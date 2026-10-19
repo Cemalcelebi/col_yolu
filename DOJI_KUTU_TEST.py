@@ -38,7 +38,7 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 import pandas as pd
 
-SURUM = "DOJI_KUTU_TEST v1.0 (2026-10-19)"
+SURUM = "DOJI_KUTU_TEST v1.1 (2026-10-19: kirilim olcumu + dusus riski)"
 dlog = logging.getLogger("col.dojikutu")
 if not dlog.handlers:
     _h = logging.StreamHandler(sys.stderr)
@@ -178,6 +178,7 @@ def k3_tarama(ay: DKAyar, veri: Dict[str, pd.DataFrame]) -> pd.DataFrame:
                      "tam_ufuk": int(en + ay.ufuk < n), "sert_goreli_up": up >= g_sert, "sert_goreli_dn": dn <= -g_sert}
             # taban: her gun (adimla) — kutu sarti yok
             kayit["grup"] = "T"
+            kayit["donchian"] = bool(en >= 21 and C[en] > C[en - 20:en].max())   # v1.1: taban kirilim (20 gun zirvesi)
             satir.append(dict(kayit))
             w = G.bolge_col(D, en, gay)
             if not w:
@@ -200,6 +201,17 @@ def k3_tarama(ay: DKAyar, veri: Dict[str, pd.DataFrame]) -> pd.DataFrame:
                 dip = float((np.median(C[s0:e0 + 1]) - tl) / (th - tl)) if th > tl else np.nan
             else:
                 dip = np.nan
+            # v1.1: KIRILIM — kutu tavani (en yuksek kapanis) ufuk icinde asilirsa, sonuc kirilim kapanisindan
+            tavan = float(C[s0:e0 + 1].max())
+            kb = np.where(C[en + 1:min(n, en + 1 + ay.ufuk)] > tavan * 1.002)[0]
+            if len(kb) and en + 1 + kb[0] + ay.ufuk < n:
+                b = en + 1 + int(kb[0]); ik = slice(b + 1, b + 1 + ay.ufuk)
+                hu2 = np.where(H[ik] >= C[b] * (1 + ay.sert / 100))[0]
+                hd2 = np.where(L[ik] <= C[b] * (1 - ay.sert / 200))[0]
+                kayit.update(kirilim=True, k_up=float(H[ik].max() / C[b] - 1) * 100, k_dn=float(L[ik].min() / C[b] - 1) * 100,
+                             k_once="yukari" if (len(hu2) and (not len(hd2) or hu2[0] < hd2[0])) else ("asagi" if len(hd2) else "yok"))
+            else:
+                kayit.update(kirilim=False)
             kayit.update(grup=grp, doji=dj, uz=e0 - s0 + 1, dip=dip,
                          doji_oran=dj / (e0 - s0 + 1))
             satir.append(kayit)
@@ -219,8 +231,10 @@ def _ozet(g: pd.DataFrame, ay: DKAyar) -> Dict[str, Any]:
     return {"n": len(g),
             "sert_yukari_%": round(100 * (g.up >= ay.sert).mean(), 1),
             "sert_asagi_%": round(100 * (g.dn <= -ay.sert).mean(), 1),
+            "agir_dusus_%": round(100 * (g.dn <= -ay.sert / 2).mean(), 1),
             "sert_herhangi_%": round(100 * ((g.up >= ay.sert) | (g.dn <= -ay.sert)).mean(), 1),
             "goreli_yukari_%": round(100 * g.sert_goreli_up.mean(), 1),
+            "goreli_asagi_%": round(100 * (g.dn <= -ay.sert_kat * g.ref).mean(), 1),   # hissenin kendi normal gununun 8 kati
             "once_yukari_%": round(100 * (g.once == "yukari").mean(), 1),
             "medyan_en_yuksek_%": round(float(g.up.median()), 1),
             "medyan_en_dusuk_%": round(float(g.dn.median()), 1)}
@@ -232,6 +246,14 @@ def k4_ozet(ay: DKAyar, t: pd.DataFrame) -> pd.DataFrame:
             "A (kutu, doji >= %d)" % ay.doji_min: t[t.grup == "A"],
             "A_dip (A + dipte)": t[(t.grup == "A") & (t.dip <= ay.dip_esik)],
             "A5_dip (doji >= 5 + dipte)": t[(t.grup == "A") & (t.doji >= 5) & (t.dip <= ay.dip_esik)]}
+    def _kir(g):    # kirilim kapanisindan olculen sonuclar, _ozet ile ayni alanlar
+        g = g[g.get("kirilim", pd.Series(False, index=g.index)).fillna(False).astype(bool)]
+        return g.assign(up=g.k_up, dn=g.k_dn, once=g.k_once, sert_goreli_up=g.k_up >= ay.sert_kat * g.ref)
+    T = t[t.grup == "T"]
+    grup.update({"K_T (taban kirilim: 20 gun zirvesi)": T[T.donchian.fillna(False).astype(bool)],
+                 "K_B (dojisiz kutu kirildi)": _kir(t[t.grup == "B"]),
+                 "K_A (doji kutusu kirildi)": _kir(t[t.grup == "A"]),
+                 "K_A_dip (dipteki doji kutusu kirildi)": _kir(t[(t.grup == "A") & (t.dip <= ay.dip_esik)])})
     satir = []
     for ad, bas, son in ay.donemler:
         m = (t.tarih >= bas) & (t.tarih <= son)
@@ -242,7 +264,7 @@ def k4_ozet(ay: DKAyar, t: pd.DataFrame) -> pd.DataFrame:
     oz = pd.DataFrame(satir)
     # iz denetimi: ayni donemin tabanina (T) gore kat
     taban = oz[oz.grup.str.startswith("T")].set_index("donem")
-    for kol in ("sert_yukari_%", "sert_herhangi_%", "once_yukari_%"):
+    for kol in ("sert_yukari_%", "sert_herhangi_%", "once_yukari_%", "sert_asagi_%", "agir_dusus_%", "goreli_asagi_%", "goreli_yukari_%"):
         kat = []
         for _, r in oz.iterrows():
             tb = taban[kol].get(r["donem"], np.nan) if kol in taban.columns else np.nan
@@ -254,8 +276,8 @@ def k4_ozet(ay: DKAyar, t: pd.DataFrame) -> pd.DataFrame:
 # ------------------------------------------------------------------ K5
 def k5_rapor(ay: DKAyar, oz: pd.DataFrame, cikti: str) -> str:
     dlog.info("K5: rapor")
-    kol = ["donem", "grup", "n", "sert_yukari_%", "sert_yukari_kat", "sert_herhangi_%", "sert_herhangi_kat",
-           "once_yukari_%", "once_yukari_kat", "medyan_en_yuksek_%", "medyan_en_dusuk_%"]
+    kol = ["donem", "grup", "n", "sert_yukari_%", "sert_yukari_kat", "sert_asagi_%", "sert_asagi_kat",
+           "agir_dusus_%", "agir_dusus_kat", "goreli_yukari_%", "goreli_yukari_kat", "goreli_asagi_%", "goreli_asagi_kat", "once_yukari_%", "once_yukari_kat", "medyan_en_yuksek_%", "medyan_en_dusuk_%"]
     sat = [f"# DOJI KUTU TESTI — {pd.Timestamp.now():%Y-%m-%d %H:%M}", "",
            f"Sav: kutuda >= {ay.doji_min} doji -> ardindan sert hareket (+-%{ay.sert:g}, {ay.ufuk} bar). "
            f"kat = ayni donemin tabanina (her gun) gore.", "",
