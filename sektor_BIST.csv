@@ -1,0 +1,584 @@
+sembol,sektor,alt,endeks,alt_bist
+A1CAP,Finans,Capital Markets,XAKUR,XAKUR
+A1YEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+ACSEL,Temel Madde,Chemicals,XKMYA,XKMYA
+ADEL,Sanayi,Business Equipment & Supplies,XMESY,XMESY
+ADESE,GYO,Real Estate - Diversified,XGMYO,XGMYO
+ADGYO,GYO,REIT - Residential,XGMYO,XGMYO
+AEFES,Tüketim-Temel,Beverages - Non-Alcoholic,XGIDA,XGIDA
+AFYON,Temel Madde,Building Materials,XTAST,XTAST
+AGESA,Finans,Insurance - Diversified,XSGRT,XSGRT
+AGHOL,Sanayi,Conglomerates,XHOLD,XHOLD
+AGROT,Sanayi,Conglomerates,XMESY,XMESY
+AGYO,GYO,REIT - Retail,XGMYO,XGMYO
+AHGAZ,Kamu Hizmeti,Utilities - Regulated Gas,XELKT,XELKT
+AHSGY,GYO,REIT - Diversified,XGMYO,XGMYO
+AKBNK,Finans,Banks - Regional,XBANK,XBANK
+AKCNS,Temel Madde,Building Materials,XTAST,XTAST
+AKENR,Kamu Hizmeti,Utilities - Regulated Electric,XELKT,XELKT
+AKFGY,GYO,REIT - Hotel & Motel,XGMYO,XGMYO
+AKFIS,GYO,Real Estate - Development,XINSA,XINSA
+AKFYE,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+AKGRT,Finans,Insurance - Diversified,XSGRT,XSGRT
+AKMGY,GYO,REIT - Retail,XGMYO,XGMYO
+AKSA,Tüketim-Döngüsel,Textile Manufacturing,XKMYA,XKMYA
+AKSEN,Kamu Hizmeti,Utilities - Independent Power Producers,XELKT,XELKT
+AKSGY,GYO,REIT - Diversified,XGMYO,XGMYO
+AKSUE,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+AKYHO,Sanayi,Security & Protection Services,XHOLD,XHOLD
+ALARK,Sanayi,Conglomerates,XHOLD,XHOLD
+ALBRK,Finans,Banks - Regional,XBANK,XBANK
+ALCAR,Sanayi,Specialty Industrial Machinery,XMESY,XMESY
+ALCTL,Teknoloji,Communication Equipment,XBLSM,XBLSM
+ALFAS,Teknoloji,Solar,XELKT,XELKT
+ALGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+ALKA,Temel Madde,Paper & Paper Products,XKAGT,XKAGT
+ALKIM,Temel Madde,Paper & Paper Products,XKMYA,XKMYA
+ALKLC,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ALTNY,Sanayi,Aerospace & Defense,XSAVUNMA,XSAVUNMA
+ALVES,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+ANELE,Sanayi,Engineering & Construction,XINSA,XINSA
+ANGEN,Sağlık,Medical Devices,XKMYA,XKMYA
+ANHYT,Finans,Insurance - Life,XSGRT,XSGRT
+ANSGR,Finans,Insurance - Diversified,XSGRT,XSGRT
+ARASE,Kamu Hizmeti,Utilities - Independent Power Producers,XELKT,XELKT
+ARCLK,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+ARDYZ,Teknoloji,Information Technology Services,XBLSM,XBLSM
+ARENA,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+ARMGD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ARSAN,Sanayi,Engineering & Construction,XHOLD,XHOLD
+ARTMS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+ARZUM,Teknoloji,Consumer Electronics,XTCRT,XTCRT
+ASELS,Sanayi,Aerospace & Defense,XSAVUNMA,XSAVUNMA
+ASGYO,GYO,Real Estate - Development,XGMYO,XGMYO
+ASTOR,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+ASUZU,Tüketim-Döngüsel,Auto Manufacturers,XMESY,XMESY
+ATAGY,GYO,REIT - Diversified,XGMYO,XGMYO
+ATAKP,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ATATP,Teknoloji,Software - Infrastructure,XBLSM,XBLSM
+ATEKS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+ATLAS,Finans,Capital Markets,XYORT,XYORT
+ATSYH,Tüketim-Döngüsel,Apparel Manufacturing,XTEKS,XTEKS
+AVGYO,GYO,REIT - Specialty,XGMYO,XGMYO
+AVHOL,Finans,Asset Management,XHOLD,XHOLD
+AVOD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+AVPGY,GYO,Real Estate - Diversified,XGMYO,XGMYO
+AYCES,Tüketim-Döngüsel,Resorts & Casinos,XTRZM,XTRZM
+AYDEM,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+AYEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+AYES,Temel Madde,Steel,XMANA,XMANA
+AYGAZ,Kamu Hizmeti,Utilities - Regulated Gas,XKMYA,XKMYA
+AZTEK,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+BAGFS,Temel Madde,Agricultural Inputs,XKMYA,XKMYA
+BAHKM,Temel Madde,Chemicals,XKMYA,XKMYA
+BAKAB,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+BALAT,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+BALSU,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+BANVT,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+BARMA,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+BASCM,Temel Madde,Building Materials,XTAST,XTAST
+BASGZ,Kamu Hizmeti,Utilities - Regulated Gas,XGMYO,XGMYO
+BAYRK,Tüketim-Döngüsel,Footwear & Accessories,XKMYA,XKMYA
+BEGYO,GYO,Real Estate - Development,XGMYO,XGMYO
+BERA,Sanayi,Conglomerates,XHOLD,XHOLD
+BESLR,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+BEYAZ,Sanayi,Rental & Leasing Services,XULAS,XULAS
+BFREN,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+BIENY,Sanayi,Building Products & Equipment,XTAST,XTAST
+BIGCH,Tüketim-Döngüsel,Restaurants,XTRZM,XTRZM
+BIGEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+BIGTK,İletişim,Publishing,XYAYIN,XYAYIN
+BIMAS,Tüketim-Temel,Grocery Stores,XTCRT,XTCRT
+BINBN,Teknoloji,Information Technology Services,XBLSM,XBLSM
+BINHO,Sanayi,Conglomerates,XHOLD,XHOLD
+BIOEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+BIZIM,Tüketim-Döngüsel,Department Stores,XTCRT,XTCRT
+BJKAS,İletişim,Entertainment,XSPOR,XSPOR
+BLCYT,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+BLUME,Teknoloji,Solar,XMANA,XMANA
+BMSCH,Temel Madde,Steel,XMANA,XMANA
+BMSTL,Temel Madde,Steel,XMANA,XMANA
+BNTAS,Tüketim-Döngüsel,Packaging & Containers,XMESY,XMESY
+BOBET,Temel Madde,Building Materials,XTAST,XTAST
+BORLS,Sanayi,Rental & Leasing Services,XKIRALAMA,XKIRALAMA
+BORSK,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+BOSSA,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+BRISA,Tüketim-Döngüsel,Auto Parts,XKMYA,XKMYA
+BRKO,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+BRKSN,Sanayi,Conglomerates,XKMYA,XKMYA
+BRKVY,Finans,Asset Management,XVARLIK,XVARLIK
+BRLSM,Sanayi,Engineering & Construction,XINSA,XINSA
+BRMEN,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+BRSAN,Temel Madde,Steel,XMANA,XMANA
+BRYAT,Temel Madde,Steel,XHOLD,XHOLD
+BSOKE,Temel Madde,Building Materials,XTAST,XTAST
+BTCIM,Temel Madde,Building Materials,XTAST,XTAST
+BUCIM,Temel Madde,Building Materials,XTAST,XTAST
+BULGS,Finans,Capital Markets,XAKUR,XAKUR
+BURCE,Sanayi,Specialty Industrial Machinery,XMANA,XMANA
+BURVA,Sanayi,Metal Fabrication,XMANA,XMANA
+BVSAN,Sanayi,Farm & Heavy Construction Machinery,XMESY,XMESY
+BYDNR,Tüketim-Döngüsel,Restaurants,XTRZM,XTRZM
+CANTE,Kamu Hizmeti,Utilities - Independent Power Producers,XELKT,XELKT
+CASA,Tüketim-Döngüsel,Specialty Retail,XTCRT,XTCRT
+CATES,Kamu Hizmeti,Utilities - Independent Power Producers,XELKT,XELKT
+CCOLA,Tüketim-Temel,Beverages - Non-Alcoholic,XGIDA,XGIDA
+CELHA,Sanayi,Metal Fabrication,XMANA,XMANA
+CEMAS,Sanayi,Metal Fabrication,XMANA,XMANA
+CEMTS,Temel Madde,Steel,XMANA,XMANA
+CEMZY,Tüketim-Temel,Farm Products,XGIDA,XGIDA
+CEOEM,Sanayi,Specialty Business Services,,YAHOO:Specialty Business Services
+CGCAM,Temel Madde,Building Materials,XTAST,XTAST
+CIMSA,Temel Madde,Building Materials,XTAST,XTAST
+CLEBI,Sanayi,Airports & Air Services,XULAS,XULAS
+CMBTN,Temel Madde,Building Materials,XTAST,XTAST
+CMENT,Temel Madde,Building Materials,XTAST,XTAST
+CONSE,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+COSMO,Finans,Asset Management,XHOLD,XHOLD
+CRDFA,Finans,Credit Services,XFINK,XFINK
+CRFSA,Tüketim-Temel,Grocery Stores,XTCRT,XTCRT
+CUSAN,Sanayi,Building Products & Equipment,XMANA,XMANA
+CVKMD,Temel Madde,Other Industrial Metals & Mining,XMADN,XMADN
+CWENE,Teknoloji,Solar,XELKT,XELKT
+DAGI,Tüketim-Döngüsel,Apparel Manufacturing,XTEKS,XTEKS
+DAPGM,GYO,Real Estate - Development,XINSA,XINSA
+DARDL,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+DCTTR,Finans,Capital Markets,XTCRT,XTCRT
+DENGE,Sanayi,Integrated Freight & Logistics,XHOLD,XHOLD
+DERHL,Tüketim-Döngüsel,Apparel Manufacturing,XHOLD,XHOLD
+DERIM,Tüketim-Döngüsel,Footwear & Accessories,XTEKS,XTEKS
+DESA,Tüketim-Döngüsel,Footwear & Accessories,XTEKS,XTEKS
+DESPC,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+DEVA,Sağlık,Drug Manufacturers - Specialty & Generic,XKMYA,XKMYA
+DGATE,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+DGGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+DGNMO,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XKAGT,XKAGT
+DIRIT,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+DITAS,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+DMRGD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+DMSAS,Sanayi,Metal Fabrication,XMANA,XMANA
+DNISI,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+DOAS,Tüketim-Döngüsel,Auto & Truck Dealerships,XTCRT,XTCRT
+DOCO,Sanayi,Airports & Air Services,XTRZM,XTRZM
+DOFER,Temel Madde,Steel,XMANA,XMANA
+DOFRB,Tüketim-Döngüsel,Leisure,XBLSM,XBLSM
+DOGUB,Sanayi,Building Products & Equipment,XTAST,XTAST
+DOHOL,Sanayi,Conglomerates,XHOLD,XHOLD
+DOKTA,Temel Madde,Steel,XMANA,XMANA
+DSTKF,Finans,Credit Services,XBANK,XBANK
+DUNYH,Tüketim-Temel,Packaged Foods,XHOLD,XHOLD
+DURDO,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+DURKN,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+DYOBY,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+DZGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+EBEBK,Tüketim-Döngüsel,Specialty Retail,XTCRT,XTCRT
+ECILC,Sağlık,Drug Manufacturers - Specialty & Generic,XHOLD,XHOLD
+ECZYT,Sanayi,Conglomerates,XHOLD,XHOLD
+EDATA,Teknoloji,Information Technology Services,XBLSM,XBLSM
+EDIP,GYO,REIT - Diversified,XINSA,XINSA
+EFOR,Tüketim-Temel,Farm Products,XGIDA,XGIDA
+EGEEN,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+EGEGY,GYO,Real Estate - Development,XGMYO,XGMYO
+EGEPO,Sağlık,Medical Care Facilities,XSAGLIK,XSAGLIK
+EGGUB,Sanayi,Marine Shipping,XKMYA,XKMYA
+EGPRO,Sanayi,Building Products & Equipment,XKMYA,XKMYA
+EGSER,Temel Madde,Building Materials,XTAST,XTAST
+EKGYO,GYO,REIT - Residential,XGMYO,XGMYO
+EKIZ,Tüketim-Temel,Household & Personal Products,XGIDA,XGIDA
+EKOS,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+EKSUN,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ELITE,Tüketim-Temel,Beverages - Non-Alcoholic,XGIDA,XGIDA
+EMKEL,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+EMNIS,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+ENDAE,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+ENERY,Kamu Hizmeti,Utilities - Regulated Gas,XELKT,XELKT
+ENJSA,Kamu Hizmeti,Utilities - Regulated Electric,XELKT,XELKT
+ENKAI,Sanayi,Engineering & Construction,XINSA,XINSA
+ENSRI,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+ENTRA,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+EPLAS,Sanayi,Building Products & Equipment,XKMYA,XKMYA
+ERBOS,Sanayi,Metal Fabrication,XMANA,XMANA
+ERCB,Temel Madde,Steel,XMANA,XMANA
+EREGL,Temel Madde,Steel,XMANA,XMANA
+ERSU,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ESCAR,Sanayi,Rental & Leasing Services,XKIRALAMA,XKIRALAMA
+ESCOM,Teknoloji,Information Technology Services,XBLSM,XBLSM
+ESEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+ETILR,Tüketim-Döngüsel,Restaurants,XTRZM,XTRZM
+ETYAT,Finans,Asset Management,XYORT,XYORT
+EUHOL,Finans,Capital Markets,XAKUR,XAKUR
+EUKYO,Finans,Asset Management,XYORT,XYORT
+EUPWR,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+EUREN,Sanayi,Building Products & Equipment,XKMYA,XKMYA
+EUYO,Finans,Asset Management,XYORT,XYORT
+EYGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+FADE,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+FENER,İletişim,Entertainment,XSPOR,XSPOR
+FLAP,Tüketim-Döngüsel,Travel Services,XTRZM,XTRZM
+FMIZP,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+FONET,Sağlık,Health Information Services,XBLSM,XBLSM
+FORMT,Sanayi,Building Products & Equipment,XMESY,XMESY
+FORTE,Teknoloji,Software - Application,XBLSM,XBLSM
+FRIGO,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+FROTO,Tüketim-Döngüsel,Auto Manufacturers,XMESY,XMESY
+FZLGY,GYO,REIT - Residential,XGMYO,XGMYO
+GARAN,Finans,Banks - Regional,XBANK,XBANK
+GARFA,Finans,Credit Services,XFINK,XFINK
+GATEG,Sanayi,Security & Protection Services,,YAHOO:Security & Protection Services
+GEDIK,Finans,Capital Markets,XAKUR,XAKUR
+GEDZA,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+GENIL,Sağlık,Drug Manufacturers - Specialty & Generic,XTCRT,XTCRT
+GENTS,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XKAGT,XKAGT
+GEREL,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+GESAN,Sanayi,Engineering & Construction,XINSA,XINSA
+GIPTA,Tüketim-Döngüsel,Specialty Retail,XKAGT,XKAGT
+GLBMD,Finans,Capital Markets,XAKUR,XAKUR
+GLCVY,Finans,Asset Management,XVARLIK,XVARLIK
+GLRMK,Sanayi,Engineering & Construction,XINSA,XINSA
+GLRYH,Finans,Asset Management,XHOLD,XHOLD
+GLYHO,Sanayi,Conglomerates,XHOLD,XHOLD
+GMTAS,BILINMIYOR,,XTCRT,XTCRT
+GOKNR,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+GOLTS,Temel Madde,Building Materials,XTAST,XTAST
+GOODY,Tüketim-Döngüsel,Auto Parts,XKMYA,XKMYA
+GOZDE,Finans,Asset Management,XVARLIK,XVARLIK
+GRNYO,Finans,Asset Management,XYORT,XYORT
+GRSEL,Sanayi,Railroads,XULAS,XULAS
+GRTHO,Tüketim-Temel,Farm Products,XHOLD,XHOLD
+GSDDE,Sanayi,Marine Shipping,XULAS,XULAS
+GSDHO,Sanayi,Marine Shipping,XHOLD,XHOLD
+GSRAY,İletişim,Entertainment,XSPOR,XSPOR
+GUBRF,Temel Madde,Agricultural Inputs,XKMYA,XKMYA
+GUNDG,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+GWIND,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+GZNMI,Tüketim-Döngüsel,Travel Services,XTRZM,XTRZM
+HALKB,Finans,Banks - Regional,XBANK,XBANK
+HATEK,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+HATSN,Sanayi,Aerospace & Defense,XMESY,XMESY
+HDFGS,Finans,Asset Management,XVARLIK,XVARLIK
+HEDEF,Finans,Asset Management,XHOLD,XHOLD
+HEKTS,Temel Madde,Agricultural Inputs,XKMYA,XKMYA
+HKTM,Sanayi,Specialty Industrial Machinery,XMESY,XMESY
+HLGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+HOROZ,Sanayi,Integrated Freight & Logistics,XULAS,XULAS
+HRKET,Sanayi,Engineering & Construction,XULAS,XULAS
+HTTBT,Teknoloji,Software - Application,XBLSM,XBLSM
+HUBVC,Finans,Asset Management,XVARLIK,XVARLIK
+HUNER,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+HURGZ,İletişim,Publishing,XYAYIN,XYAYIN
+ICBCT,Finans,Banks - Regional,XBANK,XBANK
+ICUGS,Finans,Asset Management,XVARLIK,XVARLIK
+IDGYO,GYO,REIT - Residential,XGMYO,XGMYO
+IEYHO,Tüketim-Döngüsel,Textile Manufacturing,XHOLD,XHOLD
+IHAAS,İletişim,Broadcasting,XYAYIN,XYAYIN
+IHEVA,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+IHGZT,İletişim,Publishing,XYAYIN,XYAYIN
+IHLAS,Sanayi,Conglomerates,XHOLD,XHOLD
+IHLGM,GYO,Real Estate - Diversified,XGMYO,XGMYO
+IHYAY,İletişim,Publishing,XHOLD,XHOLD
+IMASM,Sanayi,Specialty Industrial Machinery,XMESY,XMESY
+INDES,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+INFO,Finans,Capital Markets,XAKUR,XAKUR
+INGRM,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+INTEK,Teknoloji,Software - Application,XBLSM,XBLSM
+INTEM,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XTCRT,XTCRT
+INVEO,Finans,Asset Management,XHOLD,XHOLD
+INVES,Finans,Asset Management,XHOLD,XHOLD
+ISBIR,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+ISBTR,Finans,Banks - Regional,XBANK,XBANK
+ISCTR,Finans,Banks - Regional,XBANK,XBANK
+ISDMR,Temel Madde,Steel,XMANA,XMANA
+ISFIN,Finans,Credit Services,XFINK,XFINK
+ISGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+ISKPL,Sanayi,Specialty Business Services,XKMYA,XKMYA
+ISMEN,Finans,Capital Markets,XAKUR,XAKUR
+ISSEN,Tüketim-Döngüsel,Packaging & Containers,XTEKS,XTEKS
+IZENR,Kamu Hizmeti,Utilities - Independent Power Producers,XELKT,XELKT
+IZFAS,Tüketim-Temel,Household & Personal Products,XKMYA,XKMYA
+IZINV,Sanayi,Conglomerates,XHOLD,XHOLD
+IZMDC,Temel Madde,Steel,XMANA,XMANA
+JANTS,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+KAPLM,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+KAREL,Teknoloji,Communication Equipment,XBLSM,XBLSM
+KARSN,Sanayi,Farm & Heavy Construction Machinery,XMESY,XMESY
+KARTN,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+KATMR,Sanayi,Farm & Heavy Construction Machinery,XMESY,XMESY
+KAYSE,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+KBORU,Temel Madde,Building Materials,XKMYA,XKMYA
+KCAER,Temel Madde,Steel,XMANA,XMANA
+KCHOL,Sanayi,Conglomerates,XHOLD,XHOLD
+KENT,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+KERVN,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+KFEIN,Teknoloji,Software - Application,XBLSM,XBLSM
+KGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+KIMMR,Tüketim-Temel,Grocery Stores,XTCRT,XTCRT
+KLGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+KLKIM,Temel Madde,Specialty Chemicals,XTAST,XTAST
+KLMSN,Sanayi,Specialty Industrial Machinery,XMESY,XMESY
+KLNMA,Finans,Banks - Regional,XBANK,XBANK
+KLRHO,Sanayi,Conglomerates,XHOLD,XHOLD
+KLSER,Sanayi,Building Products & Equipment,XTAST,XTAST
+KLSYN,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XKAGT,XKAGT
+KLYPV,Teknoloji,Solar,XELKT,XELKT
+KMPUR,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+KNFRT,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+KOCMT,Temel Madde,Steel,XMANA,XMANA
+KONKA,Temel Madde,Paper & Paper Products,XKAGT,XKAGT
+KONTR,Sanayi,Conglomerates,XHOLD,XHOLD
+KONYA,Temel Madde,Building Materials,XTAST,XTAST
+KOPOL,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+KORDS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+KOTON,Tüketim-Döngüsel,Apparel Manufacturing,XTCRT,XTCRT
+KRDMA,Temel Madde,Steel,XMANA,XMANA
+KRDMB,Temel Madde,Steel,XMANA,XMANA
+KRDMD,Temel Madde,Steel,XMANA,XMANA
+KRGYO,GYO,REIT - Residential,XGMYO,XGMYO
+KRONT,Teknoloji,Software - Infrastructure,XBLSM,XBLSM
+KRPLS,Tüketim-Temel,Household & Personal Products,XKMYA,XKMYA
+KRSTL,Tüketim-Temel,Beverages - Non-Alcoholic,XGIDA,XGIDA
+KRTEK,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+KRVGD,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+KSTUR,Tüketim-Döngüsel,Resorts & Casinos,XTRZM,XTRZM
+KTLEV,Finans,Credit Services,XFINK,XFINK
+KTSKR,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+KUTPO,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XTAST,XTAST
+KUVVA,Tüketim-Temel,Food Distribution,XTCRT,XTCRT
+KUYAS,GYO,Real Estate Services,XINSA,XINSA
+KZBGY,GYO,REIT - Hotel & Motel,XGMYO,XGMYO
+KZGYO,BILINMIYOR,,XGMYO,XGMYO
+LIDER,Sanayi,Rental & Leasing Services,XKIRALAMA,XKIRALAMA
+LIDFA,Finans,Credit Services,XFINK,XFINK
+LILAK,Tüketim-Temel,Household & Personal Products,XKAGT,XKAGT
+LINK,Teknoloji,Software - Application,XBLSM,XBLSM
+LKMNH,Sağlık,Medical Care Facilities,XSAGLIK,XSAGLIK
+LMKDC,Temel Madde,Building Materials,XTAST,XTAST
+LOGO,Teknoloji,Software - Application,XBLSM,XBLSM
+LRSHO,Sanayi,Conglomerates,XHOLD,XHOLD
+LUKSK,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+LYDHO,Sanayi,Conglomerates,XHOLD,XHOLD
+LYDYE,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+MAALT,Tüketim-Döngüsel,Lodging,XTRZM,XTRZM
+MACKO,İletişim,Internet Content & Information,XBLSM,XBLSM
+MAGEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+MAKIM,Sanayi,Specialty Industrial Machinery,XMESY,XMESY
+MAKTK,Sanayi,Tools & Accessories,XMESY,XMESY
+MANAS,Sanayi,Electrical Equipment & Parts,XBLSM,XBLSM
+MARBL,Temel Madde,Building Materials,XTAST,XTAST
+MARMR,Sanayi,Conglomerates,XKMYA,XKMYA
+MARTI,Tüketim-Döngüsel,Lodging,XTRZM,XTRZM
+MAVI,Tüketim-Döngüsel,Apparel Retail,XTCRT,XTCRT
+MEDTR,Sağlık,Medical Devices,XKMYA,XKMYA
+MEGAP,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+MEGMT,Sanayi,Electrical Equipment & Parts,XMANA,XMANA
+MEKAG,Temel Madde,Building Materials,XMESY,XMESY
+MEPET,Enerji,Oil & Gas Refining & Marketing,XTCRT,XTCRT
+MERCN,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+MERIT,Tüketim-Döngüsel,Resorts & Casinos,XTRZM,XTRZM
+MERKO,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+METRO,Finans,Asset Management,XHOLD,XHOLD
+MGROS,Tüketim-Temel,Grocery Stores,XTCRT,XTCRT
+MHRGY,GYO,REIT - Office,XGMYO,XGMYO
+MIATK,Teknoloji,Information Technology Services,XBLSM,XBLSM
+MMCAS,Sanayi,Integrated Freight & Logistics,XULAS,XULAS
+MNDRS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+MNDTR,Tüketim-Döngüsel,Packaging & Containers,XKAGT,XKAGT
+MOBTL,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+MOGAN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+MOPAS,Tüketim-Temel,Packaged Foods,XTCRT,XTCRT
+MPARK,Sağlık,Medical Care Facilities,XSAGLIK,XSAGLIK
+MRGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+MRSHL,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+MSGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+MTRKS,Finans,Financial Data & Stock Exchanges,XBLSM,XBLSM
+MTRYO,Finans,Asset Management,XYORT,XYORT
+MZHLD,Sanayi,Conglomerates,XHOLD,XHOLD
+NATEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+NETAS,Teknoloji,Communication Equipment,XBLSM,XBLSM
+NIBAS,Sanayi,Engineering & Construction,XTAST,XTAST
+NTGAZ,Enerji,Oil & Gas Midstream,XELKT,XELKT
+NTHOL,Tüketim-Döngüsel,Travel Services,XHOLD,XHOLD
+NUGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+NUHCM,Temel Madde,Building Materials,XTAST,XTAST
+OBAMS,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+OBASE,Teknoloji,Software - Application,XBLSM,XBLSM
+ODAS,Kamu Hizmeti,Utilities - Regulated Electric,XELKT,XELKT
+ODINE,Teknoloji,Software - Infrastructure,XBLSM,XBLSM
+OFSYM,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ONCSM,Sağlık,Medical Devices,XKMYA,XKMYA
+ONRYT,Sanayi,Aerospace & Defense,XSAVUNMA,XSAVUNMA
+ORCAY,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ORGE,Sanayi,Engineering & Construction,XINSA,XINSA
+ORMA,Temel Madde,Lumber & Wood Production,XKAGT,XKAGT
+OSMEN,Finans,Capital Markets,XAKUR,XAKUR
+OSTIM,Finans,Asset Management,XHOLD,XHOLD
+OTKAR,Tüketim-Döngüsel,Auto Manufacturers,XMESY,XMESY
+OTTO,Finans,Asset Management,XHOLD,XHOLD
+OYAKC,Temel Madde,Building Materials,XTAST,XTAST
+OYAYO,Finans,Asset Management,XYORT,XYORT
+OYLUM,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+OYYAT,Finans,Capital Markets,XAKUR,XAKUR
+OZATD,Sanayi,Aerospace & Defense,XMESY,XMESY
+OZGYO,GYO,REIT - Residential,XGMYO,XGMYO
+OZKGY,GYO,REIT - Diversified,XGMYO,XGMYO
+OZRDN,Tüketim-Döngüsel,Packaging & Containers,XKMYA,XKMYA
+OZSUB,Tüketim-Temel,Farm Products,XGIDA,XGIDA
+OZYSR,Sanayi,Electrical Equipment & Parts,XMANA,XMANA
+PAGYO,GYO,REIT - Retail,XGMYO,XGMYO
+PAMEL,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+PAPIL,Sanayi,Building Products & Equipment,XBLSM,XBLSM
+PARSN,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+PASEU,Sanayi,Integrated Freight & Logistics,XULAS,XULAS
+PATEK,Teknoloji,Information Technology Services,XBLSM,XBLSM
+PCILT,İletişim,Advertising Agencies,XYAYIN,XYAYIN
+PEKGY,GYO,REIT - Diversified,XGMYO,XGMYO
+PENGD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+PENTA,Teknoloji,Electronics & Computer Distribution,XBLSM,XBLSM
+PETKM,Temel Madde,Chemicals,XKMYA,XKMYA
+PETUN,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+PGSUS,Sanayi,Airlines,XULAS,XULAS
+PINSU,Tüketim-Temel,Beverages - Non-Alcoholic,XGIDA,XGIDA
+PKART,Sanayi,Business Equipment & Supplies,XBLSM,XBLSM
+PKENT,Tüketim-Döngüsel,Resorts & Casinos,XTRZM,XTRZM
+PLTUR,Sanayi,Rental & Leasing Services,XKIRALAMA,XKIRALAMA
+PNLSN,Sanayi,Building Products & Equipment,XMANA,XMANA
+PNSUT,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+POLHO,Temel Madde,Specialty Chemicals,XHOLD,XHOLD
+POLTK,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+PRDGS,Finans,Asset Management,XVARLIK,XVARLIK
+PRKAB,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+PRKME,Enerji,Thermal Coal,XMADN,XMADN
+PRZMA,Sanayi,Specialty Business Services,XKAGT,XKAGT
+PSDTC,Sanayi,Conglomerates,XTCRT,XTCRT
+PSGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+QNBFK,Finans,Credit Services,XFINK,XFINK
+QNBTR,Finans,Banks - Regional,XBANK,XBANK
+QUAGR,Sanayi,Building Products & Equipment,XTAST,XTAST
+RALYH,Sanayi,Engineering & Construction,XHOLD,XHOLD
+RAYSG,Finans,Insurance - Diversified,XSGRT,XSGRT
+REEDR,Teknoloji,Consumer Electronics,XBLSM,XBLSM
+RGYAS,GYO,Real Estate - Development,XGMYO,XGMYO
+RNPOL,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+RODRG,Tüketim-Döngüsel,Apparel Manufacturing,XTEKS,XTEKS
+RTALB,Sağlık,Biotechnology,XKMYA,XKMYA
+RUBNS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+RUZYE,Enerji,Thermal Coal,XMADN,XMADN
+RYGYO,GYO,REIT - Industrial,XGMYO,XGMYO
+RYSAS,Sanayi,Integrated Freight & Logistics,XULAS,XULAS
+SAFKR,Tüketim-Döngüsel,Auto Parts,XMESY,XMESY
+SAHOL,Finans,Banks - Regional,XHOLD,XHOLD
+SAMAT,Sanayi,Specialty Business Services,XKAGT,XKAGT
+SANEL,Sanayi,Electrical Equipment & Parts,XINSA,XINSA
+SANFM,Tüketim-Temel,Household & Personal Products,XKMYA,XKMYA
+SANKO,Tüketim-Döngüsel,Textile Manufacturing,XTCRT,XTCRT
+SARKY,Temel Madde,Copper,XMANA,XMANA
+SASA,Tüketim-Döngüsel,Textile Manufacturing,XKMYA,XKMYA
+SAYAS,Sanayi,Engineering & Construction,XMESY,XMESY
+SDTTR,Sanayi,Aerospace & Defense,XSAVUNMA,XSAVUNMA
+SEGMN,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+SEGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+SEKFK,Finans,Credit Services,XFINK,XFINK
+SEKUR,Tüketim-Döngüsel,Packaging & Containers,XKMYA,XKMYA
+SELEC,Sağlık,Medical Distribution,XTCRT,XTCRT
+SELVA,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+SERNT,Temel Madde,Building Materials,XTAST,XTAST
+SEYKM,Sağlık,Medical Instruments & Supplies,XKMYA,XKMYA
+SILVR,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+SISE,Sanayi,Conglomerates,XHOLD,XHOLD
+SKBNK,Finans,Banks - Regional,XBANK,XBANK
+SKTAS,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+SKYLP,Sanayi,Consulting Services,,YAHOO:Consulting Services
+SKYMD,Finans,Capital Markets,XAKUR,XAKUR
+SMART,Teknoloji,Software - Infrastructure,XBLSM,XBLSM
+SMRTG,Teknoloji,Solar,XELKT,XELKT
+SMRVA,Finans,Asset Management,XVARLIK,XVARLIK
+SNGYO,GYO,REIT - Residential,XGMYO,XGMYO
+SNICA,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+SNPAM,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+SODSN,Temel Madde,Chemicals,XKMYA,XKMYA
+SOKE,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+SOKM,Tüketim-Döngüsel,Department Stores,XTCRT,XTCRT
+SONME,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+SRVGY,GYO,REIT - Diversified,XGMYO,XGMYO
+SUMAS,Temel Madde,Lumber & Wood Production,XKAGT,XKAGT
+SUNTK,Tüketim-Döngüsel,Apparel Manufacturing,XTEKS,XTEKS
+SURGY,GYO,Real Estate - Development,XGMYO,XGMYO
+SUWEN,Tüketim-Döngüsel,Apparel Manufacturing,XTCRT,XTCRT
+TABGD,Tüketim-Döngüsel,Restaurants,XTRZM,XTRZM
+TARKM,Temel Madde,Agricultural Inputs,XKMYA,XKMYA
+TATEN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+TATGD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+TAVHL,Sanayi,Airports & Air Services,XHOLD,XHOLD
+TBORG,Tüketim-Temel,Beverages - Brewers,XGIDA,XGIDA
+TCELL,İletişim,Telecom Services,XILTM,XILTM
+TCKRC,Sanayi,Metal Fabrication,XMANA,XMANA
+TDGYO,GYO,Real Estate - Diversified,XGMYO,XGMYO
+TEHOL,GYO,REIT - Diversified,XHOLD,XHOLD
+TEKTU,Tüketim-Döngüsel,Lodging,XTRZM,XTRZM
+TERA,Finans,Capital Markets,XAKUR,XAKUR
+TEZOL,Temel Madde,Paper & Paper Products,XKAGT,XKAGT
+TGSAS,Sanayi,Industrial Distribution,XTCRT,XTCRT
+THYAO,Sanayi,Airlines,XULAS,XULAS
+TKFEN,Temel Madde,Agricultural Inputs,XHOLD,XHOLD
+TKNSA,Tüketim-Döngüsel,Specialty Retail,XTCRT,XTCRT
+TLMAN,Sanayi,Marine Shipping,XULAS,XULAS
+TMPOL,Temel Madde,Specialty Chemicals,XKMYA,XKMYA
+TMSN,Sanayi,Farm & Heavy Construction Machinery,XMESY,XMESY
+TNZTP,Sağlık,Medical Care Facilities,XSAGLIK,XSAGLIK
+TOASO,Tüketim-Döngüsel,Auto Manufacturers,XMESY,XMESY
+TRALT,Temel Madde,Gold,XMADN,XMADN
+TRCAS,Kamu Hizmeti,Utilities - Independent Power Producers,XHOLD,XHOLD
+TRENJ,Temel Madde,Gold,XMADN,XMADN
+TRGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+TRHOL,Finans,Asset Management,XHOLD,XHOLD
+TRILC,Sağlık,Drug Manufacturers - Specialty & Generic,XKMYA,XKMYA
+TRMET,Temel Madde,Other Industrial Metals & Mining,XMADN,XMADN
+TSGYO,GYO,REIT - Office,XGMYO,XGMYO
+TSKB,Finans,Banks - Regional,XBANK,XBANK
+TSPOR,İletişim,Entertainment,XSPOR,XSPOR
+TTKOM,İletişim,Telecom Services,XILTM,XILTM
+TTRAK,Sanayi,Farm & Heavy Construction Machinery,XMESY,XMESY
+TUCLK,Sanayi,Metal Fabrication,XMANA,XMANA
+TUKAS,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+TUPRS,Enerji,Oil & Gas Refining & Marketing,XKMYA,XKMYA
+TUREX,Sanayi,Railroads,XULAS,XULAS
+TURGG,GYO,Real Estate - Development,XINSA,XINSA
+TURSG,Finans,Insurance - Property & Casualty,XSGRT,XSGRT
+UFUK,GYO,Real Estate Services,XHOLD,XHOLD
+ULAS,Tüketim-Döngüsel,Lodging,XTRZM,XTRZM
+ULKER,Tüketim-Temel,Confectioners,XGIDA,XGIDA
+ULUFA,BILINMIYOR,,XFINK,XFINK
+ULUSE,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+ULUUN,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+UNLU,Finans,Capital Markets,XHOLD,XHOLD
+USAK,Sanayi,Building Products & Equipment,XTAST,XTAST
+USHOL,Finans,Asset Management,XHOLD,XHOLD
+VAKBN,Finans,Banks - Regional,XBANK,XBANK
+VAKFN,Finans,Credit Services,XFINK,XFINK
+VAKKO,Tüketim-Döngüsel,Apparel Manufacturing,XTCRT,XTCRT
+VANGD,Tüketim-Temel,Food Distribution,XGIDA,XGIDA
+VBTYZ,Teknoloji,Information Technology Services,XBLSM,XBLSM
+VERUS,Temel Madde,Specialty Chemicals,XHOLD,XHOLD
+VESBE,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+VESTL,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+VKFYO,Finans,Asset Management,XYORT,XYORT
+VKGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+VKING,Tüketim-Temel,Household & Personal Products,XKAGT,XKAGT
+VRGYO,GYO,REIT - Diversified,XGMYO,XGMYO
+VSNMD,Temel Madde,Building Materials,XMADN,XMADN
+YAPRK,Tüketim-Temel,Farm Products,XGIDA,XGIDA
+YATAS,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XTEKS,XTEKS
+YAYLA,Sanayi,Engineering & Construction,XINSA,XINSA
+YBTAS,Temel Madde,Building Materials,XTAST,XTAST
+YEOTK,Sanayi,Engineering & Construction,XINSA,XINSA
+YESIL,Finans,Asset Management,XHOLD,XHOLD
+YGGYO,GYO,REIT - Retail,XGMYO,XGMYO
+YIGIT,Sanayi,Electrical Equipment & Parts,XMESY,XMESY
+YKBNK,Finans,Banks - Regional,XBANK,XBANK
+YKSLN,Temel Madde,Steel,XMANA,XMANA
+YONGA,Tüketim-Döngüsel,Furnishings Fixtures & Appliances,XMESY,XMESY
+YUNSA,Tüketim-Döngüsel,Textile Manufacturing,XTEKS,XTEKS
+YYAPI,Sanayi,Engineering & Construction,XINSA,XINSA
+YYLGD,Tüketim-Temel,Packaged Foods,XGIDA,XGIDA
+ZEDUR,Sanayi,Conglomerates,XELKT,XELKT
+ZOREN,Kamu Hizmeti,Utilities - Renewable,XELKT,XELKT
+ZRGYO,GYO,REIT - Diversified,XGMYO,XGMYO

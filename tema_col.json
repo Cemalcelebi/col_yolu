@@ -1,0 +1,128 @@
+{
+ "surum": "2026-09-27 v1.0",
+ "tanim": {
+  "surum": "v1",
+  "revizyon_gerekce": "",
+  "dalga_gun": 60,
+  "dalga_min": 15.0,
+  "dalga_spy_fark": 10.0,
+  "sma": 200,
+  "sonrasi_gun": 120,
+  "buyuk_kazanan": 30.0,
+  "buyuk_oran_min": 1.3,
+  "ufuk": 120,
+  "maliyet": 0.4,
+  "giris": "acilis"
+ },
+ "kaynak": {
+  "desen": "/content/drive/MyDrive/col_tarayici/arsiv/desen/DESEN_TAM.py",
+  "desen_md5": "d039d3d74b0ee9a4e5de6dd7bc53e216",
+  "olc_md5": "81a0dbb9c3046b8ea788a5205b6dd8b9"
+ },
+ "adim0": {
+  "ABD 2024-26": {
+   "n": 3595,
+   "kazanan": 61.9471488178025,
+   "bek": 8.325169693862993,
+   "beklenen_kazanan": 62.0,
+   "beklenen_bek": 8.3,
+   "tuttu": true
+  },
+  "ABD 2022-23": {
+   "n": 3138,
+   "kazanan": 61.75908221797323,
+   "bek": 4.667391760082869,
+   "beklenen_kazanan": 62.0,
+   "beklenen_bek": 4.7,
+   "tuttu": true
+  }
+ },
+ "dalga_sayisi": 317,
+ "adim2": {
+  "ABD 2024-26": {
+   "n": 3595,
+   "n_olculen": 3240,
+   "n_disari": 355,
+   "n_tema": 1046,
+   "n_gerisi": 2194,
+   "bek_fark": [
+    -5.60288284192071,
+    -8.298681334381046,
+    -2.7909040064599333
+   ],
+   "yetersiz": false,
+   "buyuk_tema%": 10.803059273422562,
+   "buyuk_gerisi%": 12.625341841385598,
+   "buyuk_oran": 0.8556646947974403,
+   "sart1": false,
+   "n_buyuk_tema": 113,
+   "sart2": false,
+   "olcu_tema": {
+    "n": 1046,
+    "bek": 4.745109573997782,
+    "kazanan%": 60.038240917782026,
+    "ort": 4.745109573997782,
+    "medyan": 4.788728677443876,
+    "agir%": 17.208413001912046,
+    "endeks_ustu": NaN,
+    "bar": 106.0
+   },
+   "olcu_gerisi": {
+    "n": 2194,
+    "bek": 10.433015969210228,
+    "kazanan%": 62.989972652689154,
+    "ort": 10.433015969210231,
+    "medyan": 6.818896580637068,
+    "agir%": 12.716499544211485,
+    "endeks_ustu": NaN,
+    "bar": 117.0
+   }
+  },
+  "ABD 2022-23": {
+   "n": 3138,
+   "n_olculen": 2805,
+   "n_disari": 333,
+   "n_tema": 949,
+   "n_gerisi": 1856,
+   "bek_fark": [
+    1.0487855251756577,
+    -0.8501067675999885,
+    2.9476958382368768
+   ],
+   "yetersiz": false,
+   "buyuk_tema%": 8.851422550052687,
+   "buyuk_gerisi%": 7.435344827586207,
+   "buyuk_oran": 1.1904521922389701,
+   "sart1": false,
+   "n_buyuk_tema": 84,
+   "sart2": false,
+   "olcu_tema": {
+    "n": 949,
+    "bek": 5.367072830558843,
+    "kazanan%": 62.381454162276086,
+    "ort": 5.367072830558844,
+    "medyan": 6.233497507206898,
+    "agir%": 12.85563751317176,
+    "endeks_ustu": NaN,
+    "bar": 122.0
+   },
+   "olcu_gerisi": {
+    "n": 1856,
+    "bek": 4.352411153503709,
+    "kazanan%": 61.36853448275862,
+    "ort": 4.352411153503711,
+    "medyan": 6.2391742877263345,
+    "agir%": 12.823275862068966,
+    "endeks_ustu": NaN,
+    "bar": 122.0
+   }
+  }
+ },
+ "karar": "GEÇMEDİ",
+ "neden": [
+  "ABD 2024-26: beklenti farkı TERS (tema daha kötü)",
+  "ABD 2024-26: büyük kazanan oranı 0.86 kat < 1.3",
+  "ABD 2022-23: beklenti farkı yok (bant sıfırı kapsıyor)",
+  "ABD 2022-23: büyük kazanan oranı 1.19 kat < 1.3"
+ ]
+}

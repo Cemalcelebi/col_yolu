@@ -1,0 +1,15 @@
+{
+  "tarih": "2026-09-29",
+  "v2": {
+    "silk_min_yukselis%": 10.0,
+    "silk_max_uzaklik%": 8.0,
+    "uzama_esik%": 12.0,
+    "uzama_olcek%": 6.0,
+    "uzama_max_ceza": 1.0,
+    "alt_bant_kat": 2.0
+  },
+  "esik": -0.06829961323280742,
+  "referans_n": 78,
+  "referans_uyum_v1": 0.744,
+  "referans_uyum_v2": 0.769
+}

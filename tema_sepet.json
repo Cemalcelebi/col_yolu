@@ -1,0 +1,219 @@
+{
+ "surum": "2026-09-27 v2.1",
+ "tanim": {
+  "surum": "v2",
+  "revizyon_gerekce": "Cemal: lider önce çölünü kurar, sektör rüzgârı başlayınca uçar; haberle öğrenmek geç kalır (v1: dalga sonrası kırılımlar fon içinde −3/−10 puan kötü). Rüzgâr hisselerden kurulan endüstri sepetinden, erken işaretle, makineyle yakalanır.",
+  "min_uye": 5,
+  "getiri_sinir": 0.5,
+  "erken_gun": 20,
+  "erken_fark": 5.0,
+  "sma": 200,
+  "sessiz": 20,
+  "pencere": 20,
+  "dalga_gun": 60,
+  "dalga_min": 15.0,
+  "dalga_spy_fark": 10.0,
+  "dip_gun": 60,
+  "buyuk_kazanan": 30.0
+ },
+ "tema_col_md5": "954c4ffee5a0fd4ec8a7b75740ccf10d",
+ "kaynak": {
+  "desen": "/content/drive/MyDrive/col_tarayici/arsiv/desen/DESEN_TAM.py",
+  "desen_md5": "d039d3d74b0ee9a4e5de6dd7bc53e216",
+  "olc_md5": "81a0dbb9c3046b8ea788a5205b6dd8b9"
+ },
+ "adim0": {
+  "ABD 2024-26": {
+   "n": 3595,
+   "kazanan": 61.9471488178025,
+   "bek": 8.325169693862993,
+   "beklenen_kazanan": 62.0,
+   "beklenen_bek": 8.3,
+   "tuttu": true
+  },
+  "ABD 2022-23": {
+   "n": 3138,
+   "kazanan": 61.75908221797323,
+   "bek": 4.667391760082869,
+   "beklenen_kazanan": 62.0,
+   "beklenen_bek": 4.7,
+   "tuttu": true
+  }
+ },
+ "fiyat": {
+  "oturum": "2026-09-27 17:36:41.057677",
+  "hisse": 1278,
+  "basarisiz": 0
+ },
+ "sepet": {
+  "hisse": 1278,
+  "sepet": 81,
+  "bas": "2019-01-02",
+  "son": "2026-09-25"
+ },
+ "karar": "GEÇMEDİ",
+ "neden": [
+  "ABD 2024-26: beklenti farkı yok (bant sıfırı kapsıyor)",
+  "ABD 2024-26: büyük kazanan oranı 0.98 kat < 1.3",
+  "ABD 2022-23: beklenti farkı yok (bant sıfırı kapsıyor)",
+  "ABD 2022-23: büyük kazanan oranı 0.96 kat < 1.3"
+ ],
+ "karar_set": {
+  "ABD 2024-26": {
+   "n": 3595,
+   "n_olculen": 2803,
+   "n_disari": 792,
+   "n_tema": 845,
+   "n_gerisi": 1958,
+   "olcu_tema": {
+    "n": 845,
+    "bek": 8.743679391409472,
+    "kazanan%": 58.698224852071,
+    "ort": 8.743679391409476,
+    "medyan": 5.161133068446366,
+    "agir%": 16.68639053254438,
+    "endeks_ustu": NaN,
+    "bar": 122.0
+   },
+   "olcu_gerisi": {
+    "n": 1958,
+    "bek": 9.01684603547211,
+    "kazanan%": 63.840653728294185,
+    "ort": 9.016846035472112,
+    "medyan": 6.785034743589369,
+    "agir%": 13.636363636363635,
+    "endeks_ustu": NaN,
+    "bar": 111.5
+   },
+   "bek_fark": [
+    -0.2542095241109359,
+    -3.8637284448026685,
+    3.5527535946884945
+   ],
+   "yetersiz": false,
+   "buyuk_tema%": 12.42603550295858,
+   "buyuk_gerisi%": 12.665985699693566,
+   "buyuk_oran": 0.9810555449513265,
+   "sart1": false,
+   "n_buyuk_tema": 105,
+   "sart2": false
+  },
+  "ABD 2022-23": {
+   "n": 3138,
+   "n_olculen": 2389,
+   "n_disari": 749,
+   "n_tema": 748,
+   "n_gerisi": 1641,
+   "olcu_tema": {
+    "n": 748,
+    "bek": 4.220697309672404,
+    "kazanan%": 60.962566844919785,
+    "ort": 4.2206973096724045,
+    "medyan": 4.8609709646711075,
+    "agir%": 14.037433155080215,
+    "endeks_ustu": NaN,
+    "bar": 122.0
+   },
+   "olcu_gerisi": {
+    "n": 1641,
+    "bek": 4.166057365568698,
+    "kazanan%": 60.93845216331505,
+    "ort": 4.166057365568697,
+    "medyan": 6.196306134994489,
+    "agir%": 13.528336380255942,
+    "endeks_ustu": NaN,
+    "bar": 122.0
+   },
+   "bek_fark": [
+    0.061813878867970296,
+    -1.900700823047632,
+    2.1218516171785704
+   ],
+   "yetersiz": false,
+   "buyuk_tema%": 7.887700534759358,
+   "buyuk_gerisi%": 8.226691042047532,
+   "buyuk_oran": 0.9587938205585264,
+   "sart1": false,
+   "n_buyuk_tema": 59,
+   "sart2": false
+  }
+ },
+ "kontrol_fon": {
+  "ABD 2024-26": {
+   "n": 754,
+   "bek_fark": [
+    -2.06357903533884,
+    -4.911340699793674,
+    1.0530699038423423
+   ],
+   "buyuk_oran": 1.0470463832532797
+  },
+  "ABD 2022-23": {
+   "n": 552,
+   "bek_fark": [
+    0.5660417904766444,
+    -1.7652677570006827,
+    2.820814934710359
+   ],
+   "buyuk_oran": 1.4099802371541503
+  }
+ },
+ "bugun": [
+  {
+   "endustri": "Semiconductors",
+   "uye": 30,
+   "isaret_kac_gun_once": 4,
+   "sepet_spy_20g_fark": 8.3,
+   "onde_gidenler_20g": "MXL +48%, INTC +34%, SWKS +33%, AMD +32%, SMTC +28%",
+   "col_kuranlar": "ADI, AMD, GFS, INTC, LASR, MCHP, POET"
+  },
+  {
+   "endustri": "Auto & Truck Dealerships",
+   "uye": 6,
+   "isaret_kac_gun_once": 9,
+   "sepet_spy_20g_fark": -0.1,
+   "onde_gidenler_20g": "ACVA +45%, OPLN -2%, DRVN -3%, KMX -9%, CVNA -12%",
+   "col_kuranlar": "OPLN"
+  },
+  {
+   "endustri": "Gambling",
+   "uye": 6,
+   "isaret_kac_gun_once": 15,
+   "sepet_spy_20g_fark": -13.3,
+   "onde_gidenler_20g": "CHDN -8%, DKNG -9%, BRSL -12%, FLUT -12%, SGHC -13%",
+   "col_kuranlar": "BRSL, DKNG, RSI, SGHC"
+  },
+  {
+   "endustri": "Farm & Heavy Construction Machinery",
+   "uye": 5,
+   "isaret_kac_gun_once": 15,
+   "sepet_spy_20g_fark": -0.8,
+   "onde_gidenler_20g": "CNH +15%, AGCO +6%, CAT +1%, TEX -11%, PCAR -12%",
+   "col_kuranlar": "CAT"
+  },
+  {
+   "endustri": "Oil & Gas Midstream",
+   "uye": 18,
+   "isaret_kac_gun_once": 17,
+   "sepet_spy_20g_fark": -1.4,
+   "onde_gidenler_20g": "NAT +19%, TRMD +16%, DHT +13%, CMBT +4%, KMI -3%",
+   "col_kuranlar": "EPD, HESM, MPLX"
+  },
+  {
+   "endustri": "Medical Care Facilities",
+   "uye": 10,
+   "isaret_kac_gun_once": 17,
+   "sepet_spy_20g_fark": -2.6,
+   "onde_gidenler_20g": "STLN +5%, HCA +4%, SGRY +3%, EHC +3%, LFST -4%",
+   "col_kuranlar": "BKD, HCSG, OPCH, STLN"
+  },
+  {
+   "endustri": "Agricultural Inputs",
+   "uye": 6,
+   "isaret_kac_gun_once": 18,
+   "sepet_spy_20g_fark": -7.3,
+   "onde_gidenler_20g": "NTR -1%, MOS -2%, CTVA -5%, ICL -8%, FMC -10%",
+   "col_kuranlar": "SMG"
+  }
+ ]
+}
