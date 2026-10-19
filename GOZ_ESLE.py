@@ -46,7 +46,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-SURUM = "GOZ_ESLE v1.2 (2026-10-19: bolge kurali, hisseye ozel olcu)"
+SURUM = "GOZ_ESLE v1.3 (2026-10-19: bolge ince ayar + doji)"
 glog = logging.getLogger("col.goz")
 if not glog.handlers:
     _h = logging.StreamHandler(sys.stderr)
@@ -87,7 +87,9 @@ class GozAyar:
     #   ref = son 250 barin medyan gun araligi (H-L / onceki kapanis, %).
     #   buyuk mum: aralik >= bolge_buyuk_kat x ref ya da |kapanis degisimi| >= 0.9 x bolge_buyuk_kat x ref
     #   bant: kapanislarin (max-min)/medyan <= bolge_bant_kat x ref  (fitiller bolgeyi bozmaz)
-    bolge_bant_kat: float = 5.0
+    bolge_bant_kat: float = 6.0          # v1.3: cekirdek (%10-%90 kapanis) bandi
+    bolge_uzak_kat: float = 1.5          # v1.3: cekirdekten bu kadar ref otesi kapanis = COK ayrilma
+    bolge_sol_kat: float = 1.5           # v1.3: bastaki bu kadar ref'ten buyuk mumlar kirpilir (inis mumlari)
     bolge_buyuk_kat: float = 2.0
     bolge_ardisik: int = 3
     bolge_min_bar: int = 15
@@ -165,31 +167,33 @@ def buyuk_mum(df: pd.DataFrame, ay: "GozAyar") -> np.ndarray:
 
 
 def bolge_hazirla(df: pd.DataFrame) -> Dict[str, np.ndarray]:
-    """BOLGE KURALI icin bar dizileri: kapanis, gun araligi %, kapanis degisimi %, hisseye ozel ref."""
+    """BOLGE KURALI icin bar dizileri: kapanis, gun araligi %, kapanis degisimi %, hisseye ozel ref, govde orani."""
     O, H, L, C = (df[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
     pc = np.r_[O[0], C[:-1]]
     with np.errstate(divide="ignore", invalid="ignore"):
         ar = 100 * (H - L) / pc
         dg = 100 * (C / pc - 1)
     ref = pd.Series(ar).rolling(250, min_periods=120).median().to_numpy()
-    return {"C": C, "ar": ar, "dg": dg, "ref": ref}
+    rng = H - L
+    go = np.where(rng > 0, np.abs(C - O) / np.where(rng > 0, rng, 1), 1.0)
+    return {"C": C, "H": H, "L": L, "ar": ar, "dg": dg, "ref": ref, "go": go}
 
 
 def bolge_col(D: Dict[str, np.ndarray], e: int, ay: "GozAyar") -> Optional[Tuple[int, int]]:
-    """e gununde biten col penceresi (s, e) ya da None.
-    Geriye dogru uzar; su iki olaydan biri olunca durur:
-      (a) kapanislar bandi bolge_bant_kat x ref'i asar   -> fiyat bolgeden ayrildi
-      (b) bolge_ardisik kadar PESPESE, AYNI YONDE buyuk mum -> buyuk mumla ayrilma (seri colun disinda kalir)
-    Tek buyuk mum (b'yi tetiklemeyen) colu bozmaz."""
+    """v1.3 (Cemal 19 Eki 23:28 ince ayar). e gununde biten col penceresi (s, e) ya da None.
+    Geriye dogru buyur; cekirdek = kapanislarin %10-%90 araligi (her adimda guncellenir). Durur:
+      (a) cekirdek bandi > bolge_bant_kat x ref                      -> bolge genisledi
+      (b) bir kapanis cekirdegin bolge_uzak_kat x ref otesinde       -> COK ayrilma (az ayrilma kabul)
+      (c) bolge_ardisik kadar pespese ayni yonlu buyuk mum           -> buyuk mumla ayrilma
+    SOL KIRPMA: bolgenin basindaki, gun araligi > bolge_sol_kat x ref olan ya da kapanisi
+    cekirdek disinda kalan barlar atilir (bolgeye inis mumlari cole dahil edilmez)."""
     C, ar, dg, ref = D["C"], D["ar"], D["dg"], D["ref"]
     r = ref[e]
-    if not np.isfinite(r) or r <= 0:
+    if not np.isfinite(r) or r <= 0 or not np.isfinite(C[e]):
         return None
     buyuk = ay.bolge_buyuk_kat * r
-    bant = ay.bolge_bant_kat * r / 100
-    hi = lo = C[e]
-    s, seri, yon, j = e, 0, 0, e
-    for j in range(e, max(-1, e - ay.bolge_en_cok), -1):
+    s, seri, yon = e, 0, 0
+    for j in range(e - 1, max(-1, e - ay.bolge_en_cok), -1):
         if not np.isfinite(C[j]):
             break
         if ar[j] >= buyuk or abs(dg[j]) >= 0.9 * buyuk:
@@ -201,11 +205,29 @@ def bolge_col(D: Dict[str, np.ndarray], e: int, ay: "GozAyar") -> Optional[Tuple
                 break
         else:
             seri = 0
-        h2, l2 = max(hi, C[j]), min(lo, C[j])
-        if (h2 - l2) / float(np.median(C[j:e + 1])) > bant:
+        z = C[j:e + 1]
+        lo, hi = np.percentile(z, 10), np.percentile(z, 90)
+        med = float(np.median(z))
+        if (hi - lo) / med * 100 > ay.bolge_bant_kat * r:
             break
-        hi, lo, s = h2, l2, j
+        tol = ay.bolge_uzak_kat * r / 100 * med
+        if C[j] > hi + tol or C[j] < lo - tol:
+            break
+        s = j
+    z = C[s:e + 1]
+    lo, hi = np.percentile(z, 10), np.percentile(z, 90)
+    while s < e and (ar[s] > ay.bolge_sol_kat * r or C[s] > hi or C[s] < lo):
+        s += 1
     return (s, e) if e - s + 1 >= ay.bolge_min_bar else None
+
+
+def bolge_doji(D: Dict[str, np.ndarray], s: int, e: int, esik: float = 0.10) -> Dict[str, float]:
+    """Bolgedeki doji orani ve hissenin kendi normaline (bolge oncesi 250 bar) gore kati."""
+    go = D["go"]
+    d = go[s:e + 1] < esik
+    d0 = go[max(0, s - 250):s] < esik
+    return {"doji": float(d.mean()),
+            "doji_kat": float(d.mean() / d0.mean()) if len(d0) >= 60 and d0.mean() > 0 else np.nan}
 
 
 # ------------------------------------------------------------------ K1
@@ -345,6 +367,8 @@ def k2_kod_pencereleri(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFra
         kayit["bolge_bas_i"], kayit["bolge_son_i"] = (bw if bw else (-1, -1))
         kayit["bolge_uz"] = (bw[1] - bw[0] + 1) if bw else 0
         kayit["bolge_iou"] = round(iou(bw[0], bw[1], int(r.bi0), int(r.si0)), 3) if bw else 0.0
+        if bw:                                                    # v1.3: doji (hissenin kendi normaline gore)
+            kayit.update({f"bolge_{k_}": round(v_, 3) for k_, v_ in bolge_doji(bolge_hazirla(df), *bw).items()})
         if not seg:
             kayit["kod_durum"] = "segment yok"
         elif kayit["kod_iou"] >= 0.5:
