@@ -1,0 +1,68 @@
+# Arastirma calistirici — elle baslatilir (GitHub > Actions > Arastirma > Run workflow).
+# Verilen betigi yfinance erisimi olan bulutta calistirir, arastirma_cikti/ klasorunu repoya yazar.
+name: Arastirma
+
+on:
+  workflow_dispatch:
+    inputs:
+      betik:
+        description: "Calistirilacak betik (repo kokunde)"
+        required: true
+        default: "DOJI_KUTU_TEST.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: arastirma
+  cancel-in-progress: false
+
+jobs:
+  calistir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements-gh.txt
+
+      - run: pip install -r requirements-gh.txt
+
+      - name: Veri onbellegini geri yukle
+        uses: actions/cache/restore@v4
+        with:
+          path: veri_1d_turkey.pkl
+          key: veri-1d-turkey-arastirma-${{ github.run_id }}
+          restore-keys: veri-1d-turkey-
+
+      - name: Betik
+        env:
+          BETIK: ${{ github.event.inputs.betik }}
+        run: python -u "$BETIK"
+
+      - name: Veri onbellegini sakla
+        if: always() && hashFiles('veri_1d_turkey.pkl') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: veri_1d_turkey.pkl
+          key: veri-1d-turkey-arastirma-${{ github.run_id }}
+
+      - name: Ciktiyi repoya kaydet
+        if: always()
+        env:
+          BETIK: ${{ github.event.inputs.betik }}
+        run: |
+          git config user.name "col-yolu-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          [ -d arastirma_cikti ] && git add -f arastirma_cikti
+          if git diff --cached --quiet; then echo "Degisiklik yok"; exit 0; fi
+          git commit -m "Arastirma: $BETIK $(TZ=Europe/Istanbul date '+%F %H:%M')"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1

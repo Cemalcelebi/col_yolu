@@ -35,6 +35,7 @@
 from __future__ import annotations
 
 import argparse
+import bisect
 import logging
 import math
 import os
@@ -193,6 +194,13 @@ def bolge_col(D: Dict[str, np.ndarray], e: int, ay: "GozAyar") -> Optional[Tuple
         return None
     buyuk = ay.bolge_buyuk_kat * r
     s, seri, yon = e, 0, 0
+    srt = [float(C[e])]                     # siralı kapanislar (bisect) — np.percentile ile ayni sonuc, hizli
+
+    def _yuzde(a: List[float], q: float) -> float:
+        k = (len(a) - 1) * q
+        f = int(k)
+        return a[f] + (a[min(f + 1, len(a) - 1)] - a[f]) * (k - f)
+
     for j in range(e - 1, max(-1, e - ay.bolge_en_cok), -1):
         if not np.isfinite(C[j]):
             break
@@ -205,9 +213,8 @@ def bolge_col(D: Dict[str, np.ndarray], e: int, ay: "GozAyar") -> Optional[Tuple
                 break
         else:
             seri = 0
-        z = C[j:e + 1]
-        lo, hi = np.percentile(z, 10), np.percentile(z, 90)
-        med = float(np.median(z))
+        bisect.insort(srt, float(C[j]))
+        lo, hi, med = _yuzde(srt, 0.10), _yuzde(srt, 0.90), _yuzde(srt, 0.50)
         if (hi - lo) / med * 100 > ay.bolge_bant_kat * r:
             break
         tol = ay.bolge_uzak_kat * r / 100 * med
