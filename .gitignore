@@ -225,6 +225,16 @@ __marimo__/
 *.csv
 !sektor_BIST.csv
 !sektor_ABD.csv
+# GitHub Actions gunluk taramasinin girdileri ve takip durumu (Drive'dan kopya, 2026-10-19)
+!v1_final_BIST.csv
+!kirilim_sonrasi_w.csv
+!yeni_BIST_2023.csv
+!temel_duz.csv
+!cds_2022.csv
+!takip_adaylar.csv
+!takip_pozisyonlar.csv
+!takip_kapanan.csv
+!veri_koru_gunluk.csv
 *.png
 *.log
 .ipynb_checkpoints/

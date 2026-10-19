@@ -28,6 +28,14 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Repodaki tek veri istisnası küçük ayar dosyalarıdır: `sektor_BIST.csv` (BIST alt endekslerinden kurulan sektörler; Yahoo sektör etiketleri hatalı), `sektor_ABD.csv` ve `.json` ayarları.
 - Token, şifre, Telegram anahtarı gibi bilgiler asla koda yazılmaz. Bunlar `.env` dosyasında tutulur ve `.env` git dışındadır.
 
+## GitHub Actions günlük tarama (2026-10-19)
+- `.github/workflows/gunluk_tarama.yml` iş günleri 19:35 TR saatinde `gh_gunluk.py` dosyasını çalıştırır. Bu dosya `BASLAT.py`'yi exec eder, ardından `gun()`'ü çağırır.
+- Kodlardaki sabit Drive yolu, iş akışında `/content/drive/MyDrive/col_tarayici → repo kökü` sembolik bağlantısıyla karşılanır. Bu yüzden Colab koduna Actions için değişiklik yapılmaz.
+- Rapor `rapor/son_rapor.txt` dosyasına yazılır, günlük kopyası `rapor/YYYY-MM-DD.txt` adıyla saklanır. Kurulum çıktısı `rapor/kurulum_log.txt` dosyasındadır.
+- Takip durumunun asıl yeri artık bu repodur: `takip_adaylar.csv`, `takip_pozisyonlar.csv`, `takip_kapanan.csv`. Colab'da `gun()` ayrıca çalıştırılırsa iki kopya ayrışır.
+- Veri önbelleği (`veri_1d_turkey.pkl`) repoya girmez, Actions önbelleğinde tutulur.
+- Repodaki girdi kopyaları Drive'dan 2026-10-19'da alınmıştır: `v1_final_BIST.csv`, `kirilim_sonrasi_w.csv`, `yeni_BIST_2023.csv`, `temel_duz.csv`, `cds_2022.csv`.
+
 ## Cemal'in çöl tanımı (kodu buna göre yorumla)
 - Çöl, düşüş sonrası dipte aylarca süren sıkışmadır: dip savunulur, mumlar küçüktür. Tepede oluşan sıkışma dağıtımdır, çöl değildir.
 - "Küçük mum" mumun gövdesi değil, fitiller dahil boyudur (H−L). `COL_v1.py` içinde `MUM_OLCU='aralik'` olarak tanımlıdır.
