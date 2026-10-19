@@ -46,7 +46,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-SURUM = "GOZ_ESLE v1.1 (2026-10-19: buyuk mum kapisi)"
+SURUM = "GOZ_ESLE v1.2 (2026-10-19: bolge kurali, hisseye ozel olcu)"
 glog = logging.getLogger("col.goz")
 if not glog.handlers:
     _h = logging.StreamHandler(sys.stderr)
@@ -77,9 +77,21 @@ class GozAyar:
     #   bir barda (H-L)/onceki kapanis >= buyuk_aralik (%) ya da |kapanis degisimi| >= buyuk_degisim (%)
     #   -> buyuk mum. Icinde buyuk mum olan pencere col DEGILDIR (puanlanmaz).
     #   Cemal'in Eylul etiketleri buyuk mumsuz en uzun parcaya kirpilir; kirpik < min_kirpik bar ise etiket duser.
-    buyuk_aralik: Optional[float] = 10.0
-    buyuk_degisim: Optional[float] = 9.5
+    #   v1.2 (23:05): tek buyuk mum colu bozmaz (Cemal: bolgeye geri donuyorsa col); varsayilan KAPALI,
+    #   yerine BOLGE KURALI (asagida). Esik tarama icin --buyuk-aralik/--buyuk-degisim ile acilir.
+    buyuk_aralik: Optional[float] = None
+    buyuk_degisim: Optional[float] = None
     min_kirpik: int = 10
+    # v1.2 BOLGE KURALI (Cemal 19 Eki 23:03): col = fiyat bolgeden ayrilmiyor + zamanla pespese kucuk mumlar;
+    #   pespese buyuk mumla fiyat bolgeden ayriliyorsa col orada biter. Olcu hisseye ozel (23:04):
+    #   ref = son 250 barin medyan gun araligi (H-L / onceki kapanis, %).
+    #   buyuk mum: aralik >= bolge_buyuk_kat x ref ya da |kapanis degisimi| >= 0.9 x bolge_buyuk_kat x ref
+    #   bant: kapanislarin (max-min)/medyan <= bolge_bant_kat x ref  (fitiller bolgeyi bozmaz)
+    bolge_bant_kat: float = 5.0
+    bolge_buyuk_kat: float = 2.0
+    bolge_ardisik: int = 3
+    bolge_min_bar: int = 15
+    bolge_en_cok: int = 250
     # model
     nms_iou: float = 0.3
     esik_olasilik: float = 0.5
@@ -150,6 +162,50 @@ def buyuk_mum(df: pd.DataFrame, ay: "GozAyar") -> np.ndarray:
     if ay.buyuk_degisim is not None:
         b |= np.nan_to_num(dg, nan=0.0) >= ay.buyuk_degisim
     return b
+
+
+def bolge_hazirla(df: pd.DataFrame) -> Dict[str, np.ndarray]:
+    """BOLGE KURALI icin bar dizileri: kapanis, gun araligi %, kapanis degisimi %, hisseye ozel ref."""
+    O, H, L, C = (df[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
+    pc = np.r_[O[0], C[:-1]]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ar = 100 * (H - L) / pc
+        dg = 100 * (C / pc - 1)
+    ref = pd.Series(ar).rolling(250, min_periods=120).median().to_numpy()
+    return {"C": C, "ar": ar, "dg": dg, "ref": ref}
+
+
+def bolge_col(D: Dict[str, np.ndarray], e: int, ay: "GozAyar") -> Optional[Tuple[int, int]]:
+    """e gununde biten col penceresi (s, e) ya da None.
+    Geriye dogru uzar; su iki olaydan biri olunca durur:
+      (a) kapanislar bandi bolge_bant_kat x ref'i asar   -> fiyat bolgeden ayrildi
+      (b) bolge_ardisik kadar PESPESE, AYNI YONDE buyuk mum -> buyuk mumla ayrilma (seri colun disinda kalir)
+    Tek buyuk mum (b'yi tetiklemeyen) colu bozmaz."""
+    C, ar, dg, ref = D["C"], D["ar"], D["dg"], D["ref"]
+    r = ref[e]
+    if not np.isfinite(r) or r <= 0:
+        return None
+    buyuk = ay.bolge_buyuk_kat * r
+    bant = ay.bolge_bant_kat * r / 100
+    hi = lo = C[e]
+    s, seri, yon, j = e, 0, 0, e
+    for j in range(e, max(-1, e - ay.bolge_en_cok), -1):
+        if not np.isfinite(C[j]):
+            break
+        if ar[j] >= buyuk or abs(dg[j]) >= 0.9 * buyuk:
+            y = 1 if dg[j] > 0 else -1
+            seri = seri + 1 if (seri and y == yon) else 1
+            yon = y
+            if seri >= ay.bolge_ardisik:
+                s = max(s, j + ay.bolge_ardisik)
+                break
+        else:
+            seri = 0
+        h2, l2 = max(hi, C[j]), min(lo, C[j])
+        if (h2 - l2) / float(np.median(C[j:e + 1])) > bant:
+            break
+        hi, lo, s = h2, l2, j
+    return (s, e) if e - s + 1 >= ay.bolge_min_bar else None
 
 
 # ------------------------------------------------------------------ K1
@@ -280,6 +336,15 @@ def k2_kod_pencereleri(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFra
                          kod_yuk_atr=np.nan, kod_iou=0.0, bas_fark_bar=np.nan)
         kayit["kod_aday"] = bool(olc) and bool(olc.get("aday", True)) if isinstance(olc, dict) else False
         kayit["uzun_col"] = (uz or {}).get("uzun", "") if isinstance(uz, dict) else ""
+        # v1.2 BOLGE KURALI: Cemal'in (kirpilmamis) isaretinin son gununde
+        try:
+            bw = bolge_col(bolge_hazirla(df), int(r.si0), ay)
+        except Exception as ex:
+            glog.debug("%s bolge_col: %s", r.etiket_id, ex)
+            bw = None
+        kayit["bolge_bas_i"], kayit["bolge_son_i"] = (bw if bw else (-1, -1))
+        kayit["bolge_uz"] = (bw[1] - bw[0] + 1) if bw else 0
+        kayit["bolge_iou"] = round(iou(bw[0], bw[1], int(r.bi0), int(r.si0)), 3) if bw else 0.0
         if not seg:
             kayit["kod_durum"] = "segment yok"
         elif kayit["kod_iou"] >= 0.5:
@@ -294,6 +359,11 @@ def k2_kod_pencereleri(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFra
     glog.info("K2: kod COL etiketlerinde: eslesti %d/%d | segment yok %d | aday %d",
               int((c.kod_iou >= 0.5).sum()), len(c), int((c.kod_durum == "segment yok").sum()),
               int(c.kod_aday.sum()))
+    o = t[t.sinif == "OLUMSUZ"]
+    glog.info("K2: BOLGE KURALI (bant %gx, buyuk %gx, pespese %d): COL eslesti %d/%d (ort ortusme %.2f) | "
+              "OLUMSUZ'da bolge var %d/%d", ay.bolge_bant_kat, ay.bolge_buyuk_kat, ay.bolge_ardisik,
+              int((c.bolge_iou >= 0.5).sum()), len(c), float(c.bolge_iou.mean()),
+              int((o.bolge_uz > 0).sum()), len(o))
     return t
 
 
@@ -670,7 +740,8 @@ def k5_model(ay: GozAyar, w: pd.DataFrame, e: pd.DataFrame, olculer: List[str]) 
 
 
 # ------------------------------------------------------------------ K6
-def k6_grafik(ay: GozAyar, veri, e, kod: pd.DataFrame, loso: pd.DataFrame, cikti: str, sayfa_basi: int = 6) -> List[str]:
+def k6_grafik(ay: GozAyar, veri, e, kod: pd.DataFrame, loso: pd.DataFrame, cikti: str, sayfa_basi: int = 6,
+              bolge_ciz: bool = True) -> List[str]:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -720,16 +791,21 @@ def k6_grafik(ay: GozAyar, veri, e, kod: pd.DataFrame, loso: pd.DataFrame, cikti
                 ax.add_patch(Rectangle((kb - 0.5, k.kod_taban), ks - kb + 1, k.kod_tavan - k.kod_taban,
                                        fill=False, ec="#e74c3c", lw=1.8, label="kod (COL_v1)"))
             m = ld.loc[r.etiket_id] if r.etiket_id in ld.index else None
-            if m is not None and np.isfinite(m.get("model_bas_i", np.nan)) and m.model_iou > 0:
+            if bolge_ciz and k is not None and int(k.get("bolge_uz", 0)) > 0:      # v1.2: BOLGE KURALI kutusu
+                mb, ms = int(k.bolge_bas_i), int(k.bolge_son_i)
+                ax.add_patch(Rectangle((mb - 0.5, float(df.Low.iloc[mb:ms + 1].min())), ms - mb + 1,
+                                       float(df.High.iloc[mb:ms + 1].max() - df.Low.iloc[mb:ms + 1].min()),
+                                       fill=False, ec="#8e44ad", lw=2.0, label="bolge kurali"))
+            elif m is not None and np.isfinite(m.get("model_bas_i", np.nan)) and m.model_iou > 0:
                 mb, ms = int(m.model_bas_i), int(m.model_son_i)
                 ax.add_patch(Rectangle((mb - 0.5, float(df.Low.iloc[mb:ms + 1].min())), ms - mb + 1,
                                        float(df.High.iloc[mb:ms + 1].max() - df.Low.iloc[mb:ms + 1].min()),
                                        fill=False, ec="#2980b9", lw=1.6, ls="--", label="yeni model"))
             kod_iou = float(k.kod_iou) if k is not None else 0.0
-            mdl_iou = float(m.model_iou) if m is not None else 0.0
+            mdl_iou = float(k.bolge_iou) if (bolge_ciz and k is not None) else (float(m.model_iou) if m is not None else 0.0)
             kirp = f"  (kirpildi: {ix[int(r.bi)]:%d.%m}-{ix[int(r.si)]:%d.%m})" if (int(r.bi0), int(r.si0)) != (int(r.bi), int(r.si)) else ""
             ax.set_title(f"{r.sembol}  {r.bas:%d.%m.%Y}-{r.son:%d.%m.%Y}{kirp}  [{'COL' if r.sinif == 'COL' else 'COL DEGIL'}]"
-                         f"   kod %{100 * kod_iou:.0f}   model %{100 * mdl_iou:.0f}", fontsize=9)
+                         f"   kod %{100 * kod_iou:.0f}   {'bolge' if bolge_ciz else 'model'} %{100 * mdl_iou:.0f}", fontsize=9)
             tk = np.linspace(a0, a1, 6).astype(int)
             ax.set_xticks(tk)
             ax.set_xticklabels([f"{ix[i]:%m.%y}" for i in tk], fontsize=7)
