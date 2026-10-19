@@ -1,0 +1,40 @@
+== aralik 10 degisim 9.5
+22:53:37 WARNING goz: K1: veride olmayan etiket: PEKER
+22:53:37 INFO goz: K1: buyuk mum kapisi aralik>=10.0% / degisim>=9.5%: temiz 18, kirpildi 19, dustu 0
+22:53:37 INFO goz: K1: 32 hisse, 37 etiket (COL 29, OLUMSUZ 8)
+22:54:15 INFO goz: K3: 31851 pencere (1308 poz, 28397 neg, 296 olumsuz) | buyuk mum kapisindan atlanan 84224 | 32 sn
+22:54:19 INFO goz: K4: 54 olcu tarandi, 2 iz (AUC>=0.70 ve tutarlilik>=80%)
+22:54:50 INFO goz: K5 (hisse disarida): COL yakalama IoU>=0.5 22/29, IoU>=0.3 24/29 | OLUMSUZ'da alarm 4/8 | toplam tespit 373 (isaretsiz 336)
+== aralik 8 degisim 7
+22:54:51 WARNING goz: K1: veride olmayan etiket: PEKER
+22:54:51 WARNING goz: K1: buyuk mum kapisindan sonra 4 etiket dustu: EUREN_20251001, VRGYO_20250814, ARZUM_20240806, ODAS_20240606
+22:54:51 INFO goz: K1: buyuk mum kapisi aralik>=8.0% / degisim>=7.0%: temiz 12, kirpildi 21, dustu 4
+22:54:51 INFO goz: K1: 32 hisse, 33 etiket (COL 25, OLUMSUZ 8)
+22:55:11 INFO goz: K3: 16620 pencere (769 poz, 14715 neg, 145 olumsuz) | buyuk mum kapisindan atlanan 99355 | 15 sn
+22:55:13 INFO goz: K4: 54 olcu tarandi, 4 iz (AUC>=0.70 ve tutarlilik>=80%)
+22:55:43 INFO goz: K5 (hisse disarida): COL yakalama IoU>=0.5 11/25, IoU>=0.3 15/25 | OLUMSUZ'da alarm 4/8 | toplam tespit 243 (isaretsiz 221)
+== aralik 7 degisim 6
+22:55:45 WARNING goz: K1: veride olmayan etiket: PEKER
+22:55:45 WARNING goz: K1: buyuk mum kapisindan sonra 6 etiket dustu: INVES_20250508, BURVA_20250626, EUREN_20251001, VRGYO_20250814, ARZUM_20240806, ODAS_20240606
+22:55:45 INFO goz: K1: buyuk mum kapisi aralik>=7.0% / degisim>=6.0%: temiz 5, kirpildi 26, dustu 6
+22:55:45 INFO goz: K1: 32 hisse, 31 etiket (COL 23, OLUMSUZ 8)
+22:56:00 INFO goz: K3: 10476 pencere (498 poz, 9395 neg, 96 olumsuz) | buyuk mum kapisindan atlanan 105496 | 10 sn
+22:56:02 INFO goz: K4: 54 olcu tarandi, 1 iz (AUC>=0.70 ve tutarlilik>=80%)
+22:56:26 INFO goz: K5 (hisse disarida): COL yakalama IoU>=0.5 9/23, IoU>=0.3 13/23 | OLUMSUZ'da alarm 1/8 | toplam tespit 224 (isaretsiz 206)
+== aralik 6 degisim 5
+22:56:28 WARNING goz: K1: veride olmayan etiket: PEKER
+22:56:28 WARNING goz: K1: buyuk mum kapisindan sonra 8 etiket dustu: INVES_20250508, BURVA_20250626, EUREN_20251001, VRGYO_20250814, ARZUM_20240806, EMNIS_20250414, ODAS_20240606, SEYKM_20260308
+22:56:28 INFO goz: K1: buyuk mum kapisi aralik>=6.0% / degisim>=5.0%: temiz 3, kirpildi 26, dustu 8
+22:56:28 INFO goz: K1: 32 hisse, 29 etiket (COL 22, OLUMSUZ 7)
+22:56:39 INFO goz: K3: 5975 pencere (255 poz, 5521 neg, 72 olumsuz) | buyuk mum kapisindan atlanan 110017 | 7 sn
+22:56:40 INFO goz: K4: 54 olcu tarandi, 0 iz (AUC>=0.70 ve tutarlilik>=80%)
+22:56:44 INFO goz: K5 (hisse disarida): COL yakalama IoU>=0.5 10/22, IoU>=0.3 12/22 | OLUMSUZ'da alarm 2/7 | toplam tespit 165 (isaretsiz 148)
+== aralik 5 degisim 4
+22:56:44 WARNING goz: K1: veride olmayan etiket: PEKER
+22:56:44 WARNING goz: K1: buyuk mum kapisindan sonra 17 etiket dustu: TEHOL_20260203, INVES_20250508, BURVA_20250626, EYGYO_20250528, SUNTK_20240827, HDFGS_20250422, INFO_20250326, TATGD_20240530, EUREN_20251001, VRGYO_20250814, VESTL_20250602, ARZUM_20240806, EMNIS_20250414, ODAS_20240606, GEDIK_20250915, SEYKM_20260308, SDTTR_20240328
+22:56:44 INFO goz: K1: buyuk mum kapisi aralik>=5.0% / degisim>=4.0%: temiz 1, kirpildi 19, dustu 17
+22:56:44 INFO goz: K1: 32 hisse, 20 etiket (COL 15, OLUMSUZ 5)
+22:56:50 INFO goz: K3: 2217 pencere (140 poz, 2003 neg, 39 olumsuz) | buyuk mum kapisindan atlanan 113730 | 2 sn
+22:56:51 INFO goz: K4: 54 olcu tarandi, 0 iz (AUC>=0.70 ve tutarlilik>=80%)
+22:56:53 INFO goz: K5 (hisse disarida): COL yakalama IoU>=0.5 5/15, IoU>=0.3 5/15 | OLUMSUZ'da alarm 0/5 | toplam tespit 72 (isaretsiz 64)
+bitti

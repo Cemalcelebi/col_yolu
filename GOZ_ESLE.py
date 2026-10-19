@@ -46,7 +46,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-SURUM = "GOZ_ESLE v1.0 (2026-10-19)"
+SURUM = "GOZ_ESLE v1.1 (2026-10-19: buyuk mum kapisi)"
 glog = logging.getLogger("col.goz")
 if not glog.handlers:
     _h = logging.StreamHandler(sys.stderr)
@@ -73,6 +73,13 @@ class GozAyar:
     # tarama esikleri (iz sayilma)
     iz_auc: float = 0.70
     iz_tutarlilik: float = 0.80
+    # v1.1 BUYUK MUM KAPISI (Cemal 19 Eki: "%10 dev mum cole dahil olamaz")
+    #   bir barda (H-L)/onceki kapanis >= buyuk_aralik (%) ya da |kapanis degisimi| >= buyuk_degisim (%)
+    #   -> buyuk mum. Icinde buyuk mum olan pencere col DEGILDIR (puanlanmaz).
+    #   Cemal'in Eylul etiketleri buyuk mumsuz en uzun parcaya kirpilir; kirpik < min_kirpik bar ise etiket duser.
+    buyuk_aralik: Optional[float] = 10.0
+    buyuk_degisim: Optional[float] = 9.5
+    min_kirpik: int = 10
     # model
     nms_iou: float = 0.3
     esik_olasilik: float = 0.5
@@ -129,6 +136,22 @@ def _auc(poz: np.ndarray, neg: np.ndarray) -> float:
     return float(u / (len(poz) * len(neg)))
 
 
+def buyuk_mum(df: pd.DataFrame, ay: "GozAyar") -> np.ndarray:
+    """v1.1: bar basina buyuk mum bayragi. Olcu onceki kapanisa gore %:
+    gun araligi (H-L) >= buyuk_aralik  VEYA  |kapanis degisimi| >= buyuk_degisim. Ilk bar: acilisa gore."""
+    pc = df.Close.shift(1).fillna(df.Open).to_numpy(float)
+    H, L, C = df.High.to_numpy(float), df.Low.to_numpy(float), df.Close.to_numpy(float)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ar = 100 * (H - L) / pc
+        dg = 100 * np.abs(C / pc - 1)
+    b = np.zeros(len(df), bool)
+    if ay.buyuk_aralik is not None:
+        b |= np.nan_to_num(ar, nan=0.0) >= ay.buyuk_aralik
+    if ay.buyuk_degisim is not None:
+        b |= np.nan_to_num(dg, nan=0.0) >= ay.buyuk_degisim
+    return b
+
+
 # ------------------------------------------------------------------ K1
 def k1_veri(ay: GozAyar) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame]:
     yv = os.path.join(ay.kok, ay.veri_csv)
@@ -165,6 +188,45 @@ def k1_veri(ay: GozAyar) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame]:
         glog.warning("K1: veride olmayan etiket: %s", ", ".join(yok.sembol))
     e = e[e.veri_var & (e.si > e.bi)].reset_index(drop=True)
     e["etiket_id"] = [f"{r.sembol}_{r.bas:%Y%m%d}" for r in e.itertuples()]
+    # v1.1: buyuk mum kapisi -> Eylul etiketlerini buyuk mumsuz en uzun parcaya kirp
+    e["bi0"], e["si0"] = e.bi, e.si
+    e["buyuk_mum_sayi"] = 0
+    e["kirpik_durum"] = "kapi yok"
+    if ay.buyuk_aralik is not None or ay.buyuk_degisim is not None:
+        dus = []
+        for i, r in e.iterrows():
+            b = buyuk_mum(veri[r.sembol], ay)
+            ic = b[int(r.bi):int(r.si) + 1]
+            e.loc[i, "buyuk_mum_sayi"] = int(ic.sum())
+            if not ic.any():
+                e.loc[i, "kirpik_durum"] = "temiz"
+                continue
+            en, en_b, k, kb = 0, 0, 0, 0
+            for j, v in enumerate(ic):
+                if v:
+                    k = 0
+                    continue
+                if k == 0:
+                    kb = j
+                k += 1
+                if k > en:
+                    en, en_b = k, kb
+            if en < ay.min_kirpik:
+                e.loc[i, "kirpik_durum"] = f"dustu (buyuk mumsuz en uzun parca {en} bar)"
+                dus.append(i)
+                continue
+            e.loc[i, "bi"] = int(r.bi) + en_b
+            e.loc[i, "si"] = int(r.bi) + en_b + en - 1
+            e.loc[i, "kirpik_durum"] = f"kirpildi {int(r.si0 - r.bi0 + 1)}->{en} bar"
+        if dus:
+            glog.warning("K1: buyuk mum kapisindan sonra %d etiket dustu: %s", len(dus),
+                         ", ".join(e.loc[dus, "etiket_id"]))
+        dusen_df = e.loc[dus].copy()
+        e = e.drop(index=dus).reset_index(drop=True)
+        e.attrs["dusen"] = dusen_df
+        glog.info("K1: buyuk mum kapisi aralik>=%s%% / degisim>=%s%%: temiz %d, kirpildi %d, dustu %d",
+                  ay.buyuk_aralik, ay.buyuk_degisim, int((e.kirpik_durum == "temiz").sum()),
+                  int(e.kirpik_durum.str.startswith("kirpildi").sum()), len(dus))
     glog.info("K1: %d hisse, %d etiket (COL %d, OLUMSUZ %d)", len(veri), len(e),
               int((e.sinif == "COL").sum()), int((e.sinif == "OLUMSUZ").sum()))
     return veri, e
@@ -437,9 +499,12 @@ def k3_pencereler(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFrame) -
     col = e[e.sinif == "COL"]
     olm = e[e.sinif == "OLUMSUZ"]
     satir: List[Dict[str, Any]] = []
+    atlanan = 0
     for s_ad, df in veri.items():
         d = _dizi(df)
         n = len(df)
+        kapi = ay.buyuk_aralik is not None or ay.buyuk_degisim is not None
+        bk = np.concatenate([[0], np.cumsum(buyuk_mum(df, ay))]) if kapi else None
         ecol = [(int(r.bi), int(r.si), r.etiket_id) for r in col[col.sembol == s_ad].itertuples()]
         eolm = [(int(r.bi), int(r.si), r.etiket_id) for r in olm[olm.sembol == s_ad].itertuples()]
         sonlar = set(range(ay.min_once + min(ay.uzunluklar), n, ay.adim))
@@ -450,6 +515,9 @@ def k3_pencereler(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFrame) -
                 st = en - uz + 1
                 if st < ay.min_once:
                     continue
+                if bk is not None and bk[en + 1] - bk[st] > 0:
+                    atlanan += 1
+                    continue          # v1.1 kapi: icinde buyuk mum var -> col degil, puanlanmaz
                 try:
                     o = pencere_olc(d, st, en)
                 except Exception as ex:
@@ -471,8 +539,8 @@ def k3_pencereler(ay: GozAyar, veri: Dict[str, pd.DataFrame], e: pd.DataFrame) -
     w["poz"] = w.iou_col >= ay.iou_poz
     w["neg"] = (w.iou_col < ay.iou_neg)
     w["olm"] = w.iou_olm >= ay.iou_poz
-    glog.info("K3: %d pencere (%d poz, %d neg, %d olumsuz) %.0f sn", len(w), int(w.poz.sum()),
-              int(w.neg.sum()), int(w.olm.sum()), time.monotonic() - t0)
+    glog.info("K3: %d pencere (%d poz, %d neg, %d olumsuz) | buyuk mum kapisindan atlanan %d | %.0f sn",
+              len(w), int(w.poz.sum()), int(w.neg.sum()), int(w.olm.sum()), atlanan, time.monotonic() - t0)
     return w
 
 
@@ -632,6 +700,19 @@ def k6_grafik(ay: GozAyar, veri, e, kod: pd.DataFrame, loso: pd.DataFrame, cikti
             lo_, hi_ = np.nanmin(L), np.nanmax(H)
             ax.axvspan(r.bi - 0.5, r.si + 0.5, color="#2ecc71" if r.sinif == "COL" else "#95a5a6", alpha=0.22,
                        label="Cemal: COL" if r.sinif == "COL" else "Cemal: COL DEGIL")
+            if (int(r.bi0), int(r.si0)) != (int(r.bi), int(r.si)):       # v1.1: Eylul isaretinin kirpilmamis hali
+                for xx in (r.bi0 - 0.5, r.si0 + 0.5):
+                    ax.axvline(xx, color="#2ecc71", lw=1.2, ls=":")
+            if ay.buyuk_aralik is not None or ay.buyuk_degisim is not None:   # v1.1: buyuk mumlar
+                bm = buyuk_mum(df, ay)[a0:a1 + 1]
+                if bm.any():
+                    ax.scatter(x[bm], H[bm] * 1.012, marker="v", s=22, color="#e67e22", zorder=5,
+                               label=f"kapi: >=%{ay.buyuk_aralik:g} aralik / %{ay.buyuk_degisim:g} kapanis")
+                orta = GozAyar(buyuk_aralik=6.0, buyuk_degisim=5.0)      # gostergelik: kapidan kucuk ama iri mum
+                om = buyuk_mum(df, orta)[a0:a1 + 1] & ~bm
+                if om.any():
+                    ax.scatter(x[om], H[om] * 1.012, marker="v", s=16, facecolors="none", edgecolors="#c39b00",
+                               zorder=5, label="iri mum (>=%6 aralik / %5 kapanis)")
             k = kd.loc[r.etiket_id] if r.etiket_id in kd.index else None
             if k is not None and isinstance(k.kod_bas, str):
                 kb = int(ix.searchsorted(pd.Timestamp(k.kod_bas)))
@@ -646,14 +727,15 @@ def k6_grafik(ay: GozAyar, veri, e, kod: pd.DataFrame, loso: pd.DataFrame, cikti
                                        fill=False, ec="#2980b9", lw=1.6, ls="--", label="yeni model"))
             kod_iou = float(k.kod_iou) if k is not None else 0.0
             mdl_iou = float(m.model_iou) if m is not None else 0.0
-            ax.set_title(f"{r.sembol}  {r.bas:%d.%m.%Y}-{r.son:%d.%m.%Y}  [{'COL' if r.sinif == 'COL' else 'COL DEGIL'}]"
-                         f"   kod ortusme %{100 * kod_iou:.0f}   model ortusme %{100 * mdl_iou:.0f}", fontsize=9)
+            kirp = f"  (kirpildi: {ix[int(r.bi)]:%d.%m}-{ix[int(r.si)]:%d.%m})" if (int(r.bi0), int(r.si0)) != (int(r.bi), int(r.si)) else ""
+            ax.set_title(f"{r.sembol}  {r.bas:%d.%m.%Y}-{r.son:%d.%m.%Y}{kirp}  [{'COL' if r.sinif == 'COL' else 'COL DEGIL'}]"
+                         f"   kod %{100 * kod_iou:.0f}   model %{100 * mdl_iou:.0f}", fontsize=9)
             tk = np.linspace(a0, a1, 6).astype(int)
             ax.set_xticks(tk)
             ax.set_xticklabels([f"{ix[i]:%m.%y}" for i in tk], fontsize=7)
             ax.tick_params(axis="y", labelsize=7)
             ax.set_ylim(lo_ * 0.97, hi_ * 1.03)
-            ax.legend(fontsize=6, loc="upper left", ncol=5)
+            ax.legend(fontsize=6, loc="upper left", ncol=3)
         fig.tight_layout()
         y = os.path.join(cikti, f"grafik_{p0 // sayfa_basi + 1:02d}.png")
         fig.savefig(y, dpi=110)
@@ -692,12 +774,18 @@ def _arg() -> GozAyar:
     p.add_argument("--kok", default=GozAyar.kok)
     p.add_argument("--cikti", default=None)
     p.add_argument("--kod-kok", default=None, help="COL_v1.py baska klasordeyse")
+    p.add_argument("--buyuk-aralik", type=float, default=GozAyar.buyuk_aralik, help="%%; 0 = kapali")
+    p.add_argument("--buyuk-degisim", type=float, default=GozAyar.buyuk_degisim, help="%%; 0 = kapali")
+    p.add_argument("--grafiksiz", action="store_true")
     a = p.parse_args()
-    ay = GozAyar(kok=a.kok, cikti=a.cikti)
+    ay = GozAyar(kok=a.kok, cikti=a.cikti,
+                 buyuk_aralik=a.buyuk_aralik or None, buyuk_degisim=a.buyuk_degisim or None)
+    ay.grafiksiz = a.grafiksiz  # type: ignore[attr-defined]
     if a.kod_kok:
         ay.kod_dosya = os.path.join(os.path.abspath(a.kod_kok), "COL_v1.py")
     return ay
 
 
 if __name__ == "__main__":
-    goz_esle(_arg())
+    _ay = _arg()
+    goz_esle(_ay, grafik=not getattr(_ay, "grafiksiz", False))
