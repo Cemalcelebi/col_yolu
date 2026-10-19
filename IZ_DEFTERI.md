@@ -1,4 +1,4 @@
-# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 4 Ekim 2026, 12:45)
+# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 19 Ekim 2026, 23:55)
 
 Kural: bir iz ancak (1) n ≥ 100, (2) 2017–21 ve 2022–26 dönemlerinde AYNI yönde, (3) birden fazla ölçüde
 (ortalama VE medyan) aynı yönde çıkarsa "GEÇERLİ" sayılır. Tek testte çıkan "ADAY", başka testte tersine dönen "ÇÜRÜDÜ".
@@ -22,6 +22,7 @@ RÜZGÂR = sektör sepeti (medyan) − piyasa medyanı, son 20 / 60 işlem gün�
 | A10 | Hacim patlaması (≥3× 60g ortanca) + gün kapanışı −%5 altı | piy20 ort / medyan | −3,5 / −6,3 | −2,8 / −4,2 | 267 / 799 | ADAY (iki dönemde ort+medyan aynı yön, n≥100; 60g medyan −7,3 / −5,6, kazanan %37 / %39) |
 | A11 | A10 + hisse önceki 20 günde zaten −%20 düşmüş | piy60 medyan | −13,3 | −12,7 | 40 / 109 | ADAY-zayıf (kazanan %32/%30 ama 17–21'de n=40) |
 | A12 | Fiyat 1 yıldır en geride %20 + hacim 1 yılda en çok ARTAN %20 (düşerken hacim = çıkış) | piy250 medyan | −1,7 | −14,3 | 232 / 299 | ADAY-zayıf (ort artı, medyan/kazanan/büyük-kayıp üçü eksi; 22–26 belirgin) |
+| A13 | Dipteki doji kutusu (bölge kuralı v1.3 + ≥3 doji, önceki 250 günün alt %35'i) — SERT DÜŞÜŞ RİSKİ DÜŞÜK (19 Eki 2026, DOJI_KUTU_TEST v1.1) | 60 bar içinde −8× normal gün düşüş oranı, her gün tabanına göre | 16–19: %12,8 vs %20,3 · 20–22: %4,2 vs %14,7 | 23–26: %6,2 vs %9,2 · kırılımda da aynı yön (12,5/5,5/7,2 vs 20 gün zirvesi 21,3/17,9/11,0) | 3.332 / 1.980 / 4.369 | BIST'te GEÇERLİ (3 dönem aynı yön, mutlak −%20 ölçüsünde de); ABD testi bekliyor. Yükseliş tarafında fark YOK (sert yukarı 0,90–1,02×) — alım izi değil, risk süzgeci |
 
 ## B. ALIM İZLERİ
 | # | İz | Ölçü | 17–21 | 22–26 | n | Durum |
@@ -39,6 +40,7 @@ RÜZGÂR = sektör sepeti (medyan) − piyasa medyanı, son 20 / 60 işlem gün�
 | B13 | B12 + sektör rüzgârı (20g > +%1), giriş = çölün son günü (sonradan bilinen) | piy60 ort / medyan | +16,6 / +8,0 | +26,9 / +12,3 | 107 / 119 | ADAY ama SONRADAN BİLGİ — gerçek zamanda tutmadı (bkz. C) |
 
 ## C. ÇÜRÜYEN / BOŞ İZLER
+- DOJİ KUTUSU → SERT HAREKET (19 Eki 2026, DOJI_KUTU_TEST v1.1, BIST 583 hisse 2016–26): kutu 3. dojisini bulduğu gün ya da kutu kırıldığında, sonraki 60 barda ±%20 sert hareket / önce yukarı oranı her gün tabanıyla ve 20 gün zirvesi kırılımıyla aynı (kat 0,90–1,02, üç dönem). Yükseliş izi yok; düşüş riski izi A13'te.
 - Haber türü, büyüklüğü, davranışı tek başına; makine birleşimi (AUC 0,56); D1; teyit+geri alım; merdiven; sektör kümesi; 1 hafta biletleri; ABD salınım fiyat-only
 - B9 (yeni rüzgâr + haber): tek hisse tekrarı → çürüdü
 - ÖLÜ EŞEK (4 Eki): üç yoldan denendi, hiçbiri ayrışmadı — (a) KAP yapısal kötü haber sınıfları (4.910 metin: konkordato, fabrika kapatma/taşıma, üretim durdurma, SPK tedbiri…) sonrası 60g: hiçbir sınıf iki dönemde tutarlı eksi değil; (b) bilanço (2 yıl satış geride + zarar / 2 yıl faaliyet+net zarar / özkaynak eksi) → rapor sonrası 250g ÖLÜ ort +32,7/+44,5 medyan −9,7/+4,8 — canlıdan kötü değil; (c) fiyat+sektör 1 yıldır geride (İşY 53 sektör) → en çok düşen+geride ort +3,8/+2,8 medyan −4,1/−1,2 (n 7/66). UYARI: fiyat verisi yalnız bugün borsada olan 583 hisse — iflas/kot dışı olanlar yok (hayatta kalma yanlılığı), bu yüzden "ölü eşek tutmaz" DENEMEZ, "mevcut veriyle test edilemiyor" denir. Cemal'in örnekleri: İhlas grubu 5 yılda piyasaya göre −310 puan (5/5 geride), YESIL −411 puan, tekstil 3 yılda −22 puan. Döngüsel sektörler (otomotiv, çimento, beyaz eşya, havacılık) bu kurala takılıyor ama ölü değil — OTKAR/FROTO/ARCLK satış büyüyor, kâr 1 yıl bozuk.
