@@ -218,3 +218,14 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Çöl Yolu: veri ve çıktılar Drive'da kalır ---
+*.pkl
+*.parquet
+*.csv
+!sektor_BIST.csv
+!sektor_ABD.csv
+*.png
+*.log
+.ipynb_checkpoints/
+kap_nobet_ayar.json
