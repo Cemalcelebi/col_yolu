@@ -1,0 +1,25 @@
+# COL DIP TESTI — 2026-10-20 20:33 (COL_DIP_TEST v1.0 (2026-10-20))
+
+Kural: col (aday) -> kapanis > tavan*1.002 atilim -> ERTESI GUN ACILIS alim -> %20 hedef sonra SMA20 trail, hedefsiz 120 bar; maliyet %0.4; atilimdan once taban kirilirsa islem yok. Tekil (hisse, atilim gunu).
+Gruplar: dip = yeni tespit (D12 col_dip, tum evren) · taban = her taze 20 gun zirvesi kirilimi · eski = col_segment D7 (200 hisselik BIST orneklemi, 10 barda bir, 2023-01-01 sonrasi) · dip_ornek = dip, ayni orneklem ve adimla (eski ile elma-elma).
+
+| donem | grup | n | kazanan_% | beklenti_% | medyan_% | agir_kayip_% | hedef_% | ort_bar | kazanan_kat_taban | beklenti_fark_taban | slot_portfoy_% | slot_alinan | slot_atlanan | bozuldu_% |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2016-19 | dip | 1322 | 70.3 | 14.67 | 10.84 | 12.3 | 69.2 | 75.1 | 1.06 | 0.92 | 83.8 | 208 | 1114 | 30.7 |
+| 2016-19 | taban | 11504 | 66.6 | 13.76 | 9.77 | 14.6 | 64.7 | 75.9 | 1.0 | 0.0 | 55.8 | 200 | 11304 |  |
+| 2020-22 | dip | 1235 | 77.1 | 15.93 | 10.83 | 7.6 | 78.3 | 67.1 | 0.98 | -8.14 | 144.4 | 233 | 1002 | 27.8 |
+| 2020-22 | taban | 19425 | 78.6 | 24.07 | 14.49 | 9.4 | 80.5 | 62.0 | 1.0 | 0.0 | 243.6 | 360 | 19065 |  |
+| 2023 | dip | 178 | 93.8 | 42.02 | 25.99 | 1.7 | 96.1 | 48.7 | 1.15 | 13.22 | 101.6 | 56 | 122 | 41.7 |
+| 2023 | taban | 6705 | 81.8 | 28.8 | 15.48 | 5.8 | 85.3 | 58.4 | 1.0 | 0.0 | 65.0 | 131 | 6574 |  |
+| 2023 | eski | 36 | 91.7 | 29.49 | 12.91 | 5.6 | 94.4 | 53.4 | 1.12 | 0.69 | 35.4 | 36 | 0 | 63.6 |
+| 2023 | dip_ornek | 31 | 93.5 | 47.1 | 20.67 | 0.0 | 93.5 | 52.4 | 1.14 | 18.3 | 48.7 | 31 | 0 | 37.7 |
+| 2024-26 | dip | 2167 | 60.0 | 6.89 | 5.11 | 17.3 | 62.0 | 75.3 | 0.94 | -2.28 | 79.3 | 262 | 1905 | 41.8 |
+| 2024-26 | taban | 19329 | 64.0 | 9.16 | 7.44 | 16.1 | 64.9 | 72.7 | 1.0 | 0.0 | 127.7 | 336 | 18993 |  |
+| 2024-26 | eski | 152 | 65.8 | 6.36 | 6.6 | 17.1 | 68.4 | 69.5 | 1.03 | -2.81 | 36.5 | 146 | 6 | 53.4 |
+| 2024-26 | dip_ornek | 410 | 62.2 | 8.57 | 6.66 | 15.6 | 66.6 | 72.5 | 0.97 | -0.59 | 86.5 | 194 | 216 | 41.2 |
+| ABD 2022-23 | dip | 2461 | 54.9 | 1.6 | 2.76 | 16.2 | 44.5 | 89.9 | 0.94 | -1.63 | 18.4 | 112 | 2349 | 39.5 |
+| ABD 2022-23 | taban | 25180 | 58.2 | 3.23 | 4.28 | 13.1 | 41.9 | 93.5 | 1.0 | 0.0 | 25.6 | 112 | 25068 |  |
+| ABD 2024-26 | dip | 2472 | 63.6 | 11.29 | 7.5 | 15.9 | 60.8 | 78.2 | 1.05 | 5.69 | 79.9 | 282 | 2190 | 36.9 |
+| ABD 2024-26 | taban | 53683 | 60.8 | 5.6 | 5.84 | 14.2 | 51.0 | 86.6 | 1.0 | 0.0 | 82.1 | 302 | 53381 |  |
+
+Ozet: dip tespiti 6 donemin 3'inde tabandan yuksek beklenti verdi; kazanan orani tabanin 1.3 katini gecen donem: 0.
