@@ -40,6 +40,7 @@ RÜZGÂR = sektör sepeti (medyan) − piyasa medyanı, son 20 / 60 işlem gün�
 | B13 | B12 + sektör rüzgârı (20g > +%1), giriş = çölün son günü (sonradan bilinen) | piy60 ort / medyan | +16,6 / +8,0 | +26,9 / +12,3 | 107 / 119 | ADAY ama SONRADAN BİLGİ — gerçek zamanda tutmadı (bkz. C) |
 
 ## C. ÇÜRÜYEN / BOŞ İZLER
+- DİP ÇÖLÜ (D12, 20 Ekim 2026, COL_DIP_TEST): bölge + dipte + yeni dip yok + imza ≥3/4 tespitinden atılımda alım (ertesi gün açılış, %20 sonra SMA20 trail), taban = her taze 20 gün zirvesi kırılımı aynı çıkışla. Beklenti dip/taban: BIST 16-19 +14,7/+13,8 · 20-22 +15,9/+24,1 · 2023 +42,0/+28,8 · 24-26 +6,9/+9,2 · ABD 22-23 +1,6/+3,2 · ABD 24-26 +11,3/+5,6 (n 1.235–2.472). 6 dönemin 3'ünde iyi, 3'ünde kötü → İZ DEĞİL. Çöl tespiti atılımın üstüne kalıcı bir kazanç eklemiyor (COL_OZET 8. bölüm ile aynı).
 - DOJİ KUTUSU → SERT HAREKET (19 Eki 2026, DOJI_KUTU_TEST v1.1, BIST 583 hisse 2016–26): kutu 3. dojisini bulduğu gün ya da kutu kırıldığında, sonraki 60 barda ±%20 sert hareket / önce yukarı oranı her gün tabanıyla ve 20 gün zirvesi kırılımıyla aynı (kat 0,90–1,02, üç dönem). Yükseliş izi yok; düşüş riski izi A13'te.
 - Haber türü, büyüklüğü, davranışı tek başına; makine birleşimi (AUC 0,56); D1; teyit+geri alım; merdiven; sektör kümesi; 1 hafta biletleri; ABD salınım fiyat-only
 - B9 (yeni rüzgâr + haber): tek hisse tekrarı → çürüdü

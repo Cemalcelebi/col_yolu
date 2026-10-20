@@ -237,6 +237,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
   2016-19 %61 | 2020-22 %58 | 2023-26 %56 (piyasa 58/54/44; sektör çölsüz 45-55/49-55/41-46). Tek başına yön, "yüzde yüz" değil.
   D9b: rüzgâr = sepet − piyasa ≥ %10 VE sepet > 0 (çöküşte "az düşen" sahte rüzgârı keser; 10 yılda sonucu değiştirmedi).
 - Durum: V1'de uygulandı, test sürüyor. Kural sayılmaz (9.0).
+- 20 Eki: üretimde çöl tespiti artık D12 dip çölü (bkz. 9.5). D7 `col_segment` kodda duruyor (`SEGMENT_MOD='eski'` ile geri açılır); göz testinde Cemal'in 29 çölünden yalnız 1'ini buluyordu.
 
 ### 9.2 İZ VERMEYEN ÇÖL METRİKLERİ (küçük muma gidilmesinin nedeni)
 - col_ogren v1.3 (9 Eki): 9419 tekil çöl; ayıran ölçüler yalnız tavan/taban etiketinde (geometri payı), simetrik ±%10 etikette
@@ -279,6 +280,15 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
   Böyle bir hisse artık aday olmuyor. Listede bekleyen aday "VERI DURDU" yazısıyla düşüyor, `bugun_liste`'de de aday sayılmıyor.
   Açık pozisyon otomatik satılmıyor (işlem durmuş olabilir), yalnızca uyarı basılıyor. Bayat oranı %10'u aşarsa bu toplu veri sorunudur: temizlik yapılmıyor, uyarı basılıyor.
   Sentetik sınama: eski kodda bayat aday listede kalıyor ve yeni bayat hisse aday oluyordu; yenisinde ikisi de düzeldi. %15 bayat senaryosunda aday silinmiyor.
+- COL_v1 D12 (20 Eki): DİP ÇÖLÜ — Cemal'in tarifi: düşüş sonrası dipte bölge, bir noktadan sonra yeni dip yok; mumlar küçülür, Bollinger daralır, doji ve hacim kuruması beklenir.
+  `col_dip()` = bölge kuralı (GOZ_ESLE v1.3 ile birebir aynı, 2379/2379) + dipte (`DIP_KONUM` 0.35) + son %40'ta yeni dip yok + 4 imzadan ≥3 (küçük mum, Bollinger daralma, doji artışı, hacim kuruma).
+  Göz testi (37 etiket): 29 çölden 12'si tam pencereyle (+4 kısmi) bulunuyor; eski D7 1/29. 8 "değil"den 4'ünde de çöl görüyor; şekil ölçüleri "değil"i ayırmıyor, bölüm 7 ile aynı.
+  COL_DIP_TEST (atılımda ertesi gün açılış alım, %20 sonra SMA20 trail / 120 bar, tekil; taban = her taze 20 gün zirvesi kırılımı), beklenti dip/taban:
+  BIST 16-19 +14.7/+13.8 · 20-22 +15.9/+24.1 · 2023 +42.0/+28.8 · 24-26 +6.9/+9.2 · ABD 22-23 +1.6/+3.2 · ABD 24-26 +11.3/+5.6.
+  6 dönemin 3'ünde tabandan iyi → TABANI GEÇMEDİ, iz değil. Asıl kaynak yine atılım + trail (bölüm 8 ile aynı). Kazanan oranı hiçbir dönemde tabanın 1.3 katına çıkmadı.
+  Eski D7 ile aynı örneklemde (200 hisse) dip daha iyi: 2023 +47.1/+29.5, 24-26 +8.6/+6.4. Atılımdan önce bozulan aday %28–42.
+  Üretimde `SEGMENT_MOD='dip'` (20 Eki): eski tespitten iyi ve Cemal'in çöllerini görüyor; kural sayılmaz.
+  COL_GECMIS.py: geçmiş bir günde (ör. 16 Mart 2024) kod hangi çölleri bulurdu + her cuma tarama (grafikli PDF, hisse adsız).
 
 ### 9.6 DİĞER ÖLÇÜMLER (tekil, ertesi açılış, onarılmış veri)
 - col_v2 / yeniden_tara (8 Eki; bugünkü col_olc): 2024-26 yeni liste n=989 %69 bekl +10.8, portföy eşit +140% (yıllık +45, DD −14);
@@ -300,12 +310,13 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 
 ### 9.8 AÇIK / BEKLEYEN
 - Küçük mum (D7) + D9: test sürüyor; tam iz ve doğru metrik hesabı gelince kural.
+- D12 dip çölü tabanı geçmedi (9.5). Cemal'in 29 çölünden 8'i imza ölçülerine takılıyor (INVES, HDFGS, INFO, KATMR, EUREN, ARZUM, VRGYO, EMNIS): ya ölçü yanlış ya etiket — Cemal'in gözüyle karar bekliyor (karne grafikleri).
 - T6 (taban kırılınca çık) testle çelişiyor: tut ya da kaldır.
 - Boyut çarpanları (doji/fitil/dar) yeniden doğrulama.
   Aynı işte düzeltilecek (20 Eki inceleme): `dar_hafta_olc`, segmentten önceki haftayı da segmente sayıyor ("ilk" bloğu). Bu yüzden `dar` değeri düşük çıkıyor.
   Düzeltme `dar` değerlerini değiştirir, bu yüzden tek başına yapılmayacak.
 - ~~Verisi durmuş hissenin aday olması ve listeden hiç çıkmaması~~ → 20 Eki'de D11/T9 ile düzeltildi (bkz. 9.5).
-- GitHub Actions günlük tarama: ilk başarılı çalışma bekleniyor. 19 Eki'deki elle çalıştırma 281/626 hissede iptal edildi.
+- GitHub Actions günlük tarama: eski iş akışı 19 Eki 21:01'de elle kapatılmıştı. 20 Eki'de `gunluk_col_tarama.yml` adıyla yeniden kuruldu; ilk başarılı çalışma 20 Eki 21:30 (aday 43, açık 10). CDS verisi eski — güncellenmeli.
 - DURDO açık pozisyonda taban serisinde.
 - 9 açık pozisyonda gerçek taban yok (yedek ×0.85).
 - motor_karne kâğıt işlemleri sürüyor.
@@ -317,9 +328,9 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 ```
 ÇÖL YOLU / BIST+ABD; tam özet Drive: col_tarayici/COL_OZET.md (bölüm 9 = son durum).
 SİSTEM TEST AŞAMASINDA; bu MD bağlam sigortası, kural defteri değil. Tam iz + doğru metrik hesabı gelince kural olur.
-GÜNCEL TESPİT ŞARTI (V1 D7): küçük mum = gün aralığı H-L ≤ 0.65×ATR30 (gövde değil). Çöl şekil metrikleri iz vermedi (col_ogren).
+GÜNCEL TESPİT (20 Eki, D12): dip çölü = bölge kuralı + dipte + yeni dip yok + imza (küçük mum, Bollinger, doji, hacim) ≥3/4. Göz testi 12/29 (D7 1/29). Taban (20 gün zirvesi kırılımı) karşısında iz değil (3/6 dönem). Çöl şekil metrikleri iz vermedi (col_ogren).
 EYLÜL-EKİM 2026 FON TASFİYE KRİZİ: TERA/DSTKF/ODINE/GUNDG/TRHOL... taban serileri GERÇEK düşüş, bölünme değil. Büyük düşüşte önce COLAB_VERILER/col_tarayici/atlas/taban_serisi_izleme.csv + veri_koru_gunluk.csv.
-Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası, D11/T9 verisi durmuş hisse aday olmaz (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8; veri_koru.
+Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası, D11/T9 verisi durmuş hisse aday olmaz, D12 dip çölü üretimde (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8; veri_koru.
 Kural: col_segment (yerel=5, ≥20 bar ≤6 ATR) → aday; kapanış>tavan×1.002 → AL; %20 → SMA20 trail; 120 bar; stop yok.
 Boyut %6×CDS×borç×doji×fitil×dar×kural, max %12. Aday filtresi yok. Segment kodu değişmedi.
 Gerçek sayı (tekil, ertesi açılış, 120 bar): BIST 24-26 %64/+8.9 · BIST 23 %88/+38 · ABD 24-26 %62/+8.3 · ABD 22-23 %62/+4.7.

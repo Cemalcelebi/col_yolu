@@ -84,7 +84,11 @@
 #      IMZA_HACIM'i) — 4'ten en az IMZA_MIN. Cikti col_segment ile ayni alanlar (+ konum, imza...), col_olc SEGMENT_MOD'a
 #      gore col_dip ya da col_segment kullanir. col_segment DEGISMEDI (olcum modulleri onu acikca cagiriyor).
 #      Goz testi (37 etiket): eski 1/29, col_dip 12/29 tam pencere (+4 kismi); bolge kurali GOZ_ESLE ile 2379/2379 ayni.
-#      Uretime gecis (SEGMENT_MOD='dip') COL_DIP_TEST.py (BIST 2016-26 donemleri + ABD, trail, slot) sonucuna bagli.
+#      COL_DIP_TEST (20 Eki; atilimda ertesi gun acilis alim, %20 sonra SMA20 trail / 120 bar, tekil; taban = her taze 20 gun
+#      zirvesi kirilimi): beklenti dip / taban — BIST 16-19 +14.7/+13.8 | 20-22 +15.9/+24.1 | 2023 +42.0/+28.8 | 24-26 +6.9/+9.2 |
+#      ABD 22-23 +1.6/+3.2 | ABD 24-26 +11.3/+5.6 -> 6 donemin 3'unde tabandan iyi: TABANI GECMEDI (iz degil; atilim + trail
+#      yine asil kaynak, COL_OZET 8. bolum ile ayni). Eski col_segment ile ayni orneklemde dip daha iyi: 2023 +47.1/+29.5,
+#      24-26 +8.6/+6.4. Uretimde SEGMENT_MOD='dip' (20 Eki): eski tespitten iyi ve Cemal'in collerini goruyor; kural degil.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -131,7 +135,7 @@ RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu esk
 VERI_BAYAT = 5          # D11: son bari ortak son tarihten bu kadar is gunu eski hisse aday olmaz (verisi durmus)
 VERI_BAYAT_UST = 0.10   # D11: bayat orani bunu asarsa toplu veri sorunu sayilir -> bayat suzgeci uygulanmaz
 # D12: dip colu (Cemal'in tarifi). Bolge parametreleri GOZ_ESLE v1.3 (GozAyar) ile ayni tutulur.
-SEGMENT_MOD = 'eski'    # D12: 'dip' (col_dip: bolge + dip + imza) | 'eski' (col_segment, D7). COL_DIP_TEST gecerse 'dip'
+SEGMENT_MOD = 'dip'     # D12: 'dip' (col_dip: bolge + dip + imza) | 'eski' (col_segment, D7)
 BOLGE_BANT_KAT = 6.0    # D12: cekirdek (%10-%90 kapanis) bandi <= bu kadar normal gun araligi
 BOLGE_UZAK_KAT = 1.5    # D12: cekirdekten bu kadar normal gun otesindeki kapanis = bolgeden cok ayrilma
 BOLGE_SOL_KAT = 1.5     # D12: bolge basindaki bu kadar normal gunden buyuk (inis) mumlar kirpilir
