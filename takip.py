@@ -26,6 +26,11 @@
 #   T8) 2026-10-18 D9 BAGLANTISI: COL_v1 D9 (uzun col + sektor ruzgari) gun() ekranina baglandi.
 #       BEKLE satirlarina 'uzun' (6ay/12ay) ve 'ruz' (sektor sepeti 60g - piyasa, %) eklenir;
 #       ekranin sonunda ruzgar_listesi() basilir (RUZGAR_LISTE=False ile kapanir). Alim/satim mantigi DEGISMEDI.
+#   T9) 2026-10-20 BAYAT ADAY (COL_v1 D11 veri_bayat): verisi durmus hisse (yfinance 'no data' / islem durdurma;
+#       BASLAT eski veriyi tutar) aday olabiliyordu ve 60 bar suresi hic dolmuyordu (df buyumuyor, aday listede kaliyordu).
+#       Simdi: son bari ortak son tarihten VERI_BAYAT (5) is gunu eski hisse aday olmaz; listedeki aday 'VERI DURDU' ile duser.
+#       Acik pozisyonda yalniz uyari basilir, otomatik satilmaz (islem durmus olabilir, satis mumkun olmayabilir).
+#       Bayat orani VERI_BAYAT_UST'u (%10) asarsa toplu veri sorunu sayilir: temizlik yapilmaz, uyari basilir.
 # =====================================================================
 import os, logging, numpy as np, pandas as pd
 _K='/content/drive/MyDrive/col_tarayici'
@@ -139,21 +144,28 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
     A=_oku(yA,A_KOL); P=_oku(yP,P_KOL); Kp=_oku(yK,K_KOL)
     cds_pct=_cds_pct(bugun) if oneki=='takip' else np.nan
     cds_c=CARPAN['cds'](cds_pct)
+    try: bayat,b_sinir,b_toplu=veri_bayat(veri) if 'veri_bayat' in globals() else ({},None,False)   # T9
+    except Exception as e: tlog.warning(f'T9 veri_bayat: {e}'); bayat,b_sinir,b_toplu={},None,False
+    b_suz={} if b_toplu else bayat                      # T9: toplu veri sorununda suzgec uygulanmaz
+    if b_toplu: tlog.warning(f'T9 toplu veri sorunu: {len(bayat)} hisse bayat (sinir {b_sinir.date()}), temizlik yapilmadi')
     # ---- yeni adaylar (T1: sinyal gunu olculeri kaydedilir) ----
     R=[]; mevcut=set(A.sembol)|set(P.sembol)
     for s,df in veri.items():
         if len(df)<250 or s in mevcut: continue
+        if s in b_suz: continue                         # T9: verisi durmus hisse aday olmaz
         if _fon_uyari(s): continue                      # T7: tasfiye fonu payli hisse aday olmaz
         try: o=col_olc(df)
         except Exception as e: tlog.debug(f'{s} col_olc: {e}'); o=None
         if o: R.append([s,bugun,o['tavan'],o['taban'],o['bas_tarih'],int(o['GECER']),o['doji'],o['alt_fitil'],o['dar'],o['gecerli_oran'],o['atr_ref']])
     if R: A=pd.concat([A,pd.DataFrame(R,columns=A_KOL)],ignore_index=True)
     # ---- kirilim -> AL ----
-    al=[]; dus=[]; bozuk=[]
+    al=[]; dus=[]; bozuk=[]; durdu=[]
     for r in A.itertuples():
         if str(r.eklendi)==bugun: continue
         df=veri.get(r.sembol)
         if df is None or not len(df): continue
+        if r.sembol in b_suz:                           # T9: veri durdu -> aday duser (60 bar suresi hic dolmazdi)
+            durdu.append(r.sembol); tlog.info(f'VERI DURDU aday {r.sembol} son bar {b_suz[r.sembol].date()}'); continue
         c=float(df.Close.iloc[-1])
         if c>r.tavan*AL_PAY:
             bo,ozn=borc_bilgi(r.sembol,bugun)
@@ -165,12 +177,14 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             bozuk.append(r.sembol); tlog.info(f'COL BOZULDU aday {r.sembol} @{c:.2f} taban {r.taban}')
         elif len(df[df.index>pd.Timestamp(r.eklendi)])>=60: dus.append(r.sembol)
     if al: P=pd.concat([P,pd.DataFrame(al,columns=P_KOL)],ignore_index=True)
-    A=A[~A.sembol.isin([a[0] for a in al]+dus+bozuk)].reset_index(drop=True)
+    A=A[~A.sembol.isin([a[0] for a in al]+dus+bozuk+durdu)].reset_index(drop=True)
     # ---- pozisyonlar: trail / ufuk ----
-    kapat=[]; tut=[]
+    kapat=[]; tut=[]; durdu_poz=[]
     for i,r in P.iterrows():
         df=veri.get(r.sembol)
         if df is None or not len(df): continue
+        if r.sembol in b_suz:                           # T9: yalniz uyari, otomatik satilmaz (islem durmus olabilir)
+            durdu_poz.append(r.sembol); tlog.warning(f'VERI DURDU pozisyon {r.sembol} son bar {b_suz[r.sembol].date()}')
         il=df[df.index>pd.Timestamp(r.giris_tarih)]
         c=float(df.Close.iloc[-1]); bar=len(il); g=(c/r.giris-1)*100
         hv=bool(r.hedef_vurdu) or (len(il)>0 and float(il.High.max())>=r.giris*(1+hedef/100))
@@ -199,6 +213,7 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
     tlog.info(f'gun {bugun} aday {len(A)} poz {len(P)} kapanan {len(Kp)} cds_pct {cds_pct}')
     print(f"\n== {bugun}  CDS {cds_pct if np.isfinite(cds_pct) else '?'} -> {cds_c}x")
     print(f"aday {len(A)} | poz {len(P)} | kapanan {len(Kp)}")
+    if b_toplu: print(f"\n[!] VERI SORUNU: {len(bayat)} hissede {b_sinir.date()} sonrasi veri yok — toplu guncelleme sorunu, bayat aday temizligi yapilmadi (T9)")
     if al:
         print("\nAL  (hisse  pozisyon%  borc  doji  fitil  dar)")
         for a in al: print(f"  {a[0]:6s} %{a[7]:.1f}  {a[9] if np.isfinite(a[9]) else '?'}{' OZ-' if a[10] else ''}  {a[12]}  {a[13]}  {a[14]}  {'kural' if a[11] else 'serbest'}")
@@ -211,6 +226,7 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             tbs=f"taban {(tb/c-1)*100:+.0f}%" if np.isfinite(tb) else "taban ?"
             fon=f"  FON {fe[0].split()[0].title()} %{fe[1]:.0f}" if fe else ""
             print(f"  {s:6s} {g:+4.0f}%  {('TRAIL sat:'+f'{(s20/c-1)*100:+.0f}%') if hv else str(ufuk-b)+'g'}  {tbs}{fon}")
+    if durdu_poz: print("\n[!] VERI DURDU — acik pozisyon, fiyat eski, elle kontrol et:", ", ".join(f"{s} (son bar {b_suz[s].date()})" for s in durdu_poz))
     RZ=pd.DataFrame()                                    # T8: D9 sektor ruzgari (COL_v1 yoksa bos)
     if 'sektor_ruzgar' in globals():
         try: RZ=sektor_ruzgar(veri)
@@ -240,6 +256,7 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             print(f"  {s:6s} {uz:+4.0f}%   %{poz:.1f}   {dv}  {fv}  {ucl or '-':4s}  {rzs:>4s}{'  RUZGAR' if var else ''}  {'' if kr else '(serbest)'}")
     if dus: print("\nSURESI DOLDU (60 bar):", ", ".join(dus))
     if bozuk: print("\nCOL BOZULDU (taban kirildi, aday dustu):", ", ".join(bozuk))
+    if durdu: print(f"\nVERI DURDU ({globals().get('VERI_BAYAT',5)}+ is gunu veri yok, aday dustu):", ", ".join(f"{s} (son bar {b_suz[s].date()})" for s in durdu))
     if len(Kp):
         v=Kp.getiri.astype(float); va=Kp.getiri_acilis.astype(float).dropna(); vx=Kp.xu_getiri.astype(float).dropna()
         print(f"\nKAPANAN {len(Kp)}: kazanan %{100*(v>0).mean():.0f}  ort {v.mean():+.1f}%"
@@ -274,4 +291,4 @@ def replay(bas, son=None, veri=None, oneki='replay', sifirla=True):
         v=Kp.getiri.astype(float); print(f"\n{len(Kp)} islem | kazanan %{100*(v>0).mean():.0f} | ort %{v.mean():+.1f} | bek %{bek(v):+.1f}")
     return A,P,Kp
 
-print(f"[ok] takip (2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
+print(f"[ok] takip (2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")

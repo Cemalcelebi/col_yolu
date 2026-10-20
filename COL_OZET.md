@@ -275,6 +275,10 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 - COL_v1 D10 (20 Eki, inceleme): D10a `bugun_liste`'ye `ruzgar` sütunu eklendi. D9b şartı artık burada da uygulanıyor ve rüzgâr kararı `sektor_ruzgar` içinde tek yerde veriliyor; `takip` BEKLE zaten doğruydu.
   D10b rüzgâr hesabında tarih hizası: verisi `RUZ_BAYAT`=5 iş gününden eski hisse hesaba girmiyor (log'a yazılıyor). Başlangıç kapanışı ortak takvim gününden alınıyor, böylece arada boşluk olan hissenin penceresi uzamıyor.
   Sentetik sınama: tam takvimli 581 hissede sonuç birebir aynı. Boşluklu hissede eski kod −%38, yeni kod +%25 (doğrusu). AL kuralı, segment ve çarpanlar değişmedi.
+- COL_v1 D11 + takip T9 (20 Eki): bayat aday. `veri_bayat()` son barı ortak son tarihten `VERI_BAYAT`=5 iş gününden eski olan hisseyi "veri durdu" sayıyor.
+  Böyle bir hisse artık aday olmuyor. Listede bekleyen aday "VERI DURDU" yazısıyla düşüyor, `bugun_liste`'de de aday sayılmıyor.
+  Açık pozisyon otomatik satılmıyor (işlem durmuş olabilir), yalnızca uyarı basılıyor. Bayat oranı %10'u aşarsa bu toplu veri sorunudur: temizlik yapılmıyor, uyarı basılıyor.
+  Sentetik sınama: eski kodda bayat aday listede kalıyor ve yeni bayat hisse aday oluyordu; yenisinde ikisi de düzeldi. %15 bayat senaryosunda aday silinmiyor.
 
 ### 9.6 DİĞER ÖLÇÜMLER (tekil, ertesi açılış, onarılmış veri)
 - col_v2 / yeniden_tara (8 Eki; bugünkü col_olc): 2024-26 yeni liste n=989 %69 bekl +10.8, portföy eşit +140% (yıllık +45, DD −14);
@@ -300,7 +304,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 - Boyut çarpanları (doji/fitil/dar) yeniden doğrulama.
   Aynı işte düzeltilecek (20 Eki inceleme): `dar_hafta_olc`, segmentten önceki haftayı da segmente sayıyor ("ilk" bloğu). Bu yüzden `dar` değeri düşük çıkıyor.
   Düzeltme `dar` değerlerini değiştirir, bu yüzden tek başına yapılmayacak.
-- Verisi durmuş hisse (yfinance "no data"; BASLAT eski veriyi tutar) `takip.gun`'de aday olabiliyor ve 60 bar süresi hiç dolmuyor; df büyümediği için listede sonsuza kadar kalıyor. Henüz düzeltilmedi (20 Eki inceleme).
+- ~~Verisi durmuş hissenin aday olması ve listeden hiç çıkmaması~~ → 20 Eki'de D11/T9 ile düzeltildi (bkz. 9.5).
 - GitHub Actions günlük tarama: ilk başarılı çalışma bekleniyor. 19 Eki'deki elle çalıştırma 281/626 hissede iptal edildi.
 - DURDO açık pozisyonda taban serisinde.
 - 9 açık pozisyonda gerçek taban yok (yedek ×0.85).
@@ -315,7 +319,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 SİSTEM TEST AŞAMASINDA; bu MD bağlam sigortası, kural defteri değil. Tam iz + doğru metrik hesabı gelince kural olur.
 GÜNCEL TESPİT ŞARTI (V1 D7): küçük mum = gün aralığı H-L ≤ 0.65×ATR30 (gövde değil). Çöl şekil metrikleri iz vermedi (col_ogren).
 EYLÜL-EKİM 2026 FON TASFİYE KRİZİ: TERA/DSTKF/ODINE/GUNDG/TRHOL... taban serileri GERÇEK düşüş, bölünme değil. Büyük düşüşte önce COLAB_VERILER/col_tarayici/atlas/taban_serisi_izleme.csv + veri_koru_gunluk.csv.
-Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8; veri_koru.
+Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası, D11/T9 verisi durmuş hisse aday olmaz (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8; veri_koru.
 Kural: col_segment (yerel=5, ≥20 bar ≤6 ATR) → aday; kapanış>tavan×1.002 → AL; %20 → SMA20 trail; 120 bar; stop yok.
 Boyut %6×CDS×borç×doji×fitil×dar×kural, max %12. Aday filtresi yok. Segment kodu değişmedi.
 Gerçek sayı (tekil, ertesi açılış, 120 bar): BIST 24-26 %64/+8.9 · BIST 23 %88/+38 · ABD 24-26 %62/+8.3 · ABD 22-23 %62/+4.7.

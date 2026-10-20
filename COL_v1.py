@@ -65,6 +65,12 @@
 #      (2) Arada islem gormedigi gunler olan hissenin penceresi geriye uzuyordu -> baslangic kapanisi her hisse icin ayni
 #          takvim gunu: piyasanin RUZ_GERI bar oncesi (hisselerin o tarihlerinin medyani), o gun ve oncesindeki son kapanis.
 #      Tam takvimli hissede sonuc birebir ayni (sentetik sinama). AL kurali, segment ve carpanlar DEGISMEDI.
+#  ================== 2026-10-20 D11: VERISI DURMUS (BAYAT) HISSE ==========================
+#  D11) veri_bayat(): son bari ortak son tarihten VERI_BAYAT (5) is gunu eski hisse 'verisi durmus' (yfinance 'no data',
+#      islem durdurma; BASLAT eski veriyi tutar). Boyle hisse eski veriyle aday olabiliyor, takip'te 60 bar suresi hic
+#      dolmadigi icin listede kaliyordu. bugun_liste artik bu hisseleri aday saymaz ('VERI DURDU' satiri); takip T9
+#      aday listesinden dusurur. Bayat orani VERI_BAYAT_UST (%10) ustundeyse bu delist degil toplu guncelleme sorunudur:
+#      suzgec uygulanmaz, uyari basilir. sektor_ruzgar'in kendi bayat sarti (D10b, RUZ_BAYAT) ayridir, degismedi.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -108,6 +114,8 @@ RUZ_ESIK = 0.10         # D9: sepet getirisi (hisse haric) - piyasa medyani >= %
 RUZ_MIN_UYE = 4         # D9: sepet icin en az uye
 RUZ_MUTLAK = 0.0        # D9b: sepetin kendi RUZ_GERI getirisi bundan buyuk olmali (0 = sepet yukseliyor)
 RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu eski hisse ruzgar hesabina girmez (verisi durmus)
+VERI_BAYAT = 5          # D11: son bari ortak son tarihten bu kadar is gunu eski hisse aday olmaz (verisi durmus)
+VERI_BAYAT_UST = 0.10   # D11: bayat orani bunu asarsa toplu veri sorunu sayilir -> bayat suzgeci uygulanmaz
 RUZGAR_LISTE = True     # D9: bugun_liste sonunda ruzgar listesi bas
 SEKTOR_DOSYALAR = ['sektor_BIST.csv', 'sektor_TR.csv']   # D9: col_tarayici'da sirayla aranir
 AL_PAY = 1.002          # kirilim esigi: kapanis > tavan * AL_PAY  (test = canli)
@@ -292,6 +300,29 @@ def fon_etiket(sembol):
     """(kurucu, pay) ya da None. FON_ESIK altindaki paylar None sayilir."""
     v = fon_defteri().get(str(sembol).upper())
     return v if (v and v[1] >= FON_ESIK) else None
+
+# ---------------- D11: VERISI DURMUS (BAYAT) HISSE ----------------
+def veri_bayat(veri=None, tarih=None, gun=None):
+    """D11: verisi durmus hisseler (yfinance 'no data' / islem durdurma; BASLAT eski veriyi tutar).
+    Ortak son tarih = verideki en yeni bar (tarih verilirse o gune kadar). Son bari bundan gun (VERI_BAYAT) is gunu
+    eski olan hisse bayat. Bayat orani VERI_BAYAT_UST'u asarsa toplu guncelleme sorunudur (delist degil): toplu=True,
+    cagiran suzgeci uygulamaz (aday listesi topluca silinmesin).
+    Donus: (bayat {sembol: son_bar}, sinir Timestamp|None, toplu bool)."""
+    veri = veri if veri is not None else VERI
+    gun = VERI_BAYAT if gun is None else gun
+    son = {}
+    for s, df in veri.items():
+        try:
+            x = df[df.index <= pd.Timestamp(tarih)] if tarih is not None else df
+            if len(x): son[s] = x.index[-1]
+        except Exception as e: log.debug(f'{s} veri_bayat: {e}')
+    if not son: return {}, None, False
+    sinir = max(son.values()) - pd.offsets.BDay(gun)
+    bayat = {s: t for s, t in son.items() if t < sinir}
+    toplu = len(bayat) > VERI_BAYAT_UST * len(son)
+    if toplu:
+        log.warning(f'D11: {len(bayat)}/{len(son)} hissenin son bari {sinir.date()} oncesi — toplu veri guncelleme sorunu, bayat suzgeci uygulanmadi')
+    return bayat, sinir, toplu
 
 # ---------------- D9: UZUN COL + SEKTOR RUZGARI ----------------
 def uzun_col_olc(df, tarih=None):
@@ -505,8 +536,14 @@ def bugun_liste(veri=None, n=40, hepsi=False):
     R=[]; FON_ELENEN=[]
     try: RZ = sektor_ruzgar(veri)                      # D9
     except Exception as e: log.warning(f'D9 ruzgar: {e}'); RZ = pd.DataFrame()
+    try: BAYAT, _, _btop = veri_bayat(veri)            # D11
+    except Exception as e: log.warning(f'D11 veri_bayat: {e}'); BAYAT, _btop = {}, False
+    if _btop: BAYAT = {}                              # D11: toplu veri sorunu -> suzgec yok (uyari veri_bayat'ta)
+    BS = ("  VERI DURDU (" + f"{VERI_BAYAT}+ is gunu veri yok, aday sayilmadi): " + ", ".join(f"{h} (son {t.date()})" for h, t in sorted(BAYAT.items())[:15])
+          + (" ..." if len(BAYAT) > 15 else "")) if BAYAT else ""
     for s,df in veri.items():
         if len(df)<250: continue
+        if s in BAYAT: continue                        # D11: verisi durmus hisse aday sayilmaz
         try: o=col_olc(df)
         except Exception as e: log.debug(f'{s} col_olc: {e}'); o=None
         if not o: continue
@@ -523,12 +560,14 @@ def bugun_liste(veri=None, n=40, hepsi=False):
     t=pd.DataFrame(R)
     if t.empty:
         print("aday yok" + (f" | FON ELENDI: {', '.join(h for h,_,_ in FON_ELENEN)}" if FON_ELENEN else ""))
+        if BS: print(BS)                                 # D11
         if RUZGAR_LISTE: ruzgar_listesi(veri)            # D9
         return t
     t=t.sort_values(['GECER','doji'],ascending=[False,False]).head(n)
     pd.set_option('display.width',230); pd.set_option('display.max_columns',None)
     print(f"{len(veri)} hisseden {len(R)} aday ({int(t.GECER.sum())} kurali geciyor) — yuksek doji ustte")
     if FON_ELENEN: print("  FON ELENDI (tasfiye fonu payi >= %" + f"{FON_ESIK:.0f}): " + ", ".join(f"{h} ({k.split()[0].title()} %{p:.0f})" for h,k,p in FON_ELENEN))
+    if BS: print(BS)                                     # D11
     print()
     print(t.to_string(index=False))
     if RUZGAR_LISTE: ruzgar_listesi(veri)                # D9
@@ -642,7 +681,7 @@ def endeks_yukle(sembol='XU100.IS', period='10y'):
     print(f"{sembol}: {len(xu)} bar  {xu.index[0].date()} -> {xu.index[-1].date()}")
     return xu
 
-print(f"[ok] COL SISTEMI v2  (2026-10-20 D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
+print(f"[ok] COL SISTEMI v2  (2026-10-20 D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
 print(f"  esikler: clv>={E_CLV} bant_son>={E_BS} ortaust>={E_OU} | segment>={MIN_UZ} bar, yuk<={MAX_YUK} ATR, yerel={YEREL} | AL_PAY={AL_PAY}")
 print(f"  CIKIS={CIKIS} HEDEF=%{HEDEF} | pozisyon %{POZISYON_TABAN} x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %{POZISYON_UST})")
 _r=cds_rejim()

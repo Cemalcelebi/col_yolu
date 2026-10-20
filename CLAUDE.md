@@ -6,6 +6,7 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 ## İletişim
 - Her zaman Türkçe yaz. Açıklamalar kısa ve öz olsun, önemli noktalar mutlaka belirtilsin.
 - Cemal mobilden çalışır. Sonucu tek, indirilebilir dosya olarak ver; uzun kod bloğunu sohbete yapıştırma.
+- Kod kutusunu yalnızca Colab'a yapıştırılacak komut için kullan ve kutunun üstüne "Colab'a yapıştır" yaz. Dosya adlarını ve yollarını (ör. col_tarayici içindeki COL_v1.py) düz metinle yaz, kutuya koyma. Cemal kutudaki her şeyi Colab'a yapıştırıyor; 20 Ekim'de dosya yolu yapıştırılınca SyntaxError çıktı.
 - Cemal grafik okur ve alım-satım kararını kendisi verir. Claude kodu yazar, ölçer, veriyi toplar.
 
 ## Kod standardı (kesin kural)
