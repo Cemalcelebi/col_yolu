@@ -31,6 +31,8 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 
 ## Drive düzeni ve arşiv (temizlik 2026-10-20)
 - Bir dosya `col_tarayici` kökünde yoksa önce arşive bak; yeni kopya üretme.
+- `IZ_DEFTERI.md`'nin Drive'daki tek kopyası `MyDrive/COLAB_VERILER/col_tarayici/` klasöründedir, `col_tarayici` kökünde değil. Güncellerken orada güncelle.
+- Drive bağlayıcısı dosya içeriğini yerinde değiştiremez. Bu yüzden önce Drive'daki eski kopyanın repodaki beklenen sürümle bayt bayt aynı olduğu doğrulanır, sonra yeni dosya aynı klasöre aynı adla yüklenir. Yüklenen dosya geri indirilip bayt bayt karşılaştırılır; ancak eşitse eski dosya çöpe atılır, böylece klasörde tek kopya kalır (20 Ekim'de COL_v1.py, takip.py, COL_OZET.md ve IZ_DEFTERI.md böyle güncellendi).
 - `col_tarayici/arsiv/` yerinden oynatılmaz: `tema_col.py`, `tema_sepet.py` ve `ruzgar_defteri.py`, `arsiv/desen/DESEN_TAM.py` dosyasını okur.
 - `col_tarayici/arsiv/col_kodlarim/`: Eylül – 2 Ekim araştırma kodları. BUYUK_COL (v2–v8), RUZGAR_COL, RUZGAR_ZAMAN, COL_KIRILIM_ATLAS, BUYUK_YUKSELIS, TEYIT_BILETI, SIKISMA_TESTI, BEKLEME_TESTI, COL_KANIT, akümülasyon, segment ve backtest hücreleri. Veri yolları sabit (`K=.../col_tarayici`) olduğu için kodlar buradan da çalışır.
 - `col_tarayici/arsiv/eski_ciktilar/`: Ağustos–Eylül test çıktıları (yon_v3…v10, hbaglam, hcol_geri, iki_asamali, evre2, replay, liste, bekleme, ruzgar_*, col_ruzgar_*, tara4h ...). Ayrıca:
