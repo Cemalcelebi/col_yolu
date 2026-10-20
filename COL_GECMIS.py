@@ -48,7 +48,7 @@ if not gclog.handlers:
 class GCAyar:
     kok: str = os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else "/content/drive/MyDrive/col_tarayici"
     cikti: Optional[str] = None
-    anlik: Tuple[str, ...] = ("2024-03-15",)
+    anlik: Tuple[str, ...] = ("2024-03-15", "2024-09-13", "2025-01-17", "2025-07-18")
     aralik_bas: str = "2024-01-01"
     aralik_frekans: str = "W-FRI"
     pencere_once: int = 150
