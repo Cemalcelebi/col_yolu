@@ -1,0 +1,4 @@
+gun,sembol,tespit,kutu_bas,kutu_son,uzunluk,tavan,taban,imza,imza_ok,konum,kapanis,en_yuksek_%,en_dusuk_%,sonuc,cid,islem_getiri,hedef,acik,atilim,giris,cikis
+2024-03-15,ANGEN,2024-03-15,2023-10-20,2024-03-15,105,14.92,12.03,3,"kucuk,bollinger,hacim",0.283,13.12,61.0,-15.5,bozuldu,1,,,,,,
+2024-03-15,CANTE,2024-03-15,2023-12-07,2024-03-15,71,2.66,2.13,4,"kucuk,bollinger,doji,hacim",0.046,2.33,25.3,-32.7,atilim,2,-49.4,False,False,2024-04-15,2024-04-16,2024-10-09
+2024-03-15,MZHLD,2024-03-15,2023-09-12,2024-03-15,133,10.0,7.2,3,"bollinger,doji,hacim",0.222,8.55,10.1,-24.6,atilim yok,3,,,,,,
