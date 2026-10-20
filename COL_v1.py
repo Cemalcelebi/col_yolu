@@ -71,6 +71,20 @@
 #      dolmadigi icin listede kaliyordu. bugun_liste artik bu hisseleri aday saymaz ('VERI DURDU' satiri); takip T9
 #      aday listesinden dusurur. Bayat orani VERI_BAYAT_UST (%10) ustundeyse bu delist degil toplu guncelleme sorunudur:
 #      suzgec uygulanmaz, uyari basilir. sektor_ruzgar'in kendi bayat sarti (D10b, RUZ_BAYAT) ayridir, degismedi.
+#  ================== 2026-10-20 D12: DIP COLU (Cemal'in tarifi) ==========================
+#  D12) Goz testi (GOZ_ESLE, 19 Eki): D7 col_segment Cemal'in 29 colunden 1'ini buluyordu (ATR30 colun icinde de
+#      kuculdugu icin 'kucuk mum' esigi asilamiyor). Cemal'in tarifi: col dusus sonrasi DIPTE olusur; bir noktadan sonra
+#      fiyat yeni dip yapmaz; fiyat dusmeyince mumlar kuculur, Bollinger daralir, doji olusur, hacim kurur.
+#      col_dip(): (1) BOLGE: GOZ_ESLE.bolge_col v1.3 ile birebir ayni kural (hisseye ozel normal gun = 250 bar medyan
+#      gun araligi; cekirdek bant <= 6x, cok ayrilma ve pespese 3 buyuk mum bolgeyi bitirir, inis mumlari kirpilir);
+#      (2) DIPTE: bolge medyani, bolge + onceki 250 barin araliginin alt DIP_KONUM'unda; (3) YENI DIP YOK: bolgenin son
+#      DIP_SON_PAY kisminda onceki dibin altina (yarim normal gunden fazla) inis yok; (4) IMZA: kucuk mum (bolge barlarinin
+#      >= IMZA_KUCUK'u normal gunden kucuk), Bollinger daralma (bolgedeki en dar bant son 250 gunun en dar IMZA_BB'sinde),
+#      doji artisi (oran >= bolge oncesi 250 barin IMZA_DOJI kati), hacim kuruma (medyan hacim <= bolge oncesi 60 barin
+#      IMZA_HACIM'i) — 4'ten en az IMZA_MIN. Cikti col_segment ile ayni alanlar (+ konum, imza...), col_olc SEGMENT_MOD'a
+#      gore col_dip ya da col_segment kullanir. col_segment DEGISMEDI (olcum modulleri onu acikca cagiriyor).
+#      Goz testi (37 etiket): eski 1/29, col_dip 12/29 tam pencere (+4 kismi); bolge kurali GOZ_ESLE ile 2379/2379 ayni.
+#      Uretime gecis (SEGMENT_MOD='dip') COL_DIP_TEST.py (BIST 2016-26 donemleri + ABD, trail, slot) sonucuna bagli.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -116,6 +130,22 @@ RUZ_MUTLAK = 0.0        # D9b: sepetin kendi RUZ_GERI getirisi bundan buyuk olma
 RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu eski hisse ruzgar hesabina girmez (verisi durmus)
 VERI_BAYAT = 5          # D11: son bari ortak son tarihten bu kadar is gunu eski hisse aday olmaz (verisi durmus)
 VERI_BAYAT_UST = 0.10   # D11: bayat orani bunu asarsa toplu veri sorunu sayilir -> bayat suzgeci uygulanmaz
+# D12: dip colu (Cemal'in tarifi). Bolge parametreleri GOZ_ESLE v1.3 (GozAyar) ile ayni tutulur.
+SEGMENT_MOD = 'eski'    # D12: 'dip' (col_dip: bolge + dip + imza) | 'eski' (col_segment, D7). COL_DIP_TEST gecerse 'dip'
+BOLGE_BANT_KAT = 6.0    # D12: cekirdek (%10-%90 kapanis) bandi <= bu kadar normal gun araligi
+BOLGE_UZAK_KAT = 1.5    # D12: cekirdekten bu kadar normal gun otesindeki kapanis = bolgeden cok ayrilma
+BOLGE_SOL_KAT = 1.5     # D12: bolge basindaki bu kadar normal gunden buyuk (inis) mumlar kirpilir
+BOLGE_BUYUK_KAT = 2.0   # D12: buyuk mum = normal gun araliginin 2 kati
+BOLGE_ARDISIK = 3       # D12: pespese 3 ayni yonlu buyuk mum = bolgeden ayrilma
+BOLGE_MIN_BAR = 15      # D12: en kisa bolge (col_olc ayrica MIN_UZ ister)
+BOLGE_EN_COK = 250      # D12: en uzun bolge (bar)
+DIP_KONUM = 0.35        # D12: bolge medyani, (bolge + onceki 250 bar) araliginin alt %35'inde -> dipte
+DIP_SON_PAY = 0.40      # D12: bolgenin son %40'inda onceki dibin altina inis yok (dip savunuluyor)
+IMZA_MIN = 3            # D12: 4 imzadan en az bu kadari (kucuk mum, Bollinger daralma, doji artisi, hacim kuruma)
+IMZA_KUCUK = 0.60       # D12: bolge barlarinin en az %60'i hissenin normal gun araligindan kucuk
+IMZA_BB = 0.15          # D12: bolgedeki en dar Bollinger genisligi, son 250 gunun en dar %15'inde
+IMZA_DOJI = 1.0         # D12: bolgedeki doji orani >= bolge oncesi 250 barin doji orani x bu kat
+IMZA_HACIM = 0.90       # D12: bolge medyan hacmi <= bolge oncesi 60 bar medyan hacminin %90'i
 RUZGAR_LISTE = True     # D9: bugun_liste sonunda ruzgar listesi bas
 SEKTOR_DOSYALAR = ['sektor_BIST.csv', 'sektor_TR.csv']   # D9: col_tarayici'da sirayla aranir
 AL_PAY = 1.002          # kirilim esigi: kapanis > tavan * AL_PAY  (test = canli)
@@ -254,6 +284,151 @@ def col_segment(df, tarih=None, esik=0.65, tolerans=2, en_cok=120, min_bar=8,
             eg=f"{kk['egim']:9.4f}" if np.isfinite(kk["egim"]) else "      nan"
             print(f"  {str(kk['tarih'].date()):11s} {kk['govde_atr']:8.2f} {kk['band']:>6s} {eg} {str(kk['ok']):>6s}{im}")
     return out
+
+# ---------------- D12: DIP COLU (Cemal'in tarifi) ----------------
+def _bolge_dizi(x):
+    """D12: bolge kurali dizileri (GOZ_ESLE.bolge_hazirla ile ayni): kapanis, gun araligi %, kapanis degisimi %,
+    hissenin normal gun araligi (250 bar medyan, %), govde orani."""
+    O, H, L, C = (x[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
+    pc = np.r_[O[0], C[:-1]]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        ar = 100 * (H - L) / pc
+        dg = 100 * (C / pc - 1)
+    ref = pd.Series(ar).rolling(250, min_periods=120).median().to_numpy()
+    rng = H - L
+    go = np.where(rng > 0, np.abs(C - O) / np.where(rng > 0, rng, 1), 1.0)
+    return {"C": C, "H": H, "L": L, "ar": ar, "dg": dg, "ref": ref, "go": go}
+
+def _bolge_kutu(D, e):
+    """D12: e gununde biten bolge (s, e) ya da None — GOZ_ESLE.bolge_col v1.3 ile birebir ayni kural.
+    Geriye dogru buyur; cekirdek = kapanislarin %10-%90 araligi. Durur: (a) cekirdek bandi > BOLGE_BANT_KAT x normal gun,
+    (b) bir kapanis cekirdegin BOLGE_UZAK_KAT x normal gun otesinde, (c) BOLGE_ARDISIK pespese ayni yonlu buyuk mum.
+    Bastaki inis mumlari (gun araligi > BOLGE_SOL_KAT x normal gun ya da cekirdek disi kapanis) kirpilir."""
+    import bisect
+    C, ar, dg, ref = D["C"], D["ar"], D["dg"], D["ref"]
+    r = ref[e]
+    if not np.isfinite(r) or r <= 0 or not np.isfinite(C[e]): return None
+    buyuk = BOLGE_BUYUK_KAT * r
+    s, seri, yon = e, 0, 0
+    srt = [float(C[e])]
+    def _yuzde(a, q):
+        k = (len(a) - 1) * q; f = int(k)
+        return a[f] + (a[min(f + 1, len(a) - 1)] - a[f]) * (k - f)
+    for j in range(e - 1, max(-1, e - BOLGE_EN_COK), -1):
+        if not np.isfinite(C[j]): break
+        if ar[j] >= buyuk or abs(dg[j]) >= 0.9 * buyuk:
+            y = 1 if dg[j] > 0 else -1
+            seri = seri + 1 if (seri and y == yon) else 1
+            yon = y
+            if seri >= BOLGE_ARDISIK:
+                s = max(s, j + BOLGE_ARDISIK); break
+        else:
+            seri = 0
+        bisect.insort(srt, float(C[j]))
+        lo, hi, med = _yuzde(srt, 0.10), _yuzde(srt, 0.90), _yuzde(srt, 0.50)
+        if (hi - lo) / med * 100 > BOLGE_BANT_KAT * r: break
+        tol = BOLGE_UZAK_KAT * r / 100 * med
+        if C[j] > hi + tol or C[j] < lo - tol: break
+        s = j
+    z = C[s:e + 1]
+    lo, hi = np.percentile(z, 10), np.percentile(z, 90)
+    while s < e and (ar[s] > BOLGE_SOL_KAT * r or C[s] > hi or C[s] < lo): s += 1
+    return (s, e) if e - s + 1 >= BOLGE_MIN_BAR else None
+
+def _bb_genislik(x):
+    """D12: Bollinger (20, 2 sigma) genisligi / orta bant — her bar icin (geriye bakar, ileriye bakis yok)."""
+    cs = x['Close']; m = cs.rolling(20, min_periods=20).mean(); sd = cs.rolling(20, min_periods=20).std(ddof=0)
+    return (4 * sd / m.replace(0, np.nan)).to_numpy(float)
+
+def _col_dip_e(x, D, bbw, e, alanlar=True):
+    """D12 cekirdek: e gununde biten dip colu. x, D (_bolge_dizi) ve bbw (_bb_genislik) e'yi iceren ayni seriden;
+    yalniz e'ye kadarki barlar kullanilir (tarama tum seri icin dizileri bir kez kurup bu fonksiyonu her gun cagirir).
+    alanlar=False: carpan alanlari (doji, fitil, dar hafta) hesaplanmaz — yalniz tespit + tavan/taban (tarama hizi).
+    Donus: (sonuc | None, olculer)."""
+    t = {'mod': 'dip'}
+    if e + 1 < 130: t['red'] = 'veri kisa'; return None, t
+    w = _bolge_kutu(D, e)
+    if not w: t['red'] = 'bolge yok'; return None, t
+    s, e = w; uz = e - s + 1
+    C, H, L, ar, ref, go = D['C'], D['H'], D['L'], D['ar'], D['ref'], D['go']
+    r0 = ref[s] if (np.isfinite(ref[s]) and ref[s] > 0) else ref[e]   # colden onceki normal gun araligi (%)
+    t.update(bas_tarih=str(x.index[s].date()), son_tarih=str(x.index[e].date()), uz=int(uz))
+    o0 = max(0, s - 250)
+    if s - o0 < 60: t['red'] = 'gecmis kisa'; return None, t
+    # (2) dipte: bolge medyani, (onceki 250 bar + bolge) araliginin neresinde (0 = en dip)
+    lo, hi = float(np.nanmin(L[o0:e + 1])), float(np.nanmax(H[o0:e + 1]))
+    konum = float((np.median(C[s:e + 1]) - lo) / (hi - lo)) if hi > lo else np.nan
+    # (3) yeni dip yok: bolgenin son DIP_SON_PAY kisminda onceki dibin yarim normal gunden fazla altina inis yok
+    k = s + max(1, int(round((1 - DIP_SON_PAY) * uz)))
+    d1, d2 = float(np.nanmin(L[s:k])), float(np.nanmin(L[k:e + 1]))
+    yeni_dip_yok = bool(d2 >= d1 * (1 - 0.5 * r0 / 100))
+    # (4) imzalar
+    kucuk = float(np.mean(ar[s:e + 1] <= r0))
+    pen = bbw[max(0, e - 249):e + 1]; pen = pen[np.isfinite(pen)]
+    kb = bbw[s:e + 1]; kb = kb[np.isfinite(kb)]
+    bb = float((pen <= kb.min()).mean()) if (len(pen) >= 60 and len(kb)) else np.nan
+    dj, dj0 = float((go[s:e + 1] < 0.10).mean()), float((go[o0:s] < 0.10).mean())
+    doji_kat = (dj / dj0 if dj0 > 0 else (np.inf if dj > 0 else np.nan))
+    V = x['Volume'].to_numpy(float)
+    v1, v0 = np.nanmedian(V[s:e + 1]), np.nanmedian(V[max(0, s - 60):s])
+    hacim_kat = float(v1 / v0) if (np.isfinite(v0) and v0 > 0 and np.isfinite(v1)) else np.nan
+    imza = {'kucuk': kucuk >= IMZA_KUCUK, 'bollinger': bool(np.isfinite(bb) and bb <= IMZA_BB),
+            'doji': bool(np.isfinite(doji_kat) and doji_kat >= IMZA_DOJI),
+            'hacim': bool(np.isfinite(hacim_kat) and hacim_kat <= IMZA_HACIM)}
+    t.update(konum=round(konum, 3) if np.isfinite(konum) else np.nan, yeni_dip_yok=yeni_dip_yok,
+             kucuk_oran=round(kucuk, 3), bb_min=round(bb, 3) if np.isfinite(bb) else np.nan,
+             doji_kat=round(doji_kat, 2) if np.isfinite(doji_kat) else (np.inf if doji_kat == np.inf else np.nan),
+             hacim_kat=round(hacim_kat, 2) if np.isfinite(hacim_kat) else np.nan,
+             imza=int(sum(imza.values())), imza_ok=','.join(a for a, v in imza.items() if v))
+    if not (np.isfinite(konum) and konum <= DIP_KONUM): t['red'] = 'dipte degil'; return None, t
+    if not yeni_dip_yok: t['red'] = 'yeni dip'; return None, t
+    if t['imza'] < IMZA_MIN: t['red'] = 'imza az'; return None, t
+    atr_s = _atr_ref(x, s, 30)
+    if not np.isfinite(atr_s) or atr_s <= 0: t['red'] = 'atr yok'; return None, t
+    Os = x['Open'].to_numpy(float)[s:e + 1]; Hs, Ls, Cs, Vs = H[s:e + 1], L[s:e + 1], C[s:e + 1], V[s:e + 1]
+    gu = np.maximum(Os, Cs)
+    out = {"bas_tarih": t['bas_tarih'], "son_tarih": t['son_tarih'],
+           "uzunluk": int(uz), "hafta_bar": round(uz / 5.0, 1), "cekirdek_bar": int(uz), "atr_ref": round(atr_s, 4),
+           "taban": round(float(Ls.min()), 2), "tavan": round(float(gu.max()), 2),
+           "yukseklik_atr": round((float(Hs.max()) - float(Ls.min())) / atr_s, 2),
+           **{a: t[a] for a in ('mod', 'konum', 'kucuk_oran', 'bb_min', 'doji_kat', 'hacim_kat', 'imza', 'imza_ok')}}
+    if not alanlar: return out, t
+    # col_segment ile ayni carpan alanlari (D1 gecerli bar, D2 dar hafta) — carpanlar_hesapla / takip bunlari kullanir
+    g = gecerli_bar_maskesi(Os, Hs, Ls, Cs, Vs); ng = int(g.sum()); gecerli_oran = ng / uz
+    if ng >= 5:
+        rg = Hs[g] - Ls[g]
+        doji = float((np.abs(Cs[g] - Os[g]) / rg < DOJI_ESIK).mean())
+        alt_fitil = float(((np.minimum(Os[g], Cs[g]) - Ls[g]) / atr_s).mean())
+    else:
+        doji = np.nan; alt_fitil = np.nan
+    dar = dar_hafta_olc(x.iloc[:e + 1], s)
+    ov = float(np.nanmean(V[max(0, s - 30):s])) if s > 0 else np.nan
+    out.update({"govde_ort": round(float(np.abs(Cs - Os).mean()) / atr_s, 2),
+                "doji": round(doji, 3) if np.isfinite(doji) else np.nan,
+                "alt_fitil": round(alt_fitil, 3) if np.isfinite(alt_fitil) else np.nan,
+                "dar": round(dar, 3) if np.isfinite(dar) else np.nan,
+                "gecerli_oran": round(gecerli_oran, 3),
+                "egim": round(_egim(Cs, atr_s), 4), "bb_rank": t['bb_min'],
+                "hacim_orani": round(float(np.nanmean(Vs)) / ov, 2) if (np.isfinite(ov) and ov > 0) else np.nan})
+    return out, t
+
+def col_dip(df, tarih=None, yazdir=False, tani=False):
+    """D12 DIP COLU — Cemal'in tarifi: dususten sonra dipte bolge; bir noktadan sonra fiyat yeni dip yapmaz; fiyat
+    dusmeyince mumlar kuculur, Bollinger daralir, doji olusur, hacim kurur.
+    Sart: BOLGE + DIPTE (DIP_KONUM) + YENI DIP YOK (DIP_SON_PAY) + 4 imzadan en az IMZA_MIN.
+    Donus: col_segment ile ayni alanlar (+ konum, kucuk_oran, bb_min, doji_kat, hacim_kat, imza) ya da None.
+    tani=True -> (sonuc, olculer): olculer reddedilen colun nedenini ('red') ve butun olculeri tasir."""
+    x = df[df.index <= pd.Timestamp(tarih)] if tarih is not None else df
+    try:
+        out, t = _col_dip_e(x, _bolge_dizi(x), _bb_genislik(x), len(x) - 1) if len(x) else (None, {'mod': 'dip', 'red': 'veri yok'})
+    except Exception as ex:
+        log.debug(f'col_dip: {ex}'); out, t = None, {'mod': 'dip', 'red': f'hata: {ex}'}
+    if yazdir:
+        print(f"  DIP COLU {t.get('bas_tarih','?')} -> {t.get('son_tarih','?')} ({t.get('uz',0)} bar) | konum {t.get('konum')} "
+              f"yeni_dip_yok {t.get('yeni_dip_yok')} | imza {t.get('imza')} {t.get('imza_ok','')} | "
+              f"kucuk {t.get('kucuk_oran')} bb {t.get('bb_min')} doji_kat {t.get('doji_kat')} hacim_kat {t.get('hacim_kat')}"
+              + (f" | RED: {t['red']}" if 'red' in t else " | COL"))
+    return (out, t) if tani else out
 
 # ---------------- D8: FON SUZGECI ----------------
 def _fon_norm(s):
@@ -520,7 +695,7 @@ def carpanlar_hesapla(olcu, cds_pct=np.nan, borc_oz=np.nan, oz_negatif=0, kural=
 # ---------------- OLCUM ----------------
 def col_olc(df, tarih=None):
     x=df[df.index<=pd.Timestamp(tarih)] if tarih is not None else df
-    r=col_segment(x)
+    r=col_dip(x) if SEGMENT_MOD=='dip' else col_segment(x)   # D12
     if not r or r['uzunluk']<MIN_UZ or r['yukseklik_atr']>MAX_YUK: return None
     if not r.get('atr_ref') or r['atr_ref']<=0: return None
     b=_bant(df, tarih if tarih is not None else df.index[-1])
@@ -681,7 +856,7 @@ def endeks_yukle(sembol='XU100.IS', period='10y'):
     print(f"{sembol}: {len(xu)} bar  {xu.index[0].date()} -> {xu.index[-1].date()}")
     return xu
 
-print(f"[ok] COL SISTEMI v2  (2026-10-20 D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
+print(f"[ok] COL SISTEMI v2  (2026-10-20 D12: col tespiti = {'DIP COLU (bolge + dip + yeni dip yok + imza >= ' + str(IMZA_MIN) + '/4)' if SEGMENT_MOD=='dip' else 'ESKI col_segment (D7)'} | D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
 print(f"  esikler: clv>={E_CLV} bant_son>={E_BS} ortaust>={E_OU} | segment>={MIN_UZ} bar, yuk<={MAX_YUK} ATR, yerel={YEREL} | AL_PAY={AL_PAY}")
 print(f"  CIKIS={CIKIS} HEDEF=%{HEDEF} | pozisyon %{POZISYON_TABAN} x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %{POZISYON_UST})")
 _r=cds_rejim()
