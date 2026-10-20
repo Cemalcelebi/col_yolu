@@ -52,8 +52,9 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Cemal'in kişisel fotoğraf ve belgelerine, "Dizüstü Bilgisayarım" yedeğine dokunulmaz.
 
 ## GitHub Actions günlük tarama (2026-10-19)
-- `.github/workflows/gunluk_tarama.yml` iş günleri 19:35 TR saatinde `gh_gunluk.py` dosyasını çalıştırır. Bu dosya `BASLAT.py`'yi exec eder, ardından `gun()`'ü çağırır.
+- `.github/workflows/gunluk_col_tarama.yml` iş günleri 19:35 TR saatinde `gh_gunluk.py` dosyasını çalıştırır. Bu dosya `BASLAT.py`'yi exec eder, ardından `gun()`'ü çağırır.
 - Kodlardaki sabit Drive yolu, iş akışında `/content/drive/MyDrive/col_tarayici → repo kökü` sembolik bağlantısıyla karşılanır. Bu yüzden Colab koduna Actions için değişiklik yapılmaz.
+- 20 Ekim: eski `gunluk_tarama.yml` iş akışı 19 Ekim 21:01'de GitHub arayüzünden elle kapatılmıştı (API durumu disabled_manually), bu yüzden zamanlanmış tarama hiç çalışmadı. İş akışı aynı içerikle `gunluk_col_tarama.yml` adıyla yeniden kuruldu; yeni dosya açık başlar. Tarama yine çalışmıyorsa önce iş akışı durumuna bak.
 - Rapor `rapor/son_rapor.txt` dosyasına yazılır, günlük kopyası `rapor/YYYY-MM-DD.txt` adıyla saklanır. Kurulum çıktısı `rapor/kurulum_log.txt` dosyasındadır.
 - Takip durumunun asıl yeri artık bu repodur: `takip_adaylar.csv`, `takip_pozisyonlar.csv`, `takip_kapanan.csv`. Colab'da `gun()` ayrıca çalıştırılırsa iki kopya ayrışır.
 - Veri önbelleği (`veri_1d_turkey.pkl`) repoya girmez, Actions önbelleğinde tutulur.

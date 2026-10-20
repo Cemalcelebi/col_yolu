@@ -8,7 +8,7 @@
 #    BASLAT.py, COL_v1.py, takip.py ve digerlerine dokunulmaz.
 #
 #  NASIL
-#    Is akisi (.github/workflows/gunluk_tarama.yml) once
+#    Is akisi (.github/workflows/gunluk_col_tarama.yml) once
 #        /content/drive/MyDrive/col_tarayici  ->  repo koku
 #    sembolik baglantisini kurar. Boylece kodlardaki sabit Drive yollari
 #    oldugu gibi calisir. Bu dosya o baglantiyi denetler, BASLAT.py'yi
