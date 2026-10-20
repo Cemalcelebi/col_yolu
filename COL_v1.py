@@ -54,6 +54,17 @@
 #      10 yil testinde bu sart sonucu degistirmedi (2631 olaydan 46'si sepet<=0) — sadece cokuste sahte ruzgari keser.
 #      ruzgar_listesi() artik her ruzgarli sektorun UYELERINI 60g getirileriyle basar (ruzgari kim tasiyor) ve
 #      sepet<=0 olan 'az dusen' sektorleri ayri satirda gosterir.
+#  ================== 2026-10-20 D10: RUZGAR TUTARLILIGI (inceleme) ==========================
+#  D10a) bugun_liste 'ruz' sutunu yalniz sayiydi; D9b sarti (sepet > RUZ_MUTLAK) yalniz ruzgar_listesi'nde ve takip
+#      BEKLE'deki 'RUZGAR' etiketinde vardi -> cokus haftasinda 'az dusen' sektordeki aday 'ruz +15' gibi ruzgarli
+#      gorunuyordu. Simdi sektor_ruzgar() 'ruzgar' sutununu (ruz >= RUZ_ESIK ve sepet > RUZ_MUTLAK) tek yerde hesaplar;
+#      bugun_liste 'ruzgar' sutununa takip BEKLE ile ayni 'RUZGAR' etiketini yazar. Sayi ('ruz') aynen kalir.
+#  D10b) sektor_ruzgar tarih hizasi: getiri her hissenin kendi son RUZ_GERI+1 barindan hesaplaniyordu.
+#      (1) Verisi durmus hisse (yfinance 'no data'; BASLAT eski veriyi tutar) eski donemin getirisiyle piyasa medyanina
+#          ve sepete giriyordu -> son bari ortak son tarihten RUZ_BAYAT is gunu eski hisse hesaba girmez (log'a yazilir).
+#      (2) Arada islem gormedigi gunler olan hissenin penceresi geriye uzuyordu -> baslangic kapanisi her hisse icin ayni
+#          takvim gunu: piyasanin RUZ_GERI bar oncesi (hisselerin o tarihlerinin medyani), o gun ve oncesindeki son kapanis.
+#      Tam takvimli hissede sonuc birebir ayni (sentetik sinama). AL kurali, segment ve carpanlar DEGISMEDI.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -96,6 +107,7 @@ RUZ_GERI = 60           # D9: sektor ruzgari penceresi (gun)
 RUZ_ESIK = 0.10         # D9: sepet getirisi (hisse haric) - piyasa medyani >= %10 -> ruzgar var
 RUZ_MIN_UYE = 4         # D9: sepet icin en az uye
 RUZ_MUTLAK = 0.0        # D9b: sepetin kendi RUZ_GERI getirisi bundan buyuk olmali (0 = sepet yukseliyor)
+RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu eski hisse ruzgar hesabina girmez (verisi durmus)
 RUZGAR_LISTE = True     # D9: bugun_liste sonunda ruzgar listesi bas
 SEKTOR_DOSYALAR = ['sektor_BIST.csv', 'sektor_TR.csv']   # D9: col_tarayici'da sirayla aranir
 AL_PAY = 1.002          # kirilim esigi: kapanis > tavan * AL_PAY  (test = canli)
@@ -334,21 +346,42 @@ def sektor_tablosu(yeniden=False):
     _SEKTOR = d
     return d
 
+_RUZ_BAYAT_UYARI = None   # D10b: ayni bayat listesi her cagrida yeniden basilmasin
 def sektor_ruzgar(veri=None, tarih=None):
     """Her hisse icin sektor ruzgari: sepet (hisse haric) RUZ_GERI gunluk getirisi - piyasa medyani.
-    Donus: DataFrame index=sembol, sutunlar alt, ruz, sepet, piy, uye. Sektoru olmayan / sepeti kucuk hisse: ruz NaN."""
+    Donus: DataFrame index=sembol, sutunlar alt, ruz, sepet, piy, uye, g, ruzgar. Sektoru olmayan / sepeti kucuk hisse: ruz NaN.
+    ruzgar (D10a) = ruz >= RUZ_ESIK ve sepet > RUZ_MUTLAK (D9b) — ruzgar karari burada, tek yerde.
+    D10b: verisi ortak son tarihten RUZ_BAYAT is gunu eski hisse hesaba girmez; baslangic kapanisi ortak takvim gunu."""
+    global _RUZ_BAYAT_UYARI
     veri = veri if veri is not None else VERI
     sek = sektor_tablosu()
-    getiri = {}
+    bos = pd.DataFrame(columns=['alt', 'ruz', 'sepet', 'piy', 'uye', 'g', 'ruzgar'])
+    kes = {}
     for s, df in veri.items():
         try:
             x = df[df.index <= pd.Timestamp(tarih)] if tarih is not None else df
-            if len(x) < RUZ_GERI + 1: continue
-            c0, c1 = float(x.Close.iloc[-RUZ_GERI - 1]), float(x.Close.iloc[-1])
+            if len(x) >= RUZ_GERI + 1: kes[s] = x
+        except Exception as e: log.debug(f'{s} ruzgar: {e}')
+    if not kes: return bos
+    son = max(x.index[-1] for x in kes.values())                        # D10b: ortak son tarih
+    sinir = son - pd.offsets.BDay(RUZ_BAYAT)
+    bayat = sorted(s for s, x in kes.items() if x.index[-1] < sinir)
+    if bayat and tuple(bayat) != _RUZ_BAYAT_UYARI:
+        log.warning(f'D10 ruzgar: {len(bayat)} hissenin verisi durmus (son bar < {sinir.date()}), hesaba girmedi: '
+                    + ', '.join(bayat[:12]) + (' ...' if len(bayat) > 12 else ''))
+    _RUZ_BAYAT_UYARI = tuple(bayat)
+    taze = {s: x for s, x in kes.items() if x.index[-1] >= sinir}
+    t0 = pd.Series([x.index[-RUZ_GERI - 1] for x in taze.values()]).median()   # D10b: piyasanin RUZ_GERI bar oncesi
+    getiri = {}
+    for s, x in taze.items():
+        try:
+            on = x.Close[x.index <= t0]
+            if on.empty: continue
+            c0, c1 = float(on.iloc[-1]), float(x.Close.iloc[-1])
             if c0 > 0 and np.isfinite(c0) and np.isfinite(c1): getiri[s] = c1 / c0 - 1
         except Exception as e: log.debug(f'{s} ruzgar: {e}')
     g = pd.Series(getiri, dtype=float)
-    if g.empty: return pd.DataFrame(columns=['alt', 'ruz', 'sepet', 'piy', 'uye', 'g'])
+    if g.empty: return bos
     piy = float(g.median())
     alt = pd.Series({s: sek.get(str(s).upper()) for s in g.index})
     R = []
@@ -361,7 +394,9 @@ def sektor_ruzgar(veri=None, tarih=None):
             R.append({'sembol': s, 'alt': a, 'ruz': np.nan, 'sepet': np.nan, 'piy': piy, 'uye': len(uy), 'g': float(g[s])}); continue
         sep = float(g[uy].mean())
         R.append({'sembol': s, 'alt': a, 'ruz': sep - piy, 'sepet': sep, 'piy': piy, 'uye': len(uy), 'g': float(g[s])})
-    return pd.DataFrame(R).set_index('sembol')
+    out = pd.DataFrame(R).set_index('sembol')
+    out['ruzgar'] = (out.ruz >= RUZ_ESIK) & (out.sepet > RUZ_MUTLAK)        # D10a: D9b dahil; NaN -> False
+    return out
 
 def ruzgar_listesi(veri=None, n=40, yazdir=True):
     """D9: ruzgarli sektorlerde (ruz >= RUZ_ESIK) UZUN COLDE olan hisseler — col_segment adayi olmasa da.
@@ -481,7 +516,8 @@ def bugun_liste(veri=None, n=40, hepsi=False):
         if hepsi or o['GECER']:
             u = uzun_col_olc(df) or {}                   # D9
             rz = float(RZ.ruz.get(s, np.nan)) if (not RZ.empty and s in RZ.index) else np.nan
-            R.append({'sembol':s,'fon':(f"{fe[1]:.0f}%" if fe else ''),'uzun':u.get('uzun',''),'ruz':(round(100*rz,0) if np.isfinite(rz) else np.nan),'bas':o['bas_tarih'],'bar':o['uzunluk'],'doji':o['doji'],'fitil':o['alt_fitil'],'dar':o['dar'],
+            rv = bool(RZ.ruzgar.get(s, False)) if (not RZ.empty and s in RZ.index and 'ruzgar' in RZ.columns) else False   # D10a
+            R.append({'sembol':s,'fon':(f"{fe[1]:.0f}%" if fe else ''),'uzun':u.get('uzun',''),'ruz':(round(100*rz,0) if np.isfinite(rz) else np.nan),'ruzgar':('RUZGAR' if rv else ''),'bas':o['bas_tarih'],'bar':o['uzunluk'],'doji':o['doji'],'fitil':o['alt_fitil'],'dar':o['dar'],
                       'gecerli':o['gecerli_oran'],'clv':o['clv'],'bant':round(o['bant_son'],2),'ortaust':round(o['ortaust'],2),
                       'yuk':o['yukseklik_atr'],'taban':o['taban'],'tavan':o['tavan'],'fiyat':round(float(df.Close.iloc[-1]),2),'GECER':o['GECER']})
     t=pd.DataFrame(R)
@@ -606,7 +642,7 @@ def endeks_yukle(sembol='XU100.IS', period='10y'):
     print(f"{sembol}: {len(xu)} bar  {xu.index[0].date()} -> {xu.index[-1].date()}")
     return xu
 
-print(f"[ok] COL SISTEMI v2  (2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
+print(f"[ok] COL SISTEMI v2  (2026-10-20 D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
 print(f"  esikler: clv>={E_CLV} bant_son>={E_BS} ortaust>={E_OU} | segment>={MIN_UZ} bar, yuk<={MAX_YUK} ATR, yerel={YEREL} | AL_PAY={AL_PAY}")
 print(f"  CIKIS={CIKIS} HEDEF=%{HEDEF} | pozisyon %{POZISYON_TABAN} x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %{POZISYON_UST})")
 _r=cds_rejim()
