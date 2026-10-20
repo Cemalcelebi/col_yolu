@@ -28,6 +28,28 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Repodaki tek veri istisnası küçük ayar dosyalarıdır: `sektor_BIST.csv` (BIST alt endekslerinden kurulan sektörler; Yahoo sektör etiketleri hatalı), `sektor_ABD.csv` ve `.json` ayarları.
 - Token, şifre, Telegram anahtarı gibi bilgiler asla koda yazılmaz. Bunlar `.env` dosyasında tutulur ve `.env` git dışındadır.
 
+## Drive düzeni ve arşiv (temizlik 2026-10-20)
+- Bir dosya `col_tarayici` kökünde yoksa önce arşive bak; yeni kopya üretme.
+- `col_tarayici/arsiv/` yerinden oynatılmaz: `tema_col.py`, `tema_sepet.py` ve `ruzgar_defteri.py`, `arsiv/desen/DESEN_TAM.py` dosyasını okur.
+- `col_tarayici/arsiv/col_kodlarim/`: Eylül – 2 Ekim araştırma kodları. BUYUK_COL (v2–v8), RUZGAR_COL, RUZGAR_ZAMAN, COL_KIRILIM_ATLAS, BUYUK_YUKSELIS, TEYIT_BILETI, SIKISMA_TESTI, BEKLEME_TESTI, COL_KANIT, akümülasyon, segment ve backtest hücreleri. Veri yolları sabit (`K=.../col_tarayici`) olduğu için kodlar buradan da çalışır.
+- `col_tarayici/arsiv/eski_ciktilar/`: Ağustos–Eylül test çıktıları (yon_v3…v10, hbaglam, hcol_geri, iki_asamali, evre2, replay, liste, bekleme, ruzgar_*, col_ruzgar_*, tara4h ...). Ayrıca:
+  - Eylül OB24/OB23 test setinin (n=2064/820) tek kaydı: `onbellek_*.pkl.yedek_20261008_0913`
+  - `onbellek_*.yedek_0923/0942` ve `onbellek_v1_*`: boyutları güncel önbellekle aynı, ama içerik eşitliği kanıtlanmadı
+  - `veri_1d_turkey.pkl.yedek_evren_20261008_0721`
+  - `ASAGI_KIRDI` atlas grafikleri: eski sınıflandırma, yeniden üretilemez
+- `QMLS_Tarayici/arsiv/`: QMLS'in eski sürümleri (`.bak`, `_eski_`, `-1/-2`). Güncel sürümler `QMLS_Tarayici` kökünde.
+- Yerinde kalması zorunlu olanlar:
+  - `veri_1d_turkey.pkl.yedek_bolunme_*`: `bolunme_onar.py` ham veri olarak okur
+  - `veri_1d_turkey.pkl.yedek_20261008`: `zincir_denetimi` için VERI_ESKI
+  - `buyuk_col_kor_anahtar*.pkl`, `buyuk_col_olaylar.csv`, `buyuk_col_haftalik.pkl`: BUYUK_COL kör testi; Cemal'in etiketleri henüz çözülmedi
+  - `onbellek_v2_*`: Ekim col_v2 ölçümü
+  - kalibre_*, goz_*, kor_test/, `iyi_kotu_coller.pdf`, `cemal_vs_kod.pdf`
+- Silinenler (Drive çöp kutusunda ~19 Kasım 2026'ya kadar geri alınabilir):
+  - birebir kopyalar (aynı ad, aynı bayt)
+  - `COLAB_VERILER/col_tarayici/atlas*/` altındaki sınıf klasörleri (972 PNG, COL_KIRILIM_ATLAS çıktısı). Atlas CSV'leri, `taban_serisi_izleme.csv` ve `motor_karne.csv` yerinde.
+  - `__pycache__`
+- Cemal'in kişisel fotoğraf ve belgelerine, "Dizüstü Bilgisayarım" yedeğine dokunulmaz.
+
 ## GitHub Actions günlük tarama (2026-10-19)
 - `.github/workflows/gunluk_tarama.yml` iş günleri 19:35 TR saatinde `gh_gunluk.py` dosyasını çalıştırır. Bu dosya `BASLAT.py`'yi exec eder, ardından `gun()`'ü çağırır.
 - Kodlardaki sabit Drive yolu, iş akışında `/content/drive/MyDrive/col_tarayici → repo kökü` sembolik bağlantısıyla karşılanır. Bu yüzden Colab koduna Actions için değişiklik yapılmaz.
