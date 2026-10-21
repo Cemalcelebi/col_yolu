@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CO = {k: id(v) for k, v in globals().items()}
 
-CO_SURUM = "COL_OBEK v1.1 (2026-10-21, dusen bicak olculeri)"
+CO_SURUM = "COL_OBEK v1.2 (2026-10-21, dusen bicak + Cemal'in yolu: +%8/+%10 mu once stop mu)"
 colog = logging.getLogger("col.obek")
 if not colog.handlers:
     _co_h = logging.StreamHandler(sys.stderr)
@@ -58,6 +58,8 @@ class COAyar:
     al_pay: float = 1.002
     boz_tol: float = 0.02
     ileri: int = 60                # ilk olay icin bakilan bar
+    yuk_esik: Tuple[float, ...] = (8.0, 10.0)   # Cemal: alimdan sonra en az %8-10 yukselis gorulduyse stop maliyete cekilir
+    yuk_bar: int = 60              # yukselis / stop icin bakilan bar (alim barindan sonra)
     min_gecmis: int = 260
     donemler: Tuple = (("2016-19", "2016-01-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"),
                        ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))
@@ -129,6 +131,34 @@ def co_k2_tespit(ay: COAyar, df: pd.DataFrame) -> Tuple[List[Dict[str, Any]], Di
 
 
 # ------------------------------------------------------------------ K3 sonuc + olcu
+def co_yol(ay: COAyar, O: np.ndarray, H: np.ndarray, L: np.ndarray, b: int, stop: float) -> Dict[str, Any]:
+    """Cemal'in yolu: alim barindan sonraki acilista gir, stop = obek dibi - tol. yuk_bar icinde once +%8/+%10 mu geldi, once stop mu?
+    Ayni barda ikisi birden olursa stop sayilir (temkinli). mfe = en yuksek goruldugu %, stop_bar = stop'a kadar bar."""
+    n = len(O)
+    if b + 1 >= n:
+        return {}
+    giris = O[b + 1]
+    out: Dict[str, Any] = {"giris": round(float(giris), 2), "mfe": np.nan, "stop_bar": np.nan}
+    hedefler = {h: f"yuk{int(h)}" for h in ay.yuk_esik}
+    durum = {k: "yok" for k in hedefler.values()}
+    mfe, stop_i = -np.inf, None
+    for i in range(b + 1, min(n, b + 1 + ay.yuk_bar)):
+        mfe = max(mfe, H[i] / giris - 1)
+        if L[i] <= stop:
+            stop_i = i
+            for h, k in hedefler.items():
+                if durum[k] == "yok":
+                    durum[k] = "stop"
+            break
+        for h, k in hedefler.items():
+            if durum[k] == "yok" and H[i] >= giris * (1 + h / 100):
+                durum[k] = "gordu"
+    out.update(durum)
+    out["mfe"] = round(float(mfe) * 100, 1) if np.isfinite(mfe) else np.nan
+    out["stop_bar"] = (stop_i - b) if stop_i else np.nan
+    return out
+
+
 def co_k3_sonuc(ay: COAyar, CD, cay, A: Dict[str, np.ndarray], S20: np.ndarray, r: Dict[str, Any]) -> Dict[str, Any]:
     O, H, L, C = A["O"], A["H"], A["L"], A["C"]
     n = len(C)
@@ -148,6 +178,7 @@ def co_k3_sonuc(ay: COAyar, CD, cay, A: Dict[str, np.ndarray], S20: np.ndarray, 
         isl = CD._cd_islem(cay, ay.al_pay, O, H, L, C, S20, e, r["tavan"], r["dip"])
         if isl and "getiri" in isl:
             s.update(islem_getiri=round(isl["getiri"], 1), hedef=isl["hedef"])
+        s.update(co_yol(ay, O, H, L, olay_i, dip))
     return s
 
 
@@ -243,15 +274,16 @@ def co_k4_taban(ay: COAyar, veri: Dict[str, pd.DataFrame], adim: int = 5, w: int
     rows = []
     for sem, df in veri.items():
         df = df[np.isfinite(df.Close)]
-        H, L, C = (df[c].to_numpy(float) for c in ("High", "Low", "Close"))
+        O, H, L, C = (df[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
         n = len(C); ix = df.index
         for e in range(ay.min_gecmis, n - 1, adim):
             tavan = H[e - w + 1:e + 1].max() * ay.al_pay; dip = L[e - w + 1:e + 1].min() * (1 - ay.boz_tol)
-            olay = "yok"
+            olay, oi = "yok", None
             for i in range(e + 1, min(n, e + 1 + ay.ileri)):
-                if C[i] > tavan: olay = "alim"; break
-                if C[i] < dip: olay = "dusus"; break
-            rows.append({"sembol": sem, "sinyal": ix[e].date(), "olay": olay,
+                if C[i] > tavan: olay, oi = "alim", i; break
+                if C[i] < dip: olay, oi = "dusus", i; break
+            yol = co_yol(ay, O, H, L, oi, dip) if olay == "alim" else {}
+            rows.append({"sembol": sem, "sinyal": ix[e].date(), "olay": olay, **yol,
                          "get_60": round(float(C[min(n - 1, e + 60)] / C[e] - 1) * 100, 1) if e + 60 < n else np.nan,
                          "get_120": round(float(C[min(n - 1, e + 120)] / C[e] - 1) * 100, 1) if e + 120 < n else np.nan})
     return pd.DataFrame(rows)
@@ -284,13 +316,22 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
             if len(tb):
                 sat.append(f"| {ad} TABAN (her 5. gun, w=15) | {len(tb)} | {tb.sembol.nunique()} | {_oran(tb.olay=='alim')} | {_oran(tb.olay=='dusus')} | {_oran(tb.olay=='yok')} | - | "
                            f"{tb.fark60.mean():+.1f} / {tb.fark60.median():+.1f} | {tb.fark120.mean():+.1f} / {tb.fark120.median():+.1f} |")
+    sat += ["", f"## Cemal'in yolu: alim geldikten sonra (ertesi acilis giris, stop = obek dibi -%{100*ay.boz_tol:.0f}, {ay.yuk_bar} bar)", "",
+            "| donem | alim n | +%8 GORDU | +%8 gormeden STOP | ikisi de yok | +%10 GORDU | +%10 gormeden STOP | mfe medyan | stop'a kadar bar medyan |", "|---|---|---|---|---|---|---|---|---|"]
+    for ad, b, s_ in ay.donemler:
+        for etiket, Z in (("", T), ("TABAN", TB if TB is not None else pd.DataFrame())):
+            if Z is None or not len(Z) or "yuk8" not in Z.columns: continue
+            x = Z[(Z.sinyal >= b) & (Z.sinyal <= s_) & (Z.olay == "alim") & Z.yuk8.notna()]
+            if x.empty: continue
+            sat.append(f"| {ad} {etiket} | {len(x)} | {_oran(x.yuk8=='gordu')} | {_oran(x.yuk8=='stop')} | {_oran(x.yuk8=='yok')} | {_oran(x.yuk10=='gordu')} | {_oran(x.yuk10=='stop')} | "
+                       f"{x.mfe.median():+.1f} | {x.stop_bar.median():.0f} |")
     sat += ["", "## Hangi olcu ALIM'i DUSUS'ten ayiriyor? (olcu tercilleri; donem 2017-21 ve 2022-26 ayri; ALIM orani ve fark120 medyani)", ""]
     olculer = ["yuv_%", "mum_kat", "konum250", "dusus60", "bicak_dusus20", "bicak_mum20", "sma50_egim", "sma200_uzak", "bb_son", "hacim_kat", "obek_sira", "piyasa60", "ruzgar60", "w"]
     for ad, b, s_ in (("2017-21", "2017-01-01", "2021-12-31"), ("2022-26", "2022-01-01", "2026-12-31")):
         x = T[(T.sinyal >= b) & (T.sinyal <= s_) & T.olay.isin(["alim", "dusus"])]
         if len(x) < 30: continue
         sat.append(f"### {ad}  (n={len(x)}, ALIM %{100*(x.olay=='alim').mean():.0f})"); sat.append("")
-        sat.append("| olcu | dusuk tercil: ALIM / fark120 | orta | yuksek |"); sat.append("|---|---|---|---|")
+        sat.append("| olcu | dusuk tercil: ALIM / +8 gordu / fark120 | orta | yuksek |"); sat.append("|---|---|---|---|")
         for m in olculer:
             if m not in x.columns or x[m].nunique() < 3: continue
             try:
@@ -300,7 +341,8 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
             h = []
             for lab in ("dusuk", "orta", "yuksek"):
                 z = x[q == lab]
-                h.append(f"%{100*(z.olay=='alim').mean():.0f} / {z.fark120.median():+.1f}")
+                za = z[z.olay == "alim"]
+                h.append(f"%{100*(z.olay=='alim').mean():.0f} / %{100*(za.yuk8=='gordu').mean():.0f} / {z.fark120.median():+.1f}")
             sat.append(f"| {m} | {h[0]} | {h[1]} | {h[2]} |")
         for m in ("onceki_obek",):
             sat.append(""); sat.append(f"{m}: " + " | ".join(f"{k}: n={len(z)} ALIM %{100*(z.olay=='alim').mean():.0f} fark120 {z.fark120.median():+.1f}" for k, z in x.groupby(m)))
