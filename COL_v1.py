@@ -99,7 +99,14 @@
 #      inis >= D13_INIS %, konum (kutu medyani, [d-250, e] araliginda) <= D13_KONUM, retest >= D13_RETEST, yuvarlanma D13_YUV
 #      ('parabol': dipten sonraki Low'lara parabol a>0 ve son egim>0 | 'ucte_bir' | 'sma10' | 'yok'), kutu aralik medyani /
 #      onceki 60 gun <= D13_KUCUK, dipten sonra kucuk mum obegi (>= 3 ardisik bar, aralik <= kutu medyani) >= D13_OBEK
-#      (D13_OBEK_YUK: obekler yukseliyor). Esikler COL_TESPIT (3456 varyant, goz testi + evren) sonucuyla secilir.
+#      (D13_OBEK_YUK: obekler yukseliyor). Esikler COL_TESPIT (3456 varyant, goz testi + evren) sonucuyla secildi (21 Eki):
+#      N120, bar>=15, inis>=%10, retest 0, parabol, kucuk sart yok, obek>=2, obek_yuk hayir (COL_TESPIT vid 3094).
+#      GOZ: Cemal'in 29 colunden 17 (D12 16), 29 'degil' kutusundan 2 yanlis alarm (D12 8); ARZUM en iyi obek yakalandi, dusen
+#      bicak yakalanmadi. EVREN (583 BIST 2016-26 + 1410 ABD 2022-26, 18.7 bin sinyal): sinyalden sonra 60 barda alim orani
+#      tabandan +12..+26 puan (6/6 donem), alim sonrasi uretim cikisi getirisi tabandan iyi 6/6, bozulma %2-9 (taban %31-44);
+#      60 bar ileri getiri 4/6 (2020-22 -1,2 ve ABD 22-23 -1,5 puan). Hic yakalanmayan 8 col: BINBN-24, EMNIS, EUREN, INVES,
+#      PEKER (veri yok), SKTAS, SMRTG, VRGYO (dipten sonra 15 bar yok ya da yuvarlanma parabolu yok). col_olc kapilari
+#      (uzunluk >= MIN_UZ 20, yukseklik <= MAX_YUK 6 ATR) D13'te de gecerli. Geri alma tek satir: SEGMENT_MOD='dip'.
 #      Cikti col_dip ile ayni alanlar (+ dip_bar, inis, retest, yuv, obek, kucuk_kat). col_olc SEGMENT_MOD='dip2' ile kullanir.
 #      col_dip (D12) ve col_segment (D7) DEGISMEDI; carpan alanlari ortak yardimciya (_col_alanlar) alindi, sonuc birebir ayni.
 #  ============================================================================
@@ -148,12 +155,12 @@ RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu esk
 VERI_BAYAT = 5          # D11: son bari ortak son tarihten bu kadar is gunu eski hisse aday olmaz (verisi durmus)
 VERI_BAYAT_UST = 0.10   # D11: bayat orani bunu asarsa toplu veri sorunu sayilir -> bayat suzgeci uygulanmaz
 # D12: dip colu (Cemal'in tarifi). Bolge parametreleri GOZ_ESLE v1.3 (GozAyar) ile ayni tutulur.
-SEGMENT_MOD = 'dip'     # D12: 'dip' (col_dip: bolge + dip + imza) | 'dip2' (col_dip2, D13) | 'eski' (col_segment, D7)
+SEGMENT_MOD = 'dip2'    # D13 (21 Eki): 'dip2' (col_dip2) | 'dip' (col_dip, D12; geri almak icin bu) | 'eski' (col_segment, D7)
 D13_N = 120             # D13: yeni dip icin geriye bakis (bar)
 D13_KENAR = 3           # D13: dip pencerenin ilk bu kadar barinda ise inis gorunmuyor -> aday degil
 D13_BAR = 15            # D13: dipten beri en az bar (dip bu kadar bar savunuldu)
-D13_INIS = 5.0          # D13: pencerede dipten onceki en yuksek kapanis / dip - 1 >= bu kadar % (dusus sonrasi dip)
-D13_KONUM = 0.35        # D13: kutu medyani, [d-250, e] araliginin alt bu kadarinda (dipte); 1.01 = sart yok
+D13_INIS = 10.0         # D13: pencerede dipten onceki en yuksek kapanis / dip - 1 >= bu kadar % (dusus sonrasi dip)
+D13_KONUM = 1.01        # D13: kutu medyani, [d-250, e] araliginin alt bu kadarinda (dipte); 1.01 = sart yok (COL_TESPIT: konum ayirmadi, inis >= %10 yetti)
 D13_RETEST = 0          # D13: dibe 1 normal gun yaklasan bar sayisi en az
 D13_YUV = 'parabol'     # D13: 'parabol' | 'ucte_bir' | 'sma10' | 'yok'
 D13_KUCUK = 99.0        # D13: kutu aralik medyani / onceki 60 gun medyani <= bu kadar (99 = sart yok)
