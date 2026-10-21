@@ -294,6 +294,10 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
   `MALIYET_ESIK`=8.0, CSV'de `maliyette` sütunu, TUT satırında 'stop=maliyet'. AL kuralı, çarpanlar, trail ve ufuk değişmedi. test_takip.py 5/5 (maliyet çıkışı, bayrak kalıcılığı, +8 yoksa stop yok, aynı gün sayılmaz, taban önceliği).
   Dayanak COL_YOL B15: BIST 4 dönem 30 slot ort. +157 vs mevcut +144, ağır kayıp %10→%6. ABD (21 Eki, aynı gün): teyit etmedi — ABD ort. maliyet8_sma20 +17 vs mevcut +21 (22-23: −6 vs +6; 24-26: +40 vs +37).
   6 dönemin 3'ünde mevcudu geçiyor → getiri izi değil; tutarlı olan tek şey ağır kaybın yarıya inmesi (6/6 dönem). Üretimde kalıp kalmayacağı Cemal'in kararı (geri alma tek satır: MALIYET_ESIK=999).
+- BASLAT B5 + takip T11 (21 Eki, Cemal: "gun() her saatte çalışsın, bugünün mumu bitmediyse dünkü veriyle"): seans açıkken (TR iş günü 09:00–19:00, CANLI değilse) bugünün yarım barı
+  VERI'den ve XU100'den her zaman atılır; pkl'de kaldıysa pkl temizlenir. Eskiden yalnız indirme yapıldığında atılıyordu: 21 Eki 12:43'te "veri güncel, indirme atlandı" deyip bugünün barını tuttu, XU100'e hiç uygulanmıyordu.
+  gun() kendi içinde de aynı kapıyı taşır (tarih verilmişse/replay'de uygulanmaz). 19:00 sonrası bugünün barı kalır; 19:35 Actions koşusu etkilenmez. test_takip.py 7/7.
+  Not: Colab'da gun() çalıştırmak Drive CSV'lerini yazar; takip CSV'lerinin asıl yeri repo (Actions). Gün içi koşu istenirse Actions'ta gunluk_col_tarama elle tetiklenir, dünkü veriyle çalışır.
 
 ### 9.6 DİĞER ÖLÇÜMLER (tekil, ertesi açılış, onarılmış veri)
 - col_v2 / yeniden_tara (8 Eki; bugünkü col_olc): 2024-26 yeni liste n=989 %69 bekl +10.8, portföy eşit +140% (yıllık +45, DD −14);
@@ -348,7 +352,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 SİSTEM TEST AŞAMASINDA; bu MD bağlam sigortası, kural defteri değil. Tam iz + doğru metrik hesabı gelince kural olur.
 GÜNCEL TESPİT (20 Eki, D12): dip çölü = bölge kuralı + dipte + yeni dip yok + imza (küçük mum, Bollinger, doji, hacim) ≥3/4. Göz testi 12/29 (D7 1/29). Taban (20 gün zirvesi kırılımı) karşısında iz değil (3/6 dönem). Çöl şekil metrikleri iz vermedi (col_ogren).
 EYLÜL-EKİM 2026 FON TASFİYE KRİZİ: TERA/DSTKF/ODINE/GUNDG/TRHOL... taban serileri GERÇEK düşüş, bölünme değil. Büyük düşüşte önce COLAB_VERILER/col_tarayici/atlas/taban_serisi_izleme.csv + veri_koru_gunluk.csv.
-Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası, D11/T9 verisi durmuş hisse aday olmaz, D12 dip çölü üretimde (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8, T10 +%8 görülünce stop maliyete (21 Eki; BIST +157 vs +144, ABD teyit etmedi, ağır kayıp yarıya) ; veri_koru.
+Ekim eklemeleri: D8 fon süzgeci, D9 uzun çöl + sektör rüzgârı, D10 rüzgâr etiketi (D9b) + tarih hizası, D11/T9 verisi durmuş hisse aday olmaz, D12 dip çölü üretimde (20 Eki); takip T6 taban kırılınca çık (testle çelişiyor), T7, T8, T10 +%8 görülünce stop maliyete (21 Eki; BIST +157 vs +144, ABD teyit etmedi, ağır kayıp yarıya), B5/T11 seans açıkken bugünün yarım barı her zaman atılır; veri_koru.
 Kural: col_segment (yerel=5, ≥20 bar ≤6 ATR) → aday; kapanış>tavan×1.002 → AL; taban −%2 kapanış → çık (T6); +%8 görülünce stop maliyete (T10); %20 → SMA20 trail; 120 bar.
 Boyut %6×CDS×borç×doji×fitil×dar×kural, max %12. Aday filtresi yok. Segment kodu değişmedi.
 Gerçek sayı (tekil, ertesi açılış, 120 bar): BIST 24-26 %64/+8.9 · BIST 23 %88/+38 · ABD 24-26 %62/+8.3 · ABD 22-23 %62/+4.7.

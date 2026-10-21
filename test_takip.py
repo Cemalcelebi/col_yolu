@@ -1,4 +1,4 @@
-"""test_takip.py — takip.py T10 (stop maliyete) mekanik sinama. Sentetik veri, gecici klasor; Drive'a dokunmaz.
+"""test_takip.py — takip.py T10 (stop maliyete) + T11 (seans acikken yarim bar) mekanik sinama. Sentetik veri, gecici klasor; Drive'a dokunmaz.
 Calistirma: python3 test_takip.py  (repo kokunde; COL_v1.py ve takip.py ayni klasorde)"""
 import contextlib, io, os, sys, tempfile
 import numpy as np, pandas as pd
@@ -69,6 +69,23 @@ poz_yaz('t5', g); P, Kp = calistir('t5', df5, df5.index[-1])
 ok = len(Kp) == 1 and Kp.iloc[0].neden == 'taban'
 print('5 taban oncelikli     :', 'OK' if ok else 'HATA', Kp[['neden']].to_dict('records') if len(Kp) else 'kapanan yok')
 if not ok: hata.append(5)
+# 6) T11: tarih verilmeden, seans ACIKKEN (TR 12:43, son bar = bugun) -> bugunun bari atilir, dunku bar ile karar (test 2 ile ayni: TUT, maliyette=1)
+ns['TAKIP_SIMDI'] = df.index[-1] + pd.Timedelta(hours=12, minutes=43)
+poz_yaz('t6', g)
+with contextlib.redirect_stdout(io.StringIO()):
+    A6, P6, K6 = ns['gun'](veri={'TEST': df}, oneki='t6', sessiz=True)
+ok = len(K6) == 0 and len(P6) == 1 and int(P6.iloc[0].maliyette) == 1 and int(P6.iloc[0].bar) == len(yol) - 1
+print('6 seans acik yarim bar:', 'OK' if ok else 'HATA', dict(poz=len(P6), kapanan=len(K6), bar=int(P6.iloc[0].bar) if len(P6) else None))
+if not ok: hata.append(6)
+# 7) T11: ayni veri, seans KAPALI (TR 19:30) -> bugunun bari kalir, test 1 ile ayni (maliyet cikisi)
+ns['TAKIP_SIMDI'] = df.index[-1] + pd.Timedelta(hours=19, minutes=30)
+poz_yaz('t7', g)
+with contextlib.redirect_stdout(io.StringIO()):
+    A7, P7, K7 = ns['gun'](veri={'TEST': df}, oneki='t7', sessiz=True)
+ok = len(K7) == 1 and K7.iloc[0].neden == 'maliyet'
+print('7 seans kapali tam bar:', 'OK' if ok else 'HATA', K7[['neden']].to_dict('records') if len(K7) else 'kapanan yok')
+if not ok: hata.append(7)
+ns['TAKIP_SIMDI'] = None
 import shutil; shutil.rmtree(TMP, ignore_errors=True)
 print('SONUC:', 'HEPSI OK' if not hata else f'HATA {hata}')
 sys.exit(1 if hata else 0)

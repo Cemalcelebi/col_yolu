@@ -37,6 +37,9 @@
 #       fiyati; sonraki bir gunde Low <= giris ise SAT neden='maliyet', cikis = giris (stop emri maliyetten doldu), getiri 0.
 #       Sira: taban (desen iptali) > maliyet > trail > ufuk. 'maliyette' sutunu CSV'de tutulur, TUT satirinda 'stop=maliyet' yazar.
 #       AL kurali, carpanlar, trail ve ufuk DEGISMEDI. test_takip.py mekanik sinama.
+#   T11) 2026-10-21 YARIM BAR (Cemal: 'gun() her saatte calissin, bugunun mumu bitmediyse dunku veriyle'): seans acikken
+#       (TR is gunu 09:00-19:00, CANLI degilse) gun() bugune ait barlari veriden atar, son tam barla (dun) karar verir. tarih verilmisse
+#       (replay) uygulanmaz. BASLAT B5 ayni isi VERI/XU100 yuklenirken yapar; bu kapi gun()'un kendi guvencesidir. TAKIP_SIMDI testi icin.
 # =====================================================================
 import os, logging, numpy as np, pandas as pd
 _K='/content/drive/MyDrive/col_tarayici'
@@ -44,6 +47,7 @@ POZ_TABAN=6.0
 TABAN_TOL=0.02      # T6: tabanin %2 altinda kapanis = col bozuldu
 TABAN_YEDEK=0.15    # T6: taban hesaplanamazsa giris*(1-0.15)
 MALIYET_ESIK=8.0    # T10: giris ustunde bu kadar % gorulunce stop maliyete (giris fiyati)
+TAKIP_SIMDI=None    # T11: test icin sabit TR zamani (None = simdi)
 A_KOL=['sembol','eklendi','tavan','taban','bas','kural','doji','alt_fitil','dar','gecerli_oran','atr_ref']
 P_KOL=['sembol','giris_tarih','giris','tavan','taban','hedef_vurdu','bar','giris_acilis','poz','cds_pct','borc_oz','oz_negatif','kural',
        'doji','alt_fitil','dar','gecerli_oran','xu_giris','maliyette']
@@ -142,10 +146,27 @@ def _acilis_doldur(T, veri):
         T.loc[m,'getiri_acilis']=((T.loc[m,'cikis_acilis']/T.loc[m,'giris_acilis']-1)*100).round(1)
     return T
 
+def _tr_zaman():
+    z=globals().get('TAKIP_SIMDI')
+    return pd.Timestamp(z) if z is not None else pd.Timestamp.utcnow().tz_localize(None)+pd.Timedelta(hours=3)
+def _yarim_bar_at(veri):
+    """T11: seans acikken (TR is gunu 09:00-19:00, CANLI degil) bugune ait barlari atar. -> (yeni sozluk, atilan hisse sayisi, bugun)"""
+    t=_tr_zaman()
+    if not (t.weekday()<5 and 9<=t.hour<19) or globals().get('CANLI',False): return veri, 0, None
+    b=t.normalize(); at=0; y={}
+    for s,df in veri.items():
+        if df is not None and len(df) and df.index[-1].normalize()>=b: y[s]=df[df.index.normalize()<b]; at+=1
+        else: y[s]=df
+    return y, at, b
 def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih=None):
     veri=veri if veri is not None else VERI
     if tarih is not None:
         T=pd.Timestamp(tarih); veri={s:df[df.index<=T] for s,df in veri.items()}
+    else:                                                # T11: seans acikken bugunun yarim bari atilir
+        veri,_at,_b=_yarim_bar_at(veri)
+        if _at:
+            tlog.info(f'T11 seans acik: {_at} hissede {_b.date()} yarim bari atildi')
+            if not sessiz: print(f"  [seans acik] {_at} hissede bugunun ({_b.date()}) yarim bari atildi; karar son tam barla")
     bugun=str(max(df.index[-1] for df in veri.values() if len(df)).date())
     yA,yP,yK=_yol(oneki)
     A=_oku(yA,A_KOL); P=_oku(yP,P_KOL); Kp=_oku(yK,K_KOL)
@@ -306,4 +327,4 @@ def replay(bas, son=None, veri=None, oneki='replay', sifirla=True):
         v=Kp.getiri.astype(float); print(f"\n{len(Kp)} islem | kazanan %{100*(v>0).mean():.0f} | ort %{v.mean():+.1f} | bek %{bek(v):+.1f}")
     return A,P,Kp
 
-print(f"[ok] takip (2026-10-21 T10: +%{MALIYET_ESIK:.0f} gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
+print(f"[ok] takip (2026-10-21 T11: seans acikken bugunun yarim bari atilir | T10: +%{MALIYET_ESIK:.0f} gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")

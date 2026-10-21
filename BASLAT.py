@@ -5,6 +5,9 @@
 #      temettu duzeltmesi) o hisse BASTAN indirilir. Sahte sicrama / sahte kirilim biter.
 #  B3) onbellek.py, DENETIM.py yuklenir; OBUS de yuklenir; XU100 10 yil (2017-22 testi).
 #  B4) temel_duz.csv eski formatsa (oz_negatif yok) yeniden hesaplanir.
+#  B5) 2026-10-21 YARIM BAR (Cemal): gun() her saatte calisabilsin. Seans acikken (TR is gunu 09:00-19:00) bugunun
+#      yarim bari VERI'den ve XU100'den HER ZAMAN atilir (indirme atlanmis olsa da; pkl'de kaldiysa pkl temizlenir),
+#      karar dunku kapanisla verilir. 19:00 sonrasi bugunun bari kalir. CANLI=True ile kapanir.
 import os, io, time, pickle, logging
 if not os.path.exists('/content/drive/MyDrive'):
     from google.colab import drive; drive.mount('/content/drive')
@@ -46,8 +49,25 @@ def sembol_bastan_indir(k, period=None):
     except Exception as e: blog.warning(f'{k} bastan indirme: {e}')
     return False
 B2_NEDEN = {}   # VK_YAMA v1.0 (veri_koru: yenileme sonrası bölünme onarımı + B2 nedeni)
+def _seans_acik():
+    """B5: TR is gunu 09:00-19:00 arasi True (gunun bari henuz kapanmadi). CANLI=True ile kapali."""
+    t=_tr_simdi(); return bool(t.weekday()<5 and 9<=t.hour<19 and not globals().get('CANLI',False))
+def _yarim_bar_at(veri):
+    """B5: seans acikken bugune (ve sonrasina) ait barlari atar; sozlugu yerinde degistirir, atilan hisse sayisini doner."""
+    if not _seans_acik(): return 0
+    _bugun=pd.Timestamp(_tr_simdi().date()); _at=0
+    for _k in list(veri):
+        _df=veri[_k]
+        if _df is not None and len(_df) and _df.index[-1].normalize()>=_bugun: veri[_k]=_df[_df.index.normalize()<_bugun]; _at+=1
+    return _at
 def veri_yenile(gun=15, zorla=False, sapma=0.005):
     for _k in VERI: VERI[_k]=VERI[_k].dropna(subset=['Close'])
+    _at0=_yarim_bar_at(VERI)                              # B5: pkl'de bugunun yarim bari kaldiysa once at
+    if _at0:
+        print(f"  [yenile] seans acik ({_tr_simdi():%H:%M} TR): {_at0} hissede bugunun yarim bari atildi, karar dunku kapanisla")
+        try:
+            tmp=f'{K}/veri_1d_turkey.pkl.tmp'; pickle.dump(VERI,open(tmp,'wb')); os.replace(tmp,f'{K}/veri_1d_turkey.pkl')
+        except Exception as e: blog.warning(f'B5 pkl temizlenemedi: {e}')
     son=max(df.index[-1] for df in VERI.values()).date(); hedef=_beklenen_son_bar()
     if son>=hedef and not zorla and not globals().get('CANLI',False):
         print(f"  [yenile] veri guncel ({son}), indirme atlandi"); return son
@@ -78,12 +98,8 @@ def veri_yenile(gun=15, zorla=False, sapma=0.005):
         if sembol_bastan_indir(k): guncel+=1
         else: hata+=1
     if bastan: print(f"  [yenile] seri uyusmadi (bolunme/temettu), bastan indirildi: {', '.join(bastan[:15])}{' ...' if len(bastan)>15 else ''} ({len(bastan)})")
-    _tr=_tr_simdi()
-    if _tr.weekday()<5 and 9<=_tr.hour<19 and not globals().get('CANLI',False):
-        _bugun=pd.Timestamp(_tr.date()); _at=0
-        for _k in VERI:
-            if len(VERI[_k]) and VERI[_k].index[-1].normalize()>=_bugun: VERI[_k]=VERI[_k][VERI[_k].index.normalize()<_bugun]; _at+=1
-        if _at: print(f"  [yenile] seans acik: {_at} hissede bugunun yarim bari atildi")
+    _at=_yarim_bar_at(VERI)                               # B5
+    if _at: print(f"  [yenile] seans acik ({_tr_simdi():%H:%M} TR): {_at} hissede bugunun yarim bari atildi, karar dunku kapanisla")
     for _k in VERI: VERI[_k]=VERI[_k].dropna(subset=['Close'])
     son=max(df.index[-1] for df in VERI.values()).date()
     print(f"  [yenile] {guncel} hisse guncellendi | hata {hata} | son bar {son} | {time.time()-t0:.0f}s")
@@ -122,7 +138,10 @@ def pnl_ob(o, kb, gp, ufuk=250, hedef=20, maliyet=0.4):
     """Eski imza korunur (getiri, jt); govde DENETIM.pnl ile ayni."""
     g,jt,_=pnl(o, kb, gp, ufuk=ufuk, hedef=hedef, maliyet=maliyet); return g,jt
 print(f"  onbellek: OB24 {len(OB24) if OB24 else '-'} | OB23 {len(OB23) if OB23 else '-'} | OBUS {len(OBUS) if OBUS else '-'}")
-try: xu = endeks_yukle(period='10y')
+try:
+    xu = endeks_yukle(period='10y')
+    _xd={'xu':xu}
+    if _yarim_bar_at(_xd): xu=_xd['xu']; print(f"  [endeks] seans acik: XU100 bugunun yarim bari atildi, son bar {xu.index[-1].date()}")   # B5
 except Exception as e: xu=None; print("[endeks yok]", e)
 tr=_tr_simdi()
 print(f"\nHAZIR | VERI {len(VERI)} | d {len(d)} | d23 {len(d23) if d23 is not None else '-'} | TR saat {tr:%H:%M}")
