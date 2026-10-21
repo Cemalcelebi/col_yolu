@@ -33,7 +33,7 @@ import pandas as pd
 
 _CK_ONCE_CB = {k: id(v) for k, v in globals().items()}
 
-CB_SURUM = "COL_BUGUN v1.0 (2026-10-21)"
+CB_SURUM = "COL_BUGUN v1.1 (2026-10-21, etiketleme seti)"
 cblog = logging.getLogger("col.bugun")
 if not cblog.handlers:
     _cb_h = logging.StreamHandler(sys.stderr)
@@ -51,6 +51,9 @@ class CBAyar:
     grafik_bar: int = 220                # grafikte gosterilen son bar sayisi
     sayfa_basi: int = 4                  # PDF sayfasinda grafik sayisi
     min_bar: int = 260                   # taramaya girmek icin en az bar
+    etiket_n: int = 20                   # etiketleme PDF'i: red listesinden secilen kutu sayisi (bulunanlar ayrica hepsi)
+    etiket_min_bar: int = 25             # etiketlemeye girecek red kutusunun en az bar sayisi
+    tohum: int = 42
 
 
 def _cb_cd():
@@ -132,8 +135,9 @@ def cb_k3_tara(ay: CBAyar, ns: Dict[str, Any], veri: Dict[str, pd.DataFrame]) ->
 
 
 # ------------------------------------------------------------------ K4 grafik
-def cb_k4_grafik(ay: CBAyar, veri: Dict[str, pd.DataFrame], tc: pd.DataFrame, yol: str, baslik: str) -> Optional[str]:
-    """Her col icin mum grafigi: kutu dikdortgeni, taban/tavan, SMA20/50, hacim. Tek PDF."""
+def cb_k4_grafik(ay: CBAyar, veri: Dict[str, pd.DataFrame], tc: pd.DataFrame, yol: str, baslik: str, anonim: bool = False) -> Optional[str]:
+    """Her col icin mum grafigi: kutu dikdortgeni, taban/tavan, SMA20/50, hacim. Tek PDF.
+    anonim=True: etiketleme icin — hisse adi yok, numara var, taban/tavan cizgisi yok (Cemal'in kurali: test resminde ad yok)."""
     if tc.empty:
         return None
     try:
@@ -166,13 +170,18 @@ def cb_k4_grafik(ay: CBAyar, veri: Dict[str, pd.DataFrame], tc: pd.DataFrame, yo
                 ax.plot(xs, x_.Close.rolling(50).mean().to_numpy()[a0:en + 1], color="#6c5ce7", lw=0.9, label="SMA50")
                 lo_, hi_ = float(x_.Low.iloc[s:en + 1].min()), float(x_.High.iloc[s:en + 1].max())
                 ax.add_patch(Rectangle((s - .5, lo_), en - s + 1, hi_ - lo_, fill=False, ec="#8e44ad", lw=1.8, label="kutu (D12)"))
-                ax.axhline(r.tavan, color="#27ae60", lw=0.9, ls="--", label=f"tavan {r.tavan}")
-                ax.axhline(r.taban, color="#c0392b", lw=0.9, ls="--", label=f"taban {r.taban}")
+                if not anonim:
+                    ax.axhline(r.tavan, color="#27ae60", lw=0.9, ls="--", label=f"tavan {r.tavan}")
+                    ax.axhline(r.taban, color="#c0392b", lw=0.9, ls="--", label=f"taban {r.taban}")
                 ax2 = ax.twinx(); ax2.bar(xs, V, color="#bbb", alpha=.35, width=1); ax2.set_ylim(0, np.nanmax(V) * 4); ax2.axis("off")
-                etiket = "  ".join(e for e in (("GECER" if r.GECER else "kural gecmez"), r.ruzgar, (f"fon {r.fon}" if r.fon else "")) if e)
-                ax.set_title(f"{r.sembol}  kutu {pd.Timestamp(r.kutu_bas):%d.%m.%Y}-{pd.Timestamp(r.kutu_son):%d.%m.%Y} ({r.bar} bar)  "
-                             f"konum {r.konum}  imza {r.imza}/4 [{r.imza_ok}]  fiyat {r.fiyat}  tavana %{r['tavana_%']:+.1f}  {etiket}",
-                             fontsize=7.5)
+                if anonim:
+                    ax.set_title(f"#{int(r.no)}   kutu {pd.Timestamp(r.kutu_bas):%d.%m.%Y}-{pd.Timestamp(r.kutu_son):%d.%m.%Y} ({r.bar} bar)   "
+                                 f"konum {r.konum}  imza {r.imza}/4 [{r.imza_ok}]        COL / DEGIL / HENUZ DEGIL : ______", fontsize=8)
+                else:
+                    etiket = "  ".join(e for e in (("GECER" if r.GECER else "kural gecmez"), r.ruzgar, (f"fon {r.fon}" if r.fon else "")) if e)
+                    ax.set_title(f"{r.sembol}  kutu {pd.Timestamp(r.kutu_bas):%d.%m.%Y}-{pd.Timestamp(r.kutu_son):%d.%m.%Y} ({r.bar} bar)  "
+                                 f"konum {r.konum}  imza {r.imza}/4 [{r.imza_ok}]  fiyat {r.fiyat}  tavana %{r['tavana_%']:+.1f}  {etiket}",
+                                 fontsize=7.5)
                 tk = np.linspace(a0, en, 6).astype(int)
                 ax.set_xticks(tk); ax.set_xticklabels([f"{ix[i]:%d.%m.%y}" for i in tk], fontsize=6.5)
                 ax.tick_params(axis="y", labelsize=6.5); ax.legend(fontsize=5.5, loc="upper left", ncol=5)
@@ -180,6 +189,38 @@ def cb_k4_grafik(ay: CBAyar, veri: Dict[str, pd.DataFrame], tc: pd.DataFrame, yo
             fig.tight_layout()
             pdf.savefig(fig, bbox_inches="tight"); plt.close(fig)
     cblog.info("K4: PDF -> %s (%d grafik)", yol, len(tc))
+    return yol
+
+
+# ------------------------------------------------------------------ K6 etiketleme
+def cb_k6_etiket(ay: CBAyar, veri: Dict[str, pd.DataFrame], tc: pd.DataFrame, tr: pd.DataFrame, cikti: str, gun: str) -> Optional[str]:
+    """Cemal'in gozu icin set: bulunan collerin hepsi + red listesinden red nedenine gore dengeli etiket_n kutu
+    (bar >= etiket_min_bar, imza yuksek olan once, sabit tohumla). Karisik sirada numaralanir; ad anahtari CSV'de."""
+    rng = np.random.default_rng(ay.tohum)
+    parcalar: List[pd.DataFrame] = []
+    if len(tc):
+        a = tc[["sembol", "kutu_bas", "kutu_son", "bar", "konum", "imza", "imza_ok", "fiyat"]].copy(); a["kaynak"] = "col"; a["red"] = "COL"
+        parcalar.append(a)
+    if len(tr):
+        t = tr[tr.bar.fillna(0) >= ay.etiket_min_bar].copy()
+        nedenler = [n for n in ("yeni dip", "dipte degil", "imza az") if (t.red == n).any()]
+        pay = int(np.ceil(ay.etiket_n / max(1, len(nedenler))))
+        for n in nedenler:
+            g = t[t.red == n].copy()
+            g["_r"] = rng.random(len(g))
+            g = g.sort_values(["imza", "_r"], ascending=[False, True]).head(pay)
+            b = g[["sembol", "kutu_bas", "kutu_son", "bar", "konum", "imza", "imza_ok", "fiyat", "red"]].copy(); b["kaynak"] = "red"
+            parcalar.append(b)
+    if not parcalar:
+        return None
+    E = pd.concat(parcalar, ignore_index=True)
+    E = E.iloc[rng.permutation(len(E))].reset_index(drop=True)
+    E.insert(0, "no", np.arange(1, len(E) + 1))
+    E["cemal"] = ""
+    E.to_csv(os.path.join(cikti, f"COL_BUGUN_etiket_{gun}.csv"), index=False)
+    yol = cb_k4_grafik(ay, veri, E, os.path.join(cikti, f"COL_BUGUN_etiket_{gun}.pdf"),
+                       f"Etiketleme — {gun}: {len(E)} kutu (hisse adsiz). Her kutuya: COL / DEGIL / HENUZ DEGIL", anonim=True)
+    cblog.info("K6: etiket seti %d kutu (col %d, red %d)", len(E), int((E.kaynak == 'col').sum()), int((E.kaynak == 'red').sum()))
     return yol
 
 
@@ -204,6 +245,7 @@ def col_bugun(ay: Optional[CBAyar] = None, veri: Optional[Dict[str, pd.DataFrame
     pdf = cb_k4_grafik(ay, veri, tc, os.path.join(cikti, f"COL_BUGUN_{gun}.pdf"),
                        f"D12 dip colu — {gun} itibariyla bulunan {len(tc)} col ({ns.get('SEGMENT_MOD')}, imza>={ns.get('IMZA_MIN')}/4, "
                        f"DIP_KONUM {ns.get('DIP_KONUM')})")                   # K4
+    etiket_pdf = cb_k6_etiket(ay, veri, tc, tr, cikti, gun)                      # K6
     # K5 rapor
     sat = [f"# COL BUGUN — {gun} ({CB_SURUM})", "",
            f"Tespit: uretim COL_v1.col_olc, SEGMENT_MOD={ns.get('SEGMENT_MOD')} (D12 col_dip: bolge + dipte DIP_KONUM<={ns.get('DIP_KONUM')} "
@@ -223,11 +265,12 @@ def col_bugun(ay: Optional[CBAyar] = None, veri: Optional[Dict[str, pd.DataFrame
         if len(tr) > 60:
             sat.append(f"... (+{len(tr) - 60}; tamami CSV'de)")
     sat.append("")
-    sat.append(f"Dosyalar: COL_BUGUN_{gun}.csv, COL_BUGUN_red_{gun}.csv" + (f", COL_BUGUN_{gun}.pdf" if pdf else " (PDF yok)"))
+    sat.append(f"Dosyalar: COL_BUGUN_{gun}.csv, COL_BUGUN_red_{gun}.csv" + (f", COL_BUGUN_{gun}.pdf" if pdf else " (PDF yok)")
+               + (f", etiketleme: COL_BUGUN_etiket_{gun}.pdf + .csv" if etiket_pdf else ""))
     metin = "\n".join(sat) + "\n"
     open(os.path.join(cikti, "COL_BUGUN_rapor.md"), "w", encoding="utf-8").write(metin)
     cblog.info("BITTI %.0f sn -> %s", time.monotonic() - t0, cikti)
-    return {"col": tc, "red": tr, "rapor": metin, "pdf": pdf, "cikti": cikti}
+    return {"col": tc, "red": tr, "rapor": metin, "pdf": pdf, "etiket_pdf": etiket_pdf, "cikti": cikti}
 
 
 def _cakisma_kontrol_cb(_once=_CK_ONCE_CB, _dosya='COL_BUGUN.py'):
