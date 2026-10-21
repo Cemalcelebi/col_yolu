@@ -16,6 +16,7 @@
 #    maliyet8_sma20: +%8'de maliyete; +%20 gorulunce SMA20 alti kapanista cik (mevcut trail ile birlesik)
 #    mevcut        : mevcut sistem (+%20 sonra SMA20 trail, 120 bar) + ilk stop
 #    mevcut_stopsuz: mevcut sistem, stop yok (COL_DIP_TEST ile ayni)
+#    hedef_5/8/10/15/20: alim gelince ilk dokunusta sabit hedefte sat; gelmezse ilk stop; 120 barda kapanis (Cemal 21 Eki)
 #  Stop seviyesi, bir onceki barin zirvesine gore guncellenir (ayni bar icinde hem yukselip hem stop olmak temkinli sayilir).
 #  TABAN: ayni yol, obek sarti aranmadan her 5. gunun son 15 mumu kutu sayilarak (COL_OBEK tabani). Oran 1,3x kurali icin.
 #  OLCULER: donem basina n, kazanan %, ort (%200'de kirpili) / medyan, agir kayip % (< -20), stopla cikan %, ort bar, slot portfoy (30 slot).
@@ -36,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in globals().items()}
 
-CY_SURUM = "COL_YOL v1.0 (2026-10-21)"
+CY_SURUM = "COL_YOL v1.1 (2026-10-21, sabit hedef varyantlari)"
 cylog = logging.getLogger("col.yol")
 if not cylog.handlers:
     _cy_h = logging.StreamHandler(sys.stderr)
@@ -74,6 +75,12 @@ class CYAyar:
         "maliyet8_sma20": {"T": [8], "S": [0], "sma20": 20},
         "mevcut": {"sma20": 20},
         "mevcut_stopsuz": {"sma20": 20, "stopsuz": True},
+        # Cemal 21 Eki: "alim gelince beklemeden %5 / %8 / %10 al cik; gelmezse kutu dibi -2'de stop"
+        "hedef_5": {"hedef": 5},
+        "hedef_8": {"hedef": 8},
+        "hedef_10": {"hedef": 10},
+        "hedef_15": {"hedef": 15},
+        "hedef_20": {"hedef": 20},
     })
 
 
@@ -164,13 +171,23 @@ def cy_cikis(ay: CYAyar, v: Dict[str, Any], O: np.ndarray, H: np.ndarray, L: np.
         hv = kaz >= v["sma20"]                          # hedef gorulmus mu (onceki bara kadar)
         tr = hv & np.isfinite(s) & (c < s)
         k_trail = int(np.argmax(tr)) if tr.any() else None
-    aday = [(k_stop, "stop"), (k_trail, "trail")]
+    k_hedef = None
+    if "hedef" in v:
+        hp = p0 * (1 + v["hedef"] / 100)
+        hh = h >= hp
+        k_hedef = int(np.argmax(hh)) if hh.any() else None
+    aday = [(k_stop, "stop"), (k_trail, "trail"), (k_hedef, "hedef")]
     aday = [(k, ad) for k, ad in aday if k is not None]
     if aday:
-        k, ad = min(aday, key=lambda z: z[0])
+        # ayni barda stop ve hedef birlikte -> temkinli: stop (siralama: stop < trail < hedef)
+        sira = {"stop": 0, "trail": 1, "hedef": 2}
+        k, ad = min(aday, key=lambda z: (z[0], sira[z[1]]))
         if ad == "stop":
             fiyat = min(o[k], stop[k]) if o[k] < stop[k] else stop[k]
             return g + k, float(fiyat), "stop"
+        if ad == "hedef":
+            hp = p0 * (1 + v["hedef"] / 100)
+            return g + k, float(max(o[k], hp)), "hedef"       # acilis hedefin ustundeyse acilistan
         return g + k, float(c[k]), "trail"
     k = m - 1
     return g + k, float(c[k]), ("ufuk" if son == g + ay.ufuk else "veri_sonu")
