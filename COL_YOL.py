@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in globals().items()}
 
-CY_SURUM = "COL_YOL v1.1 (2026-10-21, sabit hedef varyantlari)"
+CY_SURUM = "COL_YOL v1.2 (2026-10-21, ABD evreni)"
 cylog = logging.getLogger("col.yol")
 if not cylog.handlers:
     _cy_h = logging.StreamHandler(sys.stderr)
@@ -62,6 +62,8 @@ class CYAyar:
     taban_w: int = 15
     donemler: Tuple = (("2016-19", "2016-01-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"),
                        ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))
+    abd: bool = True               # ABD evreni (COL_DIP_TEST.cd_k1_abd, yfinance ~5 dk), CLAUDE.md test standardi
+    donemler_abd: Tuple = (("ABD 2022-23", "2022-01-01", "2023-12-31"), ("ABD 2024-26", "2024-01-01", "2026-12-31"))
     # varyant adi -> (basamak esikleri %, stop seviyeleri % [girise gore]; 'zirve' iz; sma20 trail esigi)
     varyantlar: Dict[str, Dict[str, Any]] = field(default_factory=lambda: {
         "stop_ufuk": {},
@@ -215,9 +217,9 @@ def cy_k3_varyantlar(ay: CYAyar, isl: List[Dict[str, Any]], D: Dict[str, Dict[st
 
 
 # ------------------------------------------------------------------ K4 ozet
-def cy_k4_ozet(ay: CYAyar, CD, T: pd.DataFrame) -> pd.DataFrame:
+def cy_k4_ozet(ay: CYAyar, CD, T: pd.DataFrame, donemler: Optional[Tuple] = None) -> pd.DataFrame:
     rows = []
-    for ad, b, s_ in ay.donemler:
+    for ad, b, s_ in (donemler or ay.donemler):
         x0 = T[(T.sinyal >= b) & (T.sinyal <= s_)]
         for kaynak in ("obek", "taban"):
             for var in ay.varyantlar:
@@ -237,12 +239,13 @@ def cy_k4_ozet(ay: CYAyar, CD, T: pd.DataFrame) -> pd.DataFrame:
 
 
 # ------------------------------------------------------------------ K5 rapor
-def cy_k5_rapor(ay: CYAyar, oz: pd.DataFrame, cikti: str) -> str:
-    sat = [f"# COL YOL — obek -> alim -> cikis varyantlari   ({CY_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
+def cy_k5_rapor(ay: CYAyar, oz: pd.DataFrame, cikti: str, donemler: Optional[Tuple] = None, pazar: str = "BIST") -> str:
+    donemler = donemler or ay.donemler
+    sat = [f"# COL YOL — obek -> alim -> cikis varyantlari — {pazar}   ({CY_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
            "Yol: obek sinyali -> 60 gunde yesil kapanis > obek tavani -> ertesi acilis giris -> ilk stop obek dibi -%2 -> cikis varyanti -> en gec 120 bar.",
            "Maliyet %0,4. Ortalama %200'de kirpili (kurus hisse veri sicramasi). Taban: obek aranmadan her 5. gunun 15 mumluk kutusu, ayni yol.",
            "Slot portfoy: 30 slot, esit agirlik, giris sirasi, dolu ise atla (yalniz obek).", ""]
-    for ad, _, _ in ay.donemler:
+    for ad, _, _ in donemler:
         x = oz[oz.donem == ad]
         if x.empty:
             continue
@@ -259,15 +262,25 @@ def cy_k5_rapor(ay: CYAyar, oz: pd.DataFrame, cikti: str) -> str:
                        + (f"{t.n} | %{t['kazanan_%']:.0f} | {t['ort_%']:+.1f} / {t['medyan_%']:+.1f} | %{t['agir_%']:.0f} | %{t['stop_%']:.0f} |" if t is not None else "- | - | - | - | - |"))
         sat.append("")
     # dort donemde en iyi: ort ve kazanan siralamasi
-    sat += ["## Dort donem birlikte (obek): varyant basina donem ortalamalarinin ortalamasi", "", "| varyant | kazanan | ort | medyan | agir | slot portfoy ort |", "|---|---|---|---|---|---|"]
+    sat += [f"## {pazar} donemleri birlikte (obek): varyant basina donem ortalamalarinin ortalamasi", "", "| varyant | kazanan | ort | medyan | agir | slot portfoy ort |", "|---|---|---|---|---|---|"]
     o = oz[oz.kaynak == "obek"].groupby("varyant").agg(kazanan=("kazanan_%", "mean"), ort=("ort_%", "mean"), medyan=("medyan_%", "mean"),
                                                         agir=("agir_%", "mean"), slot=("slot_portfoy_pct", "mean")).sort_values("ort", ascending=False)
     for var, r in o.iterrows():
         sat.append(f"| {var} | %{r.kazanan:.0f} | {r.ort:+.1f} | {r.medyan:+.1f} | %{r.agir:.0f} | {r.slot:+.0f}% |")
     sat += ["", "Not: taban ile kiyas 'obek ne ekliyor' sorusuna, varyantlar arasi kiyas 'cikis nasil olmali' sorusuna bakar. OLCUM; kural sonucla.", ""]
     metin = "\n".join(sat) + "\n"
-    open(os.path.join(cikti, "COL_YOL_rapor.md"), "w", encoding="utf-8").write(metin)
+    open(os.path.join(cikti, "COL_YOL_rapor.md" if pazar == "BIST" else f"COL_YOL_rapor_{pazar}.md"), "w", encoding="utf-8").write(metin)
     return metin
+
+
+def _yol_pazar(ay: CYAyar, CD, CO, veri: Dict[str, pd.DataFrame], cikti: str, donemler: Tuple, pazar: str) -> Tuple[pd.DataFrame, pd.DataFrame, str]:
+    isl, D = cy_k2_islemler(ay, CO, veri)
+    T = cy_k3_varyantlar(ay, isl, D)
+    ek = "" if pazar == "BIST" else f"_{pazar}"
+    T.to_csv(os.path.join(cikti, f"col_yol_islemler{ek}.csv.gz"), index=False)
+    oz = cy_k4_ozet(ay, CD, T, donemler)
+    oz.to_csv(os.path.join(cikti, f"col_yol_ozet{ek}.csv"), index=False)
+    return T, oz, cy_k5_rapor(ay, oz, cikti, donemler, pazar)
 
 
 def col_yol(ay: Optional[CYAyar] = None, veri: Optional[Dict[str, pd.DataFrame]] = None) -> Dict[str, Any]:
@@ -279,14 +292,20 @@ def col_yol(ay: Optional[CYAyar] = None, veri: Optional[Dict[str, pd.DataFrame]]
     cay = CD.CDAyar(kok=ay.kok)
     if veri is None:
         veri = CD.cd_k1_bist(cay); CD.cd_k2_onarim(cay, veri)
-    isl, D = cy_k2_islemler(ay, CO, veri)
-    T = cy_k3_varyantlar(ay, isl, D)
-    T.to_csv(os.path.join(cikti, "col_yol_islemler.csv.gz"), index=False)
-    oz = cy_k4_ozet(ay, CD, T)
-    oz.to_csv(os.path.join(cikti, "col_yol_ozet.csv"), index=False)
-    metin = cy_k5_rapor(ay, oz, cikti)
+    T, oz, metin = _yol_pazar(ay, CD, CO, veri, cikti, ay.donemler, "BIST")
+    out: Dict[str, Any] = {"islemler": T, "ozet": oz, "rapor": metin, "cikti": cikti}
+    if ay.abd:
+        try:
+            veri_abd = CD.cd_k1_abd(cay)
+            Ta, oza, ma = _yol_pazar(ay, CD, CO, veri_abd, cikti, ay.donemler_abd, "ABD")
+            out.update(islemler_abd=Ta, ozet_abd=oza, rapor_abd=ma)
+            metin = metin + "\n" + ma
+        except Exception as ex:
+            cylog.error("ABD: %s", ex)
+            out["rapor_abd"] = f"ABD calismadi: {ex}"
+    out["rapor"] = metin
     cylog.info("BITTI %.0f sn -> %s", time.monotonic() - t0, cikti)
-    return {"islemler": T, "ozet": oz, "rapor": metin, "cikti": cikti}
+    return out
 
 
 def _cakisma_kontrol_cy(_once=_CK_ONCE_CY, _dosya='COL_YOL.py'):
