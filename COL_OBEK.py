@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CO = {k: id(v) for k, v in globals().items()}
 
-CO_SURUM = "COL_OBEK v1.2 (2026-10-21, dusen bicak + Cemal'in yolu: +%8/+%10 mu once stop mu)"
+CO_SURUM = "COL_OBEK v1.3 (2026-10-21, alim = yesil mum kapanisi tavan ustu; +%8/+%10 mu once stop mu; dusen bicak)"
 colog = logging.getLogger("col.obek")
 if not colog.handlers:
     _co_h = logging.StreamHandler(sys.stderr)
@@ -165,7 +165,7 @@ def co_k3_sonuc(ay: COAyar, CD, cay, A: Dict[str, np.ndarray], S20: np.ndarray, 
     e, tavan, dip = r["e"], r["tavan"] * ay.al_pay, r["dip"] * (1 - ay.boz_tol)
     olay, olay_i = "yok", None
     for i in range(e + 1, min(n, e + 1 + ay.ileri)):
-        if C[i] > tavan:
+        if C[i] > tavan and C[i] > O[i]:                       # Cemal 21 Eki: alim = YESIL mumun kapanisi kutunun ustunde
             olay, olay_i = "alim", i; break
         if C[i] < dip:
             olay, olay_i = "dusus", i; break
@@ -280,7 +280,7 @@ def co_k4_taban(ay: COAyar, veri: Dict[str, pd.DataFrame], adim: int = 5, w: int
             tavan = H[e - w + 1:e + 1].max() * ay.al_pay; dip = L[e - w + 1:e + 1].min() * (1 - ay.boz_tol)
             olay, oi = "yok", None
             for i in range(e + 1, min(n, e + 1 + ay.ileri)):
-                if C[i] > tavan: olay, oi = "alim", i; break
+                if C[i] > tavan and C[i] > O[i]: olay, oi = "alim", i; break   # yesil mum
                 if C[i] < dip: olay, oi = "dusus", i; break
             yol = co_yol(ay, O, H, L, oi, dip) if olay == "alim" else {}
             rows.append({"sembol": sem, "sinyal": ix[e].date(), "olay": olay, **yol,
@@ -297,7 +297,7 @@ def _oran(x: pd.Series) -> str:
 def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFrame] = None) -> str:
     sat = [f"# COL OBEK — yuvarlanma obegi: bul, sonucu kaydet   ({CO_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
            "Obek: 10-25 bar, dip ilk %40'ta, dipten sonra yeni dip yok, dipler yukari yuvarlaniyor, mumlar onceki 60 gune gore kucuk, pencere dar.",
-           "Sinyal = obegin ilk saglandigi gun. Olay (60 bar): ALIM = kapanis > obek tavani (Cemal: alim mumlari) | DUSUS = kapanis < dip -%2 | yok.",
+           "Sinyal = obegin ilk saglandigi gun. Olay (60 bar): ALIM = YESIL mumun kapanisi > obek tavani (Cemal: alim mumu) | DUSUS = kapanis < dip -%2 | yok.",
            "Alimda islem: ertesi acilis, %20 sonra SMA20 trail / 120 bar. fark60/120 = 60/120 bar getirisi - ayni gun piyasa medyani. Ortalamalar %200'de kirpilir (eski kurus hisse veri sicramasi). OLCUM, kural degil.", ""]
     if T.empty:
         sat.append("sinyal yok"); return "\n".join(sat)
