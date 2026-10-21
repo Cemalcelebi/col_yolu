@@ -1,0 +1,5 @@
+sembol,kutu_bas,kutu_son,bar,konum,imza,imza_ok,kucuk_oran,bb_min,doji_kat,hacim_kat,taban,tavan,fiyat,tavana_%,yuk_atr,doji,fitil,dar,clv,GECER,ruz_%,ruzgar,fon
+EKGYO,2026-09-15,2026-10-19,25,0.209,3,"kucuk,bollinger,hacim",0.64,0.024,0.74,0.85,17.82,20.58,18.25,12.8,3.79,0.16,0.25,0.571,-0.092,False,,,
+ARZUM,2026-09-22,2026-10-19,20,0.026,3,"bollinger,doji,hacim",0.3,0.092,1.79,0.53,1.11,1.27,1.12,13.4,2.17,0.15,0.211,0.833,-0.095,False,,,
+OYLUM,2026-08-17,2026-10-19,46,0.164,3,"bollinger,doji,hacim",0.565,0.004,1.0,0.84,5.64,7.37,6.5,13.4,5.49,0.217,0.285,0.455,0.0,False,,,
+EUYO,2026-08-25,2026-10-19,40,0.249,3,"bollinger,doji,hacim",0.4,0.136,1.61,0.88,3.41,5.0,3.73,34.0,5.38,0.3,0.233,0.4,-0.158,False,,,
