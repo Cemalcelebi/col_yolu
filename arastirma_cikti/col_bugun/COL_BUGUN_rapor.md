@@ -1,4 +1,4 @@
-# COL BUGUN — 2026-10-20 (COL_BUGUN v1.0 (2026-10-21))
+# COL BUGUN — 2026-10-20 (COL_BUGUN v1.1 (2026-10-21, etiketleme seti))
 
 Tespit: uretim COL_v1.col_olc, SEGMENT_MOD=dip (D12 col_dip: bolge + dipte DIP_KONUM<=0.35 + yeni dip yok + imza>=3/4), uzunluk>=20 bar, yukseklik<=6.0 ATR. 583 hisse, 0 verisi durmus (D11) disarida.
 
@@ -78,4 +78,4 @@ sembol         red   kutu_bas  bar  konum  imza                    imza_ok    fi
  TAVHL dipte degil 2026-06-29   80  0.368     1                  bollinger   274.00
 ... (+294; tamami CSV'de)
 
-Dosyalar: COL_BUGUN_2026-10-20.csv, COL_BUGUN_red_2026-10-20.csv, COL_BUGUN_2026-10-20.pdf
+Dosyalar: COL_BUGUN_2026-10-20.csv, COL_BUGUN_red_2026-10-20.csv, COL_BUGUN_2026-10-20.pdf, etiketleme: COL_BUGUN_etiket_2026-10-20.pdf + .csv
