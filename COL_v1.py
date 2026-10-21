@@ -89,6 +89,19 @@
 #      ABD 22-23 +1.6/+3.2 | ABD 24-26 +11.3/+5.6 -> 6 donemin 3'unde tabandan iyi: TABANI GECMEDI (iz degil; atilim + trail
 #      yine asil kaynak, COL_OZET 8. bolum ile ayni). Eski col_segment ile ayni orneklemde dip daha iyi: 2023 +47.1/+29.5,
 #      24-26 +8.6/+6.4. Uretimde SEGMENT_MOD='dip' (20 Eki): eski tespitten iyi ve Cemal'in collerini goruyor; kural degil.
+#  ================== 2026-10-21 D13: DIP -> SAVUNMA -> YUVARLANMA -> OBEK (Cemal'in uc kurali) ==================
+#  D13) Cemal (21 Eki): (1) onceki kucuk mumlu raf + dusus + yeni dip TEK KUTU sayilmaz; onceki bolge dip kirilimiyla biter,
+#      col yeni dipten SONRA baslar. (2) Kucuk mum tek basina yetmez: dip olusumu, dipte tutunma, parabolik yukari yuvarlanma
+#      ve kucuk mum obekleri BIRLIKTE ve sirayla. (3) Tespit ile islem karari ayrilir: asagi kirilip toparlanan col de tespit
+#      edilir (bozulma karari takip/cikis isidir, tespit daraltilmaz).
+#      col_dip2(): kutu = [d, e], d = son D13_N barin en dusuk Low'u (kutu dipten baslar; onceki raf kutuya girmez). Sart:
+#      dipten beri >= D13_BAR bar (dip kirilmadi), dip pencerenin ilk D13_KENAR barinda degil (inis gorunuyor), kutu oncesi
+#      inis >= D13_INIS %, konum (kutu medyani, [d-250, e] araliginda) <= D13_KONUM, retest >= D13_RETEST, yuvarlanma D13_YUV
+#      ('parabol': dipten sonraki Low'lara parabol a>0 ve son egim>0 | 'ucte_bir' | 'sma10' | 'yok'), kutu aralik medyani /
+#      onceki 60 gun <= D13_KUCUK, dipten sonra kucuk mum obegi (>= 3 ardisik bar, aralik <= kutu medyani) >= D13_OBEK
+#      (D13_OBEK_YUK: obekler yukseliyor). Esikler COL_TESPIT (3456 varyant, goz testi + evren) sonucuyla secilir.
+#      Cikti col_dip ile ayni alanlar (+ dip_bar, inis, retest, yuv, obek, kucuk_kat). col_olc SEGMENT_MOD='dip2' ile kullanir.
+#      col_dip (D12) ve col_segment (D7) DEGISMEDI; carpan alanlari ortak yardimciya (_col_alanlar) alindi, sonuc birebir ayni.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -135,7 +148,17 @@ RUZ_BAYAT = 5           # D10b: son bari ortak son tarihten bu kadar is gunu esk
 VERI_BAYAT = 5          # D11: son bari ortak son tarihten bu kadar is gunu eski hisse aday olmaz (verisi durmus)
 VERI_BAYAT_UST = 0.10   # D11: bayat orani bunu asarsa toplu veri sorunu sayilir -> bayat suzgeci uygulanmaz
 # D12: dip colu (Cemal'in tarifi). Bolge parametreleri GOZ_ESLE v1.3 (GozAyar) ile ayni tutulur.
-SEGMENT_MOD = 'dip'     # D12: 'dip' (col_dip: bolge + dip + imza) | 'eski' (col_segment, D7)
+SEGMENT_MOD = 'dip'     # D12: 'dip' (col_dip: bolge + dip + imza) | 'dip2' (col_dip2, D13) | 'eski' (col_segment, D7)
+D13_N = 120             # D13: yeni dip icin geriye bakis (bar)
+D13_KENAR = 3           # D13: dip pencerenin ilk bu kadar barinda ise inis gorunmuyor -> aday degil
+D13_BAR = 15            # D13: dipten beri en az bar (dip bu kadar bar savunuldu)
+D13_INIS = 5.0          # D13: pencerede dipten onceki en yuksek kapanis / dip - 1 >= bu kadar % (dusus sonrasi dip)
+D13_KONUM = 0.35        # D13: kutu medyani, [d-250, e] araliginin alt bu kadarinda (dipte); 1.01 = sart yok
+D13_RETEST = 0          # D13: dibe 1 normal gun yaklasan bar sayisi en az
+D13_YUV = 'parabol'     # D13: 'parabol' | 'ucte_bir' | 'sma10' | 'yok'
+D13_KUCUK = 99.0        # D13: kutu aralik medyani / onceki 60 gun medyani <= bu kadar (99 = sart yok)
+D13_OBEK = 2            # D13: dipten sonra kucuk mum obegi sayisi en az
+D13_OBEK_YUK = False    # D13: obeklerin orta fiyati yukselmeli mi
 BOLGE_BANT_KAT = 6.0    # D12: cekirdek (%10-%90 kapanis) bandi <= bu kadar normal gun araligi
 BOLGE_UZAK_KAT = 1.5    # D12: cekirdekten bu kadar normal gun otesindeki kapanis = bolgeden cok ayrilma
 BOLGE_SOL_KAT = 1.5     # D12: bolge basindaki bu kadar normal gunden buyuk (inis) mumlar kirpilir
@@ -389,14 +412,21 @@ def _col_dip_e(x, D, bbw, e, alanlar=True):
     if t['imza'] < IMZA_MIN: t['red'] = 'imza az'; return None, t
     atr_s = _atr_ref(x, s, 30)
     if not np.isfinite(atr_s) or atr_s <= 0: t['red'] = 'atr yok'; return None, t
+    ek = {a: t[a] for a in ('mod', 'konum', 'kucuk_oran', 'bb_min', 'doji_kat', 'hacim_kat', 'imza', 'imza_ok')}
+    return _col_alanlar(x, s, e, atr_s, t['bas_tarih'], t['son_tarih'], ek, t['bb_min'], alanlar), t
+
+def _col_alanlar(x, s, e, atr_s, bas_tarih, son_tarih, ek, bb_rank, alanlar=True):
+    """D12/D13 ortak cikti: col_segment ile ayni alanlar (tavan/taban/yukseklik + D1 gecerli bar, D2 dar hafta carpan alanlari).
+    ek = tespite ozgu ek alanlar. alanlar=False: yalniz tespit + tavan/taban (tarama hizi). Davranis D12 ile birebir ayni."""
+    uz = e - s + 1
+    H, L, C, V = (x[c].to_numpy(float) for c in ('High', 'Low', 'Close', 'Volume'))
     Os = x['Open'].to_numpy(float)[s:e + 1]; Hs, Ls, Cs, Vs = H[s:e + 1], L[s:e + 1], C[s:e + 1], V[s:e + 1]
     gu = np.maximum(Os, Cs)
-    out = {"bas_tarih": t['bas_tarih'], "son_tarih": t['son_tarih'],
+    out = {"bas_tarih": bas_tarih, "son_tarih": son_tarih,
            "uzunluk": int(uz), "hafta_bar": round(uz / 5.0, 1), "cekirdek_bar": int(uz), "atr_ref": round(atr_s, 4),
            "taban": round(float(Ls.min()), 2), "tavan": round(float(gu.max()), 2),
-           "yukseklik_atr": round((float(Hs.max()) - float(Ls.min())) / atr_s, 2),
-           **{a: t[a] for a in ('mod', 'konum', 'kucuk_oran', 'bb_min', 'doji_kat', 'hacim_kat', 'imza', 'imza_ok')}}
-    if not alanlar: return out, t
+           "yukseklik_atr": round((float(Hs.max()) - float(Ls.min())) / atr_s, 2), **ek}
+    if not alanlar: return out
     # col_segment ile ayni carpan alanlari (D1 gecerli bar, D2 dar hafta) — carpanlar_hesapla / takip bunlari kullanir
     g = gecerli_bar_maskesi(Os, Hs, Ls, Cs, Vs); ng = int(g.sum()); gecerli_oran = ng / uz
     if ng >= 5:
@@ -412,9 +442,9 @@ def _col_dip_e(x, D, bbw, e, alanlar=True):
                 "alt_fitil": round(alt_fitil, 3) if np.isfinite(alt_fitil) else np.nan,
                 "dar": round(dar, 3) if np.isfinite(dar) else np.nan,
                 "gecerli_oran": round(gecerli_oran, 3),
-                "egim": round(_egim(Cs, atr_s), 4), "bb_rank": t['bb_min'],
+                "egim": round(_egim(Cs, atr_s), 4), "bb_rank": bb_rank,
                 "hacim_orani": round(float(np.nanmean(Vs)) / ov, 2) if (np.isfinite(ov) and ov > 0) else np.nan})
-    return out, t
+    return out
 
 def col_dip(df, tarih=None, yazdir=False, tani=False):
     """D12 DIP COLU — Cemal'in tarifi: dususten sonra dipte bolge; bir noktadan sonra fiyat yeni dip yapmaz; fiyat
@@ -432,6 +462,87 @@ def col_dip(df, tarih=None, yazdir=False, tani=False):
               f"yeni_dip_yok {t.get('yeni_dip_yok')} | imza {t.get('imza')} {t.get('imza_ok','')} | "
               f"kucuk {t.get('kucuk_oran')} bb {t.get('bb_min')} doji_kat {t.get('doji_kat')} hacim_kat {t.get('hacim_kat')}"
               + (f" | RED: {t['red']}" if 'red' in t else " | COL"))
+    return (out, t) if tani else out
+
+# ---------------- D13: DIP -> SAVUNMA -> YUVARLANMA -> OBEK ----------------
+def _d13_obekler(kucuk, C, d):
+    """D13: dipten itibaren kucuk-bar maskesi; >= 3 ardisik kucuk bar = obek. (obek sayisi, yukselen pay)."""
+    n = len(kucuk); i = 0; orta = []
+    while i < n:
+        if kucuk[i]:
+            j = i
+            while j + 1 < n and kucuk[j + 1]: j += 1
+            if j - i + 1 >= 3: orta.append(float(np.median(C[d + i:d + j + 1])))
+            i = j + 1
+        else:
+            i += 1
+    yuk = float(np.mean(np.diff(orta) > 0)) if len(orta) >= 2 else (1.0 if len(orta) == 1 else np.nan)
+    return len(orta), yuk
+
+def _col_dip2_e(x, e, alanlar=True):
+    """D13 cekirdek: e gununde biten kutu [d, e]; yalniz <= e barlari kullanilir (COL_TESPIT.ct_k2_ozellik ile ayni formuller).
+    Donus: (sonuc | None, olculer); olculer 'red' ile reddedilme nedenini tasir."""
+    t = {'mod': 'dip2'}
+    N = D13_N
+    if e + 1 < max(260, N) + 10: t['red'] = 'veri kisa'; return None, t
+    O, H, L, C = (x[c].to_numpy(float)[:e + 1] for c in ('Open', 'High', 'Low', 'Close'))
+    k = e - N + 1
+    d = k + int(np.nanargmin(L[k:e + 1]))
+    bs = e - d
+    t.update(dip_i=int(d), dip_bar=int(bs), bas_tarih=str(x.index[d].date()), son_tarih=str(x.index[e].date()), uz=int(bs + 1))
+    if bs < D13_BAR: t['red'] = 'dip yeni'; return None, t
+    if d - k < D13_KENAR: t['red'] = 'inis yok'; return None, t
+    pc = np.r_[O[0], C[:-1]]
+    with np.errstate(divide='ignore', invalid='ignore'):
+        ar = 100 * (H - L) / pc
+    r60 = float(np.nanmedian(ar[max(0, d - 60):d])) if d >= 40 else np.nan
+    if not (np.isfinite(r60) and r60 > 0): t['red'] = 'ref yok'; return None, t
+    dip = float(L[d])
+    if not (np.isfinite(dip) and dip > 0): t['red'] = 'dip yok'; return None, t
+    o0 = max(0, d - 250)
+    lo, hi = float(np.nanmin(L[o0:e + 1])), float(np.nanmax(H[o0:e + 1]))
+    konum = float((np.median(C[d:e + 1]) - lo) / (hi - lo)) if hi > lo else np.nan
+    inis = float(np.nanmax(C[k:d]) / dip - 1) * 100
+    retest = int(np.sum(L[d + 1:e + 1] <= dip * (1 + r60 / 100)))
+    y = L[d:e + 1] / dip - 1
+    xx = np.linspace(0.0, 1.0, len(y)); a, b, _ = np.polyfit(xx, 100 * y, 2) if len(y) >= 8 else (np.nan, np.nan, np.nan)
+    parabol = bool(np.isfinite(a) and a > 0 and (2 * a + b) > 0)
+    k3 = max(2, len(y) // 3)
+    ucte_bir = bool(np.median(y[-k3:]) > np.median(y[k3:2 * k3]) > 0)
+    sma10 = pd.Series(C).rolling(10, min_periods=10).mean().to_numpy(float)
+    seg = sma10[d:e + 1]; kk = max(3, len(seg) // 3)
+    sma_d = bool(np.isfinite(seg[kk - 1]) and np.isfinite(seg[0]) and (seg[kk - 1] - seg[0]) <= 0 and (seg[-1] - seg[-kk]) > 0)
+    arb = ar[d:e + 1]; med = float(np.nanmedian(arb)); kucuk_kat = med / r60
+    ob, ob_yuk = _d13_obekler(arb <= med, C, d)
+    yuv = {'parabol': parabol, 'ucte_bir': ucte_bir, 'sma10': sma_d, 'yok': True}
+    t.update(konum=round(konum, 3) if np.isfinite(konum) else np.nan, inis=round(inis, 1), retest=retest, parabol=parabol,
+             ucte_bir=ucte_bir, sma10=sma_d, kucuk_kat=round(kucuk_kat, 2), obek=ob, obek_yuk=round(ob_yuk, 2) if np.isfinite(ob_yuk) else np.nan)
+    if inis < D13_INIS: t['red'] = 'inis az'; return None, t
+    if not (np.isfinite(konum) and konum <= D13_KONUM): t['red'] = 'dipte degil'; return None, t
+    if retest < D13_RETEST: t['red'] = 'retest az'; return None, t
+    if not yuv.get(D13_YUV, True): t['red'] = 'yuvarlanma yok'; return None, t
+    if not (np.isfinite(kucuk_kat) and kucuk_kat <= D13_KUCUK): t['red'] = 'mum buyuk'; return None, t
+    if ob < D13_OBEK: t['red'] = 'obek az'; return None, t
+    if D13_OBEK_YUK and not (np.isfinite(ob_yuk) and ob_yuk >= 0.999): t['red'] = 'obek yukselmiyor'; return None, t
+    atr_s = _atr_ref(x, d, 30)
+    if not np.isfinite(atr_s) or atr_s <= 0: t['red'] = 'atr yok'; return None, t
+    ek = {a: t[a] for a in ('mod', 'konum', 'dip_bar', 'inis', 'retest', 'kucuk_kat', 'obek', 'obek_yuk')}
+    ek['yuv'] = D13_YUV
+    return _col_alanlar(x, d, e, atr_s, t['bas_tarih'], t['son_tarih'], ek, np.nan, alanlar), t
+
+def col_dip2(df, tarih=None, yazdir=False, tani=False):
+    """D13 — Cemal'in uc kurali: kutu yeni dipten baslar (onceki raf/dusus girmez); dip savunmasi + yuvarlanma + kucuk mum
+    obekleri birlikte; tespit islem kararindan ayri (kirilip toparlanan da tespit edilir, bozulma karari takip'te).
+    Donus: col_dip ile ayni alanlar (+ dip_bar, inis, retest, yuv, obek, kucuk_kat) ya da None. tani=True -> (sonuc, olculer)."""
+    x = df[df.index <= pd.Timestamp(tarih)] if tarih is not None else df
+    try:
+        out, t = _col_dip2_e(x, len(x) - 1) if len(x) else (None, {'mod': 'dip2', 'red': 'veri yok'})
+    except Exception as ex:
+        log.debug(f'col_dip2: {ex}'); out, t = None, {'mod': 'dip2', 'red': f'hata: {ex}'}
+    if yazdir:
+        print(f"  DIP2 {t.get('bas_tarih','?')} -> {t.get('son_tarih','?')} ({t.get('uz',0)} bar) | konum {t.get('konum')} inis {t.get('inis')} "
+              f"retest {t.get('retest')} | parabol {t.get('parabol')} ucte_bir {t.get('ucte_bir')} sma10 {t.get('sma10')} | "
+              f"kucuk_kat {t.get('kucuk_kat')} obek {t.get('obek')} yuk {t.get('obek_yuk')}" + (f" | RED: {t['red']}" if 'red' in t else " | COL"))
     return (out, t) if tani else out
 
 # ---------------- D8: FON SUZGECI ----------------
@@ -699,7 +810,7 @@ def carpanlar_hesapla(olcu, cds_pct=np.nan, borc_oz=np.nan, oz_negatif=0, kural=
 # ---------------- OLCUM ----------------
 def col_olc(df, tarih=None):
     x=df[df.index<=pd.Timestamp(tarih)] if tarih is not None else df
-    r=col_dip(x) if SEGMENT_MOD=='dip' else col_segment(x)   # D12
+    r=col_dip2(x) if SEGMENT_MOD=='dip2' else (col_dip(x) if SEGMENT_MOD=='dip' else col_segment(x))   # D13 / D12 / D7
     if not r or r['uzunluk']<MIN_UZ or r['yukseklik_atr']>MAX_YUK: return None
     if not r.get('atr_ref') or r['atr_ref']<=0: return None
     b=_bant(df, tarih if tarih is not None else df.index[-1])
@@ -860,7 +971,7 @@ def endeks_yukle(sembol='XU100.IS', period='10y'):
     print(f"{sembol}: {len(xu)} bar  {xu.index[0].date()} -> {xu.index[-1].date()}")
     return xu
 
-print(f"[ok] COL SISTEMI v2  (2026-10-20 D12: col tespiti = {'DIP COLU (bolge + dip + yeni dip yok + imza >= ' + str(IMZA_MIN) + '/4)' if SEGMENT_MOD=='dip' else 'ESKI col_segment (D7)'} | D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
+print(f"[ok] COL SISTEMI v2  (2026-10-21 D13 / D12: col tespiti = {('DIP2 (yeni dipten kutu + savunma ' + str(D13_BAR) + ' bar + ' + D13_YUV + ' + obek >= ' + str(D13_OBEK) + ')') if SEGMENT_MOD=='dip2' else ('DIP COLU (bolge + dip + yeni dip yok + imza >= ' + str(IMZA_MIN) + '/4)' if SEGMENT_MOD=='dip' else 'ESKI col_segment (D7)')} | D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
 print(f"  esikler: clv>={E_CLV} bant_son>={E_BS} ortaust>={E_OU} | segment>={MIN_UZ} bar, yuk<={MAX_YUK} ATR, yerel={YEREL} | AL_PAY={AL_PAY}")
 print(f"  CIKIS={CIKIS} HEDEF=%{HEDEF} | pozisyon %{POZISYON_TABAN} x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %{POZISYON_UST})")
 _r=cds_rejim()
