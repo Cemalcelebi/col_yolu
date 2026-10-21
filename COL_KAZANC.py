@@ -19,7 +19,13 @@
 #    En tutarli ikili sartlar VE ile birlestirilip yeniden olculur. CLAUDE.md: tek testte pozitif, baskasinda negatif olan iz sayilmaz.
 #  NOT: "kirilim hacmi" COL_OZET 3. bolumde (segment kirilimi cercevesinde) kapanmis konudur; burada Cemal'in istegiyle obek
 #    cercevesinde yeniden olculur, sonuc ne cikarsa yazilir. CDS yalniz 2022+ oldugundan donemler arasi tutarlilik olculemez, alinmadi.
-#  KURAL_MOTORU: K1 veri  K2 islemler (obek + taban, olculerle)  K3 cikis + piyasa/sektor  K4 kova ozeti  K5 bilesik  K6 rapor
+#  v1.1 K7 DOGRULAMA (Cemal 21 Eki, 'once izi dogrula'): kucuk alim mumu (alim_mum_kat < 1,5) icin donem x pazar fark + Welch p,
+#    Bonferroni / BH-FDR (tum kova x donem hucreleri), taban kutularinda ayni test, esik duyarliligi (1,2/1,5/2/3), fiyat / likidite /
+#    volatilite kovalari icinde fark (within-bucket) + iki yonlu tablo, OLS (fiyat, likidite, vol, w, bekleme, piyasa, donem kontrolu),
+#    ATR20 normalizasyonu (mum/ATR, govde/ATR) ve desil monotonlugu (Spearman), portfoy etkisinin kaynagi (sayi mi secim mi),
+#    karistiricilar, karar kurali. Yeni alanlar: fiyat, atr20_pct, alim_mum_atr, govde_atr, vol20, sektor. Rapor: COL_KAZANC_dogrulama.md.
+#    Tek basina: python COL_KAZANC.py dogrula  (col_kazanc_islemler.csv.gz'den okur, veri indirmez).
+#  KURAL_MOTORU: K1 veri  K2 islemler (obek + taban, olculerle)  K3 cikis + piyasa/sektor  K4 kova ozeti  K5 bilesik  K6 rapor  K7 dogrulama
 #  Calistirma: GitHub Actions 'Arastirma' (betik: COL_KAZANC.py). Cikti: arastirma_cikti/col_kazanc/. OLCUM; kural sonucla konur.
 # =====================================================================
 from __future__ import annotations
@@ -37,7 +43,7 @@ import pandas as pd
 
 _CK_ONCE_CK = {k: id(v) for k, v in globals().items()}
 
-CK_SURUM = "COL_KAZANC v1.0 (2026-10-21)"
+CK_SURUM = "COL_KAZANC v1.1 (2026-10-21, K7 dogrulama: kucuk alim mumu izi)"
 cklog = logging.getLogger("col.kazanc")
 if not cklog.handlers:
     _ck_h = logging.StreamHandler(sys.stderr)
@@ -125,7 +131,11 @@ def ck_olcu(A: Dict[str, np.ndarray], r: Dict[str, Any], b: int, onceki: Optiona
             "bicak_dusus20": round(float(C[max(0, s - 1)] / C[max(0, s - 21)] - 1) * 100, 1),
             "obek_sira": sira,
             "onceki_obek": ("yok" if onceki is None or s - onceki["e"] > 60 else ("asagida" if r["dip"] < onceki["dip"] else "yukarida")),
-            "lik60": round(ciro / 1e6, 2)}
+            "lik60": round(ciro / 1e6, 2),
+            # v1.1 K7: fiyat / volatilite / ATR normalizasyonu (alim gunu, ileriye bakis yok)
+            "fiyat": round(float(C[b]), 4), "atr20_pct": round(float(A["ATR20"][b] / C[b] * 100), 2) if np.isfinite(A["ATR20"][b]) and C[b] > 0 else np.nan,
+            "alim_mum_atr": kat(float(rng), float(A["ATR20"][b])), "govde_atr": kat(float(abs(C[b] - O[b])), float(A["ATR20"][b])),
+            "vol20": round(float(A["VOL20"][b]), 2) if np.isfinite(A["VOL20"][b]) else np.nan}
 
 
 def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, np.ndarray]]]:
@@ -144,6 +154,12 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
         O, H, L, C = A["O"], A["H"], A["L"], A["C"]
         n = len(C)
         A["S20"] = df.Close.rolling(20, min_periods=20).mean().to_numpy(float)
+        pc = np.r_[O[0], C[:-1]]
+        tr = np.maximum(H - L, np.maximum(np.abs(H - pc), np.abs(L - pc)))
+        A["ATR20"] = pd.Series(tr).rolling(20, min_periods=20).mean().to_numpy(float)                       # v1.1
+        with np.errstate(divide="ignore", invalid="ignore"):
+            lr = np.log(C / pc)
+        A["VOL20"] = (pd.Series(lr).rolling(20, min_periods=20).std(ddof=0) * 100).to_numpy(float)          # gunluk % std
         A["ix"] = df.index
         D[sem] = A
         onceki, sira = None, 0
@@ -223,6 +239,7 @@ def ck_k3_piyasa(ay: CKAyar, veri: Dict[str, pd.DataFrame], T: pd.DataFrame, paz
                 rz[i] = 100 * (sv - p[i])
     T = T.copy()
     T["piyasa60"] = np.round(100 * p, 1); T["ruzgar60"] = np.round(rz, 1); T["piy_gun"] = np.round(100 * gd, 2)
+    T["sektor"] = [sek.get(x, "?") for x in T.sembol]                                                     # v1.1
     return T
 
 
@@ -406,6 +423,261 @@ def ck_k6_rapor(ay: CKAyar, T: pd.DataFrame, OZ: pd.DataFrame, R: pd.DataFrame, 
     return metin
 
 
+
+# ------------------------------------------------------------------ K7 dogrulama: kucuk alim mumu izi (v1.1)
+def _p_welch(a: np.ndarray, b: np.ndarray) -> float:
+    """Iki ortalama farki icin Welch t, normal yaklasimla iki yonlu p (n buyuk; scipy yok)."""
+    import math
+    a = a[np.isfinite(a)]; b = b[np.isfinite(b)]
+    if len(a) < 2 or len(b) < 2:
+        return np.nan
+    se = math.sqrt(a.var(ddof=1) / len(a) + b.var(ddof=1) / len(b))
+    if se == 0:
+        return np.nan
+    return float(math.erfc(abs(a.mean() - b.mean()) / se / math.sqrt(2)))
+
+
+def _bh_fdr(p: np.ndarray) -> np.ndarray:
+    """Benjamini-Hochberg q degerleri (NaN'lar atlanir)."""
+    q = np.full(len(p), np.nan); m = np.isfinite(p); pv = p[m]; n = len(pv)
+    if n == 0:
+        return q
+    sira = np.argsort(pv); rank = np.arange(1, n + 1)
+    qq = np.minimum.accumulate((pv[sira] * n / rank)[::-1])[::-1]
+    out = np.empty(n); out[sira] = np.minimum(qq, 1.0); q[m] = out
+    return q
+
+
+def _spearman(x: np.ndarray, y: np.ndarray) -> float:
+    m = np.isfinite(x) & np.isfinite(y)
+    if m.sum() < 3:
+        return np.nan
+    rx = pd.Series(x[m]).rank().to_numpy(); ry = pd.Series(y[m]).rank().to_numpy()
+    return float(np.corrcoef(rx, ry)[0, 1])
+
+
+def _ols(y: np.ndarray, X: np.ndarray, adlar: List[str]) -> pd.DataFrame:
+    """Sabitli EKK; katsayi, SE (HC0 sagla), t. Eksik satirlar atilir."""
+    m = np.isfinite(y) & np.all(np.isfinite(X), axis=1)
+    y = y[m]; X = np.column_stack([np.ones(m.sum()), X[m]])
+    beta, *_ = np.linalg.lstsq(X, y, rcond=None)
+    e = y - X @ beta
+    XtX_inv = np.linalg.pinv(X.T @ X)
+    meat = (X * (e ** 2)[:, None]).T @ X
+    V = XtX_inv @ meat @ XtX_inv
+    se = np.sqrt(np.diag(V))
+    return pd.DataFrame({"degisken": ["sabit"] + adlar, "katsayi": beta, "se": se, "t": beta / se, "n": m.sum()})
+
+
+def _slot_fark(CD, x: pd.DataFrame, xa: pd.DataFrame, slot: int) -> Tuple[float, float]:
+    sa = CD._cd_slot(xa.assign(getiri=xa.getiri.clip(upper=200)), slot)[0] if len(xa) else np.nan
+    sk = CD._cd_slot(x.assign(getiri=x.getiri.clip(upper=200)), slot)[0] if len(x) else np.nan
+    return sk, sa
+
+
+def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: List[Tuple[str, Tuple]], olcu: str = "alim_mum_kat",
+                  esik: float = 1.5, esikler: Tuple[float, ...] = (1.2, 1.5, 2.0, 3.0)) -> str:
+    """Kucuk alim mumu (olcu < esik) izinin dogrulamasi. Rapor COL_KAZANC_dogrulama.md."""
+    t0 = time.monotonic()
+    T = T.copy()
+    T["g"] = T.getiri.clip(upper=200)
+    T["kucuk"] = (T[olcu] < esik).astype(float).where(T[olcu].notna())
+    don_list = [(pazar, ad, b, s_) for pazar, dl in donemler_hepsi for ad, b, s_ in dl]
+    def _don(x: pd.DataFrame, pazar: str, b: str, s_: str) -> pd.DataFrame:
+        return x[(x.pazar == pazar) & (x.sinyal >= b) & (x.sinyal <= s_)]
+    sat = [f"# COL KAZANC — DOGRULAMA: kucuk alim mumu izi ({olcu} < {esik})   ({CK_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
+           "Soru (Cemal 21 Eki): 'alim mumu kucuk olsun' sarti gercek iz mi, yoksa volatilite / fiyat / likidite / cok test artefakti mi?",
+           "Fark = kucuk mum islemlerinin ort getirisi (%200 kirpili) - geri kalanin ort getirisi (puan). p = Welch, normal yaklasim. Slot = 30 slot portfoy.", ""]
+    # ---- 1. donem x pazar, esik duyarliligi, taban, coklu test
+    sat += ["## 1. Donem x pazar fark, esik duyarliligi (obek islemleri; parantez icinde TABAN kutulari)", "",
+            "| esik | donem | n kucuk / n diger | fark ort | kazanan fark | p | slot kucuk / hepsi | TABAN fark (p) |", "|---|---|---|---|---|---|---|---|"]
+    p_ana: Dict[Tuple[float, str], float] = {}
+    for e in esikler:
+        for pazar, ad, b, s_ in don_list:
+            x0 = _don(T[T.kaynak == "obek"], pazar, b, s_); tb = _don(T[T.kaynak == "taban"], pazar, b, s_)
+            k = x0[x0[olcu] < e]; d = x0[x0[olcu] >= e]
+            if len(k) < ay.min_n or len(d) < ay.min_n:
+                continue
+            p = _p_welch(k.g.to_numpy(), d.g.to_numpy()); p_ana[(e, ad)] = p
+            tk = tb[tb[olcu] < e]; td = tb[tb[olcu] >= e]
+            tf = (tk.g.mean() - td.g.mean()) if len(tk) >= ay.min_n and len(td) >= ay.min_n else np.nan
+            tp = _p_welch(tk.g.to_numpy(), td.g.to_numpy()) if np.isfinite(tf) else np.nan
+            sk, sa = _slot_fark(CD, k, x0, ay.slot)
+            sat.append(f"| {e} | {ad} | {len(k)} / {len(d)} | {k.g.mean() - d.g.mean():+.2f} | {100 * ((k.getiri > 0).mean() - (d.getiri > 0).mean()):+.1f} | {p:.3f} | {sk:+.0f}% / {sa:+.0f}% | {tf:+.2f} ({tp:.3f}) |")
+    sat.append("")
+    # havuz p + Bonferroni + BH (tum kova x donem hucreleri)
+    hucre: List[Dict[str, Any]] = []
+    ref = T[T.kaynak == "obek"]
+    for ol in ay.kovalar:
+        if ol not in T.columns:
+            continue
+        kova, et, _ = ck_kova(ay, T, ol, ref)
+        Tk = T.assign(_k=kova)
+        for pazar, ad, b, s_ in don_list:
+            x0 = _don(Tk[Tk.kaynak == "obek"], pazar, b, s_)
+            for kv in et:
+                a = x0[x0._k == kv]; r = x0[x0._k != kv]
+                if len(a) >= ay.min_n and len(r) >= ay.min_n:
+                    hucre.append({"olcu": ol, "kova": kv, "donem": ad, "fark": a.g.mean() - r.g.mean(), "p": _p_welch(a.g.to_numpy(), r.g.to_numpy())})
+    H = pd.DataFrame(hucre)
+    H["q_bh"] = _bh_fdr(H.p.to_numpy())
+    m_kova = H.groupby(["olcu", "kova"]).ngroups; m_hucre = len(H)
+    H.to_csv(os.path.join(cikti, "col_kazanc_dogrulama_hucre.csv"), index=False)
+    sat += ["### Coklu test duzeltmesi", "", f"Tarama: {m_kova} kova (olcu x kova), {m_hucre} kova x donem hucresi. Bonferroni esigi 0,05/{m_kova} = {0.05 / m_kova:.5f} (kova) ve 0,05/{m_hucre} = {0.05 / m_hucre:.6f} (hucre).", ""]
+    for pazar, dl in donemler_hepsi:
+        xo = T[(T.kaynak == "obek") & (T.pazar == pazar)]
+        k = xo[xo[olcu] < esik]; d = xo[xo[olcu] >= esik]
+        p = _p_welch(k.g.to_numpy(), d.g.to_numpy())
+        sat.append(f"- {pazar} havuz (tum donemler): n {len(k)} / {len(d)}, fark {k.g.mean() - d.g.mean():+.2f}, p = {p:.2e} -> Bonferroni(kova) {'GECER' if p < 0.05 / m_kova else 'GECMEZ'}, Bonferroni(hucre) {'GECER' if p < 0.05 / m_hucre else 'GECMEZ'}")
+    hk = H[(H.olcu == olcu) & (H.kova.astype(str).str.startswith("<1.5"))]
+    sat.append(f"- BH-FDR (q < 0,10) ile ayakta kalan hucre: {int((H.q_bh < 0.10).sum())} / {m_hucre}; kucuk mum hucreleri: " +
+               (", ".join(f"{r.donem} q={r.q_bh:.2f}" for r in hk.itertuples()) if len(hk) else "-"))
+    sat.append("")
+    # ---- 2. kaynak ayristirma: fiyat / likidite / volatilite kovalari icinde
+    sat += ["## 2. Kaynak ayristirma — kova icinde kucuk vs buyuk mum farki (pazar havuzu, obek)", ""]
+    within: List[Dict[str, Any]] = []
+    for pazar, _ in donemler_hepsi:
+        xo = T[(T.kaynak == "obek") & (T.pazar == pazar)].copy()
+        if xo.empty:
+            continue
+        xo["fiyat_k"] = pd.cut(xo.fiyat, [-np.inf, 5, 20, 50, 100, np.inf], labels=["<5", "5-20", "20-50", "50-100", ">100"], right=False).astype(object)
+        for ad, kol in (("lik60", "lik_k"), ("vol20", "vol_k"), ("atr20_pct", "atr_k")):
+            try:
+                xo[kol] = pd.qcut(xo[ad].rank(method="first"), 5, labels=[f"Q{i}" for i in range(1, 6)]).astype(object)
+            except Exception:
+                xo[kol] = "?"
+        for grup, kol in (("fiyat", "fiyat_k"), ("likidite (lik60 besteblik)", "lik_k"), ("volatilite (vol20 besteblik)", "vol_k"), ("ATR% (atr20_pct besteblik)", "atr_k")):
+            sat += [f"### {pazar} — {grup}", "", "| kova | n kucuk / diger | ort kucuk | ort diger | fark | p | kazanan kucuk / diger |", "|---|---|---|---|---|---|---|"]
+            for kv, g in xo.groupby(kol, sort=True):
+                k = g[g.kucuk == 1]; d = g[g.kucuk == 0]
+                if len(k) < ay.min_n or len(d) < ay.min_n:
+                    continue
+                p = _p_welch(k.g.to_numpy(), d.g.to_numpy()); f = k.g.mean() - d.g.mean()
+                within.append({"pazar": pazar, "grup": grup, "kova": kv, "n_kucuk": len(k), "n_diger": len(d), "fark": f, "p": p})
+                sat.append(f"| {kv} | {len(k)} / {len(d)} | {k.g.mean():+.2f} | {d.g.mean():+.2f} | {f:+.2f} | {p:.3f} | %{100 * (k.getiri > 0).mean():.0f} / %{100 * (d.getiri > 0).mean():.0f} |")
+            sat.append("")
+        # iki yonlu: kucuk x fiyat, kucuk x likidite (ort getiri)
+        for grup, kol in (("fiyat", "fiyat_k"), ("likidite", "lik_k")):
+            pv = xo.pivot_table(index="kucuk", columns=kol, values="g", aggfunc="mean")
+            nn = xo.pivot_table(index="kucuk", columns=kol, values="g", aggfunc="size")
+            sat += [f"### {pazar} — iki yonlu: kucuk mum x {grup} (ort getiri, n)", "", "| kucuk | " + " | ".join(str(c) for c in pv.columns) + " |", "|---|" + "---|" * len(pv.columns)]
+            for idx in pv.index:
+                sat.append(f"| {'kucuk' if idx == 1 else 'buyuk'} | " + " | ".join(f"{pv.loc[idx, c]:+.1f} (n{int(nn.loc[idx, c])})" if np.isfinite(pv.loc[idx, c]) else "-" for c in pv.columns) + " |")
+            sat.append("")
+    W = pd.DataFrame(within)
+    if len(W):
+        W.to_csv(os.path.join(cikti, "col_kazanc_dogrulama_within.csv"), index=False)
+    # OLS kontrol
+    sat += ["### OLS: getiri ~ kucuk + log fiyat + log lik60 + vol20 + w + bekleme + piyasa60 + donem kuklalari (HC0 SE)", "", "| pazar | n | kucuk katsayi | SE | t | kazanan modeli (LPM) kucuk katsayi | t |", "|---|---|---|---|---|---|---|"]
+    ols_t: Dict[str, float] = {}
+    for pazar, dl in donemler_hepsi:
+        xo = T[(T.kaynak == "obek") & (T.pazar == pazar)].copy()
+        if xo.empty:
+            continue
+        xo["don"] = "?"
+        for ad, b, s_ in dl:
+            xo.loc[(xo.sinyal >= b) & (xo.sinyal <= s_), "don"] = ad
+        kuk = pd.get_dummies(xo.don, prefix="d", drop_first=True).astype(float)
+        X = np.column_stack([xo.kucuk, np.log(xo.fiyat.clip(lower=1e-6)), np.log(xo.lik60.clip(lower=1e-6)), xo.vol20, xo.w, xo.bekleme, xo.piyasa60] + [kuk[c] for c in kuk.columns])
+        adlar = ["kucuk", "log_fiyat", "log_lik60", "vol20", "w", "bekleme", "piyasa60"] + list(kuk.columns)
+        o1 = _ols(xo.g.to_numpy(float), X, adlar); o2 = _ols((xo.getiri > 0).astype(float).to_numpy(), X, adlar)
+        r1 = o1[o1.degisken == "kucuk"].iloc[0]; r2 = o2[o2.degisken == "kucuk"].iloc[0]
+        ols_t[pazar] = float(r1.t)
+        sat.append(f"| {pazar} | {int(r1.n)} | {r1.katsayi:+.3f} | {r1.se:.3f} | {r1.t:+.2f} | {r2.katsayi:+.4f} | {r2.t:+.2f} |")
+        o1.assign(pazar=pazar, model="getiri").to_csv(os.path.join(cikti, f"col_kazanc_dogrulama_ols_{pazar}.csv"), index=False)
+    sat.append("")
+    sat.append("Okuma: kucuk katsayisi, fiyat/likidite/volatilite/donem kontrolunden sonra |t| >= 2 ile ayni isarette kaliyorsa iz kendi basina; kayboluyorsa proxy.")
+    sat.append("")
+    # ---- 3-4. normalizasyon ve desil monotonlugu
+    sat += ["## 3-4. Normalizasyon (mum/ATR20) ve desil monotonlugu (obek, pazar havuzu)", ""]
+    mono: Dict[str, float] = {}
+    for pazar, _ in donemler_hepsi:
+        xo = T[(T.kaynak == "obek") & (T.pazar == pazar)]
+        if xo.empty:
+            continue
+        for ad in (olcu, "alim_mum_atr", "govde_atr"):
+            v = xo[ad].astype(float)
+            try:
+                des = pd.qcut(v.rank(method="first"), 10, labels=False)
+            except Exception:
+                continue
+            g = xo.g.groupby(des).agg(["mean", "size", "median"]); g["kazanan"] = xo.getiri.gt(0).groupby(des).mean() * 100
+            sinir = v.quantile(np.linspace(0.1, 0.9, 9)).to_numpy()
+            rho = _spearman(np.arange(len(g), dtype=float), g["mean"].to_numpy()); mono[f"{pazar}:{ad}"] = rho
+            sat += [f"### {pazar} — {ad} desilleri (D1 en kucuk mum). Spearman(desil, ort) = {rho:+.2f}", "",
+                    "| desil | ust sinir | n | ort | medyan | kazanan |", "|---|---|---|---|---|---|"]
+            for i, r in g.iterrows():
+                us = f"<{sinir[int(i)]:.2f}" if int(i) < 9 else f">={sinir[8]:.2f}"
+                sat.append(f"| D{int(i) + 1} | {us} | {int(r['size'])} | {r['mean']:+.2f} | {r['median']:+.2f} | %{r['kazanan']:.0f} |")
+            sat.append("")
+        # ATR esigi: mum/ATR < 1 vs rest, donem bazinda
+    sat += ["### ATR normalizasyonu ile esik: alim mumu < 1,0 x ATR20 (donem bazinda, obek)", "", "| donem | n kucuk / diger | fark | p |", "|---|---|---|---|"]
+    for pazar, ad, b, s_ in don_list:
+        x0 = _don(T[T.kaynak == "obek"], pazar, b, s_)
+        k = x0[x0.alim_mum_atr < 1.0]; d = x0[x0.alim_mum_atr >= 1.0]
+        if len(k) >= ay.min_n and len(d) >= ay.min_n:
+            sat.append(f"| {ad} | {len(k)} / {len(d)} | {k.g.mean() - d.g.mean():+.2f} | {_p_welch(k.g.to_numpy(), d.g.to_numpy()):.3f} |")
+    sat.append("")
+    # ---- 5. portfoy etkisinin kaynagi
+    sat += ["## 5. Portfoy etkisinin kaynagi: sayi mi, secim mi? (obek, donem)", "",
+            "| donem | n kucuk / diger | ort kucuk / diger | slot kucuk | slot diger (ayni n, 20 rastgele orneklem ort) | slot hepsi | ort bar kucuk / diger | gunluk es zamanli sinyal kucuk / diger |",
+            "|---|---|---|---|---|---|---|---|"]
+    rng = np.random.default_rng(42)
+    for pazar, ad, b, s_ in don_list:
+        x0 = _don(T[T.kaynak == "obek"], pazar, b, s_)
+        k = x0[x0.kucuk == 1]; d = x0[x0.kucuk == 0]
+        if len(k) < ay.min_n or len(d) < ay.min_n:
+            continue
+        sk, sa = _slot_fark(CD, k, x0, ay.slot)
+        n = min(len(k), len(d))
+        sd = float(np.mean([CD._cd_slot(d.sample(n, random_state=int(rng.integers(1e9))).assign(getiri=lambda z: z.g), ay.slot)[0] for _ in range(20)]))
+        ez_k = k.groupby("alim").size().mean(); ez_d = d.groupby("alim").size().mean()
+        sat.append(f"| {ad} | {len(k)} / {len(d)} | {k.g.mean():+.1f} / {d.g.mean():+.1f} | {sk:+.0f}% | {sd:+.0f}% | {sa:+.0f}% | {k.bar.mean():.0f} / {d.bar.mean():.0f} | {ez_k:.1f} / {ez_d:.1f} |")
+    sat.append("")
+    sat.append("Okuma: 'slot kucuk' > 'slot diger (ayni n)' ise secim; yalniz n farkindan geliyorsa sayi. Es zamanli sinyal yuksekse slotlar doluyor, islem atlaniyor.")
+    sat.append("")
+    # ---- 6. karistiricilar
+    sat += ["## 6. Karistiricilar: kucuk mum baska neyle birlikte geliyor? (obek, pazar havuzu)", "", "| pazar | degisken | ort kucuk | ort diger | nokta-biserial r |", "|---|---|---|---|---|"]
+    for pazar, _ in donemler_hepsi:
+        xo = T[(T.kaynak == "obek") & (T.pazar == pazar)]
+        if xo.empty:
+            continue
+        for ad in ("w", "bekleme", "piyasa60", "ruzgar60", "lik60", "fiyat", "vol20", "atr20_pct", "obek_sira", "alim_ustu_pct", "gap_pct", "hacim_alim_kat", "yuv_pct", "konum250"):
+            v = xo[ad].astype(float); m = np.isfinite(v) & xo.kucuk.notna()
+            if m.sum() < 10:
+                continue
+            r = float(np.corrcoef(xo.kucuk[m], v[m])[0, 1]) if v[m].std() > 0 else np.nan
+            sat.append(f"| {pazar} | {ad} | {v[xo.kucuk == 1].mean():.2f} | {v[xo.kucuk == 0].mean():.2f} | {r:+.2f} |")
+        # sektor dagilimi farki
+        if "sektor" in xo.columns:
+            pk = xo[xo.kucuk == 1].sektor.value_counts(normalize=True); pdg = xo[xo.kucuk == 0].sektor.value_counts(normalize=True)
+            fark = (pk.reindex(pk.index.union(pdg.index)).fillna(0) - pdg.reindex(pk.index.union(pdg.index)).fillna(0)).sort_values()
+            sat.append(f"| {pazar} | sektor payi farki (kucuk - diger), en buyuk 3 | " + ", ".join(f"{i} {100 * v:+.1f}" for i, v in fark.tail(3).iloc[::-1].items()) + " | en kucuk 3: " + ", ".join(f"{i} {100 * v:+.1f}" for i, v in fark.head(3).items()) + " | |")
+    sat.append("")
+    # ---- 7. karar
+    sat += ["## 7. Karar kurali", ""]
+    kriter = []
+    if len(W):
+        for pazar, _ in donemler_hepsi:
+            w = W[W.pazar == pazar]
+            if len(w):
+                kriter.append(f"{pazar} kova ici arti: {int((w.fark > 0).sum())}/{len(w)} kova (fiyat+likidite+vol+ATR)")
+    for pazar, _ in donemler_hepsi:
+        t_ = ols_t.get(pazar, np.nan); rho = mono.get(f"{pazar}:{olcu}", np.nan); rho_atr = mono.get(f"{pazar}:alim_mum_atr", np.nan)
+        kriter.append(f"{pazar} OLS kucuk t = {t_:+.2f}; monotonluk Spearman {olcu} {rho:+.2f}, mum/ATR {rho_atr:+.2f}")
+    sat += [f"- {k}" for k in kriter]
+    gecer_ols = all(ols_t.get(p, 0) >= 2.0 for p, _ in donemler_hepsi)
+    gecer_mono = all(mono.get(f"{p}:{olcu}", 0) <= -0.5 for p, _ in donemler_hepsi)
+    gecer_within = bool(len(W)) and all(((W[W.pazar == p].fark > 0).mean() >= 0.7) for p, _ in donemler_hepsi if len(W[W.pazar == p]))
+    karar = "URETIME ADAY (tum kriterler gecti; ABD'de 2025-26 ayrilarak yeniden bakilmali)" if (gecer_ols and gecer_mono and gecer_within) else "ARASTIRILDI, ALINMADI"
+    sat += ["", f"Kriter: kova ici arti >= %70 (her pazar) VE OLS t >= 2 (her pazar) VE desil monotonlugu Spearman <= -0,5 (her pazar). "
+            f"Sonuc: kova ici {'GECTI' if gecer_within else 'GECMEDI'}, OLS {'GECTI' if gecer_ols else 'GECMEDI'}, monotonluk {'GECTI' if gecer_mono else 'GECMEDI'} -> **{karar}**.", ""]
+    metin = "\n".join(sat) + "\n"
+    open(os.path.join(cikti, "COL_KAZANC_dogrulama.md"), "w", encoding="utf-8").write(metin)
+    cklog.info("K7 dogrulama bitti (%.0f sn)", time.monotonic() - t0)
+    return metin
+
+
 # ------------------------------------------------------------------ calistirici
 def _kazanc_pazar(ay: CKAyar, CD, CO, CY, veri: Dict[str, pd.DataFrame], pazar: str) -> pd.DataFrame:
     isl, D = ck_k2_islemler(ay, CO, CY, veri)
@@ -446,8 +718,24 @@ def col_kazanc(ay: Optional[CKAyar] = None, veri: Optional[Dict[str, pd.DataFram
     if len(B):
         B.to_csv(os.path.join(cikti, "col_kazanc_bilesik.csv"), index=False)
     metin = ck_k6_rapor(ay, T, OZ, R, B, cikti, donemler_hepsi)
+    try:
+        dog = ck_k7_dogrula(ay, CD, T, cikti, donemler_hepsi)
+    except Exception as ex:
+        cklog.error("K7: %s", ex); dog = f"K7 calismadi: {ex}"
     cklog.info("BITTI %.0f sn -> %s", time.monotonic() - t0, cikti)
-    return {"islemler": T, "kova": OZ, "tutarlilik": R, "bilesik": B, "rapor": metin, "cikti": cikti}
+    return {"islemler": T, "kova": OZ, "tutarlilik": R, "bilesik": B, "rapor": metin, "dogrulama": dog, "cikti": cikti}
+
+
+def col_kazanc_dogrula(ay: Optional[CKAyar] = None) -> str:
+    """Yalniz K7: mevcut col_kazanc_islemler.csv.gz uzerinden dogrulama (veri indirmez)."""
+    ay = ay or CKAyar()
+    cikti = ay.cikti or os.path.join(ay.kok, "arastirma_cikti", "col_kazanc")
+    CD, _, _ = _ck_mod()
+    T = pd.read_csv(os.path.join(cikti, "col_kazanc_islemler.csv.gz"), parse_dates=["sinyal", "alim", "giris", "cikis"])
+    for k in ("sinyal", "alim", "giris", "cikis"):
+        T[k] = pd.to_datetime(T[k])
+    donemler_hepsi: List[Tuple[str, Tuple]] = [("BIST", ay.donemler)] + ([("ABD", ay.donemler_abd)] if (T.pazar == "ABD").any() else [])
+    return ck_k7_dogrula(ay, CD, T, cikti, donemler_hepsi)
 
 
 def _cakisma_kontrol_ck(_once=_CK_ONCE_CK, _dosya='COL_KAZANC.py'):
@@ -465,5 +753,8 @@ def _cakisma_kontrol_ck(_once=_CK_ONCE_CK, _dosya='COL_KAZANC.py'):
 _cakisma_kontrol_ck()
 
 if __name__ == "__main__":
-    R = col_kazanc()
-    print(R["rapor"])
+    if len(sys.argv) > 1 and sys.argv[1] == "dogrula":
+        print(col_kazanc_dogrula())
+    else:
+        R = col_kazanc()
+        print(R["rapor"]); print(R["dogrulama"])
