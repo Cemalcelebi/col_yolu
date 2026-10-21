@@ -25,7 +25,14 @@
 #    ATR20 normalizasyonu (mum/ATR, govde/ATR) ve desil monotonlugu (Spearman), portfoy etkisinin kaynagi (sayi mi secim mi),
 #    karistiricilar, karar kurali. Yeni alanlar: fiyat, atr20_pct, alim_mum_atr, govde_atr, vol20, sektor. Rapor: COL_KAZANC_dogrulama.md.
 #    Tek basina: python COL_KAZANC.py dogrula  (col_kazanc_islemler.csv.gz'den okur, veri indirmez).
-#  KURAL_MOTORU: K1 veri  K2 islemler (obek + taban, olculerle)  K3 cikis + piyasa/sektor  K4 kova ozeti  K5 bilesik  K6 rapor  K7 dogrulama
+#  v1.2 K8 BIRIKIM (Cemal 21 Eki, 'yfinance verisiyle kurumsal birikim: NVI ve CMF, yatay/kucuk mumlu donemde pozitif ayrisma var mi, ABD'de test et'):
+#    obek (s..e) boyunca CMF20 (son deger ve ortalama), NVI degisimi (NVI[e]/NVI[s]) ve NVI > EMA255, A/D cizgisi ve OBV degisimi
+#    (obek hacmine bolunmus, -100..100), obek fiyat degisimi. AKIS sinifi: BIRIKIM = CMF20 > 0,05 VE NVI yukari VE A/D yukari;
+#    DAGITIM = ucu de asagi; KARISIK = geri kalan. Uc soru: (A) obekte ayrisma tabana gore daha mi sik? (B) ayrisan obekten sonra
+#    alim (kirilim) daha mi sik, bozulma daha mi az, 60 gun ileri getiri daha mi iyi? (C) alim sonrasi uretim cikisiyla getiri farki
+#    (K4 kovalarina da girer). Tum obekler (alim gelmeyenler dahil) col_kazanc_obekler.csv.gz'de. Rapor: COL_KAZANC_birikim.md.
+#    Tek basina: python COL_KAZANC.py birikim  (kaydedilmis islem + obek dosyalarindan okur).
+#  KURAL_MOTORU: K1 veri  K2 islemler (obek + taban, olculerle)  K3 cikis + piyasa/sektor  K4 kova ozeti  K5 bilesik  K6 rapor  K7 dogrulama  K8 birikim
 #  Calistirma: GitHub Actions 'Arastirma' (betik: COL_KAZANC.py). Cikti: arastirma_cikti/col_kazanc/. OLCUM; kural sonucla konur.
 # =====================================================================
 from __future__ import annotations
@@ -43,7 +50,7 @@ import pandas as pd
 
 _CK_ONCE_CK = {k: id(v) for k, v in globals().items()}
 
-CK_SURUM = "COL_KAZANC v1.1 (2026-10-21, K7 dogrulama: kucuk alim mumu izi)"
+CK_SURUM = "COL_KAZANC v1.2 (2026-10-21, K8 birikim: NVI / CMF / A-D ayrismasi)"
 cklog = logging.getLogger("col.kazanc")
 if not cklog.handlers:
     _ck_h = logging.StreamHandler(sys.stderr)
@@ -93,8 +100,15 @@ class CKAyar:
         "ruzgar60": ([-np.inf, -5, 5, np.inf], ["<-5", "-5-5", ">=5 ruzgar"]),
         "piy_gun": ([-np.inf, -1, 1, np.inf], ["<-1", "-1-1", ">=1"]),
         "lik60": None,
+        # v1.2 K8 birikim (obek boyunca para akisi; alim gununde bilinir)
+        "cmf_son": ([-np.inf, -0.05, 0.05, np.inf], ["<-0.05 dagitim", "-0.05-0.05", ">=0.05 birikim"]),
+        "cmf_obek": ([-np.inf, -0.05, 0.05, np.inf], ["<-0.05 dagitim", "-0.05-0.05", ">=0.05 birikim"]),
+        "nvi_obek_pct": ([-np.inf, 0, 2, np.inf], ["<0", "0-2", ">=2"]),
+        "ad_obek": ([-np.inf, -5, 5, np.inf], ["<-5 dagitim", "-5-5", ">=5 birikim"]),
+        "obv_obek": ([-np.inf, -5, 5, np.inf], ["<-5", "-5-5", ">=5"]),
+        "nvi_ustu": None, "akis": None,                        # kategorik
     })
-    kategorik: Tuple[str, ...] = ("onceki_obek",)
+    kategorik: Tuple[str, ...] = ("onceki_obek", "nvi_ustu", "akis")
     bilesik_en_cok: int = 4         # en tutarli bu kadar ikili sart VE ile birlestirilir
 
 
@@ -107,6 +121,27 @@ def _ck_mod():
 
 
 # ------------------------------------------------------------------ K2 islemler + olculer
+def ck_akis(A: Dict[str, np.ndarray], s: int, e: int) -> Dict[str, Any]:
+    """v1.2: obek (s..e) boyunca para akisi. CMF20 son/ort, NVI degisimi ve EMA255 ustu, A/D ve OBV degisimi (obek hacmine bolunmus, %),
+    obek fiyat degisimi (%). AKIS: birikim / dagitim / karisik. Yalniz s..e kullanilir (ileriye bakis yok)."""
+    C, V = A["C"], A["V"]
+    vt = float(np.nansum(V[s:e + 1]))
+    def pct(a, c):
+        return round(float(a / c - 1) * 100, 2) if (np.isfinite(a) and np.isfinite(c) and c > 0) else np.nan
+    def pay(x):
+        return round(float(x / vt) * 100, 2) if (np.isfinite(x) and vt > 0) else np.nan
+    cmf_son = float(A["CMF20"][e]) if np.isfinite(A["CMF20"][e]) else np.nan
+    cmf_obek = float(np.nanmean(A["CMF20"][s:e + 1])) if np.isfinite(A["CMF20"][s:e + 1]).any() else np.nan
+    nvi = pct(A["NVI"][e], A["NVI"][s]); ad = pay(A["AD"][e] - A["AD"][max(0, s - 1)]); obv = pay(A["OBV"][e] - A["OBV"][max(0, s - 1)])
+    nvi_ustu = int(A["NVI"][e] > A["NVI_E255"][e]) if np.isfinite(A["NVI_E255"][e]) else np.nan
+    if np.isfinite(cmf_son) and np.isfinite(nvi) and np.isfinite(ad):
+        akis = "birikim" if (cmf_son > 0.05 and nvi > 0 and ad > 0) else ("dagitim" if (cmf_son < -0.05 and nvi < 0 and ad < 0) else "karisik")
+    else:
+        akis = "?"
+    return {"cmf_son": round(cmf_son, 3) if np.isfinite(cmf_son) else np.nan, "cmf_obek": round(cmf_obek, 3) if np.isfinite(cmf_obek) else np.nan,
+            "nvi_obek_pct": nvi, "nvi_ustu": nvi_ustu, "ad_obek": ad, "obv_obek": obv, "fiyat_obek_pct": pct(C[e], C[s]), "akis": akis}
+
+
 def ck_olcu(A: Dict[str, np.ndarray], r: Dict[str, Any], b: int, onceki: Optional[Dict[str, Any]], sira: int) -> Dict[str, Any]:
     """Alim bari b (kapanis bilinir) ve obek r (s,e,d,tavan,dip,med,ref60,yuv,w) icin olculer. Ileriye bakis yok."""
     O, H, L, C, V, ar = A["O"], A["H"], A["L"], A["C"], A["V"], A["ar"]
@@ -139,13 +174,15 @@ def ck_olcu(A: Dict[str, np.ndarray], r: Dict[str, Any], b: int, onceki: Optiona
             # v1.1 K7: NATR'nin son 50 gun icindeki yuzdelik sirasi (0 = en dar); 5 gun ileri getiri ve vol genislemesi (SONUC olcusu, ileriye bakar, sinyal degil)
             "natr50_pct": round(float((A["NATR"][max(0, b - 49):b + 1] <= A["NATR"][b]).mean() * 100), 1) if np.isfinite(A["NATR"][b]) else np.nan,
             "ileri5_pct": round(float(C[b + 5] / C[b] * 100 - 100), 2) if b + 5 < len(C) and C[b] > 0 else np.nan,
-            "ileri5_vol_kat": kat(float(np.nanmean((H - L)[b + 1:b + 6])), float(A["ATR20"][b])) if b + 5 < len(C) else np.nan}   # H-L / ATR20 (ar yuzde idi, duzeltildi)
+            "ileri5_vol_kat": kat(float(np.nanmean((H - L)[b + 1:b + 6])), float(A["ATR20"][b])) if b + 5 < len(C) else np.nan,   # H-L / ATR20 (ar yuzde idi, duzeltildi)
+            **ck_akis(A, s, e)}                                                                                    # v1.2 K8
 
 
-def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, np.ndarray]]]:
+def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, np.ndarray]], List[Dict[str, Any]]]:
     t0 = time.monotonic()
     oay = CO.COAyar(kok=ay.kok); yay = CY.CYAyar(kok=ay.kok, abd=False)
     isl: List[Dict[str, Any]] = []
+    obk: List[Dict[str, Any]] = []                                     # v1.2: tum obek/taban kutulari (alim gelmeyenler dahil)
     D: Dict[str, Dict[str, np.ndarray]] = {}
     for k, (sem, df) in enumerate(veri.items()):
         df = df[np.isfinite(df.Close)]
@@ -165,12 +202,28 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
         with np.errstate(divide="ignore", invalid="ignore"):
             lr = np.log(C / pc)
         A["VOL20"] = (pd.Series(lr).rolling(20, min_periods=20).std(ddof=0) * 100).to_numpy(float)          # gunluk % std
+        # v1.2 K8: para akisi serileri. MFM = ((C-L)-(H-C))/(H-L); CMF20 = sum(MFM*V,20)/sum(V,20); A/D = kumulatif MFM*V;
+        # OBV = kumulatif isaret(C-pc)*V; NVI: hacim dustugu gun fiyat degisimiyle guncellenir (1000'den), EMA255 ustu klasik sinyal.
+        V = A["V"]; hl = H - L
+        with np.errstate(divide="ignore", invalid="ignore"):
+            mfm = np.where(hl > 0, ((C - L) - (H - C)) / hl, 0.0)
+        mfv = pd.Series(mfm * V)
+        A["CMF20"] = (mfv.rolling(20, min_periods=20).sum() / pd.Series(V).rolling(20, min_periods=20).sum().replace(0, np.nan)).to_numpy(float)
+        A["AD"] = np.nancumsum(mfm * V)
+        A["OBV"] = np.nancumsum(np.sign(C - pc) * V)
+        pv = np.r_[V[0], V[:-1]]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            adim = np.where((V < pv) & np.isfinite(C / pc), C / pc, 1.0)
+        A["NVI"] = 1000.0 * np.cumprod(np.where(np.isfinite(adim) & (adim > 0), adim, 1.0))
+        A["NVI_E255"] = pd.Series(A["NVI"]).ewm(span=255, min_periods=255, adjust=False).mean().to_numpy(float)
         A["ix"] = df.index
         D[sem] = A
         onceki, sira = None, 0
         for r in sig:
             sira = sira + 1 if (onceki is not None and r["s"] - onceki["e"] <= 60) else 1
             b = CY.cy_alim(yay, O, C, r["e"], r["tavan"], r["dip"])
+            obk.append({"sembol": sem, "kaynak": "obek", "sinyal": df.index[r["e"]], "w": r["w"], "obek_sira": sira,
+                        **ck_akis(A, r["s"], r["e"]), **_ck_sonuc60(A, r["e"], r["dip"] * (1 - yay.boz_tol), b)})
             if b is not None and b + 1 < n and b >= 60:
                 isl.append({"sembol": sem, "kaynak": "obek", "sinyal_i": r["e"], "alim_i": b, "giris_i": b + 1,
                             "stop0": r["dip"] * (1 - yay.boz_tol), **ck_olcu(A, r, b, onceki, sira)})
@@ -180,6 +233,9 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
                 s = e - ay.taban_w + 1
                 tavan, dip = float(H[s:e + 1].max()), float(L[s:e + 1].min())
                 b = CY.cy_alim(yay, O, C, e, tavan, dip)
+                if e >= 60:
+                    obk.append({"sembol": sem, "kaynak": "taban", "sinyal": df.index[e], "w": ay.taban_w, "obek_sira": 1,
+                                **ck_akis(A, s, e), **_ck_sonuc60(A, e, dip * (1 - yay.boz_tol), b)})
                 if b is None or b + 1 >= n or b < 60:
                     continue
                 d = s + int(np.argmin(L[s:e + 1]))
@@ -193,7 +249,26 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
             cklog.info("K2: %d/%d hisse | %d islem (%.0f sn)", k + 1, len(veri), len(isl), time.monotonic() - t0)
     cklog.info("K2 bitti: %d islem (obek %d, taban %d) (%.0f sn)", len(isl), sum(i["kaynak"] == "obek" for i in isl),
                sum(i["kaynak"] == "taban" for i in isl), time.monotonic() - t0)
-    return isl, D
+    return isl, D, obk
+
+
+def _ck_sonuc60(A: Dict[str, np.ndarray], e: int, boz: float, b: Optional[int]) -> Dict[str, Any]:
+    """v1.2 K8 SONUC olculeri (ileriye bakar; sinyal degil): alim geldi mi, kac barda; dip -%2 altina kapanis (bozulma) alimdan once mi;
+    60 bar ileri kapanis / en yuksek / en dusuk (%); once +%10 mu -%10 mu."""
+    C, H, L = A["C"], A["H"], A["L"]; n = len(C); son = min(n - 1, e + 60)
+    c0 = float(C[e]); pen = slice(e + 1, son + 1)
+    out: Dict[str, Any] = {"alim": int(b is not None), "alim_bar": (b - e) if b is not None else np.nan}
+    cc = C[pen]
+    ilk_boz = int(np.argmax(cc < boz)) + 1 if (cc < boz).any() else None
+    out["bozulma"] = int(ilk_boz is not None and (b is None or ilk_boz < b - e))
+    if son - e >= 60 and c0 > 0:
+        out["ileri60_pct"] = round(float(C[son] / c0 - 1) * 100, 2)
+        out["ileri60_max"] = round(float(np.nanmax(H[pen]) / c0 - 1) * 100, 2); out["ileri60_min"] = round(float(np.nanmin(L[pen]) / c0 - 1) * 100, 2)
+        yu = np.where(H[pen] >= c0 * 1.10)[0]; ya = np.where(L[pen] <= c0 * 0.90)[0]
+        out["once_yukari"] = int(len(yu) > 0 and (len(ya) == 0 or yu[0] < ya[0]))
+    else:
+        out.update({"ileri60_pct": np.nan, "ileri60_max": np.nan, "ileri60_min": np.nan, "once_yukari": np.nan})
+    return out
 
 
 # ------------------------------------------------------------------ K3 cikis + piyasa
@@ -713,13 +788,125 @@ def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: L
     return metin
 
 
+
+# ------------------------------------------------------------------ K8 birikim: NVI / CMF / A-D ayrismasi (v1.2)
+def ck_k8_birikim(ay: CKAyar, T: pd.DataFrame, OB: pd.DataFrame, cikti: str, donemler_hepsi: List[Tuple[str, Tuple]]) -> str:
+    """Obek boyunca para akisi (CMF20, NVI, A/D, OBV) -> (A) obekte ayrisma tabandan sik mi, (B) ayrisan obekten sonra alim/bozulma/60g,
+    (C) alim sonrasi uretim cikisiyla getiri farki. Rapor COL_KAZANC_birikim.md."""
+    t0 = time.monotonic()
+    OB = OB.copy(); T = T.copy(); T["g"] = T.getiri.clip(upper=200)
+    OB["i60"] = OB.ileri60_pct.clip(upper=200)
+    don_list = [(pazar, ad, b, s_) for pazar, dl in donemler_hepsi for ad, b, s_ in dl]
+    def _don(x, pazar, b, s_):
+        return x[(x.pazar == pazar) & (x.sinyal >= b) & (x.sinyal <= s_)]
+    sat = [f"# COL KAZANC — BIRIKIM: NVI / CMF / A-D ayrismasi obekte ne diyor?   ({CK_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
+           "Soru (Cemal 21 Eki): gunluk OHLCV ile kurumsal birikim izi — fiyat yatay / kucuk mumluyken (obek) NVI ve CMF pozitif ayrisiyor mu, ayrisanlar sonra daha mi iyi?",
+           "Olculer obek (s..e) boyunca, obegin son gunu itibariyla (ileriye bakis yok): CMF20 son ve ort; NVI degisimi % ve NVI > EMA255; A/D ve OBV degisimi (obek hacmine bolunmus, %).",
+           "AKIS: BIRIKIM = CMF20 > 0,05 VE NVI yukari VE A/D yukari · DAGITIM = ucu de asagi · KARISIK = geri kalan. Taban = obek sarti aranmadan her 5. gunun 15 mumluk kutusu.",
+           "Sonuc olculeri: alim (60 gun icinde yesil kapanis > tavan), bozulma (alimdan once dip -%2 alti kapanis), 60 bar ileri kapanis % (%200 kirpili), once +%10 mu -%10 mu, alim sonrasi uretim cikisi getirisi.", ""]
+    # ---- A. ayrisma obekte daha mi sik?
+    sat += ["## A. Obekte ayrisma tabandan daha mi sik? (pazar havuzu)", "", "| pazar | kaynak | n | birikim % | dagitim % | karisik % | CMF20 son ort | NVI obek % ort | A/D % ort | NVI>EMA255 % | fiyat obek % ort |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+    for pazar, _ in donemler_hepsi:
+        for kay in ("obek", "taban"):
+            x = OB[(OB.pazar == pazar) & (OB.kaynak == kay) & (OB.akis != "?")]
+            if x.empty:
+                continue
+            sat.append(f"| {pazar} | {kay} | {len(x)} | %{100 * (x.akis == 'birikim').mean():.1f} | %{100 * (x.akis == 'dagitim').mean():.1f} | %{100 * (x.akis == 'karisik').mean():.1f} | "
+                       f"{x.cmf_son.mean():+.3f} | {x.nvi_obek_pct.mean():+.2f} | {x.ad_obek.mean():+.2f} | %{100 * x.nvi_ustu.mean():.0f} | {x.fiyat_obek_pct.mean():+.2f} |")
+    sat.append("")
+    # ---- B. ayrisma -> alim / bozulma / 60g
+    sat += ["## B. Ayrisan obekten sonra ne oluyor? (donem; obek ve TABAN ayri)", "",
+            "| donem | kaynak | akis | n | alim % | bozulma % | ileri60 ort | ileri60 kazanan | once +10 % | ileri60 fark vs karisik (p) |", "|---|---|---|---|---|---|---|---|---|---|"]
+    kayit_b: List[Dict[str, Any]] = []
+    for pazar, ad, b, s_ in don_list:
+        for kay in ("obek", "taban"):
+            x = _don(OB[(OB.kaynak == kay) & (OB.akis != "?")], pazar, b, s_)
+            if len(x) < ay.min_n:
+                continue
+            ref = x[x.akis == "karisik"]
+            for ak in ("birikim", "karisik", "dagitim"):
+                g = x[x.akis == ak]
+                if len(g) < ay.min_n:
+                    continue
+                f = g.i60.mean() - ref.i60.mean() if len(ref) >= ay.min_n else np.nan
+                p = _p_welch(g.i60.to_numpy(float), ref.i60.to_numpy(float)) if np.isfinite(f) else np.nan
+                kayit_b.append({"donem": ad, "kaynak": kay, "akis": ak, "n": len(g), "alim": g.alim.mean(), "bozulma": g.bozulma.mean(), "i60": g.i60.mean(), "fark": f, "p": p})
+                sat.append(f"| {ad} | {kay} | {ak} | {len(g)} | %{100 * g.alim.mean():.0f} | %{100 * g.bozulma.mean():.0f} | {g.i60.mean():+.2f} | %{100 * (g.ileri60_pct > 0).mean():.0f} | %{100 * g.once_yukari.mean():.0f} | "
+                           + (f"{f:+.2f} ({p:.3f}) |" if np.isfinite(f) else "- |"))
+    sat.append("")
+    KB = pd.DataFrame(kayit_b)
+    if len(KB):
+        KB.to_csv(os.path.join(cikti, "col_kazanc_birikim_obek.csv"), index=False)
+    # tek olcu kovalari: CMF20 son, NVI ustu, A/D -> alim orani ve ileri60 (obek, donem)
+    sat += ["### Tek olcu: CMF20 son / NVI > EMA255 / A-D -> alim orani ve 60 gun ileri (obek, donem)", "",
+            "| donem | olcu | kova | n | alim % | bozulma % | ileri60 ort | ileri60 kazanan |", "|---|---|---|---|---|---|---|---|"]
+    for pazar, ad, b, s_ in don_list:
+        x = _don(OB[OB.kaynak == "obek"], pazar, b, s_)
+        if len(x) < ay.min_n:
+            continue
+        for olcu, kova, et in (("cmf_son", [-np.inf, -0.05, 0.05, np.inf], ["<-0.05", "-0.05-0.05", ">=0.05"]),
+                               ("nvi_ustu", [-np.inf, 0.5, np.inf], ["altinda", "ustunde"]),
+                               ("ad_obek", [-np.inf, -5, 5, np.inf], ["<-5", "-5-5", ">=5"]),
+                               ("nvi_obek_pct", [-np.inf, 0, 2, np.inf], ["<0", "0-2", ">=2"])):
+            kv = pd.cut(x[olcu].astype(float), kova, labels=et, right=False).astype(object)
+            for k in et:
+                g = x[kv == k]
+                if len(g) >= ay.min_n:
+                    sat.append(f"| {ad} | {olcu} | {k} | {len(g)} | %{100 * g.alim.mean():.0f} | %{100 * g.bozulma.mean():.0f} | {g.i60.mean():+.2f} | %{100 * (g.ileri60_pct > 0).mean():.0f} |")
+    sat.append("")
+    # ---- C. alim sonrasi getiri (uretim cikisi)
+    sat += ["## C. Alim geldikten sonra uretim cikisiyla getiri: akis sinifina gore (obek islemleri; parantez TABAN)", "",
+            "| donem | akis | n | ort | kazanan | fark vs donem | p | TABAN fark (p) |", "|---|---|---|---|---|---|---|---|"]
+    kayit_c: List[Dict[str, Any]] = []
+    for pazar, ad, b, s_ in don_list:
+        x = _don(T[T.kaynak == "obek"], pazar, b, s_); tb = _don(T[T.kaynak == "taban"], pazar, b, s_)
+        if len(x) < ay.min_n:
+            continue
+        for ak in ("birikim", "karisik", "dagitim"):
+            g = x[x.akis == ak]; r = x[x.akis != ak]
+            if len(g) < ay.min_n:
+                continue
+            f = g.g.mean() - x.g.mean(); p = _p_welch(g.g.to_numpy(float), r.g.to_numpy(float))
+            tg = tb[tb.akis == ak]; tr_ = tb[tb.akis != ak]
+            tf = tg.g.mean() - tb.g.mean() if len(tg) >= ay.min_n else np.nan
+            tp = _p_welch(tg.g.to_numpy(float), tr_.g.to_numpy(float)) if np.isfinite(tf) else np.nan
+            kayit_c.append({"donem": ad, "akis": ak, "n": len(g), "ort": g.g.mean(), "fark": f, "p": p, "taban_fark": tf})
+            sat.append(f"| {ad} | {ak} | {len(g)} | {g.g.mean():+.2f} | %{100 * (g.getiri > 0).mean():.0f} | {f:+.2f} | {p:.3f} | " + (f"{tf:+.2f} ({tp:.3f}) |" if np.isfinite(tf) else "- |"))
+    sat.append("")
+    KC = pd.DataFrame(kayit_c)
+    if len(KC):
+        KC.to_csv(os.path.join(cikti, "col_kazanc_birikim_islem.csv"), index=False)
+    sat.append("Not: tek olcu kovalari (cmf_son, cmf_obek, nvi_obek_pct, ad_obek, obv_obek, nvi_ustu, akis) ana taramaya (COL_KAZANC_rapor.md, K4 tutarlilik) da girdi; donem bazinda fark ve taban karsilastirmasi orada.")
+    sat.append("")
+    # ---- D. karar
+    sat += ["## D. Okuma / karar", ""]
+    if len(KB):
+        bb = KB[(KB.kaynak == "obek") & (KB.akis == "birikim")]; dd = KB[(KB.kaynak == "obek") & (KB.akis == "dagitim")]
+        for pazar, dl in donemler_hepsi:
+            adlar = [ad for ad, _, _ in dl]
+            b2 = bb[bb.donem.isin(adlar)]; d2 = dd[dd.donem.isin(adlar)]
+            sat.append(f"- {pazar}: birikim obeklerinde ileri60 farki (vs karisik) {int((b2.fark > 0).sum())}/{len(b2)} donem arti, alim orani {100 * b2.alim.mean():.0f}% (karisik {100 * KB[(KB.kaynak == 'obek') & (KB.akis == 'karisik') & KB.donem.isin(adlar)].alim.mean():.0f}%); "
+                       f"dagitim obekleri ileri60 farki {int((d2.fark < 0).sum())}/{len(d2)} donem eksi.")
+    if len(KC):
+        for pazar, dl in donemler_hepsi:
+            adlar = [ad for ad, _, _ in dl]
+            c2 = KC[(KC.akis == "birikim") & KC.donem.isin(adlar)]
+            sat.append(f"- {pazar}: alim sonrasi birikim sinifi getiri farki {int((c2.fark > 0).sum())}/{len(c2)} donem arti (ort {c2.fark.mean():+.2f} puan); tabanda {int((c2.taban_fark > 0).sum())}/{int(c2.taban_fark.notna().sum())} arti.")
+    sat += ["", "Kriter (CLAUDE.md): iz = her donemde ve her iki pazarda ayni yon, tabandan ayrisma, 1,3x. Birikim sinifi hem alim oranini hem ileri60'i hem alim sonrasi getiriyi her donemde yukari cekmiyorsa 'kurumsal birikim OHLCV'den okunmuyor' yazilir.", ""]
+    metin = "\n".join(sat) + "\n"
+    open(os.path.join(cikti, "COL_KAZANC_birikim.md"), "w", encoding="utf-8").write(metin)
+    cklog.info("K8 birikim bitti (%.0f sn)", time.monotonic() - t0)
+    return metin
+
+
 # ------------------------------------------------------------------ calistirici
-def _kazanc_pazar(ay: CKAyar, CD, CO, CY, veri: Dict[str, pd.DataFrame], pazar: str) -> pd.DataFrame:
-    isl, D = ck_k2_islemler(ay, CO, CY, veri)
+def _kazanc_pazar(ay: CKAyar, CD, CO, CY, veri: Dict[str, pd.DataFrame], pazar: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    isl, D, obk = ck_k2_islemler(ay, CO, CY, veri)
     T = ck_k3_cikis(ay, CY, isl, D)
     T = ck_k3_piyasa(ay, veri, T, pazar)
     T["pazar"] = pazar
-    return T
+    OB = pd.DataFrame(obk); OB["pazar"] = pazar
+    return T, OB
 
 
 def col_kazanc(ay: Optional[CKAyar] = None, veri: Optional[Dict[str, pd.DataFrame]] = None,
@@ -732,20 +919,21 @@ def col_kazanc(ay: Optional[CKAyar] = None, veri: Optional[Dict[str, pd.DataFram
     cay = CD.CDAyar(kok=ay.kok)
     if veri is None:
         veri = CD.cd_k1_bist(cay); CD.cd_k2_onarim(cay, veri)
-    T = _kazanc_pazar(ay, CD, CO, CY, veri, "BIST")
+    T, OB = _kazanc_pazar(ay, CD, CO, CY, veri, "BIST")
     donemler_hepsi: List[Tuple[str, Tuple]] = [("BIST", ay.donemler)]
     OZ = ck_k4_ozet(ay, CD, T, ay.donemler, "BIST")
     if ay.abd:
         try:
             if veri_abd is None:
                 veri_abd = CD.cd_k1_abd(cay)
-            Ta = _kazanc_pazar(ay, CD, CO, CY, veri_abd, "ABD")
+            Ta, OBa = _kazanc_pazar(ay, CD, CO, CY, veri_abd, "ABD")
             OZa = ck_k4_ozet(ay, CD, Ta, ay.donemler_abd, "ABD")
-            T = pd.concat([T, Ta], ignore_index=True); OZ = pd.concat([OZ, OZa], ignore_index=True)
+            T = pd.concat([T, Ta], ignore_index=True); OZ = pd.concat([OZ, OZa], ignore_index=True); OB = pd.concat([OB, OBa], ignore_index=True)
             donemler_hepsi.append(("ABD", ay.donemler_abd))
         except Exception as ex:
             cklog.error("ABD: %s", ex)
     T.to_csv(os.path.join(cikti, "col_kazanc_islemler.csv.gz"), index=False)
+    OB.to_csv(os.path.join(cikti, "col_kazanc_obekler.csv.gz"), index=False)
     OZ.to_csv(os.path.join(cikti, "col_kazanc_kova.csv"), index=False)
     R = ck_k4_tutarlilik(ay, OZ)
     R.to_csv(os.path.join(cikti, "col_kazanc_tutarlilik.csv"), index=False)
@@ -757,8 +945,22 @@ def col_kazanc(ay: Optional[CKAyar] = None, veri: Optional[Dict[str, pd.DataFram
         dog = ck_k7_dogrula(ay, CD, T, cikti, donemler_hepsi)
     except Exception as ex:
         cklog.error("K7: %s", ex); dog = f"K7 calismadi: {ex}"
+    try:
+        bir = ck_k8_birikim(ay, T, OB, cikti, donemler_hepsi)
+    except Exception as ex:
+        cklog.error("K8: %s", ex); bir = f"K8 calismadi: {ex}"
     cklog.info("BITTI %.0f sn -> %s", time.monotonic() - t0, cikti)
-    return {"islemler": T, "kova": OZ, "tutarlilik": R, "bilesik": B, "rapor": metin, "dogrulama": dog, "cikti": cikti}
+    return {"islemler": T, "obekler": OB, "kova": OZ, "tutarlilik": R, "bilesik": B, "rapor": metin, "dogrulama": dog, "birikim": bir, "cikti": cikti}
+
+
+def col_kazanc_birikim(ay: Optional[CKAyar] = None) -> str:
+    """Yalniz K8: kaydedilmis islem + obek dosyalarindan (veri indirmez)."""
+    ay = ay or CKAyar()
+    cikti = ay.cikti or os.path.join(ay.kok, "arastirma_cikti", "col_kazanc")
+    T = pd.read_csv(os.path.join(cikti, "col_kazanc_islemler.csv.gz"), parse_dates=["sinyal", "alim", "giris", "cikis"])
+    OB = pd.read_csv(os.path.join(cikti, "col_kazanc_obekler.csv.gz"), parse_dates=["sinyal"])
+    donemler_hepsi: List[Tuple[str, Tuple]] = [("BIST", ay.donemler)] + ([("ABD", ay.donemler_abd)] if (OB.pazar == "ABD").any() else [])
+    return ck_k8_birikim(ay, T, OB, cikti, donemler_hepsi)
 
 
 def col_kazanc_dogrula(ay: Optional[CKAyar] = None) -> str:
@@ -790,6 +992,8 @@ _cakisma_kontrol_ck()
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "dogrula":
         print(col_kazanc_dogrula())
+    elif len(sys.argv) > 1 and sys.argv[1] == "birikim":
+        print(col_kazanc_birikim())
     else:
         R = col_kazanc()
-        print(R["rapor"]); print(R["dogrulama"])
+        print(R["rapor"]); print(R["dogrulama"]); print(R["birikim"])
