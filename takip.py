@@ -31,15 +31,22 @@
 #       Simdi: son bari ortak son tarihten VERI_BAYAT (5) is gunu eski hisse aday olmaz; listedeki aday 'VERI DURDU' ile duser.
 #       Acik pozisyonda yalniz uyari basilir, otomatik satilmaz (islem durmus olabilir, satis mumkun olmayabilir).
 #       Bayat orani VERI_BAYAT_UST'u (%10) asarsa toplu veri sorunu sayilir: temizlik yapilmaz, uyari basilir.
+#   T10) 2026-10-21 STOP MALIYETE (Cemal'in yolu, COL_YOL olcumu: 50.006 obek islemi, 4 donem; "+%8'de stop maliyete +
+#       %20 sonra SMA20 trail" 30 slot portfoyde 4 donem ort. +157 vs mevcut +144, agir kayip %10 -> %6; IZ_DEFTERI B15):
+#       pozisyonda girisin uzerinde MALIYET_ESIK (%8) gorulduyse (onceki barlarin en yuksegi, ayni gun sayilmaz) stop = giris
+#       fiyati; sonraki bir gunde Low <= giris ise SAT neden='maliyet', cikis = giris (stop emri maliyetten doldu), getiri 0.
+#       Sira: taban (desen iptali) > maliyet > trail > ufuk. 'maliyette' sutunu CSV'de tutulur, TUT satirinda 'stop=maliyet' yazar.
+#       AL kurali, carpanlar, trail ve ufuk DEGISMEDI. test_takip.py mekanik sinama.
 # =====================================================================
 import os, logging, numpy as np, pandas as pd
 _K='/content/drive/MyDrive/col_tarayici'
 POZ_TABAN=6.0
 TABAN_TOL=0.02      # T6: tabanin %2 altinda kapanis = col bozuldu
 TABAN_YEDEK=0.15    # T6: taban hesaplanamazsa giris*(1-0.15)
+MALIYET_ESIK=8.0    # T10: giris ustunde bu kadar % gorulunce stop maliyete (giris fiyati)
 A_KOL=['sembol','eklendi','tavan','taban','bas','kural','doji','alt_fitil','dar','gecerli_oran','atr_ref']
 P_KOL=['sembol','giris_tarih','giris','tavan','taban','hedef_vurdu','bar','giris_acilis','poz','cds_pct','borc_oz','oz_negatif','kural',
-       'doji','alt_fitil','dar','gecerli_oran','xu_giris']
+       'doji','alt_fitil','dar','gecerli_oran','xu_giris','maliyette']
 K_KOL=P_KOL+['cikis_tarih','cikis','cikis_acilis','getiri','getiri_acilis','xu_cikis','xu_getiri','neden']
 
 tlog=logging.getLogger('col.takip'); tlog.propagate=False   # ekrana degil, sadece dosyaya
@@ -171,7 +178,7 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             bo,ozn=borc_bilgi(r.sembol,bugun)
             poz,cc=carpanlar_hesapla(r._asdict(), cds_pct, bo, ozn, int(r.kural))
             al.append([r.sembol,bugun,c,r.tavan,r.taban,0,0,np.nan,round(poz,2),cds_pct,bo,ozn,int(r.kural),
-                       r.doji,r.alt_fitil,r.dar,r.gecerli_oran,_xu_kapanis(bugun)])
+                       r.doji,r.alt_fitil,r.dar,r.gecerli_oran,_xu_kapanis(bugun),0])
             tlog.info(f'AL {r.sembol} @{c:.2f} poz%{poz:.1f} carpan={cc}')
         elif pd.notna(r.taban) and c<float(r.taban)*(1-TABAN_TOL):
             bozuk.append(r.sembol); tlog.info(f'COL BOZULDU aday {r.sembol} @{c:.2f} taban {r.taban}')
@@ -193,13 +200,20 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             tb,kay=_taban_bul(r.sembol,r.giris_tarih,r.giris,veri); P.loc[i,'taban']=tb; r=P.loc[i]
             tlog.warning(f'{r.sembol} taban yoktu -> {tb:.2f} ({kay})')
         taban_kirildi=pd.notna(r.taban) and c<float(r.taban)*(1-TABAN_TOL)
-        neden='taban' if taban_kirildi else ('trail' if (hv and c<s20) else ('ufuk' if (bar>=ufuk and not hv) else None))
-        P.loc[i,'hedef_vurdu']=int(hv); P.loc[i,'bar']=bar
+        # T10: onceki barlarda +MALIYET_ESIK gorulduyse stop = giris; bugun Low <= giris -> maliyetten cikis (ayni gun sayilmaz)
+        il_once=il.iloc[:-1] if len(il) else il
+        m8=bool(pd.notna(r.get('maliyette')) and int(r.get('maliyette') or 0)==1) or (len(il_once)>0 and float(il_once.High.max())>=float(r.giris)*(1+MALIYET_ESIK/100))
+        lo=float(df.Low.iloc[-1]) if np.isfinite(df.Low.iloc[-1]) else c
+        maliyet_stop=bool(m8 and lo<=float(r.giris))
+        neden='taban' if taban_kirildi else ('maliyet' if maliyet_stop else ('trail' if (hv and c<s20) else ('ufuk' if (bar>=ufuk and not hv) else None)))
+        P.loc[i,'hedef_vurdu']=int(hv); P.loc[i,'bar']=bar; P.loc[i,'maliyette']=int(m8)
         if neden:
+            cf=float(r.giris) if neden=='maliyet' else c        # T10: stop emri maliyetten dolar
+            gf=0.0 if neden=='maliyet' else g
             xk=_xu_kapanis(bugun); xg=(xk/r.xu_giris-1)*100 if (np.isfinite(xk) and pd.notna(r.xu_giris) and r.xu_giris>0) else np.nan
-            kapat.append(list(P.loc[i,P_KOL].values)+[bugun,c,np.nan,round(g,1),np.nan,xk,round(xg,1) if np.isfinite(xg) else np.nan,neden])
-            tlog.info(f'SAT {r.sembol} @{c:.2f} {g:+.1f}% {neden} bar={bar}')
-        else: tut.append((r.sembol,c,g,bar,hv,s20,float(r.taban) if pd.notna(r.taban) else np.nan,_fon_uyari(r.sembol)))
+            kapat.append(list(P.loc[i,P_KOL].values)+[bugun,cf,np.nan,round(gf,1),np.nan,xk,round(xg,1) if np.isfinite(xg) else np.nan,neden])
+            tlog.info(f'SAT {r.sembol} @{cf:.2f} {gf:+.1f}% {neden} bar={bar}')
+        else: tut.append((r.sembol,c,g,bar,hv,s20,float(r.taban) if pd.notna(r.taban) else np.nan,_fon_uyari(r.sembol),m8))
     if kapat: Kp=pd.concat([Kp,pd.DataFrame(kapat,columns=K_KOL)],ignore_index=True)
     P=P[~P.sembol.isin([k[0] for k in kapat])].reset_index(drop=True)
     P=_acilis_doldur(P,veri); Kp=_acilis_doldur(Kp,veri)
@@ -222,10 +236,11 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
         for k in kapat: print(f"  {k[0]:6s} {k[len(P_KOL)+3]:+.0f}%  {k[len(P_KOL)+6] if np.isfinite(k[len(P_KOL)+6]) else '?'}  {k[-1]}")
     if tut:
         print("\nTUT  (hisse  kar%  durum  tabana%)")
-        for s,c,g,b,hv,s20,tb,fe in sorted(tut,key=lambda z:-z[2]):
+        for s,c,g,b,hv,s20,tb,fe,m8 in sorted(tut,key=lambda z:-z[2]):
             tbs=f"taban {(tb/c-1)*100:+.0f}%" if np.isfinite(tb) else "taban ?"
             fon=f"  FON {fe[0].split()[0].title()} %{fe[1]:.0f}" if fe else ""
-            print(f"  {s:6s} {g:+4.0f}%  {('TRAIL sat:'+f'{(s20/c-1)*100:+.0f}%') if hv else str(ufuk-b)+'g'}  {tbs}{fon}")
+            ms="  stop=maliyet" if m8 else ""                   # T10
+            print(f"  {s:6s} {g:+4.0f}%  {('TRAIL sat:'+f'{(s20/c-1)*100:+.0f}%') if hv else str(ufuk-b)+'g'}  {tbs}{ms}{fon}")
     if durdu_poz: print("\n[!] VERI DURDU — acik pozisyon, fiyat eski, elle kontrol et:", ", ".join(f"{s} (son bar {b_suz[s].date()})" for s in durdu_poz))
     RZ=pd.DataFrame()                                    # T8: D9 sektor ruzgari (COL_v1 yoksa bos)
     if 'sektor_ruzgar' in globals():
@@ -291,4 +306,4 @@ def replay(bas, son=None, veri=None, oneki='replay', sifirla=True):
         v=Kp.getiri.astype(float); print(f"\n{len(Kp)} islem | kazanan %{100*(v>0).mean():.0f} | ort %{v.mean():+.1f} | bek %{bek(v):+.1f}")
     return A,P,Kp
 
-print(f"[ok] takip (2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
+print(f"[ok] takip (2026-10-21 T10: +%{MALIYET_ESIK:.0f} gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
