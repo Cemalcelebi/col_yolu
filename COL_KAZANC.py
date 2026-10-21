@@ -135,7 +135,11 @@ def ck_olcu(A: Dict[str, np.ndarray], r: Dict[str, Any], b: int, onceki: Optiona
             # v1.1 K7: fiyat / volatilite / ATR normalizasyonu (alim gunu, ileriye bakis yok)
             "fiyat": round(float(C[b]), 4), "atr20_pct": round(float(A["ATR20"][b] / C[b] * 100), 2) if np.isfinite(A["ATR20"][b]) and C[b] > 0 else np.nan,
             "alim_mum_atr": kat(float(rng), float(A["ATR20"][b])), "govde_atr": kat(float(abs(C[b] - O[b])), float(A["ATR20"][b])),
-            "vol20": round(float(A["VOL20"][b]), 2) if np.isfinite(A["VOL20"][b]) else np.nan}
+            "vol20": round(float(A["VOL20"][b]), 2) if np.isfinite(A["VOL20"][b]) else np.nan,
+            # v1.1 K7: NATR'nin son 50 gun icindeki yuzdelik sirasi (0 = en dar); 5 gun ileri getiri ve vol genislemesi (SONUC olcusu, ileriye bakar, sinyal degil)
+            "natr50_pct": round(float((A["NATR"][max(0, b - 49):b + 1] <= A["NATR"][b]).mean() * 100), 1) if np.isfinite(A["NATR"][b]) else np.nan,
+            "ileri5_pct": round(float(C[b + 5] / C[b] * 100 - 100), 2) if b + 5 < len(C) and C[b] > 0 else np.nan,
+            "ileri5_vol_kat": kat(float(np.nanmean(ar[b + 1:b + 6])), float(A["ATR20"][b])) if b + 5 < len(C) else np.nan}
 
 
 def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[List[Dict[str, Any]], Dict[str, Dict[str, np.ndarray]]]:
@@ -157,6 +161,7 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
         pc = np.r_[O[0], C[:-1]]
         tr = np.maximum(H - L, np.maximum(np.abs(H - pc), np.abs(L - pc)))
         A["ATR20"] = pd.Series(tr).rolling(20, min_periods=20).mean().to_numpy(float)                       # v1.1
+        A["NATR"] = A["ATR20"] / np.where(A["C"] > 0, A["C"], np.nan) * 100                                      # yuzdesel ATR
         with np.errstate(divide="ignore", invalid="ignore"):
             lr = np.log(C / pc)
         A["VOL20"] = (pd.Series(lr).rolling(20, min_periods=20).std(ddof=0) * 100).to_numpy(float)          # gunluk % std
@@ -564,6 +569,16 @@ def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: L
             for idx in pv.index:
                 sat.append(f"| {'kucuk' if idx == 1 else 'buyuk'} | " + " | ".join(f"{pv.loc[idx, c]:+.1f} (n{int(nn.loc[idx, c])})" if np.isfinite(pv.loc[idx, c]) else "-" for c in pv.columns) + " |")
             sat.append("")
+        # iki yonlu: kucuk mum x goreli hacim (RVOL = hacim_alim_kat) — Cemal madde 2
+        xo["rvol_k"] = pd.cut(xo.hacim_alim_kat, [-np.inf, 1, 2, 4, np.inf], labels=["<1", "1-2", "2-4", ">=4"], right=False).astype(object)
+        sat += [f"### {pazar} — iki yonlu: kucuk mum x RVOL (alim hacmi / obek medyan hacmi): ort getiri (n, kazanan)", "", "| kucuk | <1 | 1-2 | 2-4 | >=4 |", "|---|---|---|---|---|"]
+        for idx in (1.0, 0.0):
+            hs = []
+            for c in ("<1", "1-2", "2-4", ">=4"):
+                g = xo[(xo.kucuk == idx) & (xo.rvol_k == c)]
+                hs.append(f"{g.g.mean():+.1f} (n{len(g)}, %{100 * (g.getiri > 0).mean():.0f})" if len(g) >= ay.min_n else "-")
+            sat.append(f"| {'kucuk' if idx == 1 else 'buyuk'} | " + " | ".join(hs) + " |")
+        sat.append("")
     W = pd.DataFrame(within)
     if len(W):
         W.to_csv(os.path.join(cikti, "col_kazanc_dogrulama_within.csv"), index=False)
@@ -636,13 +651,28 @@ def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: L
     sat.append("")
     sat.append("Okuma: 'slot kucuk' > 'slot diger (ayni n)' ise secim; yalniz n farkindan geliyorsa sayi. Es zamanli sinyal yuksekse slotlar doluyor, islem atlaniyor.")
     sat.append("")
+    # 5b. kirilim sonrasi 1-5 gun (Cemal madde 5): kucuk mum -> hemen ardindan yon ve volatilite genislemesi var mi?
+    if "ileri5_pct" in T.columns:
+        sat += ["### 5b. Alim mumundan sonraki 5 gun: getiri ve volatilite genislemesi (obek; sonuc olcusu)", "",
+                "| donem | ileri5 ort kucuk / diger | ileri5 kazanan kucuk / diger | 5g vol/ATR20 kucuk / diger | NATR50 yuzdelik <=10 : n, islem getirisi, ileri5 | NATR50 yuzdelik >10 : islem getirisi |", "|---|---|---|---|---|---|"]
+        for pazar, ad, b, s_ in don_list:
+            x0 = _don(T[T.kaynak == "obek"], pazar, b, s_)
+            k = x0[x0.kucuk == 1]; d = x0[x0.kucuk == 0]
+            if len(k) < ay.min_n or len(d) < ay.min_n:
+                continue
+            nd = x0[x0.natr50_pct <= 10]; nu = x0[x0.natr50_pct > 10]
+            on = f"| {ad} | {k.ileri5_pct.mean():+.2f} / {d.ileri5_pct.mean():+.2f} | %{100 * (k.ileri5_pct > 0).mean():.0f} / %{100 * (d.ileri5_pct > 0).mean():.0f} | {k.ileri5_vol_kat.mean():.2f} / {d.ileri5_vol_kat.mean():.2f} | "
+            sat.append(on + (f"{len(nd)}, {nd.g.mean():+.1f}, {nd.ileri5_pct.mean():+.2f} | {nu.g.mean():+.1f} |" if len(nd) >= ay.min_n and len(nu) >= ay.min_n else "- | - |"))
+        sat.append("")
+        sat.append("Okuma: kucuk mumdan sonra 5 gunde getiri ve vol genislemesi digerinden buyuk degilse 'kucuk mum = hemen ardindan hacimli kirilim' hikayesi veri ile desteklenmiyor.")
+        sat.append("")
     # ---- 6. karistiricilar
     sat += ["## 6. Karistiricilar: kucuk mum baska neyle birlikte geliyor? (obek, pazar havuzu)", "", "| pazar | degisken | ort kucuk | ort diger | nokta-biserial r |", "|---|---|---|---|---|"]
     for pazar, _ in donemler_hepsi:
         xo = T[(T.kaynak == "obek") & (T.pazar == pazar)]
         if xo.empty:
             continue
-        for ad in ("w", "bekleme", "piyasa60", "ruzgar60", "lik60", "fiyat", "vol20", "atr20_pct", "obek_sira", "alim_ustu_pct", "gap_pct", "hacim_alim_kat", "yuv_pct", "konum250"):
+        for ad in ("w", "bekleme", "piyasa60", "ruzgar60", "lik60", "fiyat", "vol20", "atr20_pct", "obek_sira", "alim_ustu_pct", "gap_pct", "hacim_alim_kat", "natr50_pct", "yuv_pct", "konum250"):
             v = xo[ad].astype(float); m = np.isfinite(v) & xo.kucuk.notna()
             if m.sum() < 10:
                 continue
