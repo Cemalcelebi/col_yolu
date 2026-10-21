@@ -1,4 +1,4 @@
-# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 19 Ekim 2026, 23:55)
+# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 21 Ekim 2026, 12:10)
 
 Kural: bir iz ancak (1) n ≥ 100, (2) 2017–21 ve 2022–26 dönemlerinde AYNI yönde, (3) birden fazla ölçüde
 (ortalama VE medyan) aynı yönde çıkarsa "GEÇERLİ" sayılır. Tek testte çıkan "ADAY", başka testte tersine dönen "ÇÜRÜDÜ".
