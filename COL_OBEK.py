@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CO = {k: id(v) for k, v in globals().items()}
 
-CO_SURUM = "COL_OBEK v1.0 (2026-10-21)"
+CO_SURUM = "COL_OBEK v1.1 (2026-10-21, dusen bicak olculeri)"
 colog = logging.getLogger("col.obek")
 if not colog.handlers:
     _co_h = logging.StreamHandler(sys.stderr)
@@ -163,6 +163,9 @@ def co_olcu(A: Dict[str, np.ndarray], r: Dict[str, Any], onceki: Optional[Dict[s
     return {"w": r["w"], "yuv_%": round(r["yuv"], 2), "mum_kat": round(r["med"] / r["ref60"], 2),
             "konum250": round((C[e] - lo) / (hi - lo), 2) if hi > lo else np.nan,
             "dusus60": round(float(C[e] / C[max(0, s - 60)] - 1) * 100, 1),
+            # Cemal 21 Eki: "dusen bicak" — obek oncesi 20 barda dik dusus ve iri mumlar; esik veriden ogrenilecek
+            "bicak_dusus20": round(float(C[max(0, s - 1)] / C[max(0, s - 21)] - 1) * 100, 1),
+            "bicak_mum20": round(float(np.nanmedian(A["ar"][max(0, s - 20):s]) / r["ref60"]), 2) if r["ref60"] > 0 else np.nan,
             "sma50_egim": round((sma50 / sma50o - 1) * 100, 1), "sma200_uzak": round((C[e] / sma200 - 1) * 100, 1),
             "bb_son": round(float((pen <= bbw[-1]).mean()), 2) if len(pen) > 60 else np.nan,
             "hacim_kat": round(float(np.nanmedian(V[s:e + 1]) / np.nanmedian(V[max(0, s - 60):s])), 2) if np.nanmedian(V[max(0, s - 60):s]) > 0 else np.nan,
@@ -280,7 +283,7 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
                 sat.append(f"| {ad} TABAN (her 5. gun, w=15) | {len(tb)} | {tb.sembol.nunique()} | {_oran(tb.olay=='alim')} | {_oran(tb.olay=='dusus')} | {_oran(tb.olay=='yok')} | - | "
                            f"{tb.fark60.mean():+.1f} / {tb.fark60.median():+.1f} | {tb.fark120.mean():+.1f} / {tb.fark120.median():+.1f} |")
     sat += ["", "## Hangi olcu ALIM'i DUSUS'ten ayiriyor? (olcu tercilleri; donem 2017-21 ve 2022-26 ayri; ALIM orani ve fark120 medyani)", ""]
-    olculer = ["yuv_%", "mum_kat", "konum250", "dusus60", "sma50_egim", "sma200_uzak", "bb_son", "hacim_kat", "obek_sira", "piyasa60", "ruzgar60", "w"]
+    olculer = ["yuv_%", "mum_kat", "konum250", "dusus60", "bicak_dusus20", "bicak_mum20", "sma50_egim", "sma200_uzak", "bb_son", "hacim_kat", "obek_sira", "piyasa60", "ruzgar60", "w"]
     for ad, b, s_ in (("2017-21", "2017-01-01", "2021-12-31"), ("2022-26", "2022-01-01", "2026-12-31")):
         x = T[(T.sinyal >= b) & (T.sinyal <= s_) & T.olay.isin(["alim", "dusus"])]
         if len(x) < 30: continue
