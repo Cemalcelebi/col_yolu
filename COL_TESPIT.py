@@ -188,7 +188,7 @@ def ct_k2_ozellik(ay: CTAyar, sem: str, df: pd.DataFrame, N: int) -> Tuple[List[
         ob, ob_yuk = _obekler(arb <= med, C, d)
         out.append({"sembol": sem, "N": N, "e": e, "d": d, "bar": bs, "konum": konum, "inis": inis, "retest": retest,
                     "parabol": parabol, "ucte_bir": ucte_bir, "sma10": sma_d, "kucuk_kat": kucuk_kat, "obek": ob, "obek_yuk": ob_yuk,
-                    "dip": float(dip), "tavan": float(np.nanmax(gu[d:e + 1]))})
+                    "dip": float(dip), "tavan": float(np.nanmax(gu[d:e + 1])), "sinyal": df.index[e]})
     return out, A
 
 
@@ -214,25 +214,31 @@ def _maske(F: pd.DataFrame, v: pd.Series) -> np.ndarray:
     return m
 
 
-def ct_k3_sinyal(ay: CTAyar, F: pd.DataFrame, V: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Her varyant icin (sembol, N, d) basina ILK saglanan e = sinyal. Donus: S (vid, satir) ve benzersiz sinyal satirlari U."""
+def ct_k3_sinyal(ay: CTAyar, F: pd.DataFrame, V: pd.DataFrame) -> Tuple[Dict[str, np.ndarray], pd.DataFrame]:
+    """Her varyant icin (sembol, N, d) basina ILK saglanan e = sinyal. Bellek dostu: sinyaller iki int32 dizi (vid, satir),
+    vid'e gore sirali; vid_bas[v]..vid_bas[v+1] o varyantin satirlari. Donus: (S dict, sirali F)."""
     t0 = time.monotonic()
     F = F.sort_values(["sembol", "N", "d", "e"]).reset_index(drop=True)
     anahtar = (F.sembol.astype(str) + "|" + F.N.astype(str) + "|" + F.d.astype(str)).to_numpy()
     kod = pd.factorize(anahtar)[0]
-    kayit = []
+    parcalar: List[np.ndarray] = []; vid_bas = np.zeros(len(V) + 1, dtype=np.int64)
     for v in V.itertuples():
         m = _maske(F, v)
-        if not m.any():
-            continue
         idx = np.flatnonzero(m)
-        # ayni (sembol,N,d) icin ilk e: idx sirali (F sirali) -> ilk gorulen kod
-        _, ilk = np.unique(kod[idx], return_index=True)
-        kayit.append(pd.DataFrame({"vid": v.vid, "satir": idx[ilk]}))
-    S = pd.concat(kayit, ignore_index=True) if kayit else pd.DataFrame(columns=["vid", "satir"])
-    U = F.loc[np.unique(S.satir.to_numpy())].copy() if len(S) else F.iloc[0:0].copy()
-    ctlog.info("K3: %d varyant, %d sinyal kaydi, %d benzersiz (sembol,e) (%.0f sn)", len(V), len(S), len(U), time.monotonic() - t0)
+        if len(idx):
+            _, ilk = np.unique(kod[idx], return_index=True)
+            sat = idx[ilk].astype(np.int32)
+        else:
+            sat = np.zeros(0, dtype=np.int32)
+        parcalar.append(sat); vid_bas[v.vid + 1] = vid_bas[v.vid] + len(sat)
+    satir = np.concatenate(parcalar) if parcalar else np.zeros(0, dtype=np.int32)
+    S = {"satir": satir, "vid_bas": vid_bas}
+    ctlog.info("K3: %d varyant, %d sinyal kaydi, %d benzersiz (sembol,e) (%.0f sn)", len(V), len(satir), len(np.unique(satir)), time.monotonic() - t0)
     return S, F
+
+
+def _vid_satir(S: Dict[str, np.ndarray], vid: int) -> np.ndarray:
+    return S["satir"][S["vid_bas"][vid]:S["vid_bas"][vid + 1]]
 
 
 # ------------------------------------------------------------------ K4 sonuclar
@@ -272,7 +278,6 @@ def ct_k4_sonuc(ay: CTAyar, CK, CY, U: pd.DataFrame, D: Dict[str, Dict[str, np.n
     for r in U.itertuples():
         son.append(_sonuc(D[r.sembol], int(r.e), float(r.dip), float(r.tavan), ay))
     U = pd.concat([U.reset_index(drop=True), pd.DataFrame(son)], axis=1)
-    U["sinyal"] = [D[s]["ix"][int(e)] for s, e in zip(U.sembol, U.e)]
     # uretim cikisi: alim_a (bozulma kesmeli) ve alim_b (kesmesiz) ayri
     cay = CK.CKAyar(kok=ay.kok)
     for ad in ("alim_a", "alim_b"):
@@ -330,32 +335,39 @@ def ct_k5_etiket(ay: CTAyar) -> pd.DataFrame:
     return e.reset_index(drop=True)
 
 
-def ct_k5_goz(ay: CTAyar, E: pd.DataFrame, F: pd.DataFrame, S: pd.DataFrame, V: pd.DataFrame, D: Dict[str, Dict[str, np.ndarray]]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def ct_k5_goz(ay: CTAyar, E: pd.DataFrame, F: pd.DataFrame, S: Dict[str, np.ndarray], V: pd.DataFrame, D: Dict[str, Dict[str, np.ndarray]]) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Her etiket x varyant: yakalandi mi. COL: etiket bitisi + 5 bar icinde, dibi (bas - 10 bar) sonrasinda olan sinyal.
     DEGIL: ayni pencere icinde sinyal = yanlis alarm. Donus: (etiket x varyant uzun tablo, varyant ozeti)."""
     t0 = time.monotonic()
-    Fs = F.loc[S.satir.to_numpy(), ["sembol", "e", "d"]].reset_index(drop=True); Fs["vid"] = S.vid.to_numpy()
+    satir, vid_bas = S["satir"], S["vid_bas"]
+    # satir -> vid (sinyal kaydi sirasina gore vid dizisi) ve satira gore siralama
+    vid_of = np.repeat(np.arange(len(V), dtype=np.int32), np.diff(vid_bas))
+    sira = np.argsort(satir, kind="stable"); satir_s = satir[sira]; vid_s = vid_of[sira]
+    Fsem = F.sembol.to_numpy(); Fe = F.e.to_numpy(); Fd = F.d.to_numpy()
     rows = []
     for r in E.itertuples():
         A = D.get(r.sembol)
-        if A is None:
+        if A is None or A["ix"][-1] < r.bas:
             rows.append({"etiket": r.etiket, "sinif": r.sinif, "set": r.set, "veri": 0, "vid": -1}); continue
         ix = A["ix"]
-        if ix[-1] < r.bas:
-            rows.append({"etiket": r.etiket, "sinif": r.sinif, "set": r.set, "veri": 0, "vid": -1}); continue
         s_i = int(ix.searchsorted(r.bas)); e_i = int(ix.searchsorted(r.son, side="right")) - 1
-        x = Fs[(Fs.sembol == r.sembol) & (Fs.e >= s_i) & (Fs.e <= e_i + 5) & (Fs.d >= s_i - 10) & (Fs.d <= e_i)]
-        for vid in np.unique(x.vid):
+        cand = np.flatnonzero((Fsem == r.sembol) & (Fe >= s_i) & (Fe <= e_i + 5) & (Fd >= s_i - 10) & (Fd <= e_i))
+        vids: set = set()
+        for c in cand:
+            lo = np.searchsorted(satir_s, c, side="left"); hi = np.searchsorted(satir_s, c, side="right")
+            if hi > lo:
+                vids.update(vid_s[lo:hi].tolist())
+        for vid in vids:
             rows.append({"etiket": r.etiket, "sinif": r.sinif, "set": r.set, "veri": 1, "vid": int(vid)})
         rows.append({"etiket": r.etiket, "sinif": r.sinif, "set": r.set, "veri": 1, "vid": -1})   # veri var kaydi
     G = pd.DataFrame(rows)
     var = G[G.veri == 1].drop_duplicates(["etiket"])
     n_col = int((var.sinif == "COL").sum()); n_deg = int((var.sinif == "DEGIL").sum())
     n_col_arz = int(((var.sinif == "COL") & (var.set == "arzum")).sum()); n_deg_arz = int(((var.sinif == "DEGIL") & (var.set == "arzum")).sum())
-    hit = G[G.vid >= 0]
-    oz = hit.groupby("vid").apply(lambda g: pd.Series({
-        "col_yakalanan": int(((g.sinif == "COL") & (g.set != "arzum")).sum()), "degil_yanlis": int(((g.sinif == "DEGIL") & (g.set != "arzum")).sum()),
-        "arzum_obek": int(((g.sinif == "COL") & (g.set == "arzum")).sum()), "arzum_bicak": int(((g.sinif == "DEGIL") & (g.set == "arzum")).sum())})).reset_index()
+    hit = G[G.vid >= 0].copy()
+    hit["c1"] = ((hit.sinif == "COL") & (hit.set != "arzum")).astype(int); hit["c2"] = ((hit.sinif == "DEGIL") & (hit.set != "arzum")).astype(int)
+    hit["c3"] = ((hit.sinif == "COL") & (hit.set == "arzum")).astype(int); hit["c4"] = ((hit.sinif == "DEGIL") & (hit.set == "arzum")).astype(int)
+    oz = hit.groupby("vid")[["c1", "c2", "c3", "c4"]].sum().reset_index().rename(columns={"c1": "col_yakalanan", "c2": "degil_yanlis", "c3": "arzum_obek", "c4": "arzum_bicak"})
     oz = V[["vid"]].merge(oz, on="vid", how="left").fillna(0)
     oz["col_n"] = n_col - n_col_arz; oz["degil_n"] = n_deg - n_deg_arz; oz["arzum_obek_n"] = n_col_arz; oz["arzum_bicak_n"] = n_deg_arz
     ctlog.info("K5 goz: %d etiket (veri olan COL %d, DEGIL %d) (%.0f sn)", len(E), n_col, n_deg, time.monotonic() - t0)
@@ -363,47 +375,68 @@ def ct_k5_goz(ay: CTAyar, E: pd.DataFrame, F: pd.DataFrame, S: pd.DataFrame, V: 
 
 
 # ------------------------------------------------------------------ K6 ozet + rapor
-def ct_k6_ozet(ay: CTAyar, CD, F: pd.DataFrame, S: pd.DataFrame, U: pd.DataFrame, TB: pd.DataFrame, V: pd.DataFrame, GO: pd.DataFrame,
-               donemler_hepsi: List[Tuple[str, Tuple]], pazar_of: Dict[str, str]) -> pd.DataFrame:
-    """Varyant x donem: n, alim_a %, alim_b %, bozulma %, toparlanan %, ileri60 ort, ileri120 ort, once+10 %, getiri_a ort, slot_a; taban farki."""
+def ct_k6_ozet(ay: CTAyar, CD, F: pd.DataFrame, S: Dict[str, np.ndarray], U: pd.DataFrame, TB: pd.DataFrame, V: pd.DataFrame, GO: pd.DataFrame,
+               donemler_hepsi: List[Tuple[str, Tuple]], pazar_of: Dict[str, str]):
+    """Varyant x donem: n, alim_a %, alim_b %, bozulma %, toparlanan %, ileri60/120 ort, once+10 %, getiri_a/b ort; taban farki.
+    Bellek dostu: sonuc olculeri F satirina hizali dizilere yazilir, varyant basina numpy ile toplanir."""
     t0 = time.monotonic()
-    Ui = U.set_index(["sembol", "e"]) if len(U) else U
-    Fs = F.loc[S.satir.to_numpy(), ["sembol", "e"]].reset_index(drop=True); Fs["vid"] = S.vid.to_numpy()
-    Fs = Fs.merge(U[["sembol", "e", "sinyal", "alim_a", "alim_b", "bozulma", "toparlanan", "ileri60", "ileri120", "once_yukari", "getiri_a", "getiri_b"]], on=["sembol", "e"], how="left")
-    Fs["pazar"] = Fs.sembol.map(pazar_of)
+    nF = len(F)
+    # F satirina hizali sonuc dizileri
+    kol = {"alim_a": np.full(nF, np.nan), "alim_b": np.full(nF, np.nan), "bozulma": np.full(nF, np.nan), "toparlanan": np.full(nF, np.nan),
+           "ileri60": np.full(nF, np.nan), "ileri120": np.full(nF, np.nan), "once": np.full(nF, np.nan), "getiri_a": np.full(nF, np.nan), "getiri_b": np.full(nF, np.nan)}
+    # U, F'nin alt kumesi (ayni sembol,e); F satir indeksini sembol|N|e anahtarindan bul
+    Fkey = pd.Series(np.arange(nF), index=pd.MultiIndex.from_arrays([F.sembol.to_numpy(), F.N.to_numpy(), F.e.to_numpy()]))
+    ui = Fkey.reindex(pd.MultiIndex.from_arrays([U.sembol.to_numpy(), U.N.to_numpy(), U.e.to_numpy()])).to_numpy()
+    ok = np.isfinite(ui.astype(float)); ui = ui[ok].astype(int); Uo = U[ok]
+    kol["alim_a"][ui] = Uo.alim_a.notna().to_numpy(float); kol["alim_b"][ui] = Uo.alim_b.notna().to_numpy(float)
+    for k in ("bozulma", "toparlanan", "ileri60", "ileri120", "getiri_a", "getiri_b"):
+        kol[k][ui] = Uo[k].to_numpy(float)
+    kol["once"][ui] = Uo.once_yukari.to_numpy(float)
+    kol["ileri60"] = np.minimum(kol["ileri60"], 200); kol["ileri120"] = np.minimum(kol["ileri120"], 200); kol["getiri_a"] = np.minimum(kol["getiri_a"], 200); kol["getiri_b"] = np.minimum(kol["getiri_b"], 200)
+    # donem kodu (F satirina hizali)
+    pazar = F.sembol.map(pazar_of).to_numpy()
+    tarih = pd.to_datetime(F.sinyal).to_numpy()
+    don_kod = np.full(nF, -1, dtype=np.int16); don_adlar: List[str] = []
+    for pz, dl in donemler_hepsi:
+        for ad, b_, s_ in dl:
+            m = (pazar == pz) & (tarih >= np.datetime64(b_)) & (tarih <= np.datetime64(s_))
+            don_kod[m] = len(don_adlar); don_adlar.append(ad)
+    # taban ozetleri
     TB = TB.copy(); TB["pazar"] = TB.sembol.map(pazar_of)
-    rows = []
-    taban_oz = {}
-    for pazar, dl in donemler_hepsi:
-        for ad, b, s_ in dl:
-            t = TB[(TB.pazar == pazar) & (TB.sinyal >= b) & (TB.sinyal <= s_)]
+    taban_oz: Dict[str, Dict[str, float]] = {}
+    for pz, dl in donemler_hepsi:
+        for ad, b_, s_ in dl:
+            t = TB[(TB.pazar == pz) & (TB.sinyal >= b_) & (TB.sinyal <= s_)]
             if len(t):
                 taban_oz[ad] = {"n": len(t), "alim_a": t.alim_a.notna().mean(), "alim_b": t.alim_b.notna().mean(), "bozulma": t.bozulma.mean(),
                                 "ileri60": t.ileri60.clip(upper=200).mean(), "ileri120": t.ileri120.clip(upper=200).mean(), "once": t.once_yukari.mean(),
                                 "getiri_a": t.getiri_a.clip(upper=200).mean()}
-    for vid, g in Fs.groupby("vid"):
-        for pazar, dl in donemler_hepsi:
-            for ad, b, s_ in dl:
-                x = g[(g.pazar == pazar) & (g.sinyal >= b) & (g.sinyal <= s_)]
-                if len(x) < ay.min_n:
-                    continue
-                tbo = taban_oz.get(ad, {})
-                r = {"vid": vid, "donem": ad, "n": len(x), "alim_a": x.alim_a.notna().mean(), "alim_b": x.alim_b.notna().mean(), "bozulma": x.bozulma.mean(),
-                     "toparlanan": x.toparlanan.mean(), "ileri60": x.ileri60.clip(upper=200).mean(), "ileri120": x.ileri120.clip(upper=200).mean(),
-                     "once": x.once_yukari.mean(), "getiri_a": x.getiri_a.clip(upper=200).mean(), "getiri_b": x.getiri_b.clip(upper=200).mean(),
-                     "n_islem_a": int(x.getiri_a.notna().sum())}
-                for k in ("alim_a", "alim_b", "ileri60", "ileri120", "getiri_a"):
-                    r[f"f_{k}"] = r[k] - tbo.get(k, np.nan)
-                rows.append(r)
+    rows = []
+    def _m(a):
+        a = a[np.isfinite(a)]; return float(a.mean()) if len(a) else np.nan
+    for vid in range(len(V)):
+        idx = _vid_satir(S, vid)
+        if not len(idx):
+            continue
+        dk = don_kod[idx]
+        for di, ad in enumerate(don_adlar):
+            sel = idx[dk == di]
+            if len(sel) < ay.min_n:
+                continue
+            tbo = taban_oz.get(ad, {})
+            r = {"vid": vid, "donem": ad, "n": int(len(sel)), "alim_a": _m(kol["alim_a"][sel]), "alim_b": _m(kol["alim_b"][sel]), "bozulma": _m(kol["bozulma"][sel]),
+                 "toparlanan": _m(kol["toparlanan"][sel]), "ileri60": _m(kol["ileri60"][sel]), "ileri120": _m(kol["ileri120"][sel]), "once": _m(kol["once"][sel]),
+                 "getiri_a": _m(kol["getiri_a"][sel]), "getiri_b": _m(kol["getiri_b"][sel]), "n_islem_a": int(np.isfinite(kol["getiri_a"][sel]).sum())}
+            for k in ("alim_a", "alim_b", "ileri60", "ileri120", "getiri_a"):
+                r[f"f_{k}"] = r[k] - tbo.get(k, np.nan)
+            rows.append(r)
     OZ = pd.DataFrame(rows)
-    # varyant ozeti: donem sayisi, alim ve ileri60 tabandan iyi donem sayisi, ort farklar, goz testi
     def _oz(g):
         return pd.Series({"donem": len(g), "n_top": int(g.n.sum()), "alim_arti": int((g.f_alim_a > 0.10).sum()), "i60_arti": int((g.f_ileri60 > 0).sum()),
                           "getiri_arti": int((g.f_getiri_a > 0).sum()), "f_alim": g.f_alim_a.mean(), "f_i60": g.f_ileri60.mean(), "f_i120": g.f_ileri120.mean(),
                           "f_getiri": g.f_getiri_a.mean(), "bozulma": g.bozulma.mean(), "toparlanan": g.toparlanan.mean(), "alim_b_eksi_a": (g.alim_b - g.alim_a).mean()})
-    VO = OZ.groupby("vid").apply(_oz).reset_index() if len(OZ) else pd.DataFrame(columns=["vid"])
+    VO = OZ.groupby("vid")[["n", "f_alim_a", "f_ileri60", "f_ileri120", "f_getiri_a", "bozulma", "toparlanan", "alim_b", "alim_a"]].apply(_oz).reset_index() if len(OZ) else pd.DataFrame(columns=["vid"])
     VO = V.merge(VO, on="vid", how="left").merge(GO, on="vid", how="left")
-    # skor: goz (COL yakalama - yanlis alarm) + evren tutarliligi
     VO["skor"] = (VO.col_yakalanan.fillna(0) / VO.col_n.replace(0, np.nan).fillna(1) - VO.degil_yanlis.fillna(0) / VO.degil_n.replace(0, np.nan).fillna(1)) \
         + 0.1 * VO.alim_arti.fillna(0) + 0.1 * VO.i60_arti.fillna(0) + 0.05 * VO.getiri_arti.fillna(0)
     ctlog.info("K6 ozet: %d varyant x donem satiri (%.0f sn)", len(OZ), time.monotonic() - t0)
@@ -495,7 +528,7 @@ def col_tespit(ay: Optional[CTAyar] = None, veri: Optional[Dict[str, pd.DataFram
     F = pd.DataFrame(F_list)
     ctlog.info("K2 bitti: %d aday gun (%.0f sn)", len(F), time.monotonic() - t0)
     S, F = ct_k3_sinyal(ay, F, V)
-    U = F.loc[np.unique(S.satir.to_numpy())].copy() if len(S) else F.iloc[0:0].copy()
+    U = F.loc[np.unique(S["satir"])].copy() if len(S["satir"]) else F.iloc[0:0].copy()
     U, TB = ct_k4_sonuc(ay, CK, CY, U, D, veri)
     U.to_csv(os.path.join(cikti, "col_tespit_sinyal.csv.gz"), index=False)
     E = ct_k5_etiket(ay)
