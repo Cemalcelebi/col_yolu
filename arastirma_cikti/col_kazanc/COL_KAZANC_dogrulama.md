@@ -1,4 +1,4 @@
-# COL KAZANC — DOGRULAMA: kucuk alim mumu izi (alim_mum_kat < 1.5)   (COL_KAZANC v1.1 (2026-10-21, K7 dogrulama: kucuk alim mumu izi), 2026-10-21 12:49)
+# COL KAZANC — DOGRULAMA: kucuk alim mumu izi (alim_mum_kat < 1.5)   (COL_KAZANC v1.1 (2026-10-21, K7 dogrulama: kucuk alim mumu izi), 2026-10-21 13:06)
 
 Soru (Cemal 21 Eki): 'alim mumu kucuk olsun' sarti gercek iz mi, yoksa volatilite / fiyat / likidite / cok test artefakti mi?
 Fark = kucuk mum islemlerinin ort getirisi (%200 kirpili) - geri kalanin ort getirisi (puan). p = Welch, normal yaklasim. Slot = 30 slot portfoy.
@@ -10,25 +10,25 @@ Fark = kucuk mum islemlerinin ort getirisi (%200 kirpili) - geri kalanin ort get
 | 1.2 | 2016-19 | 1814 / 8505 | +2.19 | +5.7 | 0.001 | +102% / +93% | +1.33 (0.006) |
 | 1.2 | 2020-22 | 3491 / 14014 | +2.62 | +7.0 | 0.000 | +260% / +231% | +2.06 (0.000) |
 | 1.2 | 2023 | 1117 / 3857 | +4.71 | +3.0 | 0.002 | +107% / +124% | +3.02 (0.000) |
-| 1.2 | 2024-26 | 3953 / 13255 | +2.54 | +6.9 | 0.000 | +121% / +179% | +1.82 (0.000) |
+| 1.2 | 2024-26 | 3953 / 13255 | +2.54 | +6.9 | 0.000 | +121% / +180% | +1.82 (0.000) |
 | 1.2 | ABD 2022-23 | 8472 / 14624 | -0.08 | -0.9 | 0.719 | -2% / -6% | -0.73 (0.000) |
 | 1.2 | ABD 2024-26 | 15908 / 31935 | -0.10 | +0.4 | 0.599 | +16% / +40% | +0.18 (0.155) |
 | 1.5 | 2016-19 | 3137 / 7182 | +1.98 | +6.1 | 0.000 | +151% / +93% | +0.49 (0.245) |
 | 1.5 | 2020-22 | 5992 / 11513 | +1.81 | +3.5 | 0.000 | +319% / +231% | +1.76 (0.000) |
 | 1.5 | 2023 | 1951 / 3023 | +2.92 | +2.2 | 0.020 | +139% / +124% | +1.14 (0.106) |
-| 1.5 | 2024-26 | 6678 / 10530 | +1.45 | +5.9 | 0.000 | +135% / +179% | +1.47 (0.000) |
+| 1.5 | 2024-26 | 6678 / 10530 | +1.45 | +5.9 | 0.000 | +135% / +180% | +1.47 (0.000) |
 | 1.5 | ABD 2022-23 | 12974 / 10122 | -0.58 | -2.0 | 0.006 | -7% / -6% | -1.09 (0.000) |
 | 1.5 | ABD 2024-26 | 25332 / 22511 | +0.03 | +0.5 | 0.885 | -1% / +40% | +0.08 (0.519) |
 | 2.0 | 2016-19 | 5140 / 5179 | +0.81 | +4.3 | 0.120 | +138% / +93% | +0.38 (0.344) |
 | 2.0 | 2020-22 | 9997 / 7508 | +2.02 | +2.5 | 0.000 | +338% / +231% | +1.17 (0.002) |
 | 2.0 | 2023 | 3271 / 1703 | +1.19 | +3.2 | 0.342 | +139% / +124% | -1.10 (0.211) |
-| 2.0 | 2024-26 | 10637 / 6571 | +1.45 | +6.7 | 0.000 | +135% / +179% | +1.46 (0.000) |
+| 2.0 | 2024-26 | 10637 / 6571 | +1.45 | +6.7 | 0.000 | +135% / +180% | +1.46 (0.000) |
 | 2.0 | ABD 2022-23 | 18069 / 5027 | -0.88 | -3.0 | 0.001 | +1% / -6% | -1.50 (0.000) |
 | 2.0 | ABD 2024-26 | 35835 / 12008 | -0.33 | +0.1 | 0.124 | +15% / +40% | +0.07 (0.679) |
 | 3.0 | 2016-19 | 7594 / 2725 | +1.67 | +4.9 | 0.006 | +120% / +93% | +1.00 (0.032) |
 | 3.0 | 2020-22 | 15151 / 2354 | +1.70 | +3.1 | 0.012 | +271% / +231% | +1.34 (0.014) |
 | 3.0 | 2023 | 4723 / 251 | +8.05 | +13.4 | 0.001 | +117% / +124% | -4.77 (0.023) |
-| 3.0 | 2024-26 | 15220 / 1988 | +1.13 | +6.2 | 0.060 | +168% / +179% | +1.37 (0.001) |
+| 3.0 | 2024-26 | 15220 / 1988 | +1.13 | +6.2 | 0.060 | +168% / +180% | +1.37 (0.001) |
 | 3.0 | ABD 2022-23 | 21498 / 1598 | -0.73 | -3.8 | 0.127 | -2% / -6% | -1.37 (0.001) |
 | 3.0 | ABD 2024-26 | 43787 / 4056 | -0.76 | -1.1 | 0.036 | +14% / +40% | -0.24 (0.369) |
 
@@ -36,7 +36,7 @@ Fark = kucuk mum islemlerinin ort getirisi (%200 kirpili) - geri kalanin ort get
 
 Tarama: 84 kova (olcu x kova), 504 kova x donem hucresi. Bonferroni esigi 0,05/84 = 0.00060 (kova) ve 0,05/504 = 0.000099 (hucre).
 
-- BIST havuz (tum donemler): n 17758 / 32248, fark +1.76, p = 5.53e-10 -> Bonferroni(kova) GECER, Bonferroni(hucre) GECER
+- BIST havuz (tum donemler): n 17758 / 32248, fark +1.76, p = 5.54e-10 -> Bonferroni(kova) GECER, Bonferroni(hucre) GECER
 - ABD havuz (tum donemler): n 38306 / 32633, fark -0.22, p = 1.16e-01 -> Bonferroni(kova) GECMEZ, Bonferroni(hucre) GECMEZ
 - BH-FDR (q < 0,10) ile ayakta kalan hucre: 292 / 504; kucuk mum hucreleri: 2016-19 q=0.00, 2020-22 q=0.00, 2023 q=0.04, 2024-26 q=0.00, ABD 2022-23 q=0.01, ABD 2024-26 q=0.91
 
@@ -166,12 +166,13 @@ Tarama: 84 kova (olcu x kova), 504 kova x donem hucresi. Bonferroni esigi 0,05/8
 
 ### OLS: getiri ~ kucuk + log fiyat + log lik60 + vol20 + w + bekleme + piyasa60 + donem kuklalari (HC0 SE)
 
-| pazar | n | kucuk katsayi | SE | t | kazanan modeli (LPM) kucuk katsayi | t |
-|---|---|---|---|---|---|---|
-| BIST | 50006 | +1.952 | 0.289 | +6.76 | +0.0404 | +8.72 |
-| ABD | 70939 | +0.125 | 0.140 | +0.89 | -0.0072 | -2.08 |
+| pazar | n | kucuk katsayi | SE | t | kazanan modeli (LPM) kucuk katsayi | t | + log RVOL kontrolu: kucuk | log RVOL katsayisi |
+|---|---|---|---|---|---|---|---|---|
+| BIST | 50006 | +1.952 | 0.289 | +6.76 | +0.0404 | +8.72 | -0.055 (t -0.17) | -3.242 (t -13.86) |
+| ABD | 70939 | +0.125 | 0.140 | +0.89 | -0.0072 | -2.08 | +0.145 (t +0.95) | +0.085 (t +0.52) |
 
 Okuma: kucuk katsayisi, fiyat/likidite/volatilite/donem kontrolunden sonra |t| >= 2 ile ayni isarette kaliyorsa iz kendi basina; kayboluyorsa proxy.
+Son iki sutun: alim gunu goreli hacmi (RVOL = alim hacmi / obek medyan hacmi) modele girince kucuk katsayisi sifira iniyorsa, kucuk mum dusuk hacmin vekilidir (iz hacimdedir, mum boyunda degil).
 
 ## 3-4. Normalizasyon (mum/ATR20) ve desil monotonlugu (obek, pazar havuzu)
 
@@ -283,7 +284,7 @@ Okuma: kucuk katsayisi, fiyat/likidite/volatilite/donem kontrolunden sonra |t| >
 | 2016-19 | 3137 / 7182 | +7.7 / +5.7 | +151% | +73% | +93% | 33 / 30 | 7.6 / 14.0 |
 | 2020-22 | 5992 / 11513 | +13.6 / +11.7 | +319% | +235% | +231% | 30 / 26 | 10.6 / 16.6 |
 | 2023 | 1951 / 3023 | +17.8 / +14.9 | +139% | +114% | +124% | 27 / 24 | 10.1 / 13.0 |
-| 2024-26 | 6678 / 10530 | +5.2 / +3.7 | +135% | +62% | +179% | 27 / 25 | 11.0 / 16.1 |
+| 2024-26 | 6678 / 10530 | +5.2 / +3.7 | +135% | +62% | +180% | 27 / 25 | 11.0 / 16.1 |
 | ABD 2022-23 | 12974 / 10122 | -0.5 / +0.1 | -7% | +11% | -6% | 44 / 42 | 40.5 / 30.9 |
 | ABD 2024-26 | 25332 / 22511 | +1.5 / +1.4 | -1% | +51% | +40% | 39 / 35 | 37.7 / 32.7 |
 
@@ -291,14 +292,14 @@ Okuma: 'slot kucuk' > 'slot diger (ayni n)' ise secim; yalniz n farkindan geliyo
 
 ### 5b. Alim mumundan sonraki 5 gun: getiri ve volatilite genislemesi (obek; sonuc olcusu)
 
-| donem | ileri5 ort kucuk / diger | ileri5 kazanan kucuk / diger | 5g vol/ATR20 kucuk / diger | NATR50 yuzdelik <=10 : n, islem getirisi, ileri5 | NATR50 yuzdelik >10 : islem getirisi |
+| donem | ileri5 ort kucuk / diger | ileri5 kazanan kucuk / diger | 5g (H-L)/ATR20 medyan kucuk / diger | NATR50 yuzdelik <=10 : n, islem getirisi, ileri5 | NATR50 yuzdelik >10 : islem getirisi |
 |---|---|---|---|---|---|
-| 2016-19 | +1.23 / +1.04 | %54 / %48 | 230.99 / 418.15 | 4020, +6.8, +1.55 | +6.0 |
-| 2020-22 | +2.77 / +3.18 | %60 / %57 | 92.29 / 106.08 | 8748, +14.0, +3.28 | +10.7 |
-| 2023 | +2.40 / +1.95 | %57 / %54 | 26.81 / 31.60 | 2603, +16.8, +1.53 | +15.2 |
-| 2024-26 | +1.50 / +1.27 | %58 / %52 | 12.82 / 16.95 | 9209, +5.5, +1.64 | +2.9 |
-| ABD 2022-23 | -0.01 / +0.29 | %49 / %50 | 7.32 / 10.64 | 13285, -0.1, +0.32 | -0.5 |
-| ABD 2024-26 | +0.15 / +0.59 | %48 / %50 | 6.63 / 11.12 | 23809, +1.8, +0.40 | +1.1 |
+| 2016-19 | +1.23 / +1.04 | %54 / %48 | 1.18 / 1.40 | 4020, +6.8, +1.55 | +6.0 |
+| 2020-22 | +2.77 / +3.18 | %60 / %57 | 1.20 / 1.45 | 8748, +14.0, +3.28 | +10.7 |
+| 2023 | +2.40 / +1.95 | %57 / %54 | 1.10 / 1.36 | 2603, +16.8, +1.53 | +15.2 |
+| 2024-26 | +1.50 / +1.27 | %58 / %52 | 1.14 / 1.32 | 9209, +5.5, +1.64 | +2.9 |
+| ABD 2022-23 | -0.01 / +0.29 | %49 / %50 | 0.98 / 1.06 | 13285, -0.1, +0.32 | -0.5 |
+| ABD 2024-26 | +0.15 / +0.59 | %48 / %50 | 1.02 / 1.10 | 23809, +1.8, +0.40 | +1.1 |
 
 Okuma: kucuk mumdan sonra 5 gunde getiri ve vol genislemesi digerinden buyuk degilse 'kucuk mum = hemen ardindan hacimli kirilim' hikayesi veri ile desteklenmiyor.
 
@@ -343,8 +344,8 @@ Okuma: kucuk mumdan sonra 5 gunde getiri ve vol genislemesi digerinden buyuk deg
 
 - BIST kova ici arti: 17/20 kova (fiyat+likidite+vol+ATR)
 - ABD kova ici arti: 9/20 kova (fiyat+likidite+vol+ATR)
-- BIST OLS kucuk t = +6.76; monotonluk Spearman alim_mum_kat -0.87, mum/ATR -0.53
-- ABD OLS kucuk t = +0.89; monotonluk Spearman alim_mum_kat +0.36, mum/ATR +0.31
+- BIST OLS kucuk t = +6.76 (RVOL kontrollu t = -0.17); monotonluk Spearman alim_mum_kat -0.87, mum/ATR -0.53
+- ABD OLS kucuk t = +0.89 (RVOL kontrollu t = +0.95); monotonluk Spearman alim_mum_kat +0.36, mum/ATR +0.31
 
-Kriter: kova ici arti >= %70 (her pazar) VE OLS t >= 2 (her pazar) VE desil monotonlugu Spearman <= -0,5 (her pazar). Sonuc: kova ici GECMEDI, OLS GECMEDI, monotonluk GECMEDI -> **ARASTIRILDI, ALINMADI**.
+Kriter: kova ici arti >= %70 (her pazar) VE OLS t >= 2 hacim kontrolu ile de (her pazar) VE desil monotonlugu Spearman <= -0,5 (her pazar). Sonuc: kova ici GECMEDI, OLS GECMEDI, monotonluk GECMEDI -> **ARASTIRILDI, ALINMADI**.
 
