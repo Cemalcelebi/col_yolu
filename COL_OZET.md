@@ -311,12 +311,16 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 ### 9.8 AÇIK / BEKLEYEN
 - Küçük mum (D7) + D9: test sürüyor; tam iz ve doğru metrik hesabı gelince kural.
 - D12 dip çölü tabanı geçmedi (9.5). Cemal'in 29 çölünden 8'i imza ölçülerine takılıyor (INVES, HDFGS, INFO, KATMR, EUREN, ARZUM, VRGYO, EMNIS): ya ölçü yanlış ya etiket — Cemal'in gözüyle karar bekliyor (karne grafikleri).
+  21 Eki tanı (goz_esle/goz_imza_tani.csv, betik goz_esle/arastirma/imza_tani.py; etiket bitişi ±5 bar, üretim col_dip): 29 çölün 16'sı COL.
+  Kaçanlar: 5'i "dipte değil" (SUNTK 0,40 · ARZUM 0,42 · SKTAS 0,38 · EUREN 0,52 · VRGYO 0,57; eşik 0,35) · 6'sı "imza az" (INVES, HDFGS, INFO, KATMR, EMNIS, TEHOL-2026) · 3'ü veri kısa (TATGD-1, BINBN-2, PEKER yok).
+  Küçük mum ölçüsü 250 gün yerine önceki 60 güne göre alınırsa INVES 0,14→0,80, HDFGS 0,22→0,61, VRGYO 0,08→0,58 geçer; INFO, KATMR, EUREN yine geçmez (mumları önceki 60 günden de iri).
+  OLUMSUZ 8'in 4'ü (PAPIL, ALTNY, TUREX, GARFA) bugünkü kuralla COL çıkıyor; konum, bant genişliği, eğim ve küçük mum hiçbiri bu dördünü Cemal'in çöllerinden ayırmıyor. Sonuç: yakalama için DIP_KONUM ve mum referansı gevşetilebilir, ayırma için Cemal'in PDF notu şart. n=37, bulgu değil, ölçüm.
 - T6 (taban kırılınca çık) testle çelişiyor: tut ya da kaldır.
 - Boyut çarpanları (doji/fitil/dar) yeniden doğrulama.
   Aynı işte düzeltilecek (20 Eki inceleme): `dar_hafta_olc`, segmentten önceki haftayı da segmente sayıyor ("ilk" bloğu). Bu yüzden `dar` değeri düşük çıkıyor.
   Düzeltme `dar` değerlerini değiştirir, bu yüzden tek başına yapılmayacak.
 - ~~Verisi durmuş hissenin aday olması ve listeden hiç çıkmaması~~ → 20 Eki'de D11/T9 ile düzeltildi (bkz. 9.5).
-- GitHub Actions günlük tarama: eski iş akışı 19 Eki 21:01'de elle kapatılmıştı. 20 Eki'de `gunluk_col_tarama.yml` adıyla yeniden kuruldu; ilk başarılı çalışma 20 Eki 21:30 (aday 43, açık 10). CDS verisi eski — güncellenmeli.
+- GitHub Actions günlük tarama: eski iş akışı 19 Eki 21:01'de elle kapatılmıştı. 20 Eki'de `gunluk_col_tarama.yml` adıyla yeniden kuruldu; ilk başarılı çalışma 20 Eki 21:30 (aday 43, açık 10). CDS 21 Eki'de güncellendi (investing.com, 21 Eyl–19 Eki 2026; 4–18 Eyl boşluk, kaynak sayfa vermedi): 250,1 bp, pct250 0,84 → çarpan 1,5x (3 Eyl verisiyle 0,22 → 0,5x idi). Boyut 3% → 9% olur; ilk etkisi 21 Eki raporunda.
 - DURDO açık pozisyonda taban serisinde.
 - 9 açık pozisyonda gerçek taban yok (yedek ×0.85).
 - motor_karne kâğıt işlemleri sürüyor.
