@@ -4,3 +4,4 @@ numpy==2.0.2
 yfinance>=0.2.54
 requests
 openpyxl
+matplotlib>=3.8
