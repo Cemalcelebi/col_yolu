@@ -266,7 +266,7 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
     sat = [f"# COL OBEK — yuvarlanma obegi: bul, sonucu kaydet   ({CO_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
            "Obek: 10-25 bar, dip ilk %40'ta, dipten sonra yeni dip yok, dipler yukari yuvarlaniyor, mumlar onceki 60 gune gore kucuk, pencere dar.",
            "Sinyal = obegin ilk saglandigi gun. Olay (60 bar): ALIM = kapanis > obek tavani (Cemal: alim mumlari) | DUSUS = kapanis < dip -%2 | yok.",
-           "Alimda islem: ertesi acilis, %20 sonra SMA20 trail / 120 bar. fark60/120 = 60/120 bar getirisi - ayni gun piyasa medyani. OLCUM, kural degil.", ""]
+           "Alimda islem: ertesi acilis, %20 sonra SMA20 trail / 120 bar. fark60/120 = 60/120 bar getirisi - ayni gun piyasa medyani. Ortalamalar %200'de kirpilir (eski kurus hisse veri sicramasi). OLCUM, kural degil.", ""]
     if T.empty:
         sat.append("sinyal yok"); return "\n".join(sat)
     T = T.copy(); T["sinyal"] = pd.to_datetime(T.sinyal)
@@ -275,8 +275,10 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
         x = T[(T.sinyal >= b) & (T.sinyal <= s_)]
         if x.empty: continue
         a = x[x.olay == "alim"]; g = a.islem_getiri.dropna()
+        gk = g.clip(upper=200)        # eski kurus hisselerde veri sicramasi (TRHOL 2019 +69752%): ortalama %200'de kirpilir, medyan degismez
         sat.append(f"| {ad} | {len(x)} | {x.sembol.nunique()} | {_oran(x.olay=='alim')} | {_oran(x.olay=='dusus')} | {_oran(x.olay=='yok')} | "
-                   f"{g.mean():+.1f} / {g.median():+.1f} / %{100*(g>0).mean():.0f} (n={len(g)}) | {x.fark60.mean():+.1f} / {x.fark60.median():+.1f} | {x.fark120.mean():+.1f} / {x.fark120.median():+.1f} |")
+                   f"{gk.mean():+.1f} / {g.median():+.1f} / %{100*(g>0).mean():.0f} (n={len(g)}, >%200 olan {int((g>200).sum())}) | "
+                   f"{x.fark60.clip(-100, 200).mean():+.1f} / {x.fark60.median():+.1f} | {x.fark120.clip(-100, 200).mean():+.1f} / {x.fark120.median():+.1f} |")
         if TB is not None and len(TB):
             tb = TB[(TB.sinyal >= b) & (TB.sinyal <= s_)]
             if len(tb):
