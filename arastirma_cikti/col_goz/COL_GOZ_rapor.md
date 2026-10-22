@@ -81,3 +81,14 @@ Yani göz kararı bu dört ölçüye indirgenemedi. Doğru yol: ayırıcı ölç
 717  VRGYO  2025-06-30   38  0.230     4.63    27.72
 719  VSNMD  2026-02-24   61  0.209     2.60    -9.78
 723  YAYLA  2024-01-15   60  0.305     4.88   282.48
+
+## Cemal'in kararı (22 Ekim, col_goz_cemal_2024_26.csv)
+150 kutunun 88'i EVET, 62'si HAYIR. Benim ÇÖL dediğim 45'in 33'ü EVET; SINIR dediğim 105'in 55'i EVET.
+| | n | alım | bozulma | ileri60 medyan | ileri60 > +20 |
+|---|---|---|---|---|---|
+| EVET | 88 | %98 | %1 | +15,6 | %49 |
+| HAYIR | 62 | %76 | %18 | −7,2 | %18 |
+
+Notlar (19 kutu): "atılım barı yok", "kutunun devamı var", "daha ilerisi var", "zıplama zikzakları var", "ölü eşek". HAYIR'ların çoğu sinyalden sonra atılım gelmediği için HAYIR.
+Şekil ölçüleri EVET/HAYIR'ı ayırmıyor: bar 0,46 · yük 0,45 · yuk_atr 0,49 · toplam_duz 0,47 · kucuk 0,51 · son_konum 0,62 (AUC); ileri60 0,69.
+SONUÇ: bu etiket "çöl mü" değil "atılım geldi mi" etiketi. Tespit kuralı bundan öğrenilemez (COL_OZET bölüm 4 ders 5 ve IZ_DEFTERI DERS 4). Yeniden etiketleme ancak sinyal sonrası bar gizlenerek anlamlı olur.
