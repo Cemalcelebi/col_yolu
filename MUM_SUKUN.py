@@ -1,5 +1,5 @@
 # =====================================================================
-#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.1)
+#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.2)
 #
 #  CEMAL (22 Eki, ANGX grafigi): "Son 3-4 mum: dizilim ve mum boyu kuculmesi cok derin bir isaret. Standart sayi cevirmeyeceksin;
 #    her hissenin normal donem hareketliligi ile boyle donemlere orani tek tek hisseye ozel hesaplanmali."
@@ -13,6 +13,15 @@
 #    v1.1 (22 Eki): GECERLI MUM sarti (COL_v1 D1 ile ayni): H > L ve hacim > 0. Islem gormeyen ya da tavan/tabanda kilitli
 #               (O=H=L=C) gun "sakin" sayilmaz; k mumdan biri gecersizse o gunun olcusu yok, normal dagilima da girmez.
 #               v1.0'da ABD sinyallerinin %5'i, BIST sinyallerinin %24'u bu tur barlardan geliyordu (ornek cizimde goruldu).
+#  v1.2 (22 Eki) ZEMIN modu. CEMAL: "akiskan bir madde asagi duserken sert ve duz zemine carpip zemine yapisik kalarak n duzleminde
+#    bir sira gecmesi; 3 az, 4-5 mumluk bolge." Kopuk kucuk mumlar degil: dipleri hizali, aralarinda acilis boslugu yok, kaymayan sira.
+#    Olculer hissenin KENDI normal tek mum araligi (nr = onceki 250 barin H-L/C medyani, k bar geriden) cinsinden:
+#      bant = k mumun (maks H - min L)/C / nr      dip_hiza = (k mumun en yuksek dibi - en dusuk dibi)/C / nr
+#      bosluk = sira icindeki en buyuk |O_t - C_{t-1}| / nr     kayma = |C_t - O_{t-k+1}|/C / nr
+#    Baglam (sert dusus, zemine carpma): siradan once 20 barda kapanis tepeden >= %15 asagi, siradan onceki 10 barda >= %12 asagi,
+#      siradan onceki 5 mum normalin >= 1,3 kati (hizla gelen dusus), sira 60 barin dibinde (en dusuk dip <= 60 bar dibi x 1,03),
+#      k mumun hepsi gecerli. Varyant z_siki: bant <= 2, dip_hiza <= 0,5, bosluk <= 0,4, kayma <= 0,7; z_gevsek: 2,5 / 0,7 / 0,6 / 1,0.
+#      TABAN: ayni baglam, zemin yok (bant >= 3: sira daginik). k = 4, 5, 6. Sonuc ve iz standardi asagidaki ile ayni.
 #  BAGLAM: dusus sonrasi = kapanis, son 60 barin en yuksek kapanisinin %80'i veya alti VE son 20 barin en dusugunun %15 yakininda.
 #  SINYAL: baglam + yuzdelik <= esik {2, 5, 10}. TABAN: ayni baglam, yuzdelik 30-70 (normal oynaklikta mumlar). Ayni hisse 20 bar
 #    icinde bir kez sayilir.
@@ -20,7 +29,7 @@
 #  STANDART (CLAUDE.md): BIST 2016-21 ve 2022-26 + ABD 2016-21 ve 2022-26, esikler sabit; iz = dort dilimde de taban oraninin
 #    >= 1,3 kati ve getiri ayni yonde. Bu bir YON testidir; gecerse trail + slot simulasyonu ayrica yapilir.
 #  KURAL_MOTORU: K1 veri  K2 olcu + olaylar  K3 ozet  K4 tek hisse (bugunku deger)  K5 rapor
-#  Calistirma: python MUM_SUKUN.py [hisse ...]   (veri: MS_VERI_BIST / MS_VERI_ABD ortam degiskenleri ya da Drive yolu)
+#  Calistirma: python MUM_SUKUN.py [--zemin] [hisse ...]   (veri: MS_VERI_BIST / MS_VERI_ABD ortam degiskenleri ya da Drive yolu)
 #  Cikti: arastirma_cikti/mum_sukun/ (MUM_SUKUN_rapor.md, mum_sukun_ozet.csv, mum_sukun_olaylar.csv.gz)
 # =====================================================================
 from __future__ import annotations
@@ -38,7 +47,7 @@ import pandas as pd
 
 _CK_ONCE_MS = {k: id(v) for k, v in globals().items()}
 
-MS_SURUM = "MUM_SUKUN v1.1 (2026-10-22, hisseye ozel mum kuculmesi; gecerli mum sarti)"
+MS_SURUM = "MUM_SUKUN v1.2 (2026-10-22, hisseye ozel mum kuculmesi; gecerli mum sarti; zemin modu)"
 mslog = logging.getLogger("col.mum_sukun")
 if not mslog.handlers:
     _ms_h = logging.StreamHandler(sys.stderr)
@@ -64,6 +73,15 @@ class MSAyar:
     hedef_asagi: float = 0.10
     sicrama: float = 0.25        # BIST: bu kadar gunluk hareket veri hatasi (sinir %10); pencerede varsa olay atlanir
     donem_siniri: str = "2022-01-01"
+    # v1.2 zemin modu
+    zemin_k: Tuple[int, ...] = (4, 5, 6)
+    zemin_esik: Dict[str, Tuple[float, float, float, float]] = field(default_factory=lambda: {
+        "z_siki": (2.0, 0.5, 0.4, 0.7), "z_gevsek": (2.5, 0.7, 0.6, 1.0)})   # bant, dip_hiza, bosluk, kayma (nr cinsinden)
+    zemin_taban_bant: float = 3.0   # taban: ayni baglam, sira daginik
+    zemin_dusus20: float = 0.15
+    zemin_hiz10: float = 0.12
+    zemin_carp: float = 1.3
+    zemin_dip: float = 0.03
     veri: Dict[str, str] = field(default_factory=lambda: {
         "BIST": os.environ.get("MS_VERI_BIST", "/content/drive/MyDrive/col_tarayici/veri_1d_turkey.pkl"),
         "ABD": os.environ.get("MS_VERI_ABD", "/content/drive/MyDrive/col_tarayici/veri_1d_america.pkl"),
@@ -156,6 +174,14 @@ def _sonuc(d: pd.DataFrame, i: int, A: MSAyar) -> Dict[str, float]:
     return r
 
 
+def _temiz_pencere(c: pd.Series, A: MSAyar) -> np.ndarray:
+    """BIST: veri sicramasi (bolunme/bedelsiz izi) olcu penceresinde ya da ileri pencerede varsa o gun olay sayilmaz."""
+    bozuk = (c.pct_change().abs() > A.sicrama).to_numpy().astype(int)
+    cs = np.concatenate([[0], np.cumsum(bozuk)]); n = len(c); ii = np.arange(n)
+    bas = np.maximum(0, ii - A.normal - 10); bit = np.minimum(n, ii + A.ufuk + 1)
+    return (cs[bit] - cs[bas]) == 0
+
+
 def ms_k2_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.DataFrame:
     rows: List[Dict[str, Any]] = []
     t0 = time.time()
@@ -165,11 +191,7 @@ def ms_k2_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.DataF
         lo20 = d.Low.rolling(20, min_periods=15).min()
         baglam = ((c <= hi60 * (1 - A.dusus)) & (c <= lo20 * (1 + A.dip_yakin))).to_numpy().copy()
         if pazar == "BIST":
-            # veri sicramasi (bolunme/bedelsiz izi) olcu penceresinde ya da ileri pencerede varsa olay sayilmaz
-            bozuk = (c.pct_change().abs() > A.sicrama).to_numpy().astype(int)
-            cs = np.concatenate([[0], np.cumsum(bozuk)]); n = len(c); ii = np.arange(n)
-            bas = np.maximum(0, ii - A.normal - 10); bit = np.minimum(n, ii + A.ufuk + 1)
-            baglam &= (cs[bit] - cs[bas]) == 0
+            baglam &= _temiz_pencere(c, A)
         if not baglam.any():
             continue
         idx = np.flatnonzero(baglam)
@@ -201,6 +223,77 @@ def ms_k2_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.DataF
         O["donem"] = np.where(pd.to_datetime(O.tarih) < pd.Timestamp(A.donem_siniri), "2016-21", "2022-26")
         O = O[pd.to_datetime(O.tarih) >= pd.Timestamp("2016-01-01")]
     return O
+
+
+# ---------------------------------------------------------------- K2z zemin (v1.2)
+def ms_zemin_olcu(d: pd.DataFrame, k: int, A: MSAyar) -> pd.DataFrame:
+    """Her gun, o gun biten k mumluk sira icin zemin olculeri (hissenin kendi normal mum araligi cinsinden) ve baglam."""
+    O, H, L, C = d.Open, d.High, d.Low, d.Close
+    gec = H > L
+    if "Volume" in d.columns and d.Volume.notna().any():
+        gec &= d.Volume.fillna(0) > 0
+    r = ((H - L) / C).where(gec)
+    nr = r.shift(k).rolling(A.normal, min_periods=A.normal_min).median()
+    Lm = L.rolling(k).min()
+    out = pd.DataFrame(index=d.index)
+    out["bant"] = (H.rolling(k).max() - Lm) / C / nr
+    out["dip_hiza"] = (L.rolling(k).max() - Lm) / C / nr
+    out["bosluk"] = ((O - C.shift()).abs() / C.shift() / nr).rolling(k - 1).max()
+    out["kayma"] = (C - O.shift(k - 1)).abs() / C / nr
+    out["tam"] = gec.astype(int).rolling(k).sum() == k
+    once = C.shift(k)
+    out["dusus20"] = once / once.rolling(20, min_periods=15).max() - 1
+    out["hiz10"] = once / once.rolling(10, min_periods=8).max() - 1
+    out["carp"] = r.shift(k).rolling(5, min_periods=4).mean() / nr
+    out["dipte"] = Lm <= L.rolling(60, min_periods=40).min() * (1 + A.zemin_dip)
+    out["baglam"] = (out.tam & out.dipte & (out.dusus20 <= -A.zemin_dusus20) & (out.hiz10 <= -A.zemin_hiz10)
+                     & (out.carp >= A.zemin_carp) & nr.notna())
+    for ad, (b, dh, bo, ka) in A.zemin_esik.items():
+        out[ad] = out.baglam & (out.bant <= b) & (out.dip_hiza <= dh) & (out.bosluk <= bo) & (out.kayma <= ka)
+    out["taban"] = out.baglam & (out.bant >= A.zemin_taban_bant)
+    return out
+
+
+def ms_k2z_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.DataFrame:
+    """Zemin olaylari; ciktinin bicimi ms_k2_olaylar ile ayni (olcu='zemin'), boylece K3 ozet ve iz ayni kalir."""
+    rows: List[Dict[str, Any]] = []
+    t0 = time.time()
+    varyantlar = list(A.zemin_esik) + ["taban"]
+    for no, (s, d) in enumerate(V.items(), 1):
+        try:
+            temiz = _temiz_pencere(d.Close, A) if pazar == "BIST" else np.ones(len(d), bool)
+            for k in A.zemin_k:
+                Z = ms_zemin_olcu(d, k, A)
+                for ad in varyantlar:
+                    m = Z[ad].to_numpy(dtype=bool) & temiz
+                    son = -10 ** 9
+                    for i in np.flatnonzero(m):
+                        if i - son < A.tekrar:
+                            continue
+                        son = i
+                        rows.append({"pazar": pazar, "sembol": s, "tarih": d.index[i], "k": k, "olcu": "zemin", "varyant": ad,
+                                     "oran": float(Z.bant.iat[i]), **_sonuc(d, i, A)})
+        except Exception as ex:  # tek hisse bozuksa digerleri devam eder
+            mslog.warning("zemin %s atlandi: %s", s, ex)
+        if no % 200 == 0:
+            mslog.info("zemin %s %d/%d hisse, %d olay, %.0f sn", pazar, no, len(V), len(rows), time.time() - t0)
+    O = pd.DataFrame(rows)
+    if not O.empty:
+        O["donem"] = np.where(pd.to_datetime(O.tarih) < pd.Timestamp(A.donem_siniri), "2016-21", "2022-26")
+        O = O[pd.to_datetime(O.tarih) >= pd.Timestamp("2016-01-01")]
+    return O
+
+
+def ms_zemin_bugun(d: pd.DataFrame, A: Optional[MSAyar] = None) -> pd.DataFrame:
+    """Tek hisse: son gun biten 4/5/6 mumluk sira zemin mi (olculer ve hangi kosul tutmadi)."""
+    A = A or MSAyar()
+    rows = []
+    for k in A.zemin_k:
+        Z = ms_zemin_olcu(d, k, A).iloc[-1]
+        rows.append({"k": k, **{c: (round(float(Z[c]), 2) if not isinstance(Z[c], (bool, np.bool_)) else bool(Z[c]))
+                                for c in ["bant", "dip_hiza", "bosluk", "kayma", "dusus20", "hiz10", "carp", "dipte", "baglam",
+                                          *A.zemin_esik, "taban"]}})
+    return pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------- K3 ozet
@@ -236,7 +329,17 @@ def ms_k4_hisse(d: pd.DataFrame, A: Optional[MSAyar] = None) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------- K5 rapor
-def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataFrame]) -> str:
+def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataFrame], mod: str = "sukun") -> str:
+    if mod == "zemin":
+        sat = [f"# MUM_SUKUN zemin — {MS_SURUM}", "",
+               "Soru (Cemal, 22 Eki): sert dusus duz bir zemine carpip 4-6 mum dipleri hizali, bosluksuz, kaymadan yan yana dizilince isaret mi?",
+               "Olculer hissenin kendi normal mum araligi cinsinden (dosya basindaki v1.2 notu). Taban: ayni sert dusus baglami, sira daginik (bant >= 3).",
+               "Iz: 4 dilimde (BIST/ABD x 2016-21/2022-26) kat >= 1,3 ve 60g getiri tabandan iyi, her dilimde n >= 30.", ""]
+        sat += ["## Varyant ozeti (4 dilim)", "", iz.sort_values(["gecti", "ayni_yon", "kat_ort"], ascending=False).round(2).to_markdown(index=False), ""]
+        sat += ["## Dilim ayrintisi", "", oz.round(2).to_markdown(index=False), ""]
+        for s, t in hisseler.items():
+            sat += [f"## {s} bugun", "", t.to_markdown(index=False), ""]
+        return "\n".join(sat)
     sat = [f"# MUM_SUKUN — {MS_SURUM}", "",
            "Soru (Cemal, 22 Eki): dusus sonrasi son 3-4 mumun kuculmesi, hissenin KENDI normal oynakligina gore olculunce bir isaret mi?",
            "Olcu: son k mumun ortalama boyu, ayni hissenin onceki 250 bardaki dagiliminin yuzde kacinda. Sinyal: yuzdelik <= esik.",
@@ -248,8 +351,14 @@ def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataF
     return "\n".join(sat)
 
 
-def mum_sukun(hisse_listesi: Optional[List[str]] = None, A: Optional[MSAyar] = None) -> Dict[str, Any]:
+def mum_sukun(hisse_listesi: Optional[List[str]] = None, A: Optional[MSAyar] = None, mod: str = "sukun") -> Dict[str, Any]:
+    """mod='sukun': v1.1 mum kuculmesi testi. mod='zemin': v1.2 duz zemin testi (ayri cikti dosyalari)."""
+    if mod not in ("sukun", "zemin"):
+        raise ValueError(f"mod sukun ya da zemin olmali: {mod}")
     A = A or MSAyar()
+    on = "zemin_" if mod == "zemin" else "mum_sukun_"
+    k2 = ms_k2z_olaylar if mod == "zemin" else ms_k2_olaylar
+    k4 = ms_zemin_bugun if mod == "zemin" else ms_k4_hisse
     os.makedirs(A.cikti, exist_ok=True)
     tum = []; veri = {}
     for pazar, yol in A.veri.items():
@@ -259,20 +368,20 @@ def mum_sukun(hisse_listesi: Optional[List[str]] = None, A: Optional[MSAyar] = N
             mslog.error("%s verisi okunamadi (%s); bu pazar atlandi", pazar, ex)
             continue
         veri[pazar] = V
-        tum.append(ms_k2_olaylar(V, pazar, A))
+        tum.append(k2(V, pazar, A))
     if not tum:
         raise RuntimeError("hic veri okunamadi")
     O = pd.concat(tum, ignore_index=True)
-    O.to_csv(os.path.join(A.cikti, "mum_sukun_olaylar.csv.gz"), index=False)
+    O.to_csv(os.path.join(A.cikti, on + "olaylar.csv.gz"), index=False)
     oz = ms_k3_ozet(O); iz = ms_iz(oz)
-    oz.to_csv(os.path.join(A.cikti, "mum_sukun_ozet.csv"), index=False)
+    oz.to_csv(os.path.join(A.cikti, on + "ozet.csv"), index=False)
     hs = {}
     for s in hisse_listesi or []:
         for V in veri.values():
             if s in V:
-                hs[s] = ms_k4_hisse(V[s], A); break
-    rapor = ms_k5_rapor(oz, iz, hs)
-    with open(os.path.join(A.cikti, "MUM_SUKUN_rapor.md"), "w", encoding="utf-8") as f:
+                hs[s] = k4(V[s], A); break
+    rapor = ms_k5_rapor(oz, iz, hs, mod)
+    with open(os.path.join(A.cikti, "MUM_SUKUN_zemin_rapor.md" if mod == "zemin" else "MUM_SUKUN_rapor.md"), "w", encoding="utf-8") as f:
         f.write(rapor)
     return {"olaylar": O, "ozet": oz, "iz": iz, "hisse": hs, "rapor": rapor}
 
@@ -292,7 +401,9 @@ def _cakisma_kontrol_ms(_once=_CK_ONCE_MS, _dosya='MUM_SUKUN.py'):
 _cakisma_kontrol_ms()
 
 if __name__ == "__main__":
-    R = mum_sukun(sys.argv[1:])
+    _arg = sys.argv[1:]
+    _mod = "zemin" if "--zemin" in _arg else "sukun"
+    R = mum_sukun([a for a in _arg if not a.startswith("--")], mod=_mod)
     print(R["iz"].sort_values(["gecti", "ayni_yon", "kat_ort"], ascending=False).round(2).to_string(index=False))
     for s, t in R["hisse"].items():
         print(f"\n{s} bugun:\n{t.to_string(index=False)}")

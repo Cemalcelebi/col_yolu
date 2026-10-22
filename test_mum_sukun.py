@@ -7,6 +7,7 @@
 # 5) Sonuc: once +%20 mi -%10 mu dogru isaretlenir.
 # 6) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
 # 7) v1.1 gecerli mum: islem gormeyen (hacim 0) ya da kilitli (O=H=L=C) son mumlar sakin sayilmaz, olcu verilmez.
+# 8) v1.2 zemin: sert dusus + dipleri hizali, bosluksuz 5 mum -> z_siki; ayni dusus + daginik sira -> taban; dipleri kayan sira zemin degil.
 import sys, numpy as np, pandas as pd
 
 import MUM_SUKUN as M
@@ -66,6 +67,27 @@ def sina():
     sifir = seri(dusus=True, son=[0.0005, 0.0005, 0.0005]); sifir["Volume"] = 1000.0; sifir.iloc[-1, sifir.columns.get_loc("Volume")] = 0.0
     O7 = M.ms_k2_olaylar({"T7": sifir}, "ABD", A)
     if not O7[(O7.tarih == sifir.index[-1])].empty: hata.append("7) hacmi 0 olan gun sinyal verdi")
+    def zemin_seri(son):
+        z = seri(n=420, oynak=0.02, tohum=7)
+        z.iloc[-25:] = z.iloc[-26].Close  # duz bekleme
+        c0 = z.Close.iat[-26]
+        for j, i in enumerate(range(len(z) - 13, len(z) - 5)):  # 8 gunde sert dusus, buyuk mumlar
+            pc = z.Close.iat[i - 1]; cc = pc * 0.95
+            z.iloc[i] = [pc, pc * 1.01, cc * 0.98, cc]
+        for j, (o, h, l, c) in enumerate(son):
+            i = len(z) - 5 + j; b = z.Close.iat[len(z) - 6]
+            z.iloc[i] = [b * o, b * h, b * l, b * c]
+        z.iloc[-25:-13] = [[c0 * 1.0, c0 * 1.01, c0 * 0.99, c0]] * 12
+        return z
+    duz = [(1.0, 1.006, 0.995, 1.002), (1.002, 1.007, 0.995, 1.0), (1.0, 1.005, 0.996, 1.003), (1.003, 1.006, 0.995, 1.001), (1.001, 1.006, 0.996, 1.002)]
+    Zd = M.ms_zemin_olcu(zemin_seri(duz), 5, A).iloc[-1]
+    if not (Zd.baglam and Zd.z_siki and not Zd.taban): hata.append(f"8) duz zemin z_siki degil: {Zd.to_dict()}")
+    dag = [(1.0, 1.05, 0.97, 1.04), (1.04, 1.06, 0.98, 0.99), (0.95, 1.0, 0.94, 0.99), (1.0, 1.08, 0.99, 1.06), (1.02, 1.05, 0.96, 0.97)]
+    Zg = M.ms_zemin_olcu(zemin_seri(dag), 5, A).iloc[-1]
+    if not (Zg.baglam and Zg.taban and not Zg.z_gevsek): hata.append(f"8) daginik sira taban degil: {Zg.to_dict()}")
+    kay = [(1.0, 1.004, 0.992, 0.994), (0.994, 0.998, 0.984, 0.986), (0.986, 0.99, 0.976, 0.978), (0.978, 0.982, 0.968, 0.97), (0.97, 0.974, 0.96, 0.962)]
+    Zk = M.ms_zemin_olcu(zemin_seri(kay), 5, A).iloc[-1]
+    if Zk.z_siki: hata.append(f"8) dipleri kayan sira zemin sayildi: {Zk.to_dict()}")
     g = {"MSAyar": object(), "__name__": "kapi_test"}
     try:
         src = open("MUM_SUKUN.py", encoding="utf-8").read()
@@ -83,4 +105,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_mum_sukun: 7/7 OK")
+    print("test_mum_sukun: 8/8 OK")
