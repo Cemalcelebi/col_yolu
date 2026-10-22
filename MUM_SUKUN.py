@@ -1,5 +1,5 @@
 # =====================================================================
-#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.2)
+#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.3)
 #
 #  CEMAL (22 Eki, ANGX grafigi): "Son 3-4 mum: dizilim ve mum boyu kuculmesi cok derin bir isaret. Standart sayi cevirmeyeceksin;
 #    her hissenin normal donem hareketliligi ile boyle donemlere orani tek tek hisseye ozel hesaplanmali."
@@ -22,6 +22,15 @@
 #      siradan onceki 5 mum normalin >= 1,3 kati (hizla gelen dusus), sira 60 barin dibinde (en dusuk dip <= 60 bar dibi x 1,03),
 #      k mumun hepsi gecerli. Varyant z_siki: bant <= 2, dip_hiza <= 0,5, bosluk <= 0,4, kayma <= 0,7; z_gevsek: 2,5 / 0,7 / 0,6 / 1,0.
 #      TABAN: ayni baglam, zemin yok (bant >= 3: sira daginik). k = 4, 5, 6. Sonuc ve iz standardi asagidaki ile ayni.
+#  v1.3 (22 Eki) KISA UFUK + AYRILMA. CEMAL: "60 gun cok uzun; 2-3 gunluk sikisma %3-5'lik hareket verir. Bolge uzun sikisip
+#    oraya para girerse ayrilma sert olur." Zemin olaylarina iki sonuc eklendi (60 gunluk sonuc aynen duruyor):
+#    KISA: sinyal kapanisindan 3/5/10 bar icindeki en yuksek ve en dusuk (%, ve hissenin normal mumu cinsinden); 10 bar icinde
+#      once +%3 mu -%3 mu, once +%5 mi -%3 mu, once +%5 mi -%5 mi (ayni gun ikisi = olumsuz). Taban yine dagnik sira.
+#    AYRILMA: bolge = sira bandi (min L .. maks H) +- 0,5 normal mum; sinyalden sonra barlar bandin icinde kaldikca bolge uzar.
+#      Bandi ilk asan bar = ayrilma. bolge_bar = toplam uzunluk, hacim_kat = bolgedeki ortalama hacim / bolge oncesi 50 bar
+#      medyani, yon = yukari/asagi, sertlik = ayrilma bari dahil 5 barda banttan uzaklasma, normal mum cinsinden.
+#      Sabit kovalar: bolge 4-7 / 8-15 / >=16 bar; hacim <0,8 / 0,8-1,5 / >=1,5. Iz: uzun + hacimli kova kisa kovaya gore
+#      dort dilimde de >= 1,3 kat (sert ayrilma = sertlik >= 3 normal mum).
 #  BAGLAM: dusus sonrasi = kapanis, son 60 barin en yuksek kapanisinin %80'i veya alti VE son 20 barin en dusugunun %15 yakininda.
 #  SINYAL: baglam + yuzdelik <= esik {2, 5, 10}. TABAN: ayni baglam, yuzdelik 30-70 (normal oynaklikta mumlar). Ayni hisse 20 bar
 #    icinde bir kez sayilir.
@@ -47,7 +56,7 @@ import pandas as pd
 
 _CK_ONCE_MS = {k: id(v) for k, v in globals().items()}
 
-MS_SURUM = "MUM_SUKUN v1.2 (2026-10-22, hisseye ozel mum kuculmesi; gecerli mum sarti; zemin modu)"
+MS_SURUM = "MUM_SUKUN v1.3 (2026-10-22, hisseye ozel mum kuculmesi; gecerli mum sarti; zemin modu; kisa ufuk + ayrilma)"
 mslog = logging.getLogger("col.mum_sukun")
 if not mslog.handlers:
     _ms_h = logging.StreamHandler(sys.stderr)
@@ -82,6 +91,14 @@ class MSAyar:
     zemin_hiz10: float = 0.12
     zemin_carp: float = 1.3
     zemin_dip: float = 0.03
+    # v1.3 kisa ufuk + ayrilma
+    kisa_ufuk: Tuple[int, ...] = (3, 5, 10)
+    kisa_hedef: Tuple[Tuple[float, float], ...] = ((3.0, 3.0), (5.0, 3.0), (5.0, 5.0))   # (+% , -%) once hangisi, 10 bar
+    kisa_sure: int = 10
+    ayrilma_tol: float = 0.5     # bant payi, normal mum cinsinden
+    ayrilma_max: int = 120       # bolge en fazla bu kadar uzar
+    ayrilma_bar: int = 5         # sertlik penceresi
+    sert_esik: float = 3.0       # sertlik >= 3 normal mum = sert ayrilma
     veri: Dict[str, str] = field(default_factory=lambda: {
         "BIST": os.environ.get("MS_VERI_BIST", "/content/drive/MyDrive/col_tarayici/veri_1d_turkey.pkl"),
         "ABD": os.environ.get("MS_VERI_ABD", "/content/drive/MyDrive/col_tarayici/veri_1d_america.pkl"),
@@ -251,7 +268,61 @@ def ms_zemin_olcu(d: pd.DataFrame, k: int, A: MSAyar) -> pd.DataFrame:
     for ad, (b, dh, bo, ka) in A.zemin_esik.items():
         out[ad] = out.baglam & (out.bant <= b) & (out.dip_hiza <= dh) & (out.bosluk <= bo) & (out.kayma <= ka)
     out["taban"] = out.baglam & (out.bant >= A.zemin_taban_bant)
+    out["nr"] = nr
     return out
+
+
+def _sonuc_kisa(d: pd.DataFrame, i: int, nr: float, A: MSAyar) -> Dict[str, float]:
+    """v1.3: sinyal kapanisindan kisa ufukta en yuksek/en dusuk ve once hangi hedef."""
+    c = d.Close.to_numpy(); h = d.High.to_numpy(); l = d.Low.to_numpy(); n = len(c); r: Dict[str, float] = {}
+    for u in A.kisa_ufuk:
+        if i + u < n:
+            up = (h[i + 1:i + u + 1].max() / c[i] - 1) * 100; dn = (1 - l[i + 1:i + u + 1].min() / c[i]) * 100
+        else:
+            up = dn = np.nan
+        r[f"yuk{u}"] = up; r[f"dus{u}"] = dn
+        r[f"yuk{u}_nr"] = up / (nr * 100) if np.isfinite(nr) and nr > 0 else np.nan
+    for (hu, hd) in A.kisa_hedef:
+        ad = f"once_{int(hu)}_{int(hd)}"
+        if i + A.kisa_sure >= n:
+            r[ad] = np.nan; continue
+        up_s = c[i] * (1 + hu / 100); dn_s = c[i] * (1 - hd / 100); snc = 0.0   # sure dolarsa olumsuz
+        for j in range(i + 1, i + A.kisa_sure + 1):
+            if l[j] <= dn_s:
+                snc = 0.0; break
+            if h[j] >= up_s:
+                snc = 1.0; break
+        r[ad] = snc
+    return r
+
+
+def _ayrilma(d: pd.DataFrame, i: int, k: int, nr: float, A: MSAyar) -> Dict[str, float]:
+    """v1.3: sira bandinin uzadigi bolge ve ondan ayrilma (bolge uzunlugu, hacim, yon, sertlik)."""
+    bos = {"bolge_bar": np.nan, "hacim_kat": np.nan, "yon": np.nan, "sertlik": np.nan, "sertlik_pct": np.nan, "ayrilma_gun": pd.NaT}
+    if not (np.isfinite(nr) and nr > 0):
+        return bos
+    h = d.High.to_numpy(); l = d.Low.to_numpy(); c = d.Close.to_numpy(); n = len(c); s0 = i - k + 1
+    pay = A.ayrilma_tol * nr * c[i]
+    ust = h[s0:i + 1].max() + pay; alt = l[s0:i + 1].min() - pay
+    e = i + 1
+    while e < n and e - i <= A.ayrilma_max and h[e] <= ust and l[e] >= alt:
+        e += 1
+    if e >= n or e - i > A.ayrilma_max or e + A.ayrilma_bar > n:
+        return bos
+    yukari = h[e] > ust and not (l[e] < alt and c[e] < (ust + alt) / 2)
+    son = e + A.ayrilma_bar
+    if yukari:
+        sert = (h[e:son].max() - ust) / c[i]
+    else:
+        sert = (alt - l[e:son].min()) / c[i]
+    hk = np.nan
+    if "Volume" in d.columns:
+        v = d.Volume.to_numpy(dtype=float)
+        once = v[max(0, s0 - 50):s0]; once = once[once > 0]
+        if len(once) >= 20:
+            hk = float(np.mean(v[s0:e]) / np.median(once))
+    return {"bolge_bar": float(e - s0), "hacim_kat": hk, "yon": 1.0 if yukari else -1.0,
+            "sertlik": float(sert / nr), "sertlik_pct": float(sert * 100), "ayrilma_gun": d.index[e]}
 
 
 def ms_k2z_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.DataFrame:
@@ -271,8 +342,10 @@ def ms_k2z_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: MSAyar) -> pd.Data
                         if i - son < A.tekrar:
                             continue
                         son = i
+                        nri = float(Z.nr.iat[i])
                         rows.append({"pazar": pazar, "sembol": s, "tarih": d.index[i], "k": k, "olcu": "zemin", "varyant": ad,
-                                     "oran": float(Z.bant.iat[i]), **_sonuc(d, i, A)})
+                                     "oran": float(Z.bant.iat[i]), **_sonuc(d, i, A), **_sonuc_kisa(d, i, nri, A),
+                                     **_ayrilma(d, i, k, nri, A)})
         except Exception as ex:  # tek hisse bozuksa digerleri devam eder
             mslog.warning("zemin %s atlandi: %s", s, ex)
         if no % 200 == 0:
@@ -294,6 +367,51 @@ def ms_zemin_bugun(d: pd.DataFrame, A: Optional[MSAyar] = None) -> pd.DataFrame:
                                 for c in ["bant", "dip_hiza", "bosluk", "kayma", "dusus20", "hiz10", "carp", "dipte", "baglam",
                                           *A.zemin_esik, "taban"]}})
     return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------- K3z zemin kisa ufuk + ayrilma ozeti (v1.3)
+def ms_k3z_kisa(O: pd.DataFrame, A: MSAyar) -> pd.DataFrame:
+    """Kisa ufuk: varyant x dilim; once-hedef oranlari ve tabana gore kat."""
+    hed = [f"once_{int(u)}_{int(dd)}" for u, dd in A.kisa_hedef]
+    agg = {"n": ("sembol", "size"), **{h: (h, "mean") for h in hed}}
+    for u in A.kisa_ufuk:
+        agg[f"yuk{u}_med"] = (f"yuk{u}", "median"); agg[f"dus{u}_med"] = (f"dus{u}", "median")
+        agg[f"yuk{u}_nr_med"] = (f"yuk{u}_nr", "median")
+    g = O.groupby(["k", "varyant", "pazar", "donem"]).agg(**agg).reset_index()
+    for h in hed:
+        g[h] *= 100
+    t = g[g.varyant == "taban"][["k", "pazar", "donem"] + hed].rename(columns={h: "t_" + h for h in hed})
+    g = g.merge(t, on=["k", "pazar", "donem"], how="left")
+    for h in hed:
+        g["kat_" + h[5:]] = g[h] / g["t_" + h]
+    return g
+
+
+def ms_iz_kisa(g: pd.DataFrame, A: MSAyar, min_n: int = 30) -> pd.DataFrame:
+    rows = []
+    for (k, v), s in g[g.varyant != "taban"].groupby(["k", "varyant"]):
+        for u, dd in A.kisa_hedef:
+            kc = f"kat_{int(u)}_{int(dd)}"
+            rows.append({"k": k, "varyant": v, "hedef": f"+{int(u)}/-{int(dd)}", "dilim": len(s),
+                         "gecti": int(((s[kc] >= 1.3) & (s.n >= min_n)).sum()), "ayni_yon": int((s[kc] > 1.0).sum()),
+                         "kat_min": s[kc].min(), "kat_ort": s[kc].mean(), "n_min": int(s.n.min())})
+    return pd.DataFrame(rows)
+
+
+def ms_k3z_ayrilma(O: pd.DataFrame, A: MSAyar) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Ayrilma: z_gevsek olaylari (z_siki onun alt kumesi). Ayni bolgeden (ayni ayrilma gunu) gelen k=4/5/6 olaylari tek
+    sayilir, en kucuk k tutulur. Sabit kovalar."""
+    Z = O[(O.varyant == "z_gevsek") & O.sertlik.notna()].sort_values(["k", "tarih"])
+    Z = Z.drop_duplicates(["pazar", "sembol", "ayrilma_gun"]).copy()
+    Z["boy"] = pd.cut(Z.bolge_bar, [0, 7, 15, 10 ** 6], labels=["4-7", "8-15", ">=16"])
+    Z["hac"] = pd.cut(Z.hacim_kat, [0, 0.8, 1.5, 10 ** 6], right=False, labels=["<0,8", "0,8-1,5", ">=1,5"])
+    Z["sert"] = (Z.sertlik >= A.sert_esik).astype(float) * 100
+    Z["yuk"] = (Z.yon > 0).astype(float) * 100
+    f = dict(n=("sembol", "size"), sert_oran=("sert", "mean"), sertlik_med=("sertlik", "median"),
+             sertlik_pct_med=("sertlik_pct", "median"), yukari=("yuk", "mean"))
+    t1 = Z.groupby(["pazar", "donem", "boy"], observed=True).agg(**f).reset_index()
+    t2 = Z.groupby(["pazar", "donem", "boy", "hac"], observed=True).agg(**f).reset_index()
+    return t1, t2
 
 
 # ---------------------------------------------------------------- K3 ozet
@@ -329,7 +447,8 @@ def ms_k4_hisse(d: pd.DataFrame, A: Optional[MSAyar] = None) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------- K5 rapor
-def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataFrame], mod: str = "sukun") -> str:
+def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataFrame], mod: str = "sukun",
+                ekler: Optional[Dict[str, pd.DataFrame]] = None) -> str:
     if mod == "zemin":
         sat = [f"# MUM_SUKUN zemin — {MS_SURUM}", "",
                "Soru (Cemal, 22 Eki): sert dusus duz bir zemine carpip 4-6 mum dipleri hizali, bosluksuz, kaymadan yan yana dizilince isaret mi?",
@@ -337,6 +456,8 @@ def ms_k5_rapor(oz: pd.DataFrame, iz: pd.DataFrame, hisseler: Dict[str, pd.DataF
                "Iz: 4 dilimde (BIST/ABD x 2016-21/2022-26) kat >= 1,3 ve 60g getiri tabandan iyi, her dilimde n >= 30.", ""]
         sat += ["## Varyant ozeti (4 dilim)", "", iz.sort_values(["gecti", "ayni_yon", "kat_ort"], ascending=False).round(2).to_markdown(index=False), ""]
         sat += ["## Dilim ayrintisi", "", oz.round(2).to_markdown(index=False), ""]
+        for baslik, t in (ekler or {}).items():
+            sat += [f"## {baslik}", "", t.round(2).to_markdown(index=False), ""]
         for s, t in hisseler.items():
             sat += [f"## {s} bugun", "", t.to_markdown(index=False), ""]
         return "\n".join(sat)
@@ -375,15 +496,28 @@ def mum_sukun(hisse_listesi: Optional[List[str]] = None, A: Optional[MSAyar] = N
     O.to_csv(os.path.join(A.cikti, on + "olaylar.csv.gz"), index=False)
     oz = ms_k3_ozet(O); iz = ms_iz(oz)
     oz.to_csv(os.path.join(A.cikti, on + "ozet.csv"), index=False)
+    ekler: Dict[str, pd.DataFrame] = {}
+    if mod == "zemin":
+        try:
+            gk = ms_k3z_kisa(O, A); izk = ms_iz_kisa(gk, A); a1, a2 = ms_k3z_ayrilma(O, A)
+            gk.to_csv(os.path.join(A.cikti, "zemin_kisa_ozet.csv"), index=False)
+            a1.to_csv(os.path.join(A.cikti, "zemin_ayrilma_boy.csv"), index=False)
+            a2.to_csv(os.path.join(A.cikti, "zemin_ayrilma_boy_hacim.csv"), index=False)
+            ekler = {"v1.3 KISA UFUK iz ozeti (10 bar icinde once hedef, tabana gore kat)": izk,
+                     "v1.3 KISA UFUK dilim ayrintisi": gk,
+                     "v1.3 AYRILMA bolge uzunluguna gore (z_gevsek)": a1,
+                     "v1.3 AYRILMA bolge uzunlugu x hacim": a2}
+        except Exception as ex:  # ek ozet bozulursa ana sonuc yine yazilir
+            mslog.error("v1.3 kisa/ayrilma ozeti yazilamadi: %s", ex)
     hs = {}
     for s in hisse_listesi or []:
         for V in veri.values():
             if s in V:
                 hs[s] = k4(V[s], A); break
-    rapor = ms_k5_rapor(oz, iz, hs, mod)
+    rapor = ms_k5_rapor(oz, iz, hs, mod, ekler)
     with open(os.path.join(A.cikti, "MUM_SUKUN_zemin_rapor.md" if mod == "zemin" else "MUM_SUKUN_rapor.md"), "w", encoding="utf-8") as f:
         f.write(rapor)
-    return {"olaylar": O, "ozet": oz, "iz": iz, "hisse": hs, "rapor": rapor}
+    return {"olaylar": O, "ozet": oz, "iz": iz, "hisse": hs, "rapor": rapor, "ekler": ekler}
 
 
 def _cakisma_kontrol_ms(_once=_CK_ONCE_MS, _dosya='MUM_SUKUN.py'):

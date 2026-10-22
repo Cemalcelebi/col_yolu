@@ -7,6 +7,8 @@
 # 5) Sonuc: once +%20 mi -%10 mu dogru isaretlenir.
 # 6) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
 # 7) v1.1 gecerli mum: islem gormeyen (hacim 0) ya da kilitli (O=H=L=C) son mumlar sakin sayilmaz, olcu verilmez.
+# 9) v1.3 kisa ufuk: once +%3 / -%3 dogru isaretlenir; ayrilma: duz bolge 12 bar surer, sonra yukari kopar -> yon +1, bolge_bar
+#    dogru, sertlik > 0; hacim bolgede iki kat -> hacim_kat ~2.
 # 8) v1.2 zemin: sert dusus + dipleri hizali, bosluksuz 5 mum -> z_siki; ayni dusus + daginik sira -> taban; dipleri kayan sira zemin degil.
 import sys, numpy as np, pandas as pd
 
@@ -88,6 +90,18 @@ def sina():
     kay = [(1.0, 1.004, 0.992, 0.994), (0.994, 0.998, 0.984, 0.986), (0.986, 0.99, 0.976, 0.978), (0.978, 0.982, 0.968, 0.97), (0.97, 0.974, 0.96, 0.962)]
     Zk = M.ms_zemin_olcu(zemin_seri(kay), 5, A).iloc[-1]
     if Zk.z_siki: hata.append(f"8) dipleri kayan sira zemin sayildi: {Zk.to_dict()}")
+    idx9 = pd.bdate_range("2024-01-01", periods=12)
+    y9 = pd.DataFrame({"Open": 100.0, "High": [100, 101, 104, 100] + [100] * 8, "Low": [100, 99, 99, 90] + [100] * 8, "Close": 100.0}, index=idx9)
+    if M._sonuc_kisa(y9, 0, 0.02, A)["once_3_3"] != 1.0: hata.append("9) kisa: once +%3 isaretlenmedi")
+    y9b = y9.copy(); y9b.loc[idx9[1], "Low"] = 96
+    if M._sonuc_kisa(y9b, 0, 0.02, A)["once_3_3"] != 0.0: hata.append("9) kisa: once -%3 isaretlenmedi")
+    n9 = 100; i9 = 60; idx = pd.bdate_range("2024-01-01", periods=n9)
+    c9 = np.full(n9, 100.0); h9 = c9 * 1.02; l9 = c9 * 0.98; v9 = np.full(n9, 1000.0)
+    h9[i9 - 4:i9 + 8] = 100.5; l9[i9 - 4:i9 + 8] = 99.5; v9[i9 - 4:i9 + 8] = 2000.0   # 5 mumluk sira + 7 bar daha bolgede
+    h9[i9 + 8:] = 108.0; c9[i9 + 8:] = 107.0; l9[i9 + 8:] = 106.0                     # yukari kopus
+    a9 = M._ayrilma(pd.DataFrame({"Open": c9, "High": h9, "Low": l9, "Close": c9, "Volume": v9}, index=idx), i9, 5, 0.01, A)
+    if not (a9["yon"] == 1.0 and a9["bolge_bar"] == 12 and a9["sertlik"] > 0 and abs(a9["hacim_kat"] - 2.0) < 0.01):
+        hata.append(f"9) ayrilma yanlis: {a9}")
     g = {"MSAyar": object(), "__name__": "kapi_test"}
     try:
         src = open("MUM_SUKUN.py", encoding="utf-8").read()
@@ -105,4 +119,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_mum_sukun: 8/8 OK")
+    print("test_mum_sukun: 9/9 OK")
