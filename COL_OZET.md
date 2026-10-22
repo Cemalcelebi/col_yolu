@@ -219,7 +219,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
 
 ---
 
-## 9. 25 EYLÜL – 21 EKİM 2026 — SON DURUM (en güncel bölüm budur)
+## 9. 25 EYLÜL – 22 EKİM 2026 — SON DURUM (en güncel bölüm budur)
 
 ### 9.0 ÇALIŞMA ÇERÇEVESİ — BU DOSYANIN ROLÜ
 - Sistem TEST AŞAMASINDA, nihai sürüm yok. Bu MD kural defteri değil; bağlam kopukluğuna karşı SİGORTA.
@@ -347,6 +347,7 @@ Uzun iş kuralı: her adımda CSV, kaldığı yerden devam, süre ilk adımdan �
   Ölçüm (goz_esle/arastirma/kutu_dip_tani.py → goz_esle/goz_kutu_dip_tani.csv): "raf kesme" (kutudaki en düşük dipten önceki kapanış medyanı sonraki kapanışların %90'ının üstündeyse kutu dipten başlar) ve bant 4x, 37 etikette: COL 16→17/30, OLUMSUZ yanlış alarm 4/8 değişmedi, raf 3 etikette kesildi. Cemal'in çöllerinden hiçbirini kaybettirmiyor; faydası tam evrende (OYLUM/EUYO tipi kutular) ölçülecek. Üretime alınmadı, "yaz" bekliyor.
   COL_GOZ (21 Eki akşam, arastirma_cikti/col_goz/; Cemal: "kod binlerce çöl bulmuş, sen tek tek bak karar ver"): D13'ün 2024-26 BIST kutuları (3100; üretim kapısı sonrası 746) grafikle tek tek gözden geçirildi. Gözle ÇÖL 45 (%6), SINIR 105 (%14), DEĞİL 568 (%76; KISA 252 bir aylık duraklama, V 155 dip sıçraması, GENİŞ 70, TREND İÇİ 75, YÜKSELİŞ 16), veri hatası 28. Kodun sistematik hatası: kutu 120 bar dibinden başlayıp ilk uygun günde (20-40 bar) sinyal veriyor; gerçek çöllerde düz bölge kutudan çok önce başlıyor, kod yalnız son parçayı işaretliyor. ÇÖL kutularında alım %89 / bozulma %4 / ileri60 medyan +13,6 (diğerleri %80 / %17 / +0,6) — ama grafiklerde sonraki 40 bar görünüyordu, sonradan bilgi; n=45, iz değil. Basit ölçüler (kutu öncesi düz bar, yuk_atr, kapanış konumu, mum küçüklüğü) göz kararını ayıramadı. Üretim değişmedi; Cemal'in 45+105 kutuyu onaylaması bekleniyor (PDF sohbette).
   Cemal'in kararı (22 Eki, arastirma_cikti/col_goz/col_goz_cemal_2024_26.csv; dokunmatik işaretleme sayfası): 150 kutunun 88'i EVET, 62'si HAYIR (benim ÇÖL 33/45, SINIR 55/105 EVET). Notları ("atılım barı yok", "kutunun devamı var", "daha ilerisi var") kararın sinyal SONRASI atılıma göre verildiğini gösteriyor: EVET'lerde alım %98, bozulma %1, ileri60 medyan +15,6; HAYIR'larda %76, %18, −7,2. Şekil ölçüleri EVET/HAYIR'ı ayırmıyor (bar, yük, düz bar, mum küçüklüğü AUC 0,45-0,53; kapanış konumu 0,62). Yani etiket "çöl mü" değil "atılım geldi mi" etiketi (bölüm 4 ders 5, DERS 4 ile aynı); tespit kuralı bundan öğrenilemez. Yol: sinyal sonrası gizlenerek yeniden etiketleme, ya da tespit D13'te kalır ve ayırma AL kuralına bırakılır (zaten öyle). Üretim değişmedi.
+  MUM_SUKUN (22 Eki, Cemal'in ANGX notu; arastirma_cikti/mum_sukun/, test_mum_sukun.py 6/6): düşüş sonrası son 3-4 mumun boyu hissenin KENDİ 250 günlük dağılımının yüzdeliğiyle ölçüldü (sabit eşik yok). 24 varyant × BIST/ABD × 2016-21/2022-26: hiçbir dilimde taban (aynı bağlamda normal mumlar) oranının 1,3 katı yok, ortalama kat ~1,0; BIST 2016-21'de hafif artı, 2022-26'da ters. Büyük hareketi de önceden göstermiyor. İz değil (IZ_DEFTERI C).
 - T6 (taban kırılınca çık) testle çelişiyor: tut ya da kaldır.
 - Boyut çarpanları (doji/fitil/dar) yeniden doğrulama.
   Aynı işte düzeltilecek (20 Eki inceleme): `dar_hafta_olc`, segmentten önceki haftayı da segmente sayıyor ("ilk" bloğu). Bu yüzden `dar` değeri düşük çıkıyor.
@@ -373,7 +374,7 @@ Gerçek sayı (tekil, ertesi açılış, 120 bar): BIST 24-26 %64/+8.9 · BIST 2
 Test setleri OB24/OB23/OBUS (BASLAT) + OBUS21 (onbellek_ABD_2022_23.pkl). Ölçüm: exec OLCUM.py → islemler_olc/dilim/kiyas/esli_kiyas.
 Çakışma kapısı: ölçüm dosyası üretim adını ezerse durur. DESEN_TAM arsiv/desen/ altında, kapalı; OLCUM ile birlikte yüklenmez.
 Kapananlar: sektör, momentum, onc250, konum250, taban koruması/kırılma, çöl kalitesi filtresi, tutunma/silkeleme, 4h/1h çöl ölçüleri salınım dibinde,
-QMLS tahtacı/nakit/onay/dip sırası, giriş zamanlaması, stoplar, 90+ şekil, KNN, VIX/DXY, öbek yoluna ek şart (hacim 2-3-4 kat, hacim kuruması, 25 ölçü — COL_KAZANC 21 Eki: hiçbiri; küçük alım mumu K7 doğrulama: BIST'te düşük hacim vekili, ABD'de yok; NVI/CMF/A-D birikim ayrışması K8: ABD'de kâr yok, BIST tabanda da aynı). Tutanlar: alt fitil<0.12, doji, dar hafta, CDS, borç/öz, üç şart.
+QMLS tahtacı/nakit/onay/dip sırası, giriş zamanlaması, stoplar, 90+ şekil, KNN, VIX/DXY, öbek yoluna ek şart (hacim 2-3-4 kat, hacim kuruması, 25 ölçü — COL_KAZANC 21 Eki: hiçbiri; küçük alım mumu K7 doğrulama: BIST'te düşük hacim vekili, ABD'de yok; NVI/CMF/A-D birikim ayrışması K8: ABD'de kâr yok, BIST tabanda da aynı; hisseye özel mum küçülmesi MUM_SUKUN 22 Eki: 4 dilimde de yok). Tutanlar: alt fitil<0.12, doji, dar hafta, CDS, borç/öz, üç şart.
 Açık: genç halka arz (--genc-ay 24) 3. dip bek +1.6 (n=105), 1h kapitülasyon yönü (n=112) — daha uzun 1h veri (Twelve Data) ya da günlük ölçü.
 Kurallar: kod yazmadan önce "yaz"; tek dosya, üretim kalitesi; eski doğru kısımlar korunur; uzun tarama = her adımda CSV + devam; süre ilk adımdan;
 test resimlerinde hisse adı yok; Drive'a Colab'dan yerinde yaz. Cemal grafiği okur, karar verir; ben ölçerim. Basit hatayı makineye buldur (kapı, test).
