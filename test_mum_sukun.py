@@ -6,6 +6,7 @@
 # 4) Olay: dusus + sakin 3 mum -> p02 varyantinda o gun olay bulunur (p05 daha once tetiklenmis olabilir: 20 bar tekrar kurali), taban varyantinda o gun olay yok.
 # 5) Sonuc: once +%20 mi -%10 mu dogru isaretlenir.
 # 6) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
+# 7) v1.1 gecerli mum: islem gormeyen (hacim 0) ya da kilitli (O=H=L=C) son mumlar sakin sayilmaz, olcu verilmez.
 import sys, numpy as np, pandas as pd
 
 import MUM_SUKUN as M
@@ -57,6 +58,14 @@ def sina():
     if M._sonuc(yol, 0, A)["once_yukari"] != 1.0: hata.append("5) once +%20 isaretlenmedi")
     yol2 = yol.copy(); yol2.loc[idx[1], "Low"] = 85
     if M._sonuc(yol2, 0, A)["once_yukari"] != 0.0: hata.append("5) once -%10 isaretlenmedi")
+    kilit = seri(dusus=True); kilit["Volume"] = 1000.0
+    for j in (1, 2, 3):
+        pc = kilit.Close.iat[-j - 1]; kilit.iloc[-j, :4] = [pc, pc, pc, pc]
+    r = M.ms_yuzdelik(kilit, 3, "govde", A)
+    if np.isfinite(r["yuzdelik"]): hata.append(f"7) kilitli mumlar olculdu: {r}")
+    sifir = seri(dusus=True, son=[0.0005, 0.0005, 0.0005]); sifir["Volume"] = 1000.0; sifir.iloc[-1, sifir.columns.get_loc("Volume")] = 0.0
+    O7 = M.ms_k2_olaylar({"T7": sifir}, "ABD", A)
+    if not O7[(O7.tarih == sifir.index[-1])].empty: hata.append("7) hacmi 0 olan gun sinyal verdi")
     g = {"MSAyar": object(), "__name__": "kapi_test"}
     try:
         src = open("MUM_SUKUN.py", encoding="utf-8").read()
@@ -74,4 +83,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_mum_sukun: 6/6 OK")
+    print("test_mum_sukun: 7/7 OK")

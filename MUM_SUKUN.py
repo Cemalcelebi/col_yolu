@@ -1,5 +1,5 @@
 # =====================================================================
-#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.0)
+#  MUM_SUKUN — dusus sonrasi 3-4 mumluk sukunet, her hissenin KENDI normaline gore   (2026-10-22, v1.1)
 #
 #  CEMAL (22 Eki, ANGX grafigi): "Son 3-4 mum: dizilim ve mum boyu kuculmesi cok derin bir isaret. Standart sayi cevirmeyeceksin;
 #    her hissenin normal donem hareketliligi ile boyle donemlere orani tek tek hisseye ozel hesaplanmali."
@@ -10,6 +10,9 @@
 #    yuzdelik = B_t, hissenin kendi normal dagiliminin yuzde kacinda (0 = gecmisindeki en sakin an). Esik bu yuzdeliktir: her hisse
 #               kendi oynakligina gore olculur, sabit bir mum boyu yoktur. oran = B_t / normal medyan (bilgi icin).
 #    dizilim  = 'sira' varyanti: k mumun boyu ardisik kuculuyor (b_{t-k+1} >= ... >= b_t).
+#    v1.1 (22 Eki): GECERLI MUM sarti (COL_v1 D1 ile ayni): H > L ve hacim > 0. Islem gormeyen ya da tavan/tabanda kilitli
+#               (O=H=L=C) gun "sakin" sayilmaz; k mumdan biri gecersizse o gunun olcusu yok, normal dagilima da girmez.
+#               v1.0'da ABD sinyallerinin %5'i, BIST sinyallerinin %24'u bu tur barlardan geliyordu (ornek cizimde goruldu).
 #  BAGLAM: dusus sonrasi = kapanis, son 60 barin en yuksek kapanisinin %80'i veya alti VE son 20 barin en dusugunun %15 yakininda.
 #  SINYAL: baglam + yuzdelik <= esik {2, 5, 10}. TABAN: ayni baglam, yuzdelik 30-70 (normal oynaklikta mumlar). Ayni hisse 20 bar
 #    icinde bir kez sayilir.
@@ -35,7 +38,7 @@ import pandas as pd
 
 _CK_ONCE_MS = {k: id(v) for k, v in globals().items()}
 
-MS_SURUM = "MUM_SUKUN v1.0 (2026-10-22, hisseye ozel mum kuculmesi)"
+MS_SURUM = "MUM_SUKUN v1.1 (2026-10-22, hisseye ozel mum kuculmesi; gecerli mum sarti)"
 mslog = logging.getLogger("col.mum_sukun")
 if not mslog.handlers:
     _ms_h = logging.StreamHandler(sys.stderr)
@@ -80,7 +83,8 @@ def ms_k1_veri(yol: str) -> Dict[str, pd.DataFrame]:
     temiz = {}
     for s, d in V.items():
         try:
-            d = d[["Open", "High", "Low", "Close"]].astype(float).dropna()
+            kol = ["Open", "High", "Low", "Close"] + (["Volume"] if "Volume" in d.columns else [])
+            d = d[kol].astype(float).dropna(subset=["Open", "High", "Low", "Close"])
             d = d[(d.High >= d.Low) & (d.Close > 0)]
             if len(d) >= 150:  # normal_min 120 + k; olay icin ayrica normal_min aranir
                 temiz[str(s)] = d.sort_index()
@@ -91,11 +95,22 @@ def ms_k1_veri(yol: str) -> Dict[str, pd.DataFrame]:
 
 
 # ---------------------------------------------------------------- K2 olcu
-def ms_olcu(d: pd.DataFrame, k: int, olcu: str, A: MSAyar) -> pd.DataFrame:
-    """Her gun: B (son k mum ortalama boyu, %), hissenin kendi normal yuzdelik esikleri, yuzdelik ve dizilim."""
+def _mum_boyu(d: pd.DataFrame, k: int, olcu: str) -> Tuple[pd.Series, pd.Series]:
+    """b: gunluk mum boyu (%); B: son k mum ortalamasi. Gecersiz mum (H <= L ya da hacim 0) iceren pencere NaN."""
     pc = d.Close.shift(1)
     b = ((d.Close - d.Open).abs() if olcu == "govde" else (d.High - d.Low)) / pc * 100
-    B = b.rolling(k, min_periods=k).mean()
+    gecerli = d.High > d.Low
+    if "Volume" in d.columns and d.Volume.notna().any():
+        gecerli &= d.Volume.fillna(0) > 0
+    b = b.where(gecerli)
+    tam = gecerli.astype(int).rolling(k, min_periods=k).sum() == k
+    B = b.rolling(k, min_periods=k).mean().where(tam)
+    return b, B
+
+
+def ms_olcu(d: pd.DataFrame, k: int, olcu: str, A: MSAyar) -> pd.DataFrame:
+    """Her gun: B (son k mum ortalama boyu, %), hissenin kendi normal yuzdelik esikleri, yuzdelik ve dizilim."""
+    b, B = _mum_boyu(d, k, olcu)
     gecmis = B.shift(k)
     roll = gecmis.rolling(A.normal, min_periods=A.normal_min)
     out = pd.DataFrame({"B": B, "med": roll.median()})
@@ -111,13 +126,11 @@ def ms_olcu(d: pd.DataFrame, k: int, olcu: str, A: MSAyar) -> pd.DataFrame:
 
 def ms_yuzdelik(d: pd.DataFrame, k: int, olcu: str, A: MSAyar) -> Dict[str, float]:
     """Son gun icin tam yuzdelik (tek hisse raporu)."""
-    pc = d.Close.shift(1)
-    b = ((d.Close - d.Open).abs() if olcu == "govde" else (d.High - d.Low)) / pc * 100
-    B = b.rolling(k, min_periods=k).mean().dropna()
-    if len(B) < k + 30:
-        return {"B": np.nan, "yuzdelik": np.nan, "oran": np.nan, "normal_bar": len(B)}
+    b, B = _mum_boyu(d, k, olcu)
+    if len(B) < k + 30 or not np.isfinite(B.iloc[-1]):
+        return {"B": np.nan, "yuzdelik": np.nan, "oran": np.nan, "normal_bar": int(B.notna().sum()), "not": "son mumlar gecersiz ya da veri kisa"}
     son = B.iloc[-1]
-    gecmis = B.iloc[:-k].iloc[-A.normal:]
+    gecmis = B.iloc[:-k].iloc[-A.normal:].dropna()
     return {"B": round(float(son), 2), "yuzdelik": round(float((gecmis <= son).mean() * 100), 1),
             "oran": round(float(son / gecmis.median()), 2), "normal_bar": int(len(gecmis)),
             "son_mumlar": [round(float(x), 2) for x in b.iloc[-k:]], "normal_medyan": round(float(gecmis.median()), 2)}
