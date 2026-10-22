@@ -1,35 +1,39 @@
-COL GUNLUK RAPOR — 2026-10-20 21:30 (TR)
+COL GUNLUK RAPOR — 2026-10-21 23:21 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
-Onbellek: hazir (582 hisse)
-Veri: 583 hisse | son bar 2026-10-20
-Ozet: aday 43 | pozisyon 10 | kapanan 6 | sure 60 sn
+Onbellek: sarildi (583 hisse)
+Veri: 583 hisse | son bar 2026-10-21
+Ozet: aday 31 | pozisyon 8 | kapanan 8 | sure 109 sn
 ============================================================
 
-== 2026-10-20  CDS 0.22 -> 0.5x
-aday 43 | poz 10 | kapanan 6
+== 2026-10-21  CDS 0.84 -> 1.5x
+aday 31 | poz 8 | kapanan 8
+
+SAT  (hisse  kar%  endeks%)
+  ISDMR  +0%  ?  maliyet
+  TRCAS  -18%  ?  taban
 
 TUT  (hisse  kar%  durum  tabana%)
-  DURDO    +6%  TRAIL sat:-0%  taban -20%
-  GARAN    -3%  91g  taban -13%
-  YKBNK    -4%  91g  taban -11%
-  ISDMR    -6%  90g  taban -10%
-  ZRGYO   -10%  96g  taban -6%
-  ALARK   -10%  90g  taban -6%
-  ISCTR   -10%  91g  taban -5%
-  AKBNK   -10%  91g  taban -5%
-  BIMAS   -12%  91g  taban -4%
-  TRCAS   -16%  92g  taban +1%
+  DURDO   +15%  TRAIL sat:-6%  taban -26%  stop=maliyet
+  GARAN    -2%  89g  taban -13%
+  YKBNK    -3%  89g  taban -12%
+  BIMAS    -8%  89g  taban -7%
+  ALARK    -8%  88g  taban -7%
+  ISCTR   -10%  89g  taban -5%
+  AKBNK   -10%  89g  taban -5%
+  ZRGYO   -12%  94g  taban -3%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 43]
-  ENTRA    -1%   %5.9   0.261  0.299  12ay    -5  
-  HUNER    -5%   %1.5   nan  nan  -       -5  (serbest)
-  ALBRK    -6%   %1.7   0.227  0.271  -      +14  (serbest)
-  VAKBN    -6%   %1.7   0.182  0.174  -      +14  (serbest)
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 31]
+  ENTRA    -0%   %12.0   0.261  0.299  12ay    -4  
+  ALBRK    -6%   %5.0   0.227  0.271  -      +15  (serbest)
+  HUNER    -6%   %4.4   nan  nan  -       -5  (serbest)
+  VAKBN    -7%   %5.0   0.182  0.174  -      +15  (serbest)
+  HALKB    -7%   %4.4   0.083  0.154  -      +14  (serbest)
+  EKGYO    -7%   %8.2   0.182  0.23  -       +6  (serbest)
 
-COL BOZULDU (taban kirildi, aday dustu): ASELS, UNLU, ATATP, BOBET, GESAN, GLRMK, IZMDC, KARSN, KTLEV, AVOD, EGEEN, EGEPO
+COL BOZULDU (taban kirildi, aday dustu): AGHOL, MEPET, EUPWR, ICBCT, MZHLD, OYYAT, PNSUT, TBORG, BJKAS, GOKNR, KONYA, SMRTG
 
-KAPANAN 6: kazanan %0  ort -44.3% | acilis->acilis ort -45.2% (n=6)
+KAPANAN 8: kazanan %0  ort -35.5% | acilis->acilis ort -45.2% (n=6)
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-32.1
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-17, XSGRT %-20
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-31.1
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-14, XSGRT %-23, XMADN %-25
   ruzgarli sektorde uzun colde hisse yok

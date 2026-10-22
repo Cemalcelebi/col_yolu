@@ -11,25 +11,26 @@
   ATILIM BAR:  atilim_kalite_testi(tr)  <- gap bari = dev hacim bari
 [evren] TradingView'den tüm BIST: 626 hisse.
 [evren] turkey: 626 hisse
-[cache] mevcut: 582 hisse
-[cache] beklenen son bar: 2026-10-20  |  eksik: 44  bayat: 0
-[cache] 44 sembol inecek (toplam 626 yerine).
+[cache] mevcut: 583 hisse
+[cache] beklenen son bar: 2026-10-21  |  eksik: 43  bayat: 0
+[cache] 43 sembol inecek (toplam 626 yerine).
 
-  ...25/44  (guncellenen: 1)
-  ...44/44  (guncellenen: 1)
+  ...25/43  (guncellenen: 0)
+  ...43/43  (guncellenen: 0)
 [cache] 583 hisse kaydedildi -> ./veri_1d_turkey.pkl
-[filtre] guncel: 583 / 583  (sinir: 2026-10-14)
+[filtre] guncel: 583 / 583  (sinir: 2026-10-15)
 
-[hazir] 583 hisse  |  20.1 sn
-  [yenile] veri guncel (2026-10-20), indirme atlandi
-VERİ KORU v1.0: 583 hisse | 57 hissede 64 bölünme/bedelsiz onarıldı (ham inen seri) | 3 açılış hatası/şüpheli dokunulmadı | pkl yazıldı | 0s
-  onarılan: ADEL 2024-01-02 ×0.093; AKYHO 2024-08-19 ×0.581; AKYHO 2024-08-16 ×1.743; AKYHO 2024-08-12 ×0.535; ARZUM 2025-08-26 ×0.609; AVHOL 2018-06-28 ×0.380; AYGAZ 2022-09-01 ×1.728; BAKAB 2024-02-01 ×0.509; BFREN 2025-04-28 ×0.251; BJKAS 2024-07-03 ×0.246; BNTAS 2025-02-18 ×0.523; BRMEN 2025-12-22 ×0.530; BSOKE 2024-12-02 ×0.262; CASA 2020-06-02 ×2.530; CCOLA 2024-08-01 ×0.092; CELHA 2025-07-16 ×0.359; CRFSA 2020-11-24 ×5.378; CVKMD 2026-08-03 ×0.389; DARDL 2025-05-07 ×0.412; DITAS 2025-12-24 ×0.510 ...
+[hazir] 583 hisse  |  23.9 sn
+  [yenile] seri uyusmadi (bolunme/temettu), bastan indirildi: DUNYH (1)
+  [yenile] 583 hisse guncellendi | hata 0 | son bar 2026-10-21 | 82s
+VERİ KORU v1.0: 583 hisse | 1 hissede 1 bölünme/bedelsiz onarıldı (ham inen seri) | 3 açılış hatası/şüpheli dokunulmadı | pkl yazıldı | 0s
+  onarılan: DUNYH 2026-10-21 ×0.160
   kalan kapanış sıçraması (≤0.62 / ≥1.6): 1 → MERKO 2020-12-21 0.498
-[ok] COL SISTEMI v2  (2026-10-20 D11: verisi durmus hisse aday olmaz, > 5 is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > 5 is gunu | 2026-10-18 D9: uzun col 250 bar + sektor ruzgari >= %10, sepet > %0 (D9b) | 2026-10-17 D7: kucuk mum = aralik | D8: fon suzgeci ACIK, 9 hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)
+  B2 nedeni: 1 hisse baştan indi | fark tarihleri: [('2026-10-01', 1)] | farkı eski serinin SON barında olan: 0 | yeni/eski oran örnek: {'DUNYH': 5.727}
+[ok] COL SISTEMI v2  (2026-10-21 D13 / D12: col tespiti = DIP2 (yeni dipten kutu + savunma 15 bar + parabol + obek >= 2) | D11: verisi durmus hisse aday olmaz, > 5 is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > 5 is gunu | 2026-10-18 D9: uzun col 250 bar + sektor ruzgari >= %10, sepet > %0 (D9b) | 2026-10-17 D7: kucuk mum = aralik | D8: fon suzgeci ACIK, 9 hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)
   esikler: clv>=-0.164 bant_son>=0.509 ortaust>=0.4 | segment>=20 bar, yuk<=6.0 ATR, yerel=5 | AL_PAY=1.002
   CIKIS=trail HEDEF=%20 | pozisyon %6.0 x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %12.0)
-  CDS 218.7 bp (2026-09-03, 47 gun once) | yuzdelik 0.22 | DUSUK RISK (rahat piyasa) -> YARIM pozisyon
-  [!] CDS verisi eski — investing.com'dan guncelle: cds_2022.csv
+  CDS 250.1 bp (2026-10-19, 2 gun once) | yuzdelik 0.84 | YUKSEK RISK (korku) -> 1.5x pozisyon
 [ok] kalibrasyon yuklendi
   t = kalibrasyon()        <- kod vs Cemal, bar bar
   p = parametre_tara()     <- hangi ayar en yakin (36 kombinasyon)
@@ -41,7 +42,7 @@ VERİ KORU v1.0: 583 hisse | 57 hissede 64 bölünme/bedelsiz onarıldı (ham in
   p = piramit(w, hedef=30)
 [ok] giris_testleri yuklendi
   p = giris_testleri(w, xu)
-[ok] takip (2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %2 | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)
+[ok] takip (2026-10-21 T11: seans acikken bugunun yarim bari atilir | T10: +%8 gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %2 | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)
 [ok] temel yuklendi (2026-09-18: oz_negatif)
    t = temel_yukle()   <- ilk sefer 1-2 dk, sonra onbellek
    temel_test([('BIST 2024-26', d[d.GECER]), ('BIST 2023', d23)], t)
@@ -57,8 +58,9 @@ VERİ KORU v1.0: 583 hisse | 57 hissede 64 bölünme/bedelsiz onarıldı (ham in
 [OB23 yok] [Errno 2] No such file or directory: '/content/drive/MyDrive/col_tarayici/onbellek_2023.pkl'
 [OBUS yok] [Errno 2] No such file or directory: '/content/drive/MyDrive/col_tarayici/onbellek_ABD.pkl'
   onbellek: OB24 - | OB23 - | OBUS -
-XU100.IS: 2500 bar  2016-10-20 -> 2026-10-20
+XU100.IS: 2500 bar  2016-10-21 -> 2026-10-21
+  [endeks] seans acik: XU100 bugunun yarim bari atildi, son bar 2026-10-21
 
-HAZIR | VERI 583 | d 4927 | d23 549 | TR saat 21:30
+HAZIR | VERI 583 | d 4927 | d23 549 | TR saat 23:22
   A,P,Kp = gun()          <- gunluk
   denetim(OB24, OB23, OBUS, xu)   <- tum duzeltilmis metrikler (30 sn)
