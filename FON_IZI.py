@@ -1301,9 +1301,10 @@ def _fi_k9_spk(satirlar: List[str], U: List[str], yerel: str = "tr") -> Dict[str
             if not s.startswith(" "):                       # sutun 0'daki GRUP TOPLAMI = hisse grubunun sonu
                 hisse = False
             continue
-        if not _fi_re.search(r"\b\d{2}/\d{2}/\d{2}\b", s):   # satir = kod/ISIN + alis tarihi (devam satirlarinda tarih yok)
-            continue
         m = _fi_re.match(r"^\s*(?:Tem\.\s?Ver\.\s+)?([A-Z][A-Z0-9]{2,7})\b(?!\s+TOPLAM)", s)   # 'Tem.Ver.' = teminattaki pay
+        para = _fi_re.match(r"^\s*(?:Tem\.\s?Ver\.\s+)?[A-Z][A-Z0-9]{2,7}\s+(?:TL|TRY|USD|EUR|GBP)\b", s)
+        if not _fi_re.search(r"\b\d{2}/\d{2}/\d{2}\b", s) and not para:   # satir = kod/ISIN + alis tarihi ya da kod + doviz
+            continue                                                          # (Istanbul: tarih ve ISIN alt satira tasar)
         im = _FI_ISIN.search(s)
         if not m and not (im and not s[:im.start()].strip()):                # kodsuz satir: yalniz ISIN (kod ISIN eslemesinden)
             continue
@@ -1828,6 +1829,48 @@ def fi_k11_aylik(G: pd.DataFrame, V: Dict[str, pd.DataFrame], ham: Dict[str, pd.
     return M, Z
 
 
+def fi_k11_grafik(MA: pd.DataFrame, D: pd.DataFrame, V: Dict[str, pd.DataFrame], kos: pd.DataFrame, yol: str) -> int:
+    """Fon hisseleri vaka PDF'i: duzeltilmis fiyat (log), fazlar (ONCE/ERKEN/KOSU/COKUS), raporlu tasfiye fonlarinin sermaye payi
+    (ay sonu, basamak) ve raporda gun gun gorunen fon alim/satim gunleri. Donus: sayfa sayisi."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    renk = {"ONCE": "#e8eef7", "ERKEN": "#e6f4ea", "KOSU": "#fff4d6", "COKUS": "#fbe3e3"}
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        for s in [x for x in FON_HISSE if x in set(MA.kod)]:
+            d = V.get(s)
+            if d is None:
+                continue
+            a = MA[MA.kod == s].copy(); a["t"] = pd.to_datetime(a.ay + "-01") + pd.offsets.MonthEnd(0)
+            bas = min(a.t.min() - pd.Timedelta(days=120), d.index.max() - pd.Timedelta(days=900)); d = d[d.index >= bas]
+            fig, ax = plt.subplots(figsize=(11.7, 6.2)); ax2 = ax.twinx()
+            k = kos[kos.sembol == s]
+            if len(k):
+                dip, x2, tepe = (pd.Timestamp(k.iloc[0][c]) for c in ("dip", "x2", "tepe"))
+                for (b, e, f) in ((d.index.min(), dip, "ONCE"), (dip, x2, "ERKEN"), (x2, tepe, "KOSU"), (tepe, d.index.max(), "COKUS")):
+                    ax.axvspan(b, e, color=renk[f], zorder=0); ax.text(b, 0.97, " " + f, transform=ax.get_xaxis_transform(), fontsize=8, va="top")
+            ax.semilogy(d.index, d.Close, color="#1f2a44", lw=1.1, zorder=3); ax.set_ylabel("fiyat (log, bolunme duzeltilmis)")
+            ps = a.set_index("t").pay_sermaye.fillna(0)
+            ps = ps.reindex(pd.date_range(ps.index.min(), ps.index.max(), freq="ME"), fill_value=0.0)   # raporda yoksa pay 0
+            ax2.step(ps.index, 100 * ps.to_numpy(), where="post", color="#c0392b", lw=1.6, zorder=4)
+            ax2.set_ylabel("raporlu tasfiye fonlarinin sermaye payi %", color="#c0392b"); ax2.set_ylim(bottom=0)
+            g = D[(D.kod == s) & ((D.fon_alis > 0) | (D.fon_satis > 0))] if len(D) else pd.DataFrame()
+            if len(g):
+                g = g[pd.to_datetime(g.tarih) >= bas]
+                ax.scatter(pd.to_datetime(g[g.fon_alis > 0].tarih), d.Close.reindex(pd.to_datetime(g[g.fon_alis > 0].tarih)),
+                           marker="^", color="#1e8449", s=18, zorder=5, label="raporda fon alim gunu")
+                ax.scatter(pd.to_datetime(g[g.fon_satis > 0].tarih), d.Close.reindex(pd.to_datetime(g[g.fon_satis > 0].tarih)),
+                           marker="v", color="#922b21", s=18, zorder=5, label="raporda fon satis gunu")
+                ax.legend(loc="lower right", fontsize=8)
+            en = a.pay_sermaye.max()
+            ax.set_title(f"{s}  |  raporlu tasfiye fonlarinin en yuksek sermaye payi %{100 * en:.1f}  |  kaynak: KAP aylik portfoy raporlari",
+                         fontsize=10)
+            fig.tight_layout(); pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame) -> str:
     """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26)."""
     mu = K.get("muaf", pd.Series(False, index=K.index)).fillna(False).astype(bool)
@@ -1907,6 +1950,10 @@ def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     kap.to_csv(os.path.join(A.cikti, "k9_kapsam_sirket.csv"), index=False)
     with open(os.path.join(A.cikti, "FON_IZI_k10_rapor.md"), "w", encoding="utf-8") as f:
         f.write(fi_k10_rapor(Oz, MZ, K, E))
+    try:
+        fi_k11_grafik(MA, D, V, kos, os.path.join(A.cikti, "FON_IZI_fon_birikim.pdf"))
+    except Exception as ex:   # grafik bozulursa tablolar yine yazilir
+        filog.error("birikim grafigi cizilemedi: %s", ex)
     return {"P": P, "I": I, "K": K, "G": G, "olaylar": E, "taban": B, "ozet": Oz, "defter": D, "faz": Z, "aylik": M, "kapsam": kap,
             "birikim": MA, "birikim_ozet": MZ}
 
