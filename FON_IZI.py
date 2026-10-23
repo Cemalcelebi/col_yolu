@@ -1,5 +1,5 @@
 # =====================================================================
-#  FON_IZI — tasfiye fonlarinin topladigi hisselerin yukselis oncesi/sirasi izi   (2026-10-23, v1.1)
+#  FON_IZI — tasfiye fonlarinin topladigi hisselerin yukselis oncesi/sirasi izi   (2026-10-23, v1.2)
 #
 #  CEMAL (22 Eki): "Fonlar Eylul'e kadar onca alis yapmis, hisseler yuzde bin yukselmis; o para girisi nasil bir iz birakti?
 #    Benim dusuncem: balina girisi zamanina denk gelen bolgede kucuk mum ve ufak ufak yukari yuvarlanma. TEHOL, TERA, PASEU,
@@ -27,8 +27,21 @@
 #    normal olan gun sayisi; vcv = hacim degiskenlik katsayisi. K3b: fon hisselerinin dip->tepe donemindeki Z0 bolgeleri ile diger
 #    BIST hisselerinin 2024-26 Z0 bolgeleri karsilastirilir. K4b: evrende Z0 olaylari (ayni hissede 20 bar icinde bir kez), hacim
 #    varyantlari Z0'in hacim izi tasimayan kismina karsi; sonuc 250 barda once 2 kat / -%30 ve 60 barda once +%20 / -%10.
+#  v1.2 (23 Eki) GOSTERGE BATARYASI. CEMAL: "Iz yok diyorsun ama hisseler alindi; yalniz mum ve hacme bakma, her gostergeye
+#    bak: ters uyumsuzluk, Fibonacci, hepsi." K6: 40+ gosterge (RSI, Stokastik, Williams %R, CCI, MFI, CMF, OBV, A/D, MACD, ADX/DI,
+#    Aroon, Bollinger %B + genislik, Keltner sikismasi, Ichimoku, SMA50/200, ROC, ATR%, Force, Ulcer, Fibonacci konum/geri cekilme)
+#    + pivot tabanli UYUMSUZLUK (duz/gizli boga, ayi; RSI, MACD hist, OBV, MFI, CMF; pivot p+-k barin en dusugu/yuksegi, sinyal
+#    pivotun dogrulandigi p+k gununde -> gelecege bakmaz). K7 BLOK HACIM: hacim >= 20x onceki 20 gun medyani (OZATD 14 May 2026:
+#    fonlar tek gunde 13,6 mn lot, komsu kilitli tavan gunlerinde ~0,1 mn; onceki olculer kilitli O=H=L=C gunlerini disliyordu).
+#    K8 KAP OLAYLARI (BIST, 2017-26, kap_ozet konu kodlari): VBTS/BISTECH tedbiri, borsada islem goren tipe donusum, toptan alis
+#    satis, pay alim satim bildirimi, devre kesici, olagan disi fiyat, SPK islem yasagi, fiili dolasim degisikligi, piyasa yapicilik,
+#    soylenti aciklamasi. Saat 18:00 sonrasi bildirim ertesi islem gunune sayilir. K6a fon hisselerinde faz basina 100 gunde sinyal
+#    sikligi vs diger BIST (2024-26); K6b evren: her sinyal (ayni hissede 20 bar icinde bir kez) vs her 5. gun tabani; sonuc 60 bar
+#    once +%20/-%10 (k20), 250 bar once 2 kat/-%30 (x2), 60 bar once -%20/+%20 (dus). Iz = 4 dilimde kat >= 1,3 (KAP yalniz BIST: 2 dilim).
 #  KURAL_MOTORU: K1 veri+duzeltme  K2 gunluk/pencere olculeri  K3 vaka fazlari  K4 evren olaylari + ozet  K5 rapor
-#  Calistirma: FI_VERI_BIST=... FI_VERI_ABD=... python FON_IZI.py   Cikti: arastirma_cikti/fon_izi/
+#                K6 gosterge/uyumsuzluk/Fibonacci  K7 blok hacim  K8 KAP olaylari (v1.2: fon_izi_gosterge)
+#  Calistirma: FI_VERI_BIST=... FI_VERI_ABD=... python FON_IZI.py   (v1.2: ... FI_KAP=<kap_ozet klasoru> python FON_IZI.py gosterge)
+#  Cikti: arastirma_cikti/fon_izi/
 # =====================================================================
 from __future__ import annotations
 
@@ -45,7 +58,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.0 (2026-10-22, tasfiye fonu hisselerinin yukselis izi + evren testi)"
+FI_SURUM = "FON_IZI v1.2 (2026-10-23, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -84,6 +97,14 @@ class FIAyar:
     z0_dd: float = -0.10
     hacim_tekrar: int = 20
     hacim_bas: str = "2024-01-01"   # K3b diger hisseler karsilastirma donemi baslangici (bitis kriz_tarih)
+    # v1.2 gosterge bataryasi
+    piv_k: int = 5                  # uyumsuzluk pivotu: p-k..p+k araliginin en dusugu/yuksegi; sinyal p+k gunu
+    piv_ara: int = 60               # iki pivot arasi en fazla bar
+    g_tekrar: int = 20              # ayni hissede ayni sinyal 20 bar icinde bir kez
+    ornek_adim: int = 5             # taban: her 5. gun
+    blok_kat: float = 20.0          # blok hacim: onceki 20 gun medyaninin 20 kati
+    once_bar: int = 120             # fon vakasi ONCE fazi (dipten onceki bar)
+    kap: str = os.environ.get("FI_KAP", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/kap_ozet")
     veri: Dict[str, str] = field(default_factory=lambda: {
         "BIST": os.environ.get("FI_VERI_BIST", "/content/drive/MyDrive/col_tarayici/veri_1d_turkey.pkl"),
         "ABD": os.environ.get("FI_VERI_ABD", "/content/drive/MyDrive/col_tarayici/veri_1d_america.pkl"),
@@ -402,6 +423,406 @@ def fi_ozet(O: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
     return oz, iz.sort_values(["gecti", "ayni_yon", "kat_ort"], ascending=False)
 
 
+# ---------------------------------------------------------------- K6 gosterge bataryasi + uyumsuzluk + Fibonacci (v1.2)
+def _fi_ema(x: pd.Series, n: int) -> pd.Series:
+    return x.ewm(span=n, adjust=False, min_periods=n).mean()
+
+
+def _fi_wilder(x: pd.Series, n: int) -> pd.Series:
+    return x.ewm(alpha=1.0 / n, adjust=False, min_periods=n).mean()
+
+
+def _fi_bar_once(x: np.ndarray, n: int, en_buyuk: bool) -> np.ndarray:
+    """Her bar icin son n+1 bardaki en yuksek (en_buyuk) / en dusuk degerin kac bar once oldugu (Aroon, Fibonacci bacagi)."""
+    out = np.full(len(x), np.nan)
+    if len(x) <= n:
+        return out
+    w = np.lib.stride_tricks.sliding_window_view(x, n + 1)
+    k = np.argmax(w, axis=1) if en_buyuk else np.argmin(w, axis=1)
+    out[n:] = n - k
+    return out
+
+
+def _fi_uyumsuzluk(fiyat: np.ndarray, gosterge: np.ndarray, k: int, ara: int, dip: bool) -> Tuple[np.ndarray, np.ndarray]:
+    """Pivot tabanli uyumsuzluk, gelecege bakmadan. Pivot p = p-k..p+k araliginin en dusugu (dip) / en yuksegi (tepe); sinyal
+    pivotun dogrulandigi p+k gunu. Ardisik iki pivot (k <= ara farki <= `ara`). Dip: duz boga = fiyat daha dusuk dip, gosterge daha
+    yuksek dip; gizli boga = fiyat daha yuksek dip, gosterge daha dusuk dip. Tepe: duz ayi = fiyat daha yuksek tepe, gosterge daha
+    dusuk tepe; gizli ayi tersi. Donus: (duz, gizli) bool dizileri."""
+    n = len(fiyat); duz = np.zeros(n, bool); gizli = np.zeros(n, bool)
+    if n < 2 * k + 2:
+        return duz, gizli
+    w = np.lib.stride_tricks.sliding_window_view(fiyat, 2 * k + 1)
+    ext = w.min(axis=1) if dip else w.max(axis=1)
+    tek = (w == ext[:, None]).sum(axis=1) == 1          # kesin uc nokta (duz rafin her bari pivot sayilmaz)
+    piv = np.flatnonzero((fiyat[k:n - k] == ext) & tek) + k
+    piv = piv[~np.isnan(gosterge[piv])]
+    for a, b in zip(piv[:-1], piv[1:]):
+        if b - a < k or b - a > ara:
+            continue
+        fa, fb, ga, gb = fiyat[a], fiyat[b], gosterge[a], gosterge[b]
+        t = b + k
+        if dip:
+            if fb < fa and gb > ga:
+                duz[t] = True
+            elif fb > fa and gb < ga:
+                gizli[t] = True
+        else:
+            if fb > fa and gb < ga:
+                duz[t] = True
+            elif fb < fa and gb > ga:
+                gizli[t] = True
+    return duz, gizli
+
+
+_FI_UY = (("rsi", "rsi"), ("macd", "macd_hist"), ("obv", "obv"), ("mfi", "mfi"), ("cmf", "cmf"))
+_FI_FIB = np.array([0.236, 0.382, 0.5, 0.618, 0.786])
+
+
+def fi_gostergeler(d: pd.DataFrame, A: FIAyar) -> pd.DataFrame:
+    """v1.2 gunluk gosterge tablosu (hepsi yalniz o gune kadarki veriyle)."""
+    c, h, l = d.Close, d.High, d.Low; v = d.Volume.astype(float); pc = c.shift(); dc = c.diff(); tp = (h + l + c) / 3
+    G = pd.DataFrame(index=d.index)
+    G["r"] = c / pc - 1
+    up = _fi_wilder(dc.clip(lower=0), 14); dn = _fi_wilder((-dc).clip(lower=0), 14)
+    G["rsi"] = 100 * up / (up + dn).replace(0, np.nan)
+    hh = h.rolling(14).max(); ll = l.rolling(14).min()
+    G["stoch"] = 100 * (c - ll) / (hh - ll).replace(0, np.nan)
+    G["wr"] = G.stoch - 100
+    m = tp.rolling(20).mean()
+    G["cci"] = (tp - m) / (0.015 * (tp - m).abs().rolling(20).mean()).replace(0, np.nan)   # sapma kayan ortalamaya gore (yaklasik)
+    rmf = tp * v; pos = rmf.where(tp > tp.shift(), 0.0).rolling(14).sum(); neg = rmf.where(tp < tp.shift(), 0.0).rolling(14).sum()
+    G["mfi"] = 100 * pos / (pos + neg).replace(0, np.nan)
+    mfm = (((c - l) - (h - c)) / (h - l).replace(0, np.nan)).fillna(0.0)
+    G["cmf"] = (mfm * v).rolling(20).sum() / v.rolling(20).sum().replace(0, np.nan)
+    obv = (np.sign(dc).fillna(0.0) * v).cumsum(); ad = (mfm * v).cumsum(); v20 = v.rolling(20).sum().replace(0, np.nan)
+    G["obv"] = obv
+    G["obv20"] = (obv - obv.shift(20)) / v20
+    G["ad20"] = (ad - ad.shift(20)) / v20
+    G["obv_60tepe"] = obv >= obv.rolling(60).max()
+    macd = _fi_ema(c, 12) - _fi_ema(c, 26); sig = _fi_ema(macd, 9)
+    G["macd"] = macd / c; G["macd_sinyal"] = sig / c; G["macd_hist"] = (macd - sig) / c
+    tr = pd.concat([h - l, (h - pc).abs(), (l - pc).abs()], axis=1).max(axis=1); atr = _fi_wilder(tr, 14)
+    upm = h.diff(); dnm = -l.diff()
+    pdm = upm.where((upm > dnm) & (upm > 0), 0.0); ndm = dnm.where((dnm > upm) & (dnm > 0), 0.0)
+    G["pdi"] = 100 * _fi_wilder(pdm, 14) / atr.replace(0, np.nan)
+    G["ndi"] = 100 * _fi_wilder(ndm, 14) / atr.replace(0, np.nan)
+    G["adx"] = _fi_wilder(100 * (G.pdi - G.ndi).abs() / (G.pdi + G.ndi).replace(0, np.nan), 14)
+    hn = h.to_numpy(float); ln = l.to_numpy(float)
+    G["aroon_up"] = 100 * (25 - _fi_bar_once(hn, 25, True)) / 25
+    G["aroon_dn"] = 100 * (25 - _fi_bar_once(ln, 25, False)) / 25
+    m20 = c.rolling(20).mean(); s20 = c.rolling(20).std(ddof=0)
+    G["bb_b"] = (c - (m20 - 2 * s20)) / (4 * s20).replace(0, np.nan)
+    bw = 4 * s20 / m20
+    G["bb_gen"] = bw / bw.rolling(A.normal, min_periods=A.normal_min).median()
+    e20 = _fi_ema(c, 20); atr20 = _fi_wilder(tr, 20)
+    G["sikisma"] = ((m20 + 2 * s20) < (e20 + 1.5 * atr20)) & ((m20 - 2 * s20) > (e20 - 1.5 * atr20))
+    tenkan = (h.rolling(9).max() + l.rolling(9).min()) / 2; kijun = (h.rolling(26).max() + l.rolling(26).min()) / 2
+    spa = ((tenkan + kijun) / 2).shift(26); spb = ((h.rolling(52).max() + l.rolling(52).min()) / 2).shift(26)
+    G["bulut_ust"] = c > pd.concat([spa, spb], axis=1).max(axis=1, skipna=False)
+    G["tk_ust"] = tenkan > kijun
+    sma50 = c.rolling(50).mean(); sma200 = c.rolling(200).mean()
+    G["sma50_mes"] = c / sma50 - 1; G["sma200_mes"] = c / sma200 - 1; G["sma50_200"] = sma50 > sma200
+    G["roc20"] = c / c.shift(20) - 1
+    G["c_60tepe"] = c / c.rolling(60).max()
+    G["atr_yzd"] = atr / c
+    G["force"] = _fi_ema(dc * v, 13) / (c * v.rolling(20).mean()).replace(0, np.nan)
+    dd14 = 100 * (c / c.rolling(14).max() - 1)
+    G["ulcer"] = np.sqrt((dd14 ** 2).rolling(14).mean())
+    n = A.normal; lo = l.rolling(n).min(); hi = h.rolling(n).max()
+    G["fib_konum"] = (c - lo) / (hi - lo).replace(0, np.nan)
+    yukselis = _fi_bar_once(ln, n - 1, False) > _fi_bar_once(hn, n - 1, True)   # bacak dipten tepeye (dip once)
+    geri = ((hi - c) / (hi - lo).replace(0, np.nan)).where(yukselis)
+    G["fib_geri"] = geri
+    gn = geri.to_numpy(float)
+    G["fib_yakin"] = np.min(np.abs(gn[:, None] - _FI_FIB[None, :]), axis=1)
+    G["vk"] = v / v.shift().rolling(20, min_periods=10).median().replace(0, np.nan)
+    G["kilit_tavan"] = (G.r >= A.sinir_gun) & ((h - l) / c < 0.002)
+    for ad, kol in _FI_UY:
+        x = G[kol].to_numpy(float)
+        a, b = _fi_uyumsuzluk(ln, x, A.piv_k, A.piv_ara, True)
+        G[f"uy_{ad}_boga"] = a; G[f"uy_{ad}_gizli_boga"] = b
+        a, _ = _fi_uyumsuzluk(hn, x, A.piv_k, A.piv_ara, False)
+        G[f"uy_{ad}_ayi"] = a
+    return G
+
+
+def _fi_yukari_kes(x: pd.Series, e: float) -> pd.Series:
+    return (x > e) & (x.shift() <= e)
+
+
+def _fi_yeni(x: pd.Series) -> pd.Series:
+    return x & ~x.shift(1, fill_value=False).astype(bool)
+
+
+# Asagi yonlu (satis/kacinma) sinyalleri: bunlarda iz = 'dus' sonucunda kat >= 1,3.
+FI_AYI = {"rsi_70_ustu", "mfi_80_ustu", "cmf_negatif", "bb_alt_kirilim", "fib_tepe_bolge", "blok_taban",
+          "uy_rsi_ayi", "uy_macd_ayi", "uy_obv_ayi", "uy_mfi_ayi", "uy_cmf_ayi",
+          "kap_devre_kesici", "kap_olagan_disi", "kap_spk_yasak", "kap_vbts_tedbir", "kap_tipe_donusum"}
+
+
+def fi_gosterge_sinyal(G: pd.DataFrame, A: FIAyar) -> Dict[str, pd.Series]:
+    """Sabit esikli ikili sinyaller (gosterge ders kitabi esikleri; veriye gore ayarlanmadi)."""
+    blok = G.vk >= A.blok_kat; tavan = G.r >= A.sinir_gun
+    S = {"rsi_30_alti": G.rsi < 30, "rsi_70_ustu": G.rsi > 70, "rsi_50_kesme": _fi_yukari_kes(G.rsi, 50),
+         "stoch_20_donus": _fi_yukari_kes(G.stoch, 20), "wr_80_alti": G.wr < -80,
+         "cci_100_alti": G.cci < -100, "cci_100_ustu": G.cci > 100,
+         "mfi_20_alti": G.mfi < 20, "mfi_80_ustu": G.mfi > 80,
+         "cmf_pozitif": G.cmf > 0.10, "cmf_negatif": G.cmf < -0.10,
+         "obv_lider": G.obv_60tepe & (G.c_60tepe < 0.95),
+         "ad_birikim_yatay": (G.ad20 > 0.20) & (G.roc20.abs() < 0.03),
+         "macd_al_sifir_alti": _fi_yukari_kes(G.macd - G.macd_sinyal, 0.0) & (G.macd < 0),
+         "macd_sifir_kesme": _fi_yukari_kes(G.macd, 0.0),
+         "adx_25_trend": _fi_yukari_kes(G.adx, 25) & (G.pdi > G.ndi),
+         "aroon_yukari": (G.aroon_up > 70) & (G.aroon_dn < 30),
+         "bb_sikisma": G.bb_gen < 0.6, "bb_ust_kirilim": G.bb_b > 1, "bb_alt_kirilim": G.bb_b < 0,
+         "squeeze_yukari_cozulme": (~G["sikisma"]) & G["sikisma"].shift(1, fill_value=False).astype(bool) & (G.macd_hist > 0),
+         "bulut_ustu_kesme": _fi_yeni(G.bulut_ust), "tenkan_kijun_kesme": _fi_yeni(G.tk_ust), "altin_kesisim": _fi_yeni(G.sma50_200),
+         "fib_618_bolge": (G.fib_geri >= 0.55) & (G.fib_geri <= 0.68), "fib_382_bolge": (G.fib_geri >= 0.33) & (G.fib_geri <= 0.43),
+         "fib_dip_bolge": G.fib_konum < 0.15, "fib_tepe_bolge": G.fib_konum > 0.90,
+         "force_guclu": G.force > 0.01, "ulcer_sakin_trend": (G.ulcer < 3) & (G.roc20 > 0.05),
+         "blok_hacim": blok, "blok_tavan": blok & tavan,
+         "blok_seri_ici": blok & tavan & (G.kilit_tavan.astype(int).rolling(5).sum().shift() >= 2),
+         "blok_taban": blok & (G.r <= -A.sinir_gun), "kilit_tavan": G.kilit_tavan}
+    for ad, _ in _FI_UY:
+        for t in ("boga", "gizli_boga", "ayi"):
+            S[f"uy_{ad}_{t}"] = G[f"uy_{ad}_{t}"]
+    return {k: v.fillna(False).astype(bool) for k, v in S.items()}
+
+
+def _fi_ilk(c: np.ndarray, h: np.ndarray, l: np.ndarray, ufuk: int, yukari: float, asagi: float) -> Tuple[np.ndarray, np.ndarray]:
+    """Her gun icin ufuk bar icinde once +yukari (High) mi once -asagi (Low) mu; (once_yukari, once_asagi) 1/0, ufuk dolmadiysa NaN.
+    Ayni barda ikisi birden: asagi sayilir (temkinli; _fi_once ile ayni)."""
+    n = len(c); u = np.full(n, np.nan); a = np.full(n, np.nan)
+    m = n - ufuk
+    if m <= 0:
+        return u, a
+    Hw = np.lib.stride_tricks.sliding_window_view(h[1:], ufuk)[:m]; Lw = np.lib.stride_tricks.sliding_window_view(l[1:], ufuk)[:m]
+    yu = Hw >= (c[:m] * (1 + yukari))[:, None]; ya = Lw <= (c[:m] * (1 - asagi))[:, None]
+    iu = np.where(yu.any(1), yu.argmax(1), ufuk + 1); ia = np.where(ya.any(1), ya.argmax(1), ufuk + 1)
+    u[:m] = (iu < ia).astype(float); a[:m] = (ia < iu).astype(float)
+    return u, a
+
+
+_FI_SONUC = ("k20", "x2", "dus")
+
+
+def _fi_sonuclar(d: pd.DataFrame) -> Dict[str, np.ndarray]:
+    c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    k20, _ = _fi_ilk(c, h, l, 60, 0.20, 0.10); x2, _ = _fi_ilk(c, h, l, 250, 1.00, 0.30); _, dus = _fi_ilk(c, h, l, 60, 0.20, 0.20)
+    return {"k20": k20, "x2": x2, "dus": dus}
+
+
+# ---------------------------------------------------------------- K8 KAP olaylari (v1.2)
+FI_KAP_KONU = {"kap_vbts_tedbir": (14,), "kap_tipe_donusum": (13,), "kap_toptan": (84, 119, 140), "kap_pay_alim_satim": (6,),
+               "kap_devre_kesici": (0,), "kap_olagan_disi": (42,), "kap_spk_yasak": (30,), "kap_fiili_dolasim": (61,),
+               "kap_piyasa_yapici": (3,), "kap_soylenti": (79,)}
+
+
+def fi_kap_yukle(A: FIAyar) -> Dict[str, Dict[str, pd.DataFrame]]:
+    """kap_ozet (tarih, saat, sembol, konu_id) -> {sembol: {grup: DataFrame(tarih, saat)}}. Klasor (kap_20*.csv.gz) ya da tek dosya."""
+    yol = A.kap
+    if os.path.isdir(yol):
+        dosyalar = sorted(os.path.join(yol, f) for f in os.listdir(yol) if f.startswith("kap_20") and f.endswith(".csv.gz"))
+    else:
+        dosyalar = [yol]
+    if not dosyalar or not all(os.path.exists(f) for f in dosyalar):
+        raise FileNotFoundError(f"KAP ozeti yok: {yol}")
+    K = pd.concat([pd.read_csv(f, usecols=["tarih", "saat", "sembol", "konu_id"]) for f in dosyalar], ignore_index=True)
+    K = K.drop_duplicates()
+    ters = {k: g for g, ks in FI_KAP_KONU.items() for k in ks}
+    K = K[K.konu_id.isin(ters)].copy(); K["grup"] = K.konu_id.map(ters)
+    K["tarih"] = pd.to_datetime(K.tarih, errors="coerce"); K = K.dropna(subset=["tarih"])
+    out: Dict[str, Dict[str, pd.DataFrame]] = {}
+    for (s, g), t in K.groupby(["sembol", "grup"]):
+        out.setdefault(str(s), {})[g] = t[["tarih", "saat"]]
+    filog.info("KAP: %d bildirim, %d sembol (%s .. %s)", len(K), len(out), K.tarih.min().date(), K.tarih.max().date())
+    return out
+
+
+def fi_kap_sinyal(idx: pd.DatetimeIndex, olay: Optional[Dict[str, pd.DataFrame]]) -> Dict[str, pd.Series]:
+    """Bildirimleri islem gunune esler: saat 18:00 ve sonrasi -> ertesi islem gunu (D0), aksi halde ayni gun (ya da sonraki ilk islem gunu)."""
+    S = {}
+    for g in FI_KAP_KONU:
+        b = np.zeros(len(idx), bool)
+        if olay and g in olay:
+            t = olay[g]
+            gun = t.tarih + pd.to_timedelta((t.saat.astype(str) >= "18:00").astype(int), unit="D")
+            j = idx.searchsorted(gun.to_numpy(), side="left")
+            j = j[j < len(idx)]
+            b[j] = True
+        S[g] = pd.Series(b, index=idx)
+    return S
+
+
+# ---------------------------------------------------------------- K6a fon vakalari / K6b evren
+_FI_GKOL = ["rsi", "mfi", "cmf", "obv20", "ad20", "adx", "bb_gen", "fib_konum", "atr_yzd", "macd_hist", "vk", "roc20", "ulcer", "force"]
+
+
+def fi_k6_vaka(V: Dict[str, pd.DataFrame], kos: pd.DataFrame, kap: Dict[str, Dict[str, pd.DataFrame]], A: FIAyar
+               ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Fon hisselerinin ONCE / ERKEN / KOSU fazlarinda 100 gunde sinyal sikligi ve gosterge medyanlari vs diger BIST (2024-26).
+    Donus: (sinyal profili, gosterge profili, fon hisselerinin blok hacim gunleri)."""
+    say: Dict[str, Dict[str, float]] = {}; gun: Dict[str, int] = {}; deger: Dict[str, List[pd.DataFrame]] = {}; blok = []
+    kosd = kos.set_index("sembol"); a0, b0 = pd.Timestamp(A.hacim_bas), pd.Timestamp(A.kriz_tarih)
+    for s, d in V.items():
+        try:
+            G = fi_gostergeler(d, A); S = fi_gosterge_sinyal(G, A); S.update(fi_kap_sinyal(d.index, kap.get(s)))
+            Sd = pd.DataFrame(S)
+            if s in kosd.index:
+                k = kosd.loc[s]; i_dip = d.index.get_loc(k.dip)
+                bitis_erken = k.x2 if pd.notna(k.x2) else k.tepe
+                fazlar = {"ONCE": d.index[max(0, i_dip - A.once_bar):i_dip], "ERKEN": d.loc[k.dip:bitis_erken].index,
+                          "KOSU": d.loc[bitis_erken:k.tepe].index[1:] if pd.notna(k.x2) else d.index[:0]}
+                b = G.loc[k.dip:k.tepe]; b = b[b.vk >= A.blok_kat]
+                for t, row in b.iterrows():
+                    blok.append({"sembol": s, "tarih": t.date(), "r_yzd": row.r * 100, "hacim_kat": row.vk,
+                                 "kilit_tavan_onceki5": int(G.kilit_tavan.loc[:t].iloc[-6:-1].sum()),
+                                 "faz": "ERKEN" if t <= bitis_erken else "KOSU"})
+            else:
+                fazlar = {"DIGER": d.loc[a0:b0].index}
+            for f, ix in fazlar.items():
+                if len(ix) == 0:
+                    continue
+                q = say.setdefault(f, {})
+                for c in Sd.columns:
+                    q[c] = q.get(c, 0.0) + float(Sd.loc[ix, c].sum())
+                gun[f] = gun.get(f, 0) + len(ix)
+                deger.setdefault(f, []).append(G.loc[ix, _FI_GKOL])
+        except Exception as ex:
+            filog.warning("gosterge vaka %s atlandi: %s", s, ex)
+    fz = [f for f in ("ONCE", "ERKEN", "KOSU", "DIGER") if f in gun]
+    P = pd.DataFrame({f: {c: 100.0 * v / gun[f] for c, v in say[f].items()} for f in fz})
+    if "DIGER" in P:
+        for f in ("ONCE", "ERKEN", "KOSU"):
+            if f in P:
+                P[f"{f}/DIGER"] = P[f] / P["DIGER"].replace(0, np.nan)
+    P.loc["_gun_sayisi"] = [gun.get(f, np.nan) for f in fz] + [np.nan] * (P.shape[1] - len(fz))
+    D = pd.DataFrame({f: pd.concat(deger[f]).median() for f in fz})
+    return P.reset_index().rename(columns={"index": "sinyal"}), D.reset_index().rename(columns={"index": "gosterge"}), pd.DataFrame(blok)
+
+
+def fi_k6_evren(V: Dict[str, pd.DataFrame], pazar: str, kap: Optional[Dict[str, Dict[str, pd.DataFrame]]], A: FIAyar) -> pd.DataFrame:
+    """Her sinyal (ayni hissede g_tekrar bar icinde bir kez) ve taban (her ornek_adim. gun) icin sonuc sayaclari, donem bazinda."""
+    top: Dict[Tuple[str, str], List[float]] = {}; t0 = time.time(); bas = pd.Timestamp("2016-01-01"); sinir = pd.Timestamp(A.donem_siniri)
+
+    def ekle(ad: str, ix: np.ndarray, Y: Dict[str, np.ndarray], dn: np.ndarray) -> None:
+        for donem in ("2016-21", "2022-26"):
+            j = ix[dn[ix] == donem]
+            if len(j) == 0:
+                continue
+            q = top.setdefault((ad, donem), [0.0] * 7)
+            q[0] += len(j)
+            for k, y in enumerate(_FI_SONUC):
+                yy = Y[y][j]; ok = ~np.isnan(yy)
+                q[1 + 2 * k] += ok.sum(); q[2 + 2 * k] += yy[ok].sum()
+
+    for no, (s, d) in enumerate(V.items(), 1):
+        try:
+            if len(d) < 400:
+                continue
+            G = fi_gostergeler(d, A); S = fi_gosterge_sinyal(G, A)
+            if kap is not None:
+                S.update(fi_kap_sinyal(d.index, kap.get(s)))
+            Y = _fi_sonuclar(d)
+            gecerli = (d.index >= bas)
+            dn = np.where(d.index < sinir, "2016-21", "2022-26")
+            taban = np.flatnonzero(gecerli & (np.arange(len(d)) % A.ornek_adim == 0) & G.rsi.notna().to_numpy())
+            ekle("_TABAN", taban, Y, dn)
+            for ad, sg in S.items():
+                ix = np.flatnonzero(sg.to_numpy() & gecerli)
+                if len(ix) == 0:
+                    continue
+                tut = []; son = -10 ** 9
+                for i in ix:
+                    if i - son >= A.g_tekrar:
+                        tut.append(i); son = i
+                ekle(ad, np.asarray(tut, dtype=int), Y, dn)
+        except Exception as ex:
+            filog.warning("gosterge evren %s %s atlandi: %s", pazar, s, ex)
+        if no % 300 == 0:
+            filog.info("gosterge %s %d/%d hisse, %.0f sn", pazar, no, len(V), time.time() - t0)
+    rows = [{"pazar": pazar, "sinyal": a, "donem": dn, "n": q[0], "n_k20": q[1], "k20": q[2], "n_x2": q[3], "x2": q[4],
+             "n_dus": q[5], "dus": q[6]} for (a, dn), q in top.items()]
+    return pd.DataFrame(rows)
+
+
+def fi_k6_ozet(E: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Oranlar ve kat (sinyal / taban); iz: yukari sinyalde k20 ya da x2, asagi sinyalde dus katinin >= 1,3 oldugu dilim sayisi."""
+    E = E.copy()
+    for y in _FI_SONUC:
+        E[f"{y}_yzd"] = 100 * E[y] / E[f"n_{y}"].replace(0, np.nan)
+    T = E[E.sinyal == "_TABAN"].set_index(["pazar", "donem"])
+    S = E[E.sinyal != "_TABAN"].copy()
+    for y in _FI_SONUC:
+        S[f"t_{y}_yzd"] = [T.loc[(p, dn), f"{y}_yzd"] for p, dn in zip(S.pazar, S.donem)]
+        S[f"kat_{y}"] = S[f"{y}_yzd"] / S[f"t_{y}_yzd"]
+    S["yon"] = np.where(S.sinyal.isin(FI_AYI), "asagi", "yukari")
+    S["gecti_k20"] = (S.yon == "yukari") & (S.kat_k20 >= 1.3) & (S.n_k20 >= 30)
+    S["gecti_x2"] = (S.yon == "yukari") & (S.kat_x2 >= 1.3) & (S.n_x2 >= 30)
+    S["gecti_dus"] = (S.yon == "asagi") & (S.kat_dus >= 1.3) & (S.n_dus >= 30)
+    iz = S.groupby(["sinyal", "yon"]).agg(dilim=("n", "size"), n_min=("n", "min"),
+                                          gecti_k20=("gecti_k20", "sum"), kat_k20_min=("kat_k20", "min"), kat_k20_ort=("kat_k20", "mean"),
+                                          gecti_x2=("gecti_x2", "sum"), kat_x2_min=("kat_x2", "min"),
+                                          gecti_dus=("gecti_dus", "sum"), kat_dus_min=("kat_dus", "min"), kat_dus_ort=("kat_dus", "mean")
+                                          ).reset_index()
+    iz["iz"] = np.where(iz.yon == "yukari", (iz.gecti_k20 == iz.dilim) | (iz.gecti_x2 == iz.dilim), iz.gecti_dus == iz.dilim) & (iz.dilim >= 4)
+    iz["sira"] = np.where(iz.yon == "yukari", iz.kat_k20_min, iz.kat_dus_min)
+    return S, iz.sort_values(["iz", "sira"], ascending=False).drop(columns="sira")
+
+
+def fi_k6_rapor(P: pd.DataFrame, D: pd.DataFrame, blok: pd.DataFrame, iz: pd.DataFrame, S: pd.DataFrame, kos: pd.DataFrame) -> str:
+    gosterge = [r for r in iz.sinyal if not r.startswith("kap_")]
+    sat = [f"# FON_IZI gosterge bataryasi — {FI_SURUM}", "",
+           "Soru (Cemal, 23 Eki): fonlar hisseleri alirken iz birakmadi mi? Mum ve hacim disinda her gosterge, uyumsuzluk, Fibonacci.", "",
+           "## Fon hisselerinde blok hacim gunleri (hacim >= 20x onceki 20 gun medyani, dip -> tepe)", "",
+           blok.round(2).to_markdown(index=False) if len(blok) else "(yok)", "",
+           "## Fon hisseleri: 100 gunde sinyal sikligi (ONCE = dipten onceki 120 bar, ERKEN = dip -> 2 kat, KOSU = 2 kat -> tepe;"
+           " DIGER = fon disi BIST 2024-26)", "", P.round(2).to_markdown(index=False), "",
+           "## Fon hisseleri: gosterge medyanlari", "", D.round(3).to_markdown(index=False), "",
+           "## Evren testi: gostergeler (4 dilim BIST/ABD x 2016-21/2022-26; kat = sinyal orani / her 5. gun tabani)", "",
+           iz[iz.sinyal.isin(gosterge)].round(2).to_markdown(index=False), "",
+           "## Evren testi: KAP olaylari (yalniz BIST, 2 dilim; 2017 oncesi KAP verisi yok)", "",
+           iz[~iz.sinyal.isin(gosterge)].round(2).to_markdown(index=False), "",
+           "## Vaka kosulari", "", kos.assign(**{c: pd.to_datetime(kos[c]).dt.date for c in ("dip", "x2", "tepe")}).round(2).to_markdown(index=False), ""]
+    return "\n".join(sat)
+
+
+def fon_izi_gosterge(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """v1.2 ana giris: K6 gosterge/uyumsuzluk/Fibonacci + K7 blok hacim + K8 KAP olaylari; vaka profili ve evren testi."""
+    A = A or FIAyar()
+    os.makedirs(A.cikti, exist_ok=True)
+    veri = {}
+    for pazar, yol in A.veri.items():
+        try:
+            veri[pazar] = fi_k1_veri(yol, pazar, A)
+        except Exception as ex:
+            filog.error("%s verisi okunamadi (%s); bu pazar atlandi", pazar, ex)
+    if "BIST" not in veri:
+        raise RuntimeError("BIST verisi yok; vaka incelemesi yapilamaz")
+    try:
+        kap = fi_kap_yukle(A)
+    except Exception as ex:
+        filog.error("KAP ozeti okunamadi (%s); KAP sinyalleri bos", ex); kap = {}
+    kos = []
+    for s in FON_HISSE:
+        if s in veri["BIST"]:
+            k = fi_kosu(veri["BIST"][s], A)
+            if k:
+                kos.append({"sembol": s, **k})
+    kos = pd.DataFrame(kos)
+    P, D, blok = fi_k6_vaka(veri["BIST"], kos, kap, A)
+    E = pd.concat([fi_k6_evren(V, p, kap if p == "BIST" else None, A) for p, V in veri.items()], ignore_index=True)
+    S, iz = fi_k6_ozet(E)
+    P.to_csv(os.path.join(A.cikti, "fon_gosterge_profil.csv"), index=False)
+    D.to_csv(os.path.join(A.cikti, "fon_gosterge_deger.csv"), index=False)
+    blok.to_csv(os.path.join(A.cikti, "fon_blok_gunleri.csv"), index=False)
+    S.to_csv(os.path.join(A.cikti, "fon_gosterge_evren.csv"), index=False)
+    iz.to_csv(os.path.join(A.cikti, "fon_gosterge_iz.csv"), index=False)
+    with open(os.path.join(A.cikti, "FON_IZI_gosterge.md"), "w", encoding="utf-8") as f:
+        f.write(fi_k6_rapor(P, D, blok, iz, S, kos))
+    return {"profil": P, "deger": D, "blok": blok, "evren": S, "iz": iz, "kosular": kos}
+
+
 # ---------------------------------------------------------------- K5 rapor
 def fi_k5_rapor(kos: pd.DataFrame, faz: pd.DataFrame, tet: pd.DataFrame, oz: pd.DataFrame, iz: pd.DataFrame,
                 ekler: Optional[Dict[str, pd.DataFrame]] = None) -> str:
@@ -480,6 +901,10 @@ def _cakisma_kontrol_fi(_once=_CK_ONCE_FI, _dosya='FON_IZI.py'):
 _cakisma_kontrol_fi()
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
+        R = fon_izi_gosterge()
+        print(R["iz"].round(2).to_string(index=False))
+        sys.exit(0)
     R = fon_izi()
     print(R["iz"].round(2).to_string(index=False))
     print(R["fazlar"].groupby("faz").median(numeric_only=True).round(2).to_string())
