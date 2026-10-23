@@ -105,6 +105,12 @@ class FIAyar:
     blok_kat: float = 20.0          # blok hacim: onceki 20 gun medyaninin 20 kati
     once_bar: int = 120             # fon vakasi ONCE fazi (dipten onceki bar)
     kap: str = os.environ.get("FI_KAP", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/kap_ozet")
+    # v1.3 fon islem defteri (KAP portfoy dagilim raporlari)
+    kapfon: str = os.environ.get("FI_KAPFON", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/kapfon")
+    kapfon_bas: str = "2023-01-01"
+    kapfon_bit: str = "2026-10-20"
+    kapfon_gun: int = 15            # rapor ayin ilk 6 is gunu icinde yayimlanir; ayin 1-15'i taranir
+    kapfon_bekle: float = 0.3       # KAP'a nezaket beklemesi (sn)
     veri: Dict[str, str] = field(default_factory=lambda: {
         "BIST": os.environ.get("FI_VERI_BIST", "/content/drive/MyDrive/col_tarayici/veri_1d_turkey.pkl"),
         "ABD": os.environ.get("FI_VERI_ABD", "/content/drive/MyDrive/col_tarayici/veri_1d_america.pkl"),
@@ -821,6 +827,180 @@ def fon_izi_gosterge(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     with open(os.path.join(A.cikti, "FON_IZI_gosterge.md"), "w", encoding="utf-8") as f:
         f.write(fi_k6_rapor(P, D, blok, iz, S, kos))
     return {"profil": P, "deger": D, "blok": blok, "evren": S, "iz": iz, "kosular": kos}
+
+
+# ---------------------------------------------------------------- K9 fon islem defteri (v1.3): KAP portfoy dagilim raporlari
+FI_FON_SIRKET = ("TERA PORTF", "PUSULA PORTF", "HEDEF PORTF", "ATLAS PORTF", "A1 CAPITAL PORTF", "A1 PORTF", "PARDUS PORTF", "BULLS PORTF")
+_FI_KAP = "https://www.kap.org.tr"
+
+
+def _fi_kap_oturum():
+    import requests
+    s = requests.Session()
+    s.headers.update({"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124 Safari/537.36",
+                      "Accept": "application/json, text/plain, */*", "Content-Type": "application/json;charset=UTF-8",
+                      "Origin": _FI_KAP, "Referer": _FI_KAP + "/tr/bildirim-sorgu"})
+    try:
+        s.get(_FI_KAP + "/tr/bildirim-sorgu", timeout=30)
+    except Exception as ex:
+        filog.warning("KAP acilis sayfasi: %s", ex)
+    return s
+
+
+def _fi_kap_istek(s, yontem: str, url: str, deneme: int = 4, **kw):
+    """KAP istegi; 403/429/5xx ve ag hatasinda artan beklemeyle tekrar. Basarisizsa None."""
+    for i in range(deneme):
+        try:
+            r = s.request(yontem, url, timeout=60, **kw)
+            if r.status_code == 200:
+                return r
+            filog.warning("KAP %s %s -> HTTP %s (deneme %d)", yontem, url[-60:], r.status_code, i + 1)
+        except Exception as ex:
+            filog.warning("KAP %s %s -> %s (deneme %d)", yontem, url[-60:], str(ex)[:100], i + 1)
+        time.sleep(3 * (i + 1))
+    return None
+
+
+def fi_k9_liste(A: FIAyar) -> pd.DataFrame:
+    """KAP fon bildirimlerinden 'Portfoy Dagilim Raporu' listesi (butun fonlar), gun gun; kaldigi yerden devam eder."""
+    import json
+    os.makedirs(A.kapfon, exist_ok=True)
+    yol = os.path.join(A.kapfon, "liste.csv"); yol_gun = os.path.join(A.kapfon, "liste_gunler.txt")
+    L = pd.read_csv(yol) if os.path.exists(yol) else pd.DataFrame()
+    bitti = set(open(yol_gun).read().split()) if os.path.exists(yol_gun) else set()
+    gunler = [g for g in pd.date_range(A.kapfon_bas, A.kapfon_bit, freq="D")
+              if g.day <= A.kapfon_gun and g.weekday() < 5 and str(g.date()) not in bitti]
+    s = _fi_kap_oturum(); yeni: List[Dict[str, Any]] = []; t0 = time.time()
+    for no, g in enumerate(gunler, 1):
+        gs = str(g.date())
+        r = _fi_kap_istek(s, "POST", _FI_KAP + "/tr/api/disclosure/funds/byCriteria",
+                          data=json.dumps({"fromDate": gs, "toDate": gs, "mkkMemberOidList": [], "subjectList": []}))
+        if r is None:
+            filog.error("KAP liste %s alinamadi; sonraki calistirmada tekrar denenecek", gs); continue
+        try:
+            J = r.json()
+        except Exception:
+            filog.error("KAP liste %s JSON degil", gs); continue
+        if len(J) >= 2000:
+            filog.warning("KAP liste %s: 2000 kayit siniri; o gunun bir kismi eksik olabilir", gs)
+        for j in J:
+            if (j.get("subject") or "").strip() == "Portföy Dağılım Raporu":
+                yeni.append({"yayin": j.get("publishDate"), "fon": j.get("fundCode"), "unvan": j.get("kapTitle"),
+                             "indeks": j.get("disclosureIndex"), "yil": j.get("year"), "donem": j.get("period"),
+                             "ek": j.get("attachmentCount")})
+        bitti.add(gs)
+        if no % 20 == 0 or no == len(gunler):
+            L = pd.concat([L, pd.DataFrame(yeni)], ignore_index=True).drop_duplicates("indeks") if yeni else L; yeni = []
+            L.to_csv(yol, index=False)
+            with open(yol_gun, "w") as f:
+                f.write("\n".join(sorted(bitti)))
+            filog.info("KAP liste %d/%d gun, %d rapor, %.0f sn", no, len(gunler), len(L), time.time() - t0)
+        time.sleep(A.kapfon_bekle)
+    return L
+
+
+def fi_k9_indir(L: pd.DataFrame, A: FIAyar) -> pd.DataFrame:
+    """Hedef portfoy sirketlerinin raporlarinin eklerini (PDF) indirir; KAP Java sarmalini soyar. Donus: ek listesi."""
+    import re
+    kl = os.path.join(A.kapfon, "pdf"); os.makedirs(kl, exist_ok=True)
+    yol = os.path.join(A.kapfon, "ekler.csv")
+    E = pd.read_csv(yol) if os.path.exists(yol) else pd.DataFrame(columns=["indeks", "dosya"])
+    var = set(E.indeks.astype(int)) if len(E) else set()
+    H = L[L.unvan.astype(str).str.upper().str.contains("|".join(FI_FON_SIRKET), regex=True)].copy()
+    H = H[~H.indeks.astype(int).isin(var)]
+    s = _fi_kap_oturum(); yeni = []; t0 = time.time()
+    for no, row in enumerate(H.itertuples(index=False), 1):
+        r = _fi_kap_istek(s, "GET", f"{_FI_KAP}/tr/Bildirim/{int(row.indeks)}")
+        if r is None:
+            continue
+        linkler = sorted(set(re.findall(r"https://www\.kap\.org\.tr/tr/api/file/download/[0-9a-f]+", r.text)))
+        for u in linkler:
+            d = _fi_kap_istek(s, "GET", u)
+            if d is None:
+                continue
+            b = d.content; i = b.find(b"%PDF")
+            ad = re.findall(r"filename\*=UTF-8''([^;]+)", d.headers.get("content-disposition", "")) or [u.rsplit("/", 1)[-1] + ".pdf"]
+            dosya = os.path.join(kl, f"{int(row.indeks)}__{ad[0]}")
+            with open(dosya, "wb") as f:
+                f.write(b[i:] if i >= 0 else b)
+            yeni.append({"indeks": int(row.indeks), "dosya": dosya})
+            time.sleep(A.kapfon_bekle)
+        if not linkler:
+            yeni.append({"indeks": int(row.indeks), "dosya": ""})
+        if no % 25 == 0 or no == len(H):
+            E = pd.concat([E, pd.DataFrame(yeni)], ignore_index=True); yeni = []
+            E.to_csv(yol, index=False)
+            filog.info("KAP ek %d/%d rapor, %.0f sn", no, len(H), time.time() - t0)
+    return E
+
+
+def _fi_pdf_metin(dosya: str) -> str:
+    """PDF -> duz metin (sutun duzeni korunur). Once pdftotext, yoksa pypdf."""
+    import subprocess
+    try:
+        return subprocess.run(["pdftotext", "-layout", dosya, "-"], capture_output=True, timeout=60, check=True).stdout.decode("utf-8", "replace")
+    except Exception:
+        from pypdf import PdfReader
+        return "\n".join((p.extract_text(extraction_mode="layout") or "") for p in PdfReader(dosya).pages)
+
+
+def _fi_sayi(x: str) -> float:
+    return float(x.replace(".", "").replace(",", "."))
+
+
+import re as _fi_re
+_FI_ISLEM_RE = _fi_re.compile(r"^\s*([A-Z][A-Z0-9]{2,5})\s+.*?(\d{2}/\d{2}/\d{2,4})\s+([\d.]+,\d+)\s+([\d.]+,\d+)\s*$")
+_FI_POZ_RE = _fi_re.compile(r"^\s*([A-Z][A-Z0-9]{2,5})\s+TL\s+.*?(TR[A-Z0-9]{10})\s+([\d.]+,\d{2})\s")
+
+
+def fi_k9_ayristir(metin: str) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+    """Portfoy dagilim raporu metni -> (hisse alis/satis islemleri, hisse pozisyonlari). Islem: kod, tarih, fiyat, deger, lot = deger/fiyat.
+    Pozisyon: kod, ISIN, nominal (pay adedi)."""
+    islem, poz = [], []; kip = None; poz_kip = False
+    for satir in metin.splitlines():
+        u = satir.upper()
+        if "HİSSE SENETLERİ(ALIŞLAR)" in u or "HISSE SENETLERI(ALIŞLAR)" in u or "HİSSE SENETLERİ (ALIŞLAR)" in u:
+            kip = "alis"; continue
+        if "HİSSE SENETLERİ(SATIŞLAR)" in u or "HISSE SENETLERI(SATIŞLAR)" in u or "HİSSE SENETLERİ (SATIŞLAR)" in u:
+            kip = "satis"; continue
+        if _fi_re.match(r"^\s*[B-Z]\s?\)", satir) or _fi_re.match(r"^\s*[IVX]+-", satir):
+            kip = None
+        if _fi_re.match(r"^\s*III-FON PORTF", u):
+            poz_kip = True; continue
+        if _fi_re.match(r"^\s*IV-", u):
+            poz_kip = False
+        if kip:
+            m = _FI_ISLEM_RE.match(satir)
+            if m:
+                fiyat = _fi_sayi(m.group(3)); deger = _fi_sayi(m.group(4))
+                if fiyat > 0:
+                    gun, ay, yil = m.group(2).split("/"); yil = ("20" + yil) if len(yil) == 2 else yil
+                    islem.append({"kod": m.group(1), "yon": kip, "tarih": f"{yil}-{ay}-{gun}", "fiyat": fiyat, "deger": deger,
+                                  "lot": deger / fiyat})
+        elif poz_kip:
+            m = _FI_POZ_RE.match(satir)
+            if m:
+                poz.append({"kod": m.group(1), "isin": m.group(2), "nominal": _fi_sayi(m.group(3))})
+    return islem, poz
+
+
+def fi_k9_tablolar(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Indirilen PDF'leri ayristirir. Donus: (islemler, pozisyonlar) — fon, sirket, donem bilgisiyle."""
+    meta = L.set_index(L.indeks.astype(int))
+    son = set(L.assign(indeks=L.indeks.astype(int)).groupby(["fon", "yil", "donem"]).indeks.max())   # duzeltme raporu varsa en sonu
+    I, P = [], []
+    for row in E[(E.dosya.astype(str) != "") & E.indeks.astype(int).isin(son)].itertuples(index=False):
+        try:
+            m = meta.loc[int(row.indeks)]
+            islem, poz = fi_k9_ayristir(_fi_pdf_metin(row.dosya))
+            ek = {"fon": m.fon, "unvan": m.unvan, "yil": m.yil, "donem": m.donem, "indeks": int(row.indeks)}
+            I += [{**ek, **x} for x in islem]; P += [{**ek, **x} for x in poz]
+        except Exception as ex:
+            filog.warning("rapor %s ayristirilamadi: %s", row.indeks, ex)
+    I = pd.DataFrame(I); P = pd.DataFrame(P)
+    if len(I):
+        I["tarih"] = pd.to_datetime(I.tarih, errors="coerce")
+    return I, P
 
 
 # ---------------------------------------------------------------- K5 rapor
