@@ -1,5 +1,5 @@
 # =====================================================================
-#  SESSIZ_ML — sessiz yuvarlanma (Z0) bolgelerinde ALIS ve SATIS icin makine ogrenmesi   (2026-10-23, v1.1)
+#  SESSIZ_ML — sessiz yuvarlanma (Z0) bolgelerinde ALIS ve SATIS icin makine ogrenmesi   (2026-10-23, v1.2)
 #
 #  CEMAL (23 Eki): "Isaretledigin bolgede alis ve satis, makine ogrenmesi icin ne gerekiyorsa her seyi yap."
 #  BOLGE: FON_IZI v1.1 Z0 = son 20 bar +%5..+%30, medyan mum hissenin kendi 250 bar normalinin <= 0,85'i, verim >= 0,3,
@@ -62,7 +62,7 @@ warnings.filterwarnings("ignore", message=".*eval_set.*")   # lightgbm 4.7 uyari
 
 _CK_ONCE_SM = {k: id(v) for k, v in globals().items()}
 
-SM_SURUM = "SESSIZ_ML v1.0 (2026-10-23, Z0 bolgelerinde alis + satis modeli, ileri yuruyen LightGBM)"
+SM_SURUM = "SESSIZ_ML v1.2 (2026-10-23, Z0 bolgelerinde alis + satis modeli, ileri yuruyen LightGBM)"
 smlog = logging.getLogger("col.sessiz_ml")
 if not smlog.handlers:
     _sm_h = logging.StreamHandler(sys.stderr)
@@ -282,7 +282,14 @@ def sm_ileri_egit(O: pd.DataFrame, etiket: str, embargo_gun: int, A: SMAyar, kol
                       "test_kayip_ilk": k_te[0], "test_kayip_son": k_te[-1], "test_kayip_en_dusuk": float(np.nanmin(k_te)),
                       "test_sabit_tahmin": sabit_te, "dosya": dosya})
         O.loc[te, "p"] = m.predict_proba(O.loc[te, kol])[:, 1]
-        esik[Y] = float(np.quantile(m.predict_proba(tr[kol])[:, 1], 1 - A.ust_oran))
+        p_tr = m.predict_proba(tr[kol])[:, 1]
+        esik[Y] = float(np.quantile(p_tr, 1 - A.ust_oran))
+        if "pazar" in O.columns:                       # v1.2: pazar bazinda egitim esigi (havuz esigi BIST'te %58-74 seciyordu)
+            if "esik_pz" not in O.columns:
+                O["esik_pz"] = np.nan
+            for pz in O.loc[te, "pazar"].dropna().unique():
+                mk = (tr.pazar == pz).to_numpy()
+                O.loc[te & (O.pazar == pz), "esik_pz"] = float(np.quantile(p_tr[mk], 1 - A.ust_oran)) if mk.sum() >= 100 else esik[Y]
         onem.append(pd.Series(m.booster_.feature_importance("gain"), index=kol, name=Y))
     imp = pd.concat(onem, axis=1) if onem else pd.DataFrame()
     if not imp.empty:
@@ -641,7 +648,7 @@ def sessiz_ml(A: Optional[SMAyar] = None, ogretmen: bool = True) -> Dict[str, An
     deg = pd.concat([sm_degerlendir(Ok20, "y_k20", A), sm_degerlendir(Ox2, "y_x2", A)], ignore_index=True)
     # K5 islemler: tum Z0 (test yillari), model ust %20 (egitim esigi), model alt
     P = Ok20[Ok20.p.notna()].copy(); P["yil"] = pd.to_datetime(P.tarih).dt.year
-    P["ust"] = P.p >= P.yil.map(esik_k20)
+    P["ust"] = P.p >= P.esik_pz                     # v1.2: pazar bazinda egitim esigi (gercek zamanli)
     Vd = {**V.get("BIST", {}), **{("ABD:" + s): d for s, d in V.get("ABD", {}).items()}}
     Zd = {**Z.get("BIST", {}), **{("ABD:" + s): z for s, z in Z.get("ABD", {}).items()}}
     P["sembol"] = np.where(P.pazar == "ABD", "ABD:" + P.sembol, P.sembol)
@@ -654,7 +661,8 @@ def sessiz_ml(A: Optional[SMAyar] = None, ogretmen: bool = True) -> Dict[str, An
         u = g[g.ust]; al = g[~g.ust]
         rast = [sm_portfoy(g.sample(len(u), random_state=int(rng.integers(1e9))), A)["portfoy"] for _ in range(A.rastgele_tohum)] if len(u) else [np.nan]
         prt.append({"pazar": pz, "donem": dn, "secim": "tum_Z0", **sm_portfoy(g, A)})
-        prt.append({"pazar": pz, "donem": dn, "secim": "model_ust20", **sm_portfoy(u, A), "rastgele_ayni_sayi_medyan": float(np.nanmedian(rast))})
+        prt.append({"pazar": pz, "donem": dn, "secim": "model_ust20", **sm_portfoy(u, A), "rastgele_ayni_sayi_medyan": float(np.nanmedian(rast)),
+                    "secilen_oran_yzd": 100.0 * len(u) / max(len(g), 1)})
         for ad, t in (("tum_Z0", g), ("model_ust20 (alis tahmini)", u), ("model_alt80", al)):
             bas.append({"pazar": pz, "donem": dn, "secim": ad, **sm_basari(t)})
     prt = pd.DataFrame(prt); bas = pd.DataFrame(bas)

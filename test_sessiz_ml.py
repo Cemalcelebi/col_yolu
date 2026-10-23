@@ -8,6 +8,7 @@
 # 7) Vektorel etiket (sm_once_vek) dongulu sm_once ile birebir ayni; maliyet = komisyon + 2 x kayma = %0,8.
 # 8) Egitim kaniti: logloss egrisi yazilir (egitim kaybi duser) ve model dosyasi diske kaydedilir.
 # 6) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
+# 9) v1.2 pazar bazinda esik: iki pazarin puan duzeyi farkliysa her pazar kendi egitim esigini alir (havuz esigi degil).
 import sys, numpy as np, pandas as pd
 
 import FON_IZI as F
@@ -90,6 +91,17 @@ def sina():
         _, _, _, kan = S.sm_ileri_egit(O8, "y", 90, A8, ad="deneme")
         if kan.empty or not (kan.egitim_kayip_son.iat[0] < kan.egitim_kayip_ilk.iat[0]) or not os.path.exists(kan.dosya.iat[0]):
             hata.append(f"8) egitim kaniti eksik: {kan.to_dict('records')}")
+        O9 = O8.copy(); O9["pazar"] = np.where(np.arange(len(O9)) % 2 == 0, "ABD", "BIST")
+        O9.loc[O9.pazar == "ABD", S.OZ_KOL[0]] += 3.0
+        O9["y"] = (O9[S.OZ_KOL[0]] + rng.normal(0, 1, len(O9)) > 0).astype(float)
+        P9, _, _, _ = S.sm_ileri_egit(O9, "y", 90, S.SMAyar(test_yillari=(2023,), gbm={**A.gbm, "n_estimators": 50}, cikti=td))
+        t9 = P9[P9.p.notna()]
+        if "esik_pz" not in t9 or t9.esik_pz.isna().any():
+            hata.append("9) pazar esigi yazilmadi")
+        else:
+            e9 = t9.groupby("pazar").esik_pz.first()
+            if not (e9.get("ABD", 0) > e9.get("BIST", 1)):
+                hata.append(f"9) pazar esikleri ayrismadi: {e9.to_dict()}")
     g = {"SMAyar": object(), "__name__": "kapi_test"}
     try:
         src = open("SESSIZ_ML.py", encoding="utf-8").read()
@@ -107,4 +119,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_sessiz_ml: 8/8 OK")
+    print("test_sessiz_ml: 9/9 OK")

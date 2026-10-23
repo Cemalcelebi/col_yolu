@@ -11,6 +11,10 @@
 # 9) v1.2 uyumsuzluk: fiyat daha dusuk dip + gosterge daha yuksek dip -> duz boga, sinyal pivotun dogrulandigi gun (p+k).
 # 10) v1.2 KAP esleme: 18:00 sonrasi bildirim ertesi islem gunu, hafta sonu bildirimi pazartesi.
 # 11) v1.2 blok hacim: kilitli tavan serisi icinde 50x hacimli tavan gunu blok_tavan ve blok_seri_ici.
+# 12) v1.4 bolunme duzeltmesi: 10 Mart 2020 -%15 (marj %20) gercek; Haziran 2020 -%12 KAP kaydi yoksa gercek, bedelsiz kaydi varsa
+#     bolunme; Haziran 2020 -%50 her zaman bolunme; 2024 -%12 (marj %10) bolunme.
+# 13) v1.4 _fi_ilk: ayni barda hem +esik hem -esik -> asagi=1, yukari=0; hicbiri -> 0/0.
+# 14) v1.4 esli taban: kat_dus_esli = sinyal orani / esli taban orani; _es_ satirlari iz tablosuna girmez.
 import sys, numpy as np, pandas as pd
 
 import FON_IZI as F
@@ -101,6 +105,33 @@ def sina():
     S11 = F.fi_gosterge_sinyal(F.fi_gostergeler(d11, A), A)
     if not (S11["blok_tavan"].iat[-1] and S11["blok_seri_ici"].iat[-1] and S11["blok_hacim"].sum() == 1):
         hata.append("11) blok hacim / seri ici yakalanmadi")
+    def _seri(tarihler_r):
+        idx = pd.bdate_range("2019-12-02", "2024-12-31"); c = np.full(len(idx), 100.0)
+        for t, r in tarihler_r:
+            j = idx.get_loc(pd.Timestamp(t)); c[j:] = c[j:] * (1 + r)
+        return pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1000.0}, index=idx)
+    olay = [("2020-03-10", -0.15), ("2020-06-15", -0.12), ("2020-09-15", -0.50), ("2024-04-15", -0.12)]
+    d12 = _seri(olay)
+    z0, k0 = F.fi_duzelt(d12, A)
+    z1, k1 = F.fi_duzelt(d12, A, pd.DatetimeIndex(["2020-05-01"]))
+    def _r(z, t):
+        return z.Close.loc[pd.Timestamp(t)] / z.Close.shift().loc[pd.Timestamp(t)] - 1
+    if not (k0 == 2 and abs(_r(z0, "2020-03-10") + 0.15) < 1e-9 and abs(_r(z0, "2020-06-15") + 0.12) < 1e-9
+            and abs(_r(z0, "2020-09-15")) < 1e-9 and abs(_r(z0, "2024-04-15")) < 1e-9):
+        hata.append(f"12) KAP kaydi yokken duzeltme yanlis: k={k0}")
+    if not (k1 == 3 and abs(_r(z1, "2020-06-15")) < 1e-9 and abs(_r(z1, "2020-03-10") + 0.15) < 1e-9):
+        hata.append(f"12) KAP bedelsiz kaydiyla duzeltme yanlis: k={k1}")
+    c13 = np.full(6, 100.0); h13 = c13.copy(); l13 = c13.copy(); h13[2] = 125; l13[2] = 75
+    u13, a13 = F._fi_ilk(c13, h13, l13, 3, 0.20, 0.20)
+    if not (u13[0] == 0 and a13[0] == 1 and u13[2] == 0 and a13[2] == 0):
+        hata.append(f"13) ayni bar kurali yanlis: u={u13[:3]} a={a13[:3]}")
+    E14 = pd.DataFrame([{"pazar": "BIST", "sinyal": s_, "donem": "2016-21", "n": 100, "n_k20": 100, "k20": 40, "n_x2": 100, "x2": 30,
+                         "n_dus": 100, "dus": d_} for s_, d_ in (("_TABAN", 20), ("blok_taban", 40), ("_es_taban_bloksuz", 38))])
+    S14, iz14 = F.fi_k6_ozet(E14)
+    r14 = S14[S14.sinyal == "blok_taban"]
+    if not (len(r14) == 1 and abs(r14.kat_dus.iat[0] - 2.0) < 1e-9 and abs(r14.kat_dus_esli.iat[0] - 40 / 38) < 1e-9
+            and not S14.sinyal.str.startswith("_es_").any()):
+        hata.append("14) esli taban kati yanlis")
     return hata
 
 
@@ -108,4 +139,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 11/11 OK")
+    print("test_fon_izi: 14/14 OK")
