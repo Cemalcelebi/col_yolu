@@ -1274,6 +1274,7 @@ def _fi_k9_spk(satirlar: List[str], U: List[str], yerel: str = "tr") -> Dict[str
     # --- pozisyonlar (III ... IV). Hisse grubu 'Hisse Turk' / 'Hisse Yabanci' alt gruplarina ayrilabilir; her alt grubun satirlari
     # kendi GRUP TOPLAMI satiriyla karsilastirilir (parca = iki toplam satiri arasindaki satirlar). Yabanci alt grup tabloya girmez.
     bolum = False; hisse = False; alt = ""; parca: List[Dict[str, Any]] = []; rapor_t = 0.0; ayr_t = 0.0; toplam_var = False
+    yabanci_var = False
     for s, u in zip(satirlar, U):
         if _fi_re.match(r"^\s*III\s*-\s*FON PORTF", u):
             bolum = True; k["poz_bolum"] = True; continue
@@ -1294,6 +1295,8 @@ def _fi_k9_spk(satirlar: List[str], U: List[str], yerel: str = "tr") -> Dict[str
             if parca and n:
                 if alt != "yabanci":
                     rapor_t += _fi_sayi(n[0], yerel); ayr_t += sum(x["nominal"] for x in parca); poz += parca; toplam_var = True
+                else:
+                    yabanci_var = True
                 parca = []
             if not s.startswith(" "):                       # sutun 0'daki GRUP TOPLAMI = hisse grubunun sonu
                 hisse = False
@@ -1317,6 +1320,8 @@ def _fi_k9_spk(satirlar: List[str], U: List[str], yerel: str = "tr") -> Dict[str
         parca.append({"kod": m.group(1) if m else "", "isin": im.group(1) if im else "", "nominal": n[0], "fiyat": fiyat, "deger": deger})
     if toplam_var:
         k["poz_rapor"] = rapor_t; k["poz_ayr"] = ayr_t
+    elif yabanci_var:                                                  # yalniz yabanci hisse tasiyan fon: BIST pozisyonu 0
+        k["poz_rapor"] = 0.0; k["poz_ayr"] = 0.0
     # --- islemler (A) HISSE SENETLERI(ALISLAR)/(SATISLAR))
     yon = None
     for s, u in zip(satirlar, U):
