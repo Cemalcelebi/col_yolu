@@ -20,7 +20,8 @@
 # 16) v1.5 Atlas bicimi: %1.76 / 1.76% yuzde, kodu ust satirda kalan pozisyon, 'Hisse KOD .. g-Aaa-yy nominal tutar' islemleri ve
 #     yalniz Hisse grubunun TOPLAM satiri (Takasbank grubu karismaz).
 # 17) v1.5 tarih: 07/11/23, 30-Haz-25, 1-Şub-24, 05.01.2024.
-# 18) v1.5 fon girisi: giris yalniz onceki ay raporu varsa; ikinci giren fon 'cok'; onceki ay hicbir fonda yoksa 'ilk'; cikis olayi.
+# 18) v1.5 fon girisi: giris yalniz onceki ay raporu varsa; ikinci giren fon 'cok'; onceki ay hicbir fonda yoksa 'ilk'; cikis olayi;
+#     fonlarin payi sermayenin %5 / %10'unu ilk astiginda yogun5/yogun10, bilinme = o ayin en gec fon raporu.
 # 19) v1.5 giris mekanigi: yayin gunu ne saatte olursa olsun giris ertesi islem gunu acilisi; once +%20 (k20); +%8 sonrasi maliyete
 #     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
 import sys, numpy as np, pandas as pd
@@ -215,7 +216,14 @@ def sina():
         {"fon": "F1", "sirket": "XX", "ay": 102, "kod": "BBB", "nominal": 5.0, "agirlik": 1.0}])   # F1 AAA cikisi (ay 102)
     KP18 = pd.DataFrame([{"fon": f, "ay": a, "bilinme": pd.Timestamp("2024-01-01") + pd.Timedelta(days=30 * (a - 100) + i)}
                          for i, (f, a) in enumerate([("F1", 100), ("F1", 101), ("F2", 100), ("F2", 101), ("F3", 101), ("F1", 102)])])
-    E18 = F.fi_k10_olaylar(G18, KP18)
+    G18 = G18.merge(KP18, on=["fon", "ay"], how="left")
+    O18 = pd.DataFrame([{"kod": k_, "ay": a_, "oran": 1.0} for k_ in ("AAA", "BBB", "CCC") for a_ in (99, 100, 101, 102)])
+    D18 = pd.DataFrame([{"kod": "BBB", "sermaye_lot": 100.0}])
+    E18 = F.fi_k10_olaylar(G18, KP18, O18, D18)
+    y18 = E18[E18.tur.astype(str).str.startswith("yogun")]
+    if not (sorted(y18.tur) == ["yogun10", "yogun5"] and (y18.kod == "BBB").all() and abs(y18.pay.iat[0] - 0.1) < 1e-12
+            and y18.bilinme.iat[0] == G18[(G18.kod == "BBB") & (G18.ay == 101)].bilinme.max()):
+        hata.append(f"18) yogun olayi yanlis: {y18.to_dict('records')}")
     gi = E18[E18.tur == "giris"]; ci = E18[E18.tur == "cikis"]
     if not (len(gi) == 2 and set(gi.fon) == {"F1", "F2"} and set(gi.kod) == {"BBB"}
             and gi[gi.fon == "F1"].ilk.iat[0] and not gi[gi.fon == "F2"].ilk.iat[0] and gi[gi.fon == "F2"].cok.iat[0]
