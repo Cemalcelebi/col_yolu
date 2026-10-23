@@ -4,6 +4,7 @@
 # 2) Pencere olculeri: tabansiz istikrarli yukseliste taban=0, verim yuksek; bir -%10 gun eklenince taban=1.
 # 3) Sonuc: once 2 kat / once -%30 dogru isaretlenir.
 # 4) Kosu: dip, ilk 2 kat ve tepe dogru bulunur; kriz tarihinden sonraki tepe sayilmaz.
+# 6) v1.1 hacim esligi: kucuk mumlu, kuru hacimli, yukselis gunlerinde hacimli sessiz yukselis Z0 sayilir; hk < 1, udvr > 1, dh < 1.
 # 5) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
 import sys, numpy as np, pandas as pd
 
@@ -39,6 +40,14 @@ def sina():
     k = F.fi_kosu(d, F.FIAyar(kriz_tarih=str(idx[150].date())))
     if not (k["dip"] == idx[49] and k["tepe"] == idx[149] and abs(k["kat"] - 10) < 1e-6 and k["x2"] is not None and d.Close[k["x2"]] >= 20):
         hata.append(f"4) kosu yanlis: {k}")
+    n = 400; idx = pd.bdate_range("2023-01-02", periods=n); rng6 = np.random.default_rng(2)
+    r6 = rng6.normal(0, 0.02, n); r6[-20:] = np.where(np.arange(20) % 3 == 2, -0.003, 0.01)
+    c = 100 * np.cumprod(1 + r6); hl = np.where(np.arange(n) >= n - 20, 0.006, 0.03)
+    v = np.where(np.arange(n) >= n - 20, np.where(r6 > 0, 600.0, 200.0), 1000.0)
+    d6 = pd.DataFrame({"Open": c, "High": c * (1 + hl / 2), "Low": c * (1 - hl / 2), "Close": c, "Volume": v}, index=idx)
+    o6 = F.fi_hacim_olc(d6, A).iloc[-1]
+    if not (o6.Z0 and o6.hk < 1 and o6.udvr > 1 and o6.dh < 1):
+        hata.append(f"6) sessiz yuvarlanma / hacim olculeri yanlis: {o6.to_dict()}")
     g = {"FIAyar": object(), "__name__": "kapi_test"}
     try:
         src = open("FON_IZI.py", encoding="utf-8").read()
@@ -56,4 +65,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 5/5 OK")
+    print("test_fon_izi: 6/6 OK")
