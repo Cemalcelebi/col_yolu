@@ -1,5 +1,8 @@
 # Fon hisseleri: para nerede iz bıraktı? (FON_IZI v1.2, 23 Ekim 2026)
 
+> **DÜZELTME (23 Eki akşam, bağımsız denetim + FON_IZI v1.4):** Bu sayfadaki 'blok hacimli taban günü (A14)' ve 'borsa bayrağı (A15)' sonuçları eşli tabana göre ÇÜRÜDÜ: bloksuz taban günü de aynı riski taşıyor (eşli kat 0,91–1,73), olağan dışı fiyat sorusu / VBTS zaten sıçramış hisselere göre ek risk ~1,0–1,2. Ayrıca bölünme düzeltmesindeki Mart 2020 veri hatası giderildi; yeniden koşuda alım izi yok sonucu değişmedi. Güncel sayılar: FON_IZI_gosterge.md, IZ_DEFTERI A14/A15.
+
+
 ## Kısa cevap
 - Para iz bıraktı, ama **fiyat grafiğinde ve göstergelerde değil**. 62 gösterge sinyalinden (RSI, MACD, MFI, CMF, OBV, ADX, Ichimoku, Bollinger, Fibonacci, 15 çeşit uyumsuzluk...) **hiçbiri** BIST+ABD 4 dilimde alım izi vermedi.
 - İzler üç yerde: **(1) sahiplik** (fonun payı: OZATD'de Tera %8 → %26), **(2) blok devir günleri** (tek günde dev hacim), **(3) borsanın kendi bayrakları** (olağan dışı fiyat sorusu, VBTS tedbiri, devre kesici).

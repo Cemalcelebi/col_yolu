@@ -1,4 +1,4 @@
-# SESSIZ_ML ogretmen — SESSIZ_ML v1.0 (2026-10-23, Z0 bolgelerinde alis + satis modeli, ileri yuruyen LightGBM)
+# SESSIZ_ML ogretmen — SESSIZ_ML v1.2 (2026-10-23, Z0 bolgelerinde alis + satis modeli, ileri yuruyen LightGBM)
 
 Maliyet: komisyon %0.2 + kayma her yonde %0.3 = islem basina %0.8
 
@@ -6,46 +6,46 @@ Maliyet: komisyon %0.2 + kayma her yonde %0.3 = islem basina %0.8
 
 | model               |   pozitif |   negatif |   cv_auc_hisse_gruplu |   agac |   egitim_kayip_ilk |   egitim_kayip_son |   ayrik_hisse_kayip_ilk |   ayrik_hisse_kayip_son |   esik | dosya                                                      |
 |:--------------------|----------:|----------:|----------------------:|-------:|-------------------:|-------------------:|------------------------:|------------------------:|-------:|:-----------------------------------------------------------|
-| ogretmen_alim       |     10121 |    150000 |                 0.731 |    300 |              0.237 |              0.211 |                   0.182 |                   0.319 |  0.601 | arastirma_cikti/sessiz_ml/modeller/ogretmen_alim.txt       |
-| ogretmen_alim_kesim |      5666 |     80945 |                 0.59  |    300 |              0.255 |              0.179 |                   0.153 |                   0.249 |  0.552 | arastirma_cikti/sessiz_ml/modeller/ogretmen_alim_kesim.txt |
+| ogretmen_alim       |     10121 |    150000 |                 0.73  |    300 |              0.237 |              0.211 |                   0.182 |                   0.319 |  0.601 | arastirma_cikti/sessiz_ml/modeller/ogretmen_alim.txt       |
+| ogretmen_alim_kesim |      5666 |     80945 |                 0.588 |    300 |              0.255 |              0.179 |                   0.153 |                   0.249 |  0.552 | arastirma_cikti/sessiz_ml/modeller/ogretmen_alim_kesim.txt |
 | ogretmen_satis      |       943 |    150000 |                 0.84  |    300 |              0.034 |              0.002 |                   0.037 |                   0.03  |  0.002 | arastirma_cikti/sessiz_ml/modeller/ogretmen_satis.txt      |
 
 ## 2) Gormedigi veri: tarih kesimli ogretmen (kesim oncesiyle egitildi, sonrasinda fon hisselerini tanidi mi)
 
 | ogretmen   | egitim       |   fon_gun_kesim_sonrasi |   fon_isaretlenme_% |   gorulmemis_hisse_gun |   gorulmemis_isaretlenme_% |   ayirt_kat |
 |:-----------|:-------------|------------------------:|--------------------:|-----------------------:|---------------------------:|------------:|
-| alim       | < 2025-07-01 |                    4455 |              35.241 |                  83904 |                      5.677 |       6.208 |
+| alim       | < 2025-07-01 |                    4455 |              35.556 |                  83904 |                      5.673 |       6.267 |
 
 ## 3a) Tuttu mu: iz goren hisselerde sonuc vs ayni hisselerin rastgele gunleri
 
 | ogretmen   | sonuc   | pazar   | donem         |    n |   isabet_% |   taban_isabet_% |   kat |   r60_medyan_% |   taban_r60_medyan_% |   r20_medyan_% |   taban_r20_medyan_% |
 |:-----------|:--------|:--------|:--------------|-----:|-----------:|-----------------:|------:|---------------:|---------------------:|---------------:|---------------------:|
 | alim       | y_k20   | ABD     | 2016-21       | 8931 |     35.965 |           23.237 | 1.548 |          2.41  |                3.306 |        nan     |              nan     |
-| alim       | y_k20   | ABD     | 2022-26       | 7562 |     35.983 |           25.876 | 1.391 |          0.535 |                1.162 |        nan     |              nan     |
-| alim       | y_k20   | BIST    | 2016-21       | 2521 |     42.166 |           37.748 | 1.117 |          2.664 |                2.941 |        nan     |              nan     |
+| alim       | y_k20   | ABD     | 2022-26       | 7562 |     35.969 |           25.876 | 1.39  |          0.535 |                1.162 |        nan     |              nan     |
+| alim       | y_k20   | BIST    | 2016-21       | 2589 |     42.449 |           37.921 | 1.119 |          2.381 |                2.764 |        nan     |              nan     |
 | alim       | y_k20   | BIST    | 2022-26       | 2245 |     45.39  |           40.664 | 1.116 |          4.629 |                3.162 |        nan     |              nan     |
 | alim       | y_x2    | ABD     | 2016-21       | 8931 |     24.23  |           10.275 | 2.358 |          2.41  |                3.306 |        nan     |              nan     |
 | alim       | y_x2    | ABD     | 2022-26       | 6240 |     27.949 |           11.907 | 2.347 |          0.691 |                1.107 |        nan     |              nan     |
-| alim       | y_x2    | BIST    | 2016-21       | 2521 |     39.072 |           33.409 | 1.169 |          2.664 |                2.941 |        nan     |              nan     |
+| alim       | y_x2    | BIST    | 2016-21       | 2589 |     37.312 |           32.302 | 1.155 |          2.381 |                2.764 |        nan     |              nan     |
 | alim       | y_x2    | BIST    | 2022-26       | 2037 |     38.292 |           37.656 | 1.017 |          5.544 |                5.295 |        nan     |              nan     |
 | satis      | y_dus20 | ABD     | 2016-21       | 7064 |     39.057 |           24.402 | 1.601 |        nan     |              nan     |          2.057 |                1.274 |
 | satis      | y_dus20 | ABD     | 2022-26       | 8491 |     43.799 |           31.062 | 1.41  |        nan     |              nan     |         -0.19  |                0.27  |
-| satis      | y_dus20 | BIST    | 2016-21       |  873 |     38.373 |           28.441 | 1.349 |        nan     |              nan     |         -1.084 |                0.555 |
+| satis      | y_dus20 | BIST    | 2016-21       |  890 |     38.315 |           28.358 | 1.351 |        nan     |              nan     |         -1.012 |                0.563 |
 | satis      | y_dus20 | BIST    | 2022-26       | 1753 |     42.27  |           36.383 | 1.162 |        nan     |              nan     |         -1.594 |                0.519 |
-| alim_kesim | y_k20   | ABD     | >= 2025-07-01 | 2792 |     42.944 |           29.089 | 1.476 |          7.193 |                2.084 |        nan     |              nan     |
-| alim_kesim | y_k20   | BIST    | >= 2025-07-01 |  440 |     38.182 |           36.123 | 1.057 |         -6.438 |               -2.952 |        nan     |              nan     |
+| alim_kesim | y_k20   | ABD     | >= 2025-07-01 | 2791 |     42.924 |           29.089 | 1.476 |          7.22  |                2.084 |        nan     |              nan     |
+| alim_kesim | y_k20   | BIST    | >= 2025-07-01 |  444 |     38.063 |           36.123 | 1.054 |         -6.498 |               -2.952 |        nan     |              nan     |
 
 ## 3b) Alim izinden acilan islemler (uretim cikisi, maliyet dusulmus)
 
 | secim        | pazar   | donem   |    n |   hedefe_ulasan_% |   zararla_kapanan_% |   agir_zarar_% |   ort_net_% |   medyan_net_% |   ort_brut_% |   ort_bar |   portfoy_% |
 |:-------------|:--------|:--------|-----:|------------------:|--------------------:|---------------:|------------:|---------------:|-------------:|----------:|------------:|
 | alim_izi     | ABD     | 2016-21 | 8931 |            30.724 |              73.418 |         13.358 |       4.057 |           -0.8 |        4.857 |    23.081 |      22.133 |
-| alim_izi     | ABD     | 2022-26 | 7803 |            31.078 |              74.125 |         14.751 |       1.637 |           -0.8 |        2.437 |    19.629 |     128.969 |
-| alim_izi     | BIST    | 2016-21 | 2521 |            34.708 |              70.369 |         12.257 |       5.594 |           -0.8 |        6.394 |    23.211 |     494.134 |
+| alim_izi     | ABD     | 2022-26 | 7803 |            31.078 |              74.125 |         14.751 |       1.637 |           -0.8 |        2.437 |    19.628 |     128.969 |
+| alim_izi     | BIST    | 2016-21 | 2589 |            35.805 |              69.602 |         12.708 |       7.801 |           -0.8 |        8.601 |    23.248 |     328.007 |
 | alim_izi     | BIST    | 2022-26 | 2291 |            38.804 |              65.168 |         13.924 |       8.354 |           -0.8 |        9.154 |    23.786 |     533.831 |
 | rastgele_gun | ABD     | 2016-21 | 8496 |            24.659 |              71.128 |          5.579 |       1.244 |           -0.8 |        2.044 |    38.077 |     106.684 |
 | rastgele_gun | ABD     | 2022-26 | 8423 |            22.32  |              76.671 |          7.468 |      -0.012 |           -0.8 |        0.788 |    27.767 |      -1.313 |
-| rastgele_gun | BIST    | 2016-21 | 1523 |            28.299 |              73.145 |          8.207 |       3.063 |           -0.8 |        3.863 |    26.884 |     155.228 |
+| rastgele_gun | BIST    | 2016-21 | 1523 |            28.496 |              73.014 |          8.207 |       3.071 |           -0.8 |        3.871 |    26.819 |     153.347 |
 | rastgele_gun | BIST    | 2022-26 | 1558 |            32.157 |              69.705 |          9.884 |       4.165 |           -0.8 |        4.965 |    21.379 |     256.22  |
 
 ## Ogretmenin gordugu: fon gunleri vs diger hisseler (ozellik medyanlari)
