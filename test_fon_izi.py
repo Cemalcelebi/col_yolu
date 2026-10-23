@@ -6,6 +6,11 @@
 # 4) Kosu: dip, ilk 2 kat ve tepe dogru bulunur; kriz tarihinden sonraki tepe sayilmaz.
 # 6) v1.1 hacim esligi: kucuk mumlu, kuru hacimli, yukselis gunlerinde hacimli sessiz yukselis Z0 sayilir; hk < 1, udvr > 1, dh < 1.
 # 5) Cakisma kapisi: modul bellekteki baska bir adi ezerse durur.
+# 7) v1.2 gelecege bakmama: 500 bara kesilen seride butun gostergeler ve sinyaller tam serinin ilk 500 bariyla ayni.
+# 8) v1.2 vektorlu sonuc (_fi_ilk) = dongu (_fi_once).
+# 9) v1.2 uyumsuzluk: fiyat daha dusuk dip + gosterge daha yuksek dip -> duz boga, sinyal pivotun dogrulandigi gun (p+k).
+# 10) v1.2 KAP esleme: 18:00 sonrasi bildirim ertesi islem gunu, hafta sonu bildirimi pazartesi.
+# 11) v1.2 blok hacim: kilitli tavan serisi icinde 50x hacimli tavan gunu blok_tavan ve blok_seri_ici.
 import sys, numpy as np, pandas as pd
 
 import FON_IZI as F
@@ -58,6 +63,44 @@ def sina():
         if "EZDİ" not in str(ex): hata.append(f"5) beklenmeyen hata: {ex}")
     except Exception as ex:
         hata.append(f"5) kapi sinamasi calismadi: {type(ex).__name__} {ex}")
+    rng7 = np.random.default_rng(7); n7 = 700; idx7 = pd.bdate_range("2020-01-01", periods=n7)
+    c7 = 50 * np.cumprod(1 + rng7.normal(0, 0.025, n7)); o7 = c7 * (1 + rng7.normal(0, 0.005, n7))
+    d7 = pd.DataFrame({"Open": o7, "High": np.maximum(o7, c7) * (1 + rng7.uniform(0, 0.02, n7)),
+                       "Low": np.minimum(o7, c7) * (1 - rng7.uniform(0, 0.02, n7)), "Close": c7,
+                       "Volume": rng7.uniform(1e5, 1e6, n7)}, index=idx7)
+    try:
+        Gt = F.fi_gostergeler(d7, A); Gk = F.fi_gostergeler(d7.iloc[:500], A)
+        St = pd.DataFrame(F.fi_gosterge_sinyal(Gt, A)).iloc[:500]; Sk = pd.DataFrame(F.fi_gosterge_sinyal(Gk, A))
+        fark = [c for c in Gk.columns if not np.allclose(Gt[c].iloc[:500].to_numpy(float), Gk[c].to_numpy(float), equal_nan=True, rtol=1e-9, atol=1e-12)]
+        fark += [c for c in Sk.columns if not (St[c].to_numpy() == Sk[c].to_numpy()).all()]
+        if fark:
+            hata.append(f"7) gelecek degisince gecmis degisti: {fark}")
+        if sum(int(St[c].sum()) for c in St.columns if c.startswith("uy_")) == 0:
+            hata.append("7) rastgele seride hic uyumsuzluk yok (sinama bos)")
+    except Exception as ex:
+        hata.append(f"7) gosterge hesaplanamadi: {type(ex).__name__} {ex}")
+    cc, hh, ll = d7.Close.to_numpy(), d7.High.to_numpy(), d7.Low.to_numpy()
+    u8, _ = F._fi_ilk(cc, hh, ll, 60, 0.20, 0.10)
+    dongu = np.array([F._fi_once(d7, i, 60, 0.20, 0.10) for i in range(n7 - 60)])
+    if not np.array_equal(u8[:n7 - 60], dongu) or not np.isnan(u8[n7 - 60:]).all():
+        hata.append("8) vektorlu sonuc dongu ile ayni degil")
+    f9 = np.r_[np.linspace(10, 5, 21), np.linspace(5.1, 9, 20), np.linspace(8.8, 4, 20), np.linspace(4.2, 10, 20)]
+    g9 = np.full(len(f9), 50.0); g9[20] = 20.0; g9[60] = 30.0
+    duz9, gizli9 = F._fi_uyumsuzluk(f9, g9, 5, 60, True)
+    if not (duz9[65] and duz9.sum() == 1 and not gizli9.any()):
+        hata.append(f"9) uyumsuzluk yanlis: duz {np.flatnonzero(duz9)} gizli {np.flatnonzero(gizli9)}")
+    idx10 = pd.bdate_range("2026-05-04", periods=15)
+    olay = {"kap_vbts_tedbir": pd.DataFrame({"tarih": pd.to_datetime(["2026-05-05", "2026-05-06", "2026-05-09"]),
+                                              "saat": ["10:00", "18:30", "12:00"]})}
+    k10 = F.fi_kap_sinyal(idx10, olay)["kap_vbts_tedbir"]
+    if list(k10[k10].index.strftime("%m-%d")) != ["05-05", "05-07", "05-11"]:
+        hata.append(f"10) KAP esleme yanlis: {list(k10[k10].index.strftime('%m-%d'))}")
+    c11 = np.r_[np.full(30, 100.0), 100 * 1.1 ** np.arange(1, 5)]; v11 = np.r_[np.full(30, 1000.0), 100.0, 100.0, 100.0, 50000.0]
+    d11 = pd.DataFrame({"Open": c11, "High": c11, "Low": c11, "Close": c11, "Volume": v11}, index=pd.bdate_range("2026-01-01", periods=len(c11)))
+    d11.iloc[:30, d11.columns.get_loc("High")] = 101.0; d11.iloc[:30, d11.columns.get_loc("Low")] = 99.0
+    S11 = F.fi_gosterge_sinyal(F.fi_gostergeler(d11, A), A)
+    if not (S11["blok_tavan"].iat[-1] and S11["blok_seri_ici"].iat[-1] and S11["blok_hacim"].sum() == 1):
+        hata.append("11) blok hacim / seri ici yakalanmadi")
     return hata
 
 
@@ -65,4 +108,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 6/6 OK")
+    print("test_fon_izi: 11/11 OK")
