@@ -2231,6 +2231,152 @@ def fi_k12_ders(V: Dict[str, pd.DataFrame], MA: pd.DataFrame, D: pd.DataFrame, k
     return sayfa
 
 
+def fi_k12_ders_u(V: Dict[str, pd.DataFrame], MA: pd.DataFrame, X: pd.DataFrame, Dv: pd.DataFrame, yol: str, kod: str = "TEHOL",
+                  bas: str = "2024-09-01", bit: str = "2025-03-31", u_bas: str = "2024-10-04", u_bit: str = "2024-12-20") -> int:
+    """Ders 2 (Cemal, 24 Eki): 'TEHOL'deki Ara 2024 - Oca 2025 U sekli fon doneminin izi mi? Oyleyse bir daha goremem, iz degil.'
+    Sayfalar: cevap; U bolgesi + D13 tespitleri + raporlu fon payi; ayni hissede fon oncesi yillarda ayni sekil (D13 tespitleri);
+    D13 evren testi (6 donem, alim gelme orani ve alim sonrasi getiri, taban ile); balinalar nasil iz birakir + yeni SPK kurallari.
+    X = col_tespit_sinyal (D13 = N120, bar>=15, inis>=10, parabol, obek>=2), Dv = col_tespit_varyant_donem (vid 3094 = D13)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    AYLAR = ("Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara")
+
+    def tr(x) -> str:
+        x = pd.Timestamp(x)
+        return f"{x.day} {AYLAR[x.month - 1]} {x.year}"
+
+    def yazi(fig, y, baslik, satirlar, boy=10.5, gen=88):
+        fig.text(0.07, y, baslik, fontsize=15, weight="bold", va="top", color="#1f2a44"); y -= 0.045
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.024
+            y -= 0.006
+        return y
+
+    d = V.get(kod)
+    if d is None:
+        raise KeyError(f"{kod} fiyat verisinde yok")
+    q = X[(X.sembol == kod) & (X.N == 120) & (X.konum <= 1.01) & (X.bar >= 15) & (X.inis >= 10) & (X.parabol == True)   # noqa: E712
+          & (X.obek >= 2)].copy()
+    q["sinyal"] = pd.to_datetime(q.sinyal)
+    a = MA[MA.kod == kod].copy(); a["t"] = pd.to_datetime(a.ay + "-01") + pd.offsets.MonthEnd(0)
+    ps = a.set_index("t").pay_sermaye.fillna(0)
+    ps = ps.reindex(pd.date_range(min(ps.index.min(), pd.Timestamp(bas)), ps.index.max(), freq="ME"), fill_value=0.0)
+    on = d[d.index < pd.Timestamp("2024-01-01")]; qo = q[q.sinyal < pd.Timestamp("2024-01-01")]
+    t = Dv[Dv.vid == 3094].copy()
+    t["taban_alim"] = t.alim_a - t.f_alim_a; t["kat"] = t.alim_a / t.taban_alim
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, f"DERS 2: {kod}'ÜN U ŞEKLİ — FON İZİ Mİ, ÇÖL İZİ Mİ?", [
+            "Soru: 'TEHOL'de ilk gördüğüm U şekli fon döneminin iziyse onu bir daha göremem; demek ki iz değilmiş.'",
+            "",
+            "Cevap kısaca:",
+            f"- 1) U bölgesi ({tr(u_bas)} – {tr(u_bit)}) oluşurken raporlu fonların payı SIFIR. "
+            "Fonların payı Nisan 2025'te, fiyat dipten 10 kat yukarıdayken ortaya çıkıyor. Yani U'yu raporlu fonlar çizmedi.",
+            f"- 2) Kodumuz (D13) bu U'yu {', '.join(tr(x) for x in q[(q.sinyal >= u_bas) & (q.sinyal <= bit)].sinyal)} "
+            f"günlerinde yakaladı. Aynı şekli aynı hissede 2017–2023 arasında da {len(qo)} kez buldu; o yıllarda raporlu fonlar "
+            "TEHOL'de yoktu (2023'te hiç, 2024 Mayıs'a kadar hiç; 2023 öncesi için fon verimiz yok).",
+            "- 3) Bu şekil bütün borsada ve ABD'de var: 2016–26 arasında 18.700 kez. Bir daha GÖRECEKSİN.",
+            "- 4) Şeklin izi YÖN izidir: U'dan sonra yukarı kırılım (alım) gelme oranı sıradan günden 12–26 puan fazla, 6 dönemin 6'sında; "
+            "5 dönemde 1,3 katın üstünde.",
+            "- 5) Göremeyeceğin şey TEHOL'ün 10 katlık koşusu: o büyüklük fon döngüsünün (al, fona sat, fiyatı it) ürünüydü. U sonrası "
+            "sıradan kazanç: alımdan sonra üretim çıkışıyla ortalama +%1 ile +%20 arası, tabandan biraz iyi.",
+            "",
+            "Uyarı: U bölgesinde kimin aldığını veri söylemiyor. Savcılık anlatımındaki 'önce kişisel hesaplarda toplama' bu döneme "
+            "denk gelebilir; ama bu fon raporunda da, fiyat grafiğinde de ayırt edici bir iz bırakmıyor.",
+        ])
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # U bolgesi
+        w = d[(d.index >= bas) & (d.index <= bit)]
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, f"{kod}: U BÖLGESİ, KODUN TESPİTİ VE FON PAYI", [
+            "Üst: fiyat (log). Sarı bant = U (dip → yukarı kırılım). Mavi üçgen = D13 tespit günü (dip savunuldu, dipler yukarı "
+            "yuvarlandı, küçük mum öbekleri). Alt: raporlu tasfiye fonlarının sermaye payı.",
+            "U sırasında fon payı 0. Pay, fiyat zaten 10 kat çıktıktan sonra (Nisan 2025) beliriyor. Kırmızı üçgen (12 Eyl 2024): "
+            "aynı kuralın çöküş öncesi yakaladığı bir kutu; aşağı kırıldı (bozuldu). Şekil her seferinde tutmuyor."], boy=10)
+        ax = fig.add_axes([0.11, 0.40, 0.84, 0.32])
+        ax.axvspan(pd.Timestamp(u_bas), pd.Timestamp(u_bit), color="#fff4d6", zorder=0)
+        ax.semilogy(w.index, w.Close, color="#1f2a44", lw=1.2); ax.set_ylabel("fiyat (log)")
+        qq = q[(q.sinyal >= bas) & (q.sinyal <= bit)]
+        iyi = qq[qq.bozulma != 1]; kot = qq[qq.bozulma == 1]
+        ax.scatter(iyi.sinyal, w.Close.reindex(iyi.sinyal), marker="^", s=70, color="#1f77b4", zorder=5, label="D13 tespit")
+        ax.scatter(kot.sinyal, w.Close.reindex(kot.sinyal), marker="^", s=70, color="#c0392b", zorder=5, label="D13 tespit, bozuldu")
+        ax.legend(loc="upper left", fontsize=8)
+        axp = fig.add_axes([0.11, 0.08, 0.84, 0.25], sharex=ax)
+        p2 = ps[(ps.index >= bas) & (ps.index <= pd.Timestamp(bit) + pd.Timedelta(days=60))]
+        axp.bar(p2.index, 100 * p2.to_numpy(), width=25, color="#c0392b"); axp.set_ylabel("fon payı, sermayenin %'si")
+        axp.grid(alpha=0.3); ax.set_xlim(pd.Timestamp(bas), pd.Timestamp(bit) + pd.Timedelta(days=60))
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # fon oncesi yillar
+        if len(on):
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, f"{kod}: FON DÖNEMİNDEN ÖNCE DE AYNI ŞEKİL", [
+                f"2016–2023. Üçgenler: kodun aynı kuralla bulduğu U şekilleri ({len(qo)} gün; mavi = sonra alım geldi ya da bozulmadı, "
+                "kırmızı = aşağı bozuldu). Raporlu fonlar TEHOL'e 2024 Mayıs'tan önce girmedi (2023 öncesi için fon verimiz yok). "
+                "Şekil fon döneminden önce de vardı; fon döneminde farklı olan U'dan sonraki koşunun büyüklüğüydü.",
+                ], boy=10)
+            ax = fig.add_axes([0.11, 0.12, 0.84, 0.66])
+            ax.semilogy(on.index, on.Close, color="#1f2a44", lw=0.9); ax.set_ylabel("fiyat (log, bölünme düzeltilmiş)")
+            ax.scatter(qo[qo.bozulma != 1].sinyal, on.Close.reindex(qo[qo.bozulma != 1].sinyal), marker="^", s=40, color="#1f77b4", zorder=5)
+            ax.scatter(qo[qo.bozulma == 1].sinyal, on.Close.reindex(qo[qo.bozulma == 1].sinyal), marker="^", s=40, color="#c0392b", zorder=5)
+            ax.grid(alpha=0.3)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # evren testi
+        if len(t):
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, "TEST: U ŞEKLİ (D13) BÜTÜN BORSADA NE YAPIYOR?", [
+                "BIST 4 dönem + ABD 2 dönem, 18.700 U tespiti. Üst: tespitten sonraki 60 barda yukarı kırılım (alım) gelme oranı; "
+                "gri = sıradan gün (her 5. gün). Alt: alım geldiyse üretim çıkışıyla (+%8 sonrası maliyet, +%20 sonrası SMA20 trail) "
+                "getiri farkı, puan (artı = U'dan sonra daha iyi).",
+                "Okuma: YÖN izi güçlü ve tutarlı (6/6). KAZANÇ izi küçük: 6/6 artı ama çoğu 1-2 puan; 2023'te +6,8.",
+            ], boy=10)
+            ax = fig.add_axes([0.12, 0.47, 0.83, 0.30]); x = np.arange(len(t))
+            ax.bar(x - 0.2, 100 * t.taban_alim, width=0.38, color="#9aa5b1", label="sıradan gün")
+            ax.bar(x + 0.2, 100 * t.alim_a, width=0.38, color="#1f2a44", label="U tespiti (D13)")
+            for xi, k_, v in zip(x, t.kat, t.alim_a):
+                ax.text(xi + 0.2, 100 * v + 1, f"{k_:.2f}x", ha="center", fontsize=8, color="#c0392b" if k_ >= 1.3 else "#555")
+            ax.set_xticks(x); ax.set_xticklabels(t.donem, fontsize=8); ax.set_ylabel("alım gelme oranı %"); ax.set_ylim(0, 100)
+            ax.legend(loc="lower right", fontsize=8)
+            axg = fig.add_axes([0.12, 0.10, 0.83, 0.28])
+            axg.bar(x, t.f_getiri_a, color=np.where(t.f_getiri_a > 0, "#1e8449", "#c0392b"))
+            axg.axhline(0, color="#555", lw=1); axg.set_xticks(x); axg.set_xticklabels(t.donem, fontsize=8)
+            axg.set_ylabel("alım sonrası getiri farkı (puan)"); axg.grid(alpha=0.3)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "BALİNALAR NASIL İZ BIRAKIR?", [
+            "Büyük alıcının parası fiyatı iter; ama fiyat ve hacim ALICININ KİM OLDUĞUNU söylemez. Ölçtüklerimiz:",
+            "- Hacim patlaması / blok gün: var, ama fon olmayan hisselerde de aynı sıklıkta → ayırmıyor (A14 çürüdü).",
+            "- Hacim kuruması + küçük mum (sessiz toplama): fon hisselerinde VAR (hacim normalin %57'si) ama aynı görüntü sıradan "
+            "hisselerde de var, sonrası ayrışmıyor.",
+            "- OBV / CMF / A-D birikim ayrışması: ABD'de kâr getirmiyor, BIST'te her kutuda aynı → fona özgü değil.",
+            "- 62 gösterge, uyumsuzluk, Fibonacci: yukarı yönlü hiçbiri iki dönemde 1,3 değil.",
+            "",
+            "Balinanın GERÇEK izleri fiyat dışında:",
+            "- Sahiplik kaydı: fon portföy raporu (aylık, ~1 hafta gecikme), KAP pay alım satım bildirimi.",
+            "- Aracı kurum dağılımı (AKD): hangi kurum her gün net alıcı (ücretli; elimizde yok).",
+            "- Borsanın kendi bayrakları: olağan dışı fiyat sorusu, VBTS tedbiri, toptan alış satış.",
+            "",
+            "YENİ KURALLAR (SPK, 28 Ağustos ve 8 Eylül 2026 kararları; basından):",
+            "- Serbest fon bir şirkette fiili dolaşımdaki payların en fazla %2–8'ine sahip olabilir (halka açıklık düştükçe sınır artar).",
+            "- Fon portföyünde %5'ten büyük pozisyonların toplamı %20'yi geçemez (BIST 30 hariç). Uyum takvimi kaynaklara göre farklı.",
+            "- Pay sahipliği bildirim eşiği %5'ten %3'e iniyor: balina girişi KAP'ta daha erken görünecek.",
+            "→ Haklısın: fonların %30–78 pay toplaması bir daha yasal olarak olmayacak. Ama U şekli fonla gelmiyordu; o kalıyor.",
+            "",
+            "DERSİN ÖZETİ",
+            "- Bir şekil, ancak sonrasını sıradan günden iki dönemde ve ABD'de ayırırsa iz sayılır. U şekli 'yön' için bunu yapıyor, "
+            "'büyük kazanç' için yapmıyor.",
+            "- TEHOL'deki koşunun büyüklüğü fon döngüsündendi; U'nun kendisi değil.",
+            "- Balinayı grafikte değil, sahiplik kaydında ara (yeni %3 eşiği). Grafikte gördüğün şekil herkesin şekli.",
+        ], boy=9.6)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame, ek_muaf: int = 0) -> str:
     """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26).
     ek_muaf: indirme sirasinda 'muaf' isaretlenen (tabloya hic girmeyen) rapor sayisi."""
@@ -2317,6 +2463,12 @@ def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
         fi_k12_ders(V, MA, D, kos, Oz, os.path.join(A.cikti, "FON_IZI_ders.pdf"))
     except Exception as ex:   # ders bozulursa tablolar yine yazilir
         filog.error("ders PDF'i cizilemedi: %s", ex)
+    try:
+        tespit = os.path.join(os.path.dirname(A.cikti.rstrip("/")), "col_tespit")
+        fi_k12_ders_u(V, MA, pd.read_csv(os.path.join(tespit, "col_tespit_sinyal.csv.gz"), low_memory=False),
+                      pd.read_csv(os.path.join(tespit, "col_tespit_varyant_donem.csv")), os.path.join(A.cikti, "FON_IZI_ders2_U.pdf"))
+    except Exception as ex:   # COL_TESPIT ciktisi yoksa ders 2 atlanir
+        filog.error("ders 2 (U sekli) PDF'i cizilemedi: %s", ex)
     return {"P": P, "I": I, "K": K, "G": G, "olaylar": E, "taban": B, "ozet": Oz, "defter": D, "faz": Z, "aylik": M, "kapsam": kap,
             "birikim": MA, "birikim_ozet": MZ}
 
