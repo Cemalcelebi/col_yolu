@@ -253,6 +253,24 @@ IK_KAYIT: List[Dict[str, Any]] = [
           "Düzgün dip tek başına büyük yükselişi daha sık getirir mi?", "Yeni deneme", "IZ C", 2,
           cikti="arastirma_cikti/fon_izi/k16_gevsek_ozet.csv",
           notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL: 2 kat katı BIST 0,69 / 0,77 / 0,96, ABD 0,60 / 1,05 / 0,83; önce −%20 katı 1,00-1,93 (çok test edilen dip daha sık kırılıyor)."),
+    _ik_k("Ç78", "2026-10-24", "İKİ YUVARLAMA: dipten sonra önce aşağı (∩), hemen ardından yukarı (∪) yuvarlama (K17 Y1)", "FON_IZI.py (k17)",
+          "Cemal (TEHOL 2021): '1'de aşağı yuvarlama, 2. bölge istenen; ikisi peş peşe' — bu sıra sonrası önce +%20 daha sık mı?",
+          "Yeni deneme (TEHOL 21 Nis-8 Haz 2021 kalibre)", "IZ C", 2, "iki_yuvarlama", "yukari", cikti="arastirma_cikti/fon_izi/k17_ozet.csv",
+          notu="Eşli kutuya (aynı çöküş, desen yok) göre de önce +%20 katı BIST 0,99 / 1,08 / 0,87, ABD 1,03 / 1,02 / 0,86 → İZ DEĞİL."),
+    _ik_k("Ç79", "2026-10-24", "İki yuvarlama + 2. bölgenin dibi düzgün (K17 Y2)", "FON_IZI.py (k17)",
+          "∪ bölgesinin dibi haftalarca test edilmişse fark var mı?", "Yeni deneme", "IZ C", 2, "iki_yuvarlama_duz", "yukari",
+          notu="Kâselerin çoğu zaten düzgün dipli (BIST 735'in 688'i); ayırıcı değil."),
+    _ik_k("Ç80", "2026-10-24", "İki yuvarlama + kutu tavanı kırılımı (K17 Y3)", "FON_IZI.py (k17)",
+          "İki yuvarlamalı kutunun tavanı kırılınca girmek fark yaratır mı?", "Yeni deneme", "IZ C", 2, "iki_yuvarlama_kir", "yukari",
+          notu="Eşli kutuya göre BIST 2023 1,46 (önce −%20 0,46), 2024-26 0,94, ABD 0,73-0,97 → İZ DEĞİL."),
+    _ik_k("Ç81", "2026-10-24", "İki yuvarlama, sıkı yay (iki bölgede R2 >= 0,70; K17 Y4)", "FON_IZI.py (k17)",
+          "Gözle temiz yay olanlar ayrışır mı? (Ç78-Ç80 iz değil sonrası tur 2, eşik önceden)", "Yeni deneme", "IZ C", 2,
+          "iki_yuvarlama_siki", "yukari"),
+    _ik_k("Ç82", "2026-10-24", "İki yuvarlama + sektör rüzgârı (K17 Y5)", "FON_IZI.py (k17)",
+          "Rüzgârlı sektörde iki yuvarlama ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2, "iki_yuvarlama_ruz", "yukari",
+          notu="Eşli kutuya göre önce −%20 BIST 0,51-0,71 (aşağı risk düşük) ama tek cetvelde ters kat 1,0-1,4; BIST 2023 n=29 küçük."),
+    _ik_k("Ç83", "2026-10-24", "İki yuvarlama, hafif silkeleme (-%5..-%15; K17 Y6)", "FON_IZI.py (k17)",
+          "Cemal'in 'iki kutu' girişi gibi sığ ikinci çukur ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2, "iki_yuvarlama_hafif", "yukari"),
 ]
 
 
@@ -289,6 +307,13 @@ IK_GOREV: List[Dict[str, str]] = [
                 "tek cetvel Ç73-Ç75 + 2 kat Ç76-Ç77; FON_IZI_ders5_duzgun_dip.pdf",
      "sonuc": "Ölçü gözünü yakalıyor (2021 elendi, 2024 kaldı) ama iz değil; düzgün dip tek başına 2 katı daha seyrek, −%20'yi daha sık getiriyor. "
               "Ortalama getiriyi TEHOL'ün kendisi (+%797) şişiriyordu; TEHOL hariç +%4, medyan %0",
+     "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-24", "istek": "TEHOL 2021: 1'de aşağı yuvarlama, 2. bölge istenen, ikisi peş peşe (daha önce görmedim); "
+                                     "2019 örneği: bu kadar yükseliş yeterli",
+     "yapilan": "K17 'iki yuvarlama' ölçüsü (∩ sonra ∪, TEHOL 2021'e kalibre, eşik önceden); 3 deneme + önceden yazılan tur 2'de 3 deneme "
+                "(sıkı yay, sektör rüzgârı, hafif silkeleme); tek cetvel Ç78-Ç83 + eşli kutu; FON_IZI_ders6_iki_yuvarlama.pdf",
+     "sonuc": "Kod deseni buluyor (TEHOL 2021 dahil; BIST 735, ABD 2471 olay) ama 6 denemenin hiçbiri iz değil; hücrelerin çoğu 0,85-1,25. "
+              "En yakın Ç78 ve Ç83 ABD 2023 (1,41 / 1,37), tek hücre. Başarı ölçüsü olarak 'önce +%20' Cemal'in onayıyla kullanıldı",
      "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
@@ -627,6 +652,41 @@ def ik_s_duz_dip_gevsek(ay, pazar, V):
         else pd.DataFrame(columns=["sembol", "gun"])
 
 
+def _ik_k17(ay, pazar, varyant):
+    D = _ik_dosya(ay, "fon_izi/k17_olaylar.csv.gz")
+    return _ik_pazar_suz(D[D.varyant == varyant], pazar, "bilgi")
+
+
+def ik_s_iki_yuvarlama(ay, pazar, V):
+    """Ç78: K17 Y1 — çöküş dibinden sonra önce aşağı yuvarlama (∩), hemen ardından yukarı yuvarlama (∪) (FON_IZI k17)."""
+    return _ik_k17(ay, pazar, "Y1")
+
+
+def ik_s_iki_yuvarlama_duz(ay, pazar, V):
+    """Ç79: K17 Y2 — Y1 + 2. bölgenin dip tabanı >= 0,20."""
+    return _ik_k17(ay, pazar, "Y2")
+
+
+def ik_s_iki_yuvarlama_kir(ay, pazar, V):
+    """Ç80: K17 Y3 — Y1 kutusunun tavanı 60 barda dip kırılmadan geçildiği gün."""
+    return _ik_k17(ay, pazar, "Y3")
+
+
+def ik_s_iki_yuvarlama_siki(ay, pazar, V):
+    """Ç81: K17 Y4 — iki bölgede de parabol uyumu R2 >= 0,70 (temiz yay)."""
+    return _ik_k17(ay, pazar, "Y4")
+
+
+def ik_s_iki_yuvarlama_ruz(ay, pazar, V):
+    """Ç82: K17 Y5 — Y1 + bilgi gününde sektör rüzgârı (D9b)."""
+    return _ik_k17(ay, pazar, "Y5")
+
+
+def ik_s_iki_yuvarlama_hafif(ay, pazar, V):
+    """Ç83: K17 Y6 — Y1, 1'in tepesinden 2'nin dibine -%5..-%15 (hafif silkeleme)."""
+    return _ik_k17(ay, pazar, "Y6")
+
+
 IK_SINYAL: Dict[str, Callable] = {
     "tavan": ik_s_tavan, "taban": ik_s_taban, "hacim_dus": ik_s_hacim_dus, "hacim_dus_20": ik_s_hacim_dus_20,
     "blok_taban": ik_s_blok_taban, "geride_hacim": ik_s_geride_hacim, "hacimli_kirilim": ik_s_hacimli_kirilim,
@@ -637,6 +697,9 @@ IK_SINYAL: Dict[str, Callable] = {
     "kap_sozlesme_kosmus": ik_s_kap_sozlesme_kosmus, "kap_soylenti_dus": ik_s_kap_soylenti_dus,
     "kap_olagan_disi": ik_s_kap_olagan_disi, "kap_vbts": ik_s_kap_vbts, "hacim_dus_20_oyn": ik_s_hacim_dus_20_oyn,
     "kap_olgun_sozlesme": ik_s_kap_olgun_sozlesme, "k13_duz_dip": ik_s_k13_duz_dip, "duz_dip_gevsek": ik_s_duz_dip_gevsek,
+    "iki_yuvarlama": ik_s_iki_yuvarlama, "iki_yuvarlama_duz": ik_s_iki_yuvarlama_duz, "iki_yuvarlama_kir": ik_s_iki_yuvarlama_kir,
+    "iki_yuvarlama_siki": ik_s_iki_yuvarlama_siki, "iki_yuvarlama_ruz": ik_s_iki_yuvarlama_ruz,
+    "iki_yuvarlama_hafif": ik_s_iki_yuvarlama_hafif,
 }
 IK_ABD_YOK = {"kap_olgun_sozlesme", "kap_bedelsiz", "kap_geri_alim", "kap_geri_alim_kosmamis", "kap_sozlesme_kosmus", "kap_soylenti_dus",
               "kap_olagan_disi", "kap_vbts", "fon_giris", "fon_yogun5"}     # ABD'de karşılık verisi yok (yapısal)

@@ -335,6 +335,23 @@ def sina():
     a23 = F.fi_k13_olc(kutu23(True), 350, 399)["dip_taban"]; b23 = F.fi_k13_olc(kutu23(False), 350, 399)["dip_taban"]
     if not (a23 >= 0.30 and b23 <= 0.05):
         hata.append(f"23) dip tabanı yanlış: düz {a23:.2f} iğne {b23:.2f}")
+    # 24) K17 iki yuvarlama: çöküş -> dip -> ∩ (aşağı yuvarlama) -> ∪ (yukarı yuvarlama) olay verir; yalnız ∪ (∩ yok) ve ∪'nun
+    # dibi asıl dibi kırarsa olay yok; olay günü 2. bölge yukarı dönmeden önce değil.
+    def seri24(kol):
+        x1 = np.linspace(0, 1, 25); x2 = np.linspace(0, 1, 30)
+        ark = 11 + 2.0 * np.sin(np.pi * x1) + x1                             # 11 -> 13,5 -> 12 (∩)
+        kase = 12 + 1.6 * ((2 * x2 - 1) ** 2 - 1)                             # 12 -> 10,4 -> 12 (∪), dipten +%4
+        if kol == "kase":
+            ark = np.full(25, 11.0)
+        if kol == "kirik":
+            kase = kase - 1.6                                                 # ∪'nun dibi asıl dibin (10) altına iner
+        c = np.r_[np.full(330, 20.0), np.linspace(20, 10, 20), [10.0], ark, kase, np.full(80, kase[-1])]
+        idx = pd.bdate_range("2019-01-01", periods=len(c))
+        return pd.DataFrame({"Open": c, "High": c * 1.01, "Low": c * 0.995, "Close": c, "Volume": 1e6}, index=idx)
+    O24 = F.fi_k17_tara({"IKI": seri24("iki"), "KASE": seri24("kase"), "KIRIK": seri24("kirik")})
+    ok24 = list(O24.sembol) == ["IKI"] and O24.bilgi.iloc[0] > seri24("iki").index[350 + 1 + 25 + 15] if len(O24) else False
+    if not ok24:
+        hata.append(f"24) K17 iki yuvarlama yanlış: {list(O24.sembol) if len(O24) else []}")
     return hata
 
 
@@ -342,4 +359,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 23/23 OK")
+    print("test_fon_izi: 24/24 OK")

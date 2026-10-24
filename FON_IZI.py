@@ -3159,6 +3159,233 @@ def fi_k12_ders5(V: Dict[str, pd.DataFrame], O: pd.DataFrame, KH: pd.DataFrame, 
     return 3
 
 
+# ---------------------------------------------------------------- K17 iki yuvarlama: önce aşağı (∩), hemen ardından yukarı (∪)
+# CEMAL (24 Eki, TEHOL 21 Nis - 8 Haz 2021 grafiği): "1'de aşağı yuvarlama var, sonraki 2. bölge istenilen bölge; bu iki bölge peş peşe
+# gelmiş, daha önce böyle görmedim." 2019 örneğine: "bir yükseliş gelmiş, bu kadar bir yükseliş yeterli" -> başarı ölçüsü önce +%20 (k20).
+# Ölçü (gün t, gerçek zamanlı): dip j = [t-120, t-25] en düşük Low, önceki 60 barın da dibi, dipten sonra yeni dip yok, öncesinde
+# >= %40 düşüş. p = [j+5, t-10] en yüksek kapanış (1'in tepesi); m = [p, t] en düşük kapanış (2'nin dibi). 1 = log kapanış [j+1, m]:
+# parabol a < 0, tepe noktası ortada (x 0,15-0,85), uyum R2 >= r2. 2 = log kapanış [p, t]: a > 0, dip noktası ortada, son eğim > 0,
+# R2 >= r2. 2'nin en düşük Low'u dipten >= %3 yukarıda; 1'in tepesinden 2'nin dibine -%5..-%30; iki bölge >= 10 bar; m t'den >= 5 bar önce.
+# Eşikler TEHOL 2021'den (1: 22 Nis dip -> 20 May tepe -> 28 May dip -%12, R2 0,43; 2: R2 0,92, ilk sinyal 3 Haz) ve evren sonucu
+# görülmeden yazıldı. Y2: + 2'nin dip tabanı >= 0,20 (K13b ölçüsü 2. bölgeye). Y3: Y1 kutusunun tavanı (en yüksek kapanış) 60 barda
+# dip kırılmadan geçilirse kırılım günü (fi_k14_kirilim). Eşli kutu: aynı çöküş bağlamı, desen yok (fi_k14_esli).
+FI_K17_ESIK = {"dusus": -0.40, "bar": (25, 120), "yan": 10, "m_son": 5, "tepe": (0.15, 0.85), "r2": 0.40, "derin": (-0.30, -0.05),
+               "ust_dip": 1.03}
+FI_K17_Y2 = {**FI_K17_ESIK, "dip_taban": 0.20}
+# Tur 2 (Y1-Y3 iz değil çıktıktan sonra, sonuç görülmeden yazıldı): Y4 sıkı yuvarlama (iki bölgede de R2 >= 0,70: gözle 'temiz yay');
+# Y5 Y1 + sektör rüzgârı bilgi gününde (D9b, fi_k14_ruzgar; CLAUDE.md 'rüzgâr olmadan çöl aranmaz'); Y6 hafif silkeleme (1'in tepesinden
+# 2'nin dibine -%5..-%15; Cemal'in 'iki kutu' kuralında giriş = 2. kutudan sonraki hafif silkeleme; TEHOL 2021 -%12).
+FI_K17_Y4 = {**FI_K17_ESIK, "r2": 0.70}
+FI_K17_Y6 = {**FI_K17_ESIK, "derin": (-0.15, -0.05)}
+K17_VARYANT = ("Y1", "Y2", "Y3", "Y4", "Y5", "Y6")
+
+
+def _fi_k17_parabol(y: np.ndarray) -> Tuple[float, float, float, float]:
+    """y'ye x = 0..1 üzerinde 2. derece parabol: (a, tepe/dip noktası x*, R2, x=1'deki eğim)."""
+    x = np.linspace(0.0, 1.0, len(y)); a, b, c0 = np.polyfit(x, y, 2)
+    ss = float(((y - y.mean()) ** 2).sum())
+    r2 = 1 - float(((y - (a * x * x + b * x + c0)) ** 2).sum()) / ss if ss > 0 else 0.0
+    return float(a), float(-b / (2 * a)) if a else np.nan, r2, float(2 * a + b)
+
+
+def fi_k17_olc(d: pd.DataFrame, j: int, p: int, m: int, t: int) -> Dict[str, float]:
+    """Bölge 1 = [j+1, m] (aşağı yuvarlama), bölge 2 = [p, t] (yukarı yuvarlama) ölçüleri + 2'nin dip tabanı."""
+    c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    a1, x1, r1, _ = _fi_k17_parabol(np.log(c[j + 1:m + 1]))
+    a2, x2, r2, e2 = _fi_k17_parabol(np.log(c[p:t + 1]))
+    w = slice(p, t + 1); mum = float(np.median((h[w] - l[w]) / c[p - 1:t])) if p > 0 else np.nan
+    return {"bar": t - j + 1, "bar1": m - j, "bar2": t - p + 1, "a1": a1, "x1": x1, "r2_1": r1, "a2": a2, "x2": x2, "r2_2": r2,
+            "egim2": e2, "derin": c[m] / c[p] - 1, "ust_dip": l[w].min() / l[j],
+            "dip_taban2": float(np.mean(l[w] <= l[w].min() * (1 + 2 * mum))) if mum == mum else np.nan,
+            "tepe1": d.index[p], "dip2": d.index[m]}
+
+
+def fi_k17_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K17_ESIK) -> pd.DataFrame:
+    """Her hissede her gün t: FI_K17_ESIK şartları (yukarıdaki blok). Aynı dip için ilk gün olay; hissede 60 barda tek.
+    Dönüş: sembol, dip, bilgi (= t, giriş ertesi açılış), ölçüler."""
+    sat: List[Dict[str, Any]] = []
+    b0, b1 = E["bar"]; yan = E["yan"]; t0, t1 = E["tepe"]
+    for s, d in V.items():
+        try:
+            n = len(d)
+            if n < 400:
+                continue
+            l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
+            Lw = np.lib.stride_tricks.sliding_window_view(l, b1 - b0 + 1)          # pencere [t-b1, t-b0]
+            jrel = Lw.argmin(axis=1)
+            sonmin = pd.Series(l).rolling(b0).min().to_numpy()                    # [t-b0+1, t]
+            gorulen = set(); son_olay = -10 ** 9
+            for t in range(max(b1, 320), n):
+                k = t - b1
+                if k >= len(jrel):
+                    break
+                j = k + jrel[k]
+                if j in gorulen or t - son_olay < 60 or not (sonmin[t] >= l[j]) or l[j] > l[max(0, j - 60):j].min():
+                    continue
+                if not (l[j] > 0) or l[j] / c[max(0, j - 60):j].max() - 1 > E["dusus"]:
+                    continue
+                p = j + 5 + int(np.argmax(c[j + 5:t - yan + 1]))
+                m = p + int(np.argmin(c[p:t + 1]))
+                if m - j < yan or t - p + 1 < yan or t - m < E["m_son"]:
+                    continue
+                o = fi_k17_olc(d, j, p, m, t)
+                if not (o["a1"] < 0 and t0 <= o["x1"] <= t1 and o["r2_1"] >= E["r2"] and o["a2"] > 0 and t0 <= o["x2"] <= t1
+                        and o["r2_2"] >= E["r2"] and o["egim2"] > 0 and E["derin"][0] <= o["derin"] <= E["derin"][1]
+                        and o["ust_dip"] >= E["ust_dip"]):
+                    continue
+                if "dip_taban" in E and not (o["dip_taban2"] >= E["dip_taban"]):   # Y2: 2. bölgenin dibi düzgün
+                    continue
+                gorulen.add(j); son_olay = t
+                sat.append({"sembol": s, "dip": d.index[j], "bilgi": d.index[t], **o})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K17 %s atlandi: %s", s, ex)
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k17(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K17 sürücü: Y1 (iki yuvarlama), Y2 (+ 2'nin düzgün dibi), Y3 (Y1 + kutu tavanı kırılımı), tur 2 Y4-Y6 olayları ve eşli kutular, BIST + ABD;
+    k20 / dus / trail (fi_k10_sonuc) ve 2 kat (fi_k14_yukselis). Karar fi_k14_karar(k20). Çıktı k17_olaylar.csv.gz, k17_ozet.csv."""
+    A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
+    Z: List[pd.DataFrame] = []; X: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K17 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        Y1 = fi_k17_tara(V, FI_K17_ESIK).reset_index(drop=True)
+        Y2 = fi_k17_tara(V, FI_K17_Y2).reset_index(drop=True)
+        Y3 = fi_k14_kirilim(V, Y1).reset_index(drop=True) if len(Y1) else Y1
+        Es = fi_k14_esli(V, Y1).reset_index(drop=True)
+        Y4 = fi_k17_tara(V, FI_K17_Y4).reset_index(drop=True)
+        Y6 = fi_k17_tara(V, FI_K17_Y6).reset_index(drop=True)
+        try:
+            W = fi_k14_ruzgar(V, fi_k14_sektor(pazar))
+            Y5 = Y1[[bool(W.at[pd.Timestamp(b), s_]) if pd.Timestamp(b) in W.index and s_ in W.columns else False
+                     for s_, b in zip(Y1.sembol, Y1.bilgi)]].reset_index(drop=True) if len(Y1) else Y1
+        except Exception as ex:   # sektör dosyası yoksa Y5 boş kalır, diğerleri sürer
+            filog.warning("K17 %s rüzgâr hesaplanamadı, Y5 boş: %s", pazar, ex); Y5 = Y1.iloc[0:0]
+        P: Dict[str, pd.DataFrame] = {}
+        for ad, O in (("Y1", Y1), ("Y2", Y2), ("Y3", Y3), ("Y4", Y4), ("Y5", Y5), ("Y6", Y6), ("esli", Es)):
+            if len(O):
+                O = O.join(fi_k10_sonuc(V, O.sembol, O.bilgi), how="left").join(fi_k14_yukselis(V, O), how="left")
+            filog.info("K17 %s %s: %d olay", pazar, ad, len(O))
+            P[ad] = O; X.append(O.assign(pazar=pazar, varyant=ad))
+        for ad in K17_VARYANT:
+            Z.append(fi_k14_kiyas(P[ad], P["esli"], pazar, FI_K13_DONEM).assign(varyant=ad))
+    if not Z:
+        raise RuntimeError("K17: hiçbir pazarın verisi okunamadı")
+    Zk = pd.concat(Z, ignore_index=True); Zk.to_csv(os.path.join(A.cikti, "k17_ozet.csv"), index=False)
+    pd.concat([x for x in X if len(x)], ignore_index=True).to_csv(os.path.join(A.cikti, "k17_olaylar.csv.gz"), index=False)
+    sonuc = {ad: (Zk[Zk.varyant == ad],) + fi_k14_karar(Zk[Zk.varyant == ad], "k20") for ad in K17_VARYANT}
+    return {"sonuc": sonuc, "ozet": Zk}
+
+
+def fi_k12_ders6(V: Dict[str, pd.DataFrame], O: pd.DataFrame, KH: pd.DataFrame, yol: str, kod: str = "TEHOL") -> int:
+    """Ders 6 (Cemal 24 Eki: '1'de aşağı yuvarlama, 2. bölge istenen, ikisi peş peşe'): (1) TEHOL 2021 şablonu: dip, 1. bölge yayı,
+    2. bölge kâsesi, sinyal günü, giriş, +%20 / -%10 çizgileri, hacim; (2) evrende 6 örnek (BIST Y1, yay uyumuna göre sıralı, sonuca
+    bakılmadan; hisse adı yok); (3) test: tek cetvel Ç78-Ç83 karar hücreleri, 1,3 çizgisi. O = k17 olayları (BIST, sonuçlu),
+    KH = karne_hucre."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    AYLAR = ("Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara")
+    tr = lambda x: f"{pd.Timestamp(x).day} {AYLAR[pd.Timestamp(x).month - 1]} {pd.Timestamp(x).year}"
+
+    def yazi(fig, y, baslik, satirlar, boy=9.5, gen=92):
+        fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.021
+            y -= 0.004
+        return y
+
+    def sablon(ax, axh, d, dip, bilgi, baslik, kucuk=False, sonrasi=60):
+        tar = d.index; j = int(tar.searchsorted(pd.Timestamp(dip))); t = int(tar.searchsorted(pd.Timestamp(bilgi)))
+        c = d.Close.to_numpy(float)
+        p = j + 5 + int(np.argmax(c[j + 5:t - FI_K17_ESIK["yan"] + 1])); m = p + int(np.argmin(c[p:t + 1]))
+        w = d.iloc[max(0, j - 30):min(len(d), t + sonrasi + 1)]
+        ax.axvspan(tar[j], tar[t], color="#fff4d6", zorder=0)
+        ax.vlines(w.index, w.Low, w.High, color="#95a5a6", lw=0.5 if kucuk else 0.8)
+        ax.plot(w.index, w.Close, color="#1f2a44", lw=0.7 if kucuk else 1.0)
+        for (a, b), renk, et in (((j + 1, m), "#e67e22", "1 aşağı yuvarlama"), ((p, t), "#27ae60", "2 yukarı yuvarlama")):
+            y = np.log(c[a:b + 1]); x = np.linspace(0, 1, len(y)); k_ = np.polyfit(x, y, 2)
+            ax.plot(tar[a:b + 1], np.exp(np.polyval(k_, x)) * (1.06 if renk == "#e67e22" else 0.95), color=renk, lw=2.2 if not kucuk else 1.5)
+            if not kucuk:
+                ax.text(tar[(a + b) // 2], np.exp(np.polyval(k_, 0.5)) * (1.12 if renk == "#e67e22" else 0.89), et, color=renk,
+                        fontsize=9, ha="center", weight="bold")
+        ax.scatter([tar[j]], [d.Low.iloc[j]], color="#c0392b", s=14 if kucuk else 30, zorder=4)
+        if t + 1 < len(d):
+            g = d.Open.iloc[t + 1]
+            ax.axvline(tar[t], color="#2c3e50", ls=":", lw=1)
+            ax.scatter([tar[t + 1]], [g], marker="^", color="#2980b9", s=20 if kucuk else 50, zorder=5)
+            ax.axhline(g * 1.2, color="#27ae60", ls="--", lw=0.8); ax.axhline(g * 0.9, color="#c0392b", ls="--", lw=0.8)
+            if not kucuk:
+                ax.text(w.index[-1], g * 1.2, " +%20", color="#27ae60", fontsize=8, va="bottom", ha="right")
+                ax.text(w.index[-1], g * 0.9, " −%10", color="#c0392b", fontsize=8, va="top", ha="right")
+                ax.text(tar[t], ax.get_ylim()[1], " sinyal günü → ertesi açılış giriş (▲)", fontsize=7.5, va="top")
+        ax.set_yscale("log"); ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_xticks([]); ax.tick_params(labelsize=6 if kucuk else 8); ax.set_title(baslik, fontsize=8 if kucuk else 10)
+        if axh is not None:
+            axh.bar(w.index, w.Volume, color="#7f8c8d", width=1.0); axh.set_xticks([]); axh.set_yticks([]); axh.set_ylabel("hacim", fontsize=7)
+
+    d = V[kod]
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "DERS 6: İKİ YUVARLAMA — ÖNCE AŞAĞI, HEMEN ARDINDAN YUKARI", [
+            "Sen (TEHOL 21 Nis – 8 Haz 2021): '1'de aşağı yuvarlama var, sonraki 2. bölge istenen bölge; ikisi peş peşe gelmiş, daha "
+            "önce böyle görmedim.' 2019 örneğine de: 'bir yükseliş gelmiş, bu kadar yükseliş yeterli' → başarı ölçüsü: 60 günde önce +%20.",
+            "Ölçü (sonuç görülmeden, TEHOL 2021'e göre): çöküş (≥ %40) dibinden sonra yeni dip yok; 1 = dipten 2'nin dibine kapanışlar "
+            "tepesi ortada bir yay (∩, turuncu); 2 = 1'in tepesinden bugüne kapanışlar dibi ortada bir kâse (∪, yeşil), sonu yukarı "
+            "dönmüş; 2'nin dibi asıl dibin ≥ %3 üstünde; 1'in tepesinden 2'nin dibine −%5…−%30. Kâse yukarı döndüğü ilk gün sinyal.",
+            "Grafikte: kırmızı nokta = dip, sarı = kutu, noktalı çizgi = sinyal günü, ▲ = ertesi açılış giriş, kesikli = +%20 / −%10.",
+        ])
+        sablon(fig.add_axes([0.08, 0.30, 0.88, 0.36]), fig.add_axes([0.08, 0.22, 0.88, 0.07]), d, "2021-04-22", "2021-06-04",
+               f"{kod} {tr('2021-04-22')} – {tr('2021-06-04')} (senin işaretlediğin bölge)")
+        yazi(fig, 0.17, "Grafikte nasıl görünür, nasıl görünmez", [
+            "- Görünür: dipten sonra fiyat bir süre yükselip yavaşça geri döner (yay), sonra daha yukarıda yeni bir küçük çukur açar "
+            "ve çukurun sağ kenarı yukarı kıvrılır.",
+            "- Görünmez: hangisinin +%20'ye gideceği. Aynı şekil evrende yüzlerce kez çıkıyor; sonrası yazı-tura (3. sayfa)."], boy=9)
+        pdf.savefig(fig); plt.close(fig)
+        X = O[(O.varyant == "Y1") & (O.sembol != kod)].assign(r=lambda x: x.r2_1 + x.r2_2).sort_values("r", ascending=False).head(6)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "EVRENDE İKİ YUVARLAMA: 6 ÖRNEK (BIST, hisse adı yok)", [
+            "Yayı ve kâsesi en düzgün 6 olay (iki parabol uyumunun toplamı; sonuca bakılmadan seçildi). Başlıkta yıl ve 60 günde önce "
+            "ne geldi. Kendi gözünle bak: senin '1 aşağı, 2 yukarı' dediğin bunlar mı?"])
+        for k, r in enumerate(X.itertuples()):
+            s = "önce +%20" if getattr(r, "k20", np.nan) == 1 else ("önce −%20" if getattr(r, "dus", np.nan) == 1 else "yatay")
+            sablon(fig.add_axes([0.07 + (k % 2) * 0.47, 0.62 - (k // 2) * 0.28, 0.41, 0.21]), None, V[r.sembol], r.dip, r.bilgi,
+                   f"{pd.Timestamp(r.bilgi).year} — {s}", kucuk=True)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "TEST: İKİ YUVARLAMA FARK YARATIYOR MU?", [
+            "Tek cetvel: 60 günde önce +%20 (önce −%10'dan), eşli taban (aynı ay × momentum × likidite). Kırmızı çizgi 1,3: dört "
+            "karar hücresinin (BIST/ABD 2023 ve 2024-26) hepsinde geçmeli. Ç78 iki yuvarlama · Ç79 + 2'nin dibi düzgün · Ç80 + kutu "
+            "tavanı kırılımı · tur 2 (önceden yazıldı): Ç81 sıkı yay · Ç82 + sektör rüzgârı · Ç83 hafif silkeleme (−%5…−%15)."])
+        ax = fig.add_axes([0.10, 0.42, 0.85, 0.40])
+        et, deg, renk = [], [], []
+        RENK = {"BIST": "#1f2a44", "ABD": "#7f8fa6"}
+        for kd in ("Ç78", "Ç79", "Ç80", "Ç81", "Ç82", "Ç83"):
+            for r in KH[(KH.kod == kd) & (KH.donem.isin(["2023", "2024-26"]))].itertuples():
+                et.append(f"{kd}\n{r.pazar}\n{r.donem}\nn={int(r.n)}"); deg.append(r.ana_kat); renk.append(RENK.get(r.pazar, "#999"))
+        ax.bar(range(len(deg)), np.nan_to_num(np.array(deg, float)), color=renk)
+        ax.axhline(1.3, color="#c0392b", ls="--", lw=2); ax.axhline(1.0, color="#999")
+        ax.set_xticks(range(len(deg))); ax.set_xticklabels(et, fontsize=4.6); ax.set_ylabel("önce +%20, eşli kat")
+        yazi(fig, 0.34, "Sonuç ve ders", [
+            "- İZ DEĞİL: altı denemenin hiçbiri dört hücrede 1,3'e çıkmadı; çoğu hücre 0,85-1,25 (= sıradan hisse). En yakın: Ç78 "
+            "ABD 2023 1,41 ve Ç83 ABD 2023 1,37 — tek hücre, öteki hücreler 1,0 civarı.",
+            "- Önce −%20 de eşli tabandan sık (1,0-1,6): çöküş sonrası hisse oynak; şekil bu oynaklığı azaltmıyor.",
+            "- 2'nin dibinin düzgün olması (Ç79) neredeyse her kâsede var (735'in 688'i): ayırıcı değil.",
+            "- Senin gözün doğru bir şekli görüyor ve kod da aynı şekli buluyor (TEHOL 2021 dahil); ama şekil tek başına sonrasını "
+            "söylemiyor. Karar yine kırılım + trail + boyutta."], boy=9)
+        pdf.savefig(fig); plt.close(fig)
+    return 3
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -3335,6 +3562,19 @@ if __name__ == "__main__":
         _R = fon_izi_k16()
         for _k, (_Z, _karar, _H) in _R["sonuc"].items():
             print(_k, _karar); print(_Z.round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k17":           # iki yuvarlama (önce aşağı, ardından yukarı)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k17()
+        for _k, (_Z, _karar, _H) in _R["sonuc"].items():
+            print(_k, _karar); print(_Z.round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k17ders":       # Ders 6 (k17 ve IZ_KARNE Ç78-Ç83 çıktılarından)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _A = FIAyar(); _O = pd.read_csv(os.path.join(_A.cikti, "k17_olaylar.csv.gz"), low_memory=False)
+        _O = _O[_O.pazar == "BIST"]
+        _KH = pd.read_csv(os.path.join(os.path.dirname(_A.cikti.rstrip("/")), "iz_karne", "karne_hucre.csv"))
+        fi_k12_ders6(fi_k1_veri(_A.veri["BIST"], "BIST", _A), _O, _KH, os.path.join(_A.cikti, "FON_IZI_ders6_iki_yuvarlama.pdf"))
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()
