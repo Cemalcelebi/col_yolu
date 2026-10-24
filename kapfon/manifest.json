@@ -1,0 +1,50 @@
+{
+ "surum": "FON_IZI v1.5 (2026-10-24, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)",
+ "ayristirici": "v1.5",
+ "olusturma": "2026-10-24 05:05:18.177196",
+ "metin_sayisi": 25007,
+ "rapor": 23102,
+ "muaf": 1424,
+ "dosyalar": {
+  "ekler.csv.gz": {
+   "boy": 209299,
+   "sha256": "a78f2c9b027d36eef80f9aeae063ad6dad4c94c118e5eb71400655c69b9c254a"
+  },
+  "k9_islem.csv.gz": {
+   "boy": 50414401,
+   "sha256": "ad60457ce637619b5e760155d714469f9b819ec692c13c90e6506a88f9d162db"
+  },
+  "k9_kontrol.csv.gz": {
+   "boy": 499039,
+   "sha256": "8d8e58c0c4951aaaf70d74f565a80d1bf8981f34c7838aca44b222af110200c1"
+  },
+  "k9_pozisyon.csv.gz": {
+   "boy": 5136193,
+   "sha256": "62aecd65ec0fcebff8eaea1b3efde85f0c31955c25230d77fddd455c03d47abd"
+  },
+  "liste.csv.gz": {
+   "boy": 644209,
+   "sha256": "eba2df8cd960dcd08971ffa34e84b36c7ff10b20d5fc547fd2ec602a172ec367"
+  },
+  "liste_haftalar.txt": {
+   "boy": 4377,
+   "sha256": "9583aa453a84c98cd5c5c59370a8cf64501321d84c8ffd373a7326c0274fec07"
+  },
+  "metin.tar.xz.000": {
+   "boy": 47185920,
+   "sha256": "f957f9aba5e4977327bf0a92eef5aea1f65c6301dca0238209624dc4f36b1e4a"
+  },
+  "metin.tar.xz.001": {
+   "boy": 47185920,
+   "sha256": "964e72a4178d0c6bb0ea4ed408094352153555039cca63dfe18b9cabb3ec40d2"
+  },
+  "metin.tar.xz.002": {
+   "boy": 47185920,
+   "sha256": "7daa6aac448372f2c6cea5c2d3fdfde2d09e3ae1ce5794de49c3b1ea55d3c4ab"
+  },
+  "metin.tar.xz.003": {
+   "boy": 31280240,
+   "sha256": "dcef7161768aeca41e960250497f1b82e38215c11bb7adbee6e90e5e4025d77f"
+  }
+ }
+}
