@@ -24,6 +24,8 @@
 #     fonlarin payi sermayenin %5 / %10'unu ilk astiginda yogun5/yogun10, bilinme = o ayin en gec fon raporu.
 # 19) v1.5 giris mekanigi: yayin gunu ne saatte olursa olsun giris ertesi islem gunu acilisi; once +%20 (k20); +%8 sonrasi maliyete
 #     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
+# 20) v1.5 artirimli ayristirma + paket: ikinci calistirmada eski rapor yeniden ayristirilmaz, yeni rapor eklenir; ayristirici
+#     surumu farkli rapor yeniden ayristirilir; paket -> ac sonrasi tablolar ve metinler ayni; bozuk parca sha256 ile yakalanir.
 import sys, numpy as np, pandas as pd
 
 import FON_IZI as F
@@ -241,6 +243,42 @@ def sina():
     if not (len(R19) == 1 and R19.giris.iat[0] == idx19[80] and abs(R19.trail.iat[0] + 0.004) < 1e-12 and R19.k20.iat[0] == 0
             and R19.cikis_tarih.iat[0] == idx19[85] and R19.on60.iat[0] == R19b.on60.iat[0]):
         hata.append(f"19) giris mekanigi yanlis: {R19.to_dict('records')}")
+
+    # 20) artirimli ayristirma + paket
+    import tempfile, os, shutil
+    kok = tempfile.mkdtemp(); A20 = F.FIAyar(kapfon=os.path.join(kok, "kf"))
+    os.makedirs(os.path.join(A20.kapfon, "txt"))
+    for i in (1, 2):
+        with open(os.path.join(A20.kapfon, "txt", f"{i}__X_2024_{i}_0.txt"), "w", encoding="utf-8") as f:
+            f.write(m15)
+    L20 = pd.DataFrame([{"yayin": f"0{i}.0{i + 1}.2024 10:00:00", "fon": "XX", "unvan": "DENEME PORTFÖY HİSSE SENEDİ FONU",
+                         "indeks": i, "yil": 2024, "donem": i, "ek": 1, "kural": f"{i}. Ay"} for i in (1, 2)])
+    L20.to_csv(os.path.join(A20.kapfon, "liste.csv"), index=False)
+    E20 = pd.DataFrame([{"indeks": 1, "dosya": "txt/1__X_2024_1_0.txt", "durum": "ok"}])
+    P1, I1, K1 = F.fi_k9_tablolar_guncel(L20, E20, A20)
+    E20 = pd.concat([E20, pd.DataFrame([{"indeks": 2, "dosya": os.path.join(A20.kapfon, "txt", "2__X_2024_2_0.txt"), "durum": "ok"}])])
+    E20.to_csv(os.path.join(A20.kapfon, "ekler.csv"), index=False)
+    E20 = F.fi_k9_ekler_oku(A20)                                   # mutlak yol -> goreli
+    k0 = pd.read_csv(os.path.join(A20.kapfon, "k9_kontrol.csv.gz"))
+    P2, I2, K2 = F.fi_k9_tablolar_guncel(L20, E20, A20)
+    k2 = pd.read_csv(os.path.join(A20.kapfon, "k9_kontrol.csv.gz"))
+    K2b = k2.copy(); K2b["ayristirici"] = K2b.ayristirici.astype(str); K2b.loc[K2b.indeks == 1, "ayristirici"] = "eski"; K2b.to_csv(os.path.join(A20.kapfon, "k9_kontrol.csv.gz"), index=False)
+    P3, I3, K3 = F.fi_k9_tablolar_guncel(L20, E20, A20)
+    paket = os.path.join(kok, "paket"); F.fi_k9_paketle(A20, paket, parca_mb=1)
+    A20b = F.FIAyar(kapfon=os.path.join(kok, "kf2")); F.fi_k9_paket_ac(paket, A20b)
+    acik_ok = (open(os.path.join(A20b.kapfon, "txt", "2__X_2024_2_0.txt"), encoding="utf-8").read() == m15 and
+               len(pd.read_csv(os.path.join(A20b.kapfon, "k9_pozisyon.csv.gz"))) == len(P3))
+    with open(os.path.join(paket, "metin.tar.xz.000"), "ab") as f:
+        f.write(b"x")
+    try:
+        F.fi_k9_paket_ac(paket, F.FIAyar(kapfon=os.path.join(kok, "kf3"))); bozuk_yakalandi = False
+    except RuntimeError:
+        bozuk_yakalandi = True
+    shutil.rmtree(kok)
+    if not (len(K1) == 1 and len(K2) == 2 and len(P2) == 2 * len(P1) and list(E20.dosya) == ["txt/1__X_2024_1_0.txt", "txt/2__X_2024_2_0.txt"]
+            and set(K3.ayristirici) == {F.FI_K9_SURUM} and len(P3) == len(P2) and acik_ok and bozuk_yakalandi
+            and (k0.indeks == 1).all() and len(k2) == 2):
+        hata.append(f"20) artirimli ayristirma / paket yanlis: {len(K1)} {len(K2)} {len(P1)} {len(P2)} {acik_ok} {bozuk_yakalandi}")
     return hata
 
 
@@ -248,4 +286,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 19/19 OK")
+    print("test_fon_izi: 20/20 OK")

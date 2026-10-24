@@ -59,6 +59,8 @@
 #  Calistirma: FI_VERI_BIST=... FI_VERI_ABD=... python FON_IZI.py   (v1.2: ... FI_KAP=<kap_ozet klasoru> python FON_IZI.py gosterge)
 #    v1.5: FI_KAPFON=<klasor> python FON_IZI.py k9indir  (~5,5 saat, KAP hiz siniri; kaldigi yerden devam eder)
 #          FI_KAPFON=... FI_ISY=<Is Yatirim temel degerler HTML> FI_KAP=... FI_VERI_BIST=... python FON_IZI.py k10  (~11 dk)
+#          Artirimli: k9indir yalniz yeni raporlari indirir, k10 yalniz yeni raporlari ayristirir (k9_*.csv.gz tablolarina ekler).
+#          Paket: FI_KAPFON=... python FON_IZI.py k9paket <klasor>  /  k9ac <klasor> (repo 'kapfon-veri' dali; sha256 dogrulamali)
 #  Cikti: arastirma_cikti/fon_izi/
 # =====================================================================
 from __future__ import annotations
@@ -945,6 +947,7 @@ def _fi_kap_istek(s, yontem: str, url: str, deneme: int = 4, **kw):
     return None
 
 
+FI_K9_SURUM = "v1.5"   # ayristirici surumu: degisirse eski raporlar (metni varsa) yeniden ayristirilir
 FI_K9_HARIC = ("PARA PİYASASI", "PARA PIYASASI", "BORÇLANMA ARAÇLARI", "KISA VADELİ", "ALTIN", "GÜMÜŞ", "KIYMETLİ MADEN", "EUROBOND",
                "DÖVİZ", "KİRA SERTİFİKA", "FON SEPETİ", "GİRİŞİM SERMAYESİ", "GAYRİMENKUL", "LİKİT")   # BIST hissesi tasimayan fon turleri
 
@@ -1052,9 +1055,7 @@ def fi_k9_indir(L: pd.DataFrame, A: FIAyar) -> pd.DataFrame:
     kt = os.path.join(A.kapfon, "txt"); kp = os.path.join(A.kapfon, "pdf")
     os.makedirs(kt, exist_ok=True); os.makedirs(kp, exist_ok=True)
     yol = os.path.join(A.kapfon, "ekler.csv")
-    E = pd.read_csv(yol) if os.path.exists(yol) else pd.DataFrame(columns=["indeks", "dosya", "durum"])
-    if len(E) and "durum" not in E.columns:   # v1.3 ekler.csv (PDF yolu) -> v1.5 (metin yolu); eski PDF'ler bir kez metne cevrilir
-        E = _fi_k9_eski_ekler(E, kt)
+    E = fi_k9_ekler_oku(A)
     tamam = set(E[E.durum.isin(["ok", "muaf", "bos"])].indeks.astype(int))
     H = fi_k9_secim(L); H = H[~H.indeks.isin(tamam)]
     yerel = threading.local(); kilit = threading.Lock(); sonuc: List[Dict[str, Any]] = []; t0 = time.time()
@@ -1085,7 +1086,7 @@ def fi_k9_indir(L: pd.DataFrame, A: FIAyar) -> pd.DataFrame:
                     f.write(b)
             with open(txt, encoding="utf-8") as f:
                 muaf |= _fi_muaf(f.read())
-            dosyalar.append(txt)
+            dosyalar.append(os.path.relpath(txt, A.kapfon))           # goreli yol: klasor tasinabilir (Drive, Colab, paket)
         durum = "muaf" if muaf else ("ok" if dosyalar else "bos")
         return {"indeks": ind, "dosya": ";".join(dosyalar), "durum": durum}
 
@@ -1106,6 +1107,25 @@ def fi_k9_indir(L: pd.DataFrame, A: FIAyar) -> pd.DataFrame:
         E = pd.concat([E, pd.DataFrame(sonuc)], ignore_index=True).drop_duplicates("indeks", keep="last")
     E.to_csv(yol, index=False)
     return E
+
+
+def fi_k9_ekler_oku(A: FIAyar) -> pd.DataFrame:
+    """ekler.csv'yi okur; v1.3 bicimini (PDF yolu) cevirir; mutlak yollari A.kapfon'a goreli yapar (klasor tasinabilir olsun)."""
+    yol = os.path.join(A.kapfon, "ekler.csv")
+    E = pd.read_csv(yol) if os.path.exists(yol) else pd.DataFrame(columns=["indeks", "dosya", "durum"])
+    if len(E) and "durum" not in E.columns:   # v1.3 ekler.csv (PDF yolu) -> v1.5 (metin yolu); eski PDF'ler bir kez metne cevrilir
+        E = _fi_k9_eski_ekler(E, os.path.join(A.kapfon, "txt"))
+    E["dosya"] = E.dosya.fillna("").astype(str).map(
+        lambda s: ";".join(os.path.join("txt", os.path.basename(d)) for d in s.split(";") if d))
+    return E
+
+
+def _fi_k9_yol(d: str, A: FIAyar) -> str:
+    """ekler.csv'deki metin yolu (goreli 'txt/...' ya da eski mutlak yol) -> mevcut dosya."""
+    for aday in (d, os.path.join(A.kapfon, d), os.path.join(A.kapfon, "txt", os.path.basename(d))):
+        if os.path.exists(aday):
+            return aday
+    raise FileNotFoundError(f"rapor metni yok: {d}")
 
 
 def _fi_k9_eski_ekler(E: pd.DataFrame, kt: str) -> pd.DataFrame:
@@ -1434,6 +1454,121 @@ def _fi_k9_atlas(satirlar: List[str], U: List[str], yerel: str = "us") -> Dict[s
     return {"bicim": "A", "poz": poz, "islem": islem, "kontrol": k}
 
 
+def fi_k9_paketle(A: FIAyar, hedef: str, parca_mb: int = 45) -> Dict[str, Any]:
+    """KAP fon verisini tasinabilir pakete yazar (artirimli guncellemenin baslangici): liste, ekler, ayristirilmis tablolar ve
+    ham rapor metinleri (tar.xz, GitHub dosya siniri icin parca_mb MB parcalar). manifest.json: her dosyanin boyu ve sha256'si."""
+    import gzip, hashlib, json, shutil, subprocess
+    os.makedirs(hedef, exist_ok=True)
+    E = fi_k9_ekler_oku(A)
+    E.to_csv(os.path.join(hedef, "ekler.csv.gz"), index=False)
+    with open(os.path.join(A.kapfon, "liste.csv"), "rb") as f, gzip.open(os.path.join(hedef, "liste.csv.gz"), "wb") as g:
+        shutil.copyfileobj(f, g)
+    for ad in ("liste_haftalar.txt", "k9_pozisyon.csv.gz", "k9_islem.csv.gz", "k9_kontrol.csv.gz"):
+        if os.path.exists(os.path.join(A.kapfon, ad)):
+            shutil.copy2(os.path.join(A.kapfon, ad), os.path.join(hedef, ad))
+    metinler = sorted({d for s in E[E.durum == "ok"].dosya for d in str(s).split(";")
+                       if d and os.path.exists(os.path.join(A.kapfon, d))})
+    for eski in [f for f in os.listdir(hedef) if f.startswith("metin.tar.xz.")]:
+        os.unlink(os.path.join(hedef, eski))
+    liste_yol = os.path.join(hedef, "_metin_listesi.txt")
+    with open(liste_yol, "w", encoding="utf-8") as f:
+        f.write("\n".join(metinler))
+    tar = subprocess.Popen(["tar", "-cf", "-", "-C", A.kapfon, "-T", liste_yol], stdout=subprocess.PIPE)
+    xz = subprocess.Popen(["xz", "-T0", "-6", "-c"], stdin=tar.stdout, stdout=subprocess.PIPE)
+    tar.stdout.close()
+    no, boy = 0, parca_mb * 1024 * 1024
+    while True:
+        blok = xz.stdout.read(boy)
+        if not blok:
+            break
+        with open(os.path.join(hedef, f"metin.tar.xz.{no:03d}"), "wb") as f:
+            f.write(blok)
+        no += 1
+    if xz.wait() != 0 or tar.wait() != 0:
+        raise RuntimeError("metin paketi olusturulamadi (tar/xz hatasi)")
+    os.unlink(liste_yol)
+    man = {"surum": FI_SURUM, "ayristirici": FI_K9_SURUM, "olusturma": str(pd.Timestamp.now()), "metin_sayisi": len(metinler),
+           "rapor": int((E.durum == "ok").sum()), "muaf": int((E.durum == "muaf").sum()), "dosyalar": {}}
+    for ad in sorted(os.listdir(hedef)):
+        if ad == "manifest.json":
+            continue
+        h = hashlib.sha256()
+        with open(os.path.join(hedef, ad), "rb") as f:
+            for b in iter(lambda: f.read(1 << 20), b""):
+                h.update(b)
+        man["dosyalar"][ad] = {"boy": os.path.getsize(os.path.join(hedef, ad)), "sha256": h.hexdigest()}
+    with open(os.path.join(hedef, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump(man, f, ensure_ascii=False, indent=1)
+    filog.info("K9 paket: %d metin, %d parca, %s", len(metinler), no, hedef)
+    return man
+
+
+def fi_k9_paket_ac(kaynak: str, A: FIAyar) -> Dict[str, Any]:
+    """fi_k9_paketle paketini A.kapfon'a acar; her dosya once manifest sha256'siyla dogrulanir (bozuk/eksik parca -> durur)."""
+    import gzip, hashlib, json, shutil, subprocess
+    with open(os.path.join(kaynak, "manifest.json"), encoding="utf-8") as f:
+        man = json.load(f)
+    for ad, bilgi in man["dosyalar"].items():
+        yol = os.path.join(kaynak, ad)
+        if not os.path.exists(yol):
+            raise FileNotFoundError(f"paket eksik: {ad}")
+        h = hashlib.sha256()
+        with open(yol, "rb") as f:
+            for b in iter(lambda: f.read(1 << 20), b""):
+                h.update(b)
+        if h.hexdigest() != bilgi["sha256"]:
+            raise RuntimeError(f"paket bozuk: {ad} (sha256 tutmuyor)")
+    os.makedirs(A.kapfon, exist_ok=True)
+    for ad in ("liste.csv.gz", "ekler.csv.gz"):
+        with gzip.open(os.path.join(kaynak, ad), "rb") as f, open(os.path.join(A.kapfon, ad[:-3]), "wb") as g:
+            shutil.copyfileobj(f, g)
+    for ad in ("liste_haftalar.txt", "k9_pozisyon.csv.gz", "k9_islem.csv.gz", "k9_kontrol.csv.gz"):
+        if ad in man["dosyalar"]:
+            shutil.copy2(os.path.join(kaynak, ad), os.path.join(A.kapfon, ad))
+    parcalar = sorted(a for a in man["dosyalar"] if a.startswith("metin.tar.xz."))
+    xz = subprocess.Popen(["xz", "-d", "-c"], stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    tar = subprocess.Popen(["tar", "-xf", "-", "-C", A.kapfon], stdin=xz.stdout)
+    xz.stdout.close()
+    for ad in parcalar:
+        with open(os.path.join(kaynak, ad), "rb") as f:
+            shutil.copyfileobj(f, xz.stdin)
+    xz.stdin.close()
+    if xz.wait() != 0 or tar.wait() != 0:
+        raise RuntimeError("metin paketi acilamadi (xz/tar hatasi)")
+    filog.info("K9 paket acildi: %s -> %s (%d metin)", kaynak, A.kapfon, man["metin_sayisi"])
+    return man
+
+
+def fi_k9_tablolar_guncel(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Artirimli ayristirma: A.kapfon'daki k9_pozisyon / k9_islem / k9_kontrol tablolarini okur, yalniz yeni raporlari (ya da
+    ayristirici surumu degismis raporlari) ayristirip ekler ve kaydeder. Ham metni olmayan eski rapor tablodan korunur."""
+    yollar = {ad: os.path.join(A.kapfon, f"{ad}.csv.gz") for ad in ("k9_pozisyon", "k9_islem", "k9_kontrol")}
+    if all(os.path.exists(y) for y in yollar.values()):
+        P0 = pd.read_csv(yollar["k9_pozisyon"], low_memory=False); I0 = pd.read_csv(yollar["k9_islem"], low_memory=False)
+        K0 = pd.read_csv(yollar["k9_kontrol"], low_memory=False, dtype={"ayristirici": str})
+    else:
+        P0 = I0 = K0 = pd.DataFrame(columns=["indeks"])
+    surum = K0.get("ayristirici", pd.Series(dtype=object)).astype(str)
+    gecerli = set(K0.loc[surum == FI_K9_SURUM, "indeks"].astype(int)) if len(K0) else set()
+    eski = set(K0.indeks.astype(int)) - gecerli if len(K0) else set()
+    metinli = set(E[(E.durum == "ok")].indeks.astype(int))
+    yeniden = {i for i in eski if i in metinli and all(
+        os.path.exists(os.path.join(A.kapfon, d)) or os.path.exists(d) for d in str(E.set_index("indeks").dosya.get(i, "")).split(";") if d)}
+    atla = gecerli | (eski - yeniden)
+    t0 = time.time()
+    P1, I1, K1 = fi_k9_tablolar(L, E, A, atla=atla)
+    cik = set(K1.indeks.astype(int)) if len(K1) else set()
+    P = pd.concat([P0[~P0.indeks.astype(int).isin(cik)] if len(P0) else P0, P1], ignore_index=True)
+    I = pd.concat([I0[~I0.indeks.astype(int).isin(cik)] if len(I0) else I0, I1], ignore_index=True)
+    K = pd.concat([K0[~K0.indeks.astype(int).isin(cik)] if len(K0) else K0, K1], ignore_index=True)
+    if len(I):
+        I["tarih"] = pd.to_datetime(I.tarih, errors="coerce")
+    for ad, x in (("k9_pozisyon", P), ("k9_islem", I), ("k9_kontrol", K)):
+        x.to_csv(yollar[ad], index=False)
+    filog.info("K9 artirimli: %d yeni/yenilenen rapor ayristirildi (%d eski korundu), %.0f sn", len(cik), len(atla), time.time() - t0)
+    return P, I, K
+
+
 def _fi_k9_poz_tuttu(r: Dict[str, Any]) -> bool:
     """Pozisyon mutabakati: portfoy tablosu bulunmali; hisse basligi yoksa (hisse tasimayan fon) satir da olmamali; baslik varsa
     satir toplami raporun hisse grubu toplamina esit olmali. Taninmayan yerlesim (tablo yok) 'tutmadi' sayilir."""
@@ -1445,20 +1580,24 @@ def _fi_k9_poz_tuttu(r: Dict[str, Any]) -> bool:
     return not np.isnan(k["poz_rapor"]) and _fi_esit(k["poz_ayr"], k["poz_rapor"])
 
 
-def fi_k9_tablolar(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def fi_k9_tablolar(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar,
+                   atla: Optional[set] = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Indirilen raporlari ayristirir. Bir raporun birden fazla eki varsa (TR/EN kopya ya da parca) pozisyon en cok hisse satiri
     bulunan ekten, islemler en cok islem bulunan ekten alinir (toplanmaz -> kopya ek cift sayilmaz).
     Donus: (pozisyonlar, islemler, kontrol) — fon, sirket, donem, yayin bilgisiyle. Mutabakat: poz_tuttu / alis_tuttu / satis_tuttu."""
     meta = L.assign(indeks=L.indeks.astype(int)).drop_duplicates("indeks").set_index("indeks")
     P, I, K = [], [], []
-    for row in E[(E.durum == "ok") & E.indeks.astype(int).isin(meta.index)].itertuples(index=False):
+    secili = E[(E.durum == "ok") & E.indeks.astype(int).isin(meta.index)]
+    if atla:
+        secili = secili[~secili.indeks.astype(int).isin(atla)]
+    for row in secili.itertuples(index=False):
         ind = int(row.indeks); m = meta.loc[ind]
         ek = {"indeks": ind, "fon": m.fon, "sirket": str(m.unvan).upper().split(" PORTF")[0], "yil": int(m.yil), "donem": int(m.donem),
               "yayin": m.yayin, "kural": str(m.get("kural", "") or "")}
         try:
-            metinler = [_fi_pdf_metin(d) for d in str(row.dosya).split(";") if d]
+            metinler = [_fi_pdf_metin(_fi_k9_yol(d, A)) for d in str(row.dosya).split(";") if d]
             if metinler and all(_fi_muaf(x) for x in metinler):
-                K.append({**ek, "muaf": True}); continue
+                K.append({**ek, "muaf": True, "ayristirici": FI_K9_SURUM}); continue
             R = [fi_k9_ayristir(x) for x in metinler]
         except Exception as ex:
             filog.warning("rapor %s ayristirilamadi: %s", ind, ex); K.append({**ek, "hata": str(ex)[:100]}); continue
@@ -1466,7 +1605,7 @@ def fi_k9_tablolar(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar) -> Tuple[pd.Data
             continue
         rp = max(R, key=lambda x: len(x["poz"])); ri = max(R, key=lambda x: len(x["islem"]))
         kp, ki = rp["kontrol"], ri["kontrol"]
-        kon = {**ek, "bicim": rp["bicim"], "n_poz": len(rp["poz"]), "n_islem": len(ri["islem"]), "poz_rapor": kp["poz_rapor"],
+        kon = {**ek, "ayristirici": FI_K9_SURUM, "bicim": rp["bicim"], "n_poz": len(rp["poz"]), "n_islem": len(ri["islem"]), "poz_rapor": kp["poz_rapor"],
                "poz_ayr": kp["poz_ayr"], "alis_rapor": ki["alis_rapor"], "alis_ayr": ki["alis_ayr"], "satis_rapor": ki["satis_rapor"],
                "satis_ayr": ki["satis_ayr"], "islem_bolum": ki["alis_bolum"] or ki["satis_bolum"], "atlanan_islem": ki["atlanan_islem"]}
         kon["poz_tuttu"] = _fi_k9_poz_tuttu(rp)
@@ -1922,10 +2061,8 @@ def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.Data
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
-    L = pd.read_csv(os.path.join(A.kapfon, "liste.csv")); Ek = pd.read_csv(os.path.join(A.kapfon, "ekler.csv"))
-    P, I, K = fi_k9_tablolar(L, Ek, A)
-    for ad, x in (("k9_pozisyon", P), ("k9_islem", I), ("k9_kontrol", K)):
-        x.to_csv(os.path.join(A.kapfon, f"{ad}.csv.gz"), index=False)
+    L = pd.read_csv(os.path.join(A.kapfon, "liste.csv")); Ek = fi_k9_ekler_oku(A)
+    P, I, K = fi_k9_tablolar_guncel(L, Ek, A)
     V = fi_k1_veri(A.veri["BIST"], "BIST", A)
     G, KP = fi_k10_pozisyon(P, K, list(V))
     with open(A.veri["BIST"], "rb") as f:
@@ -2054,6 +2191,11 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
         _A = FIAyar(); _E = fi_k9_indir(fi_k9_liste(_A), _A)
         print(_E.durum.value_counts().to_string())
+        sys.exit(0)
+    if len(sys.argv) > 2 and sys.argv[1] in ("k9paket", "k9ac"):   # v1.5: tasinabilir KAP fon verisi paketi (yaz / ac)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _M = fi_k9_paketle(FIAyar(), sys.argv[2]) if sys.argv[1] == "k9paket" else fi_k9_paket_ac(sys.argv[2], FIAyar())
+        print({k: v for k, v in _M.items() if k != "dosyalar"})
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "k10":           # v1.5: fon girisi testi + fon defteri
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
