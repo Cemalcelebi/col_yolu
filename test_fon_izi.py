@@ -15,6 +15,15 @@
 #     bolunme; Haziran 2020 -%50 her zaman bolunme; 2024 -%12 (marj %10) bolunme.
 # 13) v1.4 _fi_ilk: ayni barda hem +esik hem -esik -> asagi=1, yukari=0; hicbiri -> 0/0.
 # 14) v1.4 esli taban: kat_dus_esli = sinyal orani / esli taban orani; _es_ satirlari iz tablosuna girmez.
+# 15) v1.5 SPK bicimi: Hisse Turk/Yabanci alt gruplari, ISIN'siz satir, 'Tem.Ver.' satiri, kodsuz ISIN satiri; GRUP TOPLAMI
+#     mutabakati; islemde fiyat = deger olan 1 lotluk satir (sira: fiyat deger nominal) ve 'Toplami:' mutabakati.
+# 16) v1.5 Atlas bicimi: %1.76 / 1.76% yuzde, kodu ust satirda kalan pozisyon, 'Hisse KOD .. g-Aaa-yy nominal tutar' islemleri ve
+#     yalniz Hisse grubunun TOPLAM satiri (Takasbank grubu karismaz).
+# 17) v1.5 tarih: 07/11/23, 30-Haz-25, 1-Şub-24, 05.01.2024.
+# 18) v1.5 fon girisi: giris yalniz onceki ay raporu varsa; ikinci giren fon 'cok'; onceki ay hicbir fonda yoksa 'ilk'; cikis olayi;
+#     fonlarin payi sermayenin %5 / %10'unu ilk astiginda yogun5/yogun10, bilinme = o ayin en gec fon raporu.
+# 19) v1.5 giris mekanigi: yayin gunu ne saatte olursa olsun giris ertesi islem gunu acilisi; once +%20 (k20); +%8 sonrasi maliyete
+#     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
 import sys, numpy as np, pandas as pd
 
 import FON_IZI as F
@@ -132,6 +141,106 @@ def sina():
     if not (len(r14) == 1 and abs(r14.kat_dus.iat[0] - 2.0) < 1e-9 and abs(r14.kat_dus_esli.iat[0] - 40 / 38) < 1e-9
             and not S14.sinyal.str.startswith("_es_").any()):
         hata.append("14) esli taban kati yanlis")
+
+    # 15) SPK bicimi
+    m15 = "\n".join([
+        "III-FON PORTFÖY DEĞERİ TABLOSU",
+        "HİSSE SENETLERİ",
+        "Hisse Türk",
+        "AKBNK      TL   AKBANK   TRAAKBNK91N6     1.000,00   40,000000 23/07/25   80100511   50,000000   50.000,00   10,00",
+        "                T.A.Ş.",
+        "GEDZA      TL                 GEDZA           725,00   32,400000 27/12/22   80100514   36,880000   26.738,00   5,00",
+        "Tem.Ver. ODAS   TL   ODAŞ   TREODAS00014      200,00   10,000000 30/12/22   80100511   10,000000    2.000,00   1,00",
+        "                            TREDOTO00013      100,00   20,000000 20/08/24   80_100_5   20,000000    2.000,00   1,00",
+        " GRUP TOPLAMI                                  2.025,00",
+        "Hisse Yabancı",
+        "AI US      USD  Application  US12468P1049      210,00   14,640000 17/11/22               14,000000    2.940,00",
+        " GRUP TOPLAMI                                    210,00",
+        "GRUP TOPLAMI                                   2.235,00",
+        "IV-FON TOPLAM DEĞERİ TABLOSU",
+        "    VII-PORTFÖYDEN SATIŞLAR",
+        "     A) HİSSE SENETLERİ(SATIŞLAR)",
+        "     TTRAK     TÜRK TRAKTÖR         06/12/22           539,300             539,30             1,00",
+        "     TTRAK     TÜRK TRAKTÖR         06/12/22           539,200          36.665,60            68,00",
+        "     HISSE TÜRK                          Toplamı:              37204,90            69,00",
+        "     C) YATIRIM FONU (SATIŞLAR)",
+        "     TKM TEB PORTFÖY   07/12/22  07/12/22   0,054     1.000.404,97   18.409.425,00",
+        "IX-PORTFÖYE ALIŞLAR",
+        "A) HİSSE SENETLERİ(ALIŞLAR)",
+        "EKGYO                    07/11/23       6,770       67.700,00    10.000,00",
+        "13X GF        13X GF     28/12/22       1,045       62.676,00    60.000,00",
+        "                          Toplamı:         130376,00     70000,00",
+        "H) MEVDUAT"])
+    r15 = F.fi_k9_ayristir(m15); k15 = r15["kontrol"]
+    kod15 = sorted(p["kod"] for p in r15["poz"]); t15 = [x for x in r15["islem"] if x["kod"] == "TTRAK"]
+    if not (r15["bicim"] == "S" and kod15 == ["", "AKBNK", "GEDZA", "ODAS"] and k15["poz_rapor"] == 2025 and k15["poz_ayr"] == 2025
+            and len(t15) == 2 and sorted(x["lot"] for x in t15) == [1.0, 68.0] and k15["satis_rapor"] == 69 and k15["satis_ayr"] == 69
+            and k15["alis_rapor"] == 70000 and k15["alis_ayr"] == 70000 and abs(r15["poz"][0]["deger"] - 50000) < 1e-6):
+        hata.append(f"15) SPK bicimi yanlis: {kod15} {k15} {t15}")
+    # 16) Atlas bicimi
+    m16 = "\n".join([
+        "3- FON PORTFÖY DEĞERİ TABLOSU",
+        " A) HİSSE SENETLERİ",
+        "    ARASE                        Doğu Aras Enerji               38,000.00        8,724,800.00    %10.96",
+        "   THYAO                 TÜRK HAVA YOLLARI A.O                25,433.00    7,210,255.50   9.33%",
+        "   PGSUS",
+        "                                    YOLLARI A.O            22,500.00    3,170,250.00   4.73%",
+        "    TOPLAM:                                                85,933.00   19,105,305.50",
+        " B) VARANTLAR",
+        "4- FON TOPLAM DEĞERİ TABLOSU",
+        "8-PORTFÖYDEN SATIŞLAR",
+        "     Takasbank Para Piyasası   TRY      2-Haz-25        3-Haz-25               6,170,000.00   6,178,375.99",
+        "TOPLAM:                                                     6,170,000.00   6,178,375.99",
+        "Hisse     AKBNK   AKBANK T.A.S.                  2-Haz-25          343.00       17,493.00",
+        "Hisse     AKBNK   AKBANK T.A.Ş.                  2-Haz-25          343.00       17,493.00",
+        " TOPLAM:                                  686.00   34,986.00",
+        "9- PORTFÖYE ALIŞLAR",
+        "Hisse   GARAN   Garanti Bankası A.Ş.             30-Haz-25    142.00      17,679.00",
+        "TOPLAM:                                                142.00      17,679.00"])
+    r16 = F.fi_k9_ayristir(m16); k16 = r16["kontrol"]
+    if not (r16["bicim"] == "A" and [p["kod"] for p in r16["poz"]] == ["ARASE", "THYAO", "PGSUS"] and k16["poz_ayr"] == k16["poz_rapor"] == 85933
+            and k16["satis_ayr"] == k16["satis_rapor"] == 686 and k16["alis_ayr"] == k16["alis_rapor"] == 142
+            and r16["islem"][0]["tarih"] == "2025-06-02" and abs(r16["islem"][0]["fiyat"] - 51.0) < 1e-9):
+        hata.append(f"16) Atlas bicimi yanlis: {[p['kod'] for p in r16['poz']]} {k16}")
+    # 17) tarih
+    if [F._fi_tarih(x) for x in ("07/11/23", "30-Haz-25", "1-Şub-24", "05.01.2024", "31/02/24")] != \
+            ["2023-11-07", "2025-06-30", "2024-02-01", "2024-01-05", None]:
+        hata.append("17) tarih cevirisi yanlis")
+    # 18) fon girisi / cikisi
+    G18 = pd.DataFrame([
+        {"fon": "F1", "sirket": "XX", "ay": 100, "kod": "AAA", "nominal": 10.0, "agirlik": 0.5},
+        {"fon": "F1", "sirket": "XX", "ay": 101, "kod": "AAA", "nominal": 10.0, "agirlik": 0.5},
+        {"fon": "F1", "sirket": "XX", "ay": 101, "kod": "BBB", "nominal": 5.0, "agirlik": 0.5},     # F1 BBB girisi (ilk)
+        {"fon": "F2", "sirket": "TERA", "ay": 101, "kod": "BBB", "nominal": 5.0, "agirlik": 0.02},  # F2 BBB girisi (2. fon -> cok)
+        {"fon": "F3", "sirket": "XX", "ay": 101, "kod": "CCC", "nominal": 5.0, "agirlik": 1.0},     # F3'un ay 100 raporu yok -> giris degil
+        {"fon": "F1", "sirket": "XX", "ay": 102, "kod": "BBB", "nominal": 5.0, "agirlik": 1.0}])   # F1 AAA cikisi (ay 102)
+    KP18 = pd.DataFrame([{"fon": f, "ay": a, "bilinme": pd.Timestamp("2024-01-01") + pd.Timedelta(days=30 * (a - 100) + i)}
+                         for i, (f, a) in enumerate([("F1", 100), ("F1", 101), ("F2", 100), ("F2", 101), ("F3", 101), ("F1", 102)])])
+    G18 = G18.merge(KP18, on=["fon", "ay"], how="left")
+    O18 = pd.DataFrame([{"kod": k_, "ay": a_, "oran": 1.0} for k_ in ("AAA", "BBB", "CCC") for a_ in (99, 100, 101, 102)])
+    D18 = pd.DataFrame([{"kod": "BBB", "sermaye_lot": 100.0}])
+    E18 = F.fi_k10_olaylar(G18, KP18, O18, D18)
+    y18 = E18[E18.tur.astype(str).str.startswith("yogun")]
+    if not (sorted(y18.tur) == ["yogun10", "yogun5"] and (y18.kod == "BBB").all() and abs(y18.pay.iat[0] - 0.1) < 1e-12
+            and y18.bilinme.iat[0] == G18[(G18.kod == "BBB") & (G18.ay == 101)].bilinme.max()):
+        hata.append(f"18) yogun olayi yanlis: {y18.to_dict('records')}")
+    gi = E18[E18.tur == "giris"]; ci = E18[E18.tur == "cikis"]
+    if not (len(gi) == 2 and set(gi.fon) == {"F1", "F2"} and set(gi.kod) == {"BBB"}
+            and gi[gi.fon == "F1"].ilk.iat[0] and not gi[gi.fon == "F2"].ilk.iat[0] and gi[gi.fon == "F2"].cok.iat[0]
+            and gi[gi.fon == "F2"].tasfiye.iat[0] and gi[gi.fon == "F1"].buyuk.iat[0] and not gi[gi.fon == "F2"].buyuk.iat[0]
+            and len(ci) == 1 and ci.kod.iat[0] == "AAA" and ci.ay.iat[0] == 102):
+        hata.append(f"18) fon girisi/cikisi yanlis: {E18[['tur', 'fon', 'kod', 'ay', 'ilk', 'cok']].to_dict('records')}")
+    # 19) giris mekanigi
+    idx19 = pd.bdate_range("2024-01-01", periods=150)
+    c19 = np.full(150, 101.0); o19 = c19.copy(); h19 = c19 + 1; l19 = c19 - 0.5
+    o19[80] = 100.0; h19[82] = 109.0; l19[85] = 99.5                               # giris 100; +%9 gorulur, 85. barda maliyete doner
+    d19 = pd.DataFrame({"Open": o19, "High": h19, "Low": l19, "Close": c19, "Volume": 1e6}, index=idx19)
+    R19 = F.fi_k10_sonuc({"AAA": d19}, pd.Series(["AAA"]), pd.Series([idx19[79] + pd.Timedelta(hours=10)]))
+    d19b = d19.copy(); d19b.iloc[100:, :4] = 500.0
+    R19b = F.fi_k10_sonuc({"AAA": d19b}, pd.Series(["AAA"]), pd.Series([idx19[79]]))
+    if not (len(R19) == 1 and R19.giris.iat[0] == idx19[80] and abs(R19.trail.iat[0] + 0.004) < 1e-12 and R19.k20.iat[0] == 0
+            and R19.cikis_tarih.iat[0] == idx19[85] and R19.on60.iat[0] == R19b.on60.iat[0]):
+        hata.append(f"19) giris mekanigi yanlis: {R19.to_dict('records')}")
     return hata
 
 
@@ -139,4 +248,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 14/14 OK")
+    print("test_fon_izi: 19/19 OK")
