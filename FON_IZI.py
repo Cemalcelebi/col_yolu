@@ -2395,7 +2395,15 @@ def fi_k13_olc(d: pd.DataFrame, i0: int, i1: int) -> Dict[str, float]:
     norm = np.median((h[a:b] - l[a:b]) / c[max(a - 1, 0):b - 1][: b - a]) if b - a > 50 and a > 0 else np.nan
     return {"bar": n, "dusus": l[w].min() / tepe - 1 if tepe == tepe else np.nan, "bant": c[w].max() / c[w].min() - 1,
             "mum_norm": mum / norm if norm == norm and norm > 0 else np.nan, "u": l[i1 - 9:i1 + 1].min() / l[i0:i0 + 10].min(),
-            "egim": float(np.polyfit(np.arange(n), np.log(c[w]), 1)[0] * n)}
+            "egim": float(np.polyfit(np.arange(n), np.log(c[w]), 1)[0] * n),
+            # K13b (Cemal 24 Eki: 'Ekim 2024 bölgesinin dibi düzgün, 2021'inki değil'): dip tabanı = kutudaki barların ne kadarı
+            # dibe yakın (Low <= kutu dibi x (1 + 2 x kutunun medyan mum boyu)). Tek günlük iğne (V) dip ~0; haftalarca test edilen
+            # düz zemin yüksek. TEHOL 2024: 0,26; TEHOL 2021: 0,06.
+            "dip_taban": float(np.mean(l[w] <= l[w].min() * (1 + 2 * mum))) if mum == mum else np.nan}
+
+
+# K13b eşiği sonuç görülmeden yazıldı: TEHOL 2024 değerinin (0,26) biraz altı.
+FI_K13B_ESIK = {**FI_K13_ESIK, "dip_taban": 0.20}
 
 
 def fi_k13_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K13_ESIK) -> pd.DataFrame:
@@ -2431,6 +2439,8 @@ def fi_k13_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K13_ESIK) -> 
                     continue
                 o = fi_k13_olc(d, j, t)
                 if not (o["mum_norm"] <= E["mum"] and o["u"] >= E["u"] and E["egim"][0] <= o["egim"] <= E["egim"][1]):
+                    continue
+                if "dip_taban" in E and not (o["dip_taban"] >= E["dip_taban"]):       # K13b düzgün dip (yalnız istenirse)
                     continue
                 gorulen.add(j)
                 if t - son_olay < 60:                                         # ayni hissede 60 bar icinde tek olay
@@ -3026,6 +3036,129 @@ def fi_k12_ders4(D: List[Tuple[str, str, pd.DataFrame, str]], yol: str) -> int:
     return sayfa
 
 
+# ---------------------------------------------------------------- K16 düzgün dip devam denemeleri (Cemal 24 Eki; şartlar önceden)
+# Ç75: düzgün dip tek başına (çöküş sonrası taban, K13'ün bant/mum/U/eğim şartları gevşek). Ç76/Ç77: Cemal'in başarı ölçüsü (250 günde
+# dip kırılmadan 2 kat) Ç73 (K13b) ve Ç75 olaylarında, eşli kutuya göre; karar fi_k14_karar (dört hücre >= 1,3, n >= 30).
+FI_K16_GEVSEK = {**FI_K13_ESIK, "bant": 10.0, "mum": 99.0, "u": 0.0, "egim": (-9.0, 9.0), "dip_taban": 0.20}
+
+
+def fon_izi_k16(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K13b (FI_K13B_ESIK) ve gevşek düzgün dip (FI_K16_GEVSEK) olayları -> 2 kat / +%50 / önce -%20, eşli kutuya göre; CSV."""
+    A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
+    Z: Dict[str, List[pd.DataFrame]] = {"k13b": [], "gevsek": []}
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K16 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        for ad, E in (("k13b", FI_K13B_ESIK), ("gevsek", FI_K16_GEVSEK)):
+            O = fi_k13_tara(V, E).reset_index(drop=True); Es = fi_k14_esli(V, O).reset_index(drop=True)
+            O = O.join(fi_k10_sonuc(V, O.sembol, O.bilgi), how="left").join(fi_k14_yukselis(V, O), how="left") if len(O) else O
+            Es = Es.join(fi_k10_sonuc(V, Es.sembol, Es.bilgi), how="left").join(fi_k14_yukselis(V, Es), how="left") if len(Es) else Es
+            filog.info("K16 %s %s: %d olay, %d esli kutu", pazar, ad, len(O), len(Es))
+            Z[ad].append(fi_k14_kiyas(O, Es, pazar, FI_K13_DONEM))
+            O.assign(pazar=pazar).to_csv(os.path.join(A.cikti, f"k16_{ad}_{pazar}_olaylar.csv.gz"), index=False)
+    sonuc = {}
+    for ad, L in Z.items():
+        if L:
+            Zk = pd.concat(L, ignore_index=True); Zk.to_csv(os.path.join(A.cikti, f"k16_{ad}_ozet.csv"), index=False)
+            sonuc[ad] = (Zk,) + fi_k14_karar(Zk, "kat2")
+    return {"sonuc": sonuc}
+
+
+def fi_k12_ders5(V: Dict[str, pd.DataFrame], O: pd.DataFrame, KH: pd.DataFrame, K16: Dict[str, pd.DataFrame], yol: str,
+                 kod: str = "TEHOL") -> int:
+    """Ders 5 (Cemal 24 Eki: 'Ekim 2024 bölgesinin dibi düzgün, 2021'inki değil'): (1) iki TEHOL bölgesi, dip bandı (dip ile dip x
+    (1 + 2 mum) arası) gölgeli, banda değen barlar işaretli, dip tabanı ölçüsü; (2) evrende düzgün dipli 6 örnek (hisse adı yok,
+    ölçüye göre sıralı, sonuç başlıkta); (3) test: tek cetvel (önce +%20, eşli taban) ve 2 kat (eşli kutu), 1,3 çizgisi; (4) özet.
+    O = K13b olayları (BIST, sonuç sütunlarıyla), KH = karne_hucre (Ç73, Ç75), K16 = {'k13b': ozet, 'gevsek': ozet}."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    AYLAR = ("Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara")
+    tr = lambda x: f"{pd.Timestamp(x).day} {AYLAR[pd.Timestamp(x).month - 1]} {pd.Timestamp(x).year}"
+
+    def yazi(fig, y, baslik, satirlar, boy=10, gen=90):
+        fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.042
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.023
+            y -= 0.005
+        return y
+
+    def kutu(ax, d, b, e, baslik, oncesi=40, sonrasi=40, kucuk=False):
+        i0 = d.index.get_loc(d.index[d.index >= pd.Timestamp(b)][0]); i1 = d.index.get_loc(d.index[d.index <= pd.Timestamp(e)][-1])
+        o = fi_k13_olc(d, i0, i1)
+        w = d.iloc[max(0, i0 - oncesi):min(len(d), i1 + sonrasi + 1)]
+        L = d.Low.iloc[i0:i1 + 1]; dip = L.min()
+        mum = float(np.median((d.High.iloc[i0:i1 + 1] - L) / d.Close.shift(1).iloc[i0:i1 + 1]))
+        ust = dip * (1 + 2 * mum)
+        ax.axvspan(d.index[i0], d.index[i1], color="#fff4d6", zorder=0)
+        ax.fill_between([d.index[i0], d.index[i1]], dip, ust, color="#27ae60", alpha=0.25, zorder=1)
+        ax.vlines(w.index, w.Low, w.High, color="#7f8c8d", lw=0.6 if kucuk else 0.8)
+        ax.plot(w.index, w.Close, color="#1f2a44", lw=0.8 if kucuk else 1.1)
+        t = L[L <= ust]
+        ax.scatter(t.index, t.values, color="#c0392b", s=6 if kucuk else 12, zorder=3)
+        ax.set_yscale("log"); ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_xticks([]); ax.tick_params(labelsize=6 if kucuk else 8)
+        ax.set_title(f"{baslik} · dip tabanı {o['dip_taban']:.2f}".replace(".", ","), fontsize=8 if kucuk else 10)
+        return o
+
+    d = V[kod]
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "DERS 5: DÜZGÜN DİP — SENİN GÖZÜN NE GÖRÜYOR?", [
+            "Sen: 'Ekim 2024 bölgesinin dibi düzgün, 2021'inki değil.' Ölçüye çevirdim: kutudaki barların ne kadarı dibin hemen yanında "
+            "(dip ile dip + 2 mum boyu arası, yeşil bant)? Kırmızı nokta = banda değen gün. Bu orana 'dip tabanı' dedim.",
+            "2024: dip haftalarca test edilmiş, zemin düz (senin 50 günlük bölgende 0,26; kodun 4 Eki dibinden başlayan 31 günlük "
+            "kutusunda 0,45). 2021: dip tek günlük iğne, fiyat hemen %12-21 yukarıda oturmuş (0,06). Eşik sonuç görülmeden yazıldı: "
+            "dip tabanı ≥ 0,20.",
+        ], boy=9.5)
+        kutu(fig.add_axes([0.08, 0.43, 0.88, 0.25]), d, "2024-10-07", "2024-12-16", f"{kod} {tr('2024-10-07')} – {tr('2024-12-16')}")
+        kutu(fig.add_axes([0.08, 0.08, 0.88, 0.25]), d, "2021-04-21", "2021-06-08", f"{kod} {tr('2021-04-21')} – {tr('2021-06-08')}")
+        pdf.savefig(fig); plt.close(fig)
+        X = O[O.sembol != kod].sort_values("dip_taban", ascending=False).head(6)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "EVRENDE DÜZGÜN DİPLİ 6 ÖRNEK (BIST, hisse adı yok)", [
+            "Dip tabanı en yüksek 6 olay (sonuca bakılmadan seçildi). Başlıkta yıl ve 60 günde önce ne geldi. Kendi gözünle bak: "
+            "senin 'düzgün dip' dediğin bunlar mı?"], boy=9.5)
+        for k, r in enumerate(X.itertuples()):
+            s = "önce +%20" if getattr(r, "k20", np.nan) == 1 else ("önce −%20" if getattr(r, "dus", np.nan) == 1 else "yatay")
+            kutu(fig.add_axes([0.07 + (k % 2) * 0.47, 0.62 - (k // 2) * 0.28, 0.41, 0.21]), V[r.sembol], r.dip, r.bilgi,
+                 f"{pd.Timestamp(r.bilgi).year} — {s}", oncesi=30, sonrasi=60, kucuk=True)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "TEST: DÜZGÜN DİP FARK YARATIYOR MU?", [
+            "Üst: tek cetvel (60 günde önce +%20, eşli taban: aynı ay × momentum × likidite). Ç73 = TEHOL tipi taban + düzgün dip; "
+            "Ç75 = yalnız düzgün dip (çöküş sonrası taban). Alt: senin ölçün — 250 günde dip kırılmadan 2 kat, eşli kutuya (aynı "
+            "çöküş, şekilsiz) göre. Kırmızı çizgi 1,3: dört hücrede (BIST/ABD 2023 ve 2024-26) geçmesi gerekir."], boy=9.5)
+        ax = fig.add_axes([0.10, 0.50, 0.85, 0.30])
+        et, deg, renk = [], [], []
+        for kd, rk in (("Ç73", "#1f2a44"), ("Ç75", "#7f8fa6")):
+            for r in KH[KH.kod == kd].itertuples():
+                et.append(f"{kd}\n{r.pazar} {r.donem}\nn={int(r.n)}"); deg.append(r.ana_kat); renk.append(rk)
+        ax.bar(range(len(deg)), deg, color=renk); ax.axhline(1.3, color="#c0392b", ls="--", lw=2); ax.axhline(1.0, color="#999")
+        ax.set_xticks(range(len(deg))); ax.set_xticklabels(et, fontsize=5.5); ax.set_ylabel("önce +%20, eşli kat")
+        ax = fig.add_axes([0.10, 0.10, 0.85, 0.30])
+        et, deg, renk = [], [], []
+        for ad, rk in (("k13b", "#1f2a44"), ("gevsek", "#7f8fa6")):
+            Z = K16.get(ad)
+            if Z is None:
+                continue
+            for r in Z.itertuples():
+                et.append(f"{'Ç76' if ad == 'k13b' else 'Ç77'}\n{r.pazar} {r.donem}\nn={int(r.n)}"); deg.append(r.kat2_kat); renk.append(rk)
+        ax.bar(range(len(deg)), np.nan_to_num(np.array(deg, float)), color=renk)
+        ax.axhline(1.3, color="#c0392b", ls="--", lw=2); ax.axhline(1.0, color="#999")
+        ax.set_xticks(range(len(deg))); ax.set_xticklabels(et, fontsize=5.5); ax.set_ylabel("2 kat (dip kırılmadan), eşli kutu katı")
+        pdf.savefig(fig); plt.close(fig)
+    return 3
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -3194,6 +3327,12 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "k15":           # K14'un ikinci turu (genislik, oynaklik esli, 3 kat)
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
         _R = fon_izi_k15()
+        for _k, (_Z, _karar, _H) in _R["sonuc"].items():
+            print(_k, _karar); print(_Z.round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k16":           # duzgun dip devam denemeleri (2 kat, esli kutu)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k16()
         for _k, (_Z, _karar, _H) in _R["sonuc"].items():
             print(_k, _karar); print(_Z.round(3).to_string(index=False))
         sys.exit(0)

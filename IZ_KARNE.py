@@ -237,6 +237,22 @@ IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç72", "2026-10-24", "D13 tespiti aşağı riski düşürür mü (koruma)", "IZ_KARNE.py",
           "COL_TESPIT 'bozulma %2-9 vs %31-44' eşli tabanla tutar mı?", "Yeni deneme", "IZ C", 2, "d13", "koruma",
           notu="ABD olay dosyası yok."),
+    _ik_k("Ç73", "2026-10-24", "TEHOL tipi taban + DÜZGÜN DİP (K13b)", "FON_IZI.py (FI_K13B_ESIK), IZ_KARNE.py",
+          "Cemal: 'Ekim 2024 dibi düzgün, 2021'inki değil' — dibi haftalarca test edilen taban sonrası yükseliş?",
+          "Yeni deneme (TEHOL 2024 geçer, 2021 elenir)", "IZ C", 2, "k13_duz_dip", "yukari",
+          notu="Eylül'deki 'dip sabitliği' (çöl segmenti) kapalıydı; bu deneme Cemal'in doğrudan isteği, yalnız TEHOL tipi taban."),
+    _ik_k("Ç74", "2026-10-24", "TEHOL tipi taban + düzgün dip → aşağı risk düşük mü", "IZ_KARNE.py",
+          "Düzgün dipli taban sonrası önce −%20 daha seyrek mi?", "Yeni deneme", "IZ C", 2, "k13_duz_dip", "koruma"),
+    _ik_k("Ç75", "2026-10-24", "Düzgün dip tek başına (çöküş sonrası taban, şekil şartı gevşek)", "FON_IZI.py (FI_K16_GEVSEK)",
+          "Düzgün dip, TEHOL'ün öteki ölçüleri olmadan da fark yaratır mı?", "Yeni deneme", "IZ C", 2, "duz_dip_gevsek", "yukari"),
+    _ik_k("Ç76", "2026-10-24", "Ç73 olayları, Cemal'in ölçüsü: 250 günde dip kırılmadan 2 kat (eşli kutu)", "FON_IZI.py (k16)",
+          "Düzgün dipli TEHOL tipi tabandan sonra büyük yükseliş daha sık mı?", "Yeni deneme", "IZ C", 2,
+          cikti="arastirma_cikti/fon_izi/k16_k13b_ozet.csv",
+          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL: 2 kat katı BIST 0,83 / 0,00 (n7) / 1,31 (n47, TEHOL'ün kendisi dahil); ABD 0,29 / 0,30 / 0,92."),
+    _ik_k("Ç77", "2026-10-24", "Ç75 olayları, 250 günde dip kırılmadan 2 kat (eşli kutu)", "FON_IZI.py (k16)",
+          "Düzgün dip tek başına büyük yükselişi daha sık getirir mi?", "Yeni deneme", "IZ C", 2,
+          cikti="arastirma_cikti/fon_izi/k16_gevsek_ozet.csv",
+          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL: 2 kat katı BIST 0,69 / 0,77 / 0,96, ABD 0,60 / 1,05 / 0,83; önce −%20 katı 1,00-1,93 (çok test edilen dip daha sık kırılıyor)."),
 ]
 
 
@@ -267,6 +283,12 @@ IK_GOREV: List[Dict[str, str]] = [
      "durum": "TAMAMLANDI (seviye 4 sistem/çıkış ve ABD olay dosyası eksik maddeler AÇIK, aşağıda)"},
     {"tarih": "2026-10-24", "istek": "Görev bitince 'tamamlandı' de, ne oldu ne bitti indekse yaz, son mesaj madde madde, iz şablonu grafikte",
      "yapilan": "CLAUDE.md kuralı + bu görev günlüğü + ders PDF'inde grafik şablon", "sonuc": "Bundan sonra her görevde uygulanır",
+     "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-24", "istek": "Kodun 'benzer' dediği 2021 bölgesinin dibi düzgün değil; Ekim 2024'ünki düzgün",
+     "yapilan": "'Dip tabanı' ölçüsü (kutu barlarının dibe 2 mum yakın oranı; 2024: 0,26, 2021: 0,06); K13b tarama (eşik 0,20, önceden); "
+                "tek cetvel Ç73-Ç75 + 2 kat Ç76-Ç77; FON_IZI_ders5_duzgun_dip.pdf",
+     "sonuc": "Ölçü gözünü yakalıyor (2021 elendi, 2024 kaldı) ama iz değil; düzgün dip tek başına 2 katı daha seyrek, −%20'yi daha sık getiriyor. "
+              "Ortalama getiriyi TEHOL'ün kendisi (+%797) şişiriyordu; TEHOL hariç +%4, medyan %0",
      "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
@@ -589,6 +611,22 @@ def ik_s_kap_olgun_sozlesme(ay, pazar, V):
     return O[(a > 0.03) & (b > 0.01)]
 
 
+def ik_s_k13_duz_dip(ay, pazar, V):
+    """Ç73/Ç74: K13 TEHOL tipi taban + düzgün dip (FON_IZI FI_K13B_ESIK: kutu barlarının >= %20'si dibin 2 mum boyu içinde)."""
+    F = _ik_fi()
+    O = F.fi_k13_tara(V, F.FI_K13B_ESIK)
+    return pd.DataFrame({"sembol": O.sembol.values, "gun": pd.to_datetime(O.bilgi).values}) if len(O) \
+        else pd.DataFrame(columns=["sembol", "gun"])
+
+
+def ik_s_duz_dip_gevsek(ay, pazar, V):
+    """Ç75: düzgün dip tek başına (FON_IZI FI_K16_GEVSEK: çöküş sonrası 30-80 günlük taban, dip tabanı >= 0,20)."""
+    F = _ik_fi()
+    O = F.fi_k13_tara(V, F.FI_K16_GEVSEK)
+    return pd.DataFrame({"sembol": O.sembol.values, "gun": pd.to_datetime(O.bilgi).values}) if len(O) \
+        else pd.DataFrame(columns=["sembol", "gun"])
+
+
 IK_SINYAL: Dict[str, Callable] = {
     "tavan": ik_s_tavan, "taban": ik_s_taban, "hacim_dus": ik_s_hacim_dus, "hacim_dus_20": ik_s_hacim_dus_20,
     "blok_taban": ik_s_blok_taban, "geride_hacim": ik_s_geride_hacim, "hacimli_kirilim": ik_s_hacimli_kirilim,
@@ -598,7 +636,7 @@ IK_SINYAL: Dict[str, Callable] = {
     "kap_geri_alim": ik_s_kap_geri_alim, "kap_geri_alim_kosmamis": ik_s_kap_geri_alim_kosmamis,
     "kap_sozlesme_kosmus": ik_s_kap_sozlesme_kosmus, "kap_soylenti_dus": ik_s_kap_soylenti_dus,
     "kap_olagan_disi": ik_s_kap_olagan_disi, "kap_vbts": ik_s_kap_vbts, "hacim_dus_20_oyn": ik_s_hacim_dus_20_oyn,
-    "kap_olgun_sozlesme": ik_s_kap_olgun_sozlesme,
+    "kap_olgun_sozlesme": ik_s_kap_olgun_sozlesme, "k13_duz_dip": ik_s_k13_duz_dip, "duz_dip_gevsek": ik_s_duz_dip_gevsek,
 }
 IK_ABD_YOK = {"kap_olgun_sozlesme", "kap_bedelsiz", "kap_geri_alim", "kap_geri_alim_kosmamis", "kap_sozlesme_kosmus", "kap_soylenti_dus",
               "kap_olagan_disi", "kap_vbts", "fon_giris", "fon_yogun5"}     # ABD'de karşılık verisi yok (yapısal)
