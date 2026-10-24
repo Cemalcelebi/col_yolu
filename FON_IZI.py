@@ -2377,6 +2377,222 @@ def fi_k12_ders_u(V: Dict[str, pd.DataFrame], MA: pd.DataFrame, X: pd.DataFrame,
     return sayfa
 
 
+# ---------------------------------------------------------------- K13 TEHOL-tipi cöl benzerlik taramasi (v1.5)
+# CEMAL (24 Eki): "TEHOL'deki 7 Ekim - 16 Aralik 2024 bolgesi col; kod aynisini ayni hissede daha once gordu diyorsun, ben niye
+# goremiyorum?" Cevap olcuyle: referans kutunun olculeri sabit esiklere cevrilir, ayni hissede ve evrende aranir, en yakin ornekler
+# yan yana cizilir. Esikler TEHOL 2024 kutusundan (dusus -%69, 50 bar, kapanis bandi %17, mum normalin 0,71'i, dipler +%8,5).
+FI_K13_ESIK = {"dusus": -0.40, "bar": (30, 80), "bant": 0.25, "mum": 0.85, "u": 1.02, "egim": (-0.05, 0.30)}
+
+
+def fi_k13_olc(d: pd.DataFrame, i0: int, i1: int) -> Dict[str, float]:
+    """Kutu [i0, i1] olculeri: once 60 bar tepesinden dibe dusus, bar, kapanis bandi, mum (H-L / onceki kapanis medyani) ve bunun
+    hissenin kendi normaline (kutudan 60-310 bar once) orani, son 10 bar dibi / ilk 10 bar dibi (U), log egim (kutu boyunca)."""
+    c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    w = slice(i0, i1 + 1); n = i1 - i0 + 1
+    tepe = c[max(0, i0 - 60):i0].max() if i0 > 0 else np.nan
+    mum = np.median((h[w] - l[w]) / c[max(i0 - 1, 0):i1][: n]) if i0 > 0 else np.nan
+    a, b = max(0, i0 - 310), max(1, i0 - 60)
+    norm = np.median((h[a:b] - l[a:b]) / c[max(a - 1, 0):b - 1][: b - a]) if b - a > 50 and a > 0 else np.nan
+    return {"bar": n, "dusus": l[w].min() / tepe - 1 if tepe == tepe else np.nan, "bant": c[w].max() / c[w].min() - 1,
+            "mum_norm": mum / norm if norm == norm and norm > 0 else np.nan, "u": l[i1 - 9:i1 + 1].min() / l[i0:i0 + 10].min(),
+            "egim": float(np.polyfit(np.arange(n), np.log(c[w]), 1)[0] * n)}
+
+
+def fi_k13_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K13_ESIK) -> pd.DataFrame:
+    """Her hissede her gun t icin: dip j = [t-80, t-30] araligindaki en dusuk Low ve onceki 60 barin da dibi; dipten sonra yeni dip yok; kutu [j, t] butun
+    esikleri sagliyorsa aday. Ayni dip icin ilk gun olay (bilgi gunu = t, giris ertesi acilis). Donus: sembol, dip, t, olculer."""
+    sat: List[Dict[str, Any]] = []
+    b0, b1 = E["bar"]
+    for s, d in V.items():
+        try:
+            n = len(d)
+            if n < 400:
+                continue
+            l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
+            Lw = np.lib.stride_tricks.sliding_window_view(l, b1 - b0 + 1)          # pencere [t-b1, t-b0]
+            jrel = Lw.argmin(axis=1); jmin = Lw.min(axis=1)
+            sonmin = pd.Series(l).rolling(b0 - 1).min().to_numpy()                # [t-b0+2, t]
+            gorulen = set(); son_olay = -10 ** 9
+            for t in range(max(b1, 320), n):
+                k = t - b1
+                if k >= len(jrel):
+                    break
+                j = k + jrel[k]
+                if j in gorulen or not (sonmin[t] >= jmin[k]):
+                    continue
+                if j > 0 and l[j] > l[max(0, j - 60):j].min():                  # pencere kenari degil, gercek dip (60 bar)
+                    continue
+                if t - j + 1 < b0:
+                    continue
+                tepe = c[max(0, j - 60):j].max()
+                if l[j] / tepe - 1 > E["dusus"]:
+                    continue
+                if c[j:t + 1].max() / c[j:t + 1].min() - 1 > E["bant"]:
+                    continue
+                o = fi_k13_olc(d, j, t)
+                if not (o["mum_norm"] <= E["mum"] and o["u"] >= E["u"] and E["egim"][0] <= o["egim"] <= E["egim"][1]):
+                    continue
+                gorulen.add(j)
+                if t - son_olay < 60:                                         # ayni hissede 60 bar icinde tek olay
+                    continue
+                son_olay = t
+                sat.append({"sembol": s, "dip": d.index[j], "bilgi": d.index[t], **o})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K13 %s atlandi: %s", s, ex)
+    return pd.DataFrame(sat)
+
+
+def fi_k13_ozet(V: Dict[str, pd.DataFrame], O: pd.DataFrame, pazar: str, donemler: List[Tuple[str, str, str]]) -> pd.DataFrame:
+    """Olay ve taban (her hissenin her 5. gunu) icin K10 giris/sonuc mekanigi: k20 (60 barda once +%20 / -%10), dus (once -%20),
+    trail (uretim cikisi). Donem basina oran, kat ve trail ortalamasi."""
+    R = fi_k10_sonuc(V, O.sembol, O.bilgi) if len(O) else pd.DataFrame()
+    X = O.reset_index(drop=True).join(R, how="inner") if len(R) else O.iloc[0:0]
+    sat = []
+    for ad, b, e in donemler:
+        x = X[(X.bilgi >= b) & (X.bilgi <= e)]
+        T = fi_k10_taban(V, b, e)
+        r = {"pazar": pazar, "donem": ad, "n": len(x), "k20": x.k20.mean(), "k20_taban": T.k20.mean(), "dus": x.dus.mean(),
+             "dus_taban": T.dus.mean(), "trail": x.trail.mean(), "trail_taban": T.trail.mean()}
+        r["k20_kat"] = r["k20"] / r["k20_taban"] if r["k20_taban"] else np.nan
+        r["dus_kat"] = r["dus"] / r["dus_taban"] if r["dus_taban"] else np.nan
+        sat.append(r)
+    return pd.DataFrame(sat), X
+
+
+def fi_k12_ders3(VP: Dict[str, Dict[str, pd.DataFrame]], X: pd.DataFrame, Z: pd.DataFrame, yol: str, kod: str = "TEHOL",
+                 ref: Tuple[str, str] = ("2024-10-07", "2024-12-16"), ornek: int = 12) -> int:
+    """Ders 3 (Cemal, 24 Eki): 'Kod aynisini daha once gordu diyorsun, ben niye goremiyorum?' Referans kutunun olculeri (K13),
+    ayni hissede olculere uyan eski kutu, evrende en yakin ornekler (hisse adi yok; en yakinlar sonuctan bagimsiz secilir), test
+    sonucu (BIST/ABD x 3 donem, kat + 1,3 cizgisi). VP = {pazar: V}, X = K13 olaylari (pazar sutunlu, sonuc sutunlariyla), Z = ozet."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    AYLAR = ("Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara")
+
+    def tr(x) -> str:
+        x = pd.Timestamp(x)
+        return f"{x.day} {AYLAR[x.month - 1]} {x.year}"
+
+    def yazi(fig, y, baslik, satirlar, boy=10.5, gen=88):
+        fig.text(0.07, y, baslik, fontsize=15, weight="bold", va="top", color="#1f2a44"); y -= 0.045
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.024
+            y -= 0.006
+        return y
+
+    def kutu_ciz(ax, d, b, e, baslik, oncesi=70, sonrasi=60, kucuk=False):
+        i0 = d.index.get_loc(d.index[d.index >= pd.Timestamp(b)][0]); i1 = d.index.get_loc(d.index[d.index <= pd.Timestamp(e)][-1])
+        w = d.iloc[max(0, i0 - oncesi):min(len(d), i1 + sonrasi + 1)]
+        taban = d.Close.iloc[i0:i1 + 1].min()
+        ax.axvspan(d.index[i0], d.index[i1], color="#fff4d6", zorder=0)
+        ax.semilogy(w.index, w.Close / taban, color="#1f2a44", lw=0.9 if kucuk else 1.2)
+        ax.set_title(baslik, fontsize=8 if kucuk else 10)
+        ax.tick_params(labelsize=6 if kucuk else 8); ax.set_xticks([])
+        ax.axhline(1.0, color="#999", lw=0.6, ls=":")
+        ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}x"))
+        ax.yaxis.set_minor_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}x" if round(v, 2) in (0.5, 1.5, 2, 3, 5) else ""))
+
+    VB = VP.get("BIST", {}); d = VB.get(kod)
+    if d is None:
+        raise KeyError(f"{kod} fiyat verisinde yok")
+    i0 = d.index.get_loc(d.index[d.index >= pd.Timestamp(ref[0])][0]); i1 = d.index.get_loc(d.index[d.index <= pd.Timestamp(ref[1])][-1])
+    R = fi_k13_olc(d, i0, i1)
+    X = X.copy()
+    X["uzak"] = (abs(X.dusus - R["dusus"]) / 0.2 + abs(X.bar - R["bar"]) / 20 + abs(X.bant - R["bant"]) / 0.08
+                 + abs(X.mum_norm - R["mum_norm"]) / 0.15 + abs(X.u - R["u"]) / 0.05 + abs(X.egim - R["egim"]) / 0.1)
+    kendi = X[(X.sembol == kod) & (X.pazar == "BIST") & (X.bilgi < pd.Timestamp(ref[0]))]
+    diger = X[~((X.sembol == kod) & (X.pazar == "BIST"))].sort_values("uzak").head(ornek)
+    yil = max((X.bilgi.max() - X.bilgi.min()).days / 365.25, 1.0)
+    ZB = Z[Z.pazar == "BIST"]; XB = X[X.pazar == "BIST"]
+    yb, ya = (X.pazar == "BIST").sum() / yil, (X.pazar == "ABD").sum() / yil
+    k20b = XB.k20.mean() if "k20" in XB and len(XB) else np.nan
+    k20t = float((ZB.k20_taban * ZB.n).sum() / ZB.n.sum()) if len(ZB) and ZB.n.sum() else np.nan
+    kat = lambda m: f"{ZB[m].min():.2f}–{ZB[m].max():.2f}".replace(".", ",") if len(ZB) else "?"
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        nb = int((X.pazar == "BIST").sum()); na = int((X.pazar == "ABD").sum())
+        yazi(fig, 0.95, "DERS 3: SENİN GÖRDÜĞÜN ÇÖL NE, KOD NE GÖRDÜ?", [
+            "Haklısın, önceki sözüm fazlaydı. Kodun (D13) TEHOL'de 'daha önce gördüğü' kutuların çoğu senin bölgenin AYNISI değildi: "
+            "D13 gevşek bir kural (dip savunuldu + dipler yükseliyor + küçük mum öbekleri). Çoğu uzun ve geniş bantlı yükseliş parçalarıydı. "
+            "COL_GOZ'da da görmüştük: kodun kutularının ancak %6'sı gözle çöl çıkıyordu.",
+            "",
+            f"Bu kez SENİN bölgeni ({tr(ref[0])} – {tr(ref[1])}) ölçtüm ve aynı ölçülerle aradım:",
+            f"- Öncesinde düşüş: %{100 * R['dusus']:.0f} (60 günlük tepeden dibe)",
+            f"- Süre: {R['bar']} işlem günü; kapanış bandı: %{100 * R['bant']:.0f} (en yüksek / en düşük kapanış)",
+            f"- Mum boyu: hissenin kendi normalinin {R['mum_norm']:.2f}'i (küçük mum)",
+            f"- Dipler: son 10 günün dibi ilk 10 günün dibinden %{100 * (R['u'] - 1):.1f} yukarıda (U); bütün kutu eğimi %{100 * R['egim']:+.0f}",
+            "",
+            f"Arama eşikleri (sabit): düşüş ≤ -%40, 30–80 gün, bant ≤ %25, mum ≤ normalin 0,85'i, dipler ≥ +%2, eğim -%5 ile +%30 arası.",
+            "",
+            "Sonuç:",
+            f"- TEHOL'de 2024 öncesi bu ölçülere uyan TEK bölge var: {', '.join(tr(x) for x in kendi.dip) if len(kendi) else 'yok'} "
+            "dibinden sonraki taban (sayfa 2).",
+            f"- Bütün BIST'te 2016–2026 arasında {nb}, ABD'de {na} kez. Yılda BIST'te ~{yb:.0f} kez görürsün (sayfa 3–4).",
+            "- AMA BIST'te sonrasını ayırmıyor: önce +%20 gelme oranı sıradan günle aynı (sayfa 5). ABD'de iki yöne de oynaklık artıyor.",
+        ], boy=10)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, f"{kod}: 2024 BÖLGESİ VE AYNI ÖLÇÜLERE UYAN ESKİ BÖLGE", [
+            "Sarı bant = taban. Fiyat tabanın en düşük kapanışına bölündü (aynı ölçek). Bantın solu düşüş, sağı sonrası (60 gün)."], boy=10)
+        ax = fig.add_axes([0.10, 0.50, 0.85, 0.33]); kutu_ciz(ax, d, ref[0], ref[1], f"{kod} {tr(ref[0])} – {tr(ref[1])} (senin bölgen)")
+        if len(kendi):
+            k = kendi.iloc[0]
+            ax2 = fig.add_axes([0.10, 0.08, 0.85, 0.33])
+            kutu_ciz(ax2, d, k.dip, k.bilgi, f"{kod} {tr(k.dip)} – {tr(k.bilgi)} (aynı ölçüler; düşüş %{100 * k.dusus:.0f}, "
+                                            f"bant %{100 * k.bant:.0f}, mum {k.mum_norm:.2f})")
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        for parca in (diger.iloc[:6], diger.iloc[6:12]):
+            if not len(parca):
+                continue
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, "AYNI ÖLÇÜLERE EN YAKIN ÖRNEKLER (hisse adı yok)", [
+                "Sıralama yalnız ölçü benzerliğine göre; sonuca bakılmadan seçildi. Başlıkta: pazar-yıl, sonra 60 günde önce ne geldi."],
+                boy=10)
+            for kk, r in enumerate(parca.itertuples()):
+                V_ = VP.get(r.pazar, {}); dd = V_.get(r.sembol)
+                if dd is None:
+                    continue
+                sonuc = "önce +%20" if r.k20 == 1 else ("önce -%20" if r.dus == 1 else "yatay / -%10")
+                ax = fig.add_axes([0.08 + (kk % 2) * 0.46, 0.62 - (kk // 2) * 0.27, 0.40, 0.21])
+                kutu_ciz(ax, dd, r.dip, r.bilgi, f"{r.pazar} {pd.Timestamp(r.bilgi).year} — {sonuc}", oncesi=60, sonrasi=60, kucuk=True)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        if len(Z):
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, "TEST: BU ŞEKİLDEN SONRA NE GELİYOR?", [
+                "Olay = ölçülere uyan bölge (aynı hissede 60 günde bir). Giriş: bilgi gününün ertesi açılış. Çubuk = olayın oranı / "
+                "sıradan günün (her hissenin her 5. günü) oranı. Üst: 60 günde önce +%20 (önce -%10 değil). Alt: 60 günde önce -%20.",
+                "İz için iki dönemde ve ABD'de üstte 1,3'ü geçmeli, altta artmamalı. BIST: yukarı kat " + kat("k20_kat") + ". ABD: iki yön "
+                "birden artıyor = oynaklık, yön değil."], boy=10)
+            for kk, (m, bas_) in enumerate((("k20_kat", "önce +%20, kat"), ("dus_kat", "önce -%20, kat"))):
+                ax = fig.add_axes([0.12, 0.47 - kk * 0.36, 0.83, 0.28])
+                et = [f"{p} {dn}\nn={int(n)}" for p, dn, n in zip(Z.pazar, Z.donem, Z.n)]
+                ax.bar(range(len(Z)), Z[m], color=["#1f2a44" if p == "BIST" else "#7f8fa6" for p in Z.pazar])
+                ax.axhline(1.0, color="#999", lw=1); ax.axhline(1.3, color="#c0392b", lw=2, ls="--")
+                ax.set_xticks(range(len(Z))); ax.set_xticklabels(et, fontsize=7); ax.set_ylabel(bas_)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "DERSİN ÖZETİ", [
+            "- Neden göremedin: kodun D13 kuralı senin gözünden çok gevşek. 'Kod buldu' demek 'senin çölünün aynısı' demek değil. "
+            "Bundan sonra karşılaştırmayı hep ÖLÇÜYLE yapacağım: senin işaretlediğin bölgenin ölçüleri → sabit eşik → arama → yan yana grafik.",
+            f"- Senin bölgen nadir ama tekrar ediyor: TEHOL'de bir kez daha (2021), BIST'te yılda ~{yb:.0f}, ABD'de ~{ya:.0f} kez.",
+            "- Bu şekil BIST'te yukarı kırılımı önceden haber vermiyor (kat " + kat("k20_kat") + "); aşağı risk sıradan günden düşük "
+            "ya da aynı (önce -%20 kat " + kat("dus_kat") + "). "
+            "Yani 'kolay kolay dibi kırılmayan sakin taban' diyebiliriz, 'sonra uçar' diyemeyiz.",
+            f"- TEHOL'deki büyük yükseliş bu şekilden okunamazdı: aynı şekli taşıyan BIST bölgelerinin %{100 * k20b:.0f}'i 60 günde önce +%20 gördü, "
+            f"sıradan günlerde de oran %{100 * k20t:.0f}. Fon alımları TEHOL'de yükselişin içinde geldi (Ders 2).",
+            f"- Senin gözün ölçülerden fazlasını görüyor olabilir (ör. sektör rüzgârı, haber). İstersen bu {len(XB)} BIST örneğini adsız "
+            "işaretleme sayfası yapayım: hangilerini 'çöl' sayıyorsun, ayıran ne, onu ölçelim.",
+        ], boy=10)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame, ek_muaf: int = 0) -> str:
     """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26).
     ek_muaf: indirme sirasinda 'muaf' isaretlenen (tabloya hic girmeyen) rapor sayisi."""
@@ -2410,6 +2626,35 @@ def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.Data
            "## Iz karari (BIST; ABD karsiligi bu turda kurulmadi)", "", pd.DataFrame(iz).to_markdown(index=False), "",
            "## Ayrinti", "", Oz[[c for c in kolon if c in Oz]].round(3).to_markdown(index=False), ""]
     return "\n".join(sat)
+
+
+FI_K13_DONEM = [("2016-22", "2016-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31")]
+
+
+def fon_izi_k13(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K13 surucu (Ders 3): TEHOL 7 Eki - 16 Ara 2024 tabaninin olculeriyle sabit esikli arama (BIST + ABD, 3 donem), sonuc testi,
+    olay/ozet CSV ve FON_IZI_ders3_col_olcu.pdf."""
+    A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
+    VP, Xs, Zs = {}, [], []
+    for pazar in ("BIST", "ABD"):
+        try:
+            VP[pazar] = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K13 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        O = fi_k13_tara(VP[pazar])
+        Z, X = fi_k13_ozet(VP[pazar], O, pazar, FI_K13_DONEM)
+        filog.info("K13 %s: %d olay", pazar, len(O))
+        Xs.append(X.assign(pazar=pazar)); Zs.append(Z)
+    if not Xs:
+        raise RuntimeError("K13: hicbir pazar verisi okunamadi")
+    X = pd.concat(Xs, ignore_index=True); Z = pd.concat(Zs, ignore_index=True)
+    X.to_csv(os.path.join(A.cikti, "k13_tehol_tipi_olaylar.csv"), index=False)
+    Z.to_csv(os.path.join(A.cikti, "k13_tehol_tipi_ozet.csv"), index=False)
+    try:
+        fi_k12_ders3(VP, X, Z, os.path.join(A.cikti, "FON_IZI_ders3_col_olcu.pdf"))
+    except Exception as ex:
+        filog.error("K13 ders PDF uretilemedi: %s", ex)
+    return {"olay": X, "ozet": Z}
 
 
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
@@ -2564,6 +2809,11 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "k10":           # v1.5: fon girisi testi + fon defteri
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
         _R = fon_izi_k10()
+        print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k13":           # TEHOL tipi taban olcusu (Ders 3)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k13()
         print(_R["ozet"].round(3).to_string(index=False))
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
