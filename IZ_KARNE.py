@@ -195,8 +195,9 @@ IK_KAYIT: List[Dict[str, Any]] = [
        "İZ DEĞİL (BIST'e özgü)", "IZ C", 2, cikti="arastirma_cikti/col_kazanc", notu="Üretim yolu içi ölçüm; olay cetveli değil."),
     _ik_k("Ç47", "2026-10-21", "D13 tespit motoru (COL_TESPIT, col_dip2)", "COL_TESPIT.py, COL_v1.py", "Cemal'in 3 kuralıyla tespit",
        "Tespit bulgusu: alım oranı +12..26p 6/6; iz değil", "IZ C", 2, "d13", "yukari", "arastirma_cikti/col_tespit",
-       "Denetim 24 Eki: ABD olayları dosyada vardı ('.US' ekli), adaptör okumuyordu → düzeltildi. 'Alım +12..26p' tabanı "
-       "mekanikti (taban kutusu dibe/tavana uzak); mesafe-eşli tabanda alım farkı −2..+3p, bozulma ~0,5 kat."),
+       "Denetim 24 Eki: ABD olayları dosyada vardı ('.US' ekli), adaptör okumuyordu → düzeltildi (ABD 2023 0,97, 2024-26 0,98). "
+       "COL_TESPIT v1.1 yeniden koşum: mesafe-eşli tabana göre alım farkı +0,5..+3,8p (ham +11..+26p mekanikti), bozulma eşli "
+       "tabanın 0,3-0,65'i; seçim ölçütü 'alım > taban+10p, 4/4' artık 3456 varyantın hiçbirinde tutmuyor. Göz testi 17/29, 2/29 aynı."),
     _ik_k("Ç48", "2026-10-21", "COL_GOZ (746 kutu gözle) + Cemal kararı", "goz_esle/arastirma", "Kodun kutuları gözle çöl mü?",
        "%6 çöl; etiket 'atılım geldi mi' etiketi", "COL_OZET §9.8", 0, cikti="arastirma_cikti/col_goz"),
     _ik_k("Ç49", "2026-10-22", "MUM_SUKUN v1.1 hisseye özel mum küçülmesi", "MUM_SUKUN.py", "Düşüş sonrası sakin 3-4 mum",
@@ -1132,8 +1133,8 @@ IK_DENETIM_SAYI: Dict[str, Any] = {
     "t10": {"BIST": {"önce": (156.8, 144.0), "sonra": (144.1, 154.6)}, "ABD": {"önce": (17.0, 21.4), "sonra": (0.3, 6.2)}},
     "obek_alim": {"donem": ["2016-19", "2020-22", "2023", "2024-26"], "obek": [70, 78, 67, 71], "taban": [53, 62, 53, 48],
                   "esli": [67, 76, 70, 67]},
-    "d13_boz": {"donem": ["BIST 16-19", "BIST 20-22", "BIST 2023", "BIST 24-26", "ABD 22-23", "ABD 24-26"], "d13": [8, 6, 2, 9, 8, 9],
-                "taban": [35, 31, 41, 44, 42, 37], "esli": [13, 12, 8, 16, 16, 13]},
+    "d13_boz": {"donem": ["BIST 16-19", "BIST 20-22", "BIST 2023", "BIST 24-26", "ABD 22-23", "ABD 24-26"], "d13": [8.5, 5.8, 2.4, 9.3, 10.5, 8.2],
+                "taban": [35, 31, 41, 44, 42, 37], "esli": [13.3, 12.4, 8.4, 15.8, 16.0, 13.3]},     # COL_TESPIT v1.1 yeniden kosum
     "duzgun_dus": {"hucre": ["BIST 16-22", "BIST 2023", "BIST 24-26", "ABD 16-22", "ABD 2023", "ABD 24-26"],
                    "önce": [1.92, 1.00, 1.14, 1.32, 1.26, 1.23], "sonra": [1.30, 0.75, 0.93, 1.10, 1.07, 1.07]},
 }
@@ -1217,7 +1218,8 @@ def ik_ders_denetim(ay: IKAyar, yol: Optional[str] = None) -> str:
             "- 1) T10'un 'portföyü artırır' gerekçesi tersine döndü (BIST +144 vs +155, ABD 0 vs +6). Kalan tek etkisi ağır kaybı "
             "azaltması (%9 → %5). Yani T10 bir getiri kuralı değil, bir sigorta: daha az kazanç karşılığı daha az ağır zarar.",
             "- 2) Öbek 'alım gelir mi' sorusuna da cevap vermiyor: aynı uzaklıktaki sıradan kutuyla fark −3..+4 puan.",
-            "- 3) D13'ün bozulma üstünlüğü küçüldü (yaklaşık yarı kat, 1/5 değil); 'alım oranı +12..26 puan' mekanikti.",
+            "- 3) D13'ün bozulma üstünlüğü küçüldü (eşli tabanın 0,3-0,65'i, 1/5 değil); 'alım oranı +12..26 puan' mekanikti (eşli "
+            "fark +0,5..+3,8). D13'ü seçtiren ölçütü artık hiçbir varyant geçmiyor; üretimde kalması senin kararın.",
             "- 4) 'Çok test edilen dip daha sık kırılıyor' gözlemi kontrol grubu hatasındandı; düzeltince tutarlı değil.",
         ], boy=8.8)
         pdf.savefig(fig); plt.close(fig)
