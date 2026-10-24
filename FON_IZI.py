@@ -55,7 +55,7 @@
 #    veren sirketlerde gun gun alim/satim lotu ve borsa hacmindeki payi; vaka PDF'i.
 #  KURAL_MOTORU: K1 veri+duzeltme  K2 gunluk/pencere olculeri  K3 vaka fazlari  K4 evren olaylari + ozet  K5 rapor
 #                K6 gosterge/uyumsuzluk/Fibonacci  K7 blok hacim  K8 KAP olaylari (v1.2: fon_izi_gosterge)
-#                K9 KAP fon raporlari  K10 fon girisi testi  K11 fon defteri (v1.5: fon_izi_k10)
+#                K9 KAP fon raporlari  K10 fon girisi testi  K11 fon defteri  K12 ders PDF'i (v1.5: fon_izi_k10)
 #  Calistirma: FI_VERI_BIST=... FI_VERI_ABD=... python FON_IZI.py   (v1.2: ... FI_KAP=<kap_ozet klasoru> python FON_IZI.py gosterge)
 #    v1.5: FI_KAPFON=<klasor> python FON_IZI.py k9indir  (~5,5 saat, KAP hiz siniri; kaldigi yerden devam eder)
 #          FI_KAPFON=... FI_ISY=<Is Yatirim temel degerler HTML> FI_KAP=... FI_VERI_BIST=... python FON_IZI.py k10  (~11 dk)
@@ -2023,6 +2023,214 @@ def fi_k11_grafik(MA: pd.DataFrame, D: pd.DataFrame, V: Dict[str, pd.DataFrame],
     return sayfa
 
 
+# ---------------------------------------------------------------- K12 ders PDF'i (v1.5)
+# CEMAL (24 Eki): "Fon izi nasil bir iz, ben bunu grafiklerde gorebilir miyim? Her yeni buldugun iz icin bana da ders ver."
+def fi_k12_ders(V: Dict[str, pd.DataFrame], MA: pd.DataFrame, D: pd.DataFrame, kos: pd.DataFrame, Oz: pd.DataFrame, yol: str) -> int:
+    """Fon izi dersi (A4 dikey, telefonda okunur): iz nedir, nerede saklanir, uc vaka grafigi (TEHOL ay ay pay, OZATD blok gunleri,
+    IEYHO gun gun fon alimi), grafikte gorunen / gorunmeyen, test sonucu (kat cubuklari, 1,3 cizgisi), kendin nasil bakarsin.
+    Sayilar cikti tablolarindan okunur (MA = k11_aylik_birikim, D = k11_defter_gunluk, Oz = k10_ozet). Donus: sayfa sayisi."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    renk = {"ONCE": "#e8eef7", "ERKEN": "#e6f4ea", "KOSU": "#fff4d6", "COKUS": "#fbe3e3"}
+    ad = {"ONCE": "dip öncesi", "ERKEN": "dip → 2 kat", "KOSU": "2 kat → tepe", "COKUS": "çöküş"}
+    A4 = (8.27, 11.69)
+
+    def yazi(fig, y, baslik, satirlar, boy=10.5, gen=88):
+        fig.text(0.07, y, baslik, fontsize=15, weight="bold", va="top", color="#1f2a44"); y -= 0.045
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.024
+            y -= 0.006
+        return y
+
+    def fazlar(ax, s, d):
+        k = kos[kos.sembol == s]
+        if not len(k):
+            return
+        dip, x2, tepe = (pd.Timestamp(k.iloc[0][c]) for c in ("dip", "x2", "tepe"))
+        for b, e, f in ((d.index.min(), dip, "ONCE"), (dip, x2, "ERKEN"), (x2, tepe, "KOSU"), (tepe, d.index.max(), "COKUS")):
+            if e > b:
+                ax.axvspan(b, e, color=renk[f], zorder=0)
+                ax.text(b, 0.98, " " + ad[f], transform=ax.get_xaxis_transform(), fontsize=7.5, va="top", color="#555")
+
+    def pay_serisi(s):
+        a = MA[MA.kod == s].copy(); a["t"] = pd.to_datetime(a.ay + "-01") + pd.offsets.MonthEnd(0)
+        ps = a.set_index("t").pay_sermaye.fillna(0)
+        return ps.reindex(pd.date_range(ps.index.min(), ps.index.max(), freq="ME"), fill_value=0.0)
+
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        # 1) ozet
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.95, "DERS: FON İZİ NEDİR?", [
+            "Kısa cevap: fonun izi FİYAT GRAFİĞİNDE değil, SAHİPLİK KAYDINDA. Fon bir hisseyi aldığında bunu her ay KAP'taki "
+            "'Portföy Dağılım Raporu'nda yazar. Rapor ay bitiminden yaklaşık 1 hafta sonra (medyan 7 gün) yayımlanır.",
+            "",
+            "5 cümlede fon izi:",
+            "- 1) Tasfiye fonları 23 hissede sermayenin %37'sine kadar pay topladı (TEHOL, OZATD, IEYHO, TRHOL...). Rakamlar basınla aynı.",
+            "- 2) Bu payı KOŞU fazında topladılar: 23 hissenin 21'inde net alımın en az %80'i fiyat dipten 2 kat olduktan sonra geldi.",
+            "- 3) Payın sermayenin %5'ini geçtiği ay fiyat dipten medyan 11,9 kat yukarıdaydı (4 ile 84 kat arası).",
+            "- 4) Dipteki ilk toplama raporlarda YOK: savcılık anlatımına göre hisseler önce kişisel hesaplarda toplandı, sonra fonlara satıldı.",
+            "- 5) Bütün BIST'te 'fon girdi' bilgisiyle alım yapmak (rapor yayınının ertesi günü) para kazandırmadı: kat 0,8-1,1.",
+            "",
+            "Bu derste:",
+            "- Sayfa 2: iz nerede saklanıyor (akış şeması)",
+            "- Sayfa 3-5: üç vaka grafiği (ay ay fon payı, blok günleri, gün gün fon alımı)",
+            "- Sayfa 6: grafikte ne görürsün, ne göremezsin",
+            "- Sayfa 7: test sonucu (neden 'iz değil' dedik)",
+            "- Sayfa 8: kendin nasıl bakarsın + dersin özeti",
+        ])
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 2) akis
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "İZ NEREDE SAKLANIYOR?", [
+            "Paranın yolu dört adımdır. İlk adım hiçbir kamu kaydında yok; ikinci ve üçüncü adım KAP raporlarında var; dördüncü adım "
+            "grafikte çöküş olarak görünür."])
+        ax = fig.add_axes([0.05, 0.12, 0.9, 0.72]); ax.axis("off"); ax.set_xlim(0, 1); ax.set_ylim(0, 1)
+        kutular = [
+            (0.86, "1) DİPTE TOPLAMA", "Fon sahipleri hisseyi kişisel hesaplarında topluyor.\nGÖRÜNMEZ: fon raporu yok; yalnız aracı kurum dağılımı (AKD, ücretli).", "#e8eef7"),
+            (0.62, "2) FONA DEVİR", "Hisseler fonlara satılıyor (blok günler: OZATD 14 May 2026 13,6 mn lot).\nGÖRÜNÜR: aylık fon raporu + bazen tek günde dev hacim.", "#fff4d6"),
+            (0.38, "3) FON PAYI BÜYÜR", "Fonun payı sermayenin %5-37'sine, halka açık kısmın çoğunluğuna çıkar.\nGÖRÜNÜR: her ay KAP'ta, ~1 hafta gecikmeyle. %5 eşiğinde pay bildirimi.", "#fff4d6"),
+            (0.14, "4) TEK ALICI ÇEKİLİR", "Fon tasfiyeye girer, satıcı kalır, alıcı yok.\nGRAFİKTE GÖRÜNÜR: taban serisi, -%85..-98.", "#fbe3e3")]
+        for yk, bas, metin, rk in kutular:
+            ax.add_patch(plt.Rectangle((0.05, yk - 0.09), 0.9, 0.18, facecolor=rk, edgecolor="#1f2a44", lw=1.2))
+            ax.text(0.08, yk + 0.055, bas, fontsize=12, weight="bold", va="center")
+            ax.text(0.08, yk - 0.02, metin, fontsize=9.5, va="center")
+            if yk > 0.2:
+                ax.annotate("", xy=(0.5, yk - 0.14), xytext=(0.5, yk - 0.095), arrowprops=dict(arrowstyle="->", lw=2))
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 3) TEHOL ay ay pay
+        for s, baslik, notlar in (
+                ("TEHOL", "VAKA 1 — TEHOL: fon payı bir ayda ortaya çıkıyor",
+                 ["Üst panel: fiyat (log). Renkli bantlar: fazlar. Alt panel: raporlu tasfiye fonlarının SERMAYE payı (ay sonu).",
+                  "Nisan 2025 raporunda fonların payı birden ortaya çıkıyor; o ay fiyat dipten ~10,6 kat yukarıda (KOŞU). Dipte (Ekim 2024) "
+                  "pay sıfıra yakın. Kasım 2025'te raporlu pay düşüyor (fonlar sattı ya da paylar rapor vermeyen fonlara geçti). "
+                  "Yani fon izi fiyat grafiğinde değil, alt paneldeki rapor serisinde; ve geç geliyor."]),
+                ("OZATD", "VAKA 2 — OZATD: blok günleri + fon payı",
+                 ["Orta panel: günlük hacim (kırmızı = önceki 20 gün medyanının 20 katından büyük blok gün).",
+                  "30 Nis ve 14 May 2026 blok günleri ile Mayıs raporunda fon payının sermayenin ~%26'sına çıkması aynı ay. Blok günü "
+                  "grafikte GÖRÜNÜR ama fiyat zaten dipten ~5 kat yukarıdaydı; ve aynı büyüklükte blok günler fon olmayan pek çok hissede de var."])):
+            d = V.get(s)
+            if d is None or s not in set(MA.kod):
+                continue
+            ps = pay_serisi(s); d = d[d.index >= ps.index.min() - pd.Timedelta(days=200)]
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, baslik, notlar, boy=10)
+            ax = fig.add_axes([0.11, 0.50 if s == "TEHOL" else 0.56, 0.84, 0.27 if s == "TEHOL" else 0.21])
+            fazlar(ax, s, d); ax.semilogy(d.index, d.Close, color="#1f2a44", lw=1.1); ax.set_ylabel("fiyat (log)")
+            if s == "OZATD":
+                axv = fig.add_axes([0.11, 0.36, 0.84, 0.17], sharex=ax)
+                med = d.Volume.shift(1).rolling(20).median(); blok = d.Volume >= 20 * med
+                axv.bar(d.index, d.Volume / 1e6, color=np.where(blok, "#c0392b", "#9aa5b1"), width=1.5)
+                axv.set_ylabel("hacim (mn lot)")
+                for t in d.index[blok]:
+                    axv.annotate(t.strftime("%d %b %Y"), (t, d.Volume[t] / 1e6), fontsize=7, rotation=90, va="bottom", ha="center")
+                axp = fig.add_axes([0.11, 0.08, 0.84, 0.24], sharex=ax)
+            else:
+                axp = fig.add_axes([0.11, 0.10, 0.84, 0.33], sharex=ax)
+            axp.bar(ps.index, 100 * ps.to_numpy(), width=25, color="#c0392b")
+            axp.set_ylabel("fon payı, sermayenin %'si"); axp.grid(alpha=0.3)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 5) IEYHO gun gun
+        s = "IEYHO"; d = V.get(s); g = D[(D.kod == s)].copy() if len(D) else pd.DataFrame()
+        if d is not None and len(g):
+            g["tarih"] = pd.to_datetime(g.tarih); g = g.set_index("tarih")
+            bas = pd.Timestamp("2025-06-01"); bit = pd.Timestamp("2026-01-31")
+            dd = d[(d.index >= bas) & (d.index <= bit)]; gg = g[(g.index >= bas) & (g.index <= bit)]
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, "VAKA 3 — IEYHO: fon hangi gün kaç lot aldı?", [
+                "İşlem dökümü veren şirketlerde (Atlas tam; Tera hiç) fonun her alımı gün gün var. Alt panel: fonun o gün aldığı lot / "
+                "borsanın o günkü toplam hacmi.",
+                "Eylül 2025'te Atlas fonları 78 mn lot aldı; en büyük gün 22 Eyl: 15,4 mn lot = günlük hacmin %13'ü. Fiyat o sırada dipten "
+                "3-6 kat yukarıda (KOŞU). Günlük payı %10-20 olan alıcı grafikte 'özel bir mum' bırakmıyor: hacim zaten yüksek, "
+                "fiyat zaten yükseliyor."], boy=10)
+            ax = fig.add_axes([0.11, 0.47, 0.84, 0.28]); fazlar(ax, s, dd)
+            ax.plot(dd.index, dd.Close, color="#1f2a44", lw=1.1); ax.set_ylabel("fiyat")
+            al = gg[gg.fon_alis > 0]
+            ax.scatter(al.index, dd.Close.reindex(al.index), marker="^", color="#1e8449", s=22, zorder=5, label="fon alım günü")
+            ax.legend(loc="upper left", fontsize=8)
+            axp = fig.add_axes([0.11, 0.10, 0.84, 0.31], sharex=ax)
+            axp.bar(gg.index, 100 * (gg.fon_alis / gg.hacim.where(gg.hacim > 0)).fillna(0), color="#1e8449", width=1.5)
+            axp.set_ylabel("fon alımı, günlük hacmin %'si"); axp.grid(alpha=0.3); ax.set_xlim(bas, bit)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 6) gorunen / gorunmeyen
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "GRAFİKTE NE GÖRÜRSÜN, NE GÖREMEZSİN?", [
+            "GÖRÜRSÜN (fon hissesinin KOŞU görüntüsü):",
+            "- Taban günü yok, geri çekilmeler sığ (medyan -%19), log grafikte aylarca düz çizgi gibi yükseliş.",
+            "- Kilitli tavan serileri, RSI>70, Bollinger üst bant kırılımları, borsanın 'olağan dışı fiyat' sorusu ve VBTS tedbiri.",
+            "- Bazen tek günde dev hacim (blok devir: OZATD 14 May 2026, TRHOL 10 Oca 2025 192 kat hacim).",
+            "",
+            "AMA: bu görüntü fon olmayan yüzlerce yükselen hissede de var. Aynı görüntüden sonra 2 kat görme oranı BIST'te izsiz "
+            "yükselişle aynı (kat 1,09-1,19), ABD'de daha kötü (0,38-0,55). Görüntü 'yükselen hisse' demek, 'fon topluyor' demek değil.",
+            "",
+            "GÖREMEZSİN:",
+            "- Dipteki ilk toplama (kişisel hesaplar): fon raporunda yok, grafikte de özel bir iz yok (sessiz yuvarlanma bölgesinde hacim "
+            "hatta KURUYOR: kendi normalinin %57'si).",
+            "- Kimin aldığı: fiyat-hacim, alıcının kim olduğunu söylemez. Bunu yalnız sahiplik kaydı (fon raporu, KAP pay bildirimi) ve "
+            "aracı kurum dağılımı (AKD, ücretli) söyler.",
+            "",
+            "PRATİK SONUÇ: Grafikte 'fon geliyor' diye alım işareti aranmaz. Fon payı raporda yüksekse bu bir RİSK bilgisidir: tek alıcı "
+            "çekilirse taban serisi gelir (TERA -88, DSTKF -90). COL_v1'deki D8 fon süzgeci tam bunu yapar.",
+        ], boy=10)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 7) test sonucu
+        if len(Oz):
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.95, "TEST: 'FON GİRDİ' BİLGİSİYLE ALSAYDIN?", [
+                "Bütün BIST, 22.600 fon raporu. Rapor KAP'ta yayımlandıktan sonraki gün açılışta alım, üretimdeki çıkış kuralı. "
+                "Çubuk = 60 günde önce +%20'yi görme oranı / aynı ay ve aynı momentumdaki diğer hisselerin oranı (eşli kat). "
+                "İz sayılması için iki dönemde de 1,3 çizgisini geçmeli. Soluk çubuk = 100'den az olay (güvenilmez).", "",
+                "Sonuç: bol olaylı hiçbir çubuk çizgiye yaklaşmıyor. Tek yaklaşan 'pay sermayenin %10'unu aştı' 2024-26: yalnız 26 olay, "
+                "2023'te 2 olay; büyük kazançların hepsi zaten fon hisselerinden (OZATD, PASEU, GUNDG). Fon çıkışı da düşüşü haber "
+                "vermiyor (önce -%20 kat 0,89-0,96)."], boy=10)
+            ax = fig.add_axes([0.25, 0.08, 0.68, 0.56])
+            x = Oz[Oz.varyant != "cikis"].copy()
+            etiket = {"giris": "fon girişi", "ilk": "ilk kez giriş", "cok": "aynı ay 2+ fon", "buyuk": "büyük giriş (≥%3)",
+                      "artis": "toplu artış ≥%50", "tasfiye": "tasfiye şirketi girişi", "yogun5": "pay sermayenin %5'ini aştı",
+                      "yogun10": "pay sermayenin %10'unu aştı"}
+            sira = [v for v in etiket if v in set(x.varyant)]
+            yk = np.arange(len(sira))
+            for j, (dn, rk) in enumerate((("2023", "#7f8fa6"), ("2024-26", "#1f2a44"))):
+                deg = [x[(x.varyant == v) & (x.donem == dn)].k20_kat_esli.mean() for v in sira]
+                nn = [int(x[(x.varyant == v) & (x.donem == dn)].n.sum()) for v in sira]
+                ax.barh(yk + (0.2 if j == 0 else -0.2), deg, height=0.38, color=rk, label=dn)
+                for yy, dv, n_ in zip(yk + (0.2 if j == 0 else -0.2), deg, nn):   # 100'den az olay: soluk (guvenilmez)
+                    if n_ < 100 and dv == dv:
+                        ax.barh(yy, dv, height=0.38, color="white", alpha=0.65)
+                for yy, dv, n_ in zip(yk + (0.2 if j == 0 else -0.2), deg, nn):
+                    ax.text((dv if dv == dv else 0) + 0.02, yy, f"n={n_}", va="center", fontsize=7)
+            ax.axvline(1.0, color="#999", lw=1); ax.axvline(1.3, color="#c0392b", lw=2, ls="--")
+            ax.text(1.31, len(sira) - 0.4, "iz sınırı 1,3", color="#c0392b", fontsize=8)
+            ax.set_yticks(yk); ax.set_yticklabels([etiket[v] for v in sira], fontsize=9); ax.invert_yaxis()
+            ax.set_xlabel("eşli kat (1 = sıradan hisseyle aynı)"); ax.legend(loc="lower right", fontsize=8); ax.set_xlim(0, 1.8)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        # 8) kendin bak + ozet
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "KENDİN NASIL BAKARSIN?", [
+            "- KAP > Bildirim Sorgu > Fon bildirimleri > konu 'Portföy Dağılım Raporu' > fonu seç. Rapor her ay, ay bitiminden ~1 hafta "
+            "sonra çıkar. 'III-FON PORTFÖY DEĞERİ TABLOSU' bölümünde hisse kodu ve NOMİNAL = lot sayısı.",
+            "- Hisse sayfasında (KAP > şirket > bildirimler) 'Pay Alım Satım Bildirimi': bir yatırımcı %5, 10, 15, 20, 25, 33, 50 eşiklerini "
+            "geçince bildirir. Fonun payının hızla büyüdüğü en erken burada görünür.",
+            "- Dikkat: yalnız nitelikli yatırımcıya satılan serbest fonlar rapor vermez (Pardus, A1, Pusula serbest fonları). Onlar görünmez.",
+            "- Ben her ay yeni raporları 10 dakikada ekleyebilirim; istersen 'fon payı yüksek hisseler' listesini her ay çıkarırım "
+            "(üretime almak senin 'yaz' kararın).",
+            "",
+            "DERSİN ÖZETİ",
+            "- İz nedir? Bir ölçünün sonrasını ayırması: iki dönemde (2023, 2024-26) ve ABD'de, sabit eşikle, aynı koşuldaki sıradan "
+            "hisseye göre en az 1,3 kat. Tek vakada görmek iz değildir.",
+            "- Fon izi var ama SAHİPLİKTE; fiyat grafiğinde yok. Fonlar fiyatı yükselmiş hisseye giriyor; 'fon girdi' bilgisi alım "
+            "işareti değil.",
+            "- Fon payı yüksek hisse = tek alıcı riski. Kullanımı: kaçınma / pozisyon boyutu, alım değil.",
+            "- Dipteki asıl toplama elde yok (kişisel hesaplar). Günlük kesinlik için AKD gerekir (ücretli).",
+        ], boy=10)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame, ek_muaf: int = 0) -> str:
     """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26).
     ek_muaf: indirme sirasinda 'muaf' isaretlenen (tabloya hic girmeyen) rapor sayisi."""
@@ -2105,6 +2313,10 @@ def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
         fi_k11_grafik(MA, D, V, kos, os.path.join(A.cikti, "FON_IZI_fon_birikim.pdf"))
     except Exception as ex:   # grafik bozulursa tablolar yine yazilir
         filog.error("birikim grafigi cizilemedi: %s", ex)
+    try:
+        fi_k12_ders(V, MA, D, kos, Oz, os.path.join(A.cikti, "FON_IZI_ders.pdf"))
+    except Exception as ex:   # ders bozulursa tablolar yine yazilir
+        filog.error("ders PDF'i cizilemedi: %s", ex)
     return {"P": P, "I": I, "K": K, "G": G, "olaylar": E, "taban": B, "ozet": Oz, "defter": D, "faz": Z, "aylik": M, "kapsam": kap,
             "birikim": MA, "birikim_ozet": MZ}
 
