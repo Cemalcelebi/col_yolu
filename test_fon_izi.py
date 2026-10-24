@@ -26,6 +26,7 @@
 #     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
 # 21) K13 Ders 3 olcu/tarama (sentetik taban)
 # 22) K14 esli kutu, yukselis, kirilim, ruzgar
+# 23) K13b dip tabani (duzgun dip vs igne)
 # 20) v1.5 artirimli ayristirma + paket: ikinci calistirmada eski rapor yeniden ayristirilmaz, yeni rapor eklenir; ayristirici
 #     surumu farkli rapor yeniden ayristirilir; paket -> ac sonrasi tablolar ve metinler ayni; bozuk parca sha256 ile yakalanir.
 import sys, numpy as np, pandas as pd
@@ -321,6 +322,19 @@ def sina():
             and not W22["A0"].iloc[:60].any())
     if not ok22:
         hata.append(f"22) K14 esli/yukselis/kirilim/ruzgar yanlis: {len(Es22)} {list(Y22.kat2) if len(Y22) else []} {len(K22)}")
+    # 23) K13b dip tabanı: tek günlük iğne dip (V) düşük, haftalarca test edilen düz zemin yüksek.
+    idx23 = pd.bdate_range("2022-01-03", periods=400)
+    def kutu23(duz):
+        c = np.full(400, 50.0); c[350:] = 51.0
+        low = c * 0.99
+        if duz:
+            low[350:400:3] = 50.0 * 0.995           # her 3 günde bir dibe değiyor
+        else:
+            low[350] = 45.0                         # tek günlük iğne
+        return pd.DataFrame({"Open": c, "High": c * 1.01, "Low": low, "Close": c, "Volume": 1e6}, index=idx23)
+    a23 = F.fi_k13_olc(kutu23(True), 350, 399)["dip_taban"]; b23 = F.fi_k13_olc(kutu23(False), 350, 399)["dip_taban"]
+    if not (a23 >= 0.30 and b23 <= 0.05):
+        hata.append(f"23) dip tabanı yanlış: düz {a23:.2f} iğne {b23:.2f}")
     return hata
 
 
@@ -328,4 +342,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 22/22 OK")
+    print("test_fon_izi: 23/23 OK")
