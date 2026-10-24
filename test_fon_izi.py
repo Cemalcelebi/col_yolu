@@ -25,6 +25,7 @@
 # 19) v1.5 giris mekanigi: yayin gunu ne saatte olursa olsun giris ertesi islem gunu acilisi; once +%20 (k20); +%8 sonrasi maliyete
 #     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
 # 21) K13 Ders 3 olcu/tarama (sentetik taban)
+# 22) K14 esli kutu, yukselis, kirilim, ruzgar
 # 20) v1.5 artirimli ayristirma + paket: ikinci calistirmada eski rapor yeniden ayristirilmaz, yeni rapor eklenir; ayristirici
 #     surumu farkli rapor yeniden ayristirilir; paket -> ac sonrasi tablolar ve metinler ayni; bozuk parca sha256 ile yakalanir.
 import sys, numpy as np, pandas as pd
@@ -296,6 +297,30 @@ def sina():
             and len(O21b) == 0 and o21["bar"] == 50 and o21["dusus"] < -0.55 and o21["mum_norm"] < 0.5 and o21["u"] > 1.02)
     if not ok21:
         hata.append(f"21) K13 tarama/olcu yanlis: {len(O21)} {len(O21b)} {o21}")
+    # 22) K14: esli kutu (genis bantli ayni cokus -> esli var, K13 olayinin dibi esli olmaz), yukselis (2 kat dip kirilmadan /
+    # once dip kirilir), kirilim (tavan ustu kapanis -> yeni bilgi gunu), ruzgar (yukselen sektor ruzgarli, duz sektor degil).
+    d22b = seri21(0.20)
+    Es22 = F.fi_k14_esli({"AAA": d21, "BBB": d22b}, O21)
+    def seri22(son):
+        c = np.r_[np.full(300, 10.0), np.full(30, 10.0), son]
+        idx = pd.bdate_range("2021-01-01", periods=len(c))
+        return pd.DataFrame({"Open": c, "High": c * 1.01, "Low": c * 0.99, "Close": c, "Volume": 1e6}, index=idx)
+    yuk = seri22(np.linspace(10, 25, 260)); dus_ = seri22(np.r_[np.linspace(10, 9, 20), np.linspace(9, 25, 240)])
+    O22 = pd.DataFrame({"sembol": ["Y", "D"], "dip": [yuk.index[300]] * 2, "bilgi": [yuk.index[329]] * 2})
+    Y22 = F.fi_k14_yukselis({"Y": yuk, "D": dus_}, O22)
+    kir = seri22(np.r_[np.full(5, 10.0), np.full(20, 10.5), np.full(240, 10.5)])
+    K22 = F.fi_k14_kirilim({"Y": kir}, O22.iloc[:1])
+    idx22 = pd.bdate_range("2022-01-01", periods=200)
+    V22 = {f"{g}{k}": pd.DataFrame({"Close": (np.linspace(10, 20, 200) if g == "A" else np.full(200, 10.0)) * (1 + 0.001 * k)}, index=idx22)
+           for g in "AB" for k in range(5)}
+    for k in range(10):
+        V22[f"C{k}"] = pd.DataFrame({"Close": np.full(200, 10.0)}, index=idx22)
+    W22 = F.fi_k14_ruzgar(V22, {s: s[0] for s in V22})
+    ok22 = (len(Es22) >= 1 and set(Es22.sembol) == {"BBB"} and list(Y22.kat2) == [1.0, 0.0] and Y22.dip_kirildi.iloc[1] == 1.0
+            and len(K22) == 1 and K22.bilgi.iloc[0] == kir.index[335] and bool(W22["A0"].iloc[-1]) and not bool(W22["B0"].iloc[-1])
+            and not W22["A0"].iloc[:60].any())
+    if not ok22:
+        hata.append(f"22) K14 esli/yukselis/kirilim/ruzgar yanlis: {len(Es22)} {list(Y22.kat2) if len(Y22) else []} {len(K22)}")
     return hata
 
 
@@ -303,4 +328,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 21/21 OK")
+    print("test_fon_izi: 22/22 OK")
