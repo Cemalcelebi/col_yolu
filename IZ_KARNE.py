@@ -124,7 +124,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç18", "2026-10-04", "A4 koşmuşken iş ilişkisi haberi", "KAP_ARSIV.py (Drive)", "20 günde +%25 koşmuş hissede sözleşme haberi",
        "GEÇERLİ (ar60 −7/−8)", "IZ A4", 3, "kap_sozlesme_kosmus", "asagi"),
     _ik_k("Ç19", "2026-10-04", "A9 OLGUN rüzgâr + sözleşme/teşvik", "KAP_ARSIV.py (Drive)", "Olgun sektör rüzgârında haber",
-       "GEÇERLİ ama nötrden farkı küçük", "IZ A9", 3, notu="Günlük rüzgâr paneli (FON_IZI K14) ile sıradaki turda puanlanacak."),
+       "GEÇERLİ ama nötrden farkı küçük", "IZ A9", 3, notu="Tek cetvelle Ç71'de puanlandı (İZ DEĞİL)."),
     _ik_k("Ç20", "2026-10-04", "A5 söylentiye açıklama + o gün −%5", "KAP_ARSIV.py (Drive)", "Söylenti açıklaması günü düşüş",
        "ADAY (n 26/46)", "IZ A5", 3, "kap_soylenti_dus", "asagi"),
     _ik_k("Ç21", "2026-10-04", "A8 sözleşme tutarı > yıllık ciro %50", "KAP_ARSIV.py (Drive)", "Büyük sözleşme sonrası",
