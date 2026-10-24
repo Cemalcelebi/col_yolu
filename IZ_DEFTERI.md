@@ -1,5 +1,7 @@
 # İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 24 Ekim 2026, 10:10)
 
+**24 Ekim 2026 — OKUMA NOTU:** Aşağıdaki A/B/C tablolarındaki 'GEÇERLİ / ADAY / ÇÜRÜDÜ' kararları ESKİ cetvellerle verildi (ar60, piy, her 5. gün tabanı, ABD'siz). Güncel ve tek geçerli karar aşağıdaki 0. İNDEKS'teki TEK CETVEL kararıdır (IZ_KARNE.py). Tablolar tarihçe olarak duruyor.
+
 Kural: bir iz ancak (1) n ≥ 100, (2) 2017–21 ve 2022–26 dönemlerinde AYNI yönde, (3) birden fazla ölçüde
 (ortalama VE medyan) aynı yönde çıkarsa "GEÇERLİ" sayılır. Tek testte çıkan "ADAY", başka testte tersine dönen "ÇÜRÜDÜ".
 YENİ KURAL (18:30): aynı hissede 60 gün içindeki tekrar haberler TEK olay sayılır. Bir hissenin tek bir çılgın dönemi
@@ -7,6 +9,144 @@ YENİ KURAL (18:30): aynı hissede 60 gün içindeki tekrar haberler TEK olay sa
 Getiriler: ar = hissenin kendi yıllık ortalamasına göre arındırılmış; ham = çıplak; piy = aynı gün likit hisselerin ileri getiri medyanına göre fark.
 RÜZGÂR = sektör sepeti (medyan) − piyasa medyanı, son 20 / 60 işlem günü.
   YENİ BAŞLAYAN: 60g ≤ 0 ve 20g > +%1 · OLGUN: 60g > +%3 ve 20g > +%1 · TERS: 20g < −%1.
+
+<!-- IZ_KARNE INDEKS BASLA (otomatik; elle duzenleme, `python IZ_KARNE.py indeks`) -->
+
+## 0. İNDEKS — bütün çalışmalar ve tek cetvel kararı
+
+Üretici: IZ_KARNE v1.0 (2026-10-24, indeks + tek cetvel yeniden denetim). Kaynak: IZ_KARNE.py içindeki IK_KAYIT (çalışma kaydı) + arastirma_cikti/iz_karne/karne.csv (tek cetvel puanları). Bu bölüm elle düzenlenmez: yeni çalışma IK_KAYIT'a bir satır ekler, `python IZ_KARNE.py seviye N` ya da `indeks` bölümü yeniden yazar (test_iz_karne bunu denetler).
+
+TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 iş gününde tek olay. Ana ölçü yukarı izlerde 60 günde önce +%20 (−%10'dan önce), kaçınma izlerinde 60 günde önce −%20. Kat = olay oranı / EŞLİ TABAN (aynı ay × 60 gün momentum beşliği × likidite üçlüsü). İZ = BIST 2023, BIST 2024-26, ABD 2023, ABD 2024-26 dört hücrede kat ≥1,3, n ≥30, ters yön <1,3. ABD verisi olmayan (KAP) en fazla BIST-ADAY olur. Eski kararlar farklı cetvellerle verildi (ar60, piy, her 5. gün tabanı; 17-21/22-26; ABD'siz); karışıklığın kaynağı bu.
+
+**Tek cetvel özeti:** İZ DEĞİL 31 (puanlanan 31 / kayıtlı 72 çalışma)
+
+**Kesinleşen durum (tek cetvel):** dört karar hücresinin hepsinde tutan İZ yok. Eski cetvelde 'GEÇERLİ' yazan maddeler eşli tabanla yeniden ölçüldü; fark çoğunlukla hissenin zaten düşmüş/yükselmiş, sakin/oynak olmasından geliyordu (eşli taban bunu eşitler).
+
+**Eşiğe en yakın (BIST'in 3 döneminde ≥1,3, ABD'de tutmuyor):**
+
+- Ç24 A11 A10 + 20 günde zaten −%20 (BIST 1,96 / 1,50 / 2,25; ABD 1,33 / 1,15 / 1,08)
+- Ç60 A14 blok hacimli taban günü (BIST 2,05 / 1,62 / 2,62; ABD 1,37 / 1,16 / 1,15)
+
+### Görev günlüğü (Cemal'in verdiği işler)
+
+| Tarih | İstek | Yapılan | Sonuç | Durum |
+|---|---|---|---|---|
+| 2026-10-24 | Fon işlem defteri: hangi gün kaç lot, dolaşım, hacim (Faz 1) | 24.526 KAP fon raporu indirildi, 22.600 ayrıştırıldı (%97,1 tuttu); defter + fon girişi testi | Fonlar koşu fazında giriyor; fon girişi iz değil (Ç64-Ç66) | **TAMAMLANDI** |
+| 2026-10-24 | Ham KAP verisini sakla, güncelleme yalnız yenileri eklesin | kapfon-veri dalı (220 MB) + artırımlı güncelleme (k9indir, k10, k9paket) | Açma: python FON_IZI.py k9ac kapfon | **TAMAMLANDI** |
+| 2026-10-24 | Fon izi nasıl bir iz, grafikte görebilir miyim; her ize ders | FON_IZI_ders.pdf + CLAUDE.md ders kuralı | İz sahiplikte, fiyat grafiğinde değil | **TAMAMLANDI** |
+| 2026-10-24 | TEHOL Ara 2024-Oca 2025 U şekli fon izi mi? | FON_IZI_ders2_U.pdf | U sırasında fon payı 0; U fon izi değil | **TAMAMLANDI** |
+| 2026-10-24 | TEHOL 7 Eki-16 Ara 2024 çölünün aynısını ben niye göremiyorum? | K13 ölçü + arama, FON_IZI_ders3_col_olcu.pdf | D13'ün eski kutuları aynısı değildi; tek eş Nis-Haz 2021; iz değil (Ç67) | **TAMAMLANDI** |
+| 2026-10-24 | İz yok çıkarsa durma: denenen, yaklaşan, sıradaki 3 deneme, kendin dene | CLAUDE.md kuralı; K14-K15 6 deneme; FON_IZI_ders4_tehol_denemeler.pdf | 6 deneme iz değil (Ç68) | **TAMAMLANDI** |
+| 2026-10-24 | İz defterine indeks; neler iz neler değil kesinleştir; en basitten karmaşığa; indeks kendini yenilesin | IZ_KARNE.py: 72 çalışmalık kayıt, tek cetvel (eşli taban, 4 karar hücresi), seviye 1-3'te 31 madde puanlandı, indeks IZ_DEFTERI başında otomatik; IZ_KARNE_ders.pdf | Tek cetvelde İZ 0, ADAY 0. Eski 'GEÇERLİ' A1-A4, A13, B1 eşli tabanda tutmadı; en yakın BIST'e özgü A11/A14 | **TAMAMLANDI (seviye 4 sistem/çıkış ve ABD olay dosyası eksik maddeler AÇIK, aşağıda)** |
+| 2026-10-24 | Görev bitince 'tamamlandı' de, ne oldu ne bitti indekse yaz, son mesaj madde madde, iz şablonu grafikte | CLAUDE.md kuralı + bu görev günlüğü + ders PDF'inde grafik şablon | Bundan sonra her görevde uygulanır | **TAMAMLANDI** |
+
+**Açık kalanlar:**
+
+- Seviye 4 (sistem/çıkış/portföy: B15-T10, B5/B6/B8) tek cetvelle değil slot simülasyonuyla yeniden ölçülecek.
+- ABD olay dosyası olmayan maddeler (A13 doji kutusu, D13): BIST'te zaten tutmadığı için ABD taraması ertelendi.
+- Karar bekleyen standart sorusu (Cemal): yalnız BIST'te güçlü risk izleri (A11, A14: BIST 3 dönemde 1,5-2,6 kat, ABD 1,0-1,4) 'BIST'e özgü risk süzgeci' diye ayrı sınıf olsun mu? Şu anki standartla iz değil.
+- Puanlanamayan eski maddeler: A7 (veri yok), A8 (sözleşme tutarı yok), B10/B11 (kriz takvimi), B12/B13 ve D7 (çöl segment olay dosyası yok).
+
+### Seviye 1 — tek gün fiyat-hacim
+
+| Kod | Tarih | Çalışma | Dosya | Eski karar | Tek cetvel | BIST 16-22 / 23 / 24-26 | ABD 16-22 / 23 / 24-26 | Defter |
+|---|---|---|---|---|---|---|---|---|
+| Ç16 | 2026-10-04 | A2 tavan günü (+%9) | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −11/−15) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,32 / 1,13 / 1,39 | 1,25 / 1,20 / 1,23 | IZ A2 |
+| Ç17 | 2026-10-04 | A3 taban günü (−%5 altı) | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −4,8/−4,7) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,02 / 0,93 / 0,98 | 1,15 / 1,10 / 1,12 | IZ A3 |
+| Ç23 | 2026-10-04 | A10 hacim patlaması + gün −%5 altı | KAP_ARSIV.py (Drive) | ADAY (piy20 −3,5/−2,8) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,33 / 1,27 / 1,28 | 1,19 / 1,13 / 1,12 | IZ A10 |
+| Ç24 | 2026-10-04 | A11 A10 + 20 günde zaten −%20 | KAP_ARSIV.py (Drive) | ADAY-zayıf | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,96 / 1,50 / 2,25 | 1,33 / 1,15 / 1,08 | IZ A11 |
+| Ç25 | 2026-10-04 | A12 1 yıl en geride + hacim en çok artan | KAP_ARSIV.py (Drive) | ADAY-zayıf | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,19 / 0,96 / 0,97 | 1,24 / 1,37 / 1,21 | IZ A12 |
+| Ç34 | 2026-10-04 | Hacimli yukarı kırılım (+%5 kapanış) | — | İz değil | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,93 / 0,90 / 0,89 | 1,08 / 1,15 / 0,99 | IZ C |
+| Ç54 | 2026-10-22 | Tavan-taban olayı (≥4 tavan sonra ≥3 taban) | goz_esle/arastirma/tavan_taban_olay.py | Ölçüm (117 olay), karar yazılmadı | puanlanmadı | — | — | — |
+| Ç60 | 2026-10-23 | A14 blok hacimli taban günü | FON_IZI.py | ÇÜRÜDÜ (eşli 0,91-1,73) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 2,05 / 1,62 (n9) / 2,62 | 1,37 / 1,16 / 1,15 | IZ A14 |
+| Ç70 | 2026-10-24 | A11 oynaklık ölçekli (−3σ gün + hacim 3x + 20 günde −%20) | IZ_KARNE.py | Yeni deneme | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 2,26 / 3,56 (n2) / 0,00 (n5) | 1,47 / 1,18 / 1,04 | IZ A11 |
+
+### Seviye 2 — çok günlük şekil / tespit
+
+| Kod | Tarih | Çalışma | Dosya | Eski karar | Tek cetvel | BIST 16-22 / 23 / 24-26 | ABD 16-22 / 23 / 24-26 | Defter |
+|---|---|---|---|---|---|---|---|---|
+| Ç04 | 2026-09 | Segment / şekil 90+ ölçü (alt iğne, doji, dar hafta…) | COL_v1.py | Alt fitil<0,12, doji, dar hafta boyut çarpanı olarak TUTAN; diğerleri fark yok | puanlanmadı: Eylül ölçümü (tekilsiz, maliyetsiz); col_ogren'de doji ayırmadı → yeniden doğrulanmadı. | — | — | COL_OZET §3, §9.2 |
+| Ç09 | 2026-09-25 | Dört set ölçümü (sıcak sektör, momentum, onc250, konum250, taban koruması, çöl kalitesi) | OLCUM.py | KAPALI: oynaklık, iz yok | puanlanmadı | — | — | COL_OZET §8 |
+| Ç10 | 2026-09-25 | QMLS salınım / genç halka arz 3. dip | QMLS_Tarayici (Drive) | AÇIK: bek +1,6 (n 105), 1h veri kısa | puanlanmadı: Küçük örnek; Twelve Data verisi gerekir. | — | — | COL_OZET §8 |
+| Ç11 | 2026-10-01 | SIKISMA_TESTI | arsiv/col_kodlarim | Fark yok | puanlanmadı | — | — | COL_OZET §9.6 |
+| Ç12 | 2026-10-02 | BUYUK_YUKSELIS | arsiv/col_kodlarim | Hayır (%5, kat 0,78); hafif iz sektör dalgası/genişlik/konum52 1,24-1,29 | puanlanmadı | — | — | COL_OZET §9.6 |
+| Ç14 | 2026-10-02 | COL_KIRILIM_ATLAS (öncü/rüzgâr) | arsiv/col_kodlarim | Tutarsız | puanlanmadı | — | — | COL_OZET §9.6 |
+| Ç31 | 2026-10-04 | B12-B13 çöl kırılım günü hacim yönü | — | ADAY yön (B13 sonradan bilgi) | puanlanmadı: Çöl segment olay dosyası yok. | — | — | IZ B12, B13 |
+| Ç33 | 2026-10-04 | Çölde erken giriş / güvenilir isim V / para izi | — | ÇÜRÜDÜ / iz değil | puanlanmadı | — | — | IZ C |
+| Ç35 | 2026-10-08 | col_v2 / yeniden_tara, tahtaci_oyunu | yeniden_tara.py, tahtaci_oyunu.py | Ölçüm; tahtacı GEÇMEDİ | puanlanmadı | — | — | COL_OZET §9.6 |
+| Ç36 | 2026-10-09 | col_ogren / col_tanim2 | col_ogren.py, col_tanim2.py | İz yok | puanlanmadı | — | — | COL_OZET §9.2 |
+| Ç37 | 2026-10-17 | D7 küçük mum (H−L) + D9 uzun çöl + rüzgâr | COL_v1.py | D9 yön ADAY (%56-61); test sürüyor | puanlanmadı: Olay dosyası yok. | — | — | COL_OZET §9.1 |
+| Ç38 | 2026-10-19 | A13 dipte doji kutusu → sert düşüş riski | DOJI_KUTU_TEST.py | BIST GEÇERLİ risk (ABD bekliyor) | **İZ DEĞİL** (⊥ önce −%20 düşük, 2026-10-24) | 0,97 / 1,11 / 0,92 | — (n0) / — (n0) / — (n0) | IZ A13 |
+| Ç39 | 2026-10-19 | Doji kutusu → sert yukarı hareket | DOJI_KUTU_TEST.py | İz değil (0,90-1,02) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,95 / 1,00 / 1,03 | — (n0) / — (n0) / — (n0) | IZ C |
+| Ç41 | 2026-10-20 | D12 dip çölü (COL_DIP_TEST) | COL_DIP_TEST.py | İZ DEĞİL (6 dönemin 3'ü) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,93 / 0,85 / 0,90 | 0,74 / 1,07 / 0,98 | IZ C |
+| Ç44 | 2026-10-21 | B14 yuvarlanma öbeği (COL_OBEK) | COL_OBEK.py | ADAY yalnız yön; kazanç yok | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,01 / 1,02 / 0,96 | 0,86 / 0,97 / 0,97 | IZ B14 |
+| Ç46 | 2026-10-21 | COL_KAZANC ek şart + K7 küçük alım mumu + K8 NVI/CMF | COL_KAZANC.py | İZ DEĞİL (BIST'e özgü) | puanlanmadı: Üretim yolu içi ölçüm; olay cetveli değil. | — | — | IZ C |
+| Ç47 | 2026-10-21 | D13 tespit motoru (COL_TESPIT, col_dip2) | COL_TESPIT.py, COL_v1.py | Tespit bulgusu: alım oranı +12..26p 6/6; iz değil | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,94 / 0,99 / 0,98 | — (n0) / — (n0) / — (n0) | IZ C |
+| Ç49 | 2026-10-22 | MUM_SUKUN v1.1 hisseye özel mum küçülmesi | MUM_SUKUN.py | İZ DEĞİL (0,96-1,04) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,98 / 0,97 / 1,00 | 1,15 / 1,13 / 1,17 | IZ C |
+| Ç50 | 2026-10-22 | MUM_SUKUN v1.2 düz zemine yapışan sıra | MUM_SUKUN.py | İZ DEĞİL | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,04 / 1,14 / 0,83 | 1,34 / 1,01 (n28) / 0,94 | IZ C |
+| Ç51 | 2026-10-22 | MUM_SUKUN v1.3 kısa ufuk + ayrılma sertliği | MUM_SUKUN.py | İZ DEĞİL | puanlanmadı: Kısa ufuk ölçüsü; 60 günlük cetvel uygun değil. | — | — | IZ C |
+| Ç53 | 2026-10-22 | Derin dip sonrası oynaklık tercilleri | goz_esle/arastirma/dip_vol.py | Ölçüm, karar yazılmadı | puanlanmadı | — | — | — |
+| Ç55 | 2026-10-22 | FON_IZI v1.0 fon hisselerinin yükseliş izi (iz B) | FON_IZI.py | İZ DEĞİL | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,91 / 1,40 (n18) / 0,88 | 0,87 / 0,84 / 0,89 | IZ C |
+| Ç56 | 2026-10-23 | FON_IZI v1.1 sessiz yuvarlanma (Z0) + hacim | FON_IZI.py | İZ DEĞİL | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,00 / 1,00 / 1,02 | 0,89 / 0,94 / 0,87 | IZ C |
+| Ç57 | 2026-10-23 | Z0 + hacim kuru (≤0,6) | FON_IZI.py | İZ DEĞİL (ABD 2,45 / BIST 0,97) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 0,97 / 0,99 (n28) / 1,02 | 1,10 / 1,02 / 1,01 | IZ C |
+| Ç58 | 2026-10-23 | SESSIZ_ML (LightGBM alış/satış + öğretmen) | SESSIZ_ML.py | İZ DEĞİL (BIST yok, ABD oynaklık) | puanlanmadı: Model; olay cetveli yerine yıl yıl ileri test. | — | — | IZ C |
+| Ç59 | 2026-10-23 | FON_IZI v1.2 62 gösterge / uyumsuzluk / Fibonacci | FON_IZI.py | İZ DEĞİL (yukarı hiçbiri 1,3 değil) | puanlanmadı: 62 sinyalin olay dosyası saklanmadı; özet var. | — | — | IZ C |
+| Ç67 | 2026-10-24 | K13 TEHOL tipi taban (Ders 3) | FON_IZI.py (k13) | İZ DEĞİL | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,04 / 0,76 (n13) / 1,11 | 1,12 / 1,21 / 1,10 | IZ C |
+| Ç68 | 2026-10-24 | K14-K15 TEHOL tipi 6 devam denemesi (Ders 4) | FON_IZI.py (k14, k15) | İZ DEĞİL; BIST'te aşağı risk düşük | puanlanmadı: Zaten eşli kutuya göre ölçüldü. | — | — | IZ C |
+| Ç69 | 2026-10-24 | TEHOL tipi taban → BIST'te aşağı risk düşük | FON_IZI.py (k14, k15) | Gözlem: BIST 0,45-0,68, ABD yok | **İZ DEĞİL** (⊥ önce −%20 düşük, 2026-10-24) | 0,97 / 0,48 (n13) / 1,27 | 1,34 / 0,95 / 1,29 | IZ C |
+| Ç72 | 2026-10-24 | D13 tespiti aşağı riski düşürür mü (koruma) | IZ_KARNE.py | Yeni deneme | **İZ DEĞİL** (⊥ önce −%20 düşük, 2026-10-24) | 1,03 / 0,93 / 1,09 | — (n0) / — (n0) / — (n0) | IZ C |
+
+### Seviye 3 — dış veri (KAP, fon)
+
+| Kod | Tarih | Çalışma | Dosya | Eski karar | Tek cetvel | BIST 16-22 / 23 / 24-26 | ABD 16-22 / 23 / 24-26 | Defter |
+|---|---|---|---|---|---|---|---|---|
+| Ç05 | 2026-09 | Rejim / dış veri (CDS, EEM, VIX, DXY, temel) | rejim.py, temel.py | CDS ve borç/öz çarpan; VIX/DXY/USDTRY tutarsız (KAPALI) | puanlanmadı | — | — | COL_OZET §3 |
+| Ç15 | 2026-10-04 | A1 bedelsiz bildirimi | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −12/−6) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,42 / 1,14 / 1,31 | — / — / — | IZ A1 |
+| Ç18 | 2026-10-04 | A4 koşmuşken iş ilişkisi haberi | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −7/−8) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,13 / 1,19 / 1,28 | — / — / — | IZ A4 |
+| Ç19 | 2026-10-04 | A9 OLGUN rüzgâr + sözleşme/teşvik | KAP_ARSIV.py (Drive) | GEÇERLİ ama nötrden farkı küçük | puanlanmadı: Günlük rüzgâr paneli (FON_IZI K14) ile sıradaki turda puanlanacak. | — | — | IZ A9 |
+| Ç20 | 2026-10-04 | A5 söylentiye açıklama + o gün −%5 | KAP_ARSIV.py (Drive) | ADAY (n 26/46) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,33 / 0,54 (n13) / 2,09 (n19) | — / — / — | IZ A5 |
+| Ç21 | 2026-10-04 | A8 sözleşme tutarı > yıllık ciro %50 | KAP_ARSIV.py (Drive) | ADAY (n 29/20) | puanlanmadı: Sözleşme tutarı kap_ozet'te yok → tek cetvelle puanlanamaz. | — | — | IZ A8 |
+| Ç22 | 2026-10-04 | A7 açığa satış | — | ÇÜRÜDÜ | puanlanmadı: Veri elde yok. | — | — | IZ A7 |
+| Ç26 | 2026-10-04 | B1 geri alım bildirimi | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 +4,9/+2,4) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,02 / 1,04 / 1,18 | — / — / — | IZ B1 |
+| Ç27 | 2026-10-04 | B1'' geri alım + koşmamış | KAP_ARSIV.py (Drive) | GEÇERLİ? | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | 1,00 / 1,09 / 1,18 | — / — / — | IZ B1'' |
+| Ç28 | 2026-10-04 | B9 yeni rüzgâr + sözleşme | KAP_ARSIV.py (Drive) | ÇÜRÜDÜ (tek hisse tekrarı) | puanlanmadı | — | — | IZ B9 |
+| Ç30 | 2026-10-04 | B10 kriz teyidi + küçük PD / B11 dayanıklı | — | ADAY / REJİME BAĞLI | puanlanmadı: Kriz takvimi + sermaye verisi gerekir; bu turda yok. | — | — | IZ B10, B11 |
+| Ç32 | 2026-10-04 | Ölü eşek (KAP kötü haber, bilanço, geride) | — | Test edilemez (hayatta kalma) | puanlanmadı: Borsadan çıkmış hisse verisi yok. | — | — | IZ C |
+| Ç52 | 2026-10-22 | Faiz kararı günleri (TCMB) sektör/borç tepkisi | goz_esle/arastirma/faiz_olay.py | Ölçüm, karar yazılmadı | puanlanmadı | — | — | — |
+| Ç61 | 2026-10-23 | A15a borsa sorusu: olağan dışı fiyat (KAP 42) | FON_IZI.py | ÇÜRÜDÜ (eşli 1,14-1,17) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,35 / 1,03 / 1,35 | — / — / — | IZ A15 |
+| Ç62 | 2026-10-23 | A15b VBTS / BISTECH tedbiri (KAP 14) | FON_IZI.py | ÇÜRÜDÜ (eşli 1,02-1,14) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,14 / 0,99 / 1,20 | — / — / — | IZ A15 |
+| Ç64 | 2026-10-24 | K9-K11 KAP fon portföy defteri | FON_IZI.py (k9indir, k10) | Ölçüm: fonlar koşu fazında giriyor | puanlanmadı | — | — | IZ C |
+| Ç65 | 2026-10-24 | K10 fon girişi (rapor yayını sonrası) | FON_IZI.py | İZ DEĞİL (0,80-1,07) | **İZ DEĞİL** (↑ önce +%20, 2026-10-24) | — (n0) / 0,89 / 1,00 | — / — / — | IZ C |
+| Ç66 | 2026-10-24 | K10 fon payı sermayenin %5'ini aştı | FON_IZI.py | İZ DEĞİL (oynaklık) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | — (n0) / 1,60 (n8) / 1,23 | — / — / — | IZ C |
+| Ç71 | 2026-10-24 | A9 OLGUN rüzgâr + sözleşme/teşvik (tek cetvel) | IZ_KARNE.py | Yeni deneme | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,01 / 0,91 / 0,97 | — / — / — | IZ A9 |
+
+### Seviye 4 — sistem / çıkış / portföy
+
+| Kod | Tarih | Çalışma | Dosya | Eski karar | Tek cetvel | BIST 16-22 / 23 / 24-26 | ABD 16-22 / 23 / 24-26 | Defter |
+|---|---|---|---|---|---|---|---|---|
+| Ç01 | 2026-09 | Giriş noktası / zamanlaması | giris_testleri.py, kirilim_sonrasi.py, mfe_analiz.py | KAPALI: hiçbiri geçmedi | puanlanmadı: Kapalı konu (CLAUDE.md). Sistem kuralı, olay izi değil. | — | — | COL_OZET §3 |
+| Ç02 | 2026-09 | Aday filtreleri (E_ONC, üç şart kapısı, taban kırılması düşürme) | COL_v1.py (eski sürümler arsiv/) | KAPALI: her filtre para kaybettirdi | puanlanmadı | — | — | COL_OZET §3, §4 ders 1 |
+| Ç03 | 2026-09 | Çıkış varyantları (fiyat/zaman stopu, desen sat, şelale, SMA200) | STOP_TEST.py, selale.py | KAPALI: trail SMA20 en iyi | puanlanmadı | — | — | COL_OZET §3 |
+| Ç06 | 2026-09 | 4h / haftalık / KNN | col_atilim_TEK.py (arşiv) | KAPALI: rejime bağlı, ML kâr eklemedi | puanlanmadı | — | — | COL_OZET §3 |
+| Ç13 | 2026-10-02 | TEYIT_BILETI | arsiv/col_kodlarim | Zayıf (+1,0; 2026 −2,1) | puanlanmadı | — | — | COL_OZET §9.6 |
+| Ç29 | 2026-10-04 | B5 teyit günü / B6 likidite / B8 genişlik yılları | — | GEÇERLİ (küçük / filtre / zamanlama) | puanlanmadı: Tanımları defterde tam yazılı değil; sistem filtresi. | — | — | IZ B5, B6, B8 |
+| Ç45 | 2026-10-21 | B15 çıkış kuralı (COL_YOL) → T10 üretimde | COL_YOL.py | İZ DEĞİL (ABD 3/6); ağır kayıp yarıya | puanlanmadı: Portföy kuralı; olay cetveli uygulanmaz. | — | — | IZ B15 |
+
+### Seviye 0 — altyapı / ölçüm
+
+| Kod | Tarih | Çalışma | Dosya | Eski karar | Tek cetvel | BIST 16-22 / 23 / 24-26 | ABD 16-22 / 23 / 24-26 | Defter |
+|---|---|---|---|---|---|---|---|---|
+| Ç07 | 2026-09-18 | Göz kalibrasyonu v3 (29 çöl + 8 olumsuz) | KALIBRE.py, kalibrasyon.py | Ölçüm: eski 13/26, v3 23/26; şekil olumsuzu ayırmıyor | puanlanmadı | — | — | COL_OZET §7 |
+| Ç08 | 2026-09-18 | Kod denetimi (12 sorun) | DENETIM.py | Düzeltildi: tekil işlem, ertesi açılış, drawdown | puanlanmadı | — | — | COL_OZET §6 |
+| Ç40 | 2026-10-19 | GOZ_ESLE bölge kuralı + çöl karnesi | GOZ_ESLE.py | Ölçüm (altyapı) | puanlanmadı | — | — | COL_OZET §9.5 |
+| Ç42 | 2026-10-20 | COL_GECMIS (geçmiş gün taraması) | COL_GECMIS.py | Araç | puanlanmadı | — | — | COL_OZET §9.5 |
+| Ç43 | 2026-10-21 | COL_BUGUN / COL_SEKIL / etiketler | COL_BUGUN.py, COL_SEKIL.py | Ölçüm, n küçük | puanlanmadı | — | — | COL_OZET §9.8 |
+| Ç48 | 2026-10-21 | COL_GOZ (746 kutu gözle) + Cemal kararı | goz_esle/arastirma | %6 çöl; etiket 'atılım geldi mi' etiketi | puanlanmadı | — | — | COL_OZET §9.8 |
+| Ç63 | 2026-10-23 | Bağımsız denetim + v1.4 düzeltmeleri (Mart 2020 marjı) | FON_IZI.py, SESSIZ_ML.py | Veri hatası düzeltildi; kararlar değişmedi | puanlanmadı | — | — | IZ C |
+
+Kat sütunları ana ölçünün eşli tabana göre katıdır (↑ yukarı iz: önce +%20, ≥1,3 aranır; ↓ kaçınma izi: önce −%20, ≥1,3 aranır; ⊥ koruma izi: önce −%20, ≤0,77 aranır). (nX) = o hücrede 30'dan az olay. Ayrıntı: arastirma_cikti/iz_karne/karne_hucre.csv.
+
+<!-- IZ_KARNE INDEKS BITTI -->
 
 ## A. ÇIKIŞ / KAÇINMA İZLERİ
 | # | İz | Ölçü | 17–21 | 22–26 | n | Durum |
