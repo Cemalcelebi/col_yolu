@@ -77,3 +77,4 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Bir ölçü bir testte pozitif, başka bir testte negatif çıkıyorsa iz sayılmaz. Küçük örneklemden çıkan sonuç "bulgu" diye sunulmaz.
 - Desene veya tek göstergeye göre alım-satım yoktur. Tarayıcı yalnızca aday bulur.
 - Kapanmış konuları yeniden açma (`COL_OZET.md` listesine bak): giriş zamanlaması/onay/hacim, stop/erken kesme, sektör ısısı, KNN, VIX/DXY, 90'dan fazla şekil ölçüsü.
+- İz yok çıkarsa durma (Cemal, 24 Ekim 2026): ne denendiğini, eşiğe (1,3) en çok yaklaşan hücreleri ve sıradaki 3 denemeyi yaz, sonra o denemeleri Claude kendisi yapar. Cemal'e yalnız karar gereken yerde sorulur (üretim "yaz", kapalı konuya dokunan deneme, veri/ücret/izin). Sıradaki denemeler sonuç görülmeden, sabit eşikle önceden yazılır; eşik sonuca göre oynanmaz.

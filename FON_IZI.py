@@ -2657,6 +2657,375 @@ def fon_izi_k13(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     return {"olay": X, "ozet": Z}
 
 
+# ---------------------------------------------------------------- K14 K13'un uc devam denemesi (v1.5)
+# CEMAL (24 Eki): "Iz yok cikarsa durma: ne denedigini, esige en cok yaklasanlari ve siradaki 3 denemeyi yaz, sonra kendin dene."
+# Sartlar SONUC GORULMEDEN yazildi: ana olcu, esli kutuya (ayni cokus baglami: >= %40 dusus, 30 gun yeni dip yok, ama K13 sekil
+# sartini hic saglamamis dip) gore BIST 2023, BIST 2024-26, ABD 2023, ABD 2024-26 hucrelerinin HEPSINDE >= 1,3; asagi olcu
+# (once -%20) ayni hucrelerde < 1,3; hucrede olay n < 30 ise 'kucuk orneklem' (iz sayilmaz).
+# D1 RUZGAR: Cemal'in tanimi 'sektor ruzgari olmadan col aranmaz' -> K13 + D9b ruzgari bilgi gunu (sepet 60g - piyasa medyani
+#    >= %10 ve sepet > 0; BIST alt endeks, ABD endustri; uye >= 4, hisse haric). Esli kutu da ruzgarli olanlarla sinirli.
+# D2 YUKSELIS: 'col ardindan gelen yukselisle degerlendirilir' -> 250 barda, kapanis kutu dibinin %2 altina inmeden once 2 kat.
+# D3 KIRILIM: uc evre -> kutu tavani (kutudaki en yuksek kapanis) x1,002 ustunde kapanis, 60 bar icinde, dip kirilmadan; giris
+#    ertesi acilis. Ana olcu 2 kat (D2 kurali), yaninda once +%20 ve uretim cikisi.
+FI_K14_ESIK = {"ruz": 0.10, "ruz_gun": 60, "ruz_uye": 4, "kat": 1.0, "kat_yarim": 0.5, "ufuk": 250, "dip_tol": 0.02,
+               "bekle": 60, "tavan": 1.002, "n_min": 30, "kat_esik": 1.3}
+FI_K14_HUCRE = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
+
+
+def fi_k14_sektor(pazar: str, kok: Optional[str] = None) -> Dict[str, str]:
+    """{sembol: alt sektor}. BIST: sektor_BIST.csv 'alt_bist' (Yahoo etiketleri hatali); ABD: sektor_ABD.csv 'endustri',
+    sembol uzantisi ('.AM') atilir. Dosya repo kokunde (bu dosyanin klasoru)."""
+    kok = kok or os.path.dirname(os.path.abspath(__file__))
+    if pazar == "BIST":
+        t = pd.read_csv(os.path.join(kok, "sektor_BIST.csv")); kol = "alt_bist"
+    else:
+        t = pd.read_csv(os.path.join(kok, "sektor_ABD.csv")); kol = "endustri"
+    t = t.dropna(subset=[kol])
+    return {str(s).split(".")[0].upper().strip(): str(a) for s, a in zip(t.sembol, t[kol])}
+
+
+def fi_k14_ruzgar(V: Dict[str, pd.DataFrame], sek: Dict[str, str], E: Dict[str, Any] = FI_K14_ESIK) -> pd.DataFrame:
+    """Gunluk ruzgar paneli (index tarih, sutun sembol, bool): sepet (ayni alt sektor, hisse haric, ort. 60g getiri) - piyasa
+    medyani >= E['ruz'] ve sepet > 0 (COL_v1 D9b ile ayni tanim, her gun icin). Uyesi < E['ruz_uye'] olan sektor: ruzgar yok."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index().ffill(limit=5)
+    r = C / C.shift(E["ruz_gun"]) - 1
+    piy = r.median(axis=1)
+    W = pd.DataFrame(False, index=r.index, columns=r.columns)
+    grup: Dict[str, List[str]] = {}
+    for s in r.columns:
+        a = sek.get(str(s).upper())
+        if a:
+            grup.setdefault(a, []).append(s)
+    for a, uy in grup.items():
+        R = r[uy]; S = R.sum(axis=1, min_count=1); N = R.notna().sum(axis=1)
+        for s in uy:
+            kendi = R[s]
+            sep = (S - kendi.fillna(0)) / (N - kendi.notna().astype(int))
+            uye = N - kendi.notna().astype(int)
+            W[s] = ((sep - piy) >= E["ruz"]) & (sep > 0) & (uye >= E["ruz_uye"])
+    return W
+
+
+def fi_k14_esli(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] = FI_K13_ESIK) -> pd.DataFrame:
+    """Esli kutu: K13 ile ayni cokus baglami (dip [t-80, t-30] icinde ve onceki 60 barin dibi, dipten beri yeni dip yok, once
+    >= %40 dusus) ama bu dipten HIC K13 olayi cikmamis. Bilgi gunu = dipten 30. bar (K13'un en erken olabilecegi gun); hissede
+    60 barda tek. Donus K13 ile ayni sutunlar."""
+    sat: List[Dict[str, Any]] = []
+    b0, b1 = E["bar"]
+    olay = {(s, pd.Timestamp(x)) for s, x in zip(O.sembol, O.dip)} if len(O) else set()   # ayni hissede olaya 60 bar yakin kutu da girmez
+    for s, d in V.items():
+        try:
+            n = len(d)
+            if n < 400:
+                continue
+            l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
+            sonmin = pd.Series(l).rolling(b0 - 1).min().to_numpy()
+            yakin = d.index.get_indexer(pd.DatetimeIndex(O.bilgi[O.sembol == s])) if len(O) else np.array([], int)
+            son_olay = -10 ** 9
+            for t in range(max(b1, 320), n):
+                j = t - b0 + 1
+                if not (l[j] <= l[max(0, j - 60):j].min() and sonmin[t] >= l[j]):          # gercek dip, sonra yeni dip yok
+                    continue
+                if (s, d.index[j]) in olay or t - son_olay < 60 or (len(yakin) and np.abs(yakin - t).min() < 60):
+                    continue
+                tepe = c[max(0, j - 60):j].max()
+                if l[j] / tepe - 1 > E["dusus"]:
+                    continue
+                son_olay = t
+                sat.append({"sembol": s, "dip": d.index[j], "bilgi": d.index[t], **fi_k13_olc(d, j, t)})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K14 esli %s atlandi: %s", s, ex)
+    return pd.DataFrame(sat)
+
+
+def fi_k14_yukselis(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] = FI_K14_ESIK) -> pd.DataFrame:
+    """D2: giris = bilgi gununden sonraki acilis; kutu dibi = [dip, bilgi] en dusuk Low. E['ufuk'] barda kapanis dibin
+    E['dip_tol'] altina inmeden once High >= giris x (1+E['kat']) -> kat2 = 1; ayni sekilde +%50 -> kat15; max_yuk = dip
+    kirilana (ya da ufka) kadar en yuksek High / giris - 1. Ufuk dolmamissa NaN."""
+    out = []
+    for i, r in enumerate(O.itertuples()):
+        d = V.get(r.sembol)
+        if d is None:
+            continue
+        tar = d.index; e = int(tar.searchsorted(pd.Timestamp(r.bilgi), side="right"))
+        if e + E["ufuk"] > len(d):
+            continue
+        a = int(tar.searchsorted(pd.Timestamp(r.dip), side="left"))
+        dip = d.Low.iloc[a:e].min(); g = d.Open.iloc[e]
+        if not (g > 0 and dip > 0):
+            continue
+        c = d.Close.to_numpy(float)[e:e + E["ufuk"]]; h = d.High.to_numpy(float)[e:e + E["ufuk"]]
+        kir = np.flatnonzero(c < dip * (1 - E["dip_tol"])); k = kir[0] if len(kir) else len(c)
+        ilk = lambda m: (np.flatnonzero(h >= g * (1 + m)) if (h >= g * (1 + m)).any() else np.array([10 ** 6]))[0]
+        out.append({"i": i, "kat2": float(ilk(E["kat"]) <= k and ilk(E["kat"]) < len(c)),
+                    "kat15": float(ilk(E["kat_yarim"]) <= k and ilk(E["kat_yarim"]) < len(c)),
+                    "max_yuk": h[:max(k, 1)].max() / g - 1, "dip_kirildi": float(k < len(c))})
+    R = pd.DataFrame(out)
+    return R.set_index("i") if len(R) else R
+
+
+def fi_k14_kirilim(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] = FI_K14_ESIK) -> pd.DataFrame:
+    """D3: kutu [dip, bilgi]; tavan = kutudaki en yuksek kapanis. Bilgi gununden sonraki E['bekle'] barda kapanis dibin
+    E['dip_tol'] altina inmeden tavan x E['tavan'] ustune cikarsa o gun yeni bilgi gunu (giris ertesi acilis). Donus: kirilan
+    satirlar, 'bilgi' = kirilim gunu, 'kutu_bilgi' = eski bilgi gunu."""
+    sat = []
+    for r in O.itertuples():
+        d = V.get(r.sembol)
+        if d is None:
+            continue
+        tar = d.index; a = int(tar.searchsorted(pd.Timestamp(r.dip), side="left"))
+        b = int(tar.searchsorted(pd.Timestamp(r.bilgi), side="right"))
+        c = d.Close.to_numpy(float); tavan = c[a:b].max(); dip = d.Low.iloc[a:b].min()
+        for k in range(b, min(len(c), b + E["bekle"])):
+            if c[k] < dip * (1 - E["dip_tol"]):
+                break
+            if c[k] > tavan * E["tavan"]:
+                x = r._asdict(); x.pop("Index", None); x["kutu_bilgi"] = x["bilgi"]; x["bilgi"] = tar[k]
+                sat.append(x); break
+    return pd.DataFrame(sat)
+
+
+def fi_k14_kiyas(Ol: pd.DataFrame, Es: pd.DataFrame, pazar: str, donemler: List[Tuple[str, str, str]],
+                 olculer: Tuple[str, ...] = ("kat2", "kat15", "k20", "dus", "trail")) -> pd.DataFrame:
+    """Donem basina olay ve esli kutu oranlari, kat = olay / esli. 'trail' ortalama getiri (kat yerine fark)."""
+    sat = []
+    for ad, b, e in donemler:
+        x = Ol[(Ol.bilgi >= b) & (Ol.bilgi <= e)] if len(Ol) else Ol
+        y = Es[(Es.bilgi >= b) & (Es.bilgi <= e)] if len(Es) else Es
+        r = {"pazar": pazar, "donem": ad, "n": len(x), "n_esli": len(y)}
+        for m in olculer:
+            a_ = x[m].mean() if m in x and len(x) else np.nan; t_ = y[m].mean() if m in y and len(y) else np.nan
+            r[m] = a_; r[m + "_esli"] = t_
+            if m == "trail":
+                r["trail_fark"] = a_ - t_
+            else:
+                r[m + "_kat"] = a_ / t_ if t_ and t_ == t_ else np.nan
+        sat.append(r)
+    return pd.DataFrame(sat)
+
+
+def fi_k14_karar(Z: pd.DataFrame, ana: str, E: Dict[str, Any] = FI_K14_ESIK) -> Tuple[str, pd.DataFrame]:
+    """Onceden yazilan sart: FI_K14_HUCRE hucrelerinin hepsinde ana_kat >= 1,3, dus_kat < 1,3, n >= 30."""
+    H = Z.set_index(["pazar", "donem"]).reindex(FI_K14_HUCRE)
+    kucuk = (H.n.fillna(0) < E["n_min"]).any()
+    gecti = (H[ana + "_kat"] >= E["kat_esik"]).all() and (H.dus_kat < E["kat_esik"]).all()
+    return ("IZ" if gecti and not kucuk else ("KUCUK ORNEKLEM" if gecti else "IZ DEGIL")), H.reset_index()
+
+
+def fon_izi_k14(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K14 surucu: K13 olaylari + esli kutular (BIST + ABD), D1 ruzgar, D2 yukselis, D3 kirilim; CSV + rapor tablosu."""
+    A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
+    Z: Dict[str, List[pd.DataFrame]] = {"D1": [], "D2": [], "D3": []}
+    X: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K14 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        O = fi_k13_tara(V); Es = fi_k14_esli(V, O)
+        filog.info("K14 %s: %d olay, %d esli kutu", pazar, len(O), len(Es))
+        W = fi_k14_ruzgar(V, fi_k14_sektor(pazar))
+        tum = []
+        for tur, T in (("olay", O), ("esli", Es)):
+            if not len(T):
+                continue
+            T = T.reset_index(drop=True)
+            T = T.join(fi_k10_sonuc(V, T.sembol, T.bilgi), how="left").join(fi_k14_yukselis(V, T), how="left")
+            T["ruzgar"] = [bool(W.at[pd.Timestamp(b), s]) if pd.Timestamp(b) in W.index and s in W.columns else False
+                           for s, b in zip(T.sembol, T.bilgi)]
+            K = fi_k14_kirilim(V, T[["sembol", "dip", "bilgi"]])
+            if len(K):
+                K = K.reset_index(drop=True)
+                K = K.join(fi_k10_sonuc(V, K.sembol, K.bilgi), how="left").join(fi_k14_yukselis(V, K), how="left")
+            T["tur"] = tur; K["tur"] = tur
+            tum.append((tur, T, K))
+        d = {t: (T, K) for t, T, K in tum}
+        (Ot, Ok), (Et, Ek) = d.get("olay", (O.iloc[0:0], O.iloc[0:0])), d.get("esli", (O.iloc[0:0], O.iloc[0:0]))
+        Z["D1"].append(fi_k14_kiyas(Ot[Ot.ruzgar], Et[Et.ruzgar], pazar, FI_K13_DONEM))
+        Z["D2"].append(fi_k14_kiyas(Ot, Et, pazar, FI_K13_DONEM))
+        Z["D3"].append(fi_k14_kiyas(Ok, Ek, pazar, FI_K13_DONEM))
+        for tur, T, K in tum:
+            X.append(T.assign(pazar=pazar, asama="kutu")); X.append(K.assign(pazar=pazar, asama="kirilim"))
+    if not X:
+        raise RuntimeError("K14: hicbir pazar verisi okunamadi")
+    Xa = pd.concat(X, ignore_index=True); Xa.to_csv(os.path.join(A.cikti, "k14_olaylar.csv.gz"), index=False)
+    ana = {"D1": "k20", "D2": "kat2", "D3": "kat2"}
+    sonuc = {}
+    for k, L in Z.items():
+        Zk = pd.concat(L, ignore_index=True); Zk.to_csv(os.path.join(A.cikti, f"k14_{k}_ozet.csv"), index=False)
+        sonuc[k] = (Zk,) + fi_k14_karar(Zk, ana[k])
+    return {"olay": Xa, "sonuc": sonuc}
+
+
+# ---------------------------------------------------------------- K15 ikinci tur (K14'un uc denemesi de IZ DEGIL, v1.5)
+# Sartlar SONUC GORULMEDEN yazildi (K14 ile ayni karar kurali, FI_K14_HUCRE; ana olcu 2 kat, R3'te 3 kat):
+# R1 GENISLIK: K14'te ruzgarli olay cok az (4-15). Pazar duzeyinde zemin: bilgi gunu hisselerin >= %50'si SMA200 ustunde
+#    (IZ_DEFTERI B8 'piyasa genisligi' GECERLI zamanlama izi). Olay ve esli kutu ayni sartla.
+# R2 OYNAKLIK ESLI: K14'te esli kutular daha sik 2 kat yapti; esli kutular daha oynak olabilir. Esli oran, olaylarin
+#    (kutudan once 60-310 bar medyan (H-L)/onceki kapanis) pazar ici uclusu x yil hucrelerine gore agirlikli (dogrudan
+#    standartlastirma). Kat = olay orani / agirlikli esli orani.
+# R3 BUYUK YUKSELIS: TEHOL'un yaptigi -> 250 barda dip kirilmadan once 3 kat (kat3), olay vs esli; R2 agirligiyla da.
+FI_K15_ESIK = {"genislik": 0.50, "sma": 200, "kat3": 2.0}
+
+
+FI_K15_DERS = [("D1", "K13 + sektör rüzgârı (D9b), ana ölçü önce +%20", "k20"),
+               ("D2", "K13, ana ölçü 250 günde dip kırılmadan 2 kat", "kat2"),
+               ("D3", "K13 kutu tavanı kırılımı (60 gün içinde), ana ölçü 2 kat", "kat2"),
+               ("R1", "K13 + piyasa genişliği ≥%50 (SMA200 üstü), ana ölçü 2 kat", "kat2"),
+               ("R2", "K13 vs oynaklığı eşlenmiş eşli kutu, ana ölçü 2 kat", "kat2"),
+               ("R3", "K13, ana ölçü 3 kat (TEHOL'ün yaptığı)", "kat3")]
+
+
+def fi_k15_genislik(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K15_ESIK) -> pd.Series:
+    """Gunluk piyasa genisligi: kapanisi SMA200 ustunde olan hisse payi (SMA'si hesaplanabilen hisseler icinde)."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index().ffill(limit=5)
+    M = C.rolling(E["sma"], min_periods=E["sma"]).mean()
+    ust = (C > M) & M.notna()
+    return ust.sum(axis=1) / M.notna().sum(axis=1).replace(0, np.nan)
+
+
+def fi_k15_oynaklik(V: Dict[str, pd.DataFrame], O: pd.DataFrame) -> pd.Series:
+    """Kutudan once oynaklik: dipten 60-310 bar once medyan (H-L)/onceki kapanis (K13 mum normuyla ayni pencere)."""
+    out = []
+    for r in O.itertuples():
+        d = V.get(r.sembol)
+        if d is None:
+            out.append(np.nan); continue
+        j = int(d.index.searchsorted(pd.Timestamp(r.dip), side="left")); a, b = max(1, j - 310), max(1, j - 60)
+        h = d.High.to_numpy(float); l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
+        out.append(float(np.median((h[a:b] - l[a:b]) / c[a - 1:b - 1])) if b - a > 50 else np.nan)
+    return pd.Series(out, index=O.index)
+
+
+def fi_k15_kiyas(Ol: pd.DataFrame, Es: pd.DataFrame, pazar: str, donemler: List[Tuple[str, str, str]],
+                 olculer: Tuple[str, ...] = ("kat2", "kat3", "dus"), agirlik: bool = False) -> pd.DataFrame:
+    """fi_k14_kiyas gibi; agirlik=True ise esli orani olaylarin 'hucre' (oynaklik uclusu x yil) dagilimina gore agirlikli."""
+    sat = []
+    for ad, b, e in donemler:
+        x = Ol[(Ol.bilgi >= b) & (Ol.bilgi <= e)]; y = Es[(Es.bilgi >= b) & (Es.bilgi <= e)]
+        r = {"pazar": pazar, "donem": ad, "n": len(x), "n_esli": len(y)}
+        for m in olculer:
+            a_ = x[m].mean() if len(x) else np.nan
+            if agirlik and len(x):
+                ey = y.groupby("hucre")[m].mean(); w = x.hucre.value_counts(normalize=True)
+                ort = w.index.intersection(ey.dropna().index)
+                t_ = float((ey[ort] * w[ort]).sum() / w[ort].sum()) if len(ort) else np.nan
+            else:
+                t_ = y[m].mean() if len(y) else np.nan
+            r[m] = a_; r[m + "_esli"] = t_; r[m + "_kat"] = a_ / t_ if t_ and t_ == t_ else np.nan
+        sat.append(r)
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k15(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K15 surucu: k14_olaylar.csv.gz kutu satirlari + veri -> R1 genislik, R2 oynaklik esli, R3 3 kat; CSV + karar."""
+    A = A or FIAyar()
+    X = pd.read_csv(os.path.join(A.cikti, "k14_olaylar.csv.gz"), parse_dates=["dip", "bilgi"])
+    X = X[X.asama == "kutu"].reset_index(drop=True)
+    Z: Dict[str, List[pd.DataFrame]] = {"R1": [], "R2": [], "R3": []}
+    Y = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K15 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        T = X[X.pazar == pazar].reset_index(drop=True)
+        G = fi_k15_genislik(V)
+        T["genislik"] = G.reindex(pd.DatetimeIndex(T.bilgi)).to_numpy()
+        T["oyn"] = fi_k15_oynaklik(V, T)
+        q = np.nanquantile(T.oyn[T.tur == "esli"], [1 / 3, 2 / 3])
+        T["hucre"] = [f"{int(np.searchsorted(q, v))}_{b.year}" if v == v else "" for v, b in zip(T.oyn, T.bilgi)]
+        K3 = fi_k14_yukselis(V, T, {**FI_K14_ESIK, "kat": FI_K15_ESIK["kat3"]})
+        T["kat3"] = K3.kat2.reindex(T.index) if len(K3) else np.nan
+        Ol, Es = T[T.tur == "olay"], T[T.tur == "esli"]
+        gn = FI_K15_ESIK["genislik"]
+        Z["R1"].append(fi_k15_kiyas(Ol[Ol.genislik >= gn], Es[Es.genislik >= gn], pazar, FI_K13_DONEM))
+        Z["R2"].append(fi_k15_kiyas(Ol[Ol.hucre != ""], Es[Es.hucre != ""], pazar, FI_K13_DONEM, agirlik=True))
+        Z["R3"].append(fi_k15_kiyas(Ol, Es, pazar, FI_K13_DONEM, olculer=("kat3", "kat2", "dus")))
+        Y.append(T)
+    if not Y:
+        raise RuntimeError("K15: hicbir pazar verisi okunamadi")
+    pd.concat(Y, ignore_index=True).to_csv(os.path.join(A.cikti, "k15_olaylar.csv.gz"), index=False)
+    ana = {"R1": "kat2", "R2": "kat2", "R3": "kat3"}
+    sonuc = {}
+    for k, L in Z.items():
+        Zk = pd.concat(L, ignore_index=True); Zk.to_csv(os.path.join(A.cikti, f"k15_{k}_ozet.csv"), index=False)
+        sonuc[k] = (Zk,) + fi_k14_karar(Zk, ana[k])
+    try:
+        D = [(k, ACIK, pd.read_csv(os.path.join(A.cikti, f"k14_{k}_ozet.csv")), m) for k, ACIK, m in FI_K15_DERS[:3]]
+        D += [(k, ACIK, sonuc[k][0], m) for k, ACIK, m in FI_K15_DERS[3:]]
+        fi_k12_ders4(D, os.path.join(A.cikti, "FON_IZI_ders4_tehol_denemeler.pdf"))
+    except Exception as ex:
+        filog.error("K15 ders 4 PDF uretilemedi: %s", ex)
+    return {"sonuc": sonuc}
+
+
+def fi_k12_ders4(D: List[Tuple[str, str, pd.DataFrame, str]], yol: str) -> int:
+    """Ders 4 (curuyen olcu dersi): K13'un iki tur devam denemesi. D = [(kod, aciklama, ozet Z, ana olcu)]; her deneme icin
+    BIST/ABD x donem ana kat ve asagi (dus) kat cubuklari, 1,3 cizgisi, n. Son sayfa: ders ve 'kendin nasil bakarsin'."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+
+    def yazi(fig, y, baslik, satirlar, boy=10, gen=90):
+        fig.text(0.07, y, baslik, fontsize=15, weight="bold", va="top", color="#1f2a44"); y -= 0.045
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= 0.023
+            y -= 0.005
+        return y
+
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "DERS 4: TEHOL TİPİ TABAN — ALTI DENEME, İZ YOK", [
+            "Ders 3'te senin TEHOL bölgenin ölçüleriyle aranan taban (K13) iz çıkmadı. Kural gereği durmadım: altı deneme daha yaptım. "
+            "Şartları sonuca bakmadan yazdım: ana ölçü 'eşli kutuya' göre BIST 2023, BIST 2024-26, ABD 2023, ABD 2024-26 dört hücrenin "
+            "hepsinde ≥1,3 olmalı, aşağı ölçü (önce −%20) 1,3'ü geçmemeli, her hücrede en az 30 olay olmalı.",
+            "Eşli kutu = aynı çöküş (≥%40 düşüş, 30 gün yeni dip yok) ama senin şekline (dar bant, küçük mum, yükselen dipler) hiç "
+            "uymamış dip. Yani soru: 'çöküşten sonraki herhangi bir tabana göre, SENİN şeklin fark yaratıyor mu?'",
+            "",
+            *[f"- {k}: {a}" for k, a, _, _ in D],
+            "",
+            "Sonraki sayfalarda her deneme bir çubuk grafik: koyu = BIST, açık = ABD; kırmızı kesikli çizgi 1,3. Üst grafik ana ölçü, "
+            "alt grafik aşağı ölçü. Çubuğun altında n (olay sayısı).",
+        ])
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        for i in range(0, len(D), 2):
+            fig = plt.figure(figsize=A4)
+            for kk, (kod, acik, Z, ana) in enumerate(D[i:i + 2]):
+                y0 = 0.52 - kk * 0.47
+                fig.text(0.07, y0 + 0.42, f"{kod}: {acik}"[:110], fontsize=10, weight="bold", va="top", color="#1f2a44")
+                for jj, (m, bas_) in enumerate(((ana + "_kat", f"{ana}, kat"), ("dus_kat", "önce −%20, kat"))):
+                    ax = fig.add_axes([0.10 + jj * 0.45, y0 + 0.05, 0.38, 0.30])
+                    et = [f"{p[0]} {dn}\nn={int(n)}" for p, dn, n in zip(Z.pazar, Z.donem, Z.n)]
+                    ax.bar(range(len(Z)), Z[m].fillna(0), color=["#1f2a44" if p == "BIST" else "#7f8fa6" for p in Z.pazar])
+                    ax.axhline(1.0, color="#999", lw=1); ax.axhline(1.3, color="#c0392b", lw=1.5, ls="--")
+                    ax.set_xticks(range(len(Z))); ax.set_xticklabels(et, fontsize=5.5); ax.set_title(bas_, fontsize=8)
+                    ax.tick_params(axis="y", labelsize=7)
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.95, "NEDEN İZ DEĞİL, NE ÖĞRENDİK, SEN NASIL BAKARSIN", [
+            "- Senin şeklin (dar, sakin, yükselen dipli taban) büyük yükselişi DAHA SIK getirmiyor; ABD'de çoğu hücrede daha SEYREK. "
+            "Geniş, oynak çöküş tabanları 2 katı daha sık yapıyor: oynak hisse iki yöne de çok gider.",
+            "- Oynaklığı eşleyince de (R2) sonuç aynı: yalnız BIST 2024-26 hücresi 1,3'ü geçiyor, diğer beş hücre geçmiyor. Tek dönemde "
+            "geçen ölçü iz değildir (DERS 1).",
+            "- Rüzgâr (D1) şartı olay sayısını hücre başına 4–15'e, genişlik (R1) BIST 2023'te 3'e düşürüyor; bu kadar az olaydan "
+            "karar çıkmaz. Olanlar da 1,3'ü dört hücrede birden geçmiyor.",
+            "- Tutarlı tek görüntü: BIST'te bu tabanlardan sonra önce −%20 gelme oranı eşli kutunun yarısı ile üçte ikisi arası (3 dönemde de). "
+            "ABD'de yok. Yani BIST'te 'dibi kolay kırılmayan sakin taban' ama 'sonra uçar' değil. A13 doji kutusu ile aynı aile.",
+            "- TEHOL'ü 10 kat yapan şekil değil, sonrasında gelen alıcıydı (Ders 2: fonlar yükselişin içinde girdi).",
+            "",
+            "Kendin bakarken: bir tabanı gördüğünde aynı hissenin ve aynı dönemin GENİŞ çöküş tabanlarını yanına koy. Senin "
+            "sevdiğin dar taban onlardan daha iyi gitmiyorsa, karar şekilden değil başka bir şeyden (rüzgâr, alıcı, haber) gelmeli.",
+        ])
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -2815,6 +3184,18 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
         _R = fon_izi_k13()
         print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k14":           # K13'un uc devam denemesi (ruzgar, yukselis, kirilim)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k14()
+        for _k, (_Z, _karar, _H) in _R["sonuc"].items():
+            print(_k, _karar); print(_Z.round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k15":           # K14'un ikinci turu (genislik, oynaklik esli, 3 kat)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k15()
+        for _k, (_Z, _karar, _H) in _R["sonuc"].items():
+            print(_k, _karar); print(_Z.round(3).to_string(index=False))
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()
