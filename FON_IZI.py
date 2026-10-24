@@ -42,10 +42,23 @@
 #    Mart 2020 cokusunun 537 gunu bolunme sanilip siliniyordu); 13.03.2020-28.02.2021 gecisinde %10,5-21 sicrama yalniz KAP bedelsiz
 #    kaydi yakininda bolunme sayilir. (2) asagi sinyallerde ESLI TABAN (ayni gun kosulu, sinyalsiz): blok_taban <-> bloksuz taban gunu,
 #    kap_olagan_disi <-> 20 barda >= +%40, kap_vbts_tedbir <-> tavan gunu; kat_*_esli sutunlari. (3) _fi_ilk ayni barda iki esik -> asagi.
-#    ABD'de 'tavan/taban' = +-%9,5 gun (gunluk sinir yok). K9 (v1.3 taslak) ayristiricisi henuz kullanilmaz.
+#    ABD'de 'tavan/taban' = +-%9,5 gun (gunluk sinir yok).
+#  v1.5 (24 Eki) FAZ 1 — FON ISLEM DEFTERI. CEMAL: "Hangi gun kac lot alinmis, dolasimdaki lot, hacim; iz bulmak zorundasin."
+#    K9: KAP 'Portfoy Dagilim Raporu' listesi konu suzgeciyle (2022-12 -> bugun, 45.740 rapor; tasfiyedeki fonlarin haftalik
+#    raporlari ayrilir), BIST hissesi tasiyabilen fonlarin son (duzeltilmis) raporlari indirilir ve metne cevrilir. Ayristirici sirasi:
+#    SPK sablonu (III-, Turk/ABD sayi), Atlas ailesi (3-), genel ISIN ayristiricisi (banka portfoy sirketleri); her rapor kendi hisse
+#    grubu toplamiyla mutabakattan gecer (tutmayan kullanilmaz). Nitelikli yatirimciya satilan fonlar rapor vermez (muaf).
+#    K10: fon girisi / cikisi / ilk giris / coklu giris / buyuk giris / toplu artis / tasfiye sirketi / fonlarin sermaye payi %5-%10'u
+#    ilk asti (yogun5/10); bilgi ani = KAP yayini, giris = ertesi islem gunu acilisi, cikis = uretim (T10 maliyet + trail);
+#    taban her 5. gun, esli taban ayni ay x 60 gun momentum besligi x likidite uclusu; 30 slot vs ayni sayida rastgele.
+#    K11: fon hisselerinde ay ay raporlu tasfiye fonu pozisyonu (bolunmeden arindirilmis lot, sermaye payi, faz) ve islem dokumu
+#    veren sirketlerde gun gun alim/satim lotu ve borsa hacmindeki payi; vaka PDF'i.
 #  KURAL_MOTORU: K1 veri+duzeltme  K2 gunluk/pencere olculeri  K3 vaka fazlari  K4 evren olaylari + ozet  K5 rapor
 #                K6 gosterge/uyumsuzluk/Fibonacci  K7 blok hacim  K8 KAP olaylari (v1.2: fon_izi_gosterge)
+#                K9 KAP fon raporlari  K10 fon girisi testi  K11 fon defteri (v1.5: fon_izi_k10)
 #  Calistirma: FI_VERI_BIST=... FI_VERI_ABD=... python FON_IZI.py   (v1.2: ... FI_KAP=<kap_ozet klasoru> python FON_IZI.py gosterge)
+#    v1.5: FI_KAPFON=<klasor> python FON_IZI.py k9indir  (~5,5 saat, KAP hiz siniri; kaldigi yerden devam eder)
+#          FI_KAPFON=... FI_ISY=<Is Yatirim temel degerler HTML> FI_KAP=... FI_VERI_BIST=... python FON_IZI.py k10  (~11 dk)
 #  Cikti: arastirma_cikti/fon_izi/
 # =====================================================================
 from __future__ import annotations
@@ -63,7 +76,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.4 (2026-10-23, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri)"
+FI_SURUM = "FON_IZI v1.5 (2026-10-24, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -1871,11 +1884,12 @@ def fi_k11_grafik(MA: pd.DataFrame, D: pd.DataFrame, V: Dict[str, pd.DataFrame],
     return sayfa
 
 
-def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame) -> str:
-    """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26)."""
+def fi_k10_rapor(Oz: pd.DataFrame, MZ: pd.DataFrame, K: pd.DataFrame, E: pd.DataFrame, ek_muaf: int = 0) -> str:
+    """v1.5 raporu: kapsam, fon hisselerinde birikim zamani, fon girisi/cikisi/yogunlasma testi (BIST 2023 / 2024-26).
+    ek_muaf: indirme sirasinda 'muaf' isaretlenen (tabloya hic girmeyen) rapor sayisi."""
     mu = K.get("muaf", pd.Series(False, index=K.index)).fillna(False).astype(bool)
     kk = K[~mu]
-    kap = pd.DataFrame([{"rapor": len(K), "muaf (nitelikli yatirimci fonu)": int(mu.sum()), "ayristirilan": len(kk),
+    kap = pd.DataFrame([{"rapor": len(K) + ek_muaf, "muaf (nitelikli yatirimci fonu)": int(mu.sum()) + ek_muaf, "ayristirilan": len(kk),
                          "pozisyon mutabakati %": 100 * kk.poz_tuttu.fillna(False).astype(bool).mean() if len(kk) else np.nan,
                          "islem bolumu olan %": 100 * kk.islem_bolum.fillna(False).astype(bool).mean() if len(kk) else np.nan}])
     iz = []
@@ -1949,7 +1963,7 @@ def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     M.to_csv(os.path.join(A.cikti, "k11_aylik_pozisyon.csv"), index=False)
     kap.to_csv(os.path.join(A.cikti, "k9_kapsam_sirket.csv"), index=False)
     with open(os.path.join(A.cikti, "FON_IZI_k10_rapor.md"), "w", encoding="utf-8") as f:
-        f.write(fi_k10_rapor(Oz, MZ, K, E))
+        f.write(fi_k10_rapor(Oz, MZ, K, E, int((Ek.durum == "muaf").sum())))
     try:
         fi_k11_grafik(MA, D, V, kos, os.path.join(A.cikti, "FON_IZI_fon_birikim.pdf"))
     except Exception as ex:   # grafik bozulursa tablolar yine yazilir
