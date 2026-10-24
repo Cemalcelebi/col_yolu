@@ -8,6 +8,7 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Cemal mobilden çalışır. Sonucu tek, indirilebilir dosya olarak ver; uzun kod bloğunu sohbete yapıştırma.
 - Kod kutusunu yalnızca Colab'a yapıştırılacak komut için kullan ve kutunun üstüne "Colab'a yapıştır" yaz. Dosya adlarını ve yollarını (ör. col_tarayici içindeki COL_v1.py) düz metinle yaz, kutuya koyma. Cemal kutudaki her şeyi Colab'a yapıştırıyor; 20 Ekim'de dosya yolu yapıştırılınca SyntaxError çıktı.
 - Cemal grafik okur ve alım-satım kararını kendisi verir. Claude kodu yazar, ölçer, veriyi toplar.
+- Her yeni iz/bulgu için Cemal'e grafikli kısa bir DERS PDF'i hazırlanır (Cemal, 24 Ekim 2026): iz nedir, nerede saklanır, grafikte nasıl görünür ve görünmez, test sonucu (eşli kat + 1,3 çizgisi), kendisi nasıl bakar. Örnek: `arastirma_cikti/fon_izi/FON_IZI_ders.pdf` (FON_IZI K12). Çürüyen ölçü için de kısa ders verilir: neden iz değil.
 - Görev bitmeden tur bitmez (Cemal, 21 Ekim 2026): bir iş akışı veya uzun ölçüm başlatıldığında Claude sonucu kendisi bekler (ön planda döngüyle, gerekirse birkaç kez) ve bütün sonucu tek mesajda yazar. "Çalışıyor, bitince yazarım" diye ara mesaj atıp Cemal'den yeni mesaj beklenmez; son görev de dahil hiçbir görevde bekleme moduna girilmez. Birden fazla görev verildiyse hepsi bitince tek rapor.
 
 ## Kod standardı (kesin kural)
