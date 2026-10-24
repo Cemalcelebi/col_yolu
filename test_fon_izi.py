@@ -24,6 +24,7 @@
 #     fonlarin payi sermayenin %5 / %10'unu ilk astiginda yogun5/yogun10, bilinme = o ayin en gec fon raporu.
 # 19) v1.5 giris mekanigi: yayin gunu ne saatte olursa olsun giris ertesi islem gunu acilisi; once +%20 (k20); +%8 sonrasi maliyete
 #     donus -> trail getirisi 0 - %0,4; on60 giris oncesi veriyle (sonraki barlar degisince ayni).
+# 21) K13 Ders 3 olcu/tarama (sentetik taban)
 # 20) v1.5 artirimli ayristirma + paket: ikinci calistirmada eski rapor yeniden ayristirilmaz, yeni rapor eklenir; ayristirici
 #     surumu farkli rapor yeniden ayristirilir; paket -> ac sonrasi tablolar ve metinler ayni; bozuk parca sha256 ile yakalanir.
 import sys, numpy as np, pandas as pd
@@ -279,6 +280,22 @@ def sina():
             and set(K3.ayristirici) == {F.FI_K9_SURUM} and len(P3) == len(P2) and acik_ok and bozuk_yakalandi
             and (k0.indeks == 1).all() and len(k2) == 2):
         hata.append(f"20) artirimli ayristirma / paket yanlis: {len(K1)} {len(K2)} {len(P1)} {len(P2)} {acik_ok} {bozuk_yakalandi}")
+    # 21) K13 (Ders 3) olcu ve tarama: 400 bar sakin, 30 barda -%60, 60 bar kucuk mumlu hafif yukselen taban -> tek olay, dip
+    # cokusun dibi, bilgi gunu tabanin icinde; ayni seri tabanda genis bantla (+-%20 salinim) -> olay yok.
+    rng21 = np.random.default_rng(21)
+    def seri21(salinim):
+        c = np.r_[100 * np.exp(np.cumsum(rng21.normal(0, 0.01, 400))), np.linspace(100, 40, 31)[1:],
+                  40 * (1 + np.linspace(0, 0.08, 60)) * (1 + salinim * np.sin(np.arange(60) / 3)), np.linspace(43.2, 50, 40)]
+        c[:400] *= 100 / c[399]
+        rg = np.r_[np.full(430, 0.04), np.full(60, 0.012), np.full(40, 0.03)]
+        idx = pd.bdate_range("2020-01-01", periods=len(c))
+        return pd.DataFrame({"Open": c, "High": c * (1 + rg / 2), "Low": c * (1 - rg / 2), "Close": c, "Volume": 1e6}, index=idx)
+    d21 = seri21(0.0); O21 = F.fi_k13_tara({"AAA": d21}); O21b = F.fi_k13_tara({"BBB": seri21(0.20)})
+    o21 = F.fi_k13_olc(d21, 430, 479)
+    ok21 = (len(O21) == 1 and 425 <= d21.index.get_loc(O21.dip.iloc[0]) <= 431 and 455 <= d21.index.get_loc(O21.bilgi.iloc[0]) <= 489
+            and len(O21b) == 0 and o21["bar"] == 50 and o21["dusus"] < -0.55 and o21["mum_norm"] < 0.5 and o21["u"] > 1.02)
+    if not ok21:
+        hata.append(f"21) K13 tarama/olcu yanlis: {len(O21)} {len(O21b)} {o21}")
     return hata
 
 
@@ -286,4 +303,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 20/20 OK")
+    print("test_fon_izi: 21/21 OK")
