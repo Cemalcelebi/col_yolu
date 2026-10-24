@@ -1,4 +1,4 @@
-# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 24 Ekim 2026, 10:10)
+# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 24 Ekim 2026, 12:10)
 
 **24 Ekim 2026 — OKUMA NOTU:** Aşağıdaki A/B/C tablolarındaki 'GEÇERLİ / ADAY / ÇÜRÜDÜ' kararları ESKİ cetvellerle verildi (ar60, piy, her 5. gün tabanı, ABD'siz). Güncel ve tek geçerli karar aşağıdaki 0. İNDEKS'teki TEK CETVEL kararıdır (IZ_KARNE.py). Tablolar tarihçe olarak duruyor.
 
@@ -103,7 +103,7 @@ TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 i�
 | Ç05 | 2026-09 | Rejim / dış veri (CDS, EEM, VIX, DXY, temel) | rejim.py, temel.py | CDS ve borç/öz çarpan; VIX/DXY/USDTRY tutarsız (KAPALI) | puanlanmadı | — | — | COL_OZET §3 |
 | Ç15 | 2026-10-04 | A1 bedelsiz bildirimi | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −12/−6) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,42 / 1,14 / 1,31 | — / — / — | IZ A1 |
 | Ç18 | 2026-10-04 | A4 koşmuşken iş ilişkisi haberi | KAP_ARSIV.py (Drive) | GEÇERLİ (ar60 −7/−8) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,13 / 1,19 / 1,28 | — / — / — | IZ A4 |
-| Ç19 | 2026-10-04 | A9 OLGUN rüzgâr + sözleşme/teşvik | KAP_ARSIV.py (Drive) | GEÇERLİ ama nötrden farkı küçük | puanlanmadı: Günlük rüzgâr paneli (FON_IZI K14) ile sıradaki turda puanlanacak. | — | — | IZ A9 |
+| Ç19 | 2026-10-04 | A9 OLGUN rüzgâr + sözleşme/teşvik | KAP_ARSIV.py (Drive) | GEÇERLİ ama nötrden farkı küçük | puanlanmadı: Tek cetvelle Ç71'de puanlandı (İZ DEĞİL). | — | — | IZ A9 |
 | Ç20 | 2026-10-04 | A5 söylentiye açıklama + o gün −%5 | KAP_ARSIV.py (Drive) | ADAY (n 26/46) | **İZ DEĞİL** (↓ önce −%20, 2026-10-24) | 1,33 / 0,54 (n13) / 2,09 (n19) | — / — / — | IZ A5 |
 | Ç21 | 2026-10-04 | A8 sözleşme tutarı > yıllık ciro %50 | KAP_ARSIV.py (Drive) | ADAY (n 29/20) | puanlanmadı: Sözleşme tutarı kap_ozet'te yok → tek cetvelle puanlanamaz. | — | — | IZ A8 |
 | Ç22 | 2026-10-04 | A7 açığa satış | — | ÇÜRÜDÜ | puanlanmadı: Veri elde yok. | — | — | IZ A7 |
