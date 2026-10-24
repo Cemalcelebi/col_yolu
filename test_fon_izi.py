@@ -298,7 +298,8 @@ def sina():
             and len(O21b) == 0 and o21["bar"] == 50 and o21["dusus"] < -0.55 and o21["mum_norm"] < 0.5 and o21["u"] > 1.02)
     if not ok21:
         hata.append(f"21) K13 tarama/olcu yanlis: {len(O21)} {len(O21b)} {o21}")
-    # 22) K14: esli kutu (genis bantli ayni cokus -> esli var, K13 olayinin dibi esli olmaz), yukselis (2 kat dip kirilmadan /
+    # 22) K14: esli kutu (genis bantli ayni cokus -> esli var; K13 olayinin dibinden olay gununden SONRA esli olmaz, oncesi
+    # olabilir — v1.6 denetim: eskiden gelecekteki olay da eliyordu), yukselis (2 kat dip kirilmadan /
     # once dip kirilir), kirilim (tavan ustu kapanis -> yeni bilgi gunu), ruzgar (yukselen sektor ruzgarli, duz sektor degil).
     d22b = seri21(0.20)
     Es22 = F.fi_k14_esli({"AAA": d21, "BBB": d22b}, O21)
@@ -317,7 +318,8 @@ def sina():
     for k in range(10):
         V22[f"C{k}"] = pd.DataFrame({"Close": np.full(200, 10.0)}, index=idx22)
     W22 = F.fi_k14_ruzgar(V22, {s: s[0] for s in V22})
-    ok22 = (len(Es22) >= 1 and set(Es22.sembol) == {"BBB"} and list(Y22.kat2) == [1.0, 0.0] and Y22.dip_kirildi.iloc[1] == 1.0
+    ok22 = (len(Es22) >= 1 and "BBB" in set(Es22.sembol)
+            and (Es22[Es22.sembol == "AAA"].bilgi < O21.bilgi.iloc[0]).all()      # v1.6: esli yalniz gecmisi bilir (olaydan sonra yok) and list(Y22.kat2) == [1.0, 0.0] and Y22.dip_kirildi.iloc[1] == 1.0
             and len(K22) == 1 and K22.bilgi.iloc[0] == kir.index[335] and bool(W22["A0"].iloc[-1]) and not bool(W22["B0"].iloc[-1])
             and not W22["A0"].iloc[:60].any())
     if not ok22:
@@ -352,6 +354,33 @@ def sina():
     ok24 = list(O24.sembol) == ["IKI"] and O24.bilgi.iloc[0] > seri24("iki").index[350 + 1 + 25 + 15] if len(O24) else False
     if not ok24:
         hata.append(f"24) K17 iki yuvarlama yanlış: {list(O24.sembol) if len(O24) else []}")
+    # 25) v1.6 fi_duzelt (denetim): %15 yukarı tavan günü gerçek hareket (düzeltilmez); %50 bedelsiz düşüşü düzeltilir; piyasa
+    # geneli aşağı sıçrama günü (hisselerin >= %2'si) bölünme sayılmaz.
+    idx25 = pd.bdate_range("2023-01-02", periods=60)
+    def seri25(adim, gun=30):
+        c = np.full(60, 10.0); c[gun:] = 10.0 * adim
+        return pd.DataFrame({"Open": c, "High": c * 1.01, "Low": c * 0.99, "Close": c, "Volume": 1e6}, index=idx25)
+    A25 = F.FIAyar()
+    u25, nu = F.fi_duzelt(seri25(1.15), A25)
+    b25, nb = F.fi_duzelt(seri25(0.5), A25)
+    piy25 = F.fi_piyasa_sicrama({f"H{k}": seri25(0.8) for k in range(10)}, A25)
+    m25, nm = F.fi_duzelt(seri25(0.8), A25, piyasa=piy25)
+    if not (nu == 0 and abs(u25.Close.iloc[0] - 10) < 1e-9 and nb == 1 and abs(b25.Close.iloc[0] - 5) < 1e-9
+            and idx25[30] in piy25["asagi"] and nm == 0):
+        hata.append(f"25) fi_duzelt v1.6 yanlış: yukarı {nu}, bedelsiz {nb}, piyasa günü {nm}")
+    # 26) v1.6 K13 değişmezi (denetim): her olayda dipten bilgi gününe kadar dibin altına inen Low yok (eskiden t-29 barı
+    # denetlenmiyordu; BIST 193 olayın 45'inde ihlal vardı). Gürültülü çöküş serilerinde gevşek eşikle sınanır.
+    rng26 = np.random.default_rng(26); V26 = {}
+    for k in range(12):
+        c = np.r_[100 * np.exp(np.cumsum(rng26.normal(0, 0.01, 400))), np.linspace(100, 45, 30),
+                  45 * np.exp(np.cumsum(rng26.normal(0.001, 0.025, 200)))]
+        idx = pd.bdate_range("2019-01-01", periods=len(c))
+        V26[f"R{k}"] = pd.DataFrame({"Open": c, "High": c * 1.02, "Low": c * (0.98 - 0.03 * rng26.random(len(c))), "Close": c,
+                                     "Volume": 1e6}, index=idx)
+    O26 = F.fi_k13_tara(V26, F.FI_K16_GEVSEK)
+    ihlal26 = sum(V26[r.sembol].Low.loc[r.dip:r.bilgi].iloc[1:].min() < V26[r.sembol].Low.loc[r.dip] for r in O26.itertuples())
+    if not len(O26) or ihlal26:
+        hata.append(f"26) K13 dipten sonra yeni dip: {ihlal26}/{len(O26)} olay")
     return hata
 
 
@@ -359,4 +388,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 24/24 OK")
+    print("test_fon_izi: 26/26 OK")

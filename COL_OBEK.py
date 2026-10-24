@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CO = {k: id(v) for k, v in globals().items()}
 
-CO_SURUM = "COL_OBEK v1.3 (2026-10-21, alim = yesil mum kapanisi tavan ustu; +%8/+%10 mu once stop mu; dusen bicak)"
+CO_SURUM = "COL_OBEK v1.4 (2026-10-24, denetim: esli taban ALIM, ayni alim tek islem, islem yesil alim barindan, trail ufuksuz)"
 colog = logging.getLogger("col.obek")
 if not colog.handlers:
     _co_h = logging.StreamHandler(sys.stderr)
@@ -171,12 +171,17 @@ def co_k3_sonuc(ay: COAyar, CD, cay, A: Dict[str, np.ndarray], S20: np.ndarray, 
             olay, olay_i = "dusus", i; break
     if e + 1 >= n:
         olay = "veri sonu"
-    s: Dict[str, Any] = {"olay": olay, "olay_bar": (olay_i - e) if olay_i else np.nan}
+    s: Dict[str, Any] = {"olay": olay, "olay_bar": (olay_i - e) if olay_i else np.nan,
+                         # denetim 24 Eki: alim barinin tarihi (ayni alim tek islem sayilsin) ve sinyal gunu tavan/dip uzakligi (esli taban)
+                         "alim_tarih": A["ix"][olay_i].date() if (olay == "alim" and "ix" in A) else None,
+                         "tavan_uz": round((tavan / C[e] - 1) * 100, 2), "dip_uz": round((C[e] / dip - 1) * 100, 2)}
     for uf in (60, 120):
         s[f"get_{uf}"] = round(float(C[min(n - 1, e + uf)] / C[e] - 1) * 100, 1) if e + uf < n else np.nan
     if olay == "alim":
-        isl = CD._cd_islem(cay, ay.al_pay, O, H, L, C, S20, e, r["tavan"], r["dip"])
-        if isl and "getiri" in isl:
+        # denetim 24 Eki: islem yesil alim barindan (eskiden _cd_islem renksiz ilk kirilimi aliyordu, %8,5'inde farkli bar);
+        # veri sonunda acik islem getiriye girmez
+        isl = CD._cd_cikis(cay, O, H, C, S20, olay_i)
+        if isl and "getiri" in isl and not isl.get("acik"):
             s.update(islem_getiri=round(isl["getiri"], 1), hedef=isl["hedef"])
         s.update(co_yol(ay, O, H, L, olay_i, dip))
     return s
@@ -219,6 +224,7 @@ def co_k3_tara(ay: COAyar, CD, cay, veri: Dict[str, pd.DataFrame]) -> pd.DataFra
             continue
         S20 = df.Close.rolling(cay.ma, min_periods=cay.ma).mean().to_numpy(float)
         ix = df.index
+        A["ix"] = ix
         onceki, sira = None, 0
         for r in sig:
             sira = sira + 1 if (onceki is not None and r["s"] - onceki["e"] <= 60) else 1
@@ -284,6 +290,7 @@ def co_k4_taban(ay: COAyar, veri: Dict[str, pd.DataFrame], adim: int = 5, w: int
                 if C[i] < dip: olay, oi = "dusus", i; break
             yol = co_yol(ay, O, H, L, oi, dip) if olay == "alim" else {}
             rows.append({"sembol": sem, "sinyal": ix[e].date(), "olay": olay, **yol,
+                         "tavan_uz": round((tavan / C[e] - 1) * 100, 2), "dip_uz": round((C[e] / dip - 1) * 100, 2),
                          "get_60": round(float(C[min(n - 1, e + 60)] / C[e] - 1) * 100, 1) if e + 60 < n else np.nan,
                          "get_120": round(float(C[min(n - 1, e + 120)] / C[e] - 1) * 100, 1) if e + 120 < n else np.nan})
     return pd.DataFrame(rows)
@@ -292,6 +299,20 @@ def co_k4_taban(ay: COAyar, veri: Dict[str, pd.DataFrame], adim: int = 5, w: int
 # ------------------------------------------------------------------ K5 rapor
 def _oran(x: pd.Series) -> str:
     return f"%{100 * x.mean():.0f}" if len(x) else "-"
+
+
+CO_UZ_KOVA = [-1, 1, 2, 3, 4, 5, 6, 8, 10, 15, 1e9]
+
+
+def co_esli_alim(x: pd.DataFrame, tb: pd.DataFrame) -> float:
+    """Denetim 24 Eki: taban kutusu (son 15 bar) obekten genis; tavan kapanisa ~2 kat uzak oldugundan 'ALIM orani tabandan +15-20p'
+    mekanikti. Esli taban ALIM orani: taban satirlari sinyal gunu tavan ve dip uzakligi (%) kovalarina gore gruplanir, her obek
+    kendi kovasinin taban oranini alir, ortalama. Kovasi tabanda bos olan obek disarida."""
+    if not len(x) or not len(tb) or "tavan_uz" not in tb or "tavan_uz" not in x:
+        return np.nan
+    k = lambda Z: (pd.cut(Z.tavan_uz, CO_UZ_KOVA), pd.cut(Z.dip_uz, CO_UZ_KOVA))
+    h = tb.assign(_a=(tb.olay == "alim").astype(float)).groupby(list(k(tb)), observed=True)._a.mean()
+    return float(h.reindex(pd.MultiIndex.from_arrays(list(k(x)))).mean())
 
 
 def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFrame] = None) -> str:
@@ -306,7 +327,10 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
     for ad, b, s_ in ay.donemler:
         x = T[(T.sinyal >= b) & (T.sinyal <= s_)]
         if x.empty: continue
-        a = x[x.olay == "alim"]; g = a.islem_getiri.dropna()
+        a = x[x.olay == "alim"]
+        if "alim_tarih" in a:      # denetim 24 Eki: ayni alim barina dusen obek sinyalleri tek islem (eskiden ~yarisi kopyaydi)
+            a = a.drop_duplicates(["sembol", "alim_tarih"])
+        g = a.islem_getiri.dropna()
         gk = g.clip(upper=200)        # eski kurus hisselerde veri sicramasi (TRHOL 2019 +69752%): ortalama %200'de kirpilir, medyan degismez
         sat.append(f"| {ad} | {len(x)} | {x.sembol.nunique()} | {_oran(x.olay=='alim')} | {_oran(x.olay=='dusus')} | {_oran(x.olay=='yok')} | "
                    f"{gk.mean():+.1f} / {g.median():+.1f} / %{100*(g>0).mean():.0f} (n={len(g)}, >%200 olan {int((g>200).sum())}) | "
@@ -316,12 +340,16 @@ def co_k5_rapor(ay: COAyar, T: pd.DataFrame, cikti: str, TB: Optional[pd.DataFra
             if len(tb):
                 sat.append(f"| {ad} TABAN (her 5. gun, w=15) | {len(tb)} | {tb.sembol.nunique()} | {_oran(tb.olay=='alim')} | {_oran(tb.olay=='dusus')} | {_oran(tb.olay=='yok')} | - | "
                            f"{tb.fark60.mean():+.1f} / {tb.fark60.median():+.1f} | {tb.fark120.mean():+.1f} / {tb.fark120.median():+.1f} |")
+                ea = co_esli_alim(x, tb)
+                sat.append(f"| {ad} ESLI TABAN (tavan/dip uzakligi ayni kova) | - | - | %{100 * ea:.0f} | - | - | - | - | - |")
     sat += ["", f"## Cemal'in yolu: alim geldikten sonra (ertesi acilis giris, stop = obek dibi -%{100*ay.boz_tol:.0f}, {ay.yuk_bar} bar)", "",
             "| donem | alim n | +%8 GORDU | +%8 gormeden STOP | ikisi de yok | +%10 GORDU | +%10 gormeden STOP | mfe medyan | stop'a kadar bar medyan |", "|---|---|---|---|---|---|---|---|---|"]
     for ad, b, s_ in ay.donemler:
         for etiket, Z in (("", T), ("TABAN", TB if TB is not None else pd.DataFrame())):
             if Z is None or not len(Z) or "yuk8" not in Z.columns: continue
             x = Z[(Z.sinyal >= b) & (Z.sinyal <= s_) & (Z.olay == "alim") & Z.yuk8.notna()]
+            if "alim_tarih" in x and x.alim_tarih.notna().any():
+                x = x.drop_duplicates(["sembol", "alim_tarih"])          # denetim: ayni alim tek islem
             if x.empty: continue
             sat.append(f"| {ad} {etiket} | {len(x)} | {_oran(x.yuk8=='gordu')} | {_oran(x.yuk8=='stop')} | {_oran(x.yuk8=='yok')} | {_oran(x.yuk10=='gordu')} | {_oran(x.yuk10=='stop')} | "
                        f"{x.mfe.median():+.1f} | {x.stop_bar.median():.0f} |")

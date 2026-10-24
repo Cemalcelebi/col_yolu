@@ -47,7 +47,7 @@ from numpy.lib.stride_tricks import sliding_window_view
 
 _CK_ONCE_CT = {k: id(v) for k, v in globals().items()}
 
-CT_SURUM = "COL_TESPIT v1.0 (2026-10-21, D13 adayi: dip -> savunma -> yuvarlanma -> kucuk mum obekleri)"
+CT_SURUM = "COL_TESPIT v1.1 (2026-10-24, denetim: mesafe-esli taban, ABD pazar sutunu, trail ufuksuz)"
 ctlog = logging.getLogger("col.tespit")
 if not ctlog.handlers:
     _ct_h = logging.StreamHandler(sys.stderr)
@@ -258,7 +258,9 @@ def _sonuc(A: Dict[str, np.ndarray], e: int, dip: float, tavan: float, ay: CTAya
             if alim_b is not None: break
     c0 = C[e]
     out = {"alim_a": alim_a, "alim_b": alim_b, "bozulma": int(boz_i is not None and (alim_b is None or boz_i < alim_b)),
-           "toparlanan": int(boz_i is not None and alim_b is not None and boz_i < alim_b)}
+           "toparlanan": int(boz_i is not None and alim_b is not None and boz_i < alim_b),
+           # denetim 24 Eki: sinyal gunu tavana / bozulma cizgisine uzaklik (%) -> mesafe-esli taban (alim/bozulma mekanik farki)
+           "tavan_uz": round((tv / c0 - 1) * 100, 2) if c0 > 0 else np.nan, "dip_uz": round((c0 / dp - 1) * 100, 2) if dp > 0 else np.nan}
     for h in (60, 120):
         out[f"ileri{h}"] = round(float(C[e + h] / c0 - 1) * 100, 2) if (e + h < n and c0 > 0) else np.nan
     if e + 60 < n and c0 > 0:
@@ -382,7 +384,8 @@ def ct_k6_ozet(ay: CTAyar, CD, F: pd.DataFrame, S: Dict[str, np.ndarray], U: pd.
     t0 = time.monotonic()
     nF = len(F)
     # F satirina hizali sonuc dizileri
-    kol = {"alim_a": np.full(nF, np.nan), "alim_b": np.full(nF, np.nan), "bozulma": np.full(nF, np.nan), "toparlanan": np.full(nF, np.nan),
+    kol = {"e_alim_a": np.full(nF, np.nan), "e_bozulma": np.full(nF, np.nan),
+           "alim_a": np.full(nF, np.nan), "alim_b": np.full(nF, np.nan), "bozulma": np.full(nF, np.nan), "toparlanan": np.full(nF, np.nan),
            "ileri60": np.full(nF, np.nan), "ileri120": np.full(nF, np.nan), "once": np.full(nF, np.nan), "getiri_a": np.full(nF, np.nan), "getiri_b": np.full(nF, np.nan)}
     # U, F'nin alt kumesi (ayni sembol,e); F satir indeksini sembol|N|e anahtarindan bul
     Fkey = pd.Series(np.arange(nF), index=pd.MultiIndex.from_arrays([F.sembol.to_numpy(), F.N.to_numpy(), F.e.to_numpy()]))
@@ -411,6 +414,26 @@ def ct_k6_ozet(ay: CTAyar, CD, F: pd.DataFrame, S: Dict[str, np.ndarray], U: pd.
                 taban_oz[ad] = {"n": len(t), "alim_a": t.alim_a.notna().mean(), "alim_b": t.alim_b.notna().mean(), "bozulma": t.bozulma.mean(),
                                 "ileri60": t.ileri60.clip(upper=200).mean(), "ileri120": t.ileri120.clip(upper=200).mean(), "once": t.once_yukari.mean(),
                                 "getiri_a": t.getiri_a.clip(upper=200).mean()}
+    # denetim 24 Eki: MESAFE-ESLI TABAN. Taban kutusu (15 bar) dipten/tavandan uzak; D13 sinyali dibe uzak, tavana yakin -> 'alim
+    # +12..26p, bozulma %2-9 vs %31-44' buyuk olcude mekanikti. Her sinyal kendi donem x tavan uzakligi x dip uzakligi kovasinin taban
+    # oranini alir (e_alim_a, e_bozulma); f_alim_a ve f_bozulma artik esli farktir (ham fark f_alim_a_ham).
+    kb = [-1e9, 0, 1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 30, 45, 70, 1e9]
+    if "tavan_uz" in TB and "tavan_uz" in Uo:
+        tb_don = np.full(len(TB), "", dtype=object)
+        for pz, dl in donemler_hepsi:
+            for ad, b_, s_ in dl:
+                tb_don[((TB.pazar == pz) & (TB.sinyal >= b_) & (TB.sinyal <= s_)).to_numpy()] = ad
+        Tk = pd.DataFrame({"d": tb_don, "k1": pd.cut(TB.tavan_uz, kb).astype(str), "k2": pd.cut(TB.dip_uz, kb).astype(str),
+                           "a": TB.alim_a.notna().astype(float).to_numpy(), "b": TB.bozulma.astype(float).to_numpy()})
+        hucre = Tk[Tk.d != ""].groupby(["d", "k1", "k2"])[["a", "b"]].mean()
+        u_don = np.full(len(Uo), "", dtype=object)
+        u_pz = Uo.sembol.map(pazar_of).to_numpy(); u_t = pd.to_datetime(Uo.sinyal).to_numpy()
+        for pz, dl in donemler_hepsi:
+            for ad, b_, s_ in dl:
+                u_don[(u_pz == pz) & (u_t >= np.datetime64(b_)) & (u_t <= np.datetime64(s_))] = ad
+        mi = pd.MultiIndex.from_arrays([u_don, pd.cut(Uo.tavan_uz, kb).astype(str).to_numpy(), pd.cut(Uo.dip_uz, kb).astype(str).to_numpy()])
+        ex = hucre.reindex(mi)
+        kol["e_alim_a"][ui] = ex.a.to_numpy(float); kol["e_bozulma"][ui] = ex.b.to_numpy(float)
     rows = []
     def _m(a):
         a = a[np.isfinite(a)]; return float(a.mean()) if len(a) else np.nan
@@ -429,6 +452,12 @@ def ct_k6_ozet(ay: CTAyar, CD, F: pd.DataFrame, S: Dict[str, np.ndarray], U: pd.
                  "getiri_a": _m(kol["getiri_a"][sel]), "getiri_b": _m(kol["getiri_b"][sel]), "n_islem_a": int(np.isfinite(kol["getiri_a"][sel]).sum())}
             for k in ("alim_a", "alim_b", "ileri60", "ileri120", "getiri_a"):
                 r[f"f_{k}"] = r[k] - tbo.get(k, np.nan)
+            r["f_alim_a_ham"] = r["f_alim_a"]
+            ea, eb = kol["e_alim_a"][sel], kol["e_bozulma"][sel]; ok_ = np.isfinite(ea)
+            if ok_.sum() >= ay.min_n:
+                r["f_alim_a"] = _m(kol["alim_a"][sel][ok_]) - float(ea[ok_].mean())
+                r["f_bozulma"] = _m(kol["bozulma"][sel][ok_]) - float(eb[ok_].mean())
+                r["esli_alim_a"] = float(ea[ok_].mean()); r["esli_bozulma"] = float(eb[ok_].mean())
             rows.append(r)
     OZ = pd.DataFrame(rows)
     def _oz(g):
@@ -530,7 +559,7 @@ def col_tespit(ay: Optional[CTAyar] = None, veri: Optional[Dict[str, pd.DataFram
     S, F = ct_k3_sinyal(ay, F, V)
     U = F.loc[np.unique(S["satir"])].copy() if len(S["satir"]) else F.iloc[0:0].copy()
     U, TB = ct_k4_sonuc(ay, CK, CY, U, D, veri)
-    U.to_csv(os.path.join(cikti, "col_tespit_sinyal.csv.gz"), index=False)
+    U.assign(pazar=U.sembol.map(pazar_of)).to_csv(os.path.join(cikti, "col_tespit_sinyal.csv.gz"), index=False)   # denetim: pazar sutunu
     E = ct_k5_etiket(ay)
     G, GO = ct_k5_goz(ay, E, F, S, V, D)
     donemler_hepsi = [(p, dl) for p, _, dl in pazarlar]

@@ -35,6 +35,8 @@
 # =====================================================================
 from __future__ import annotations
 
+import hashlib
+import inspect
 import logging
 import os
 import re
@@ -89,7 +91,8 @@ def _ik_k(kod, tarih, ad, dosya, soru, eski, defter="", seviye=0, sinyal="", yon
 IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç01", "2026-09", "Giriş noktası / zamanlaması", "giris_testleri.py, kirilim_sonrasi.py, mfe_analiz.py",
        "Tavan tanımı, teyit, retest, kırılım hacmi, ilk 8 bar kırılımda girmeyi geçer mi?", "KAPALI: hiçbiri geçmedi",
-       "COL_OZET §3", 4, notu="Kapalı konu (CLAUDE.md). Sistem kuralı, olay izi değil."),
+       "COL_OZET §3", 4, notu="Kapalı konu (CLAUDE.md). Sistem kuralı, olay izi değil. Denetim 24 Eki: mfe_analiz 'stopsuz' satırı "
+       "stoplardan farklı örneklemdendi (stop maliyeti ~2 kat abartılı: +19,3 → aynı örneklemde +10,2); yön aynı, düzeltildi."),
     _ik_k("Ç02", "2026-09", "Aday filtreleri (E_ONC, üç şart kapısı, taban kırılması düşürme)", "COL_v1.py (eski sürümler arsiv/)",
        "Kırılım öncesi eleme kâr ekler mi?", "KAPALI: her filtre para kaybettirdi", "COL_OZET §3, §4 ders 1", 4),
     _ik_k("Ç03", "2026-09", "Çıkış varyantları (fiyat/zaman stopu, desen sat, şelale, SMA200)", "STOP_TEST.py, selale.py",
@@ -161,26 +164,39 @@ IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç37", "2026-10-17", "D7 küçük mum (H−L) + D9 uzun çöl + rüzgâr", "COL_v1.py", "Küçük mum tanımı ve uzun çöl yönü",
        "D9 yön ADAY (%56-61); test sürüyor", "COL_OZET §9.1", 2, notu="Olay dosyası yok."),
     _ik_k("Ç38", "2026-10-19", "A13 dipte doji kutusu → sert düşüş riski", "DOJI_KUTU_TEST.py", "Doji kutusundan sonra sert düşüş azalır mı?",
-       "BIST GEÇERLİ risk (ABD bekliyor)", "IZ A13", 2, "doji_kutu", "koruma", "arastirma_cikti/doji_kutu"),
+       "BIST GEÇERLİ risk (ABD bekliyor)", "IZ A13", 2, "doji_kutu", "koruma", "arastirma_cikti/doji_kutu",
+       "Denetim 24 Eki: aynı kutu kayınca yeniden A sayılıyordu (düzeltildi) ve A_dip'in kontrolü yoktu; eşi B_dip (dojisiz dip kutusu) "
+       "ile sert aşağı kat 0,94 / 0,97 / 0,90 → etkinin çoğu 'dipte' olmaktan, dojiden değil."),
     _ik_k("Ç39", "2026-10-19", "Doji kutusu → sert yukarı hareket", "DOJI_KUTU_TEST.py", "Doji kutusu yukarı hareketi haber verir mi?",
        "İz değil (0,90-1,02)", "IZ C", 2, "doji_kutu", "yukari", "arastirma_cikti/doji_kutu"),
     _ik_k("Ç40", "2026-10-19", "GOZ_ESLE bölge kuralı + çöl karnesi", "GOZ_ESLE.py", "Bölge kuralı Cemal'in gözüyle eşleşiyor mu?",
        "Ölçüm (altyapı)", "COL_OZET §9.5", 0),
     _ik_k("Ç41", "2026-10-20", "D12 dip çölü (COL_DIP_TEST)", "COL_DIP_TEST.py", "Dip çölünden atılım tabanı geçer mi?",
-       "İZ DEĞİL (6 dönemin 3'ü)", "IZ C", 2, "d12_atilim", "yukari", "arastirma_cikti/col_dip"),
+       "İZ DEĞİL (6 dönemin 3'ü)", "IZ C", 2, "d12_atilim", "yukari", "arastirma_cikti/col_dip",
+       "Denetim 24 Eki: hedefli işlem 120. barda kesilip verinin son barına atlıyordu, kazananlar 'açık' diye atılıyordu (düzeltildi). "
+       "Yeni beklenti dip/taban: 17,5/16,1 · 18,7/25,5 · 41,8/31,2 · 7,7/10,5 · ABD 2,1/2,3 · 13,1/7,0 → yine 3/6, karar aynı."),
     _ik_k("Ç42", "2026-10-20", "COL_GECMIS (geçmiş gün taraması)", "COL_GECMIS.py", "Kod geçmişte hangi çölleri bulurdu?", "Araç",
        "COL_OZET §9.5", 0, cikti="arastirma_cikti/col_gecmis"),
     _ik_k("Ç43", "2026-10-21", "COL_BUGUN / COL_SEKIL / etiketler", "COL_BUGUN.py, COL_SEKIL.py", "Bugünkü kutular + şekil ölçüleri",
-       "Ölçüm, n küçük", "COL_OZET §9.8", 0, cikti="arastirma_cikti/col_bugun, col_sekil"),
+       "Ölçüm, n küçük", "COL_OZET §9.8", 0, cikti="arastirma_cikti/col_bugun, col_sekil",
+       notu="Denetim 24 Eki: COL_SEKIL'in 'ayıran ölçüleri' (dip_pos, dipten sonra bar, öbek, retest, hacim) kıyaslanamaz negatiflerden "
+            "geliyordu (21 'bugün' kutusu kodun kendi ret nedenine göre seçilmişti). Aynı yoldan çizilmiş 8 OLUMSUZ'a göre bütün AUC 0,37-0,60: "
+            "hiçbir şekil ölçüsü çölü ayırmıyor."),
     _ik_k("Ç44", "2026-10-21", "B14 yuvarlanma öbeği (COL_OBEK)", "COL_OBEK.py", "Öbekten sonra alım gelir mi, kazanç artar mı?",
-       "ADAY yalnız yön; kazanç yok", "IZ B14", 2, "obek", "yukari", "arastirma_cikti/col_obek"),
+       "ADAY yalnız yön; kazanç yok", "IZ B14", 2, "obek", "yukari", "arastirma_cikti/col_obek",
+       "Denetim 24 Eki: 'alım oranı tabandan +15-20p' mekanikti (taban kutusu tavana ~2 kat uzak). Tavan/dip uzaklığı eşli tabana göre "
+       "ALIM %70/%78/%67/%71 vs %67/%76/%70/%67 (+3/+2/−3/+4p) → yön izi de yok. İşlemlerin yarısı kopyaydı (düzeltildi)."),
     _ik_k("Ç45", "2026-10-21", "B15 çıkış kuralı (COL_YOL) → T10 üretimde", "COL_YOL.py", "+%8 maliyet stopu + trail kazancı artırır mı?",
-       "İZ DEĞİL (ABD 3/6); ağır kayıp yarıya", "IZ B15", 4, cikti="arastirma_cikti/col_yol", notu="Portföy kuralı; olay cetveli uygulanmaz."),
+       "İZ DEĞİL (ABD 3/6); ağır kayıp yarıya", "IZ B15", 4, cikti="arastirma_cikti/col_yol",
+       notu="Portföy kuralı; olay cetveli uygulanmaz. Denetim 24 Eki (kopya işlemler atıldı, hisse başına tek slot, trail ufuksuz, "
+            "20 rastgele sıra ortalaması): BIST 4 dönem slot ort. maliyet8_sma20 (T10) +144 vs mevcut +155; ABD 0 vs +6. T10'un "
+            "'+157 vs +144' getiri dayanağı TERS döndü; tutarlı kalan tek etki ağır kaybın azalması (%9,1 → %5,4)."),
     _ik_k("Ç46", "2026-10-21", "COL_KAZANC ek şart + K7 küçük alım mumu + K8 NVI/CMF", "COL_KAZANC.py", "Üretim yoluna şart eklemek kazanç artırır mı?",
        "İZ DEĞİL (BIST'e özgü)", "IZ C", 2, cikti="arastirma_cikti/col_kazanc", notu="Üretim yolu içi ölçüm; olay cetveli değil."),
     _ik_k("Ç47", "2026-10-21", "D13 tespit motoru (COL_TESPIT, col_dip2)", "COL_TESPIT.py, COL_v1.py", "Cemal'in 3 kuralıyla tespit",
        "Tespit bulgusu: alım oranı +12..26p 6/6; iz değil", "IZ C", 2, "d13", "yukari", "arastirma_cikti/col_tespit",
-       "ABD olay dosyası yok → yalnız BIST puanı."),
+       "Denetim 24 Eki: ABD olayları dosyada vardı ('.US' ekli), adaptör okumuyordu → düzeltildi. 'Alım +12..26p' tabanı "
+       "mekanikti (taban kutusu dibe/tavana uzak); mesafe-eşli tabanda alım farkı −2..+3p, bozulma ~0,5 kat."),
     _ik_k("Ç48", "2026-10-21", "COL_GOZ (746 kutu gözle) + Cemal kararı", "goz_esle/arastirma", "Kodun kutuları gözle çöl mü?",
        "%6 çöl; etiket 'atılım geldi mi' etiketi", "COL_OZET §9.8", 0, cikti="arastirma_cikti/col_goz"),
     _ik_k("Ç49", "2026-10-22", "MUM_SUKUN v1.1 hisseye özel mum küçülmesi", "MUM_SUKUN.py", "Düşüş sonrası sakin 3-4 mum",
@@ -236,7 +252,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
           "Puanlanmamış tek GEÇERLİ madde", "Yeni deneme", "IZ A9", 3, "kap_olgun_sozlesme", "asagi"),
     _ik_k("Ç72", "2026-10-24", "D13 tespiti aşağı riski düşürür mü (koruma)", "IZ_KARNE.py",
           "COL_TESPIT 'bozulma %2-9 vs %31-44' eşli tabanla tutar mı?", "Yeni deneme", "IZ C", 2, "d13", "koruma",
-          notu="ABD olay dosyası yok."),
+          notu="Denetim 24 Eki: ABD olayları artık puanlanıyor (adaptör düzeltildi)."),
     _ik_k("Ç73", "2026-10-24", "TEHOL tipi taban + DÜZGÜN DİP (K13b)", "FON_IZI.py (FI_K13B_ESIK), IZ_KARNE.py",
           "Cemal: 'Ekim 2024 dibi düzgün, 2021'inki değil' — dibi haftalarca test edilen taban sonrası yükseliş?",
           "Yeni deneme (TEHOL 2024 geçer, 2021 elenir)", "IZ C", 2, "k13_duz_dip", "yukari",
@@ -248,11 +264,14 @@ IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç76", "2026-10-24", "Ç73 olayları, Cemal'in ölçüsü: 250 günde dip kırılmadan 2 kat (eşli kutu)", "FON_IZI.py (k16)",
           "Düzgün dipli TEHOL tipi tabandan sonra büyük yükseliş daha sık mı?", "Yeni deneme", "IZ C", 2,
           cikti="arastirma_cikti/fon_izi/k16_k13b_ozet.csv",
-          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL: 2 kat katı BIST 0,83 / 0,00 (n7) / 1,31 (n47, TEHOL'ün kendisi dahil); ABD 0,29 / 0,30 / 0,92."),
+          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL. Denetim sonrası (K13 pencere + eşli kutu geçmiş bilgi + fi_duzelt): 2 kat katı "
+               "BIST 0,79 / 0,00 (n2) / 1,30 (n41), ABD 0,33 / 0,31 / 0,92."),
     _ik_k("Ç77", "2026-10-24", "Ç75 olayları, 250 günde dip kırılmadan 2 kat (eşli kutu)", "FON_IZI.py (k16)",
           "Düzgün dip tek başına büyük yükselişi daha sık getirir mi?", "Yeni deneme", "IZ C", 2,
           cikti="arastirma_cikti/fon_izi/k16_gevsek_ozet.csv",
-          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL: 2 kat katı BIST 0,69 / 0,77 / 0,96, ABD 0,60 / 1,05 / 0,83; önce −%20 katı 1,00-1,93 (çok test edilen dip daha sık kırılıyor)."),
+          notu="Eşli kutu kıyası. SONUÇ İZ DEĞİL. Denetim sonrası 2 kat katı BIST 0,71 / 0,96 / 1,06, ABD 0,73 / 1,08 / 0,91; "
+               "önce −%20 katı 0,75-1,31 (eskiden 1,00-1,93: eşli kutu geleceğe göre seçiliyordu → 'çok test edilen dip daha sık "
+               "kırılıyor' gözlemi düştü)."),
     _ik_k("Ç78", "2026-10-24", "İKİ YUVARLAMA: dipten sonra önce aşağı (∩), hemen ardından yukarı (∪) yuvarlama (K17 Y1)", "FON_IZI.py (k17)",
           "Cemal (TEHOL 2021): '1'de aşağı yuvarlama, 2. bölge istenen; ikisi peş peşe' — bu sıra sonrası önce +%20 daha sık mı?",
           "Yeni deneme (TEHOL 21 Nis-8 Haz 2021 kalibre)", "IZ C", 2, "iki_yuvarlama", "yukari", cikti="arastirma_cikti/fon_izi/k17_ozet.csv",
@@ -271,6 +290,13 @@ IK_KAYIT: List[Dict[str, Any]] = [
           notu="Eşli kutuya göre önce −%20 BIST 0,51-0,71 (aşağı risk düşük) ama tek cetvelde ters kat 1,0-1,4; BIST 2023 n=29 küçük."),
     _ik_k("Ç83", "2026-10-24", "İki yuvarlama, hafif silkeleme (-%5..-%15; K17 Y6)", "FON_IZI.py (k17)",
           "Cemal'in 'iki kutu' girişi gibi sığ ikinci çukur ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2, "iki_yuvarlama_hafif", "yukari"),
+    _ik_k("Ç84", "2026-10-24", "GERİYE DÖNÜK KOD DENETİMİ (6 bağımsız denetçi; ölçüm + üretim kodu)", "IZ_KARNE.py, FON_IZI.py, COL_*.py, "
+          "SESSIZ_ML.py, DOJI_KUTU_TEST.py, MUM_SUKUN.py, DENETIM.py, STOP_TEST.py, mfe_analiz.py, zincir_denetimi.py",
+          "Cemal: 'eski modeller sık hata yaptı; yanlışları bul, doğrula, düzelt, yeniden koştur'", "Denetim", "IZ C", 0,
+          cikti="arastirma_cikti/iz_karne/IZ_KARNE_ders7_denetim.pdf",
+          notu="Ölçüm kodunda ~30 doğrulanmış hata düzeltildi, etkilenen her çalışma yeniden koşuldu: tek cetvel İZ 0 (değişmedi). "
+               "Düşen iddialar: T10 getiri dayanağı (ters döndü), öbek 'yön' izi (mekanik), D13 'alım +12..26p' (mekanik), düzgün dip "
+               "'−%20 daha sık' (kontrol grubu hatası), COL_SEKIL 'ayıran ölçüler' (kıyaslanamaz negatif). Üretimde 11 hata: 'yaz' bekliyor."),
 ]
 
 
@@ -315,10 +341,25 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Kod deseni buluyor (TEHOL 2021 dahil; BIST 735, ABD 2471 olay) ama 6 denemenin hiçbiri iz değil; hücrelerin çoğu 0,85-1,25. "
               "En yakın Ç78 ve Ç83 ABD 2023 (1,41 / 1,37), tek hücre. Başarı ölçüsü olarak 'önce +%20' Cemal'in onayıyla kullanıldı",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-24", "istek": "Eski modeller sık hata yaptı: geriye dönük test ve kodlardaki yanlışları bul, doğrula, düzelt, yeniden koştur",
+     "yapilan": "6 bağımsız denetçi (cetvel, FON_IZI, şekil, çıkış/ML, üretim, eski kod); her bulgu yeniden üretildi; ~30 ölçüm hatası düzeltildi; "
+                "FON_IZI (K1, K10, K13-K17, gösterge, ana), COL_DIP_TEST, COL_OBEK, COL_YOL, COL_KAZANC, COL_TESPIT, SESSIZ_ML, DOJI_KUTU, "
+                "MUM_SUKUN, COL_SEKIL ve tek cetvel (41 çalışma) yeniden koşuldu; IZ_KARNE_ders7_denetim.pdf",
+     "sonuc": "İZ 0 (değişmedi). Düşen iddialar: T10 getiri dayanağı ters döndü (BIST +144 vs +155, ABD 0 vs +6; yalnız ağır kayıp %9→%5), "
+              "öbek ve D13 'alım oranı' üstünlüğü mekanikti, düzgün dip '−%20 daha sık' ve COL_SEKIL 'ayıran ölçüler' karşılaştırma hatasıydı. "
+              "Üretimde 11 doğrulanmış hata (çıkış yalnız son güne bakıyor, bedelsiz ölçeği, AL satırı, T9, XU100 yarım bar, fon süzgeci...)",
+     "durum": "TAMAMLANDI, AÇIK: üretim düzeltmeleri Cemal'in 'yaz' kararını bekliyor; 13F izin engelinde"},
 ]
 IK_ACIK: List[str] = [
+    "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
+    "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
+    "_yarim_bar_at ad çakışması (XU100); listedeki fon hisselerine süzgeç yok; boş hedef_vurdu; trail aynı bar; pkl biçimi; test_takip log yan etkisi.",
+    "T10 kararı yeniden (Cemal): düzeltilmiş COL_YOL'da T10 getiriyi artırmıyor (BIST +144 vs +155, ABD 0 vs +6), yalnız ağır kaybı azaltıyor.",
+    "DENETIM.py / STOP_TEST.py düzeltildi (veri sonunda açık işlem) ama OB önbellekleri Drive'da; Colab'da yeniden koşulmalı.",
+    "ABD 13F: SEC indirmesi e-posta içeren istek olduğu için izin sisteminde engellendi; Cemal açık izin/ayar verirse yapılır.",
     "Seviye 4 (sistem/çıkış/portföy: B15-T10, B5/B6/B8) tek cetvelle değil slot simülasyonuyla yeniden ölçülecek.",
-    "ABD olay dosyası olmayan maddeler (A13 doji kutusu, D13): BIST'te zaten tutmadığı için ABD taraması ertelendi.",
+    "ABD olay dosyası olmayan madde (A13 doji kutusu): BIST'te zaten tutmadığı için ABD taraması ertelendi (D13'ün ABD olayları "
+    "denetimde bulundu ve puanlandı).",
     "Karar bekleyen standart sorusu (Cemal): yalnız BIST'te güçlü risk izleri (A11, A14: BIST 3 dönemde 1,5-2,6 kat, ABD 1,0-1,4) "
     "'BIST'e özgü risk süzgeci' diye ayrı sınıf olsun mu? Şu anki standartla iz değil.",
     "Puanlanamayan eski maddeler: A7 (veri yok), A8 (sözleşme tutarı yok), B10/B11 (kriz takvimi), B12/B13 ve D7 (çöl segment olay dosyası yok).",
@@ -342,7 +383,13 @@ def ik_taban(ay: IKAyar, pazar: str, V: Dict[str, pd.DataFrame]) -> pd.DataFrame
     (veri dosyasının boyutu ve tarihi anahtar; veri değişirse yeniden hesaplanır)."""
     F = _ik_fi()
     os.makedirs(ay.onbellek, exist_ok=True)
-    st = os.stat(ay.veri[pazar]); anahtar = f"{st.st_size}_{int(st.st_mtime)}"
+    st = os.stat(ay.veri[pazar])
+    # denetim 24 Eki: anahtar yalnız dosya boyu/tarihiydi; fi_duzelt / sonuç / hücre kodu ya da KAP bedelsiz kaydı değişince eski
+    # taban kullanılıyordu. Kodun ve düzeltilmiş verinin parmak izi eklendi.
+    imza = hashlib.md5((inspect.getsource(F.fi_duzelt) + inspect.getsource(F.fi_piyasa_sicrama) + inspect.getsource(F.fi_k10_sonuc)
+                        + inspect.getsource(F._fi_k10_hucre) + inspect.getsource(F.fi_k10_taban)
+                        + str(sorted((s, len(d), round(float(d.Close.sum()), 4)) for s, d in V.items()))).encode()).hexdigest()[:12]
+    anahtar = f"{st.st_size}_{int(st.st_mtime)}_{imza}"
     yol = os.path.join(ay.onbellek, f"taban_{pazar}.pkl")
     if os.path.exists(yol):
         try:
@@ -361,7 +408,10 @@ def ik_taban(ay: IKAyar, pazar: str, V: Dict[str, pd.DataFrame]) -> pd.DataFrame
 
 # ---------------------------------------------------------------- 3) SİNYALLER (her biri -> DataFrame[sembol, gun])
 def _ik_panel(V: Dict[str, pd.DataFrame], kol: str) -> pd.DataFrame:
-    return pd.DataFrame({s: d[kol] for s, d in V.items()}).sort_index()
+    # denetim 24 Eki: hisselerin yarısından azının barı olan ince gün (bayram arifesi 9 Nis 2024: 541'in 215'i) shift/rolling
+    # zincirini öteki hisselerde ~20 gün NaN yapıyordu; o gün tablodan çıkarılır.
+    P = pd.DataFrame({s: d[kol] for s, d in V.items()}).sort_index()
+    return P.loc[P.notna().sum(axis=1) >= 0.5 * P.ffill().notna().sum(axis=1)]
 
 
 def _ik_gecerli(V) -> pd.DataFrame:
@@ -456,7 +506,10 @@ def ik_s_obek(ay, pazar, V):
 def ik_s_d13(ay, pazar, V):
     D = _ik_dosya(ay, "col_tespit/col_tespit_sinyal.csv.gz")
     D = D[(D.N == 120) & (D.bar >= 15) & (D.inis >= 10) & (D.parabol.astype(bool)) & (D.obek >= 2)]
-    return _ik_pazar_suz(D, pazar, "sinyal")
+    # denetim 24 Eki: dosyada 'pazar' sütunu yok, ABD sembolleri '.US' ekli; eskiden ABD olayları hiç puanlanmıyordu.
+    us = D.sembol.astype(str).str.endswith(".US")
+    D = D[us] if pazar == "ABD" else D[~us]
+    return pd.DataFrame({"sembol": D.sembol.astype(str).str.replace(r"\.US$", "", regex=True).values, "gun": pd.to_datetime(D.sinyal).values})
 
 
 def ik_s_d12_atilim(ay, pazar, V):
@@ -757,7 +810,9 @@ def ik_karar(Z: pd.DataFrame, abd_yok: bool, ay: IKAyar, yon: str = "yukari") ->
             v = float(H.at[(p, d), k])
         except Exception:
             return np.nan
-        return (1 / v if v and v == v else np.nan) if yon == "koruma" and k.endswith("_kat") else v
+        if yon == "koruma" and k.endswith("_kat"):
+            return np.inf if v == 0 else (1 / v if v == v else np.nan)     # kat 0 = en güçlü koruma (eskiden NaN sayılıyordu)
+        return v
     E = ay.kat_esik
     if abd_yok:
         hc = [("BIST", d) for d, _, _ in IK_DONEM]
@@ -882,9 +937,13 @@ def ik_indeks_metni(ay: IKAyar) -> str:
             bist = [x for x in v[:3] if x == x]
             if bist and min(bist) >= 1.3:
                 yakin.append(f"{kod} {r['ad']} (BIST {' / '.join(_ik_f(x) for x in v[:3])}; ABD {' / '.join(_ik_f(x) for x in v[3:])})")
-        satir += ["**Kesinleşen durum (tek cetvel):** dört karar hücresinin hepsinde tutan İZ yok. Eski cetvelde 'GEÇERLİ' yazan "
-                  "maddeler eşli tabanla yeniden ölçüldü; fark çoğunlukla hissenin zaten düşmüş/yükselmiş, sakin/oynak olmasından "
-                  "geliyordu (eşli taban bunu eşitler).", ""]
+        izler = [kod for kod, k in KR.iterrows() if k.karar == "İZ"]
+        if izler:      # denetim 24 Eki: bu cümle eskiden sabitti, İZ çıksa da 'İZ yok' yazıyordu
+            satir += [f"**Kesinleşen durum (tek cetvel):** dört karar hücresinde tutan İZ: {', '.join(izler)}.", ""]
+        else:
+            satir += ["**Kesinleşen durum (tek cetvel):** dört karar hücresinin hepsinde tutan İZ yok. Eski cetvelde 'GEÇERLİ' yazan "
+                      "maddeler eşli tabanla yeniden ölçüldü; fark çoğunlukla hissenin zaten düşmüş/yükselmiş, sakin/oynak olmasından "
+                      "geliyordu (eşli taban bunu eşitler).", ""]
         if yakin:
             satir += ["**Eşiğe en yakın (BIST'in 3 döneminde ≥1,3, ABD'de tutmuyor):**", ""] + [f"- {y}" for y in yakin] + [""]
     satir += ["### Görev günlüğü (Cemal'in verdiği işler)", "", "| Tarih | İstek | Yapılan | Sonuç | Durum |", "|---|---|---|---|---|"]
@@ -1066,6 +1125,122 @@ def ik_ders(ay: IKAyar, yol: Optional[str] = None) -> str:
     return yol
 
 
+# ---------------------------------------------------------------- 7) DENETİM DERSİ (24 Eki 2026)
+# Geriye dönük kod denetiminin (6 bağımsız denetçi, her bulgu yeniden üretildi) sonuç değiştiren kısımları. Sayılar düzeltme öncesi
+# ve sonrası koşumlardan (arastirma_cikti/col_yol, col_obek, fon_izi/k16_gevsek_ozet.csv; D13 eşli taban denetçi ölçümü) alınmıştır.
+IK_DENETIM_SAYI: Dict[str, Any] = {
+    "t10": {"BIST": {"önce": (156.8, 144.0), "sonra": (144.1, 154.6)}, "ABD": {"önce": (17.0, 21.4), "sonra": (0.3, 6.2)}},
+    "obek_alim": {"donem": ["2016-19", "2020-22", "2023", "2024-26"], "obek": [70, 78, 67, 71], "taban": [53, 62, 53, 48],
+                  "esli": [67, 76, 70, 67]},
+    "d13_boz": {"donem": ["BIST 16-19", "BIST 20-22", "BIST 2023", "BIST 24-26", "ABD 22-23", "ABD 24-26"], "d13": [8, 6, 2, 9, 8, 9],
+                "taban": [35, 31, 41, 44, 42, 37], "esli": [13, 12, 8, 16, 16, 13]},
+    "duzgun_dus": {"hucre": ["BIST 16-22", "BIST 2023", "BIST 24-26", "ABD 16-22", "ABD 2023", "ABD 24-26"],
+                   "önce": [1.92, 1.00, 1.14, 1.32, 1.26, 1.23], "sonra": [1.30, 0.75, 0.93, 1.10, 1.07, 1.07]},
+}
+
+
+def ik_ders_denetim(ay: IKAyar, yol: Optional[str] = None) -> str:
+    """Ders 7 (Cemal 24 Eki: 'eski modeller hata yapmış olabilir, bul, doğrula, düzelt, yeniden koştur'): (1) hata türleri ve
+    hangi sonucu nasıl şişirdikleri; (2) önce/sonra grafikleri (T10, öbek alım, D13 bozulma, düzgün dip −%20); (3) karar durumu ve
+    üretim hataları. Çürüyen ölçü dersi kısa tutulur (CLAUDE.md)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    yol = yol or os.path.join(ay.cikti, "IZ_KARNE_ders7_denetim.pdf")
+    D = IK_DENETIM_SAYI
+    A4 = (8.27, 11.69)
+
+    def yazi(fig, y, baslik, satirlar, boy=9.5, gen=94):
+        fig.text(0.06, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.04
+        for s in satirlar:
+            for j, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.06 if not s.startswith("- ") or j == 0 else 0.085, y, parca, fontsize=boy, va="top"); y -= 0.021
+            y -= 0.004
+        return y
+
+    def cubuk(ax, etiket, seriler, renk, baslik, ylab, cizgi=None):
+        x = np.arange(len(etiket)); w = 0.8 / len(seriler)
+        for i, (ad, v) in enumerate(seriler):
+            ax.bar(x + (i - (len(seriler) - 1) / 2) * w, v, w, label=ad, color=renk[i])
+        if cizgi is not None:
+            ax.axhline(cizgi, color="#c0392b", ls="--", lw=1.5)
+        ax.set_xticks(x); ax.set_xticklabels(etiket, fontsize=7, rotation=25, ha="right"); ax.set_title(baslik, fontsize=10)
+        ax.set_ylabel(ylab, fontsize=8); ax.set_ylim(0, ax.get_ylim()[1] * 1.25)
+        ax.legend(fontsize=6.5, frameon=False, loc="upper center", ncol=len(seriler)); ax.tick_params(labelsize=7)
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "DERS 7: GERİYE DÖNÜK DENETİM — HATALAR SONUCU NASIL ŞİŞİRDİ?", [
+            "Sen: 'Eski modeller sık hata yapıyordu; testlerdeki yanlışları bul, doğrula, düzelt, yeniden koştur.' Altı bağımsız denetçi "
+            "kodu bölüm bölüm okudu; her bulgu sentetik ya da gerçek veriyle yeniden üretildi, sonra düzeltilip ölçümler yeniden koşuldu.",
+            "Sonuç kısaca: hiçbir 'iz değil' kararı 'iz' olmadı. Ama eskiden pozitif görünen dört iddia düştü (aşağıda), ve üretim "
+            "kodunda (takip.py) gerçek para etkisi olan hatalar bulundu; onlar senin 'yaz' kararını bekliyor.",
+        ])
+        y = yazi(fig, y - 0.01, "Hata türleri (öğrenmen gereken altı tuzak)", [
+            "- KOPYA İŞLEM: ardışık sinyaller aynı alım gününe düşüp aynı işlem 2-21 kez sayıldı (öbek işlemlerinin yarısı). n ve "
+            "anlamlılık iki kat şişti; slot simülasyonu aynı hisseye birden çok slot açtı. Üretimde hisse bir kez tutulur.",
+            "- GELECEĞİ GÖREN KONTROL GRUBU: eşli kutu 'bu dipten hiç olay çıkmamış' diye seçildi; olay 50 bar sonra da çıkabildiği için "
+            "kontrol grubu sonucun içindeki fiyat yoluna göre seçilmiş oldu.",
+            "- KIYASLANAMAZ TABAN: öbek/D13 sinyali tavana yakın ve dipten uzak; taban kutusu (son 15 bar) ise tersine. 'Alım oranı "
+            "tabandan +15-20 puan' bu mesafeden geliyordu. Doğrusu: aynı tavan/dip uzaklığındaki tabanla kıyas (eşli taban).",
+            "- GERÇEK HAREKETİ BÖLÜNME SANMAK: BIST verisinde %10,5-30 yukarı tavan günleri (1.068) ve 15 Şubat 2023 deprem açılışı "
+            "(375 hisse) bölünme sanılıp geçmiş fiyat oynatılıyordu. Bölünme/bedelsiz fiyatı düşürür, yükseltmez.",
+            "- AÇIK İŞLEMİ KAPANMIŞ SAYMAK: trail'deki işlem 120. barda kesilip verinin son gününe atlıyordu ya da veri bitince "
+            "kapanmış sayılıyordu. Kazananların bir kısmı atılıyor, bir kısmı yıllarca tutulmuş gibi görünüyordu.",
+            "- KÜÇÜK PENCERE KAYMASI: 'dipten sonra yeni dip yok' kontrolü bir barı atlıyordu (K13: 193 olayın 45'inde ihlal).",
+        ], boy=8.8)
+        pdf.savefig(fig); plt.close(fig)
+
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.97, "ÖNCE / SONRA: DÜŞEN DÖRT İDDİA", [], boy=9)
+        t = D["t10"]
+        ax = fig.add_axes([0.08, 0.70, 0.38, 0.22])
+        cubuk(ax, ["BIST önce", "BIST sonra", "ABD önce", "ABD sonra"],
+              [("T10 (+%8 → maliyete stop)", [t["BIST"]["önce"][0], t["BIST"]["sonra"][0], t["ABD"]["önce"][0], t["ABD"]["sonra"][0]]),
+               ("T10'suz mevcut", [t["BIST"]["önce"][1], t["BIST"]["sonra"][1], t["ABD"]["önce"][1], t["ABD"]["sonra"][1]])],
+              ["#e67e22", "#1f2a44"], "1) T10 dayanağı: 30 slot portföy, 4 dönem ort. %", "%")
+        o = D["obek_alim"]
+        ax = fig.add_axes([0.56, 0.70, 0.38, 0.22])
+        cubuk(ax, o["donem"], [("öbek", o["obek"]), ("ham taban (eski kıyas)", o["taban"]), ("eşli taban (düzeltme)", o["esli"])],
+              ["#1f2a44", "#bdc3c7", "#27ae60"], "2) Öbekten sonra ALIM oranı %", "%")
+        b = D["d13_boz"]
+        ax = fig.add_axes([0.08, 0.38, 0.38, 0.22])
+        cubuk(ax, b["donem"], [("D13", b["d13"]), ("ham taban", b["taban"]), ("eşli taban", b["esli"])],
+              ["#1f2a44", "#bdc3c7", "#27ae60"], "3) D13 sonrası bozulma %", "%")
+        g = D["duzgun_dus"]
+        ax = fig.add_axes([0.56, 0.38, 0.38, 0.22])
+        cubuk(ax, g["hucre"], [("önce", g["önce"]), ("sonra", g["sonra"])], ["#bdc3c7", "#1f2a44"],
+              "4) Düzgün dip → önce −%20, eşli kutu katı", "kat", cizgi=1.3)
+        yazi(fig, 0.30, "Okuma", [
+            "- 1) T10'un 'portföyü artırır' gerekçesi tersine döndü (BIST +144 vs +155, ABD 0 vs +6). Kalan tek etkisi ağır kaybı "
+            "azaltması (%9 → %5). Yani T10 bir getiri kuralı değil, bir sigorta: daha az kazanç karşılığı daha az ağır zarar.",
+            "- 2) Öbek 'alım gelir mi' sorusuna da cevap vermiyor: aynı uzaklıktaki sıradan kutuyla fark −3..+4 puan.",
+            "- 3) D13'ün bozulma üstünlüğü küçüldü (yaklaşık yarı kat, 1/5 değil); 'alım oranı +12..26 puan' mekanikti.",
+            "- 4) 'Çok test edilen dip daha sık kırılıyor' gözlemi kontrol grubu hatasındandı; düzeltince tutarlı değil.",
+        ], boy=8.8)
+        pdf.savefig(fig); plt.close(fig)
+
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "KARAR DURUMU VE ÜRETİM HATALARI", [
+            "Tek cetvel yeniden koşuldu (41 çalışma): İZ 0. Eşiğe en yakın yine BIST'e özgü A11 ve A14. D13 artık ABD'de de "
+            "puanlandı (2023 0,97, 2024-26 0,98): iz değil.",
+            "Üretimde (takip.py / BASLAT.py) doğrulanan hatalar — kod senin 'yaz' kararın olmadan değişmez:",
+            "- Çıkış yalnız SON güne bakıyor: atlanan ya da birden gelen günlerde taban/maliyet/trail çıkışı kaçıyor; kapanan "
+            "işlemlerin getirisi bu yüzden yola bağlı (16 Eki satırları günlük oynatmada farklı çıkıyor).",
+            "- Bedelsiz/bölünme sonrası pozisyon ve aday fiyatları ölçeklenmiyor: %100 bedelsizde sahte −%48 'taban' satışı.",
+            "- AL ekran satırı yanlış sütunları basıyor (22 Eki ENTRA: pozisyon 'nan', 'OZ-', 'serbest' yanlış).",
+            "- Maliyet çıkışı boşlukla açılışta da giriş fiyatından yazılıyor; taban önceliği T10 ölçümünden farklı.",
+            "- Verisi durmuş hissedeki pozisyon rapordan sessizce kayboluyor (T9 fiilen çalışmıyor).",
+            "- XU100 yarım bar düzeltmesi ad çakışmasıyla devre dışı; listede bekleyen fon hisselerine süzgeç uygulanmıyor.",
+            "Kendin nasıl bakarsın: bir sonuç 'çok iyi' görünüyorsa önce üç soruyu sor — aynı işlem kaç kez sayıldı? kontrol grubu "
+            "sonucu bilmeden mi seçildi? kıyas aynı koşulda mı (aynı uzaklık, aynı gün, aynı çöküş)?",
+        ], boy=9)
+        pdf.savefig(fig); plt.close(fig)
+    return yol
+
+
 def iz_karne(komut: str = "indeks", seviye: Optional[List[int]] = None) -> Any:
     ay = IKAyar()
     if komut == "indeks":
@@ -1096,8 +1271,10 @@ if __name__ == "__main__":
         ik_indeks(IKAyar()); print("indeks yazıldı"); sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "ders":
         print(ik_ders(IKAyar())); sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "denetimders":
+        print(ik_ders_denetim(IKAyar())); sys.exit(0)
     if len(sys.argv) > 2 and sys.argv[1] == "seviye":
         sv = [int(x) for x in sys.argv[2].split(",")]
         kod = sys.argv[3].split(",") if len(sys.argv) > 3 else None
         print(ik_seviye(IKAyar(), sv, kod)[["kod", "sinyal", "yon", "karar", "neden"]].to_string(index=False)); sys.exit(0)
-    print("kullanım: python IZ_KARNE.py indeks | ders | seviye 1[,2,3] [Ç16,Ç17]")
+    print("kullanım: python IZ_KARNE.py indeks | ders | denetimders | seviye 1[,2,3] [Ç16,Ç17]")

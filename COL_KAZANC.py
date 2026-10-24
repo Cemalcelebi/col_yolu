@@ -50,7 +50,7 @@ import pandas as pd
 
 _CK_ONCE_CK = {k: id(v) for k, v in globals().items()}
 
-CK_SURUM = "COL_KAZANC v1.2 (2026-10-21, K8 birikim: NVI / CMF / A-D ayrismasi)"
+CK_SURUM = "COL_KAZANC v1.3 (2026-10-24, denetim: kopya islem, hisse basina tek slot, ay kumeli p, dogru bos dagilim)"
 cklog = logging.getLogger("col.kazanc")
 if not cklog.handlers:
     _ck_h = logging.StreamHandler(sys.stderr)
@@ -219,16 +219,19 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
         A["ix"] = df.index
         D[sem] = A
         onceki, sira = None, 0
+        gorulen: set = set()            # denetim 24 Eki: ayni alim barina dusen obek sinyalleri tek islem (BIST'te ~yarisi kopyaydi)
         for r in sig:
             sira = sira + 1 if (onceki is not None and r["s"] - onceki["e"] <= 60) else 1
             b = CY.cy_alim(yay, O, C, r["e"], r["tavan"], r["dip"])
             obk.append({"sembol": sem, "kaynak": "obek", "sinyal": df.index[r["e"]], "w": r["w"], "obek_sira": sira,
                         **ck_akis(A, r["s"], r["e"]), **_ck_sonuc60(A, r["e"], r["dip"] * (1 - yay.boz_tol), b)})
-            if b is not None and b + 1 < n and b >= 60:
+            if b is not None and b + 1 < n and b >= 60 and b not in gorulen:
+                gorulen.add(b)
                 isl.append({"sembol": sem, "kaynak": "obek", "sinyal_i": r["e"], "alim_i": b, "giris_i": b + 1,
                             "stop0": r["dip"] * (1 - yay.boz_tol), **ck_olcu(A, r, b, onceki, sira)})
             onceki = r
         if ay.taban:
+            gorulen_t: set = set()
             for e in range(oay.min_gecmis, n - 1, ay.taban_adim):
                 s = e - ay.taban_w + 1
                 tavan, dip = float(H[s:e + 1].max()), float(L[s:e + 1].min())
@@ -236,8 +239,9 @@ def ck_k2_islemler(ay: CKAyar, CO, CY, veri: Dict[str, pd.DataFrame]) -> Tuple[L
                 if e >= 60:
                     obk.append({"sembol": sem, "kaynak": "taban", "sinyal": df.index[e], "w": ay.taban_w, "obek_sira": 1,
                                 **ck_akis(A, s, e), **_ck_sonuc60(A, e, dip * (1 - yay.boz_tol), b)})
-                if b is None or b + 1 >= n or b < 60:
+                if b is None or b + 1 >= n or b < 60 or b in gorulen_t:
                     continue
+                gorulen_t.add(b)
                 d = s + int(np.argmin(L[s:e + 1]))
                 med = float(np.nanmedian(A["ar"][s:e + 1])); r60 = float(np.nanmedian(A["ar"][max(0, s - 60):s]))
                 y = L[d:e + 1] / dip - 1; kk = max(2, len(y) // 3)
@@ -517,6 +521,18 @@ def _p_welch(a: np.ndarray, b: np.ndarray) -> float:
     return float(math.erfc(abs(a.mean() - b.mean()) / se / math.sqrt(2)))
 
 
+def _p_kume(a: pd.DataFrame, b: pd.DataFrame, kol: str = "g", kume: str = "alim") -> float:
+    """Denetim 24 Eki: islemler zamanda kumeli (ayni ay ayni piyasa); Welch bagimsizlik varsayiyor ve p'yi asiri kucultuyordu.
+    Ay kumeli test: her ay (kume) icin a ve b ortalama farki; aylarin farklari uzerinden t (normal yaklasim), iki yonlu p."""
+    import math
+    ka = a.groupby(pd.to_datetime(a[kume]).dt.to_period("M"))[kol].mean()
+    kb = b.groupby(pd.to_datetime(b[kume]).dt.to_period("M"))[kol].mean()
+    f = (ka - kb).dropna().to_numpy(float)
+    if len(f) < 6 or f.std(ddof=1) == 0:
+        return np.nan
+    return float(math.erfc(abs(f.mean()) / (f.std(ddof=1) / math.sqrt(len(f))) / math.sqrt(2)))
+
+
 def _bh_fdr(p: np.ndarray) -> np.ndarray:
     """Benjamini-Hochberg q degerleri (NaN'lar atlanir)."""
     q = np.full(len(p), np.nan); m = np.isfinite(p); pv = p[m]; n = len(pv)
@@ -607,8 +623,10 @@ def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: L
     for pazar, dl in donemler_hepsi:
         xo = T[(T.kaynak == "obek") & (T.pazar == pazar)]
         k = xo[xo[olcu] < esik]; d = xo[xo[olcu] >= esik]
-        p = _p_welch(k.g.to_numpy(), d.g.to_numpy())
-        sat.append(f"- {pazar} havuz (tum donemler): n {len(k)} / {len(d)}, fark {k.g.mean() - d.g.mean():+.2f}, p = {p:.2e} -> Bonferroni(kova) {'GECER' if p < 0.05 / m_kova else 'GECMEZ'}, Bonferroni(hucre) {'GECER' if p < 0.05 / m_hucre else 'GECMEZ'}")
+        p = _p_welch(k.g.to_numpy(), d.g.to_numpy()); pk = _p_kume(k, d)
+        sat.append(f"- {pazar} havuz (tum donemler): n {len(k)} / {len(d)}, fark {k.g.mean() - d.g.mean():+.2f}, Welch p = {p:.2e}, "
+                   f"AY KUMELI p = {pk:.2e} -> Bonferroni(kova, ay kumeli) {'GECER' if pk < 0.05 / m_kova else 'GECMEZ'}, "
+                   f"Bonferroni(hucre, ay kumeli) {'GECER' if pk < 0.05 / m_hucre else 'GECMEZ'} (denetim 24 Eki: Welch bagimsiz gozlem varsayar, kumeli p esas)")
     hk = H[(H.olcu == olcu) & (H.kova.astype(str).str.startswith("<1.5"))]
     sat.append(f"- BH-FDR (q < 0,10) ile ayakta kalan hucre: {int((H.q_bh < 0.10).sum())} / {m_hucre}; kucuk mum hucreleri: " +
                (", ".join(f"{r.donem} q={r.q_bh:.2f}" for r in hk.itertuples()) if len(hk) else "-"))
@@ -724,8 +742,9 @@ def ck_k7_dogrula(ay: CKAyar, CD, T: pd.DataFrame, cikti: str, donemler_hepsi: L
         if len(k) < ay.min_n or len(d) < ay.min_n:
             continue
         sk, sa = _slot_fark(CD, k, x0, ay.slot)
-        n = min(len(k), len(d))
-        sd = float(np.mean([CD._cd_slot(d.sample(n, random_state=int(rng.integers(1e9))).assign(getiri=lambda z: z.g), ay.slot)[0] for _ in range(20)]))
+        # denetim 24 Eki: bos dagilim TUM islemlerden ayni n (eskiden 'diger' gruptan, ABD'de n uyusmuyordu)
+        n = len(k)
+        sd = float(np.mean([CD._cd_slot(x0.sample(n, random_state=int(rng.integers(1e9))).assign(getiri=lambda z: z.g), ay.slot, tohum=j)[0] for j in range(20)]))
         ez_k = k.groupby("alim").size().mean(); ez_d = d.groupby("alim").size().mean()
         sat.append(f"| {ad} | {len(k)} / {len(d)} | {k.g.mean():+.1f} / {d.g.mean():+.1f} | {sk:+.0f}% | {sd:+.0f}% | {sa:+.0f}% | {k.bar.mean():.0f} / {d.bar.mean():.0f} | {ez_k:.1f} / {ez_d:.1f} |")
     sat.append("")
@@ -903,6 +922,7 @@ def ck_k8_birikim(ay: CKAyar, T: pd.DataFrame, OB: pd.DataFrame, cikti: str, don
 def _kazanc_pazar(ay: CKAyar, CD, CO, CY, veri: Dict[str, pd.DataFrame], pazar: str) -> Tuple[pd.DataFrame, pd.DataFrame]:
     isl, D, obk = ck_k2_islemler(ay, CO, CY, veri)
     T = ck_k3_cikis(ay, CY, isl, D)
+    T = T[T.neden != "veri_sonu"].reset_index(drop=True)      # denetim 24 Eki: veri sonunda acik islem kapanmis sayilmaz
     T = ck_k3_piyasa(ay, veri, T, pazar)
     T["pazar"] = pazar
     OB = pd.DataFrame(obk); OB["pazar"] = pazar

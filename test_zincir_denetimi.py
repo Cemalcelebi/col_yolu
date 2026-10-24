@@ -140,7 +140,7 @@ def T7_pnl_ve_maliyet(ns):
     c2 = np.full(n, 10.0); c2[101:] = 10.5
     M2 = pd.DataFrame({"O": c2, "H": c2 * 1.001, "L": c2 * 0.999, "C": c2, "V": 1e6}, index=ix)
     assert abs(ns["zd_pnl"](M2, 50, np.nan, ufuk=120, maliyet=0.0) - 5.0) < 1e-6
-    V = evren(); R = ns["zd_maliyet"](ns["_zd_evren"](V), ns["_zd_sinyaller"](sinyaller(V)))
+    V = evren(); R = ns["zd_maliyet"](ns["_zd_evren"](V), ns["_zd_sinyaller"](sinyaller(V).assign(tavan=0.01)))   # denetim: giris kirilimdan; dusuk tavan = hemen kirilim
     b = [v[1] for v in R["ozet"].values()]; assert b[0] > b[1] > b[2] and abs((b[0] - b[2]) - 2.2) < 1e-6, R
 
 

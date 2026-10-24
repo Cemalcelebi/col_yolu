@@ -37,7 +37,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in globals().items()}
 
-CY_SURUM = "COL_YOL v1.2 (2026-10-21, ABD evreni)"
+CY_SURUM = "COL_YOL v1.3 (2026-10-24, denetim: kopya islem, hisse basina tek slot, trail ufuksuz, slot bandi)"
 cylog = logging.getLogger("col.yol")
 if not cylog.handlers:
     _cy_h = logging.StreamHandler(sys.stderr)
@@ -126,15 +126,19 @@ def cy_k2_islemler(ay: CYAyar, CO, veri: Dict[str, pd.DataFrame]) -> Tuple[List[
         A["S20"] = df.Close.rolling(20, min_periods=20).mean().to_numpy(float)
         A["ix"] = df.index
         D[sem] = A
+        gorulen: set = set()          # denetim 24 Eki: ardisik obek sinyalleri ayni alim barina dusuyordu (BIST 50.006 -> 24.838 tekil)
         for r in sig:
             b = cy_alim(ay, O, C, r["e"], r["tavan"], r["dip"])
-            if b is not None and b + 1 < n:
+            if b is not None and b + 1 < n and b not in gorulen:
+                gorulen.add(b)
                 isl.append({"sembol": sem, "kaynak": "obek", "sinyal_i": r["e"], "alim_i": b, "giris_i": b + 1,
                             "stop0": r["dip"] * (1 - ay.boz_tol), "w": r["w"]})
+        gorulen_t: set = set()
         for e in range(oay.min_gecmis, n - 1, ay.taban_adim):
             tavan, dip = H[e - ay.taban_w + 1:e + 1].max(), L[e - ay.taban_w + 1:e + 1].min()
             b = cy_alim(ay, O, C, e, tavan, dip)
-            if b is not None and b + 1 < n:
+            if b is not None and b + 1 < n and b not in gorulen_t:
+                gorulen_t.add(b)
                 isl.append({"sembol": sem, "kaynak": "taban", "sinyal_i": e, "alim_i": b, "giris_i": b + 1,
                             "stop0": dip * (1 - ay.boz_tol), "w": ay.taban_w})
         if (k + 1) % 100 == 0:
@@ -149,7 +153,8 @@ def cy_cikis(ay: CYAyar, v: Dict[str, Any], O: np.ndarray, H: np.ndarray, L: np.
              g: int, stop0: float) -> Tuple[int, float, str]:
     """Giris g (acilis). Donus: (cikis_i, cikis_fiyat, neden). neden: stop | trail | ufuk | veri_sonu."""
     n = len(C)
-    son = min(n, g + ay.ufuk)
+    trail = "sma20" in v
+    son = n if trail else min(n, g + ay.ufuk)       # denetim 24 Eki: uretimde trail'deki isleme ufuk yok (takip.py); yalniz hedefsize 120 bar
     p0 = O[g]
     o, h, l, c, s = O[g:son], H[g:son], L[g:son], C[g:son], S20[g:son]
     m = len(c)
@@ -178,11 +183,15 @@ def cy_cikis(ay: CYAyar, v: Dict[str, Any], O: np.ndarray, H: np.ndarray, L: np.
         hp = p0 * (1 + v["hedef"] / 100)
         hh = h >= hp
         k_hedef = int(np.argmax(hh)) if hh.any() else None
-    aday = [(k_stop, "stop"), (k_trail, "trail"), (k_hedef, "hedef")]
+    k_ufuk = None
+    if trail:
+        uf = (np.arange(m) >= ay.ufuk - 1) & ~hv
+        k_ufuk = int(np.argmax(uf)) if uf.any() else None
+    aday = [(k_stop, "stop"), (k_trail, "trail"), (k_hedef, "hedef"), (k_ufuk, "ufuk")]
     aday = [(k, ad) for k, ad in aday if k is not None]
     if aday:
-        # ayni barda stop ve hedef birlikte -> temkinli: stop (siralama: stop < trail < hedef)
-        sira = {"stop": 0, "trail": 1, "hedef": 2}
+        # ayni barda stop ve hedef birlikte -> temkinli: stop (siralama: stop < trail < hedef < ufuk)
+        sira = {"stop": 0, "trail": 1, "hedef": 2, "ufuk": 3}
         k, ad = min(aday, key=lambda z: (z[0], sira[z[1]]))
         if ad == "stop":
             fiyat = min(o[k], stop[k]) if o[k] < stop[k] else stop[k]
@@ -190,9 +199,9 @@ def cy_cikis(ay: CYAyar, v: Dict[str, Any], O: np.ndarray, H: np.ndarray, L: np.
         if ad == "hedef":
             hp = p0 * (1 + v["hedef"] / 100)
             return g + k, float(max(o[k], hp)), "hedef"       # acilis hedefin ustundeyse acilistan
-        return g + k, float(c[k]), "trail"
+        return g + k, float(c[k]), ad
     k = m - 1
-    return g + k, float(c[k]), ("ufuk" if son == g + ay.ufuk else "veri_sonu")
+    return g + k, float(c[k]), ("ufuk" if (not trail and son == g + ay.ufuk) else "veri_sonu")
 
 
 def cy_k3_varyantlar(ay: CYAyar, isl: List[Dict[str, Any]], D: Dict[str, Dict[str, np.ndarray]]) -> pd.DataFrame:
@@ -220,7 +229,7 @@ def cy_k3_varyantlar(ay: CYAyar, isl: List[Dict[str, Any]], D: Dict[str, Dict[st
 def cy_k4_ozet(ay: CYAyar, CD, T: pd.DataFrame, donemler: Optional[Tuple] = None) -> pd.DataFrame:
     rows = []
     for ad, b, s_ in (donemler or ay.donemler):
-        x0 = T[(T.sinyal >= b) & (T.sinyal <= s_)]
+        x0 = T[(T.sinyal >= b) & (T.sinyal <= s_) & (T.neden != "veri_sonu")]     # denetim: veri sonunda acik islem kapanmis sayilmaz
         for kaynak in ("obek", "taban"):
             for var in ay.varyantlar:
                 x = x0[(x0.kaynak == kaynak) & (x0.varyant == var)]
@@ -232,8 +241,8 @@ def cy_k4_ozet(ay: CYAyar, CD, T: pd.DataFrame, donemler: Optional[Tuple] = None
                      "agir_%": round(100 * (g < ay.agir).mean(), 1), "stop_%": round(100 * (x.neden == "stop").mean(), 1),
                      "ort_bar": round(x.bar.mean(), 0), "mfe_medyan": round(x.mfe.median(), 1)}
                 if kaynak == "obek":
-                    port, al, atla = CD._cd_slot(x.assign(getiri=x.getiri.clip(upper=200)), ay.slot)
-                    r.update(slot_portfoy_pct=round(port, 1), slot_alinan=al, slot_atlanan=atla)
+                    port, port_sd, al, atla = CD._cd_slot_bant(x.assign(getiri=x.getiri.clip(upper=200)), ay.slot)
+                    r.update(slot_portfoy_pct=round(port, 1), slot_sd=round(port_sd, 1), slot_alinan=int(round(al)), slot_atlanan=int(round(atla)))
                 rows.append(r)
     return pd.DataFrame(rows)
 
@@ -244,7 +253,8 @@ def cy_k5_rapor(ay: CYAyar, oz: pd.DataFrame, cikti: str, donemler: Optional[Tup
     sat = [f"# COL YOL — obek -> alim -> cikis varyantlari — {pazar}   ({CY_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
            "Yol: obek sinyali -> 60 gunde yesil kapanis > obek tavani -> ertesi acilis giris -> ilk stop obek dibi -%2 -> cikis varyanti -> en gec 120 bar.",
            "Maliyet %0,4. Ortalama %200'de kirpili (kurus hisse veri sicramasi). Taban: obek aranmadan her 5. gunun 15 mumluk kutusu, ayni yol.",
-           "Slot portfoy: 30 slot, esit agirlik, giris sirasi, dolu ise atla (yalniz obek).", ""]
+           "Slot portfoy: 30 slot, esit agirlik, giris sirasi, dolu ise atla, hisse basina tek pozisyon; ayni gun sirasi 20 kez rastgele, ortalama (yalniz obek).",
+           "v1.3 denetim: ayni alim barina dusen obek sinyalleri tek islem; trail varyantlarinda 120 bar ufku yalniz hedef gorulmemise; veri sonunda acik islem disarida.", ""]
     for ad, _, _ in donemler:
         x = oz[oz.donem == ad]
         if x.empty:

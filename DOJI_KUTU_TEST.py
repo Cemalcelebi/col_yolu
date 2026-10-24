@@ -158,7 +158,7 @@ def k3_tarama(ay: DKAyar, veri: Dict[str, pd.DataFrame]) -> pd.DataFrame:
         H, L, C = D["H"], D["L"], D["C"]
         n = len(df)
         ix = df.index
-        son_bolge_bas = -999
+        son_bolge_bas = -999; son_bolge_son = -999
         kutu_A = False
         for en in range(ay.min_bar_gecmis, n - 1, ay.adim):
             r = D["ref"][en]
@@ -185,7 +185,10 @@ def k3_tarama(ay: DKAyar, veri: Dict[str, pd.DataFrame]) -> pd.DataFrame:
                 continue
             s0, e0 = w
             dj = int((D["go"][s0:e0 + 1] < ay.doji_esik).sum())
-            ayni = abs(s0 - son_bolge_bas) <= 5      # ayni kutu (baslangic +-5 bar)
+            # denetim 24 Eki: eskiden 'ayni kutu' = baslangic +-5 bar; kutu basi kayinca (medyan ~14 gun) ayni kutu yeniden A
+            # sayiliyordu (A olaylarinin %58'i onceki A kutusuyla ortusuyordu). Simdi: onceki kutuyla ortusen kutu ayni kutudur.
+            ayni = s0 <= son_bolge_son
+            son_bolge_son = max(son_bolge_son, e0)
             if not ayni:
                 son_bolge_bas, kutu_A = s0, False
                 grp = "A" if dj >= ay.doji_min else "B"   # kutu ilk goruldugunde
@@ -245,6 +248,7 @@ def k4_ozet(ay: DKAyar, t: pd.DataFrame) -> pd.DataFrame:
             "B (kutu, doji < %d)" % ay.doji_min: t[t.grup == "B"],
             "A (kutu, doji >= %d)" % ay.doji_min: t[t.grup == "A"],
             "A_dip (A + dipte)": t[(t.grup == "A") & (t.dip <= ay.dip_esik)],
+            "B_dip (B + dipte: A_dip'in esi, denetim 24 Eki)": t[(t.grup == "B") & (t.dip <= ay.dip_esik)],
             "A5_dip (doji >= 5 + dipte)": t[(t.grup == "A") & (t.doji >= 5) & (t.dip <= ay.dip_esik)]}
     def _kir(g):    # kirilim kapanisindan olculen sonuclar, _ozet ile ayni alanlar
         g = g[g.get("kirilim", pd.Series(False, index=g.index)).fillna(False).astype(bool)]

@@ -81,7 +81,8 @@ def sina():
     if list(I.ik_s_hacim_dus(ay, "BIST", {"X": d2}).gun)[:1] != [idx[80]]:
         hata.append("6) sinyal ileriye bakıyor")
     # 7) doji seçimi
-    if "kirilim" in inspect.getsource(I.ik_s_doji_kutu).split('"""')[-1].split("#")[0]:
+    kod7 = "\n".join(l.split("#")[0] for l in inspect.getsource(I.ik_s_doji_kutu).split('"""')[-1].splitlines())
+    if "kirilim" in kod7:      # denetim 24 Eki: eskiden yalnız ilk yorumdan önceki metne bakıyordu (seçim satırı denetlenmiyordu)
         hata.append("7) doji kutusu seçimi ileriye bakan 'kirilim' sütununu kullanıyor")
     return hata
 

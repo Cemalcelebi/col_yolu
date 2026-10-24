@@ -174,6 +174,9 @@ def islem_listesi(OB, kural, bist=True):
             jt, cp, neden = kural.cik(o, e, gp)
             if jt < e:
                 raise ValueError(f'cikis girisden once ({jt}<{e})')
+            # denetim 24 Eki: veri sonunda acik islem (veri_sonu ya da ufku dolmadan 'sure') kapanmis sayilmaz
+            if neden == 'veri_sonu' or (neden == 'sure' and jt == len(o['iC']) - 1 and jt - e < getattr(kural, 'ufuk', AYAR['UFUK'])):
+                say['acik'] = say.get('acik', 0) + 1; continue
             a = (o.get('seg') or {}).get('atr_ref') or np.nan
             R.append({
                 'sembol': o['sembol'],

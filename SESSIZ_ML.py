@@ -62,7 +62,7 @@ warnings.filterwarnings("ignore", message=".*eval_set.*")   # lightgbm 4.7 uyari
 
 _CK_ONCE_SM = {k: id(v) for k, v in globals().items()}
 
-SM_SURUM = "SESSIZ_ML v1.2 (2026-10-23, Z0 bolgelerinde alis + satis modeli, ileri yuruyen LightGBM)"
+SM_SURUM = "SESSIZ_ML v1.3 (2026-10-24, denetim: bar ufuklu embargo, islem basina satis puani, slot hisse basina tek)"
 smlog = logging.getLogger("col.sessiz_ml")
 if not smlog.handlers:
     _sm_h = logging.StreamHandler(sys.stderr)
@@ -239,6 +239,8 @@ def sm_k3_olaylar(V: Dict[str, pd.DataFrame], Z: Dict[str, pd.DataFrame], pazar:
         sec = np.array(sec); yk = sm_once_vek(h, l, c, sec, 60, 0.20, 0.10); yx = sm_once_vek(h, l, c, sec, 250, 1.0, 0.30)
         for j, i in enumerate(sec):
             rows.append({"pazar": pazar, "sembol": s, "tarih": d.index[i], "i": int(i), "y_k20": yk[j], "y_x2": yx[j],
+                         # denetim 24 Eki: etiket ufku bar; embargo takvim gunuydu (BIST'te 60 bar 84-97 gun) -> etiket bitis tarihi
+                         "bitis_y_k20": d.index[min(i + 60, len(d) - 1)], "bitis_y_x2": d.index[min(i + 250, len(d) - 1)],
                          "gelecek_r60": c[i + 60] / c[i] - 1 if i + 60 < len(c) else np.nan,   # yalniz sizinti kanaryasi; ozellik degil
                          **dict(zip(OZ_KOL, X[i]))})
     O = pd.DataFrame(rows)
@@ -261,7 +263,8 @@ def sm_ileri_egit(O: pd.DataFrame, etiket: str, embargo_gun: int, A: SMAyar, kol
     t = pd.to_datetime(O.tarih)
     for Y in A.test_yillari:
         bas = pd.Timestamp(f"{Y}-01-01"); bit = pd.Timestamp(f"{Y + 1}-01-01")
-        tr = O[(t + pd.Timedelta(days=embargo_gun) < bas) & O[etiket].notna()]
+        bk = f"bitis_{etiket}"           # denetim 24 Eki: etiketin bittigi gun test yilindan once (bar ufku); yoksa eski gun embargosu
+        tr = O[((pd.to_datetime(O[bk]) < bas) if bk in O else (t + pd.Timedelta(days=embargo_gun) < bas)) & O[etiket].notna()]
         te = (t >= bas) & (t < bit)
         if len(tr) < 500 or tr[etiket].nunique() < 2 or not te.any():
             smlog.warning("%s %d: egitim kucuk (%d) ya da test yok, atlandi", etiket, Y, len(tr)); continue
@@ -354,7 +357,7 @@ def sm_islemler(sinyal: pd.DataFrame, V: Dict[str, pd.DataFrame], Z: Dict[str, p
             continue
         o, h, l, c = (d[k].to_numpy() for k in ("Open", "High", "Low", "Close"))
         stop0 = float(z.dip20.iat[int(x.i)]) * (1 - A.stop_pay)
-        ps = PS.get(x.sembol) if PS is not None else None
+        ps = PS.get((x.sembol, pd.Timestamp(d.index[e]))) if PS is not None else None
         es = sat_esik.get(pd.Timestamp(x.tarih).year, np.inf) if sat_esik else np.inf
         j, fiyat, neden, hg = sm_cikis(o, h, l, c, z.sma20.to_numpy(), e, stop0, A, ps, es)
         rows.append({"pazar": x.pazar, "sembol": x.sembol, "sinyal": x.tarih, "giris_t": d.index[e], "cikis_t": d.index[j],
@@ -367,13 +370,15 @@ def sm_portfoy(I: pd.DataFrame, A: SMAyar) -> Dict[str, float]:
     """30 slot: sirayla giris, bos slot yoksa atla; esit pay (giristeki ozkaynak / slot), cikista ozkaynak guncellenir."""
     if I.empty:
         return {"islem": 0, "portfoy": 0.0, "kazanan": np.nan, "islem_basi": np.nan, "agir": np.nan}
-    I = I.sort_values("giris_t"); oz = 1.0; acik: List[Tuple[pd.Timestamp, float, float]] = []; alinan = []
+    I = I.sort_values("giris_t"); oz = 1.0; acik: List[Tuple[pd.Timestamp, float, float, str]] = []; alinan = []
     for x in I.itertuples():
-        for a in [a for a in acik if a[0] <= x.giris_t]:
+        # denetim 24 Eki: cikis gunu kapanista biten islemin parasi o gunun acilisinda kullanilamaz (<); ayni hisseye ikinci slot yok
+        for a in [a for a in acik if a[0] < x.giris_t]:
             oz += a[1] * a[2]; acik.remove(a)
-        if len(acik) >= A.slot:
+        sem = getattr(x, "sembol", None)
+        if len(acik) >= A.slot or (sem is not None and any(a[3] == sem for a in acik)):
             continue
-        pay = oz / A.slot; acik.append((x.cikis_t, pay, x.getiri)); alinan.append(x.getiri)
+        pay = oz / A.slot; acik.append((x.cikis_t, pay, x.getiri, sem)); alinan.append(x.getiri)
     for a in acik:
         oz += a[1] * a[2]
     g = np.array(alinan)
@@ -410,6 +415,8 @@ def sm_k6_satis_satirlari(I: pd.DataFrame, V: Dict[str, pd.DataFrame], Z: Dict[s
         df["gun"] = ix - e; df["kar"] = c[ix] / giris - 1; df["kar_maks"] = tepe / giris - 1; df["zirveden"] = c[ix] / tepe - 1
         df["y_sat"] = np.where(np.isnan(ilk), np.nan, (ilk == -1).astype(float))   # once -%10 -> 1 (sat); once +%10 ya da hicbiri -> 0
         df["pazar"] = x.pazar; df["sembol"] = x.sembol; df["tarih"] = d.index[ix]; df["k"] = ix
+        df["giris_t"] = x.giris_t                                   # denetim 24 Eki: ayni hissede ust uste binen islemler ayrilsin
+        df["bitis_y_sat"] = d.index[np.minimum(ix + 20, len(d) - 1)]
         parca.append(df)
     S = pd.concat(parca, ignore_index=True) if parca else pd.DataFrame()
     smlog.info("satis satiri: %d", len(S))
@@ -670,9 +677,11 @@ def sessiz_ml(A: Optional[SMAyar] = None, ogretmen: bool = True) -> Dict[str, An
     S = sm_k6_satis_satirlari(I_tum, Vd, Zd, A)
     Sp, imp_sat, esik_sat, kan3 = sm_satis_puan(S, A)
     deg_sat = sm_degerlendir(Sp, "y_sat", replace(A, ust_oran=1 - A.sat_esik_q))
-    PS: Dict[str, np.ndarray] = {}
-    for s, g in Sp[Sp.p.notna()].groupby("sembol"):
-        arr = np.full(len(Vd[s]), np.nan); arr[g.k.to_numpy()] = g.p.to_numpy(); PS[s] = arr
+    PS: Dict[Any, np.ndarray] = {}
+    # denetim 24 Eki: satis puani pozisyona ozgu (gun, kar, zirveden); eskiden hisse basina tek dizi, ust uste binen iki islemde
+    # sonuncunun puani obur isleme yaziliyordu -> anahtar (sembol, giris_t)
+    for (s, gt), g in Sp[Sp.p.notna()].groupby(["sembol", "giris_t"]):
+        arr = np.full(len(Vd[s]), np.nan); arr[g.k.to_numpy()] = g.p.to_numpy(); PS[(s, pd.Timestamp(gt))] = arr
     I_ml = sm_islemler(P, Vd, Zd, A, PS, esik_sat)
     I_ml["donem"] = I_tum.donem.values; I_ml["ust"] = I_tum.ust.values
     cik = []
@@ -690,8 +699,9 @@ def sessiz_ml(A: Optional[SMAyar] = None, ogretmen: bool = True) -> Dict[str, An
     # fon hisseleri 2026: satis modelinin ilk sinyali
     fon = []
     for s in F.FON_HISSE:
-        if s in PS:
-            p = pd.Series(PS[s], index=Vd[s].index).loc["2026-06-01":"2026-09-30"]
+        ks = [k for k in PS if k[0] == s]
+        if ks:
+            p = pd.concat([pd.Series(PS[k], index=Vd[s].index) for k in ks], axis=1).max(axis=1).loc["2026-06-01":"2026-09-30"]
             yuk = p[p >= esik_sat.get(2026, np.inf)]
             fon.append({"sembol": s, "satis_puani_gun": int(p.notna().sum()), "ilk_sat_sinyali": yuk.index.min() if len(yuk) else None})
     fon = pd.DataFrame(fon)

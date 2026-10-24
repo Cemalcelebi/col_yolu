@@ -192,10 +192,11 @@ def _sonuc(d: pd.DataFrame, i: int, A: MSAyar) -> Dict[str, float]:
 
 
 def _temiz_pencere(c: pd.Series, A: MSAyar) -> np.ndarray:
-    """BIST: veri sicramasi (bolunme/bedelsiz izi) olcu penceresinde ya da ileri pencerede varsa o gun olay sayilmaz."""
+    """BIST: veri sicramasi (bolunme/bedelsiz izi) olcu penceresinde varsa o gun olay sayilmaz. Denetim 24 Eki: eskiden ileri
+    pencereye (gelecek 120 bar) de bakiyordu -> olay secimi gelecege bagliydi; simdi yalniz gecmis (sonuc etkilenmedi: 1,06 -> 1,07)."""
     bozuk = (c.pct_change().abs() > A.sicrama).to_numpy().astype(int)
     cs = np.concatenate([[0], np.cumsum(bozuk)]); n = len(c); ii = np.arange(n)
-    bas = np.maximum(0, ii - A.normal - 10); bit = np.minimum(n, ii + A.ufuk + 1)
+    bas = np.maximum(0, ii - A.normal - 10); bit = np.minimum(n, ii + 1)
     return (cs[bit] - cs[bas]) == 0
 
 

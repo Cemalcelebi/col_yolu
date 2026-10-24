@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.5 (2026-10-24, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.6 (2026-10-24, denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -145,15 +145,24 @@ class FIAyar:
 
 
 # ---------------------------------------------------------------- K1 veri
-def fi_duzelt(d: pd.DataFrame, A: FIAyar, bedelsiz: Optional[pd.DatetimeIndex] = None) -> Tuple[pd.DataFrame, int]:
+def fi_duzelt(d: pd.DataFrame, A: FIAyar, bedelsiz: Optional[pd.DatetimeIndex] = None,
+              piyasa: Optional[Dict[str, set]] = None) -> Tuple[pd.DataFrame, int]:
     """BIST ham fiyat: gunluk siniri asan sicramalari geriye dogru carpanla duzeltir. Donus: (duzeltilmis, sicrama sayisi).
     v1.4: sinir 13.03.2020'ye kadar %20 (eskiden 01.03.2020 aliniyordu; Mart 2020 cokusunun 537 gunu bolunme sanilip siliniyordu).
     Gecis donemi (13.03.2020-28.02.2021): %10,5-21 sicrama ancak `bedelsiz` (KAP bedelsiz bildirim tarihleri) yakininda bolunme sayilir;
-    kayit yoksa gercek hareket kabul edilir."""
+    kayit yoksa gercek hareket kabul edilir.
+    v1.6 (denetim 24 Eki): (a) bolunme/bedelsiz fiyati DUSURUR; +%30'a kadar yukari sicrama gercek harekettir (tavan gunu, Yahoo
+    kapanisi ile baz fiyat farki); eskiden BIST'te 1.068 gercek tavan gunu silinip gecmis carpanla oynatiliyordu. (b) `piyasa`
+    {'yukari': gunler, 'asagi': gunler}: ayni gun hisselerin >= %2'si ayni yonde siniri astiysa (15.02.2023 deprem kapanisi sonrasi
+    acilis 375 hisse, 12.03.2020 bayat bar 99 hisse, bayram arifesi) o gunun sicramasi bolunme sayilmaz."""
     d = d[["Open", "High", "Low", "Close", "Volume"]].astype(float).copy()
     oran = d.Close / d.Close.shift()
     lim = np.where(d.index >= pd.Timestamp(A.limit_tarih), A.limit_yeni, A.limit_eski)
     kir = (oran - 1).abs() > lim
+    kir &= ~((oran > 1) & (oran < 1.30))
+    if piyasa:
+        kir &= ~((oran > 1) & d.index.isin(list(piyasa.get("yukari", ()))))
+        kir &= ~((oran < 1) & d.index.isin(list(piyasa.get("asagi", ()))))
     gecis = (d.index >= pd.Timestamp(A.limit_tarih)) & (d.index < pd.Timestamp(A.limit_gecis_bit)) & ((oran - 1).abs() <= A.limit_eski)
     if gecis.any():
         kanit = np.zeros(len(d), bool)
@@ -173,6 +182,21 @@ def fi_duzelt(d: pd.DataFrame, A: FIAyar, bedelsiz: Optional[pd.DatetimeIndex] =
     return d, int(kir.sum())
 
 
+def fi_piyasa_sicrama(V: Dict[str, pd.DataFrame], A: FIAyar, oran_esik: float = 0.02) -> Dict[str, set]:
+    """v1.6: piyasa geneli sicrama gunleri. Hisselerin >= oran_esik'i ayni gun ayni yonde gunluk siniri astiysa (kapanis / onceki
+    kapanis) bu bir piyasa olayidir (kapanis sonrasi acilis, bayat bar), bolunme degil. Donus {'yukari': set, 'asagi': set}."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items() if "Close" in d}).sort_index()
+    C = C.where(C > 0)
+    O = C / C.ffill().shift()
+    lim = pd.Series(np.where(C.index >= pd.Timestamp(A.limit_tarih), A.limit_yeni, A.limit_eski), index=C.index)
+    n = C.notna().sum(axis=1).clip(lower=1)
+    yuk = O.sub(1).gt(lim, axis=0).sum(axis=1) / n
+    asa = O.sub(1).lt(-lim, axis=0).sum(axis=1) / n
+    out = {"yukari": set(C.index[yuk >= oran_esik]), "asagi": set(C.index[asa >= oran_esik])}
+    filog.info("piyasa geneli sicrama gunleri: yukari %d, asagi %d", len(out["yukari"]), len(out["asagi"]))
+    return out
+
+
 def fi_k1_veri(yol: str, pazar: str, A: FIAyar) -> Dict[str, pd.DataFrame]:
     if not os.path.exists(yol):
         raise FileNotFoundError(f"veri yok: {yol}")
@@ -186,6 +210,7 @@ def fi_k1_veri(yol: str, pazar: str, A: FIAyar) -> Dict[str, pd.DataFrame]:
             bdz = fi_bedelsiz_tarihleri(A)
         except Exception as ex:
             filog.warning("KAP bedelsiz kaydi okunamadi (%s); gecis donemindeki %%10,5-21 sicramalar gercek hareket sayilacak", ex)
+    piy = fi_piyasa_sicrama(V, A) if pazar == "BIST" else {}
     out = {}
     for s, d in V.items():
         try:
@@ -194,7 +219,7 @@ def fi_k1_veri(yol: str, pazar: str, A: FIAyar) -> Dict[str, pd.DataFrame]:
             d = d.dropna(subset=["Open", "High", "Low", "Close"])
             d = d[(d.High >= d.Low) & (d.Close > 0)].sort_index()
             if pazar == "BIST":
-                d, _ = fi_duzelt(d, A, bdz.get(str(s)))
+                d, _ = fi_duzelt(d, A, bdz.get(str(s)), piy)
             else:
                 d = d[["Open", "High", "Low", "Close", "Volume"]].astype(float)
             if len(d) >= 150:
@@ -852,7 +877,7 @@ def fi_k6_ozet(E: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
                                           kat_dus_esli_min=("kat_dus_esli", "min"), kat_dus_esli_ort=("kat_dus_esli", "mean"),
                                           kat_k20_esli_min=("kat_k20_esli", "min"), kat_k20_esli_ort=("kat_k20_esli", "mean"),
                                           esli_taban=("esli_taban", "first")).reset_index()
-    iz["iz"] = np.where(iz.yon == "yukari", (iz.gecti_k20 == iz.dilim) | (iz.gecti_x2 == iz.dilim), iz.gecti_dus == iz.dilim) & (iz.dilim >= 4)
+    iz["iz"] = np.where(iz.yon == "yukari", (iz.gecti_k20 == iz.dilim) | (iz.gecti_x2 == iz.dilim), iz.gecti_dus == iz.dilim) & (iz.dilim >= np.where(iz.sinyal.astype(str).str.startswith("kap_"), 2, 4))   # denetim: KAP yalniz BIST, 2 dilim
     esli_ok = np.where(iz.yon == "asagi", iz.kat_dus_esli_min >= 1.3, iz.kat_k20_esli_min >= 1.3)   # v1.4: esli tabani da gecmeli
     iz["iz"] = iz.iz & (iz.esli_taban.isna() | esli_ok)
     iz["sira"] = np.where(iz.yon == "yukari", iz.kat_k20_min, iz.kat_dus_min)
@@ -913,6 +938,7 @@ def fon_izi_gosterge(A: Optional[FIAyar] = None) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------- K9 fon islem defteri (v1.3): KAP portfoy dagilim raporlari
+FI_TASFIYE_RE = r"^\s*(TERA|PUSULA|HEDEF|ATLAS|A1|PARDUS|BULLS)( CAP[İI]TAL)?( PORTF.*)?\s*$"   # v1.6: sirket adinin tamami (alt dizgi degil)
 FI_FON_SIRKET = ("TERA PORTF", "PUSULA PORTF", "HEDEF PORTF", "ATLAS PORTF", "A1 CAPITAL PORTF", "A1 PORTF", "PARDUS PORTF", "BULLS PORTF")
 _FI_KAP = "https://www.kap.org.tr"
 
@@ -1672,17 +1698,29 @@ def fi_k10_olaylar(G: pd.DataFrame, KP: pd.DataFrame, oran: Optional[pd.DataFram
     X["kapsam"] = [(f, a - 1) in var for f, a in zip(X.fon, X.ay)]
     E = X[X.kapsam & X.nom_once.isna()].copy()                       # giris: bu ay var, gecen ay (rapor var) yok
     E["bilinme"] = [kap.get((f, a), pd.NaT) for f, a in zip(E.fon, E.ay)]   # bilgi ani = bu ayin raporunun yayini
-    # hisse-ay toplu: iki ay da raporu olan fonlarda toplam nominal ve onceki ay sahip sayisi
-    ikili = KP[[(f, a - 1) in var for f, a in zip(KP.fon, KP.ay)]][["fon", "ay"]]
-    simdi = G.merge(ikili, on=["fon", "ay"]).groupby(["kod", "ay"]).nominal.sum().rename("top_simdi")
-    gecen = G.assign(ay=G.ay + 1).merge(ikili, on=["fon", "ay"]).groupby(["kod", "ay"]).agg(
-        top_gecen=("nominal", "sum"), sahip_gecen=("fon", "nunique"))
+    # hisse-ay toplu: iki ay da raporu olan fonlarda toplam nominal ve onceki ay sahip sayisi.
+    # v1.6 (denetim 24 Eki): yalniz olayin bilinme anina kadar YAYIMLANMIS bu ay raporlari sayilir (eskiden o ayin butun
+    # raporlari; 34.643 giris olayinin 31.095'inde toplamda henuz yayimlanmamis rapor vardi, 905 'artis' o an bilinemezdi).
+    ikili = KP[[(f, a - 1) in var for f, a in zip(KP.fon, KP.ay)]][["fon", "ay", "bilinme"]].rename(columns={"bilinme": "bil_m"})
+    E = E.reset_index(drop=True)
+    ev_ = E[["kod", "ay", "bilinme"]].reset_index().rename(columns={"index": "_e"})
+    def _pit(T: pd.DataFrame) -> pd.DataFrame:
+        x = ev_.merge(T, on=["kod", "ay"], how="inner")
+        return x[x.bil_m <= x.bilinme]
+    xs = _pit(G[["fon", "ay", "kod", "nominal"]].merge(ikili, on=["fon", "ay"]))
+    xg = _pit(G[["fon", "ay", "kod", "nominal"]].assign(ay=G.ay + 1).merge(ikili, on=["fon", "ay"]))
+    E["top_simdi"] = xs.groupby("_e").nominal.sum().reindex(E.index, fill_value=0.0).to_numpy()
+    E["top_gecen"] = xg.groupby("_e").nominal.sum().reindex(E.index, fill_value=0.0).to_numpy()
+    E["sahip_gecen"] = xg.groupby("_e").fon.nunique().reindex(E.index, fill_value=0).to_numpy()
+    # yogun5/10 icin hisse-ay toplami (o ayin butun raporlari; bilinme = en gec rapor -> o an bilinir)
+    ikili2 = ikili[["fon", "ay"]]
+    simdi = G.merge(ikili2, on=["fon", "ay"]).groupby(["kod", "ay"]).nominal.sum().rename("top_simdi")
+    gecen = G.assign(ay=G.ay + 1).merge(ikili2, on=["fon", "ay"]).groupby(["kod", "ay"]).nominal.sum().rename("top_gecen")
     T = pd.concat([simdi, gecen], axis=1).fillna(0).reset_index()
-    E = E.merge(T, on=["kod", "ay"], how="left")
     E["ilk"] = E.sahip_gecen.fillna(0) == 0
     E["artis"] = (E.top_simdi / E.top_gecen.where(E.top_gecen > 0)).fillna(np.inf) - 1 >= FI_K10_ESIK["artis"]
     E["buyuk"] = E.agirlik >= FI_K10_ESIK["buyuk"]
-    E["tasfiye"] = E.sirket.astype(str).str.contains("|".join(s.split(" PORTF")[0] for s in FI_FON_SIRKET))
+    E["tasfiye"] = E.sirket.astype(str).str.upper().str.match(FI_TASFIYE_RE)    # denetim 24 Eki: alt dizgi 'MUTLAK GETIRI HEDEFLI' fonlarini da yakaliyordu
     E = E.sort_values("bilinme")
     E["sira"] = E.groupby(["kod", "ay"]).cumcount() + 1               # ayni hisseye o ay kacinci giren fon
     E["cok"] = E.sira == 2                                             # ikinci fonun raporu yayimlandiginda bilinir
@@ -1932,7 +1970,7 @@ def fi_k11_aylik(G: pd.DataFrame, V: Dict[str, pd.DataFrame], ham: Dict[str, pd.
         if d is None or h is None or g.empty:
             continue
         ay = g.groupby("ay").agg(lot=("nominal", "sum"), fon_sayisi=("fon", "nunique"), deger=("deger", "sum"))
-        tasf = g[g.sirket.astype(str).str.contains("|".join(x.split(" PORTF")[0] for x in FI_FON_SIRKET))].groupby("ay").nominal.sum()
+        tasf = g[g.sirket.astype(str).str.upper().str.match(FI_TASFIYE_RE)].groupby("ay").nominal.sum()
         ay["tasfiye_lot"] = tasf.reindex(ay.index).fillna(0)
         oran = (h.Close.reindex(d.index).ffill() / d.Close).replace([np.inf, -np.inf], np.nan)
         dm = pd.DataFrame({"kapanis": d.Close, "hacim": d.Volume, "oran": oran})
@@ -1950,8 +1988,9 @@ def fi_k11_aylik(G: pd.DataFrame, V: Dict[str, pd.DataFrame], ham: Dict[str, pd.
             ay["faz"] = ""; ay["fiyat_dip"] = np.nan
         if dol is not None and s in set(dol.kod):
             r = dol[dol.kod == s].iloc[0]
-            ay["pay_sermaye"] = ay.duz_tasfiye / (r.sermaye_lot * ay.oran.iloc[-1]) if r.sermaye_lot > 0 else np.nan
-            ay["pay_halka_acik"] = ay.duz_tasfiye / (r.dolasim_lot * ay.oran.iloc[-1]) if r.dolasim_lot > 0 else np.nan
+            # v1.6 (denetim): duz_tasfiye zaten bugunku pay tabaninda; ek oran bolmesi kaldirildi (fi_k10_olaylar ile ayni formul)
+            ay["pay_sermaye"] = ay.duz_tasfiye / r.sermaye_lot if r.sermaye_lot > 0 else np.nan
+            ay["pay_halka_acik"] = ay.duz_tasfiye / r.dolasim_lot if r.dolasim_lot > 0 else np.nan
         else:
             ay["pay_sermaye"] = ay["pay_halka_acik"] = np.nan
         ay["kod"] = s; sat.append(ay.reset_index())
@@ -2419,7 +2458,7 @@ def fi_k13_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K13_ESIK) -> 
             l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
             Lw = np.lib.stride_tricks.sliding_window_view(l, b1 - b0 + 1)          # pencere [t-b1, t-b0]
             jrel = Lw.argmin(axis=1); jmin = Lw.min(axis=1)
-            sonmin = pd.Series(l).rolling(b0 - 1).min().to_numpy()                # [t-b0+2, t]
+            sonmin = pd.Series(l).rolling(b0).min().to_numpy()                    # [t-b0+1, t] (denetim 24 Eki: t-b0+1 bari atlaniyordu)
             gorulen = set(); son_olay = -10 ** 9
             for t in range(max(b1, 320), n):
                 k = t - b1
@@ -2718,11 +2757,16 @@ def fi_k14_ruzgar(V: Dict[str, pd.DataFrame], sek: Dict[str, str], E: Dict[str, 
 
 def fi_k14_esli(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] = FI_K13_ESIK) -> pd.DataFrame:
     """Esli kutu: K13 ile ayni cokus baglami (dip [t-80, t-30] icinde ve onceki 60 barin dibi, dipten beri yeni dip yok, once
-    >= %40 dusus) ama bu dipten HIC K13 olayi cikmamis. Bilgi gunu = dipten 30. bar (K13'un en erken olabilecegi gun); hissede
+    >= %40 dusus) ama bilgi gunune kadar bu dipten olay cikmamis (v1.6: yalniz gecmis bilgi). Bilgi gunu = dipten 30. bar (K13'un en erken olabilecegi gun); hissede
     60 barda tek. Donus K13 ile ayni sutunlar."""
     sat: List[Dict[str, Any]] = []
     b0, b1 = E["bar"]
-    olay = {(s, pd.Timestamp(x)) for s, x in zip(O.sembol, O.dip)} if len(O) else set()   # ayni hissede olaya 60 bar yakin kutu da girmez
+    # v1.6 (denetim 24 Eki): eskiden 'bu dipten HIC olay cikmamis' ve 'olaya +-60 bar yakin degil' GELECEGE bakiyordu (olay dip+80'e
+    # kadar cikabilir): kontrol grubu sonuc penceresindeki fiyat yoluna gore seciliyordu. Simdi yalniz bilgi gunune kadar bilinen:
+    # ayni dipten bilgi gunu ya da oncesinde olay cikmissa, ya da son 60 barda olay varsa esli olmaz.
+    ilk_olay: Dict[Tuple[str, pd.Timestamp], pd.Timestamp] = {}
+    for s_, x, y in (zip(O.sembol, O.dip, O.bilgi) if len(O) else ()):
+        k_ = (s_, pd.Timestamp(x)); ilk_olay[k_] = min(ilk_olay.get(k_, pd.Timestamp(y)), pd.Timestamp(y))
     for s, d in V.items():
         try:
             n = len(d)
@@ -2736,7 +2780,9 @@ def fi_k14_esli(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] =
                 j = t - b0 + 1
                 if not (l[j] <= l[max(0, j - 60):j].min() and sonmin[t] >= l[j]):          # gercek dip, sonra yeni dip yok
                     continue
-                if (s, d.index[j]) in olay or t - son_olay < 60 or (len(yakin) and np.abs(yakin - t).min() < 60):
+                io = ilk_olay.get((s, d.index[j]))
+                gec = yakin[(yakin >= 0) & (yakin <= t)] if len(yakin) else yakin
+                if (io is not None and io <= d.index[t]) or t - son_olay < 60 or (len(gec) and (t - gec).min() < 60):
                     continue
                 tepe = c[max(0, j - 60):j].max()
                 if l[j] / tepe - 1 > E["dusus"]:
@@ -3379,7 +3425,8 @@ def fi_k12_ders6(V: Dict[str, pd.DataFrame], O: pd.DataFrame, KH: pd.DataFrame, 
             "- İZ DEĞİL: altı denemenin hiçbiri dört hücrede 1,3'e çıkmadı; çoğu hücre 0,85-1,25 (= sıradan hisse). En yakın: Ç78 "
             "ABD 2023 1,41 ve Ç83 ABD 2023 1,37 — tek hücre, öteki hücreler 1,0 civarı.",
             "- Önce −%20 de eşli tabandan sık (1,0-1,6): çöküş sonrası hisse oynak; şekil bu oynaklığı azaltmıyor.",
-            "- 2'nin dibinin düzgün olması (Ç79) neredeyse her kâsede var (735'in 688'i): ayırıcı değil.",
+            f"- 2'nin dibinin düzgün olması (Ç79) neredeyse her kâsede var ({int((O.varyant == 'Y1').sum())}'in "
+            f"{int((O.varyant == 'Y2').sum())}'i): ayırıcı değil.",
             "- Senin gözün doğru bir şekli görüyor ve kod da aynı şekli buluyor (TEHOL 2021 dahil); ama şekil tek başına sonrasını "
             "söylemiyor. Karar yine kırılım + trail + boyutta."], boy=9)
         pdf.savefig(fig); plt.close(fig)
@@ -3414,7 +3461,7 @@ def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     MA, MZ = fi_k11_aylik(G, V, ham, kos, dol)
     MA.to_csv(os.path.join(A.cikti, "k11_aylik_birikim.csv"), index=False); MZ.to_csv(os.path.join(A.cikti, "k11_birikim_ozet.csv"), index=False)
     tl = G[G.kod.isin(FON_HISSE)].copy()
-    tl["tasfiye_lot"] = np.where(tl.sirket.astype(str).str.contains("|".join(s.split(" PORTF")[0] for s in FI_FON_SIRKET)), tl.nominal, 0.0)
+    tl["tasfiye_lot"] = np.where(tl.sirket.astype(str).str.upper().str.match(FI_TASFIYE_RE), tl.nominal, 0.0)
     M = tl.groupby(["kod", "ay"]).agg(fon_sayisi=("fon", "nunique"), lot=("nominal", "sum"), tasfiye_lot=("tasfiye_lot", "sum")).reset_index()
     M["ay"] = [f"{a // 12}-{a % 12 + 1:02d}" for a in M.ay]
     kap = K.assign(sirket=K.sirket.astype(str), muaf=K.get("muaf", pd.Series(False, index=K.index)).fillna(False).astype(bool),

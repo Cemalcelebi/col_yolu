@@ -39,7 +39,7 @@ import pandas as pd
 
 _CK_ONCE_CD = {k: id(v) for k, v in globals().items()}
 
-CD_SURUM = "COL_DIP_TEST v1.0 (2026-10-20)"
+CD_SURUM = "COL_DIP_TEST v1.1 (2026-10-24, denetim: trail ufuksuz, slot hisse basina tek + rastgele sira bandi)"
 cdlog = logging.getLogger("col.diptest")
 if not cdlog.handlers:
     _cd_h = logging.StreamHandler(sys.stderr)
@@ -207,7 +207,7 @@ def _cd_cikis(ay: CDAyar, O, H, C, S20, b: int) -> Optional[Dict[str, Any]]:
         return None
     p0 = float(O[g])
     hv = None
-    for k in range(g, min(n, g + ay.ufuk)):
+    for k in range(g, n):     # denetim 24 Eki: trail'e ufuk uygulanmaz (uretim); eskiden hedefli islem 120. barda kesilip son bara atliyordu
         if hv is None and H[k] >= p0 * (1 + ay.hedef / 100):
             hv = k
             continue
@@ -289,19 +289,29 @@ def cd_k4_tara(ay: CDAyar, ns: Dict[str, Any], veri: Dict[str, pd.DataFrame], pa
 
 
 # ------------------------------------------------------------------ K5
-def _cd_slot(t: pd.DataFrame, slot: int) -> Tuple[float, int, int]:
-    """Sabit sermaye, esit agirlik (1/slot), giris sirasina gore; slotlar doluysa islem atlanir. -> (portfoy %, alinan, atlanan)."""
-    acik: List[pd.Timestamp] = []
+def _cd_slot(t: pd.DataFrame, slot: int, tohum: Optional[int] = None) -> Tuple[float, int, int]:
+    """Sabit sermaye, esit agirlik (1/slot), giris sirasina gore; slotlar doluysa islem atlanir. -> (portfoy %, alinan, atlanan).
+    Denetim 24 Eki: (1) ayni hisseye ikinci slot acilmaz (uretimde hisse bir kez tutulur); (2) cikis gunu kapanista biten islemin
+    slotu o gunun acilis girisine verilmez (c >= giris dolu); (3) ayni gun girisler `tohum` verilirse rastgele siralanir (eskiden
+    alfabetik: sonuc 121..144 arasi oynuyordu) — bant icin _cd_slot_bant."""
+    acik: List[Tuple[pd.Timestamp, Any]] = []
     top, al, atla = 0.0, 0, 0
-    for r in t.sort_values(["giris", "sembol"]).itertuples():
-        acik = [c for c in acik if c > r.giris]
-        if len(acik) >= slot:
+    sira = np.random.default_rng(tohum).random(len(t)) if tohum is not None else np.zeros(len(t))
+    for r in t.assign(_sira=sira).sort_values(["giris", "_sira", "sembol"]).itertuples():
+        acik = [(c, s) for c, s in acik if c >= r.giris]
+        if len(acik) >= slot or any(s == r.sembol for _, s in acik):
             atla += 1
             continue
-        acik.append(r.cikis)
+        acik.append((r.cikis, r.sembol))
         top += r.getiri / slot
         al += 1
     return top, al, atla
+
+
+def _cd_slot_bant(t: pd.DataFrame, slot: int, n: int = 20) -> Tuple[float, float, float, float]:
+    """Ayni gun giris sirasi n kez rastgele: (portfoy ort, std, alinan ort, atlanan ort)."""
+    R = np.array([_cd_slot(t, slot, tohum=k) for k in range(n)], float)
+    return float(R[:, 0].mean()), float(R[:, 0].std()), float(R[:, 1].mean()), float(R[:, 2].mean())
 
 
 def cd_k5_ozet(ay: CDAyar, isl: pd.DataFrame, aday: pd.DataFrame) -> pd.DataFrame:
@@ -319,7 +329,8 @@ def cd_k5_ozet(ay: CDAyar, isl: pd.DataFrame, aday: pd.DataFrame) -> pd.DataFram
                 if g.empty:
                     continue
                 kaz = float((g.getiri > 0).mean() * 100)
-                port, al, atla = _cd_slot(g, ay.slot)
+                port, port_sd, al, atla = _cd_slot_bant(g, ay.slot)
+                al, atla = int(round(al)), int(round(atla))
                 am = (aday.pazar == pazar) & (aday.grup == grup) & (aday.tarih >= pd.Timestamp(bas)) & (aday.tarih <= pd.Timestamp(son)) \
                     if not aday.empty else None
                 sat.append({"donem": ad, "grup": grup, "n": len(g), "kazanan_%": round(kaz, 1),
@@ -328,7 +339,7 @@ def cd_k5_ozet(ay: CDAyar, isl: pd.DataFrame, aday: pd.DataFrame) -> pd.DataFram
                             "hedef_%": round(float(g.hedef.mean() * 100), 1), "ort_bar": round(float(g.bar.mean()), 1),
                             "kazanan_kat_taban": round(kaz / tb_kaz, 2) if tb_kaz and np.isfinite(tb_kaz) else np.nan,
                             "beklenti_fark_taban": round(float(g.getiri.mean()) - tb_bek, 2) if np.isfinite(tb_bek) else np.nan,
-                            "slot_portfoy_%": round(port, 1), "slot_alinan": al, "slot_atlanan": atla,
+                            "slot_portfoy_%": round(port, 1), "slot_sd": round(port_sd, 1), "slot_alinan": al, "slot_atlanan": atla,
                             "bozuldu_%": round(float((aday[am].sonuc == "bozuldu").mean() * 100), 1) if am is not None and am.any() else np.nan})
     return pd.DataFrame(sat)
 

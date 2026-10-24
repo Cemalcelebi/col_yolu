@@ -102,8 +102,13 @@ def mfe_analiz(sec, veri=None, ufuk=250, hedefler=(10,20,30,50,75),
         vur=(w[k]<=-st+0.001)
         m,_,b = bek(w[k])
         print(f"  {st:5d}% {100*vur.mean():7.0f}% {m:+7.1f}% {b:+8.1f}%")
-    m,kz,b = bek(w['g250'] if 'g250' in w else w['son'])
-    print(f"  {'stopsuz':>6s} {'':>8s} {m:+7.1f}% {b:+8.1f}%")
+    # denetim 24 Eki: stopsuz satiri stoplarla AYNI orneklemden (w['son']); eskiden yalniz 250 bar verisi dolu sinyallerden (g250)
+    # aliniyordu -> stopun maliyeti ~iki kat abartiliyordu (+19,3 vs ayni orneklemde +10,2).
+    m,kz,b = bek(w['son'])
+    print(f"  {'stopsuz':>6s} {'':>8s} {m:+7.1f}% {b:+8.1f}%   (stoplarla ayni orneklem, son bar)")
+    if 'g250' in w:
+        m2,_,b2 = bek(w['g250'])
+        print(f"  {'(g250)':>6s} {'':>8s} {m2:+7.1f}% {b2:+8.1f}%   (yalniz 250 bar dolu, n={int(w['g250'].notna().sum())}; stoplarla kiyaslanmaz)")
     return w
 
 

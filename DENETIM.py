@@ -64,7 +64,7 @@ def _temiz_olcu(o):
 
 def islemler(OB, giris='acilis', bist=True):
     """Tekillestirilmis, temizlenmis islem listesi."""
-    R=[]; gor=set(); ham=0; dis_hl=0; dis_lik=0; dis_tekrar=0
+    R=[]; gor=set(); ham=0; dis_hl=0; dis_lik=0; dis_tekrar=0; dis_acik=0
     for o in OB:
         kb=_kirilim(o)
         if kb is None or kb+2>len(o['iC'])-25: continue
@@ -79,12 +79,15 @@ def islemler(OB, giris='acilis', bist=True):
         else: e=kb; gp=float(o['iC'][kb])
         if not np.isfinite(gp) or gp<=0: continue
         jt=_cikis(o,e,gp); cp=float(o['iC'][jt])
+        # denetim 24 Eki: veri sonunda hala acik islem (ufuk dolmadi ya da trail suruyor) kapanmis sayilmaz
+        nC=len(o['iC']); hv=bool((o['iH'][e+1:jt+1]>=gp*(1+DN_HEDEF/100)).any())
+        if jt==nC-1 and (jt-e<DN_UFUK or hv): dis_acik+=1; continue
         a=o['seg'].get('atr_ref') or np.nan
         R.append({'sembol':o['sembol'],'giris_t':pd.Timestamp(o['iT'][e]).normalize(),'cikis_t':pd.Timestamp(o['iT'][jt]).normalize(),
                   'gp':gp,'cp':cp,'g':(cp/gp-1)*100-DN_COST,'e':e,'jt':jt,'o':o,
                   'doji':doji,'fitil':fitil,'kural':bool(o.get('GECER',True)),'atr_pct':a/gp*100 if np.isfinite(a) else np.nan})
     q=pd.DataFrame(R)
-    bilgi={'ham':ham,'tekrar':dis_tekrar,'hl':dis_hl,'lik':dis_lik,'kalan':len(q)}
+    bilgi={'ham':ham,'tekrar':dis_tekrar,'hl':dis_hl,'lik':dis_lik,'acik':dis_acik,'kalan':len(q)}
     return q,bilgi
 
 def _agirlik(r, mod, med_atr):

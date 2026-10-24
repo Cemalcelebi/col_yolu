@@ -30,7 +30,7 @@ import pandas as pd
 
 _CK_ONCE_CS = {k: id(v) for k, v in globals().items()}
 
-CS_SURUM = "COL_SEKIL v1.0 (2026-10-21)"
+CS_SURUM = "COL_SEKIL v1.1 (2026-10-24, denetim: karsilastirilabilir negatif = eski OLUMSUZ)"
 cslog = logging.getLogger("col.sekil")
 if not cslog.handlers:
     _cs_h = logging.StreamHandler(sys.stderr)
@@ -190,8 +190,11 @@ def cs_k4_rapor(ay: CSAyar, T: pd.DataFrame, cikti: str) -> str:
     sat = [f"# COL SEKIL — Cemal'in tarifi olcuye   ({CS_SURUM}, {pd.Timestamp.now():%Y-%m-%d %H:%M})", "",
            f"Etiket: COL {len(c)} (Cemal'in colleri, 2024-26) | DEGIL {len(d)} (eski OLUMSUZ {int((d.set=='eski').sum())} + 21 Eki kutulari {int((d.set=='bugun').sum())}).",
            "Pencere = etiketin kendisi. n kucuk, donemler farkli: BULGU DEGIL, OLCUM. AUC 0.5 = ayirmiyor, 1.0/0.0 = tam ayiriyor.", "",
+           "DENETIM 24 Eki: 'bugun' DEGIL kutulari cokus haftasinda biten ve COL_BUGUN'un kendi ret nedenine ('yeni dip', 'dipte degil')",
+           "gore secilmis kutular; dip olculeri bu kutularda tanim geregi farkli. COL kutularinin sonu ise grafigin devami gorulerek cizildi",
+           "(19/29'da kirilim 5 bar icinde). Karsilastirilabilir negatif yalniz ayni yoldan (gozle) cizilen eski OLUMSUZ: AUC_esk sutunu esastir.", "",
            "## Olcu basina medyan (COL | DEGIL) ve AUC (COL > DEGIL olasiligi)", "",
-           "| olcu | COL medyan | DEGIL medyan | AUC | yorum |", "|---|---|---|---|---|"]
+           "| olcu | COL medyan | DEGIL medyan | AUC (tum DEGIL) | AUC_esk (yalniz eski OLUMSUZ) | yorum |", "|---|---|---|---|---|---|"]
     yorum = {"aralik_pct": "gun araligi % (mutlak kucuk mum)", "aralik_kutu": "aralik / kutu yuksekligi", "aralik_ref60": "onceki 60 gune gore",
              "aralik_ref250": "onceki 250 gune gore (kodun olcusu)", "kucuk_oran250": "kodun 'kucuk' imzasi", "dip_pos": "dip kutunun neresinde (0 bas)",
              "dip_sonrasi_bar": "dipten sonra kac bar", "retest": "dibe yaklasan bar (savunma testi)", "dip_oncesi_dusus": "kutu basi -> dip %",
@@ -199,13 +202,13 @@ def cs_k4_rapor(ay: CSAyar, T: pd.DataFrame, cikti: str) -> str:
              "obek": "kucuk mum obegi sayisi", "obek_yukselen": "obekler yukseliyor mu", "bb_son": "kutu sonu Bollinger sirasi", "hacim_kat60": "hacim / onceki 60 gun", "uz": "bar"}
     for m in OLCULER:
         if m not in T.columns: continue
-        a = _auc(c[m].to_numpy(float), d[m].to_numpy(float))
-        sat.append(f"| {m} | {c[m].median():.2f} | {d[m].median():.2f} | {a:.2f} | {yorum.get(m,'')} |")
+        a = _auc(c[m].to_numpy(float), d[m].to_numpy(float)); a_es = _auc(c[m].to_numpy(float), d[d.set == "eski"][m].to_numpy(float))
+        sat.append(f"| {m} | {c[m].median():.2f} | {d[m].median():.2f} | {a:.2f} | {a_es:.2f} | {yorum.get(m,'')} |")
     for m in ("yuvarlak", "sma10_donus"):
         if m in T.columns:
             sat.append(f"| {m} | %{100*c[m].mean():.0f} evet | %{100*d[m].mean():.0f} evet | - | {('dipten sonra parabol yukari donmus' if m=='yuvarlak' else 'SMA10 once duz/asagi sonra yukari')} |")
     sat += ["", "## Bileşik: dip savunması + yuvarlanma (dip_pos <= 0.6 ve yuvarlak)", ""]
-    for ad, g in (("COL", c), ("DEGIL", d)):
+    for ad, g in (("COL", c), ("DEGIL", d), ("DEGIL yalniz eski OLUMSUZ", d[d.set == "eski"])):
         b = (g.dip_pos <= 0.6) & g.yuvarlak.astype(bool)
         sat.append(f"- {ad}: {int(b.sum())}/{len(g)} gecer")
     sat += ["", "## Etiket basina", ""]

@@ -1,29 +1,33 @@
-# COL SEKIL — Cemal'in tarifi olcuye   (COL_SEKIL v1.0 (2026-10-21), 2026-10-21 07:17)
+# COL SEKIL — Cemal'in tarifi olcuye   (COL_SEKIL v1.0 (2026-10-21), 2026-10-24 22:01)
 
 Etiket: COL 28 (Cemal'in colleri, 2024-26) | DEGIL 29 (eski OLUMSUZ 8 + 21 Eki kutulari 21).
 Pencere = etiketin kendisi. n kucuk, donemler farkli: BULGU DEGIL, OLCUM. AUC 0.5 = ayirmiyor, 1.0/0.0 = tam ayiriyor.
 
+DENETIM 24 Eki: 'bugun' DEGIL kutulari cokus haftasinda biten ve COL_BUGUN'un kendi ret nedenine ('yeni dip', 'dipte degil')
+gore secilmis kutular; dip olculeri bu kutularda tanim geregi farkli. COL kutularinin sonu ise grafigin devami gorulerek cizildi
+(19/29'da kirilim 5 bar icinde). Karsilastirilabilir negatif yalniz ayni yoldan (gozle) cizilen eski OLUMSUZ: AUC_esk sutunu esastir.
+
 ## Olcu basina medyan (COL | DEGIL) ve AUC (COL > DEGIL olasiligi)
 
-| olcu | COL medyan | DEGIL medyan | AUC | yorum |
-|---|---|---|---|---|
-| aralik_pct | 3.34 | 3.00 | 0.58 | gun araligi % (mutlak kucuk mum) |
-| aralik_kutu | 0.18 | 0.14 | 0.60 | aralik / kutu yuksekligi |
-| aralik_ref60 | 0.89 | 0.95 | 0.44 | onceki 60 gune gore |
-| aralik_ref250 | 0.79 | 0.87 | 0.38 | onceki 250 gune gore (kodun olcusu) |
-| kucuk_oran250 | 0.65 | 0.62 | 0.58 | kodun 'kucuk' imzasi |
-| dip_pos | 0.09 | 0.76 | 0.20 | dip kutunun neresinde (0 bas) |
-| dip_sonrasi_bar | 26.50 | 12.00 | 0.79 | dipten sonra kac bar |
-| retest | 4.00 | 1.00 | 0.71 | dibe yaklasan bar (savunma testi) |
-| dip_oncesi_dusus | 4.00 | 14.40 | 0.21 | kutu basi -> dip % |
-| egri_a | -4.00 | -13.20 | 0.67 | parabol ic bukeyligi (>0 yuvarlanma) |
-| ilk_egim | 16.00 | 22.60 | 0.40 | dipten sonra ilk egim |
-| son_egim | 3.50 | -2.90 | 0.69 | kutu sonu egim (>0 yukari) |
-| obek | 2.00 | 0.00 | 0.74 | kucuk mum obegi sayisi |
-| obek_yukselen | 1.00 | 1.00 | 0.48 | obekler yukseliyor mu |
-| bb_son | 0.21 | 0.46 | 0.34 | kutu sonu Bollinger sirasi |
-| hacim_kat60 | 0.91 | 0.72 | 0.71 | hacim / onceki 60 gun |
-| uz | 34.00 | 44.00 | 0.35 | bar |
+| olcu | COL medyan | DEGIL medyan | AUC (tum DEGIL) | AUC_esk (yalniz eski OLUMSUZ) | yorum |
+|---|---|---|---|---|---|
+| aralik_pct | 3.34 | 3.00 | 0.58 | 0.54 | gun araligi % (mutlak kucuk mum) |
+| aralik_kutu | 0.18 | 0.14 | 0.60 | 0.44 | aralik / kutu yuksekligi |
+| aralik_ref60 | 0.89 | 0.95 | 0.44 | 0.54 | onceki 60 gune gore |
+| aralik_ref250 | 0.79 | 0.87 | 0.38 | 0.48 | onceki 250 gune gore (kodun olcusu) |
+| kucuk_oran250 | 0.65 | 0.62 | 0.58 | 0.47 | kodun 'kucuk' imzasi |
+| dip_pos | 0.09 | 0.76 | 0.20 | 0.51 | dip kutunun neresinde (0 bas) |
+| dip_sonrasi_bar | 26.50 | 12.00 | 0.79 | 0.54 | dipten sonra kac bar |
+| retest | 4.00 | 1.00 | 0.71 | 0.37 | dibe yaklasan bar (savunma testi) |
+| dip_oncesi_dusus | 4.00 | 14.40 | 0.21 | 0.56 | kutu basi -> dip % |
+| egri_a | -4.00 | -13.20 | 0.67 | 0.53 | parabol ic bukeyligi (>0 yuvarlanma) |
+| ilk_egim | 16.00 | 22.60 | 0.40 | 0.53 | dipten sonra ilk egim |
+| son_egim | 3.50 | -2.90 | 0.69 | 0.59 | kutu sonu egim (>0 yukari) |
+| obek | 2.00 | 0.00 | 0.74 | 0.47 | kucuk mum obegi sayisi |
+| obek_yukselen | 1.00 | 1.00 | 0.48 | 0.53 | obekler yukseliyor mu |
+| bb_son | 0.21 | 0.46 | 0.34 | 0.60 | kutu sonu Bollinger sirasi |
+| hacim_kat60 | 0.91 | 0.72 | 0.71 | 0.57 | hacim / onceki 60 gun |
+| uz | 34.00 | 44.00 | 0.35 | 0.44 | bar |
 | yuvarlak | %32 evet | %10 evet | - | dipten sonra parabol yukari donmus |
 | sma10_donus | %50 evet | %38 evet | - | SMA10 once duz/asagi sonra yukari |
 
@@ -31,6 +35,7 @@ Pencere = etiketin kendisi. n kucuk, donemler farkli: BULGU DEGIL, OLCUM. AUC 0.
 
 - COL: 8/28 gecer
 - DEGIL: 2/29 gecer
+- DEGIL yalniz eski OLUMSUZ: 2/8 gecer
 
 ## Etiket basina
 

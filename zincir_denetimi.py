@@ -333,8 +333,18 @@ def zd_maliyet(E: Dict[str, pd.DataFrame], S: pd.DataFrame, maliyetler: Tuple[fl
         i = M.index.get_indexer([r.tarih])[0]
         if i < 0 or len(M) - 1 - i < 40:
             continue
+        # denetim 24 Eki: uretim kurali gibi giris tavan x 1,002 kirilimindan (60 bar); eskiden tarama gunu +1 aciliyordu ve
+        # ASAGI satirlari da (uretimde islem acilmaz) dahildi
+        if str(getattr(r, "yon", "YUKARI")).upper().startswith("ASAGI"):
+            continue
+        tv = float(getattr(r, "tavan", np.nan))
+        if not np.isfinite(tv):
+            continue
+        kb = next((j for j in range(i + 1, min(len(M), i + 61)) if float(M["C"].iloc[j]) > tv * 1.002), None)
+        if kb is None:
+            continue
         for m in maliyetler:
-            p = zd_pnl(M, i, np.nan, ufuk=ufuk, maliyet=m)
+            p = zd_pnl(M, kb, tv, ufuk=ufuk, maliyet=m)
             if p is not None:
                 sonuc[m].append(p)
     ozet = {m: (len(v), float(np.mean(v)) if v else np.nan, float((np.array(v) > 0).mean()) if v else np.nan) for m, v in sonuc.items()}
