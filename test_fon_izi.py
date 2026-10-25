@@ -431,6 +431,18 @@ def sina():
     if not ok29:
         hata.append(f"29) K21/K22 mum mum yol/sıra yanlış: P {W29['P'][:1, :1] if len(W29['P']) else []} R {W29['R'][:1, :1] if len(W29['R']) else []} "
                     f"pencere {P29.to_dict('records') if len(P29) else []} emir {S29.to_dict('records') if len(S29) else []}")
+    # 30) K23/K24 iki evre: 150 bar 20'de yatay, 60 barda 10'a düşüş, 12 bar dipte hafif iniş (SMA20 altında, bant daralıyor), sonra 5 bar
+    # SMA20 üstünde dar dizilme (dipleri SMA'nın üstünde) -> K24 kuralı 5. günde tetikler; K23 seri = 5/L, delen = 0, once_alt = 1.
+    ix30 = pd.bdate_range("2020-01-01", periods=300)
+    c30 = np.r_[np.full(150, 20.0), np.linspace(20, 10, 60), np.linspace(9.95, 9.8, 12), [10.3, 10.35, 10.4, 10.45, 10.5], np.full(73, 10.5)]
+    d30 = pd.DataFrame({"Open": c30 * 0.999, "High": c30 * 1.005, "Low": c30 * 0.995, "Close": c30, "Volume": 1e6}, index=ix30)
+    K30 = F.fi_k24_tara(d30); t30 = ix30[226]
+    P30 = F.fi_k23_parmak(d30, 15).loc[t30]
+    ok30 = (len(K30) >= 1 and bool(K30.loc[K30.tarih == t30, "kural"].any()) and abs(P30.seri - 5 / 15) < 1e-12 and P30.delen == 0
+            and abs(P30.once_alt - 1.0) < 1e-12 and P30.dusus < -0.4)
+    if not ok30:
+        hata.append(f"30) K23/K24 iki evre yanlış: K24 {K30.to_dict('records') if len(K30) else []} K23 seri {P30.seri} delen {P30.delen} "
+                    f"once_alt {P30.once_alt} dusus {P30.dusus}")
     return hata
 
 
@@ -438,4 +450,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 29/29 OK")
+    print("test_fon_izi: 30/30 OK")

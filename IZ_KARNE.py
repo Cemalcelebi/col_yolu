@@ -350,6 +350,21 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "sonra 0,46-0,54: fark atılım mumunda (sonradan bilinen). Atılım mumunu alan tek emir (kutu tavanı ×1,002'de bekleyen alış, "
                "sahte kırılım dahil): dolumların %44-55'i aynı gün kutuya döndü; sıra 15. gün 0,44-0,53, 120. gün 0,42-0,52; 8 hücrenin "
                "hiçbiri geçmedi. Ders 9 s.6-7."),
+    _ik_k("Ç95", "2026-10-25", "BÖLGE PARMAK İZİ + BİREBİR BENZER BÖLGELER: MANAS 13 Haz-11 Tem ve 20 Eki-5 Kas 2025'in 16 ölçüsü, en yakın 100 "
+          "bölge yukarı / aşağı / yatay (K23)", "FON_IZI.py (k23)",
+          "Cemal: 'işaretli bölgenin her özelliğini kaydet; birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, aşağı, yatay; halüsinasyon mu?'",
+          "Yeni deneme (karar önceden; KNN kapalı konu, Cemal'in isteğiyle)", "IZ C", 2, cikti="arastirma_cikti/fon_izi/k23_ozet.csv",
+          notu="16 ölçü (eğim, mum, yeşil oranı, alt/üst fitil, yakınlık, düzeni bozan, hacim, RSI, MACD, düşüş, konum, 2. evre payı, 1. evrede "
+               "SMA20 altı, 2. evrede delen, BB sıkışması). En yakın 100 bölgenin 60 günde önce +%15 oranı / bütün bölgeler: 1. bölge BIST 2023 "
+               "%42 / %58 (0,72), BIST 2024-26 %62 / %54 (1,15), ABD 2023 1,45, ABD 2024-26 1,46; 2. bölge 0,93 / 1,19 / 1,50 / 1,19. Dört "
+               "hücrede tutmuyor (BIST 2023 ters); ABD'de benzerlerin aşağı oranı da yüksek (oynak hisseler). Ders: FON_IZI_ders10_bolge_parmak.pdf."),
+    _ik_k("Ç96", "2026-10-25", "İKİ EVRE KURALI: düşüş sonrası SMA20 altı (1. evre) → SMA20 üstünde 5 gün dizilme, en fazla 2 delen, BB "
+          "sıkışması (K24)", "FON_IZI.py (k24)",
+          "Cemal: '1. evre kırmızı SMA altında, 2. evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse'", "Yeni deneme (karar önceden)",
+          "IZ C", 2, cikti="arastirma_cikti/fon_izi/k24_ozet.csv",
+          notu="Eşikler MANAS'ın iki bölgesinden (iki örnek de tetikler). Eşli = aynı düşüş + SMA20 üstü 5. gün, tarif tutmayan. 60 gün önce "
+               "+%15: BIST 2023 %46 vs %62 (0,75, n 490), BIST 2024-26 %57 vs %56 (1,03, n 932), ABD 2023 0,92, ABD 2024-26 0,97; 2016-22 "
+               "BIST 1,14, ABD 1,02. Tarif eşliden iyi değil. Ders 10 s.4."),
 ]
 
 
@@ -434,6 +449,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Kod hatası yok. Atılımdan sonra çöl hissesi aynı gün borsanın ortasında (sıra 0,45-0,53). Cemal'in penceresinde (atılım mumu dahil) "
               "çöl ÖNDE (sıra 0,57-0,66): fark yalnız atılım mumunda, o da kapanışta bilinir; tavanda bekleyen emir onu yakalasa da dolumların yarısı "
               "sahte kırılım, sıra yine ~0,5. MANAS 18 Tem-8 Ağu +%84,5 (en iyi %1) ama koşan vaka",
+     "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
+    {"tarih": "2026-10-25", "istek": "İşaretli MANAS bölgelerinin (13 Haz-13 Tem, 20 Eki-5 Kas 2025) her özelliğini kaydet (eğim, küçük mum, kırmızı-yeşil, "
+                                     "fitiller, yakınlık, düzeni bozan, hacim, RSI, MACD); 1. evre SMA altı, 2. evre SMA üstünde dizilme, delen yok; birebir "
+                                     "benzer bölgelerin yüzde kaçı yukarı / aşağı / yatay; halüsinasyon mu?",
+     "yapilan": "K23: 16 ölçülü parmak izi, BIST + ABD bütün pencerelerde en yakın 100 bölge, 60 gün ±%15 yukarı / aşağı / yatay vs bütün bölgeler; "
+                "K24: iki evre tarifi doğrudan kural olarak vs eşli; karar önceden; IZ_KARNE Ç95-Ç96; FON_IZI_ders10_bolge_parmak.pdf",
+     "sonuc": "Şekil gerçek ve kod buluyor. En yakın 100 benzer bölge BIST 2024-26'da %62-64 yukarı (hepsi %54), BIST 2023'te %42-54 (hepsi %58); "
+              "ABD'de 1,2-1,5 kat ama aşağı oranı da yüksek. İki evre kuralı eşliyle aynı (0,75-1,03). Dört hücrede tutmuyor → iz değil",
      "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
 ]
 IK_ACIK: List[str] = [

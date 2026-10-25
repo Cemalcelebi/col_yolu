@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.9 (2026-10-25, K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.9 (2026-10-25, K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -4518,6 +4518,261 @@ def fon_izi_k22(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str
     return {"ozet": Zk, "karar": karar}
 
 
+# ---------------------------------------------------------------- K23 bölge parmak izi + birebir benzer bölgeler (Cemal 25 Eki)
+# CEMAL (25 Eki, MANAS grafiğinde iki bölge işaretli): 'Şu işaretli bölgenin her özelliğini kaydet: eğim, küçük mum, kırmızı-yeşil oranı,
+# alt fitil, üst fitil, birbirine yakınlık, düzeni bozan mum sayısı, hacim oranı, RSI, MACD... Birebir aynı görünümdeki bölgelerin yüzde kaçı
+# yukarı çıkmış, yüzde kaçı aşağı düşmüş, yüzde kaçı yatayda kalmış? Bu bir halüsinasyon mu? Ben ısrarla değil diyorum.' (KNN kapalı konu;
+# Cemal'in doğrudan isteğiyle açıldı.) ÖNCEDEN YAZILDI (sonuç görülmeden): bölgeler FI_K23['bolge'] (aşağıdaki düzeltme notu). Parmak izi (yalnız bölge ve öncesi): eğim (log kapanış OLS, bar
+# başı), mum (bölge H-L medyanı / önceki 60 bar), yeşil oranı, alt fitil ve üst fitil (H-L'ye oran, medyan), yakınlık (kapanış std / ort.),
+# bozan (H-L > 2 x bölge medyanı olan mum oranı), hacim (TL hacim medyanı / önceki 60 bar), RSI14 ve MACD histogramı / fiyat (bitiş günü),
+# düşüş (bölge dibi / önceki 120 bar tepesi - 1), konum (bitiş kapanışının bölge aralığındaki yeri). Benzerlik: her ölçü hücrenin bütün
+# pencerelerinin medyan / IQR'si ile ölçeklenir (±5 kırpılır), Öklid uzaklığı; en yakın K (100) pencere, aynı hissede 60 bar içinde tek
+# (en yakını). Sonuç bitiş kapanışından: 60 barda önce +%15 (High) -> YUKARI, önce -%15 (Low) -> AŞAĞI, ikisi yok -> YATAY (aynı bar ikisi
+# -> aşağı); kısa: 20 barda ±%10. Karar: en yakın K'nin yukarı oranı / hücrenin bütün pencerelerinin yukarı oranı >= 1,3, dört hücrede
+# (BIST / ABD x 2023 / 2024-26). MANAS'ın kendisi (bölge ±120 bar) kıyastan çıkarılır.
+# DÜZELTME (Cemal aynı gün tarihleri verdi; ilk okumamın yerine onunkiler): 1 = 13.06-21.07.2025 (ilk çöl, 21 Tem atılım barı dahil),
+# 2 = 20.10-05.11.2025 (ikinci çöl). Grafikten okuduğum 17.11-04.12.2025 silkelemesi (S) kayıtta kalır; ilk okumam 29.09-05.11 (A) bıraktım.
+# DÜZELTME 2 (Cemal: 'yanlış yazdım, birincisi 13 Haziran - 13 Temmuz') ve EK ÖLÇÜLER (Cemal: 'birinci evre kırmızı SMA altında, ikinci
+# evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse'; BB 20,2 orta bandı): seri (bitişteki SMA20 üstü kapanış serisi / L =
+# 2. evrenin payı), once_alt (serinin öncesindeki pencere kısmında SMA20 altı kapanış oranı = 1. evre), delen (serideki Low < SMA20 oranı),
+# bbw (bitişte BB genişliği 4 sigma / SMA20, pencere içindeki en yükseğine oran = sıkışma).
+FI_K23 = {"bolge": {"1": ("MANAS", "2025-06-13", "2025-07-13"), "2": ("MANAS", "2025-10-20", "2025-11-05"),
+                    "S": ("MANAS", "2025-11-17", "2025-12-04")}, "k": 100, "ayri": 60,
+          "ufuk": 60, "esik": 0.15, "kisa_ufuk": 20, "kisa_esik": 0.10, "kirp": 5.0, "kat_esik": 1.3,
+          "olcu": ("egim", "mum", "yesil", "alt_fitil", "ust_fitil", "yakinlik", "bozan", "hacim", "rsi", "macd", "dusus", "konum",
+                   "seri", "once_alt", "delen", "bbw")}
+
+
+def fi_k23_parmak(d: pd.DataFrame, L: int) -> pd.DataFrame:
+    """Her bitiş günü t için [t-L+1, t] penceresinin parmak izi (yalnız t ve öncesi) ve t kapanışından sonraki sonuçlar (yon60, yon20)."""
+    import warnings
+    from numpy.lib.stride_tricks import sliding_window_view as swv
+    warnings.filterwarnings("ignore", message="All-NaN slice encountered")   # kilitli (H = L) günlerden oluşan pencere: ölçü NaN, atlanır
+    o = d.Open.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
+    v = (d.Close * d.Volume).to_numpy(float); n = len(c); E = FI_K23
+    if n < L + 200:
+        return pd.DataFrame()
+    pc = np.r_[np.nan, c[:-1]]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        m = (h - l) / pc; rg = h - l
+        alt = np.where(rg > 0, (np.minimum(o, c) - l) / rg, np.nan); ust = np.where(rg > 0, (h - np.maximum(o, c)) / rg, np.nan)
+    e = np.arange(L - 1, n)                                                   # pencere bitiş indeksleri
+    Mw, Aw, Uw, Cw = swv(m, L), swv(alt, L), swv(ust, L), swv(c, L)
+    with np.errstate(all="ignore"):
+        mmed = np.nanmedian(Mw, 1)
+        on_m = pd.Series(m).rolling(60, min_periods=40).median().shift(L).to_numpy()[e]
+        on_v = pd.Series(v).rolling(60, min_periods=40).median().shift(L).to_numpy()[e]
+        x = np.arange(L, dtype=float); xc = x - x.mean(); ly = np.log(Cw)
+        egim = (ly * xc).sum(1) / (xc ** 2).sum()
+        hl = swv(h, L).max(1); ll = swv(l, L).min(1)
+        tepe = pd.Series(h).rolling(120, min_periods=60).max().shift(L).to_numpy()[e]
+        dl = np.diff(c, prepend=np.nan); up = pd.Series(np.clip(dl, 0, None)).ewm(alpha=1 / 14, adjust=False).mean()
+        dn = pd.Series(np.clip(-dl, 0, None)).ewm(alpha=1 / 14, adjust=False).mean(); rsi = (100 - 100 / (1 + up / dn)).to_numpy()
+        cs = pd.Series(c); mac = cs.ewm(span=12, adjust=False).mean() - cs.ewm(span=26, adjust=False).mean()
+        mh = ((mac - mac.ewm(span=9, adjust=False).mean()) / cs).to_numpy()
+        F = pd.DataFrame({"egim": egim, "mum": mmed / on_m, "yesil": (swv(c, L) > swv(o, L)).mean(1),
+                          "alt_fitil": np.nanmedian(Aw, 1), "ust_fitil": np.nanmedian(Uw, 1), "yakinlik": Cw.std(1) / Cw.mean(1),
+                          "bozan": (Mw > 2 * mmed[:, None]).mean(1), "hacim": np.median(swv(v, L), 1) / on_v, "rsi": rsi[e], "macd": mh[e],
+                          "dusus": ll / tepe - 1, "konum": (c[e] - ll) / np.where(hl > ll, hl - ll, np.nan)}, index=d.index[e])
+    # iki evre (Cemal): SMA20 altı (1. evre) -> SMA20 üstünde dizilme (2. evre); kümülatif toplamlarla
+    sma = cs.rolling(20).mean().to_numpy(); bw = (4 * cs.rolling(20).std() / cs.rolling(20).mean()).to_numpy()
+    ust_ = c > sma; seri = np.zeros(n, int)
+    for t in range(n):
+        seri[t] = seri[t - 1] + 1 if (ust_[t] and t > 0) else int(ust_[t])
+    alt_c = np.r_[0, np.cumsum(c < sma)]; del_c = np.r_[0, np.cumsum(l < sma)]
+    s_ = np.minimum(seri[e], L); bas = e - L + 1; orta = e - s_ + 1                       # 1. evre [bas, orta-1], 2. evre [orta, e]
+    with np.errstate(all="ignore"):
+        F["seri"] = s_ / L
+        F["once_alt"] = np.where(orta > bas, (alt_c[orta] - alt_c[bas]) / (orta - bas), 0.0)
+        F["delen"] = np.where(s_ > 0, (del_c[e + 1] - del_c[orta]) / np.maximum(s_, 1), 1.0)
+        F["bbw"] = bw[e] / swv(bw, L).max(1)
+    F["i"] = e
+    # sonuç: t kapanışından sonra (t+1 ... t+ufuk) önce +esik (High) mi, önce -esik (Low) mu
+    def yon(u, s):
+        out = np.full(len(e), np.nan)
+        for j, t in enumerate(e):
+            if t + u >= n:
+                continue
+            g = c[t]; hu = np.flatnonzero(h[t + 1:t + 1 + u] >= g * (1 + s)); lo = np.flatnonzero(l[t + 1:t + 1 + u] <= g * (1 - s))
+            a, b = (hu[0] if len(hu) else 10 ** 9), (lo[0] if len(lo) else 10 ** 9)
+            out[j] = 1.0 if a < b else (-1.0 if b <= a and b < 10 ** 9 else 0.0)
+        return out
+    F["yon60"] = yon(E["ufuk"], E["esik"]); F["yon20"] = yon(E["kisa_ufuk"], E["kisa_esik"])
+    return F.replace([np.inf, -np.inf], np.nan)
+
+
+def fi_k23_esle(P: pd.DataFrame, hedef: pd.Series, E: Dict[str, Any] = FI_K23) -> pd.DataFrame:
+    """P (bir hücrenin bütün pencereleri: sembol, tarih, ölçüler) içinde hedef parmak izine en yakın K pencere; ölçek hücrenin medyan/IQR'si;
+    aynı hissede E['ayri'] bar içinde tek (en yakın)."""
+    O = list(E["olcu"]); X = P[O]
+    med = X.median(); iqr = (X.quantile(0.75) - X.quantile(0.25)).replace(0, np.nan)
+    Z = ((X - med) / iqr).clip(-E["kirp"], E["kirp"]); z0 = ((hedef[O].astype(float) - med) / iqr).clip(-E["kirp"], E["kirp"])
+    P = P.assign(uzak=np.sqrt(((Z - z0) ** 2).sum(1, min_count=len(O)))).dropna(subset=["uzak"]).sort_values("uzak")
+    sec, son = [], {}
+    for r in P.itertuples():
+        if any(abs(r.i - k) < E["ayri"] for k in son.get(r.sembol, [])):
+            continue
+        son.setdefault(r.sembol, []).append(r.i); sec.append(r.Index)
+        if len(sec) >= E["k"]:
+            break
+    return P.loc[sec]
+
+
+def fon_izi_k23(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str, pd.DataFrame]]] = None) -> Dict[str, Any]:
+    """K23 sürücü: bölge A ve B'nin parmak izi; BIST + ABD bütün pencereleri; hücre (pazar x 2016-22 / 2023 / 2024-26) içinde en yakın K ve
+    yukarı / aşağı / yatay oranları, hücre tabanına göre kat. Çıktı k23_ozet.csv, k23_esler.csv, k23_parmak.csv."""
+    A = A or FIAyar(); E = FI_K23; donem = [("2016-22", "2016-01-01", "2022-12-31")] + K19_DONEM
+    Vb = V_hazir["BIST"] if V_hazir and "BIST" in V_hazir else fi_k1_veri(A.veri["BIST"], "BIST", A)
+    H: Dict[str, pd.Series] = {}
+    for ad, (s, b, e_) in E["bolge"].items():
+        d = Vb[s]; L = int(((d.index >= b) & (d.index <= e_)).sum())
+        son_g = d.index[d.index <= pd.Timestamp(e_)][-1]                       # bölge sonu tatile düşerse önceki işlem günü
+        F = fi_k23_parmak(d, L); H[ad] = F.loc[son_g].copy(); H[ad]["L"] = L; H[ad]["sembol"] = s; H[ad]["son"] = son_g
+    Z: List[Dict[str, Any]] = []; ES: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = Vb if pazar == "BIST" else (V_hazir["ABD"] if V_hazir and "ABD" in V_hazir else fi_k1_veri(A.veri["ABD"], "ABD", A))
+        except Exception as ex:
+            filog.warning("K23 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        for ad, h0 in H.items():
+            L = int(h0["L"]); parca = []
+            for s, d in V.items():
+                try:
+                    F = fi_k23_parmak(d, L)
+                    if len(F):
+                        parca.append(F.assign(sembol=s))
+                except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+                    filog.warning("K23 %s atlandi: %s", s, ex)
+            P = pd.concat(parca).rename_axis("tarih").reset_index()
+            s0, b0 = h0["sembol"], pd.Timestamp(h0["son"])
+            P = P[~((P.sembol == s0) & ((P.tarih - b0).abs() <= pd.Timedelta(days=180)))].dropna(subset=list(E["olcu"]) + ["yon60"])
+            for dad, b, e_ in donem:
+                Px = P[(P.tarih >= b) & (P.tarih <= e_)].reset_index(drop=True)
+                if len(Px) < 1000:
+                    continue
+                M = fi_k23_esle(Px, h0, E); z: Dict[str, Any] = {"bolge": ad, "pazar": pazar, "donem": dad, "n_pencere": len(Px), "k": len(M),
+                                                               "uzak_med": float(M.uzak.median())}
+                for u in ("yon60", "yon20"):
+                    x = M[u].dropna(); t_ = Px[u].dropna()
+                    z.update({f"{u}_yukari": float((x == 1).mean()), f"{u}_asagi": float((x == -1).mean()), f"{u}_yatay": float((x == 0).mean()),
+                              f"{u}_taban_yukari": float((t_ == 1).mean()), f"{u}_taban_asagi": float((t_ == -1).mean()),
+                              f"{u}_taban_yatay": float((t_ == 0).mean())})
+                z["kat60"] = z["yon60_yukari"] / z["yon60_taban_yukari"] if z["yon60_taban_yukari"] > 0 else np.nan
+                z["kat20"] = z["yon20_yukari"] / z["yon20_taban_yukari"] if z["yon20_taban_yukari"] > 0 else np.nan
+                Z.append(z); ES.append(M.assign(bolge=ad, pazar=pazar, donem=dad))
+                filog.info("K23 %s %s %s: n %d en yakin %d yukari %.2f (taban %.2f, kat %.2f) asagi %.2f yatay %.2f", ad, pazar, dad, len(Px),
+                           len(M), z["yon60_yukari"], z["yon60_taban_yukari"], z["kat60"], z["yon60_asagi"], z["yon60_yatay"])
+    if not Z:
+        raise RuntimeError("K23: sonuç yok")
+    Zk = pd.DataFrame(Z); Zk.to_csv(os.path.join(A.cikti, "k23_ozet.csv"), index=False)
+    pd.concat(ES, ignore_index=True).to_csv(os.path.join(A.cikti, "k23_esler.csv"), index=False)
+    pd.DataFrame(H).T.to_csv(os.path.join(A.cikti, "k23_parmak.csv"))
+    karar = {}
+    for ad in H:
+        X = Zk[(Zk.bolge == ad) & (Zk.donem != "2016-22")]
+        karar[ad] = bool(len(X) == 4 and (X.kat60 >= E["kat_esik"]).all())
+    return {"ozet": Zk, "parmak": pd.DataFrame(H).T, "karar": karar}
+
+
+# ---------------------------------------------------------------- K24 iki evre kuralı (Cemal 25 Eki)
+# CEMAL: 'Birinci evre kırmızı SMA (BB 20 orta bandı) altında, ikinci evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse.'
+# ÖNCEDEN YAZILDI (eşikler MANAS 13.06-11.07.2025 ve 20.10-05.11.2025'ten, evren sonucu görülmeden): t günü SMA20 üstündeki kapanış
+# serisi tam 5'e ulaşır (dizilme teyidi); serinin öncesindeki 10 barın >= %80'i SMA20 altında kapanmış (1. evre); serideki 5 mumun en
+# fazla 2'sinin dibi SMA20'yi deler; BB genişliği (4 sigma / SMA20) son 15 barın en yükseğinin <= %70'i (sıkışma); son 15 barın dibi önceki
+# 120 bar tepesinin <= -%30 altında (düşüş sonrası); hissede 60 barda tek. MANAS 10.07.2025 ve 05.11.2025'te tetikler.
+# EŞLİ: aynı gün yapısı (düşüş <= -%30 ve SMA20 üstünde 5. gün) ama 1. evre / delen / sıkışma şartlarından en az biri tutmayan günler.
+# Sonuç t kapanışından (K23 ile aynı): 60 barda önce +%15 / önce -%15 / yatay; 20 barda ±%10. Karar: yukarı oranı eşlinin >= 1,3 katı,
+# dört hücre (BIST / ABD x 2023 / 2024-26), n >= 30.
+# Ayar (evren sonucu görülmeden): MANAS 1. bölgede serinin 5 mumundan 2'si SMA20'yi deliyor (04.07 ve 08.07); 'en fazla 1' iki örneğin
+# birini dışarıda bıraktığı için 'en fazla 2' yapıldı (kalibrasyon iki vakaya, sonuç ölçülmeden).
+FI_K24 = {"seri": 5, "once": 10, "once_alt": 0.80, "delen_en_cok": 2, "bbw_oran": 0.70, "bbw_pencere": 15, "dusus": -0.30, "tekrar": 60}
+
+
+def _fi_k23_yon(c: np.ndarray, h: np.ndarray, l: np.ndarray, t: int, u: int, s: float) -> float:
+    """t kapanışından sonraki u barda önce +s (High) -> 1, önce -s (Low) -> -1 (aynı bar -> -1), ikisi yok -> 0; pencere dolmamışsa NaN."""
+    if t + u >= len(c):
+        return np.nan
+    g = c[t]; hu = np.flatnonzero(h[t + 1:t + 1 + u] >= g * (1 + s)); lo = np.flatnonzero(l[t + 1:t + 1 + u] <= g * (1 - s))
+    a, b = (hu[0] if len(hu) else 10 ** 9), (lo[0] if len(lo) else 10 ** 9)
+    return 1.0 if a < b else (-1.0 if b < 10 ** 9 else 0.0)
+
+
+def fi_k24_tara(d: pd.DataFrame, E: Dict[str, Any] = FI_K24) -> pd.DataFrame:
+    """Bir hissede iki evre günleri: kural (sinyal) ve eşli (aynı düşüş + SMA20 üstü 5. gün, kuralın geri kalanı tutmayan)."""
+    c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float); n = len(c); E3 = FI_K23
+    if n < 200:
+        return pd.DataFrame()
+    cs = pd.Series(c); sma = cs.rolling(20).mean().to_numpy(); bw = (4 * cs.rolling(20).std() / cs.rolling(20).mean()).to_numpy()
+    tepe = pd.Series(h).rolling(120, min_periods=60).max().to_numpy()
+    seri = np.zeros(n, int)
+    for t in range(1, n):
+        seri[t] = seri[t - 1] + 1 if c[t] > sma[t] else 0
+    sat, son = [], {True: -10 ** 9, False: -10 ** 9}
+    w = E["bbw_pencere"]; k = E["seri"]
+    for t in np.flatnonzero(seri == k):
+        a = t - k + 1; b0 = a - E["once"]
+        if b0 - 120 < 0:
+            continue
+        dus = l[t - w + 1:t + 1].min() / tepe[t - w] - 1
+        if not (dus <= E["dusus"]):
+            continue
+        once = float((c[b0:a] < sma[b0:a]).mean()); delen = int((l[a:t + 1] < sma[a:t + 1]).sum())
+        bo = float(bw[t] / np.nanmax(bw[t - w + 1:t + 1])) if np.isfinite(bw[t]) else np.nan
+        kural = bool(once >= E["once_alt"] and delen <= E["delen_en_cok"] and bo <= E["bbw_oran"])
+        if t - son[kural] < E["tekrar"]:
+            continue
+        son[kural] = int(t)
+        sat.append({"tarih": d.index[t], "kural": kural, "once_alt": once, "delen": delen, "bbw": bo, "dusus": dus,
+                    "yon60": _fi_k23_yon(c, h, l, int(t), E3["ufuk"], E3["esik"]),
+                    "yon20": _fi_k23_yon(c, h, l, int(t), E3["kisa_ufuk"], E3["kisa_esik"]),
+                    "r120": c[t + 120] / c[t] - 1 if t + 120 < n else np.nan})
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k24(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str, pd.DataFrame]]] = None) -> Dict[str, Any]:
+    """K24 sürücü: iki evre kuralı vs eşli, BIST + ABD, 2016-22 / 2023 / 2024-26. Çıktı k24_ozet.csv, k24_olaylar.csv.gz."""
+    A = A or FIAyar(); E = FI_K24; donem = [("2016-22", "2016-01-01", "2022-12-31")] + K19_DONEM
+    Z: List[Dict[str, Any]] = []; T: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = V_hazir[pazar] if V_hazir and pazar in V_hazir else fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K24 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        parca = []
+        for s, d in V.items():
+            try:
+                X = fi_k24_tara(d, E)
+                if len(X):
+                    parca.append(X.assign(sembol=s, pazar=pazar))
+            except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+                filog.warning("K24 %s atlandi: %s", s, ex)
+        if not parca:
+            continue
+        P = pd.concat(parca, ignore_index=True); T.append(P)
+        for dad, b, e_ in donem:
+            Px = P[(P.tarih >= b) & (P.tarih <= e_)]
+            S, Q = Px[Px.kural].dropna(subset=["yon60"]), Px[~Px.kural].dropna(subset=["yon60"])
+            if not len(S) or not len(Q):
+                continue
+            z = {"pazar": pazar, "donem": dad, "n": len(S), "n_esli": len(Q)}
+            for u in ("yon60", "yon20"):
+                z.update({f"{u}_yukari": float((S[u] == 1).mean()), f"{u}_asagi": float((S[u] == -1).mean()), f"{u}_yatay": float((S[u] == 0).mean()),
+                          f"{u}_esli_yukari": float((Q[u] == 1).mean()), f"{u}_esli_asagi": float((Q[u] == -1).mean()),
+                          f"{u}_esli_yatay": float((Q[u] == 0).mean())})
+            z["kat60"] = z["yon60_yukari"] / z["yon60_esli_yukari"] if z["yon60_esli_yukari"] > 0 else np.nan
+            z["kat20"] = z["yon20_yukari"] / z["yon20_esli_yukari"] if z["yon20_esli_yukari"] > 0 else np.nan
+            z["r120_med"], z["r120_esli_med"] = float(S.r120.median()), float(Q.r120.median())
+            Z.append(z)
+            filog.info("K24 %s %s: n %d (esli %d) yukari %.2f vs %.2f kat %.2f", pazar, dad, len(S), len(Q), z["yon60_yukari"],
+                       z["yon60_esli_yukari"], z["kat60"])
+    if not Z:
+        raise RuntimeError("K24: sonuç yok")
+    Zk = pd.DataFrame(Z); Zk.to_csv(os.path.join(A.cikti, "k24_ozet.csv"), index=False)
+    pd.concat(T, ignore_index=True).to_csv(os.path.join(A.cikti, "k24_olaylar.csv.gz"), index=False)
+    X = Zk[Zk.donem != "2016-22"]
+    return {"ozet": Zk, "karar": bool(len(X) == 4 and ((X.kat60 >= FI_K23["kat_esik"]) & (X.n >= 30)).all())}
+
+
 def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame, Ek: pd.DataFrame, Pn: pd.DataFrame, yol: str,
                  vaka: Tuple[str, str] = ("MANAS", "2025-07-22"), pencere: Tuple[str, str] = ("2025-07-18", "2025-08-08")) -> int:
     """Ders 9 (Cemal 25 Eki: 'mumları kıyasla, kim yüzde olarak daha çok yol almış'): (1) soru, nasıl ölçüldü, kısa cevap; (2) gün gün
@@ -4688,6 +4943,135 @@ def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame,
             "aranmaz')."])
         pdf.savefig(fig); plt.close(fig)
     return 8
+
+
+def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
+    """Ders 10 (Cemal 25 Eki: 'işaretli bölgenin her özelliğini kaydet; birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, aşağı, yatay?
+    halüsinasyon mu?'): (1) soru, iki bölgenin parmak izi; (2) MANAS bölgeleri grafikte (SMA20, BB, iki evre); (3) en yakın 100 benzer bölge
+    yukarı / aşağı / yatay vs bütün bölgeler; (4) iki evre kuralı vs eşli; (5) BIST 2024-26 en yakın 8 benzer bölge ve sonrası; (6) sonuç.
+    V = BIST; Zk = k23_ozet.csv, Hk = k23_parmak.csv, Es = k23_esler.csv, Z24 = k24_ozet.csv."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    yz = lambda x: f"%{100 * x:.0f}" if x == x else "—"
+    sz = lambda x, k=2: f"{x:.{k}f}".replace(".", ",") if x == x else "—"
+
+    def yazi(fig, y, baslik, satirlar, boy=9.4, gen=92):
+        if baslik:
+            fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    def mumlar(ax, w, renk_sma=True):
+        x = np.arange(len(w)); r = np.where(w.Close >= w.Open, "#27ae60", "#c0392b")
+        ax.vlines(x, w.Low, w.High, color=r, lw=0.7)
+        ax.bar(x, (w.Close - w.Open).abs().clip(lower=1e-9), bottom=np.minimum(w.Open, w.Close), color=r, width=0.7)
+        if renk_sma:
+            ax.plot(x, w.sma, color="#e67e22", lw=1.3); ax.plot(x, w.ust, color="#3498db", lw=0.8); ax.plot(x, w.alt, color="#3498db", lw=0.8)
+        return x
+
+    def hazir(d):
+        d = d.copy(); m = d.Close.rolling(20).mean(); sd = d.Close.rolling(20).std()
+        return d.assign(sma=m, ust=m + 2 * sd, alt=m - 2 * sd)
+
+    E = FI_K23; HUC = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
+    Zi = Zk.set_index(["bolge", "pazar", "donem"]); Hk = Hk.set_index(Hk.columns[0]) if "egim" not in Hk.index else Hk
+    g = lambda b, p, d_, k: Zi.loc[(b, p, d_), k] if (b, p, d_) in Zi.index else np.nan
+    Zj = Z24.set_index(["pazar", "donem"]); g24 = lambda p, d_, k: Zj.loc[(p, d_), k] if (p, d_) in Zj.index else np.nan
+    ETK = {"egim": "eğim (bar başı)", "mum": "mum boyu / düşüştekiler", "yesil": "yeşil mum oranı", "alt_fitil": "alt fitil oranı",
+           "ust_fitil": "üst fitil oranı", "yakinlik": "yakınlık (std/ort)", "bozan": "düzeni bozan mum oranı", "hacim": "hacim / önceki 60 gün",
+           "rsi": "RSI14 (bitiş)", "macd": "MACD hist / fiyat", "dusus": "öncesindeki düşüş", "konum": "bitişin bölgedeki yeri",
+           "seri": "2. evre payı (SMA20 üstü seri)", "once_alt": "1. evrede SMA20 altı", "delen": "2. evrede SMA'yı delen", "bbw": "BB genişliği / bölge en yükseği"}
+    BL = {"1": "1. bölge 13 Haz – 11 Tem 2025", "2": "2. bölge 20 Eki – 5 Kas 2025", "S": "silkeleme 17 Kas – 4 Ara 2025 (benim okumam)"}
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "DERS 10: İŞARETLİ BÖLGENİN PARMAK İZİ — BENZERLERİ NE YAPTI?", [
+            "Sen: 'Şu işaretli bölgenin her özelliğini kaydet: eğim, küçük mum, kırmızı-yeşil oranı, alt fitil, üst fitil, birbirine yakınlık, "
+            "düzeni bozan mum sayısı, hacim, RSI, MACD… Birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, yüzde kaçı aşağı, yüzde kaçı "
+            "yatay? Bu bir halüsinasyon mu?' Ve: '1. evre kırmızı SMA altında, 2. evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse.'",
+            "Nasıl ölçüldü (sonuç görülmeden yazıldı): iki bölgenin 16 ölçüsü aşağıda. Borsadaki BÜTÜN hisselerin BÜTÜN günlerinde aynı "
+            "uzunluktaki bölgeler aynı 16 ölçüyle ölçüldü; senin bölgene en yakın 100 bölge alındı (aynı hissede üst üste binen tek sayıldı, "
+            "MANAS'ın kendisi hariç). Sonra her birinin bitişinden sonraki 60 günde: önce +%15 gördüyse YUKARI, önce −%15 gördüyse AŞAĞI, "
+            "ikisi de yoksa YATAY. Kıyas: aynı pazar ve dönemdeki bütün bölgeler. Geçme şartı: yukarı oranı 1,3 kat, dört hücrede."])
+        ax = fig.add_axes([0.07, 0.10, 0.86, y - 0.13]); ax.axis("off")
+        sat = [[ETK[o]] + [sz(float(Hk.loc[b, o]), 3) for b in ("1", "2")] for o in E["olcu"] if o in Hk.columns]
+        tb = ax.table(cellText=sat, colLabels=["ölçü", BL["1"].split(" ", 2)[0] + " " + "bölge (21 gün)", "2. bölge (12 gün)"], loc="upper center",
+                      cellLoc="center", colWidths=[0.46, 0.27, 0.27])
+        tb.auto_set_font_size(False); tb.set_fontsize(8.5); tb.scale(1, 1.35)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "SENİN İKİ BÖLGEN GRAFİKTE (turuncu SMA20, mavi Bollinger 20,2)", [
+            "Gri gölge: işaretlediğin bölge. İki evre görülüyor: önce mumlar SMA20'nin altında, sonra SMA20'nin üstünde dizilme. "
+            "1. bölgenin 2. evresinde 5 mumun 2'si fitiliyle SMA'yı deliyor, 2. bölgede hiçbiri. Bant iki bölgede de daralıyor."])
+        d0 = hazir(V["MANAS"])
+        for k, b in enumerate(("1", "2")):
+            s_, b0, e0 = E["bolge"][b]; w = d0.loc[pd.Timestamp(b0) - pd.Timedelta(days=60):pd.Timestamp(e0) + pd.Timedelta(days=45)]
+            ax = fig.add_axes([0.08, 0.50 - k * 0.40, 0.88, 0.32]); x = mumlar(ax, w)
+            ib = np.flatnonzero((w.index >= b0) & (w.index <= e0)); ax.axvspan(ib[0] - 0.5, ib[-1] + 0.5, color="#999", alpha=0.18)
+            ax.set_xticks(x[::10]); ax.set_xticklabels([f"{t:%d.%m}" for t in w.index[::10]], fontsize=7); ax.set_title(BL[b], fontsize=9)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "EN YAKIN 100 BENZER BÖLGE: YUKARI / AŞAĞI / YATAY (60 gün, ±%15)", [
+            "Her hücrede sol çubuk: senin bölgene en yakın 100 bölge; sağ çubuk: aynı pazar ve dönemdeki bütün bölgeler. Yeşil yukarı, kırmızı "
+            "aşağı, gri yatay. Benzerlerin yukarı oranı tabandan belirgin ve her dönemde yüksek olsaydı şekil bir şey söylüyor olurdu."])
+        for k, b in enumerate(("1", "2")):
+            ax = fig.add_axes([0.10, 0.52 - k * 0.40, 0.85, 0.30]); et = []
+            for j, (p, d_) in enumerate([("BIST", "2016-22")] + HUC[:2] + [("ABD", "2016-22")] + HUC[2:]):
+                for q, (on, ad) in enumerate((("yon60_", "benzer"), ("yon60_taban_", "hepsi"))):
+                    xx = j * 2.6 + q; u, a_, y_ = g(b, p, d_, on + "yukari"), g(b, p, d_, on + "asagi"), g(b, p, d_, on + "yatay")
+                    ax.bar(xx, 100 * u, color="#27ae60", width=0.9); ax.bar(xx, 100 * y_, bottom=100 * u, color="#bbb", width=0.9)
+                    ax.bar(xx, 100 * a_, bottom=100 * (u + y_), color="#c0392b", width=0.9)
+                    ax.text(xx, 100 * u / 2, yz(u), ha="center", va="center", fontsize=6.5, color="white")
+                et.append((j * 2.6 + 0.5, f"{p} {d_}\nkat {sz(g(b, p, d_, 'kat60'))}"))
+            ax.set_xticks([a for a, _ in et]); ax.set_xticklabels([b_ for _, b_ in et], fontsize=7); ax.set_ylim(0, 100)
+            ax.set_ylabel("%", fontsize=8); ax.set_title(BL[b] + " — her hücrede sol: en yakın 100, sağ: hepsi", fontsize=9)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "İKİ EVRE KURALI (SMA20 altı → SMA20 üstünde dizilme) vs EŞLİ", [
+            "Senin tarifin doğrudan kural olarak (eşikler senin iki bölgenden, sonuç görülmeden): önce en az −%30 düşüş; dizilmeden önceki "
+            "10 günün en az %80'i SMA20 altında; SMA20 üstünde 5. gün; bu 5 mumun en fazla 2'si SMA'yı deler; bant genişliği son 15 günün "
+            "en yükseğinin en fazla %70'i. Eşli: aynı düşüş ve aynı 5. gün, ama 1. evre / delen / sıkışma şartı tutmayan günler."]
+            + [f"- {p} {d_}: kural n {int(g24(p, d_, 'n'))}, yukarı {yz(g24(p, d_, 'yon60_yukari'))} / aşağı {yz(g24(p, d_, 'yon60_asagi'))} / "
+               f"yatay {yz(g24(p, d_, 'yon60_yatay'))}; eşli yukarı {yz(g24(p, d_, 'yon60_esli_yukari'))} / aşağı {yz(g24(p, d_, 'yon60_esli_asagi'))} "
+               f"(kat {sz(g24(p, d_, 'kat60'))})" for p, d_ in [("BIST", "2016-22")] + HUC[:2] + [("ABD", "2016-22")] + HUC[2:] if (p, d_) in Zj.index]
+            + [f"- Geçme şartı (dört hücrede kat ≥ 1,3): {'GEÇTİ' if ((Zj.loc[[h for h in HUC if h in Zj.index], 'kat60'] >= 1.3).all() and len([h for h in HUC if h in Zj.index]) == 4) else 'GEÇMEDİ'}. "
+               "Senin tarifine uyan günler, aynı düşüşten sonra SMA üstüne çıkan ama tarife uymayan günlerden daha sık yukarı gitmiyor."])
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        X = Es[(Es.bolge == "2") & (Es.pazar == "BIST") & (Es.donem == "2024-26")].sort_values("uzak").head(8)
+        yazi(fig, 0.96, "2. BÖLGEYE EN BENZER 8 BÖLGE (BIST 2024-26) VE SONRASI", [
+            "Gri gölge benzer bölge, sağı sonraki 60 gün. Başlıkta sonuç. Hepsi senin 2. bölgene ölçülerde çok yakın; kimi koştu, kimi düştü, "
+            "kimi yatay kaldı. Şekil bunu önceden ayırmıyor."])
+        for k, r in enumerate(X.itertuples()):
+            d = hazir(V[r.sembol]); t = d.index.get_loc(pd.Timestamp(r.tarih)); w = d.iloc[max(0, t - 30):t + 61]
+            ax = fig.add_axes([0.07 + (k % 2) * 0.47, 0.70 - (k // 2) * 0.21, 0.42, 0.16]); x = mumlar(ax, w)
+            i0 = t - max(0, t - 30); ax.axvspan(i0 - 11.5, i0 + 0.5, color="#999", alpha=0.18); ax.set_xticks([])
+            ax.tick_params(labelsize=6)
+            ax.set_title(f"{r.sembol} {pd.Timestamp(r.tarih):%d.%m.%Y}: {({1.0: 'YUKARI', -1.0: 'AŞAĞI', 0.0: 'YATAY'}).get(r.yon60, '—')}", fontsize=8)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        b1 = Zk[(Zk.bolge.isin(["1", "2"])) & (Zk.donem != "2016-22")]
+        yazi(fig, 0.96, "SONUÇ: HALÜSİNASYON MU?", [
+            "- Hayır, gördüğün şekil gerçek: iki bölge ölçülerde de birbirine benziyor (küçük mum, düşüşten sonra, SMA altı → SMA üstü dizilme, "
+            "bant sıkışması) ve kod bu şekli binlerce kez buluyor.",
+            f"- Ama aynı şeklin sonrası yazı-tura değil, 'piyasa ne yaparsa': en yakın 100 benzer bölgenin yukarı oranı karar hücrelerinde "
+            f"{yz(b1.yon60_yukari.min())}-{yz(b1.yon60_yukari.max())}, aynı dönemin bütün bölgelerinde {yz(b1.yon60_taban_yukari.min())}-"
+            f"{yz(b1.yon60_taban_yukari.max())}. Kat {sz(b1.kat60.min())}-{sz(b1.kat60.max())}: BIST 2024-26'da biraz önde, BIST 2023'te geride; "
+            "ABD'de önde ama aşağı oranı da yüksek (benzer bölgeler daha oynak hisseler).",
+            "- İki evre kuralı (senin tarifin) eşli günlerle aynı ya da kötü. Dört hücrede tutan bir üstünlük yok → standarda göre İZ DEĞİL.",
+            "- Senin iki bölgen gerçekten koştu; benzerlerinin ~10'da 6'sı da +%15'i önce gördü. Ama aynı gün herhangi bir bölgenin de ~10'da 5-6'sı "
+            "görüyor. Fark, kazanmayı garantileyecek ya da sistemi rastgeleden ayıracak büyüklükte değil.",
+            "",
+            "Sıradaki (önceden yazılı): aynı benzerlik araması oynaklığı eşitleyerek (benzer bölgelerin tabanı aynı oynaklıktaki bölgeler) ve "
+            "katalizörle (sektör rüzgârı / KAP haberi aynı hafta) birlikte — CLAUDE.md: 'rüzgâr ya da katalizör olmadan çöl aranmaz'."])
+        pdf.savefig(fig); plt.close(fig)
+    return 6
 
 
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
@@ -4917,11 +5301,27 @@ if __name__ == "__main__":
         _R = fon_izi_k22()
         print(_R["karar"]); print(_R["ozet"].round(3).to_string(index=False))
         sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k23":           # işaretli bölgenin parmak izi + birebir benzer bölgeler (yukarı / aşağı / yatay)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k23()
+        print(_R["karar"]); print(_R["parmak"].to_string()); print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k24":           # iki evre kuralı (SMA20 altı -> SMA20 üstünde dizilme) vs eşli
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k24()
+        print(_R["karar"]); print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "k21ders":       # Ders 9 (k21 + k22 çıktılarından)
         _A = FIAyar()
         print(fi_k12_ders9(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k21_ozet.csv")),
                            pd.read_csv(os.path.join(_A.cikti, "k21_yol.csv")), pd.read_csv(os.path.join(_A.cikti, "k22_ozet.csv")),
                            pd.read_csv(os.path.join(_A.cikti, "k22_pencere.csv")), os.path.join(_A.cikti, "FON_IZI_ders9_sag_ayak_mum.pdf")), "sayfa")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k23ders":       # Ders 10 (k23 + k24 çıktılarından)
+        _A = FIAyar()
+        print(fi_k12_ders10(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_ozet.csv")),
+                            pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")), pd.read_csv(os.path.join(_A.cikti, "k23_esler.csv")),
+                            pd.read_csv(os.path.join(_A.cikti, "k24_ozet.csv")), os.path.join(_A.cikti, "FON_IZI_ders10_bolge_parmak.pdf")), "sayfa")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()
