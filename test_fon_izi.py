@@ -401,6 +401,18 @@ def sina():
             and abs(K27.mum_kat.iloc[0] - C27.mum_kat.iloc[0]) < 1e-12) if len(C27) and len(E27) else False
     if not ok27:
         hata.append(f"27) K18 profil yanlış: C1 {list(C27.sembol) if len(C27) else []} eşli {list(E27.sembol) if len(E27) else []}")
+    # 28) K19 sistem çıkışı: kapanış stop altına inerse o kapanıştan çık; +%20 görülünce ertesi bardan SMA20 trail (ufuk yok);
+    # ikisi de yoksa 120. bar; 120 bar dolmadan veri biterse sayılmaz; aynı bar stop + hedef -> stop.
+    def cik28(c, h=None, stop=9.0):
+        c = np.asarray(c, float); h = c if h is None else np.asarray(h, float)
+        return F.fi_k19_cikis(c, h, pd.Series(c).rolling(20).mean().to_numpy(), 0, 10.0, stop)
+    s28 = cik28(np.r_[np.full(10, 10.0), [8.5], np.full(200, 10.0)])
+    t28 = cik28(np.r_[np.linspace(10, 13, 30), np.full(30, 13.0), [11.0], np.full(100, 11.0)])
+    u28 = cik28(np.full(150, 10.5)); n28 = cik28(np.full(50, 10.5))
+    a28 = cik28(np.r_[[8.5], np.full(30, 10)], h=np.r_[[12.5], np.full(30, 10)])
+    if not (abs(s28[0] - (0.85 - 1 - 0.004)) < 1e-9 and s28[1] == 11 and abs(t28[0] - (1.1 - 1 - 0.004)) < 1e-9
+            and abs(u28[0] - (0.05 - 0.004)) < 1e-9 and u28[1] == 120 and n28[0] != n28[0] and abs(a28[0] - (-0.154)) < 1e-9):
+        hata.append(f"28) K19 çıkış yanlış: stop {s28} trail {t28} ufuk {u28} kısa {n28} aynı bar {a28}")
     return hata
 
 
@@ -408,4 +420,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 27/27 OK")
+    print("test_fon_izi: 28/28 OK")

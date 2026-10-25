@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.7 (2026-10-25, K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.8 (2026-10-25, K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -3915,6 +3915,319 @@ def fi_k12_ders7(V: Dict[str, pd.DataFrame], vaka: pd.DataFrame, Zk: pd.DataFram
     return sayfa
 
 
+# ---------------------------------------------------------------- K19 SİSTEM rastgeleden iyi mi? (Cemal 25 Eki)
+# CEMAL (25 Eki): "'Kazandıran şey sistemin zaten yaptığı: kırılımda gir, zarar sınırı kutu dibinde, sonra trail' diyorsun; ama bunun
+# rastgele bir hissede ya da rastgele bir noktadan çok daha fazla kazandırması lazım; bu test yok, burada bir aptallık var." Haklı: o
+# cümle ölçülmeden yazıldı; tek cetvel de 'önce +%20'yi ölçüyordu, sistemin kâr/zararını değil (CLAUDE.md standardı trail + slot).
+# KURAL (sonuç görülmeden yazıldı, 25 Eki): sinyal günü t, giriş t+1 açılışı g; stop = kutu dibi x 0,98 (takip T6 TABAN_TOL); kapanış
+# stopun altındaysa o kapanıştan çık; High >= g x 1,20 görülünce ertesi bardan itibaren kapanış < SMA20 -> çık (trail, ufuk yok);
+# hedef de stop da yoksa 120. bar kapanışı. Maliyet %0,4. Trail'deyken veri biterse son kapanış (açık işlem işaretli); trail'siz ve
+# 120 bar dolmamışsa işlem sayılmaz (sistemde de rastgelede de aynı).
+# SİNYALLER: S1 cemal = K18 C1 (Cemal'in vaka profili); S2 kutu = K18 C1 + eşli (düşüş sonrası bütün kutu kırılımları, profil şartı yok);
+# S3 donchian = kapanış önceki 20 barın en yüksek gövde üstünü x1,002 geçer (çöl/düşüş şartı yok), stop = önceki 20 barın dibi x 0,98;
+# hissede 60 barda tek.
+# RASTGELE (her sinyal için 3 çekiliş, AYNI çıkış kuralı ve AYNI stop mesafesi d = 1 - stop/g): R_hisse = aynı gün rastgele başka hisse;
+# R_esli = aynı gün, aynı 60 gün momentum beşliği x 60 gün likidite üçlüsü; R_nokta = aynı hisse, aynı dönemde rastgele gün.
+# EK (aynı gün, sonuç görülmeden): her işlemde 'tut120' = stopsuz, trailsiz 120 bar tut (çıkış kuralının kendi katkısı, betimsel).
+# KARAR (önceden): hücre (pazar x 2023 / 2024-26) 'sistem üstün' = R_esli'ye göre işlem başı fark ay kümeli bootstrap %90 alt sınırı > 0
+# VE 30 slot portföy toplamı R_esli'nin >= 1,3 katı (R_esli <= 0 ise sistem > 0). Dört karar hücresinin hepsi -> sistem rastgeleden üstün.
+FI_K19 = {"stop_tol": 0.02, "hedef": 0.20, "ufuk": 120, "maliyet": 0.004, "cekilis": 3, "slot": 30, "bas": "2023-01-01",
+          "donchian": 20, "tekrar": 60, "d_ust": 0.60, "boot": 1000, "kat_esik": 1.3}
+K19_DONEM = [("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31")]
+
+
+def fi_k19_cikis(c: np.ndarray, h: np.ndarray, sma: np.ndarray, e: int, g: float, stop: float, E: Dict[str, Any] = FI_K19
+                 ) -> Tuple[float, int, bool]:
+    """Sistem çıkışı (K19 KURAL). Dönüş (getiri - maliyet, tutulan bar, açık mı); sayılmayan işlemde getiri NaN."""
+    n = len(c)
+    if not (g > 0) or e >= n:
+        return np.nan, 0, False
+    w = c[e:e + E["ufuk"]]; hw = h[e:e + E["ufuk"]]
+    ih = np.flatnonzero(hw >= g * (1 + E["hedef"])); ih = int(ih[0]) if len(ih) else None
+    ist = np.flatnonzero(w < stop); ist = int(ist[0]) if len(ist) else None
+    if ist is not None and (ih is None or ist <= ih):                      # aynı bar: kapanış stopun altındaysa stop önce
+        return w[ist] / g - 1 - E["maliyet"], ist + 1, False
+    if ih is not None:
+        j0 = e + ih + 1
+        tj = np.flatnonzero(c[j0:] < sma[j0:])
+        if len(tj):
+            j = j0 + int(tj[0]); return c[j] / g - 1 - E["maliyet"], j - e + 1, False
+        return c[-1] / g - 1 - E["maliyet"], n - e, True
+    if len(w) < E["ufuk"]:
+        return np.nan, len(w), False
+    return w[-1] / g - 1 - E["maliyet"], E["ufuk"], False
+
+
+def fi_k19_dizi(V: Dict[str, pd.DataFrame]) -> Dict[str, Any]:
+    """Hisse dizileri (o, h, c, sma20) ve günlük kesit: 60 gün momentum beşliği, 60 gün medyan TL hacim üçlüsü (o gün bilinen)."""
+    A = {s: (d.index, d.Open.to_numpy(float), d.High.to_numpy(float), d.Close.to_numpy(float),
+             d.Close.rolling(20).mean().to_numpy()) for s, d in V.items()}
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index()
+    TL = pd.DataFrame({s: d.Close * d.Volume for s, d in V.items()}).reindex(C.index)
+    mom = (C / C.shift(60) - 1).rank(axis=1, pct=True)
+    lik = TL.rolling(60, min_periods=40).median().rank(axis=1, pct=True)
+    grp = (np.ceil(mom * 5).clip(1, 5) * 10 + np.ceil(lik * 3).clip(1, 3))
+    return {"A": A, "grp": grp, "var": C.notna()}
+
+
+def fi_k19_islem(D: Dict[str, Any], s: str, t: pd.Timestamp, d: Optional[float] = None, stop: Optional[float] = None,
+                 E: Dict[str, Any] = FI_K19) -> Optional[Dict[str, Any]]:
+    """(hisse, sinyal günü t) için giriş t+1 açılışı ve çıkış. stop verilirse sinyal, d verilirse rastgele (stop = g x (1 - d))."""
+    a = D["A"].get(s)
+    if a is None:
+        return None
+    idx, o, h, c, sma = a
+    i = int(idx.searchsorted(t, side="right"))                              # t'den sonraki ilk işlem günü = giriş
+    if i >= len(c) or i < 61:
+        return None
+    g = o[i]
+    if stop is None:
+        stop = g * (1 - d)
+    r, b, acik = fi_k19_cikis(c, h, sma, i, g, stop, E)
+    if r != r:
+        return None
+    tut = c[i + E["ufuk"] - 1] / g - 1 - E["maliyet"] if i + E["ufuk"] <= len(c) else np.nan   # kıyas: stopsuz, trailsiz 120 bar tut
+    return {"sembol": s, "bilgi": t, "giris": idx[i], "cikis": idx[min(len(idx) - 1, i + b - 1)], "r": r, "bar": b, "acik": acik,
+            "d": 1 - stop / g if g > 0 else np.nan, "tut120": tut}
+
+
+def fi_k19_donchian(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K19) -> pd.DataFrame:
+    """S3: kapanış önceki 20 barın en yüksek gövde üstünü x1,002 geçer; stop = önceki 20 barın dibi x (1 - stop_tol); 60 barda tek."""
+    sat = []
+    for s, d in V.items():
+        o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); l = d.Low.to_numpy(float)
+        top = pd.Series(np.maximum(o, c)).rolling(E["donchian"]).max().shift(1).to_numpy()
+        dip = pd.Series(l).rolling(E["donchian"]).min().shift(1).to_numpy()
+        son = -10 ** 9
+        for t in np.flatnonzero(c > top * 1.002):
+            if t < 61 or t - son < E["tekrar"] or d.index[t] < pd.Timestamp(E["bas"]):
+                continue
+            son = int(t); sat.append({"sembol": s, "bilgi": d.index[t], "stop": dip[t] * (1 - E["stop_tol"])})
+    return pd.DataFrame(sat)
+
+
+def fi_k19_rastgele(D: Dict[str, Any], X: pd.DataFrame, tur: str, cek: int, E: Dict[str, Any] = FI_K19,
+                    tohum: int = 19) -> pd.DataFrame:
+    """Her sistem işlemi (X: sembol, bilgi, d, donem) için `cek` rastgele işlem, aynı çıkış ve aynı stop mesafesi.
+    tur: 'hisse' aynı gün rastgele hisse; 'esli' aynı gün aynı momentum x likidite grubu; 'nokta' aynı hisse, aynı dönemde rastgele gün."""
+    rng = np.random.default_rng(tohum); sat = []
+    grp, var = D["grp"], D["var"]; kolon = np.array(var.columns)
+    for k, r in enumerate(X.itertuples()):
+        t = pd.Timestamp(r.bilgi); dd = min(r.d, E["d_ust"])
+        if tur in ("hisse", "esli"):
+            if t not in var.index:
+                continue
+            aday = kolon[var.loc[t].to_numpy() & (kolon != r.sembol)]
+            if tur == "esli":
+                gs = grp.loc[t]; g0 = gs.get(r.sembol, np.nan)
+                es = aday[(gs.reindex(aday).to_numpy() == g0)] if g0 == g0 else np.array([])
+                aday = es if len(es) >= 3 else aday
+            for j in range(cek):
+                if not len(aday):
+                    break
+                y = fi_k19_islem(D, str(rng.choice(aday)), t, d=dd, E=E)
+                if y:
+                    sat.append({**y, "i": k, "cek": j})
+        else:
+            idx = D["A"][r.sembol][0]
+            b, e_ = pd.Timestamp(r.don_bas), pd.Timestamp(r.don_bit)
+            gun = idx[(idx >= b) & (idx <= e_)]
+            for j in range(cek):
+                if not len(gun):
+                    break
+                y = fi_k19_islem(D, r.sembol, pd.Timestamp(rng.choice(gun)), d=dd, E=E)
+                if y:
+                    sat.append({**y, "i": k, "cek": j})
+    return pd.DataFrame(sat)
+
+
+def fi_k19_slot(X: pd.DataFrame, slot: int = 30) -> float:
+    """30 slot: işlemler giriş sırasıyla; boş slot yoksa ya da hisse elde ise atlanır; her işlem sermayenin 1/slot'u (toplam getiri)."""
+    if not len(X):
+        return np.nan
+    acik: List[Tuple[pd.Timestamp, str]] = []; top = 0.0
+    for r in X.sort_values("giris").itertuples():
+        g = pd.Timestamp(r.giris)
+        acik = [(c_, s_) for c_, s_ in acik if c_ >= g]                # çıkış günü >= bugün olan slot dolu
+        if len(acik) >= slot or any(s_ == r.sembol for _, s_ in acik):
+            continue
+        acik.append((pd.Timestamp(r.cikis), r.sembol)); top += r.r / slot
+    return top
+
+
+def fi_k19_kiyas(S: pd.DataFrame, R: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K19, tohum: int = 19) -> Dict[str, Any]:
+    """Bir hücrede sistem (S) ve rastgele gruplar: işlem başı ort/medyan/kazanan/ağır kayıp/bar, 30 slot (rastgelede çekiliş ortalaması),
+    R_esli ve R_hisse'ye göre eşli fark (sinyal başına rastgele ortalaması) ve ay kümeli bootstrap %90 aralığı."""
+    rng = np.random.default_rng(tohum)
+    out: Dict[str, Any] = {"n": len(S)}
+    def ozet(X, on):
+        out[on + "ort"] = X.r.mean(); out[on + "med"] = X.r.median(); out[on + "kaz"] = (X.r > 0).mean()
+        out[on + "agir"] = (X.r <= -0.15).mean(); out[on + "bar"] = X.bar.mean()
+        k = X.tut120.notna()                                               # aynı işlemlerde çıkış kuralı mı, 120 bar tutmak mı
+        out[on + "kural_tut"] = X.r[k].mean(); out[on + "tut120"] = X.tut120[k].mean(); out[on + "tut_agir"] = (X.tut120[k] <= -0.15).mean()
+    ozet(S, "s_"); out["s_slot"] = fi_k19_slot(S, E["slot"]); out["s_acik"] = S.acik.mean()
+    for ad, Rx in R.items():
+        if not len(Rx):
+            continue
+        ozet(Rx, ad + "_")
+        out[ad + "_slot"] = float(np.nanmean([fi_k19_slot(Rx[Rx.cek == j], E["slot"]) for j in sorted(Rx.cek.unique())]))
+        m = Rx.groupby("i").r.mean()
+        P = pd.DataFrame({"s": S.r.to_numpy()}, index=S.index).join(m.rename("r"), how="inner")
+        P["fark"] = P.s - P.r; P["ay"] = pd.to_datetime(S.loc[P.index, "bilgi"]).dt.to_period("M").astype(str)
+        aylar = P.ay.unique(); G = {a: P.fark[P.ay == a].to_numpy() for a in aylar}
+        bs = [np.concatenate([G[a] for a in rng.choice(aylar, len(aylar))]).mean() for _ in range(E["boot"])]
+        out[ad + "_fark"] = P.fark.mean(); out[ad + "_alt"], out[ad + "_ust"] = np.percentile(bs, [5, 95])
+    se, rs = out.get("s_slot", np.nan), out.get("esli_slot", np.nan)
+    slot_ok = (se >= E["kat_esik"] * rs) if rs > 0 else (se > 0)
+    out["ustun"] = bool(out.get("esli_alt", -1) > 0 and slot_ok)
+    return out
+
+
+def fon_izi_k19(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K19 sürücü: S1 cemal / S2 kutu (k18_olaylar.csv.gz) ve S3 donchian; BIST + ABD, 2023 ve 2024-26; R_hisse, R_esli, R_nokta;
+    karar fi_k19_kiyas 'ustun'. Çıktı k19_islem.csv.gz (sistem + rastgele işlemler), k19_ozet.csv."""
+    A = A or FIAyar(); E = FI_K19
+    K18 = pd.read_csv(os.path.join(A.cikti, "k18_olaylar.csv.gz"), parse_dates=["bilgi"], low_memory=False)
+    Z: List[Dict[str, Any]] = []; T: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K19 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        D = fi_k19_dizi(V)
+        K = K18[(K18.pazar == pazar) & (K18.bilgi >= E["bas"])]
+        sinyal = {"cemal": K[K.varyant == "C1"].assign(stop=lambda x: x.taban * (1 - E["stop_tol"])),
+                  "kutu": K[K.varyant.isin(["C1", "esli"])].assign(stop=lambda x: x.taban * (1 - E["stop_tol"])),
+                  "donchian": fi_k19_donchian(V, E)}
+        for sad, X0 in sinyal.items():
+            S = pd.DataFrame([y for y in (fi_k19_islem(D, r.sembol, pd.Timestamp(r.bilgi), stop=r.stop, E=E)
+                                          for r in X0.itertuples()) if y]) if len(X0) else pd.DataFrame()
+            if not len(S):
+                continue
+            for dad, b, e_ in K19_DONEM:
+                Sx = S[(S.bilgi >= b) & (S.bilgi <= e_)].reset_index(drop=True).assign(don_bas=b, don_bit=e_)
+                if not len(Sx):
+                    continue
+                R = {tur: fi_k19_rastgele(D, Sx, tur, E["cekilis"], E) for tur in ("hisse", "esli", "nokta")}
+                z = fi_k19_kiyas(Sx, R, E); z.update({"pazar": pazar, "donem": dad, "sinyal": sad}); Z.append(z)
+                filog.info("K19 %s %s %s: n %d sistem %.3f esli %.3f slot %.2f / %.2f ustun %s", pazar, dad, sad, z["n"],
+                           z["s_ort"], z.get("esli_ort", np.nan), z["s_slot"], z.get("esli_slot", np.nan), z["ustun"])
+                T.append(Sx.assign(pazar=pazar, donem=dad, sinyal=sad, grup="sistem"))
+                for tur, Rx in R.items():
+                    T.append(Rx.assign(pazar=pazar, donem=dad, sinyal=sad, grup=tur))
+    if not Z:
+        raise RuntimeError("K19: sonuç yok")
+    Zk = pd.DataFrame(Z); Zk.to_csv(os.path.join(A.cikti, "k19_ozet.csv"), index=False)
+    pd.concat(T, ignore_index=True).to_csv(os.path.join(A.cikti, "k19_islem.csv.gz"), index=False)
+    karar = {s: bool(Zk[Zk.sinyal == s].ustun.all() and len(Zk[Zk.sinyal == s]) == 4) for s in Zk.sinyal.unique()}
+    return {"ozet": Zk, "karar": karar}
+
+
+def fi_k12_ders8(Zk: pd.DataFrame, T: pd.DataFrame, yol: str) -> int:
+    """Ders 8 (Cemal 25 Eki: 'sistem rastgele hisseden / rastgele noktadan çok daha fazla kazandırmalı; bu test yok'): (1) soru, kural,
+    kısa cevap; (2) işlem başı ortalama getiri: sistem vs aynı gün eşli hisse / rastgele hisse / aynı hisse rastgele gün, farkın %90 aralığı;
+    (3) çıkış kuralı (kutu dibi stop + trail) vs 120 gün tut: ortalama, medyan, −%30 altı kayıp. Zk = k19_ozet.csv, T = k19_islem.csv.gz."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    yz = lambda x: (("−" if x < 0 else "+") + f"%{abs(100 * x):.1f}").replace(".", ",") if x == x else "—"
+
+    def yazi(fig, y, baslik, satirlar, boy=9.4, gen=92):
+        if baslik:
+            fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    HUC = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
+    C = Zk[Zk.sinyal == "cemal"].set_index(["pazar", "donem"])
+    fark = Zk.esli_fark; T1 = T[T.tut120.notna() & (T.grup == "sistem")]
+    G = T1.groupby(["pazar", "donem", "sinyal"])
+    kural = G.r.agg(["mean", "median"]); tut = G.tut120.agg(["mean", "median"])
+    k30 = G.r.apply(lambda x: (x <= -0.30).mean()); t30 = G.tut120.apply(lambda x: (x <= -0.30).mean())
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "DERS 8: SİSTEM RASTGELEDEN İYİ Mİ?", [
+            "Sen: 'Kazandıran şey kırılımda gir, kutu dibinde zarar sınırı, sonra trail diyorsun; ama bu rastgele bir hisseden ya da "
+            "rastgele bir noktadan çok daha fazla kazandırmalı. Bu test yok; burada bir aptallık var.' Haklıydın: o cümleyi ölçmeden "
+            "yazmıştım ve tek cetvel sistemin kâr/zararını değil 'önce +%20'yi ölçüyordu.",
+            "Kural (sonuç görülmeden): atılım günü sinyal, ertesi açılış giriş; kapanış kutu dibinin %2 altına inerse çık; +%20 görülünce "
+            "SMA20 trail; ikisi de yoksa 120. gün; %0,4 maliyet. Üç sinyal: senin profilin (K18 C1), bütün düşüş sonrası kutu kırılımları, "
+            "düz 20 gün kırılımı (çölsüz).",
+            "Rastgele (her sinyale 3 çekiliş, AYNI çıkış, AYNI stop mesafesi): aynı gün eşli hisse (aynı momentum × likidite), aynı gün "
+            "rastgele hisse, aynı hisse rastgele gün. Geçme şartı (önceden): eşli hisseye göre işlem başı fark %90 aralıkta sıfırın üstünde "
+            "VE 30 slot portföy en az 1,3 kat; dört karar hücresinin hepsinde.",
+            "",
+            "KISA CEVAP",
+            f"- GİRİŞ rastgeleden iyi değil: 12 hücrenin hiçbiri geçmedi. Sistem ile aynı gün eşli hisse arasındaki işlem başı fark "
+            f"{yz(fark.min())} … {yz(fark.max())}; aralıklar sıfırı içeriyor. Senin profilin BIST 2023'te işlem başı "
+            f"{yz(C.loc[('BIST', '2023'), 's_ort'])}, aynı gün eşli hisse {yz(C.loc[('BIST', '2023'), 'esli_ort'])}: kazancın tamamı "
+            "piyasadan.",
+            "- ÇIKIŞ kazancı artırmıyor, riskin şeklini değiştiriyor: aynı girişlerde stopsuz 120 gün tutmak ortalamada her hücrede daha "
+            "çok getiriyor (trail büyük kazananı erken kesiyor). Yatay piyasada (BIST 2024-26, ABD) kural medyanı ve kazanan oranını "
+            f"artırıyor; −%30 altı kayıp BIST 2024-26'da {yz(t30.get(('BIST', '2024-26', 'cemal')))} → {yz(k30.get(('BIST', '2024-26', 'cemal')))}, "
+            f"ABD 2024-26'da {yz(t30.get(('ABD', '2024-26', 'cemal')))} → {yz(k30.get(('ABD', '2024-26', 'cemal')))}, ABD 2023'te aynı. "
+            "Boğada (BIST 2023) tutmak her ölçüde iyi.",
+            "- Yani para 'sistemden' değil 'piyasada olmaktan' geliyor. Çöl + atılım bir giriş üstünlüğü vermiyor; stop + trail bir "
+            "risk ayarı, kazanç kaynağı değil.",
+        ])
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "GİRİŞ: SİSTEM vs RASTGELE (işlem başı ortalama, aynı çıkış)", [
+            "Koyu = sistem, diğerleri aynı çıkış ve aynı stop mesafesiyle rastgele girişler. Çubuklar neredeyse aynı boyda: girişin seçimi "
+            "fark yaratmıyor."])
+        for k, sad in enumerate(("cemal", "kutu", "donchian")):
+            ax = fig.add_axes([0.10, 0.62 - k * 0.27, 0.85, 0.20]); X = Zk[Zk.sinyal == sad].set_index(["pazar", "donem"])
+            for j, (kol, renk, et) in enumerate((("s_ort", "#1f2a44", "sistem"), ("esli_ort", "#7f8fa6", "eşli hisse aynı gün"),
+                                                 ("hisse_ort", "#b8c4d6", "rastgele hisse aynı gün"), ("nokta_ort", "#e0c38c", "aynı hisse rastgele gün"))):
+                ax.bar(np.arange(4) + j * 0.2 - 0.3, [100 * X.loc[h, kol] if h in X.index else 0 for h in HUC], 0.2, color=renk, label=et)
+            ax.set_xticks(range(4)); ax.set_xticklabels([f"{p} {d}" for p, d in HUC], fontsize=8); ax.axhline(0, color="#999", lw=0.8)
+            ax.set_ylabel("işlem başı %", fontsize=8); ax.set_title({"cemal": "senin profilin (K18 C1)", "kutu": "düşüş sonrası bütün kutu kırılımları",
+                                                                     "donchian": "düz 20 gün kırılımı (çöl şartı yok)"}[sad], fontsize=9)
+            if k == 0:
+                ax.legend(fontsize=7, ncol=2)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "ÇIKIŞ: KUTU DİBİ STOP + TRAIL vs 120 GÜN TUT (aynı girişler, senin profilin)", [
+            "Aynı işlemler, iki çıkış. Ortalama: tutmak hep önde (büyük kazananlar trail'de erken satılıyor). Medyan ve −%30 altı kayıp: "
+            "yatay piyasada kural önde, boğada (BIST 2023) tutmak önde."])
+        for k, (ad, f1, f2) in enumerate((("ortalama", kural["mean"], tut["mean"]), ("medyan", kural["median"], tut["median"]),
+                                          ("−%30 altı kayıp oranı", k30, t30))):
+            ax = fig.add_axes([0.10, 0.62 - k * 0.27, 0.85, 0.20])
+            a_ = [100 * f1.get((p, d, "cemal"), np.nan) for p, d in HUC]; b_ = [100 * f2.get((p, d, "cemal"), np.nan) for p, d in HUC]
+            ax.bar(np.arange(4) - 0.18, a_, 0.36, color="#1f2a44", label="kutu dibi stop + trail")
+            ax.bar(np.arange(4) + 0.18, b_, 0.36, color="#e0a458", label="120 gün tut")
+            ax.set_xticks(range(4)); ax.set_xticklabels([f"{p} {d}" for p, d in HUC], fontsize=8); ax.axhline(0, color="#999", lw=0.8)
+            ax.set_ylabel("%", fontsize=8); ax.set_title(ad, fontsize=9)
+            if k == 0:
+                ax.legend(fontsize=7)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "DERS: NEREDE APTALLIK VARDI, ŞİMDİ NE BİLİYORUZ", [
+            "- Aptallık: aylarca 'çöl iz mi?' diye girişi ölçtük ve her seferinde 'iz değil, kazanç kırılım + trail'den' dedik. Kırılım + "
+            "trail'in kendisini rastgele girişle hiç kıyaslamadık. Kıyaslayınca o da tutmadı.",
+            "- Geçmişteki 'BIST 2023 işlem başı +%38-40' gibi sayılar sistemin değil, o yılın piyasasının sayısıydı: aynı gün rastgele hisse de "
+            "aynısını yaptı. Sistemin 'gerçek sayısı' rastgele girişe göre farktır: ~0.",
+            "- Senin koşan vakaların (TEHOL, MANAS, KTLEV…) gerçek, ama aynı kural binlerce sinyalde rastgeleden ayrışmıyor. Büyük kazancı "
+            "seçmek değil, piyasada olup büyük kazananı kesmemek belirliyor (trail onları erken satıyor).",
+            "- Çıkış kuralı bir sigorta: yatay piyasada derin kaybı azaltıyor (BIST 2024-26'da en çok), karşılığında ortalamadan veriyor.",
+            "",
+            "Karar gereken (senin):",
+            "- Sistemin amacı: (a) piyasada kalıp büyük kazananı kesmemek (tut / gevşek trail) mi, (b) derin kaybı sınırlamak (mevcut stop + "
+            "trail) mı? Veri ikisinin birden olmadığını söylüyor.",
+            "- Üretim değişmedi. Çıkış ya da tespit değişikliği 'yaz' kararı.",
+            "",
+            "Sıradaki (önceden yazılı, kararın sonrası): aynı rastgele kıyas üretimdeki D13 + T6/T10 + trail zinciri için ve 2016-22 ayı "
+            "döneminde (piyasa düşerken giriş seçimi ve stop daha mı değerli?)."])
+        pdf.savefig(fig); plt.close(fig)
+    return 4
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -4120,6 +4433,17 @@ if __name__ == "__main__":
         print(fi_k12_ders7(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k18_vaka.csv")),
                            pd.read_csv(os.path.join(_A.cikti, "k18_ozet.csv")), _KH, pd.read_csv(os.path.join(_A.cikti, "k18_liste_BIST.csv")),
                            _O, os.path.join(_A.cikti, "FON_IZI_ders7_cemal_vakalar.pdf")), "sayfa")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k19":           # sistem (kırılım + kutu dibi stop + trail) rastgeleden iyi mi
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k19()
+        print(_R["karar"]); print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k19ders":       # Ders 8 (k19 çıktılarından)
+        _A = FIAyar()
+        print(fi_k12_ders8(pd.read_csv(os.path.join(_A.cikti, "k19_ozet.csv")),
+                           pd.read_csv(os.path.join(_A.cikti, "k19_islem.csv.gz"), low_memory=False),
+                           os.path.join(_A.cikti, "FON_IZI_ders8_sistem_rastgele.pdf")), "sayfa")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()

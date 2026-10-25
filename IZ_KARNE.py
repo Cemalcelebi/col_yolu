@@ -320,6 +320,13 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "1,2-1,85 kat sık: oynak hisse. Tek cetvel önce +%20 0,84-1,10."),
     _ik_k("Ç90", "2026-10-25", "Cemal'in vaka profili + sektör rüzgârı (K18 C6)", "FON_IZI.py (k18)",
           "Rüzgârlı sektörde profil ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2, "cemal_profil_ruz", "yukari"),
+    _ik_k("Ç91", "2026-10-25", "SİSTEM vs RASTGELE: kırılımda gir + kutu dibi stop + trail, aynı çıkışla rastgele girişe göre (K19)",
+          "FON_IZI.py (k19)", "Cemal: 'kırılım + kutu dibi + trail rastgele hisseden / rastgele noktadan çok daha fazla kazandırmalı; bu test yok'",
+          "Yeni deneme (karar önceden)", "IZ C", 4, cikti="arastirma_cikti/fon_izi/k19_ozet.csv",
+          notu="Portföy testi (tek cetvel değil). 3 sinyal (Cemal profili, bütün kutu kırılımları, düz 20 gün kırılımı) × BIST/ABD × 2023/"
+               "2024-26: 12 hücrenin hiçbiri aynı gün eşli hisseden üstün değil (işlem başı fark −1,8..+1,7 puan, %90 aralık sıfırı içeriyor). "
+               "BIST 2023 işlem başı +%38 = aynı gün rastgele hisse +%40 (piyasa). Çıkış kuralı aynı girişlerde 120 gün tutmaktan ortalamada "
+               "hep düşük; yatay piyasada medyan ve −%30 altı kayıpta iyi (BIST 2024-26 %11 → %4). Ders: FON_IZI_ders8_sistem_rastgele.pdf."),
 ]
 
 
@@ -381,6 +388,13 @@ IK_GOREV: List[Dict[str, str]] = [
               "de var; evrende önce +%20 eşli tabanın 0,84-1,16'sı, önce −%20 1,05-1,49 → İZ DEĞİL. BIST 2024-26'da 1.254 sinyal: 211 koştu (2 kat), "
               "340 +%20, 638 koşmadı (eşlide oranlar aynı). Fon payı çöl sırasında ~0. Üretim D13 12 bölgenin 5'ini gördü",
      "durum": "TAMAMLANDI, AÇIK: D13'ün kaçırdığı bölgeler (BINBN, KTLEV, MANAS) için kutu başlangıcı üretim kararı ('yaz')"},
+    {"tarih": "2026-10-25", "istek": "'Kazandıran kırılım + kutu dibi stop + trail' diyorsun ama rastgele hisseden / rastgele noktadan çok daha fazla "
+                                     "kazandırmalı; bu test yok, burada bir aptallık var",
+     "yapilan": "K19: aynı çıkış ve aynı stop mesafesiyle sistem vs aynı gün eşli hisse / rastgele hisse / aynı hisse rastgele gün (3 sinyal, BIST + ABD, "
+                "2023 ve 2024-26, karar önceden); aynı girişlerde çıkış kuralı vs 120 gün tut; IZ_KARNE Ç91; FON_IZI_ders8_sistem_rastgele.pdf",
+     "sonuc": "Haklı: o cümle ölçülmemişti. Giriş rastgeleden iyi değil (12/12 hücre, fark ~0; BIST 2023 +%38 = piyasa). Çıkış kuralı kazanç "
+              "kaynağı değil: 120 gün tutmak ortalamada hep önde; kural yalnız yatay piyasada derin kaybı azaltıyor. Para piyasada olmaktan geliyor",
+     "durum": "TAMAMLANDI, AÇIK: sistemin amacı (büyük kazananı tutmak mı, derin kaybı sınırlamak mı) Cemal'in kararı; üretim değişmedi"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -398,6 +412,9 @@ IK_ACIK: List[str] = [
     "D13 yakalama (Cemal'in vakaları, 25 Eki): üretim D13 Cemal'in koşan BINBN-24, KTLEV-24, MANAS-25a/b bölgelerini görmedi (dip yeni / parabol "
     "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
+    "SİSTEM (K19, 25 Eki): giriş (çöl/kırılım) aynı gün eşli rastgele hisseden iyi değil; çıkış (kutu dibi stop + trail) 120 gün tutmaktan "
+    "ortalamada düşük, yatay piyasada derin kaybı azaltıyor. Cemal'in kararı: amaç büyük kazananı tutmak mı (gevşek trail / tut), derin kaybı "
+    "sınırlamak mı. Sıradaki ölçüm: üretim zinciri (D13 + T6/T10 + trail) ve 2016-22 ayı dönemi aynı rastgele kıyasla.",
 ]
 
 
