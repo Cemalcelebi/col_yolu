@@ -4945,6 +4945,58 @@ def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame,
     return 8
 
 
+def fi_k23_kor_pdf(V: Dict[str, pd.DataFrame], Es: pd.DataFrame, yol: str, anahtar: str, n: int = 48, tohum: int = 23,
+                   haric: Tuple[Tuple[str, str], ...] = ()) -> pd.DataFrame:
+    """KÖR ETİKET SETİ (Cemal 25 Eki: 'benzer dediğin bölgelerde bana benzer olana tik koydum, olmayana x; bu ölçü tam tutmalı'). İlk 8
+    örnekte Cemal sonrasını da görüyordu; adil ölçüm için BIST'te K23 en yakın eşlerinden (bölge 1 ve 2, yarı yarıya) rastgele n bölge, grafik
+    bölgenin bittiği gün KESİK, hisse adı / tarih / sonuç yok, numaralı. Anahtar (sembol, tarih, bölge, sonuç) ayrı CSV'de; Cemal ✓/✗ verince
+    ÖNCEDEN YAZILAN değerlendirme: ✓'lerin 60 gün ±%15 yukarı oranı vs ✗'ler vs bütün bölgeler; sonra 16 ölçüden ✓/✗'yi ayıranlar (AUC)
+    -> 'Cemal benzerliği' ağırlıkları -> K23 bu ağırlıklarla görülmemiş dönem/pazarda yeniden (dört hücre, 1,3)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    rng = np.random.default_rng(tohum); E = FI_K23
+    X = Es[(Es.pazar == "BIST") & Es.bolge.astype(str).isin(["1", "2"])].copy()
+    X["tarih"] = pd.to_datetime(X.tarih)
+    hx = {(s, pd.Timestamp(t)) for s, t in haric}
+    X = X[[(r.sembol, r.tarih) not in hx for r in X.itertuples()]].drop_duplicates(["sembol", "tarih"])
+    sec = pd.concat([X[X.bolge.astype(str) == b].sample(n // 2, random_state=int(rng.integers(1e9))) for b in ("1", "2")])
+    sec = sec.sample(frac=1, random_state=int(rng.integers(1e9))).reset_index(drop=True); sec["no"] = np.arange(1, len(sec) + 1)
+
+    def ciz(ax, d, t, L, baslik):
+        m = d.Close.rolling(20).mean(); sd = d.Close.rolling(20).std()
+        i = d.index.get_loc(t); w = d.iloc[max(0, i - L - 40):i + 1]; mm, ss = m.loc[w.index], sd.loc[w.index]
+        x = np.arange(len(w)); r = np.where(w.Close >= w.Open, "#27ae60", "#c0392b")
+        ax.vlines(x, w.Low, w.High, color=r, lw=0.7)
+        ax.bar(x, (w.Close - w.Open).abs().clip(lower=1e-9), bottom=np.minimum(w.Open, w.Close), color=r, width=0.7)
+        ax.plot(x, mm, color="#e67e22", lw=1.3); ax.plot(x, mm + 2 * ss, color="#3498db", lw=0.8); ax.plot(x, mm - 2 * ss, color="#3498db", lw=0.8)
+        ax.axvspan(len(w) - L - 0.5, len(w) - 0.5, color="#999", alpha=0.18); ax.set_xticks([]); ax.set_yticks([])
+        ax.set_title(baslik, fontsize=13, weight="bold", loc="left")
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.96, "KÖR SET: SENİN BÖLGENE BENZİYOR MU?", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        for k, s in enumerate(["Her grafik gri bölgenin bittiği gün KESİLDİ: sonrası, hisse adı ve tarih yok. Turuncu SMA20, mavi Bollinger 20,2.",
+                               "Her numara için yalnız şunu söyle: senin bölgene benziyor (✓) mu, benzemiyor (✗) mu. Cevabı tek satır yaz, ör.",
+                               "'✓: 1, 4, 7, 12 …' (yazmadıkların ✗ sayılır). Sonra anahtarı açıp ✓'lerin ve ✗'lerin sonrasını kıyaslarım.",
+                               "Aşağıda senin iki bölgen (örnek)."]):
+            fig.text(0.07, 0.915 - k * 0.022, s, fontsize=9.5, va="top")
+        for k, b in enumerate(("1", "2")):
+            s0, b0, e0 = E["bolge"][b]; d = V[s0]; t = d.index[d.index <= pd.Timestamp(e0)][-1]
+            L = int(((d.index >= b0) & (d.index <= e0)).sum())
+            ciz(fig.add_axes([0.08, 0.47 - k * 0.38, 0.86, 0.30]), d, t, L, f"ÖRNEK {b}")
+        pdf.savefig(fig); plt.close(fig)
+        for p0 in range(0, len(sec), 6):
+            fig = plt.figure(figsize=(8.27, 11.69))
+            for k, r in enumerate(sec.iloc[p0:p0 + 6].itertuples()):
+                L = int(Es[(Es.bolge.astype(str) == str(r.bolge))].pipe(lambda _: 21 if str(r.bolge) == "1" else 12))
+                ciz(fig.add_axes([0.06 + (k % 2) * 0.47, 0.69 - (k // 2) * 0.32, 0.42, 0.26]), V[r.sembol], pd.Timestamp(r.tarih), L, f"{r.no}")
+            pdf.savefig(fig); plt.close(fig)
+    sec[["no", "sembol", "tarih", "bolge", "uzak", "yon60", "yon20"]].to_csv(anahtar, index=False)
+    return sec
+
+
 def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
     """Ders 10 (Cemal 25 Eki: 'işaretli bölgenin her özelliğini kaydet; birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, aşağı, yatay?
     halüsinasyon mu?'): (1) soru, iki bölgenin parmak izi; (2) MANAS bölgeleri grafikte (SMA20, BB, iki evre); (3) en yakın 100 benzer bölge
