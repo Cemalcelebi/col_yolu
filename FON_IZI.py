@@ -4536,8 +4536,10 @@ def fon_izi_k22(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str
 # evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse'; BB 20,2 orta bandı): seri (bitişteki SMA20 üstü kapanış serisi / L =
 # 2. evrenin payı), once_alt (serinin öncesindeki pencere kısmında SMA20 altı kapanış oranı = 1. evre), delen (serideki Low < SMA20 oranı),
 # bbw (bitişte BB genişliği 4 sigma / SMA20, pencere içindeki en yükseğine oran = sıkışma).
+# EK (Cemal aynı gün: 'BINBN de var, 27 Aralık - 21 Ocak arası'): bölge 3 = BINBN 27.12.2024-21.01.2025 (düşüş sonrası SMA20 altında yatay,
+# BB 0,61 -> 0,027 sıkışma; 21 Ocak SMA20 üstündeki ilk kapanış). Aynı ölçü ve karar; sonuç görülmeden eklendi.
 FI_K23 = {"bolge": {"1": ("MANAS", "2025-06-13", "2025-07-13"), "2": ("MANAS", "2025-10-20", "2025-11-05"),
-                    "S": ("MANAS", "2025-11-17", "2025-12-04")}, "k": 100, "ayri": 60,
+                    "S": ("MANAS", "2025-11-17", "2025-12-04"), "3": ("BINBN", "2024-12-27", "2025-01-21")}, "k": 100, "ayri": 60,
           "ufuk": 60, "esik": 0.15, "kisa_ufuk": 20, "kisa_esik": 0.10, "kirp": 5.0, "kat_esik": 1.3,
           "olcu": ("egim", "mum", "yesil", "alt_fitil", "ust_fitil", "yakinlik", "bozan", "hacim", "rsi", "macd", "dusus", "konum",
                    "seri", "once_alt", "delen", "bbw")}
@@ -4565,7 +4567,7 @@ def fi_k23_parmak(d: pd.DataFrame, L: int) -> pd.DataFrame:
         x = np.arange(L, dtype=float); xc = x - x.mean(); ly = np.log(Cw)
         egim = (ly * xc).sum(1) / (xc ** 2).sum()
         hl = swv(h, L).max(1); ll = swv(l, L).min(1)
-        tepe = pd.Series(h).rolling(120, min_periods=60).max().shift(L).to_numpy()[e]
+        tepe = pd.Series(h).rolling(120, min_periods=20).max().shift(L).to_numpy()[e]   # 20: genç halka arz da ölçülür (BINBN 55 bar)
         dl = np.diff(c, prepend=np.nan); up = pd.Series(np.clip(dl, 0, None)).ewm(alpha=1 / 14, adjust=False).mean()
         dn = pd.Series(np.clip(-dl, 0, None)).ewm(alpha=1 / 14, adjust=False).mean(); rsi = (100 - 100 / (1 + up / dn)).to_numpy()
         cs = pd.Series(c); mac = cs.ewm(span=12, adjust=False).mean() - cs.ewm(span=26, adjust=False).mean()
@@ -4703,7 +4705,7 @@ def fi_k24_tara(d: pd.DataFrame, E: Dict[str, Any] = FI_K24) -> pd.DataFrame:
     if n < 200:
         return pd.DataFrame()
     cs = pd.Series(c); sma = cs.rolling(20).mean().to_numpy(); bw = (4 * cs.rolling(20).std() / cs.rolling(20).mean()).to_numpy()
-    tepe = pd.Series(h).rolling(120, min_periods=60).max().to_numpy()
+    tepe = pd.Series(h).rolling(120, min_periods=20).max().to_numpy()      # 20: genç halka arz da ölçülür
     seri = np.zeros(n, int)
     for t in range(1, n):
         seri[t] = seri[t - 1] + 1 if c[t] > sma[t] else 0
@@ -4711,7 +4713,7 @@ def fi_k24_tara(d: pd.DataFrame, E: Dict[str, Any] = FI_K24) -> pd.DataFrame:
     w = E["bbw_pencere"]; k = E["seri"]
     for t in np.flatnonzero(seri == k):
         a = t - k + 1; b0 = a - E["once"]
-        if b0 - 120 < 0:
+        if b0 < 20 or not np.isfinite(tepe[t - w]):
             continue
         dus = l[t - w + 1:t + 1].min() / tepe[t - w] - 1
         if not (dus <= E["dusus"]):
@@ -4945,56 +4947,91 @@ def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame,
     return 8
 
 
-def fi_k23_kor_pdf(V: Dict[str, pd.DataFrame], Es: pd.DataFrame, yol: str, anahtar: str, n: int = 48, tohum: int = 23,
-                   haric: Tuple[Tuple[str, str], ...] = ()) -> pd.DataFrame:
-    """KÖR ETİKET SETİ (Cemal 25 Eki: 'benzer dediğin bölgelerde bana benzer olana tik koydum, olmayana x; bu ölçü tam tutmalı'). İlk 8
-    örnekte Cemal sonrasını da görüyordu; adil ölçüm için BIST'te K23 en yakın eşlerinden (bölge 1 ve 2, yarı yarıya) rastgele n bölge, grafik
-    bölgenin bittiği gün KESİK, hisse adı / tarih / sonuç yok, numaralı. Anahtar (sembol, tarih, bölge, sonuç) ayrı CSV'de; Cemal ✓/✗ verince
-    ÖNCEDEN YAZILAN değerlendirme: ✓'lerin 60 gün ±%15 yukarı oranı vs ✗'ler vs bütün bölgeler; sonra 16 ölçüden ✓/✗'yi ayıranlar (AUC)
-    -> 'Cemal benzerliği' ağırlıkları -> K23 bu ağırlıklarla görülmemiş dönem/pazarda yeniden (dört hücre, 1,3)."""
+# KÖR SET v2 (Cemal 25 Eki: 'birebir benzerini ver, kodun en iyi puanladığını; hisse adı ve sonraki mumlar olmasın; ben benzer ya da değil
+# diyeceğim, kaçtan kaçı yukarı çıkmış' + '1. evre düşüş (yapı dipte olsun), 2. evre çöl mumları: dip oluşmuş, yatay, çok net küçük mum, eğim
+# yukarı ya da yatay; 3. evre sağ ayak: kod bilmeyecek, yalnız test için'). ÖNCEDEN YAZILDI: aday havuzu BIST 2016-26 bütün pencereleri, sert
+# süzgeç düşüş <= -%30 ve eğim >= -0,001 (bar başı; bölge boyunca ~-%2); ölçek havuzun medyan/IQR'si; her örneğe en yakın 16 (aynı hissede 60
+# barda tek, örneğin kendisi ±180 gün hariç, Cemal'in daha önce gördüğü 8 bölge hariç); grafikte bölgeden önceki 40 bar + bölge, bölge sonunda
+# kesik. Değerlendirme: Cemal'in ✓'lerinin 60 gün ±%15 yukarı oranı vs ✗'ler vs aynı süzgeçten geçen bütün pencereler; ✓ >= 1,3 x süzgeç
+# tabanı ise 'göz izi adayı' -> 16 ölçünün ✓/✗ ayrımı (AUC) -> Cemal ağırlıklı benzerlik ABD'de ve görülmemiş dönemde (dört hücre).
+FI_K23_KOR = {"k": 16, "dusus": -0.30, "egim": -0.001, "once": 40}
+
+
+def fi_k23_en_benzer(V: Dict[str, pd.DataFrame], h0: pd.Series, k: int, haric: Tuple[Tuple[str, str], ...] = (),
+                     E: Dict[str, Any] = FI_K23, K: Dict[str, Any] = FI_K23_KOR) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Bir örnek bölgeye (h0: parmak izi + L + sembol + son) BIST havuzunda sert süzgeçten geçen en yakın k pencere ve süzgeçli havuz."""
+    L = int(h0["L"]); parca = []
+    for s, d in V.items():
+        try:
+            F = fi_k23_parmak(d, L)
+            if len(F):
+                parca.append(F.assign(sembol=s))
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K23 kor %s atlandi: %s", s, ex)
+    P = pd.concat(parca).rename_axis("tarih").reset_index().dropna(subset=list(E["olcu"]))
+    P = P[(P.dusus <= K["dusus"]) & (P.egim >= K["egim"])]
+    P = P[~((P.sembol == h0["sembol"]) & ((P.tarih - pd.Timestamp(h0["son"])).abs() <= pd.Timedelta(days=180)))]
+    hx = {(s, pd.Timestamp(t)) for s, t in haric}
+    if hx:
+        P = P[[(r.sembol, r.tarih) not in hx for r in P.itertuples()]]
+    P = P.reset_index(drop=True)
+    return fi_k23_esle(P, h0, {**E, "k": k}), P
+
+
+def fi_k23_kor_pdf(V: Dict[str, pd.DataFrame], H: Dict[str, pd.Series], yol: str, anahtar: str, tohum: int = 23,
+                   haric: Tuple[Tuple[str, str], ...] = (), K: Dict[str, Any] = FI_K23_KOR) -> pd.DataFrame:
+    """Kör set v2: her örnek (H: bölge adı -> parmak izi) için en benzer K['k'] bölge, numaralı, adsız, sonu kesik; örnek grafiği bölümün
+    başında. Anahtar CSV: no, bölge, sembol, tarih, uzaklık, sonuç (yon60, yon20) ve süzgeçli havuz tabanı."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
-    rng = np.random.default_rng(tohum); E = FI_K23
-    X = Es[(Es.pazar == "BIST") & Es.bolge.astype(str).isin(["1", "2"])].copy()
-    X["tarih"] = pd.to_datetime(X.tarih)
-    hx = {(s, pd.Timestamp(t)) for s, t in haric}
-    X = X[[(r.sembol, r.tarih) not in hx for r in X.itertuples()]].drop_duplicates(["sembol", "tarih"])
-    sec = pd.concat([X[X.bolge.astype(str) == b].sample(n // 2, random_state=int(rng.integers(1e9))) for b in ("1", "2")])
-    sec = sec.sample(frac=1, random_state=int(rng.integers(1e9))).reset_index(drop=True); sec["no"] = np.arange(1, len(sec) + 1)
+    rng = np.random.default_rng(tohum); parca = []; no = 1
 
-    def ciz(ax, d, t, L, baslik):
+    def ciz(ax, d, t, L, baslik, renk="#1f2a44"):
         m = d.Close.rolling(20).mean(); sd = d.Close.rolling(20).std()
-        i = d.index.get_loc(t); w = d.iloc[max(0, i - L - 40):i + 1]; mm, ss = m.loc[w.index], sd.loc[w.index]
+        i = d.index.get_loc(t); w = d.iloc[max(0, i - L - K["once"]):i + 1]; mm, ss = m.loc[w.index], sd.loc[w.index]
         x = np.arange(len(w)); r = np.where(w.Close >= w.Open, "#27ae60", "#c0392b")
         ax.vlines(x, w.Low, w.High, color=r, lw=0.7)
         ax.bar(x, (w.Close - w.Open).abs().clip(lower=1e-9), bottom=np.minimum(w.Open, w.Close), color=r, width=0.7)
         ax.plot(x, mm, color="#e67e22", lw=1.3); ax.plot(x, mm + 2 * ss, color="#3498db", lw=0.8); ax.plot(x, mm - 2 * ss, color="#3498db", lw=0.8)
         ax.axvspan(len(w) - L - 0.5, len(w) - 0.5, color="#999", alpha=0.18); ax.set_xticks([]); ax.set_yticks([])
-        ax.set_title(baslik, fontsize=13, weight="bold", loc="left")
+        ax.set_title(baslik, fontsize=13, weight="bold", loc="left", color=renk)
 
     with PdfPages(yol) as pdf:
         fig = plt.figure(figsize=(8.27, 11.69))
-        fig.text(0.07, 0.96, "KÖR SET: SENİN BÖLGENE BENZİYOR MU?", fontsize=15, weight="bold", va="top", color="#1f2a44")
-        for k, s in enumerate(["Her grafik gri bölgenin bittiği gün KESİLDİ: sonrası, hisse adı ve tarih yok. Turuncu SMA20, mavi Bollinger 20,2.",
-                               "Her numara için yalnız şunu söyle: senin bölgene benziyor (✓) mu, benzemiyor (✗) mu. Cevabı tek satır yaz, ör.",
-                               "'✓: 1, 4, 7, 12 …' (yazmadıkların ✗ sayılır). Sonra anahtarı açıp ✓'lerin ve ✗'lerin sonrasını kıyaslarım.",
-                               "Aşağıda senin iki bölgen (örnek)."]):
-            fig.text(0.07, 0.915 - k * 0.022, s, fontsize=9.5, va="top")
-        for k, b in enumerate(("1", "2")):
-            s0, b0, e0 = E["bolge"][b]; d = V[s0]; t = d.index[d.index <= pd.Timestamp(e0)][-1]
-            L = int(((d.index >= b0) & (d.index <= e0)).sum())
-            ciz(fig.add_axes([0.08, 0.47 - k * 0.38, 0.86, 0.30]), d, t, L, f"ÖRNEK {b}")
+        fig.text(0.07, 0.95, "KÖR SET: SENİN ÇÖLÜNE BENZİYOR MU?", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        for k_, s_ in enumerate(["Kodun en yüksek puan verdiği benzer bölgeler. Her bölümde önce SENİN örneğin, sonra 16 aday.",
+                                 "Grafik çölün bittiği gün KESİK: sağ ayak, hisse adı, tarih yok. Gri = çöl; solundaki düşüş = 1. evre.",
+                                 "Süzgeç (senin tarifin): öncesinde en az -%30 düşüş, çölde eğim yatay ya da yukarı. Sıra karışık.",
+                                 "Cevap tek satır: '✓: 3, 7, 12 …' (yazmadıkların ✗). Sonra kaçının yukarı gittiğini açarım.",
+                                 "Bölüm A = MANAS Haz-Tem 2025 · Bölüm B = MANAS Eki-Kas 2025 · Bölüm C = BINBN Ara 2024-Oca 2025."]):
+            fig.text(0.07, 0.90 - k_ * 0.024, s_, fontsize=9.5, va="top")
         pdf.savefig(fig); plt.close(fig)
-        for p0 in range(0, len(sec), 6):
-            fig = plt.figure(figsize=(8.27, 11.69))
-            for k, r in enumerate(sec.iloc[p0:p0 + 6].itertuples()):
-                L = int(Es[(Es.bolge.astype(str) == str(r.bolge))].pipe(lambda _: 21 if str(r.bolge) == "1" else 12))
-                ciz(fig.add_axes([0.06 + (k % 2) * 0.47, 0.69 - (k // 2) * 0.32, 0.42, 0.26]), V[r.sembol], pd.Timestamp(r.tarih), L, f"{r.no}")
-            pdf.savefig(fig); plt.close(fig)
-    sec[["no", "sembol", "tarih", "bolge", "uzak", "yon60", "yon20"]].to_csv(anahtar, index=False)
-    return sec
+        for harf, b in zip("ABC", ("1", "2", "3")):
+            h0 = H[b]; M, P = fi_k23_en_benzer(V, h0, K["k"], haric, K=K)
+            M = M.sample(frac=1, random_state=int(rng.integers(1e9))).reset_index(drop=True)
+            M["no"] = np.arange(no, no + len(M)); no += len(M)
+            M["bolum"] = harf; M["bolge"] = b; M["havuz_n"] = len(P)
+            M["havuz_yukari"] = float((P.yon60 == 1).sum() / P.yon60.notna().sum()) if P.yon60.notna().any() else np.nan
+            parca.append(M); L = int(h0["L"])
+            gruplar = [M.iloc[0:4]] + [M.iloc[j:j + 6] for j in range(4, len(M), 6)]   # 1. sayfa: örnek + 4 aday, sonra 6'şar
+            for gi, sat in enumerate(gruplar):
+                if not len(sat):
+                    continue
+                fig = plt.figure(figsize=(8.27, 11.69))
+                if gi == 0:
+                    ciz(fig.add_axes([0.08, 0.66, 0.86, 0.28]), V[h0["sembol"]], pd.Timestamp(h0["son"]), L, f"BÖLÜM {harf} — SENİN ÖRNEĞİN",
+                        "#c0392b")
+                    yer = [(0.06, 0.34), (0.53, 0.34), (0.06, 0.04), (0.53, 0.04)]
+                else:
+                    yer = [(0.06 + (j % 2) * 0.47, 0.69 - (j // 2) * 0.32) for j in range(6)]
+                for (x0, y0), r in zip(yer, sat.itertuples()):
+                    ciz(fig.add_axes([x0, y0, 0.42, 0.26]), V[r.sembol], pd.Timestamp(r.tarih), L, f"{harf}{r.no}")
+                pdf.savefig(fig); plt.close(fig)
+    A = pd.concat(parca, ignore_index=True)
+    A[["no", "bolum", "bolge", "sembol", "tarih", "uzak", "yon60", "yon20", "havuz_n", "havuz_yukari"]].to_csv(anahtar, index=False)
+    return A
 
 
 def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
@@ -5033,38 +5070,41 @@ def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame
         return d.assign(sma=m, ust=m + 2 * sd, alt=m - 2 * sd)
 
     E = FI_K23; HUC = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
-    Zi = Zk.set_index(["bolge", "pazar", "donem"]); Hk = Hk.set_index(Hk.columns[0]) if "egim" not in Hk.index else Hk
+    Zk = Zk.assign(bolge=Zk.bolge.astype(str)); Hk = Hk.set_index("Unnamed: 0") if "Unnamed: 0" in Hk.columns else Hk
+    Hk.index = Hk.index.astype(str); Zi = Zk.set_index(["bolge", "pazar", "donem"])
+    BB = [b for b in ("1", "2", "3") if b in Hk.index]
     g = lambda b, p, d_, k: Zi.loc[(b, p, d_), k] if (b, p, d_) in Zi.index else np.nan
     Zj = Z24.set_index(["pazar", "donem"]); g24 = lambda p, d_, k: Zj.loc[(p, d_), k] if (p, d_) in Zj.index else np.nan
     ETK = {"egim": "eğim (bar başı)", "mum": "mum boyu / düşüştekiler", "yesil": "yeşil mum oranı", "alt_fitil": "alt fitil oranı",
            "ust_fitil": "üst fitil oranı", "yakinlik": "yakınlık (std/ort)", "bozan": "düzeni bozan mum oranı", "hacim": "hacim / önceki 60 gün",
            "rsi": "RSI14 (bitiş)", "macd": "MACD hist / fiyat", "dusus": "öncesindeki düşüş", "konum": "bitişin bölgedeki yeri",
            "seri": "2. evre payı (SMA20 üstü seri)", "once_alt": "1. evrede SMA20 altı", "delen": "2. evrede SMA'yı delen", "bbw": "BB genişliği / bölge en yükseği"}
-    BL = {"1": "1. bölge 13 Haz – 11 Tem 2025", "2": "2. bölge 20 Eki – 5 Kas 2025", "S": "silkeleme 17 Kas – 4 Ara 2025 (benim okumam)"}
+    BL = {"1": "1. bölge MANAS 13 Haz – 11 Tem 2025", "2": "2. bölge MANAS 20 Eki – 5 Kas 2025", "3": "3. bölge BINBN 27 Ara 2024 – 21 Oca 2025",
+          "S": "silkeleme 17 Kas – 4 Ara 2025 (benim okumam)"}
     with PdfPages(yol) as pdf:
         fig = plt.figure(figsize=A4)
         y = yazi(fig, 0.96, "DERS 10: İŞARETLİ BÖLGENİN PARMAK İZİ — BENZERLERİ NE YAPTI?", [
             "Sen: 'Şu işaretli bölgenin her özelliğini kaydet: eğim, küçük mum, kırmızı-yeşil oranı, alt fitil, üst fitil, birbirine yakınlık, "
             "düzeni bozan mum sayısı, hacim, RSI, MACD… Birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, yüzde kaçı aşağı, yüzde kaçı "
             "yatay? Bu bir halüsinasyon mu?' Ve: '1. evre kırmızı SMA altında, 2. evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse.'",
-            "Nasıl ölçüldü (sonuç görülmeden yazıldı): iki bölgenin 16 ölçüsü aşağıda. Borsadaki BÜTÜN hisselerin BÜTÜN günlerinde aynı "
+            "Nasıl ölçüldü (sonuç görülmeden yazıldı): üç bölgenin 16 ölçüsü aşağıda. Borsadaki BÜTÜN hisselerin BÜTÜN günlerinde aynı "
             "uzunluktaki bölgeler aynı 16 ölçüyle ölçüldü; senin bölgene en yakın 100 bölge alındı (aynı hissede üst üste binen tek sayıldı, "
             "MANAS'ın kendisi hariç). Sonra her birinin bitişinden sonraki 60 günde: önce +%15 gördüyse YUKARI, önce −%15 gördüyse AŞAĞI, "
             "ikisi de yoksa YATAY. Kıyas: aynı pazar ve dönemdeki bütün bölgeler. Geçme şartı: yukarı oranı 1,3 kat, dört hücrede."])
         ax = fig.add_axes([0.07, 0.10, 0.86, y - 0.13]); ax.axis("off")
-        sat = [[ETK[o]] + [sz(float(Hk.loc[b, o]), 3) for b in ("1", "2")] for o in E["olcu"] if o in Hk.columns]
-        tb = ax.table(cellText=sat, colLabels=["ölçü", BL["1"].split(" ", 2)[0] + " " + "bölge (21 gün)", "2. bölge (12 gün)"], loc="upper center",
-                      cellLoc="center", colWidths=[0.46, 0.27, 0.27])
+        sat = [[ETK[o]] + [sz(float(Hk.loc[b, o]), 3) for b in BB] for o in E["olcu"] if o in Hk.columns]
+        tb = ax.table(cellText=sat, colLabels=["ölçü"] + [f"{b}. bölge ({int(float(Hk.loc[b, 'L']))} gün)" for b in BB], loc="upper center",
+                      cellLoc="center", colWidths=[0.40] + [0.60 / len(BB)] * len(BB))
         tb.auto_set_font_size(False); tb.set_fontsize(8.5); tb.scale(1, 1.35)
         pdf.savefig(fig); plt.close(fig)
         fig = plt.figure(figsize=A4)
-        yazi(fig, 0.96, "SENİN İKİ BÖLGEN GRAFİKTE (turuncu SMA20, mavi Bollinger 20,2)", [
-            "Gri gölge: işaretlediğin bölge. İki evre görülüyor: önce mumlar SMA20'nin altında, sonra SMA20'nin üstünde dizilme. "
-            "1. bölgenin 2. evresinde 5 mumun 2'si fitiliyle SMA'yı deliyor, 2. bölgede hiçbiri. Bant iki bölgede de daralıyor."])
-        d0 = hazir(V["MANAS"])
-        for k, b in enumerate(("1", "2")):
-            s_, b0, e0 = E["bolge"][b]; w = d0.loc[pd.Timestamp(b0) - pd.Timedelta(days=60):pd.Timestamp(e0) + pd.Timedelta(days=45)]
-            ax = fig.add_axes([0.08, 0.50 - k * 0.40, 0.88, 0.32]); x = mumlar(ax, w)
+        yazi(fig, 0.96, "SENİN BÖLGELERİN GRAFİKTE (turuncu SMA20, mavi Bollinger 20,2)", [
+            "Gri gölge: işaretlediğin çöl. Önce düşüş (yapı dipte), sonra küçük mumlu yatay bölge; MANAS'ta mumlar SMA20 altından üstüne "
+            "diziliyor, BINBN'de SMA20 fiyatın üstüne iniyor ve bant aşırı daralıyor (0,61 -> 0,027). Sağdaki kısım sağ ayak: kod bunu bilmez."])
+        for k, b in enumerate(BB):
+            s_, b0, e0 = E["bolge"][b]; d0 = hazir(V[s_])
+            w = d0.loc[pd.Timestamp(b0) - pd.Timedelta(days=60):pd.Timestamp(e0) + pd.Timedelta(days=45)]
+            ax = fig.add_axes([0.08, 0.60 - k * 0.285, 0.88, 0.21]); x = mumlar(ax, w)
             ib = np.flatnonzero((w.index >= b0) & (w.index <= e0)); ax.axvspan(ib[0] - 0.5, ib[-1] + 0.5, color="#999", alpha=0.18)
             ax.set_xticks(x[::10]); ax.set_xticklabels([f"{t:%d.%m}" for t in w.index[::10]], fontsize=7); ax.set_title(BL[b], fontsize=9)
         pdf.savefig(fig); plt.close(fig)
@@ -5072,8 +5112,8 @@ def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame
         yazi(fig, 0.96, "EN YAKIN 100 BENZER BÖLGE: YUKARI / AŞAĞI / YATAY (60 gün, ±%15)", [
             "Her hücrede sol çubuk: senin bölgene en yakın 100 bölge; sağ çubuk: aynı pazar ve dönemdeki bütün bölgeler. Yeşil yukarı, kırmızı "
             "aşağı, gri yatay. Benzerlerin yukarı oranı tabandan belirgin ve her dönemde yüksek olsaydı şekil bir şey söylüyor olurdu."])
-        for k, b in enumerate(("1", "2")):
-            ax = fig.add_axes([0.10, 0.52 - k * 0.40, 0.85, 0.30]); et = []
+        for k, b in enumerate(BB):
+            ax = fig.add_axes([0.10, 0.62 - k * 0.285, 0.85, 0.20]); et = []
             for j, (p, d_) in enumerate([("BIST", "2016-22")] + HUC[:2] + [("ABD", "2016-22")] + HUC[2:]):
                 for q, (on, ad) in enumerate((("yon60_", "benzer"), ("yon60_taban_", "hepsi"))):
                     xx = j * 2.6 + q; u, a_, y_ = g(b, p, d_, on + "yukari"), g(b, p, d_, on + "asagi"), g(b, p, d_, on + "yatay")
@@ -5086,7 +5126,7 @@ def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame
         pdf.savefig(fig); plt.close(fig)
         fig = plt.figure(figsize=A4)
         y = yazi(fig, 0.96, "İKİ EVRE KURALI (SMA20 altı → SMA20 üstünde dizilme) vs EŞLİ", [
-            "Senin tarifin doğrudan kural olarak (eşikler senin iki bölgenden, sonuç görülmeden): önce en az −%30 düşüş; dizilmeden önceki "
+            "Senin tarifin doğrudan kural olarak (eşikler MANAS'taki iki bölgenden, sonuç görülmeden; BINBN'i de 27 Ocak 2025'te yakalıyor): önce en az −%30 düşüş; dizilmeden önceki "
             "10 günün en az %80'i SMA20 altında; SMA20 üstünde 5. gün; bu 5 mumun en fazla 2'si SMA'yı deler; bant genişliği son 15 günün "
             "en yükseğinin en fazla %70'i. Eşli: aynı düşüş ve aynı 5. gün, ama 1. evre / delen / sıkışma şartı tutmayan günler."]
             + [f"- {p} {d_}: kural n {int(g24(p, d_, 'n'))}, yukarı {yz(g24(p, d_, 'yon60_yukari'))} / aşağı {yz(g24(p, d_, 'yon60_asagi'))} / "
@@ -5108,16 +5148,16 @@ def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame
             ax.set_title(f"{r.sembol} {pd.Timestamp(r.tarih):%d.%m.%Y}: {({1.0: 'YUKARI', -1.0: 'AŞAĞI', 0.0: 'YATAY'}).get(r.yon60, '—')}", fontsize=8)
         pdf.savefig(fig); plt.close(fig)
         fig = plt.figure(figsize=A4)
-        b1 = Zk[(Zk.bolge.isin(["1", "2"])) & (Zk.donem != "2016-22")]
+        b1 = Zk[(Zk.bolge.astype(str).isin(BB)) & (Zk.donem != "2016-22")]
         yazi(fig, 0.96, "SONUÇ: HALÜSİNASYON MU?", [
-            "- Hayır, gördüğün şekil gerçek: iki bölge ölçülerde de birbirine benziyor (küçük mum, düşüşten sonra, SMA altı → SMA üstü dizilme, "
+            "- Hayır, gördüğün şekil gerçek: üç bölge ölçülerde de birbirine benziyor (küçük mum, düşüşten sonra, SMA altı → SMA üstü dizilme, "
             "bant sıkışması) ve kod bu şekli binlerce kez buluyor.",
             f"- Ama aynı şeklin sonrası yazı-tura değil, 'piyasa ne yaparsa': en yakın 100 benzer bölgenin yukarı oranı karar hücrelerinde "
             f"{yz(b1.yon60_yukari.min())}-{yz(b1.yon60_yukari.max())}, aynı dönemin bütün bölgelerinde {yz(b1.yon60_taban_yukari.min())}-"
             f"{yz(b1.yon60_taban_yukari.max())}. Kat {sz(b1.kat60.min())}-{sz(b1.kat60.max())}: BIST 2024-26'da biraz önde, BIST 2023'te geride; "
             "ABD'de önde ama aşağı oranı da yüksek (benzer bölgeler daha oynak hisseler).",
             "- İki evre kuralı (senin tarifin) eşli günlerle aynı ya da kötü. Dört hücrede tutan bir üstünlük yok → standarda göre İZ DEĞİL.",
-            "- Senin iki bölgen gerçekten koştu; benzerlerinin ~10'da 6'sı da +%15'i önce gördü. Ama aynı gün herhangi bir bölgenin de ~10'da 5-6'sı "
+            "- Senin üç bölgen gerçekten koştu; benzerlerinin ~10'da 6'sı da +%15'i önce gördü. Ama aynı gün herhangi bir bölgenin de ~10'da 5-6'sı "
             "görüyor. Fark, kazanmayı garantileyecek ya da sistemi rastgeleden ayıracak büyüklükte değil.",
             "",
             "Sıradaki (önceden yazılı): aynı benzerlik araması oynaklığı eşitleyerek (benzer bölgelerin tabanı aynı oynaklıktaki bölgeler) ve "

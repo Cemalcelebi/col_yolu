@@ -356,15 +356,18 @@ IK_KAYIT: List[Dict[str, Any]] = [
           "Yeni deneme (karar önceden; KNN kapalı konu, Cemal'in isteğiyle)", "IZ C", 2, cikti="arastirma_cikti/fon_izi/k23_ozet.csv",
           notu="16 ölçü (eğim, mum, yeşil oranı, alt/üst fitil, yakınlık, düzeni bozan, hacim, RSI, MACD, düşüş, konum, 2. evre payı, 1. evrede "
                "SMA20 altı, 2. evrede delen, BB sıkışması). En yakın 100 bölgenin 60 günde önce +%15 oranı / bütün bölgeler: 1. bölge BIST 2023 "
-               "%42 / %58 (0,72), BIST 2024-26 %62 / %54 (1,15), ABD 2023 1,45, ABD 2024-26 1,46; 2. bölge 0,93 / 1,19 / 1,50 / 1,19. Dört "
-               "hücrede tutmuyor (BIST 2023 ters); ABD'de benzerlerin aşağı oranı da yüksek (oynak hisseler). Ders: FON_IZI_ders10_bolge_parmak.pdf."),
+               "%42 / %58 (0,72), BIST 2024-26 %62 / %54 (1,15), ABD 2023 1,45, ABD 2024-26 1,46; 2. bölge 0,91 / 1,19 / 1,50 / 1,19; 3. bölge "
+               "(BINBN 27 Ara 2024-21 Oca 2025, Cemal'in eki) 0,60 / 1,15 / 1,05 / 1,14. Dört hücrede tutmuyor (BIST 2023 ters); ABD'de "
+               "benzerlerin aşağı oranı da yüksek (oynak hisseler). Kör etiket seti (her örneğe en yakın 16, düşüş <= -%30 + eğim yatay/yukarı "
+               "süzgeci, sonu kesik, adsız; FON_IZI_kor_set_bolge.pdf) Cemal'in ✓/✗'ini bekliyor. Ders: FON_IZI_ders10_bolge_parmak.pdf."),
     _ik_k("Ç96", "2026-10-25", "İKİ EVRE KURALI: düşüş sonrası SMA20 altı (1. evre) → SMA20 üstünde 5 gün dizilme, en fazla 2 delen, BB "
           "sıkışması (K24)", "FON_IZI.py (k24)",
           "Cemal: '1. evre kırmızı SMA altında, 2. evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse'", "Yeni deneme (karar önceden)",
           "IZ C", 2, cikti="arastirma_cikti/fon_izi/k24_ozet.csv",
           notu="Eşikler MANAS'ın iki bölgesinden (iki örnek de tetikler). Eşli = aynı düşüş + SMA20 üstü 5. gün, tarif tutmayan. 60 gün önce "
-               "+%15: BIST 2023 %46 vs %62 (0,75, n 490), BIST 2024-26 %57 vs %56 (1,03, n 932), ABD 2023 0,92, ABD 2024-26 0,97; 2016-22 "
-               "BIST 1,14, ABD 1,02. Tarif eşliden iyi değil. Ders 10 s.4."),
+               "+%15: BIST 2023 %46 vs %62 (0,74, n 516), BIST 2024-26 %58 vs %56 (1,04, n 967), ABD 2023 0,92, ABD 2024-26 0,97; 2016-22 "
+               "BIST 1,13, ABD 1,01 (düşüş ölçüsü genç halka arzlar için 20 barla, BINBN'i 27.01.2025'te yakalar). Tarif eşliden iyi değil. "
+               "Ders 10 s.4."),
 ]
 
 
@@ -458,6 +461,15 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Şekil gerçek ve kod buluyor. En yakın 100 benzer bölge BIST 2024-26'da %62-64 yukarı (hepsi %54), BIST 2023'te %42-54 (hepsi %58); "
               "ABD'de 1,2-1,5 kat ama aşağı oranı da yüksek. İki evre kuralı eşliyle aynı (0,75-1,03). Dört hücrede tutmuyor → iz değil",
      "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
+    {"tarih": "2026-10-25", "istek": "BINBN 27 Ara 2024-21 Oca 2025 de var; 1. evre düşüş (dipte olsun), 2. evre çöl (yatay, çok net küçük mum, eğim "
+                                     "yatay/yukarı), 3. evre sağ ayak kod bilmeden; kodun en iyi puanladığı birebir benzerleri ver, hisse adı ve sonraki mumlar "
+                                     "olmasın, ben benzer/değil diyeyim, kaçtan kaçı yukarı çıkmış",
+     "yapilan": "BINBN K23'e 3. bölge (genç halka arz için düşüş ölçüsü 20 barla); K23/K24 yeniden; kör set v2: her örneğe BIST 2016-26 havuzunda "
+                "düşüş <= -%30 ve eğim yatay/yukarı süzgeciyle en yakın 16 (48 grafik, adsız, çöl sonunda kesik, sonuç anahtarda gizli); ders 10'a "
+                "3. bölge; IZ_KARNE Ç95-Ç96 notları",
+     "sonuc": "BINBN benzerleri BIST 2023 %35 yukarı (hepsi %58), BIST 2024-26 %62 (%54), ABD 1,05-1,14 kat; K24 BINBN'i yakalıyor, sonuç değişmedi "
+              "(0,74-1,04). Kör set Cemal'de",
+     "durum": "TAMAMLANDI, AÇIK: Cemal'in kör set ✓/✗'i bekleniyor (sonra ✓'lerin yukarı oranı vs süzgeç tabanı, önceden yazılı)"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -475,6 +487,9 @@ IK_ACIK: List[str] = [
     "D13 yakalama (Cemal'in vakaları, 25 Eki): üretim D13 Cemal'in koşan BINBN-24, KTLEV-24, MANAS-25a/b bölgelerini görmedi (dip yeni / parabol "
     "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
+    "KÖR SET (K23, 25 Eki): FON_IZI_kor_set_bolge.pdf, 48 grafik (A: MANAS Haz-Tem, B: MANAS Eki-Kas, C: BINBN Ara-Oca; her biri en yakın 16, "
+    "adsız, çöl sonunda kesik). Cemal ✓/✗ verince: ✓'lerin 60 gün ±%15 yukarı oranı vs ✗ vs süzgeç tabanı (~%58); ✓ >= 1,3 x taban ise ✓/✗'yi "
+    "ayıran ölçüler -> Cemal ağırlıklı benzerlik ABD ve görülmemiş dönemde. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
     "SİSTEM (K19, 25 Eki): giriş (çöl/kırılım) aynı gün eşli rastgele hisseden iyi değil; çıkış (kutu dibi stop + trail) 120 gün tutmaktan "
     "ortalamada düşük, yatay piyasada derin kaybı azaltıyor. Cemal'in kararı: amaç büyük kazananı tutmak mı (gevşek trail / tut), derin kaybı "
     "sınırlamak mı. Sıradaki ölçüm: üretim zinciri (D13 + T6/T10 + trail) ve 2016-22 ayı dönemi aynı rastgele kıyasla.",
