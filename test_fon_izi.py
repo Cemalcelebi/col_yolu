@@ -413,6 +413,24 @@ def sina():
     if not (abs(s28[0] - (0.85 - 1 - 0.004)) < 1e-9 and s28[1] == 11 and abs(t28[0] - (1.1 - 1 - 0.004)) < 1e-9
             and abs(u28[0] - (0.05 - 0.004)) < 1e-9 and u28[1] == 120 and n28[0] != n28[0] and abs(a28[0] - (-0.154)) < 1e-9):
         hata.append(f"28) K19 çıkış yanlış: stop {s28} trail {t28} ufuk {u28} kısa {n28} aynı bar {a28}")
+    # 29) K21/K22 mum mum: yol girişin açılışından (k=0 giriş günü kapanışı), sıra sinyal hissesi hariç diğer hisselere göre; bekleyen emir
+    # dolumu max(açılış, seviye) ve kapanış seviyenin altındaysa sahte; pencere 'dahil' t-1 kapanışından.
+    ix29 = pd.bdate_range("2024-01-01", periods=200)
+    def df29(c, o=None):
+        c = np.asarray(c, float); o = c if o is None else np.asarray(o, float)
+        return pd.DataFrame({"Open": o, "High": np.maximum(o, c), "Low": np.minimum(o, c), "Close": c, "Volume": 1.0}, index=ix29)
+    V29 = {"S": df29(np.r_[np.full(100, 10.0), np.full(100, 12.0)], np.r_[np.full(100, 10.0), [11.0], np.full(99, 12.0)]),
+           "A": df29(np.full(200, 10.0)), "B": df29(np.r_[np.full(100, 10.0), np.full(100, 13.0)], np.r_[np.full(101, 10.0), np.full(99, 13.0)])}
+    W29 = F.fi_k21_yol(V29, pd.DataFrame({"sembol": ["S"], "giris": [ix29[100]]}), {**F.FI_K21, "ufuk": 5})
+    P29 = F.fi_k22_pencere(V29, pd.DataFrame({"sembol": ["S"], "bilgi": [ix29[100]]}), g=5)
+    ok29 = (len(W29["P"]) == 1 and abs(W29["P"][0, 0] - (12 / 11 - 1)) < 1e-12 and abs(W29["R"][0, 0] - 0.5) < 1e-12
+            and abs(W29["M"][0, 0] - ((10 / 10 - 1) + (13 / 10 - 1)) / 2) < 1e-12 and len(P29) == 1
+            and abs(P29.dahil_r.iloc[0] - 0.2) < 1e-12 and abs(P29.sonra_r.iloc[0]) < 1e-12 and abs(P29.sonra_sira.iloc[0] - 0.0) < 1e-12)
+    S29 = F.fi_k22_sira(V29, pd.DataFrame({"sembol": ["S"], "bilgi": [ix29[100]], "dolum": [11.5], "sahte": [False]}), {**F.FI_K22, "gun": (0, 5)})
+    ok29 = ok29 and len(S29) == 1 and abs(S29.r0.iloc[0] - (12 / 11.5 - 1)) < 1e-12 and abs(S29.s0.iloc[0] - 0.5) < 1e-12
+    if not ok29:
+        hata.append(f"29) K21/K22 mum mum yol/sıra yanlış: P {W29['P'][:1, :1] if len(W29['P']) else []} R {W29['R'][:1, :1] if len(W29['R']) else []} "
+                    f"pencere {P29.to_dict('records') if len(P29) else []} emir {S29.to_dict('records') if len(S29) else []}")
     return hata
 
 
@@ -420,4 +438,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 28/28 OK")
+    print("test_fon_izi: 29/29 OK")

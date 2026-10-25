@@ -334,6 +334,22 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "hiçbir sinyal dört hücrede geçmedi; BIST'te hiçbir hücre geçmedi (profil 2024-26 120 gün en yüksek +%53,5 vs eşli +%51,0; "
                "nadir 2 kat oranı %20,7 vs %20,5). ABD'de 3 hücre geçti (profil ve kutu 2024-26, nadir 2023). MANAS 16 Haz-28 Tem 2025 K18 "
                "buldu (22 Tem), 20 Eki-5 Kas 2025 kutusu 12 gün, bulmadı; D13 ikisini de görmedi."),
+    _ik_k("Ç93", "2026-10-25", "SAĞ AYAK MUM MUM: çöl atılımından sonra her gün yüzde yol ve aynı gün BÜTÜN hisseler içindeki sıra; en sıkı çöl (K21)",
+          "FON_IZI.py (k21)", "Cemal: 'çölden çıkan hisse ile rastgele günde alınan yolun eşit olma ihtimali sıfır; büyük bir yanlışın içindesin; "
+          "çıkış kuralını bırak, mumları kıyasla'", "Denetim + yeni deneme (karar önceden)", "IZ C", 4, cikti="arastirma_cikti/fon_izi/k21_ozet.csv",
+          notu="Çıkış kuralı, eşleştirme, kura yok. Kod hatası aranıp bulunmadı (giriş günü hizası, bozuk mum, ortalama şişmesi). Sıra 60. ve 120. "
+               "günde 0,45-0,53 (profil, nadir; n ≥ 30 hücreler); BIST 2024-26 profil 120. gün medyan −%2,5 vs bütün hisseler −%1,7. En sıkı çöl "
+               "(kutu ≥ 30, bant ≤ %20, düşüş ≤ −%50, mum ve hacim ≤ 0,8; MANAS Haz-Tem 2025 geçer) BIST 2024-26 n 29-36: sıra 0,38-0,43, "
+               "120 gün en yüksek +%44 vs eşli +%43, 2 kat %12 vs %19. Hiçbir çöl tanımı mum mum üstün değil. Ders: FON_IZI_ders9_sag_ayak_mum.pdf."),
+    _ik_k("Ç94", "2026-10-25", "CEMAL'İN PENCERESİ + TAVANDA BEKLEYEN ALIŞ EMRİ: çölün son gününden 15 gün (atılım mumu dahil) ve atılım mumunu "
+          "alan bekleyen emir (K22)", "FON_IZI.py (k22)",
+          "Cemal: 'MANAS 18 Temmuz - 8 Ağustos 2025, çölün sağ ayağı; buradaki yükseliş sıradan bir hisseden fazla olmalı'",
+          "Yeni deneme (karar önceden)", "IZ C", 4, cikti="arastirma_cikti/fon_izi/k22_ozet.csv",
+          notu="MANAS 18.07-08.08.2025 +%84,5 vs bütün hisseler +%9,0 (580 hissenin 5'i daha çok; sıra 0,99). Aynı pencere bütün çöl "
+               "atılımlarında: atılım mumu DAHİL sıra 0,57-0,66 (çöl önde; BIST 2024-26 profil medyan +%6,5 vs +%1,8), atılım kapanışından "
+               "sonra 0,46-0,54: fark atılım mumunda (sonradan bilinen). Atılım mumunu alan tek emir (kutu tavanı ×1,002'de bekleyen alış, "
+               "sahte kırılım dahil): dolumların %44-55'i aynı gün kutuya döndü; sıra 15. gün 0,44-0,53, 120. gün 0,42-0,52; 8 hücrenin "
+               "hiçbiri geçmedi. Ders 9 s.6-7."),
 ]
 
 
@@ -409,6 +425,15 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Ölçülen zaten sağ ayaktı (atılımdan sonrası), çöl içi değil. MANAS Haz-Tem K18 buldu (sonra 9 kat; trail +%34'te sattı), "
               "Eki-Kas kutusu 12 gün, bulmadı; D13 ikisini de görmedi. Sağ ayak BIST'te hiçbir hücrede rastgeleden iyi değil (nadir çöl 2 kat %20,7 vs %20,5); "
               "ABD'de 3 hücre iyi, dört hücre değil",
+     "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
+    {"tarih": "2026-10-25", "istek": "Çölden çıkan, koşmaya başlayan hisse ile rastgele günde alınanın yolu eşit olamaz; büyük bir yanlış var; "
+                                     "mumları kıyasla, kim yüzde olarak daha çok yol almış? MANAS 18 Tem-8 Ağu 2025 sağ ayağı sıradan hisseden fazla olmalı",
+     "yapilan": "Kod denetimi (gün hizası, bozuk mum, ortalama/medyan); K21: her sinyalin 1-120. gün yolu ve aynı gün BÜTÜN hisseler içindeki sırası "
+                "(eşleştirmesiz) + en sıkı çöl; K22: Cemal'in penceresi (çölün son günü → 15 gün) ve tavanda bekleyen alış emri; BIST + ABD, "
+                "karar önceden; IZ_KARNE Ç93-Ç94; FON_IZI_ders9_sag_ayak_mum.pdf",
+     "sonuc": "Kod hatası yok. Atılımdan sonra çöl hissesi aynı gün borsanın ortasında (sıra 0,45-0,53). Cemal'in penceresinde (atılım mumu dahil) "
+              "çöl ÖNDE (sıra 0,57-0,66): fark yalnız atılım mumunda, o da kapanışta bilinir; tavanda bekleyen emir onu yakalasa da dolumların yarısı "
+              "sahte kırılım, sıra yine ~0,5. MANAS 18 Tem-8 Ağu +%84,5 (en iyi %1) ama koşan vaka",
      "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
 ]
 IK_ACIK: List[str] = [

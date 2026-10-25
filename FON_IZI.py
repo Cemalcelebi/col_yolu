@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.8 (2026-10-25, K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.9 (2026-10-25, K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -4278,6 +4278,418 @@ def fi_k12_ders8(Zk: pd.DataFrame, T: pd.DataFrame, yol: str) -> int:
     return 5
 
 
+# ---------------------------------------------------------------- K21 sağ ayak mum mum (Cemal 25 Eki)
+# CEMAL (25 Eki): 'Tam çölden çıkan, koşmaya başlayan hisse ile rastgele günde alınan yolun eşit olma ihtimali sıfır; büyük bir yanlışın
+# içindesin; çıkış kuralı değil, mumları kıyasla: kim yüzde olarak daha çok yol almış?' DENETİM (önceden yazıldı, sonuç görülmeden):
+# (1) çıkış kuralı yok; her sinyal için girişten (atılım ertesi açılış) sonraki 1..120. gün kapanış yolu; aynı gün BORSADAKİ BÜTÜN hisselerin
+# aynı girişle yolu (eşleştirme yok, örnekleme yok); sinyalin o gün bütün hisseler içindeki sırası (0 = en kötü, 0,5 = orta, 1 = en iyi).
+# (2) EN SIKI ÇÖL (Cemal: 'çöl nadir'): K18 C1 + kutu >= 30 bar + bant <= %20 + düşüş <= -%50 + mum ve hacim <= düşüştekinin 0,80'i
+# (MANAS Haz-Tem 2025 geçer: 32 bar, %16, -%62, 0,74 / 0,63). K20 ile aynı karar: 120 günde en yüksek, aynı gün eşli hisseye göre fark
+# ay kümeli %90 alt sınırı > 0, dört hücre. (3) 'Mum mum üstün' = 60. ve 120. günde ortalama sıra %90 alt sınırı > 0,5, dört hücre.
+FI_K21 = {"bar_min": 30, "bant": 0.20, "dusus": -0.50, "mum": 0.80, "hacim": 0.80, "ufuk": 120, "gun": (1, 5, 20, 60, 120), "boot": 1000}
+
+
+def fi_k21_siki(K18: pd.DataFrame, E: Dict[str, Any] = FI_K21) -> pd.DataFrame:
+    """K18 olaylarından en sıkı çöl (önceden yazılı eşikler, C1 profili içinde)."""
+    K = K18[K18.varyant == "C1"]
+    return K[(K.bar >= E["bar_min"]) & (K.bant <= E["bant"]) & (K.dusus <= E["dusus"]) & (K.mum_kat <= E["mum"])
+             & (K.hacim_kat <= E["hacim"])]
+
+
+def fi_k21_yol(V: Dict[str, pd.DataFrame], S: pd.DataFrame, E: Dict[str, Any] = FI_K21) -> Dict[str, Any]:
+    """S (sembol, giris) için mum mum yol: P[j, k] = sinyal kapanış(giriş + k) / giriş açılışı - 1 (k = 0..ufuk-1), M[j, k] = aynı gün
+    bütün diğer hisselerin aynı yolunun medyanı, R[j, k] = sinyalin o gün diğer hisseler içindeki sırası (altında kalan oran).
+    Giriş günü işlem görmeyen ya da pencere dolmayan sinyal atlanır. Dönüş {'P','M','R','meta'}."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index(); O = pd.DataFrame({s: d.Open for s, d in V.items()}).reindex(C.index)
+    Cv, Ov, kol, idx, u = C.to_numpy(float), O.to_numpy(float), {s: j for j, s in enumerate(C.columns)}, C.index, E["ufuk"]
+    P, M, R, meta, onb = [], [], [], [], {}
+    for r in S.itertuples():
+        i = int(idx.searchsorted(pd.Timestamp(r.giris))); j = kol.get(r.sembol)
+        if j is None or i + u > len(idx) or idx[i] != pd.Timestamp(r.giris):
+            continue
+        if i not in onb:
+            with np.errstate(divide="ignore", invalid="ignore"):
+                onb[i] = Cv[i:i + u] / Ov[i] - 1                                       # (ufuk x hisse)
+        Y = onb[i]; p = Y[:, j]
+        if not np.isfinite(p).all():
+            continue
+        D_ = np.delete(Y, j, axis=1); ok = np.isfinite(D_)
+        P.append(p); M.append(np.nanmedian(np.where(ok, D_, np.nan), axis=1))
+        R.append((np.where(ok, D_ < p[:, None], False).sum(1)) / np.maximum(ok.sum(1), 1)); meta.append((r.sembol, idx[i]))
+    return {"P": np.array(P), "M": np.array(M), "R": np.array(R), "meta": pd.DataFrame(meta, columns=["sembol", "giris"])}
+
+
+def fon_izi_k21(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str, pd.DataFrame]]] = None) -> Dict[str, Any]:
+    """K21 sürücü: (1) en sıkı çöl K19/K20 kıyası (aynı gün eşli / rastgele hisse); (2) cemal, nadir, en_siki için mum mum yol ve sıra,
+    BIST + ABD, 2023 / 2024-26. Çıktı k21_ozet.csv (kıyas + sıra kararı), k21_yol.csv (gün gün medyan yol), k21_islem.csv.gz."""
+    A = A or FIAyar(); E, E19 = FI_K21, FI_K19
+    K18 = pd.read_csv(os.path.join(A.cikti, "k18_olaylar.csv.gz"), parse_dates=["bilgi"], low_memory=False)
+    T19 = pd.read_csv(os.path.join(A.cikti, "k19_islem.csv.gz"), parse_dates=["bilgi", "giris"], low_memory=False)
+    rng = np.random.default_rng(21); Z: List[Dict[str, Any]] = []; Y: List[pd.DataFrame] = []; T: List[pd.DataFrame] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = V_hazir[pazar] if V_hazir and pazar in V_hazir else fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K21 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        D = fi_k19_dizi(V)
+        K = fi_k21_siki(K18[(K18.pazar == pazar) & (K18.bilgi >= E19["bas"])]); K = K.assign(stop=K.taban * (1 - E19["stop_tol"]))
+        S21 = pd.DataFrame([y for y in (fi_k19_islem(D, r.sembol, pd.Timestamp(r.bilgi), stop=r.stop, E=E19) for r in K.itertuples()) if y])
+        for dad, b, e_ in K19_DONEM:
+            sin = {s_: T19[(T19.pazar == pazar) & (T19.donem == dad) & (T19.grup == "sistem") & (T19.sinyal == s_)] for s_ in ("cemal", "nadir")}
+            Sx = S21[(S21.bilgi >= b) & (S21.bilgi <= e_)].reset_index(drop=True).assign(don_bas=b, don_bit=e_) if len(S21) else pd.DataFrame()
+            sin["en_siki"] = Sx; z: Dict[str, Any] = {}
+            if len(Sx):
+                R = {tur: fi_k19_rastgele(D, Sx, tur, E19["cekilis"], E19) for tur in ("hisse", "esli")}
+                z = fi_k19_kiyas(Sx, R, E19)
+                T.append(Sx.assign(pazar=pazar, donem=dad, grup="sistem"))
+                for tur, Rx in R.items():
+                    T.append(Rx.assign(pazar=pazar, donem=dad, grup=tur))
+            for s_, X in sin.items():
+                if not len(X):
+                    continue
+                W = fi_k21_yol(V, X, E); n = len(W["P"])
+                if not n:
+                    continue
+                zz: Dict[str, Any] = {"pazar": pazar, "donem": dad, "sinyal": s_, "n_yol": n, **(z if s_ == "en_siki" else {})}
+                ay = W["meta"].giris.dt.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay)
+                for g in E["gun"]:
+                    k = g - 1; rk = W["R"][:, k]; G = {a: rk[ay == a] for a in aylar}
+                    bs = [np.concatenate([G[a] for a in rng.choice(aylar, len(aylar))]).mean() for _ in range(E["boot"])]
+                    zz.update({f"g{g}_sinyal_med": float(np.median(W["P"][:, k])), f"g{g}_evren_med": float(np.median(W["M"][:, k])),
+                               f"g{g}_sinyal_ort": float(W["P"][:, k].mean()), f"g{g}_sira": float(rk.mean()),
+                               f"g{g}_sira_alt": float(np.percentile(bs, 5)), f"g{g}_ust_ceyrek": float((rk >= 0.75).mean()),
+                               f"g{g}_alt_ceyrek": float((rk < 0.25).mean())})
+                zz["mum_ustun"] = bool(zz["g60_sira_alt"] > 0.5 and zz["g120_sira_alt"] > 0.5)
+                Z.append(zz)
+                Y.append(pd.DataFrame({"pazar": pazar, "donem": dad, "sinyal": s_, "gun": np.arange(1, E["ufuk"] + 1),
+                                       "sinyal_med": np.median(W["P"], 0), "sinyal_q25": np.percentile(W["P"], 25, 0),
+                                       "sinyal_q75": np.percentile(W["P"], 75, 0), "evren_med": np.median(W["M"], 0), "sira": W["R"].mean(0)}))
+                filog.info("K21 %s %s %s: n %d sira g60 %.3f g120 %.3f (alt %.3f) mum_ustun %s", pazar, dad, s_, n, zz["g60_sira"],
+                           zz["g120_sira"], zz["g120_sira_alt"], zz["mum_ustun"])
+    if not Z:
+        raise RuntimeError("K21: sonuç yok")
+    Zk = pd.DataFrame(Z); Zk.to_csv(os.path.join(A.cikti, "k21_ozet.csv"), index=False)
+    Yk = pd.concat(Y, ignore_index=True); Yk.to_csv(os.path.join(A.cikti, "k21_yol.csv"), index=False)
+    if T:
+        pd.concat(T, ignore_index=True).to_csv(os.path.join(A.cikti, "k21_islem.csv.gz"), index=False)
+    karar = {s: bool(Zk[Zk.sinyal == s].mum_ustun.all() and len(Zk[Zk.sinyal == s]) == 4) for s in Zk.sinyal.unique()}
+    siki = Zk[Zk.sinyal == "en_siki"]
+    karar["en_siki_sag_ayak"] = bool(len(siki) == 4 and siki.get("sag_ayak_ustun", pd.Series(False)).fillna(False).astype(bool).all())
+    return {"ozet": Zk, "yol": Yk, "karar": karar}
+
+
+# ---------------------------------------------------------------- K22 bekleyen alış emri (Cemal 25 Eki, MANAS 18 Tem - 8 Ağu 2025)
+# CEMAL: 'MANAS Haziran-Temmuz çöl mumlarını bulup "dip oluştu, artık aşağı düşmeyecek" dediğimiz an; adil ölçmeni istediğim 18 Temmuz -
+# 8 Ağustos, çölün sağ ayağı; buradaki yükseliş sıradan bir hisseden fazla olmalı.' K21 bulgusu: çölün son gününden ölçülünce (atılım mumu
+# dahil) çöl hisseleri aynı gün bütün hisselerin üstünde (sıra ~0,6), atılım kapanışından sonra ortada (~0,5): fark atılım mumunda.
+# Atılım mumunu alınabilir kılan tek emir: çöl tavanının üstünde BEKLEYEN alış emri (gün içinde dolar). ÖNCEDEN YAZILDI (sonuç görülmeden):
+# kutu t-1'de biter (K18 kutusu, profil ölçüleri yalnız kutu), emir seviyesi = max(kutu tavanı, önceki 20 bar gövde tepesi) x 1,002;
+# High[t] >= seviye -> dolum max(Open[t], seviye); kapanış geri kutuya dönse de işlem (sahte kırılım dahil); hissede 60 barda tek.
+# Ölçü: dolumdan k gün sonra kapanış / dolum - 1 (k = 15 Cemal'in penceresi, 60, 120); aynı gün bütün hisseler kapanış(t+k) / açılış(t) - 1;
+# sıra. Karar: 60 ve 120. gün sıra ay kümeli %90 alt sınırı > 0,5, dört hücre (BIST / ABD x 2023 / 2024-26). Sinyaller: profil (C1
+# eşikleri), nadir (+ bant <= %20, düşüş <= -%50).
+FI_K22 = {"gun": (0, 15, 60, 120), "boot": 1000}
+
+
+def fi_k22_emir_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K18_ESIK, bas: str = "2023-01-01") -> pd.DataFrame:
+    """Bekleyen alış emri dolumları: sembol, bilgi (= t, dolum günü), seviye, dolum, sahte (kapanış < seviye), kutu ölçüleri."""
+    sat: List[Dict[str, Any]] = []; b0 = E["bar"][0]; t0 = pd.Timestamp(bas)
+    for s, d in V.items():
+        try:
+            if len(d) < b0 + 80:
+                continue
+            o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+            if not (l > 0).all():
+                continue
+            top = np.maximum(o, c); hh = pd.Series(top).rolling(E["son20"]).max().shift(1).to_numpy()
+            son = -10 ** 9; ib = int(d.index.searchsorted(t0))
+            for t in np.flatnonzero(h > hh * 1.002):
+                if t < max(ib, b0 + 21) or t - son < E["tekrar"]:
+                    continue
+                i0 = _fi_k18_kutu(top, l, int(t), E)
+                if i0 < 0 or t - i0 < b0:
+                    continue
+                sev = max(top[i0:t].max(), hh[t]) * 1.002
+                if not (h[t] >= sev):
+                    continue
+                r = fi_k18_olc(d, i0, int(t))
+                if not (r["dusus"] <= E["dusus"] and r["mum_kat"] <= E["mum"] and r["hacim_kat"] <= E["hacim"]):
+                    continue
+                son = int(t)
+                sat.append({"sembol": s, "bilgi": d.index[t], "seviye": sev, "dolum": max(o[t], sev), "sahte": bool(c[t] < sev),
+                            **{k: r[k] for k in ("bar", "dusus", "bant", "mum_kat", "hacim_kat")}})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K22 %s atlandi: %s", s, ex)
+    return pd.DataFrame(sat)
+
+
+def fi_k22_sira(V: Dict[str, pd.DataFrame], S: pd.DataFrame, E: Dict[str, Any] = FI_K22) -> pd.DataFrame:
+    """Her dolum için k gün sonra getiri (dolumdan) ve aynı gün bütün diğer hisselerin açılıştan getirisi içindeki sırası."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index(); O = pd.DataFrame({s: d.Open for s, d in V.items()}).reindex(C.index)
+    Cv, Ov, kol, idx = C.to_numpy(float), O.to_numpy(float), {s: j for j, s in enumerate(C.columns)}, C.index
+    sat = []
+    for r in S.itertuples():
+        j = kol.get(r.sembol); t = int(idx.searchsorted(pd.Timestamp(r.bilgi)))
+        if j is None or t >= len(idx) or idx[t] != pd.Timestamp(r.bilgi):
+            continue
+        z = {"sembol": r.sembol, "bilgi": idx[t], "sahte": r.sahte}
+        for k in E["gun"]:
+            if t + k >= len(idx):
+                z[f"r{k}"] = z[f"s{k}"] = z[f"m{k}"] = np.nan; continue
+            with np.errstate(divide="ignore", invalid="ignore"):
+                y = Cv[t + k] / Ov[t] - 1
+            p = Cv[t + k, j] / r.dolum - 1; y = np.delete(y, j); y = y[np.isfinite(y)]
+            z[f"r{k}"], z[f"s{k}"], z[f"m{k}"] = p, (float((y < p).mean()) if len(y) and p == p else np.nan), (float(np.median(y)) if len(y) else np.nan)
+        sat.append(z)
+    return pd.DataFrame(sat)
+
+
+def fi_k22_pencere(V: Dict[str, pd.DataFrame], K: pd.DataFrame, g: int = 15) -> pd.DataFrame:
+    """Cemal'in penceresi: çölün son günü kapanışından (atılımdan önceki gün, t-1) g işlem günü sonrasına (atılım mumu DAHİL, sonradan
+    bilinen) ve atılım kapanışından (t) g gün sonrasına (alınabilen); aynı pencerede bütün diğer hisseler içindeki sıra. K: sembol, bilgi."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index(); Cv, idx = C.to_numpy(float), C.index
+    kol = {s: j for j, s in enumerate(C.columns)}; sat = []
+    for r in K.itertuples():
+        j = kol.get(r.sembol); t = int(idx.searchsorted(pd.Timestamp(r.bilgi)))
+        if j is None or t < 1 or t + g >= len(idx) or idx[t] != pd.Timestamp(r.bilgi):
+            continue
+        z = {"sembol": r.sembol, "bilgi": idx[t]}
+        for ad, a in (("dahil", t - 1), ("sonra", t)):
+            with np.errstate(divide="ignore", invalid="ignore"):
+                y = Cv[a + g] / Cv[a] - 1
+            p = y[j]; y = np.delete(y, j); y = y[np.isfinite(y)]
+            z[f"{ad}_r"], z[f"{ad}_evren"], z[f"{ad}_sira"] = p, (float(np.median(y)) if len(y) else np.nan), (float((y < p).mean()) if len(y) and p == p else np.nan)
+        sat.append(z)
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k22(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str, pd.DataFrame]]] = None) -> Dict[str, Any]:
+    """K22 sürücü: profil ve nadir çölde bekleyen alış emri, BIST + ABD, 2023 / 2024-26; sıra kararı. Çıktı k22_ozet.csv, k22_islem.csv.gz."""
+    A = A or FIAyar(); E = FI_K22; rng = np.random.default_rng(22); Z: List[Dict[str, Any]] = []; T: List[pd.DataFrame] = []
+    PN: List[Dict[str, Any]] = []
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = V_hazir[pazar] if V_hazir and pazar in V_hazir else fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K22 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        S0 = fi_k22_emir_tara(V)
+        if not len(S0):
+            continue
+        X0 = fi_k22_sira(V, S0, E).merge(S0[["sembol", "bilgi", "bant", "dusus"]], on=["sembol", "bilgi"], how="left")
+        for sad, X1 in (("profil", X0), ("nadir", X0[(X0.bant <= FI_K18_C4["bant"]) & (X0.dusus <= -0.50)])):
+            for dad, b, e_ in K19_DONEM:
+                X = X1[(X1.bilgi >= b) & (X1.bilgi <= e_)]
+                if not len(X):
+                    continue
+                z: Dict[str, Any] = {"pazar": pazar, "donem": dad, "sinyal": sad, "n": len(X), "sahte": float(X.sahte.mean())}
+                for k in E["gun"]:
+                    x = X.dropna(subset=[f"s{k}"]); ay = x.bilgi.dt.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay)
+                    if not len(x):
+                        continue
+                    G = {a: x[f"s{k}"].to_numpy()[ay == a] for a in aylar}
+                    bs = [np.concatenate([G[a] for a in rng.choice(aylar, len(aylar))]).mean() for _ in range(E["boot"])]
+                    z.update({f"g{k}_n": len(x), f"g{k}_med": float(x[f"r{k}"].median()), f"g{k}_ort": float(x[f"r{k}"].mean()),
+                              f"g{k}_evren_med": float(x[f"m{k}"].median()), f"g{k}_sira": float(x[f"s{k}"].mean()),
+                              f"g{k}_sira_alt": float(np.percentile(bs, 5)), f"g{k}_ust_ceyrek": float((x[f"s{k}"] >= 0.75).mean())})
+                z["emir_ustun"] = bool(z.get("g60_sira_alt", 0) > 0.5 and z.get("g120_sira_alt", 0) > 0.5)
+                Z.append(z); T.append(X.assign(pazar=pazar, donem=dad, sinyal=sad))
+                filog.info("K22 %s %s %s: n %d sahte %.2f sira g15 %.3f g60 %.3f g120 %.3f (alt %.3f) ustun %s", pazar, dad, sad, z["n"],
+                           z["sahte"], z.get("g15_sira", np.nan), z.get("g60_sira", np.nan), z.get("g120_sira", np.nan),
+                           z.get("g120_sira_alt", np.nan), z["emir_ustun"])
+        try:                                                                   # Cemal'in penceresi, K18 atılımlarında (kapanışla kırılım)
+            K18 = pd.read_csv(os.path.join(A.cikti, "k18_olaylar.csv.gz"), parse_dates=["bilgi"], low_memory=False)
+            K18 = K18[(K18.pazar == pazar) & (K18.bilgi >= FI_K19["bas"])]
+            for sad, Kx in (("profil", K18[K18.varyant == "C1"]), ("nadir", K18[(K18.varyant == "C4") & (K18.dusus <= -0.50)])):
+                for dad, b, e_ in K19_DONEM:
+                    Pw = fi_k22_pencere(V, Kx[(Kx.bilgi >= b) & (Kx.bilgi <= e_)])
+                    if len(Pw):
+                        PN.append({"pazar": pazar, "donem": dad, "sinyal": sad, "n": len(Pw),
+                                   **{f"{a}_{m}": float(getattr(Pw[f"{a}_{x}"], m)()) for a in ("dahil", "sonra") for x, m in (("r", "median"), ("sira", "mean"))},
+                                   "dahil_evren": float(Pw.dahil_evren.median())})
+        except Exception as ex:
+            filog.warning("K22 %s pencere ölçülemedi: %s", pazar, ex)
+    if PN:
+        pd.DataFrame(PN).to_csv(os.path.join(A.cikti, "k22_pencere.csv"), index=False)
+    if not Z:
+        raise RuntimeError("K22: sonuç yok")
+    Zk = pd.DataFrame(Z); Zk.to_csv(os.path.join(A.cikti, "k22_ozet.csv"), index=False)
+    pd.concat(T, ignore_index=True).to_csv(os.path.join(A.cikti, "k22_islem.csv.gz"), index=False)
+    karar = {s: bool(Zk[Zk.sinyal == s].emir_ustun.all() and len(Zk[Zk.sinyal == s]) == 4) for s in Zk.sinyal.unique()}
+    return {"ozet": Zk, "karar": karar}
+
+
+def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame, Ek: pd.DataFrame, Pn: pd.DataFrame, yol: str,
+                 vaka: Tuple[str, str] = ("MANAS", "2025-07-22"), pencere: Tuple[str, str] = ("2025-07-18", "2025-08-08")) -> int:
+    """Ders 9 (Cemal 25 Eki: 'mumları kıyasla, kim yüzde olarak daha çok yol almış'): (1) soru, nasıl ölçüldü, kısa cevap; (2) gün gün
+    medyan yol: sinyal vs aynı gün bütün hisseler; (3) sıra (0 = en kötü, 1 = en iyi) gün gün; (4) vaka: MANAS atılımı ve aynı gün bütün
+    hisselerin yol bandı; (5) Cemal'in penceresi (çölün son günü -> 15 gün, atılım mumu dahil) ve bekleyen alış emri (K22); (6) neden, karar.
+    V = BIST (vaka için); Zk = k21_ozet.csv, Yk = k21_yol.csv, Ek = k22_ozet.csv, Pn = k22_pencere.csv."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    yz = lambda x: (("−" if x < 0 else "+") + f"%{abs(100 * x):.1f}").replace(".", ",") if x == x else "—"
+    sz = lambda x: f"{x:.2f}".replace(".", ",") if x == x else "—"
+
+    def yazi(fig, y, baslik, satirlar, boy=9.4, gen=92):
+        if baslik:
+            fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    HUC = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
+    ET = {"cemal": "senin profilin", "nadir": "nadir çöl", "en_siki": "en sıkı çöl"}
+    Zi = Zk.set_index(["pazar", "donem", "sinyal"])
+    g = lambda p, d, s, k: Zi.loc[(p, d, s), k] if (p, d, s) in Zi.index and k in Zi.columns else np.nan
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        sat = ["Sen: 'Tam çölden çıkan, koşmaya başlayan hisse ile rastgele günde alınan yolun eşit olma ihtimali sıfır. Çıkış kuralını bırak, "
+               "mumları kıyasla: kim yüzde olarak daha çok yol almış?' Bu sayfalarda çıkış kuralı YOK, eşleştirme YOK, kura YOK.",
+               "Nasıl ölçüldü: her çöl atılımında giriş ertesi gün açılış. Sonra 1., 2., … 120. günün kapanışı girişe göre yüzde kaç? Aynı günü "
+               "borsadaki BÜTÜN hisseler için de aynı şekilde hesapladım (aynı giriş günü, aynı açılış). Sonra her gün sordum: senin çöl hissen o "
+               "gün bütün hisseler arasında kaçıncı? 0 = en kötü, 0,5 = tam orta, 1 = en iyi. Çöl gerçekten öne geçiyorsa bu sayı 0,5'in "
+               "üstüne çıkmalı.",
+               "Ayrıca kod hatası aradım: giriş günü hizası (her sinyalde giriş günü hissenin kendi verisinde var mı), bozuk mum (2022 sonrası "
+               "%10,5 üstü sıçrama: çoğu 15 Şubat 2023 deprem açılışı, iki grupta da), ortalamayı birkaç uçan hissenin şişirmesi (medyan ayrıca "
+               "yazıldı). Hata bulunmadı.", "", "KISA CEVAP"]
+        for s_ in ("cemal", "nadir", "en_siki"):
+            sat.append(f"- {ET[s_]}: 120. gün sırası " + ", ".join(f"{p} {d} {sz(g(p, d, s_, 'g120_sira'))}"
+                                                                for p, d in HUC if g(p, d, s_, "n_yol") == g(p, d, s_, "n_yol"))
+                       + f" (n BIST 2024-26 {int(g('BIST', '2024-26', s_, 'n_yol')) if g('BIST', '2024-26', s_, 'n_yol') == g('BIST', '2024-26', s_, 'n_yol') else 0}).")
+        sat += [f"- BIST 2024-26 senin profilin: 120. gün medyan yol {yz(g('BIST', '2024-26', 'cemal', 'g120_sinyal_med'))}, aynı gün bütün "
+                f"hisselerin medyanı {yz(g('BIST', '2024-26', 'cemal', 'g120_evren_med'))}. Nadir çöl {yz(g('BIST', '2024-26', 'nadir', 'g120_sinyal_med'))} "
+                f"vs {yz(g('BIST', '2024-26', 'nadir', 'g120_evren_med'))}.",
+                "- Yani çöl atılımından sonra hisse, aynı gün alınabilecek bütün hisseler arasında ORTADA, BIST'te biraz altında. 'Sıfır ihtimal' "
+                "dediğin şey veride her gün oluyor: atılım günü 100 çöl hissesinden ~23'ü koşuyor, aynı gün borsadan rastgele 100 hisseden de ~22'si.",
+                "- Mum mum geçme şartı (önceden: 60. ve 120. gün sıranın %90 alt sınırı > 0,5, dört hücre): hiçbir çöl tanımı geçmedi.",
+                "- SENİN PENCERENDE (çölün son gününden 15 gün, atılım mumu dahil) çöl hissesi borsanın ÜSTÜNDE: sıra "
+                f"{sz(Pn.dahil_mean.min())}-{sz(Pn.dahil_mean.max())}. Bu kısımda haklısın. Ama fark atılım mumunun kendisinde: atılım "
+                f"kapanışından sonra sıra {sz(Pn.sonra_mean.min())}-{sz(Pn.sonra_mean.max())}. Atılım mumunu tavanda bekleyen emirle almak "
+                f"da üstünlük vermiyor (her iki dolumdan biri sahte kırılım; sıra {sz(Ek.g120_sira.min())}-{sz(Ek.g120_sira.max())}). Sayfa 6-7."]
+        yazi(fig, 0.96, "DERS 9: SAĞ AYAK MUM MUM — KİM DAHA ÇOK YOL ALDI?", sat)
+        pdf.savefig(fig); plt.close(fig)
+        for s_ in ("cemal", "nadir"):
+            fig = plt.figure(figsize=A4)
+            yazi(fig, 0.96, f"GÜN GÜN YOL: {ET[s_].upper()} vs AYNI GÜN BÜTÜN HİSSELER", [
+                "Koyu çizgi: çöl hisselerinin girişten bu yana yüzde yolu (medyan), gölge: ortadaki yarısı. Turuncu: aynı gün bütün hisselerin "
+                "medyan yolu. İki çizgi üst üste ise çöl, aynı gün rastgele alınan hisseden fazla yol almamış demektir."])
+            for k, (p, d) in enumerate(HUC):
+                y_ = Yk[(Yk.pazar == p) & (Yk.donem == d) & (Yk.sinyal == s_)]
+                ax = fig.add_axes([0.10 + (k % 2) * 0.46, 0.50 - (k // 2) * 0.40, 0.38, 0.30])
+                if len(y_):
+                    ax.fill_between(y_.gun, 100 * y_.sinyal_q25, 100 * y_.sinyal_q75, color="#1f2a44", alpha=0.15, lw=0)
+                    ax.plot(y_.gun, 100 * y_.sinyal_med, color="#1f2a44", lw=2, label="çöl atılımı (medyan)")
+                    ax.plot(y_.gun, 100 * y_.evren_med, color="#e0a458", lw=2, label="aynı gün bütün hisseler")
+                    ax.set_title(f"{p} {d}  (n {int(g(p, d, s_, 'n_yol'))}, 120. gün sıra {sz(g(p, d, s_, 'g120_sira'))})", fontsize=8.5)
+                ax.axhline(0, color="#999", lw=0.8); ax.set_xlabel("girişten sonraki işlem günü", fontsize=8); ax.set_ylabel("yol %", fontsize=8)
+                ax.tick_params(labelsize=7)
+                if k == 0:
+                    ax.legend(fontsize=7, loc="upper left")
+            pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "SIRA: ÇÖL HİSSESİ O GÜN BÜTÜN HİSSELER ARASINDA KAÇINCI?", [
+            "0,5 çizgisi = tam orta (rastgele). Çöl öne geçseydi çizgiler girişten sonra yükselip 0,6-0,7'ye gitmeliydi. 60. ve 120. günde "
+            f"sıra {sz(Zk[Zk.n_yol >= 30][['g60_sira', 'g120_sira']].min().min())} ile {sz(Zk[Zk.n_yol >= 30][['g60_sira', 'g120_sira']].max().max())} "
+            "arasında (30'dan az sinyalli hücreler hariç): çöl hissesi aynı gün borsanın ortasında, BIST'te biraz altında."])
+        for k, (p, d) in enumerate(HUC):
+            ax = fig.add_axes([0.10 + (k % 2) * 0.46, 0.50 - (k // 2) * 0.40, 0.38, 0.30])
+            for s_, renk in (("cemal", "#1f2a44"), ("nadir", "#c0392b"), ("en_siki", "#27ae60")):
+                y_ = Yk[(Yk.pazar == p) & (Yk.donem == d) & (Yk.sinyal == s_)]
+                if len(y_):
+                    ax.plot(y_.gun, y_.sira, color=renk, lw=1.6, label=f"{ET[s_]} (n {int(g(p, d, s_, 'n_yol'))})")
+            ax.axhline(0.5, color="#e0a458", lw=1.5, ls="--"); ax.set_ylim(0.2, 0.8); ax.set_title(f"{p} {d}", fontsize=9)
+            ax.set_xlabel("girişten sonraki işlem günü", fontsize=8); ax.set_ylabel("sıra (0,5 = orta)", fontsize=8); ax.tick_params(labelsize=7)
+            ax.legend(fontsize=6.5, loc="upper right")
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        vs, vt = vaka; d0 = V.get(vs)
+        yazi(fig, 0.96, f"VAKA: {vs} ATILIMI ({pd.Timestamp(vt):%d.%m.%Y}) vs AYNI GÜN BÜTÜN HİSSELER", [
+            f"Senin örneğin. Üstte {vs}'ın mumları (atılım günü dikey çizgi). Altta girişten sonraki yolu (kalın) ve aynı gün alınabilecek bütün "
+            "hisselerin yolları (gri bant: ortadaki yarısı, açık bant: %10-%90). Bu vaka koşanlardan; ama çöl hisselerinin çoğu bandın ortasında "
+            "kaldı (önceki sayfalar)."])
+        if d0 is not None:
+            C = pd.DataFrame({s: x.Close for s, x in V.items()}).sort_index(); O = pd.DataFrame({s: x.Open for s, x in V.items()}).reindex(C.index)
+            i = int(C.index.searchsorted(pd.Timestamp(vt), side="right")); u = min(120, len(C) - i)
+            ax = fig.add_axes([0.10, 0.50, 0.85, 0.30]); w = d0.loc[C.index[max(0, i - 60)]:C.index[i + u - 1]]
+            x = np.arange(len(w)); renk = np.where(w.Close >= w.Open, "#27ae60", "#c0392b")
+            ax.vlines(x, w.Low, w.High, color=renk, lw=0.7); ax.bar(x, (w.Close - w.Open).abs().clip(lower=1e-9), bottom=np.minimum(w.Open, w.Close), color=renk, width=0.7)
+            j0 = int(np.flatnonzero(w.index == C.index[i - 1])[0]) if (w.index == C.index[i - 1]).any() else 0
+            ax.axvline(j0, color="#1f2a44", ls="--", lw=1); ax.set_xticks(x[::20]); ax.set_xticklabels([f"{t:%d.%m.%y}" for t in w.index[::20]], fontsize=7)
+            ax.set_ylabel("fiyat", fontsize=8); ax.set_title(f"{vs} günlük mumlar (atılım = kesikli çizgi)", fontsize=9)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                Yv = C.iloc[i:i + u].to_numpy(float) / O.iloc[i].to_numpy(float) - 1
+            ax2 = fig.add_axes([0.10, 0.07, 0.85, 0.33]); gg = np.arange(1, u + 1)
+            q = np.nanpercentile(Yv, [10, 25, 50, 75, 90], axis=1)
+            ax2.fill_between(gg, 100 * q[0], 100 * q[4], color="#bbb", alpha=0.35, lw=0, label="bütün hisseler %10-%90")
+            ax2.fill_between(gg, 100 * q[1], 100 * q[3], color="#888", alpha=0.45, lw=0, label="bütün hisseler ortadaki yarı")
+            ax2.plot(gg, 100 * q[2], color="#e0a458", lw=1.8, label="bütün hisseler medyan")
+            pv = C[vs].iloc[i:i + u].to_numpy(float) / O[vs].iloc[i] - 1
+            ax2.plot(gg, 100 * pv, color="#1f2a44", lw=2.2, label=vs)
+            sira = np.nanmean(Yv < pv[:, None], axis=1)
+            ax2.set_title(f"girişten sonraki yol: {vs} 60. gün {yz(pv[min(59, u - 1)])} (sıra {sz(sira[min(59, u - 1)])}), "
+                          f"120. gün {yz(pv[u - 1])} (sıra {sz(sira[u - 1])})", fontsize=8.5)
+            ax2.set_yscale("symlog", linthresh=50); ax2.axhline(0, color="#999", lw=0.8)
+            ax2.set_xlabel("girişten sonraki işlem günü", fontsize=8); ax2.set_ylabel("yol % (ölçek sıkıştırılmış)", fontsize=8); ax2.legend(fontsize=7, loc="upper left")
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        Pi = Pn.set_index(["pazar", "donem", "sinyal"]); Ei = Ek.set_index(["pazar", "donem", "sinyal"])
+        tra = lambda x: f"{pd.Timestamp(x).day} " + ("Ocak Şubat Mart Nisan Mayıs Haziran Temmuz Ağustos Eylül Ekim Kasım Aralık".split()[pd.Timestamp(x).month - 1])
+        pg = lambda T_, p, d, s_, k: T_.loc[(p, d, s_), k] if (p, d, s_) in T_.index and k in T_.columns else np.nan
+        C = pd.DataFrame({s: x.Close for s, x in V.items()}).sort_index()
+        a, b = C.index.searchsorted(pd.Timestamp(pencere[0])), C.index.searchsorted(pd.Timestamp(pencere[1]))
+        yv = (C.iloc[b] / C.iloc[a] - 1).dropna(); pv_ = yv.get(vs, np.nan); yo = yv.drop(vs, errors="ignore")
+        y = yazi(fig, 0.96, f"SENİN PENCEREN: {vs} {pd.Timestamp(pencere[0]):%d.%m} – {pd.Timestamp(pencere[1]):%d.%m.%Y}", [
+            f"Sen: '{vs} Haziran-Temmuz çöl mumlarını bulup dip oluştu dediğimiz an; adil ölçmeni istediğim {tra(pencere[0])} – "
+            f"{tra(pencere[1])}, çölün sağ ayağı.' Bu pencere {b - a} işlem günü; çölün son gününden başlıyor, atılım mumunu da içine alıyor.",
+            f"- {vs} bu pencerede {yz(pv_)}; aynı pencerede bütün hisselerin medyanı {yz(float(yo.median()))}. {len(yo)} hissenin "
+            f"{int((yo > pv_).sum())}'i daha çok gitti (sıra {sz(float((yo < pv_).mean()))}). Senin vakan gerçekten en iyi %1'de.",
+            "- Aynı pencere tanımı (çölün son günü kapanışından 15 işlem günü), kodun bulduğu BÜTÜN çöl atılımlarında:"]
+            +
+            [f"- {'profilin' if s_ == 'profil' else 'nadir çöl'} {p} {d} (n {int(pg(Pi, p, d, s_, 'n'))}): atılım mumu DAHİL sıra "
+             f"{sz(pg(Pi, p, d, s_, 'dahil_mean'))} (medyan {yz(pg(Pi, p, d, s_, 'dahil_median'))} vs bütün hisseler {yz(pg(Pi, p, d, s_, 'dahil_evren'))}); "
+             f"atılım kapanışından sonra sıra {sz(pg(Pi, p, d, s_, 'sonra_mean'))}"
+             for s_ in ("profil", "nadir") for p, d in HUC if (p, d, s_) in Pi.index]
+            + ["- BU KISIMDA HAKLISIN: senin pencerende çöl hissesi borsanın üstünde (sıra 0,5'in üstü). Ama farkın tamamı ATILIM MUMUNDA: "
+               "atılım kapanışından sonra sıra yine ~0,5. Atılım mumu 'çöl bitti' dediğimiz mumun kendisi; kapanışta yukarıda kaldığını ancak "
+               "kapanışta biliyorsun."], boy=8.6)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "ATILIM MUMUNU ALMANIN TEK YOLU: TAVANDA BEKLEYEN ALIŞ EMRİ (K22)", [
+            "Kural (önceden yazıldı): çöl kutusu dün bitti; emir kutu tavanının (ve son 20 günün tepesinin) %0,2 üstünde bekler; fiyat değerse "
+            "dolar. Kapanış geri kutuya dönse de işlem sayılır (gerçekte öyle olur). Karar: 60. ve 120. gün sırası %90 alt sınırı > 0,5, dört hücre."]
+            + [f"- {'profilin' if s_ == 'profil' else 'nadir çöl'} {p} {d}: n {int(pg(Ei, p, d, s_, 'n'))}, sahte kırılım (kapanış kutuya döndü) "
+               f"{yz(pg(Ei, p, d, s_, 'sahte'))}; sıra 15. gün {sz(pg(Ei, p, d, s_, 'g15_sira'))}, 60. gün {sz(pg(Ei, p, d, s_, 'g60_sira'))}, "
+               f"120. gün {sz(pg(Ei, p, d, s_, 'g120_sira'))}" for s_ in ("profil", "nadir") for p, d in HUC if (p, d, s_) in Ei.index]
+            + [f"- Sonuç: {'hiçbir hücre geçmedi' if not Ek.emir_ustun.any() else str(int(Ek.emir_ustun.sum())) + ' hücre geçti, dört hücre değil'}. "
+               "Tavanda bekleyen emir atılımı yakalıyor ama sahte kırılımları da alıyor (her iki dolumdan biri). İkisi toplanınca yine borsanın ortası."])
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "NEDEN GÖZÜN 'İMKÂNSIZ' DİYOR — VE SENİN KARARIN", [
+            "- 'Tam çölden çıkan, koşmaya başlayan hisse' cümlesi sonucu içeriyor: 'koşmaya başlayan' ancak sonradan bilinir. Atılım günü elimizde "
+            "yalnız şekil var; o gün aynı şekle sahip 100 hisseden ~23'ü koşuyor, ~50'si geri kutuya ya da altına dönüyor (VSNMD, PAPIL gibi).",
+            "- Grafikte hatırladığın ve gördüğün çöller koşanlar; koşmayan aynı şekiller ekrandan düşüyor, akılda kalmıyor. Mum mum ölçünce "
+            "koşanlar ile dönenler toplanıyor ve ortaya borsanın ortası çıkıyor.",
+            "- Atılım GÜNÜNÜN kendisi (+%4-5) çöl hissesinde büyük, ama o mum zaten 'atılım' tanımı; kapanışta görüp ertesi gün alan onu kazanamaz. "
+            "Ertesi günden sonra fark kalmıyor.",
+            "- Bu, çöllerin olmadığı ya da gözünün yanlış gördüğü demek değil: şekli doğru görüyorsun, kod da buluyor. Söylenen şu: şekil, "
+            "o gün başka bir hisseyi almaktan daha çok yol vermiyor. Kazancı belirleyen piyasanın yönü ve büyük kazananı erken satmamak.",
+            "",
+            "Karar gereken (senin):",
+            "- Sistemin amacı: büyük kazananı tutmak (tut / gevşek trail) mı, derin kaybı sınırlamak (mevcut stop + trail) mı? (Ders 8)",
+            "- Üretim değişmedi. Değişiklik 'yaz' kararı.",
+            "",
+            "Sıradaki (önceden yazılı): aynı mum mum kıyas üretim D13 + T6/T10 zinciri ve 2016-22 ayı dönemi için; ve çöl + KATALİZÖR (sektör "
+            "rüzgârı ya da KAP haberi aynı hafta) birlikteyken sıra 0,5'in üstüne çıkıyor mu (CLAUDE.md: 'rüzgâr ya da katalizör olmadan çöl "
+            "aranmaz')."])
+        pdf.savefig(fig); plt.close(fig)
+    return 8
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -4494,6 +4906,22 @@ if __name__ == "__main__":
         print(fi_k12_ders8(pd.read_csv(os.path.join(_A.cikti, "k19_ozet.csv")),
                            pd.read_csv(os.path.join(_A.cikti, "k19_islem.csv.gz"), low_memory=False),
                            os.path.join(_A.cikti, "FON_IZI_ders8_sistem_rastgele.pdf")), "sayfa")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k21":           # sağ ayak mum mum: çöl atılımı vs aynı gün bütün hisseler + en sıkı çöl
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k21()
+        print(_R["karar"]); print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k22":           # çöl tavanında bekleyen alış emri (atılım mumu dahil) vs aynı gün bütün hisseler
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k22()
+        print(_R["karar"]); print(_R["ozet"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k21ders":       # Ders 9 (k21 + k22 çıktılarından)
+        _A = FIAyar()
+        print(fi_k12_ders9(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k21_ozet.csv")),
+                           pd.read_csv(os.path.join(_A.cikti, "k21_yol.csv")), pd.read_csv(os.path.join(_A.cikti, "k22_ozet.csv")),
+                           pd.read_csv(os.path.join(_A.cikti, "k22_pencere.csv")), os.path.join(_A.cikti, "FON_IZI_ders9_sag_ayak_mum.pdf")), "sayfa")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()
