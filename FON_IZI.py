@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.9 (2026-10-25, K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.9 (2026-10-25, K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -4775,6 +4775,91 @@ def fon_izi_k24(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str
     return {"ozet": Zk, "karar": bool(len(X) == 4 and ((X.kat60 >= FI_K23["kat_esik"]) & (X.n >= 30)).all())}
 
 
+# ---------------------------------------------------------------- K25 çöl = büyük alıcının izi mi? (Cemal 25 Eki)
+# CEMAL: 'Ben bu çöl formasyonunu fon ilişkisi olup olmadığını bilmeden inceleyip gördüm; sonra söylediklerimin çoğu fon hisselerinde çıktı.
+# Demek ki bir hisseyi fazla alıcı olunca o bölgede öyle bir yapı oluşur. Bu mantıkla yola çıktım.' + 'TERA'nın düşüşü fon krizinden; ona
+# bakmamak lazım.' ÖNCEDEN YAZILDI (sonuç görülmeden): büyük alıcının görünen izi = KAP raporlu fonların payı (sermayeye oran, rapor yayın
+# anıyla, o an bilinen). Sinyaller: K24 iki evre kuralı vs eşli, K18 C1 profil vs eşli; BIST, sinyal 2023-01-01..2025-10-31 (fon verisi
+# Ara 2022'den; 12 ay ileri pencere). SORU 1 (çöl -> büyük alıcı): sinyalde pay < %2 iken sonraki 365 günde yayımlanan raporlarda pay >= %5
+# (ve >= %2) olma oranı, sinyal vs eşli. SORU 2 (büyük alıcı -> öncesinde çöl): payın ilk kez %5'i geçtiği rapor (önceki bilinen pay < %2)
+# olayları; önceki 365 günde K24 / K18 sinyali olma oranı vs aynı tarihte fon girmemiş (±365 gün pay < %2) rastgele 10 hisse. Karar: iki
+# soruda da kat >= 1,3 -> 'çöl = büyük alıcının izi' adayı (BIST; ABD fon verisi yok). Fiyat sonuçları fon krizi dışarıda (31.08.2026'da kesik).
+FI_K25 = {"esik": 0.05, "esik2": 0.02, "once_en_cok": 0.02, "ufuk_gun": 365, "bas": "2023-01-01", "bit": "2025-10-31",
+          "kriz": "2026-08-31", "kontrol": 10, "kat_esik": 1.3}
+
+
+def fi_k25_pay_tablo(G: pd.DataFrame, oran: pd.DataFrame, dol: pd.DataFrame) -> pd.DataFrame:
+    """Hisse x ay raporlu fon payı (fi_k18_fon_pay ile aynı hesap): nominal x bölünme oranı / bugünkü sermaye lotu; bil = o ayın son raporu."""
+    M = G.groupby(["kod", "ay"]).agg(nominal=("nominal", "sum"), fon=("fon", "nunique"), bil=("bilinme", "max")).reset_index()
+    M = M.merge(oran, on=["kod", "ay"], how="left").merge(dol[["kod", "sermaye_lot"]], on="kod", how="left")
+    M["pay"] = M.nominal * M.oran.fillna(1.0) / M.sermaye_lot
+    return M.dropna(subset=["pay"]).assign(bil=lambda x: pd.to_datetime(x.bil)).sort_values(["kod", "bil"]).reset_index(drop=True)
+
+
+def fi_k25_sonra(M: pd.DataFrame, X: pd.DataFrame, E: Dict[str, Any] = FI_K25) -> pd.DataFrame:
+    """Soru 1: her sinyal (sembol, tarih) için o an bilinen pay (pay0) ve sonraki ufukta yayımlanan raporlardaki en yüksek pay (pay_max)."""
+    gr = {k: g for k, g in M.groupby("kod")}; p0, pm = [], []
+    for r in X.itertuples():
+        t = pd.Timestamp(r.tarih); g = gr.get(r.sembol)
+        p0.append(_fi_k18_pay_an(M if g is None else g, r.sembol, t) if g is not None else 0.0)
+        if g is None:
+            pm.append(0.0); continue
+        w = g[(g.bil > t) & (g.bil <= t + pd.Timedelta(days=E["ufuk_gun"]))]
+        pm.append(float(w.pay.max()) if len(w) else 0.0)
+    X = X.assign(pay0=p0, pay_max=pm)
+    X["giris5"] = (X.pay0 < E["once_en_cok"]) & (X.pay_max >= E["esik"])
+    X["giris2"] = (X.pay0 < E["once_en_cok"]) & (X.pay_max >= E["esik2"])
+    return X
+
+
+def fi_k25_girisler(M: pd.DataFrame, E: Dict[str, Any] = FI_K25) -> pd.DataFrame:
+    """Soru 2 olayları: payın ilk kez E['esik']'i geçtiği rapor (önceki bilinen pay < E['once_en_cok'] ya da hiç rapor yok)."""
+    sat = []
+    for k, g in M.groupby("kod"):
+        g = g.sort_values("bil"); once = 0.0
+        for r in g.itertuples():
+            if r.pay >= E["esik"] and once < E["once_en_cok"]:
+                sat.append({"sembol": k, "bil": r.bil, "pay": r.pay}); break
+            once = r.pay
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k25(G: pd.DataFrame, oran: pd.DataFrame, dol: pd.DataFrame, V: Dict[str, pd.DataFrame], A: Optional[FIAyar] = None,
+                tohum: int = 25) -> Dict[str, Any]:
+    """K25 sürücü (yalnız BIST). Çıktı k25_soru1.csv, k25_soru2.csv, k25_ozet.csv."""
+    A = A or FIAyar(); E = FI_K25; rng = np.random.default_rng(tohum)
+    M = fi_k25_pay_tablo(G, oran, dol)
+    k24 = pd.read_csv(os.path.join(A.cikti, "k24_olaylar.csv.gz"), parse_dates=["tarih"])
+    k24 = k24[k24.pazar == "BIST"].assign(grup=lambda x: np.where(x.kural, "K24 kural", "K24 eşli"))[["sembol", "tarih", "grup"]]
+    k18 = pd.read_csv(os.path.join(A.cikti, "k18_olaylar.csv.gz"), parse_dates=["bilgi"], low_memory=False)
+    k18 = k18[(k18.pazar == "BIST") & k18.varyant.isin(["C1", "esli"])].rename(columns={"bilgi": "tarih"})
+    k18 = k18.assign(grup=np.where(k18.varyant == "C1", "K18 profil", "K18 eşli"))[["sembol", "tarih", "grup"]]
+    X = pd.concat([k24, k18], ignore_index=True)
+    X = X[(X.tarih >= E["bas"]) & (X.tarih <= E["bit"]) & X.sembol.isin(list(V))]
+    S1 = fi_k25_sonra(M, X, E)
+    oz = S1.groupby("grup").agg(n=("sembol", "size"), giris5=("giris5", "mean"), giris2=("giris2", "mean"), pay0_med=("pay0", "median"))
+    # Soru 2: fon girişi olaylarından önceki 365 günde sinyal var mı (vs aynı tarihte fon girmemiş rastgele hisseler)
+    Gi = fi_k25_girisler(M, E); Gi = Gi[(Gi.bil >= pd.Timestamp(E["bas"]) + pd.Timedelta(days=E["ufuk_gun"])) & Gi.sembol.isin(list(V))]
+    hep = sorted(V); fon_var = {k: g for k, g in M.groupby("kod")}
+    def temiz(k, t):
+        g = fon_var.get(k)
+        if g is None:
+            return True
+        w = g[(g.bil >= t - pd.Timedelta(days=E["ufuk_gun"])) & (g.bil <= t + pd.Timedelta(days=E["ufuk_gun"]))]
+        return not len(w) or w.pay.max() < E["once_en_cok"]
+    sat = []
+    for r in Gi.itertuples():
+        t = pd.Timestamp(r.bil); kont = [k for k in rng.permutation(hep) if k != r.sembol and len(V[k].loc[:t]) > 250 and temiz(k, t)][:E["kontrol"]]
+        for k, tip in [(r.sembol, "fon girişi")] + [(k, "kontrol") for k in kont]:
+            Y = X[(X.sembol == k) & (X.tarih < t) & (X.tarih >= t - pd.Timedelta(days=E["ufuk_gun"]))]
+            sat.append({"olay": r.sembol, "bil": t, "sembol": k, "tip": tip, **{f"var_{g_}": bool((Y.grup == g_).any()) for g_ in X.grup.unique()}})
+    S2 = pd.DataFrame(sat)
+    oz2 = S2.groupby("tip")[[c for c in S2.columns if c.startswith("var_")]].mean() if len(S2) else pd.DataFrame()
+    S1.to_csv(os.path.join(A.cikti, "k25_soru1.csv"), index=False); S2.to_csv(os.path.join(A.cikti, "k25_soru2.csv"), index=False)
+    oz.to_csv(os.path.join(A.cikti, "k25_ozet.csv"))
+    return {"M": M, "soru1": S1, "ozet1": oz, "girisler": Gi, "soru2": S2, "ozet2": oz2}
+
+
 def fi_k12_ders9(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Yk: pd.DataFrame, Ek: pd.DataFrame, Pn: pd.DataFrame, yol: str,
                  vaka: Tuple[str, str] = ("MANAS", "2025-07-22"), pencere: Tuple[str, str] = ("2025-07-18", "2025-08-08")) -> int:
     """Ders 9 (Cemal 25 Eki: 'mumları kıyasla, kim yüzde olarak daha çok yol almış'): (1) soru, nasıl ölçüldü, kısa cevap; (2) gün gün
@@ -5164,6 +5249,88 @@ def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame
             "katalizörle (sektör rüzgârı / KAP haberi aynı hafta) birlikte — CLAUDE.md: 'rüzgâr ya da katalizör olmadan çöl aranmaz'."])
         pdf.savefig(fig); plt.close(fig)
     return 6
+
+
+def fi_k12_ders11(S1: pd.DataFrame, S2: pd.DataFrame, D: pd.DataFrame, yol: str, fon: Tuple[str, ...] = tuple(FON_HISSE)) -> int:
+    """Ders 11 (Cemal 25 Eki: 'bir hisseyi fazla alıcı olunca o bölgede öyle bir yapı oluşur'): (1) mantık, nasıl ölçüldü, soru 1 (çöl ->
+    sonra fon) ve soru 2 (fon -> önce çöl) çubukları; (2) deneme 2 (çölde fon var / yok) ve 3 (fon hisseleri hariç), fon krizi dışarıda; sonuç.
+    S1 = k25_soru1.csv, S2 = k25_soru2.csv, D = k25_deneme.csv."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69); yz = lambda x: (f"%{100 * x:.1f}" if x < 0.1 else f"%{100 * x:.0f}").replace(".", ",") if x == x else "—"
+
+    def yazi(fig, y, baslik, satirlar, boy=9.4, gen=92):
+        if baslik:
+            fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    G = ["K24 kural", "K24 eşli", "K18 profil", "K18 eşli"]; R = ["#1f2a44", "#9aa5b8", "#c0392b", "#e6a39b"]
+    o1 = S1.groupby("grup")[["giris5", "giris2"]].mean()
+    o2 = S2.groupby("tip")[[f"var_{g}" for g in G if f"var_{g}" in S2.columns]].mean() if len(S2) else pd.DataFrame()
+    n2 = int((S2.tip == "fon girişi").sum()) if len(S2) else 0
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "DERS 11: ÇÖL, BÜYÜK ALICININ İZİ Mİ?", [
+            "Sen: 'Bu çöl formasyonunu fon ilişkisini bilmeden gördüm; sonra söylediklerimin çoğu fon hisselerinde çıktı. Demek ki bir hisseyi "
+            "fazla alıcı olunca o bölgede öyle bir yapı oluşur.' Mantık doğru kurulmuş: o zaman çöl, büyük alıcının ayak izi olmalı. Bunu fiyattan "
+            "değil SAHİPLİKTEN ölçtüm: KAP'taki fon portföy raporları (Ara 2022'den, her raporun yayın anıyla; o gün bilinen pay).",
+            "Soru 1 — çölden SONRA büyük alıcı geldi mi? Sinyalde fon payı %2'nin altındayken sonraki 12 ayda raporlu fonların payı sermayenin "
+            "%5'ine (ve %2'sine) çıktı mı; çöl sinyali vs aynı düşüş sonrası tarife uymayan günler (eşli). Soru 2 — büyük alıcı gelmeden ÖNCE çöl "
+            "var mıydı? Fonun ilk kez %5'i geçtiği hisselerde önceki 12 ayda sinyal oranı vs aynı tarihte fon girmemiş 10 rastgele hisse. "
+            "Geçme şartı (önceden): iki soruda da 1,3 kat."])
+        ax = fig.add_axes([0.10, 0.40, 0.84, y - 0.45])
+        for j, g in enumerate(G):
+            if g in o1.index:
+                ax.bar(np.arange(2) + j * 0.2 - 0.3, [100 * o1.loc[g, "giris5"], 100 * o1.loc[g, "giris2"]], 0.2, color=R[j], label=g)
+        ax.set_xticks(range(2)); ax.set_xticklabels(["12 ayda fon payı ≥ %5", "12 ayda fon payı ≥ %2"], fontsize=8.5)
+        ax.set_ylabel("sinyallerin %'si", fontsize=8); ax.legend(fontsize=7.5); ax.set_title("Soru 1: çölden sonra fon geldi mi?", fontsize=9.5)
+        ax = fig.add_axes([0.10, 0.07, 0.84, 0.25])
+        if len(o2):
+            for j, tip in enumerate(["fon girişi", "kontrol"]):
+                if tip in o2.index:
+                    ax.bar(np.arange(o2.shape[1]) + (j - 0.5) * 0.36, 100 * o2.loc[tip].to_numpy(), 0.36, color=["#1f2a44", "#9aa5b8"][j],
+                           label=f"{tip} ({n2} olay)" if tip == "fon girişi" else "fon girmemiş kontrol (10 hisse / olay)")
+            ax.set_xticks(range(o2.shape[1])); ax.set_xticklabels([c.replace("var_", "") for c in o2.columns], fontsize=8)
+            ax.legend(fontsize=7.5)
+        ax.set_ylabel("önceki 12 ayda sinyal görülme %", fontsize=8); ax.set_title("Soru 2: fon gelmeden önce çöl var mıydı?", fontsize=9.5)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
+        d2 = lambda g, m: D[(D.grup == g) & m(D)]
+        sat = []
+        for g in ("K24 kural", "K18 profil"):
+            a, b = d2(g, lambda x: x.pay0 >= 0.02), d2(g, lambda x: x.pay0 < 0.005)
+            sat.append(f"- {g}: çölde fon VAR (pay ≥ %2, n {len(a)}): 250 günde 2 kat {yz((a.mx >= 1).mean())}, 60 günde önce +%15 "
+                       f"{yz((a.y60 == 1).mean())}; fon YOK (n {len(b)}): 2 kat {yz((b.mx >= 1).mean())}, +%15 {yz((b.y60 == 1).mean())}.")
+        sat3 = []
+        for g in G:
+            x = D[(D.grup == g) & ~D.sembol.isin(fon)]
+            sat3.append(f"- {g} (n {len(x)}): 2 kat {yz((x.mx >= 1).mean())}, 60 günde önce +%15 {yz((x.y60 == 1).mean())}, önce −%15 {yz((x.y60 == -1).mean())}")
+        yazi(fig, 0.96, "ÖNCEDEN YAZILAN İKİ DENEME (fon krizi dışarıda: 31.08.2026'da kesik)", [
+            "Sen: 'TERA'nın düşüşü fon krizinden; ona bakmamak lazım.' Doğru: Eylül 2026 krizi şekille ilgisiz bir dış olay. Aşağıdaki bütün "
+            "sonuçlarda fiyat 31 Ağustos 2026'da kesildi. Kriz dışarıda kalınca kuralın −%30'a düşen oranı %43'ten %32'ye iniyor; eşlide %30.",
+            "DENEME 2 — çöl + fon birlikte: sinyal anında fon zaten içerideyse çöl daha mı iyi?"] + sat + [
+            "DENEME 3 — fon hisseleri (23 hisse) evrenden çıkarılınca kural vs eşli:"] + sat3 + [
+            "",
+            "SONUÇ",
+            "- Görünen büyük alıcı (raporlu fon) çölden sonra eşli günlerden belirgin daha sık gelmiyor (1,1 kat civarı); fon girişlerinden önce "
+            "çöl de daha sık değil. Çölde fon zaten varsa sonrası daha KÖTÜ. Fon hisseleri çıkarılınca çöl = eşli. → Senin mantığın (çok alıcı -> "
+            "çöl) fon raporlarında görünmüyor.",
+            "- Açık kalan: savcılık anlatımına göre fon hissesi önce kişisel hesaplarda toplandı, sonra fonlara satıldı. Bu GÖRÜNMEYEN alıcı fon "
+            "raporunda yok. Onu görmek için aracı kurum dağılımı (AKD, günlük hangi kurum ne aldı) gerekir; ücretli veri — senin kararın.",
+            "- Senin gözün fon hisselerindeki çölleri doğru gördü (TEHOL, BIGEN, ANELE, HEDEF); ama aynı şekil fon olmayan yüzlerce hissede de var "
+            "ve onların sonrası sıradan. Şekil 'burada büyük alıcı var' demiyor.",
+            "",
+            "Sıradaki (önceden yazılı): (1) kör set ✓/✗ ile gözünün ayırdığı şey; (2) AKD verisi gelirse çölde tek kurumun net alıcı olduğu "
+            "günler; (3) KAP %5 pay değişim bildirimleri (ortaklık yapısı) çölden sonra daha sık mı."])
+        pdf.savefig(fig); plt.close(fig)
+    return 2
 
 
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:

@@ -368,6 +368,16 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "+%15: BIST 2023 %46 vs %62 (0,74, n 516), BIST 2024-26 %58 vs %56 (1,04, n 967), ABD 2023 0,92, ABD 2024-26 0,97; 2016-22 "
                "BIST 1,13, ABD 1,01 (düşüş ölçüsü genç halka arzlar için 20 barla, BINBN'i 27.01.2025'te yakalar). Tarif eşliden iyi değil. "
                "Ders 10 s.4."),
+    _ik_k("Ç97", "2026-10-25", "ÇÖL = BÜYÜK ALICININ İZİ Mİ: çölden sonra fon payı geliyor mu, fon girişinden önce çöl var mı; çölde fon var/yok; fon "
+          "hisseleri hariç (K25)", "FON_IZI.py (k25)",
+          "Cemal: 'bir hisseyi fazla alıcı olunca o bölgede öyle bir yapı oluşur; bu mantıkla yola çıktım' + 'TERA'nın düşüşü fon krizinden'",
+          "Yeni deneme (karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k25_ozet.csv",
+          notu="KAP raporlu fon payı (o an bilinen), BIST 2023-2025. Soru 1: sinyalde pay < %2 iken 12 ayda pay >= %5: K24 kural %1,64 vs eşli "
+               "%1,49 (1,10), K18 profil %2,12 vs %1,85 (1,15); >= %2: 1,05-1,11. Soru 2: fonun ilk kez %5'i geçtiği 19 olayda önceki 12 ayda "
+               "K24 sinyali %32 vs fon girmemiş kontrol %30 (1,07). Deneme 2: çölde fon varken (pay >= %2) 250 gün 2 kat %28 / %19 vs fonsuz %36 "
+               "/ %37 (kötü). Deneme 3: fon hisseleri hariç kural %37 vs eşli %35 (2 kat), 60 gün +%15 %56 vs %59. Fiyat 31.08.2026'da kesik (fon "
+               "krizi dışarıda; kuralın -%30 oranı %43 -> %32, eşli %30). Görünen alıcı (fon) çölle ilişkili değil; görünmeyen alıcı için AKD "
+               "verisi gerekir (ücretli). Ders: FON_IZI_ders11_buyuk_alici.pdf."),
 ]
 
 
@@ -470,6 +480,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "BINBN benzerleri BIST 2023 %35 yukarı (hepsi %58), BIST 2024-26 %62 (%54), ABD 1,05-1,14 kat; K24 BINBN'i yakalıyor, sonuç değişmedi "
               "(0,74-1,04). Kör set Cemal'de",
      "durum": "TAMAMLANDI, AÇIK: Cemal'in kör set ✓/✗'i bekleniyor (sonra ✓'lerin yukarı oranı vs süzgeç tabanı, önceden yazılı)"},
+    {"tarih": "2026-10-25", "istek": "BINBN'i fon almış, %1000 yükselmiş; sıradan hisseyle niye aynı kazandırsın? TERA'nın düşüşü fon krizinden, ona bakmamak "
+                                     "lazım. Çöl formasyonunu fon ilişkisini bilmeden gördüm; demek ki bir hisseyi fazla alıcı olunca o bölgede öyle bir yapı oluşur",
+     "yapilan": "Açıklama: 0,74-1,04 kuralın 907 sinyalinin karnesi, BINBN'in değil; BINBN'de kural 3 kez tetikledi (+%179; +%8 sonra -%89; +%49 "
+                "sonra -%80); ham veride Oca 2025 92,5 -> tepe 290,8 (3 kat). K25: fon raporlarıyla çöl -> fon ve fon -> önce çöl, çölde fon var/yok, "
+                "fon hisseleri hariç; fon krizi dışarıda; IZ_KARNE Ç97; FON_IZI_ders11_buyuk_alici.pdf",
+     "sonuc": "Görünen büyük alıcı (raporlu fon) çölden sonra daha sık gelmiyor (1,10-1,15), fon girişinden önce çöl daha sık değil (1,07), çölde "
+              "fon varken sonrası daha kötü, fon hisseleri hariç çöl = eşli. Kriz dışarıda -%30 oranı %43 -> %32 ama eşli de %30",
+     "durum": "TAMAMLANDI, AÇIK: görünmeyen alıcı için AKD verisi (ücretli) Cemal'in kararı; kör set ✓/✗ bekleniyor"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -490,6 +508,8 @@ IK_ACIK: List[str] = [
     "KÖR SET (K23, 25 Eki): FON_IZI_kor_set_bolge.pdf, 48 grafik (A: MANAS Haz-Tem, B: MANAS Eki-Kas, C: BINBN Ara-Oca; her biri en yakın 16, "
     "adsız, çöl sonunda kesik). Cemal ✓/✗ verince: ✓'lerin 60 gün ±%15 yukarı oranı vs ✗ vs süzgeç tabanı (~%58); ✓ >= 1,3 x taban ise ✓/✗'yi "
     "ayıran ölçüler -> Cemal ağırlıklı benzerlik ABD ve görülmemiş dönemde. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
+    "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil; Cemal'in 'çok alıcı -> çöl' mantığının görünmeyen alıcısı (fonlara "
+    "satmadan önce kişisel hesaplarda toplayan) için aracı kurum dağılımı (AKD) verisi gerekir; ücretli, Cemal'in kararı.",
     "SİSTEM (K19, 25 Eki): giriş (çöl/kırılım) aynı gün eşli rastgele hisseden iyi değil; çıkış (kutu dibi stop + trail) 120 gün tutmaktan "
     "ortalamada düşük, yatay piyasada derin kaybı azaltıyor. Cemal'in kararı: amaç büyük kazananı tutmak mı (gevşek trail / tut), derin kaybı "
     "sınırlamak mı. Sıradaki ölçüm: üretim zinciri (D13 + T6/T10 + trail) ve 2016-22 ayı dönemi aynı rastgele kıyasla.",

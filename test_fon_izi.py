@@ -443,6 +443,14 @@ def sina():
     if not ok30:
         hata.append(f"30) K23/K24 iki evre yanlış: K24 {K30.to_dict('records') if len(K30) else []} K23 seri {P30.seri} delen {P30.delen} "
                     f"once_alt {P30.once_alt} dusus {P30.dusus}")
+    # 31) K25: payın ilk kez %5'i geçtiği rapor olay; sinyal anında bilinen pay (önceki rapor) ve sonraki 365 günde en yüksek pay.
+    M31 = pd.DataFrame({"kod": ["X", "X", "Y"], "ay": [24288, 24290, 24288], "bil": pd.to_datetime(["2024-01-05", "2024-03-05", "2024-01-05"]),
+                        "pay": [0.01, 0.06, 0.001]})
+    G31 = F.fi_k25_girisler(M31); S31 = F.fi_k25_sonra(M31, pd.DataFrame({"sembol": ["X", "Y"], "tarih": pd.to_datetime(["2024-02-01"] * 2)}))
+    ok31 = (list(G31.sembol) == ["X"] and G31.bil.iloc[0] == pd.Timestamp("2024-03-05") and abs(S31.pay0.iloc[0] - 0.01) < 1e-12
+            and abs(S31.pay_max.iloc[0] - 0.06) < 1e-12 and bool(S31.giris5.iloc[0]) and not bool(S31.giris5.iloc[1]))
+    if not ok31:
+        hata.append(f"31) K25 fon girişi yanlış: olay {G31.to_dict('records')} sinyal {S31.to_dict('records')}")
     return hata
 
 
@@ -450,4 +458,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 30/30 OK")
+    print("test_fon_izi: 31/31 OK")
