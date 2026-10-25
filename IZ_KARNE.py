@@ -327,6 +327,13 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "2024-26: 12 hücrenin hiçbiri aynı gün eşli hisseden üstün değil (işlem başı fark −1,8..+1,7 puan, %90 aralık sıfırı içeriyor). "
                "BIST 2023 işlem başı +%38 = aynı gün rastgele hisse +%40 (piyasa). Çıkış kuralı aynı girişlerde 120 gün tutmaktan ortalamada "
                "hep düşük; yatay piyasada medyan ve −%30 altı kayıpta iyi (BIST 2024-26 %11 → %4). Ders: FON_IZI_ders8_sistem_rastgele.pdf."),
+    _ik_k("Ç92", "2026-10-25", "SAĞ AYAK: çöl atılımından sonraki yükseliş (120 gün en yüksek, 250 gün 2 kat) vs aynı gün eşli hisse; nadir çöl (K20)",
+          "FON_IZI.py (k19)", "Cemal: 'çöl bitişi, sağ ayak rastgele hisseden iyi değilse her şey hikâye; çöl nadir'", "Yeni deneme (karar önceden)",
+          "IZ C", 4, cikti="arastirma_cikti/fon_izi/k19_ozet.csv",
+          notu="Çıkış kuralı yok. 5 sinyal (profil, kutu, düz kırılım, dar kutu, nadir = dar + düşüş ≤ −%50) × BIST/ABD × 2023/2024-26: "
+               "hiçbir sinyal dört hücrede geçmedi; BIST'te hiçbir hücre geçmedi (profil 2024-26 120 gün en yüksek +%53,5 vs eşli +%51,0; "
+               "nadir 2 kat oranı %20,7 vs %20,5). ABD'de 3 hücre geçti (profil ve kutu 2024-26, nadir 2023). MANAS 16 Haz-28 Tem 2025 K18 "
+               "buldu (22 Tem), 20 Eki-5 Kas 2025 kutusu 12 gün, bulmadı; D13 ikisini de görmedi."),
 ]
 
 
@@ -395,6 +402,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Haklı: o cümle ölçülmemişti. Giriş rastgeleden iyi değil (12/12 hücre, fark ~0; BIST 2023 +%38 = piyasa). Çıkış kuralı kazanç "
               "kaynağı değil: 120 gün tutmak ortalamada hep önde; kural yalnız yatay piyasada derin kaybı azaltıyor. Para piyasada olmaktan geliyor",
      "durum": "TAMAMLANDI, AÇIK: sistemin amacı (büyük kazananı tutmak mı, derin kaybı sınırlamak mı) Cemal'in kararı; üretim değişmedi"},
+    {"tarih": "2026-10-25", "istek": "MANAS 16 Haz-28 Tem 2025 ve 20 Eki-5 Kas 2025 çöllerini bulamıyor mu? Çöl nadir; çöl bitişi (sağ ayak) rastgele "
+                                     "hisseden iyi değilse her şey hikâye; çöl oluşurken kazancı ölçüyorsan yanlış",
+     "yapilan": "MANAS kontrolü; K19'a sağ ayak ölçüleri (120 gün en yüksek, 250 gün 2 kat; çıkış kuralı yok) ve nadir/dar çöl sinyalleri eklendi, "
+                "aynı gün eşli rastgele hisseye göre koşuldu (karar önceden); IZ_KARNE Ç92; ders 8'e sağ ayak sayfası",
+     "sonuc": "Ölçülen zaten sağ ayaktı (atılımdan sonrası), çöl içi değil. MANAS Haz-Tem K18 buldu (sonra 9 kat; trail +%34'te sattı), "
+              "Eki-Kas kutusu 12 gün, bulmadı; D13 ikisini de görmedi. Sağ ayak BIST'te hiçbir hücrede rastgeleden iyi değil (nadir çöl 2 kat %20,7 vs %20,5); "
+              "ABD'de 3 hücre iyi, dört hücre değil",
+     "durum": "TAMAMLANDI, AÇIK: sistemin amacı ve D13 kapsamı Cemal'in kararı; üretim değişmedi"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "

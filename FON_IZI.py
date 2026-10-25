@@ -3929,6 +3929,9 @@ def fi_k12_ders7(V: Dict[str, pd.DataFrame], vaka: pd.DataFrame, Zk: pd.DataFram
 # RASTGELE (her sinyal için 3 çekiliş, AYNI çıkış kuralı ve AYNI stop mesafesi d = 1 - stop/g): R_hisse = aynı gün rastgele başka hisse;
 # R_esli = aynı gün, aynı 60 gün momentum beşliği x 60 gün likidite üçlüsü; R_nokta = aynı hisse, aynı dönemde rastgele gün.
 # EK (aynı gün, sonuç görülmeden): her işlemde 'tut120' = stopsuz, trailsiz 120 bar tut (çıkış kuralının kendi katkısı, betimsel).
+# K20 (Cemal 25 Eki: 'çöl bitişi, sağ ayak rastgele hisseden iyi değilse her şey hikâye; çöl nadir'; önceden yazıldı): ek sinyaller dar
+# (K18 C4, bant <= %20) ve nadir (C4 + düşüş <= -%50); ek ölçüler max120 (120 barda en yüksek / giriş), x2_250 (250 barda stop kırılmadan
+# 2 kat). Sağ ayak kararı: max120'nin R_esli'ye eşli farkı ay kümeli %90 alt sınırı > 0, dört karar hücresinde.
 # KARAR (önceden): hücre (pazar x 2023 / 2024-26) 'sistem üstün' = R_esli'ye göre işlem başı fark ay kümeli bootstrap %90 alt sınırı > 0
 # VE 30 slot portföy toplamı R_esli'nin >= 1,3 katı (R_esli <= 0 ise sistem > 0). Dört karar hücresinin hepsi -> sistem rastgeleden üstün.
 FI_K19 = {"stop_tol": 0.02, "hedef": 0.20, "ufuk": 120, "maliyet": 0.004, "cekilis": 3, "slot": 30, "bas": "2023-01-01",
@@ -3987,8 +3990,15 @@ def fi_k19_islem(D: Dict[str, Any], s: str, t: pd.Timestamp, d: Optional[float] 
     if r != r:
         return None
     tut = c[i + E["ufuk"] - 1] / g - 1 - E["maliyet"] if i + E["ufuk"] <= len(c) else np.nan   # kıyas: stopsuz, trailsiz 120 bar tut
+    # K20 'sağ ayak' (atılımdan SONRAKİ yükseliş, çıkış kuralından bağımsız): 120 barda en yüksek High / giriş; 250 barda stop
+    # (kapanış) kırılmadan 2 kat. Pencere dolmamışsa NaN.
+    mx = h[i:i + E["ufuk"]].max() / g - 1 if i + E["ufuk"] <= len(c) else np.nan
+    x2 = np.nan
+    if i + 250 <= len(c):
+        hi = np.flatnonzero(h[i:i + 250] >= 2 * g); ki = np.flatnonzero(c[i:i + 250] < stop)
+        x2 = float(len(hi) > 0 and (len(ki) == 0 or hi[0] < ki[0]))
     return {"sembol": s, "bilgi": t, "giris": idx[i], "cikis": idx[min(len(idx) - 1, i + b - 1)], "r": r, "bar": b, "acik": acik,
-            "d": 1 - stop / g if g > 0 else np.nan, "tut120": tut}
+            "d": 1 - stop / g if g > 0 else np.nan, "tut120": tut, "max120": mx, "x2_250": x2}
 
 
 def fi_k19_donchian(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K19) -> pd.DataFrame:
@@ -4065,6 +4075,7 @@ def fi_k19_kiyas(S: pd.DataFrame, R: Dict[str, pd.DataFrame], E: Dict[str, Any] 
         out[on + "agir"] = (X.r <= -0.15).mean(); out[on + "bar"] = X.bar.mean()
         k = X.tut120.notna()                                               # aynı işlemlerde çıkış kuralı mı, 120 bar tutmak mı
         out[on + "kural_tut"] = X.r[k].mean(); out[on + "tut120"] = X.tut120[k].mean(); out[on + "tut_agir"] = (X.tut120[k] <= -0.15).mean()
+        out[on + "max120"] = X.max120.mean(); out[on + "max120_med"] = X.max120.median(); out[on + "x2"] = X.x2_250.mean()
     ozet(S, "s_"); out["s_slot"] = fi_k19_slot(S, E["slot"]); out["s_acik"] = S.acik.mean()
     for ad, Rx in R.items():
         if not len(Rx):
@@ -4077,9 +4088,18 @@ def fi_k19_kiyas(S: pd.DataFrame, R: Dict[str, pd.DataFrame], E: Dict[str, Any] 
         aylar = P.ay.unique(); G = {a: P.fark[P.ay == a].to_numpy() for a in aylar}
         bs = [np.concatenate([G[a] for a in rng.choice(aylar, len(aylar))]).mean() for _ in range(E["boot"])]
         out[ad + "_fark"] = P.fark.mean(); out[ad + "_alt"], out[ad + "_ust"] = np.percentile(bs, [5, 95])
+        # K20 sağ ayak: 120 barda en yüksek yükselişin eşli farkı (aynı ay kümeli bootstrap)
+        m2 = Rx.groupby("i").max120.mean()
+        Q = pd.DataFrame({"s": S.max120.to_numpy()}, index=S.index).join(m2.rename("r"), how="inner").dropna()
+        if len(Q):
+            Q["fark"] = Q.s - Q.r; Q["ay"] = pd.to_datetime(S.loc[Q.index, "bilgi"]).dt.to_period("M").astype(str)
+            ay2 = Q.ay.unique(); G2 = {a: Q.fark[Q.ay == a].to_numpy() for a in ay2}
+            b2 = [np.concatenate([G2[a] for a in rng.choice(ay2, len(ay2))]).mean() for _ in range(E["boot"])]
+            out[ad + "_maxfark"] = Q.fark.mean(); out[ad + "_maxalt"], out[ad + "_maxust"] = np.percentile(b2, [5, 95])
     se, rs = out.get("s_slot", np.nan), out.get("esli_slot", np.nan)
     slot_ok = (se >= E["kat_esik"] * rs) if rs > 0 else (se > 0)
     out["ustun"] = bool(out.get("esli_alt", -1) > 0 and slot_ok)
+    out["sag_ayak_ustun"] = bool(out.get("esli_maxalt", -1) > 0)      # K20: atılım sonrası yükseliş eşli hisseden büyük mü
     return out
 
 
@@ -4096,9 +4116,10 @@ def fon_izi_k19(A: Optional[FIAyar] = None) -> Dict[str, Any]:
             filog.warning("K19 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
         D = fi_k19_dizi(V)
         K = K18[(K18.pazar == pazar) & (K18.bilgi >= E["bas"])]
-        sinyal = {"cemal": K[K.varyant == "C1"].assign(stop=lambda x: x.taban * (1 - E["stop_tol"])),
-                  "kutu": K[K.varyant.isin(["C1", "esli"])].assign(stop=lambda x: x.taban * (1 - E["stop_tol"])),
-                  "donchian": fi_k19_donchian(V, E)}
+        st = lambda x: x.assign(stop=x.taban * (1 - E["stop_tol"]))
+        sinyal = {"cemal": st(K[K.varyant == "C1"]), "kutu": st(K[K.varyant.isin(["C1", "esli"])]), "donchian": fi_k19_donchian(V, E),
+                  # K20 (Cemal 25 Eki: 'çöl nadir'): sıkı çöl = dar kutu (C4, bant <= %20) ve sert çöküş (düşüş <= -%50) birlikte
+                  "dar": st(K[K.varyant == "C4"]), "nadir": st(K[(K.varyant == "C4") & (K.dusus <= -0.50)])}
         for sad, X0 in sinyal.items():
             S = pd.DataFrame([y for y in (fi_k19_islem(D, r.sembol, pd.Timestamp(r.bilgi), stop=r.stop, E=E)
                                           for r in X0.itertuples()) if y]) if len(X0) else pd.DataFrame()
@@ -4208,6 +4229,35 @@ def fi_k12_ders8(Zk: pd.DataFrame, T: pd.DataFrame, yol: str) -> int:
                 ax.legend(fontsize=7)
         pdf.savefig(fig); plt.close(fig)
         fig = plt.figure(figsize=A4)
+        N = Zk[Zk.sinyal == "nadir"].set_index(["pazar", "donem"])
+        yazi(fig, 0.96, "SAĞ AYAK: ÇÖL BİTTİKTEN SONRAKİ YÜKSELİŞ (çıkış kuralı yok)", [
+            "Sen: 'çöl oluşurken günlerdeki kazanç değil; çöl bitişi, sağ ayak rastgele hisseden iyi değilse her şey hikâye; çöl nadir.' "
+            "Burada çıkış kuralı yok: atılımdan sonraki 120 günde ulaşılan en yüksek fiyat (giriş = ertesi açılış) ve 250 günde kutu dibi "
+            "kırılmadan 2 kat. Aynı gün, aynı momentum × likiditede rastgele hisse ile kıyas. 'Nadir' = dar kutu (bant ≤ %20) + sert çöküş "
+            "(≤ −%50): BIST 2024-26'da yılda ~120 sinyal.",
+            f"- Senin profilin, BIST 2024-26: 120 günde en yüksek ort. {yz(Zk[(Zk.sinyal == 'cemal') & (Zk.pazar == 'BIST') & (Zk.donem == '2024-26')].s_max120.iloc[0])}, "
+            f"aynı gün eşli hisse {yz(Zk[(Zk.sinyal == 'cemal') & (Zk.pazar == 'BIST') & (Zk.donem == '2024-26')].esli_max120.iloc[0])}.",
+            f"- Nadir çöl, BIST 2024-26: 2 kat oranı {yz(N.loc[('BIST', '2024-26'), 's_x2'])}, aynı gün eşli hisse {yz(N.loc[('BIST', '2024-26'), 'esli_x2'])}. "
+            "Kodun bulduğu her 5 nadir çölden 1'i 2 kat oldu; aynı gün rastgele seçilen hisseden de 5'te 1'i.",
+            f"- Sağ ayak geçme şartı (önceden: eşli farkın %90 alt sınırı > 0, dört hücre): hiçbir sinyal geçmedi; geçen hücreler yalnız ABD "
+            f"({int(Zk.sag_ayak_ustun.sum())} hücre), BIST'te hiçbiri."])
+        ax = fig.add_axes([0.10, 0.36, 0.85, 0.30]); et = []; a_ = []; b_ = []
+        for s_ in ("cemal", "dar", "nadir"):
+            for p, d_ in HUC:
+                r = Zk[(Zk.sinyal == s_) & (Zk.pazar == p) & (Zk.donem == d_)]
+                if len(r):
+                    et.append(f"{s_}\n{p} {d_}"); a_.append(100 * r.s_max120.iloc[0]); b_.append(100 * r.esli_max120.iloc[0])
+        ax.bar(np.arange(len(a_)) - 0.18, a_, 0.36, color="#1f2a44", label="çöl atılımı")
+        ax.bar(np.arange(len(b_)) + 0.18, b_, 0.36, color="#7f8fa6", label="aynı gün eşli rastgele hisse")
+        ax.set_xticks(range(len(et))); ax.set_xticklabels(et, fontsize=5.5); ax.set_ylabel("120 günde en yüksek, ort. %", fontsize=8); ax.legend(fontsize=7)
+        yazi(fig, 0.31, "", [
+            "- MANAS 16 Haz – 28 Tem 2025: kod (K18) buldu, sinyal 22 Tem 2025; hisse sonra 9 kat gitti. Trail çıkışı 19 Ağu'da +%34'te "
+            "sattı (120 gün tutsaydın +%156). MANAS 20 Eki – 5 Kas 2025: kod bulmadı (kutu 12 işlem günü, eşik 20). Üretim D13 ikisini de görmedi.",
+            "- Gördüklerin halüsinasyon değil: o çöller vardı ve koştu. Ama aynı şekil o yıllarda yüzlerce kez çıktı; koşanları sen hatırlıyorsun, "
+            "koşmayanları (VSNMD, PAPIL gibi) unutuyoruz. Şekil koşanı seçmiyor; sağ ayaktaki koşu aynı gün rastgele hissenin koşusu kadar."],
+             boy=9)
+        pdf.savefig(fig); plt.close(fig)
+        fig = plt.figure(figsize=A4)
         yazi(fig, 0.96, "DERS: NEREDE APTALLIK VARDI, ŞİMDİ NE BİLİYORUZ", [
             "- Aptallık: aylarca 'çöl iz mi?' diye girişi ölçtük ve her seferinde 'iz değil, kazanç kırılım + trail'den' dedik. Kırılım + "
             "trail'in kendisini rastgele girişle hiç kıyaslamadık. Kıyaslayınca o da tutmadı.",
@@ -4225,7 +4275,7 @@ def fi_k12_ders8(Zk: pd.DataFrame, T: pd.DataFrame, yol: str) -> int:
             "Sıradaki (önceden yazılı, kararın sonrası): aynı rastgele kıyas üretimdeki D13 + T6/T10 + trail zinciri için ve 2016-22 ayı "
             "döneminde (piyasa düşerken giriş seçimi ve stop daha mı değerli?)."])
         pdf.savefig(fig); plt.close(fig)
-    return 4
+    return 5
 
 
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
