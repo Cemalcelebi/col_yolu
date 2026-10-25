@@ -298,6 +298,28 @@ IK_KAYIT: List[Dict[str, Any]] = [
           notu="Ölçüm kodunda ~30 doğrulanmış hata düzeltildi, etkilenen her çalışma yeniden koşuldu: tek cetvel İZ 0 (değişmedi). "
                "Düşen iddialar: T10 getiri dayanağı (ters döndü), öbek 'yön' izi (mekanik), D13 'alım +12..26p' (mekanik), düzgün dip "
                "'−%20 daha sık' (kontrol grubu hatası), COL_SEKIL 'ayıran ölçüler' (kıyaslanamaz negatif). Üretimde 11 hata: 'yaz' bekliyor."),
+    _ik_k("Ç85", "2026-10-25", "CEMAL'İN VAKA PROFİLİ: düşüş sonrası dar kutu, mum ve hacim düşüştekinden küçük, tavan kırılımı (K18 C1)",
+          "FON_IZI.py (k18)", "Cemal: 'TEHOL, BINBN, KTLEV, ESCAR, BORLS, VERUS, MANAS koştu; VSNMD, PAPIL koşmadı. Ortak iz var mı?' — "
+          "koşanların ortak profili evrende önce +%20'yi daha sık getiriyor mu?", "Yeni deneme (eşikler koşan vakalardan)", "IZ C", 2,
+          "cemal_profil", "yukari", cikti="arastirma_cikti/fon_izi/k18_ozet.csv",
+          notu="Vakalar: koşan 9 bölgenin 7'si, koşmayan 3'ünün 2'si (VSNMD, PAPIL) profilde → profil ayırmıyor. Eşli kutuya (aynı bağlam, "
+               "profil tutmayan atılım) göre önce +%20 BIST 0,90 / 1,06, ABD 0,87 / 1,04; 2 kat 1,15 / 1,04 / 0,97 / 1,22. Tek cetvelde önce "
+               "−%20 1,24-1,39 (oynak). BIST 2024-26'da 1.254 sinyal: %23'ü 2 kat (eşli %22). Üretim D13 Cemal'in 12 bölgesinin 5'ini gördü "
+               "(VSNMD dahil), BINBN, KTLEV, EUHOL, MANAS'ı görmedi. Ders: FON_IZI_ders7_cemal_vakalar.pdf."),
+    _ik_k("Ç86", "2026-10-25", "Cemal'in vaka profili, kutu >= 40 bar ('aylarca'; K18 C2)", "FON_IZI.py (k18)",
+          "Aylarca süren kutu ayrışır mı?", "Yeni deneme", "IZ C", 2, "cemal_profil_uzun", "yukari"),
+    _ik_k("Ç87", "2026-10-25", "Cemal'in vaka profili, önce düşüş <= -%50 ('sert çöküş'; K18 C3)", "FON_IZI.py (k18)",
+          "Sert çöküş sonrası kutu ayrışır mı?", "Yeni deneme", "IZ C", 2, "cemal_profil_sert", "yukari"),
+    _ik_k("Ç88", "2026-10-25", "Cemal'in vaka profili, dar kutu (bant <= %20; K18 C4)", "FON_IZI.py (k18)",
+          "TEHOL/BINBN/ESCAR/MANAS gibi dar çöl ayrışır mı? (Ç85-Ç87 iz değil sonrası tur 2, eşik önceden)", "Yeni deneme", "IZ C", 2,
+          "cemal_profil_dar", "yukari"),
+    _ik_k("Ç89", "2026-10-25", "Cemal'in vaka profili + kutuda dev hacim barı (>= 10 kat; K18 C5)", "FON_IZI.py (k18)",
+          "Cemal'in EUHOL 24 Ara 2024 izi: çölün içindeki dev hacim barı ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2,
+          "cemal_profil_dev", "yukari",
+          notu="Eşli kutuya göre 2 kat katı BIST 2024-26 1,55, ABD 2023 1,67, ABD 2024-26 1,43 ama BIST 2023 0,86 (n 25) ve önce −%20 de "
+               "1,2-1,85 kat sık: oynak hisse. Tek cetvel önce +%20 0,84-1,10."),
+    _ik_k("Ç90", "2026-10-25", "Cemal'in vaka profili + sektör rüzgârı (K18 C6)", "FON_IZI.py (k18)",
+          "Rüzgârlı sektörde profil ayrışır mı? (tur 2)", "Yeni deneme", "IZ C", 2, "cemal_profil_ruz", "yukari"),
 ]
 
 
@@ -350,6 +372,15 @@ IK_GOREV: List[Dict[str, str]] = [
               "öbek ve D13 'alım oranı' üstünlüğü mekanikti, düzgün dip '−%20 daha sık' ve COL_SEKIL 'ayıran ölçüler' karşılaştırma hatasıydı. "
               "Üretimde 11 doğrulanmış hata (çıkış yalnız son güne bakıyor, bedelsiz ölçeği, AL satırı, T9, XU100 yarım bar, fon süzgeci...)",
      "durum": "TAMAMLANDI, AÇIK: üretim düzeltmeleri Cemal'in 'yaz' kararını bekliyor; 13F izin engelinde"},
+    {"tarih": "2026-10-25", "istek": "TEHOL, BINBN, KTLEV, ESCAR, Euro (24 Ara 2024 hacim barı), BORLS, VERUS, MANAS koştu; Vişne, PAPIL koşmadı: "
+                                     "ortak iz var mı? Bölgeleri kendin bul, test et; kodun bulduklarında koştu / koşmadı de",
+     "yapilan": "12 bölge veride bulundu (Euro = EUHOL; 'Hakiş' eşlenemedi); her bölgede aynı ölçüler + fon payı + üretim D13; koşanların ortak "
+                "profili sabit eşikle BIST + ABD 2016-26'da tarandı (K18, 3 + önceden yazılan 3 deneme); tek cetvel Ç85-Ç90; kodun bulduğu BIST "
+                "2024-26 listesi; FON_IZI_ders7_cemal_vakalar.pdf",
+     "sonuc": "Ortak iz VAR (sert düşüş → mumu ve hacmi düşüştekinden küçük dar kutu → kapanışla tavan kırılımı) ama koşmayan VSNMD ve PAPIL'de "
+              "de var; evrende önce +%20 eşli tabanın 0,84-1,16'sı, önce −%20 1,05-1,49 → İZ DEĞİL. BIST 2024-26'da 1.254 sinyal: 211 koştu (2 kat), "
+              "340 +%20, 638 koşmadı (eşlide oranlar aynı). Fon payı çöl sırasında ~0. Üretim D13 12 bölgenin 5'ini gördü",
+     "durum": "TAMAMLANDI, AÇIK: D13'ün kaçırdığı bölgeler (BINBN, KTLEV, MANAS) için kutu başlangıcı üretim kararı ('yaz')"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -364,6 +395,9 @@ IK_ACIK: List[str] = [
     "Karar bekleyen standart sorusu (Cemal): yalnız BIST'te güçlü risk izleri (A11, A14: BIST 3 dönemde 1,5-2,6 kat, ABD 1,0-1,4) "
     "'BIST'e özgü risk süzgeci' diye ayrı sınıf olsun mu? Şu anki standartla iz değil.",
     "Puanlanamayan eski maddeler: A7 (veri yok), A8 (sözleşme tutarı yok), B10/B11 (kriz takvimi), B12/B13 ve D7 (çöl segment olay dosyası yok).",
+    "D13 yakalama (Cemal'in vakaları, 25 Eki): üretim D13 Cemal'in koşan BINBN-24, KTLEV-24, MANAS-25a/b bölgelerini görmedi (dip yeni / parabol "
+    "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
+    "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
 ]
 
 
@@ -741,6 +775,42 @@ def ik_s_iki_yuvarlama_hafif(ay, pazar, V):
     return _ik_k17(ay, pazar, "Y6")
 
 
+def _ik_k18(ay, pazar, varyant):
+    D = _ik_dosya(ay, "fon_izi/k18_olaylar.csv.gz")
+    return _ik_pazar_suz(D[D.varyant == varyant], pazar, "bilgi")
+
+
+def ik_s_cemal_profil(ay, pazar, V):
+    """Ç85: K18 C1 — Cemal'in koşan vakalarının ortak profili: >= %30 düşüş sonrası dar kutu (bant <= %50, 20-130 bar), kutu mumu ve
+    hacmi düşüştekinden küçük, kutu tavanı kırılım günü (FON_IZI k18)."""
+    return _ik_k18(ay, pazar, "C1")
+
+
+def ik_s_cemal_profil_uzun(ay, pazar, V):
+    """Ç86: K18 C2 — C1, kutu >= 40 bar ('aylarca')."""
+    return _ik_k18(ay, pazar, "C2")
+
+
+def ik_s_cemal_profil_sert(ay, pazar, V):
+    """Ç87: K18 C3 — C1, önce düşüş <= -%50 ('sert çöküş')."""
+    return _ik_k18(ay, pazar, "C3")
+
+
+def ik_s_cemal_profil_dar(ay, pazar, V):
+    """Ç88: K18 C4 — profil, kutu bandı <= %20 (dar çöl; tur 2)."""
+    return _ik_k18(ay, pazar, "C4")
+
+
+def ik_s_cemal_profil_dev(ay, pazar, V):
+    """Ç89: K18 C5 — profil + kutuda dev hacim barı (>= kutu medyanının 10 katı; EUHOL 24.12.2024; tur 2)."""
+    return _ik_k18(ay, pazar, "C5")
+
+
+def ik_s_cemal_profil_ruz(ay, pazar, V):
+    """Ç90: K18 C6 — C1 + bilgi gününde sektör rüzgârı (D9b; tur 2)."""
+    return _ik_k18(ay, pazar, "C6")
+
+
 IK_SINYAL: Dict[str, Callable] = {
     "tavan": ik_s_tavan, "taban": ik_s_taban, "hacim_dus": ik_s_hacim_dus, "hacim_dus_20": ik_s_hacim_dus_20,
     "blok_taban": ik_s_blok_taban, "geride_hacim": ik_s_geride_hacim, "hacimli_kirilim": ik_s_hacimli_kirilim,
@@ -754,6 +824,8 @@ IK_SINYAL: Dict[str, Callable] = {
     "iki_yuvarlama": ik_s_iki_yuvarlama, "iki_yuvarlama_duz": ik_s_iki_yuvarlama_duz, "iki_yuvarlama_kir": ik_s_iki_yuvarlama_kir,
     "iki_yuvarlama_siki": ik_s_iki_yuvarlama_siki, "iki_yuvarlama_ruz": ik_s_iki_yuvarlama_ruz,
     "iki_yuvarlama_hafif": ik_s_iki_yuvarlama_hafif,
+    "cemal_profil": ik_s_cemal_profil, "cemal_profil_uzun": ik_s_cemal_profil_uzun, "cemal_profil_sert": ik_s_cemal_profil_sert,
+    "cemal_profil_dar": ik_s_cemal_profil_dar, "cemal_profil_dev": ik_s_cemal_profil_dev, "cemal_profil_ruz": ik_s_cemal_profil_ruz,
 }
 IK_ABD_YOK = {"kap_olgun_sozlesme", "kap_bedelsiz", "kap_geri_alim", "kap_geri_alim_kosmamis", "kap_sozlesme_kosmus", "kap_soylenti_dus",
               "kap_olagan_disi", "kap_vbts", "fon_giris", "fon_yogun5"}     # ABD'de karşılık verisi yok (yapısal)

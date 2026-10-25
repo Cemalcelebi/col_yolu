@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.6 (2026-10-24, denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.7 (2026-10-25, K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -3433,6 +3433,488 @@ def fi_k12_ders6(V: Dict[str, pd.DataFrame], O: pd.DataFrame, KH: pd.DataFrame, 
     return 3
 
 
+# ---------------------------------------------------------------- K18 Cemal'in kendi vakaları: ortak iz var mı? (Cemal 25 Eki)
+# CEMAL (25 Eki): "TEHOL'de Ekim çölü vardı, koştu; BINBN'i önceden test etmiştim, sabırsız olduğum için sattım; KTLEV'de dev U tabanı,
+# aldım sattım, çok uzun sürdü; ESCAR küçüktü, silkelemede zararına sattım; Vişne maden koşmadı (dalavere); Euro'da 24 Aralık 2024 dev
+# hacim barı; BORLS; VERUS'u kod o zamanlar bulmuştu; MANAS 21 Temmuz 2025 atılım barı, 29 Ekim 2025 yeniden oluştu, silkeleme çölün
+# biraz altına sarktı, Kasım 2025'te koştu; PAPIL zarar. Bu dediklerimin ortak izleri var mı yok mu, bölgeleri önce test ederek bul,
+# bana sormadan; 'doğru' deme: kod bunları buldu dediğin hisselerde bu ortak iz var, bunlar koştu, şu koşmadı de."
+# VAKALAR (FI_K18_VAKA): bölge Cemal'in kalibre_etiketler.csv etiketi varsa o, yoksa grafikten (atılımdan önceki sıkışma). 'Euro' =
+# EUHOL: 24.12.2024 TL hacmi önceki 60 gün medyanının 13,6 katı (o gün BIST'te 2. en büyük; aynı gün EUYO 6x, TEHOL 5,5x). 'Hakiş'
+# veride eşlenemedi (HATSN, HKTM, HRKET, HTTBT grafiklerinde çöl + koşu yok). VERUS: v1_final_BIST 21.04.2025 sinyali (sonra +%38).
+# ÖLÇÜ (gün t, gerçek zamanlı; yalnız t ve öncesi): t'de kapanış son 20 barın en yüksek gövde üstünü ve kutu tavanını x1,002 geçer
+# (ATILIM). Kutu = [i0, t-1]: t-1'de biten, bandı (en yüksek gövde üstü / en düşük Low - 1) <= bant olan en uzun pencere
+# (bar[0]..bar[1]); kutu, pencerenin dip bölgesine (en düşük Low x 1,05) İLK değdiği günden başlar (D13 kural 1: çöl yeni dipten
+# sonra sayılır; dip kutunun sonunda yeniden test edilse de başlangıç kaymaz: BINBN, MANAS). Önce düşüş = kutu dibi / kutudan önceki
+# 250 barın en yüksek High - 1. PROFİL: mum_kat = kutu medyan mum (H-L / önceki kapanış) / kutudan önceki 40 bar (düşüş mumları);
+# hacim_kat = kutu medyan TL hacmi / kutudan önceki 60 bar.
+# EŞİKLER Cemal'in KOŞAN vakalarından, evren sonucu görülmeden (25 Eki): düşüş <= -%30, kutu 20-130 bar, bant <= %50, mum_kat <= 1,0,
+# hacim_kat <= 1,0. Atılım günü ölçüsü: TEHOL 0,65/0,71, BINBN 0,42/0,59, KTLEV 0,96/0,62, ESCAR 0,37/0,53, BORLS 0,75/0,27, MANAS 0,83/0,87;
+# VERUS 1,48/1,70 (tutmuyor), EUHOL düşüş sonrası değil (koşu sonrası raf), MANAS-b kutusu 20 bardan kısa.
+# EŞLİ: aynı bağlam (aynı düşüş, bant, kutu boyu, aynı atılım), profili tutmayan (mum_kat > 1 ya da hacim_kat > 1); ayrı taranır.
+# Varyant (önceden yazıldı): C1 profil; C2 profil + kutu >= 40 bar ('aylarca'); C3 profil + düşüş <= -%50 ('sert çöküş').
+# Sonuç: k20 / dus / trail (fi_k10_sonuc), 2 kat kutu dibi kırılmadan 250 bar (fi_k14_yukselis, Cemal'in 'koştu' ölçüsü).
+FI_K18_ESIK = {"bar": (20, 130), "son20": 20, "bant": 0.50, "dip_bolge": 0.05, "dusus": -0.30, "mum": 1.0, "hacim": 1.0, "tekrar": 60}
+FI_K18_C2 = {**FI_K18_ESIK, "bar": (40, 130)}
+FI_K18_C3 = {**FI_K18_ESIK, "dusus": -0.50}
+# Tur 2 (C1-C3 İZ DEĞİL çıktıktan sonra, sonuç görülmeden yazıldı, 25 Eki): C4 dar kutu (bant <= %20; TEHOL 0,20, BINBN 0,04,
+# ESCAR 0,18, MANAS 0,16/0,18 dar; KTLEV, VERUS, BORLS geniş); C5 kutuda dev hacim barı (kutu içindeki en büyük TL hacim >= kutu
+# medyanının 10 katı; Cemal'in EUHOL 24.12.2024 izi: 27 kat); C6 C1 + bilgi gününde sektör rüzgârı (D9b, fi_k14_ruzgar; CLAUDE.md
+# 'rüzgâr veya katalizör olmadan çöl aranmaz').
+FI_K18_C4 = {**FI_K18_ESIK, "bant": 0.20}
+FI_K18_C5 = {**FI_K18_ESIK, "dev_hacim": 10.0}
+K18_VARYANT = ("C1", "C2", "C3", "C4", "C5", "C6")
+FI_K18_VAKA = [   # (ad, sembol, kutu başı, kutu sonu, Cemal'in sonucu, kaynak)
+    ("TEHOL-24", "TEHOL", "2024-10-07", "2024-12-12", "koştu", "Cemal etiketi"),
+    ("BINBN-24", "BINBN", "2024-12-17", "2025-01-21", "koştu", "Cemal etiketi (sabırsız sattım)"),
+    ("KTLEV-24", "KTLEV", "2024-06-10", "2024-10-15", "koştu", "grafik: dev U tabanı"),
+    ("ESCAR-25", "ESCAR", "2025-09-19", "2025-12-11", "koştu", "Cemal etiketi (silkelemede zararına sattım)"),
+    ("EUHOL-24", "EUHOL", "2024-11-01", "2025-03-07", "koştu", "24 Ara 2024 dev hacim barı"),
+    ("BORLS-26", "BORLS", "2026-01-12", "2026-04-09", "koştu", "grafik"),
+    ("VERUS-25", "VERUS", "2025-03-03", "2025-06-30", "koştu", "kod 21 Nis 2025'te bulmuştu"),
+    ("MANAS-25a", "MANAS", "2025-06-01", "2025-07-18", "koştu", "Cemal: 21 Tem 2025 atılım barı"),
+    ("MANAS-25b", "MANAS", "2025-10-01", "2025-10-28", "koştu", "Cemal: 29 Eki 2025 yeniden, silkeleme, Kasım'da koştu"),
+    ("VSNMD-26", "VSNMD", "2025-12-05", "2026-02-27", "koşmadı", "Cemal: koşmadı, dalavere, göz altı"),
+    ("PAPIL-25", "PAPIL", "2025-11-12", "2025-12-09", "koşmadı", "Cemal etiketi (OLUMSUZ, zarar)"),
+    ("BINBN-26", "BINBN", "2026-02-25", "2026-04-15", "koşmadı", "Cemal etiketi (ÇÖL), sonrası çöküş"),
+]
+
+
+def fi_k18_olc(d: pd.DataFrame, i0: int, t: int) -> Dict[str, Any]:
+    """Kutu [i0, t-1] ve t günü (atılım) ölçüleri; yalnız t ve öncesi. Önce düşüş, bant, mum_kat, hacim_kat, atılım getirisi ve hacmi."""
+    o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    v = (d.Volume * d.Close).to_numpy(float); m = (h - l) / np.r_[np.nan, c[:-1]]
+    w = slice(i0, t); tavan = float(np.maximum(o[w], c[w]).max()); taban = float(l[w].min()); a = max(0, i0 - 250)
+    mv = np.median(v[w])
+    m0 = np.nanmedian(m[max(1, i0 - 40):i0]) if i0 >= 21 else np.nan          # düşüş mumları (kilitli/işlemsiz günlerde 0 olabilir)
+    v0 = np.median(v[max(0, i0 - 60):i0]) if i0 >= 20 else np.nan
+    return {"kutu_bas": d.index[i0], "bar": t - i0, "dusus": taban / h[a:i0].max() - 1 if i0 - a >= 20 else np.nan,
+            "bant": tavan / taban - 1,
+            "mum_kat": float(np.nanmedian(m[w]) / m0) if m0 > 0 else np.nan,
+            "hacim_kat": float(mv / v0) if v0 > 0 else np.nan,
+            "atilim_getiri": c[t] / c[t - 1] - 1, "atilim_hacim": v[t] / mv if mv > 0 else np.nan,
+            "dev_hacim": float(v[w].max() / mv) if mv > 0 else np.nan, "tavan": tavan, "taban": taban}
+
+
+def _fi_k18_kutu(top: np.ndarray, l: np.ndarray, t: int, E: Dict[str, Any]) -> int:
+    """t-1'de biten, bandı <= E['bant'] olan en uzun pencere [t-N, t-1] içinde dip bölgesine ilk değilen bar (kutu başı); yoksa -1."""
+    b0, b1 = E["bar"]; a = max(0, t - b1)
+    rt = np.maximum.accumulate(top[a:t][::-1]); rl = np.minimum.accumulate(l[a:t][::-1])
+    asan = np.flatnonzero(rt / rl - 1 > E["bant"])
+    N = int(asan[0]) if len(asan) else t - a
+    if N < b0:
+        return -1
+    lw = l[t - N:t]
+    return t - N + int(np.flatnonzero(lw <= lw.min() * (1 + E["dip_bolge"]))[0])
+
+
+def fi_k18_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K18_ESIK, profil: Optional[bool] = True) -> pd.DataFrame:
+    """Her hissede atılım günleri (FI_K18_ESIK bloğu). profil=True: mum_kat ve hacim_kat eşik altı (C1-C3); False: en az biri
+    eşik üstü (EŞLİ); None: hepsi. Hissede E['tekrar'] barda tek olay. Dönüş: sembol, dip (= kutu başı), bilgi (= t), ölçüler."""
+    sat: List[Dict[str, Any]] = []
+    b0 = E["bar"][0]
+    for s, d in V.items():
+        try:
+            n = len(d)
+            if n < b0 + 80:
+                continue
+            o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); l = d.Low.to_numpy(float)
+            if not (l > 0).all():
+                continue
+            top = np.maximum(o, c)
+            hh = pd.Series(top).rolling(E["son20"]).max().shift(1).to_numpy()
+            son = -10 ** 9
+            for t in np.flatnonzero(c > hh * 1.002):
+                if t < b0 + 21 or t - son < E["tekrar"]:
+                    continue
+                i0 = _fi_k18_kutu(top, l, int(t), E)
+                if i0 < 0 or t - i0 < b0 or not (c[t] > top[i0:t].max() * 1.002):
+                    continue
+                r = fi_k18_olc(d, i0, int(t))
+                if not (r["dusus"] <= E["dusus"]):
+                    continue
+                if not (r["mum_kat"] == r["mum_kat"] and r["hacim_kat"] == r["hacim_kat"]):   # ölçülemeyen (kilitli/işlemsiz) kutu: ne profil ne eşli
+                    continue
+                ok = bool(r["mum_kat"] <= E["mum"] and r["hacim_kat"] <= E["hacim"])
+                if profil is not None and ok != profil:
+                    continue
+                if "dev_hacim" in E and profil and not (r["dev_hacim"] >= E["dev_hacim"]):      # C5: kutuda dev hacim barı
+                    continue
+                son = int(t)
+                sat.append({"sembol": s, "dip": r["kutu_bas"], "bilgi": d.index[t], "profil": ok, **r})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K18 %s atlandi: %s", s, ex)
+    return pd.DataFrame(sat)
+
+
+def fi_k18_d13(kok: str = ".") -> Optional[Dict[str, Any]]:
+    """Üretimdeki D13 tespiti (COL_v1._col_dip2_e) ayrı ad alanında; yoksa None (vaka tablosunda 'kod gördü mü' boş kalır)."""
+    import contextlib
+    import io
+    yol = os.path.join(kok, "COL_v1.py")
+    if not os.path.exists(yol):
+        filog.warning("K18: %s yok, D13 kontrolü atlandı", yol); return None
+    ns: Dict[str, Any] = {"__name__": "col_v1_k18", "VERI": {}}
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            exec(compile(open(yol, encoding="utf-8").read(), yol, "exec"), ns)
+    except Exception as ex:
+        filog.warning("K18: COL_v1 yüklenemedi (%s), D13 kontrolü atlandı", ex); return None
+    return ns if "_col_dip2_e" in ns else None
+
+
+def fi_k18_fon_pay(A: FIAyar, V: Dict[str, pd.DataFrame]) -> Optional[pd.DataFrame]:
+    """Raporlu fonların (KAP portföy raporları) hisse-ay toplam payı, sermayeye oran (bugünkü sermaye, bölünmeden arındırılmış lot);
+    'bil' = o ayın son raporunun yayın anı (gerçek zamanlı kullanım). Veri yoksa None."""
+    try:
+        L = pd.read_csv(os.path.join(A.kapfon, "liste.csv")); Ek = fi_k9_ekler_oku(A)
+        P, _, K = fi_k9_tablolar_guncel(L, Ek, A)
+        G, _ = fi_k10_pozisyon(P, K, list(V))
+        with open(A.veri["BIST"], "rb") as f:
+            ham = pickle.load(f)
+        ham = ham["veri"] if isinstance(ham, dict) and "veri" in ham else ham
+        M = G.groupby(["kod", "ay"]).agg(nominal=("nominal", "sum"), fon=("fon", "nunique"), bil=("bilinme", "max")).reset_index()
+        M = M.merge(fi_k10_oran(V, ham), on=["kod", "ay"], how="left").merge(fi_isy_dolasim(A.isy)[["kod", "sermaye_lot"]], on="kod", how="left")
+        M["pay"] = M.nominal * M.oran.fillna(1.0) / M.sermaye_lot
+        return M
+    except Exception as ex:
+        filog.warning("K18: fon payı hesaplanamadı (%s); vaka tablosunda fon sütunları boş", ex); return None
+
+
+def _fi_k18_pay_an(M: Optional[pd.DataFrame], s: str, t: pd.Timestamp) -> float:
+    """t anında bilinen son ayın raporlu fon payı; rapor ayı t'den 3 aydan eskiyse 0 (fonlar çıkmış); fon verisi başlamadan NaN."""
+    if M is None or t < M.bil.min():
+        return np.nan
+    x = M[(M.kod == s) & (M.bil <= t)]
+    if not len(x):
+        return 0.0
+    x = x.sort_values("ay").iloc[-1]
+    return float(x.pay) if (t.year * 12 + t.month - 1) - x.ay <= 3 else 0.0
+
+
+def fi_k18_vaka(V: Dict[str, pd.DataFrame], C1: pd.DataFrame, Es: pd.DataFrame, ns: Optional[Dict[str, Any]],
+                M: Optional[pd.DataFrame], E: Dict[str, Any] = FI_K18_ESIK) -> pd.DataFrame:
+    """Her vaka: elle kutu ölçüleri (fi_k18_olc; atılım = kutu sonundan sonra kapanışın kutu tavanını x1,002 ilk geçtiği gün), sonuç
+    (k20, 2 kat dip kırılmadan, 250 bar en yüksek), fon payı (kutu başı / atılım), üretim D13'ün kutu + atılım arasında 'çöl' dediği gün
+    sayısı, K18 tarayıcısının vaka hissesinde [kutu başı - 20, atılım + 20] içinde verdiği C1 / eşli olayı."""
+    sat = []
+    for ad, s, b, e, cemal, kaynak in FI_K18_VAKA:
+        d = V.get(s)
+        if d is None:
+            filog.warning("K18 vaka %s: veri yok", ad); continue
+        o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); n = len(d)
+        i0 = int(d.index.searchsorted(pd.Timestamp(b))); i1 = int(d.index.searchsorted(pd.Timestamp(e), side="right")) - 1
+        tavan = np.maximum(o[i0:i1 + 1], c[i0:i1 + 1]).max()
+        ka = next((t for t in range(i1 + 1, min(n, i1 + 150)) if c[t] > tavan * 1.002), None)
+        r: Dict[str, Any] = {"ad": ad, "sembol": s, "bas": b, "son": e, "cemal": cemal, "kaynak": kaynak}
+        if ka is None:
+            r["atilim"] = pd.NaT; sat.append(r); continue
+        r.update({k: v for k, v in fi_k18_olc(d, i0, i1 + 1).items() if k not in ("kutu_bas", "atilim_getiri", "atilim_hacim")})
+        v = (d.Volume * d.Close).to_numpy(float); lo = d.Low.to_numpy(float)
+        r["atilim"] = d.index[ka]; r["atilim_bekle"] = ka - i1
+        r["atilim_getiri"] = c[ka] / c[ka - 1] - 1; r["atilim_hacim"] = v[ka] / np.median(v[i0:i1 + 1])
+        r["kutu_alti"] = bool(lo[i1 + 1:ka].min() < r["taban"]) if ka > i1 + 1 else False          # atılımdan önce kutu dibi kırıldı mı
+        r["sonra20_tavan"] = lo[ka + 1:ka + 21].min() / r["tavan"] - 1 if ka + 1 < n else np.nan     # atılımdan sonra kutuya geri dönüş
+        r["sonra60_dip"] = lo[ka + 1:ka + 61].min() / r["taban"] - 1 if ka + 1 < n else np.nan       # 60 barda kutu dibine göre en derin
+        R1 = fi_k10_sonuc(V, pd.Series([s]), pd.Series([d.index[ka]]))
+        if len(R1):
+            r.update({k: R1.iloc[0][k] for k in ("k20", "dus", "trail") if k in R1})
+        Y = fi_k14_yukselis(V, pd.DataFrame({"sembol": [s], "dip": [d.index[i0]], "bilgi": [d.index[ka]]}),
+                            {**FI_K14_ESIK, "ufuk": min(250, n - ka - 2)})
+        if len(Y):
+            r.update({"kat2": Y.iloc[0].kat2, "max_yuk": Y.iloc[0].max_yuk})
+        r["ufuk_bar"] = n - ka - 1
+        r["fon_pay_kutu"] = _fi_k18_pay_an(M, s, d.index[i0]); r["fon_pay_atilim"] = _fi_k18_pay_an(M, s, d.index[ka])
+        r["fon_pay_atilim60"] = _fi_k18_pay_an(M, s, d.index[min(n - 1, ka + 60)])
+        if ns is not None:
+            gun = [str(d.index[t].date()) for t in range(i0, ka + 1) if ns["_col_dip2_e"](d, t)[0] is not None]
+            r["d13_gun"] = len(gun); r["d13_ilk"] = gun[0] if gun else ""
+        lo, hi = d.index[max(0, i0 - 20)], d.index[min(n - 1, ka + 20)]
+        for et, X in (("c1", C1), ("esli", Es)):
+            x = X[(X.sembol == s) & (X.bilgi >= lo) & (X.bilgi <= hi)] if len(X) else X
+            r[et + "_gun"] = str(pd.Timestamp(x.bilgi.iloc[0]).date()) if len(x) else ""
+        sat.append(r)
+    return pd.DataFrame(sat)
+
+
+def fi_k18_liste(O: pd.DataFrame, bas: str = "2024-01-01") -> pd.DataFrame:
+    """Kodun bulduğu (C1, BIST) olaylar, Cemal'in sorduğu biçimde: KOŞTU = 250 barda kutu dibi kırılmadan 2 kat; +%20 GÖRDÜ = 60 barda
+    önce +%20 (2 kat değil); KOŞMADI = ikisi de yok; BEKLİYOR = 60 bar dolmadı; fon hissesi işareti (FON_HISSE)."""
+    X = O[(O.bilgi >= bas)].copy()
+    if not len(X):
+        return X
+    def sonuc(r) -> str:
+        if r.kat2 == 1:
+            return "KOŞTU (2 kat)"
+        if r.k20 == 1:
+            return "+%20 GÖRDÜ"
+        return "KOŞMADI" if r.k20 == 0 else "BEKLİYOR"
+    X["sonuc"] = [sonuc(r) for r in X.itertuples()]
+    X["fon_hissesi"] = X.sembol.isin(FON_HISSE)
+    return X.sort_values("bilgi")[["sembol", "dip", "bilgi", "bar", "dusus", "bant", "mum_kat", "hacim_kat", "atilim_getiri",
+                                   "k20", "kat2", "max_yuk", "trail", "sonuc", "fon_hissesi"]]
+
+
+def fon_izi_k18(A: Optional[FIAyar] = None) -> Dict[str, Any]:
+    """K18 sürücü: C1-C3 ve eşli taramalar (BIST + ABD), sonuçlar (fi_k10_sonuc, fi_k14_yukselis), dönem kıyası (fi_k14_kiyas,
+    k20 ve 2 kat), karar (fi_k14_karar k20); vaka tablosu (BIST; D13 ve fon payı varsa) ve kodun bulduğu liste.
+    Çıktı k18_olaylar.csv.gz, k18_ozet.csv, k18_vaka.csv, k18_liste_BIST.csv."""
+    A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
+    Z: List[pd.DataFrame] = []; X: List[pd.DataFrame] = []; vaka = pd.DataFrame(); liste = pd.DataFrame()
+    for pazar in ("BIST", "ABD"):
+        try:
+            V = fi_k1_veri(A.veri[pazar], pazar, A)
+        except Exception as ex:
+            filog.warning("K18 %s verisi okunamadi, atlandi: %s", pazar, ex); continue
+        P: Dict[str, pd.DataFrame] = {}
+        for ad, E, pr in (("C1", FI_K18_ESIK, True), ("C2", FI_K18_C2, True), ("C3", FI_K18_C3, True), ("C4", FI_K18_C4, True),
+                          ("C5", FI_K18_C5, True), ("esli", FI_K18_ESIK, False)):
+            P[ad] = fi_k18_tara(V, E, pr).reset_index(drop=True)
+        try:
+            W = fi_k14_ruzgar(V, fi_k14_sektor(pazar)); C1 = P["C1"]
+            P["C6"] = C1[[bool(W.at[pd.Timestamp(b), s_]) if pd.Timestamp(b) in W.index and s_ in W.columns else False
+                          for s_, b in zip(C1.sembol, C1.bilgi)]].reset_index(drop=True) if len(C1) else C1
+        except Exception as ex:   # sektör dosyası yoksa C6 boş kalır, diğerleri sürer
+            filog.warning("K18 %s rüzgâr hesaplanamadı, C6 boş: %s", pazar, ex); P["C6"] = P["C1"].iloc[0:0]
+        for ad in K18_VARYANT + ("esli",):
+            O = P[ad]
+            if len(O):
+                O = O.join(fi_k10_sonuc(V, O.sembol, O.bilgi), how="left").join(fi_k14_yukselis(V, O), how="left")
+            filog.info("K18 %s %s: %d olay", pazar, ad, len(O))
+            P[ad] = O; X.append(O.assign(pazar=pazar, varyant=ad))
+        for ad in K18_VARYANT:
+            Z.append(fi_k14_kiyas(P[ad], P["esli"], pazar, FI_K13_DONEM).assign(varyant=ad))
+        if pazar == "BIST":
+            vaka = fi_k18_vaka(V, P["C1"], P["esli"], fi_k18_d13(), fi_k18_fon_pay(A, V))
+            liste = fi_k18_liste(P["C1"]) if len(P["C1"]) else pd.DataFrame()
+    if not Z:
+        raise RuntimeError("K18: hiçbir pazarın verisi okunamadı")
+    Zk = pd.concat(Z, ignore_index=True); Zk.to_csv(os.path.join(A.cikti, "k18_ozet.csv"), index=False)
+    pd.concat([x for x in X if len(x)], ignore_index=True).to_csv(os.path.join(A.cikti, "k18_olaylar.csv.gz"), index=False)
+    vaka.to_csv(os.path.join(A.cikti, "k18_vaka.csv"), index=False); liste.to_csv(os.path.join(A.cikti, "k18_liste_BIST.csv"), index=False)
+    sonuc = {ad: (Zk[Zk.varyant == ad],) + fi_k14_karar(Zk[Zk.varyant == ad], "k20") for ad in K18_VARYANT}
+    return {"sonuc": sonuc, "ozet": Zk, "vaka": vaka, "liste": liste}
+
+
+def fi_k12_ders7(V: Dict[str, pd.DataFrame], vaka: pd.DataFrame, Zk: pd.DataFrame, KH: pd.DataFrame, liste: pd.DataFrame,
+                 esli: pd.DataFrame, yol: str) -> int:
+    """Ders 7 (Cemal 25 Eki: 'bu dediklerimin ortak izleri var mı; kod bunları buldu dediğin hisselerde bu iz var, bunlar koştu,
+    şu koşmadı de'): (1) soru, yöntem, kısa cevap; (2) 12 vaka grafikte: kutu, tavan/taban, atılım ve ertesi açılış girişi, üretim
+    D13'ün 'çöl' dediği günler, K18 sinyali, ölçüler, sonuç; (3) ortak iz tablosu (koşan / koşmayan); (4) evren testi: tek cetvel
+    Ç85-Ç90 karar hücreleri (1,3 çizgisi) ve önce -%20; (5) kodun bulduğu liste (BIST 2024-26): koştu / +%20 / koşmadı, eşli ile kıyas.
+    vaka = k18_vaka.csv, Zk = k18_ozet.csv, KH = karne_hucre.csv, liste = k18_liste_BIST.csv, esli = BIST eşli olaylar (2024-26)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import matplotlib.ticker
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    A4 = (8.27, 11.69)
+    AYLAR = ("Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara")
+    tr = lambda x: f"{pd.Timestamp(x).day} {AYLAR[pd.Timestamp(x).month - 1]} {pd.Timestamp(x).year}"
+    yz = lambda x: (("−" if x < 0 else "") + f"%{abs(100 * x):.0f}") if x == x else "—"
+    vg = lambda x, k=2: (f"{x:.{k}f}".replace(".", ",") if x == x else "—")
+
+    def yazi(fig, y, baslik, satirlar, boy=9.5, gen=92):
+        if baslik:
+            fig.text(0.07, y, baslik, fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.040
+        for s in satirlar:
+            for k, parca in enumerate(textwrap.wrap(s, gen) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, parca, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    def vaka_ciz(ax, axh, r):
+        d = V[r.sembol]; tar = d.index
+        i0 = int(tar.searchsorted(pd.Timestamp(r.bas))); i1 = int(tar.searchsorted(pd.Timestamp(r.son), side="right")) - 1
+        ka = int(tar.searchsorted(pd.Timestamp(r.atilim))) if r.atilim == r.atilim else i1
+        w = d.iloc[max(0, i0 - 60):min(len(d), ka + 121)]
+        ax.axvspan(tar[i0], tar[i1], color="#fff4d6", zorder=0)
+        ax.vlines(w.index, w.Low, w.High, color="#95a5a6", lw=0.6); ax.plot(w.index, w.Close, color="#1f2a44", lw=0.8)
+        if r.tavan == r.tavan:
+            ax.hlines([r.tavan, r.taban], tar[i0], tar[i1], colors=["#27ae60", "#c0392b"], lw=1.1, ls="--")
+        if ka + 1 < len(d) and r.atilim == r.atilim:
+            ax.axvline(tar[ka], color="#2c3e50", ls=":", lw=1)
+            ax.scatter([tar[ka + 1]], [d.Open.iloc[ka + 1]], marker="^", color="#2980b9", s=45, zorder=5)
+        if isinstance(r.d13_ilk, str) and r.d13_ilk:
+            j = int(tar.searchsorted(pd.Timestamp(r.d13_ilk)))
+            ax.scatter([tar[j]], [d.Low.iloc[j] * 0.97], marker="s", color="#e67e22", s=22, zorder=5)
+        if isinstance(r.c1_gun, str) and r.c1_gun:
+            j = int(tar.searchsorted(pd.Timestamp(r.c1_gun)))
+            ax.scatter([tar[j]], [d.High.iloc[j] * 1.04], marker="*", color="#8e44ad", s=70, zorder=6)
+        ax.set_yscale("log"); ax.yaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _: f"{v:g}"))
+        ax.yaxis.set_minor_formatter(matplotlib.ticker.NullFormatter()); ax.tick_params(labelsize=6.5); ax.set_xticks([])
+        son = (f"koştu: 2 kat (en yüksek {vg(1 + r.max_yuk, 1)} x)" if r.kat2 == 1 else
+               (f"önce +%20 geldi, 2 kat olmadı (en yüksek {vg(1 + r.max_yuk, 1)} x)" if r.k20 == 1 else "koşmadı"))
+        ax.set_title(f"{r.ad} — sen: {r.cemal} · ölçü: {son}", fontsize=8.5, loc="left")
+        axh.bar(w.index, w.Volume * w.Close, color="#7f8c8d", width=1.0); axh.set_yticks([]); axh.tick_params(labelsize=6)
+        axh.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%y-%m"))
+
+    def vaka_metin(r) -> str:
+        d13 = f"D13 (üretim) {int(r.d13_gun)} gün 'çöl' dedi ({tr(r.d13_ilk)}'den)" if r.d13_gun == r.d13_gun and r.d13_gun > 0 else \
+            "D13 (üretim) GÖRMEDİ"
+        k18 = f"K18 sinyali {tr(r.c1_gun)}" if isinstance(r.c1_gun, str) and r.c1_gun else "K18 profil sinyali yok"
+        return (f"kutu {tr(r.bas)} – {tr(r.son)} ({int(r.bar)} bar) · önce düşüş {yz(r.dusus)} · bant {yz(r.bant)} · mum düşüşün "
+                f"{vg(r.mum_kat)}'i · hacim düşüşün {vg(r.hacim_kat)}'i · kutudaki en büyük hacim {vg(r.dev_hacim, 1)} x · atılım "
+                f"{tr(r.atilim)} ({yz(r.atilim_getiri)}, hacim {vg(r.atilim_hacim, 1)} x) · fon payı {vg(100 * r.fon_pay_atilim, 1)}% · "
+                f"{d13} · {k18}. Kaynak: {r.kaynak}.")
+
+    kos = vaka[vaka.cemal == "koştu"]; kosm = vaka[vaka.cemal == "koşmadı"]
+    prof = (vaka.dusus <= FI_K18_ESIK["dusus"]) & (vaka.mum_kat <= FI_K18_ESIK["mum"]) & (vaka.hacim_kat <= FI_K18_ESIK["hacim"])
+    p_kos, p_kosm = int(prof[kos.index].sum()), int(prof[kosm.index].sum())
+    gordu = (vaka.d13_gun.fillna(0) > 0) | vaka.c1_gun.fillna("").astype(str).str.len().gt(0)
+    d13 = vaka[vaka.d13_gun.fillna(0) > 0]
+    HK = KH[KH.kod.isin(["Ç85", "Ç86", "Ç87", "Ç88", "Ç89", "Ç90"]) & KH.donem.isin(["2023", "2024-26"])]
+    H85 = HK[HK.kod == "Ç85"]
+    ara = lambda x: f"{vg(np.nanmin(x))}-{vg(np.nanmax(x))}"
+    sayfa = 0
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "DERS 7: SENİN VAKALARIN — ORTAK İZ VAR MI?", [
+            "Sen: 'TEHOL Ekim çölü koştu; BINBN'i gördüm, sabırsız sattım; KTLEV dev U tabanı; ESCAR'ı silkelemede zararına sattım; "
+            "Vişne maden koşmadı; Euro'da 24 Aralık 2024 dev hacim barı; BORLS; VERUS'u kod o zaman bulmuştu; MANAS 21 Temmuz 2025 "
+            "atılım barı, 29 Ekim'de yeniden, silkeleme, Kasım'da koştu; PAPIL zarar. Ortak iz var mı? Bölgeleri kendin bul, test et.'",
+            "Ne yaptım: 12 bölgeyi veride buldum (senin eski etiketin varsa o: TEHOL, BINBN, ESCAR, PAPIL; yoksa grafikten). 'Euro' = "
+            "EUHOL: 24.12.2024 hacmi önceki 60 günün 13,6 katı. 'Hakiş'i veride eşleyemedim. Her bölgede aynı ölçüleri aldım, sonra koşan "
+            "vakaların ortak profilini sabit eşikle 2.000 hissede (BIST + ABD, 2016-26) aradım ve sonrasına baktım.",
+            "",
+            "KISA CEVAP",
+            f"- ORTAK İZ VAR: koşan {len(kos)} vakanın hepsinde önce sert düşüş (−%32 … −%92), ardından mumları düşüş mumlarından küçük "
+            f"(düşüşün {ara(kos.mum_kat)}'i) dar bir kutu ve kapanışla kutu tavanının kırıldığı bir atılım günü var; {int((kos.hacim_kat <= 1).sum())}/"
+            f"{len(kos)} vakada kutu hacmi de düşüştekinden düşük.",
+            "- AMA bu iz koşmayanlarda da var: " + ", ".join(f"{r.ad} (mum {vg(r.mum_kat)}, hacim {vg(r.hacim_kat)})" for r in kosm.itertuples())
+            + f". Tam profil (düşüş + küçük mum + düşük hacim): koşanların {p_kos}/{len(kos)}'unda, koşmayanların {p_kosm}/{len(kosm)}'ünde.",
+            f"- Evrende bu profil (C1) önce +%20'yi sıradan hisseden daha sık getirmiyor (eşli taban katı {ara(H85.ana_kat)}); önce "
+            f"−%20'yi {ara(H85.ters_kat)} kat daha sık getiriyor. Altı denemenin (aylarca kutu, sert çöküş, dar kutu, kutuda dev hacim "
+            f"barı, sektör rüzgârı) hiçbiri dört karar hücresinde 1,3'e çıkmadı (en yüksek {vg(np.nanmax(HK.ana_kat))}) → İZ DEĞİL.",
+            f"- Kodun bulduğu: 2024-26'da BIST'te bu profille {len(liste)} atılım. Sonucu belli olanların %{100 * (liste.kat2 == 1).sum() / max(1, liste.kat2.notna().sum()):.0f}'i "
+            f"koştu (2 kat), %{100 * ((liste.k20 == 1) & (liste.kat2 != 1)).sum() / max(1, liste.k20.notna().sum()):.0f}'i +%20 gördü ama "
+            f"2 kat olmadı, %{100 * (liste.k20 == 0).sum() / max(1, liste.k20.notna().sum()):.0f}'i koşmadı. Profili tutmayan aynı "
+            f"bağlamdaki atılımlarda koşan oranı %{100 * (esli.kat2 == 1).sum() / max(1, esli.kat2.notna().sum()):.0f} (aynı).",
+            f"- Üretimdeki D13 senin {len(vaka)} bölgenden yalnız {len(d13)}'ini 'çöl' dedi: "
+            + ", ".join(f"{r.ad} ({int(r.d13_gun)} gün)" for r in d13.itertuples())
+            + ". Görmedikleri: " + ", ".join(vaka[vaka.d13_gun.fillna(0) == 0].ad) + ".",
+        ], boy=9.3)
+        yazi(fig, y - 0.01, "Grafiklerde", [
+            "Sarı alan = kutu (çöl), yeşil/kırmızı kesikli = kutu tavanı/dibi, noktalı dikey = atılım günü, ▲ = ertesi açılış giriş, "
+            "turuncu kare = üretim D13'ün ilk 'çöl' dediği gün, mor yıldız = K18 profil sinyali (bu ölçünün tarayıcısı). Alt şerit TL hacim."],
+             boy=9)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        V_ = vaka[vaka.atilim.notna()].reset_index(drop=True)
+        for p in range(0, len(V_), 3):
+            fig = plt.figure(figsize=A4)
+            for k, r in enumerate(V_.iloc[p:p + 3].itertuples()):
+                y0 = 0.68 - k * 0.32
+                vaka_ciz(fig.add_axes([0.08, y0 + 0.085, 0.88, 0.19]), fig.add_axes([0.08, y0 + 0.045, 0.88, 0.04]), r)
+                for j, parca in enumerate(textwrap.wrap(vaka_metin(r), 125)[:4]):
+                    fig.text(0.08, y0 + 0.030 - j * 0.0125, parca, fontsize=6.6, va="top")
+            pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        y = yazi(fig, 0.96, "ORTAK İZ TABLOSU", [
+            "Her satır bir bölge. Profil = önce düşüş ≤ −%30, mum ve hacim düşüştekinden küçük (≤ 1,0). Koşan vakalarla koşmayanlar "
+            "arasında hiçbir sütun temiz ayrılmıyor: aynı şekil iki tarafta da var."], boy=9.3)
+        sut = ["vaka", "sen", "düşüş", "bar", "bant", "mum", "hacim", "dev bar", "atılım", "fon %", "D13", "K18", "sonuç"]
+        hucre = []
+        for r in vaka.itertuples():
+            hucre.append([r.ad, r.cemal, yz(r.dusus), f"{int(r.bar)}", yz(r.bant), vg(r.mum_kat), vg(r.hacim_kat), vg(r.dev_hacim, 1),
+                          yz(r.atilim_getiri), vg(100 * r.fon_pay_atilim, 1),
+                          f"{int(r.d13_gun)}" if r.d13_gun == r.d13_gun else "—", "var" if isinstance(r.c1_gun, str) and r.c1_gun else "yok",
+                          ("2 kat" if r.kat2 == 1 else ("+%20" if r.k20 == 1 else "yok")) + (" ✓" if prof[r.Index] else "")])
+        ax = fig.add_axes([0.03, y - 0.40, 0.94, 0.38]); ax.axis("off")
+        T = ax.table(cellText=hucre, colLabels=sut, loc="upper center", cellLoc="center")
+        T.auto_set_font_size(False); T.set_fontsize(6.6); T.scale(1, 1.45)
+        for (i, j), c in T.get_celld().items():
+            if i > 0 and hucre[i - 1][1] == "koşmadı":
+                c.set_facecolor("#fdecea")
+        yazi(fig, y - 0.44, "Okuma", [
+            f"- ✓ = profil tutuyor. Koşan {len(kos)} vakanın {p_kos}'sinde, koşmayan {len(kosm)} vakanın {p_kosm}'sinde ✓ var: iz koşanı "
+            "koşmayandan ayırmıyor.",
+            "- Fon payı (KAP portföy raporlarındaki fonların sermayedeki payı) çöl sırasında hepsinde ~%0-2: 'fonlar alırken çöl oluştu' "
+            "raporlu fonlarda görünmüyor. Dipteki toplama (varsa) bireysel hesaplar ve rapor vermeyen fonlardaydı; elimizde yok.",
+            f"- Atılım günü hacmi ayırmıyor, tersine: koşmayanlarda kutu medyanının {ara(kosm.atilim_hacim)} katı, koşanlarda medyan "
+            f"{vg(kos.atilim_hacim.median(), 1)} katı (en büyüğü MANAS-a {vg(kos.atilim_hacim.max(), 1)}).",
+            "- Profilin dışında kalan koşanlar: " + ", ".join(f"{r.ad} (mum {vg(r.mum_kat)}, hacim {vg(r.hacim_kat)})"
+                                                             for r in kos[~prof[kos.index]].itertuples()) + "."],
+             boy=9)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "EVREN TESTİ: PROFİL FARK YARATIYOR MU?", [
+            "Tek cetvel: sinyal günü (atılım), ertesi açılış giriş, 60 günde önce +%20 (önce −%10'dan); eşli taban = aynı ay × 60 gün "
+            "momentum × likidite. Kırmızı çizgi 1,3: dört karar hücresinin (BIST/ABD 2023 ve 2024-26) hepsinde geçmeli. Ç85 profil · "
+            "Ç86 kutu ≥ 40 bar · Ç87 düşüş ≤ −%50 · tur 2 (önceden yazıldı): Ç88 dar kutu (bant ≤ %20) · Ç89 kutuda dev hacim barı (≥ 10x) "
+            "· Ç90 sektör rüzgârı."], boy=9.3)
+        RENK = {"BIST": "#1f2a44", "ABD": "#7f8fa6"}
+        for k_, (kol, et_y, y0) in enumerate((("ana_kat", "önce +%20, eşli kat", 0.50), ("ters_kat", "önce −%20, eşli kat", 0.15))):
+            ax = fig.add_axes([0.10, y0, 0.85, 0.24]); et, deg, renk = [], [], []
+            for kd in ("Ç85", "Ç86", "Ç87", "Ç88", "Ç89", "Ç90"):
+                for r in KH[(KH.kod == kd) & (KH.donem.isin(["2023", "2024-26"]))].itertuples():
+                    et.append(f"{kd}\n{r.pazar}\n{r.donem}\nn={int(r.n)}"); deg.append(getattr(r, kol)); renk.append(RENK.get(r.pazar, "#999"))
+            ax.bar(range(len(deg)), np.nan_to_num(np.array(deg, float)), color=renk)
+            if kol == "ana_kat":                                   # 1,3 geçme çizgisi yalnız yukarı ölçüde anlamlı
+                ax.axhline(1.3, color="#c0392b", ls="--", lw=2)
+            ax.axhline(1.0, color="#999")
+            ax.set_xticks(range(len(deg))); ax.set_xticklabels(et, fontsize=4.3); ax.set_ylabel(et_y, fontsize=8)
+        fig.text(0.10, 0.765, f"Üst: yukarı (önce +%20) — hiçbir hücre 1,3'e çıkmıyor ({ara(HK.ana_kat)}).", fontsize=8.5)
+        fig.text(0.10, 0.415, f"Alt: aşağı (önce −%20) — hücreler {ara(HK.ters_kat)}: profil oynak hisseyi seçiyor.", fontsize=8.5)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        L = liste.copy(); L["bilgi"] = pd.to_datetime(L.bilgi)
+        say = L.sonuc.value_counts()
+        y = yazi(fig, 0.96, "KODUN BULDUKLARI (BIST 2024-26, profil C1)", [
+            f"Bu profili taşıyan {len(L)} atılım ({L.sembol.nunique()} hisse): KOŞTU (250 günde kutu dibi kırılmadan 2 kat) "
+            f"{say.get('KOŞTU (2 kat)', 0)}, +%20 GÖRDÜ (2 kat değil) {say.get('+%20 GÖRDÜ', 0)}, KOŞMADI (60 günde önce +%20 "
+            f"gelmedi) {say.get('KOŞMADI', 0)}, "
+            f"BEKLİYOR (60 gün dolmadı) {say.get('BEKLİYOR', 0)}. Tam liste: arastirma_cikti/fon_izi/k18_liste_BIST.csv.",
+            f"- Aynı bağlamda profili tutmayan atılımlar ({len(esli)}): koşan %{100 * (esli.kat2 == 1).sum() / max(1, esli.kat2.notna().sum()):.0f} "
+            f"vs profil %{100 * (L.kat2 == 1).sum() / max(1, L.kat2.notna().sum()):.0f}; önce +%20 %{100 * esli.k20.mean():.0f} vs "
+            f"%{100 * L.k20.mean():.0f}.",
+            f"- Fon hisselerinde (sonradan seçilmiş 23 hisse) {int(L.fon_hissesi.sum())} sinyalin {int(((L.kat2 == 1) & L.fon_hissesi).sum())}'si "
+            f"koştu; diğerlerinde {int((~L.fon_hissesi).sum())} sinyalin {int(((L.kat2 == 1) & ~L.fon_hissesi).sum())}'i. Bu fark ileriye "
+            "dönük değil: o 23 hisse zaten 10-170 kat gittikten sonra listeye alındı.",
+            "Sonucu belli son 40 sinyal (60 günü dolmuş; en yeni üstte; 'koştu' = 2 kat):"], boy=9.2)
+        X = L[L.sonuc != "BEKLİYOR"].sort_values("bilgi", ascending=False).head(40)
+        hucre = [[r.sembol, tr(r.bilgi), yz(r.dusus), f"{int(r.bar)}", vg(r.mum_kat), vg(r.hacim_kat), yz(r.trail), r.sonuc]
+                 for r in X.itertuples()]
+        ax = fig.add_axes([0.05, 0.04, 0.90, y - 0.06]); ax.axis("off")
+        T = ax.table(cellText=hucre, colLabels=["hisse", "atılım", "düşüş", "bar", "mum", "hacim", "üretim çıkışı", "sonuç"],
+                     loc="upper center", cellLoc="center")
+        T.auto_set_font_size(False); T.set_fontsize(6.6); T.scale(1, 1.18)
+        for (i, j), c in T.get_celld().items():
+            if i > 0:
+                s_ = hucre[i - 1][-1]
+                c.set_facecolor("#e8f6ec" if s_.startswith("KOŞTU") else ("#fdecea" if s_ == "KOŞMADI" else "#ffffff"))
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        fig = plt.figure(figsize=A4)
+        yazi(fig, 0.96, "DERS: NEDEN İZ DEĞİL, SEN NASIL BAKARSIN", [
+            "- Senin gözün doğru şekli görüyor: koşan hisselerinin hepsinde düşüşten sonra sakinleşen, küçük mumlu bir kutu ve kutu "
+            f"tavanını kapanışla geçen bir gün var. Kod da bu şekli buluyor ({len(vaka)} bölgenin {int(gordu.sum())}'unda K18 sinyali ya da "
+            "üretim D13).",
+            "- Ama aynı şekil koşmayanlarda da var (VSNMD, PAPIL) ve evrende binlerce kez çıkıyor; sonrası sıradan hisseyle aynı, düşüş "
+            "riski biraz daha fazla. Yani şekil 'bu hisse koşar' demiyor; 'bu hisse sakinleşti ve kutudan çıktı' diyor.",
+            "- Koşanı koşmayandan ayıran şey kutunun içinde değil, kutudan SONRA: " + "; ".join(
+                f"{r.ad} atılımdan önce kutu dibini kırdı (60 günde dibin {yz(r.sonra60_dip)} altı)" if r.kutu_alti else
+                f"{r.ad} atılımdan sonra en çok {yz(r.max_yuk)} yükselip geri döndü" for r in kosm.itertuples())
+            + ". Bunu atılım günü bilmek mümkün değil; sistemin yaptığı da bu: kırılımda gir, trail ile tut, bozulunca çık (bölüm 8 dersi).",
+            "- Fonların payı çöl sırasında raporlarda ~0. 'Fon aldığı için koştu' doğru olabilir ama iz fiyat grafiğinde değil, "
+            "sahiplik kaydında ve sonradan geliyor (K10 fon defteri: fonlar koşu fazında giriyor).",
+            "- Silkeleme: " + "; ".join(
+                f"{r.ad} kutusu {tr(r.bas)} – {tr(r.son)}, dip {vg(r.taban)}, atılım {tr(r.atilim)} "
+                + ("(arada kutu dibi kırıldı)" if r.kutu_alti else "(arada kutu dibi kırılmadı)")
+                for r in vaka[vaka.ad.isin(["ESCAR-25", "MANAS-25b", "KTLEV-24"])].itertuples())
+            + ". Bu vakalarda sabır ve zarar sınırını kutu dibinde tutmak kazandırdı; ama evrende aynı profil önce −%20'yi "
+            f"{ara(HK.ters_kat)} kat daha sık getiriyor, yani aynı sabır koşmayanlarda kutu dibine kadar zarar yazdırıyor.",
+            "",
+            "Sen nasıl bakarsın: 1) düşüş sonrası küçük mumlu kutu → aday (kod bunu buluyor); 2) kutu tavanını kapanışla geçen gün → giriş; "
+            "3) kutu dibi → zarar sınırı; 4) +%20'den sonra SMA20 trail. Hangisinin 40 kat gideceğini şekil söylemiyor; boyut ve "
+            "sabır söylüyor.",
+            "",
+            "Sıradaki (kararın): bu profili üretime 'yaz' gerekmiyor, D13 zaten benzer; ama D13 senin bölgelerinden BINBN, KTLEV, "
+            "MANAS'ı göremiyor (dip yeni / parabol yok). Kutuyu 'dibe ilk değdiği gün'den başlatan K18 kutusu bunları gördü. D13'ün "
+            "yakalama oranını artırmak istersen bu bir üretim kararı ('yaz')."], boy=9.3)
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
+
 def fon_izi_k10(A: Optional[FIAyar] = None) -> Dict[str, Any]:
     """v1.5 surucu: K9 tablolar -> K10 fon girisi/cikisi testi (BIST 2023 / 2024-26) -> K11 fon hisseleri defteri -> rapor."""
     A = A or FIAyar(); os.makedirs(A.cikti, exist_ok=True)
@@ -3622,6 +4104,22 @@ if __name__ == "__main__":
         _O = _O[_O.pazar == "BIST"]
         _KH = pd.read_csv(os.path.join(os.path.dirname(_A.cikti.rstrip("/")), "iz_karne", "karne_hucre.csv"))
         fi_k12_ders6(fi_k1_veri(_A.veri["BIST"], "BIST", _A), _O, _KH, os.path.join(_A.cikti, "FON_IZI_ders6_iki_yuvarlama.pdf"))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k18":           # Cemal'in vakaları: ortak iz (çöl + atılım profili), evren + liste
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k18()
+        for _k, (_Z, _karar, _H) in _R["sonuc"].items():
+            print(_k, _karar); print(_Z.round(3).to_string(index=False))
+        print(_R["vaka"].round(3).to_string(index=False))
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k18ders":       # Ders 7 (k18 ve IZ_KARNE Ç85-Ç90 çıktılarından)
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _A = FIAyar(); _O = pd.read_csv(os.path.join(_A.cikti, "k18_olaylar.csv.gz"), low_memory=False)
+        _O = _O[(_O.pazar == "BIST") & (_O.varyant == "esli") & (pd.to_datetime(_O.bilgi) >= "2024-01-01")]
+        _KH = pd.read_csv(os.path.join(os.path.dirname(_A.cikti.rstrip("/")), "iz_karne", "karne_hucre.csv"))
+        print(fi_k12_ders7(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k18_vaka.csv")),
+                           pd.read_csv(os.path.join(_A.cikti, "k18_ozet.csv")), _KH, pd.read_csv(os.path.join(_A.cikti, "k18_liste_BIST.csv")),
+                           _O, os.path.join(_A.cikti, "FON_IZI_ders7_cemal_vakalar.pdf")), "sayfa")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()

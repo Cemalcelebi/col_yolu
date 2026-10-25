@@ -381,6 +381,26 @@ def sina():
     ihlal26 = sum(V26[r.sembol].Low.loc[r.dip:r.bilgi].iloc[1:].min() < V26[r.sembol].Low.loc[r.dip] for r in O26.itertuples())
     if not len(O26) or ihlal26:
         hata.append(f"26) K13 dipten sonra yeni dip: {ihlal26}/{len(O26)} olay")
+    # 27) K18 Cemal'in vaka profili: çöküş (iri mum, yüksek hacim) -> dar kutu (küçük mum, düşük hacim) -> kutu tavanı kırılımı
+    # C1 olayı verir (bilgi = kırılım günü, kutu çöküş dibinden başlar); kutu mumları iri ise C1 yok, EŞLİ var; çöküş yoksa hiç olay
+    # yok; kırılımdan sonraki veri değişse de olay aynı (geleceğe bakmaz).
+    def seri27(kol, kes=None):
+        c = np.r_[np.full(300, 20.0), np.linspace(20, 8, 30), np.linspace(8, 8.6, 50), [9.2], np.full(40, 9.4)]
+        if kol == "dusussuz":
+            c = np.r_[np.full(330, 8.0), np.linspace(8, 8.6, 50), [9.2], np.full(40, 9.4)]
+        r = np.r_[np.full(300, 0.04), np.full(30, 0.08), np.full(50, 0.10 if kol == "iri" else 0.02), np.full(41, 0.05)]
+        v = np.r_[np.full(300, 2e6), np.full(30, 3e6), np.full(50, 1e6), np.full(41, 2e6)]
+        idx = pd.bdate_range("2019-01-01", periods=len(c))
+        d = pd.DataFrame({"Open": c, "High": c * (1 + r / 2), "Low": c * (1 - r / 2), "Close": c, "Volume": v}, index=idx)
+        return d.iloc[:kes] if kes else d
+    V27 = {"COL": seri27("col"), "IRI": seri27("iri"), "DUZ": seri27("dusussuz")}
+    C27 = F.fi_k18_tara(V27, F.FI_K18_ESIK, True); E27 = F.fi_k18_tara(V27, F.FI_K18_ESIK, False)
+    K27 = F.fi_k18_tara({"COL": seri27("col", kes=381)}, F.FI_K18_ESIK, True)
+    ok27 = (list(C27.sembol) == ["COL"] and list(E27.sembol) == ["IRI"] and C27.bilgi.iloc[0] == V27["COL"].index[380]
+            and C27.dip.iloc[0] <= V27["COL"].index[331] and len(K27) == 1 and K27.bilgi.iloc[0] == C27.bilgi.iloc[0]
+            and abs(K27.mum_kat.iloc[0] - C27.mum_kat.iloc[0]) < 1e-12) if len(C27) and len(E27) else False
+    if not ok27:
+        hata.append(f"27) K18 profil yanlış: C1 {list(C27.sembol) if len(C27) else []} eşli {list(E27.sembol) if len(E27) else []}")
     return hata
 
 
@@ -388,4 +408,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 26/26 OK")
+    print("test_fon_izi: 27/27 OK")
