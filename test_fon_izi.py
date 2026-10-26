@@ -501,6 +501,30 @@ def sina():
             pass
     if not ok36:
         hata.append("36) İşlenmiş veri paketi yanlış (parça/açma/bozuk parça denetimi)")
+    # 37) K27 PDF ayrıştırıcı: iki yazım (toplam nominal tutarlı / nominal tutarlı + 'iken'), konu satırından yön, görev satırı.
+    m37a = ("Konu : PAY ALIMI\nAçıklama :\n10/06/2026 tarihinde X A.Ş. payları ile ilgili olarak 110.854 TL toplam nominal tutarlı alış "
+            "işlemi ve/veya 0 TL toplam nominal tutarlı satış işlemi gerçekleştirilmiştir. paylarım %1,58472 sınırına ulaşmıştır.\n"
+            "Görevi : Yönetim Kurulu Üyesi\n")
+    m37b = "17/09/2026 tarihinde 112.009 TL nominal tutarlı alış işlemi tarafımca. paylarım % 13,44 iken % 13,56 olmuştur.\nGörevi :\nAd : Z\n"
+    m37c = "Konu : HİSSE SATIŞ\nAçıklama : 31/05/2024 tarihinde satış yapılmıştır.\n"
+    a37, b37, c37 = F.fi_k27_pdf_ayristir(m37a)[0], F.fi_k27_pdf_ayristir(m37b)[0], F.fi_k27_pdf_ayristir(m37c)[0]
+    ok37 = (a37["alim"] == 110854 and a37["satim"] == 0 and abs(a37["oran_son"] - 1.58472) < 1e-9 and a37["gorev"] == "Yönetim Kurulu Üyesi"
+            and a37["tarih"] == pd.Timestamp("2026-06-10") and b37["alim"] == 112009 and abs(b37["oran_bas"] - 13.44) < 1e-9
+            and abs(b37["oran_son"] - 13.56) < 1e-9 and b37["gorev"] == "" and c37["satim"] == 1.0 and c37["alim"] == 0.0)
+    if not ok37:
+        hata.append(f"37) K27 PDF ayrıştırıcı yanlış: {a37} {b37} {c37}")
+    # 38) Yeni ölçüt: eşli fark ve hücre içi sıra. 40 hisse, aynı hücre; olay hissesi her gün +%1 fazla getiri -> fark > 0, sıra 1.
+    ix38 = pd.bdate_range("2023-01-02", periods=200); V38 = {}
+    for k in range(40):
+        c = 10 * np.cumprod(np.r_[1.0, np.full(199, 1.001 + 0.0001 * k)])
+        V38[f"H{k:02d}"] = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1e6}, index=ix38)
+    c = 10 * np.cumprod(np.r_[1.0, np.full(199, 1.02)]); V38["OLAY"] = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c,
+                                                                                     "Volume": 1e6}, index=ix38)
+    P38 = F.fi_olcut_panel(V38, {**F.FI_OLCUT, "kriz": "2030-01-01"})
+    X38 = F.fi_olcut_olay(P38, pd.DataFrame({"sembol": ["OLAY", "H05"], "giris": [ix38[80], ix38[80]]}))
+    ok38 = bool(X38.fark.iloc[0] > 0.5 and X38.sira.iloc[0] == 1.0 and np.isfinite(X38.esli_r60.iloc[1]))
+    if not ok38:
+        hata.append(f"38) Yeni ölçüt eşli fark/sıra yanlış: {X38[['r60', 'esli_r60', 'fark', 'sira']].to_dict('records')}")
     return hata
 
 
@@ -508,4 +532,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 36/36 OK")
+    print("test_fon_izi: 38/38 OK")

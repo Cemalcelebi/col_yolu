@@ -391,6 +391,17 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "2024-26 1,01. Önceden yazılı 3 devam: D1 sıkı (üst fitil + bozan) 0,97-1,06; D2 BINBN'siz (8 ortak ölçü) n 5-26, BIST 2024-26 "
                "1,26 (n 15), diğerleri 0,77; D3 merkeze en yakın %1 0,92-1,07. Ortak yüz gerçek, sonrası tabanla aynı. Ders: "
                "FON_IZI_ders12_ortak_parmak.pdf."),
+    _ik_k("Ç99", "2026-10-26", "İÇERİDEN ALIM (KAP Pay Alım Satım Bildirimi) ve ÇÖLDE İÇERİDEN ALIM, YENİ ÖLÇÜTLE (K27)", "FON_IZI.py (k27)",
+          "Cemal: '1 + 3 ile başla, ölçütü değiştir' (yol önerisi: şekil yerine bilgi olayı; görünen alıcı = içeriden alan)",
+          "Yeni deneme (yeni ölçüt FI_OLCUT, karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k27_ozet.csv",
+          notu="KAP 2022-07 -> 2026-10: 8.609 bildirim, aracı kurum / portföy şirketi hariç 7.313, ayrıştırılan 6.637 (%91; 6.265'i MKK "
+               "aktarımı PDF). Net alım 3.477, net satış 2.324 bildirim. Yeni ölçüt: giriş ertesi gün açılış, 60 gün eşli fark (aynı gün, "
+               "momentum beşliği x likidite üçlüsü), ay kümeli %95 aralık, hücre içi sıra, 10 yuvalı portföy vs 200 eşli rastgele portföy. "
+               "Net alım: BIST 2023 eşli fark -%4,5 (aralık -10,0..+2,1, n 201, sıra 0,46), 2024-26 -%2,6 (-5,8..+0,6, n 418, sıra 0,48). "
+               "Büyük alım (oran >= 0,25 puan) n 12 / 30, -%13 / -%5. Çölde alım (K23 süzgeci + küçük mum) n 36 / 62: +%0,9 (-20,9..+22,6) / "
+               "-%6,0. Önceden yazılı 3 devam: yönetici alımı -%7,2 / -%2,3; kümeli (30 günde >= 3) -%8,2 (-14,6..-2,0) / -%2,6; düşüş "
+               "sonrası olmayan -%9,2 / -%1,9; sıra 0,44-0,51. ABD (SEC Form 4) izin bekliyor. İçeriden alım bildirimi BIST 2022-26'da "
+               "olumlu bilgi taşımıyor (2023'te eşlerin gerisinde); Avcı 2023'ün 2008-19 bulgusu bu dönemde yok."),
 ]
 
 
@@ -556,17 +567,20 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Ortam: cone. islenmis-veri dalı (V_BIST, V_ABD, K25 fon tabloları; 80 MB xz parça, sha256; FON_IZI v1.14 fi_veri_paketle / "
                 "fi_veri_paket_ac, CLI vpac, test 36; CLAUDE.md istisna 2). Web: grafik desenleri maliyet sonrası örneklem dışında nadiren "
                 "kazandırıyor; BIST'te içeriden alım ve bilanço sürprizi (PEAD) için akademik kanıt var, 52 hafta zirvesi zayıf",
-     "sonuc": "Yol önerisi açık kalanlarda (YOL)", "durum": "TAMAMLANDI, AÇIK: yol ve ölçüt kararı Cemal'in"},
+     "sonuc": "Yol önerisi açık kalanlarda (YOL)", "durum": "TAMAMLANDI (Cemal: '1 + 3, ölçütü değiştir', bir alttaki satır)"},
+    {"tarih": "2026-10-26", "istek": "1 + 3 ile başla (KAP içeriden alım; çöl + içeriden alım), ölçütü değiştir",
+     "yapilan": "Yeni ölçüt FI_OLCUT (eşli fark + ay kümeli %95 aralık + hücre içi sıra + eşli rastgele portföy; rastgele olay sağlamasıyla "
+                "iki yanlılık düzeltildi) CLAUDE.md'ye yazıldı. KAP Pay Alım Satım Bildirimi 2022-07 -> 2026-10 indirildi, tablo + PDF "
+                "ayrıştırıldı (6.637 bildirim); K27 + önceden yazılı 3 devam; IZ_KARNE Ç99; testler 37-38",
+     "sonuc": "İz değil: içeriden net alımdan sonra hisse 60 günde eşlerin %2,6-4,5 gerisinde; çölde alım, yönetici, kümeli, destek dışı "
+              "alımlar da tutmadı", "durum": "TAMAMLANDI, AÇIK: sıradaki yol (bilanço sürprizi) ve ABD Form 4 izni Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (26 Eki, Cemal: 'hiçbiri iz bulmadı, nasıl bir yol izlemeliyim'): öneri, karar Cemal'in: (1) şekil yerine BİLGİ olayı: KAP "
-    "içeriden alım bildirimleri (Avcı 2023: BIST 65 bin içeriden işlem, 1 yılda ~%6,6 anormal getiri) ve bilanço sürprizi (Boğaziçi "
-    "2020: BIST'te 60 günlük güçlü PEAD); (2) çöl + bilgi olayı birlikte (görünen alıcı = içeriden alan); (3) giriş yerine portföy/"
-    "risk tasarımı (K19: çıkış kuralı derin kaybı azaltıyor). ABD karşılığı için SEC Form 4 / 13F e-posta izni gerekir. Ölçüt sorusu: "
-    "'önce +%20 oranı >= 1,3 kat' bilinen faktörler için bile sert; getiri farkı + güven aralığı + portföy ölçüsüne geçilsin mi "
-    "(testten ÖNCE karar).",
+    "YOL (26 Eki): Cemal 1 + 3 seçti; K27 (Ç99) içeriden alım ve çölde içeriden alım yeni ölçütle İZ DEĞİL (eşlerin gerisinde). "
+    "Sırada öneri: (2) bilanço sürprizi (KAP finansal rapor; BIST için PEAD kanıtı var). ABD karşılığı (SEC Form 4) için Cemal "
+    "izni gerekir (SEC indirmesi iletişim e-postası istiyor).",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "

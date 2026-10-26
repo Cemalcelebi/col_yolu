@@ -78,7 +78,8 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Çöl, ardından gelen yükselişle değerlendirilir. Sabit bir ufuktaki kapanış başarı ölçüsü değildir.
 
 ## Test ve bulgu standardı
-- Her test iki dönemde (2023 ve 2024-26) ve ABD verisinde çalıştırılır. Eşikler sabittir, kâr/zarar trail ile hesaplanır, slot simülasyonu yapılır, taban oranı en az 1,3x olmalıdır.
+- Her test iki dönemde (2023 ve 2024-26) ve ABD verisinde çalıştırılır. Eşikler sabittir, slot simülasyonu yapılır.
+- YENİ ÖLÇÜT (Cemal, 26 Ekim 2026, 'ölçütü değiştir'; K27'den itibaren, FON_IZI.py FI_OLCUT): olay başına giriş = olaydan sonraki ilk işlem günü açılışı, r60 = 60. gün kapanışı / giriş − 1 (fon krizi 31.08.2026'da kesik). EŞLİ FARK = r60 − aynı giriş günü, aynı 60 gün momentum beşliği × likidite üçlüsündeki öteki hisselerin ortalama r60'ı. Bir hücre (pazar × 2023 / 2024-26) şu dört şartla TUTAR: n ≥ 30; ortalama eşli fark > 0 ve ay kümeli bootstrap %95 güven aralığının alt ucu > 0; ortalama hücre içi sıra > 0,50; 10 yuvalı slot portföyü (60 gün tut) olay getirileriyle, her olay yerine aynı gün aynı hücreden rastgele hisse alınan 200 portföyün %90'ından büyük (rastgele olay sağlamasıyla düzeltildi: tek hisse çarpıklığı yüzünden 'medyan fark' ve 'eşli ortalama portföyü' yanlıydı). İZ = dört hücre (BIST 2023, BIST 2024-26, ABD 2023, ABD 2024-26); ABD verisi yoksa en fazla BIST-ADAY. Eski 'önce +%20 oranı ≥ 1,3 kat' (tek cetvel) eski çalışmaların kaydıdır; yeniden açılmaz.
 - Bir ölçü bir testte pozitif, başka bir testte negatif çıkıyorsa iz sayılmaz. Küçük örneklemden çıkan sonuç "bulgu" diye sunulmaz.
 - Desene veya tek göstergeye göre alım-satım yoktur. Tarayıcı yalnızca aday bulur.
 - Kapanmış konuları yeniden açma (`COL_OZET.md` listesine bak): giriş zamanlaması/onay/hacim, stop/erken kesme, sektör ısısı, KNN, VIX/DXY, 90'dan fazla şekil ölçüsü.
