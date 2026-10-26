@@ -540,6 +540,11 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Ortak yüz: küçük mum, uzun üst fitil, orta düzeni bozan, düşük RSI. Profil sinyalleri tabanla aynı (kat 1,01-1,02, dört "
               "hücre); devam denemeleri 0,77-1,26 (1,26 n 15). İz değil",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-26", "istek": "Yalnız gerçek iz çıkınca PDF ver; iz çıkmayanları nereye koyarsan koy; her mesajdan sonra neden 'yapıtlar' "
+                                     "yazısı görüyorum",
+     "yapilan": "CLAUDE.md ders kuralı değişti: PDF yalnız gerçek izde; iz çıkmayanda dosya gönderilmez, sonuç mesajda birkaç satır + "
+                "IZ_DEFTERI/IZ_KARNE. 'Yapıtlar' = gönderilen dosya kartları; artık yalnız istenince / işaretlenecek dosyada / gerçek izde",
+     "sonuc": "Kural yazıldı", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
