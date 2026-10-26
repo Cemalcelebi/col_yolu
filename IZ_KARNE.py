@@ -549,8 +549,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Kart uygulamanın konuşma düzeyindeki listesi; Cemal'in onayıyla 22 Ekim'in iki eski işaretleme sayfası (Çöl İşaretleme, "
                 "Çöl İşaretleme Kapalı) kalıcı silindi",
      "sonuc": "İki sayfa silindi", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-26", "istek": "Yeni konuşmada bir şey yazmadan devam edebilir misin, her şeyi hatırlayacak mısın",
+     "yapilan": "CLAUDE.md'ye yeni oturum kuralı (indeksin görev günlüğü + açık kalanlardan devam); açık kalanlara DRIVE eşitleme maddesi",
+     "sonuc": "Yeni konuşma sohbeti hatırlamaz, repodaki kayıtları okur; ilk mesaj kısa bir cümle olmalı", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
+    "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
     "_yarim_bar_at ad çakışması (XU100); listedeki fon hisselerine süzgeç yok; boş hedef_vurdu; trail aynı bar; pkl biçimi; test_takip log yan etkisi.",
