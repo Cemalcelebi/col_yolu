@@ -13,3 +13,7 @@ Açma (repo kökünde, main dalındaki FON_IZI.py ile):
 
 Sonra sürücülere V_hazir olarak verilir, ör. fon_izi_k26(A, {"BIST": pickle.load(open("/tmp/veri/V_BIST.pkl","rb")), "ABD": ...}).
 Her parça sha256 ile doğrulanır; bozuk ya da eksik parçada açma durur.
+
+kap_iceriden/ (26 Ekim 2026, K27): KAP 'Pay Alım Satım Bildirimi' listesi 2022-07 -> 2026-10 (liste.csv.gz), ayrıştırılmış işlem
+satırları (islem.csv.gz; tablo + MKK PDF) ve ayrıştırılamayan bildirim numaraları (bos.txt). FI_KAPIC bu klasöre (liste.csv açılarak)
+verilirse fi_k27_indir yalnız yeni bildirimleri indirir.
