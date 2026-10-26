@@ -545,6 +545,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "CLAUDE.md ders kuralı değişti: PDF yalnız gerçek izde; iz çıkmayanda dosya gönderilmez, sonuç mesajda birkaç satır + "
                 "IZ_DEFTERI/IZ_KARNE. 'Yapıtlar' = gönderilen dosya kartları; artık yalnız istenince / işaretlenecek dosyada / gerçek izde",
      "sonuc": "Kural yazıldı", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-26", "istek": "Her mesajdan sonra 'Yapıtlar · 2' görüyorum, yeni bir şey mi; ikisini sil",
+     "yapilan": "Kart uygulamanın konuşma düzeyindeki listesi; Cemal'in onayıyla 22 Ekim'in iki eski işaretleme sayfası (Çöl İşaretleme, "
+                "Çöl İşaretleme Kapalı) kalıcı silindi",
+     "sonuc": "İki sayfa silindi", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
