@@ -1,0 +1,52 @@
+{
+ "surum": "FON_IZI v1.14 (2026-10-26, işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)",
+ "olusturma": "2026-10-26 18:12:01.773073",
+ "veri": {
+  "V_BIST.pkl": {
+   "kaynak_boy": 59331599,
+   "parca": 1
+  },
+  "V_ABD.pkl": {
+   "kaynak_boy": 145054435,
+   "parca": 2
+  },
+  "G.pkl": {
+   "kaynak_boy": 18083080,
+   "parca": 1
+  },
+  "oran.pkl": {
+   "kaynak_boy": 1208281,
+   "parca": 1
+  },
+  "dol.pkl": {
+   "kaynak_boy": 26269,
+   "parca": 1
+  }
+ },
+ "dosyalar": {
+  "G.pkl.xz.000": {
+   "boy": 3653996,
+   "sha256": "353c74e45793ac95839cb84c5a7b73ff6de997f32375668342a1eba7f247e0cb"
+  },
+  "V_ABD.pkl.xz.000": {
+   "boy": 47185920,
+   "sha256": "932322953260fe848364074120d42e4cc5ea904ad8595ccddd36bf04d929ebd9"
+  },
+  "V_ABD.pkl.xz.001": {
+   "boy": 14825736,
+   "sha256": "4938e5d6a3e7b6035f949483b823fb0ee16f64a4b90abdbf0106e241cbd0ecaf"
+  },
+  "V_BIST.pkl.xz.000": {
+   "boy": 17318200,
+   "sha256": "b3c47cc3b2f42ac96a9a486386efa635d6361788fd93238fd79e48e15d232ff1"
+  },
+  "dol.pkl.xz.000": {
+   "boy": 9500,
+   "sha256": "fc7a00de6ef0faafeb970cadff5f2da673122837e18c90545450a5757ad4214d"
+  },
+  "oran.pkl.xz.000": {
+   "boy": 12364,
+   "sha256": "cd5c5a797e58c614b302cde0fc9359203432c5bdd2cfc088f71effaa34011494"
+  }
+ }
+}
