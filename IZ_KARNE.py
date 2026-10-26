@@ -359,7 +359,10 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "%42 / %58 (0,72), BIST 2024-26 %62 / %54 (1,15), ABD 2023 1,45, ABD 2024-26 1,46; 2. bölge 0,91 / 1,19 / 1,50 / 1,19; 3. bölge "
                "(BINBN 27 Ara 2024-21 Oca 2025, Cemal'in eki) 0,60 / 1,15 / 1,05 / 1,14. Dört hücrede tutmuyor (BIST 2023 ters); ABD'de "
                "benzerlerin aşağı oranı da yüksek (oynak hisseler). Kör etiket seti (her örneğe en yakın 16, düşüş <= -%30 + eğim yatay/yukarı "
-               "süzgeci, sonu kesik, adsız; FON_IZI_kor_set_bolge.pdf) Cemal'in ✓/✗'ini bekliyor. Ders: FON_IZI_ders10_bolge_parmak.pdf."),
+               "süzgeci, sonu kesik, adsız; FON_IZI_kor_set_bolge.pdf): Cemal 20'sini işaretledi (7 ✓, 13 ✗); ✓ = 'benzer + kutu tepesi aşılırsa "
+               "alırım', tepe x 1,002 bekleyen alış emri, 60 gün ±%15: ✓ dolan 4, önce +%15 %75; ✗ dolan 9, %89; kodun en benzer 48'i dolan 37, "
+               "%70; havuz %61 (48'i 1,16 kat). Göz izi adayı değil (ön deneme, n küçük). Ders: FON_IZI_ders10_bolge_parmak.pdf, "
+               "FON_IZI_ders10b_kor_set.pdf."),
     _ik_k("Ç96", "2026-10-25", "İKİ EVRE KURALI: düşüş sonrası SMA20 altı (1. evre) → SMA20 üstünde 5 gün dizilme, en fazla 2 delen, BB "
           "sıkışması (K24)", "FON_IZI.py (k24)",
           "Cemal: '1. evre kırmızı SMA altında, 2. evre kırmızı SMA üstünde dizilme, muntazam, delen yok neredeyse'", "Yeni deneme (karar önceden)",
@@ -488,6 +491,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Görünen büyük alıcı (raporlu fon) çölden sonra daha sık gelmiyor (1,10-1,15), fon girişinden önce çöl daha sık değil (1,07), çölde "
               "fon varken sonrası daha kötü, fon hisseleri hariç çöl = eşli. Kriz dışarıda -%30 oranı %43 -> %32 ama eşli de %30",
      "durum": "TAMAMLANDI, AÇIK: görünmeyen alıcı için AKD verisi (ücretli) Cemal'in kararı; kör set ✓/✗ bekleniyor"},
+    {"tarih": "2026-10-26", "istek": "AKD beleş yok mu, Midas aylık 1200 TL, gerek var mı? Kör seti işaretledim; açık: kutu içindeki tepe aşılmıyorsa risk "
+                                     "çok, ✓'leri tepe aşılıp alış emri gelmiş gibi koydum",
+     "yapilan": "AKD: ücretsiz, bütün hisseler için geçmişe dönük kaynak bulunamadı; kurum düzeyi (kişi değil) ve geçmiş indirme zor -> alınmadı (Cemal "
+                "'gerek yok'). Kör set değerlendirmesi önceden yazıldı (kutu tepesi x 1,002 bekleyen alış, 60 gün ±%15, 250 gün 2 kat, fon krizi "
+                "dışarıda); 20 işaret (7 ✓, 13 ✗) değerlendirildi; FON_IZI_ders10b_kor_set.pdf",
+     "sonuc": "✓ dolan 4, önce +%15 %75, 2 kat %25; ✗ dolan 9, %89, %78; kodun en benzer 48'i %70 (havuz %61, 1,16 kat). ✓ ✗'den iyi değil -> "
+              "göz izi adayı değil (ön deneme, n küçük)",
+     "durum": "TAMAMLANDI, AÇIK: kalan 28 grafiğin işareti (isteğe bağlı)"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -505,11 +516,11 @@ IK_ACIK: List[str] = [
     "D13 yakalama (Cemal'in vakaları, 25 Eki): üretim D13 Cemal'in koşan BINBN-24, KTLEV-24, MANAS-25a/b bölgelerini görmedi (dip yeni / parabol "
     "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
-    "KÖR SET (K23, 25 Eki): FON_IZI_kor_set_bolge.pdf, 48 grafik (A: MANAS Haz-Tem, B: MANAS Eki-Kas, C: BINBN Ara-Oca; her biri en yakın 16, "
-    "adsız, çöl sonunda kesik). Cemal ✓/✗ verince: ✓'lerin 60 gün ±%15 yukarı oranı vs ✗ vs süzgeç tabanı (~%58); ✓ >= 1,3 x taban ise ✓/✗'yi "
-    "ayıran ölçüler -> Cemal ağırlıklı benzerlik ABD ve görülmemiş dönemde. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
-    "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil; Cemal'in 'çok alıcı -> çöl' mantığının görünmeyen alıcısı (fonlara "
-    "satmadan önce kişisel hesaplarda toplayan) için aracı kurum dağılımı (AKD) verisi gerekir; ücretli, Cemal'in kararı.",
+    "KÖR SET (K23, 26 Eki): 48 grafiğin 20'si işaretlendi (7 ✓, 13 ✗); kutu tepesi aşılırsa alış kuralıyla ✓ ✗'den iyi değil (ön deneme). Kalan "
+    "28 grafik (A11-A16, B21-B32, C33-C36, C43-C48) işaretlenirse aynı kuralla tamamlanır. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
+    "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil. AKD (aracı kurum dağılımı) alınmadı (Cemal 26 Eki: 'gerek yok'; "
+    "ücretsiz geçmiş kaynak yok, kurum düzeyi kişiyi göstermez). Bedava seçenek: KAP pay alım-satım / %5 eşik bildirimleri, çölden sonra "
+    "daha sık mı (önceden yazılı, sırada).",
     "SİSTEM (K19, 25 Eki): giriş (çöl/kırılım) aynı gün eşli rastgele hisseden iyi değil; çıkış (kutu dibi stop + trail) 120 gün tutmaktan "
     "ortalamada düşük, yatay piyasada derin kaybı azaltıyor. Cemal'in kararı: amaç büyük kazananı tutmak mı (gevşek trail / tut), derin kaybı "
     "sınırlamak mı. Sıradaki ölçüm: üretim zinciri (D13 + T6/T10 + trail) ve 2016-22 ayı dönemi aynı rastgele kıyasla.",

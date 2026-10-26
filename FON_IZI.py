@@ -5184,6 +5184,49 @@ def fi_k23_kor_degerlendir(V: Dict[str, pd.DataFrame], anahtar: pd.DataFrame, is
     return {"aday": A, "ozet": Z, "karar": karar}
 
 
+def fi_k12_ders10b(D: pd.DataFrame, T: pd.DataFrame, P: pd.DataFrame, yol: str) -> int:
+    """Ders 10b (Cemal 26 Eki, kör set işaretleri): ✓ / ✗ / kodun en benzer 48'i / havuz; kutu tepesi aşılırsa alış emri, 60 gün ±%15,
+    250 gün 2 kat. D = Cemal'in etiketli adayları (k23_kor_cemal_etiket.csv), T = 48 adayın emir sonucu, P = havuz (k23_kor_havuz.csv)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    yz = lambda x: f"%{100 * x:.0f}" if x == x else "—"
+
+    def oz(X):
+        d = X[X.tepe_doldu.astype(bool)]; y = d.tepe_y60.dropna()
+        return len(X), len(d), (y == 1).mean() if len(y) else np.nan, (y == -1).mean() if len(y) else np.nan, d.tepe_x2.dropna().mean()
+    G = [("✓ senin benzer dediklerin", D[D.isaret == "✓"]), ("✗ benzemez dediklerin", D[D.isaret == "✗"]),
+         ("kodun en benzer 48'i (hepsi)", T), ("süzgeçli havuz (6.000)", P)]
+    S = [(ad, *oz(X)) for ad, X in G]
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69)); y = 0.96
+        fig.text(0.07, y, "DERS 10b: KÖR SET — GÖZÜN AYIRDI MI?", fontsize=14, weight="bold", va="top", color="#1f2a44"); y -= 0.045
+        sat = ["Senin kuralın: ✓ = 'benzer ve kutu içindeki tepe aşılırsa alırım'. Her adayda bölge bittikten sonra 60 gün boyunca kutu "
+               "tepesinin %0,2 üstünde bekleyen alış emri; tepe aşılmazsa işlem yok. Sonuç dolumdan: 60 günde önce +%15 / önce −%15, 250 günde "
+               "2 kat; fon krizi dışarıda. Kural ve karar işaretlerin görülmeden yazıldı. 48 adayın 20'sini işaretledin (7 ✓, 13 ✗)."]
+        sat += [f"- {ad}: aday {n}, emir doldu {k}, dolanlarda önce +%15 {yz(u)}, önce −%15 {yz(a)}, 2 kat {yz(x)}" for ad, n, k, u, a, x in S]
+        sat += ["", "SONUÇ: ✓'lerin yukarı oranı ✗'lerden yüksek değil (karar şartı: ✗ ve havuzun 1,3 katı) → göz izi adayı DEĞİL. Dolan emir "
+                "sayısı çok az (✓ 4, ✗ 9): bu bir ön deneme, kesin hüküm değil.",
+                "Yan gözlem: kodun en benzer 48'inde tepe aşılınca dolanların yukarı oranı havuzdan biraz yüksek (1,16 kat), 1,3 değil; dolanların "
+                "üçte biri 2023 boğasından.",
+                "Sıradaki (önceden yazılı): kalan 28 grafiği işaretlersen aynı kuralla tamamlanır; tutarsa ✓/✗'yi ayıran ölçüler ABD'de ve "
+                "görülmemiş dönemde denenir."]
+        for s in sat:
+            for k, p in enumerate(textwrap.wrap(s, 92) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, p, fontsize=9.4, va="top"); y -= 0.021
+            y -= 0.004
+        ax = fig.add_axes([0.12, 0.08, 0.80, y - 0.13])
+        x = np.arange(len(S))
+        ax.bar(x - 0.2, [100 * s[3] for s in S], 0.4, color="#27ae60", label="önce +%15 (dolanlarda)")
+        ax.bar(x + 0.2, [100 * s[5] for s in S], 0.4, color="#1f2a44", label="250 günde 2 kat")
+        ax.set_xticks(x); ax.set_xticklabels([f"{s[0]}\n(dolan {s[2]})" for s in S], fontsize=7.5); ax.set_ylabel("%", fontsize=8)
+        ax.legend(fontsize=8); ax.set_ylim(0, 100)
+        pdf.savefig(fig); plt.close(fig)
+    return 1
+
+
 def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
     """Ders 10 (Cemal 25 Eki: 'işaretli bölgenin her özelliğini kaydet; birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, aşağı, yatay?
     halüsinasyon mu?'): (1) soru, iki bölgenin parmak izi; (2) MANAS bölgeleri grafikte (SMA20, BB, iki evre); (3) en yakın 100 benzer bölge
