@@ -505,7 +505,16 @@ IK_GOREV: List[Dict[str, str]] = [
                 "başına 2 tam genişlik grafik, çölden önce 20 mum, kalın gövde + fitil, altta hacim, Bollinger yok, ince SMA20; ad / tarih / "
                 "rakam / sağ ayak yine yok (FON_IZI v1.10 fi_k23_kor_pdf_net, test 33); FON_IZI_kor_set_net.pdf (28 sayfa)",
      "sonuc": "İlk 20 işaretin sonucu (✓ ✗'den iyi değil) geçersiz sayıldı; değerlendirme kuralı değişmedi (önceden yazılı)",
-     "durum": "TAMAMLANDI, AÇIK: Cemal'in 48 grafiği net sette yeniden işaretlemesi"},
+     "durum": "TAMAMLANDI (v3 işaretlenmeden v4 yerine geçti, bir alttaki satır)"},
+    {"tarih": "2026-10-26", "istek": "Bu güzel ama geriye zum lazım (ilerisi olmadan), veriyi görmüyorum; kutu yeşil mumla geçiliyor mu bilmiyorum; "
+                                     "alış mumu varsa kutu çizilsin, yoksa çöl mumları yeterli değil",
+     "yapilan": "Kör set v4 (önceden yazılı kural): kutu = bölgenin en yüksek / en düşüğü; alış mumu = bölgeden sonraki 60 günde kutu tepesinin "
+                "üstünde kapanan ilk yeşil mum; yalnız alış mumu gelen ve sonucu ölçülebilen adaylar (her örneğe en yakın 16, toplam 48); "
+                "sayfa başına bir aday: üstte 1 yıl geri zum, altta yakın görünüm + hacim, kutu çerçeveli, alış mumunda kesik. Giriş ertesi "
+                "açılış, 60 gün ±%15, 250 gün 2 kat; kıyas aynı şartlı havuz (bölge başına 2.000). FON_IZI v1.11 (fi_k23_alis_mumu, "
+                "fi_k23_kor4_sec/_pdf/_degerlendir, test 34); FON_IZI_kor_set_v4.pdf (52 sayfa), k23_kor4_anahtar.csv, k23_kor4_havuz.csv",
+     "sonuc": "Set Cemal'de; sonuç işaretlerden sonra açılır (anahtar gizli)",
+     "durum": "TAMAMLANDI, AÇIK: Cemal'in v4'te 48 adayı işaretlemesi"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -524,8 +533,9 @@ IK_ACIK: List[str] = [
     "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
     "KÖR SET (K23, 26 Eki): ilk 20 işaret (7 ✓, 13 ✗) küçük grafikten verildi; Cemal: 'mumun yapısı görünmüyor, gerçek grafikte başka "
-    "değerlendirirdim' -> bu sonuç geçersiz sayıldı. Aynı 48 aday aynı numarayla net mum grafiğiyle yeniden çizildi (FON_IZI_kor_set_net.pdf); "
-    "48'in yeniden işaretlenmesi bekleniyor, aynı önceden yazılı kuralla değerlendirilir. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
+    "değerlendirirdim' -> bu sonuç geçersiz sayıldı. Önce net mum (v3), sonra Cemal'in isteğiyle v4: kutu + alış mumu "
+    "(kutu tepesi üstünde kapanan ilk yeşil mum) + 1 yıl geri zum, yalnız alış mumu gelen 48 aday (FON_IZI_kor_set_v4.pdf). İşaret bekleniyor; "
+    "değerlendirme fi_k23_kor4_degerlendir (önceden yazılı). Anahtar: arastirma_cikti/fon_izi/k23_kor4_anahtar.csv.",
     "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil. AKD (aracı kurum dağılımı) alınmadı (Cemal 26 Eki: 'gerek yok'; "
     "ücretsiz geçmiş kaynak yok, kurum düzeyi kişiyi göstermez). Bedava seçenek: KAP pay alım-satım / %5 eşik bildirimleri, çölden sonra "
     "daha sık mı (önceden yazılı, sırada).",

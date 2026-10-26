@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.10 (2026-10-26, kör set v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.11 (2026-10-26, kör set v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5196,6 +5196,161 @@ def fi_k23_kor_pdf_net(V: Dict[str, pd.DataFrame], anahtar: pd.DataFrame, Hk: pd
                 pdf.savefig(fig); plt.close(fig); sayfa += 1
     return sayfa
 
+# KÖR SET v4 — KUTU + ALIŞ MUMU + GERİ ZUM (Cemal 26 Eki: 'geriye zum, ilerisi olmadan; veriyi görmüyorum' + 'kutu yeşil mumla geçiliyor
+# mu bilmiyorum; alış mumu varsa kutu çizilsin, yoksa çöl mumları yeterli değil'). ÖNCEDEN YAZILDI (işaretler görülmeden):
+#   kutu = bölgenin (t'de biten L mum) en yüksek High'ı / en düşük Low'u; ALIŞ MUMU = bölge bittikten sonraki K['alis_gun'] işlem gününde
+#   kapanışı kutu tepesinin üstünde olan İLK YEŞİL mum (kapanış > açılış). Alış mumu yoksa aday yok (Cemal: çöl mumları yeterli değil).
+#   Grafik alış mumunun kapanışında KESİK (sonrası gizli): üstte 1 yıl geri zum, altta yakın görünüm (bölgeden önce 20 mum -> alış mumu).
+#   Adaylar: her örneğe süzgeçli BIST havuzunda (düşüş <= -%30, eğim yatay/yukarı) en yakın bölgelerden, alış mumu olan ve sonucu ölçülebilen
+#   (giriş + 60 gün fon krizi 31.08.2026'dan önce) ilk K['k']'si. Giriş = alış mumundan sonraki gün açılış (yan ölçü: alış mumu kapanışı).
+#   Sonuç: 60 günde önce +%15 / önce -%15 / yatay, 250 günde 2 kat (krizde kesik). Kıyas: ✓ vs ✗ vs havuzdan aynı şartı (alış mumu var)
+#   taşıyan K['havuz_n'] rastgele bölge. Karar: ✓ yukarı oranı hem ✗'nin hem havuzun >= 1,3 katı -> 'göz izi adayı'.
+FI_K23_KOR4 = {"k": 16, "aday_k": 400, "alis_gun": 60, "ufuk": 60, "esik": 0.15, "uzun": 250, "kriz": "2026-08-31", "havuz_n": 2000,
+               "havuz_dene": 12000, "kat_esik": 1.3, "genis": 250, "yakin_once": 20, "tohum": 24}
+
+
+def fi_k23_alis_mumu(d: pd.DataFrame, t: pd.Timestamp, L: int, K: Dict[str, Any] = FI_K23_KOR4) -> Dict[str, Any]:
+    """Bölge (t'de biten L mum) kutusu, alış mumu (kutu tepesi üstünde kapanan ilk yeşil mum) ve ertesi açılış girişinin sonucu."""
+    i = int(d.index.get_loc(pd.Timestamp(t))); o = d.Open.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    c = d.Close.to_numpy(float); son = int(d.index.searchsorted(pd.Timestamp(K["kriz"]), side="right"))
+    ust, alt = float(h[i - L + 1:i + 1].max()), float(l[i - L + 1:i + 1].min())
+    out: Dict[str, Any] = {"kutu_ust": ust, "kutu_alt": alt, "alis": False, "alis_i": np.nan, "olculur": False,
+                           "y60": np.nan, "x2": np.nan, "y60_kap": np.nan}
+    j = next((k for k in range(i + 1, min(i + 1 + K["alis_gun"], son)) if c[k] > ust and c[k] > o[k]), None)
+    if j is None:
+        return out
+    out.update({"alis": True, "alis_i": j, "alis_tarih": d.index[j], "olculur": j + 1 + K["ufuk"] <= son})
+    def yon(g: float, k0: int) -> float:
+        u = min(k0 + K["ufuk"], son)
+        if u - k0 < 20:
+            return np.nan
+        a = np.flatnonzero(h[k0:u] >= g * (1 + K["esik"])); b = np.flatnonzero(l[k0:u] <= g * (1 - K["esik"]))
+        a0, b0 = (a[0] if len(a) else 10 ** 9), (b[0] if len(b) else 10 ** 9)
+        return 1.0 if a0 < b0 else (-1.0 if b0 < 10 ** 9 else 0.0)
+    if j + 1 < son:
+        g = o[j + 1]; out["y60"] = yon(g, j + 1)
+        w = h[j + 1:min(j + 1 + K["uzun"], son)]
+        out["x2"] = float(w.max() >= 2 * g) if len(w) >= 60 else np.nan
+    out["y60_kap"] = yon(c[j], j + 1)
+    return out
+
+
+def fi_k23_kor4_sec(V: Dict[str, pd.DataFrame], h0: pd.Series, K: Dict[str, Any] = FI_K23_KOR4,
+                    haric: Tuple[Tuple[str, str], ...] = ()) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Bir örneğe en yakın bölgelerden alış mumu olan ve ölçülebilen ilk K['k'] aday + aynı şartı taşıyan rastgele havuz örneği."""
+    L = int(float(h0["L"])); M, P = fi_k23_en_benzer(V, h0, K["aday_k"], haric)
+    def ekle(X: pd.DataFrame, n: int) -> pd.DataFrame:
+        sat = []
+        for r in X.itertuples():
+            try:
+                R = fi_k23_alis_mumu(V[r.sembol], r.tarih, L, K)
+            except Exception as ex:   # tek pencere bozuksa digerleri devam eder
+                filog.warning("K23 kor4 %s %s atlandi: %s", r.sembol, r.tarih, ex); continue
+            if R["alis"] and R["olculur"]:
+                sat.append({"sembol": r.sembol, "tarih": r.tarih, "uzak": getattr(r, "uzak", np.nan), **R})
+                if len(sat) >= n:
+                    break
+        return pd.DataFrame(sat)
+    A = ekle(M, K["k"])
+    if len(A) < K["k"]:
+        filog.warning("K23 kor4 bolge L=%d: alis mumlu aday %d < %d", L, len(A), K["k"])
+    H = ekle(P.sample(min(K["havuz_dene"], len(P)), random_state=K["tohum"]), K["havuz_n"])
+    return A, H
+
+
+def fi_k23_kor4_ciz(ax, axh, d: pd.DataFrame, i0: int, j: int, b0: int, b1: int, ust: float, alt: float, ince: bool,
+                    K: Dict[str, Any] = FI_K23_KOR_NET) -> None:
+    """i0..j aralığını mum olarak çizer (j = alış mumu, son mum); kutu [b0, b1] x [alt, ust] çerçeve, alış mumu işaretli."""
+    from matplotlib.patches import Rectangle
+    w = d.iloc[i0:j + 1]; x = np.arange(len(w)); r = np.where((w.Close >= w.Open).to_numpy(), K["yesil"], K["kirmizi"])
+    ax.vlines(x, w.Low, w.High, color=r, lw=0.6 if ince else 1.1, zorder=2)
+    govde = (w.Close - w.Open).abs().to_numpy(); asgari = 0.0015 * float(w.Close.median())
+    ax.bar(x, np.maximum(govde, asgari), bottom=np.minimum(w.Open, w.Close) - np.where(govde < asgari, asgari / 2, 0),
+           color=r, width=0.7 if ince else 0.62, zorder=3, linewidth=0)
+    if not ince:
+        ax.plot(x, d.Close.rolling(20).mean().iloc[i0:j + 1].to_numpy(), color=K["sma"], lw=0.9, alpha=0.8, zorder=1)
+    ax.add_patch(Rectangle((b0 - i0 - 0.5, alt), b1 - b0 + 1, ust - alt, fill=True, facecolor="#9e9e9e", alpha=0.12,
+                           edgecolor="#5d4037", lw=1.4, zorder=1))
+    ax.hlines(ust, b1 - i0 + 0.5, len(w) - 0.5, colors="#5d4037", linestyles="--", lw=0.9, zorder=1)
+    lo, hi = float(w.Low.min()), float(w.High.max()); pay = (hi - lo) * 0.07
+    ax.set_ylim(lo - pay, hi + pay); ax.set_xlim(-0.8, len(w) - 0.2)
+    ax.annotate("alış mumu", (len(w) - 1, float(w.Low.iloc[-1])), xytext=(len(w) - 1, lo - pay * 0.2), ha="right", va="top",
+                fontsize=8 if ince else 10, color="#1565c0", weight="bold", arrowprops={"arrowstyle": "->", "color": "#1565c0"})
+    if axh is not None:
+        axh.bar(x, w.Volume.to_numpy(float), color=r, alpha=0.45, width=0.62, linewidth=0); axh.set_xlim(-0.8, len(w) - 0.2)
+    for a in (ax, axh):
+        if a is None:
+            continue
+        a.set_xticks([]); a.set_yticks([])
+        for s in a.spines.values():
+            s.set_visible(False)
+
+
+def fi_k23_kor4_pdf(V: Dict[str, pd.DataFrame], Hk: pd.DataFrame, yol: str, anahtar: str, havuz_yol: str,
+                    K: Dict[str, Any] = FI_K23_KOR4, haric: Tuple[Tuple[str, str], ...] = ()) -> pd.DataFrame:
+    """Kör set v4: bölüm başına örnek + K['k'] aday, sayfa başına bir aday (üstte 1 yıl geri zum, altta yakın + hacim), alış mumunda kesik.
+    Anahtar (sonuçlar gizli) ve havuz CSV'si yazılır."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    Hk = Hk.set_index("Unnamed: 0") if "Unnamed: 0" in Hk.columns else Hk
+    Hk.index = Hk.index.astype(str); rng = np.random.default_rng(K["tohum"]); parca, havuz, no = [], [], 1
+
+    def sayfa(pdf, d, t, L, baslik, renk, alt_yazi):
+        i = int(d.index.get_loc(pd.Timestamp(t))); b0 = i - L + 1; R = fi_k23_alis_mumu(d, t, L, K)
+        fig = plt.figure(figsize=(8.27, 11.69)); fig.text(0.05, 0.965, baslik, fontsize=17, weight="bold", color=renk, va="top")
+        if not R["alis"]:
+            fig.text(0.05, 0.92, "60 gün içinde alış mumu gelmedi -> işlem yok", fontsize=11, va="top")
+            pdf.savefig(fig); plt.close(fig); return
+        j = int(R["alis_i"]); fig.text(0.05, 0.935, alt_yazi.format(n=j - i), fontsize=9.5, va="top", color="#555")
+        ax1 = fig.add_axes([0.05, 0.62, 0.90, 0.27]); ax1.set_title("1 YIL GERİ (kutu çerçeveli)", fontsize=10, loc="left", color="#555")
+        fi_k23_kor4_ciz(ax1, None, d, max(0, j - K["genis"] + 1), j, b0, i, R["kutu_ust"], R["kutu_alt"], True)
+        ax2 = fig.add_axes([0.05, 0.17, 0.90, 0.39]); axh = fig.add_axes([0.05, 0.05, 0.90, 0.10])
+        ax2.set_title("YAKIN: çölden önce 20 mum -> kutu -> alış mumu", fontsize=10, loc="left", color="#555")
+        fi_k23_kor4_ciz(ax2, axh, d, max(0, b0 - K["yakin_once"]), j, b0, i, R["kutu_ust"], R["kutu_alt"], False)
+        pdf.savefig(fig); plt.close(fig)
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.95, "KÖR SET v4 — KUTU + ALIŞ MUMU", fontsize=16, weight="bold", va="top", color="#1f2a44")
+        for k_, s_ in enumerate(["Her sayfa bir aday. Üstte 1 yıl geri zum (düşüşü görürsün), altta yakın görünüm + hacim.",
+                                 "Kahverengi çerçeve = kutu (çöl bölgesinin en yükseği / en düşüğü). Kesikli çizgi = kutu tepesi.",
+                                 "Yalnız ALIŞ MUMU gelen adaylar var: kutu tepesinin üstünde kapanan ilk yeşil mum (60 gün içinde).",
+                                 "Grafik alış mumunun kapanışında KESİK: sonrası, hisse adı, tarih, fiyat yok.",
+                                 "Soru: 'Bu çöl + bu alış mumu, ben alırdım' mı? Cevap: '✓: 3, 7, 12 …' (yazmadıkların ✗).",
+                                 "Ölçü önceden yazılı: giriş alış mumundan sonraki gün açılış; 60 günde önce +%15 mi −%15 mi; 250 günde 2 kat.",
+                                 "Bu set v3'ün yerine geçer (v3 işaretlenmedi). Her bölüm senin örneğinle açılır."]):
+            fig.text(0.07, 0.90 - k_ * 0.026, s_, fontsize=10, va="top")
+        pdf.savefig(fig); plt.close(fig)
+        for harf, b, ad in (("A", "1", "MANAS Haz-Tem 2025"), ("B", "2", "MANAS Eki-Kas 2025"), ("C", "3", "BINBN Ara 2024-Oca 2025")):
+            h0 = Hk.loc[b]; L = int(float(h0["L"]))
+            S, P = fi_k23_kor4_sec(V, h0, K, haric)
+            S = S.sample(frac=1, random_state=int(rng.integers(1e9))).reset_index(drop=True)
+            S["no"] = np.arange(no, no + len(S)); no += len(S); S["bolum"] = harf; S["bolge"] = b; parca.append(S)
+            havuz.append(P.assign(bolge=b))
+            sayfa(pdf, V[str(h0["sembol"])], pd.Timestamp(h0["son"]), L, f"BÖLÜM {harf} — SENİN ÖRNEĞİN ({ad})", "#c0392b",
+                  f"Kutu {L} mum; alış mumu kutu bittikten {{n}} mum sonra.")
+            for r in S.itertuples():
+                sayfa(pdf, V[r.sembol], r.tarih, L, f"{harf}{r.no}", "#1f2a44", f"Kutu {L} mum; alış mumu kutu bittikten {{n}} mum sonra.")
+    A = pd.concat(parca, ignore_index=True); Hv = pd.concat(havuz, ignore_index=True)
+    A[["no", "bolum", "bolge", "sembol", "tarih", "uzak", "kutu_ust", "kutu_alt", "alis_tarih", "y60", "x2", "y60_kap"]].to_csv(anahtar, index=False)
+    Hv[["bolge", "sembol", "tarih", "alis_tarih", "y60", "x2", "y60_kap"]].to_csv(havuz_yol, index=False)
+    return A
+
+
+def fi_k23_kor4_degerlendir(anahtar: pd.DataFrame, isaret: List[int], havuz: pd.DataFrame,
+                            K: Dict[str, Any] = FI_K23_KOR4) -> Dict[str, Any]:
+    """Cemal'in ✓ numaraları: ✓ / ✗ / havuz için 60 gün yukarı-aşağı, 250 gün 2 kat (giriş ertesi açılış; yan ölçü alış mumu kapanışı)."""
+    A = anahtar.assign(isaret=anahtar.no.isin(isaret))
+    def oz(X: pd.DataFrame) -> Dict[str, Any]:
+        y = X.y60.dropna(); yk = X.y60_kap.dropna(); x2 = X.x2.dropna()
+        return {"n": len(X), "yukari": float((y == 1).mean()) if len(y) else np.nan, "asagi": float((y == -1).mean()) if len(y) else np.nan,
+                "x2": float(x2.mean()) if len(x2) else np.nan, "yukari_kap": float((yk == 1).mean()) if len(yk) else np.nan}
+    Z = pd.DataFrame([{"grup": g, **oz(X)} for g, X in (("✓", A[A.isaret]), ("✗", A[~A.isaret]), ("hepsi", A), ("havuz", havuz))]).set_index("grup")
+    karar = bool(Z.loc["✓", "yukari"] >= K["kat_esik"] * Z.loc["✗", "yukari"] and Z.loc["✓", "yukari"] >= K["kat_esik"] * Z.loc["havuz", "yukari"])
+    return {"aday": A, "ozet": Z.reset_index(), "karar": karar}
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
@@ -5772,6 +5927,12 @@ if __name__ == "__main__":
         print(fi_k23_kor_pdf_net(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_kor_anahtar.csv")),
                                  pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")),
                                  os.path.join(_A.cikti, "FON_IZI_kor_set_net.pdf")), "sayfa")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k23kor4":       # kör set v4: kutu + alış mumu + 1 yıl geri zum
+        _A = FIAyar()
+        print(len(fi_k23_kor4_pdf(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")),
+                                  os.path.join(_A.cikti, "FON_IZI_kor_set_v4.pdf"), os.path.join(_A.cikti, "k23_kor4_anahtar.csv"),
+                                  os.path.join(_A.cikti, "k23_kor4_havuz.csv"))), "aday")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()

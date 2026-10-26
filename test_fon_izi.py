@@ -472,6 +472,15 @@ def sina():
             z33 = True
     if n33 != 3 or not z33:
         hata.append(f"33) Kör set net grafik yanlış: sayfa {n33}, eksik sembol yakalandı {z33}")
+    # 34) Kör set v4 alış mumu: kutu tepesini kapanışla geçen KIRMIZI mum sayılmaz, ilk YEŞİL olan sayılır; giriş ertesi açılış, sonra +%15 önce.
+    c34 = np.r_[np.full(300, 10.0), [10.5], np.linspace(10.6, 16.0, 99)]
+    o34 = c34 * 0.995; o34[300] = 10.6                       # 300. gün kapanış 10,5 > kutu 10,01 ama açılış 10,6 -> kırmızı
+    d34 = pd.DataFrame({"Open": o34, "High": np.maximum(o34, c34) * 1.001, "Low": np.minimum(o34, c34) * 0.999, "Close": c34, "Volume": 1.0},
+                       index=ix32)
+    R34 = F.fi_k23_alis_mumu(d34, ix32[299], 10)
+    ok34 = bool(R34["alis"]) and R34["alis_i"] == 301 and R34["y60"] == 1.0 and bool(R34["olculur"]) and abs(R34["kutu_ust"] - 10.01) < 1e-9
+    if not ok34:
+        hata.append(f"34) K23 kör set v4 alış mumu yanlış: {R34}")
     return hata
 
 
@@ -479,4 +488,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 33/33 OK")
+    print("test_fon_izi: 34/34 OK")
