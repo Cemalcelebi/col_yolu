@@ -361,7 +361,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "benzerlerin aşağı oranı da yüksek (oynak hisseler). Kör etiket seti (her örneğe en yakın 16, düşüş <= -%30 + eğim yatay/yukarı "
                "süzgeci, sonu kesik, adsız; FON_IZI_kor_set_bolge.pdf): Cemal 20'sini işaretledi (7 ✓, 13 ✗); ✓ = 'benzer + kutu tepesi aşılırsa "
                "alırım', tepe x 1,002 bekleyen alış emri, 60 gün ±%15: ✓ dolan 4, önce +%15 %75; ✗ dolan 9, %89; kodun en benzer 48'i dolan 37, "
-               "%70; havuz %61 (48'i 1,16 kat). Göz izi adayı değil (ön deneme, n küçük); SONRA GEÇERSİZ: Cemal küçük grafikte mum yapısını göremedi, aynı 48 aday net mum grafiğiyle yeniden çizildi (FON_IZI_kor_set_net.pdf), yeniden işaret bekleniyor. Ders: FON_IZI_ders10_bolge_parmak.pdf, "
+               "%70; havuz %61 (48'i 1,16 kat). Göz izi adayı değil (ön deneme, n küçük); SONRA GEÇERSİZ: Cemal küçük grafikte mum yapısını göremedi, aynı 48 aday net mum grafiğiyle yeniden çizildi (FON_IZI_kor_set_net.pdf), yeniden işaret bekleniyor. v4 (kutu + alış mumu + 1 yıl zum, 48 aday): Cemal 28 ✓ / 14 ✗ / 6 belirsiz; önce +%15 ✓ %54, ✗ %57, havuz %60, 2 kat ✓ %29 / ✗ %36 / havuz %42 -> göz izi değil. Ders: FON_IZI_ders10c_kor_set_v4.pdf. Ders: FON_IZI_ders10_bolge_parmak.pdf, "
                "FON_IZI_ders10b_kor_set.pdf."),
     _ik_k("Ç96", "2026-10-25", "İKİ EVRE KURALI: düşüş sonrası SMA20 altı (1. evre) → SMA20 üstünde 5 gün dizilme, en fazla 2 delen, BB "
           "sıkışması (K24)", "FON_IZI.py (k24)",
@@ -514,7 +514,14 @@ IK_GOREV: List[Dict[str, str]] = [
                 "açılış, 60 gün ±%15, 250 gün 2 kat; kıyas aynı şartlı havuz (bölge başına 2.000). FON_IZI v1.11 (fi_k23_alis_mumu, "
                 "fi_k23_kor4_sec/_pdf/_degerlendir, test 34); FON_IZI_kor_set_v4.pdf (52 sayfa), k23_kor4_anahtar.csv, k23_kor4_havuz.csv",
      "sonuc": "Set Cemal'de; sonuç işaretlerden sonra açılır (anahtar gizli)",
-     "durum": "TAMAMLANDI, AÇIK: Cemal'in v4'te 48 adayı işaretlemesi"},
+     "durum": "TAMAMLANDI (işaretler bir alttaki satırda değerlendirildi)"},
+    {"tarih": "2026-10-26", "istek": "İşaretli PDF'i indirilenlerimden sen bakar mısın, yüklersem limit gidiyor (Drive'a yükledim)",
+     "yapilan": "Drive'daki 'FON_IZI_kor_set_v4 (2).pdf' indirildi; 50 sayfadaki el çizimi işaretler (PDF Ink) tek tek okundu: 28 ✓, 14 ✗, "
+                "6 belirsiz ('zor', '?', 'kararsız alış mumu', 'oransız büyük', dalga çizimi, boş); önceden yazılı kuralla değerlendirildi "
+                "(fi_k23_kor4_degerlendir); k23_kor4_cemal_etiket.csv; FON_IZI_ders10c_kor_set_v4.pdf",
+     "sonuc": "Önce +%15: ✓ %54, ✗ %57 (belirsizlerle %50), havuz %60; 2 kat: ✓ %29, ✗ %36, havuz %42; kapanışta alışta ✓ %68 vs havuz %63. "
+              "Göz izi değil. Gözün ✓'de geç gelen, büyük ve hacimli alış mumu, dar ve dipte kutu seçiyor; sonrası farklı değil",
+     "durum": "TAMAMLANDI, AÇIK: sıradaki denemeler (alış mumu boyu/hacmi, gecikme) kapalı konuya (giriş onayı/hacim) dokunuyor -> Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -534,8 +541,9 @@ IK_ACIK: List[str] = [
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
     "KÖR SET (K23, 26 Eki): ilk 20 işaret (7 ✓, 13 ✗) küçük grafikten verildi; Cemal: 'mumun yapısı görünmüyor, gerçek grafikte başka "
     "değerlendirirdim' -> bu sonuç geçersiz sayıldı. Önce net mum (v3), sonra Cemal'in isteğiyle v4: kutu + alış mumu "
-    "(kutu tepesi üstünde kapanan ilk yeşil mum) + 1 yıl geri zum, yalnız alış mumu gelen 48 aday (FON_IZI_kor_set_v4.pdf). İşaret bekleniyor; "
-    "değerlendirme fi_k23_kor4_degerlendir (önceden yazılı). Anahtar: arastirma_cikti/fon_izi/k23_kor4_anahtar.csv.",
+    "(kutu tepesi üstünde kapanan ilk yeşil mum) + 1 yıl geri zum, yalnız alış mumu gelen 48 aday (FON_IZI_kor_set_v4.pdf). Cemal 28 ✓ / "
+    "14 ✗ / 6 belirsiz: önce +%15 ✓ %54, ✗ %57, havuz %60; 2 kat ✓ %29 -> göz izi değil (FON_IZI_ders10c_kor_set_v4.pdf). Sıradaki "
+    "denemeler (alış mumu boyu/hacmi, kutudan sonra gecikme) kapalı konu 'giriş onayı/hacim'e dokunuyor: yapılması Cemal'in kararı.",
     "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil. AKD (aracı kurum dağılımı) alınmadı (Cemal 26 Eki: 'gerek yok'; "
     "ücretsiz geçmiş kaynak yok, kurum düzeyi kişiyi göstermez). Bedava seçenek: KAP pay alım-satım / %5 eşik bildirimleri, çölden sonra "
     "daha sık mı (önceden yazılı, sırada).",

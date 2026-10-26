@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.11 (2026-10-26, kör set v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.12 (2026-10-26, kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5457,6 +5457,80 @@ def fi_k12_ders10b(D: pd.DataFrame, T: pd.DataFrame, P: pd.DataFrame, yol: str) 
         ax.legend(fontsize=8); ax.set_ylim(0, 100)
         pdf.savefig(fig); plt.close(fig)
     return 1
+
+def fi_k12_ders10c(E: pd.DataFrame, H: pd.DataFrame, yol: str) -> int:
+    """Ders 10c (Cemal 26 Eki, kör set v4 işaretleri): ✓ / net ✗ / belirsiz / havuz için alış mumundan sonraki gün açılışta giriş, 60 gün
+    ±%15, 250 gün 2 kat; gözün ✓'de neyi seçtiği (alış mumu gecikmesi, boyu, hacmi, kutu bandı, kutudaki yer). E = k23_kor4_cemal_etiket.csv,
+    H = k23_kor4_havuz.csv."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    yz = lambda x: f"%{100 * x:.0f}" if x == x else "—"
+    sz = lambda x, k=1: f"{x:.{k}f}".replace(".", ",") if x == x else "—"
+
+    def oz(X):
+        y = X.y60.dropna(); yk = X.y60_kap.dropna()
+        return (len(X), (y == 1).mean() if len(y) else np.nan, (y == -1).mean() if len(y) else np.nan,
+                X.x2.dropna().mean() if X.x2.notna().any() else np.nan, (yk == 1).mean() if len(yk) else np.nan)
+    G = [("✓ alırdım", E[E.isaret == "✓"]), ("✗ almazdım", E[E.isaret == "✗"]), ("? belirsiz", E[E.isaret == "?"]),
+         ("havuz", H)]
+    S = [(ad, *oz(X)) for ad, X in G]
+
+    def yaz(fig, y, satirlar, boy=9.4):
+        for s in satirlar:
+            for k, p in enumerate(textwrap.wrap(s, 92) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, p, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.96, "DERS 10c — KÖR SET v4: KUTU + ALIŞ MUMU", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        n_ok, n_x, n_b = (int((E.isaret == g).sum()) for g in ("✓", "✗", "?"))
+        y = yaz(fig, 0.915, [
+            f"Ne yapıldı: 48 aday (kutu + kutu tepesinin üstünde kapanan ilk yeşil mum, 1 yıl geri zum, sonrası gizli). Sen {n_ok} ✓, "
+            f"{n_x} ✗ koydun; {n_b} sayfa belirsiz ('zor', '?', 'kararsız alış mumu', 'oransız büyük', bir boş).",
+            "Ölçü (işaretlerden önce yazılı): alış mumundan sonraki gün açılışta al; 60 günde önce +%15 mi −%15 mi; 250 günde 2 kat. "
+            "Havuz = aynı süzgeçten geçen ve alış mumu gelmiş 6.000 rastgele bölge.",
+            f"- ✓: önce +%15 {yz(S[0][2])}, önce −%15 {yz(S[0][3])}, 2 kat {yz(S[0][4])}",
+            f"- ✗: {yz(S[1][2])}, {yz(S[1][3])}, {yz(S[1][4])} · belirsiz (n {S[2][1]}): {yz(S[2][2])}, {yz(S[2][3])}, {yz(S[2][4])}",
+            f"- havuz: {yz(S[3][2])}, {yz(S[3][3])}, {yz(S[3][4])}",
+            f"- yan ölçü (alış mumunun kapanışında al): ✓ {yz(S[0][5])}, ✗ {yz(S[1][5])}, havuz {yz(S[3][5])}",
+            "KARAR: ✓'nin yukarı oranı ne ✗'nin ne havuzun 1,3 katı → göz izi değil. 2 kat oranında ✓ en geride. n küçük (28 / 14).",
+            "Ne öğrendik: kutu + alış mumu kuralının kendisi havuzda zaten %60 'önce +%15' veriyor (alış mumu gelmeyenleri dışarıda "
+            "bıraktığımız için). Gözün bunun üstüne bir şey eklemedi; aynı kutu + alış mumu görüntüsünde sonrasını ayıramıyor."])
+        ax = fig.add_axes([0.12, 0.08, 0.80, y - 0.13]); x = np.arange(len(S))
+        for k, (i, renk, et) in enumerate(((2, "#27ae60", "önce +%15"), (3, "#c0392b", "önce −%15"), (4, "#1f2a44", "250 günde 2 kat"))):
+            ax.bar(x + (k - 1) * 0.27, [100 * s[i] for s in S], 0.27, color=renk, label=et)
+        ax.set_xticks(x); ax.set_xticklabels([f"{s[0]}\n(n {s[1]})" for s in S], fontsize=8); ax.set_ylabel("%", fontsize=8)
+        ax.set_ylim(0, 100); ax.legend(fontsize=8)
+        pdf.savefig(fig); plt.close(fig)
+
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.96, "GÖZÜN ✓'DE NEYİ SEÇTİ (medyan)", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        M = E.groupby("isaret")[["gecikme", "alis_boy", "alis_hacim", "bant", "dusus", "konum"]].median()
+        ad = [("gecikme", "alış mumu kutudan kaç mum sonra", lambda v: sz(v, 0)), ("alis_boy", "alış mumu boyu / kutu mumu", sz),
+              ("alis_hacim", "alış mumu hacmi / kutu hacmi", sz), ("bant", "kutu bandı (tepe/dip − 1)", yz),
+              ("dusus", "kutudan önceki düşüş", yz), ("konum", "kutunun 1 yıllık aralıktaki yeri (0 dip, 1 tepe)", lambda v: sz(v, 2))]
+        y = 0.90; fig.text(0.07, y, "ölçü", fontsize=10, weight="bold"); fig.text(0.62, y, "✓", fontsize=10, weight="bold")
+        fig.text(0.74, y, "✗", fontsize=10, weight="bold"); fig.text(0.86, y, "?", fontsize=10, weight="bold"); y -= 0.03
+        for k, et, f in ad:
+            fig.text(0.07, y, et, fontsize=9.5)
+            for xx, g in ((0.62, "✓"), (0.74, "✗"), (0.86, "?")):
+                fig.text(xx, y, f(M.loc[g, k]) if g in M.index else "—", fontsize=9.5)
+            y -= 0.026
+        yaz(fig, y - 0.02, [
+            "Okuma: ✓ dediklerinde alış mumu kutudan daha geç geldi (kutu olgunlaştıktan sonra), mum ve hacmi daha büyük, kutu daha dar ve "
+            "1 yıllık aralığın daha alt kısmında. Yani gözün belirli bir tip seçiyor; ama bu tipin sonrası seçmediklerinden iyi değil.",
+            "Neden iz değil: aynı görüntü (dar kutu + güçlü yeşil kırılım mumu) yükselen ve çöken hisselerde aynı sıklıkta. Fark kutunun "
+            "içinde değil, alış mumundan sonra; o da önceden görünmüyor (DERS 10, 13 ile aynı).",
+            "Kendin nasıl bakarsın: 'kutu tepesinin üstünde yeşil kapanış' tek başına havuzun ortalaması; ✓ demen oranı değiştirmiyor. "
+            "Bu yüzden alış mumundan sonra korumayı (kutu dibi zarar sınırı) sen koy; kazanç kırılımdan sonra piyasanın verdiği kadar.",
+            "Dikkat: alış mumu hacmi ve giriş onayı 'kapalı konu' (COL_OZET). Bu ölçüleri kural olarak denemek senin kararın."])
+        pdf.savefig(fig); plt.close(fig)
+    return 2
 
 
 def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
