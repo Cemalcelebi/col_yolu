@@ -451,6 +451,14 @@ def sina():
             and abs(S31.pay_max.iloc[0] - 0.06) < 1e-12 and bool(S31.giris5.iloc[0]) and not bool(S31.giris5.iloc[1]))
     if not ok31:
         hata.append(f"31) K25 fon girişi yanlış: olay {G31.to_dict('records')} sinyal {S31.to_dict('records')}")
+    # 32) Kör set değerlendirme emri: bölge tepesi x 1,002'de bekleyen alış; dolum max(açılış, seviye); sonra +%15 önce -> yukarı.
+    ix32 = pd.bdate_range("2021-01-01", periods=400)
+    c32 = np.r_[np.full(300, 10.0), [10.5], np.linspace(10.6, 13.0, 99)]
+    d32 = pd.DataFrame({"Open": c32, "High": c32 * 1.001, "Low": c32 * 0.999, "Close": c32, "Volume": 1.0}, index=ix32)
+    R32 = F.fi_k23_emir_sonuc(d32, ix32[299], 10)
+    ok32 = bool(R32["tepe_doldu"]) and R32["tepe_y60"] == 1.0 and bool(R32["govde_doldu"])
+    if not ok32:
+        hata.append(f"32) K23 kör set emir sonucu yanlış: {R32}")
     return hata
 
 
@@ -458,4 +466,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 31/31 OK")
+    print("test_fon_izi: 32/32 OK")

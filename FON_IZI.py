@@ -5119,6 +5119,71 @@ def fi_k23_kor_pdf(V: Dict[str, pd.DataFrame], H: Dict[str, pd.Series], yol: str
     return A
 
 
+# KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
+# işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
+# gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
+# işlem yok. Sonuç dolum gününden SONRA: 60 barda önce +%15 (High) / önce -%15 (Low) / yatay; 250 barda dolumun 2 katı; fiyat 31.08.2026'da
+# kesik (fon krizi dışarıda). Kıyas: ✓ vs ✗ vs süzgeçli havuzdan 2.000 rastgele pencere (aynı emir). Karar: ✓ yukarı oranı hem ✗'nin hem
+# havuzun >= 1,3 katı -> 'göz izi adayı' (sonra ✓/✗'yi ayıran ölçüler, ABD ve görülmemiş dönem).
+FI_K23_DEG = {"emir_gun": 60, "pay": 1.002, "ufuk": 60, "esik": 0.15, "uzun": 250, "kriz": "2026-08-31", "havuz_n": 2000, "kat_esik": 1.3}
+
+
+def fi_k23_emir_sonuc(d: pd.DataFrame, t: pd.Timestamp, L: int, E: Dict[str, Any] = FI_K23_DEG) -> Dict[str, Any]:
+    """Bir bölge (bitiş t, uzunluk L) için iki emir seviyesi (en yüksek High / gövde tepesi): dolum günü, dolum, 60 gün yön, 250 gün 2 kat."""
+    i = int(d.index.get_loc(pd.Timestamp(t))); o = d.Open.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    c = d.Close.to_numpy(float); son = int(d.index.searchsorted(pd.Timestamp(E["kriz"]), side="right"))
+    out: Dict[str, Any] = {}
+    for ad, sev in (("tepe", h[i - L + 1:i + 1].max() * E["pay"]), ("govde", np.maximum(o, c)[i - L + 1:i + 1].max() * E["pay"])):
+        j = next((k for k in range(i + 1, min(i + 1 + E["emir_gun"], son)) if h[k] >= sev), None)
+        out[f"{ad}_doldu"] = j is not None
+        if j is None:
+            out.update({f"{ad}_y60": np.nan, f"{ad}_x2": np.nan}); continue
+        g = max(o[j], sev); u = min(j + 1 + E["ufuk"], son)
+        a = np.flatnonzero(h[j + 1:u] >= g * (1 + E["esik"])); b = np.flatnonzero(l[j + 1:u] <= g * (1 - E["esik"]))
+        a0, b0 = (a[0] if len(a) else 10 ** 9), (b[0] if len(b) else 10 ** 9)
+        out[f"{ad}_y60"] = (1.0 if a0 < b0 else (-1.0 if b0 < 10 ** 9 else 0.0)) if u - (j + 1) >= 20 else np.nan
+        w = h[j + 1:min(j + 1 + E["uzun"], son)]
+        out[f"{ad}_x2"] = float(len(w) > 0 and w.max() >= 2 * g) if len(w) >= 60 else np.nan
+    return out
+
+
+def fi_k23_havuz_ornek(V: Dict[str, pd.DataFrame], H: Dict[str, pd.Series], E: Dict[str, Any] = FI_K23_DEG, tohum: int = 23,
+                       haric: Tuple[Tuple[str, str], ...] = ()) -> pd.DataFrame:
+    """Her örnek bölge için süzgeçli havuzdan (fi_k23_en_benzer ile aynı süzgeç) rastgele E['havuz_n'] pencere + emir sonucu."""
+    sat = []
+    for b, h0 in H.items():
+        _, P = fi_k23_en_benzer(V, h0, 1, haric)
+        P = P.sample(min(E["havuz_n"], len(P)), random_state=tohum)
+        for r in P.itertuples():
+            try:
+                sat.append({"bolge": b, "sembol": r.sembol, "tarih": r.tarih, **fi_k23_emir_sonuc(V[r.sembol], r.tarih, int(h0["L"]), E)})
+            except Exception as ex:   # tek pencere bozuksa digerleri devam eder
+                filog.warning("K23 havuz %s %s atlandi: %s", r.sembol, r.tarih, ex)
+    return pd.DataFrame(sat)
+
+
+def fi_k23_kor_degerlendir(V: Dict[str, pd.DataFrame], anahtar: pd.DataFrame, isaret: List[int], havuz: pd.DataFrame,
+                           E: Dict[str, Any] = FI_K23_DEG) -> Dict[str, Any]:
+    """Cemal'in ✓ numaraları (isaret) ile anahtar: her aday için emir sonucu; ✓ / ✗ / havuz özetleri ve karar."""
+    Lb = {"1": 21, "2": 12, "3": 17}
+    A = anahtar.assign(bolge=anahtar.bolge.astype(str), tarih=pd.to_datetime(anahtar.tarih))
+    A = A.assign(isaret=A.no.isin(isaret)).reset_index(drop=True)
+    R = pd.DataFrame([fi_k23_emir_sonuc(V[r.sembol], r.tarih, Lb[r.bolge], E) for r in A.itertuples()])
+    A = pd.concat([A, R], axis=1)
+    def oz(X, k):
+        d = X[X[f"{k}_doldu"]]; y = d[f"{k}_y60"].dropna(); x2 = d[f"{k}_x2"].dropna()
+        return {"n": len(X), "doldu": float(X[f"{k}_doldu"].mean()) if len(X) else np.nan, "n_islem": len(y),
+                "yukari": float((y == 1).mean()) if len(y) else np.nan, "asagi": float((y == -1).mean()) if len(y) else np.nan,
+                "x2": float(x2.mean()) if len(x2) else np.nan}
+    Z = []
+    for k in ("tepe", "govde"):
+        for ad, X in (("✓", A[A.isaret]), ("✗", A[~A.isaret]), ("havuz", havuz)):
+            Z.append({"emir": k, "grup": ad, **oz(X, k)})
+    Z = pd.DataFrame(Z); t = Z[Z.emir == "tepe"].set_index("grup")
+    karar = bool(t.loc["✓", "yukari"] >= E["kat_esik"] * t.loc["✗", "yukari"] and t.loc["✓", "yukari"] >= E["kat_esik"] * t.loc["havuz", "yukari"])
+    return {"aday": A, "ozet": Z, "karar": karar}
+
+
 def fi_k12_ders10(V: Dict[str, pd.DataFrame], Zk: pd.DataFrame, Hk: pd.DataFrame, Es: pd.DataFrame, Z24: pd.DataFrame, yol: str) -> int:
     """Ders 10 (Cemal 25 Eki: 'işaretli bölgenin her özelliğini kaydet; birebir aynı görünümdeki bölgelerin yüzde kaçı yukarı, aşağı, yatay?
     halüsinasyon mu?'): (1) soru, iki bölgenin parmak izi; (2) MANAS bölgeleri grafikte (SMA20, BB, iki evre); (3) en yakın 100 benzer bölge
