@@ -552,8 +552,19 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-10-26", "istek": "Yeni konuşmada bir şey yazmadan devam edebilir misin, her şeyi hatırlayacak mısın",
      "yapilan": "CLAUDE.md'ye yeni oturum kuralı (indeksin görev günlüğü + açık kalanlardan devam); açık kalanlara DRIVE eşitleme maddesi",
      "sonuc": "Yeni konuşma sohbeti hatırlamaz, repodaki kayıtları okur; ilk mesaj kısa bir cümle olmalı", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-26", "istek": "Ortam seçimi; işlenmiş veriyi koy; hiçbiri iz bulmadı, nasıl bir yol izlemeliyim, web'de düşün",
+     "yapilan": "Ortam: cone. islenmis-veri dalı (V_BIST, V_ABD, K25 fon tabloları; 80 MB xz parça, sha256; FON_IZI v1.14 fi_veri_paketle / "
+                "fi_veri_paket_ac, CLI vpac, test 36; CLAUDE.md istisna 2). Web: grafik desenleri maliyet sonrası örneklem dışında nadiren "
+                "kazandırıyor; BIST'te içeriden alım ve bilanço sürprizi (PEAD) için akademik kanıt var, 52 hafta zirvesi zayıf",
+     "sonuc": "Yol önerisi açık kalanlarda (YOL)", "durum": "TAMAMLANDI, AÇIK: yol ve ölçüt kararı Cemal'in"},
 ]
 IK_ACIK: List[str] = [
+    "YOL (26 Eki, Cemal: 'hiçbiri iz bulmadı, nasıl bir yol izlemeliyim'): öneri, karar Cemal'in: (1) şekil yerine BİLGİ olayı: KAP "
+    "içeriden alım bildirimleri (Avcı 2023: BIST 65 bin içeriden işlem, 1 yılda ~%6,6 anormal getiri) ve bilanço sürprizi (Boğaziçi "
+    "2020: BIST'te 60 günlük güçlü PEAD); (2) çöl + bilgi olayı birlikte (görünen alıcı = içeriden alan); (3) giriş yerine portföy/"
+    "risk tasarımı (K19: çıkış kuralı derin kaybı azaltıyor). ABD karşılığı için SEC Form 4 / 13F e-posta izni gerekir. Ölçüt sorusu: "
+    "'önce +%20 oranı >= 1,3 kat' bilinen faktörler için bile sert; getiri farkı + güven aralığı + portföy ölçüsüne geçilsin mi "
+    "(testten ÖNCE karar).",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
     "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",

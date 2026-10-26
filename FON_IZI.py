@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.13 (2026-10-26, K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.14 (2026-10-26, işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -1563,6 +1563,78 @@ def fi_k9_paket_ac(kaynak: str, A: FIAyar) -> Dict[str, Any]:
         raise RuntimeError("metin paketi acilamadi (xz/tar hatasi)")
     filog.info("K9 paket acildi: %s -> %s (%d metin)", kaynak, A.kapfon, man["metin_sayisi"])
     return man
+
+# İŞLENMİŞ VERİ PAKETİ (Cemal 26 Eki: 'koy'; yeni oturumda veri yeniden kurulmasın). KAP paketinin (kapfon-veri) eşi: repoda ayrı
+# 'islenmis-veri' dalı, main'e birleştirilmez. İçerik fi_k1_veri çıktıları (BIST/ABD düzeltilmiş günlük fiyat sözlükleri) ve K25 fon
+# tabloları; her dosya xz ile sıkıştırılıp GitHub sınırı için parca_mb MB parçalara bölünür, manifest.json boy + sha256 tutar.
+# Açma: python FON_IZI.py vpac <paket_klasoru> <hedef_klasor>  ->  pickle'lar hedefte, sürücülere V_hazir olarak verilir.
+def fi_veri_paketle(kaynak: Dict[str, str], hedef: str, parca_mb: int = 45) -> Dict[str, Any]:
+    """kaynak: paket adı -> dosya yolu. Her dosya xz'lenip parçalanır; manifest.json (sürüm, tarih, her parça boy + sha256)."""
+    import hashlib, json, subprocess
+    os.makedirs(hedef, exist_ok=True)
+    for eski in [f for f in os.listdir(hedef) if ".xz." in f or f == "manifest.json"]:
+        os.unlink(os.path.join(hedef, eski))
+    man: Dict[str, Any] = {"surum": FI_SURUM, "olusturma": str(pd.Timestamp.now()), "veri": {}, "dosyalar": {}}
+    boy = parca_mb * 1024 * 1024
+    for ad, yol in kaynak.items():
+        if not os.path.exists(yol):
+            raise FileNotFoundError(f"veri paketi kaynağı yok: {ad} -> {yol}")
+        xz = subprocess.Popen(["xz", "-T0", "-6", "-c", yol], stdout=subprocess.PIPE); no = 0
+        while True:
+            blok = xz.stdout.read(boy)
+            if not blok:
+                break
+            with open(os.path.join(hedef, f"{ad}.xz.{no:03d}"), "wb") as f:
+                f.write(blok)
+            no += 1
+        if xz.wait() != 0:
+            raise RuntimeError(f"veri paketi oluşturulamadı: {ad} (xz hatası)")
+        man["veri"][ad] = {"kaynak_boy": os.path.getsize(yol), "parca": no}
+    for ad in sorted(os.listdir(hedef)):
+        if ".xz." in ad:
+            h = hashlib.sha256()
+            with open(os.path.join(hedef, ad), "rb") as f:
+                for b in iter(lambda: f.read(1 << 20), b""):
+                    h.update(b)
+            man["dosyalar"][ad] = {"boy": os.path.getsize(os.path.join(hedef, ad)), "sha256": h.hexdigest()}
+    with open(os.path.join(hedef, "manifest.json"), "w", encoding="utf-8") as f:
+        json.dump(man, f, ensure_ascii=False, indent=1)
+    filog.info("veri paketi: %s -> %s (%d parça)", list(kaynak), hedef, len(man["dosyalar"]))
+    return man
+
+
+def fi_veri_paket_ac(kaynak: str, hedef: str) -> Dict[str, str]:
+    """fi_veri_paketle paketini hedefe açar; her parça önce sha256 ile doğrulanır (eksik/bozuk -> durur), açılan dosyanın boyu
+    manifestle karşılaştırılır. Dönüş: paket adı -> açılan dosya yolu."""
+    import hashlib, json, subprocess
+    with open(os.path.join(kaynak, "manifest.json"), encoding="utf-8") as f:
+        man = json.load(f)
+    for ad, bilgi in man["dosyalar"].items():
+        yol = os.path.join(kaynak, ad)
+        if not os.path.exists(yol):
+            raise FileNotFoundError(f"veri paketi eksik: {ad}")
+        h = hashlib.sha256()
+        with open(yol, "rb") as f:
+            for b in iter(lambda: f.read(1 << 20), b""):
+                h.update(b)
+        if h.hexdigest() != bilgi["sha256"]:
+            raise RuntimeError(f"veri paketi bozuk: {ad} (sha256 tutmuyor)")
+    os.makedirs(hedef, exist_ok=True); cikan = {}
+    for ad, bilgi in man["veri"].items():
+        yol = os.path.join(hedef, ad)
+        with open(yol, "wb") as g:
+            xz = subprocess.Popen(["xz", "-d", "-c"], stdin=subprocess.PIPE, stdout=g)
+            for no in range(bilgi["parca"]):
+                with open(os.path.join(kaynak, f"{ad}.xz.{no:03d}"), "rb") as f:
+                    xz.stdin.write(f.read())
+            xz.stdin.close()
+            if xz.wait() != 0:
+                raise RuntimeError(f"veri paketi açılamadı: {ad} (xz hatası)")
+        if os.path.getsize(yol) != bilgi["kaynak_boy"]:
+            raise RuntimeError(f"veri paketi boyu tutmuyor: {ad}")
+        cikan[ad] = yol
+    filog.info("veri paketi açıldı: %s -> %s (%s)", kaynak, hedef, list(cikan))
+    return cikan
 
 
 def fi_k9_tablolar_guncel(L: pd.DataFrame, E: pd.DataFrame, A: FIAyar) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
@@ -6136,6 +6208,10 @@ if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
         _A = FIAyar(); _E = fi_k9_indir(fi_k9_liste(_A), _A)
         print(_E.durum.value_counts().to_string())
+        sys.exit(0)
+    if len(sys.argv) > 3 and sys.argv[1] == "vpac":          # işlenmiş veri paketini (islenmis-veri dalı) aç: vpac <paket> <hedef>
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        print(fi_veri_paket_ac(sys.argv[2], sys.argv[3]))
         sys.exit(0)
     if len(sys.argv) > 2 and sys.argv[1] in ("k9paket", "k9ac"):   # v1.5: tasinabilir KAP fon verisi paketi (yaz / ac)
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")

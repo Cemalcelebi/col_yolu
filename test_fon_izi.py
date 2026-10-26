@@ -487,6 +487,20 @@ def sina():
     ok35 = abs(float(Y35["mum"].iloc[0]) - 0.255) < 1e-12 and list(np.flatnonzero(m35)) == list(range(20, 30))
     if not ok35:
         hata.append(f"35) K26 yüzdelik/maske yanlış: {float(Y35['mum'].iloc[0])}, {list(np.flatnonzero(m35))}")
+    # 36) İşlenmiş veri paketi: 3 MB rastgele dosya 1 MB parçalarla paketlenip açılınca bayt bayt aynı; bozuk parça yakalanır.
+    with tempfile.TemporaryDirectory() as td:
+        ham = os.urandom(3 * 1024 * 1024); open(os.path.join(td, "x.bin"), "wb").write(ham)
+        M36 = F.fi_veri_paketle({"x.bin": os.path.join(td, "x.bin")}, os.path.join(td, "p"), parca_mb=1)
+        C36 = F.fi_veri_paket_ac(os.path.join(td, "p"), os.path.join(td, "ac"))
+        ok36 = M36["veri"]["x.bin"]["parca"] >= 3 and open(C36["x.bin"], "rb").read() == ham
+        with open(os.path.join(td, "p", "x.bin.xz.000"), "r+b") as f:
+            f.write(b"\x00")
+        try:
+            F.fi_veri_paket_ac(os.path.join(td, "p"), os.path.join(td, "ac2")); ok36 = False
+        except RuntimeError:
+            pass
+    if not ok36:
+        hata.append("36) İşlenmiş veri paketi yanlış (parça/açma/bozuk parça denetimi)")
     return hata
 
 
@@ -494,4 +508,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 35/35 OK")
+    print("test_fon_izi: 36/36 OK")
