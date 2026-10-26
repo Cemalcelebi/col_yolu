@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.12 (2026-10-26, kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.13 (2026-10-26, K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5351,6 +5351,171 @@ def fi_k23_kor4_degerlendir(anahtar: pd.DataFrame, isaret: List[int], havuz: pd.
     karar = bool(Z.loc["✓", "yukari"] >= K["kat_esik"] * Z.loc["✗", "yukari"] and Z.loc["✓", "yukari"] >= K["kat_esik"] * Z.loc["havuz", "yukari"])
     return {"aday": A, "ozet": Z.reset_index(), "karar": karar}
 
+# K26 ORTAK PARMAK İZİ (Cemal 26 Eki: 'KZBGY 4 Şubat - 13 Mart 2025 bölgesinin parmak izini çıkar, daha önceki hissedekiyle karşılaştır;
+# belki karşılaştırmada iz çıkar'). ÖNCEDEN YAZILDI (sonuç görülmeden):
+#   Örnekler (çöl = alış mumundan önceki gün biter): MANAS 13.06-11.07.2025, MANAS 20.10-05.11.2025, BINBN 27.12.2024-21.01.2025,
+#   KZBGY 04.02-11.03.2025 (12.03 +%10 ilk ayak, 13.03 alış mumu). Her örneğin 16 ölçüsü kendi uzunluğunda; yüzdelik = BIST süzgeçli
+#   havuzda (düşüş <= -%30, eğim >= -0,001; 20 mumluk pencereler) sırası. ORTAK ÖLÇÜ = dört örneğin yüzdelik aralığı <= K['ortak_aralik'].
+#   ORTAK PROFİL = her ortak ölçüde yüzdelik [en küçük - pay, en büyük + pay] (pazarın kendi süzgeçli havuzunun yüzdeliği; ABD'de ABD'nin).
+#   Ortak ölçü < 2 ise 'ortak iz yok'. Sinyal: profil + süzgeç tutan 20 mumluk pencere, aynı hissede 60 günde tek (ilk gün). İşlem: v4 alış
+#   mumu (60 gün içinde kutu tepesinin üstünde kapanan ilk yeşil mum), ertesi açılış, 60 gün önce +%15 / -%15, 250 gün 2 kat, fon krizi
+#   31.08.2026'da kesik. Taban: aynı süzgeçli havuzdan rastgele pencere, aynı alış mumu kuralı, aynı hücre. Hücre = alış mumu yılı
+#   (2023 / 2024-26) x pazar. İZ = dört hücrede önce +%15 katı >= 1,3 (n >= 30) ve önce -%15 katı < 1,3.
+FI_K26 = {"ornek": {"MANAS-1": ("MANAS", "2025-06-13", "2025-07-11"), "MANAS-2": ("MANAS", "2025-10-20", "2025-11-05"),
+                    "BINBN": ("BINBN", "2024-12-27", "2025-01-21"), "KZBGY": ("KZBGY", "2025-02-04", "2025-03-11")},
+          "L": 20, "ortak_aralik": 0.40, "pay": 0.05, "ayri": 60, "taban_n": 40000, "tohum": 26, "kat_esik": 1.3, "n_esik": 30,
+          "donem": (("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))}
+
+
+def fi_k26_havuz(V: Dict[str, pd.DataFrame], L: int, K: Dict[str, Any] = FI_K23_KOR) -> pd.DataFrame:
+    """Bir pazarın bütün L mumluk pencerelerinin parmak izi, süzgeçli (düşüş <= K['dusus'], eğim >= K['egim'])."""
+    parca = []
+    for s, d in V.items():
+        try:
+            F = fi_k23_parmak(d, L)
+            if len(F):
+                parca.append(F.assign(sembol=s))
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K26 havuz %s atlandi: %s", s, ex)
+    P = pd.concat(parca).rename_axis("tarih").reset_index().dropna(subset=list(FI_K23["olcu"]))
+    return P[(P.dusus <= K["dusus"]) & (P.egim >= K["egim"])].reset_index(drop=True)
+
+
+def fi_k26_yuzdelik(P: pd.DataFrame, X: pd.DataFrame) -> pd.DataFrame:
+    """X'in her ölçüsünün P havuzundaki yüzdelik sırası (0-1)."""
+    out = {}
+    for k in FI_K23["olcu"]:
+        s = np.sort(P[k].to_numpy(float)); x = X[k].to_numpy(float)
+        out[k] = (np.searchsorted(s, x, "left") + np.searchsorted(s, x, "right")) / (2 * len(s))
+    return pd.DataFrame(out, index=X.index)
+
+
+def fi_k26_ortak(V: Dict[str, pd.DataFrame], Pb: pd.DataFrame, K: Dict[str, Any] = FI_K26) -> Dict[str, Any]:
+    """Dört örneğin ölçüleri, BIST havuz yüzdelikleri, ortak ölçüler ve ortak profil (yüzdelik aralıkları)."""
+    sat = {}
+    for ad, (s, a, b) in K["ornek"].items():
+        d = V[s]; i0 = int(d.index.searchsorted(pd.Timestamp(a))); i1 = int(d.index.searchsorted(pd.Timestamp(b), side="right")) - 1
+        L = i1 - i0 + 1; F = fi_k23_parmak(d, L)
+        sat[ad] = F.loc[d.index[i1], list(FI_K23["olcu"])].astype(float).rename(ad); sat[ad]["L"] = L
+    O = pd.DataFrame(sat).T; Y = fi_k26_yuzdelik(Pb, O)
+    aralik = Y.max() - Y.min(); ortak = [k for k in FI_K23["olcu"] if aralik[k] <= K["ortak_aralik"]]
+    profil = {k: (max(0.0, Y[k].min() - K["pay"]), min(1.0, Y[k].max() + K["pay"])) for k in ortak}
+    return {"olcu": O, "yuzdelik": Y, "aralik": aralik, "ortak": ortak, "profil": profil}
+
+
+def fi_k26_tara(V: Dict[str, pd.DataFrame], P: pd.DataFrame, profil: Dict[str, Tuple[float, float]], pazar: str,
+                K: Dict[str, Any] = FI_K26) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Profil sinyalleri (aynı hissede K['ayri'] günde tek) ve rastgele taban; ikisine de v4 alış mumu + sonuç."""
+    Y = fi_k26_yuzdelik(P, P); m = np.ones(len(P), bool)
+    for k, (a, b) in profil.items():
+        m &= (Y[k].to_numpy() >= a) & (Y[k].to_numpy() <= b)
+    return fi_k26_sec_islem(V, P, m, pazar, K)
+
+
+def fi_k26_sec_islem(V: Dict[str, pd.DataFrame], P: pd.DataFrame, m: np.ndarray, pazar: str,
+                     K: Dict[str, Any] = FI_K26) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Maske m'yi tutan pencerelerden aynı hissede K['ayri'] günde tek sinyal + rastgele taban; ikisine v4 alış mumu ve sonuç."""
+    S = P[m].sort_values(["sembol", "tarih"]); sec, son = [], {}
+    for r in S.itertuples():
+        if r.sembol in son and r.i - son[r.sembol] < K["ayri"]:
+            continue
+        son[r.sembol] = r.i; sec.append(r.Index)
+    def islem(X: pd.DataFrame) -> pd.DataFrame:
+        sat = []
+        for r in X.itertuples():
+            try:
+                R = fi_k23_alis_mumu(V[r.sembol], r.tarih, K["L"])
+            except Exception as ex:   # tek pencere bozuksa digerleri devam eder
+                filog.warning("K26 %s %s %s atlandi: %s", pazar, r.sembol, r.tarih, ex); continue
+            if R["alis"] and R["olculur"]:
+                sat.append({"pazar": pazar, "sembol": r.sembol, "tarih": r.tarih, **R})
+        return pd.DataFrame(sat)
+    T = P.sample(min(K["taban_n"], len(P)), random_state=K["tohum"])
+    return islem(P.loc[sec]), islem(T)
+
+
+def fi_k26_ozet(Sg: pd.DataFrame, Tb: pd.DataFrame, K: Dict[str, Any] = FI_K26) -> Tuple[pd.DataFrame, bool]:
+    """Hücre (pazar x alış mumu yılı) başına sinyal / taban: önce +%15, önce -%15, 2 kat, katlar; karar."""
+    Z = []
+    for pz in sorted(set(Sg.pazar) | set(Tb.pazar)):
+        for ad, a, b in K["donem"]:
+            def oz(X):
+                X = X[(X.pazar == pz) & (X.alis_tarih >= a) & (X.alis_tarih <= b)]; y = X.y60.dropna()
+                return len(y), (y == 1).mean() if len(y) else np.nan, (y == -1).mean() if len(y) else np.nan, X.x2.dropna().mean()
+            ns, us, as_, xs = oz(Sg); nt, ut, at, xt = oz(Tb)
+            Z.append({"pazar": pz, "donem": ad, "n": ns, "yukari": us, "asagi": as_, "x2": xs, "taban_n": nt, "taban_yukari": ut,
+                      "taban_asagi": at, "taban_x2": xt, "kat_yukari": us / ut if ut else np.nan, "kat_asagi": as_ / at if at else np.nan,
+                      "kat_x2": xs / xt if xt else np.nan})
+    Z = pd.DataFrame(Z)
+    karar = bool(len(Z) == 4 and (Z.n >= K["n_esik"]).all() and (Z.kat_yukari >= K["kat_esik"]).all() and (Z.kat_asagi < K["kat_esik"]).all())
+    return Z, karar
+
+
+def fon_izi_k26(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str, pd.DataFrame]]] = None,
+                K: Dict[str, Any] = FI_K26) -> Dict[str, Any]:
+    """K26 sürücü: ortak parmak izi + BIST/ABD taraması. Çıktı k26_ornek.csv, k26_ozet.csv, k26_sinyal.csv."""
+    A = A or FIAyar()
+    Vb = V_hazir["BIST"] if V_hazir and "BIST" in V_hazir else fi_k1_veri(A.veri["BIST"], "BIST", A)
+    Va = V_hazir["ABD"] if V_hazir and "ABD" in V_hazir else fi_k1_veri(A.veri["ABD"], "ABD", A)
+    Pb = fi_k26_havuz(Vb, K["L"]); O = fi_k26_ortak(Vb, Pb, K)
+    T = pd.concat([O["olcu"].add_prefix("deger_"), O["yuzdelik"].add_prefix("yuzdelik_")], axis=1)
+    T.to_csv(os.path.join(A.cikti, "k26_ornek.csv"))
+    filog.info("K26 ortak olcu: %s", O["ortak"])
+    if len(O["ortak"]) < 2:
+        return {"ortak": O, "ozet": pd.DataFrame(), "karar": False}
+    Sb, Tb = fi_k26_tara(Vb, Pb, O["profil"], "BIST", K)
+    Pa = fi_k26_havuz(Va, K["L"]); Sa, Ta = fi_k26_tara(Va, Pa, O["profil"], "ABD", K)
+    Sg, Tt = pd.concat([Sb, Sa], ignore_index=True), pd.concat([Tb, Ta], ignore_index=True)
+    Z, karar = fi_k26_ozet(Sg, Tt, K)
+    Z.to_csv(os.path.join(A.cikti, "k26_ozet.csv"), index=False); Sg.to_csv(os.path.join(A.cikti, "k26_sinyal.csv"), index=False)
+    return {"ortak": O, "ozet": Z, "karar": karar, "sinyal": Sg, "taban": Tt}
+
+# K26 DEVAM (İz yok çıkarsa durma; ÖNCEDEN YAZILDI, ilk tur sonucu kat 1,01-1,02 görüldükten sonra, ikinci tur sonuçları görülmeden):
+#   D1 SIKI: ortak aralık <= 0,30, pay 0 (yalnız en sıkı paylaşılan ölçüler, tam aralık).
+#   D2 ÜÇ ÖRNEK: BINBN (bbw 0,00, yeşil %18 ile en ayrık) çıkarılır; MANAS-1, MANAS-2, KZBGY ile ortak aralık 0,40, pay 0,05.
+#   D3 MERKEZ: dört örneğin 16 yüzdelik vektörünün ortalamasına (merkez) en yakın %1 pencere (pazarın kendi yüzdelikleriyle, Öklid).
+#   Aynı işlem, taban, hücre ve karar (dört hücrede önce +%15 katı >= 1,3, n >= 30, önce -%15 katı < 1,3).
+FI_K26_DENEME = {"D1": {"ortak_aralik": 0.30, "pay": 0.0}, "D2": {"cikar": "BINBN"}, "D3": {"en_yakin": 0.01}}
+
+
+def fon_izi_k26_deneme(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], Pb: pd.DataFrame, Pa: pd.DataFrame, Tt: pd.DataFrame,
+                       A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K26, D: Dict[str, Any] = FI_K26_DENEME) -> pd.DataFrame:
+    """K26'nın önceden yazılı üç devam denemesi; Tt = ilk turun tabanı (aynı taban kullanılır). Çıktı k26_deneme.csv."""
+    A = A or FIAyar(); sat = []
+    for ad in ("D1", "D2", "D3"):
+        try:
+            if ad == "D3":
+                O = fi_k26_ortak(Vb, Pb, K); mer = O["yuzdelik"].mean()
+                Sg = []
+                for pz, V, P in (("BIST", Vb, Pb), ("ABD", Va, Pa)):
+                    Y = fi_k26_yuzdelik(P, P); u = np.sqrt(((Y - mer) ** 2).sum(1)).to_numpy()
+                    Sg.append(fi_k26_sec_islem(V, P, u <= np.quantile(u, D["D3"]["en_yakin"]), pz, {**K, "taban_n": 1})[0])
+                Sg = pd.concat(Sg, ignore_index=True); ortak = list(FI_K23["olcu"])
+            else:
+                K2 = {**K, **{k: v for k, v in D[ad].items() if k != "cikar"}}
+                if "cikar" in D[ad]:
+                    K2["ornek"] = {k: v for k, v in K["ornek"].items() if k != D[ad]["cikar"]}
+                O = fi_k26_ortak(Vb, Pb, K2); ortak = O["ortak"]
+                if len(ortak) < 2:
+                    sat.append({"deneme": ad, "ortak": ",".join(ortak), "not": "ortak ölçü < 2"}); continue
+                Sg = pd.concat([fi_k26_sec_islem(V, P, fi_k26_maske(P, O["profil"]), pz, {**K, "taban_n": 1})[0]
+                                for pz, V, P in (("BIST", Vb, Pb), ("ABD", Va, Pa))], ignore_index=True)
+            Z, karar = fi_k26_ozet(Sg, Tt, K)
+            for r in Z.itertuples(index=False):
+                sat.append({"deneme": ad, "ortak": ",".join(ortak), **r._asdict(), "karar": karar})
+        except Exception as ex:   # bir deneme bozulursa digerleri devam eder
+            filog.error("K26 %s hata: %s", ad, ex); sat.append({"deneme": ad, "not": f"hata: {ex}"})
+    Z = pd.DataFrame(sat); Z.to_csv(os.path.join(A.cikti, "k26_deneme.csv"), index=False)
+    return Z
+
+
+def fi_k26_maske(P: pd.DataFrame, profil: Dict[str, Tuple[float, float]]) -> np.ndarray:
+    """Profilin bütün ölçülerinde yüzdelik aralığı tutan pencereler."""
+    Y = fi_k26_yuzdelik(P, P); m = np.ones(len(P), bool)
+    for k, (a, b) in profil.items():
+        m &= (Y[k].to_numpy() >= a) & (Y[k].to_numpy() <= b)
+    return m
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
@@ -5529,6 +5694,87 @@ def fi_k12_ders10c(E: pd.DataFrame, H: pd.DataFrame, yol: str) -> int:
             "Kendin nasıl bakarsın: 'kutu tepesinin üstünde yeşil kapanış' tek başına havuzun ortalaması; ✓ demen oranı değiştirmiyor. "
             "Bu yüzden alış mumundan sonra korumayı (kutu dibi zarar sınırı) sen koy; kazanç kırılımdan sonra piyasanın verdiği kadar.",
             "Dikkat: alış mumu hacmi ve giriş onayı 'kapalı konu' (COL_OZET). Bu ölçüleri kural olarak denemek senin kararın."])
+        pdf.savefig(fig); plt.close(fig)
+    return 2
+
+def fi_k12_ders12(V: Dict[str, pd.DataFrame], T: pd.DataFrame, Z: pd.DataFrame, Zd: pd.DataFrame, yol: str) -> int:
+    """Ders 12 (Cemal 26 Eki, KZBGY 4 Şub-13 Mar 2025 + önceki parmak izleriyle karşılaştırma): (1) KZBGY kutu + alış mumu, dört örneğin
+    16 ölçüsünün havuz yüzdeliği ve ortak ölçüler; (2) ortak profil + üç devam denemesi, hücre katları, ders. V = BIST; T = k26_ornek.csv,
+    Z = k26_ozet.csv, Zd = k26_deneme.csv."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    import textwrap
+    T = T.set_index(T.columns[0]) if T.columns[0].startswith("Unnamed") else T
+    Y = T[[c for c in T.columns if c.startswith("yuzdelik_")]].rename(columns=lambda c: c[9:])
+    ad = {"egim": "eğim", "mum": "mum boyu", "yesil": "yeşil oranı", "alt_fitil": "alt fitil", "ust_fitil": "üst fitil",
+          "yakinlik": "kapanış yakınlığı", "bozan": "düzeni bozan", "hacim": "hacim", "rsi": "RSI", "macd": "MACD", "dusus": "önceki düşüş",
+          "konum": "kutudaki yer", "seri": "SMA20 üstü dizilme", "once_alt": "1. evre SMA altı", "delen": "2. evre delen", "bbw": "BB sıkışma"}
+    ortak = [k for k in Y.columns if Y[k].max() - Y[k].min() <= FI_K26["ortak_aralik"]]
+    sz = lambda x: f"{x:.2f}".replace(".", ",") if x == x else "—"
+
+    def yaz(fig, y, satirlar, boy=9.4):
+        for s in satirlar:
+            for k, p in enumerate(textwrap.wrap(s, 92) or [""]):
+                fig.text(0.07 if not s.startswith("- ") or k == 0 else 0.095, y, p, fontsize=boy, va="top"); y -= boy * 0.0022
+            y -= 0.004
+        return y
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.965, "DERS 12 — DÖRT ÇÖLÜN ORTAK PARMAK İZİ", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        fig.text(0.07, 0.935, "KZBGY 4 Şub - 11 Mar 2025 kutusu, 13 Mar alış mumu (12 Mar +%10 ilk ayak, kutu tepesinin altında kapandı)",
+                 fontsize=9.5, va="top")
+        d = V["KZBGY"]; i = int(d.index.searchsorted(pd.Timestamp("2025-03-11"), side="right")) - 1
+        b0 = int(d.index.searchsorted(pd.Timestamp("2025-02-04"))); R = fi_k23_alis_mumu(d, d.index[i], i - b0 + 1)
+        ax = fig.add_axes([0.07, 0.66, 0.88, 0.25]); axh = fig.add_axes([0.07, 0.60, 0.88, 0.05])
+        fi_k23_kor4_ciz(ax, axh, d, b0 - 40, int(R["alis_i"]), b0, i, R["kutu_ust"], R["kutu_alt"], False)
+        axm = fig.add_axes([0.25, 0.10, 0.70, 0.44])
+        im = axm.imshow(Y.T.to_numpy(float), aspect="auto", cmap="RdYlGn", vmin=0, vmax=1)
+        axm.set_xticks(range(len(Y.index))); axm.set_xticklabels(Y.index, fontsize=8)
+        axm.set_yticks(range(len(Y.columns))); axm.set_yticklabels([ad[k] + (" ★" if k in ortak else "") for k in Y.columns], fontsize=8)
+        for a in range(len(Y.columns)):
+            for b in range(len(Y.index)):
+                axm.text(b, a, sz(Y.iloc[b, a]), ha="center", va="center", fontsize=7)
+        axm.set_title("Havuz yüzdeliği (0 en düşük, 1 en yüksek; ★ = dördünde ortak)", fontsize=9, loc="left")
+        pdf.savefig(fig); plt.close(fig)
+
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.965, "ORTAK PROFİL SONRASINI AYIRIYOR MU?", fontsize=15, weight="bold", va="top", color="#1f2a44")
+        def kat(X, pz, dn):
+            r = X[(X.pazar == pz) & (X.donem == dn)]
+            return (float(r.kat_yukari.iloc[0]), int(r.n.iloc[0])) if len(r) else (np.nan, 0)
+        hucre = [("BIST", "2023"), ("BIST", "2024-26"), ("ABD", "2023"), ("ABD", "2024-26")]
+        satir = [("ortak profil (4 ölçü)", Z)] + [(f"{k} {e}", Zd[Zd.deneme == k]) for k, e in
+                                                 (("D1", "sıkı"), ("D2", "BINBN'siz"), ("D3", "merkeze en yakın %1"))]
+        y = yaz(fig, 0.925, [
+            f"Ortak ölçüler (dört örneğin yüzdelik aralığı ≤ 0,40): {', '.join(ad[k] for k in ortak)}. Yani dördünde de mumlar küçük, "
+            "üst fitiller uzun (kutu tepesine satış), RSI düşük. Bu profil BIST + ABD'de 20 mumluk pencerelerde arandı; sinyalden sonra "
+            "v4 alış mumu (kutu tepesinin üstünde kapanan ilk yeşil mum), ertesi açılış, 60 günde önce +%15 / −%15. Taban: aynı süzgeç + "
+            "aynı alış mumu kuralıyla rastgele pencereler. Eşikler sonuçtan önce yazıldı.",
+            "Önce +%15 katı (sinyal / taban), parantezde n:"])
+        fig.text(0.07, y, "deneme", fontsize=9, weight="bold")
+        for j, (pz, dn) in enumerate(hucre):
+            fig.text(0.40 + j * 0.14, y, f"{pz} {dn}", fontsize=9, weight="bold")
+        y -= 0.025
+        for et, X in satir:
+            fig.text(0.07, y, et, fontsize=9)
+            for j, (pz, dn) in enumerate(hucre):
+                k_, n_ = kat(X, pz, dn); fig.text(0.40 + j * 0.14, y, f"{sz(k_)} ({n_})", fontsize=9,
+                                                  color="#27ae60" if k_ >= FI_K26["kat_esik"] and n_ >= FI_K26["n_esik"] else "#333")
+            y -= 0.022
+        yaz(fig, y - 0.02, [
+            "KARAR: hiçbir deneme dört hücrede 1,3'e ulaşmadı → İZ DEĞİL. Ortak profil 1,01-1,02 (taban ile aynı), D1 0,97-1,06, D3 0,92-1,07. En yakın: D2 BIST "
+            "2024-26 1,26 ama n 15 (küçük örnek, diğer hücreler 0,77).",
+            "Ne öğrendik: dört çölün gerçek bir ortak yüzü var (küçük mum, uzun üst fitil, düşük RSI), ölçüler bunu yakalıyor. Ama aynı "
+            "yüz süzgeçten geçen binlerce bölgede var ve alış mumundan sonraki yol sıradan bölgelerle aynı. Koşan dört örnek ortak yüzü "
+            "değil, sonrasını paylaşıyor; o da önceden görünmüyor (DERS 10, 13, 14).",
+            "Not: tarama 20 mumluk pencerelerle yapıldı; senin bölgelerin 12-26 mum. KZBGY 2025 ve MANAS 2025 bölgeleri 20 mumluk pencerede "
+            "profile girmedi (kendi uzunluklarında girer).",
+            "Kendin nasıl bakarsın: uzun üst fitilli küçük mumlu dip kutusu 'satıcı kutunun tepesinde bekliyor' der; tepe kapanışla "
+            "geçilirse (alış mumu) satıcı bitmiş olabilir. Ama bu, rastgele bir kutunun kırılımından daha iyi sonuç vermiyor: alış "
+            "mumundan sonra kutu dibi zarar sınırın olsun."])
         pdf.savefig(fig); plt.close(fig)
     return 2
 
@@ -6007,6 +6253,11 @@ if __name__ == "__main__":
         print(len(fi_k23_kor4_pdf(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")),
                                   os.path.join(_A.cikti, "FON_IZI_kor_set_v4.pdf"), os.path.join(_A.cikti, "k23_kor4_anahtar.csv"),
                                   os.path.join(_A.cikti, "k23_kor4_havuz.csv"))), "aday")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k26":           # dört örneğin ortak parmak izi + BIST/ABD taraması
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+        _R = fon_izi_k26()
+        print(_R["karar"], _R["ortak"]["ortak"]); print(_R["ozet"].round(3).to_string(index=False))
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()

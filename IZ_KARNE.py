@@ -381,6 +381,16 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "/ %37 (kötü). Deneme 3: fon hisseleri hariç kural %37 vs eşli %35 (2 kat), 60 gün +%15 %56 vs %59. Fiyat 31.08.2026'da kesik (fon "
                "krizi dışarıda; kuralın -%30 oranı %43 -> %32, eşli %30). Görünen alıcı (fon) çölle ilişkili değil; görünmeyen alıcı için AKD "
                "verisi gerekir (ücretli). Ders: FON_IZI_ders11_buyuk_alici.pdf."),
+    _ik_k("Ç98", "2026-10-26", "DÖRT ÇÖLÜN ORTAK PARMAK İZİ: MANAS x2, BINBN, KZBGY 04.02-11.03.2025; dördünde ortak ölçüler profil olarak "
+          "BIST + ABD'de, v4 alış mumu ile (K26)", "FON_IZI.py (k26)",
+          "Cemal: 'KZBGY 4 Şubat - 13 Mart bölgesinin parmak izini çıkar, daha önceki hissedekiyle karşılaştır; belki karşılaştırmada iz çıkar'",
+          "Yeni deneme (karar önceden)", "IZ C", 2, cikti="arastirma_cikti/fon_izi/k26_ozet.csv",
+          notu="Dört örneğin 16 ölçüsü BIST süzgeçli havuz yüzdeliğinde; ortak (aralık <= 0,40): mum boyu küçük, üst fitil uzun, düzeni "
+               "bozan orta, RSI düşük. Profil (20 mumluk pencere, aynı hissede 60 günde tek) + v4 alış mumu, ertesi açılış, 60 gün önce +%15 "
+               "vs aynı süzgeç + alış mumlu rastgele taban: BIST 2023 %80 vs %78 (1,02, n 109), BIST 2024-26 1,02 (n 309), ABD 2023 1,02, ABD "
+               "2024-26 1,01. Önceden yazılı 3 devam: D1 sıkı (üst fitil + bozan) 0,97-1,06; D2 BINBN'siz (8 ortak ölçü) n 5-26, BIST 2024-26 "
+               "1,26 (n 15), diğerleri 0,77; D3 merkeze en yakın %1 0,92-1,07. Ortak yüz gerçek, sonrası tabanla aynı. Ders: "
+               "FON_IZI_ders12_ortak_parmak.pdf."),
 ]
 
 
@@ -522,6 +532,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Önce +%15: ✓ %54, ✗ %57 (belirsizlerle %50), havuz %60; 2 kat: ✓ %29, ✗ %36, havuz %42; kapanışta alışta ✓ %68 vs havuz %63. "
               "Göz izi değil. Gözün ✓'de geç gelen, büyük ve hacimli alış mumu, dar ve dipte kutu seçiyor; sonrası farklı değil",
      "durum": "TAMAMLANDI, AÇIK: sıradaki denemeler (alış mumu boyu/hacmi, gecikme) kapalı konuya (giriş onayı/hacim) dokunuyor -> Cemal'in kararı"},
+    {"tarih": "2026-10-26", "istek": "KZBGY 4 Şubat - 13 Mart 2025 bölgesinin parmak izini çıkar, önceki hissedekiyle karşılaştır; belki "
+                                     "karşılaştırmada iz çıkar",
+     "yapilan": "K26 (önceden yazılı): KZBGY kutusu 04.02-11.03 (12.03 +%10 ilk ayak, 13.03 alış mumu); MANAS x2 ve BINBN ile 16 ölçü havuz "
+                "yüzdeliğinde karşılaştırıldı; dördünde ortak ölçüler profil olarak BIST + ABD'de tarandı, v4 alış mumu ile; iz çıkmayınca "
+                "önceden yazılı 3 devam denemesi (sıkı, BINBN'siz, merkeze en yakın %1); IZ_KARNE Ç98; FON_IZI_ders12_ortak_parmak.pdf",
+     "sonuc": "Ortak yüz: küçük mum, uzun üst fitil, orta düzeni bozan, düşük RSI. Profil sinyalleri tabanla aynı (kat 1,01-1,02, dört "
+              "hücre); devam denemeleri 0,77-1,26 (1,26 n 15). İz değil",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "

@@ -481,6 +481,12 @@ def sina():
     ok34 = bool(R34["alis"]) and R34["alis_i"] == 301 and R34["y60"] == 1.0 and bool(R34["olculur"]) and abs(R34["kutu_ust"] - 10.01) < 1e-9
     if not ok34:
         hata.append(f"34) K23 kör set v4 alış mumu yanlış: {R34}")
+    # 35) K26 yüzdelik ve profil maskesi: havuz 0..99 -> 25'in yüzdeliği 0,255; profil [0,2, 0,3] yalnız 20..29'u seçer.
+    P35 = pd.DataFrame({k: np.arange(100.0) for k in F.FI_K23["olcu"]})
+    Y35 = F.fi_k26_yuzdelik(P35, P35.iloc[[25]]); m35 = F.fi_k26_maske(P35, {"mum": (0.2, 0.3)})
+    ok35 = abs(float(Y35["mum"].iloc[0]) - 0.255) < 1e-12 and list(np.flatnonzero(m35)) == list(range(20, 30))
+    if not ok35:
+        hata.append(f"35) K26 yüzdelik/maske yanlış: {float(Y35['mum'].iloc[0])}, {list(np.flatnonzero(m35))}")
     return hata
 
 
@@ -488,4 +494,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 34/34 OK")
+    print("test_fon_izi: 35/35 OK")
