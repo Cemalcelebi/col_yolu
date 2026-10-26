@@ -361,7 +361,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "benzerlerin aşağı oranı da yüksek (oynak hisseler). Kör etiket seti (her örneğe en yakın 16, düşüş <= -%30 + eğim yatay/yukarı "
                "süzgeci, sonu kesik, adsız; FON_IZI_kor_set_bolge.pdf): Cemal 20'sini işaretledi (7 ✓, 13 ✗); ✓ = 'benzer + kutu tepesi aşılırsa "
                "alırım', tepe x 1,002 bekleyen alış emri, 60 gün ±%15: ✓ dolan 4, önce +%15 %75; ✗ dolan 9, %89; kodun en benzer 48'i dolan 37, "
-               "%70; havuz %61 (48'i 1,16 kat). Göz izi adayı değil (ön deneme, n küçük). Ders: FON_IZI_ders10_bolge_parmak.pdf, "
+               "%70; havuz %61 (48'i 1,16 kat). Göz izi adayı değil (ön deneme, n küçük); SONRA GEÇERSİZ: Cemal küçük grafikte mum yapısını göremedi, aynı 48 aday net mum grafiğiyle yeniden çizildi (FON_IZI_kor_set_net.pdf), yeniden işaret bekleniyor. Ders: FON_IZI_ders10_bolge_parmak.pdf, "
                "FON_IZI_ders10b_kor_set.pdf."),
     _ik_k("Ç96", "2026-10-25", "İKİ EVRE KURALI: düşüş sonrası SMA20 altı (1. evre) → SMA20 üstünde 5 gün dizilme, en fazla 2 delen, BB "
           "sıkışması (K24)", "FON_IZI.py (k24)",
@@ -498,7 +498,14 @@ IK_GOREV: List[Dict[str, str]] = [
                 "dışarıda); 20 işaret (7 ✓, 13 ✗) değerlendirildi; FON_IZI_ders10b_kor_set.pdf",
      "sonuc": "✓ dolan 4, önce +%15 %75, 2 kat %25; ✗ dolan 9, %89, %78; kodun en benzer 48'i %70 (havuz %61, 1,16 kat). ✓ ✗'den iyi değil -> "
               "göz izi adayı değil (ön deneme, n küçük)",
-     "durum": "TAMAMLANDI, AÇIK: kalan 28 grafiğin işareti (isteğe bağlı)"},
+     "durum": "TAMAMLANDI (kör set sonucu sonradan geçersiz sayıldı: grafik net değildi, bir alttaki satır)"},
+    {"tarih": "2026-10-26", "istek": "Sendeki grafiklerde mumun yapısı neredeyse görünmüyor; gerçek grafikte (uygulama) başka değerlendirirdim; "
+                                     "üstteki gerçek grafik, alttaki çok farklı",
+     "yapilan": "Haklı: kör set v2 sayfada 6 küçük kutu, Bollinger + 40 mum öncesiyle çizilmişti. Kör set v3: aynı 48 aday aynı numarayla, sayfa "
+                "başına 2 tam genişlik grafik, çölden önce 20 mum, kalın gövde + fitil, altta hacim, Bollinger yok, ince SMA20; ad / tarih / "
+                "rakam / sağ ayak yine yok (FON_IZI v1.10 fi_k23_kor_pdf_net, test 33); FON_IZI_kor_set_net.pdf (28 sayfa)",
+     "sonuc": "İlk 20 işaretin sonucu (✓ ✗'den iyi değil) geçersiz sayıldı; değerlendirme kuralı değişmedi (önceden yazılı)",
+     "durum": "TAMAMLANDI, AÇIK: Cemal'in 48 grafiği net sette yeniden işaretlemesi"},
 ]
 IK_ACIK: List[str] = [
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
@@ -516,8 +523,9 @@ IK_ACIK: List[str] = [
     "D13 yakalama (Cemal'in vakaları, 25 Eki): üretim D13 Cemal'in koşan BINBN-24, KTLEV-24, MANAS-25a/b bölgelerini görmedi (dip yeni / parabol "
     "yok); K18 kutusu (bandı <= %50 en uzun pencere, dibe ilk değdiği günden) bunları gördü. Tespit kuralını değiştirmek üretim kararı ('yaz'); "
     "kazanç değil yalnız yakalama değişir (K18 profili iz değil).",
-    "KÖR SET (K23, 26 Eki): 48 grafiğin 20'si işaretlendi (7 ✓, 13 ✗); kutu tepesi aşılırsa alış kuralıyla ✓ ✗'den iyi değil (ön deneme). Kalan "
-    "28 grafik (A11-A16, B21-B32, C33-C36, C43-C48) işaretlenirse aynı kuralla tamamlanır. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
+    "KÖR SET (K23, 26 Eki): ilk 20 işaret (7 ✓, 13 ✗) küçük grafikten verildi; Cemal: 'mumun yapısı görünmüyor, gerçek grafikte başka "
+    "değerlendirirdim' -> bu sonuç geçersiz sayıldı. Aynı 48 aday aynı numarayla net mum grafiğiyle yeniden çizildi (FON_IZI_kor_set_net.pdf); "
+    "48'in yeniden işaretlenmesi bekleniyor, aynı önceden yazılı kuralla değerlendirilir. Anahtar: arastirma_cikti/fon_izi/k23_kor_anahtar.csv.",
     "BÜYÜK ALICI (K25, 25 Eki): raporlu fon payı çölle ilişkili değil. AKD (aracı kurum dağılımı) alınmadı (Cemal 26 Eki: 'gerek yok'; "
     "ücretsiz geçmiş kaynak yok, kurum düzeyi kişiyi göstermez). Bedava seçenek: KAP pay alım-satım / %5 eşik bildirimleri, çölden sonra "
     "daha sık mı (önceden yazılı, sırada).",

@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.9 (2026-10-25, K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.10 (2026-10-26, kör set v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5119,6 +5119,83 @@ def fi_k23_kor_pdf(V: Dict[str, pd.DataFrame], H: Dict[str, pd.Series], yol: str
     return A
 
 
+# KÖR SET v3 NET GRAFİK (Cemal 26 Eki: 'sendeki grafiklerde mumun yapısı neredeyse görünmüyor; gerçek grafikte başka değerlendirirdim'
+# + aracı kurum uygulamasının günlük grafiği). Adaylar, numaralar ve anahtar v2 ile AYNI (k23_kor_anahtar.csv); yalnız çizim değişir:
+# sayfa başına 2 grafik, tam genişlik, bölgeden önce K_NET['once'] mum, kalın gövde + fitil, hacim alt panelde, Bollinger yok, SMA20
+# ince (1. evre / 2. evre için), çöl açık gri zemin. Hisse adı, tarih, eksen rakamı ve sağ ayak yine yok.
+FI_K23_KOR_NET = {"once": 20, "sayfa_grafik": 2, "yesil": "#26a69a", "kirmizi": "#ef5350", "sma": "#e57373"}
+
+
+def fi_k23_kor_ciz_net(ax, axh, d: pd.DataFrame, t: pd.Timestamp, L: int, K: Dict[str, Any] = FI_K23_KOR_NET) -> None:
+    """Uygulama görünümlü mum grafiği: bölge (t'de biten L mum) + öncesinde K['once'] mum; alt eksende hacim."""
+    m = d.Close.rolling(20).mean()
+    i = int(d.index.get_loc(pd.Timestamp(t))); w = d.iloc[max(0, i - L - K["once"] + 1):i + 1]
+    x = np.arange(len(w)); yuk = (w.Close >= w.Open).to_numpy(); r = np.where(yuk, K["yesil"], K["kirmizi"])
+    ax.vlines(x, w.Low, w.High, color=r, lw=1.1, zorder=2)
+    govde = (w.Close - w.Open).abs().to_numpy(); asgari = 0.0015 * float(w.Close.median())   # doji görünür kalsın
+    ax.bar(x, np.maximum(govde, asgari), bottom=np.minimum(w.Open, w.Close) - np.where(govde < asgari, asgari / 2, 0),
+           color=r, width=0.62, zorder=3, linewidth=0)
+    ax.plot(x, m.loc[w.index].to_numpy(), color=K["sma"], lw=0.9, alpha=0.8, zorder=1)
+    ax.axvspan(len(w) - L - 0.5, len(w) - 0.5, color="#9e9e9e", alpha=0.10, zorder=0)
+    alt, ust = float(w.Low.min()), float(w.High.max()); pay = (ust - alt) * 0.06
+    ax.set_ylim(alt - pay, ust + pay); ax.set_xlim(-0.8, len(w) - 0.2)
+    axh.bar(x, w.Volume.to_numpy(float), color=r, alpha=0.45, width=0.62, linewidth=0)
+    axh.set_xlim(-0.8, len(w) - 0.2)
+    for a in (ax, axh):
+        a.set_xticks([]); a.set_yticks([])
+        for s in a.spines.values():
+            s.set_visible(False)
+
+
+def fi_k23_kor_pdf_net(V: Dict[str, pd.DataFrame], anahtar: pd.DataFrame, Hk: pd.DataFrame, yol: str,
+                       K: Dict[str, Any] = FI_K23_KOR_NET) -> int:
+    """Kör set v3: v2 anahtarındaki 48 aday aynı numarayla, sayfa başına 2 net grafik; her bölüm senin örneğinle açılır. Sayfa sayısı döner."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    Hk = Hk.set_index("Unnamed: 0") if "Unnamed: 0" in Hk.columns else Hk
+    Hk.index = Hk.index.astype(str)
+    A = anahtar.assign(bolge=anahtar.bolge.astype(str), tarih=pd.to_datetime(anahtar.tarih)).sort_values("no")
+    eksik = sorted(set(A.sembol) - set(V)) + sorted({str(Hk.loc[b, "sembol"]) for b in A.bolge.unique()} - set(V))
+    if eksik:
+        raise KeyError(f"K23 kor net: veride olmayan sembol {eksik}")
+    sayfa = 0
+
+    def kutu(fig, y0, h, d, t, L, baslik, renk):
+        ax = fig.add_axes([0.05, y0 + h * 0.22, 0.90, h * 0.70]); axh = fig.add_axes([0.05, y0, 0.90, h * 0.18])
+        fi_k23_kor_ciz_net(ax, axh, d, t, L, K)
+        ax.set_title(baslik, fontsize=15, weight="bold", loc="left", color=renk)
+
+    with PdfPages(yol) as pdf:
+        fig = plt.figure(figsize=(8.27, 11.69))
+        fig.text(0.07, 0.95, "KÖR SET v3 — NET MUMLAR", fontsize=16, weight="bold", va="top", color="#1f2a44")
+        for k_, s_ in enumerate(["Aynı 48 aday, aynı numaralar; yalnız çizim senin uygulamandaki gibi: büyük mum, fitil, altta hacim.",
+                                 f"Her grafik: çölden önce {K['once']} mum + gri zemin = çöl. Çöl bittiği gün KESİK (sağ ayak yok).",
+                                 "Bollinger kaldırıldı. İnce kırmızı çizgi = SMA20 (1. evre altında, 2. evre üstünde dizilme).",
+                                 "Hisse adı, tarih, fiyat rakamı yok. Her bölüm önce SENİN örneğinle başlar.",
+                                 "Cevap: '✓: 3, 7, 12 …' (yazmadıkların ✗). Önceki 20 işaretin yerine bu set geçer.",
+                                 "Kural yine önceden yazılı: kutu tepesi ×1,002 bekleyen alış, 60 gün önce +%15 / −%15, 250 gün 2 kat."]):
+            fig.text(0.07, 0.90 - k_ * 0.026, s_, fontsize=10, va="top")
+        pdf.savefig(fig); plt.close(fig); sayfa += 1
+        for harf, b in (("A", "1"), ("B", "2"), ("C", "3")):
+            if b not in set(A.bolge):
+                continue
+            h0 = Hk.loc[b]; L = int(float(h0["L"]))
+            ogeler = [("ornek", str(h0["sembol"]), pd.Timestamp(h0["son"]))] + \
+                     [(int(r.no), r.sembol, r.tarih) for r in A[A.bolge == b].itertuples()]
+            n = K["sayfa_grafik"]
+            for j in range(0, len(ogeler), n):
+                fig = plt.figure(figsize=(8.27, 11.69))
+                for q, (no, s, t) in enumerate(ogeler[j:j + n]):
+                    y0 = 0.53 - q * 0.49
+                    if no == "ornek":
+                        kutu(fig, y0, 0.42, V[s], t, L, f"BÖLÜM {harf} — SENİN ÖRNEĞİN", "#c0392b")
+                    else:
+                        kutu(fig, y0, 0.42, V[s], t, L, f"{harf}{no}", "#1f2a44")
+                pdf.savefig(fig); plt.close(fig); sayfa += 1
+    return sayfa
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
@@ -5689,6 +5766,12 @@ if __name__ == "__main__":
         print(fi_k12_ders10(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_ozet.csv")),
                             pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")), pd.read_csv(os.path.join(_A.cikti, "k23_esler.csv")),
                             pd.read_csv(os.path.join(_A.cikti, "k24_ozet.csv")), os.path.join(_A.cikti, "FON_IZI_ders10_bolge_parmak.pdf")), "sayfa")
+        sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "k23kornet":     # kör set v3: aynı 48 aday, net mum grafiği
+        _A = FIAyar()
+        print(fi_k23_kor_pdf_net(fi_k1_veri(_A.veri["BIST"], "BIST", _A), pd.read_csv(os.path.join(_A.cikti, "k23_kor_anahtar.csv")),
+                                 pd.read_csv(os.path.join(_A.cikti, "k23_parmak.csv")),
+                                 os.path.join(_A.cikti, "FON_IZI_kor_set_net.pdf")), "sayfa")
         sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "gosterge":
         R = fon_izi_gosterge()

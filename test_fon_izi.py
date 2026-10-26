@@ -459,6 +459,19 @@ def sina():
     ok32 = bool(R32["tepe_doldu"]) and R32["tepe_y60"] == 1.0 and bool(R32["govde_doldu"])
     if not ok32:
         hata.append(f"32) K23 kör set emir sonucu yanlış: {R32}")
+    # 33) Kör set v3 net grafik: örnek + 3 aday -> kapak + 2 sayfa; anahtarda veride olmayan sembol -> KeyError (yanlış evren yakalanır).
+    import os, tempfile
+    V33 = {"X": d32, "Y": d32}
+    H33 = pd.DataFrame({"Unnamed: 0": ["1"], "sembol": ["X"], "son": [str(ix32[299])], "L": [10.0]})
+    A33 = pd.DataFrame({"no": [1, 2, 3], "bolge": [1, 1, 1], "sembol": ["Y", "Y", "X"], "tarih": [str(ix32[250]), str(ix32[200]), str(ix32[150])]})
+    with tempfile.TemporaryDirectory() as td:
+        n33 = F.fi_k23_kor_pdf_net(V33, A33, H33, os.path.join(td, "k.pdf"))
+        try:
+            F.fi_k23_kor_pdf_net(V33, A33.assign(sembol="Z"), H33, os.path.join(td, "z.pdf")); z33 = False
+        except KeyError:
+            z33 = True
+    if n33 != 3 or not z33:
+        hata.append(f"33) Kör set net grafik yanlış: sayfa {n33}, eksik sembol yakalandı {z33}")
     return hata
 
 
@@ -466,4 +479,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 32/32 OK")
+    print("test_fon_izi: 33/33 OK")
