@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.16 (2026-10-27, K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.17 (2026-10-27, K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6113,6 +6113,68 @@ def fi_k28_deneme(X: pd.DataFrame, V: Dict[str, pd.DataFrame], P: Dict[str, Any]
 # Aday GÜÇLENİR: dört eski hücrede ortalama fark > 0 ve sıra > 0,50 (yön); ayrıca hücre tutma (dört şart) sayısı yazılır.
 FI_K28_DIS = {"bas_bist": "2016-07-01", "bas_abd": "2016-09-01", "bit": "2022-12-31",
               "donem": (("2016-19", "2016-09-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"))}
+
+# K29 RİSK SÜZGECİ + PORTFÖY (Cemal 27 Eki: 'devam et'; öneri b + a). ÖNCEDEN YAZILDI (sonuç görülmeden), ölçüt FI_OLCUT:
+#   ADAY = K24 iki evre kuralı sinyalleri (Cemal'in çöl tarifi), BIST + ABD. Sinyal günü d'de yalnız d ve öncesi bilgisiyle üç RİSK
+#   işareti: R1 kötü bilanço sürprizi (K28 'alt': tepki penceresi d'den önceki 60 takvim gününde bitmiş); R2 A11 (son 20 işlem gününde
+#   hacim >= 60 gün medyanının 3 katı + gün <= -%5 + o gün 20 gün getirisi <= -%20); R3 A14 (son 20 günde hacim >= 20 gün medyanının 20
+#   katı + gün <= -%9,5). TEMİZ = işaretsiz, RİSKLİ = en az bir işaret. Karar: RİSKLİ için kaçınma ölçütü (fi_olcut_karar_kacinma) dört
+#   hücrede tutarsa 'RİSK SÜZGECİ İZİ'. Bilgi: TEMİZ ve HEPSİ aynı ölçütle (eşli fark, sıra, portföy).
+FI_K29 = {"r1_gun": 60, "r2_hacim": 3.0, "r2_gun": -0.05, "r2_20g": -0.20, "r3_hacim": 20.0, "r3_gun": -0.095, "pencere": 20}
+
+
+def fi_k29_isaretler(d: pd.DataFrame, K: Dict[str, Any] = FI_K29) -> pd.DataFrame:
+    """Bir hissenin her günü için R2 (A11) ve R3 (A14) işaretinin son K['pencere'] işlem gününde görülüp görülmediği."""
+    c = d.Close; v = d.Volume.astype(float); g = c.pct_change()
+    a11 = (v >= K["r2_hacim"] * v.rolling(60, min_periods=40).median().shift(1)) & (g <= K["r2_gun"]) & (c / c.shift(20) - 1 <= K["r2_20g"])
+    a14 = (v >= K["r3_hacim"] * v.rolling(20, min_periods=15).median().shift(1)) & (g <= K["r3_gun"])
+    w = K["pencere"]
+    return pd.DataFrame({"r2": a11.astype(int).rolling(w, min_periods=1).max().astype(bool),
+                         "r3": a14.astype(int).rolling(w, min_periods=1).max().astype(bool)}, index=d.index)
+
+
+def fi_k29_adaylar(V: Dict[str, pd.DataFrame], X28: pd.DataFrame, pazar: str, K: Dict[str, Any] = FI_K29) -> pd.DataFrame:
+    """K24 kural sinyalleri + R1/R2/R3 işaretleri; giriş = sinyal gününden sonraki ilk işlem günü."""
+    kotu = X28[X28.alt][["sembol", "tepki_son"]] if len(X28) else pd.DataFrame(columns=["sembol", "tepki_son"])
+    kotu_s = {s: pd.DatetimeIndex(g.tepki_son) for s, g in kotu.groupby("sembol")}
+    sat = []
+    for s, d in V.items():
+        try:
+            T = fi_k24_tara(d)
+            if not len(T) or "kural" not in T:
+                continue
+            T = T[T.kural]
+            if not len(T):
+                continue
+            I = fi_k29_isaretler(d, K); ix = d.index
+            for t in T.tarih:
+                j = int(ix.get_loc(t))
+                if j + 1 >= len(ix):
+                    continue
+                k = kotu_s.get(s)
+                r1 = bool(k is not None and ((k <= t) & (k > t - pd.Timedelta(days=K["r1_gun"]))).any())
+                sat.append({"sembol": s, "sinyal": t, "giris": ix[j + 1], "r1": r1, "r2": bool(I.r2.iloc[j]), "r3": bool(I.r3.iloc[j]),
+                            "pazar": pazar})
+        except Exception as ex:   # tek hisse bozuksa digerleri devam eder
+            filog.warning("K29 %s %s atlandi: %s", pazar, s, ex)
+    X = pd.DataFrame(sat); X["riskli"] = X.r1 | X.r2 | X.r3; X["temiz"] = ~X.riskli; X["hepsi"] = True
+    return X
+
+
+def fon_izi_k29(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], X28b: pd.DataFrame, X28a: pd.DataFrame,
+                Pb: Dict[str, Any], Pa: Dict[str, Any], A: Optional[FIAyar] = None, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K29 sürücü: adaylar -> TEMİZ / RİSKLİ / HEPSİ yeni ölçütle; RİSKLİ için kaçınma kararı. Çıktı k29_ozet.csv, k29_aday.csv."""
+    A = A or FIAyar(); Z, Ev = [], []
+    for pz, V, X28, P in (("BIST", Vb, X28b, Pb), ("ABD", Va, X28a, Pa)):
+        X = fi_k29_adaylar(V, X28, pz); Ev.append(X)
+        for grup in ("hepsi", "temiz", "riskli"):
+            T = fi_olcut_olay(P, X[X[grup]][["sembol", "giris"]])
+            for ad, a, b in O["donem"]:
+                Z.append({"olay": grup, "pazar": pz, "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    Z = pd.DataFrame(Z); E = pd.concat(Ev, ignore_index=True)
+    karar = {"riskli (kaçınma)": fi_olcut_karar_kacinma(Z[Z.olay == "riskli"], O), "temiz": fi_olcut_karar(Z[Z.olay == "temiz"], O)}
+    Z.to_csv(os.path.join(A.cikti, "k29_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k29_aday.csv"), index=False)
+    return {"ozet": Z, "aday": E, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
