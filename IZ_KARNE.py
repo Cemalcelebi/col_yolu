@@ -445,6 +445,17 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "satış kapatma süresi en üst %10 -%0,5 / -%0,8. Önceden yazılı 3 devam: iflas profili (seyrelme + pist < 4) +%1,5 / +%5,5; "
                "temiz çöl (K24 + seyrelme yok + nakit sağlam) +%0,3 / -%1,5; çöl tuzağı +%6,9 / +%0,9. Hiçbir kaçınma ya da yukarı ölçüt iki "
                "ABD hücresinde tutmadı. İZ DEĞİL."),
+    _ik_k("Ç104", "2026-10-27", "SADE PORTFÖY ÖLÇÜMÜ: çöl adayları 10 yuvalı portföyde, çıkış kuralıyla; piyasa ve rastgele girişle "
+          "karşılaştırma (K32)", "FON_IZI.py (k32)", "Cemal: 'a ile devam et, sade portföy ölçümü'",
+          "Düzen ölçümü (iz testi değil; karar önceden: dört hücrede MDD <= 0,8 x piyasa MDD ve getiri/MDD >= piyasa)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k32_ozet.csv",
+          notu="Aday = K24 iki evre sinyalleri; 10 yuva, ertesi açılış, maliyet BIST %0,2 / ABD %0,1 tek yön; fiyat 31.08.2026'da kesik. "
+               "Toplam getiri (en büyük düşüş) BIST 2023 / BIST 2024-26 / ABD 2023 / ABD 2024-26: piyasa eşit ağırlık +%34 (-%35) / "
+               "+%114 (-%19) / +%29 (-%18) / +%89 (-%24); çöl + çıkış (kutu dibi, +%20 sonrası SMA20, en çok 120 gün) +%61 (-%27) / +%29 "
+               "(-%35) / +%17 (-%27) / +%42 (-%42); çöl 60 gün tut +%14 / +%21 / +%42 / +%19; rastgele 10 hisse 60 gün tut (50 tohum "
+               "ortancası) +%25 / +%107 / +%24 / +%95. Yalnız BIST 2023 tuttu; girişin rastgeleye üstünlüğü de yalnız orada. Önceden yazılı "
+               "3 devam: temiz çöl (K29 işaretsiz) +%54 / +%3 / +%37 / +%3; likit çöl +%15 / +%0 / +%16 / -%3; 250 gün tut +%27 / +%155 (-%26) / +%26 / +%28. "
+               "Hiçbiri dört hücrede tutmadı. KULLANILABİLİR DÜZEN DEĞİL: 2024-26'da çöl portföyü piyasanın çok altında, düşüşü daha derin."),
 ]
 
 
@@ -646,15 +657,22 @@ IK_GOREV: List[Dict[str, str]] = [
                 "tablo veri setleri (seyrelme, nakit pisti; pay kalemi hatası sonuç görülmeden düzeltildi), 13F tıkandı (CUSIP eşlemesi) -> "
                 "FINRA açığa satış; önceden yazılı 3 devam (iflas profili, temiz çöl, çöl tuzağı); IZ_KARNE Ç103; test 40",
      "sonuc": "İz değil: dört analist ölçüsü ABD 2023-26'da eşlerden ayrışmıyor; seyrelen / nakdi biten şirketler ortalamada biraz iyi "
-              "(birkaç sıçrayan hisse), sıra ortada", "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+              "(birkaç sıçrayan hisse), sıra ortada", "durum": "TAMAMLANDI (Cemal: a, sade portföy ölçümü; bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "a ile devam et, sade portföy ölçümü",
+     "yapilan": "K32: çöl adayları 10 yuvalı portföyde 60 gün tut ve çıkış kuralıyla; piyasa (eşit ağırlık), rastgele giriş (50 tohum) ve "
+                "rastgele giriş + aynı çıkışla karşılaştırma; BIST/ABD x 2016-22/2023/2024-26; kurallar ve karar önceden; 3 devam (temiz, "
+                "likit, 250 gün tut); IZ_KARNE Ç104; test 41",
+     "sonuc": "Kullanılabilir düzen değil: çöl portföyü yalnız BIST 2023'te piyasayı geçti; 2024-26'da iki pazarda da piyasanın çok altında "
+              "(BIST +%29'a +%114, ABD +%42'ye +%89) ve düşüşü daha derin. Rastgele 10 hisse bile çöl adaylarından iyi",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): şekil (K13-K26), bilgi olayı (K27 BIST, K28, K30 ABD), risk süzgeci (K29) ve analist izleri (K31: içeriden satış, "
-    "seyrelme, nakit tükenmesi, açığa satış) yeni ölçütle İZ DEĞİL. Bedava verinin büyük kısmı denendi; kalanlar ücretli ya da "
-    "eşlenemiyor (13F CUSIP, opsiyon akışı, analist tahmin revizyonu). Seçenekler Cemal'in: (a) sade portföy ölçümü, (b) ara verip "
-    "canlı aday kalitesini izlemek.",
+    "YOL (27 Eki): şekil (K13-K26), bilgi olayı (K27 BIST, K28, K30 ABD), risk süzgeci (K29), analist izleri (K31) İZ DEĞİL; sade "
+    "portföy ölçümü (K32): çöl adaylarıyla kurulan portföy 2024-26'da eşit ağırlıklı piyasanın çok altında, KULLANILABİLİR DÜZEN "
+    "DEĞİL. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak bırakıp piyasa (endeks / eşit ağırlık) ile karşılaştırmalı "
+    "canlı izlemek, (b) ara.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
