@@ -6350,7 +6350,13 @@ def fi_k31_finansal(K: Dict[str, Any] = FI_K31) -> pd.DataFrame:
     N["filed"] = pd.to_datetime(N.filed, format="%Y%m%d", errors="coerce"); N["ddate"] = pd.to_datetime(N.ddate, format="%Y%m%d", errors="coerce")
     N["sembol"] = N.cik.astype(str).str.lstrip("0").map(cik2)
     N = N.dropna(subset=["sembol", "filed", "value"])
-    pay = N[N.tag == "EntityCommonStockSharesOutstanding"].sort_values("ddate").groupby("adsh").agg(
+    # Düzeltme (27 Eki, M2/M3 sonucu görülmeden): dei EntityCommonStockSharesOutstanding bu veri setinde neredeyse yok (çeyrekte ~1 satır;
+    # kapak sayfası). Pay sayısı bilançodaki CommonStockSharesOutstanding (anlık), yoksa çeyreklik ağırlıklı ortalama temel pay sayısı
+    # (WeightedAverageNumberOfSharesOutstandingBasic, qtrs = 1), yoksa dei kalemi. Eşikler aynı.
+    oncelik = {"CommonStockSharesOutstanding": 0, "WeightedAverageNumberOfSharesOutstandingBasic": 1, "EntityCommonStockSharesOutstanding": 2}
+    Pn = N[N.tag.isin(oncelik) & ((N.tag != "WeightedAverageNumberOfSharesOutstandingBasic") | (N.qtrs == 1))].copy()
+    Pn["_o"] = Pn.tag.map(oncelik)
+    pay = Pn.sort_values(["ddate", "_o"], ascending=[True, False]).groupby("adsh").agg(
         sembol=("sembol", "first"), filed=("filed", "first"), pay=("value", "last"), pay_t=("ddate", "last"))
     nak = N[N.tag.isin(["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"])]
     nak = nak.sort_values(["ddate", "tag"]).groupby("adsh").value.last().rename("nakit")
@@ -6398,6 +6404,60 @@ def fi_k31_aciga(semboller: List[str], bas: str, bit: str, K: Dict[str, Any] = F
     if len(X):
         X["settlementDate"] = pd.to_datetime(X.settlementDate); X["dtc"] = pd.to_numeric(X.daysToCoverQuantity, errors="coerce")
     return X
+
+def fon_izi_k31(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], form4: List[str], Fin: pd.DataFrame, SI: pd.DataFrame,
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K31, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K31 sürücü: M1..M4 olayları (ABD) -> yeni ölçüt; kaçınma ölçüleri ayna kararla, M2c yukarı ölçütle. Çıktı k31_ozet.csv."""
+    A = A or FIAyar(); olay: Dict[str, pd.DataFrame] = {}
+
+    def giris_ekle(X: pd.DataFrame, sol: bool = False) -> pd.DataFrame:
+        sat = []
+        for r in X.itertuples():
+            if r.sembol not in Va:
+                continue
+            ix = Va[r.sembol].index; j = int(ix.searchsorted(r.D, side="left" if sol else "right"))
+            if 1 <= j < len(ix):
+                sat.append({"sembol": r.sembol, "D": r.D, "giris": ix[j]})
+        return pd.DataFrame(sat)
+    Sx = fi_k31_satislar(form4, K); Sx = Sx[Sx.sembol.isin(Va) & (Sx.deger >= K["satis_min"])]
+    Sx = Sx[Sx.rol.fillna("").astype(str).str.contains("Officer|Director")].sort_values("D")
+    olay["M1_iceriden_satis"] = giris_ekle(Sx)
+    kume = []
+    for s, g in Sx.groupby("sembol"):
+        for r in g.itertuples():
+            if g[(g.D <= r.D) & (g.D > r.D - pd.Timedelta(days=K["kume_gun"]))].cik.nunique() >= K["kume_n"]:
+                kume.append({"sembol": s, "D": r.D})
+    olay["M1b_kumeli_satis"] = giris_ekle(pd.DataFrame(kume))
+    Fn = Fin.rename(columns={"filed": "D"})
+    olay["M2_seyrelme"] = giris_ekle(Fn[Fn.pay_yil >= K["seyrelme"]])
+    olay["M2b_agir_seyrelme"] = giris_ekle(Fn[Fn.pay_yil >= K["agir_seyrelme"]])
+    olay["M2c_geri_alim"] = giris_ekle(Fn[Fn.pay_yil <= K["geri_alim"]])
+    olay["M3_nakit_tukenmesi"] = giris_ekle(Fn[Fn.pist < K["pist"]])
+    olay["M3b_agir_nakit"] = giris_ekle(Fn[Fn.pist < K["pist_agir"]])
+    if len(SI):
+        T = SI[SI.symbolCode.isin(Va)].dropna(subset=["dtc"])
+        T = T[T.dtc >= T.groupby("settlementDate").dtc.transform(lambda x: x.quantile(K["dtc_ust"]))]
+        olay["M4_aciga_satis"] = giris_ekle(pd.DataFrame({"sembol": T.symbolCode, "D": T.settlementDate + pd.Timedelta(days=K["gecikme"])}),
+                                            sol=True)
+    Z = []
+    for ad_, X in olay.items():
+        if not len(X):
+            continue
+        X = X.sort_values("giris").assign(_b=True)
+        T = fi_olcut_olay(P, fi_k27_tekil(X, "_b", Va, K["ayri"])[["sembol", "giris"]])
+        for ad, a, b in O["donem"]:
+            Z.append({"olay": ad_, "pazar": "ABD", "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    Z = pd.DataFrame(Z)
+
+    def iki(Zb: pd.DataFrame, yukari: bool) -> str:
+        if yukari:
+            t = [bool(r.n >= O["n_esik"] and r.alt95 > 0 and r.sira > 0.5 and r.portfoy > r.portfoy_esli_p90) for r in Zb.itertuples()]
+        else:
+            t = [bool(r.n >= O["n_esik"] and r.ust95 < 0 and r.sira < 0.5 and r.portfoy < r.portfoy_esli_p10) for r in Zb.itertuples()]
+        return ("ABD-ADAY" + ("" if yukari else " (kaçınma)")) if len(t) == 2 and all(t) else "İZ DEĞİL"
+    karar = {o: iki(Z[Z.olay == o], o == "M2c_geri_alim") for o in Z.olay.unique()}
+    Z.to_csv(os.path.join(A.cikti, "k31_ozet.csv"), index=False)
+    return {"ozet": Z, "karar": karar, "olay": olay}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
