@@ -6283,6 +6283,13 @@ def fon_izi_k30(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], dosyalar: List[s
     Z.to_csv(os.path.join(A.cikti, "k30_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k30_olay.csv"), index=False)
     return {"ozet": Z, "olay": E, "karar": karar, "alim": X}
 
+# K30 DEVAM (ÖNCEDEN YAZILDI 27 Eki; ilk turda yalnız A5 'çölde alım' ABD 2023'te dört şartı geçti (+%7,3), 2024-26 +%7,2 aralık sıfırı
+# içeriyor; bu üçünün sonucu görülmeden): D1 çölde YÖNETİCİ alımı (A5 + A3); D2 çölde alım, değer >= 100 bin $; D3 ÖRNEKLEM DIŞI: A5
+# kuralı hiç kullanılmamış 2016-01 -> 2022-12 SEC verisinde (hücreler 2016-19, 2020-22). A5 GÜÇLENİR: iki eski hücrede ortalama fark > 0
+# ve sıra > 0,50, en az birinde dört şart. Aynı ölçüt (FI_OLCUT), aynı tekilleştirme.
+FI_K30_DENEME = {"orta": 100_000, "dis_ceyrek": [f"{y}q{q}" for y in range(2016, 2022) for q in range(1, 5)],
+                 "dis_donem": (("2016-19", "2016-01-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"))}
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
