@@ -555,6 +555,17 @@ def sina():
             and np.isnan(F40.loc["a1", "pay_yil"]))
     if not ok40:
         hata.append(f"40) K31 finansal (seyrelme / pist) yanlış: {F40.to_dict('index')}")
+    # 41) K32 yuva benzetimi: tek yuva, maliyet %1; 30 gün düz 10 (dip 9,9), 25. gün açılışta giriş, 27. gün kapanış 9 < 9,9 x 0,98 ->
+    # kutu dibi çıkışı. Son değer = 0,9 x 0,99 / 1,01; işlem getirisi aynı - 1; ertesi gün nakitte sabit.
+    ix41 = pd.bdate_range("2024-01-01", periods=40)
+    c41 = np.full(40, 10.0); c41[27:] = 9.0
+    d41 = pd.DataFrame({"Open": c41, "High": c41 + 0.05, "Low": np.minimum(c41, 9.9), "Close": c41, "Volume": 1.0}, index=ix41)
+    R41 = F.fi_k32_benzet({"A": d41}, [(ix41[25], "A")], "cikis", "2024-01-01", "2024-12-31", 0.01, {**F.FI_K32, "slot": 1})
+    bek41 = 0.9 * 0.99 / 1.01
+    ok41 = (abs(R41["deger"].iloc[-1] - bek41) < 1e-9 and len(R41["islem"]) == 1 and abs(R41["islem"][0] - (bek41 - 1)) < 1e-9
+            and abs(R41["deger"].iloc[24] - 1.0) < 1e-12)
+    if not ok41:
+        hata.append(f"41) K32 yuva benzetimi yanlış: {R41['deger'].iloc[[24, 25, 27, -1]].tolist()} {R41['islem']}")
     return hata
 
 
@@ -562,4 +573,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 40/40 OK")
+    print("test_fon_izi: 41/41 OK")

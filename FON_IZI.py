@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.19 (2026-10-27, K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.20 (2026-10-27, K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6497,6 +6497,149 @@ def fi_k31_deneme(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], Fin: pd.DataFr
         for ad, a, b in O["donem"]:
             Z.append({"olay": ad_, "pazar": "ABD", "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
     return pd.DataFrame(Z)
+
+# K32 SADE PORTFÖY ÖLÇÜMÜ (Cemal 27 Eki: 'a ile devam et, sade portföy ölçümü'). İz testi değil, DÜZEN ölçümü; beklenti gerçekçi kurulur.
+# ÖNCEDEN YAZILDI (sonuç görülmeden). Her pazar (BIST, ABD) ve dönem (2016-22, 2023, 2024-26; fiyat 31.08.2026'da kesik) ayrı, başlangıç
+# sermayesi 1, 10 eşit yuva, nakit faiz getirmez (BIST'te mevduat getirisi yok sayılır: düzen aleyhine), işlem maliyeti tek yön BIST %0,2,
+# ABD %0,1. Düzenler:
+#   P0 PİYASA: bütün hisselere eşit ağırlık, her gün yeniden dengelenen al-tut (günlük getiri ±%50'de kırpılır).
+#   P1 RASTGELE + 60 GÜN: boş yuva olduğu her gün ertesi açılışta rastgele hisse, 60 işlem günü tut (50 tohum; ortanca + dağılım).
+#   P2 ÇÖL + 60 GÜN: K24 iki evre sinyalleri (sinyal sırasıyla, boş yuva varsa), ertesi açılış, 60 gün tut.
+#   P3 ÇÖL + ÇIKIŞ: P2 girişleri; çıkış = kapanış sinyal öncesi 20 gün dibinin %2 altına inerse (kutu dibi), +%20 görüldükten sonra
+#      kapanış SMA20 altına inerse (trail), en çok 120 işlem günü.
+#   P4 RASTGELE + ÇIKIŞ: P1 girişleri, P3 çıkışı (çıkış kuralının katkısı).
+# Ölçüler: toplam getiri, yıllık getiri, en büyük düşüş (MDD), getiri / |MDD|, yatırımda geçen gün oranı, işlem sayısı, kazanan oranı,
+# en kötü işlem. KULLANILABİLİR DÜZEN (önceden): P3 dört karar hücresinin (BIST/ABD x 2023/2024-26) hepsinde MDD <= 0,8 x P0 MDD ve
+# getiri/|MDD| >= P0'ınki. Ayrıca P3, P4'ün (50 tohum) en az %75'inden iyi değilse 'girişin katkısı yok' yazılır.
+FI_K32 = {"slot": 10, "tut": 60, "azami": 120, "kar_esik": 0.20, "dip_gun": 20, "dip_pay": 0.98, "maliyet": {"BIST": 0.002, "ABD": 0.001},
+          "tohum_n": 50, "kirp": 0.5, "kriz": "2026-08-31",
+          "donem": (("2016-22", "2016-10-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-08-31"))}
+
+
+def fi_k32_piyasa(V: Dict[str, pd.DataFrame], bas: str, bit: str, K: Dict[str, Any] = FI_K32) -> pd.Series:
+    """P0: eşit ağırlıklı, günlük dengelenen piyasa değeri (bas..bit, 1'den)."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index().loc[bas:bit]
+    g = C.pct_change(fill_method=None).clip(-K["kirp"], K["kirp"]).mean(axis=1).fillna(0.0)
+    return (1 + g).cumprod()
+
+
+def fi_k32_islem(d: pd.DataFrame, j: int, kural: str, K: Dict[str, Any] = FI_K32, son: Optional[int] = None) -> Tuple[int, List[float]]:
+    """d'de j günü açılışında giren işlemin günlük değer çarpanları (giriş fiyatına göre, j..çıkış günü kapanışı) ve çıkış indeksi."""
+    o = d.Open.to_numpy(float); c = d.Close.to_numpy(float); n = len(c) if son is None else min(len(c), son)
+    g = o[j]
+    if not (g > 0):
+        return j, [1.0]
+    if kural == "tut":
+        e = min(j + K["tut"] - 1, n - 1)
+        return e, list(c[j:e + 1] / g)
+    dip = np.nanmin(d.Low.to_numpy(float)[max(0, j - K["dip_gun"]):j]) * K["dip_pay"] if j > 0 else 0.0
+    sma = d.Close.rolling(20).mean().to_numpy(); yol, gordu = [], False
+    for k in range(j, min(j + K["azami"], n)):
+        yol.append(c[k] / g); gordu = gordu or c[k] >= g * (1 + K["kar_esik"])
+        if c[k] < dip or (gordu and np.isfinite(sma[k]) and c[k] < sma[k]):
+            return k, yol
+    return min(j + K["azami"], n) - 1, yol
+
+
+def fi_k32_benzet(V: Dict[str, pd.DataFrame], giris: List[Tuple[pd.Timestamp, str]], kural: str, bas: str, bit: str, maliyet: float,
+                  K: Dict[str, Any] = FI_K32, rastgele: Optional[np.random.Generator] = None,
+                  C: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """Yuva benzetimi (gün sırası: açılışta giriş, kapanışta değerleme, kapanışta çıkış; çıkışın nakdi ertesi gün kullanılır).
+    giris: (gün, sembol) sırası (P2/P3; aynı gün sıra = verilen sıra); rastgele verilirse her gün boş yuva kadar, o gün verisi olan ve
+    en az dip_gun geçmişi bulunan hisselerden rastgele seçilir (P1/P4)."""
+    C = pd.DataFrame({s_: d.Close for s_, d in V.items()}).sort_index() if C is None else C
+    gun = C.loc[bas:bit].index
+    if not len(gun):
+        return {}
+    sem = np.array(C.columns); gecmis = C.notna().cumsum().loc[gun].to_numpy() > K["dip_gun"]; var = C.loc[gun].notna().to_numpy() & gecmis
+    gs: Dict[pd.Timestamp, List[str]] = {}
+    for t, s_ in giris:
+        gs.setdefault(pd.Timestamp(t), []).append(s_)
+    deger = np.zeros(len(gun)); nakit = 1.0; acik: List[Dict[str, Any]] = []; islem: List[float] = []; onceki = 1.0
+    for i, t in enumerate(gun):
+        if rastgele is not None:
+            bos = K["slot"] - len(acik); havuz = sem[var[i]]
+            adaylar = list(rastgele.choice(havuz, size=min(bos, len(havuz)), replace=False)) if bos > 0 and len(havuz) else []
+        else:
+            adaylar = gs.get(t, [])
+        for s_ in adaylar:
+            if len(acik) >= K["slot"] or any(p["s"] == s_ for p in acik):
+                continue
+            d = V[s_]
+            if t not in d.index:
+                continue
+            j = int(d.index.get_loc(t)); son_ = int(d.index.searchsorted(pd.Timestamp(bit), side="right"))
+            e, yol = fi_k32_islem(d, j, kural, K, son_)
+            if not len(yol) or not np.isfinite(yol).all():
+                continue
+            tutar = min(onceki / K["slot"], nakit / (1 + maliyet))
+            if tutar <= 0:
+                continue
+            nakit -= tutar * (1 + maliyet)
+            yt = pd.Series(yol, index=d.index[j:j + len(yol)]).reindex(gun[i:]).ffill()
+            yt = yt.loc[:d.index[e]].to_numpy()
+            acik.append({"s": s_, "tutar": tutar, "i0": i, "yol": yt})
+        deger[i] = nakit + sum(p["tutar"] * p["yol"][min(i - p["i0"], len(p["yol"]) - 1)] for p in acik)
+        onceki = deger[i]
+        for p in [p for p in acik if i - p["i0"] >= len(p["yol"]) - 1]:
+            nakit += p["tutar"] * p["yol"][-1] * (1 - maliyet); islem.append(p["yol"][-1] * (1 - maliyet) / (1 + maliyet) - 1)
+            acik.remove(p)
+            deger[i] -= p["tutar"] * p["yol"][-1] * maliyet
+    for p in acik:
+        islem.append(p["yol"][-1] / (1 + maliyet) - 1)
+    return {"deger": pd.Series(deger, index=gun), "islem": np.array(islem)}
+
+
+def fi_k32_olc(D: pd.Series, islem: Optional[np.ndarray] = None) -> Dict[str, float]:
+    """Toplam / yıllık getiri, en büyük düşüş, getiri/|MDD|, işlem istatistikleri."""
+    if D is None or not len(D):
+        return {}
+    top = float(D.iloc[-1] / D.iloc[0] - 1); yil = (D.index[-1] - D.index[0]).days / 365.25
+    mdd = float((D / D.cummax() - 1).min())
+    o = {"toplam": top, "yillik": (1 + top) ** (1 / yil) - 1 if yil > 0 and top > -1 else np.nan, "mdd": mdd,
+         "getiri_mdd": top / abs(mdd) if mdd < 0 else np.nan}
+    if islem is not None and len(islem):
+        o.update({"islem_n": len(islem), "kazanan": float((islem > 0).mean()), "en_kotu": float(islem.min()),
+                  "ort_islem": float(islem.mean())})
+    return o
+
+
+def fon_izi_k32(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], aday: pd.DataFrame, A: Optional[FIAyar] = None,
+                K: Dict[str, Any] = FI_K32) -> Dict[str, Any]:
+    """K32 sürücü: P0..P4, pazar x dönem. aday = K24 sinyalleri (pazar, sembol, giris). Çıktı k32_ozet.csv."""
+    A = A or FIAyar(); Z = []
+    aday = aday.assign(giris=pd.to_datetime(aday.giris))
+    for pz, V in (("BIST", Vb), ("ABD", Va)):
+        mal = K["maliyet"][pz]; ad_p = aday[aday.pazar == pz].sort_values(["giris", "sembol"])
+        C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index()
+        for dn, bas, bit in K["donem"]:
+            P0 = fi_k32_piyasa(V, bas, bit, K); Z.append({"pazar": pz, "donem": dn, "duzen": "P0_piyasa", **fi_k32_olc(P0)})
+            gir = [(r.giris, r.sembol) for r in ad_p[(ad_p.giris >= bas) & (ad_p.giris <= bit)].itertuples() if r.sembol in V]
+            filog.info("K32 %s %s: %d çöl girişi", pz, dn, len(gir))
+            for ad_, kural in (("P2_col_60gun", "tut"), ("P3_col_cikis", "cikis")):
+                R = fi_k32_benzet(V, gir, kural, bas, bit, mal, K, C=C)
+                Z.append({"pazar": pz, "donem": dn, "duzen": ad_, "giris_n": len(gir), **fi_k32_olc(R.get("deger"), R.get("islem"))})
+            for ad_, kural in (("P1_rastgele_60gun", "tut"), ("P4_rastgele_cikis", "cikis")):
+                sat = [fi_k32_olc(**{k: v for k, v in fi_k32_benzet(V, [], kural, bas, bit, mal, K, np.random.default_rng(tt), C).items()
+                                    if k in ("deger", "islem")}) for tt in range(K["tohum_n"])]
+                S = pd.DataFrame(sat)
+                Z.append({"pazar": pz, "donem": dn, "duzen": ad_, **S.median().to_dict(),
+                          "getiri_mdd_p75": float(S.getiri_mdd.quantile(0.75)), "toplam_p25": float(S.toplam.quantile(0.25)),
+                          "toplam_p75": float(S.toplam.quantile(0.75))})
+    Z = pd.DataFrame(Z); Z.to_csv(os.path.join(A.cikti, "k32_ozet.csv"), index=False)
+    karar = []
+    for pz in ("BIST", "ABD"):
+        for dn in ("2023", "2024-26"):
+            g = Z[(Z.pazar == pz) & (Z.donem == dn)].set_index("duzen")
+            karar.append(bool(g.loc["P3_col_cikis", "mdd"] >= 0.8 * g.loc["P0_piyasa", "mdd"]
+                              and g.loc["P3_col_cikis", "getiri_mdd"] >= g.loc["P0_piyasa", "getiri_mdd"]))
+    katki = []
+    for pz in ("BIST", "ABD"):
+        for dn in ("2023", "2024-26"):
+            g = Z[(Z.pazar == pz) & (Z.donem == dn)].set_index("duzen")
+            katki.append(bool(g.loc["P3_col_cikis", "getiri_mdd"] > g.loc["P4_rastgele_cikis", "getiri_mdd_p75"]))
+    return {"ozet": Z, "karar": "KULLANILABİLİR DÜZEN" if all(karar) else "KULLANILABİLİR DEĞİL", "hucre": karar,
+            "giris_katkisi": "VAR" if all(katki) else "YOK", "katki_hucre": katki}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
