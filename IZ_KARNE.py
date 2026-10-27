@@ -694,7 +694,14 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Genel: sıçrayanın izi 'ucuz, sığ, oynak' olmak ama aynı iz çöküşü de getiriyor, İZ DEĞİL. Nakit grubunda en küçük şirketler "
               "test dönemlerinde belirgin iyi (ABD-ADAY şartı tuttu) ama veri yalnız hayatta kalanları içeriyor; bu şirketlerin %26-52'si "
               "bildirimi kesmiş, bizde %0 -> GEÇERSİZ",
-     "durum": "TAMAMLANDI, AÇIK: ölü hisse fiyatı (ücretli veri) Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: batanlar da katılsın, bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "Batanlar neden test edilmiyor; 2021'de parmak izine uyan bütün hisselerin listesi yok mu, varsa katılsın",
+     "yapilan": "SEC finansal tablo veri setinden 2021-23'te nakdi 4 çeyrekten kısa yeten bütün şirketler (batanlar dahil, 22.670 bildirim) "
+                "çıkarıldı; akıbet = bildirimin kesilmesi; nakit büyüklüğüne göre beşte birler; ücretsiz fiyat kaynakları denendi",
+     "sonuc": "Liste var. Nakdi bitenlerin %20'si 1 yılda, %36'sı 2 yılda bildirimi kesiyor (en küçük üç dilimde %42-49); bizim evren bu "
+              "küçüklerin yalnız %1-2'sini içeriyor. Batanların fiyatı Yahoo / Stooq'ta yok (SIVB, FRC, WEWK boş); Tiingo, EODHD, Polygon "
+              "anahtar istiyor. Fiyat olmadan r60 ölçülemez",
+     "durum": "TAMAMLANDI, AÇIK: fiyat kaynağı (Tiingo ücretsiz hesap / EODHD) Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
     "YOL (27 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri İZ DEĞİL; sade portföy (K32) kullanılabilir değil; sıçrayan hisse "
@@ -703,7 +710,10 @@ IK_ACIK: List[str] = [
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te borsadan "
     "çıkma seyrek, etkisi küçük; ABD'de küçük / zarar eden şirketlerde büyük (nakit tükenenlerin %26-52'si 2-5 yılda bildirimi kesmiş). "
     "ABD küçük şirket bulguları bu veriyle ölçülemez; dürüst test için borsadan çıkmış hisse fiyatları gerek (ücretli: ör. Norgate, "
-    "EODHD, Sharadar). Karar Cemal'in (ücret).",
+    "EODHD, Sharadar). 27 Eki ölçüm: SEC'te 2021-23 nakdi 4 çeyrekten kısa yeten şirketlerin %36'sı 2 yılda bildirimi kesiyor, en küçük "
+    "üç nakit dilimde %42-49; evrenimiz bu küçüklerin %1-2'sini içeriyor. Liste SEC'te hazır (batanlar dahil); eksik olan yalnız "
+    "fiyat. Seçenek: Tiingo ücretsiz hesap (anahtar .env'e; borsadan çıkmışlar dahil, ayda 500 sembol sınırı) ya da EODHD ~20 $ / 1 ay. "
+    "Karar Cemal'in (hesap / ücret).",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
     "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
