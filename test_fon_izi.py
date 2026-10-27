@@ -525,6 +525,20 @@ def sina():
     ok38 = bool(X38.fark.iloc[0] > 0.5 and X38.sira.iloc[0] == 1.0 and np.isfinite(X38.esli_r60.iloc[1]))
     if not ok38:
         hata.append(f"38) Yeni ölçüt eşli fark/sıra yanlış: {X38[['r60', 'esli_r60', 'fark', 'sira']].to_dict('records')}")
+    # 39) K28 tepki: açıklama günü D (Cumartesi) -> pencere Cuma kapanışı -> Pazartesi kapanışı; olay hissesi Pazartesi +%20, öteki 9 hisse
+    # düz -> tepki ~ +0,20, giriş Salı, en üst dilimde.
+    ix39 = pd.bdate_range("2024-01-01", periods=300); V39 = {}
+    for k in range(10):
+        c = np.full(300, 10.0)
+        if k == 0:
+            c[ix39.get_loc(pd.Timestamp("2024-06-03")):] = 12.0
+        V39[f"S{k}"] = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1e6}, index=ix39)
+    X39 = F.fi_k28_olaylar(pd.DataFrame({"sembol": [f"S{k}" for k in range(10)], "D": [pd.Timestamp("2024-06-01")] * 10}), V39, "BIST")
+    r39 = X39[X39.sembol == "S0"].iloc[0]
+    ok39 = (abs(r39.ear - 0.2) < 1e-9 and r39.giris == pd.Timestamp("2024-06-04") and r39.d0 == pd.Timestamp("2024-05-31")
+            and bool(r39.ust) and not bool(X39[X39.sembol == "S5"].ust.iloc[0] and X39[X39.sembol == "S5"].ear.iloc[0] > 0))
+    if not ok39:
+        hata.append(f"39) K28 tepki penceresi yanlış: {r39.to_dict()}")
     return hata
 
 
@@ -532,4 +546,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 38/38 OK")
+    print("test_fon_izi: 39/39 OK")

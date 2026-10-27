@@ -402,6 +402,19 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "-%6,0. Önceden yazılı 3 devam: yönetici alımı -%7,2 / -%2,3; kümeli (30 günde >= 3) -%8,2 (-14,6..-2,0) / -%2,6; düşüş "
                "sonrası olmayan -%9,2 / -%1,9; sıra 0,44-0,51. ABD (SEC Form 4) izin bekliyor. İçeriden alım bildirimi BIST 2022-26'da "
                "olumlu bilgi taşımıyor (2023'te eşlerin gerisinde); Avcı 2023'ün 2008-19 bulgusu bu dönemde yok."),
+    _ik_k("Ç100", "2026-10-27", "BİLANÇO SÜRPRİZİ (PEAD): bilanço tepkisi en üst / alt %20, çöl + iyi sürpriz, ABD analist sürprizi (K28)",
+          "FON_IZI.py (k28)", "Cemal: 'başla' (yol 2: bilanço sürprizi)", "Yeni deneme (yeni ölçüt FI_OLCUT, karar önceden)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k28_ozet.csv",
+          notu="Açıklama günleri: BIST KAP 'Finansal Rapor' (9.176 hisse-dönem, 2022-07 -> 2026-10), ABD Nasdaq takvimi (65.474 kayıt). "
+               "Tepki = açıklama öncesi son kapanış -> sonraki ilk kapanış, piyasa medyanına göre; giriş ertesi gün açılış; çeyrek içi dilim. "
+               "Eşli fark (60 gün), BIST 2023 / BIST 2024-26 / ABD 2023 / ABD 2024-26: iyi sürpriz (üst %20) +%5,0 / +%1,0 / +%3,1 / "
+               "-%1,4 (alt uçlar -0,7 / -0,7 / +1,5 / -3,6); kötü sürpriz (alt %20) -%5,1 / -%3,0 (BIST'te aralığın tamamı eksi) ama ABD "
+               "-%1,1 / +%0,3 (ayna kaçınma ölçütü ABD görülmeden yazıldı, tutmadı); çöl + iyi sürpriz +%0,8 / +%2,6 / +%5,4 / +%5,6; ABD "
+               "analist sürprizi üst %20 +%1,2 / -%1,8. Önceden yazılı 3 devam: geniş çöl +%2,0 / -%1,4 / +%4,9 / +%2,3; güçlü sürpriz (üst "
+               "%10) + çöl +%3,3 (n 19) / +%11,0 / +%4,6 / +%6,3 (sıra 0,54-0,56); iki evre + iyi sürpriz +%14,5 / +%4,1 / +%5,6 / -%0,4. "
+               "Hiçbiri dört hücrede tutmadı. En tutarlı aday (güçlü sürpriz + çöl) önceden yazılı ÖRNEKLEM DIŞINDA (BIST 2016-19 / "
+               "2020-22, hiç bakılmamış) tersine döndü: -%0,9 / -%13,6 (çöl + iyi sürpriz -%5,4 / -%11,5, 2020-22 aralığı tamamen eksi); "
+               "ABD 2016-22 sonucu kararı değiştiremeyeceği için indirmesi durduruldu."),
 ]
 
 
@@ -573,14 +586,23 @@ IK_GOREV: List[Dict[str, str]] = [
                 "iki yanlılık düzeltildi) CLAUDE.md'ye yazıldı. KAP Pay Alım Satım Bildirimi 2022-07 -> 2026-10 indirildi, tablo + PDF "
                 "ayrıştırıldı (6.637 bildirim); K27 + önceden yazılı 3 devam; IZ_KARNE Ç99; testler 37-38",
      "sonuc": "İz değil: içeriden net alımdan sonra hisse 60 günde eşlerin %2,6-4,5 gerisinde; çölde alım, yönetici, kümeli, destek dışı "
-              "alımlar da tutmadı", "durum": "TAMAMLANDI, AÇIK: sıradaki yol (bilanço sürprizi) ve ABD Form 4 izni Cemal'in kararı"},
+              "alımlar da tutmadı", "durum": "TAMAMLANDI (Cemal: 'başla', bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "Başla (yol 2: bilanço sürprizi)",
+     "yapilan": "K28: BIST açıklama günleri KAP 'Finansal Rapor' listesinden (konu kodu bulundu), ABD Nasdaq bilanço takviminden (analist "
+                "sürprizi dahil); bilanço tepkisi dilimleri, çöl + iyi sürpriz, ABD analist sürprizi; kötü sürpriz için ayna (kaçınma) "
+                "ölçütü ABD görülmeden repoya işlendi; önceden yazılı 3 devam; en tutarlı aday için önceden yazılı örneklem dışı (BIST "
+                "2016-22); IZ_KARNE Ç100; test 39",
+     "sonuc": "İz değil. İyi sürpriz BIST'te ve ABD 2023'te artı ama ABD 2024-26'da eksi; kötü sürpriz yalnız BIST'te eksi; çöl + güçlü "
+              "sürpriz 2023-26'da dört hücrede artıydı ama 2016-22 BIST'te tersine döndü",
+     "durum": "TAMAMLANDI, AÇIK: sıradaki yol Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (26 Eki): Cemal 1 + 3 seçti; K27 (Ç99) içeriden alım ve çölde içeriden alım yeni ölçütle İZ DEĞİL (eşlerin gerisinde). "
-    "Sırada öneri: (2) bilanço sürprizi (KAP finansal rapor; BIST için PEAD kanıtı var). ABD karşılığı (SEC Form 4) için Cemal "
-    "izni gerekir (SEC indirmesi iletişim e-postası istiyor).",
+    "YOL (27 Eki): yol 1 + 3 (içeriden alım, K27) ve yol 2 (bilanço sürprizi, K28) yeni ölçütle İZ DEĞİL. Bilanço tepkisi BIST'te "
+    "anlamlı ama ABD'de ya da başka dönemde tekrar etmiyor (BIST'e özgü, A11/A14 ailesi). Sıradaki seçenekler Cemal'in: (a) portföy "
+    "/ risk tasarımı (K19: çıkış kuralı derin kaybı azaltıyor), (b) BIST'e özgü bulguları ayrı sınıf yapmak (standart sorusu), (c) "
+    "ABD Form 4 izni.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
