@@ -477,6 +477,18 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "2026'dan önce kesilmiş (batma, birleşme, borsadan çıkma); bizim evrendeki aynı şirketlerde %0. Küçük ve nakdi biten şirkette "
                "'iyi çıkma' büyük ölçüde hayatta kalanı seçmekten geliyor. Sonuç: ABD-ADAY GEÇERSİZ (hayatta kalma yanlılığı); dürüst test "
                "için borsadan çıkmış hisselerin fiyatı gerek (ücretli veri)."),
+    _ik_k("Ç107", "2026-10-27", "BATANLAR DAHİL NAKİT TÜKENMESİ TESTİ: SEC'te o gün bildirim veren bütün şirketler, eski kod kapak "
+          "sayfasından, batanların fiyatı Tiingo'dan (rastgele 450 / 824, ağırlıklı); iz = çeyreğin en küçük beşte bir piyasa değeri (K34)",
+          "FON_IZI.py (k34)", "Cemal: 'batanlar da test edilsin; parmak izine o dönem uyan bütün hisseler katılsın'",
+          "Yeni deneme (hayatta kalma yanlılığı giderildi; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k34_ozet.csv",
+          notu="Evren 2021-01 .. 2026-06: nakdi 4 çeyrekten kısa yeten, nakdi >= 1 M$ 3.564 şirket (bugün kodu olan 2.261, olmayan 1.303; "
+               "bunların 306'sının hissesi işlem görmüyor, 173'ü Tiingo'da eşlenmedi, 824 geçerli, 450 örnek, ağırlık 1,83); ölçülen 11.402 "
+               "olay (1.590 batan şirket olayı). En küçük beşte bir, aynı ay eşlerine göre ABD 2021-22 / 2023 / 2024-26: YALNIZ HAYATTA "
+               "KALANLAR +%6,1 / +%11,0 / +%9,3 (sıra 0,55 / 0,56 / 0,51; hepsi tutar); BATANLAR DAHİL +%2,8 / +%7,9 / +%5,8 (aralık 2023 "
+               "+0,8 / +15, 2024-26 +2 / +10; sıra 0,54 / 0,51 / 0,48). Batanlar etkinin üçte birini siliyor; 2024-26'da tipik küçük şirket "
+               "eşlerinden KÖTÜ (sıra 0,48), ortalamayı birkaç sıçrayan çekiyor. Karar: İZ DEĞİL (2024-26 sıra şartı tutmadı). K33-B'nin "
+               "ABD-ADAY'ı batanlar eklenince düştü. Not: kırpılmamış ortalamada veri hatası (ters bölünme) +%4.800'e çıkıyor; önceden yazılı "
+               "+%500 kırpması bunu sınırladı. Borsadan çıkışta son kapanış alındı (iflasta gerçek kayıp daha büyük olabilir)."),
 ]
 
 
@@ -701,21 +713,26 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Liste var. Nakdi bitenlerin %20'si 1 yılda, %36'sı 2 yılda bildirimi kesiyor (en küçük üç dilimde %42-49); bizim evren bu "
               "küçüklerin yalnız %1-2'sini içeriyor. Batanların fiyatı Yahoo / Stooq'ta yok (SIVB, FRC, WEWK boş); Tiingo, EODHD, Polygon "
               "anahtar istiyor. Fiyat olmadan r60 ölçülemez",
-     "durum": "TAMAMLANDI, AÇIK: fiyat kaynağı (Tiingo ücretsiz hesap / EODHD) Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: Tiingo ücretsiz hesap açtı, bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "Tiingo anahtarı verildi; batanlar dahil test",
+     "yapilan": "K34: SEC'ten bütün nakdi biten şirketler (batanlar dahil), eski kodları 1.303 kapak sayfasından, bugün işlem görenler "
+                "Yahoo'dan (2.246), batanlardan rastgele 450'si Tiingo'dan (saatte 45 istek, ~9 saat; sunucu yeniden başladı, kaldığı "
+                "yerden sürdü); ağırlıklı eş farkı; anahtar .env'de, repoda yok; IZ_KARNE Ç107; test 44",
+     "sonuc": "İz değil: küçük nakdi biten şirket, yalnız hayatta kalanlarla +%9-11 iyi görünüyordu; batanlar eklenince +%6-8'e iniyor ve "
+              "2024-26'da tipik küçük şirket eşlerinden kötü (sıra 0,48). Ortalamayı birkaç piyango hissesi çekiyor",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
     "YOL (27 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri İZ DEĞİL; sade portföy (K32) kullanılabilir değil; sıçrayan hisse "
-    "profili (K33) İZ DEĞİL; nakit tükenmesi içinde küçük şirket (K33-B) hayatta kalma yanlılığıyla GEÇERSİZ. Seçenekler Cemal'in: (a) "
-    "çöl taramasını aday listesi olarak piyasayla karşılaştırmalı canlı izlemek, (b) ara.",
-    "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te borsadan "
-    "çıkma seyrek, etkisi küçük; ABD'de küçük / zarar eden şirketlerde büyük (nakit tükenenlerin %26-52'si 2-5 yılda bildirimi kesmiş). "
-    "ABD küçük şirket bulguları bu veriyle ölçülemez; dürüst test için borsadan çıkmış hisse fiyatları gerek (ücretli: ör. Norgate, "
-    "EODHD, Sharadar). 27 Eki ölçüm: SEC'te 2021-23 nakdi 4 çeyrekten kısa yeten şirketlerin %36'sı 2 yılda bildirimi kesiyor, en küçük "
-    "üç nakit dilimde %42-49; evrenimiz bu küçüklerin %1-2'sini içeriyor. Liste SEC'te hazır (batanlar dahil); eksik olan yalnız "
-    "fiyat. Seçenek: Tiingo ücretsiz hesap (anahtar .env'e; borsadan çıkmışlar dahil, ayda 500 sembol sınırı) ya da EODHD ~20 $ / 1 ay. "
-    "Karar Cemal'in (hesap / ücret).",
+    "profili (K33) İZ DEĞİL; nakit tükenmesinde küçük şirket batanlar dahil (K34) İZ DEĞİL. Seçenekler Cemal'in: (a) çöl taramasını "
+    "aday listesi olarak piyasayla karşılaştırmalı canlı izlemek, (b) ara.",
+    "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
+    "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
+    "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
+    "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
+    "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
