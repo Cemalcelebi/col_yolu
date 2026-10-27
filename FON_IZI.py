@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.17 (2026-10-27, K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.18 (2026-10-27, K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6179,6 +6179,109 @@ def fon_izi_k29(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], X28b: 
     karar = {"riskli (kaçınma)": fi_olcut_karar_kacinma(Z[Z.olay == "riskli"], O), "temiz": fi_olcut_karar(Z[Z.olay == "temiz"], O)}
     Z.to_csv(os.path.join(A.cikti, "k29_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k29_aday.csv"), index=False)
     return {"ozet": Z, "aday": E, "karar": karar}
+
+# K30 ABD İÇERİDEN ALIM (SEC Form 4) (Cemal 27 Eki: 'ABD verisi izin vereyim, devam edelim; BIST hep manipülasyon'). ÖNCEDEN YAZILDI
+# (sonuç görülmeden), ölçüt FI_OLCUT. Kaynak: SEC 'Insider Transactions Data Sets' (çeyreklik form345 zip; SEC adil erişim kuralı gereği
+# User-Agent'ta iletişim e-postası, Cemal'in izniyle). Form '4' (düzeltme 4/A hariç), NONDERIV_TRANS işlem kodu 'P' (açık piyasa alımı),
+# edinme 'A'. Bildirim değeri = adet x fiyat toplamı; olay günü = FILING_DATE (kamuya açıklandığı gün), giriş = sonraki işlem günü açılışı.
+# Hisse = ISSUERTRADINGSYMBOL, ABD evrenimizde (1.411) olanlar. Aynı hissede 60 işlem gününde tek olay. Olaylar:
+#   A1 alım (değer >= 10 bin $); A2 büyük alım (>= 250 bin $); A3 yönetici (Officer ya da Director; yalnız %10 ortak hariç);
+#   A4 kümeli (aynı hissede 30 takvim gününde >= 3 farklı içeriden alımcı; olay = 3. kişinin bildirimi); A5 çölde alım (bildirimden
+#   önceki son işlem gününde biten 20 mum: K23 süzgeci + mum <= 1,0). Hücreler ABD 2023 / ABD 2024-26 (veri 2026 1. çeyrekte biter).
+#   BIST karşılığı K27'de İZ DEĞİL çıktığı için dört hücreli İZ olamaz; iki ABD hücresi tutarsa 'ABD-ADAY' yazılır (standart kararı Cemal'in).
+FI_K30 = {"url": "https://www.sec.gov/files/structureddata/data/insider-transactions-data-sets/{c}_form345.zip",
+          "ceyrekler": [f"{y}q{q}" for y in range(2022, 2027) for q in range(1, 5)], "kucuk": 10_000, "buyuk": 250_000,
+          "kume_gun": 30, "kume_n": 3, "ayri": 60, "klasor": os.environ.get("FI_SEC", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/sec")}
+
+
+def fi_k30_indir(eposta: str, K: Dict[str, Any] = FI_K30) -> List[str]:
+    """Çeyreklik form345 zip dosyalarını indirir (var olanı atlar; yayımlanmamış çeyrek 404 -> atlanır). eposta: SEC User-Agent iletişimi."""
+    import requests
+    os.makedirs(K["klasor"], exist_ok=True); s = requests.Session(); s.headers.update({"User-Agent": f"Col Yolu arastirma {eposta}"})
+    var = []
+    for c in K["ceyrekler"]:
+        yol = os.path.join(K["klasor"], f"{c}_form345.zip")
+        if os.path.exists(yol) and os.path.getsize(yol) > 0:
+            var.append(yol); continue
+        try:
+            r = s.get(K["url"].format(c=c), timeout=180)
+            if r.status_code == 200:
+                with open(yol, "wb") as f:
+                    f.write(r.content)
+                var.append(yol)
+            else:
+                filog.info("SEC %s: HTTP %s (yayımlanmamış olabilir)", c, r.status_code)
+        except Exception as ex:
+            filog.warning("SEC %s indirilemedi: %s", c, ex)
+        time.sleep(0.5)
+    return var
+
+
+def fi_k30_alimlar(dosyalar: List[str], K: Dict[str, Any] = FI_K30) -> pd.DataFrame:
+    """Form 4 açık piyasa alımları: bildirim başına sembol, açıklama günü, değer, alımcı (CIK), rol."""
+    import zipfile
+    parca = []
+    for yol in dosyalar:
+        try:
+            z = zipfile.ZipFile(yol)
+            S = pd.read_csv(z.open("SUBMISSION.tsv"), sep="\t", usecols=["ACCESSION_NUMBER", "FILING_DATE", "DOCUMENT_TYPE",
+                                                                          "ISSUERTRADINGSYMBOL"], dtype=str)
+            T = pd.read_csv(z.open("NONDERIV_TRANS.tsv"), sep="\t", usecols=["ACCESSION_NUMBER", "TRANS_CODE", "TRANS_SHARES",
+                                                                              "TRANS_PRICEPERSHARE", "TRANS_ACQUIRED_DISP_CD"],
+                            dtype={"ACCESSION_NUMBER": str, "TRANS_CODE": str, "TRANS_ACQUIRED_DISP_CD": str}, low_memory=False)
+            R = pd.read_csv(z.open("REPORTINGOWNER.tsv"), sep="\t", usecols=["ACCESSION_NUMBER", "RPTOWNERCIK", "RPTOWNER_RELATIONSHIP"],
+                            dtype=str)
+        except Exception as ex:   # tek çeyrek bozuksa digerleri devam eder
+            filog.warning("SEC %s okunamadı: %s", yol, ex); continue
+        T = T[(T.TRANS_CODE == "P") & (T.TRANS_ACQUIRED_DISP_CD == "A")].copy()
+        T["deger"] = pd.to_numeric(T.TRANS_SHARES, errors="coerce") * pd.to_numeric(T.TRANS_PRICEPERSHARE, errors="coerce")
+        T = T.groupby("ACCESSION_NUMBER", as_index=False).deger.sum()
+        R = R.groupby("ACCESSION_NUMBER", as_index=False).agg(cik=("RPTOWNERCIK", "first"), rol=("RPTOWNER_RELATIONSHIP", "first"))
+        X = T.merge(S[S.DOCUMENT_TYPE == "4"], on="ACCESSION_NUMBER").merge(R, on="ACCESSION_NUMBER", how="left")
+        parca.append(X)
+    X = pd.concat(parca, ignore_index=True).drop_duplicates("ACCESSION_NUMBER")
+    X["sembol"] = X.ISSUERTRADINGSYMBOL.astype(str).str.upper().str.strip()
+    X["D"] = pd.to_datetime(X.FILING_DATE, format="%d-%b-%Y", errors="coerce")
+    X.loc[X.D.isna(), "D"] = pd.to_datetime(X.loc[X.D.isna(), "FILING_DATE"], errors="coerce")
+    return X.dropna(subset=["D"])[["ACCESSION_NUMBER", "sembol", "D", "deger", "cik", "rol"]]
+
+
+def fon_izi_k30(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], dosyalar: List[str], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K30,
+                O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K30 sürücü: Form 4 alımları -> A1..A5 olayları -> yeni ölçüt (ABD). Çıktı k30_ozet.csv, k30_olay.csv."""
+    A = A or FIAyar(); X = fi_k30_alimlar(dosyalar, K); X = X[X.sembol.isin(Va) & (X.deger >= K["kucuk"])].copy()
+    sat = []
+    for r in X.itertuples():
+        ix = Va[r.sembol].index; j = int(ix.searchsorted(r.D, side="right"))
+        if 1 <= j < len(ix):
+            sat.append((r.Index, ix[j], ix[j - 1]))
+    X = X.loc[[a for a, _, _ in sat]].assign(giris=[b for _, b, _ in sat], d0=[c for _, _, c in sat]).sort_values("D")
+    rol = X.rol.fillna("").astype(str)
+    X["A1"] = True; X["A2"] = X.deger >= K["buyuk"]; X["A3"] = rol.str.contains("Officer|Director")
+    X["A4"] = False
+    for s, g in X.groupby("sembol"):
+        for ix_, r in g.iterrows():
+            w = g[(g.D <= r.D) & (g.D > r.D - pd.Timedelta(days=K["kume_gun"]))]
+            X.loc[ix_, "A4"] = w.cik.nunique() >= K["kume_n"]
+    col = {}
+    for s, g in X.groupby("sembol"):
+        F = fi_k23_parmak(Va[s], 20)
+        for r in g.itertuples():
+            p = F.loc[r.d0] if r.d0 in F.index else None
+            col[r.Index] = bool(p is not None and p.dusus <= FI_K23_KOR["dusus"] and p.egim >= FI_K23_KOR["egim"] and p.mum <= 1.0)
+    X["A5"] = pd.Series(col).reindex(X.index).fillna(False).astype(bool)
+    Z, Ev = [], []
+    for b in ("A1", "A2", "A3", "A4", "A5"):
+        T = fi_olcut_olay(P, fi_k27_tekil(X, b, Va, K["ayri"])[["sembol", "giris", "deger"]]); T["olay"] = b; Ev.append(T)
+        for ad, a, bb in O["donem"]:
+            Z.append({"olay": b, "pazar": "ABD", "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= bb)], O)})
+    Z = pd.DataFrame(Z); E = pd.concat(Ev, ignore_index=True).drop(columns="_esler")
+    def abd(Zb):
+        t = [bool(r.n >= O["n_esik"] and r.alt95 > 0 and r.sira > 0.5 and r.portfoy > r.portfoy_esli_p90) for r in Zb.itertuples()]
+        return "ABD-ADAY" if len(t) == 2 and all(t) else "İZ DEĞİL"
+    karar = {b: abd(Z[Z.olay == b]) for b in ("A1", "A2", "A3", "A4", "A5")}
+    Z.to_csv(os.path.join(A.cikti, "k30_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k30_olay.csv"), index=False)
+    return {"ozet": Z, "olay": E, "karar": karar, "alim": X}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
