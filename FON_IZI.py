@@ -6459,6 +6459,45 @@ def fon_izi_k31(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], form4: List[str]
     Z.to_csv(os.path.join(A.cikti, "k31_ozet.csv"), index=False)
     return {"ozet": Z, "karar": karar, "olay": olay}
 
+# K31 DEVAM (ÖNCEDEN YAZILDI 27 Eki; ilk turda dört ölçünün hiçbiri iki ABD hücresinde tutmadı, bu üçünün sonucu görülmeden):
+#   D1 İFLAS PROFİLİ: aynı bildirimde seyrelme >= +%10 VE nakit pisti < 4 çeyrek -> kaçınma.
+#   D2 TEMİZ ÇÖL: K24 iki evre sinyali (ABD) ve sinyalden önceki son finansal bildirimde seyrelme < +%3 ve (faaliyet nakit akışı >= 0 ya
+#      da pist >= 8 çeyrek) -> yukarı ölçüt (FI_OLCUT).
+#   D3 ÇÖL TUZAĞI: K24 iki evre sinyali ve son bildirimde seyrelme >= +%10 ya da pist < 4 -> kaçınma.
+FI_K31_DENEME = {"temiz_seyrelme": 0.03, "temiz_pist": 8.0}
+
+
+def fi_k31_deneme(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], Fin: pd.DataFrame, aday: pd.DataFrame, K: Dict[str, Any] = FI_K31,
+                  D: Dict[str, Any] = FI_K31_DENEME, O: Dict[str, Any] = FI_OLCUT) -> pd.DataFrame:
+    """aday = K29 aday tablosunun ABD satırları (sembol, sinyal, giris). Üç deneme için hücre özetleri."""
+    Fn = Fin[Fin.sembol.isin(Va)].sort_values("filed")
+    E1 = Fn[(Fn.pay_yil >= K["seyrelme"]) & (Fn.pist < K["pist"])]
+    sat = []
+    for r in E1.itertuples():
+        ix = Va[r.sembol].index; j = int(ix.searchsorted(r.filed, side="right"))
+        if 1 <= j < len(ix):
+            sat.append({"sembol": r.sembol, "giris": ix[j]})
+    gruplar = {"D1_iflas_profili": pd.DataFrame(sat)}
+    A_ = aday.sort_values("sinyal").copy(); son = []
+    for r in A_.itertuples():
+        g = Fn[(Fn.sembol == r.sembol) & (Fn.filed <= r.sinyal)]
+        son.append(g.iloc[-1] if len(g) else None)
+    A_["pay_yil"] = [x.pay_yil if x is not None else np.nan for x in son]
+    A_["pist"] = [x.pist if x is not None else np.nan for x in son]
+    A_["ocf"] = [x.ocf_ceyrek if x is not None else np.nan for x in son]
+    temiz = (A_.pay_yil < D["temiz_seyrelme"]) & ((A_.ocf >= 0) | (A_.pist >= D["temiz_pist"]))
+    tuzak = (A_.pay_yil >= K["seyrelme"]) | (A_.pist < K["pist"])
+    gruplar["D2_temiz_col"] = A_[temiz]; gruplar["D3_col_tuzagi"] = A_[tuzak]
+    Z = []
+    for ad_, X in gruplar.items():
+        if not len(X):
+            continue
+        X = X.sort_values("giris").assign(_b=True)
+        T = fi_olcut_olay(P, fi_k27_tekil(X, "_b", Va, K["ayri"])[["sembol", "giris"]])
+        for ad, a, b in O["donem"]:
+            Z.append({"olay": ad_, "pazar": "ABD", "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    return pd.DataFrame(Z)
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
