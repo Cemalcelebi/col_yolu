@@ -415,6 +415,14 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "Hiçbiri dört hücrede tutmadı. En tutarlı aday (güçlü sürpriz + çöl) önceden yazılı ÖRNEKLEM DIŞINDA (BIST 2016-19 / "
                "2020-22, hiç bakılmamış) tersine döndü: -%0,9 / -%13,6 (çöl + iyi sürpriz -%5,4 / -%11,5, 2020-22 aralığı tamamen eksi); "
                "ABD 2016-22 sonucu kararı değiştiremeyeceği için indirmesi durduruldu."),
+    _ik_k("Ç101", "2026-10-27", "RİSK SÜZGECİ: K24 çöl sinyallerinde kötü bilanço / A11 / A14 işaretli adaylar kaçınılmalı mı; temiz adaylar (K29)",
+          "FON_IZI.py (k29)", "Cemal: 'devam et' (öneri b + a: BIST'e özgü risk süzgeci + portföy)",
+          "Yeni deneme (yeni ölçüt FI_OLCUT + ayna kaçınma ölçütü, karar önceden)", "IZ C", 4, cikti="arastirma_cikti/fon_izi/k29_ozet.csv",
+          notu="Aday = K24 iki evre sinyalleri (BIST 2023 504 / 2024-26 902; ABD 643 / 1.818). İşaretli (riskli) pay BIST %18, ABD %35. "
+               "Eşli fark 60 gün, BIST 2023 / BIST 2024-26 / ABD 2023 / ABD 2024-26: hepsi -%1,4 / -%0,7 / +%3,1 / -%0,5; temiz -%1,3 / "
+               "-%0,7 / +%4,1 / -%0,8; riskli -%1,7 / -%1,0 / +%1,4 / +%0,1 (aralıkların hepsi sıfırı içeriyor). Önceden yazılı 3 devam "
+               "(işaretler ayrı): kötü bilanço +%0,5 / -%1,7 / -%1,5 / -%0,2; A11 -%8,5 (n 15) / +%5,0 / +%9,7 / -%3,0; A14 n 1-4. Risk "
+               "işaretleri çöl adaylarını ayırmıyor; temiz adaylar da eşlerinden iyi değil. İZ DEĞİL."),
 ]
 
 
@@ -599,14 +607,18 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Denetlendi: yeni ölçüt fiyatları 31.08.2026'da kesiyor; K27 / K28'de ölçülen en geç giriş 4-5 Haziran 2026, 31 Ağustos "
                 "sonrası ölçülen olay 0 (60 günü krize taşanlar da dışarıda). Kural CLAUDE.md test standardına yazıldı",
      "sonuc": "Sonuçlar krizden etkilenmemiş; K28'in 2016-22 tersine dönüşü kriz dışı bir dönem", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-10-27", "istek": "Yine de devam et; hevesim kalmadı, yıllardır uzman / sinyal grupları para kazandığını söylüyordu, "
+                                     "hepsi yalan mıymış",
+     "yapilan": "Öneri b + a: K29 risk süzgeci (K24 çöl sinyalleri, kötü bilanço / A11 / A14 işaretleri, BIST + ABD, yeni ölçüt + kaçınma "
+                "ölçütü) ve önceden yazılı 3 devam; IZ_KARNE Ç101",
+     "sonuc": "İz değil: işaretli ve temiz adaylar eşlerinden ayrışmıyor", "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): yol 1 + 3 (içeriden alım, K27) ve yol 2 (bilanço sürprizi, K28) yeni ölçütle İZ DEĞİL. Bilanço tepkisi BIST'te "
-    "anlamlı ama ABD'de ya da başka dönemde tekrar etmiyor (BIST'e özgü, A11/A14 ailesi). Sıradaki seçenekler Cemal'in: (a) portföy "
-    "/ risk tasarımı (K19: çıkış kuralı derin kaybı azaltıyor), (b) BIST'e özgü bulguları ayrı sınıf yapmak (standart sorusu), (c) "
-    "ABD Form 4 izni.",
+    "YOL (27 Eki): yol 1 + 3 (K27), yol 2 (K28), risk süzgeci (K29) yeni ölçütle İZ DEĞİL. Kalan seçenekler Cemal'in: (a) beklentiyi "
+    "piyasaya göre kuran sade portföy ölçümü (aday listesi + çıkış kuralı = piyasada kalmanın disiplinli yolu, derin kayıp sınırı), "
+    "(b) ara verip canlı aday kalitesini izlemek, (c) ABD Form 4 izni.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
