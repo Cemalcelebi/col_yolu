@@ -456,6 +456,27 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "ortancası) +%25 / +%107 / +%24 / +%95. Yalnız BIST 2023 tuttu; girişin rastgeleye üstünlüğü de yalnız orada. Önceden yazılı "
                "3 devam: temiz çöl (K29 işaretsiz) +%54 / +%3 / +%37 / +%3; likit çöl +%15 / +%0 / +%16 / -%3; 250 gün tut +%27 / +%155 (-%26) / +%26 / +%28. "
                "Hiçbiri dört hücrede tutmadı. KULLANILABİLİR DÜZEN DEĞİL: 2024-26'da çöl portföyü piyasanın çok altında, düşüşü daha derin."),
+    _ik_k("Ç105", "2026-10-27", "SIÇRAYAN HİSSE PROFİLİ: 60 günde ortancanın +%40 üstüne çıkanları önceden ayıran özellik (12 fiyat/hacim "
+          "özelliği; keşif 2016-22, test 2023 / 2024-26) + çöl içi, nakit tükenmesi içi, çöküş profili (K33)", "FON_IZI.py (k33)",
+          "Cemal: 'piyango gibi sıçrayan hisseler neden ayrışıyor; özellik belirgin olma ihtimali yüksek'",
+          "Yeni deneme (keşif / test ayrımı, yeni ölçüt, karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k33_kaldirac.csv",
+          notu="Aylık örnek BIST 56 bin, ABD 154 bin satır; sıçrama oranı BIST %9,7, ABD %5,1. Keşifte en güçlü kaldıraçlar: ABD düşük "
+               "fiyat 3,4 kat (çöküş de 1,9 kat), yüksek oynaklık 3,3 (çöküş 3,9), çok tavan günü 3,3 (çöküş 3,4); BIST düşük likidite 1,6, "
+               "düşük fiyat 1,5. Sıçramayı çöküşten fazla artıran (asimetri >= 1,2) ve iki pazarda da >= 1,5 kat olan özellik YOK: sıçrayan "
+               "hissenin önceden görünen izi 'oynak, ucuz, sığ' olmak; aynı iz çöküşü de getiriyor (piyango bileti). Çöl içi ve çöküş "
+               "profilinde de seçilen özellik çıkmadı. İZ DEĞİL."),
+    _ik_k("Ç106", "2026-10-27", "NAKİT TÜKENMESİ GRUBUNDA İYİ ÇIKANLARIN İZİ (ABD, K31 M3 içinde; 12 özellik + şirket verisi, AUC profili; "
+          "K33 D3 + K33-B)", "FON_IZI.py (k33b)", "Cemal: 'nakit tükenmesi araştırmasında bazıları iyi çıkmıştı; onları iyi yapan izi araştır'",
+          "Yeni deneme (keşif 2021-22, test ABD 2023 / 2024-26; en çok ABD-ADAY)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k33b_profil.csv",
+          notu="Grup 2021-26 1,8 bin olay; iyi çıkan oranı %7 / %14 / %17. Üç dönemin hepsinde ayıran (AUC >= 0,60 ya da <= 0,40): küçük "
+               "piyasa değeri (0,35 / 0,29 / 0,31), düşük fiyat, düşük likidite, 52 hafta tepesinden uzak, yüksek oynaklık, büyük tek gün "
+               "sıçraması, çok tavan günü. Şirket verisi (nakit / değer, yakma hızı, nakit akışı iyileşmesi, içeriden alım) belirgin değil. "
+               "Test: en küçük beşte bir piyasa değeri ABD 2023 +%18 (aralık +2,5 / +30), 2024-26 +%36 (+19 / +57), sıra 0,54 / 0,55, portföy "
+               "üstte -> kurala göre ABD-ADAY. ANCAK GEÇERSİZ: evrende yalnız bugün işlem gören hisseler var (ABD 1411, BIST 581; 2026-09 "
+               "öncesi biten hisse 0). SEC verisinde nakit tükenen şirketlerin %52 (2021) / %48 (2022) / %39 (2023) / %26 (2024) bildirimi "
+               "2026'dan önce kesilmiş (batma, birleşme, borsadan çıkma); bizim evrendeki aynı şirketlerde %0. Küçük ve nakdi biten şirkette "
+               "'iyi çıkma' büyük ölçüde hayatta kalanı seçmekten geliyor. Sonuç: ABD-ADAY GEÇERSİZ (hayatta kalma yanlılığı); dürüst test "
+               "için borsadan çıkmış hisselerin fiyatı gerek (ücretli veri)."),
 ]
 
 
@@ -664,15 +685,27 @@ IK_GOREV: List[Dict[str, str]] = [
                 "likit, 250 gün tut); IZ_KARNE Ç104; test 41",
      "sonuc": "Kullanılabilir düzen değil: çöl portföyü yalnız BIST 2023'te piyasayı geçti; 2024-26'da iki pazarda da piyasanın çok altında "
               "(BIST +%29'a +%114, ABD +%42'ye +%89) ve düşüşü daha derin. Rastgele 10 hisse bile çöl adaylarından iyi",
-     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: sıçrayan hisseler, bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "Piyango gibi sıçrayan hisseler neden ayrışıyor araştır; ABD nakit tükenmesi grubunda iyi çıkanları iyi "
+                                     "yapan izi bul",
+     "yapilan": "K33: 12 fiyat/hacim özelliği, keşif 2016-22, test 2023 / 2024-26, BIST + ABD; çöl içi, çöküş profili. K33-B: ABD nakit "
+                "tükenmesi grubunda iyi çıkan / öteki profili (AUC) + şirket verisi (nakit / değer, yakma hızı, nakit akışı iyileşmesi, "
+                "içeriden alım); hayatta kalma denetimi (SEC bildirim kesilmesi); IZ_KARNE Ç105-Ç106; test 42-43",
+     "sonuc": "Genel: sıçrayanın izi 'ucuz, sığ, oynak' olmak ama aynı iz çöküşü de getiriyor, İZ DEĞİL. Nakit grubunda en küçük şirketler "
+              "test dönemlerinde belirgin iyi (ABD-ADAY şartı tuttu) ama veri yalnız hayatta kalanları içeriyor; bu şirketlerin %26-52'si "
+              "bildirimi kesmiş, bizde %0 -> GEÇERSİZ",
+     "durum": "TAMAMLANDI, AÇIK: ölü hisse fiyatı (ücretli veri) Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): şekil (K13-K26), bilgi olayı (K27 BIST, K28, K30 ABD), risk süzgeci (K29), analist izleri (K31) İZ DEĞİL; sade "
-    "portföy ölçümü (K32): çöl adaylarıyla kurulan portföy 2024-26'da eşit ağırlıklı piyasanın çok altında, KULLANILABİLİR DÜZEN "
-    "DEĞİL. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak bırakıp piyasa (endeks / eşit ağırlık) ile karşılaştırmalı "
-    "canlı izlemek, (b) ara.",
+    "YOL (27 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri İZ DEĞİL; sade portföy (K32) kullanılabilir değil; sıçrayan hisse "
+    "profili (K33) İZ DEĞİL; nakit tükenmesi içinde küçük şirket (K33-B) hayatta kalma yanlılığıyla GEÇERSİZ. Seçenekler Cemal'in: (a) "
+    "çöl taramasını aday listesi olarak piyasayla karşılaştırmalı canlı izlemek, (b) ara.",
+    "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te borsadan "
+    "çıkma seyrek, etkisi küçük; ABD'de küçük / zarar eden şirketlerde büyük (nakit tükenenlerin %26-52'si 2-5 yılda bildirimi kesmiş). "
+    "ABD küçük şirket bulguları bu veriyle ölçülemez; dürüst test için borsadan çıkmış hisse fiyatları gerek (ücretli: ör. Norgate, "
+    "EODHD, Sharadar). Karar Cemal'in (ücret).",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
