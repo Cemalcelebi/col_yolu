@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.15 (2026-10-26, K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.16 (2026-10-27, K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5675,7 +5675,8 @@ def fi_olcut_hucre(X: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, A
     return {"n": len(X), "ort_fark": float(f.mean()), "medyan_fark": float(np.median(f)), "alt95": float(np.quantile(ort, 0.025)),
             "ust95": float(np.quantile(ort, 0.975)), "ort_r60": float(X.r60.mean()), "ort_esli": float(X.esli_r60.mean()),
             "sira": float(X.sira.mean()), "kazanan": float((f > 0).mean()), "portfoy": slot(X.r60.to_numpy(float)),
-            "portfoy_esli_p50": float(np.quantile(rast, 0.5)), "portfoy_esli_p90": float(np.quantile(rast, O["port_yuzde"]))}
+            "portfoy_esli_p50": float(np.quantile(rast, 0.5)), "portfoy_esli_p90": float(np.quantile(rast, O["port_yuzde"])),
+            "portfoy_esli_p10": float(np.quantile(rast, 1 - O["port_yuzde"]))}
 
 
 def fi_olcut_karar(Z: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> str:
@@ -5926,6 +5927,152 @@ def fi_k27_deneme(X: pd.DataFrame, I: pd.DataFrame, V: Dict[str, pd.DataFrame], 
             Z.append({"olay": bayrak, "pazar": "BIST", "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
     Z = pd.DataFrame(Z); Z.to_csv(os.path.join(A.cikti, "k27_deneme.csv"), index=False)
     return Z
+
+# K28 BİLANÇO SÜRPRİZİ (PEAD) (Cemal 27 Eki: 'başla'; yol 2). ÖNCEDEN YAZILDI (sonuç görülmeden), ölçüt FI_OLCUT:
+#   Açıklama günü D: BIST = KAP 'Finansal Rapor' (konu 4028328c594bfdca01594c0af9aa0057) yayın günü, aynı hisse-yıl-dönemin ilk raporu;
+#   ABD = Nasdaq bilanço takvimi günü. TEPKİ (EAR) = D'den önceki son işlem günü kapanışından D'den sonraki ilk işlem günü kapanışına
+#   getiri - aynı pencerede bütün hisselerin medyan getirisi (BIST akşam, ABD açılış öncesi / kapanış sonrası açıklamalarını kapsar).
+#   Giriş = tepki penceresinin bittiği günden sonraki işlem günü açılışı (geleceğe bakmaz). Sıralama açıklamanın takvim çeyreği x pazar
+#   içinde. E1 = tepki en üst %20 ('iyi sürpriz'); E2 = E1 + çöl (D'den önceki son işlem gününde biten 20 mum: düşüş <= -%30, eğim >=
+#   -0,001, mum <= 1,0); E3 = (yalnız ABD) analist beklentisini aşma yüzdesi en üst %20. Bilgi: tepki en alt %20 ('kötü sürpriz').
+FI_K28 = {"konu": "4028328c594bfdca01594c0af9aa0057", "bas": "2022-07-01", "abd_bas": "2022-12-01", "dilim": 0.20, "bekle": 0.35,
+          "klasor": os.environ.get("FI_PEAD", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/pead")}
+
+
+def fi_k28_liste_bist(K: Dict[str, Any] = FI_K28, bit: Optional[str] = None) -> pd.DataFrame:
+    """KAP 'Finansal Rapor' listesi ay ay (2000 sınırında ay ikiye bölünür): yayın, kodlar, yıl, dönem. liste_bist.csv."""
+    import json
+    os.makedirs(K["klasor"], exist_ok=True); s = _fi_kap_oturum(); son = pd.Timestamp(bit or pd.Timestamp.today().date()); sat = []
+
+    def sorgu(a: pd.Timestamp, b: pd.Timestamp) -> List[Dict[str, Any]]:
+        r = _fi_kap_istek(s, "POST", _FI_KAP + "/tr/api/disclosure/members/byCriteria", deneme=6,
+                          data=json.dumps({"fromDate": str(a.date()), "toDate": str(b.date()), "mkkMemberOidList": [],
+                                           "subjectList": [K["konu"]]}))
+        if r is None:
+            raise RuntimeError(f"KAP finansal rapor listesi {a.date()}..{b.date()} alınamadı")
+        J = r.json(); time.sleep(K["bekle"])
+        if len(J) >= 2000:
+            if a == b:
+                raise RuntimeError(f"KAP finansal rapor {a.date()}: tek günde 2000")
+            m = a + pd.Timedelta(days=int((b - a).days // 2))
+            return sorgu(a, m) + sorgu(m + pd.Timedelta(days=1), b)
+        return J
+    for bas in pd.date_range(K["bas"], son, freq="MS"):
+        try:
+            J = sorgu(bas, min(bas + pd.offsets.MonthEnd(0), son))
+        except Exception as ex:
+            filog.error("%s", ex); continue
+        sat += [{"yayin": j.get("publishDate"), "kod": j.get("stockCodes"), "yil": j.get("year"), "donem": j.get("period"),
+                 "unvan": j.get("kapTitle"), "indeks": j.get("disclosureIndex")} for j in J]
+    L = pd.DataFrame(sat).drop_duplicates("indeks"); L.to_csv(os.path.join(K["klasor"], "liste_bist.csv"), index=False)
+    filog.info("K28 BIST finansal rapor: %d", len(L))
+    return L
+
+
+def fi_k28_liste_abd(K: Dict[str, Any] = FI_K28, bit: Optional[str] = None) -> pd.DataFrame:
+    """Nasdaq bilanço takvimi gün gün (hafta içi): tarih, sembol, sürpriz yüzdesi, saat, mali çeyrek. Kaldığı yerden sürer. liste_abd.csv."""
+    import requests
+    os.makedirs(K["klasor"], exist_ok=True); yol = os.path.join(K["klasor"], "liste_abd.csv")
+    L = pd.read_csv(yol) if os.path.exists(yol) else pd.DataFrame(columns=["tarih"])
+    bitti = set(L.tarih.astype(str)); s = requests.Session(); s.headers.update({"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    son = pd.Timestamp(bit or pd.Timestamp.today().date()); yeni = []
+    for g in pd.bdate_range(K["abd_bas"], son):
+        if str(g.date()) in bitti:
+            continue
+        J = None
+        for i in range(4):
+            try:
+                r = s.get("https://api.nasdaq.com/api/calendar/earnings", params={"date": str(g.date())}, timeout=40)
+                if r.status_code == 200:
+                    J = r.json(); break
+            except Exception as ex:
+                filog.warning("Nasdaq %s: %s", g.date(), str(ex)[:80])
+            time.sleep(3 * (i + 1))
+        rows = ((J or {}).get("data") or {}).get("rows") or []
+        yeni += [{"tarih": str(g.date()), "sembol": x.get("symbol"), "surpriz": x.get("surprise"), "saat": x.get("time"),
+                  "ceyrek": x.get("fiscalQuarterEnding")} for x in rows] or [{"tarih": str(g.date()), "sembol": None}]
+        time.sleep(K["bekle"])
+        if len(yeni) > 3000:
+            L = pd.concat([L, pd.DataFrame(yeni)], ignore_index=True); yeni = []; L.to_csv(yol, index=False)
+    L = pd.concat([L, pd.DataFrame(yeni)], ignore_index=True); L.to_csv(yol, index=False)
+    filog.info("K28 ABD takvim: %d satır", len(L))
+    return L
+
+
+def fi_k28_olaylar(A_: pd.DataFrame, V: Dict[str, pd.DataFrame], pazar: str, K: Dict[str, Any] = FI_K28) -> pd.DataFrame:
+    """A_: sembol, D (açıklama günü), [surpriz]. Tepki (EAR, piyasa medyanına göre), giriş günü, çeyrek içi dilimler, çöl bayrağı."""
+    S = sorted(V); idx = pd.DatetimeIndex(sorted(set().union(*[V[s].index for s in S])))
+    C = pd.DataFrame({s: V[s].Close for s in S}).reindex(idx)
+    sat = []
+    for r in A_.itertuples():
+        if r.sembol not in V:
+            continue
+        a = idx.searchsorted(pd.Timestamp(r.D)) - 1; b = idx.searchsorted(pd.Timestamp(r.D), side="right")
+        if a < 0 or b + 1 >= len(idx):
+            continue
+        c0, c1 = C.iloc[a][r.sembol], C.iloc[b][r.sembol]
+        if not (np.isfinite(c0) and np.isfinite(c1) and c0 > 0):
+            continue
+        p = (C.iloc[b] / C.iloc[a] - 1).median()
+        sat.append({"sembol": r.sembol, "D": pd.Timestamp(r.D), "d0": idx[a], "tepki_son": idx[b], "giris": idx[b + 1],
+                    "ear": c1 / c0 - 1 - p, "surpriz": getattr(r, "surpriz", np.nan)})
+    X = pd.DataFrame(sat)
+    X["ceyrek"] = X.D.dt.to_period("Q").astype(str)
+    X["ust"] = X.groupby("ceyrek").ear.transform(lambda e: e >= e.quantile(1 - K["dilim"]))
+    X["alt"] = X.groupby("ceyrek").ear.transform(lambda e: e <= e.quantile(K["dilim"]))
+    sp = pd.to_numeric(X.surpriz, errors="coerce"); X["surpriz"] = sp
+    X["analist_ust"] = sp.notna() & X.assign(sp=sp).groupby("ceyrek").sp.transform(lambda e: e >= e.quantile(1 - K["dilim"]))
+    col = {}
+    for s, g in X[X.ust].groupby("sembol"):
+        F = fi_k23_parmak(V[s], 20)
+        for r in g.itertuples():
+            p = F.loc[r.d0] if r.d0 in F.index else None
+            col[r.Index] = bool(p is not None and p.dusus <= FI_K23_KOR["dusus"] and p.egim >= FI_K23_KOR["egim"] and p.mum <= 1.0)
+    X["col_ust"] = X.ust & pd.Series(col).reindex(X.index).fillna(False).astype(bool)
+    X["pazar"] = pazar
+    return X
+
+
+# K28 EK (27 Eki, BIST sonuçları görüldükten SONRA, ABD sonuçları görülmeden yazıldı): 'alt' (kötü sürpriz) için AYNA ölçütü = KAÇINMA
+# İZİ. Hücre tutar: n >= 30; ortalama eşli fark < 0 ve %95 aralığın üst ucu < 0; ortalama sıra < 0,50; slot portföyü 200 eşli rastgele
+# portföyün %10'undan küçük. BIST hücreleri bu kural yazılmadan görüldüğü için kanıt değeri ABD hücrelerindedir (örneklem dışı doğrulama).
+def fi_olcut_karar_kacinma(Z: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> str:
+    """Kaçınma izi kararı (alt sürpriz gibi aşağı sinyaller): dört hücrede ayna şartları."""
+    def tut(r) -> bool:
+        return bool(r.n >= O["n_esik"] and r.ust95 < 0 and r.sira < 0.5 and r.portfoy < r.portfoy_esli_p10)
+    t = {(r.pazar, r.donem): tut(r) for r in Z.itertuples()}
+    if all(t.get((pz, d[0]), False) for pz in ("BIST", "ABD") for d in O["donem"]):
+        return "KAÇINMA İZİ"
+    if all(t.get(("BIST", d[0]), False) for d in O["donem"]) and not any(k[0] == "ABD" for k in t):
+        return "BIST-ADAY (ABD verisi yok)"
+    return "İZ DEĞİL"
+
+def fon_izi_k28(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K28,
+                O: Dict[str, Any] = FI_OLCUT, indir: bool = True) -> Dict[str, Any]:
+    """K28 sürücü: BIST (KAP) + ABD (Nasdaq) açıklama günleri -> tepki dilimleri -> yeni ölçüt. Çıktı k28_ozet.csv, k28_olay.csv."""
+    A = A or FIAyar()
+    Lb = fi_k28_liste_bist(K) if indir else pd.read_csv(os.path.join(K["klasor"], "liste_bist.csv"))
+    La = fi_k28_liste_abd(K) if indir else pd.read_csv(os.path.join(K["klasor"], "liste_abd.csv"))
+    Lb = Lb.assign(t=pd.to_datetime(Lb.yayin, format="%d.%m.%Y %H:%M:%S", errors="coerce"))
+    Lb["sembol"] = [next((x.strip() for x in str(k).split(",") if x.strip() in Vb), None) for k in Lb.kod]
+    Lb = Lb.dropna(subset=["sembol", "t"]).sort_values("t").drop_duplicates(["sembol", "yil", "donem"])
+    Lb = Lb.assign(D=Lb.t.dt.normalize() + pd.to_timedelta((Lb.t.dt.hour >= 18).astype(int), unit="D"))   # 18:00 sonrası: ertesi gün
+    La = La.dropna(subset=["sembol"]).assign(D=lambda x: pd.to_datetime(x.tarih)).drop_duplicates(["sembol", "D"])
+    Xb = fi_k28_olaylar(Lb[["sembol", "D"]], Vb, "BIST", K); Xa = fi_k28_olaylar(La[["sembol", "D", "surpriz"]], Va, "ABD", K)
+    Z, Ev = [], []
+    for pz, X, V in (("BIST", Xb, Vb), ("ABD", Xa, Va)):
+        P = fi_olcut_panel(V, O)
+        for bayrak in ("ust", "col_ust", "analist_ust", "alt"):
+            if not X[bayrak].any():
+                continue
+            T = fi_olcut_olay(P, X[X[bayrak]][["sembol", "giris", "ear", "surpriz"]]); T["olay"] = bayrak; T["pazar"] = pz; Ev.append(T)
+            for ad, a, b in O["donem"]:
+                Z.append({"olay": bayrak, "pazar": pz, "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    Z = pd.DataFrame(Z); E = pd.concat(Ev, ignore_index=True).drop(columns="_esler")
+    karar = {b: fi_olcut_karar(Z[Z.olay == b], O) for b in ("ust", "col_ust")}
+    karar["alt (kaçınma)"] = fi_olcut_karar_kacinma(Z[Z.olay == "alt"], O)
+    Z.to_csv(os.path.join(A.cikti, "k28_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k28_olay.csv"), index=False)
+    return {"ozet": Z, "olay": E, "karar": karar, "BIST": Xb, "ABD": Xa}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
