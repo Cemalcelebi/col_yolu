@@ -433,6 +433,18 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "yönetici alımı +%9,7 (2023 dört şart tuttu) / +%6,1 (tutmadı); çölde >= 100 bin $ -%0,6 / +%7,4; ÖRNEKLEM DIŞI (2016-22, hiç "
                "bakılmamış) çölde alım -%4,5 / -%3,5, sıra 0,46 / 0,49 -> aday güçlenmedi. 2016-19'da büyük alım (+%1,8, aralık artı) ve "
                "kümeli alım (+%2,3) hafif artı; 2023-26'da yok (literatürdeki etki zamanla sönmüş). İZ DEĞİL (ABD-ADAY da değil)."),
+    _ik_k("Ç103", "2026-10-27", "ANALİST İZLERİ: içeriden satış, seyrelme, nakit tükenmesi, açığa satış (13F yerine FINRA) ve çöl adaylarına "
+          "uygulanması (K31)", "FON_IZI.py (k31)",
+          "Cemal: 'en başarılı analistlerin izlediği 4 veri: seyrelme, içeriden satış, nakit tükenmesi, kurumsal sahiplik; yapılmayanları dene'",
+          "Yeni deneme (yeni ölçüt + ayna kaçınma, karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k31_ozet.csv",
+          notu="Veri: SEC Form 4 (10b5-1 planlı satışlar hariç), SEC finansal tablo veri setleri 2021-2026 (pay sayısı bilanço kaleminden; "
+               "dei kalemi veri setinde yok, sonuç görülmeden düzeltildi), FINRA konsolide açığa satış 2022-11 -> 2026-08 (13F'te CUSIP -> "
+               "sembol eşlemesi bedava yok). Eşli fark ABD 2023 / 2024-26: içeriden satış (yönetici, >= 100 bin $) +%0,0 / -%0,5; kümeli "
+               "satış +%1,2 / -%1,2; seyrelme >= %10 +%0,1 / +%1,2; ağır seyrelme >= %30 +%0,4 / +%2,6; geri alım <= -%3 -%0,9 / +%2,0; nakit "
+               "pisti < 4 çeyrek +%2,8 / +%5,1; < 2 çeyrek +%3,4 / +%7,5 (aralık artı) ama sıra 0,47-0,50 (birkaç sıçrayan hisse); açığa "
+               "satış kapatma süresi en üst %10 -%0,5 / -%0,8. Önceden yazılı 3 devam: iflas profili (seyrelme + pist < 4) +%1,5 / +%5,5; "
+               "temiz çöl (K24 + seyrelme yok + nakit sağlam) +%0,3 / -%1,5; çöl tuzağı +%6,9 / +%0,9. Hiçbir kaçınma ya da yukarı ölçüt iki "
+               "ABD hücresinde tutmadı. İZ DEĞİL."),
 ]
 
 
@@ -627,15 +639,22 @@ IK_GOREV: List[Dict[str, str]] = [
                 "yönetici, kümeli, çölde alım, yeni ölçütle; önceden yazılı 3 devam (çölde yönetici, çölde >= 100 bin $, 2016-22 örneklem "
                 "dışı); IZ_KARNE Ç102",
      "sonuc": "İz değil: ABD içeriden alım 2023-26'da eşlerle aynı; çölde alım 2023'te güçlü göründü ama 2016-22'de tersine döndü",
-     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: analist izleri, bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "En başarılı analistlerin izlediği 4 veri (seyrelme, içeriden satış, nakit tükenmesi, kurumsal sahiplik): "
+                                     "yapılanları ayıkla, yapılmayanları dene; tıkanırsan çözüm bul, bulamazsan başka veriyi irdele",
+     "yapilan": "Ayıklandı: içeriden alım (K27, K30) ve BIST fon sahipliği (K10, K25) yapılmıştı. K31: SEC Form 4 satışları, SEC finansal "
+                "tablo veri setleri (seyrelme, nakit pisti; pay kalemi hatası sonuç görülmeden düzeltildi), 13F tıkandı (CUSIP eşlemesi) -> "
+                "FINRA açığa satış; önceden yazılı 3 devam (iflas profili, temiz çöl, çöl tuzağı); IZ_KARNE Ç103; test 40",
+     "sonuc": "İz değil: dört analist ölçüsü ABD 2023-26'da eşlerden ayrışmıyor; seyrelen / nakdi biten şirketler ortalamada biraz iyi "
+              "(birkaç sıçrayan hisse), sıra ortada", "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): yol 1 + 3 (K27 BIST, K30 ABD), yol 2 (K28), risk süzgeci (K29) yeni ölçütle İZ DEĞİL; ABD de BIST gibi (sorun "
-    "yalnız BIST manipülasyonu değil). İki aday (çöl + güçlü bilanço sürprizi, çölde içeriden alım) örneklem dışında tersine döndü. "
-    "Kalan seçenekler Cemal'in: (a) sade portföy ölçümü (aday listesi + çıkış kuralı, beklenti piyasa kadar + derin kayıp sınırı), "
-    "(b) ara verip canlı aday kalitesini izlemek.",
+    "YOL (27 Eki): şekil (K13-K26), bilgi olayı (K27 BIST, K28, K30 ABD), risk süzgeci (K29) ve analist izleri (K31: içeriden satış, "
+    "seyrelme, nakit tükenmesi, açığa satış) yeni ölçütle İZ DEĞİL. Bedava verinin büyük kısmı denendi; kalanlar ücretli ya da "
+    "eşlenemiyor (13F CUSIP, opsiyon akışı, analist tahmin revizyonu). Seçenekler Cemal'in: (a) sade portföy ölçümü, (b) ara verip "
+    "canlı aday kalitesini izlemek.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "

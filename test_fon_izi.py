@@ -539,6 +539,22 @@ def sina():
             and bool(r39.ust) and not bool(X39[X39.sembol == "S5"].ust.iloc[0] and X39[X39.sembol == "S5"].ear.iloc[0] > 0))
     if not ok39:
         hata.append(f"39) K28 tepki penceresi yanlış: {r39.to_dict()}")
+    # 40) K31 finansal: aynı şirketin 365 gün arayla iki bildirimi, pay 100 -> 120 (seyrelme +%20); ikincide nakit 30, çeyreklik faaliyet
+    # nakit akışı -10 (2 çeyrek toplamı -20) -> pist 3 çeyrek. Sembol CIK eşlemesiyle.
+    import json, gzip
+    with tempfile.TemporaryDirectory() as td:
+        json.dump({"0": {"cik_str": 123, "ticker": "TST", "title": "T"}}, open(os.path.join(td, "company_tickers.json"), "w"))
+        sat = [("a1", "CommonStockSharesOutstanding", "20230331", "0", "100", "20230510"),
+               ("a2", "CommonStockSharesOutstanding", "20240331", "0", "120", "20240510"),
+               ("a2", "CashAndCashEquivalentsAtCarryingValue", "20240331", "0", "30", "20240510"),
+               ("a2", "NetCashProvidedByUsedInOperatingActivities", "20240331", "2", "-20", "20240510")]
+        pd.DataFrame([{"adsh": a, "tag": t, "ddate": d, "qtrs": q, "uom": "x", "value": v, "cik": "0000000123", "form": "10-Q",
+                       "period": d, "filed": f} for a, t, d, q, v, f in sat]).to_csv(os.path.join(td, "fs_2024q1.csv.gz"), index=False)
+        F40 = F.fi_k31_finansal({**F.FI_K31, "klasor": td}).set_index("adsh")
+    ok40 = (F40.loc["a2", "sembol"] == "TST" and abs(F40.loc["a2", "pay_yil"] - 0.2) < 1e-9 and abs(F40.loc["a2", "pist"] - 3.0) < 1e-9
+            and np.isnan(F40.loc["a1", "pay_yil"]))
+    if not ok40:
+        hata.append(f"40) K31 finansal (seyrelme / pist) yanlış: {F40.to_dict('index')}")
     return hata
 
 
@@ -546,4 +562,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 39/39 OK")
+    print("test_fon_izi: 40/40 OK")
