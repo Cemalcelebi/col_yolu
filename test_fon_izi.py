@@ -586,6 +586,19 @@ def sina():
     c43 = F.fi_k33b_auc(np.arange(0, 5.0), np.arange(10, 16.0))
     if not (abs(a43 - 1) < 1e-12 and abs(b43 - 0.5) < 1e-12 and abs(c43) < 1e-12):
         hata.append(f"43) K33-B AUC yanlış: {a43} {b43} {c43}")
+    # 44) K34: r60 (normal / borsadan çıkış / pencere dolmamış); Tiingo eşlemesi (kod başka şirkete geçmiş -> Q'lu aday).
+    ix44 = pd.bdate_range("2023-01-02", periods=100); c44 = np.linspace(10, 20, 100)
+    d44 = pd.DataFrame({"Open": c44, "High": c44, "Low": c44, "Close": c44, "Volume": 1.0}, index=ix44)
+    g1, r1, o1, k1 = F.fi_k34_r60(d44, ix44[4], F.FI_K34)
+    g2, r2, o2, k2 = F.fi_k34_r60(d44.iloc[:40], ix44[4], F.FI_K34)
+    ok44a = g1 == ix44[5] and abs(r1 - (c44[64] / c44[5] - 1)) < 1e-12 and o1 == c44[4] and not k1 and k2 and abs(r2 - (c44[39] / c44[5] - 1)) < 1e-12
+    T44 = pd.DataFrame({"ticker": ["abc", "abcq"], "exchange": ["NYSE", "PINK"], "assetType": ["Stock", "Stock"], "priceCurrency": ["USD"] * 2,
+                        "startDate": ["2025-03-01", "2015-01-01"], "endDate": ["2026-10-26", "2024-05-01"]})
+    O44 = pd.DataFrame({"cik": ["1"], "filed": [pd.Timestamp("2022-05-01")], "son": [pd.Timestamp("2024-03-01")]})
+    E44 = F.fi_k34_tiingo_eslem(pd.DataFrame({"cik": ["1"], "kod": ["ABC"]}), T44, O44)
+    ok44 = ok44a and E44.tiingo.iloc[0] == "ABCQ"
+    if not ok44:
+        hata.append(f"44) K34 r60 / Tiingo eşlemesi yanlış: {(g1, r1, k1, g2, r2, k2)} {E44.to_dict('records')}")
     return hata
 
 
@@ -593,4 +606,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 43/43 OK")
+    print("test_fon_izi: 44/44 OK")

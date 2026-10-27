@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.21 (2026-10-27, K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.22 (2026-10-27, K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -7025,6 +7025,325 @@ def fon_izi_k33b(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], Fin: pd.DataFra
     if len(Z):
         Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k33b_ozet.csv"), index=False)
     return {"grup": X, "profil": Pr, "belirgin": belirgin, "ozet": Z, "karar": karar}
+
+# K34 BATANLAR DAHİL NAKİT TÜKENMESİ TESTİ (Cemal 27 Eki: 'batanlar da test edilsin; parmak izine o dönem uyan bütün hisseler katılsın';
+# Tiingo ücretsiz hesap, anahtar .env TIINGO_TOKEN). ÖNCEDEN YAZILDI (fiyatlar inmeden, sonuç görülmeden).
+# EVREN: SEC finansal tablo veri setlerinde 2021-01-01 .. 2026-06-05 arası verilen bütün 10-K / 10-Q (düzeltmeler dahil) bildirimleri;
+#   OLAY = nakit pisti < 4 çeyrek VE nakit >= 1 M$ (kabuk şirketler dışarıda); giriş = bildirimden sonraki ilk işlem günü açılışı; aynı
+#   şirkette 60 işlem gününde tek olay. Batanlar ayrılmaz: SEC'te o gün bildirim veren her şirket evrendedir.
+# FİYAT: bugün borsa kodu olan (SEC company_tickers) şirketler Yahoo'dan (düzeltilmiş). Kodu olmayanlar (batan / çıkan / birleşen):
+#   eski kod son 3 bildirimin SEC kapak sayfasından (Trading Symbol); kapakta sembol yoksa hisse işlem görmüyor demektir, dışarıda
+#   (sayısı yazılır). Tiingo eşlemesi: aday kodlar [eski, eski+'Q']; Tiingo listesinde başlangıç <= şirketin ilk olayından 30 gün önce ve
+#   bitiş >= son SEC bildiriminden 180 gün önce olan ilk aday geçerli (kod başka şirkete geçmişse başlangıç tarihi tutmaz). Geçerli
+#   eşleşenlerden rastgele (tohum 34) en çok 450 şirket indirilir (Tiingo ücretsiz: ayda 500 sembol, saatte 50 istek); ağırlık = geçerli
+#   sayısı / örnek sayısı. Eşleşmeyen sembollü şirket sayısı yazılır.
+# r60 = 60. işlem günü kapanışı / giriş açılışı - 1; seri 60 günden önce biterse (borsadan çıkış) son kapanış; 31.08.2026 kesiği (pencere
+#   aşarsa ve seri sürüyorsa olay ölçülmez). r60 +5'te (+%500) kırpılır (tek kuruşluk hisse sıçraması); kırpılmamış ortalama da yazılır.
+# PARMAK İZİ (K33-B'nin bulduğu): piyasa değeri (SEC pay sayısı x giriş öncesi kapanış) aynı takvim çeyreğindeki olayların (ağırlıklı)
+#   en küçük beşte birinde. EŞ = aynı takvim ayındaki öteki olaylar (ağırlıklı ortalama r60); fark = r60 - eş ortalaması; sıra = eşlerden
+#   yüksek olma payı (ağırlıklı). Hücre: 2021-22 (bilgi), 2023, 2024-26. TUTAR: n >= 30, ağırlıklı ortalama fark > 0, ay kümeli bootstrap
+#   %95 alt ucu > 0, sıra > 0,50. KARAR: 2023 ve 2024-26 tutarsa 'ABD-ADAY (batanlar dahil)', yoksa İZ DEĞİL. Yanlılık ölçüsü: aynı
+#   hesap yalnız bugün kodu olanlarla (hayatta kalanlar) da yapılır.
+FI_K34 = {"bas": "2021-01-01", "bit": "2026-06-05", "pist": 4.0, "nakit_min": 1e6, "ufuk": 60, "ayri": 60, "kriz": "2026-08-31",
+          "orneklem": 450, "tohum": 34, "kirp": 5.0, "dilim": 5, "n_esik": 30, "bootstrap": 2000, "saat_istek": 45,
+          "basla_pay": 30, "bitis_pay": 180, "klasor": os.environ.get("FI_K34", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/k34"),
+          "formlar": ("10-K", "10-Q", "10-K/A", "10-Q/A"),
+          "donem": (("2021-22", "2021-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))}
+
+
+def fi_k34_env(yol: str = ".env") -> Dict[str, str]:
+    """.env dosyasını okur (KEY=VALUE); değerler loglanmaz."""
+    d: Dict[str, str] = {}
+    try:
+        for satir in open(yol, encoding="utf8"):
+            satir = satir.strip()
+            if satir and not satir.startswith("#") and "=" in satir:
+                k, v = satir.split("=", 1); d[k.strip()] = v.strip().strip('"').strip("'")
+    except OSError as e:
+        filog.warning("K34: .env okunamadı (%s)", e)
+    return d
+
+
+def fi_k34_bildirim(klasor_fs: str) -> pd.DataFrame:
+    """SEC özütleri (fs_*.csv.gz, company_tickers.json) -> bildirim başına cik, filed, form, nakit, çeyreklik faaliyet nakit akışı, pist,
+    pay sayısı (bilanço > ağırlıklı ortalama > dei), bugünkü borsa kodu, şirketin son bildirim günü. fi_k31_finansal'dan farkı: kodsuz
+    (batmış / çıkmış) şirketler de kalır."""
+    import glob, json
+    tk = json.load(open(os.path.join(klasor_fs, "company_tickers.json")))
+    cs = {}
+    for v in tk.values():
+        cs.setdefault(str(int(v["cik_str"])), v["ticker"].upper().replace(".", "-"))
+    N = pd.concat([pd.read_csv(f, dtype=str) for f in sorted(glob.glob(os.path.join(klasor_fs, "fs_*.csv.gz")))], ignore_index=True)
+    N["value"] = pd.to_numeric(N.value, errors="coerce"); N["qtrs"] = pd.to_numeric(N.qtrs, errors="coerce")
+    N["filed"] = pd.to_datetime(N.filed, format="%Y%m%d", errors="coerce"); N["ddate"] = pd.to_datetime(N.ddate, format="%Y%m%d", errors="coerce")
+    N["cik"] = N.cik.astype(str).str.lstrip("0"); N = N.dropna(subset=["filed", "value"])
+    son = N.groupby("cik").filed.max()
+    oncelik = {"CommonStockSharesOutstanding": 0, "WeightedAverageNumberOfSharesOutstandingBasic": 1, "EntityCommonStockSharesOutstanding": 2}
+    Pn = N[N.tag.isin(oncelik) & ((N.tag != "WeightedAverageNumberOfSharesOutstandingBasic") | (N.qtrs == 1))].copy()
+    Pn["_o"] = Pn.tag.map(oncelik)
+    pay = Pn.sort_values(["ddate", "_o"], ascending=[True, False]).groupby("adsh").value.last().rename("pay")
+    nak = N[N.tag.isin(["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"])]
+    nak = nak.sort_values(["ddate", "tag"]).groupby("adsh").value.last().rename("nakit")
+    ocf = N[(N.tag == "NetCashProvidedByUsedInOperatingActivities") & (N.qtrs >= 1)]
+    ocf = ocf.sort_values(["ddate", "qtrs"]).groupby("adsh").apply(lambda g: g.value.iloc[-1] / g.qtrs.iloc[-1]).rename("ocf")
+    B = N.groupby("adsh").agg(cik=("cik", "first"), filed=("filed", "first"), form=("form", "first")).join(nak).join(ocf).join(pay)
+    B = B.reset_index().dropna(subset=["nakit", "ocf"])
+    B["pist"] = np.where(B.ocf < 0, B.nakit / (-B.ocf), np.inf); B["kod"] = B.cik.map(cs); B["son"] = B.cik.map(son)
+    return B
+
+
+def fi_k34_olaylar(B: pd.DataFrame, K: Dict[str, Any] = FI_K34) -> pd.DataFrame:
+    """Olay bildirimleri (pist < 4, nakit >= 1 M$, dönem içi, 10-K / 10-Q)."""
+    return B[B.form.isin(K["formlar"]) & (B.pist < K["pist"]) & (B.nakit >= K["nakit_min"]) & (B.filed >= K["bas"])
+             & (B.filed <= K["bit"])].sort_values(["cik", "filed"]).reset_index(drop=True)
+
+
+def fi_k34_tiingo_eslem(eski: pd.DataFrame, T: pd.DataFrame, olay: pd.DataFrame, K: Dict[str, Any] = FI_K34) -> pd.DataFrame:
+    """eski: cik, kod (| ile çoklu). T: Tiingo supported_tickers (ticker, startDate, endDate, assetType). Şirket başına geçerli Tiingo kodu."""
+    T = T[T.assetType.astype(str).str.lower() == "stock"].copy()
+    T["ticker"] = T.ticker.astype(str).str.upper(); T["startDate"] = pd.to_datetime(T.startDate, errors="coerce")
+    T["endDate"] = pd.to_datetime(T.endDate, errors="coerce"); Ti = T.drop_duplicates("ticker").set_index("ticker")
+    ilk = olay.groupby("cik").filed.min(); son = olay.groupby("cik").son.first(); sat = []
+    for r in eski.itertuples():
+        kodlar = [k for k in str(r.kod).split("|") if k and k != "nan"]
+        bulundu = None
+        for k in kodlar:
+            for aday in (k.replace(".", "-"), k.replace(".", "-") + "Q"):
+                if aday in Ti.index:
+                    t = Ti.loc[aday]
+                    if (pd.notna(t.startDate) and t.startDate <= ilk.get(r.cik, pd.Timestamp.max) - pd.Timedelta(days=K["basla_pay"])
+                            and pd.notna(t.endDate) and t.endDate >= son.get(r.cik, pd.Timestamp.min) - pd.Timedelta(days=K["bitis_pay"])):
+                        bulundu = aday; break
+            if bulundu:
+                break
+        sat.append({"cik": r.cik, "sembollu": bool(kodlar), "tiingo": bulundu})
+    return pd.DataFrame(sat)
+
+
+def fi_k34_tiingo_indir(kodlar: List[str], token: str, klasor: str, K: Dict[str, Any] = FI_K34) -> Dict[str, str]:
+    """Tiingo günlük fiyatları (2020-10-01 .. bugün), kod başına csv; var olan atlanır; saatte en çok K['saat_istek'] istek.
+    Anahtar URL'ye değil başlığa konur, loglanmaz."""
+    import requests
+    os.makedirs(klasor, exist_ok=True); s = requests.Session()
+    s.headers.update({"Content-Type": "application/json", "Authorization": f"Token {token}"})
+    durum, zaman = {}, []
+    for k in kodlar:
+        yol = os.path.join(klasor, f"{k}.csv")
+        if os.path.exists(yol):
+            durum[k] = "var"; continue
+        while len(zaman) >= K["saat_istek"] and time.time() - zaman[-K["saat_istek"]] < 3600:
+            time.sleep(30)
+        try:
+            x = s.get(f"https://api.tiingo.com/tiingo/daily/{k}/prices", params={"startDate": "2020-10-01", "format": "csv",
+                      "columns": "date,open,high,low,close,volume,adjOpen,adjHigh,adjLow,adjClose,adjVolume"}, timeout=60)
+            zaman.append(time.time())
+            if x.status_code == 200 and x.text.startswith("date"):
+                open(yol, "w").write(x.text); durum[k] = "indi"
+            else:
+                durum[k] = f"HTTP {x.status_code}"; filog.warning("K34 Tiingo %s: HTTP %s %s", k, x.status_code, x.text[:120])
+                if x.status_code == 429:
+                    time.sleep(600)
+        except Exception as e:
+            zaman.append(time.time()); durum[k] = f"hata {type(e).__name__}"; filog.warning("K34 Tiingo %s: %s", k, e)
+        filog.info("K34 Tiingo %s: %s (%d/%d)", k, durum[k], len(durum), len(kodlar))
+    return durum
+
+
+def fi_k34_tiingo_oku(yol: str) -> pd.DataFrame:
+    """Tiingo csv -> Open/High/Low/Close/Volume (düzeltilmiş)."""
+    d = pd.read_csv(yol, parse_dates=["date"]).set_index("date").sort_index()
+    d.index = d.index.tz_localize(None) if d.index.tz is not None else d.index
+    return d.rename(columns={"adjOpen": "Open", "adjHigh": "High", "adjLow": "Low", "adjClose": "Close", "adjVolume": "Volume"})[
+        ["Open", "High", "Low", "Close", "Volume"]]
+
+
+def fi_k34_r60(d: pd.DataFrame, filed: pd.Timestamp, K: Dict[str, Any] = FI_K34) -> Tuple[Optional[pd.Timestamp], float, float, bool]:
+    """Bildirimden sonraki ilk işlem günü giriş; (giriş, r60, giriş öncesi kapanış, borsadan çıkış ile bitti mi)."""
+    ix = d.index; j = int(ix.searchsorted(pd.Timestamp(filed), side="right"))
+    if j < 1 or j >= len(ix):
+        return None, np.nan, np.nan, False
+    g = float(d.Open.iloc[j]); once = float(d.Close.iloc[j - 1])
+    if not (g > 0) or not np.isfinite(g):
+        return ix[j], np.nan, once, False
+    e = j + K["ufuk"] - 1; kriz = pd.Timestamp(K["kriz"])
+    if e < len(ix):
+        if ix[e] > kriz:
+            return ix[j], np.nan, once, False
+        return ix[j], float(d.Close.iloc[e]) / g - 1, once, False
+    # seri 60 günden önce bitti: bugüne kadar sürüyorsa (henüz dolmadı) ölçülmez; eskiden bittiyse borsadan çıkış, son kapanış
+    if ix[-1] >= pd.Timestamp.today().normalize() - pd.Timedelta(days=10) or ix[-1] > kriz:
+        return ix[j], np.nan, once, False
+    return ix[j], float(d.Close.iloc[-1]) / g - 1, once, True
+
+
+def fi_k34_hucre(X: pd.DataFrame, K: Dict[str, Any] = FI_K34) -> Dict[str, Any]:
+    """X: iz olayları (fark, sira, w, giris, r60). Ağırlıklı ortalama fark, ay kümeli bootstrap %95, ağırlıklı sıra."""
+    X = X.dropna(subset=["fark"])
+    if not len(X):
+        return {"n": 0}
+    w = X.w.to_numpy(float); f = X.fark.to_numpy(float); ay = X.giris.dt.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay)
+    rng = np.random.default_rng(K["tohum"]); grup = {a: (f[ay == a] * w[ay == a], w[ay == a]) for a in aylar}; ort = []
+    for _ in range(K["bootstrap"]):
+        sec = rng.choice(aylar, len(aylar), replace=True)
+        ort.append(sum(grup[a][0].sum() for a in sec) / sum(grup[a][1].sum() for a in sec))
+    return {"n": len(X), "n_batan": int(X.batan.sum()), "agirlik": float(w.sum()), "ort_fark": float((f * w).sum() / w.sum()),
+            "alt95": float(np.quantile(ort, 0.025)), "ust95": float(np.quantile(ort, 0.975)),
+            "sira": float((X.sira.to_numpy(float) * w).sum() / w.sum()), "ort_r60": float((X.r60.to_numpy(float) * w).sum() / w.sum()),
+            "ort_r60_kirpilmamis": float((X.r60_ham.to_numpy(float) * w).sum() / w.sum()),
+            "cikis_payi": float((X.cikis.to_numpy(float) * w).sum() / w.sum())}
+
+
+def fi_k34_olc(E: pd.DataFrame, K: Dict[str, Any] = FI_K34, yanlilik: bool = True) -> Tuple[pd.DataFrame, str]:
+    """E: ölçülmüş olaylar (cik, giris, r60, r60_ham, pd, w, batan, cikis). İz = çeyreklik en küçük beşte bir piyasa değeri; eş = aynı ay."""
+    E = E.dropna(subset=["r60"]).copy(); E["ay"] = E.giris.dt.to_period("M"); E["ceyrek"] = E.giris.dt.to_period("Q")
+
+    def agirlikli_dilim(g: pd.DataFrame) -> pd.Series:
+        g = g.dropna(subset=["pd"]).sort_values("pd")
+        c = g.w.cumsum() / g.w.sum()
+        return pd.Series(c.to_numpy() <= 1 / K["dilim"] + 1e-12, index=g.index)
+    E["iz"] = pd.concat([agirlikli_dilim(g) for _, g in E.groupby("ceyrek")]).reindex(E.index).fillna(False).astype(bool)
+    fark, sira = np.full(len(E), np.nan), np.full(len(E), np.nan); pos = {ix: k for k, ix in enumerate(E.index)}
+    for _, g in E.groupby("ay"):
+        r = g.r60.to_numpy(float); w = g.w.to_numpy(float)
+        for k, ix in enumerate(g.index):
+            m = np.ones(len(g), bool); m[k] = False
+            if w[m].sum() <= 0:
+                continue
+            fark[pos[ix]] = r[k] - (r[m] * w[m]).sum() / w[m].sum()
+            sira[pos[ix]] = (w[m] * ((r[m] < r[k]) + 0.5 * (r[m] == r[k]))).sum() / w[m].sum()
+    E["fark"], E["sira"] = fark, sira
+    Z = []
+    for kume, M in (("iz_batanlar_dahil", E[E.iz]), ("hepsi_batanlar_dahil", E)):
+        for dn, a, b in K["donem"]:
+            Z.append({"kume": kume, "donem": dn, **fi_k34_hucre(M[(M.giris >= a) & (M.giris <= b)], K)})
+    # yanlılık ölçüsü: yalnız hayatta kalanlar (bugün kodu olanlar) aynı hesapla
+    H = E[~E.batan].drop(columns=["iz", "fark", "sira", "ay", "ceyrek"])
+    if yanlilik and len(H):
+        Zh, _ = fi_k34_olc(H, K, yanlilik=False)
+        Zh = Zh[Zh.kume.isin(["iz_batanlar_dahil", "hepsi_batanlar_dahil"])].copy()
+        Zh["kume"] = Zh.kume.str.replace("batanlar_dahil", "yalniz_hayatta"); Z += Zh.to_dict("records")
+    Z = pd.DataFrame(Z)
+
+    def tut(r) -> bool:
+        return bool(r.n >= K["n_esik"] and r.ort_fark > 0 and r.alt95 > 0 and r.sira > 0.5)
+    t = Z[Z.kume == "iz_batanlar_dahil"].set_index("donem")
+    karar = "ABD-ADAY (batanlar dahil)" if all(d in t.index and tut(t.loc[d]) for d in ("2023", "2024-26")) else "İZ DEĞİL"
+    return Z, karar
+
+
+def fi_k34_eski_kod(kodsuz: pd.DataFrame, B: pd.DataFrame, ua: str, cikti: str) -> pd.DataFrame:
+    """Kodsuz şirketlerin son 3 bildiriminin SEC kapak sayfasından (R1/R2.htm) eski borsa kodu, ad, borsa. Sürdürülebilir (csv'ye ekler).
+    ua: SEC kuralı gereği iletişim e-postalı User-Agent (koda / repoya yazılmaz)."""
+    import requests, html as _h
+    bitti = set(pd.read_csv(cikti, dtype=str).cik) if os.path.exists(cikti) else set()
+    s = requests.Session(); s.headers.update({"User-Agent": ua})
+
+    def kapak(cik: str, adsh: str) -> Tuple[List[str], List[str], List[str]]:
+        for R in ("R1.htm", "R2.htm"):
+            try:
+                x = s.get(f"https://www.sec.gov/Archives/edgar/data/{cik}/{adsh.replace('-', '')}/{R}", timeout=30)
+            except Exception as e:
+                filog.warning("K34 SEC %s %s: %s", cik, R, e); time.sleep(2); continue
+            time.sleep(0.15)
+            if x.status_code != 200:
+                continue
+            t = _fi_re.sub(r"\s+", " ", _h.unescape(_fi_re.sub(r"<[^>]+>", " ", x.text)))
+            m = _fi_re.findall(r"Trading Symbol\s+([A-Za-z][A-Za-z0-9.\-]{0,7})", t)
+            n = _fi_re.findall(r"Entity Registrant Name\s+(.{1,80}?)\s{1,3}(?:Entity|Document|Amendment)", t)
+            e = _fi_re.findall(r"Security Exchange Name\s+([A-Za-z]+)", t)
+            if m or "Cover" in t[:300] or "Document and Entity" in t[:400]:
+                return m, n, e
+        return [], [], []
+    with open(cikti, "a") as f:
+        if not bitti:
+            f.write("cik,adsh,kod,ad,borsa\n")
+        for r in kodsuz.itertuples():
+            if r.cik in bitti:
+                continue
+            ads = list(B[B.cik == r.cik].sort_values("filed", ascending=False).adsh.head(3)); m, n, e = [], [], []
+            for a in ads:
+                m, n, e = kapak(r.cik, a)
+                if m:
+                    break
+            ad = (n[0] if n else "").replace('"', "")
+            f.write(f'{r.cik},{ads[0] if ads else ""},{"|".join(dict.fromkeys(x.upper() for x in m))},"{ad}",{"|".join(dict.fromkeys(e))}\n')
+            f.flush()
+    return pd.read_csv(cikti, dtype=str)
+
+
+def fi_k34_yahoo(kodlar: List[str], klasor: str) -> Dict[str, pd.DataFrame]:
+    """Bugün kodu olan şirketlerin Yahoo günlük fiyatları (düzeltilmiş, 2020-10-01'den), 100'lük paketlerle; pickle önbellek."""
+    import yfinance as yf
+    yol = os.path.join(klasor, "yahoo.pkl"); V: Dict[str, pd.DataFrame] = pd.read_pickle(yol) if os.path.exists(yol) else {}
+    eksik = [k for k in kodlar if k not in V]
+    for i in range(0, len(eksik), 100):
+        paket = eksik[i:i + 100]
+        try:
+            D = yf.download(paket, start="2020-10-01", auto_adjust=True, progress=False, group_by="ticker", threads=True)
+        except Exception as e:
+            filog.warning("K34 Yahoo paket %d: %s", i, e); continue
+        for k in paket:
+            try:
+                d = D[k] if isinstance(D.columns, pd.MultiIndex) else D
+                d = d[["Open", "High", "Low", "Close", "Volume"]].dropna(subset=["Close"])
+                V[k] = d if len(d) else pd.DataFrame()
+            except Exception:
+                V[k] = pd.DataFrame()
+        pd.to_pickle(V, yol); filog.info("K34 Yahoo %d/%d", min(i + 100, len(eksik)), len(eksik))
+    return V
+
+
+def fon_izi_k34(klasor_fs: str, eski: pd.DataFrame, T: pd.DataFrame, A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K34,
+                token: Optional[str] = None, indir: bool = True) -> Dict[str, Any]:
+    """K34 sürücü: SEC olayları -> eşleme -> örneklem -> fiyatlar (Yahoo + Tiingo) -> r60 -> iz / eş ölçüsü. Çıktı k34_ozet.csv, k34_olay.csv."""
+    A = A or FIAyar(); os.makedirs(K["klasor"], exist_ok=True)
+    B = fi_k34_bildirim(klasor_fs); O = fi_k34_olaylar(B, K)
+    es = fi_k34_tiingo_eslem(eski[eski.cik.isin(O[O.kod.isna()].cik)], T, O, K)
+    gecerli = es[es.tiingo.notna()].sort_values("cik").reset_index(drop=True)
+    rng = np.random.default_rng(K["tohum"]); n_s = min(K["orneklem"], len(gecerli))
+    ornek = gecerli.iloc[np.sort(rng.choice(len(gecerli), n_s, replace=False))] if n_s else gecerli
+    w_batan = len(gecerli) / n_s if n_s else 0.0
+    sayim = {"olay": len(O), "sirket": O.cik.nunique(), "kodlu_sirket": O[O.kod.notna()].cik.nunique(),
+             "kodsuz_sirket": O[O.kod.isna()].cik.nunique(), "kodsuz_sembollu": int(es.sembollu.sum()),
+             "kodsuz_sembolsuz": int((~es.sembollu).sum()), "tiingo_gecerli": len(gecerli), "orneklem": n_s, "batan_agirlik": w_batan}
+    filog.info("K34 sayım: %s", sayim)
+    tk = token or os.environ.get("TIINGO_TOKEN") or fi_k34_env().get("TIINGO_TOKEN")
+    if indir:
+        if not tk:
+            raise RuntimeError("K34: TIINGO_TOKEN yok (.env)")
+        fi_k34_tiingo_indir(list(ornek.tiingo), tk, os.path.join(K["klasor"], "tiingo"), K)
+    Vy = fi_k34_yahoo(sorted(O.kod.dropna().unique()), K["klasor"]) if indir else pd.read_pickle(os.path.join(K["klasor"], "yahoo.pkl"))
+    seri: Dict[str, Tuple[pd.DataFrame, bool, float]] = {}
+    for r in ornek.itertuples():
+        yol = os.path.join(K["klasor"], "tiingo", f"{r.tiingo}.csv")
+        if os.path.exists(yol):
+            seri[r.cik] = (fi_k34_tiingo_oku(yol), True, w_batan)
+    for cik, kod in O[O.kod.notna()].groupby("cik").kod.first().items():
+        d = Vy.get(kod)
+        if d is not None and len(d):
+            seri[cik] = (d, False, 1.0)
+    sat = []
+    for cik, g in O.groupby("cik"):
+        if cik not in seri:
+            continue
+        d, batan, w = seri[cik]; son_i = -10 ** 9
+        for r in g.itertuples():
+            giris, r60, once, cikis = fi_k34_r60(d, r.filed, K)
+            if giris is None:
+                continue
+            i = int(d.index.get_loc(giris))
+            if i - son_i < K["ayri"]:
+                continue
+            son_i = i
+            sat.append({"cik": cik, "kod": r.kod, "filed": r.filed, "giris": giris, "r60_ham": r60,
+                        "r60": min(r60, K["kirp"]) if np.isfinite(r60) else np.nan,
+                        "pd": r.pay * once if r.pay and r.pay > 0 and np.isfinite(once) else np.nan, "pist": r.pist,
+                        "batan": batan, "w": w, "cikis": cikis})
+    E = pd.DataFrame(sat)
+    Z, karar = fi_k34_olc(E, K)
+    Z.to_csv(os.path.join(A.cikti, "k34_ozet.csv"), index=False)
+    E.to_csv(os.path.join(K["klasor"], "k34_olay.csv"), index=False)
+    return {"ozet": Z, "karar": karar, "sayim": sayim, "olay": E}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
