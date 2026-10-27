@@ -1,30 +1,33 @@
-COL GUNLUK RAPOR — 2026-10-27 00:11 (TR)
+COL GUNLUK RAPOR — 2026-10-27 23:56 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
 Onbellek: sarildi (583 hisse)
-Veri: 583 hisse | son bar 2026-10-26
-Ozet: aday 16 | pozisyon 9 | kapanan 8 | sure 89 sn
-UYARI: bugunun bari yok (son bar 2026-10-26). Yahoo gecikmis olabilir.
+Veri: 583 hisse | son bar 2026-10-27
+Ozet: aday 12 | pozisyon 8 | kapanan 9 | sure 120 sn
 ============================================================
 
-== 2026-10-26  CDS 0.84 -> 1.5x
-aday 16 | poz 9 | kapanan 8
+== 2026-10-27  CDS 0.84 -> 1.5x
+aday 12 | poz 8 | kapanan 9
+
+SAT  (hisse  kar%  endeks%)
+  DURDO  +8%  ?  trail
 
 TUT  (hisse  kar%  durum  tabana%)
-  DURDO   +15%  TRAIL sat:-4%  taban -26%  stop=maliyet
-  ENTRA    +0%  119g  taban -16%
-  GARAN    -7%  87g  taban -9%
-  YKBNK    -8%  87g  taban -8%
-  ALARK   -11%  86g  taban -4%
-  ZRGYO   -11%  92g  taban -4%
-  BIMAS   -11%  87g  taban -4%
-  ISCTR   -15%  87g  taban +0%
-  AKBNK   -15%  87g  taban +1%
+  ENTRA    -1%  117g  taban -15%
+  YKBNK    -6%  85g  taban -10%
+  GARAN    -6%  85g  taban -9%
+  ZRGYO   -13%  90g  taban -2%
+  BIMAS   -14%  85g  taban -2%
+  AKBNK   -14%  85g  taban -1%
+  ISCTR   -14%  85g  taban -1%
+  ALARK   -15%  84g  taban -0%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 16]
-  HUNER    -5%   %4.4   nan  nan  -       -4  (serbest)
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 12]
+  ALBRK    -6%   %5.0   0.227  0.271  -      +14  (serbest)
 
-KAPANAN 8: kazanan %0  ort -35.5% | acilis->acilis ort -36.7% (n=8)
+COL BOZULDU (taban kirildi, aday dustu): FLAP, EFOR, NUHCM, MAVI
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-34.9
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-18
+KAPANAN 9: kazanan %11  ort -30.7% | acilis->acilis ort -36.7% (n=8)
+
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-36.1
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-21
   ruzgarli sektorde uzun colde hisse yok
