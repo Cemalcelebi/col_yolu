@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.20 (2026-10-27, K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.21 (2026-10-27, K33 sıçrayan hisse profili; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6686,6 +6686,256 @@ def fon_izi_k32_deneme(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame],
                 h.append(bool(g.loc[ad_, "mdd"] >= 0.8 * g.loc["P0_piyasa", "mdd"] and g.loc[ad_, "getiri_mdd"] >= g.loc["P0_piyasa", "getiri_mdd"]))
         karar[ad_] = ("KULLANILABİLİR DÜZEN" if all(h) else "KULLANILABİLİR DEĞİL", h)
     return {"ozet": Z, "karar": karar}
+
+# K33 SIÇRAYAN HİSSE PROFİLİ (Cemal 27 Eki: 'birkaç piyango gibi sıçrayan hisse ortalamayı çekiyor; o hisselerin neden ayrıştığını
+# araştır, özellik belirgin olma ihtimali yüksek'). ÖNCEDEN YAZILDI (sonuç görülmeden).
+# ÖRNEK: her ayın ilk işlem günü d, o gün FI_OLCUT paneline giren bütün hisseler; giriş d açılışı, r60 panelden (kriz kesiği dahil).
+# ETİKET: SIÇRAMA = r60 - d günü pazar ortancası >= +%40; ÇÖKÜŞ = <= -%30 (ayna).
+# ÖZELLİKLER (yalnız d-1 ve öncesi; 12 tane, kapalı konular dışında): vol60 (günlük getiri std), max20 (en büyük gün getirisi), r20,
+# konum252 ((C-min)/(max-min), 252 gün), dd252 (C/max252-1), hacim_art (20g/120g hacim ortancası), likit (20g işlem değeri ortancası),
+# fiyat, aralik_oran (20g ortalama (H-L)/C / 120g ortalaması: sıkışma), skew60, tavan60 (60 günde >= +%9,5 gün sayısı), yukari_hacim
+# (20 günde yükselen günlerin hacim payı).
+# KEŞİF 2016-10..2022-12, iki pazar ayrı: her özellik d günü kesitinde onda birliğe bölünür; uç dilim (D1 ya da D10) için sıçrama
+# kaldıracı = dilimdeki sıçrama oranı / genel oran, çöküş kaldıracı aynı. SEÇİM: iki pazarda da sıçrama kaldıracı >= 1,5 VE sıçrama /
+# çöküş kaldıracı >= 1,2 (yalnız oynaklık değil, yukarı eğik). TEST (2023, 2024-26): seçilen her uç dilim olay kümesi (aynı hissede 60
+# işlem gününde tek) FI_OLCUT ile; KOMBİNE = seçilenlerden asimetrisi (iki pazarın küçüğü) en yüksek en çok 3'ünün işaretli sıra
+# ortalaması, d günü üst onda biri. Karar fi_olcut_karar (dört hücre). Bilgi: test dönemlerinde de kaldıraçlar.
+# DEVAM (iz yoksa; aynı anda önceden yazıldı, sonuçları ilk turdan bağımsız):
+#   D2 ÇÖL İÇİ: yalnız K24 iki evre adayları (k29_aday) içinde, beşte birlik uç dilimler, aynı seçim/ test kuralı (kaldıraç grup içi).
+#   D3 NAKİT TÜKENMESİ İÇİ (ABD): K31 M3 olayları (pist < 4 çeyrek) içinde; 12 özellik + pist, pay_yil (seyrelme); keşif 2021-22, test
+#      ABD 2023 / 2024-26, beşte birlik; en çok ABD-ADAY.
+#   D4 ÇÖKÜŞ PROFİLİ (kaçınma): uç onda bir dilimde iki pazarda çöküş kaldıracı >= 1,5 ve çöküş / sıçrama >= 1,2 -> fi_olcut_karar_kacinma.
+FI_K33 = {"sicrama": 0.40, "cokus": -0.30, "kesif": ("2016-10-01", "2022-12-31"), "dilim": 10, "dilim_grup": 5, "kaldirac": 1.5,
+          "asimetri": 1.2, "kombine_n": 3, "tavan": 0.095, "ayri": 60, "d3_kesif": ("2021-01-01", "2022-12-31"),
+          "ozellik": ("vol60", "max20", "r20", "konum252", "dd252", "hacim_art", "likit", "fiyat", "aralik_oran", "skew60", "tavan60",
+                      "yukari_hacim")}
+
+
+def fi_k33_ozellik(d: pd.DataFrame, K: Dict[str, Any] = FI_K33) -> pd.DataFrame:
+    """Bir hissenin her günü için 12 özellik; d günü satırı yalnız d-1 ve öncesini kullanır (shift(1))."""
+    c, h, l, v = d.Close.astype(float), d.High.astype(float), d.Low.astype(float), d.Volume.astype(float)
+    g = c.pct_change(fill_method=None)
+    mx, mn = c.rolling(252, min_periods=120).max(), c.rolling(252, min_periods=120).min()
+    ar = ((h - l) / c).rolling(20).mean()
+    yuk = (v.where(g > 0, 0.0)).rolling(20).sum() / v.rolling(20).sum()
+    F = pd.DataFrame({"vol60": g.rolling(60, min_periods=40).std(), "max20": g.rolling(20).max(), "r20": c / c.shift(20) - 1,
+                      "konum252": (c - mn) / (mx - mn), "dd252": c / mx - 1,
+                      "hacim_art": v.rolling(20).median() / v.rolling(120, min_periods=80).median(),
+                      "likit": (c * v).rolling(20).median(), "fiyat": c, "aralik_oran": ar / ar.rolling(120, min_periods=80).mean(),
+                      "skew60": g.rolling(60, min_periods=40).skew(), "tavan60": (g >= K["tavan"]).astype(float).rolling(60).sum(),
+                      "yukari_hacim": yuk}, index=d.index)
+    return F.replace([np.inf, -np.inf], np.nan).shift(1)
+
+
+def fi_k33_satir(V: Dict[str, pd.DataFrame], P: Dict[str, Any], olay: pd.DataFrame, K: Dict[str, Any] = FI_K33) -> pd.DataFrame:
+    """olay (sembol, giris, ek sütunlar): panelde olanlar; r60, fazla (r60 - giriş günü pazar ortancası), etiketler, 12 özellik."""
+    ti = {x: i for i, x in enumerate(P["tarih"])}; med: Dict[int, float] = {}; tut, r60, fz = [], [], []
+    for k, r in enumerate(olay.itertuples()):
+        i = ti.get(pd.Timestamp(r.giris)); j = P["kol"].get(r.sembol)
+        if i is None or j is None or not P["ok"][i, j]:
+            continue
+        if i not in med:
+            med[i] = float(np.nanmedian(P["R"][i][P["ok"][i]]))
+        tut.append(k); r60.append(P["R"][i, j]); fz.append(P["R"][i, j] - med[i])
+    X = olay.iloc[tut].reset_index(drop=True).assign(giris=lambda x: pd.to_datetime(x.giris), r60=r60, fazla=fz)
+    if not len(X):
+        return X
+    parca = []
+    for s_, g in X.groupby("sembol"):
+        F = fi_k33_ozellik(V[s_], K).reindex(g.giris)
+        parca.append(pd.concat([g.reset_index(drop=True), F.reset_index(drop=True)], axis=1))
+    X = pd.concat(parca, ignore_index=True)
+    X["sicrama"] = X.fazla >= K["sicrama"]; X["cokus"] = X.fazla <= K["cokus"]
+    return X.sort_values(["giris", "sembol"]).reset_index(drop=True)
+
+
+def fi_k33_ornek(V: Dict[str, pd.DataFrame], P: Dict[str, Any], K: Dict[str, Any] = FI_K33) -> pd.DataFrame:
+    """Aylık örnek: her ayın ilk panel günü, o gün panele giren bütün hisseler."""
+    t = pd.Series(P["tarih"]); ilk = t.groupby(t.dt.to_period("M")).first(); ti = {x: i for i, x in enumerate(P["tarih"])}
+    sat = [(P["sembol"][j], g) for g in ilk for j in np.flatnonzero(P["ok"][ti[g]]) if P["ok"][ti[g]].sum() >= 30]
+    return fi_k33_satir(V, P, pd.DataFrame(sat, columns=["sembol", "giris"]), K)
+
+
+def fi_k33_dilim(X: pd.DataFrame, oz: str, n: int, grup_gun: bool = True, ref: Optional[pd.Series] = None) -> pd.Series:
+    """Özelliğin dilimi (0..n-1). grup_gun: her giriş günü kesitinde; değilse ref (keşif dönemi değerleri) eşikleriyle, ref yoksa
+    grubun kendisiyle (keşifte). Böylece testte gelecekten eşik sızmaz."""
+    def q(s: pd.Series) -> pd.Series:
+        s = s.dropna()
+        if len(s) < n:
+            return pd.Series(np.nan, index=s.index)
+        return pd.Series(pd.qcut(s.rank(method="first"), n, labels=False), index=s.index)
+    if grup_gun:
+        return X.groupby("giris", group_keys=False)[oz].apply(q).reindex(X.index)
+    if ref is None:
+        return q(X[oz]).reindex(X.index)
+    kes = np.nanquantile(ref.to_numpy(float), np.linspace(0, 1, n + 1)[1:-1])
+    v = X[oz].to_numpy(float)
+    return pd.Series(np.where(np.isfinite(v), np.searchsorted(kes, v, side="right"), np.nan), index=X.index)
+
+
+def fi_k33_kaldirac(X: pd.DataFrame, ozellikler: Tuple[str, ...], n: int, grup_gun: bool = True) -> pd.DataFrame:
+    """Her özellik ve uç dilim (D1 = 0, Dn = n-1) için sıçrama / çöküş oranı ve kaldıraçları."""
+    bs, bc = X.sicrama.mean(), X.cokus.mean(); Z = []
+    for oz in ozellikler:
+        D = fi_k33_dilim(X, oz, n, grup_gun)
+        for uc, k in (("alt", 0), ("ust", n - 1)):
+            m = D == k
+            if m.sum() == 0:
+                continue
+            js, jc = X.sicrama[m].mean(), X.cokus[m].mean()
+            Z.append({"ozellik": oz, "uc": uc, "n": int(m.sum()), "sicrama_oran": js, "cokus_oran": jc,
+                      "sicrama_k": js / bs if bs > 0 else np.nan, "cokus_k": jc / bc if bc > 0 else np.nan})
+    Z = pd.DataFrame(Z)
+    if len(Z):
+        Z["asimetri"] = Z.sicrama_k / Z.cokus_k
+    return Z
+
+
+def fi_k33_sec(Kz: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K33, yon: str = "sicrama") -> pd.DataFrame:
+    """Kz: pazar -> keşif kaldıraç tablosu. Bütün pazarlarda şartı geçen (özellik, uç); 'cokus' yönünde ayna şart."""
+    birlesik = None
+    for pz, Z in Kz.items():
+        Z = Z.copy()
+        if yon == "sicrama":
+            Z["gec"] = (Z.sicrama_k >= K["kaldirac"]) & (Z.asimetri >= K["asimetri"]); Z["skor"] = Z.asimetri
+        else:
+            Z["gec"] = (Z.cokus_k >= K["kaldirac"]) & (1 / Z.asimetri >= K["asimetri"]); Z["skor"] = 1 / Z.asimetri
+        Z = Z.set_index(["ozellik", "uc"])[["gec", "skor"]].add_suffix("_" + pz)
+        birlesik = Z if birlesik is None else birlesik.join(Z, how="inner")
+    if birlesik is None:
+        return pd.DataFrame(columns=["ozellik", "uc", "skor"])
+    gec = birlesik[[c for c in birlesik if c.startswith("gec_")]].all(axis=1)
+    S = birlesik[gec].copy(); S["skor"] = S[[c for c in S if c.startswith("skor_")]].min(axis=1)
+    return S.reset_index()[["ozellik", "uc", "skor"]].sort_values("skor", ascending=False).reset_index(drop=True)
+
+
+def fi_k33_olay(X: pd.DataFrame, Sec: pd.DataFrame, n: int, grup_gun: bool, K: Dict[str, Any] = FI_K33,
+                ref: Optional[pd.DataFrame] = None) -> Dict[str, pd.DataFrame]:
+    """Seçilen her uç dilim ve KOMBİNE (en çok kombine_n özelliğin işaretli sıra ortalaması, üst dilim) için olay kümesi.
+    ref: keşif satırları (grup_gun=False iken eşik ve sıra kaynağı)."""
+    O: Dict[str, pd.DataFrame] = {}; isaretli = []
+
+    def sira(oz: str) -> pd.Series:
+        if grup_gun:
+            return X.groupby("giris")[oz].rank(pct=True)
+        r = np.sort(ref[oz].dropna().to_numpy(float)); v = X[oz].to_numpy(float)
+        return pd.Series(np.where(np.isfinite(v), np.searchsorted(r, v, side="right") / max(len(r), 1), np.nan), index=X.index)
+    for r in Sec.itertuples():
+        D = fi_k33_dilim(X, r.ozellik, n, grup_gun, None if ref is None else ref[r.ozellik])
+        O[f"{r.ozellik}_{r.uc}"] = X.loc[D == (n - 1 if r.uc == "ust" else 0), ["sembol", "giris"]]
+        if len(isaretli) < K["kombine_n"]:
+            rk = sira(r.ozellik); isaretli.append(rk if r.uc == "ust" else 1 - rk)
+    if len(isaretli) >= 2:
+        sk = pd.concat(isaretli, axis=1).mean(axis=1, skipna=False)
+        if grup_gun:
+            X_ = X.assign(_sk=sk).dropna(subset=["_sk"]); X_["_d"] = fi_k33_dilim(X_, "_sk", n, True)
+            O["KOMBINE"] = X_.loc[X_._d == n - 1, ["sembol", "giris"]]
+        else:
+            O["KOMBINE"] = X.loc[sk >= 1 - 1 / n, ["sembol", "giris"]]
+    return O
+
+
+def fi_k33_test(Ol: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], Vs: Dict[str, Dict[str, pd.DataFrame]],
+                K: Dict[str, Any] = FI_K33, O: Dict[str, Any] = FI_OLCUT) -> pd.DataFrame:
+    """Ol: pazar -> {küme adı: olaylar}. Tekilleştirip FI_OLCUT hücreleri (2023, 2024-26)."""
+    Z = []
+    for pz, kumeler in Ol.items():
+        for ad_, E in kumeler.items():
+            if not len(E):
+                continue
+            E = E.sort_values("giris").assign(_b=True).reset_index(drop=True)
+            T = fi_olcut_olay(Pn[pz], fi_k27_tekil(E, "_b", Vs[pz], K["ayri"])[["sembol", "giris"]])
+            for dn, a, b in O["donem"]:
+                Z.append({"kume": ad_, "pazar": pz, "donem": dn, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    return pd.DataFrame(Z)
+
+
+def fi_k33_karar(Zk: pd.DataFrame, kacinma: bool = False, yalniz_abd: bool = False, O: Dict[str, Any] = FI_OLCUT) -> str:
+    """Bir kümenin hücreleri -> karar (dört hücre; yalnız ABD ise iki ABD hücresi -> ABD-ADAY)."""
+    if not yalniz_abd:
+        return fi_olcut_karar_kacinma(Zk, O) if kacinma else fi_olcut_karar(Zk, O)
+    if kacinma:
+        t = [bool(r.n >= O["n_esik"] and r.ust95 < 0 and r.sira < 0.5 and r.portfoy < r.portfoy_esli_p10) for r in Zk.itertuples()]
+    else:
+        t = [bool(r.n >= O["n_esik"] and r.alt95 > 0 and r.sira > 0.5 and r.portfoy > r.portfoy_esli_p90) for r in Zk.itertuples()]
+    return "ABD-ADAY" if len(t) == 2 and all(t) else "İZ DEĞİL"
+
+
+def fon_izi_k33(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], aday: pd.DataFrame, Fin: pd.DataFrame,
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K33, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K33 sürücü: ana (aylık örnek), D2 çöl içi, D3 nakit tükenmesi içi (ABD), D4 çöküş profili. Çıktı k33_kaldirac.csv, k33_ozet.csv."""
+    A = A or FIAyar(); kb, ks = pd.Timestamp(K["kesif"][0]), pd.Timestamp(K["kesif"][1]); tb = pd.Timestamp(O["donem"][0][1])
+    oz = tuple(K["ozellik"]); KAL, Z, SEC = [], [], {}
+
+    def kaldirac_kaydi(X: pd.DataFrame, calisma: str, pz: str, n: int, gg: bool, ref: Optional[pd.DataFrame], ozl: Tuple[str, ...]) -> None:
+        for dn, a, b in (("kesif", K["kesif"][0], K["kesif"][1]),) + tuple(O["donem"]):
+            Xd = X[(X.giris >= a) & (X.giris <= b)]
+            if not len(Xd):
+                continue
+            if gg or dn == "kesif":
+                T = fi_k33_kaldirac(Xd, ozl, n, gg)
+            else:
+                bs, bc = Xd.sicrama.mean(), Xd.cokus.mean(); T = []
+                for o in ozl:
+                    D = fi_k33_dilim(Xd, o, n, False, ref[o])
+                    for uc, k in (("alt", 0), ("ust", n - 1)):
+                        m = D == k
+                        if m.sum():
+                            T.append({"ozellik": o, "uc": uc, "n": int(m.sum()), "sicrama_oran": Xd.sicrama[m].mean(),
+                                      "cokus_oran": Xd.cokus[m].mean(), "sicrama_k": Xd.sicrama[m].mean() / bs if bs else np.nan,
+                                      "cokus_k": Xd.cokus[m].mean() / bc if bc else np.nan})
+                T = pd.DataFrame(T)
+                if len(T):
+                    T["asimetri"] = T.sicrama_k / T.cokus_k
+            KAL.append(T.assign(calisma=calisma, pazar=pz, donem=dn, taban_sicrama=Xd.sicrama.mean(), taban_cokus=Xd.cokus.mean()))
+
+    # ANA + D4
+    Xs = {}
+    for pz in Vs:
+        X = fi_k33_ornek(Vs[pz], Pn[pz], K); Xs[pz] = X
+        filog.info("K33 %s: %d aylık örnek, sıçrama %.3f, çöküş %.3f", pz, len(X), X.sicrama.mean(), X.cokus.mean())
+        kaldirac_kaydi(X, "ana", pz, K["dilim"], True, None, oz)
+    Kz = {pz: fi_k33_kaldirac(X[(X.giris >= kb) & (X.giris <= ks)], oz, K["dilim"]) for pz, X in Xs.items()}
+    for calisma, yon in (("ana", "sicrama"), ("D4_cokus", "cokus")):
+        Sec = fi_k33_sec(Kz, K, yon); SEC[calisma] = Sec
+        Ol = {pz: fi_k33_olay(X[X.giris >= tb], Sec, K["dilim"], True, K) for pz, X in Xs.items()}
+        Zc = fi_k33_test(Ol, Pn, Vs, K, O)
+        Z.append(Zc.assign(calisma=calisma) if len(Zc) else Zc)
+    # D2 ÇÖL İÇİ
+    Xg, Kg = {}, {}
+    for pz in Vs:
+        ad_ = aday[(aday.pazar == pz) & aday.sembol.isin(list(Vs[pz]))][["sembol", "giris"]]
+        X = fi_k33_satir(Vs[pz], Pn[pz], ad_.assign(giris=pd.to_datetime(ad_.giris)), K); Xg[pz] = X
+        ref = X[(X.giris >= kb) & (X.giris <= ks)]; Kg[pz] = fi_k33_kaldirac(ref, oz, K["dilim_grup"], False)
+        kaldirac_kaydi(X, "D2_col_ici", pz, K["dilim_grup"], False, ref, oz)
+    Sec = fi_k33_sec(Kg, K); SEC["D2_col_ici"] = Sec
+    Ol = {pz: fi_k33_olay(X[X.giris >= tb], Sec, K["dilim_grup"], False, K, X[(X.giris >= kb) & (X.giris <= ks)]) for pz, X in Xg.items()}
+    Zc = fi_k33_test(Ol, Pn, Vs, K, O); Z.append(Zc.assign(calisma="D2_col_ici") if len(Zc) else Zc)
+    # D3 NAKİT TÜKENMESİ İÇİ (ABD)
+    if "ABD" in Vs and len(Fin):
+        Va = Vs["ABD"]; sat = []
+        for r in Fin[(Fin.pist < FI_K31["pist"]) & Fin.sembol.isin(list(Va))].sort_values("filed").itertuples():
+            ix = Va[r.sembol].index; j = int(ix.searchsorted(r.filed, side="right"))
+            if 1 <= j < len(ix):
+                sat.append({"sembol": r.sembol, "giris": ix[j], "pist": r.pist, "pay_yil": r.pay_yil})
+        E = pd.DataFrame(sat).assign(_b=True)
+        E = fi_k27_tekil(E.sort_values("giris").reset_index(drop=True), "_b", Va, K["ayri"]).drop(columns="_b")
+        X = fi_k33_satir(Va, Pn["ABD"], E, K); oz3 = oz + ("pist", "pay_yil")
+        a3, b3 = pd.Timestamp(K["d3_kesif"][0]), pd.Timestamp(K["d3_kesif"][1]); ref = X[(X.giris >= a3) & (X.giris <= b3)]
+        KAL.append(fi_k33_kaldirac(ref, oz3, K["dilim_grup"], False).assign(calisma="D3_nakit_ici", pazar="ABD", donem="kesif_2021_22",
+                                                                             taban_sicrama=ref.sicrama.mean(), taban_cokus=ref.cokus.mean()))
+        Sec = fi_k33_sec({"ABD": fi_k33_kaldirac(ref, oz3, K["dilim_grup"], False)}, K); SEC["D3_nakit_ici"] = Sec
+        Zc = fi_k33_test({"ABD": fi_k33_olay(X[X.giris >= tb], Sec, K["dilim_grup"], False, K, ref)}, Pn, Vs, K, O)
+        Z.append(Zc.assign(calisma="D3_nakit_ici") if len(Zc) else Zc)
+    Z = pd.concat([z for z in Z if len(z)], ignore_index=True) if any(len(z) for z in Z) else pd.DataFrame()
+    KAL = pd.concat(KAL, ignore_index=True)
+    karar = {}
+    for (c, k), g in (Z.groupby(["calisma", "kume"]) if len(Z) else []):
+        karar[f"{c}:{k}"] = fi_k33_karar(g, kacinma=c == "D4_cokus", yalniz_abd=c == "D3_nakit_ici", O=O)
+    KAL.to_csv(os.path.join(A.cikti, "k33_kaldirac.csv"), index=False)
+    if len(Z):
+        Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k33_ozet.csv"), index=False)
+    return {"ozet": Z, "kaldirac": KAL, "secim": SEC, "karar": karar, "ornek": Xs}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş

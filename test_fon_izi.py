@@ -566,6 +566,21 @@ def sina():
             and abs(R41["deger"].iloc[24] - 1.0) < 1e-12)
     if not ok41:
         hata.append(f"41) K32 yuva benzetimi yanlış: {R41['deger'].iloc[[24, 25, 27, -1]].tolist()} {R41['islem']}")
+    # 42) K33: özellik yalnız geçmişi kullanır (d günü r20 = C[d-1]/C[d-21]-1); seçim iki pazarda da şartı ister; keşif eşiğiyle dilim.
+    ix42 = pd.bdate_range("2023-01-02", periods=300); c42 = pd.Series(np.linspace(10, 40, 300), index=ix42)
+    d42 = pd.DataFrame({"Open": c42, "High": c42 * 1.01, "Low": c42 * 0.99, "Close": c42, "Volume": 1000.0}, index=ix42)
+    F42 = F.fi_k33_ozellik(d42)
+    ok42a = abs(F42.r20.iloc[100] - (c42.iloc[99] / c42.iloc[79] - 1)) < 1e-12 and np.isnan(F42.r20.iloc[20])
+    T42 = {"BIST": pd.DataFrame({"ozellik": ["a", "b"], "uc": ["ust", "ust"], "sicrama_k": [2.0, 2.0], "cokus_k": [1.0, 1.0],
+                                 "asimetri": [2.0, 2.0]}),
+           "ABD": pd.DataFrame({"ozellik": ["a", "b"], "uc": ["ust", "ust"], "sicrama_k": [1.6, 1.2], "cokus_k": [1.0, 1.0],
+                                "asimetri": [1.6, 1.2]})}
+    S42 = F.fi_k33_sec(T42)
+    X42 = pd.DataFrame({"giris": pd.Timestamp("2024-01-02"), "a": [0.5, 1e9, -1e9]})
+    D42 = F.fi_k33_dilim(X42, "a", 5, False, pd.Series(np.arange(100.0)))
+    ok42 = ok42a and list(S42.ozellik) == ["a"] and abs(S42.skor.iloc[0] - 1.6) < 1e-12 and list(D42) == [0, 4, 0]
+    if not ok42:
+        hata.append(f"42) K33 özellik / seçim / dilim yanlış: {F42.r20.iloc[100]} {S42.to_dict('records')} {list(D42)}")
     return hata
 
 
@@ -573,4 +588,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 41/41 OK")
+    print("test_fon_izi: 42/42 OK")
