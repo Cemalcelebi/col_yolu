@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.18 (2026-10-27, K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.19 (2026-10-27, K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6289,6 +6289,115 @@ def fon_izi_k30(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], dosyalar: List[s
 # ve sıra > 0,50, en az birinde dört şart. Aynı ölçüt (FI_OLCUT), aynı tekilleştirme.
 FI_K30_DENEME = {"orta": 100_000, "dis_ceyrek": [f"{y}q{q}" for y in range(2016, 2022) for q in range(1, 5)],
                  "dis_donem": (("2016-19", "2016-01-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"))}
+
+# K31 ANALİST İZLERİ (Cemal 27 Eki: 'en başarılı analistlerin izlediği 4 veri: seyrelme, içeriden satış, nakit tükenmesi, kurumsal
+# sahiplik; yapılanları ayıkla, yapılmayanları dene; tıkanırsan çözüm bul, bulamazsan başka veriyi irdele'). Yapılanlar: içeriden ALIM
+# (K27, K30), BIST fon sahipliği (K10, K25). ÖNCEDEN YAZILDI (sonuç görülmeden), ABD, hücreler 2023 / 2024-26, aynı hissede 60 işlem
+# gününde tek olay, giriş olayın kamuya çıktığı günden sonraki ilk işlem günü açılışı, ölçüt FI_OLCUT (kaçınma için ayna ölçütü):
+#   M1 İÇERİDEN SATIŞ (SEC Form 4, kod S, elden çıkarma D; 10b5-1 planlı bildirim hariç; Officer/Director; değer >= 100 bin $) -> kaçınma.
+#      M1b kümeli satış (30 günde >= 3 farklı satıcı) -> kaçınma.
+#   M2 SEYRELME (SEC finansal tablo veri seti, 10-Q / 10-K, dei EntityCommonStockSharesOutstanding): pay sayısı bir yıl önceki (300-430
+#      gün önceki en yakın) değere göre >= +%10 -> kaçınma; M2b >= +%30 -> kaçınma; M2c GERİ ALIM <= -%3 -> yukarı ölçüt (FI_OLCUT).
+#   M3 NAKİT TÜKENMESİ: faaliyet nakit akışı < 0 ve nakit / (çeyrek başı yakma) < 4 çeyrek -> kaçınma; M3b < 2 çeyrek -> kaçınma.
+#   M4 AÇIĞA SATIŞ (13F yerine: 13F'te CUSIP -> sembol eşlemesi bedava yok; FINRA konsolide açığa satış): ABD evreninde ödeme günü
+#      kapatma süresi (days to cover) en üst %10 -> kaçınma; giriş = ödeme gününden >= 12 takvim günü sonraki ilk işlem günü (yayın gecikmesi).
+# Karar: iki ABD hücresinde kaçınma (ya da yukarı) ölçütü tutarsa 'ABD-ADAY'; tutan ölçü sonra BIST'te (İş Yatırım / KAP) sınanır.
+FI_K31 = {"satis_min": 100_000, "kume_gun": 30, "kume_n": 3, "seyrelme": 0.10, "agir_seyrelme": 0.30, "geri_alim": -0.03,
+          "yil_min": 300, "yil_max": 430, "pist": 4.0, "pist_agir": 2.0, "dtc_ust": 0.90, "gecikme": 12, "ayri": 60,
+          "finra": "https://api.finra.org/data/group/otcMarket/name/consolidatedShortInterest",
+          "klasor": os.environ.get("FI_SECFS", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/secfs")}
+
+
+def fi_k31_satislar(dosyalar: List[str], K: Dict[str, Any] = FI_K31) -> pd.DataFrame:
+    """Form 4 açık piyasa satışları (kod S, D), 10b5-1 planlı hariç: bildirim başına sembol, gün, değer, satıcı, rol."""
+    import zipfile
+    parca = []
+    for yol in dosyalar:
+        try:
+            z = zipfile.ZipFile(yol)
+            S = pd.read_csv(z.open("SUBMISSION.tsv"), sep="\t", dtype=str,
+                            usecols=lambda c: c in ("ACCESSION_NUMBER", "FILING_DATE", "DOCUMENT_TYPE", "ISSUERTRADINGSYMBOL", "AFF10B5ONE"))
+            T = pd.read_csv(z.open("NONDERIV_TRANS.tsv"), sep="\t", usecols=["ACCESSION_NUMBER", "TRANS_CODE", "TRANS_SHARES",
+                            "TRANS_PRICEPERSHARE", "TRANS_ACQUIRED_DISP_CD"], dtype={"ACCESSION_NUMBER": str, "TRANS_CODE": str,
+                            "TRANS_ACQUIRED_DISP_CD": str}, low_memory=False)
+            R = pd.read_csv(z.open("REPORTINGOWNER.tsv"), sep="\t", usecols=["ACCESSION_NUMBER", "RPTOWNERCIK", "RPTOWNER_RELATIONSHIP"],
+                            dtype=str)
+        except Exception as ex:   # tek çeyrek bozuksa digerleri devam eder
+            filog.warning("SEC %s okunamadı: %s", yol, ex); continue
+        T = T[(T.TRANS_CODE == "S") & (T.TRANS_ACQUIRED_DISP_CD == "D")].copy()
+        T["deger"] = pd.to_numeric(T.TRANS_SHARES, errors="coerce") * pd.to_numeric(T.TRANS_PRICEPERSHARE, errors="coerce")
+        T = T.groupby("ACCESSION_NUMBER", as_index=False).deger.sum()
+        S = S[S.DOCUMENT_TYPE == "4"]
+        if "AFF10B5ONE" in S:
+            S = S[~S.AFF10B5ONE.fillna("").astype(str).str.strip().str.lower().isin(("1", "true", "y", "yes"))]
+        R = R.groupby("ACCESSION_NUMBER", as_index=False).agg(cik=("RPTOWNERCIK", "first"), rol=("RPTOWNER_RELATIONSHIP", "first"))
+        parca.append(T.merge(S, on="ACCESSION_NUMBER").merge(R, on="ACCESSION_NUMBER", how="left"))
+    X = pd.concat(parca, ignore_index=True).drop_duplicates("ACCESSION_NUMBER")
+    X["sembol"] = X.ISSUERTRADINGSYMBOL.astype(str).str.upper().str.strip()
+    X["D"] = pd.to_datetime(X.FILING_DATE, format="%d-%b-%Y", errors="coerce")
+    return X.dropna(subset=["D"])[["sembol", "D", "deger", "cik", "rol"]]
+
+
+def fi_k31_finansal(K: Dict[str, Any] = FI_K31) -> pd.DataFrame:
+    """SEC finansal tablo özütleri (fs_YYYYqQ.csv.gz) -> bildirim başına sembol, açıklama günü, pay sayısı, yıllık pay değişimi, pist."""
+    import glob, json
+    tk = json.load(open(os.path.join(K["klasor"], "company_tickers.json")))
+    cik2 = {}
+    for v in tk.values():
+        cik2.setdefault(str(int(v["cik_str"])), v["ticker"].upper().replace(".", "-"))
+    N = pd.concat([pd.read_csv(f, dtype=str) for f in sorted(glob.glob(os.path.join(K["klasor"], "fs_*.csv.gz")))], ignore_index=True)
+    N["value"] = pd.to_numeric(N.value, errors="coerce"); N["qtrs"] = pd.to_numeric(N.qtrs, errors="coerce")
+    N["filed"] = pd.to_datetime(N.filed, format="%Y%m%d", errors="coerce"); N["ddate"] = pd.to_datetime(N.ddate, format="%Y%m%d", errors="coerce")
+    N["sembol"] = N.cik.astype(str).str.lstrip("0").map(cik2)
+    N = N.dropna(subset=["sembol", "filed", "value"])
+    pay = N[N.tag == "EntityCommonStockSharesOutstanding"].sort_values("ddate").groupby("adsh").agg(
+        sembol=("sembol", "first"), filed=("filed", "first"), pay=("value", "last"), pay_t=("ddate", "last"))
+    nak = N[N.tag.isin(["CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"])]
+    nak = nak.sort_values(["ddate", "tag"]).groupby("adsh").value.last().rename("nakit")
+    ocf = N[(N.tag == "NetCashProvidedByUsedInOperatingActivities") & (N.qtrs >= 1)]
+    ocf = ocf.sort_values(["ddate", "qtrs"]).groupby("adsh").apply(lambda g: g.value.iloc[-1] / g.qtrs.iloc[-1]).rename("ocf_ceyrek")
+    F = pay.join(nak).join(ocf).reset_index().sort_values(["sembol", "filed"])
+    yil = []
+    for s, g in F.groupby("sembol"):
+        t, p = g.pay_t.to_numpy(), g.pay.to_numpy(float)
+        for i in range(len(g)):
+            d = (t[i] - t[:i]).astype("timedelta64[D]").astype(float) if i else np.array([])
+            m = np.flatnonzero((d >= K["yil_min"]) & (d <= K["yil_max"]))
+            yil.append(p[i] / p[m[np.argmin(np.abs(d[m] - 365))]] - 1 if len(m) and p[m].all() else np.nan)
+    F["pay_yil"] = yil
+    F["pist"] = np.where(F.ocf_ceyrek < 0, F.nakit / (-F.ocf_ceyrek), np.inf)
+    return F
+
+
+def fi_k31_aciga(semboller: List[str], bas: str, bit: str, K: Dict[str, Any] = FI_K31) -> pd.DataFrame:
+    """FINRA konsolide açığa satış (ödeme günü, sembol, kapatma süresi), sembol grupları ve ay ay sayfalı."""
+    import requests
+    sat = []
+    for a in pd.date_range(bas, bit, freq="MS"):
+        b = a + pd.offsets.MonthEnd(0)
+        for k in range(0, len(semboller), 400):
+            ofs = 0
+            while True:
+                gov = {"limit": 5000, "offset": ofs, "fields": ["symbolCode", "settlementDate", "daysToCoverQuantity"],
+                       "dateRangeFilters": [{"fieldName": "settlementDate", "startDate": str(a.date()), "endDate": str(b.date())}],
+                       "domainFilters": [{"fieldName": "symbolCode", "values": semboller[k:k + 400]}]}
+                J = None
+                for i in range(4):
+                    try:
+                        r = requests.post(K["finra"], json=gov, headers={"Accept": "application/json"}, timeout=90)
+                        if r.status_code == 200:
+                            J = r.json(); break
+                    except Exception as ex:
+                        filog.warning("FINRA %s: %s", a.date(), str(ex)[:80])
+                    time.sleep(3 * (i + 1))
+                J = J or []; sat += J; ofs += 5000
+                if len(J) < 5000:
+                    break
+                time.sleep(0.3)
+    X = pd.DataFrame(sat)
+    if len(X):
+        X["settlementDate"] = pd.to_datetime(X.settlementDate); X["dtc"] = pd.to_numeric(X.daysToCoverQuantity, errors="coerce")
+    return X
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
