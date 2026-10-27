@@ -6161,6 +6161,10 @@ def fi_k29_adaylar(V: Dict[str, pd.DataFrame], X28: pd.DataFrame, pazar: str, K:
     return X
 
 
+# K29 DEVAM (ÖNCEDEN YAZILDI 27 Eki; ilk turda RİSKLİ ile TEMİZ ayrışmadı, bu üçünün sonucu görülmeden): her işaret ayrı ayrı kaçınma
+# ölçütüyle: D1 yalnız R1 (kötü bilanço), D2 yalnız R2 (A11), D3 yalnız R3 (A14; n küçük olabilir). Aynı ölçüt ve karar.
+FI_K29_DENEME = ("r1", "r2", "r3")
+
 def fon_izi_k29(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], X28b: pd.DataFrame, X28a: pd.DataFrame,
                 Pb: Dict[str, Any], Pa: Dict[str, Any], A: Optional[FIAyar] = None, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
     """K29 sürücü: adaylar -> TEMİZ / RİSKLİ / HEPSİ yeni ölçütle; RİSKLİ için kaçınma kararı. Çıktı k29_ozet.csv, k29_aday.csv."""
