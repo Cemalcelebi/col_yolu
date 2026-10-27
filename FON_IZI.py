@@ -6074,6 +6074,39 @@ def fon_izi_k28(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], A: Opt
     Z.to_csv(os.path.join(A.cikti, "k28_ozet.csv"), index=False); E.to_csv(os.path.join(A.cikti, "k28_olay.csv"), index=False)
     return {"ozet": Z, "olay": E, "karar": karar, "BIST": Xb, "ABD": Xa}
 
+# K28 DEVAM (İz yok çıkarsa durma; ÖNCEDEN YAZILDI 27 Eki, ilk tur görüldükten sonra, bu üç denemenin sonucu görülmeden; aynı ölçüt
+# FI_OLCUT). İlk turda eşiğe en yakın: çöl + iyi sürpriz (dört hücrede ortalama fark +%0,8 / +%2,6 / +%5,4 / +%5,6, alt uçlar eksi).
+#   D1 GENİŞ ÇÖL: iyi sürpriz (üst %20) + K23 süzgeci (düşüş <= -%30, eğim >= -0,001), mum şartı yok (n büyür).
+#   D2 GÜÇLÜ SÜRPRİZ: tepki üst %10 + çöl (K23 süzgeci + mum <= 1,0).
+#   D3 İKİ EVRE: iyi sürpriz (üst %20) + açıklamadan önceki 60 işlem gününde K24 iki evre kuralı sinyali (Cemal'in tarifi).
+FI_K28_DENEME = {"guclu": 0.10, "iki_evre_gun": 60}
+
+
+def fi_k28_deneme(X: pd.DataFrame, V: Dict[str, pd.DataFrame], P: Dict[str, Any], pazar: str, D: Dict[str, Any] = FI_K28_DENEME,
+                  O: Dict[str, Any] = FI_OLCUT) -> pd.DataFrame:
+    """X = fi_k28_olaylar çıktısı (bir pazar). Önceden yazılı üç deneme için hücre özetleri."""
+    X = X.copy()
+    X["guclu"] = X.groupby("ceyrek").ear.transform(lambda e: e >= e.quantile(1 - D["guclu"]))
+    gen, guc, iki = {}, {}, {}
+    for s, g in X[X.ust | X.guclu].groupby("sembol"):
+        F = fi_k23_parmak(V[s], 20); K24 = fi_k24_tara(V[s])
+        k24 = pd.DatetimeIndex(K24.loc[K24.kural, "tarih"]) if len(K24) and "kural" in K24 else pd.DatetimeIndex([])
+        ix = V[s].index
+        for r in g.itertuples():
+            p = F.loc[r.d0] if r.d0 in F.index else None
+            suz = bool(p is not None and p.dusus <= FI_K23_KOR["dusus"] and p.egim >= FI_K23_KOR["egim"])
+            gen[r.Index] = r.ust and suz
+            guc[r.Index] = r.guclu and suz and bool(p is not None and p.mum <= 1.0)
+            j = int(ix.get_loc(r.d0)); bas = ix[max(0, j - D["iki_evre_gun"] + 1)]
+            iki[r.Index] = r.ust and bool(((k24 >= bas) & (k24 <= r.d0)).any())
+    Z = []
+    for ad_, sozluk in (("genis_col", gen), ("guclu_col", guc), ("iki_evre", iki)):
+        m = pd.Series(sozluk).reindex(X.index).fillna(False).astype(bool)
+        T = fi_olcut_olay(P, X[m][["sembol", "giris", "ear"]])
+        for ad, a, b in O["donem"]:
+            Z.append({"olay": ad_, "pazar": pazar, "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+    return pd.DataFrame(Z)
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
