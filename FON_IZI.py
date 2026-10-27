@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.21 (2026-10-27, K33 sıçrayan hisse profili; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.21 (2026-10-27, K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -6936,6 +6936,95 @@ def fon_izi_k33(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
     if len(Z):
         Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k33_ozet.csv"), index=False)
     return {"ozet": Z, "kaldirac": KAL, "secim": SEC, "karar": karar, "ornek": Xs}
+
+# K33-B NAKİT TÜKENMESİ GRUBUNDA İYİ ÇIKANLARIN İZİ (Cemal 27 Eki: 'ABD nakit tükenmesi araştırmasında bazıları daha iyi çıkmıştı; iyi
+# çıkanları iyi yapan izleri araştır'). ÖNCEDEN YAZILDI (K33 sonuçları görülmeden). Grup = K31 M3 olayları (ABD, nakit pisti < 4 çeyrek,
+# bildirim ertesi işlem günü giriş, aynı hissede 60 işlem gününde tek). İYİ ÇIKAN = K33 SIÇRAMA (r60 - gün ortancası >= +%40).
+# Özellikler = K33'ün 12 fiyat/hacim özelliği + şirket verisi (yalnız bildirimde ve d-1'de bilinen):
+#   pist, pay_yil (seyrelme), piyasa_degeri (pay x C[d-1]), nakit_pd (nakit / piyasa değeri), yakma_pd (-4 x çeyreklik faaliyet nakit
+#   akışı / piyasa değeri), ocf_iyilesme ((ocf - önceki bildirimin ocf'si) / |önceki ocf|, ±5 kırpılır), iceriden_alim90 (d'den önceki 90
+#   günde Form 4 açık piyasa alımı var mı; veri 2022-01'den, öncesi boş).
+# PROFİL: her dönemde (2021-22, 2023, 2024-26) iyi çıkanlarla ötekilerin özellik ortancası ve AUC (rastgele bir iyi çıkanın rastgele bir
+# ötekinden yüksek olma olasılığı). BELİRGİN ÖZELLİK = üç dönemin hepsinde AUC >= 0,60 (ya da hepsinde <= 0,40).
+# TEST: her belirgin özellik için iyi yönde uç beşte bir (eşik 2021-22 değerlerinden), iceriden_alim90 için değer 1; FI_OLCUT ABD 2023 /
+# 2024-26; iki hücre tutarsa ABD-ADAY (BIST'te bu veri yok, İZ olamaz).
+FI_K33B = {"auc_esik": 0.60, "kirp": 5.0, "alim_gun": 90, "alim_bas": "2022-01-01", "donem": (("2021-22", "2021-01-01", "2022-12-31"),
+           ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31")),
+           "sirket": ("pist", "pay_yil", "piyasa_degeri", "nakit_pd", "yakma_pd", "ocf_iyilesme", "iceriden_alim90")}
+
+
+def fi_k33b_auc(x: np.ndarray, y: np.ndarray) -> float:
+    """x (iyi çıkanlar) ile y (ötekiler) arasında AUC = P(x > y) + 0,5 P(x = y), sıra toplamıyla."""
+    x, y = x[np.isfinite(x)], y[np.isfinite(y)]
+    if len(x) < 5 or len(y) < 5:
+        return np.nan
+    r = pd.Series(np.concatenate([x, y])).rank().to_numpy()
+    return float((r[:len(x)].sum() - len(x) * (len(x) + 1) / 2) / (len(x) * len(y)))
+
+
+def fi_k33b_grup(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], Fin: pd.DataFrame, alim: pd.DataFrame, K: Dict[str, Any] = FI_K33,
+                 B: Dict[str, Any] = FI_K33B) -> pd.DataFrame:
+    """M3 olayları + şirket özellikleri + K33 satırı (r60, fazla, sıçrama, 12 özellik)."""
+    Fn = Fin[Fin.sembol.isin(list(Va))].sort_values(["sembol", "filed"]).copy()
+    Fn["ocf_once"] = Fn.groupby("sembol").ocf_ceyrek.shift(1)
+    sat = []
+    for r in Fn[Fn.pist < FI_K31["pist"]].itertuples():
+        d = Va[r.sembol]; ix = d.index; j = int(ix.searchsorted(r.filed, side="right"))
+        if not 1 <= j < len(ix):
+            continue
+        pdg = r.pay * float(d.Close.iloc[j - 1]) if r.pay and r.pay > 0 else np.nan
+        iy = (r.ocf_ceyrek - r.ocf_once) / abs(r.ocf_once) if r.ocf_once and np.isfinite(r.ocf_once) and r.ocf_once != 0 else np.nan
+        sat.append({"sembol": r.sembol, "giris": ix[j], "pist": r.pist, "pay_yil": r.pay_yil, "piyasa_degeri": pdg,
+                    "nakit_pd": r.nakit / pdg if pdg and pdg > 0 else np.nan,
+                    "yakma_pd": -4 * r.ocf_ceyrek / pdg if pdg and pdg > 0 else np.nan,
+                    "ocf_iyilesme": float(np.clip(iy, -B["kirp"], B["kirp"])) if np.isfinite(iy) else np.nan})
+    E = pd.DataFrame(sat).sort_values("giris").reset_index(drop=True).assign(_b=True)
+    E = fi_k27_tekil(E, "_b", Va, K["ayri"]).drop(columns="_b").reset_index(drop=True)
+    al = {s_: pd.DatetimeIndex(g.D) for s_, g in alim.groupby("sembol")}; ab = pd.Timestamp(B["alim_bas"]); gun = pd.Timedelta(days=B["alim_gun"])
+    E["iceriden_alim90"] = [np.nan if r.giris - gun < ab else float(((al.get(r.sembol, pd.DatetimeIndex([])) < r.giris)
+                                                                      & (al.get(r.sembol, pd.DatetimeIndex([])) >= r.giris - gun)).any())
+                            for r in E.itertuples()]
+    return fi_k33_satir(Va, P, E, K)
+
+
+def fi_k33b_profil(X: pd.DataFrame, K: Dict[str, Any] = FI_K33, B: Dict[str, Any] = FI_K33B) -> pd.DataFrame:
+    """Dönem x özellik: iyi çıkan / öteki ortancası, AUC, n."""
+    Z = []
+    for dn, a, b in B["donem"]:
+        Xd = X[(X.giris >= a) & (X.giris <= b)]
+        for oz in tuple(K["ozellik"]) + tuple(B["sirket"]):
+            x = Xd.loc[Xd.sicrama, oz].to_numpy(float); y = Xd.loc[~Xd.sicrama, oz].to_numpy(float)
+            Z.append({"donem": dn, "ozellik": oz, "n_iyi": int(np.isfinite(x).sum()), "n_oteki": int(np.isfinite(y).sum()),
+                      "iyi_ortanca": float(np.nanmedian(x)) if np.isfinite(x).any() else np.nan,
+                      "oteki_ortanca": float(np.nanmedian(y)) if np.isfinite(y).any() else np.nan, "auc": fi_k33b_auc(x, y),
+                      "iyi_oran": float(Xd.sicrama.mean()) if len(Xd) else np.nan})
+    return pd.DataFrame(Z)
+
+
+def fon_izi_k33b(Va: Dict[str, pd.DataFrame], P: Dict[str, Any], Fin: pd.DataFrame, alim: pd.DataFrame, A: Optional[FIAyar] = None,
+                 K: Dict[str, Any] = FI_K33, B: Dict[str, Any] = FI_K33B, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K33-B sürücü: profil (AUC) -> belirgin özellikler -> FI_OLCUT ABD testi. Çıktı k33b_profil.csv, k33b_ozet.csv."""
+    A = A or FIAyar(); X = fi_k33b_grup(Va, P, Fin, alim, K, B); Pr = fi_k33b_profil(X, K, B)
+    a0, b0 = B["donem"][0][1], B["donem"][0][2]; ref = X[(X.giris >= a0) & (X.giris <= b0)]
+    belirgin = []
+    for oz, g in Pr.groupby("ozellik"):
+        au = g.auc.to_numpy(float)
+        if len(au) == 3 and np.isfinite(au).all() and ((au >= B["auc_esik"]).all() or (au <= 1 - B["auc_esik"]).all()):
+            belirgin.append((oz, "ust" if au[0] >= 0.5 else "alt"))
+    kume: Dict[str, pd.DataFrame] = {}; Xt = X[X.giris >= pd.Timestamp(O["donem"][0][1])]
+    for oz, uc in belirgin:
+        if oz == "iceriden_alim90":
+            kume[f"{oz}_{uc}"] = Xt.loc[Xt[oz] == (1.0 if uc == "ust" else 0.0), ["sembol", "giris"]]
+        else:
+            D = fi_k33_dilim(Xt, oz, K["dilim_grup"], False, ref[oz])
+            kume[f"{oz}_{uc}"] = Xt.loc[D == (K["dilim_grup"] - 1 if uc == "ust" else 0), ["sembol", "giris"]]
+    kume["HEPSI_nakit_tukenmesi"] = Xt[["sembol", "giris"]]
+    Z = fi_k33_test({"ABD": kume}, {"ABD": P}, {"ABD": Va}, K, O)
+    karar = {k: fi_k33_karar(g, yalniz_abd=True, O=O) for k, g in Z.groupby("kume")} if len(Z) else {}
+    Pr.to_csv(os.path.join(A.cikti, "k33b_profil.csv"), index=False)
+    if len(Z):
+        Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k33b_ozet.csv"), index=False)
+    return {"grup": X, "profil": Pr, "belirgin": belirgin, "ozet": Z, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş

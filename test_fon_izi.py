@@ -581,6 +581,11 @@ def sina():
     ok42 = ok42a and list(S42.ozellik) == ["a"] and abs(S42.skor.iloc[0] - 1.6) < 1e-12 and list(D42) == [0, 4, 0]
     if not ok42:
         hata.append(f"42) K33 özellik / seçim / dilim yanlış: {F42.r20.iloc[100]} {S42.to_dict('records')} {list(D42)}")
+    # 43) K33-B AUC: hepsi büyük -> 1; aynı dağılım -> 0,5; tersi -> 0.
+    a43 = F.fi_k33b_auc(np.arange(5, 10.0), np.arange(0, 6.0)); b43 = F.fi_k33b_auc(np.ones(6), np.ones(7))
+    c43 = F.fi_k33b_auc(np.arange(0, 5.0), np.arange(10, 16.0))
+    if not (abs(a43 - 1) < 1e-12 and abs(b43 - 0.5) < 1e-12 and abs(c43) < 1e-12):
+        hata.append(f"43) K33-B AUC yanlış: {a43} {b43} {c43}")
     return hata
 
 
@@ -588,4 +593,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 42/42 OK")
+    print("test_fon_izi: 43/43 OK")
