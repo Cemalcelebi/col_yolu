@@ -34,6 +34,7 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Test önbellekleri: OB24, OB23, OBUS ve OBUS21 (`onbellek_ABD_2022_23.pkl`).
 - İstisna (24 Ekim 2026, Cemal'in isteği): KAP fon portföy raporları paketi (liste, ayrıştırılmış tablolar, 25 bin ham rapor metni; 220 MB) repoda ayrı `kapfon-veri` dalında durur, `main`'e birleştirilmez. Açma `python FON_IZI.py k9ac kapfon`, güncelleme yalnız yeni raporları indirir (`k9indir` + `k10`), sonra `k9paket` ile dal yenilenir.
 - İstisna 2 (26 Ekim 2026, Cemal 'koy'): işlenmiş veri paketi repoda ayrı `islenmis-veri` dalında durur, `main`'e birleştirilmez: V_BIST.pkl, V_ABD.pkl (fi_k1_veri çıktıları) ve K25 fon tabloları (G, oran, dol); xz + 45 MB parça, manifest sha256. Yeni oturumda açma: `git worktree add /tmp/iv origin/islenmis-veri` ve `python FON_IZI.py vpac /tmp/iv/veri /tmp/veri`; sürücülere V_hazir olarak verilir. Veri yenilenirse fi_veri_paketle ile dal yeniden yazılır.
+- SEC (27 Ekim 2026, Cemal'in izni): ABD Form 4 veri setleri repoya konmaz; `fi_k30_indir(eposta)` ile SEC'ten yeniden indirilir. SEC kuralı User-Agent'ta iletişim e-postası ister; Cemal'in e-postası yalnız bu indirmede kullanılır, koda ve repoya yazılmaz.
 - Repodaki tek veri istisnası küçük ayar dosyalarıdır: `sektor_BIST.csv` (BIST alt endekslerinden kurulan sektörler; Yahoo sektör etiketleri hatalı), `sektor_ABD.csv` ve `.json` ayarları.
 - Token, şifre, Telegram anahtarı gibi bilgiler asla koda yazılmaz. Bunlar `.env` dosyasında tutulur ve `.env` git dışındadır.
 

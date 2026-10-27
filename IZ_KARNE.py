@@ -423,6 +423,16 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "-%0,7 / +%4,1 / -%0,8; riskli -%1,7 / -%1,0 / +%1,4 / +%0,1 (aralıkların hepsi sıfırı içeriyor). Önceden yazılı 3 devam "
                "(işaretler ayrı): kötü bilanço +%0,5 / -%1,7 / -%1,5 / -%0,2; A11 -%8,5 (n 15) / +%5,0 / +%9,7 / -%3,0; A14 n 1-4. Risk "
                "işaretleri çöl adaylarını ayırmıyor; temiz adaylar da eşlerinden iyi değil. İZ DEĞİL."),
+    _ik_k("Ç102", "2026-10-27", "ABD İÇERİDEN ALIM (SEC Form 4 açık piyasa alımı) ve ÇÖLDE İÇERİDEN ALIM (K30)", "FON_IZI.py (k30)",
+          "Cemal: 'ABD verisi izin vereyim, devam edelim; BIST hep manipülasyon'",
+          "Yeni deneme (yeni ölçüt FI_OLCUT, karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k30_ozet.csv",
+          notu="SEC çeyreklik Form 4 veri setleri 2016-01 -> 2026-03 (41 çeyrek; SEC kuralı gereği e-posta, Cemal'in izniyle; e-posta koda "
+               "yazılmadı). 2022-26'da evrenimizde 7.821 açık piyasa alım bildirimi (>= 10 bin $). Eşli fark 60 gün, ABD 2023 / 2024-26: "
+               "alım +%0,1 / +%0,2; büyük (>= 250 bin $) -%1,6 / -%0,9; yönetici -%0,1 / -%0,2; kümeli (30 günde >= 3 kişi) -%1,8 / +%1,6; "
+               "çölde alım +%7,3 (aralık +0,3..+16,1, dört şart tuttu) / +%7,2 (aralık sıfırı içeriyor). Önceden yazılı 3 devam: çölde "
+               "yönetici alımı +%9,7 (2023 dört şart tuttu) / +%6,1 (tutmadı); çölde >= 100 bin $ -%0,6 / +%7,4; ÖRNEKLEM DIŞI (2016-22, hiç "
+               "bakılmamış) çölde alım -%4,5 / -%3,5, sıra 0,46 / 0,49 -> aday güçlenmedi. 2016-19'da büyük alım (+%1,8, aralık artı) ve "
+               "kümeli alım (+%2,3) hafif artı; 2023-26'da yok (literatürdeki etki zamanla sönmüş). İZ DEĞİL (ABD-ADAY da değil)."),
 ]
 
 
@@ -611,21 +621,28 @@ IK_GOREV: List[Dict[str, str]] = [
                                      "hepsi yalan mıymış",
      "yapilan": "Öneri b + a: K29 risk süzgeci (K24 çöl sinyalleri, kötü bilanço / A11 / A14 işaretleri, BIST + ABD, yeni ölçüt + kaçınma "
                 "ölçütü) ve önceden yazılı 3 devam; IZ_KARNE Ç101",
-     "sonuc": "İz değil: işaretli ve temiz adaylar eşlerinden ayrışmıyor", "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "sonuc": "İz değil: işaretli ve temiz adaylar eşlerinden ayrışmıyor", "durum": "TAMAMLANDI (Cemal: ABD izni, bir alttaki satır)"},
+    {"tarih": "2026-10-27", "istek": "ABD verisi için izin vereyim, devam edelim; BIST hep manipülasyon",
+     "yapilan": "SEC Form 4 veri setleri (2016-01 -> 2026-03) indirildi (e-posta yalnız indirmede, koda yazılmadı); K30: alım, büyük, "
+                "yönetici, kümeli, çölde alım, yeni ölçütle; önceden yazılı 3 devam (çölde yönetici, çölde >= 100 bin $, 2016-22 örneklem "
+                "dışı); IZ_KARNE Ç102",
+     "sonuc": "İz değil: ABD içeriden alım 2023-26'da eşlerle aynı; çölde alım 2023'te güçlü göründü ama 2016-22'de tersine döndü",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): yol 1 + 3 (K27), yol 2 (K28), risk süzgeci (K29) yeni ölçütle İZ DEĞİL. Kalan seçenekler Cemal'in: (a) beklentiyi "
-    "piyasaya göre kuran sade portföy ölçümü (aday listesi + çıkış kuralı = piyasada kalmanın disiplinli yolu, derin kayıp sınırı), "
-    "(b) ara verip canlı aday kalitesini izlemek, (c) ABD Form 4 izni.",
+    "YOL (27 Eki): yol 1 + 3 (K27 BIST, K30 ABD), yol 2 (K28), risk süzgeci (K29) yeni ölçütle İZ DEĞİL; ABD de BIST gibi (sorun "
+    "yalnız BIST manipülasyonu değil). İki aday (çöl + güçlü bilanço sürprizi, çölde içeriden alım) örneklem dışında tersine döndü. "
+    "Kalan seçenekler Cemal'in: (a) sade portföy ölçümü (aday listesi + çıkış kuralı, beklenti piyasa kadar + derin kayıp sınırı), "
+    "(b) ara verip canlı aday kalitesini izlemek.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
     "_yarim_bar_at ad çakışması (XU100); listedeki fon hisselerine süzgeç yok; boş hedef_vurdu; trail aynı bar; pkl biçimi; test_takip log yan etkisi.",
     "T10 kararı yeniden (Cemal): düzeltilmiş COL_YOL'da T10 getiriyi artırmıyor (BIST +144 vs +155, ABD 0 vs +6), yalnız ağır kaybı azaltıyor.",
     "DENETIM.py / STOP_TEST.py düzeltildi (veri sonunda açık işlem) ama OB önbellekleri Drive'da; Colab'da yeniden koşulmalı.",
-    "ABD 13F: SEC indirmesi e-posta içeren istek olduğu için izin sisteminde engellendi; Cemal açık izin/ayar verirse yapılır.",
+    "ABD SEC: Cemal 27 Eki'de e-posta iznini verdi; Form 4 (K30) yapıldı. 13F (fon pozisyonları) istenirse aynı yolla yapılabilir.",
     "Seviye 4 (sistem/çıkış/portföy: B15-T10, B5/B6/B8) tek cetvelle değil slot simülasyonuyla yeniden ölçülecek.",
     "ABD olay dosyası olmayan madde (A13 doji kutusu): BIST'te zaten tutmadığı için ABD taraması ertelendi (D13'ün ABD olayları "
     "denetimde bulundu ve puanlandı).",
