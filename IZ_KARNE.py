@@ -595,6 +595,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "İz değil. İyi sürpriz BIST'te ve ABD 2023'te artı ama ABD 2024-26'da eksi; kötü sürpriz yalnız BIST'te eksi; çöl + güçlü "
               "sürpriz 2023-26'da dört hücrede artıydı ama 2016-22 BIST'te tersine döndü",
      "durum": "TAMAMLANDI, AÇIK: sıradaki yol Cemal'in kararı"},
+    {"tarih": "2026-10-27", "istek": "Fon krizi döneminde BIST kötü olacak; Ağustos sonundan sonraki çölü dikkate alma, olağanüstü durum",
+     "yapilan": "Denetlendi: yeni ölçüt fiyatları 31.08.2026'da kesiyor; K27 / K28'de ölçülen en geç giriş 4-5 Haziran 2026, 31 Ağustos "
+                "sonrası ölçülen olay 0 (60 günü krize taşanlar da dışarıda). Kural CLAUDE.md test standardına yazıldı",
+     "sonuc": "Sonuçlar krizden etkilenmemiş; K28'in 2016-22 tersine dönüşü kriz dışı bir dönem", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (27 Eki): yol 1 + 3 (içeriden alım, K27) ve yol 2 (bilanço sürprizi, K28) yeni ölçütle İZ DEĞİL. Bilanço tepkisi BIST'te "
