@@ -6107,6 +6107,13 @@ def fi_k28_deneme(X: pd.DataFrame, V: Dict[str, pd.DataFrame], P: Dict[str, Any]
             Z.append({"olay": ad_, "pazar": pazar, "donem": ad, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
     return pd.DataFrame(Z)
 
+# K28 ÖRNEKLEM DIŞI (ÖNCEDEN YAZILDI 27 Eki, 2016-22 verisine hiç bakılmadan): en tutarlı aday 'güçlü_col' (tepki üst %10 + çöl: K23
+# süzgeci + mum <= 1,0; 2023/2024-26'da dört hücrede ortalama fark +%3..+%11, sıra 0,54-0,56, ama aralıklar sıfırı içeriyor) ve ana
+# 'col_ust', hiç kullanılmamış 2016-09 -> 2022-12 döneminde, aynı ölçütle (FI_OLCUT) iki hücrede (2016-19, 2020-22) x BIST/ABD sınanır.
+# Aday GÜÇLENİR: dört eski hücrede ortalama fark > 0 ve sıra > 0,50 (yön); ayrıca hücre tutma (dört şart) sayısı yazılır.
+FI_K28_DIS = {"bas_bist": "2016-07-01", "bas_abd": "2016-09-01", "bit": "2022-12-31",
+              "donem": (("2016-19", "2016-09-01", "2019-12-31"), ("2020-22", "2020-01-01", "2022-12-31"))}
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
