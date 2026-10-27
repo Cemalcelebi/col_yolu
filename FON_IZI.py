@@ -6620,8 +6620,10 @@ def fon_izi_k32(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], aday: 
                 R = fi_k32_benzet(V, gir, kural, bas, bit, mal, K, C=C)
                 Z.append({"pazar": pz, "donem": dn, "duzen": ad_, "giris_n": len(gir), **fi_k32_olc(R.get("deger"), R.get("islem"))})
             for ad_, kural in (("P1_rastgele_60gun", "tut"), ("P4_rastgele_cikis", "cikis")):
-                sat = [fi_k32_olc(**{k: v for k, v in fi_k32_benzet(V, [], kural, bas, bit, mal, K, np.random.default_rng(tt), C).items()
-                                    if k in ("deger", "islem")}) for tt in range(K["tohum_n"])]
+                sat = []
+                for tt in range(K["tohum_n"]):
+                    R = fi_k32_benzet(V, [], kural, bas, bit, mal, K, np.random.default_rng(tt), C)
+                    sat.append(fi_k32_olc(R.get("deger"), R.get("islem")))
                 S = pd.DataFrame(sat)
                 Z.append({"pazar": pz, "donem": dn, "duzen": ad_, **S.median().to_dict(),
                           "getiri_mdd_p75": float(S.getiri_mdd.quantile(0.75)), "toplam_p25": float(S.toplam.quantile(0.25)),
@@ -6640,6 +6642,50 @@ def fon_izi_k32(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], aday: 
             katki.append(bool(g.loc["P3_col_cikis", "getiri_mdd"] > g.loc["P4_rastgele_cikis", "getiri_mdd_p75"]))
     return {"ozet": Z, "karar": "KULLANILABİLİR DÜZEN" if all(karar) else "KULLANILABİLİR DEĞİL", "hucre": karar,
             "giris_katkisi": "VAR" if all(katki) else "YOK", "katki_hucre": katki}
+
+
+# K32 DEVAM (ÖNCEDEN YAZILDI 27 Eki; ilk turda P3 dört karar hücresinin yalnız BIST 2023'te tuttu, bu üçünün sonucu görülmeden).
+# Karar aynı: dört hücrede MDD >= 0,8 x P0 MDD ve getiri/|MDD| >= P0'ınki. Yuva, maliyet, dönem, çıkış FI_K32'deki gibi.
+#   D1 TEMİZ ÇÖL: yalnız K29 risk işaretsiz adaylar (k29_aday 'temiz'), P3 çıkışı.
+#   D2 LİKİT ÇÖL: sinyal günü 20 gün ortalama işlem değeri (kapanış x hacim) o gün pazarın üst üçte birinde olan adaylar, P3 çıkışı.
+#   D3 UZUN TUT: bütün adaylar, 250 işlem günü tut (çöl ardından gelen aylarca yükselişle değerlendirilir), çıkış kuralı yok.
+FI_K32_DENEME = {"likit_gun": 20, "likit_dilim": 2 / 3, "uzun": 250}
+
+
+def fi_k32_likit(V: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K32_DENEME) -> pd.DataFrame:
+    """Her gün, her hissenin 20 gün ortalama işlem değerinin o günkü pazar içi yüzdelik sırası."""
+    T = pd.DataFrame({s: (d.Close * d.Volume).rolling(K["likit_gun"], min_periods=K["likit_gun"]).mean() for s, d in V.items()}).sort_index()
+    return T.rank(axis=1, pct=True)
+
+
+def fon_izi_k32_deneme(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], aday: pd.DataFrame, A: Optional[FIAyar] = None,
+                       K: Dict[str, Any] = FI_K32, D: Dict[str, Any] = FI_K32_DENEME) -> Dict[str, Any]:
+    """K32 devam: D1..D3 ve P0, pazar x dönem. Çıktı k32_deneme.csv."""
+    A = A or FIAyar(); Z = []
+    aday = aday.assign(giris=pd.to_datetime(aday.giris), sinyal=pd.to_datetime(aday.sinyal))
+    for pz, V in (("BIST", Vb), ("ABD", Va)):
+        mal = K["maliyet"][pz]; C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index(); L = fi_k32_likit(V, D)
+        ad_p = aday[(aday.pazar == pz) & aday.sembol.isin(list(V))].sort_values(["giris", "sembol"]).copy()
+        ad_p["likit"] = [L.at[r.sinyal, r.sembol] if r.sinyal in L.index else np.nan for r in ad_p.itertuples()]
+        gruplar = {"D1_temiz_cikis": (ad_p[ad_p.temiz.astype(bool)], "cikis", K),
+                   "D2_likit_cikis": (ad_p[ad_p.likit >= D["likit_dilim"]], "cikis", K),
+                   "D3_uzun_250": (ad_p, "tut", {**K, "tut": D["uzun"]})}
+        for dn, bas, bit in K["donem"]:
+            Z.append({"pazar": pz, "donem": dn, "duzen": "P0_piyasa", **fi_k32_olc(fi_k32_piyasa(V, bas, bit, K))})
+            for ad_, (G, kural, KK) in gruplar.items():
+                gir = [(r.giris, r.sembol) for r in G[(G.giris >= bas) & (G.giris <= bit)].itertuples()]
+                R = fi_k32_benzet(V, gir, kural, bas, bit, mal, KK, C=C)
+                Z.append({"pazar": pz, "donem": dn, "duzen": ad_, "giris_n": len(gir), **fi_k32_olc(R.get("deger"), R.get("islem"))})
+    Z = pd.DataFrame(Z); Z.to_csv(os.path.join(A.cikti, "k32_deneme.csv"), index=False)
+    karar = {}
+    for ad_ in ("D1_temiz_cikis", "D2_likit_cikis", "D3_uzun_250"):
+        h = []
+        for pz in ("BIST", "ABD"):
+            for dn in ("2023", "2024-26"):
+                g = Z[(Z.pazar == pz) & (Z.donem == dn)].set_index("duzen")
+                h.append(bool(g.loc[ad_, "mdd"] >= 0.8 * g.loc["P0_piyasa", "mdd"] and g.loc[ad_, "getiri_mdd"] >= g.loc["P0_piyasa", "getiri_mdd"]))
+        karar[ad_] = ("KULLANILABİLİR DÜZEN" if all(h) else "KULLANILABİLİR DEĞİL", h)
+    return {"ozet": Z, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
