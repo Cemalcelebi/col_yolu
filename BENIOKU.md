@@ -17,3 +17,6 @@ Her parça sha256 ile doğrulanır; bozuk ya da eksik parçada açma durur.
 kap_iceriden/ (26 Ekim 2026, K27): KAP 'Pay Alım Satım Bildirimi' listesi 2022-07 -> 2026-10 (liste.csv.gz), ayrıştırılmış işlem
 satırları (islem.csv.gz; tablo + MKK PDF) ve ayrıştırılamayan bildirim numaraları (bos.txt). FI_KAPIC bu klasöre (liste.csv açılarak)
 verilirse fi_k27_indir yalnız yeni bildirimleri indirir.
+
+pead/ (27 Ekim 2026, K28): BIST KAP 'Finansal Rapor' listesi 2022-07 -> 2026-10 ve 2016-07 -> 2022-12, ABD Nasdaq bilanço takvimi
+2022-12 -> 2026-10 (sembol, analist sürprizi, saat). FI_PEAD bu klasöre (dosyalar açılarak) verilirse fon_izi_k28(indir=False) koşar.
