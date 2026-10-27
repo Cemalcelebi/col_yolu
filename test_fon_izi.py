@@ -582,7 +582,7 @@ def sina():
     if not ok42:
         hata.append(f"42) K33 özellik / seçim / dilim yanlış: {F42.r20.iloc[100]} {S42.to_dict('records')} {list(D42)}")
     # 43) K33-B AUC: hepsi büyük -> 1; aynı dağılım -> 0,5; tersi -> 0.
-    a43 = F.fi_k33b_auc(np.arange(5, 10.0), np.arange(0, 6.0)); b43 = F.fi_k33b_auc(np.ones(6), np.ones(7))
+    a43 = F.fi_k33b_auc(np.arange(5, 10.0), np.arange(0, 5.0)); b43 = F.fi_k33b_auc(np.ones(6), np.ones(7))
     c43 = F.fi_k33b_auc(np.arange(0, 5.0), np.arange(10, 16.0))
     if not (abs(a43 - 1) < 1e-12 and abs(b43 - 0.5) < 1e-12 and abs(c43) < 1e-12):
         hata.append(f"43) K33-B AUC yanlış: {a43} {b43} {c43}")
