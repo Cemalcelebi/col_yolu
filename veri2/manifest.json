@@ -1,0 +1,64 @@
+{
+ "surum": "FON_IZI v1.26 (2026-10-28, karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)",
+ "olusturma": "2026-10-28 06:46:29.075465",
+ "veri": {
+  "k34_yahoo.pkl": {
+   "kaynak_boy": 120982335,
+   "parca": 1
+  },
+  "k34_bildirim.pkl": {
+   "kaynak_boy": 12077235,
+   "parca": 1
+  },
+  "k31_fin.pkl": {
+   "kaynak_boy": 9121739,
+   "parca": 1
+  },
+  "k30_alim.pkl": {
+   "kaynak_boy": 716501,
+   "parca": 1
+  },
+  "k28_X_bist.pkl": {
+   "kaynak_boy": 638128,
+   "parca": 1
+  },
+  "k28_X_abd.pkl": {
+   "kaynak_boy": 1456225,
+   "parca": 1
+  },
+  "olcut_panel_AVR.pkl": {
+   "kaynak_boy": 30218314,
+   "parca": 1
+  }
+ },
+ "dosyalar": {
+  "k28_X_abd.pkl.xz.000": {
+   "boy": 240880,
+   "sha256": "9bc405cf1069454151e21ef974c7f1a8127873fa9580c8f60af47ae84e16f7a9"
+  },
+  "k28_X_bist.pkl.xz.000": {
+   "boy": 94208,
+   "sha256": "4ecde8134dc70428ed6fed656540fed9a7d94ebbacb643fc1e90953e231110fe"
+  },
+  "k30_alim.pkl.xz.000": {
+   "boy": 122324,
+   "sha256": "58ee6105360e96c237f125eca93ed6b86faa305078895841eb31648e89ef693b"
+  },
+  "k31_fin.pkl.xz.000": {
+   "boy": 2302516,
+   "sha256": "de8e66174a100c3e4e0f5d396a8e3a6267ec5dda4f1343d7345f10a14392ddd6"
+  },
+  "k34_bildirim.pkl.xz.000": {
+   "boy": 2121648,
+   "sha256": "dbbc871a6a971a6b3d266488180d1c1c79d764eebbb1f8a1e083479a730da3e9"
+  },
+  "k34_yahoo.pkl.xz.000": {
+   "boy": 33644440,
+   "sha256": "8899605e3c779fa29e25fabc2a4f80242d12ed15bfb752e7c83480ce54b58331"
+  },
+  "olcut_panel_AVR.pkl.xz.000": {
+   "boy": 11393720,
+   "sha256": "b507b188bc150721c5ceb23dbd9736784599c1e51e13b42ec964b08774863826"
+  }
+ }
+}

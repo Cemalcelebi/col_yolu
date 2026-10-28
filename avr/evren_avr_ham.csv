@@ -1,0 +1,693 @@
+kod,ad,sektor,ulke,kaynak
+ZURN.SW,Zurich Insurance Group,Insurance,Switzerland,STOXX600
+GSK.L,GSK plc,Health Care,United Kingdom,STOXX600
+RIO.L,Rio Tinto Group,Basic Resources,United Kingdom,STOXX600
+INGA.AS,ING Group,Banks,Netherlands,STOXX600
+UBSG.SW,UBS Group,Banks,Switzerland,STOXX600
+SAF.PA,Safran,Industrial Goods and Services,France,STOXX600
+DG.PA,Vinci,Construction and Materials,France,STOXX600
+PRU.L,Prudential plc,Insurance,United Kingdom,STOXX600
+BATS.L,British American Tobacco,"Food, Beverage and Tobacco",United Kingdom,STOXX600
+MBG.DE,Mercedes-Benz Group,Automobiles and Parts,Germany,STOXX600
+HLI.L,Haleon,Consumer Products and Services,United Kingdom,STOXX600
+FERR.MI,Ferrari,Automobiles and Parts,Italy,STOXX600
+RMS.PA,Hermès,Consumer Products and Services,France,STOXX600
+ISP.MI,Intesa Sanpaolo,Banks,Italy,STOXX600
+HMB.ST,H&M,Retail,Sweden,STOXX600
+PERP.PA,Pernod Ricard,"Food, Beverage and Tobacco",France,STOXX600
+MICP.PA,Michelin,Automobiles and Parts,France,STOXX600
+BKT.MC,Bankinter,Banks,Spain,STOXX600
+CABK.MC,CaixaBank,Banks,Spain,STOXX600
+ENG.MC,Enagás,Utilities,Spain,STOXX600
+NTGY.MC,Naturgy,Utilities,Spain,STOXX600
+FER.AS,Ferrovial,Construction and Materials,Netherlands,STOXX600
+RED.MC,Redeia,Utilities,Spain,STOXX600
+ITX.MC,Inditex,Retail,Spain,STOXX600
+REP.MC,Repsol,Energy,Spain,STOXX600
+SAB.MC,Banco Sabadell,Banks,Spain,STOXX600
+ATCO-A.ST,Atlas Copco,,Sweden,STOXX600
+ERIC-B.ST,Ericsson,,Sweden,STOXX600
+ALFA.ST,Alfa Laval,Industrial Goods and Services,Sweden,STOXX600
+SAND.ST,Sandvik AB,Industrial Goods and Services,Sweden,STOXX600
+FORTUM.HE,Fortum,Utilities,Finland,STOXX600
+GLEN.L,Glencore,Basic Resources,United Kingdom,STOXX600
+NG.L,National Grid,Utilities,United Kingdom,STOXX600
+LLOY.L,Lloyds Banking Group,Banks,United Kingdom,STOXX600
+CPG.L,Compass Group,Travel and Leisure,United Kingdom,STOXX600
+RKT.L,Reckitt,"Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+EXPN.L,Experian,Industrial Goods and Services,United Kingdom,STOXX600
+IMB.L,Imperial Brands,"Food, Beverage and Tobacco",United Kingdom,STOXX600
+RR.L,Rolls-Royce Holdings,Industrial Goods and Services,United Kingdom,STOXX600
+LSEG.L,London Stock Exchange Group,Financial Services,United Kingdom,STOXX600
+IAG.L,International Airlines Group,Travel and Leisure,United Kingdom,STOXX600
+III.L,3i,Financial Services,United Kingdom,STOXX600
+HLMA.L,Halma plc,Industrial Goods and Services,United Kingdom,STOXX600
+SMT.L,Scottish Mortgage Investment Trust,Financial Services,United Kingdom,STOXX600
+MNG.L,M&G,Financial Services,United Kingdom,STOXX600
+SMIN.L,Smiths Group,Industrial Goods and Services,United Kingdom,STOXX600
+CRDA.L,Croda International,Chemicals,United Kingdom,STOXX600
+SDLF.L,Standard Life plc,Insurance,United Kingdom,STOXX600
+UTG.L,Unite Group,Real Estate,United Kingdom,STOXX600
+SGRO.L,Segro,Real Estate,United Kingdom,STOXX600
+BTRW.L,Barratt Redrow,Consumer Products and Services,United Kingdom,STOXX600
+PSN.L,Persimmon plc,Media,United Kingdom,STOXX600
+NXT.L,Next plc,Retail,United Kingdom,STOXX600
+KGF.L,Kingfisher plc,Retail,United Kingdom,STOXX600
+HOLN.SW,Holcim,Construction and Materials,Switzerland,STOXX600
+SRENH.SW,Swiss Re,Insurance,Switzerland,STOXX600
+LONN.SW,Lonza Group,Health Care,Switzerland,STOXX600
+GIVN.SW,Givaudan,Chemicals,Switzerland,STOXX600
+SIKA.SW,Sika,Construction and Materials,Switzerland,STOXX600
+STMN.SW,Straumann,Health Care,Switzerland,STOXX600
+PGHN.SW,Partners Group,Financial Services,Switzerland,STOXX600
+SOON.SW,Sonova,Health Care,Switzerland,STOXX600
+LISN.SW,Lindt & Sprüngli,"Food, Beverage and Tobacco",Switzerland,STOXX600
+SCHP.SW,Schindler Group,Industrial Goods and Services,Switzerland,STOXX600
+UHR.SW,Swatch Group,Consumer Products and Services,Switzerland,STOXX600
+LOGN.SW,Logitech,Technology,Switzerland,STOXX600
+HELN.SW,Helvetia Insurance,Insurance,Switzerland,STOXX600
+BALN.SW,Baloise,Insurance,Switzerland,STOXX600
+GALE.SW,Galenica,Health Care,Switzerland,STOXX600
+EMSN.SW,Ems-Chemie,Chemicals,Switzerland,STOXX600
+ABBN.SW,ABB Ltd,Industrial Goods and Services,Switzerland,STOXX600
+ABN.AS,ABN AMRO,Banks,Netherlands,STOXX600
+AC.PA,Accor,Travel and Leisure,France,STOXX600
+ACS.MC,ACS Group,Construction and Materials,Spain,STOXX600
+ADEN.SW,Adecco,Industrial Goods and Services,Switzerland,STOXX600
+ADS.DE,Adidas,Consumer Products and Services,Germany,STOXX600
+ADM.L,Admiral Group,Insurance,United Kingdom,STOXX600
+ADYEN.AS,Adyen,Industrial Goods and Services,Netherlands,STOXX600
+AENA.MC,Aena,Travel and Leisure,Spain,STOXX600
+AGS.BR,Ageas,Insurance,Belgium,STOXX600
+AIRP.PA,Air Liquide,Chemicals,France,STOXX600
+AIR.PA,Airbus,Industrial Goods and Services,France,STOXX600
+AKERBP.OL,Aker BP,Energy,Norway,STOXX600
+ALV.DE,Allianz,Insurance,Germany,STOXX600
+ALO.PA,Alstom,Industrial Goods and Services,France,STOXX600
+AIXA.DE,AIXTRON,Technology,Germany,STOXX600
+ALC.SW,Alcon,Health Care,Switzerland,STOXX600
+AMBU-B.CO,Ambu,Health Care,Denmark,STOXX600
+AAL.L,Anglo American plc,Basic Resources,United Kingdom,STOXX600
+ABI.BR,Anheuser-Busch InBev,"Food, Beverage and Tobacco",Belgium,STOXX600
+ANTO.L,Antofagasta plc,Basic Resources,United Kingdom,STOXX600
+AKE.PA,Arkema,Chemicals,France,STOXX600
+SUNB.L,Sunbelt Rentals,Industrial Goods and Services,United Kingdom,STOXX600
+ASMI.AS,ASM International,Technology,Netherlands,STOXX600
+ASML.AS,ASML Holding,Technology,Netherlands,STOXX600
+ASSA-B.ST,Assa Abloy,Construction and Materials,Sweden,STOXX600
+ABF.L,Associated British Foods,"Food, Beverage and Tobacco",United Kingdom,STOXX600
+AZN.L,AstraZeneca,Health Care,United Kingdom,STOXX600
+AUTO.L,Auto Trader Group,Media,United Kingdom,STOXX600
+AV.L,Aviva,Insurance,United Kingdom,STOXX600
+CS.PA,AXA,Insurance,France,STOXX600
+AZE.BR,Azelis Group,Industrial Goods and Services,Belgium,STOXX600
+BME.L,B&M European Value Retail,Retail,United Kingdom,STOXX600
+BA.L,BAE Systems,Industrial Goods and Services,United Kingdom,STOXX600
+BALD-B.ST,Balder,Real Estate,Sweden,STOXX600
+BBY.L,Balfour Beatty,Construction and Materials,United Kingdom,STOXX600
+BARC.L,Barclays,Banks,United Kingdom,STOXX600
+BOL.ST,Boliden AB,Industrial Goods and Services,Sweden,STOXX600
+BBVA.MC,Banco Bilbao Vizcaya Argentaria,Banks,Spain,STOXX600
+SAN.MC,Banco Santander,Health Care,Spain,STOXX600
+BARN.SW,Barry Callebaut,"Food, Beverage and Tobacco",Switzerland,STOXX600
+BAS.DE,BASF,Chemicals,Germany,STOXX600
+BAYN.DE,Bayer,Health Care,Germany,STOXX600
+BEZ.L,Beazley,Insurance,United Kingdom,STOXX600
+BEI.DE,Beiersdorf,Consumer Products and Services,Germany,STOXX600
+BEB.SW,Belimo,Construction and Materials,Switzerland,STOXX600
+BKG.L,Berkeley Group Holdings,Consumer Products and Services,United Kingdom,STOXX600
+BMW.DE,BMW,Automobiles and Parts,Germany,STOXX600
+BNPP.PA,BNP Paribas,Banks,France,STOXX600
+BOL.PA,Bolloré,Industrial Goods and Services,France,STOXX600
+BP.L,BP,Energy,United Kingdom,STOXX600
+BNR.DE,Brenntag,Chemicals,Germany,STOXX600
+BT.A.L,BT Group,,United Kingdom,STOXX600
+BNZL.L,Bunzl,Industrial Goods and Services,United Kingdom,STOXX600
+BRBY.L,Burberry,Consumer Products and Services,United Kingdom,STOXX600
+BVI.PA,Bureau Veritas,Industrial Goods and Services,France,STOXX600
+AFX.DE,Carl Zeiss Meditec,Health Care,Germany,STOXX600
+CAPP.PA,Capgemini,Technology,France,STOXX600
+CARR.PA,Carrefour,Retail,France,STOXX600
+CAST.ST,Castellum,Real Estate,Sweden,STOXX600
+CNA.L,Centrica,Utilities,United Kingdom,STOXX600
+CCH.SW,Coca-Cola HBC,"Food, Beverage and Tobacco",Switzerland,STOXX600
+COLR.BR,Colruyt,"Personal Care, Drug and Grocery Stores",Belgium,STOXX600
+CBK.DE,Commerzbank,Banks,Germany,STOXX600
+CON.DE,Continental,Automobiles and Parts,Germany,STOXX600
+CTEC.L,ConvaTec,Health Care,United Kingdom,STOXX600
+1COV.DE,Covestro,Chemicals,Germany,STOXX600
+CAGR.PA,Crédit Agricole,Banks,France,STOXX600
+CPR.MI,Davide Campari-Milano,"Food, Beverage and Tobacco",Italy,STOXX600
+DANO.PA,Danone,"Food, Beverage and Tobacco",France,STOXX600
+DHER.DE,Delivery Hero,Retail,Germany,STOXX600
+DEMANT.CO,Demant,Health Care,Denmark,STOXX600
+DLN.L,Derwent London,Real Estate,United Kingdom,STOXX600
+DB1.DE,Deutsche Börse,Financial Services,Germany,STOXX600
+DTE.DE,Deutsche Telekom,Telecommunications,Germany,STOXX600
+DHL.DE,DHL Group,Industrial Goods and Services,Germany,STOXX600
+DGE.L,Diageo,"Food, Beverage and Tobacco",United Kingdom,STOXX600
+DPLM.L,Diploma,Industrial Goods and Services,United Kingdom,STOXX600
+DLG.L,Direct Line,Insurance,United Kingdom,STOXX600
+DOCM.SW,DocMorris,Health Care,Switzerland,STOXX600
+SMDS.L,DS Smith,Industrial Goods and Services,United Kingdom,STOXX600
+EZJ.L,EasyJet,Travel and Leisure,United Kingdom,STOXX600
+EDEN.PA,Edenred,Industrial Goods and Services,France,STOXX600
+EDP.LS,EDP - Energias de Portugal,Utilities,Portugal,STOXX600
+EDPR.LS,EDP Renováveis,Utilities,Portugal,STOXX600
+EFGI.PA,Eiffage,Construction and Materials,France,STOXX600
+ELUX-B.ST,Electrolux,Consumer Products and Services,Sweden,STOXX600
+ELISA.HE,Elisa,Telecommunications,Finland,STOXX600
+EDV.L,Endeavour Mining,Basic Resources,United Kingdom,STOXX600
+ENI.MI,Eni,Energy,Italy,STOXX600
+ENEL.MI,Enel,Utilities,Italy,STOXX600
+ENT.L,Entain,Travel and Leisure,United Kingdom,STOXX600
+EOAN.DE,E.ON,Utilities,Germany,STOXX600
+EPI-A.ST,Epiroc,Industrial Goods and Services,Sweden,STOXX600
+EBS.VI,Erste Group,Banks,Austria,STOXX600
+ESLX.PA,EssilorLuxottica,Health Care,France,STOXX600
+ENX.AS,Euronext,Financial Services,Netherlands,STOXX600
+EVK.DE,Evonik Industries,Chemicals,Germany,STOXX600
+EVT.DE,Evotec,Health Care,Germany,STOXX600
+EXO.AS,Exor,Financial Services,Netherlands,STOXX600
+FRVIA.PA,Forvia,Automobiles and Parts,France,STOXX600
+FNTN.DE,Freenet,Telecommunications,Germany,STOXX600
+FME.DE,Fresenius Medical Care,Health Care,Germany,STOXX600
+GALP.LS,Galp Energia,Energy,Portugal,STOXX600
+GAW.L,Games Workshop,Consumer Products and Services,United Kingdom,STOXX600
+G1A.DE,GEA Group,Industrial Goods and Services,Germany,STOXX600
+GEBN.SW,Geberit,Construction and Materials,Switzerland,STOXX600
+GFC.PA,Gecina,Real Estate,France,STOXX600
+GF.SW,Georg Fischer,Industrial Goods and Services,Switzerland,STOXX600
+GET.PA,Getlink,Industrial Goods and Services,France,STOXX600
+GLB.IR,Glanbia,"Food, Beverage and Tobacco",Ireland,STOXX600
+GN.CO,GN Store Nord,Health Care,Denmark,STOXX600
+GFT.IR,Grafton Group,Industrial Goods and Services,Ireland,STOXX600
+GRF.MC,Grifols,Health Care,Spain,STOXX600
+HNR.DE,Hannover Re,Insurance,Germany,STOXX600
+HAS.L,Hays,Industrial Goods and Services,United Kingdom,STOXX600
+HEI.DE,Heidelberg Materials,Construction and Materials,Germany,STOXX600
+HEN3.DE,Henkel,Consumer Products and Services,Germany,STOXX600
+HIK.L,Hikma Pharmaceuticals,Health Care,United Kingdom,STOXX600
+HSX.L,Hiscox,Insurance,Bermuda,STOXX600
+HWDN.L,Howden Joinery,Retail,United Kingdom,STOXX600
+HSBA.L,HSBC,Banks,United Kingdom,STOXX600
+BOSS.DE,Hugo Boss,Consumer Products and Services,Germany,STOXX600
+HUSQ-B.ST,Husqvarna,Consumer Products and Services,Sweden,STOXX600
+IBE.MC,Iberdrola,Utilities,Spain,STOXX600
+INCH.L,Inchcape,Retail,United Kingdom,STOXX600
+INDT.ST,Indutrade,Industrial Goods and Services,Sweden,STOXX600
+IFX.DE,Infineon Technologies,Technology,Germany,STOXX600
+INPST.PA,InPost,Industrial Goods and Services,Luxembourg,STOXX600
+IHG.L,InterContinental Hotels Group,Travel and Leisure,United Kingdom,STOXX600
+ICP.L,Intermediate Capital Group,Financial Services,United Kingdom,STOXX600
+ITRK.L,Intertek,Industrial Goods and Services,United Kingdom,STOXX600
+IPN.PA,Ipsen,Health Care,France,STOXX600
+ITV.L,ITV,Media,United Kingdom,STOXX600
+SBRY.L,Sainsbury's,"Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+JD.L,JD Sports,Retail,United Kingdom,STOXX600
+JMT.LS,Jerónimo Martins,Retail,Portugal,STOXX600
+BAER.SW,Julius Baer,Banks,Switzerland,STOXX600
+KBC.BR,KBC Group,Banks,Belgium,STOXX600
+KER.PA,Kering,Consumer Products and Services,France,STOXX600
+KNEBV.HE,Kone,Industrial Goods and Services,Finland,STOXX600
+KPN.AS,KPN,Telecommunications,Netherlands,STOXX600
+LAND.L,Land Securities,Real Estate,United Kingdom,STOXX600
+LXS.DE,Lanxess,Chemicals,Germany,STOXX600
+LEG.DE,LEG Immobilien,Real Estate,Germany,STOXX600
+LDO.MI,Leonardo,Industrial Goods and Services,Italy,STOXX600
+LSG.OL,Lerøy Seafood,"Food, Beverage and Tobacco",Norway,STOXX600
+LII.L,Liberty Global,Telecommunications,United Kingdom,STOXX600
+LIF.IR,LifeCo,Insurance,Ireland,STOXX600
+LIN.L,Linde plc,Chemicals,United Kingdom,STOXX600
+OR.PA,L'Oréal,"Personal Care, Drug and Grocery Stores",France,STOXX600
+LPP.WA,LPP,Consumer Products and Services,Poland,STOXX600
+LHA.DE,Lufthansa,Travel and Leisure,Germany,STOXX600
+LUMI.PA,Lumibird,Technology,France,STOXX600
+MC.PA,LVMH,Consumer Products and Services,France,STOXX600
+MAERSK-B.CO,Maersk,Industrial Goods and Services,Denmark,STOXX600
+MAN.DE,MAN SE,Industrial Goods and Services,Germany,STOXX600
+MB.MI,Mediobanca,Financial Services,Italy,STOXX600
+MELE.BR,Melexis,Technology,Belgium,STOXX600
+MEL.MC,Meliá Hotels,Travel and Leisure,Spain,STOXX600
+MRL.MC,Merlin Properties,Real Estate,Spain,STOXX600
+METSO.HE,Metso,Industrial Goods and Services,Finland,STOXX600
+TIGO.ST,Millicom,Telecommunications,Sweden,STOXX600
+MCG.L,Mobico Group,Travel and Leisure,United Kingdom,STOXX600
+MONC.MI,Moncler,Consumer Products and Services,Italy,STOXX600
+MNDI.L,Mondi,Industrial Goods and Services,United Kingdom,STOXX600
+MOR.DE,MorphoSys,Health Care,Germany,STOXX600
+MUV2.DE,Munich Re,Insurance,Germany,STOXX600
+MT.PA,ArcelorMittal,Basic Resources,Luxembourg,STOXX600
+MTX.DE,MTU Aero Engines,Industrial Goods and Services,Germany,STOXX600
+NAB.AT,National Bank of Greece,Banks,Greece,STOXX600
+NWG.L,NatWest Group,Banks,United Kingdom,STOXX600
+NEM.DE,Nemetschek,Technology,Germany,STOXX600
+NEOEN.PA,Neoen,Utilities,France,STOXX600
+NSN.HE,Neste,Energy,Finland,STOXX600
+NESN.SW,Nestlé,"Food, Beverage and Tobacco",Switzerland,STOXX600
+NEX.PA,Nexans,Industrial Goods and Services,France,STOXX600
+NEXI.MI,Nexi,Industrial Goods and Services,Italy,STOXX600
+NIBE-B.ST,Nibe Industrier,Construction and Materials,Sweden,STOXX600
+NN.AS,NN Group,Insurance,Netherlands,STOXX600
+NOKIA.HE,Nokia,Technology,Finland,STOXX600
+NDA-FI.HE,Nordea,Banks,Finland,STOXX600
+NHY.OL,Norsk Hydro,Basic Resources,Norway,STOXX600
+NOV N.SW,Novartis,Health Care,Switzerland,STOXX600
+NOVO-B.CO,Novo Nordisk,Health Care,Denmark,STOXX600
+OCDO.L,Ocado,Retail,United Kingdom,STOXX600
+OCI.AS,OCI,Chemicals,Netherlands,STOXX600
+OERL.SW,Oerlikon,Industrial Goods and Services,Switzerland,STOXX600
+OMV.VI,OMV,Energy,Austria,STOXX600
+ONT.BR,Ontex,"Personal Care, Drug and Grocery Stores",Belgium,STOXX600
+ORA.PA,Orange S.A.,Telecommunications,France,STOXX600
+ORK.OL,Orkla ASA,"Food, Beverage and Tobacco",Norway,STOXX600
+ORSTED.CO,Ørsted,Utilities,Denmark,STOXX600
+PANDORA.CO,Pandora,Consumer Products and Services,Denmark,STOXX600
+PBB.DE,Deutsche Pfandbriefbank,Banks,Germany,STOXX600
+P911.DE,Porsche,Automobiles and Parts,Germany,STOXX600
+PNL.AS,PostNL,Industrial Goods and Services,Netherlands,STOXX600
+PSN.PA,Publicis,Media,France,STOXX600
+PUM.DE,Puma,Consumer Products and Services,Germany,STOXX600
+QIA.AS,Qiagen,Health Care,Netherlands,STOXX600
+RBI.VI,Raiffeisen Bank International,Banks,Austria,STOXX600
+REC.MI,Recordati,Health Care,Italy,STOXX600
+RHM.DE,Rheinmetall,Industrial Goods and Services,Germany,STOXX600
+RIGN.SW,Transocean,Energy,Switzerland,STOXX600
+CFR.SW,Richemont,Consumer Products and Services,Switzerland,STOXX600
+ROG.SW,Roche Holding,Health Care,Switzerland,STOXX600
+ROL.L,Royal Mail,Industrial Goods and Services,United Kingdom,STOXX600
+RWE.DE,RWE,Utilities,Germany,STOXX600
+SGE.L,Sage Group,Technology,United Kingdom,STOXX600
+SGO.PA,Saint-Gobain,Construction and Materials,France,STOXX600
+SALM.OL,SalMar,"Food, Beverage and Tobacco",Norway,STOXX600
+SAMPO.HE,Sampo Group,Insurance,Finland,STOXX600
+SAN.PA,Sanofi,Health Care,France,STOXX600
+SANO.HE,Sanoma,Media,Finland,STOXX600
+SAP.DE,SAP,Technology,Germany,STOXX600
+SECU-B.ST,Securitas AB,Industrial Goods and Services,Sweden,STOXX600
+SU.PA,Schneider Electric,Industrial Goods and Services,France,STOXX600
+SCR.PA,SCOR SE,Insurance,France,STOXX600
+SGSN.SW,SGS S.A.,Industrial Goods and Services,Switzerland,STOXX600
+SHEL.L,Shell plc,Energy,United Kingdom,STOXX600
+SIE.DE,Siemens,Industrial Goods and Services,Germany,STOXX600
+SIG.SW,SIG Group,Industrial Goods and Services,Switzerland,STOXX600
+SEB.ST,Skandinaviska Enskilda Banken,Banks,Sweden,STOXX600
+SKA-B.ST,Skanska,Construction and Materials,Sweden,STOXX600
+SKF-B.ST,SKF,Industrial Goods and Services,Sweden,STOXX600
+SKY.L,Sky Group,Media,United Kingdom,STOXX600
+SN.L,Smith & Nephew,Health Care,United Kingdom,STOXX600
+SOLB.BR,Solvay,Chemicals,Belgium,STOXX600
+SSE.L,SSE plc,Utilities,United Kingdom,STOXX600
+SRB.OL,Storebrand,Insurance,Norway,STOXX600
+STER.HE,Stora Enso,Basic Resources,Finland,STOXX600
+STMPA.SW,STMicroelectronics,Technology,Switzerland,STOXX600
+SWED-A.ST,Swedbank,Banks,Sweden,STOXX600
+SWMA.ST,Swedish Match,"Food, Beverage and Tobacco",Sweden,STOXX600
+SCMN.SW,Swisscom,Telecommunications,Switzerland,STOXX600
+SHB-B.ST,Svenska Handelsbanken,Banks,Sweden,STOXX600
+SY1.DE,Symrise,Chemicals,Germany,STOXX600
+TATE.L,Tate & Lyle,"Food, Beverage and Tobacco",United Kingdom,STOXX600
+TJW.L,Taylor Wimpey,Consumer Products and Services,United Kingdom,STOXX600
+TELIA.ST,Telia Company,Telecommunications,Sweden,STOXX600
+TIT.MI,TIM,Telecommunications,Italy,STOXX600
+TEL2-B.ST,Tele2,Telecommunications,Sweden,STOXX600
+TEL.OL,Telenor,Telecommunications,Norway,STOXX600
+TEMN.SW,Temenos Group,Technology,Switzerland,STOXX600
+TEN.PA,Tenaris,Energy,Luxembourg,STOXX600
+TRN.MI,Terna,Utilities,Italy,STOXX600
+TSCO.L,Tesco,Retail,United Kingdom,STOXX600
+TEV.L,Teva Pharmaceutical Industries,Health Care,Israel,STOXX600
+TKA.DE,ThyssenKrupp,Industrial Goods and Services,Germany,STOXX600
+TOM.AS,TomTom,Industrial Goods and Services,Netherlands,STOXX600
+TTE.PA,TotalEnergies,Energy,France,STOXX600
+TRYG.CO,Tryg,Insurance,Denmark,STOXX600
+TUI.DE,TUI Group,Travel and Leisure,Germany,STOXX600
+UMI.BR,Umicore,Chemicals,Belgium,STOXX600
+UC.MI,UniCredit,Banks,Italy,STOXX600
+ULVR.L,Unilever,"Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+UPW.L,United Utilities,Utilities,United Kingdom,STOXX600
+UMG.AS,Universal Music Group,Media,Netherlands,STOXX600
+VALMT.HE,Valmet,Industrial Goods and Services,Finland,STOXX600
+VACN.SW,VAT Group,Industrial Goods and Services,Switzerland,STOXX600
+VESTAS.CO,Vestas,Energy,Denmark,STOXX600
+VIV.PA,Vivendi,Media,France,STOXX600
+VOD.L,Vodafone,Telecommunications,United Kingdom,STOXX600
+VOLV-B.ST,Volvo Group,Industrial Goods and Services,Sweden,STOXX600
+VNA.DE,Vonovia,Real Estate,Germany,STOXX600
+WTB.L,Whitbread,Travel and Leisure,United Kingdom,STOXX600
+WKL.AS,Wolters Kluwer,Media,Netherlands,STOXX600
+WPP.L,WPP,Media,United Kingdom,STOXX600
+PSON.L,Pearson,Media,United Kingdom,STOXX600
+PNN.L,Pennon Group,Utilities,United Kingdom,STOXX600
+PIRC.MI,Pirelli,Automobiles and Parts,Italy,STOXX600
+PLPH.SW,PolyPeptide,Health Care,Switzerland,STOXX600
+PAH3.DE,Porsche SE,Automobiles and Parts,Germany,STOXX600
+PST.MI,Poste Italiane,Insurance,Italy,STOXX600
+PROX.BR,Proximus,Telecommunications,Belgium,STOXX600
+PRY.MI,Prysmian,Industrial Goods and Services,Italy,STOXX600
+QLT.L,Quilter,Financial Services,United Kingdom,STOXX600
+FRA.DE,Rational,Industrial Goods and Services,Germany,STOXX600
+REL.L,RELX,Media,United Kingdom,STOXX600
+RCO.PA,Rémy Cointreau,"Food, Beverage and Tobacco",France,STOXX600
+RNO.PA,Renault,Automobiles and Parts,France,STOXX600
+RTO.L,Rentokil Initial,Industrial Goods and Services,United Kingdom,STOXX600
+RXL.PA,Rexel,Industrial Goods and Services,France,STOXX600
+RMV.L,Rightmove,Real Estate,United Kingdom,STOXX600
+S4.L,S4 Capital,Media,United Kingdom,STOXX600
+SDZ.SW,Sandoz,Health Care,Switzerland,STOXX600
+SRT3.DE,Sartorius,Health Care,Germany,STOXX600
+SCHA.OL,Schibsted,Media,Norway,STOXX600
+SDR.L,Schroders,Financial Services,United Kingdom,STOXX600
+G24.DE,Scout24,Technology,Germany,STOXX600
+SVT.L,Severn Trent,Utilities,United Kingdom,STOXX600
+LIGHT.AS,Signify,Construction and Materials,Netherlands,STOXX600
+SIX2.DE,Sixt,Consumer Products and Services,Germany,STOXX600
+SKG.IR,Smurfit Kappa,Industrial Goods and Services,Ireland,STOXX600
+SRG.MI,Snam,Energy,Italy,STOXX600
+GLE.PA,Société Générale,Banks,France,STOXX600
+SW.PA,Sodexo,Travel and Leisure,France,STOXX600
+SCT.L,Softcat,Technology,United Kingdom,STOXX600
+SOW.DE,Software,Technology,Germany,STOXX600
+SXS.L,Spectris,Industrial Goods and Services,United Kingdom,STOXX600
+SPX.L,Spirax-Sarco Engineering,Industrial Goods and Services,United Kingdom,STOXX600
+STJ.L,St. James's Place,Financial Services,United Kingdom,STOXX600
+STAN.L,Standard Chartered,Banks,United Kingdom,STOXX600
+STLAM.AS,Stellantis,Automobiles and Parts,Netherlands,STOXX600
+SWECO-B.ST,Sweco,Construction and Materials,Sweden,STOXX600
+SLHN.SW,Swiss Life,Insurance,Switzerland,STOXX600
+SPSN.SW,Swiss Prime Site,Real Estate,Switzerland,STOXX600
+TLX.DE,Talanx,Insurance,Germany,STOXX600
+TMV.DE,TeamViewer,Technology,Germany,STOXX600
+FTI.L,TechnipFMC,Energy,United Kingdom,STOXX600
+TEF.MC,Telefónica,Telecommunications,Spain,STOXX600
+TEP.PA,Teleperformance,Industrial Goods and Services,France,STOXX600
+TPG.L,Telecom Plus,Telecommunications,United Kingdom,STOXX600
+TGS.OL,TGS,Energy,Norway,STOXX600
+THL.PA,Thales,Industrial Goods and Services,France,STOXX600
+TOM.OL,Tomra,Industrial Goods and Services,Norway,STOXX600
+TPK.L,Travis Perkins,Retail,United Kingdom,STOXX600
+TREL-B.ST,Trelleborg,Industrial Goods and Services,Sweden,STOXX600
+8TRA.DE,Traton,Industrial Goods and Services,Germany,STOXX600
+UBI.PA,Ubisoft,Consumer Products and Services,France,STOXX600
+URW.PA,Unibail-Rodamco-Westfield,Real Estate,France,STOXX600
+UN01.DE,Uniper,Utilities,Germany,STOXX600
+UPM.HE,UPM-Kymmene,Basic Resources,Finland,STOXX600
+FR.PA,Valeo,Automobiles and Parts,France,STOXX600
+VK.PA,Vallourec,Basic Resources,France,STOXX600
+VAR1.DE,Varta,Industrial Goods and Services,Germany,STOXX600
+VIE.PA,Veolia,Utilities,France,STOXX600
+VER.VI,Verbund,Utilities,Austria,STOXX600
+VPLAY-B.ST,Viaplay,Media,Sweden,STOXX600
+VCT.PA,Vicat,Construction and Materials,France,STOXX600
+VIG.VI,Vienna Insurance Group,Insurance,Austria,STOXX600
+VITR.ST,Vitrolife,Health Care,Sweden,STOXX600
+VOE.VI,Voestalpine,Basic Resources,Austria,STOXX600
+VPK.AS,Vopak,Industrial Goods and Services,Netherlands,STOXX600
+WDP.BR,Warehouses De Pauw,Real Estate,Belgium,STOXX600
+WEIR.L,Weir Group,Industrial Goods and Services,United Kingdom,STOXX600
+WEND.PA,Wendel,Financial Services,France,STOXX600
+WIE.VI,Wienerberger,Construction and Materials,Austria,STOXX600
+WIHL.ST,Wihlborgs Fastigheter,Real Estate,Sweden,STOXX600
+WISE.L,Wise,Financial Services,United Kingdom,STOXX600
+WLN.PA,Worldline,Industrial Goods and Services,France,STOXX600
+YAR.OL,Yara International,Chemicals,Norway,STOXX600
+ZAL.DE,Zalando,Retail,Germany,STOXX600
+ANA.MC,Acciona,Construction and Materials,Spain,STOXX600
+ANE.MC,Acciona Energía,Utilities,Spain,STOXX600
+ACX.MC,Acerinox,Basic Resources,Spain,STOXX600
+ADH.OL,Adevinta,Consumer Products and Services,Norway,STOXX600
+AF.PA,Air France-KLM,Travel and Leisure,France,STOXX600
+AKZA.AS,AkzoNobel,Chemicals,Netherlands,STOXX600
+ALLFG.MC,Allfunds Group,Financial Services,Spain,STOXX600
+AML.L,Aston Martin,Automobiles and Parts,United Kingdom,STOXX600
+AMS.VI,ams OSRAM,Technology,Austria,STOXX600
+ARGX.AS,Argenx,Health Care,Netherlands,STOXX600
+ARND.DE,Aroundtown,Real Estate,Germany,STOXX600
+ATOS.PA,Atos,Technology,France,STOXX600
+BPOST.BR,Bpost,Industrial Goods and Services,Belgium,STOXX600
+BRNW.MI,Brunello Cucinelli,Consumer Products and Services,Italy,STOXX600
+BYG.L,Big Yellow Group,Real Estate,United Kingdom,STOXX600
+CASP.ST,Castellum,Real Estate,Sweden,STOXX600
+CDR.WA,CD Projekt,Consumer Products and Services,Poland,STOXX600
+CLN.SW,Clariant,Chemicals,Switzerland,STOXX600
+CTG.L,Computer Center,Technology,United Kingdom,STOXX600
+CTS.DE,CTS Eventim,Media,Germany,STOXX600
+DIA.MC,Dia,"Personal Care, Drug and Grocery Stores",Spain,STOXX600
+DIE.BR,DIETEREN Group,Automobiles and Parts,Belgium,STOXX600
+DSM.SW,DSM-Firmenich,Chemicals,Switzerland,STOXX600
+DTG.DE,Daimler Truck,Industrial Goods and Services,Germany,STOXX600
+EN.PA,Bouygues,Construction and Materials,France,STOXX600
+ENGI.PA,Engie,Utilities,France,STOXX600
+EVR.L,Evraz,Basic Resources,United Kingdom,STOXX600
+FALK.CO,Falck,Health Care,Denmark,STOXX600
+FLOW.AS,Flow Traders,Financial Services,Netherlands,STOXX600
+FLTR.IR,Flutter Entertainment,Travel and Leisure,Ireland,STOXX600
+FOR.MC,FCC,Construction and Materials,Spain,STOXX600
+GREG.L,Greggs,Retail,United Kingdom,STOXX600
+GWI.MI,Gruppo Campari,"Food, Beverage and Tobacco",Italy,STOXX600
+IDP.MI,Interpump Group,Industrial Goods and Services,Italy,STOXX600
+IGGI.L,IG Group,Financial Services,United Kingdom,STOXX600
+IMI.L,IMI,Industrial Goods and Services,United Kingdom,STOXX600
+INDV.L,Indivior,Health Care,United Kingdom,STOXX600
+INF.L,Informa,Media,United Kingdom,STOXX600
+INP.L,Investec,Financial Services,United Kingdom,STOXX600
+IPX.PA,Ipsos,Media,France,STOXX600
+JMAT.L,Johnson Matthey,Chemicals,United Kingdom,STOXX600
+JUST.AS,Just Eat Takeaway,Retail,Netherlands,STOXX600
+KNIN.SW,Kuehne + Nagel,Industrial Goods and Services,Switzerland,STOXX600
+LANV.PA,Lanvin Group,Consumer Products and Services,France,STOXX600
+LGEN.L,Legal & General,Insurance,United Kingdom,STOXX600
+LUN.ST,Lundin Energy,Energy,Sweden,STOXX600
+MKS.L,Marks & Spencer,Retail,United Kingdom,STOXX600
+MONY.L,Moneysupermarket.com,Media,United Kingdom,STOXX600
+MRW.L,Morrisons,Retail,United Kingdom,STOXX600
+NGG.L,National Grid,Utilities,United Kingdom,STOXX600
+3IN.L,3i Infrastructure,Financial Services,United Kingdom,FTSE250
+FOUR.L,4imprint,Media,United Kingdom,FTSE250
+AAS.L,Aberdeen Asia Focus,Investment Trusts,United Kingdom,FTSE250
+ASL.L,Aberforth Smaller Companies Trust,Investment Trusts,United Kingdom,FTSE250
+AEP.L,AEP Plantations,Food Producers,United Kingdom,FTSE250
+ALFA.L,Alfa Financial Software,Software and Computer Services,United Kingdom,FTSE250
+ATT.L,Allianz Technology Trust,Investment Trusts,United Kingdom,FTSE250
+AMRQ.L,Amaroq,Industrial Metals and Mining,United Kingdom,FTSE250
+AO.L,AO World,Retail,United Kingdom,FTSE250
+APN.L,Applied Nutrition,Food Producers,United Kingdom,FTSE250
+ASHM.L,Ashmore Group,Financial Services,United Kingdom,FTSE250
+AIE.L,Ashoka India Equity Investment Trust,Investment Trusts,United Kingdom,FTSE250
+ASC.L,ASOS,Retailers,United Kingdom,FTSE250
+ATYM.L,Atalaya Mining,Industrial Metals and Mining,United Kingdom,FTSE250
+ATG.L,Auction Technology Group,Software and Computer Services,United Kingdom,FTSE250
+AGT.L,AVI Global Trust,Investment Trusts,United Kingdom,FTSE250
+AVON.L,Avon Technologies,Industrial Goods and Services,United Kingdom,FTSE250
+BGFD.L,Baillie Gifford Japan Trust,Investment Trusts,United Kingdom,FTSE250
+USA.L,Baillie Gifford US Growth Trust,Investment Trusts,United Kingdom,FTSE250
+BCG.L,Baltic Classifieds,Consumer Digital Services,United Kingdom,FTSE250
+BNKR.L,Bankers Investment Trust,Investment Trusts,United Kingdom,FTSE250
+BAG.L,A.G. Barr,Beverages,United Kingdom,FTSE250
+AJB.L,AJ Bell,Financial Services,United Kingdom,FTSE250
+BWY.L,Bellway,Home Construction,United Kingdom,FTSE250
+BHMG.L,BH Macro,Hedge Funds,United Kingdom,FTSE250
+BPCR.L,Biopharma Credit,Investment Trusts,United Kingdom,FTSE250
+BRGE.L,BlackRock Greater Europe Investment Trust,Investment Trusts,United Kingdom,FTSE250
+BRSC.L,BlackRock Smaller Companies Trust,Investment Trusts,United Kingdom,FTSE250
+BRWM.L,BlackRock World Mining Trust,Investment Trusts,United Kingdom,FTSE250
+BMY.L,Bloomsbury Publishing,Media,United Kingdom,FTSE250
+BOY.L,Bodycote,Industrial Engineering,United Kingdom,FTSE250
+BREE.L,Breedon Group,Construction & Materials,United Kingdom,FTSE250
+BPT.L,Bridgepoint Group,Financial Services,United Kingdom,FTSE250
+BUT.L,Brunner Investment Trust,Investment Trusts,United Kingdom,FTSE250
+BYIT.L,Bytes Technology Group,Aerospace & Defence,United Kingdom,FTSE250
+CLDN.L,Caledonia Investments,Investment Trusts,United Kingdom,FTSE250
+CGT.L,Capital Gearing Trust,Investment Trusts,United Kingdom,FTSE250
+CWR.L,Ceres Power,Alternative Energy,United Kingdom,FTSE250
+CHG.L,Chemring Group,Aerospace & Defence,United Kingdom,FTSE250
+CSN.L,Chesnara,Life Insurance,United Kingdom,FTSE250
+CTY.L,City of London Investment Trust,Investment Trusts,United Kingdom,FTSE250
+CKN.L,Clarkson,Industrial Transportation,United Kingdom,FTSE250
+CBG.L,Close Brothers Group,Financial Services,United Kingdom,FTSE250
+CMCX.L,CMC Markets,Financial Services,United Kingdom,FTSE250
+COA.L,Coats Group,Consumer Staples,United Kingdom,FTSE250
+CORD.L,Cordiant Digital Infrastructure,Investment Trusts,United Kingdom,FTSE250
+COST.L,Costain Group,Engineering and Construction,United Kingdom,FTSE250
+CWK.L,Cranswick,Food Producers,United Kingdom,FTSE250
+CURY.L,Currys,Retailers,United Kingdom,FTSE250
+CVSG.L,CVS Group,Health Care,United Kingdom,FTSE250
+DSCV.L,discoverIE,Support Services,United Kingdom,FTSE250
+DOM.L,Domino's Pizza,Travel & Leisure,United Kingdom,FTSE250
+DRX.L,Drax Group,Electricity,United Kingdom,FTSE250
+DOCS.L,Dr. Martens,Retailers,United Kingdom,FTSE250
+DNLM.L,Dunelm Group,Retailers,United Kingdom,FTSE250
+EDIN.L,Edinburgh Investment Trust,Investment Trusts,United Kingdom,FTSE250
+EWI.L,Edinburgh Worldwide Investment Trust,Investment Trusts,United Kingdom,FTSE250
+ELM.L,Elementis,Chemicals,United Kingdom,FTSE250
+ENOG.L,Energean,Oil & Gas Producers,United Kingdom,FTSE250
+ENQ.L,EnQuest,Oil & Gas Producers,United Kingdom,FTSE250
+ESCT.L,European Smaller Companies Trust,Investment Trusts,United Kingdom,FTSE250
+EWG.L,Eurowag,Financial Services,United Kingdom,FTSE250
+FCSS.L,Fidelity China Special Situations,Investment Trusts,United Kingdom,FTSE250
+FEML.L,Fidelity Emerging Markets,Investment Trusts,United Kingdom,FTSE250
+FEV.L,Fidelity European Trust,Investment Trusts,United Kingdom,FTSE250
+FSV.L,Fidelity Special Values,Investment Trusts,United Kingdom,FTSE250
+FGT.L,Finsbury Growth & Income Trust,Equity Investments,United Kingdom,FTSE250
+FGP.L,FirstGroup,Travel & Leisure,United Kingdom,FTSE250
+FGEN.L,Foresight Environmental Infrastructure,Investment Trusts,United Kingdom,FTSE250
+FSG.L,Foresight Group,Investment Banking and Brokerage Services,United Kingdom,FTSE250
+FRAS.L,Frasers Group,Retailers,United Kingdom,FTSE250
+FCH.L,Funding Circle,Financial Services,United Kingdom,FTSE250
+GFRD.L,Galliford Try,Construction,United Kingdom,FTSE250
+GAMA.L,Gamma Communications,Telecommunications,United Kingdom,FTSE250
+GCP.L,GCP Infrastructure Investments,General Financial,United Kingdom,FTSE250
+GEN.L,Genuit Group,Construction & Materials,United Kingdom,FTSE250
+GNS.L,Genus,Pharmaceuticals & Biotechnology,United Kingdom,FTSE250
+DATA.L,GlobalData,Industrial Goods and Services,United Kingdom,FTSE250
+GSCT.L,Global Smaller Companies Trust,Investment Trusts,United Kingdom,FTSE250
+GDWN.L,Goodwin,General Industrials,United Kingdom,FTSE250
+GFTU.L,Grafton Group,Support Services,United Kingdom,FTSE250
+GRI.L,Grainger,Real Estate Investment & Services,United Kingdom,FTSE250
+GPE.L,Great Portland Estates,Real Estate Investment Trusts,United Kingdom,FTSE250
+UKW.L,Greencoat UK Wind,"Gas, Water & Multiutilities",United Kingdom,FTSE250
+GNC.L,Greencore,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+GRG.L,Greggs,Food & Drug Retailers,United Kingdom,FTSE250
+HFD.L,Halfords,Retailers,United Kingdom,FTSE250
+HMSO.L,Hammerson,Real Estate Investment Trusts,United Kingdom,FTSE250
+HANA.L,Hansa Investment Company,Investment Trusts,United Kingdom,FTSE250
+HBR.L,Harbour Energy,Oil & Gas Producers,United Kingdom,FTSE250
+HVPE.L,HarbourVest Global Private Equity,Equity Investments,United Kingdom,FTSE250
+HTWS.L,Helios Towers,Telecomms,United Kingdom,FTSE250
+HFEL.L,Henderson Far East Income,Investment Trusts,United Kingdom,FTSE250
+HSL.L,Henderson Smaller Companies Investment Trust,Investment Trusts,United Kingdom,FTSE250
+HRI.L,Herald Investment Trust,Investment Trusts,United Kingdom,FTSE250
+HGT.L,Hg Capital Trust,Investment Trusts,United Kingdom,FTSE250
+HICL.L,HICL Infrastructure Company,Investment Trusts,United Kingdom,FTSE250
+HILS.L,Hill & Smith,Industrial Engineering,United Kingdom,FTSE250
+HFG.L,Hilton Food Group,Food Producers,United Kingdom,FTSE250
+HOC.L,Hochschild Mining,Basic Resources,United Kingdom,FTSE250
+BOWL.L,Hollywood Bowl Group,Travel and leisure,United Kingdom,FTSE250
+HTG.L,Hunting,"Oil, Gas and Coal",United Kingdom,FTSE250
+ICGT.L,ICG Enterprise Trust,Investment Trusts,United Kingdom,FTSE250
+IHP.L,IntegraFin Holdings,Financial Services,United Kingdom,FTSE250
+INPP.L,International Public Partnerships,Financial Services,United Kingdom,FTSE250
+IWG.L,International Workplace Group,Support Services,United Kingdom,FTSE250
+IAD.L,Invesco Asia Dragon Trust,Investment Trusts,United Kingdom,FTSE250
+IPO.L,IP Group,Financial Services,United Kingdom,FTSE250
+JSG.L,Johnson Service Group,Industrial Support Services,United Kingdom,FTSE250
+JAM.L,JPMorgan American Investment Trust,Investment Trusts,United Kingdom,FTSE250
+JCH.L,JPMorgan Claverhouse Investment Trust,Investment Trusts,United Kingdom,FTSE250
+JEMI.L,JPMorgan Emerging Markets Dividend Income,Investment Trusts,United Kingdom,FTSE250
+JMGI.L,JPMorgan Emerging Markets Growth & Income,Investment Trusts,United Kingdom,FTSE250
+JEDT.L,JPMorgan European Discovery,Investment Trusts,United Kingdom,FTSE250
+JEGI.L,JPMorgan European Growth & Income,Investment Trusts,United Kingdom,FTSE250
+JGGI.L,JPMorgan Global Growth & Income,Investment Trusts,United Kingdom,FTSE250
+JFJ.L,JPMorgan Japanese Investment Trust,Investment Trusts,United Kingdom,FTSE250
+JUP.L,Jupiter Fund Management,Financial Services,United Kingdom,FTSE250
+KNOS.L,Kainos,Software & Computer Services,United Kingdom,FTSE250
+KLR.L,Keller Group,Construction & Materials,United Kingdom,FTSE250
+KIE.L,Kier Group,Construction & Materials,United Kingdom,FTSE250
+LRE.L,Lancashire Holdings,Nonlife Insurance,United Kingdom,FTSE250
+LWDB.L,Law Debenture,Investment Trusts,United Kingdom,FTSE250
+EMG.L,Man Group,Investment Trusts,United Kingdom,FTSE250
+MEGP.L,ME Group International,Leisure Goods,United Kingdom,FTSE250
+MRC.L,Mercantile Investment Trust,Collective Investments,United Kingdom,FTSE250
+MRCH.L,Merchants Trust,Investment Trusts,United Kingdom,FTSE250
+MNO.L,Meridian Mining,Industrial Metals and Mining,United Kingdom,FTSE250
+MTRO.L,Metro Bank,Banks,United Kingdom,FTSE250
+PAGE.L,Michael Page,Support Services,United Kingdom,FTSE250
+MAB.L,Mitchells & Butlers,Travel & Leisure,United Kingdom,FTSE250
+MTO.L,Mitie,Support Services,United Kingdom,FTSE250
+GROW.L,Molten Ventures,Financial Services,United Kingdom,FTSE250
+MNKS.L,Monks Investment Trust,Investment Trusts,United Kingdom,FTSE250
+MOON.L,Moonpig,Retailers,United Kingdom,FTSE250
+MGAM.L,Morgan Advanced Materials,Electronic & Electrical Equipment,United Kingdom,FTSE250
+MGNS.L,Morgan Sindall Group,Construction & Materials,United Kingdom,FTSE250
+MUT.L,Murray Income Trust,Investment Trusts,United Kingdom,FTSE250
+MYI.L,Murray International Trust,Investment Trusts,United Kingdom,FTSE250
+NCC.L,NCC Group,Software and Computer Services,United Kingdom,FTSE250
+NBPE.L,Neuberger Private Equity Partners,Collective Investments,United Kingdom,FTSE250
+N91.L,Ninety One,Financial Services,United Kingdom,FTSE250
+NAIT.L,North American Income Trust,Investment Trusts,United Kingdom,FTSE250
+NAS.L,North Atlantic Smaller Companies Investment Trust,Investment Trusts,United Kingdom,FTSE250
+OCI.L,Oakley Capital Investments,Investment Trusts,United Kingdom,FTSE250
+OSB.L,OSB Group,Banks,United Kingdom,FTSE250
+OXB.L,Oxford Biomedica,Pharmaceuticals and Biotechnology,United Kingdom,FTSE250
+OXIG.L,Oxford Instruments,Electronic & Electrical Equipment,United Kingdom,FTSE250
+ONT.L,Oxford Nanopore Technologies,Health Care,United Kingdom,FTSE250
+PHI.L,Pacific Horizon Investment Trust,Investment Trusts,United Kingdom,FTSE250
+PAF.L,Pan African Resources,Precious Metals and Mining,United Kingdom,FTSE250
+PINT.L,Pantheon Infrastructure,Investment Trusts,United Kingdom,FTSE250
+PIN.L,Pantheon International,Equity Investments,United Kingdom,FTSE250
+PAG.L,Paragon Banking Group,Financial Services,United Kingdom,FTSE250
+PEY.L,Partners Group Private Equity,Investment Trusts,United Kingdom,FTSE250
+PPET.L,Patria Private Equity Trust,Financial Services,United Kingdom,FTSE250
+PNL.L,Personal Assets Trust,Investment Trusts,United Kingdom,FTSE250
+PETS.L,Pets at Home,Retailers,United Kingdom,FTSE250
+PTEC.L,Playtech,Software & Computer Services,United Kingdom,FTSE250
+PLUS.L,Plus500,Financial Services,United Kingdom,FTSE250
+PCGH.L,Polar Capital Global Healthcare Trust,Investment Trusts,United Kingdom,FTSE250
+POLN.L,Pollen Street Group,Financial Services,United Kingdom,FTSE250
+PPH.L,PPHE Hotel Group,Travel and Leisure,United Kingdom,FTSE250
+PFD.L,Premier Foods,Food & Drug Retailers,United Kingdom,FTSE250
+PHP.L,Primary Health Properties,Real Estate Investment Trusts,United Kingdom,FTSE250
+PRN.L,Princes Group,Food and drink,United Kingdom,FTSE250
+QQ.L,Qinetiq,Aerospace & Defence,United Kingdom,FTSE250
+RNK.L,Rank Group,Travel and Leisure,United Kingdom,FTSE250
+RPI.L,Raspberry Pi Holdings,Technology,United Kingdom,FTSE250
+RAT.L,Rathbones,Financial Services,United Kingdom,FTSE250
+RSW.L,Renishaw,Electronic & Electrical Equipment,United Kingdom,FTSE250
+RHIM.L,RHI Magnesita,Support Services,United Kingdom,FTSE250
+RCP.L,RIT Capital Partners,Investment Trusts,United Kingdom,FTSE250
+ROSE.L,Rosebank Industries,Industrial Goods and Services,United Kingdom,FTSE250
+ROR.L,Rotork,Industrial Engineering,United Kingdom,FTSE250
+RS1.L,RS Group,Industrials,United Kingdom,FTSE250
+RTW.L,RTW Biotech Opportunities,Investment Trusts,United Kingdom,FTSE250
+RICA.L,Ruffer Investment Company,Investment Trusts,United Kingdom,FTSE250
+SAFE.L,Safestore,Real Estate Investment Trusts,United Kingdom,FTSE250
+SAGA.L,Saga,Travel and Leisure,United Kingdom,FTSE250
+SVS.L,Savills,Real Estate Investment & Services,United Kingdom,FTSE250
+MNTN.L,Schiehallion Fund,Investment Trusts,United Kingdom,FTSE250
+ATR.L,Schroder Asian Total Return Investment Company,Investment Trusts,United Kingdom,FTSE250
+SDP.L,Schroder AsiaPacific Fund,Investment Trusts,United Kingdom,FTSE250
+SOI.L,Schroder Oriental Income Fund,Financial Services,United Kingdom,FTSE250
+SAIN.L,Scottish American Investment Company,Investment Trusts,United Kingdom,FTSE250
+SEIT.L,SDCL Efficiency Income Trust,Energy,United Kingdom,FTSE250
+SEQI.L,Sequoia Economic Infrastructure Income Fund,Financial Services,United Kingdom,FTSE250
+SSIT.L,Seraphim Space Investment Trust,Investment Trusts,United Kingdom,FTSE250
+SRP.L,Serco,Support Services,United Kingdom,FTSE250
+SHC.L,Shaftesbury Capital,Real Estate Investment Trusts,United Kingdom,FTSE250
+SHAW.L,Shawbrook Bank,Banking,United Kingdom,FTSE250
+SRE.L,Sirius Real Estate,Real Estate,United Kingdom,FTSE250
+SPI.L,Spire Healthcare,Health Care Equipment & Services,United Kingdom,FTSE250
+SSPG.L,SSP Group,Retailers,United Kingdom,FTSE250
+SUPR.L,Supermarket Income REIT,Real Estate Investment Trusts,United Kingdom,FTSE250
+SYNC.L,Syncona,Pharmaceuticals & Biotechnology,United Kingdom,FTSE250
+THRL.L,Target Healthcare REIT,Real Estate Investment Trusts,United Kingdom,FTSE250
+TW.L,Taylor Wimpey,Household goods & home construction,United Kingdom,FTSE250
+TBCG.L,TBC Bank,Banks,United Kingdom,FTSE250
+TEP.L,Telecom Plus,Telecomms,United Kingdom,FTSE250
+TMPL.L,Temple Bar Investment Trust,Collective Investments,United Kingdom,FTSE250
+TEM.L,Templeton Emerging Markets Investment Trust,Investment Trusts,United Kingdom,FTSE250
+TRIG.L,The Renewables Infrastructure Group,Investment Trusts,United Kingdom,FTSE250
+THG.L,THG,Personal Products,United Kingdom,FTSE250
+TCAP.L,TP ICAP,Support Services,United Kingdom,FTSE250
+TRN.L,Trainline,Industrial Transportation,United Kingdom,FTSE250
+TRY.L,TR Property Investment Trust,Investment Trusts,United Kingdom,FTSE250
+TRST.L,Trustpilot,Technology,United Kingdom,FTSE250
+TFIF.L,Twentyfour Income Fund,Investment Trusts,United Kingdom,FTSE250
+UEM.L,Utilico Emerging Markets,Investment Trusts,United Kingdom,FTSE250
+VSVS.L,Vesuvius,General Industrials,United Kingdom,FTSE250
+VCT.L,Victrex,Chemicals,United Kingdom,FTSE250
+VEIL.L,Vietnam Enterprise Investments,General Financial,United Kingdom,FTSE250
+VOF.L,VinaCapital Vietnam Opportunity Fund,General Financial,United Kingdom,FTSE250
+VTY.L,Vistry Group,Home Construction,United Kingdom,FTSE250
+VLX.L,Volex,Industrial Goods and Services,United Kingdom,FTSE250
+FAN.L,Volution Group,Construction & Materials,United Kingdom,FTSE250
+WOSG.L,Watches of Switzerland,Personal Goods,United Kingdom,FTSE250
+JDW.L,Wetherspoons,Travel & Leisure,United Kingdom,FTSE250
+SMWH.L,WHSmith,Retailers,United Kingdom,FTSE250
+WIX.L,Wickes,Retailers,United Kingdom,FTSE250
+WIZZ.L,Wizz Air,Travel & Leisure,United Kingdom,FTSE250
+WKP.L,Workspace Group,Real Estate Investment Trusts,United Kingdom,FTSE250
+WWH.L,Worldwide Healthcare Trust,Investment Trusts,United Kingdom,FTSE250
+XPP.L,XP Power,Industrial Goods and Services,United Kingdom,FTSE250
+XPS.L,XPS Pensions,Financial Services,United Kingdom,FTSE250
+YNGA.L,Young's,Travel and Leisure,United Kingdom,FTSE250
+ZIG.L,Zigup,Support Services,United Kingdom,FTSE250

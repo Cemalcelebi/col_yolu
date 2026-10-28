@@ -20,3 +20,15 @@ verilirse fi_k27_indir yalnız yeni bildirimleri indirir.
 
 pead/ (27 Ekim 2026, K28): BIST KAP 'Finansal Rapor' listesi 2022-07 -> 2026-10 ve 2016-07 -> 2022-12, ABD Nasdaq bilanço takvimi
 2022-12 -> 2026-10 (sembol, analist sürprizi, saat). FI_PEAD bu klasöre (dosyalar açılarak) verilirse fon_izi_k28(indir=False) koşar.
+
+## Genişletme (28 Ekim 2026, Cemal: 'verileri repoya kaydet')
+- veri/: V_AVR.pkl eklendi (Avrupa, STOXX Europe 600 + FTSE 250, 581 hisse, Yahoo, 2015-01 → 2026-10; Londra peni / sterlin 100x
+  geçişleri düzeltildi; `Kur` sütunu = yerel para → EUR, yalnız likidite için). Karar pazarları artık ABD + AVR (CLAUDE.md, 28 Ekim).
+- veri2/ (xz paket, `python FON_IZI.py vpac /tmp/iv/veri2 /tmp/veri2`): k34_yahoo.pkl (nakdi biten 2.246 ABD şirketi, Yahoo),
+  k34_bildirim.pkl (SEC finansal özeti, batanlar dahil), k31_fin.pkl, k30_alim.pkl (Form 4 açık piyasa alımları, özet), k28_X_bist / abd
+  (bilanço tepkileri), olcut_panel_AVR.pkl.
+- secfs/: SEC finansal tablo veri seti özütleri 2021q1-2026q3 (fs_*.csv.gz) + company_tickers.json → FI_SECFS bu klasöre verilir.
+- k34/: k34_eski_kod.csv (batan şirketlerin SEC kapak sayfasından eski kodu), k34_orneklem.csv (Tiingo örneklemi, 450).
+- k35/: k35_sic.csv (SIC kodları). k36/: surucu.pkl (emtia, kur, faiz, CDS serileri). avr/: evren_avr_ham.csv (Avrupa evren listesi).
+- Tiingo fiyatları (batan şirketler, 450 csv) lisans gereği repoya KONMAZ; anahtar .env TIINGO_TOKEN, `fi_k34_tiingo_indir` yeniden indirir.
+- SEC Form 4 ham zipleri (sec/) repoya konmaz (27 Ekim kuralı), `fi_k30_indir` ile iner.
