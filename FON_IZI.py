@@ -8729,8 +8729,10 @@ def fon_izi_k43(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
                 row["port_piyasa_mdd"] = taban[dn]["piyasa"].get("mdd"); Z.append(row)
             filog.info("K43 %s %s: %d olay", pz, ad, len(E))
     Z = pd.DataFrame(Z)
+    Z.to_csv(os.path.join(A.cikti, "k43_ozet.csv"), index=False)          # karar adımından önce kaydet (çökme olursa ölçüm kaybolmasın)
     def tut(r) -> bool:
-        return bool(pd.notna(r.get("ham_alt95")) and r.ham_fark > 0 and r.ham_alt95 > 0 and pd.notna(r.get("port_toplam")) and r.port_toplam > r.port_piyasa)
+        return bool(pd.notna(getattr(r, "ham_alt95", np.nan)) and r.ham_fark > 0 and r.ham_alt95 > 0 and pd.notna(getattr(r, "port_toplam", np.nan))
+                    and r.port_toplam > r.port_piyasa)
     karar = []
     for ad in [x for x in Z.sinyal.unique() if not x.startswith("P")]:
         g = Z[Z.sinyal == ad]; h = {(r.pazar, r.donem): tut(r) for r in g.itertuples()}
