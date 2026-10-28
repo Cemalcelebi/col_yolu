@@ -8869,6 +8869,9 @@ def fon_izi_k44(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
 #   tabanı (yıl ağırlıklı). FARK = P(kazanan | eşleşme) - P(kazanan | rastgele); olay bootstrap %95.
 # KARAR (önceden): 'KISA İZ' = ABD ve AVR'de (2016-26 birleşik, n >= 30) E = 8 için fark >= +10 puan ve alt uç > 0; koşullu kural için aynı.
 #   BIST bilgi. +%8 hedefi tek başına 'iz' sayılmaz: rastgele hissenin de +%8'e -%8'den önce ulaşma oranı vardır; iz = o orana fark.
+# DÜZELTME (28 Eki, ilk koşu görüldükten sonra): düz rastgele tabanla ABD / AVR +20 puan çıktı AMA eşleşen bölgelerde -%8'e ulaşma da +8
+#   puan yüksekti (bölgeler çok oynak; 20 günde +-%8'e ulaşan payı %98'e karşı rastgelede %70). Taban OYNAKLIK EŞLİ rastgeleye çevrildi
+#   (fi_k45_rastgele_oynak); karar bu tabanla verilir. İlk koşu kaydı: k45_ozet_duz_taban.csv.
 FI_K45 = {"esik": (0.05, 0.08, 0.12), "ana_esik": 0.08, "bekle": 20, "kutu_bar": 10, "tohum_n": 10, "n_min": 30, "fark_esik": 0.10}
 
 
@@ -8929,7 +8932,29 @@ def fi_k45_rastgele(V: Dict[str, pd.DataFrame], E: pd.DataFrame, tohum: int) -> 
     return pd.DataFrame(sat)
 
 
-def fon_izi_k45(Vs: Dict[str, Dict[str, pd.DataFrame]], ES: pd.DataFrame, A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K45) -> Dict[str, Any]:
+def fi_k45_rastgele_oynak(V: Dict[str, pd.DataFrame], E: pd.DataFrame, tohum: int, oyn_gun: int = 20) -> pd.DataFrame:
+    """OYNAKLIK EŞLİ rastgele taban (28 Eki, ilk sonuç görüldükten sonra eklendi: eşleşen bölgeler çok oynak; oynak hisse +%8'e DE -%8'e DE
+    daha çabuk ulaşır, düz rastgele tabanla kıyas iz lehine şişer). Her eşleşme için aynı yıl, aynı 20 günlük oynaklık ondalığında
+    (giriş öncesi günlük getiri std; pazar kesiti) rastgele hisse-gün."""
+    rng = np.random.default_rng(tohum)
+    C = pd.DataFrame({s_: d.Close for s_, d in V.items()}).sort_index(); r = C.pct_change(fill_method=None)
+    vol = r.rolling(oyn_gun, min_periods=15).std().shift(1); dec = vol.rank(axis=1, pct=True)
+    sat = []
+    for e in E.itertuples():
+        if e.giris not in dec.index or e.sembol not in dec.columns or pd.isna(dec.at[e.giris, e.sembol]):
+            continue
+        q = dec.at[e.giris, e.sembol]; y = e.giris.year; gunler = dec.index[dec.index.year == y]
+        for _ in range(200):
+            g = gunler[rng.integers(0, len(gunler))]; row = dec.loc[g]; aday = row[(row >= q - 0.05) & (row <= q + 0.05)].index
+            if len(aday):
+                s_ = aday[rng.integers(len(aday))]
+                if g in V[s_].index:
+                    sat.append({"sembol": s_, "giris": g}); break
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k45(Vs: Dict[str, Dict[str, pd.DataFrame]], ES: pd.DataFrame, A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K45,
+                oynak_esli: bool = True) -> Dict[str, Any]:
     """K45 sürücü: ES = K44 eşleşmeleri (pazar, pencere, sembol, giris). Çıktı k45_ozet.csv."""
     A = A or FIAyar(); Z = []; ES = ES.assign(giris=pd.to_datetime(ES.giris))
     def oran(X: pd.DataFrame, kol: str, kazanan: str, kaybeden: str) -> Tuple[float, float, int]:
@@ -8939,7 +8964,8 @@ def fon_izi_k45(Vs: Dict[str, Dict[str, pd.DataFrame]], ES: pd.DataFrame, A: Opt
             E = ES[(ES.pazar == pz) & (ES.pencere == L)][["sembol", "giris"]]
             if not len(E):
                 continue
-            X = fi_k45_olc(V, E, K); R = [fi_k45_olc(V, fi_k45_rastgele(V, E, t), K) for t in range(K["tohum_n"])]
+            X = fi_k45_olc(V, E, K)
+            R = [fi_k45_olc(V, (fi_k45_rastgele_oynak if oynak_esli else fi_k45_rastgele)(V, E, t), K) for t in range(K["tohum_n"])]
             row = {"pencere": L, "pazar": pz, "n": len(X)}
             for e in K["esik"]:
                 kol = f"ilk_{int(e*100)}"; a, b, _ = oran(X, kol, "arti", "eksi"); ra = np.mean([oran(r_, kol, "arti", "eksi")[0] for r_ in R]); rb = np.mean([oran(r_, kol, "arti", "eksi")[1] for r_ in R])
