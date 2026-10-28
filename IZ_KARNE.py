@@ -489,6 +489,26 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "eşlerinden KÖTÜ (sıra 0,48), ortalamayı birkaç sıçrayan çekiyor. Karar: İZ DEĞİL (2024-26 sıra şartı tutmadı). K33-B'nin "
                "ABD-ADAY'ı batanlar eklenince düştü. Not: kırpılmamış ortalamada veri hatası (ters bölünme) +%4.800'e çıkıyor; önceden yazılı "
                "+%500 kırpması bunu sınırladı. Borsadan çıkışta son kapanış alındı (iflasta gerçek kayıp daha büyük olabilir)."),
+    _ik_k("Ç108", "2026-10-28", "RÜZGÂR BATANLARI AYIRIR MI: nakdi biten ABD şirketlerinde sektör rüzgârı (üretim D9b, SEC SIC sektörü) "
+          "varken 2 yılda batma oranı ve getiri (K35)", "FON_IZI.py (k35)",
+          "Cemal: 'nakdi yetmeyen şirketlerin arkasında rüzgâr olanlar da batıyor mu; rüzgâra göre alım yapacağım'",
+          "Yeni deneme (kapalı 'sektör ısısı'na dokunur, Cemal istedi; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k35_batma.csv",
+          notu="Batma (2 yılda SEC bildirimi kesildi; birleşme dahil), rüzgârlı / rüzgârsız: 2021-22 kohortu %12,7 / %21,6 (oran 0,59, "
+               "aralık 0,45-0,74); 2023-24 kohortu %21,2 / %21,1 (oran 1,0). İki kohortta tutmadı -> AYIRMIYOR. Sonradan bakılan (karar "
+               "değil): 2021-22 farkın çoğu SPAC'lerden (SIC 6770 boş çek şirketleri, %68 'batma', sektörleri hiç rüzgârlı olmuyor); SPAC "
+               "hariç oran 0,83 (0,64-1,07). En küçük nakit dilimde rüzgârlılar biraz az batıyor (%14 / %20, %15 / %23) ama aralık 1'i "
+               "içeriyor. Getiri: rüzgârlı nakdi biten şirket eşlerine 2023 -%10 (aralık eksi), 2024-26 +%1,5; rüzgârlı + küçük 2023 -%8, "
+               "2024-26 +%10 (sıra 0,49). İZ DEĞİL. Sektör başına batma (2021-22): petrol saha ekipmanı %7,5, elektrik %10, tıbbi cihaz %13, "
+               "yarı iletken %13, ilaç %16, yazılım %17, tıbbi laboratuvar %21, SPAC %68."),
+    _ik_k("Ç109", "2026-10-28", "PATLAYANLARIN ARKASINDA RÜZGÂR: 60 günde eşlerinin +%40 üstüne çıkan nakdi biten ABD hisselerinde girişte "
+          "ve zirve gününde sektör rüzgârı (K35-C)", "FON_IZI.py (k35c)",
+          "Cemal: 'patlayanların arkasında rüzgâr var mıydı, patlama zamanında rüzgâr var mıydı'",
+          "Yeni deneme (karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k35c_patlama.csv",
+          notu="Patlayan 296 / 281 / 646 (2021-22 / 2023 / 2024-26). Zirve gününde rüzgârlı payı patlayan / öteki: %27 / %23 (1,19), "
+               "%35 / %17 (2,11), %64 / %50 (1,28): üç dönemde de patlayanlar daha sık rüzgârlı ama >= 1,5 kat yalnız 2023 -> AYIRMIYOR. "
+               "Girişte: %22 / %23 (0,97), %6 / %11 (0,54, tersi), %56 / %47 (1,20): girişteki rüzgâr patlamayı önceden haber vermiyor. "
+               "Rüzgâr patlamaya EŞLİK ediyor (sektör birlikte yükseliyor) ama alım anında görünmüyor; 60 günlük sepet +%10'u geçtiğinde "
+               "hareket çoğu zaman başlamış oluyor."),
 ]
 
 
@@ -720,6 +740,14 @@ IK_GOREV: List[Dict[str, str]] = [
                 "yerden sürdü); ağırlıklı eş farkı; anahtar .env'de, repoda yok; IZ_KARNE Ç107; test 44",
      "sonuc": "İz değil: küçük nakdi biten şirket, yalnız hayatta kalanlarla +%9-11 iyi görünüyordu; batanlar eklenince +%6-8'e iniyor ve "
               "2024-26'da tipik küçük şirket eşlerinden kötü (sıra 0,48). Ortalamayı birkaç piyango hissesi çekiyor",
+     "durum": "TAMAMLANDI (Cemal: rüzgâr, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Nakdi yetmeyen / batan şirketlerin arkasında rüzgâr olanlar da batıyor mu; rüzgârı olan daha iyi mi; "
+                                     "patlayanların arkasında ve patlama zamanında rüzgâr var mıydı",
+     "yapilan": "K35: 4.556 şirketin SIC sektörü SEC'ten (batanlar dahil); üretim D9b rüzgârı (sepet hisse hariç); 2 yılda batma oranı "
+                "(Tiingo örneğine girmeyen batanlar dahil, fiyat gerekmez) ve getiri. K35-C: patlayanlarda girişte ve zirve gününde rüzgâr. "
+                "Kurallar önceden; IZ_KARNE Ç108-Ç109; test 45-46",
+     "sonuc": "Rüzgâr batmayı tutarlı azaltmıyor (2021-22 farkı çoğunlukla SPAC'ler; 2023-24 yok); rüzgârlı nakdi biten şirket daha iyi "
+              "getiri vermiyor. Patlayanlar zirvede daha sık rüzgârlı (eşlik) ama girişte rüzgâr patlamayı önceden göstermiyor",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
@@ -732,7 +760,7 @@ IK_ACIK: List[str] = [
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
