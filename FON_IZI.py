@@ -9139,7 +9139,9 @@ def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
     Hd = pd.DataFrame([{"pazar": k[0], "donem": k[1], **v} for k, v in H.items()])
     Oz.to_csv(os.path.join(A.cikti, "k46_ozet.csv"), index=False); Hd.to_csv(os.path.join(A.cikti, "k46_hucre.csv"), index=False)
     On.to_csv(os.path.join(A.cikti, "k46_ozellik.csv")); Pr.to_csv(os.path.join(A.cikti, "k46_profil.csv"))
-    return {"ozet": Oz, "hucre": Hd, "onem": On, "profil": Pr, "kontrol": pd.DataFrame(auc_k), "karar": karar, "satir": len(Z)}
+    sinyal = pd.concat([gg[gg.puan >= gg.puan.quantile(1 - K["ust"])] for _, gg in Zt.groupby(["pazar", Zt.gun.dt.year])])[["pazar", "sembol", "gun", "puan", "y8", "pl"]]
+    sinyal.to_csv(os.path.join(A.cikti, "k46_sinyal.csv"), index=False)       # üst %5 sinyal satırları (portföy testi için)
+    return {"ozet": Oz, "hucre": Hd, "onem": On, "profil": Pr, "kontrol": pd.DataFrame(auc_k), "karar": karar, "satir": len(Z), "sinyal": sinyal}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
