@@ -7554,8 +7554,8 @@ def fon_izi_k35c(E: pd.DataFrame, W: pd.DataFrame, fiyat: Dict[str, pd.DataFrame
 #         REIT - * (hepsi), Residential Construction, Utilities - Regulated Electric, Biotechnology, Solar <- 10 yıllık faiz DÜŞER.
 #   Teşvik / yasa gibi sayısallaşmayan sebepler (güneş enerjisi teşviki) bu turda yok; Solar yalnız faizle.
 # SEBEP SİNYALİ: sürücünün 20 günlük log değişimi (CDS ve 'düşer' sürücülerde işaret ters) son 250 günün 20 günlük değişimlerine göre
-#   z-skor (pencere d-1'e kadar, geleceğe bakmaz); sinyal günü = z >= 1,0'a ilk geçiş (önceki gün < 1,0). Aynı sürücüde 20 işlem günü
-#   içinde ikinci sinyal yok.
+#   z-skor (pencere d-1'e kadar, geleceğe bakmaz); sinyal günü = z >= 1,0'a geçiş (önceki gün < 1,0). Aralık kuralı yok: gürültü
+#   geçişinden hemen sonra gelen gerçek hareket yutulmasın (sonuç görülmeden, test 47 ile fark edildi); hisse başına 60 günde tek olay.
 # Ö1 ÖNCELİK (sebep rüzgârdan önce mi gelir): sinyal günü d'de sektörün fiyat rüzgârı (D9b, fi_k14_ruzgar; sektör üyesi hisselerin
 #   çoğunluğu rüzgârlı) VAR mı; yoksa sonraki 60 işlem gününde çıkıyor mu. Taban = rüzgârsız rastgele günlerden sonraki 60 günde rüzgâr
 #   çıkma oranı (aynı sektör). ÖNCÜ ORANI = P(60 günde rüzgâr | sinyal, d'de rüzgâr yok) / taban. 'SEBEP ÖNCE GELİR' = iki pazarda da
@@ -7565,7 +7565,7 @@ def fon_izi_k35c(E: pd.DataFrame, W: pd.DataFrame, fiyat: Dict[str, pd.DataFrame
 #   hisse K23 çöl süzgecinde (düşüş <= -%30, eğim >= -0,001, mum <= 1,0, 20 bar, sinyal gününde). Karar fi_olcut_karar; bilgi: sürücü başına.
 # Hayatta kalma: V_BIST / V_ABD bugün işlem görenler (K34 notu); sektör sepetleri de öyle. ABD petrol / biyoteknoloji gibi sektörlerde
 #   iyimserlik payı var, kayda yazılır.
-FI_K36 = {"z_pencere": 20, "z_gecmis": 250, "z_esik": 1.0, "ayri": 20, "ruz_bekle": 60, "oncu_esik": 1.5, "zaten_esik": 0.5, "coğunluk": 0.5,
+FI_K36 = {"z_pencere": 20, "z_gecmis": 250, "z_esik": 1.0, "ruz_bekle": 60, "oncu_esik": 1.5, "zaten_esik": 0.5, "coğunluk": 0.5,
           "ayri_hisse": 60, "tohum": 36, "taban_n": 2000, "cds": "cds_2022.csv",
           "surucu": {"GC=F": "altın", "SI=F": "gümüş", "CL=F": "petrol", "HG=F": "bakır", "ZW=F": "buğday", "HRC=F": "çelik",
                      "ALI=F": "alüminyum", "USDTRY=X": "USDTRY", "^TNX": "ABD10y", "CDS": "TR_CDS"},
@@ -7603,16 +7603,11 @@ def fi_k36_surucu_indir(K: Dict[str, Any] = FI_K36, kok: Optional[str] = None) -
 
 
 def fi_k36_sinyal(s: pd.Series, yon: int, K: Dict[str, Any] = FI_K36) -> pd.Series:
-    """Sürücü sinyal günleri (bool, sürücü takvimi): 20 günlük log değişimi x yön, son 250 günün (d-1'e kadar) z-skoru >= z_esik'e ilk
-    geçiş; 20 gün içinde tekrar yok."""
+    """Sürücü sinyal günleri (bool, sürücü takvimi): 20 günlük log değişimi x yön, son 250 günün (d-1'e kadar) z-skoru >= z_esik'e geçiş."""
     s = s[s > 0].dropna().sort_index(); x = np.log(s).diff(K["z_pencere"]) * yon
     mu = x.rolling(K["z_gecmis"], min_periods=120).mean().shift(1); sd = x.rolling(K["z_gecmis"], min_periods=120).std().shift(1)
-    z = (x - mu) / sd; gec = (z >= K["z_esik"]) & (z.shift(1) < K["z_esik"])
-    out = pd.Series(False, index=s.index); son = -10 ** 9; ix = np.flatnonzero(gec.to_numpy())
-    for i in ix:
-        if i - son >= K["ayri"]:
-            out.iloc[i] = True; son = i
-    return out
+    z = (x - mu) / sd
+    return ((z >= K["z_esik"]) & (z.shift(1) < K["z_esik"])).fillna(False)
 
 
 def fi_k36_sektor_ruzgar(W: pd.DataFrame, uyeler: List[str], K: Dict[str, Any] = FI_K36) -> pd.Series:
