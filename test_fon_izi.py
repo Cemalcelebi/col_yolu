@@ -698,6 +698,18 @@ def sina():
     f53 = F._fi_k40_fazla(sinyal, taban, np.random.default_rng(1), 300); f53b = F._fi_k40_fazla(taban.iloc[::10], taban, np.random.default_rng(1), 300)
     if not (abs(f53["fazla"] - 0.01) < 0.001 and f53["alt95"] > 0 and abs(f53b["fazla"]) < 0.001):
         hata.append(f"53) K40 fazla yanlış: {f53} {f53b}")
+    # 54) K41 klasikler: sinüs + trend seride RSI<30 ve >70 günleri var, Bollinger dönüşü var; düz seride hiçbiri yok; Fibonacci: dip 10 ->
+    # tepe 15 -> 11,9'a (61,8) iniş ve dönüş gününde sinyal.
+    ix54 = pd.bdate_range("2022-01-03", periods=400); c54 = 20 + 5 * np.sin(np.arange(400) / 8.0)
+    d54 = pd.DataFrame({"Open": c54, "High": c54 + 0.1, "Low": c54 - 0.1, "Close": c54, "Volume": 100.0}, index=ix54)
+    S54 = F.fi_k41_klasik(d54); duz = F.fi_k41_klasik(d54.assign(Close=20.0, Open=20.0, High=20.1, Low=19.9))
+    f54 = np.r_[np.full(130, 10.0), np.linspace(10, 15, 40), np.linspace(15, 11.9, 30), np.linspace(11.95, 13, 20), np.full(180, 13.0)]
+    d54f = pd.DataFrame({"Open": f54, "High": f54 + 0.1, "Low": f54 - 0.1, "Close": f54, "Volume": 100.0}, index=ix54)
+    fib = F.fi_k41_klasik(d54f)["A8_fibonacci_618"]
+    ok54 = (len(S54["A3_rsi30"]) > 0 and len(S54["A4_rsi70_kacinma"]) > 0 and len(S54["A1_bollinger_alt_donus"]) > 0
+            and all(len(v) == 0 for v in duz.values()) and len(fib) >= 1 and ix54[199] <= fib[0] <= ix54[205])
+    if not ok54:
+        hata.append(f"54) K41 klasik sinyaller yanlış: {({k: len(v) for k, v in S54.items()})} {fib[:3]}")
     return hata
 
 
@@ -705,4 +717,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 53/53 OK")
+    print("test_fon_izi: 54/54 OK")
