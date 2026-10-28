@@ -980,6 +980,13 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Alınabilir iz yok: 23 sinyalden hiçbiri ABD + Avrupa'da tutarlı olarak piyasayı geçmiyor; tek aday küçüklük (hayatta kalma "
               "yanlılığıyla şişkin). Trend sinyalleri zarar ettirmiyor ama piyasayı geçmiyor; dip sinyalleri ABD'de yalnız 2023. Daha önce "
               "söylediğim 'BIST momentum +%7-10' medyan hatasıydı, geçersiz",
+     "durum": "TAMAMLANDI (Cemal: küçüklük son yıl batanlar dahil, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Bu küçüklük son yılda yüzde kaç; batanları net eklersen",
+     "yapilan": "Yıl yıl: (A) E3 küçüklük, V_ABD (yalnız hayatta kalanlar) ortalama / ortanca / kazanan payı; (B) K34 nakdi biten ABD şirketleri "
+                "en küçük beşte bir, batanlar dahil (Tiingo örneği, ağırlıklı) ve hariç, eşit ağırlıklı piyasaya göre 60 gün farkı",
+     "sonuc": "Hayatta kalanlarda ortalama büyük (2024 +%18, 2025 +%20, son 12 ay +%13,5) ama ORTANCA -%4 .. 0, kazanan payı %40-50: "
+              "birkaç piyango hisse. Batanlar dahil en küçükler: 2023 +%1, 2024 +%2,4, 2025 -%0,2, 2026 -%9; son 12 ay -%2,4 (hayatta "
+              "kalanlarla +%0,9); kazanan %31, -%50 altı kayıp %13. Son yıllarda batanlar henüz tam görünmüyor (sansür), gerçek daha kötü",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
