@@ -733,6 +733,15 @@ def sina():
     r1 = F.fi_k45_ilk_hedef(d57, 10, 0.08, 20); r2 = F.fi_k45_ilk_hedef(d57b, 10, 0.08, 20); r3 = F.fi_k45_kutu_cikis(d57c, 10)
     if not (r1 == ("arti", 3) and r2 == ("eksi", 2) and r3 == ("yukari", 14)):
         hata.append(f"57) K45 ilk hedef / kutu çıkışı yanlış: {r1} {r2} {r3}")
+    # 58) K46 etiket: giriş i+1 açılışı 100; 3. gün High 109 -> y8 = 1, işlem +%8 - maliyet; Low 91 önce -> y8 = 0, işlem -%8 - maliyet;
+    # ikisi de yoksa 20. gün kapanışı.
+    ix58 = pd.bdate_range("2024-01-01", periods=40); o58 = np.full(40, 100.0); h58 = np.full(40, 101.0); l58 = np.full(40, 99.0); c58 = np.full(40, 100.0)
+    h58[13] = 109.0; d58 = pd.DataFrame({"Open": o58, "High": h58, "Low": l58, "Close": c58, "Volume": 1.0}, index=ix58)
+    d58b = d58.copy(); d58b.loc[ix58[12], "Low"] = 91.0; d58c = pd.DataFrame({"Open": o58, "High": np.full(40, 101.0), "Low": l58, "Close": np.full(40, 102.0), "Volume": 1.0}, index=ix58)
+    e1 = F.fi_k46_etiket(d58, 10); e2 = F.fi_k46_etiket(d58b, 10); e3 = F.fi_k46_etiket(d58c, 10)
+    ok58 = e1[0] == 1.0 and abs(e1[2] - (0.08 - 0.003)) < 1e-9 and e2[0] == 0.0 and abs(e2[2] - (-0.08 - 0.003)) < 1e-9 and e3[0] == 0.0 and abs(e3[2] - (0.02 - 0.003)) < 1e-9
+    if not ok58:
+        hata.append(f"58) K46 etiket yanlış: {e1} {e2} {e3}")
     return hata
 
 
@@ -740,4 +749,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 57/57 OK")
+    print("test_fon_izi: 58/58 OK")
