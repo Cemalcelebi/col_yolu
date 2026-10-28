@@ -9063,7 +9063,8 @@ def fi_k46_satirlar(V: Dict[str, pd.DataFrame], pazar: str, K: Dict[str, Any] = 
             filog.warning("K46 %s atlandı: %s", s, ex); continue
         c = d.Close.astype(float); g = c.pct_change(fill_method=None)
         F3 = pd.DataFrame({"sma20": c / c.rolling(20).mean() - 1, "sma50": c / c.rolling(50).mean() - 1, "sma200": c / c.rolling(200).mean() - 1,
-                           "oyn_oran": g.rolling(20).std() / g.rolling(250, min_periods=120).std()}, index=d.index)
+                           "oyn_oran": g.rolling(20).std() / g.rolling(250, min_periods=120).std(),
+                           "dd40": c / c.rolling(40).max() - 1}, index=d.index)        # K46-B: son 40 gün tepesinden düşüş (sert düşüş süzgeci)
         F = pd.concat([F1, F2, F3], axis=1)
         F["piy20"] = piy20.reindex(d.index); F["piy60"] = piy60.reindex(d.index)
         F["sira60"] = sira60[s].reindex(d.index) if s in sira60 else np.nan; F["lsira"] = lsira[s].reindex(d.index) if s in lsira else np.nan
@@ -9088,12 +9089,22 @@ def fi_k46_oynak_taban(Z: pd.DataFrame, sec: pd.DataFrame, rng: np.random.Genera
     return pd.concat(out) if out else Zy.iloc[0:0]
 
 
-def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K46) -> Dict[str, Any]:
-    """K46 sürücü: satırlar -> yıl yıl LightGBM -> üst %5 değerlendirme, kontroller, tipik profil. Çıktı k46_ozet.csv, k46_ozellik.csv, k46_profil.csv."""
+# K46-B SERT DÜŞÜŞ SONRASI (Cemal 28 Eki: 'burada makine çalıştır; belki ben yanlış tarif ediyorum; benim dediğim sert düşüşten sonra olan
+# bir şey'). ÖNCEDEN YAZILDI: K46 ile aynı makine, yalnız son 40 gün tepesinden >= %20 düşmüş hisse-günleri (dd40 <= -0,20) üzerinde
+# eğitilir ve sınanır (taban da bu alt kümeden, oynaklık eşli). Aynı karar kuralı. Çıktı önekleri k46b_*.
+FI_K46B = {"dd40": -0.20}
+
+
+def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K46,
+                filtre: Optional[Any] = None, onek: str = "k46") -> Dict[str, Any]:
+    """K46 sürücü: satırlar -> yıl yıl LightGBM -> üst %5 değerlendirme, kontroller, tipik profil. Çıktı <onek>_ozet.csv, _ozellik.csv, _profil.csv.
+    filtre: satır süzgeci (K46-B: sert düşüş sonrası)."""
     import lightgbm as lgb
     from sklearn.metrics import roc_auc_score
     A = A or FIAyar(); Z = pd.concat([fi_k46_satirlar(V, pz, K) for pz, V in Vs.items()], ignore_index=True)
     Z = Z.dropna(subset=["y8"]).reset_index(drop=True); Z["pazar_k"] = Z.pazar.map({"ABD": 0, "AVR": 1, "BIST": 2})
+    if filtre is not None:
+        Z = Z[filtre(Z)].reset_index(drop=True)
     ozl = [c for c in Z.columns if c not in ("sembol", "gun", "y8", "y20", "pl", "pazar")]
     filog.info("K46 satır %d, özellik %d, y8 oranı %.3f", len(Z), len(ozl), Z.y8.mean())
     rng = np.random.default_rng(K["tohum"]); Z["puan"] = np.nan; onem = []; auc_k = []
@@ -9137,10 +9148,10 @@ def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
         return bool(h.get("n", 0) >= K["n_min"] and h.get("fark", -1) >= K["fark_esik"] and h.get("alt95", -1) > 0 and h.get("islem", -1) > 0)
     karar = "ÖĞRENİLMİŞ İZ" if all(tut(H.get((pz, dn), {})) for pz in ("ABD", "AVR") for dn in ("2023", "2024-26")) else "İZ DEĞİL"
     Hd = pd.DataFrame([{"pazar": k[0], "donem": k[1], **v} for k, v in H.items()])
-    Oz.to_csv(os.path.join(A.cikti, "k46_ozet.csv"), index=False); Hd.to_csv(os.path.join(A.cikti, "k46_hucre.csv"), index=False)
-    On.to_csv(os.path.join(A.cikti, "k46_ozellik.csv")); Pr.to_csv(os.path.join(A.cikti, "k46_profil.csv"))
+    Oz.to_csv(os.path.join(A.cikti, f"{onek}_ozet.csv"), index=False); Hd.to_csv(os.path.join(A.cikti, f"{onek}_hucre.csv"), index=False)
+    On.to_csv(os.path.join(A.cikti, f"{onek}_ozellik.csv")); Pr.to_csv(os.path.join(A.cikti, f"{onek}_profil.csv"))
     sinyal = pd.concat([gg[gg.puan >= gg.puan.quantile(1 - K["ust"])] for _, gg in Zt.groupby(["pazar", Zt.gun.dt.year])])[["pazar", "sembol", "gun", "puan", "y8", "pl"]]
-    sinyal.to_csv(os.path.join(A.cikti, "k46_sinyal.csv"), index=False)       # üst %5 sinyal satırları (portföy testi için)
+    sinyal.to_csv(os.path.join(A.cikti, f"{onek}_sinyal.csv"), index=False)       # üst %5 sinyal satırları (portföy testi için)
     return {"ozet": Oz, "hucre": Hd, "onem": On, "profil": Pr, "kontrol": pd.DataFrame(auc_k), "karar": karar, "satir": len(Z), "sinyal": sinyal}
 
 # K47 İKİ BÖLGE: ECOGR HAFTALIK YUKARI YUVARLANMA ve BBIO DÜŞÜŞ -> İKİ DİP -> YUVARLANMA (Cemal 28 Eki, iki grafik: 'birinci slayt haftalık,
