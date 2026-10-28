@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.29 (2026-10-28, K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.30 (2026-10-28, denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -5614,10 +5614,12 @@ def fi_olcut_panel(V: Dict[str, pd.DataFrame], O: Dict[str, Any] = FI_OLCUT) -> 
     n, u = Cl.shape; h = O["ufuk"]
     R = np.full((n, u), np.nan)
     son = min(n, kriz)
+    Cf = pd.DataFrame(Cl).ffill(limit=5).to_numpy()
+    # Denetim 28 Eki (ayrı model): çıkış günü (d+59) kapanışı NaN ise olay düşüyordu (birleşik takvimde kendi borsası tatil, askı);
+    # çıkış kapanışı son bilinen kapanıştan (ffill, en çok 5 gün) alınır. Giriş açılışı yine o günün gerçek açılışı.
     if son - h + 1 > 0:
         with np.errstate(all="ignore"):
-            R[:son - h + 1] = Cl[h - 1:son] / Op[:son - h + 1] - 1
-    Cf = pd.DataFrame(Cl).ffill(limit=5).to_numpy()
+            R[:son - h + 1] = Cf[h - 1:son] / Op[:son - h + 1] - 1
     with np.errstate(all="ignore"):
         M = np.full((n, u), np.nan); M[O["mom"] + 1:] = Cf[O["mom"]:-1] / Cf[:-O["mom"] - 1] - 1   # giriş öncesi (d-1 / d-61)
     Lq = Tl.rolling(O["likit"], min_periods=10).median().shift(1).to_numpy()
@@ -7989,10 +7991,12 @@ def fi_avr_evren(ham: Dict[str, Any], evren: pd.DataFrame) -> Dict[str, pd.DataF
         if (carpan != 1).any():
             for kol in ("Open", "High", "Low", "Close"):
                 d[kol] = d[kol] * carpan
+            if p == "GBp" and carpan[-1] < 1:          # denetim 28 Eki: seri sterline indirildiyse Kur peni (/100) değil sterlin olmalı
+                p = "GBP"
         if p == "EUR":
             d["Kur"] = 1.0
         else:
-            fx = ham["fx"].get(p)
+            fx = ham["fx"].get("GBp" if p == "GBP" else p)
             if fx is None:
                 continue
             k = fx.reindex(d.index).ffill().bfill().astype(float); d["Kur"] = (k / 100.0) if p == "GBp" else k
@@ -8232,7 +8236,6 @@ def fon_izi_k39(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
         Tl = pd.DataFrame({s: d.Close * d.Volume * (d["Kur"] if "Kur" in d else 1.0) for s, d in Vs[pz].items()}).sort_index()
         L[pz] = Tl.rolling(K["likit_gun"], min_periods=40).median()
     Z = []
-    Od = {"donem": K["donem"], **{k: v for k, v in O.items() if k != "donem"}}
     for lid, hed in K["yon"]:
         if lid not in Vs or hed not in Vs:
             continue
@@ -8254,8 +8257,11 @@ def fon_izi_k39(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
                 continue
             kumeler = {"hepsi": X}
             if (P, E, henuz) == K["ana"]:
-                rk = L[hed].rank(axis=1, pct=True); X["kucuk"] = [bool(rk.at[g0, s] <= 1 / 3) if (g0 in rk.index and s in rk.columns and pd.notna(rk.at[g0, s])) else False
-                                                              for s, g0 in zip(X.sembol, X.giris - pd.Timedelta(days=1))]
+                rk = L[hed].rank(axis=1, pct=True); rix = rk.index          # denetim 28 Eki: giriş - 1 takvim günü hafta sonuna düşüyordu
+                def _kucuk(s: str, g: pd.Timestamp) -> bool:
+                    j0 = int(rix.searchsorted(g)) - 1
+                    return bool(j0 >= 0 and s in rk.columns and pd.notna(rk.iat[j0, rk.columns.get_loc(s)]) and rk.iat[j0, rk.columns.get_loc(s)] <= 1 / 3)
+                X["kucuk"] = [_kucuk(s, g) for s, g in zip(X.sembol, X.giris)]
                 kumeler["kucukler"] = X[X.kucuk]
             for kad, Xk in kumeler.items():
                 Xk = Xk.sort_values("giris").assign(_b=True).reset_index(drop=True)
@@ -8332,7 +8338,7 @@ def fi_k40_gunluk(Va: Dict[str, pd.DataFrame], Vr: Dict[str, pd.DataFrame], Ga: 
     Z = []
     sinyaller = {"ABD_guclu_gun": abd_gun[abd_gun >= K["abd_gun"]].index, "ABD_guclu_dusus_ayna": abd_gun[abd_gun <= -K["abd_gun"]].index}
     for ad, gl in sinyaller.items():
-        e = [x for x in (ertesi(t) for t in gl) if x is not None]
+        e = list(dict.fromkeys(x for x in (ertesi(t) for t in gl) if x is not None))   # denetim 28 Eki: çift sayım yok
         for dn, a, b in K["donem"]:
             m = [x for x in e if pd.Timestamp(a) <= x <= pd.Timestamp(b)]; t_ = (bosluk.index >= a) & (bosluk.index <= b)
             for olcu, ser in (("bosluk", bosluk), ("gun_ici", gunici), ("bes_gun", bes)):
@@ -8384,9 +8390,9 @@ def fi_k40_saatlik(H: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K40) -> pd
     gec = {}
     for g, x in L.groupby("gun"):
         saat = x.index.tz_convert("America/New_York").hour + x.index.tz_convert("America/New_York").minute / 60
-        a = x[saat <= 11.6]; b = x[saat >= 15.4]
+        a = x[(saat >= 11.4) & (saat <= 11.6)]; b = x[saat >= 15.4]     # denetim 28 Eki: 11:30 barının AÇILIŞI (bar zamanı = başlangıç)
         if len(a) and len(b):
-            gec[pd.Timestamp(g)] = float(b.Close.iloc[-1] / a.Close.iloc[-1] - 1)
+            gec[pd.Timestamp(g)] = float(b.Close.iloc[-1] / a.Open.iloc[0] - 1)
     gec = pd.Series(gec).sort_index(); Z = []
     for t in K["endeks"]["hedef"]:
         E = H[t].copy(); E["gun"] = E.index.tz_convert(E.index.tz).date; sat = []
@@ -8400,16 +8406,16 @@ def fi_k40_saatlik(H: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K40) -> pd
         D = pd.DataFrame(sat).set_index("gun")
         # sinyal: ABD günü g_abd -> Avrupa'nın g_abd'den sonraki ilk günü
         sg = gec[gec >= K["saat_esik"]].index; ix = D.index
-        e = [ix[int(ix.searchsorted(t_, side="right"))] for t_ in sg if int(ix.searchsorted(t_, side="right")) < len(ix)]
+        e = list(dict.fromkeys(ix[int(ix.searchsorted(t_, side="right"))] for t_ in sg if int(ix.searchsorted(t_, side="right")) < len(ix)))
         for olcu in ("bosluk", "ilk_saat", "gun_ici"):
             Z.append({"endeks": t, "olcu": olcu, **_fi_k40_fazla(D[olcu].reindex(e), D[olcu], rng, K["bootstrap"])})
         # örtüşme: ABD ilk 2 saat (9:30-11:30 ET) ile Avrupa aynı gün son 2 saati korelasyonu
         ilk2 = {}
         for g, x in L.groupby("gun"):
             saat = x.index.tz_convert("America/New_York").hour + x.index.tz_convert("America/New_York").minute / 60
-            a = x[saat <= 9.6]; b = x[saat <= 11.6]
+            a = x[saat <= 9.6]; b = x[(saat >= 11.4) & (saat <= 11.6)]
             if len(a) and len(b):
-                ilk2[pd.Timestamp(g)] = float(b.Close.iloc[-1] / a.Open.iloc[0] - 1)
+                ilk2[pd.Timestamp(g)] = float(b.Open.iloc[0] / a.Open.iloc[0] - 1)       # 9:30 açılış -> 11:30 (barın açılışı)
         son2 = {}
         for g, x in E.groupby("gun"):
             if len(x) >= 3:
