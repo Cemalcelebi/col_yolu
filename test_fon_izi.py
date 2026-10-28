@@ -653,6 +653,34 @@ def sina():
     k49 = (F.fi_olcut_karar(Z49), F.fi_olcut_karar(Z49b), F.fi_olcut_karar(Z49c), F.fi_olcut_karar(Z49d))
     if k49 != ("İZ", "İZ + BIST", "ABD-ADAY (AVR verisi yok)", "İZ DEĞİL"):
         hata.append(f"49) karar pazarları yanlış: {k49}")
+    # 50) K38 sinyaller IZ_KARNE ile birebir: aynı yapay evrende tavan ve blok taban olayları eşit.
+    import IZ_KARNE as IK
+    ix50 = pd.bdate_range("2024-01-01", periods=80); r50 = np.random.default_rng(50); V50 = {}
+    for k in range(5):
+        c = 10 * np.cumprod(1 + r50.normal(0, 0.03, 80)); v = r50.integers(100, 200, 80).astype(float)
+        if k == 0:
+            c[50] = c[49] * 1.12; v[60] = 5000; c[60] = c[59] * 0.88
+        V50[f"S{k}"] = pd.DataFrame({"Open": c, "High": c * 1.01, "Low": c * 0.99, "Close": c, "Volume": v}, index=ix50)
+    S50 = F.fi_k38_sinyaller(V50)
+    e1 = IK.ik_s_tavan(None, "X", V50); e3 = IK.ik_s_blok_taban(None, "X", V50)
+    ok50 = (len(S50["S1_tavan_kacinma"]) == len(e1) and len(S50["S3_blok_taban_yukari"]) == len(e3) and len(e3) >= 1
+            and (ix50[60] in set(S50["S3_blok_taban_yukari"].gun)))
+    if not ok50:
+        hata.append(f"50) K38 sinyal / IZ_KARNE farkı: {len(S50['S1_tavan_kacinma'])} {len(e1)} {len(S50['S3_blok_taban_yukari'])} {len(e3)}")
+    # 51) K38-B ikili dip ve ters OBO: yapay W ve ters OBO serilerinde boyun kırılımı bulunur; düz seride bulunmaz.
+    ix51 = pd.bdate_range("2023-01-02", periods=400)
+    w = np.r_[np.linspace(12, 10, 40), np.linspace(10, 11.2, 30), np.linspace(11.2, 10.05, 30), np.linspace(10.05, 12.5, 60)]
+    c51 = np.r_[np.full(120, 12.0), w, np.full(400 - 120 - len(w), 12.5)]
+    d51 = pd.DataFrame({"Open": c51, "High": c51 * 1.01, "Low": c51 * 0.99, "Close": c51, "Volume": 100.0}, index=ix51)
+    o = np.r_[np.linspace(12, 10.5, 30), np.linspace(10.5, 11.5, 25), np.linspace(11.5, 9.5, 25), np.linspace(9.5, 11.4, 25),
+              np.linspace(11.4, 10.4, 25), np.linspace(10.4, 12.5, 50)]
+    c51b = np.r_[np.full(120, 12.0), o, np.full(400 - 120 - len(o), 12.5)]
+    d51b = pd.DataFrame({"Open": c51b, "High": c51b * 1.01, "Low": c51b * 0.99, "Close": c51b, "Volume": 100.0}, index=ix51)
+    d51c = d51.assign(Close=12.0, Open=12.0, High=12.1, Low=11.9)
+    ok51 = (len(F.fi_k38b_ikili_dip(d51)) >= 1 and len(F.fi_k38b_ters_obo(d51b)) >= 1 and len(F.fi_k38b_ikili_dip(d51c)) == 0
+            and len(F.fi_k38b_ters_obo(d51c)) == 0)
+    if not ok51:
+        hata.append(f"51) K38-B şekil tanıma yanlış: {F.fi_k38b_ikili_dip(d51)} {F.fi_k38b_ters_obo(d51b)}")
     return hata
 
 
@@ -660,4 +688,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 49/49 OK")
+    print("test_fon_izi: 51/51 OK")
