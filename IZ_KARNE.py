@@ -557,6 +557,15 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "+%4 (n 18) / -%5, -%25 (n 7) / -%6; RSI boğa uyumsuzluğu 0 / -%1, 0 / -%1, 0 / 0; MACD boğa -%1 / -%1, 0 / -%1, -%1 / +%1; "
                "RSI ayı uyumsuzluğu (kaçınma) -%1 / -%1,5 (ABD 2024-26 aralık eksi ama sıra 0,50), +%1 / 0, +%2 / +%1. Altısı da İZ DEĞİL. "
                "Şekil ve gösterge sinyalleri üç pazarda da eşlerinden ayrışmıyor; en büyük sapmalar küçük örneklemlerde (ters OBO)."),
+    _ik_k("Ç114", "2026-10-28", "ABD ÖNCÜ, AVRUPA TAKİP: ABD kaba sektör sepeti piyasayı geçince Avrupa'daki (ve BIST'teki) aynı sektör "
+          "üyeleri; 8 olasılık (pencere 20 / 60, eşik %10 / %20, hedef henüz gelmedi / şartsız), ayna yön AVR -> ABD (K39)", "FON_IZI.py (k39)",
+          "Cemal: 'Amerika verileri öncü, Avrupa ve Asya takip eder; üstüne git, her olasılığı ayrıca değerlendir'",
+          "Yeni deneme (13 kaba sektör üç pazarda eşlendi; ana çeşit ve karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k39_ozet.csv",
+          notu="ABD -> AVR, ana çeşit (20 gün, %10, Avrupa henüz gelmedi; 203 sinyal): eşli fark 2016-22 -%0,3, 2023 0, 2024-26 +%1,0; "
+               "Avrupa küçükleri +%1 / -%1 / -%1; sekiz çeşidin hepsi -%0,5 .. +%1,3 arasında, sıra 0,49-0,53, hiçbiri tutmadı. "
+               "ABD -> BIST de sıfır civarı (en iyi 20 gün %20 eşik 2024-26 +%7 ama sıra 0,56, portföy altta; 2023 olay yok). Ayna AVR -> "
+               "ABD: 2023 -%7 / -%13 (Avrupa öne geçince ABD sektörü geride kalıyor, az sinyal), 2024-26 sıfır civarı. İZ DEĞİL. ABD sektör "
+               "hareketi Avrupa'ya 'sonradan' geçmiyor; Avrupa aynı gün ya da ertesi açılışta fiyatlıyor, 60 günlük eşli farkta iz kalmıyor."),
 ]
 
 
@@ -829,20 +838,27 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Dokuz ölçünün hiçbiri ABD + Avrupa dört hücrede tutmadı. BIST'in kaçınma izleri (tavan, hacimli düşüş) ABD'de ters, "
               "Avrupa'da sıfır. Blok hacimli taban ABD 2024-26'da tuttu (+%15) ama 2023'te değil. Şekiller ve uyumsuzluklar üç pazarda da "
               "eşlerinden ayrışmıyor",
+     "durum": "TAMAMLANDI (Cemal: Amerika öncü, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Amerika verileri öncü, Avrupa ve Asya takip eder; Amerika'da asıl izi ararken üstüne git, her olasılığı "
+                                     "ayrıca değerlendir",
+     "yapilan": "K39: 13 kaba sektör üç pazarda eşlendi; ABD sektör sepeti piyasayı geçince Avrupa / BIST üyeleri (8 olasılık + küçükler), "
+                "ayna AVR -> ABD; FI_OLCUT 2016-22 / 2023 / 2024-26; IZ_KARNE Ç114; test 52",
+     "sonuc": "İz değil: ABD sektör öne geçince Avrupa'daki aynı sektör sonraki 60 günde eşlerinden ayrışmıyor (bütün olasılıklar -%0,5 .. "
+              "+%1,3); BIST de öyle. Avrupa ABD'yi aynı gün / ertesi açılış fiyatlıyor, gecikme yok",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K38). Karar pazarları artık ABD + Avrupa (BIST bilgi, Çin sonra); Avrupa evreni ve veri "
-    "paketi hazır (islenmis-veri). Bundan sonra her ölçü üç pazarda koşar. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak "
-    "canlı izlemek, (b) ara, (c) Çin evreni (CSI 300 + HSI) kurup bilgi olarak eklemek, (d) rüzgâr göründükten sonra ne kadar sürüyor "
-    "(kapalı konu, onay).",
+    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K39). Karar pazarları ABD + Avrupa (BIST bilgi, Çin sonra); veri paketi hazır. ABD -> "
+    "Avrupa öncülüğü (K39) da yok. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak canlı izlemek, (b) ara, (c) Çin evreni "
+    "kurup bilgi olarak eklemek, (d) rüzgâr göründükten sonra ne kadar sürüyor (kapalı konu, onay), (e) ABD'de olay verisi "
+    "(bilanço, içeriden alım, 13F ücretli) ile çöl adayı süzme.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
