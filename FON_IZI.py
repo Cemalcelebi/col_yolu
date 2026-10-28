@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.33 (2026-10-28, K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.34 (2026-10-28, K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -8856,6 +8856,117 @@ def fon_izi_k44(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
     Z.to_csv(os.path.join(A.cikti, "k44_ozet.csv"), index=False); ES.to_csv(os.path.join(A.cikti, "k44_eslesme.csv"), index=False)
     PI.to_csv(os.path.join(A.cikti, "k44_parmak.csv"), index=False)
     return {"ozet": Z, "eslesme": ES, "parmak": PI, "karar": karar}
+
+# K45 KISA UFUK, KUTU ÇIKIŞI (Cemal 28 Eki: '60 gün bakarsan orası küçük bir durak; bölgenin altı ve üstü çıkışlarını hemen ara; bana +%8
+# yükseliş iz; büyük hedef seçersen asla olmaz; 60 günlük hedef olamaz'). ÖNCEDEN YAZILDI (sonuç görülmeden).
+# OLAYLAR: K44'ün INTEM'e birebir eşleşen bölgeleri (20 ve 10 bar, üç pazar). KUTU = bölgenin son 10 barının en yüksek / en düşük fiyatı.
+# ÖLÇÜLER (bölge bitiminden sonraki ilk açılıştan, gün içi High / Low ile):
+#   (1) İLK HEDEF: +%E mi -%E mi önce gelir (E = 5, 8, 12), en çok 20 işlem günü; üçüncü hal 'ikisi de yok'. KAZANAN = +%E önce.
+#   (2) KUTU ÇIKIŞI: kapanış kutu tavanının üstü (YUKARI) ya da tabanının altı (AŞAĞI) ilk hangisi, kaç günde (en çok 20 gün).
+#   (3) KOŞULLU: YUKARI çıkıştan sonraki ilk açılıştan +%8 mi -%8 mi önce (alım kuralı: kırılımda al, +%8 hedef, -%8 stop); AŞAĞI çıkıştan
+#       sonra -%8 mi +%8 mi önce (kaçınma / kısa kuralı).
+# TABAN: aynı pazarda, eşleşmelerle aynı yıl dağılımında RASTGELE (hisse, gün) pencereleri, 10 tohum; aynı üç ölçü. Ayrıca bütün pazarın
+#   tabanı (yıl ağırlıklı). FARK = P(kazanan | eşleşme) - P(kazanan | rastgele); olay bootstrap %95.
+# KARAR (önceden): 'KISA İZ' = ABD ve AVR'de (2016-26 birleşik, n >= 30) E = 8 için fark >= +10 puan ve alt uç > 0; koşullu kural için aynı.
+#   BIST bilgi. +%8 hedefi tek başına 'iz' sayılmaz: rastgele hissenin de +%8'e -%8'den önce ulaşma oranı vardır; iz = o orana fark.
+FI_K45 = {"esik": (0.05, 0.08, 0.12), "ana_esik": 0.08, "bekle": 20, "kutu_bar": 10, "tohum_n": 10, "n_min": 30, "fark_esik": 0.10}
+
+
+def fi_k45_ilk_hedef(d: pd.DataFrame, i: int, e: float, bekle: int) -> Tuple[str, int]:
+    """i: giriş günü (açılış); +e mi -e mi önce (High / Low), kaç günde; ikisi de yoksa ('yok', bekle)."""
+    o = float(d.Open.iloc[i]); h = d.High.to_numpy(float); l = d.Low.to_numpy(float)
+    for k in range(i, min(i + bekle, len(d))):
+        yuk = h[k] >= o * (1 + e); dus = l[k] <= o * (1 - e)
+        if yuk and dus:
+            return "ikisi", k - i + 1          # aynı gün ikisi: belirsiz (ne kazanan ne kaybeden)
+        if yuk:
+            return "arti", k - i + 1
+        if dus:
+            return "eksi", k - i + 1
+    return "yok", bekle
+
+
+def fi_k45_kutu_cikis(d: pd.DataFrame, i: int, K: Dict[str, Any] = FI_K45) -> Tuple[str, int]:
+    """i: giriş günü; kutu = [i-kutu_bar, i-1] barlarının High max / Low min; kapanış ilk hangi yöne çıkar."""
+    ust = float(d.High.iloc[max(0, i - K["kutu_bar"]):i].max()); alt = float(d.Low.iloc[max(0, i - K["kutu_bar"]):i].min()); c = d.Close.to_numpy(float)
+    for k in range(i, min(i + K["bekle"], len(d))):
+        if c[k] > ust:
+            return "yukari", k
+        if c[k] < alt:
+            return "asagi", k
+    return "yok", -1
+
+
+def fi_k45_olc(V: Dict[str, pd.DataFrame], E: pd.DataFrame, K: Dict[str, Any] = FI_K45) -> pd.DataFrame:
+    """E: sembol, giris. Her olay için ilk hedef (3 eşik), kutu çıkışı ve koşullu sonuç."""
+    sat = []
+    for r in E.itertuples():
+        d = V.get(r.sembol)
+        if d is None or r.giris not in d.index:
+            continue
+        i = int(d.index.get_loc(r.giris)); row = {"sembol": r.sembol, "giris": r.giris}
+        for e in K["esik"]:
+            s, g = fi_k45_ilk_hedef(d, i, e, K["bekle"]); row[f"ilk_{int(e*100)}"] = s; row[f"gun_{int(e*100)}"] = g
+        yon, k = fi_k45_kutu_cikis(d, i, K); row["kutu"] = yon; row["kutu_gun"] = (k - i + 1) if k >= 0 else np.nan
+        if yon != "yok" and k + 1 < len(d):
+            s2, g2 = fi_k45_ilk_hedef(d, k + 1, K["ana_esik"], K["bekle"]); row["kosullu"] = s2
+        else:
+            row["kosullu"] = "yok"
+        sat.append(row)
+    return pd.DataFrame(sat)
+
+
+def fi_k45_rastgele(V: Dict[str, pd.DataFrame], E: pd.DataFrame, tohum: int) -> pd.DataFrame:
+    """Eşleşmelerle aynı yıl dağılımında rastgele (sembol, giriş) çiftleri."""
+    rng = np.random.default_rng(tohum); sem = list(V); sat = []
+    for y, n in E.giris.dt.year.value_counts().items():
+        k = 0
+        while k < n:
+            s = sem[rng.integers(len(sem))]; d = V[s]; ix = d.index[(d.index.year == y)]
+            if len(ix) < 30:
+                continue
+            g = ix[rng.integers(10, len(ix))]; sat.append({"sembol": s, "giris": g}); k += 1
+    return pd.DataFrame(sat)
+
+
+def fon_izi_k45(Vs: Dict[str, Dict[str, pd.DataFrame]], ES: pd.DataFrame, A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K45) -> Dict[str, Any]:
+    """K45 sürücü: ES = K44 eşleşmeleri (pazar, pencere, sembol, giris). Çıktı k45_ozet.csv."""
+    A = A or FIAyar(); Z = []; ES = ES.assign(giris=pd.to_datetime(ES.giris))
+    def oran(X: pd.DataFrame, kol: str, kazanan: str, kaybeden: str) -> Tuple[float, float, int]:
+        n = len(X); return (float((X[kol] == kazanan).mean()) if n else np.nan, float((X[kol] == kaybeden).mean()) if n else np.nan, n)
+    for L in sorted(ES.pencere.unique()):
+        for pz, V in Vs.items():
+            E = ES[(ES.pazar == pz) & (ES.pencere == L)][["sembol", "giris"]]
+            if not len(E):
+                continue
+            X = fi_k45_olc(V, E, K); R = [fi_k45_olc(V, fi_k45_rastgele(V, E, t), K) for t in range(K["tohum_n"])]
+            row = {"pencere": L, "pazar": pz, "n": len(X)}
+            for e in K["esik"]:
+                kol = f"ilk_{int(e*100)}"; a, b, _ = oran(X, kol, "arti", "eksi"); ra = np.mean([oran(r_, kol, "arti", "eksi")[0] for r_ in R]); rb = np.mean([oran(r_, kol, "arti", "eksi")[1] for r_ in R])
+                row.update({f"arti{int(e*100)}": a, f"eksi{int(e*100)}": b, f"arti{int(e*100)}_rast": ra, f"eksi{int(e*100)}_rast": rb, f"fark{int(e*100)}": a - ra})
+                if e == K["ana_esik"] and len(X) >= 10:
+                    rng = np.random.default_rng(45); v = (X[kol] == "arti").to_numpy(float)
+                    bs = [rng.choice(v, len(v)).mean() - ra for _ in range(2000)]; row["fark8_alt95"] = float(np.quantile(bs, 0.025)); row["fark8_ust95"] = float(np.quantile(bs, 0.975))
+            row.update({"kutu_yukari": float((X.kutu == "yukari").mean()), "kutu_asagi": float((X.kutu == "asagi").mean()),
+                        "kutu_gun_ortanca": float(X.kutu_gun.median()), "kutu_yukari_rast": float(np.mean([(r_.kutu == "yukari").mean() for r_ in R]))})
+            Xu = X[X.kutu == "yukari"]; Xd = X[X.kutu == "asagi"]; Ru = pd.concat([r_[r_.kutu == "yukari"] for r_ in R]); Rd = pd.concat([r_[r_.kutu == "asagi"] for r_ in R])
+            row.update({"yukari_sonra_arti8": float((Xu.kosullu == "arti").mean()) if len(Xu) else np.nan, "yukari_sonra_eksi8": float((Xu.kosullu == "eksi").mean()) if len(Xu) else np.nan,
+                        "yukari_n": len(Xu), "yukari_sonra_arti8_rast": float((Ru.kosullu == "arti").mean()) if len(Ru) else np.nan,
+                        "asagi_sonra_eksi8": float((Xd.kosullu == "eksi").mean()) if len(Xd) else np.nan, "asagi_sonra_arti8": float((Xd.kosullu == "arti").mean()) if len(Xd) else np.nan,
+                        "asagi_n": len(Xd), "asagi_sonra_eksi8_rast": float((Rd.kosullu == "eksi").mean()) if len(Rd) else np.nan})
+            if len(Xu) >= 10 and len(Ru):
+                rng = np.random.default_rng(46); v = (Xu.kosullu == "arti").to_numpy(float); ra = float((Ru.kosullu == "arti").mean())
+                bs = [rng.choice(v, len(v)).mean() - ra for _ in range(2000)]; row["kosullu_fark"] = float(v.mean() - ra); row["kosullu_alt95"] = float(np.quantile(bs, 0.025))
+            Z.append(row); filog.info("K45 L=%d %s: n %d", L, pz, len(X))
+    Z = pd.DataFrame(Z); karar = {}
+    for L in Z.pencere.unique():
+        g = Z[Z.pencere == L].set_index("pazar")
+        def tut(pz: str, kol_f: str, kol_a: str) -> bool:
+            return bool(pz in g.index and g.loc[pz, "n"] >= K["n_min"] and pd.notna(g.loc[pz].get(kol_f)) and g.loc[pz, kol_f] >= K["fark_esik"] and pd.notna(g.loc[pz].get(kol_a)) and g.loc[pz, kol_a] > 0)
+        karar[f"L{int(L)}_ilk8"] = "KISA İZ" if tut("ABD", "fark8", "fark8_alt95") and tut("AVR", "fark8", "fark8_alt95") else "İZ DEĞİL"
+        karar[f"L{int(L)}_kutu_yukari_kurali"] = "KISA İZ" if tut("ABD", "kosullu_fark", "kosullu_alt95") and tut("AVR", "kosullu_fark", "kosullu_alt95") else "İZ DEĞİL"
+    Z.to_csv(os.path.join(A.cikti, "k45_ozet.csv"), index=False)
+    return {"ozet": Z, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş

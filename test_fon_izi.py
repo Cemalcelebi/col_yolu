@@ -725,6 +725,14 @@ def sina():
     ok56 = len(E56) > 0 and all(((Y56[k] >= 0.375 - 1e-9) & (Y56[k] <= 0.625 + 1e-9)).all() for k in F.FI_K44["olcu"]) and len(F.fi_k44_eslesme(P56, pd.Series({k: 1.5 for k in F.FI_K44["olcu"]}), 0.1)) == 0
     if not ok56:
         hata.append(f"56) K44 eşleşme yanlış: {len(E56)}")
+    # 57) K45 ilk hedef ve kutu çıkışı: 100 -> 3. gün High 109 -> 'arti' 3 günde (%8); Low 91 önce gelirse 'eksi'; kutu 95-105, kapanış 106 -> yukarı.
+    ix57 = pd.bdate_range("2024-01-01", periods=30); o57 = np.full(30, 100.0); h57 = np.full(30, 101.0); l57 = np.full(30, 99.0); c57 = np.full(30, 100.0)
+    h57[12] = 109.0; d57 = pd.DataFrame({"Open": o57, "High": h57, "Low": l57, "Close": c57, "Volume": 1.0}, index=ix57)
+    d57b = d57.copy(); d57b.loc[ix57[11], "Low"] = 91.0
+    d57c = d57.copy(); d57c.loc[ix57[:10], "High"] = 105.0; d57c.loc[ix57[:10], "Low"] = 95.0; d57c.loc[ix57[14], "Close"] = 106.0
+    r1 = F.fi_k45_ilk_hedef(d57, 10, 0.08, 20); r2 = F.fi_k45_ilk_hedef(d57b, 10, 0.08, 20); r3 = F.fi_k45_kutu_cikis(d57c, 10)
+    if not (r1 == ("arti", 3) and r2 == ("eksi", 2) and r3 == ("yukari", 14)):
+        hata.append(f"57) K45 ilk hedef / kutu çıkışı yanlış: {r1} {r2} {r3}")
     return hata
 
 
@@ -732,4 +740,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 56/56 OK")
+    print("test_fon_izi: 57/57 OK")
