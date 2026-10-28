@@ -752,6 +752,16 @@ def sina():
     t59 = F.fi_k47_bbio_kurali(d59); ok59 = ok59a and len(t59) == 1 and ix59c[268] < t59[0] <= ix59c[300] and len(F.fi_k47_bbio_kurali(b59.assign(Close=10.0))) == 0
     if not ok59:
         hata.append(f"59) K47 haftalık ölçü / BBIO kuralı yanlış: {ok59a} {t59}")
+    # 60) K48 geniş parmak izi: >= 120 özellik; geleceğe bakmaz (son 40 bar kesilince önceki satırlar aynı); ölçeksiz (fiyatlar x10 -> aynı özellikler).
+    r60 = np.random.default_rng(60); c60 = 50 * np.exp(np.cumsum(r60.normal(0, 0.02, 400))); o60 = c60 * (1 + r60.normal(0, 0.005, 400))
+    d60 = pd.DataFrame({"Open": o60, "High": np.maximum(o60, c60) * 1.01, "Low": np.minimum(o60, c60) * 0.99, "Close": c60, "Volume": r60.integers(1000, 5000, 400).astype(float)},
+                       index=pd.bdate_range("2022-01-03", periods=400))
+    X60 = F.fi_k48_ozellik(d60); X60k = F.fi_k48_ozellik(d60.iloc[:-40]); X60o = F.fi_k48_ozellik(d60.assign(**{k: d60[k] * 10 for k in ("Open", "High", "Low", "Close")}))
+    a60 = X60.iloc[:-40].to_numpy(float); b60 = X60k.to_numpy(float); m60 = ~(np.isnan(a60) & np.isnan(b60))
+    ok60 = X60.shape[1] >= 120 and np.allclose(np.nan_to_num(a60[m60]), np.nan_to_num(b60[m60]), rtol=1e-3, atol=1e-4) and \
+        np.allclose(np.nan_to_num(X60.to_numpy(float)), np.nan_to_num(X60o.to_numpy(float)), rtol=1e-3, atol=1e-3)
+    if not ok60:
+        hata.append(f"60) K48 geniş parmak izi: sızıntı / ölçek / sayı yanlış ({X60.shape[1]})")
     return hata
 
 
@@ -759,4 +769,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 59/59 OK")
+    print("test_fon_izi: 60/60 OK")

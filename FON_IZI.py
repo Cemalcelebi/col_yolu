@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.36 (2026-10-28, K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.37 (2026-10-28, K48 geniş parmak izi makinesi (~120 ölçeksiz özellik); K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -9066,6 +9066,11 @@ def fi_k46_satirlar(V: Dict[str, pd.DataFrame], pazar: str, K: Dict[str, Any] = 
                            "oyn_oran": g.rolling(20).std() / g.rolling(250, min_periods=120).std(),
                            "dd40": c / c.rolling(40).max() - 1}, index=d.index)        # K46-B: son 40 gün tepesinden düşüş (sert düşüş süzgeci)
         F = pd.concat([F1, F2, F3], axis=1)
+        if callable(K.get("ek_ozellik")):                                 # K48: geniş parmak izi özellikleri (yalnız d ve öncesi)
+            try:
+                F = pd.concat([F, K["ek_ozellik"](d)], axis=1)
+            except Exception as ex:
+                filog.warning("K48 ek özellik %s atlandı: %s", s, ex); continue
         F["piy20"] = piy20.reindex(d.index); F["piy60"] = piy60.reindex(d.index)
         F["sira60"] = sira60[s].reindex(d.index) if s in sira60 else np.nan; F["lsira"] = lsira[s].reindex(d.index) if s in lsira else np.nan
         idx = [i for i in range(260, len(d), K["adim"]) if pd.Timestamp(K["bas"]) <= d.index[i] <= pd.Timestamp(K["bit"])]
@@ -9316,6 +9321,104 @@ def fon_izi_k47(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
         karar[ad] = {"esli": esli, "piyasa": "PİYASAYI GEÇER" if ham else "GEÇMİYOR", "kisa": "KISA İZ" if kisa else "İZ DEĞİL"}
     Z.to_csv(os.path.join(A.cikti, "k47_ozet.csv"), index=False); KS.to_csv(os.path.join(A.cikti, "k47_kisa.csv"), index=False); pd.DataFrame(PI).to_csv(os.path.join(A.cikti, "k47_parmak.csv"), index=False)
     return {"ozet": Z, "kisa": KS, "parmak": pd.DataFrame(PI), "karar": karar, "sayim": kume_say}
+
+# K48 GENİŞ PARMAK İZİ MAKİNESİ (Cemal 28 Eki: TradingView 'Comprehensive Fingerprint' örneği, 'makineye çok metrik yüklesem belki bir şey
+# bulur; bunun gibi çok detaylı düzgün kod yaz'). ÖNCEDEN YAZILDI. Örnekteki üç değişken ailesi (fiziksel mum P_x, trend ve konum T_x,
+# sıralama / kesişim S_x) çok pencereli ve ÖLÇEKSİZ hale getirilir (fiyat birimindeki mum boyu hisseler arasında karşılaştırılamaz: kapanışa ve
+# ATR20'ye bölünür). Örnekteki 'gap = ta.pvt' hatalı (PVT hacim göstergesi), burada gerçek boşluk O / C(-1) - 1. Ek aileler: momentum
+# osilatörleri (RSI, MACD, stokastik, Williams, ADX, CCI), hacim / para akışı (OBV eğimi, CMF, A/D eğimi, MFI), Fibonacci konumu (60 / 120 / 250
+# gün aralığında yer ve en yakın 0,382 / 0,5 / 0,618 seviyesine uzaklık), destek-direnç (20 / 250 gün tepe-dip uzaklığı ve kaç bar önce).
+# Toplam ~120 özellik + K46'nın 37 özelliği. MAKİNE ve DEĞERLENDİRME: K46 ile birebir (yıl yıl ileri yürüyen LightGBM, 2019-26, etiket 20 günde
+# +%8 -%8'den önce, üst %5 sinyal vs oynaklık eşli rastgele, etiket karıştırma kontrolü, 10 yuvalı 20 gün portföy). İKİ KOŞU: K48 (bütün
+# hisse-günleri) ve K48-B (sert düşüş sonrası, dd40 <= -%20; Cemal'in vurgusu). KARAR (K46 kuralı, değişmez): ABD ve AVR'de 2023 ve 2024-26
+# hücrelerinde üst %5 fark >= +10 puan, bootstrap alt uç > 0, gerçekçi işlem > 0 -> 'ÖĞRENİLMİŞ İZ'; BIST bilgi. EK ÖLÇÜ (bilgi): K46'ya göre
+# AUC artışı (çok özellik bilgi ekliyor mu); portföy piyasayı geçiyor mu.
+def _fi_k48_beri(e: pd.Series, tavan: int = 250) -> pd.Series:
+    """Olay (True) üstünden geçen bar sayısı; hiç olmadıysa tavan."""
+    pos = np.arange(len(e), dtype=float); son = pd.Series(np.where(e.fillna(False).to_numpy(bool), pos, np.nan), index=e.index).ffill()
+    return (pd.Series(pos, index=e.index) - son).fillna(tavan).clip(upper=tavan)
+
+
+def fi_k48_ozellik(d: pd.DataFrame) -> pd.DataFrame:
+    """Geniş parmak izi: her satır yalnız o gün ve öncesini kullanır. Bütün ölçüler ölçeksiz (oran, yüzdelik, bar sayısı). float32."""
+    O = d.Open.astype(float); H = d.High.astype(float); L = d.Low.astype(float); C = d.Close.astype(float); Vh = d.Volume.astype(float).clip(lower=0)
+    eps = 1e-12; aralik = (H - L).clip(lower=0); govde = (C - O).abs(); C1 = C.shift(1)
+    tr = pd.concat([H - L, (H - C1).abs(), (L - C1).abs()], axis=1).max(axis=1); atr = tr.rolling(20, min_periods=10).mean()
+    f: Dict[str, pd.Series] = {}
+    # P_x fiziksel mum (bar düzeyi), sonra pencere ortalamaları
+    p = {"boy": aralik / C, "boy_atr": aralik / (atr + eps), "govde": govde / C, "ust_f": (H - np.maximum(O, C)) / C, "alt_f": (np.minimum(O, C) - L) / C,
+         "govde_pay": govde / (aralik + eps), "fitil_govde": ((aralik - govde) / (govde + 0.001 * C)).clip(upper=50), "kapanis_yer": (C - L) / (aralik + eps),
+         "bosluk": O / C1 - 1, "yesil": (C > O).astype(float), "kirmizi": (C < O).astype(float), "doji": (govde <= 0.1 * aralik).astype(float),
+         "cekic": ((np.minimum(O, C) - L) >= 2 * govde).astype(float) * (aralik > 0), "kayan": ((H - np.maximum(O, C)) >= 2 * govde).astype(float) * (aralik > 0)}
+    for k, v in p.items():
+        f[f"p_{k}_1"] = v
+        for w in (5, 10, 20):
+            f[f"p_{k}_{w}"] = v.rolling(w, min_periods=w // 2).mean()
+    f["p_bosluk_mak20"] = p["bosluk"].abs().rolling(20, min_periods=10).max(); f["p_boy_5_60"] = p["boy"].rolling(5).mean() / (p["boy"].rolling(60, min_periods=30).mean() + eps)
+    # T_x trend ve konum
+    for n in (10, 20, 50, 100, 200):
+        sm = C.rolling(n, min_periods=int(n * 0.8)).mean(); f[f"t_sma{n}"] = C / sm - 1
+        for k in (5, 10, 20):
+            if n in (20, 50, 200):
+                f[f"t_sma{n}_egim{k}"] = sm / sm.shift(k) - 1
+    s20 = C.rolling(20).mean(); s50 = C.rolling(50).mean(); s200 = C.rolling(200, min_periods=160).mean(); sd = C.rolling(20).std()
+    bbu = s20 + 2 * sd; bbl = s20 - 2 * sd; bbw = (bbu - bbl) / (s20 + eps); bbp = (C - bbl) / (bbu - bbl + eps)
+    f.update({"t_bbw": bbw, "t_bbw_yuzde250": bbw.rolling(250, min_periods=120).rank(pct=True), "t_bbw_deg20": bbw / (bbw.shift(20) + eps) - 1, "t_bbp": bbp,
+              "t_bbp_5": bbp.rolling(5).mean(), "t_bbp_20": bbp.rolling(20).mean(), "t_bb_alt_pay20": (C < s20).rolling(20).mean(),
+              "t_sma20_50": s20 / s50 - 1, "t_sma50_200": s50 / s200 - 1, "t_dizilim": ((C > s20).astype(int) + (s20 > s50).astype(int) + (s50 > s200).astype(int)).astype(float)})
+    for w in (5, 10, 20):
+        f[f"t_yuksek_tepe{w}"] = (H > H.shift(1)).rolling(w).mean(); f[f"t_alcak_dip{w}"] = (L < L.shift(1)).rolling(w).mean()
+    f["t_trend14"] = (H.rolling(14).max() > H.rolling(14).max().shift(1)).astype(float).rolling(10).mean()
+    for k in (1, 3, 5, 10, 20, 60, 120, 250):
+        f[f"t_r{k}"] = C / C.shift(k) - 1
+    g = C.pct_change(fill_method=None)
+    for w in (10, 20, 60):
+        f[f"t_oyn{w}"] = g.rolling(w, min_periods=w // 2).std()
+    f["t_oyn_10_60"] = f["t_oyn10"] / (f["t_oyn60"] + eps); f["t_carpik60"] = g.rolling(60, min_periods=40).skew(); f["t_basik60"] = g.rolling(60, min_periods=40).kurt()
+    for w in (20, 60, 250):
+        hh = H.rolling(w, min_periods=int(w * 0.6)).max(); ll = L.rolling(w, min_periods=int(w * 0.6)).min()
+        f[f"t_tepe_uz{w}"] = C / hh - 1; f[f"t_dip_uz{w}"] = C / ll - 1
+        f[f"t_tepe_bar{w}"] = H.rolling(w, min_periods=int(w * 0.6)).apply(lambda a: len(a) - 1 - int(np.argmax(a)), raw=True)
+        f[f"t_dip_bar{w}"] = L.rolling(w, min_periods=int(w * 0.6)).apply(lambda a: len(a) - 1 - int(np.argmin(a)), raw=True)
+    # Fibonacci konumu
+    for w in (60, 120, 250):
+        hh = H.rolling(w, min_periods=int(w * 0.6)).max(); ll = L.rolling(w, min_periods=int(w * 0.6)).min(); yer = (C - ll) / (hh - ll + eps)
+        f[f"fib_yer{w}"] = yer; f[f"fib_uzak{w}"] = pd.concat([(yer - lv).abs() for lv in (0.382, 0.5, 0.618)], axis=1).min(axis=1)
+        f[f"fib_tepe_once{w}"] = (H.rolling(w, min_periods=int(w * 0.6)).apply(lambda a: float(np.argmax(a) > np.argmin(a)), raw=True))   # 1: tepe dipten sonra (yükseliş bacağı)
+    # osilatörler
+    fark = C.diff(); yuk = fark.clip(lower=0).ewm(alpha=1 / 14, adjust=False).mean(); dus = (-fark.clip(upper=0)).ewm(alpha=1 / 14, adjust=False).mean()
+    rsi = 100 - 100 / (1 + yuk / (dus + eps)); f.update({"o_rsi14": rsi, "o_rsi_egim5": rsi - rsi.shift(5), "o_rsi_min10": rsi.rolling(10).min(), "o_rsi_mak10": rsi.rolling(10).max()})
+    e12 = C.ewm(span=12, adjust=False).mean(); e26 = C.ewm(span=26, adjust=False).mean(); macd = e12 - e26; sig = macd.ewm(span=9, adjust=False).mean()
+    f.update({"o_macd": macd / C, "o_macd_hist": (macd - sig) / C, "o_macd_hist_egim3": (macd - sig - (macd - sig).shift(3)) / C, "o_macd_kesti_beri": _fi_k48_beri((macd > sig) & (macd.shift(1) <= sig.shift(1)))})
+    ll14 = L.rolling(14).min(); hh14 = H.rolling(14).max(); st = (C - ll14) / (hh14 - ll14 + eps); f.update({"o_stok14": st, "o_stok_d3": st.rolling(3).mean(), "o_williams": st - 1})
+    tp = (H + L + C) / 3; f["o_cci20"] = (tp - tp.rolling(20).mean()) / (0.015 * tp.rolling(20).apply(lambda a: np.mean(np.abs(a - a.mean())), raw=True) + eps)
+    up = H.diff(); dn = -L.diff(); pdm = up.where((up > dn) & (up > 0), 0.0); ndm = dn.where((dn > up) & (dn > 0), 0.0); atr14 = tr.ewm(alpha=1 / 14, adjust=False).mean()
+    pdi = 100 * pdm.ewm(alpha=1 / 14, adjust=False).mean() / (atr14 + eps); ndi = 100 * ndm.ewm(alpha=1 / 14, adjust=False).mean() / (atr14 + eps)
+    dx = 100 * (pdi - ndi).abs() / (pdi + ndi + eps); f.update({"o_adx14": dx.ewm(alpha=1 / 14, adjust=False).mean(), "o_di_fark": pdi - ndi})
+    # uyumsuzluk (bilgi özelliği): 20 günde fiyat yeni dip, RSI yeni dip değil
+    f["o_pozitif_uyum20"] = ((L <= L.rolling(20).min()) & (rsi > rsi.rolling(20).min() + 5)).astype(float).rolling(5).max()
+    # hacim / para akışı
+    vs10 = Vh.rolling(10, min_periods=5).mean(); vs50 = Vh.rolling(50, min_periods=25).mean()
+    f.update({"h_hacim_10": Vh / (vs10 + eps), "h_hacim_10_50": vs10 / (vs50 + eps), "h_hacim_ust_pay10": (Vh > vs10).rolling(10).mean(),
+              "h_yukari_hacim20": (Vh * (C > C1)).rolling(20).sum() / (Vh.rolling(20).sum() + eps), "h_hacim_mak20": Vh.rolling(20).max() / (vs50 + eps)})
+    obv = (np.sign(fark).fillna(0) * Vh).cumsum(); f["h_obv_egim20"] = (obv - obv.shift(20)) / (Vh.rolling(20).sum() + eps)
+    mfm = ((C - L) - (H - C)) / (aralik + eps); f["h_cmf20"] = (mfm * Vh).rolling(20).sum() / (Vh.rolling(20).sum() + eps)
+    ad = (mfm * Vh).cumsum(); f["h_ad_egim20"] = (ad - ad.shift(20)) / (Vh.rolling(20).sum() + eps)
+    para = tp * Vh; pozp = para.where(tp > tp.shift(1), 0.0).rolling(14).sum(); negp = para.where(tp < tp.shift(1), 0.0).rolling(14).sum()
+    f["h_mfi14"] = 100 - 100 / (1 + pozp / (negp + eps)); f["h_pvt_egim20"] = ((g.fillna(0) * Vh).cumsum().diff(20)) / (Vh.rolling(20).sum() + eps)
+    # S_x sıralama / kesişim: kaç bar önce
+    for ad_, a, b in (("c_s20", C, s20), ("c_s50", C, s50), ("c_s200", C, s200), ("s20_s50", s20, s50), ("s50_s200", s50, s200), ("c_bbu", C, bbu), ("c_bbl", C, bbl)):
+        yuk_k = (a > b) & (a.shift(1) <= b.shift(1)); as_k = (a < b) & (a.shift(1) >= b.shift(1))
+        f[f"s_{ad_}_yukari_beri"] = _fi_k48_beri(yuk_k); f[f"s_{ad_}_asagi_beri"] = _fi_k48_beri(as_k)
+    f["s_c_s20_kesisme20"] = ((C > s20) != (C.shift(1) > s20.shift(1))).rolling(20).sum()          # testere (kararsızlık)
+    f["s_seri_yukari"] = (C > C1).groupby((C <= C1).cumsum()).cumsum().astype(float); f["s_seri_asagi"] = (C < C1).groupby((C >= C1).cumsum()).cumsum().astype(float)
+    F = pd.DataFrame(f, index=d.index).replace([np.inf, -np.inf], np.nan)
+    return F.astype(np.float32)
+
+
+FI_K48 = {**FI_K46, "ek_ozellik": fi_k48_ozellik, "tohum": 48}
+FI_K48B = {"dd40": -0.20}
+
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
