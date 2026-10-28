@@ -666,6 +666,20 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "3 / 3, AVR 2024-26, BIST 2 / 2) ama evren yalnız hayatta kalanlar (K34: batanlar eklenince küçüklük etkisi üçte bir eriyor). "
                "Cemal'in gözlemi veride: 'yükselişte almak' (trend grubu) zarar ettirmiyor ama piyasayı da geçmiyor (-%2 .. +%1); 'dipte "
                "dönüş' grubu ABD'de 2023'te artı, 2024-26'da sıfır, Avrupa ve BIST'te sıfır / eksi."),
+    _ik_k("Ç123", "2026-10-28", "INTEM BÖLGESİNİN PARMAK İZİ: 28 Eyl - 9 Eki 2026 sıkışması (düşüş sonrası 195-200), 8 ölçü, iki pencere "
+          "(20 / 10 bar), yüzdelik bandında birebir eşleşen bölgeler 3 pazarda, bütün olasılık testleri (K44)", "FON_IZI.py (k44)",
+          "Cemal: 'bu bölgenin parmak izini çıkart; bu bölgeler özel; iz çıkacaksa burada çıkar; birebir uyanlarda bütün olasılıklarla test et'",
+          "Yeni deneme (çöl tanımı yok, yalnız INTEM'in izi; band ve testler önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k44_ozet.csv",
+          notu="INTEM izi (20 bar): 120 gün tepesinden -%42, eğim -0,009 (BIST havuzunda %8'lik dilim: sert düşen), mum 1,42 (mumlar büyümüş, "
+               "%85'lik dilim: 'küçük mum' DEĞİL), konum 0,17, RSI 34 (%8'lik), Bollinger genişliği orta, hacim azalan (%25), yeşil payı %35. "
+               "10 bar: eğim 0 (yatay), mum 1,1, yeşil %50. Birebir eşleşme (8 ölçü +-0,125 yüzdelik): 20 bar ABD 222 / 26 / 48, AVR 81 / 8 / "
+               "16, BIST 56 / 33 / 30 (2016-22 / 2023 / 2024-26); 10 bar ABD 23 / 5 / 9, AVR (band 0,20) 165 / 36 / 51, BIST 13 / 12 / 12. EŞLİ "
+               "fark: ABD -%4 / -%9 / -%1, AVR +%2 / +%5 (n 8) / -%2, BIST +%5 / -%2 / +%3; hiçbir hücrede aralık artı (BIST 2016-22 10 bar "
+               "+%6, n 13 hariç). HAM (piyasaya göre): hepsi -%3 .. +%5, aralık 0'ı içerir. r60 ortalama ABD +%6 / +%18 / +%15 ama ortanca "
+               "+%4 / +%16 / +%1 ve piyasa +%29 / +%89 (2024-26); portföy 18 hücrenin 17'sinde piyasanın altında. Önce +%20 / önce -%20: ABD "
+               "%46-58 / %27-38 (pazar tabanıyla aynı). Karar: İZ DEĞİL, PİYASAYI GEÇMİYOR. INTEM'in kendisi: bölge bitiminden 9 işlem günü "
+               "sonra -%22 (9 Eki 198 -> 22 Eki 151). Not: bu iz Cemal'in 'küçük mumlu çöl' tanımına uymuyor (mumlar büyümüş, düşüş sert); "
+               "düşüş sonrası 10 günlük duraklama, veride bir dönüş noktası değil."),
 ]
 
 
@@ -987,6 +1001,15 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Hayatta kalanlarda ortalama büyük (2024 +%18, 2025 +%20, son 12 ay +%13,5) ama ORTANCA -%4 .. 0, kazanan payı %40-50: "
               "birkaç piyango hisse. Batanlar dahil en küçükler: 2023 +%1, 2024 +%2,4, 2025 -%0,2, 2026 -%9; son 12 ay -%2,4 (hayatta "
               "kalanlarla +%0,9); kazanan %31, -%50 altı kayıp %13. Son yıllarda batanlar henüz tam görünmüyor (sansür), gerçek daha kötü",
+     "durum": "TAMAMLANDI (Cemal: INTEM bölgesi, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "INTEM grafiği: bu bölgenin parmak izini çıkart; bu bölgeler özel; iz çıkacaksa burada çıkar; birebir uyan "
+                                     "bölgelerde bütün olasılıklarla test et",
+     "yapilan": "K44: bölge 28 Eyl - 9 Eki 2026; 8 ölçülük parmak izi (20 ve 10 bar), üç pazarın bütün pencerelerinde yüzdelik bandıyla "
+                "birebir eşleşme (toplam ~1.000 bölge), eşli fark, piyasaya fark, r20/60/120, önce +%20 / -%20, maliyetli portföy; IZ_KARNE "
+                "Ç123; test 56",
+     "sonuc": "İz değil, piyasayı geçmiyor: eşleşen bölgeler sonraki 60 günde eşlerinden ve piyasadan ayrışmıyor (18 hücrenin 17'sinde "
+              "portföy piyasanın altında). INTEM'in kendisi bölgeden sonra -%22. Bu bölge 'küçük mumlu çöl' değil: mumlar büyümüş, düşüş "
+              "sert; 10 günlük duraklama",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
@@ -999,7 +1022,7 @@ IK_ACIK: List[str] = [
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
