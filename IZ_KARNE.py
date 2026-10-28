@@ -509,6 +509,19 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "Girişte: %22 / %23 (0,97), %6 / %11 (0,54, tersi), %56 / %47 (1,20): girişteki rüzgâr patlamayı önceden haber vermiyor. "
                "Rüzgâr patlamaya EŞLİK ediyor (sektör birlikte yükseliyor) ama alım anında görünmüyor; 60 günlük sepet +%10'u geçtiğinde "
                "hareket çoğu zaman başlamış oluyor."),
+    _ik_k("Ç110", "2026-10-28", "RÜZGÂRIN SEBEBİ: sektörü kaldıran sebep (altın, petrol, bakır, çelik, buğday, USDTRY, ABD 10y faiz, TR CDS) "
+          "fiyat rüzgârından önce görünür mü; sebep sinyalinde sektör üyelerinin getirisi (K36 + 3 devam)", "FON_IZI.py (k36)",
+          "Cemal: 'rüzgâr fiyattan görülünce geç kalınır; önce sebebe bak (1), 2 ondan sonra'",
+          "Yeni deneme (kapalı 'sektör ısısı' / 'VIX-DXY'ye komşu, Cemal istedi; DXY yok; eşleme ve karar önceden)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k36_oncelik.csv",
+          notu="22 sektör-sebep çifti (BIST 6, ABD 16), sinyal = sebebin 20 günlük değişimi son 250 güne göre z >= 1. ÖNCELİK: sinyalde "
+               "sektör zaten rüzgârlı BIST %36 / ABD %24; rüzgârsızken 60 günde rüzgâr çıkma oranı tabana göre BIST 1,03 / ABD 1,08 kat -> "
+               "sebep ÖNCE GELMİYOR (tek tek: XBANK-CDS 1,7 ama 13 olay; REIT-faiz 3,0 ama rüzgâr tabanı %4). GETİRİ (eşli fark, BIST 2023 / "
+               "2024-26 / ABD 2023 / 2024-26): hepsi -%8,9 / -%0,5 / +%0,9 / +%0,9; erken (rüzgâr henüz yok) -%6,8 / -%1,6 / +%1,1 / -%0,5; "
+               "erken + çöl -%2,6 / -%1,4 / +%3,7 / -%8,3. Sebep başına: altın ABD 2024-26 +%15,5 tutar ama 2023 -%17 (ters). Devam: güçlü "
+               "sebep (z >= 2) ve yavaş sebep (60 gün) öncelik 1,0-1,2, getiri sıfır civarı; kötü sebep kaçınması hepsi -%4 / -%3 / -%4 / "
+               "-%2 (yön doğru, ayna şart iki hücrede tutmadı). İZ DEĞİL. Not: ölçülebilen sebepler de fiyattır (emtia, kur, faiz); sektör "
+               "fiyatı onlarla aynı anda hareket ediyor. Teşvik / yasa gibi fiyat olmayan sebepler bedava veride yok."),
 ]
 
 
@@ -748,19 +761,27 @@ IK_GOREV: List[Dict[str, str]] = [
                 "Kurallar önceden; IZ_KARNE Ç108-Ç109; test 45-46",
      "sonuc": "Rüzgâr batmayı tutarlı azaltmıyor (2021-22 farkı çoğunlukla SPAC'ler; 2023-24 yok); rüzgârlı nakdi biten şirket daha iyi "
               "getiri vermiyor. Patlayanlar zirvede daha sık rüzgârlı (eşlik) ama girişte rüzgâr patlamayı önceden göstermiyor",
-     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: sebebe bak, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Rüzgâr fiyattan görülünce geç kalınır, önceden nasıl bilinsin; 1 ile başla (sebebe bak), 2 ondan sonra",
+     "yapilan": "K36: 22 sektör-sebep çifti önceden eşlendi (emtia, kur, faiz, CDS; Yahoo + repo cds_2022.csv); sebep sinyali z-skor; "
+                "öncelik (sinyal rüzgârdan önce mi) ve FI_OLCUT getiri (hepsi / erken / erken + çöl); 3 devam (güçlü, yavaş, kaçınma). "
+                "Sinyal kuralındaki aralık hatası test 47 ile sonuç görülmeden düzeltildi. IZ_KARNE Ç110; test 47",
+     "sonuc": "Sebep sinyali rüzgârdan önce gelmiyor (öncü oranı 1,0-1,2); sebep sinyalinde sektör üyeleri eşlerinden iyi değil (BIST "
+              "2023 -%9). Ölçülebilen sebepler de fiyat; sektörle aynı anda hareket ediyor. İZ DEĞİL",
+     "durum": "TAMAMLANDI, AÇIK: 2 (büyükler önce, küçükler sonra) Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (27 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri İZ DEĞİL; sade portföy (K32) kullanılabilir değil; sıçrayan hisse "
-    "profili (K33) İZ DEĞİL; nakit tükenmesinde küçük şirket batanlar dahil (K34) İZ DEĞİL. Seçenekler Cemal'in: (a) çöl taramasını "
-    "aday listesi olarak piyasayla karşılaştırmalı canlı izlemek, (b) ara.",
+    "YOL (28 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri, sade portföy, sıçrayan hisse, batanlar dahil nakit tükenmesi, "
+    "rüzgâr ve batma, rüzgârın sebebi (K36) hepsi İZ DEĞİL. Rüzgâr fiyattan ve fiyat sebeplerinden önce görülemiyor. Sırada Cemal'in "
+    "onayıyla: (2) büyükler önce küçükler sonra (sektörde büyük şirketler öne geçince küçükleri sonraki 60 günde eşlerini geçiyor mu; "
+    "kapalı 'sektör ısısı'na dokunur). Seçenekler: (2), (a) çöl taramasını aday listesi olarak canlı izlemek, (b) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
