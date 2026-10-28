@@ -762,6 +762,21 @@ def sina():
         np.allclose(np.nan_to_num(X60.to_numpy(float)), np.nan_to_num(X60o.to_numpy(float)), rtol=1e-3, atol=1e-3)
     if not ok60:
         hata.append(f"60) K48 geniş parmak izi: sızıntı / ölçek / sayı yanlış ({X60.shape[1]})")
+    # 61) K49: vektör etiket fi_k46_etiket ile aynı (uzun); kısa yön: düşen seride a8 = 1 ve kâr; karıştırma grup içi değer kümesini korur.
+    E61 = F.fi_k49_etiket_seri(d60); ok61 = True
+    for i in range(250, 370, 7):
+        y, _, pl = F.fi_k46_etiket(d60, i)
+        if not np.isnan(y):
+            r = E61.loc[d60.index[i]]; ok61 &= bool(r.y8 == y and abs(r.pl - pl) < 1e-9)
+    ix61 = pd.bdate_range("2024-01-01", periods=60); c61 = np.linspace(100, 70, 60)
+    d61 = pd.DataFrame({"Open": c61, "High": c61 * 1.005, "Low": c61 * 0.995, "Close": c61, "Volume": 1.0}, index=ix61)
+    E61b = F.fi_k49_etiket_seri(d61); ok61 &= bool(E61b.a8.iloc[0] == 1.0 and abs(E61b.pls.iloc[0] - (0.08 - 0.003)) < 1e-9 and E61b.y8.iloc[0] == 0.0)
+    P61 = pd.DataFrame({"pazar": "X", "gun": np.repeat(pd.bdate_range("2024-01-01", periods=5), 20), "vd": np.tile(np.repeat([0, 1], 10), 5),
+                        "y8": np.arange(100.0), "pl": np.arange(100.0), "a8": np.arange(100.0), "pls": np.arange(100.0)})
+    Q61 = F.fi_k49_karistir(P61, 1)
+    ok61 &= bool((Q61.groupby(["gun", "vd"]).y8.apply(sorted) == P61.groupby(["gun", "vd"]).y8.apply(sorted)).all() and (Q61.y8 != P61.y8).any() and (Q61.y8 == Q61.pl).all())
+    if not ok61:
+        hata.append("61) K49 vektör etiket / kısa yön / karıştırma yanlış")
     return hata
 
 
@@ -769,4 +784,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 60/60 OK")
+    print("test_fon_izi: 61/61 OK")

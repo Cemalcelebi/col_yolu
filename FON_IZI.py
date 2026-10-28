@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.37 (2026-10-28, K48 geniş parmak izi makinesi (~120 ölçeksiz özellik); K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.38 (2026-10-28, K49 kabuk dışı derleme (iki yön, pazar pazar, bütün, şans denetimi); K48 geniş parmak izi makinesi (~120 ölçeksiz özellik); K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -9418,6 +9418,286 @@ def fi_k48_ozellik(d: pd.DataFrame) -> pd.DataFrame:
 
 FI_K48 = {**FI_K46, "ek_ozellik": fi_k48_ozellik, "tohum": 48}
 FI_K48B = {"dd40": -0.20}
+
+
+# K49 KABUK DIŞI DERLEME (Cemal 28 Eki: 'önceki kural gereği iz değil de ne; belki kural bizi sınırlıyor, kabuğumuzdan çıkalım; kuantum
+# düşünceye göre her ölçünün tersi olursa ne olur; bütünü ile ele alalım; bu piyasada iyi ve değişik çok veri oldu ama iz değil dediklerimizi
+# derle, bu düşünce tekniğiyle tekrar koştur'). ÖNCEDEN YAZILDI (sonuç görülmeden). Eski kuralın üç kısıtı kaldırılır: (1) yön önceden sabit
+# değil, her ölçü NORMAL ve TERS iki yönde denenir; (2) 'dört hücre birden' yok, her PAZAR kendi başına (ABD, AVR, BIST); (3) ölçüler tek tek
+# değil, BÜTÜN olarak da birleştirilir. Kendimizi kandırmamanın bedeli: yön ve seçim yalnız ÖĞRENME döneminde yapılır, karar görülmemiş
+# dönemlerde verilir, ve aynı yöntem etiketleri karıştırılmış veride de koşulup 'şansla kaç ölçü geçer' sayılır.
+# ÖLÇÜ BANKASI (derleme): (a) K48'in 204 sürekli ölçüsü (K33, K23 parmak izi, K46 bağlam, K48 mum fiziği / trend / kesişim / osilatör / para
+#   akışı / Fibonacci): her hafta pazar içinde yüzdelik; NORMAL = en üst %10 al, TERS = en alt %10 al. (b) Olay sinyalleri: K43 bankası (T1-T3
+#   trend, A1-A8 klasikler, E1-E3 bilinen etkiler, S1-S3 K38, F1-F6 K38-B şekiller: çöl, ikili dip, ters OBO, uyumsuzluk), K47 BBIO kuralı, ve
+#   kayıtlı olay dosyaları: K24 çöl kuralı, K26 ortak parmak izi alış, K18 kutu varyantları, K36 rüzgâr, K27 BIST içeriden alım/satım, K28
+#   bilanço tepkisi (ust/alt), K30 ABD içeriden alım türleri. Olayda NORMAL = al, TERS = açığa sat (kısa). Hissede 20 işlem günü aralık.
+# SONUÇ (Cemal'in kısa ufku, K46 ile aynı): sinyal günü d, giriş d+1 açılışı; y8 = 20 günde +%8, -%8'den önce (kısa için a8 = -%8 önce);
+#   gerçekçi işlem (hedef / stop %8, boşlukta açılış, %0,3 maliyet). TABAN: aynı pazar, aynı yıl, aynı oynaklık (vol60) ondalığındaki bütün
+#   hisse-günlerinin ortalaması (oynaklık eşli rastgele, K45 dersi). FARK = sinyal - taban (y8 puanı ve işlem getirisi); güven aralığı ay kümeli.
+# DÖNEMLER: ÖĞRENME 2016-22; TEST 2023 ve 2024-26 (giriş en geç 05.06.2026, fon krizi). Öğrenmede n < 100 olan olay kümelerinde (K27 / K28 /
+#   K30 2022'de başlar) öğrenme = 2023 ve tek test 2024-26 ('tek test' diye işaretlenir).
+# SEÇİM (öğrenme): pazar başına, ölçü-yön: n >= 100 (tek testte 30), y8 farkı >= +5 puan, alt uç > 0, işlem farkı > 0.
+# KARAR (test): seçilen ölçü-yön AYNI pazarda her test döneminde n >= 30, y8 farkı >= +5 puan, alt uç > 0, işlem farkı > 0 -> 'PAZAR İZİ'.
+#   İki ya da üç pazarda -> 'ÇOK PAZARLI'. ŞANS DENETİMİ: (a) bankasında etiketler aynı gün aynı oynaklık ondalığı içinde 3 kez karıştırılır,
+#   aynı seçim + test koşulur; gerçek PAZAR İZİ sayısı şans sayısıyla kıyaslanır. BÜTÜN (kuantum birleşimi): pazar başına öğrenmede seçilen
+#   bütün sürekli ölçülerin yönlü yüzdeliklerinin ortalaması + 0,05 x (seçilen normal olay oyu - seçilen ters olay oyu, son 5 gün); her hafta
+#   en üst %5 al. 'BÜTÜN İZİ' = aynı test şartları + 10 yuvalı 20 gün tut portföy her iki test döneminde piyasayı geçer.
+FI_K49 = {"ogren": ("2016-01-01", "2022-12-31"), "test": (("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-06-05")),
+          "dilim": 0.10, "ust": 0.05, "esik": 0.05, "n_ogren": 100, "n_tek": 30, "n_test": 30, "boot": 500, "ayri_gun": 28, "null_tekrar": 3,
+          "oy": 0.05, "oy_gun": 7, "tohum": 49, "ufuk": 20, "e": 0.08, "maliyet": 0.003, "bas": "2016-01-01", "grup_min": 20}
+
+
+def fi_k49_etiket_seri(d: pd.DataFrame, K: Dict[str, Any] = FI_K49) -> pd.DataFrame:
+    """Bütün günler için fi_k46_etiket'in vektör karşılığı (uzun) + kısa yön: y8, pl (uzun net), a8 (-%8 önce), pls (kısa net), vol60."""
+    O = d.Open.to_numpy(float); H = d.High.to_numpy(float); L = d.Low.to_numpy(float); C = d.Close.to_numpy(float); n = len(d); u = K["ufuk"]; e = K["e"]
+    i = np.arange(n); m = i + 1 + u < n; ii = i[m]; o = O[ii + 1]; m2 = o > 0; ii = ii[m2]; o = o[m2]
+    y8 = np.zeros(len(ii)); pl = np.full(len(ii), np.nan); a8 = np.zeros(len(ii)); pls = np.full(len(ii), np.nan)
+    bitL = np.zeros(len(ii), bool); bitS = np.zeros(len(ii), bool)
+    for t in range(u):
+        k = ii + 1 + t; Ok = O[k]; dn = o * (1 - e); up = o * (1 + e)
+        gd = (Ok <= dn) if t > 0 else np.zeros(len(ii), bool); gu = (Ok >= up) if t > 0 else np.zeros(len(ii), bool)
+        lh = L[k] <= dn; hh = H[k] >= up
+        # uzun: boşluk aşağı, boşluk yukarı, dip, tepe sırası (fi_k46_etiket)
+        for kos, deger, kaz in ((gd, Ok / o - 1, 0.0), (gu, Ok / o - 1, 1.0), (lh, np.full(len(ii), -e), 0.0), (hh, np.full(len(ii), e), 1.0)):
+            w = kos & ~bitL; pl[w] = deger[w]; y8[w] = kaz; bitL |= w
+        # kısa: boşluk yukarı (zarar), boşluk aşağı (kâr), tepe (stop), dip (hedef) sırası; aynı gün ikisi = zarar
+        for kos, deger, kaz in ((gu, 1 - Ok / o, 0.0), (gd, 1 - Ok / o, 1.0), (hh, np.full(len(ii), -e), 0.0), (lh, np.full(len(ii), e), 1.0)):
+            w = kos & ~bitS; pls[w] = deger[w]; a8[w] = kaz; bitS |= w
+    son = C[ii + u] / o - 1; pl[~bitL] = son[~bitL]; pls[~bitS] = -son[~bitS]
+    g = d.Close.astype(float).pct_change(fill_method=None).rolling(60, min_periods=40).std().to_numpy()
+    return pd.DataFrame({"y8": y8, "pl": pl - K["maliyet"], "a8": a8, "pls": pls - K["maliyet"], "vol60": g[ii]}, index=d.index[ii])
+
+
+def fi_k49_panel(V: Dict[str, pd.DataFrame], pazar: str, K: Dict[str, Any] = FI_K49) -> pd.DataFrame:
+    """Pazarın bütün hisse-günleri: etiketler + taban (aynı yıl, aynı vol60 ondalığı ortalaması)."""
+    parca = []
+    for s, d in V.items():
+        if len(d) < 300:
+            continue
+        try:
+            E = fi_k49_etiket_seri(d, K)
+        except Exception as ex:
+            filog.warning("K49 etiket %s atlandı: %s", s, ex); continue
+        E = E[(E.index >= pd.Timestamp(K["bas"])) & (E.index <= pd.Timestamp(K["test"][-1][2]))]
+        if len(E):
+            parca.append(E.assign(sembol=s).rename_axis("gun").reset_index())
+    P = pd.concat(parca, ignore_index=True).dropna(subset=["vol60"]); P["pazar"] = pazar; P["yil"] = P.gun.dt.year.astype(np.int16)
+    P["vd"] = np.minimum((P.groupby("yil").vol60.rank(pct=True) * 10).astype(int), 9).astype(np.int8)
+    for c in ("y8", "pl", "a8", "pls"):
+        P["e_" + c] = P.groupby(["yil", "vd"])[c].transform("mean")
+    for c in ("y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls", "vol60"):
+        P[c] = P[c].astype(np.float32)
+    return P
+
+
+def fi_k49_karistir(P: pd.DataFrame, tohum: int, anahtar: Tuple[str, ...] = ("pazar", "gun", "vd")) -> pd.DataFrame:
+    """Şans denetimi: etiketleri (y8, pl, a8, pls) aynı pazar, aynı gün, aynı oynaklık ondalığı içinde karıştırır (taban sütunları sabit)."""
+    rng = np.random.default_rng(tohum); Q = P.copy(); kod = Q.groupby(list(anahtar), sort=False).ngroup().to_numpy()
+    a = np.lexsort((np.arange(len(Q)), kod)); b = np.lexsort((rng.random(len(Q)), kod))
+    for c in ("y8", "pl", "a8", "pls"):
+        x = Q[c].to_numpy().copy(); x[a] = Q[c].to_numpy()[b]; Q[c] = x
+    return Q
+
+
+def fi_k49_olc(D: pd.DataFrame, yon: str, K: Dict[str, Any], rng: np.random.Generator) -> Dict[str, float]:
+    """D: sinyal satırları (etiket + taban sütunları). yon 'normal' (uzun) ya da 'ters_kisa' (olayda açığa satış)."""
+    if yon == "ters_kisa":
+        v = (D.a8 - D.e_a8).to_numpy(float); p = (D.pls - D.e_pls).to_numpy(float); ham = D.pls.to_numpy(float)
+    else:
+        v = (D.y8 - D.e_y8).to_numpy(float); p = (D.pl - D.e_pl).to_numpy(float); ham = D.pl.to_numpy(float)
+    n = len(v)
+    if n == 0:
+        return {"n": 0, "fark": np.nan, "alt95": np.nan, "islem_fark": np.nan, "islem": np.nan}
+    ay = D.gun.dt.year.to_numpy() * 12 + D.gun.dt.month.to_numpy(); ua, inv = np.unique(ay, return_inverse=True)
+    sv = np.bincount(inv, v); sn = np.bincount(inv).astype(float); M = len(ua)
+    if M >= 3:
+        idx = rng.integers(0, M, (K["boot"], M)); bs = sv[idx].sum(1) / sn[idx].sum(1); alt = float(np.quantile(bs, 0.025))
+    else:
+        alt = np.nan
+    return {"n": n, "fark": float(v.mean()), "alt95": alt, "islem_fark": float(np.nanmean(p)), "islem": float(np.nanmean(ham))}
+
+
+def _fi_k49_gecer(r: Dict[str, float], n_min: int, K: Dict[str, Any]) -> bool:
+    return bool(r.get("n", 0) >= n_min and r.get("fark", -1) >= K["esik"] and (r.get("alt95") or -1) > 0 and r.get("islem_fark", -1) > 0)
+
+
+def fi_k49_olaylar(Vs: Dict[str, Dict[str, pd.DataFrame]], cikti: str, K: Dict[str, Any] = FI_K49) -> pd.DataFrame:
+    """Olay bankası (pazar, olcu, kaynak, sembol, gun = sinyal günü). Giriş günü verilen dosyalarda sinyal = hissenin önceki işlem günü."""
+    out = []
+
+    def ekle(pz: str, ad: str, kaynak: str, S: pd.DataFrame) -> None:
+        if len(S):
+            out.append(pd.DataFrame({"pazar": pz, "olcu": ad, "kaynak": kaynak, "sembol": S.sembol.astype(str).to_numpy(), "gun": pd.to_datetime(S.gun).to_numpy()}))
+
+    def onceki(pz: str, S: pd.DataFrame, kol: str) -> pd.DataFrame:
+        V = Vs[pz]; r = []
+        for s, g in S.groupby("sembol"):
+            if s not in V:
+                continue
+            ix = V[s].index; j = ix.searchsorted(pd.DatetimeIndex(pd.to_datetime(g[kol]))) - 1
+            r.append(pd.DataFrame({"sembol": s, "gun": ix[j[j >= 0]]}))
+        return pd.concat(r, ignore_index=True) if r else pd.DataFrame(columns=["sembol", "gun"])
+
+    kay = {**{k: "K43 trend" for k in ("T1", "T2", "T3")}, **{f"A{i}": "K41 klasik" for i in range(1, 9)}, **{f"E{i}": "K42 bilinen etki" for i in (1, 2, 3)},
+           **{f"S{i}": "K38" for i in (1, 2, 3)}, **{f"F{i}": "K38-B şekil" for i in range(1, 7)}}
+    for pz, V in Vs.items():
+        try:
+            for ad, S in fi_k43_sinyaller(V).items():
+                ekle(pz, ad, kay.get(ad, "K43"), S)
+        except Exception as ex:
+            filog.warning("K49 K43 bankası %s: %s", pz, ex)
+        b = [(s, t) for s, d in V.items() if len(d) >= 300 for t in fi_k47_bbio_kurali(d)]
+        ekle(pz, "BBIO", "K47 kural", pd.DataFrame(b, columns=["sembol", "gun"]))
+    yol = lambda f: os.path.join(cikti, f)
+    try:
+        X = pd.read_csv(yol("k24_olaylar.csv.gz")); X = X[X.kural.astype(bool)]
+        for pz, g in X.groupby("pazar"):
+            if pz in Vs: ekle(pz, "col_kural", "K24 çöl", g.rename(columns={"tarih": "gun"}))
+        X = pd.read_csv(yol("k26_sinyal.csv")); X = X[X.alis.astype(bool) & X.alis_tarih.notna()]
+        for pz, g in X.groupby("pazar"):
+            if pz in Vs: ekle(pz, "ortak_iz_alis", "K26", g.rename(columns={"alis_tarih": "gun"}))
+        X = pd.read_csv(yol("k18_olaylar.csv.gz"))
+        for (pz, vr), g in X.groupby(["pazar", "varyant"]):
+            if pz in Vs: ekle(pz, f"kutu_{vr}", "K18 kutu", onceki(pz, g, "giris"))
+        X = pd.read_csv(yol("k36_olay.csv"))
+        for pz, g in X.groupby("pazar"):
+            for kol in ("hepsi", "erken", "col", "erken_col"):
+                gg = g[g[kol].astype(bool)].rename(columns={"sinyal": "gun"})
+                if pz in Vs: ekle(pz, f"ruzgar_{kol}", "K36 rüzgâr", gg)
+        X = pd.read_csv(yol("k27_olay.csv"))
+        for ol, g in X.groupby("olay"):
+            ekle("BIST", f"iceriden_{ol}", "K27 BIST içeriden", onceki("BIST", g, "giris"))
+        X = pd.read_csv(yol("k28_olay.csv"))
+        for (pz, ol), g in X.groupby(["pazar", "olay"]):
+            if pz in Vs: ekle(pz, f"bilanco_{ol}", "K28 bilanço", onceki(pz, g, "giris"))
+        X = pd.read_csv(yol("k30_olay.csv"))
+        for ol, g in X.groupby("olay"):
+            ekle("ABD", f"iceriden_{ol}", "K30 ABD içeriden", onceki("ABD", g, "giris"))
+    except Exception as ex:
+        filog.error("K49 olay dosyası okunamadı: %s", ex); raise
+    E = pd.concat(out, ignore_index=True).drop_duplicates(["pazar", "olcu", "sembol", "gun"]).sort_values(["pazar", "olcu", "sembol", "gun"])
+    # hissede ayri_gun takvim günü aralık (20 işlem günü ufkunda örtüşmesin)
+    tut = np.ones(len(E), bool); gv = E.gun.to_numpy(); key = (E.pazar + "|" + E.olcu + "|" + E.sembol).to_numpy(); son_k = None; son_t = None
+    for k in range(len(E)):
+        if key[k] == son_k and (gv[k] - son_t) < np.timedelta64(K["ayri_gun"], "D"):
+            tut[k] = False; continue
+        son_k = key[k]; son_t = gv[k]
+    return E[tut].reset_index(drop=True)
+
+
+def fi_k49_secim_test(rows: pd.DataFrame, K: Dict[str, Any], rng: np.random.Generator) -> List[Dict[str, Any]]:
+    """rows: (pazar, olcu, kaynak, yon, tip) ile işaretli sinyal satırları (etiket + taban). Öğrenme / test ölçümü ve karar."""
+    sonuc = []; o_a, o_b = K["ogren"]
+    for (pz, olcu, kaynak, yon), g in rows.groupby(["pazar", "olcu", "kaynak", "yon"], sort=False):
+        ogr = g[(g.gun >= o_a) & (g.gun <= o_b)]; tek = len(ogr) < K["n_ogren"]
+        if tek:
+            ogr = g[(g.gun >= K["test"][0][1]) & (g.gun <= K["test"][0][2])]; testler = K["test"][1:]; n_o = K["n_tek"]
+        else:
+            testler = K["test"]; n_o = K["n_ogren"]
+        ro = fi_k49_olc(ogr, "ters_kisa" if yon == "ters_kisa" else "normal", K, rng); secildi = _fi_k49_gecer(ro, n_o, K)
+        r = {"pazar": pz, "olcu": olcu, "kaynak": kaynak, "yon": yon, "tek_test": tek, "secildi": secildi,
+             **{f"ogren_{k}": v for k, v in ro.items()}}
+        gecti = []
+        for dn, a, b in K["test"]:
+            rt = fi_k49_olc(g[(g.gun >= a) & (g.gun <= b)], "ters_kisa" if yon == "ters_kisa" else "normal", K, rng)
+            r.update({f"{dn}_{k}": v for k, v in rt.items()})
+            if (dn, a, b) in testler:
+                gecti.append(_fi_k49_gecer(rt, K["n_test"], K))
+        r["pazar_izi"] = bool(secildi and gecti and all(gecti)); sonuc.append(r)
+    return sonuc
+
+
+def fi_k49_surekli_satir(Z: pd.DataFrame, ozl: List[str], K: Dict[str, Any]) -> pd.DataFrame:
+    """Sürekli ölçü bankası: her ölçü için haftalık pazar içi yüzdelik; normal = üst dilim, ters = alt dilim satırları (uzun)."""
+    parca = []; grp = [Z.pazar, Z.hafta]; boy = Z.groupby(["pazar", "hafta"]).sembol.transform("size")
+    for f in ozl:
+        r = Z[f].groupby(grp).rank(pct=True); r[boy < K["grup_min"]] = np.nan
+        if r.nunique() < 5:
+            continue
+        for yon, m in (("normal", r >= 1 - K["dilim"]), ("ters", r <= K["dilim"])):
+            g = Z.loc[m.fillna(False), ["pazar", "gun", "y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls"]]
+            parca.append(g.assign(olcu=f, kaynak="K48 sürekli", yon=yon))
+    return pd.concat(parca, ignore_index=True)
+
+
+def fon_izi_k49(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K49,
+                Z: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """K49 sürücü. Z: K48 satırları (fi_k46_satirlar(V, pz, FI_K48) birleşimi; verilmezse üretilir). Çıktılar k49_derleme.csv (her ölçü-yön-
+    pazar), k49_sans.csv (şans denetimi), k49_butun.csv (birleşim), k49_portfoy.csv."""
+    A = A or FIAyar(); rng = np.random.default_rng(K["tohum"])
+    P = pd.concat([fi_k49_panel(V, pz, K) for pz, V in Vs.items()], ignore_index=True); filog.info("K49 panel %d satır", len(P))
+    et = ["y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls", "vd"]
+    if Z is None:
+        Z = pd.concat([fi_k46_satirlar(V, pz, FI_K48) for pz, V in Vs.items()], ignore_index=True)
+    Z = Z.drop(columns=[c for c in ("y8", "pl", "y20") if c in Z.columns]).merge(P[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"], how="inner")
+    Z["hafta"] = Z.gun.dt.to_period("W").astype(str)
+    ozl = [c for c in Z.columns if c not in ("sembol", "gun", "pazar", "hafta", "pazar_k", "puan") + tuple(et)]
+    filog.info("K49 sürekli bankası: %d satır, %d ölçü", len(Z), len(ozl))
+    # 1) sürekli ölçüler
+    R1 = fi_k49_secim_test(fi_k49_surekli_satir(Z, ozl, K), K, rng)
+    # 2) olaylar (normal = al, ters = açığa sat)
+    E = fi_k49_olaylar(Vs, A.cikti, K).merge(P[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"], how="inner")
+    E["gun"] = pd.to_datetime(E.gun); filog.info("K49 olay bankası: %d olay, %d küme", len(E), E.groupby(["pazar", "olcu"]).ngroups)
+    R2 = fi_k49_secim_test(pd.concat([E.assign(yon="normal"), E.assign(yon="ters_kisa")], ignore_index=True), K, rng)
+    D = pd.DataFrame(R1 + R2)
+    sec_sayi = D.groupby("pazar").secildi.sum().to_dict(); iz_sayi = D.groupby("pazar").pazar_izi.sum().to_dict()
+    # 3) şans denetimi (sürekli banka; olay bankası için aynı pipeline karıştırılmış panelden)
+    sans = []
+    for t in range(K["null_tekrar"]):
+        Zk = fi_k49_karistir(Z, 1000 + t); Rk = pd.DataFrame(fi_k49_secim_test(fi_k49_surekli_satir(Zk, ozl, K), K, rng))
+        Pk = fi_k49_karistir(P, 2000 + t); Ek = E[["pazar", "olcu", "kaynak", "sembol", "gun"]].merge(Pk[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"])
+        Rek = pd.DataFrame(fi_k49_secim_test(pd.concat([Ek.assign(yon="normal"), Ek.assign(yon="ters_kisa")], ignore_index=True), K, rng))
+        for pz in Vs:
+            sans.append({"tekrar": t, "pazar": pz, "surekli_secilen": int(Rk[Rk.pazar == pz].secildi.sum()), "surekli_iz": int(Rk[Rk.pazar == pz].pazar_izi.sum()),
+                         "olay_secilen": int(Rek[Rek.pazar == pz].secildi.sum()), "olay_iz": int(Rek[Rek.pazar == pz].pazar_izi.sum())})
+        filog.info("K49 şans tekrarı %d bitti", t)
+    Sn = pd.DataFrame(sans)
+    # 4) BÜTÜN: öğrenmede seçilen sürekli ölçülerin yönlü yüzdelik ortalaması + olay oyları
+    butun = []; sinyal = []
+    for pz in Vs:
+        Zp = Z[Z.pazar == pz].copy(); secf = D[(D.pazar == pz) & D.secildi & (D.kaynak == "K48 sürekli")]
+        if not len(secf):
+            butun.append({"pazar": pz, "secilen_olcu": 0}); continue
+        grp = [Zp.hafta]; parca = []
+        for f, yon in zip(secf.olcu, secf.yon):
+            r = Zp[f].groupby(grp).rank(pct=True); parca.append(r if yon == "normal" else 1 - r)
+        Zp["skor"] = pd.concat(parca, axis=1).mean(axis=1)
+        sece = D[(D.pazar == pz) & D.secildi & (D.kaynak != "K48 sürekli") & ~D.tek_test]
+        oy = np.zeros(len(Zp))
+        for olcu, yon in zip(sece.olcu, sece.yon):
+            Eo = E[(E.pazar == pz) & (E.olcu == olcu)][["sembol", "gun"]].sort_values("gun").assign(_v=1.0)
+            mm = pd.merge_asof(Zp[["sembol", "gun"]].reset_index().sort_values("gun"), Eo, on="gun", by="sembol", direction="backward",
+                               tolerance=pd.Timedelta(days=K["oy_gun"])).set_index("index")["_v"].reindex(Zp.index).fillna(0).to_numpy()
+            oy += mm if yon == "normal" else -mm
+        Zp["skor"] = Zp.skor + K["oy"] * oy
+        esik = Zp.groupby("hafta").skor.transform(lambda x: x.quantile(1 - K["ust"]) if len(x) >= K["grup_min"] else np.inf)
+        S = Zp[Zp.skor >= esik]; row = {"pazar": pz, "secilen_olcu": len(secf), "secilen_olay": len(sece)}
+        ro = fi_k49_olc(S[(S.gun >= K["ogren"][0]) & (S.gun <= K["ogren"][1])], "normal", K, rng); row.update({f"ogren_{k}": v for k, v in ro.items()})
+        gec = []
+        for dn, a, b in K["test"]:
+            rt = fi_k49_olc(S[(S.gun >= a) & (S.gun <= b)], "normal", K, rng); row.update({f"{dn}_{k}": v for k, v in rt.items()}); gec.append(_fi_k49_gecer(rt, K["n_test"], K))
+        row["test_gecti"] = all(gec); butun.append(row); sinyal.append(S[["pazar", "sembol", "gun", "skor"]])
+    B = pd.DataFrame(butun); Sg = pd.concat(sinyal, ignore_index=True) if sinyal else pd.DataFrame(columns=["pazar", "sembol", "gun", "skor"])
+    # 5) portföy (10 yuva, 20 gün tut, skor sırası) ve piyasa
+    prow = []
+    for pz, V in Vs.items():
+        C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index(); gun = C.index; mal = FI_K32["maliyet"].get(pz, 0.001)
+        for dn, a, b in K["test"]:
+            b2 = "2026-08-31" if dn == "2024-26" else b
+            K32 = {**FI_K32, "tut": 20, "donem": ((dn, a, b2),)}; g = Sg[(Sg.pazar == pz) & (Sg.gun >= a) & (Sg.gun <= b)].sort_values(["gun", "skor"], ascending=[True, False])
+            j = gun.searchsorted(pd.DatetimeIndex(g.gun), side="right"); ok = j < len(gun); g = g[ok].assign(giris=gun[j[ok]])
+            gir = [(r.giris, r.sembol) for r in g.itertuples() if r.giris in V[r.sembol].index]
+            po = fi_k32_olc(**{k: v for k, v in fi_k32_benzet(V, gir, "tut", a, b2, mal, K32, None, C).items() if k in ("deger", "islem")}) if gir else {}
+            P0 = fi_k32_olc(fi_k32_piyasa(V, a, b2, K32))
+            prow.append({"pazar": pz, "donem": dn, "sinyal_n": len(gir), "port_toplam": po.get("toplam"), "port_mdd": po.get("mdd"), "piyasa": P0.get("toplam"), "piyasa_mdd": P0.get("mdd")})
+    Pf = pd.DataFrame(prow)
+    for i, r in B.iterrows():
+        pp = Pf[Pf.pazar == r.pazar]
+        B.loc[i, "portfoy_gecer"] = bool(len(pp) and (pp.port_toplam.fillna(-9) > pp.piyasa).all())
+        B.loc[i, "butun_izi"] = bool(r.get("test_gecti", False) and B.loc[i, "portfoy_gecer"])
+    D.to_csv(os.path.join(A.cikti, "k49_derleme.csv"), index=False); Sn.to_csv(os.path.join(A.cikti, "k49_sans.csv"), index=False)
+    B.to_csv(os.path.join(A.cikti, "k49_butun.csv"), index=False); Pf.to_csv(os.path.join(A.cikti, "k49_portfoy.csv"), index=False)
+    return {"derleme": D, "sans": Sn, "butun": B, "portfoy": Pf, "secilen": sec_sayi, "pazar_izi": iz_sayi, "olay_n": len(E), "sinyal": Sg}
 
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
