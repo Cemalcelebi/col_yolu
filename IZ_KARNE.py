@@ -536,6 +536,27 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "iki pazarda da tutmadı. Devam: gevşek eşik, 60 günlük pencere, ayna kaçınma da tutmadı. İZ DEĞİL. Küçük hisse riskine "
                "cevap: eşli ölçü zaten aynı likidite dilimindeki hisseyle kıyaslar; risk bilinince sonuç değişmez, maliyetle birlikte "
                "aleyhe döner. Notlar: BIST büyüklük vekili işlem değeri (piyasa değeri yok); BIST'te hisse ihracı ve ABD'de borç verisi yok."),
+    _ik_k("Ç112", "2026-10-28", "EN YAKIN ADAYLAR 3 PAZARDA (yeni karar pazarları ABD + AVRUPA, BIST bilgi): tavan günü kaçınması, geride "
+          "kalan + hacim artışı kaçınması, blok hacimli taban günü (K38)", "FON_IZI.py (k38)",
+          "Cemal: 'Amerika ve Avrupa tutan iz kabul edilsin, BIST bilgi, Çin sonra; adayları 3 pazarda ölç'",
+          "Yeni deneme (Avrupa evreni STOXX 600 + FTSE 250, 581 hisse; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k38_ozet.csv",
+          notu="Eşli fark (ABD 2023 / 2024-26, AVR 2023 / 2024-26, BIST 2023 / 2024-26): tavan günü sonrası +%3,5 / +%1,6, -%0,9 / -%0,8, "
+               "-%1,3 / -%0,6 -> ABD'de tavan sonrası hisse eşlerinden İYİ (kaçınmanın tersi), BIST'te hafif kötü; geride + hacim +%3,3 / "
+               "+%10,9, +%0,1 / +%0,1, -%5,3 / -%1,5 -> yine ABD'de tersi; blok hacimli taban +%4,4 / +%14,9 (2024-26 dört şart tutar, 2023 "
+               "aralık 0'ı içerir), AVR n 8 / 24, BIST -%23 / -%30 (n 9 / 31). Üçü de İZ DEĞİL. BIST'in kaçınma izleri ABD'de ters çalışıyor: "
+               "BIST'te tavan ve hacimli düşüş sonrası zayıflık BIST'e özgü (tedbir, tavan kuyruğu, manipülasyon); ABD'de aynı günler "
+               "güç belirtisi. Avrupa'da ikisi de yok (sıfır civarı). Avrupa veri temizliği: Londra peni / sterlin 100x geçişleri (5 hisse) "
+               "düzeltildi, DIA.MC dışarıda; ilk koşudaki -%18 / +%42 gibi değerler bu hatadandı."),
+    _ik_k("Ç113", "2026-10-28", "ŞEKİLLER 3 PAZARDA: çöl (K24), ikili dip, ters omuz baş omuz, RSI / MACD boğa uyumsuzluğu, RSI ayı "
+          "uyumsuzluğu kaçınması (K38-B)", "FON_IZI.py (k38b)",
+          "Cemal: 'çöl, ikili dip, ters OBO, RSI MACD uyumsuzluk şartlarını ayrı ayrı karşılaştırma olarak koştur'",
+          "Yeni deneme (23 Eki gösterge turu eski cetvelle İZ DEĞİL'di; yeni karar pazarlarıyla yeniden, karar önceden)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k38b_ozet.csv",
+          notu="Eşli fark ABD 2023 / 2024-26, AVR 2023 / 2024-26, BIST 2023 / 2024-26: çöl K24 +%3,1 (aralık artı) / -%0,5, +%0,4 / +%0,5, "
+               "-%1,4 / -%0,7; ikili dip (boyun kırılımı) 0 / 0, -%1,6 / -%1,0, +%10 (n 71, aralık 0'ı içerir) / -%0,6; ters OBO -%2 / +%3, "
+               "+%4 (n 18) / -%5, -%25 (n 7) / -%6; RSI boğa uyumsuzluğu 0 / -%1, 0 / -%1, 0 / 0; MACD boğa -%1 / -%1, 0 / -%1, -%1 / +%1; "
+               "RSI ayı uyumsuzluğu (kaçınma) -%1 / -%1,5 (ABD 2024-26 aralık eksi ama sıra 0,50), +%1 / 0, +%2 / +%1. Altısı da İZ DEĞİL. "
+               "Şekil ve gösterge sinyalleri üç pazarda da eşlerinden ayrışmıyor; en büyük sapmalar küçük örneklemlerde (ters OBO)."),
 ]
 
 
@@ -798,21 +819,30 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "ABD'de iki hücrede tutan ölçü YOK: tek cetvelde 0/46 (en yakın: tavan günü kaçınması 1,20 / 1,23; geride kalan + hacim artışı "
               "kaçınması 1,37 / 1,21); yeni ölçütte yalnız nakdi biten küçük şirket tuttu, o da batanlar eklenince düştü (K34). Avrupa / Çin'e "
               "taşınacak aday yok",
-     "durum": "TAMAMLANDI, AÇIK: iz kuralı değişikliği (ABD iki hücre + Avrupa / Çin doğrulaması, BIST bilgi) ve Avrupa / Çin evreni kurulumu "
-              "Cemal'in 'yaz' kararı"},
+     "durum": "TAMAMLANDI (Cemal: üçünü de yaz, bir alttaki satırlar)"},
+    {"tarih": "2026-10-28", "istek": "Üçünü de yaz: iz kuralı (Amerika ve Avrupa tutan iz; BIST bilgi; Çin sonra), Avrupa evreni, adayları 3 "
+                                     "pazarda ölç; ayrıca çöl, ikili dip, ters OBO, RSI / MACD uyumsuzluk ayrı ayrı; verileri repoya kaydet",
+     "yapilan": "CLAUDE.md + FI_OLCUT 'karar' = (ABD, AVR), fi_olcut_karar ortak (BIST tutarsa 'İZ + BIST'); Avrupa evreni STOXX 600 + FTSE 250 "
+                "(Wikipedia listeleri, Yahoo, 581 hisse, EUR likidite 'Kur' sütunu, peni / sterlin 100x temizliği); K38 üç aday + K38-B altı "
+                "şekil 3 pazarda; veri islenmis-veri dalına (V_AVR, K34 Yahoo fiyatları, SEC özetleri, K28 / K30 / K31 tabloları, SIC, "
+                "sürücüler, Avrupa listesi; Tiingo verisi lisans gereği repoya konmadı); IZ_KARNE Ç112-Ç113; test 49-51",
+     "sonuc": "Dokuz ölçünün hiçbiri ABD + Avrupa dört hücrede tutmadı. BIST'in kaçınma izleri (tavan, hacimli düşüş) ABD'de ters, "
+              "Avrupa'da sıfır. Blok hacimli taban ABD 2024-26'da tuttu (+%15) ama 2023'te değil. Şekiller ve uyumsuzluklar üç pazarda da "
+              "eşlerinden ayrışmıyor",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K37). Cemal'in önerisi: ABD iki hücrede tutan = iz, Avrupa ve Çin ile doğrula, BIST bilgi. "
-    "Şu an ABD'de iki hücrede tutan ölçü yok (tek cetvel 0/46; yeni ölçütte K33-B batanlarla düştü). Karar Cemal'in: (1) kuralı "
-    "CLAUDE.md'ye yaz ('yaz'), (2) Avrupa (STOXX 600 benzeri) + Çin (CSI 300 + HSI) evreni Yahoo'dan kur (yalnız bugün işlem görenler; "
-    "~1 saat), (3) en yakın adayları (tavan kaçınması, geride + hacim kaçınması, çölde içeriden alım) 4 pazarda yeniden ölç.",
+    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K38). Karar pazarları artık ABD + Avrupa (BIST bilgi, Çin sonra); Avrupa evreni ve veri "
+    "paketi hazır (islenmis-veri). Bundan sonra her ölçü üç pazarda koşar. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak "
+    "canlı izlemek, (b) ara, (c) Çin evreni (CSI 300 + HSI) kurup bilgi olarak eklemek, (d) rüzgâr göründükten sonra ne kadar sürüyor "
+    "(kapalı konu, onay).",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "

@@ -7974,6 +7974,21 @@ def fi_avr_evren(ham: Dict[str, Any], evren: pd.DataFrame) -> Dict[str, pd.DataF
     ulke = evren.set_index("kod").ulke.to_dict(); V = {}
     for kod, d in ham["V"].items():
         p = para.get(ulke.get(kod, ""), "EUR"); d = d.copy()
+        # Veri temizliği (28 Eki, ilk koşuda görüldü: Londra'da peni / sterlin geçişi 100x sıçrama; DIA.MC 1000x): bir günde kapanış
+        # oranı 80-125x ya da tersi -> o günden sonrası 100'e bölünür / çarpılır (fiyat sütunları); başka >= 20x sıçrama -> hisse dışarıda.
+        r = (d.Close / d.Close.shift(1)).to_numpy(float); kot = False; carpan = np.ones(len(d))
+        for i in np.flatnonzero((r >= 20) | (r <= 0.05)):
+            if 80 <= r[i] <= 125:
+                carpan[i:] /= 100.0
+            elif 1 / 125 <= r[i] <= 1 / 80:
+                carpan[i:] *= 100.0
+            else:
+                kot = True
+        if kot:
+            filog.warning("K38 AVR %s: açıklanamayan fiyat sıçraması, dışarıda", kod); continue
+        if (carpan != 1).any():
+            for kol in ("Open", "High", "Low", "Close"):
+                d[kol] = d[kol] * carpan
         if p == "EUR":
             d["Kur"] = 1.0
         else:
