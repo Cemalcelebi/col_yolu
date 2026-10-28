@@ -710,6 +710,13 @@ def sina():
             and all(len(v) == 0 for v in duz.values()) and len(fib) >= 1 and ix54[199] <= fib[0] <= ix54[205])
     if not ok54:
         hata.append(f"54) K41 klasik sinyaller yanlış: {({k: len(v) for k, v in S54.items()})} {fib[:3]}")
+    # 55) K43 trend sinyalleri: düz yükselen seride 52 hafta zirve kırılımı her gün değil, SMA200 üstüne geçiş bir kez; düz seride hiçbiri.
+    ix55 = pd.bdate_range("2022-01-03", periods=600); c55 = np.r_[np.linspace(20, 10, 300), np.linspace(10, 30, 300)]
+    d55 = pd.DataFrame({"Open": c55, "High": c55 + 0.1, "Low": c55 - 0.1, "Close": c55, "Volume": 100.0}, index=ix55)
+    T55 = F.fi_k43_trend(d55); duz = F.fi_k43_trend(d55.assign(Close=20.0))
+    ok55 = len(T55["T3_sma200_ustu"]) == 1 and 1 <= len(T55["T1_52h_zirve"]) <= 3 and all(len(v) == 0 for v in duz.values())
+    if not ok55:
+        hata.append(f"55) K43 trend sinyalleri yanlış: {({k: len(v) for k, v in T55.items()})} {({k: len(v) for k, v in duz.items()})}")
     return hata
 
 
@@ -717,4 +724,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 54/54 OK")
+    print("test_fon_izi: 55/55 OK")
