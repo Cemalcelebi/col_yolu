@@ -642,6 +642,17 @@ def sina():
     ok48 = ok48a and len(S48) == 1 and S48.gun.iloc[0] > ix[100] and sorted(KU48[("SEK", S48.gun.iloc[0])]) == ["S4", "S5"]
     if not ok48:
         hata.append(f"48) K37 para akışı / sinyal yanlış: {ok48a} {S48.to_dict('records')} {KU48}")
+    # 49) Karar pazarları (28 Eki): ABD + AVR dört hücre tutar -> İZ; BIST de tutarsa 'İZ + BIST'; AVR yoksa ABD-ADAY; ABD tutmazsa İZ DEĞİL.
+    def h49(pz, dn, iyi):
+        return {"pazar": pz, "donem": dn, "n": 50, "alt95": 0.01 if iyi else -0.05, "ust95": 0.1 if iyi else -0.01, "sira": 0.6 if iyi else 0.4,
+                "portfoy": 1.0 if iyi else -0.5, "portfoy_esli_p90": 0.5, "portfoy_esli_p10": -0.2}
+    Z49 = pd.DataFrame([h49(p, d, True) for p in ("ABD", "AVR") for d in ("2023", "2024-26")] + [h49("BIST", d, False) for d in ("2023", "2024-26")])
+    Z49b = pd.DataFrame([h49(p, d, True) for p in ("ABD", "AVR", "BIST") for d in ("2023", "2024-26")])
+    Z49c = pd.DataFrame([h49("ABD", d, True) for d in ("2023", "2024-26")] + [h49("BIST", d, False) for d in ("2023", "2024-26")])
+    Z49d = pd.DataFrame([h49("ABD", "2023", True), h49("ABD", "2024-26", False), h49("AVR", "2023", True), h49("AVR", "2024-26", True)])
+    k49 = (F.fi_olcut_karar(Z49), F.fi_olcut_karar(Z49b), F.fi_olcut_karar(Z49c), F.fi_olcut_karar(Z49d))
+    if k49 != ("İZ", "İZ + BIST", "ABD-ADAY (AVR verisi yok)", "İZ DEĞİL"):
+        hata.append(f"49) karar pazarları yanlış: {k49}")
     return hata
 
 
@@ -649,4 +660,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 48/48 OK")
+    print("test_fon_izi: 49/49 OK")

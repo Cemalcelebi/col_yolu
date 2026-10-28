@@ -5599,7 +5599,8 @@ def fi_k26_maske(P: pd.DataFrame, profil: Dict[str, Tuple[float, float]]) -> np.
 # getirisinin çarpıklığı yüzünden rastgele olayda -%6,8 çıkıyordu (hep elerdi), 'portföy > eşli ortalama getirilerin portföyü' rastgele
 # olayda da olaydan yana çıkıyordu; yerlerine hücre içi sıra ve eşli rastgele portföy dağılımı kondu.
 FI_OLCUT = {"ufuk": 60, "mom": 60, "likit": 20, "mom_kova": 5, "likit_kova": 3, "kriz": "2026-08-31", "bootstrap": 2000, "tohum": 27,
-            "slot": 10, "n_esik": 30, "port_n": 200, "port_yuzde": 0.90, "donem": (("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))}
+            "slot": 10, "n_esik": 30, "port_n": 200, "port_yuzde": 0.90, "donem": (("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31")),
+            "karar": ("ABD", "AVR")}   # 28 Eki (Cemal): karar pazarları ABD + Avrupa; BIST bilgi, Çin sonra
 
 
 def fi_olcut_panel(V: Dict[str, pd.DataFrame], O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
@@ -5609,7 +5610,7 @@ def fi_olcut_panel(V: Dict[str, pd.DataFrame], O: Dict[str, Any] = FI_OLCUT) -> 
     idx = pd.DatetimeIndex(T); kriz = idx.searchsorted(pd.Timestamp(O["kriz"]), side="right")
     Op = pd.DataFrame({s: V[s].Open for s in S}).reindex(idx).to_numpy(float)
     Cl = pd.DataFrame({s: V[s].Close for s in S}).reindex(idx).to_numpy(float)
-    Tl = pd.DataFrame({s: V[s].Close * V[s].Volume for s in S}).reindex(idx)
+    Tl = pd.DataFrame({s: V[s].Close * V[s].Volume * (V[s]["Kur"] if "Kur" in V[s] else 1.0) for s in S}).reindex(idx)   # Kur: Avrupa (EUR)
     n, u = Cl.shape; h = O["ufuk"]
     R = np.full((n, u), np.nan)
     son = min(n, kriz)
@@ -5680,16 +5681,23 @@ def fi_olcut_hucre(X: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, A
 
 
 def fi_olcut_karar(Z: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> str:
-    """Z: pazar, donem ve fi_olcut_hucre sütunları. Dört hücre tutarsa İZ; yalnız BIST hücreleri tutar ve ABD yoksa BIST-ADAY."""
+    """Z: pazar, donem ve fi_olcut_hucre sütunları. O['karar'] pazarlarının (28 Eki: ABD + AVR; K27-K37 kayıtları BIST + ABD ile
+    verildi) iki döneminde de tutarsa İZ; BIST bilgi: tutuyorsa 'İZ + BIST'. Karar pazarlarından biri yoksa en fazla '<var olan>-ADAY'."""
     def tut(r) -> bool:
         return bool(r.n >= O["n_esik"] and r.alt95 > 0 and r.sira > 0.5 and r.portfoy > r.portfoy_esli_p90)
     t = {(r.pazar, r.donem): tut(r) for r in Z.itertuples()}
-    bist = all(t.get(("BIST", d[0]), False) for d in O["donem"])
-    abd_var = any(k[0] == "ABD" for k in t)
-    if bist and abd_var and all(t.get(("ABD", d[0]), False) for d in O["donem"]):
-        return "İZ"
-    if bist and not abd_var:
-        return "BIST-ADAY (ABD verisi yok)"
+    return _fi_olcut_karar_ortak(t, O)
+
+
+def _fi_olcut_karar_ortak(t: Dict[Tuple[str, str], bool], O: Dict[str, Any], kacinma: bool = False) -> str:
+    pazarlar = tuple(O.get("karar", ("ABD", "AVR"))); var = [p for p in pazarlar if any(k[0] == p for k in t)]
+    hepsi = {p: all(t.get((p, d[0]), False) for d in O["donem"]) for p in pazarlar}
+    bist = any(k[0] == "BIST" for k in t) and all(t.get(("BIST", d[0]), False) for d in O["donem"])
+    ad = "KAÇINMA İZİ" if kacinma else "İZ"
+    if len(var) == len(pazarlar) and all(hepsi.values()):
+        return ad + (" + BIST" if bist else "")
+    if var and len(var) < len(pazarlar) and all(hepsi[p] for p in var):
+        return "-".join(var) + "-ADAY (" + ", ".join(p for p in pazarlar if p not in var) + " verisi yok)"
     return "İZ DEĞİL"
 
 
@@ -6037,15 +6045,11 @@ def fi_k28_olaylar(A_: pd.DataFrame, V: Dict[str, pd.DataFrame], pazar: str, K: 
 # İZİ. Hücre tutar: n >= 30; ortalama eşli fark < 0 ve %95 aralığın üst ucu < 0; ortalama sıra < 0,50; slot portföyü 200 eşli rastgele
 # portföyün %10'undan küçük. BIST hücreleri bu kural yazılmadan görüldüğü için kanıt değeri ABD hücrelerindedir (örneklem dışı doğrulama).
 def fi_olcut_karar_kacinma(Z: pd.DataFrame, O: Dict[str, Any] = FI_OLCUT) -> str:
-    """Kaçınma izi kararı (alt sürpriz gibi aşağı sinyaller): dört hücrede ayna şartları."""
+    """Kaçınma izi kararı (aşağı sinyaller): karar pazarlarının dört hücresinde ayna şartları; BIST bilgi."""
     def tut(r) -> bool:
         return bool(r.n >= O["n_esik"] and r.ust95 < 0 and r.sira < 0.5 and r.portfoy < r.portfoy_esli_p10)
     t = {(r.pazar, r.donem): tut(r) for r in Z.itertuples()}
-    if all(t.get((pz, d[0]), False) for pz in ("BIST", "ABD") for d in O["donem"]):
-        return "KAÇINMA İZİ"
-    if all(t.get(("BIST", d[0]), False) for d in O["donem"]) and not any(k[0] == "ABD" for k in t):
-        return "BIST-ADAY (ABD verisi yok)"
-    return "İZ DEĞİL"
+    return _fi_olcut_karar_ortak(t, O, kacinma=True)
 
 def fon_izi_k28(Vb: Dict[str, pd.DataFrame], Va: Dict[str, pd.DataFrame], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K28,
                 O: Dict[str, Any] = FI_OLCUT, indir: bool = True) -> Dict[str, Any]:
