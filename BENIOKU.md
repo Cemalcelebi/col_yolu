@@ -26,7 +26,8 @@ pead/ (27 Ekim 2026, K28): BIST KAP 'Finansal Rapor' listesi 2022-07 -> 2026-10 
   geçişleri düzeltildi; `Kur` sütunu = yerel para → EUR, yalnız likidite için). Karar pazarları artık ABD + AVR (CLAUDE.md, 28 Ekim).
 - veri2/ (xz paket, `python FON_IZI.py vpac /tmp/iv/veri2 /tmp/veri2`): k34_yahoo.pkl (nakdi biten 2.246 ABD şirketi, Yahoo),
   k34_bildirim.pkl (SEC finansal özeti, batanlar dahil), k31_fin.pkl, k30_alim.pkl (Form 4 açık piyasa alımları, özet), k28_X_bist / abd
-  (bilanço tepkileri), olcut_panel_AVR.pkl.
+  (bilanço tepkileri), olcut_panel_AVR.pkl, k40_saatlik.pkl (S&P / Euro Stoxx 50 / DAX / FTSE 1 saatlik, son 730 gün). 28 Ekim denetim
+  düzeltmeleri sonrası V_AVR (sterlin Kur) ve panel yenilendi.
 - secfs/: SEC finansal tablo veri seti özütleri 2021q1-2026q3 (fs_*.csv.gz) + company_tickers.json → FI_SECFS bu klasöre verilir.
 - k34/: k34_eski_kod.csv (batan şirketlerin SEC kapak sayfasından eski kodu), k34_orneklem.csv (Tiingo örneklemi, 450).
 - k35/: k35_sic.csv (SIC kodları). k36/: surucu.pkl (emtia, kur, faiz, CDS serileri). avr/: evren_avr_ham.csv (Avrupa evren listesi).
