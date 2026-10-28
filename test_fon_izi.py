@@ -681,6 +681,17 @@ def sina():
             and len(F.fi_k38b_ters_obo(d51c)) == 0)
     if not ok51:
         hata.append(f"51) K38-B şekil tanıma yanlış: {F.fi_k38b_ikili_dip(d51)} {F.fi_k38b_ters_obo(d51b)}")
+    # 52) K39 kaba sektör eşlemesi ve sinyal: 'Banks - Regional' -> BANKA, 'REIT - Office' -> GAYRIMENKUL, 'Oil & Gas E&P' -> ENERJI,
+    # 'Investment Trusts' -> FINANS, 'Software - Application' -> TEKNOLOJI; lider +%15 / hedef 0 -> tek geçiş günü, hedef +%8 ise 'henüz' yok.
+    e52 = [F.fi_k39_kaba(x) for x in ("Banks - Regional", "REIT - Office", "Oil & Gas E&P", "Investment Trusts", "Software - Application", "Hedge Funds")]
+    ix52 = pd.bdate_range("2024-01-01", periods=10)
+    lr = pd.DataFrame({"G": [0.0] * 5 + [0.15] * 5}, index=ix52); lm = lr + 0.01
+    hr0 = pd.DataFrame({"G": [0.0] * 10}, index=ix52); hr8 = pd.DataFrame({"G": [0.08] * 10}, index=ix52)
+    s52a = F.fi_k39_sinyal(lr, lm, hr0, 0.10, True); s52b = F.fi_k39_sinyal(lr, lm, hr8, 0.10, True); s52c = F.fi_k39_sinyal(lr, lm, hr8, 0.10, False)
+    ok52 = (e52 == ["BANKA", "GAYRIMENKUL", "ENERJI", "FINANS", "TEKNOLOJI", "FINANS"] and s52a["G"] == [ix52[5]] and s52b["G"] == []
+            and s52c["G"] == [ix52[5]])
+    if not ok52:
+        hata.append(f"52) K39 eşleme / sinyal yanlış: {e52} {s52a} {s52b} {s52c}")
     return hata
 
 
@@ -688,4 +699,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 51/51 OK")
+    print("test_fon_izi: 52/52 OK")
