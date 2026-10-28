@@ -692,6 +692,12 @@ def sina():
             and s52c["G"] == [ix52[5]])
     if not ok52:
         hata.append(f"52) K39 eşleme / sinyal yanlış: {e52} {s52a} {s52b} {s52c}")
+    # 53) K40 fazla: sinyal günleri +%1, taban 0 -> fazla ~ +%1, alt uç > 0; taban ile aynıysa fazla ~ 0.
+    ix53 = pd.bdate_range("2023-01-02", periods=400); r53 = np.random.default_rng(53)
+    taban = pd.Series(r53.normal(0, 0.001, 400), index=ix53); sinyal = taban.iloc[::10] + 0.01
+    f53 = F._fi_k40_fazla(sinyal, taban, np.random.default_rng(1), 300); f53b = F._fi_k40_fazla(taban.iloc[::10], taban, np.random.default_rng(1), 300)
+    if not (abs(f53["fazla"] - 0.01) < 0.001 and f53["alt95"] > 0 and abs(f53b["fazla"]) < 0.001):
+        hata.append(f"53) K40 fazla yanlış: {f53} {f53b}")
     return hata
 
 
@@ -699,4 +705,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 52/52 OK")
+    print("test_fon_izi: 53/53 OK")

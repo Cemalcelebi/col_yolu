@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.27 (2026-10-28, K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.28 (2026-10-28, K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -8283,6 +8283,156 @@ def fon_izi_k39(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
     Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k39_ozet.csv"), index=False)
     say.to_csv(os.path.join(A.cikti, "k39_grup.csv"), index=False)
     return {"ozet": Z, "karar": karar, "grup": say}
+
+# K40 SAAT FARKI: ABD YÜKSELİŞİ AVRUPA'YA NE KADAR GECİKMELİ GEÇER, GECİKMEDEN ALIM KAZANDIRIR MI (Cemal 28 Eki: 'Avrupa ile Amerika
+# arasında gün değil saat farkı; Amerika'da yükseliş yapan Avrupa'da ne kadar gecikmeli, bu gecikme esas alınıp alım yapılır mı').
+# ÖNCEDEN YAZILDI (sonuç görülmeden). Saat sırası (TR): Avrupa 10:00-18:30, ABD 16:30-23:00; örtüşme 16:30-18:30. ABD'nin Avrupa
+# kapanışından sonraki hareketi (18:30-23:00 TR) Avrupa'ya ancak ertesi sabah açılış BOŞLUĞUNDA ya da gün içinde geçebilir. Alınabilir
+# olan yalnız açılıştan sonrasıdır; boşluk alınamaz.
+# A) GÜNLÜK, HİSSE DÜZEYİ 2016-26 (V_ABD, V_AVR): ABD eşit ağırlık günlük getirisi >= +%1,5 (güçlü gün d) -> Avrupa eşit ağırlık ertesi gün
+#    (ilk işlem günü): BOŞLUK = açılış(d+1) / kapanış(d) - 1, GÜN İÇİ = kapanış(d+1) / açılış(d+1) - 1, 5 GÜN = kapanış(d+5) / açılış(d+1) - 1.
+#    Taban = bütün günlerin aynı ölçüleri. Fazla = sinyal ortalaması - taban; ay kümeli bootstrap %95. Dönemler 2016-22, 2023, 2024-26.
+#    Sektör: ABD kaba sektör sepeti (K39) günlük göreli >= +%2 -> Avrupa aynı sektör göreli (sektör sepeti - Avrupa medyanı) gün içi ve 5 gün.
+#    Ayna (bilgi): güçlü ABD düşüşü (<= -%1,5) -> Avrupa ertesi gün.
+# B) SAATLİK, ENDEKS (Yahoo 1 saat, son 730 gün; ^GSPC lider, ^STOXX50E / ^GDAXI / ^FTSE hedef): ABD'nin Avrupa kapanışından (11:30 ET)
+#    kendi kapanışına (16:00 ET) hareketi >= +%0,7 -> Avrupa ertesi gün: boşluk (önceki kapanış -> açılış), İLK SAAT (açılış -> +1 saat),
+#    GÜN (açılış -> kapanış). Taban = bütün günler. Örtüşme bilgisi: ABD ilk 2 saat (9:30-11:30 ET) ile Avrupa aynı gün son 2 saati
+#    korelasyonu (eşzamanlı fiyatlama kanıtı).
+# KARAR (önceden): 'ALINABİLİR GECİKME' = A'da Avrupa GÜN İÇİ fazlası >= +%0,2 ve alt uç > 0 hem 2023 hem 2024-26'da VE B'de GÜN fazlası
+#    >= +%0,2 ve alt uç > 0 en az iki endekste. Boşluk fazlası büyük ama gün içi fazlası yoksa: 'GECİKME YOK, AÇILIŞTA FİYATLANIYOR'.
+#    Maliyet notu: büyük Avrupa hissesinde gidiş-dönüş ~%0,1; fazla bunun altındaysa kazanç yok.
+FI_K40 = {"abd_gun": 0.015, "sektor_gun": 0.02, "saat_esik": 0.007, "fazla_esik": 0.002, "bootstrap": 2000, "tohum": 40,
+          "endeks": {"lider": "^GSPC", "hedef": ("^STOXX50E", "^GDAXI", "^FTSE")}, "bes": 5,
+          "donem": (("2016-22", "2016-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))}
+
+
+def _fi_k40_fazla(x: pd.Series, taban: pd.Series, rng: np.random.Generator, n_boot: int) -> Dict[str, float]:
+    """x: sinyal günleri ölçüsü (tarih indeksli), taban: bütün günler. Fazla = ort(x) - ort(taban), ay kümeli bootstrap (x üzerinde)."""
+    x = x.dropna(); t = taban.dropna()
+    if len(x) < 10 or len(t) < 30:
+        return {"n": int(len(x)), "fazla": np.nan, "alt95": np.nan, "ust95": np.nan, "ort": float(x.mean()) if len(x) else np.nan, "taban": float(t.mean()) if len(t) else np.nan}
+    ay = x.index.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay); grup = {a: x.to_numpy()[ay == a] for a in aylar}; bs = []
+    for _ in range(n_boot):
+        sec = rng.choice(aylar, len(aylar), replace=True); bs.append(np.concatenate([grup[a] for a in sec]).mean() - t.mean())
+    return {"n": int(len(x)), "fazla": float(x.mean() - t.mean()), "alt95": float(np.quantile(bs, 0.025)), "ust95": float(np.quantile(bs, 0.975)),
+            "ort": float(x.mean()), "taban": float(t.mean())}
+
+
+def fi_k40_gunluk(Va: Dict[str, pd.DataFrame], Vr: Dict[str, pd.DataFrame], Ga: Dict[str, str], Gr: Dict[str, str],
+                  K: Dict[str, Any] = FI_K40) -> pd.DataFrame:
+    """A) günlük: ABD güçlü gün / güçlü düşüş / sektör günü -> Avrupa ertesi gün boşluk, gün içi, 5 gün (pazar ve sektör düzeyi)."""
+    rng = np.random.default_rng(K["tohum"])
+    Ca = pd.DataFrame({s: d.Close for s, d in Va.items()}).sort_index(); ra = (Ca / Ca.shift(1) - 1)
+    Co = pd.DataFrame({s: d.Close for s, d in Vr.items()}).sort_index(); Oo = pd.DataFrame({s: d.Open for s, d in Vr.items()}).sort_index()
+    abd_gun = ra.mean(axis=1)                                                     # eşit ağırlık ABD günü
+    bosluk = (Oo / Co.shift(1) - 1).mean(axis=1); gunici = (Co / Oo - 1).mean(axis=1); bes = (Co.shift(-K["bes"] + 1) / Oo - 1).mean(axis=1)
+    avr_gun = Co.index
+    def ertesi(t: pd.Timestamp) -> Optional[pd.Timestamp]:
+        j = int(avr_gun.searchsorted(t, side="right")); return avr_gun[j] if j < len(avr_gun) else None
+    Z = []
+    sinyaller = {"ABD_guclu_gun": abd_gun[abd_gun >= K["abd_gun"]].index, "ABD_guclu_dusus_ayna": abd_gun[abd_gun <= -K["abd_gun"]].index}
+    for ad, gl in sinyaller.items():
+        e = [x for x in (ertesi(t) for t in gl) if x is not None]
+        for dn, a, b in K["donem"]:
+            m = [x for x in e if pd.Timestamp(a) <= x <= pd.Timestamp(b)]; t_ = (bosluk.index >= a) & (bosluk.index <= b)
+            for olcu, ser in (("bosluk", bosluk), ("gun_ici", gunici), ("bes_gun", bes)):
+                Z.append({"duzey": "pazar", "sinyal": ad, "olcu": olcu, "donem": dn, **_fi_k40_fazla(ser.reindex(m), ser[t_], rng, K["bootstrap"])})
+    # sektör düzeyi
+    ua: Dict[str, List[str]] = {}; ur: Dict[str, List[str]] = {}
+    for s, g in Ga.items():
+        if s in ra.columns:
+            ua.setdefault(g, []).append(s)
+    for s, g in Gr.items():
+        if s in Co.columns:
+            ur.setdefault(g, []).append(s)
+    piy_a = ra.median(axis=1); gi_med = (Co / Oo - 1).median(axis=1); b5_med = (Co.shift(-K["bes"] + 1) / Oo - 1).median(axis=1)
+    sx: Dict[str, List[Tuple[pd.Timestamp, str]]] = {"gun_ici": [], "bes_gun": []}; tab = {"gun_ici": [], "bes_gun": []}
+    for g in ua:
+        if g not in ur or len(ua[g]) < 5 or len(ur[g]) < 5:
+            continue
+        rel_a = ra[ua[g]].mean(axis=1) - piy_a; gi = (Co[ur[g]] / Oo[ur[g]] - 1).mean(axis=1) - gi_med
+        b5 = (Co[ur[g]].shift(-K["bes"] + 1) / Oo[ur[g]] - 1).mean(axis=1) - b5_med
+        tab["gun_ici"].append(gi.rename(g)); tab["bes_gun"].append(b5.rename(g))
+        for t in rel_a[rel_a >= K["sektor_gun"]].index:
+            x = ertesi(t)
+            if x is not None:
+                sx["gun_ici"].append((x, float(gi.get(x, np.nan)))); sx["bes_gun"].append((x, float(b5.get(x, np.nan))))
+    for olcu in ("gun_ici", "bes_gun"):
+        X = pd.Series([v for _, v in sx[olcu]], index=pd.DatetimeIndex([t for t, _ in sx[olcu]])); T = pd.concat(tab[olcu], axis=1).stack()
+        T.index = T.index.get_level_values(0)
+        for dn, a, b in K["donem"]:
+            Z.append({"duzey": "sektor", "sinyal": "ABD_sektor_gunu", "olcu": olcu, "donem": dn,
+                      **_fi_k40_fazla(X[(X.index >= a) & (X.index <= b)], T[(T.index >= a) & (T.index <= b)], rng, K["bootstrap"])})
+    return pd.DataFrame(Z)
+
+
+def fi_k40_saatlik_indir(K: Dict[str, Any] = FI_K40) -> Dict[str, pd.DataFrame]:
+    """Yahoo 1 saatlik endeks verisi (son 730 gün), zaman damgaları yerel borsa saatinde (tz korunur)."""
+    import yfinance as yf
+    out = {}
+    for t in (K["endeks"]["lider"],) + tuple(K["endeks"]["hedef"]):
+        d = yf.download(t, period="730d", interval="1h", progress=False, auto_adjust=False)
+        if isinstance(d.columns, pd.MultiIndex):
+            d.columns = d.columns.get_level_values(0)
+        out[t] = d[["Open", "High", "Low", "Close"]].dropna()
+    return out
+
+
+def fi_k40_saatlik(H: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K40) -> pd.DataFrame:
+    """B) saatlik: ABD geç seans (11:30 -> 16:00 ET, Avrupa kapandıktan sonra) >= eşik -> Avrupa ertesi gün boşluk / ilk saat / gün."""
+    rng = np.random.default_rng(K["tohum"]); L = H[K["endeks"]["lider"]].copy(); L["gun"] = L.index.tz_convert("America/New_York").date
+    gec = {}
+    for g, x in L.groupby("gun"):
+        saat = x.index.tz_convert("America/New_York").hour + x.index.tz_convert("America/New_York").minute / 60
+        a = x[saat <= 11.6]; b = x[saat >= 15.4]
+        if len(a) and len(b):
+            gec[pd.Timestamp(g)] = float(b.Close.iloc[-1] / a.Close.iloc[-1] - 1)
+    gec = pd.Series(gec).sort_index(); Z = []
+    for t in K["endeks"]["hedef"]:
+        E = H[t].copy(); E["gun"] = E.index.tz_convert(E.index.tz).date; sat = []
+        gunler = sorted(set(E.gun)); onceki_kapanis = None
+        for g in gunler:
+            x = E[E.gun == g].sort_index()
+            if onceki_kapanis is not None and len(x) >= 2:
+                sat.append({"gun": pd.Timestamp(g), "bosluk": x.Open.iloc[0] / onceki_kapanis - 1, "ilk_saat": x.Close.iloc[0] / x.Open.iloc[0] - 1,
+                            "gun_ici": x.Close.iloc[-1] / x.Open.iloc[0] - 1})
+            onceki_kapanis = float(x.Close.iloc[-1])
+        D = pd.DataFrame(sat).set_index("gun")
+        # sinyal: ABD günü g_abd -> Avrupa'nın g_abd'den sonraki ilk günü
+        sg = gec[gec >= K["saat_esik"]].index; ix = D.index
+        e = [ix[int(ix.searchsorted(t_, side="right"))] for t_ in sg if int(ix.searchsorted(t_, side="right")) < len(ix)]
+        for olcu in ("bosluk", "ilk_saat", "gun_ici"):
+            Z.append({"endeks": t, "olcu": olcu, **_fi_k40_fazla(D[olcu].reindex(e), D[olcu], rng, K["bootstrap"])})
+        # örtüşme: ABD ilk 2 saat (9:30-11:30 ET) ile Avrupa aynı gün son 2 saati korelasyonu
+        ilk2 = {}
+        for g, x in L.groupby("gun"):
+            saat = x.index.tz_convert("America/New_York").hour + x.index.tz_convert("America/New_York").minute / 60
+            a = x[saat <= 9.6]; b = x[saat <= 11.6]
+            if len(a) and len(b):
+                ilk2[pd.Timestamp(g)] = float(b.Close.iloc[-1] / a.Open.iloc[0] - 1)
+        son2 = {}
+        for g, x in E.groupby("gun"):
+            if len(x) >= 3:
+                son2[pd.Timestamp(g)] = float(x.Close.iloc[-1] / x.Close.iloc[-3] - 1)
+        c = pd.concat([pd.Series(ilk2).rename("abd"), pd.Series(son2).rename("avr")], axis=1).dropna()
+        Z.append({"endeks": t, "olcu": "ortusme_korelasyon", "n": int(len(c)), "fazla": float(c.abd.corr(c.avr)) if len(c) > 10 else np.nan})
+    return pd.DataFrame(Z)
+
+
+def fon_izi_k40(Va: Dict[str, pd.DataFrame], Vr: Dict[str, pd.DataFrame], avr_liste: pd.DataFrame, H: Optional[Dict[str, pd.DataFrame]] = None,
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K40) -> Dict[str, Any]:
+    """K40 sürücü: A günlük + B saatlik; karar önceden. Çıktı k40_gunluk.csv, k40_saatlik.csv."""
+    A = A or FIAyar(); Ga = fi_k39_gruplar("ABD", Va); Gr = fi_k39_gruplar("AVR", Vr, avr_liste=avr_liste)
+    Zg = fi_k40_gunluk(Va, Vr, Ga, Gr, K); H = H or fi_k40_saatlik_indir(K); Zs = fi_k40_saatlik(H, K)
+    def ok_g(dn: str) -> bool:
+        r = Zg[(Zg.duzey == "pazar") & (Zg.sinyal == "ABD_guclu_gun") & (Zg.olcu == "gun_ici") & (Zg.donem == dn)]
+        return bool(len(r) and r.fazla.iat[0] >= K["fazla_esik"] and r.alt95.iat[0] > 0)
+    s_ok = Zs[(Zs.olcu == "gun_ici") & (Zs.fazla >= K["fazla_esik"]) & (Zs.alt95 > 0)]
+    bos = Zs[(Zs.olcu == "bosluk")]
+    karar = ("ALINABİLİR GECİKME" if ok_g("2023") and ok_g("2024-26") and len(s_ok) >= 2 else
+             ("GECİKME YOK, AÇILIŞTA FİYATLANIYOR" if len(bos) and (bos.alt95 > 0).all() else "İZ DEĞİL"))
+    Zg.to_csv(os.path.join(A.cikti, "k40_gunluk.csv"), index=False); Zs.to_csv(os.path.join(A.cikti, "k40_saatlik.csv"), index=False)
+    return {"gunluk": Zg, "saatlik": Zs, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
