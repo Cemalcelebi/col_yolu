@@ -791,13 +791,21 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "İz değil: büyükler öne geçtiğinde küçükleri almak eşlerini geçmiyor (BIST 2023 +%6 ama aralık 0'ı içeriyor, ABD 2023 -%6); "
               "para akışı ve temel süzgeci düzeltmiyor; haber öncesi sinyal ABD'de tekrarlıyor (1,4-1,6 kat) ama BIST'te değil; küçük hisse "
               "riski bilinince sonuç değişmez, maliyetle aleyhe döner",
-     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: ABD'de tutanı iz say, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "BIST öngörülemez (siyaset, fon hırsızlığı); Amerika'da tutan bütün ölçüleri iz kabul edelim, olmazsa "
+                                     "Avrupa ve Çin ile karşılaştır",
+     "yapilan": "Bütün kayıtlar tarandı: tek cetvel 46 sinyal (karne.csv) ve yeni ölçüt K27-K37 özetleri, ABD 2023 + 2024-26 iki hücre şartıyla",
+     "sonuc": "ABD'de iki hücrede tutan ölçü YOK: tek cetvelde 0/46 (en yakın: tavan günü kaçınması 1,20 / 1,23; geride kalan + hacim artışı "
+              "kaçınması 1,37 / 1,21); yeni ölçütte yalnız nakdi biten küçük şirket tuttu, o da batanlar eklenince düştü (K34). Avrupa / Çin'e "
+              "taşınacak aday yok",
+     "durum": "TAMAMLANDI, AÇIK: iz kuralı değişikliği (ABD iki hücre + Avrupa / Çin doğrulaması, BIST bilgi) ve Avrupa / Çin evreni kurulumu "
+              "Cemal'in 'yaz' kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri, sade portföy, sıçrayan hisse, batanlar dahil nakit tükenmesi, "
-    "rüzgâr ve batma, rüzgârın sebebi, büyükler önce küçükler sonra (K37) hepsi İZ DEĞİL. Rüzgâr fiyattan, fiyat sebeplerinden ve "
-    "büyüklerin hareketinden önce görülemiyor. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak piyasayla karşılaştırmalı "
-    "canlı izlemek, (b) ara, (c) rüzgâr göründükten sonra ne kadar sürdüğü (kapalı konu, onay gerekir).",
+    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K37). Cemal'in önerisi: ABD iki hücrede tutan = iz, Avrupa ve Çin ile doğrula, BIST bilgi. "
+    "Şu an ABD'de iki hücrede tutan ölçü yok (tek cetvel 0/46; yeni ölçütte K33-B batanlarla düştü). Karar Cemal'in: (1) kuralı "
+    "CLAUDE.md'ye yaz ('yaz'), (2) Avrupa (STOXX 600 benzeri) + Çin (CSI 300 + HSI) evreni Yahoo'dan kur (yalnız bugün işlem görenler; "
+    "~1 saat), (3) en yakın adayları (tavan kaçınması, geride + hacim kaçınması, çölde içeriden alım) 4 pazarda yeniden ölç.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
