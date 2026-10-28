@@ -1,0 +1,24 @@
+sinyal,grup,karar,tutan_hucre,hucre,ABD_2016-22,ABD_2023,ABD_2024-26,AVR_2016-22,AVR_2023,AVR_2024-26,BIST_2016-22,BIST_2023,BIST_2024-26
+E3_kucukluk,oteki,ADAY + BIST,7,9,True,True,True,False,False,True,True,True,True
+T1_52h_zirve,trend,İZ DEĞİL,2,9,False,False,False,False,False,True,False,False,True
+A8_fibonacci_618,trend,İZ DEĞİL,2,9,False,True,True,False,False,False,False,False,False
+E1_momentum_12_1,trend,İZ DEĞİL,2,9,False,False,True,False,False,True,False,False,False
+E2_tersine_donus_1ay,dip,İZ DEĞİL,2,9,False,True,True,False,False,False,False,False,False
+S1_tavan_kacinma,oteki,İZ DEĞİL,2,9,False,True,True,False,False,False,False,False,False
+S2_geride_hacim_kacinma,oteki,İZ DEĞİL,1,9,False,False,True,False,False,False,False,False,False
+S3_blok_taban_yukari,dip,İZ DEĞİL,1,9,False,False,True,False,False,False,False,False,False
+F1_col_k24,dip,İZ DEĞİL,1,9,False,True,False,False,False,False,False,False,False
+F6_rsi_ayi_uyumsuzluk_kacinma,oteki,İZ DEĞİL,1,9,False,False,False,False,False,False,True,False,False
+T2_trend_geri_cekilme,trend,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+T3_sma200_ustu,trend,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A1_bollinger_alt_donus,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A2_bollinger_ust_kacinma,oteki,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A3_rsi30,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A4_rsi70_kacinma,oteki,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A5_macd_kesisim,trend,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A6_altin_kesisim,trend,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+A7_olum_kesisim_kacinma,oteki,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+F2_ikili_dip,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+F3_ters_obo,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+F4_rsi_boga_uyumsuzluk,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False
+F5_macd_boga_uyumsuzluk,dip,İZ DEĞİL,0,9,False,False,False,False,False,False,False,False,False

@@ -641,7 +641,31 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "+%10,7), AVR 2016-22 / 2024-26'da tutar, 2023'te değil, BIST 2023'te tutar -> dört karar hücresinin üçü; ayrıca evren yalnız "
                "hayatta kalanlar (K34 dersi: küçüklük bu veride şişer). Sonuç: 'hiçbir yerde iz yok' doğru değil; ham cetvelde momentum, "
                "tersine dönüş ve küçüklük var, hat onları görüyor. Bizim ölçüt bunların ÜSTÜNE bir şey arıyor; çöl, şekiller, göstergeler, "
-               "olaylar o üstüne bir şey katmıyor."),
+               "olaylar o üstüne bir şey katmıyor. DÜZELTME (aynı gün, K43 ile fark edildi): ham cetvelin tabanı pazar MEDYANI idi; r60 "
+               "sağa çarpık olduğundan medyan ortalamanın altında kalır ve RASTGELE hisse bile 'medyanı geçer' görünür (K43'te kaçınma "
+               "sinyalleri bile +%3-13 çıktı). Taban pazar ORTALAMASINA (eşit ağırlıklı piyasa) çevrildi ve yeniden koşuldu: momentum ABD "
+               "+%1,2 / -%0,5 / +%2,7 (yalnız 2024-26 aralık artı), BIST -%1,5 / -%0,9 / +%0,5 (YOK), AVR 0 / 0 / +%2,7; tersine dönüş ABD "
+               "+%0,6 / +%4,4 / +%3,5 (son iki aralık artı), BIST -%2,6 / -%1,2 / -%1,9 (ters), AVR sıfır; küçüklük ABD +%3,5 / +%7,3 / "
+               "+%17,1, BIST +%11,8 / +%28,1 / +%4,5, AVR +%1,5 / +%0,9 / +%2,9 (7 / 9 aralık artı; hayatta kalma yanlılığıyla şişkin). "
+               "Yukarıdaki 'BIST momentum +%7-10' ifadesi medyan hatasıydı; geçersiz. Hat yine bilinen etkiyi (küçüklük) görüyor; momentum "
+               "bu verilerde ABD'de zayıf, BIST'te yok."),
+    _ik_k("Ç122", "2026-10-28", "ALINABİLİR İZ KARNESİ: 23 sinyal (trend 7, dip 9, öteki 7; çöl yalnız biri) x 3 pazar x 3 dönem; ham fark "
+          "(eşit ağırlıklı piyasaya göre) + 10 yuvalı maliyetli portföy (piyasa ve rastgele kıyası) (K43)", "FON_IZI.py (k43)",
+          "Cemal: 'çölü boş ver; bir iz var mı, alım satımla kâr edebilir miyiz; tek başına kazandıran varsa kaydet; yükselişte alınca zarar az'",
+          "Alınabilirlik testi (karar önceden: ABD 3 dönem + AVR 2 dönem ham fark aralık artı VE portföy > piyasa)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k43_karar.csv",
+          notu="Eşit ağırlıklı piyasaya göre 60 gün farkı (ABD 2016-22 / 2023 / 2024-26): TREND: 52 hafta zirve -%0,6 / -%2,0 / +%0,1; trendde "
+               "geri çekilme -%1,1 / -%1,2 / -%1,0; SMA200 üstü -%2,1 / -%0,6 / +%0,5; altın kesişim -%0,8 / -%0,6 / +%0,7; MACD -%0,9 / +%0,5 / 0; "
+               "momentum +%1,2 / -%0,5 / +%2,7; Fibonacci -%0,1 / +%3,9 / +%4,6. DİP: Bollinger alt +%0,2 / +%0,5 / +%1,0; RSI<30 +%7,7 / +%0,1 / "
+               "-%0,7; tersine dönüş +%0,6 / +%4,4 / +%3,5; çöl K24 -%0,8 / +%5,1 / +%1,0; ikili dip -%1 / -%1 / -%1; ters OBO -%2,5 / -%2,7 / "
+               "+%3,5; RSI uyumsuzluk +%8,3 / +%3,3 / -%0,5; MACD uyumsuzluk +%5,9 / +%2,0 / -%0,6; blok taban +%1,1 / +%9,2 / +%19,9. ÖTEKİ: "
+               "küçüklük +%3,5 / +%7,3 / +%17,1 (üçü aralık artı); tavan günü +%2,1 / +%5,0 / +%4,1; geride + hacim +%1,4 / +%6,4 / +%13,3; "
+               "RSI>70, Bollinger üst, ölüm kesişimi, RSI ayı uyumsuzluğu -%2 .. +%1. AVRUPA: hemen her şey -%1 .. +%1 (küçüklük +%1,5 / +%0,9 / "
+               "+%2,9). BIST: her şey -%3 .. +%3, küçüklük +%12 / +%28 / +%4,5, ikili dip +%2 / +%9 / +%0 (aralık 0 içerir). PORTFÖY (10 yuva, "
+               "60 gün, maliyetli) piyasayı iki gelişmiş pazarda tutarlı geçen sinyal YOK. Karar: ALINABİLİR İZ yok; küçüklük ADAY + BIST (ABD "
+               "3 / 3, AVR 2024-26, BIST 2 / 2) ama evren yalnız hayatta kalanlar (K34: batanlar eklenince küçüklük etkisi üçte bir eriyor). "
+               "Cemal'in gözlemi veride: 'yükselişte almak' (trend grubu) zarar ettirmiyor ama piyasayı da geçmiyor (-%2 .. +%1); 'dipte "
+               "dönüş' grubu ABD'de 2023'te artı, 2024-26'da sıfır, Avrupa ve BIST'te sıfır / eksi."),
 ]
 
 
@@ -947,20 +971,28 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Hat bilinen etkileri görüyor: ham cetvelde 27 hücrenin 21'i artı (momentum ABD +%2-8, BIST +%7-10; tersine dönüş ABD +%4-8; "
               "küçüklük ABD +%7-22, BIST +%12-39). Eşli cetvel bunları tasarım gereği siler; küçüklük eşlide bile ABD'de tutar (hayatta "
               "kalma payıyla). 'İz yok' değil: bildiğimiz izlerin üstüne yenisi bulunamadı",
-     "durum": "TAMAMLANDI, AÇIK: ölçüt kararı Cemal'in (ham cetvelle momentum / küçüklük izi mi, eşli cetvelle 'üstüne' iz mi)"},
+     "durum": "TAMAMLANDI (Cemal: 'çölü boş ver, alınabilir iz var mı', bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Çölü boş ver. Bir iz var mı, bu izle alım satım yapıp kâr eder miyiz? Tek başına kazandıran (Fibo, trend) "
+                                     "varsa kaydet. Yükselişte alınca zarar az, dipte dönüş varsayımıyla alınca kötüleşti",
+     "yapilan": "K43: 23 sinyal (trend / dip / öteki) üç pazar üç dönemde, piyasaya göre fark + maliyetli 10 yuvalı portföy (piyasa ve "
+                "rastgele kıyası), karar önceden; IZ_KARNE Ç122; test 55. K42 / K43 ham tabanı medyan hatası bulunup ortalamaya çevrildi, "
+                "ikisi yeniden koşuldu (Ç121 düzeltme notu)",
+     "sonuc": "Alınabilir iz yok: 23 sinyalden hiçbiri ABD + Avrupa'da tutarlı olarak piyasayı geçmiyor; tek aday küçüklük (hayatta kalma "
+              "yanlılığıyla şişkin). Trend sinyalleri zarar ettirmiyor ama piyasayı geçmiyor; dip sinyalleri ABD'de yalnız 2023. Daha önce "
+              "söylediğim 'BIST momentum +%7-10' medyan hatasıydı, geçersiz",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): eşli cetvelde (aynı momentum + likidite dilimine göre) K13-K41 hepsi İZ DEĞİL. K42: ham cetvelde momentum, 1 ay tersine "
-    "dönüş ve küçüklük üç pazarda da var; hat onları görüyor. Karar Cemal'in: (1) ölçütü ham cetvele çevirip momentum / küçüklük tabanlı "
-    "bir düzen ölçmek (K32 gibi portföy, maliyetli, batanlar dahil ABD), (2) eşli cetvelde 'üstüne' iz aramaya devam, (a) canlı aday "
-    "listesi, (b) ara.",
+    "YOL (28 Eki): K43 alınabilir iz karnesi (23 sinyal, 3 pazar, piyasa kıyası, maliyetli portföy): alınabilir iz YOK; tek aday "
+    "küçüklük (hayatta kalma yanlılığı). Eşli cetvelde de K13-K41 İZ DEĞİL. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak "
+    "canlı izlemek, (b) ara, (c) küçüklüğü batanlar dahil (Tiingo, Kasım kotası) dürüst ölçmek, (d) ücretli veri (13F, opsiyon akışı).",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
