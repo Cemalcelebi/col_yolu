@@ -742,6 +742,16 @@ def sina():
     ok58 = e1[0] == 1.0 and abs(e1[2] - (0.08 - 0.003)) < 1e-9 and e2[0] == 0.0 and abs(e2[2] - (-0.08 - 0.003)) < 1e-9 and e3[0] == 0.0 and abs(e3[2] - (0.02 - 0.003)) < 1e-9
     if not ok58:
         hata.append(f"58) K46 etiket yanlış: {e1} {e2} {e3}")
+    # 59) K47: haftalık ölçü eğimi yükselen pencerede artı, düşende eksi; BBIO kuralı yapay 'düşüş -> iki dip (ikincisi derin) -> SMA20 üstü' seride bir tetik verir.
+    ix59 = pd.bdate_range("2024-01-01", periods=60); c59 = np.linspace(10, 12, 60); b59 = pd.DataFrame({"Open": c59 - 0.05, "High": c59 + 0.1, "Low": c59 - 0.1, "Close": c59, "Volume": 100.0}, index=ix59)
+    F59 = F.fi_k47_olcu(b59, 13, 8); F59b = F.fi_k47_olcu(b59.assign(Close=c59[::-1], Open=c59[::-1] + 0.05, High=c59[::-1] + 0.1, Low=c59[::-1] - 0.1), 13, 8)
+    ok59a = len(F59) > 0 and (F59.egim > 0).all() and (F59b.egim < 0).all()
+    ix59c = pd.bdate_range("2023-01-02", periods=400); c = np.full(400, 100.0)
+    c[200:240] = np.linspace(100, 75, 40); c[240:250] = np.linspace(75, 73, 10); c[250:258] = np.linspace(73, 76, 8); c[258:268] = np.linspace(76, 70, 10); c[268:300] = np.linspace(70, 82, 32); c[300:] = 82
+    d59 = pd.DataFrame({"Open": c, "High": c + 0.2, "Low": c - 0.2, "Close": c, "Volume": 100.0}, index=ix59c)
+    t59 = F.fi_k47_bbio_kurali(d59); ok59 = ok59a and len(t59) == 1 and ix59c[268] < t59[0] <= ix59c[300] and len(F.fi_k47_bbio_kurali(b59.assign(Close=10.0))) == 0
+    if not ok59:
+        hata.append(f"59) K47 haftalık ölçü / BBIO kuralı yanlış: {ok59a} {t59}")
     return hata
 
 
@@ -749,4 +759,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 58/58 OK")
+    print("test_fon_izi: 59/59 OK")
