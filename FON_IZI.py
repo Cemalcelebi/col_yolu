@@ -8597,7 +8597,7 @@ def fon_izi_k41(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
 #   E1 MOMENTUM 12-1: her ayın ilk işlem günü, son 250 günün (son 20 gün hariç) getirisi pazar içinde en yüksek onda bir -> alım.
 #   E2 KISA VADE TERSİNE DÖNÜŞ: son 20 gün getirisi en düşük onda bir -> alım (1 aylık kaybedenler toparlar).
 #   E3 KÜÇÜKLÜK: 60 günlük işlem değeri medyanı en düşük onda bir -> alım.
-# İki cetvel: HAM = r60 - aynı gün pazar medyanı r60 (literatürün ölçtüğü); EŞLİ = FI_OLCUT (bizim ölçüt). Hücreler 2016-22 / 2023 /
+# İki cetvel: HAM = r60 - aynı gün pazar ORTALAMASI r60 (eşit ağırlıklı piyasa; 28 Eki: medyan çarpıklık yüzünden yanlıydı); EŞLİ = FI_OLCUT. Hücreler 2016-22 / 2023 /
 # 2024-26, üç pazar. BEKLENTİ (önceden): E1 ve E3 HAM cetvelde birden çok hücrede artı ve aralık artı (hat görür), EŞLİ cetvelde sıfıra
 # yakın (eşleme siler). E2 ham cetvelde ABD'de artı beklenir (literatür), BIST'te belirsiz. Hat bunları ham cetvelde görmezse HAT KUSURLU.
 FI_K42 = {"dilim": 0.10, "mom_uzun": 250, "mom_kisa": 20, "likit_gun": 60, "ayri": 60,
@@ -8630,7 +8630,10 @@ def fon_izi_k42(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
             j = gun.searchsorted(pd.DatetimeIndex(S.gun), side="right"); ok = j < len(gun); S = S[ok].assign(giris=gun[j[ok]])
             S = S[[g in V[s].index for s, g in zip(S.sembol, S.giris)]].sort_values("giris").assign(_b=True).reset_index(drop=True)
             E = fi_k27_tekil(S, "_b", V, K["ayri"]); T = fi_olcut_olay(P, E[["sembol", "giris"]])
-            T["ham"] = [T.r60.iat[k] - float(np.nanmedian(P["R"][ti[g]][P["ok"][ti[g]]])) if g in ti else np.nan for k, g in enumerate(T.giris)]
+            # 28 Eki düzeltme (sonuç görüldükten sonra): taban pazar MEDYANI değil ORTALAMASI; medyan sağa çarpık r60 dağılımında ortalamanın
+            # altındadır, rastgele hisse bile 'medyanı geçer' görünüyordu (K43'te kaçınma sinyalleri bile +%3-13 çıktı). Ortalama = eşit
+            # ağırlıklı piyasanın 60 günlük getirisi; rastgele hissenin beklenen farkı 0.
+            T["ham"] = [T.r60.iat[k] - float(np.nanmean(P["R"][ti[g]][P["ok"][ti[g]]])) if g in ti else np.nan for k, g in enumerate(T.giris)]
             for dn, a, b in K["donem"]:
                 Td = T[(T.giris >= a) & (T.giris <= b)]; h = fi_olcut_hucre(Td, Od); hm = Td.ham.dropna()
                 rng = np.random.default_rng(42); ay = Td.dropna(subset=["ham"]).giris.dt.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay)
@@ -8657,7 +8660,7 @@ def fon_izi_k42(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
 #   ÖTEKİ: E3 küçüklük, S1 tavan günü, S2 geride + hacim, A2 Bollinger üst, A4 RSI > 70, A7 ölüm kesişimi, F6 RSI ayı uyumsuzluğu
 #     (bunlar BIST'te kaçınma izi sayılmıştı; burada 'alsak ne olur' diye aynı cetvelle ölçülür).
 # İKİ ÖLÇÜ, ÜÇ PAZAR (ABD, AVR karar; BIST bilgi), ÜÇ DÖNEM (2016-22 keşif, 2023, 2024-26; fiyat 31.08.2026'da kesik):
-#   HAM FARK: r60 - aynı gün pazar medyanı r60; ay kümeli bootstrap %95 (piyasayı geçer mi).
+#   HAM FARK: r60 - aynı gün pazar ORTALAMASI r60 (eşit ağırlıklı piyasa; medyan değil, 28 Eki düzeltmesi); ay kümeli bootstrap %95.
 #   PORTFÖY (K32 düzeni): 10 yuva, 60 gün tut, giriş ertesi açılış, maliyet tek yön BIST %0,2 / ABD %0,1 / AVR %0,1; toplam getiri, en büyük
 #     düşüş (MDD), getiri / |MDD|; kıyas P0 = eşit ağırlıklı piyasa (al-tut) ve P1 = rastgele giriş 60 gün tut (50 tohum ortancası).
 # KARAR (önceden, çok sinyal düzeltmesi için üç dönem): 'ALINABİLİR İZ' = ABD üç dönemde ve AVR 2023 + 2024-26'da ham fark > 0 ve alt uç > 0
@@ -8715,7 +8718,7 @@ def fon_izi_k43(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
             j = gun.searchsorted(pd.DatetimeIndex(S.gun), side="right"); ok = j < len(gun); S = S[ok].assign(giris=gun[j[ok]])
             S = S[[g in V[s].index for s, g in zip(S.sembol, S.giris)]].sort_values(["giris", "sembol"]).assign(_b=True).reset_index(drop=True)
             E = fi_k27_tekil(S, "_b", V, K["ayri"]); T = fi_olcut_olay(P, E[["sembol", "giris"]])
-            T["ham"] = [T.r60.iat[k] - float(np.nanmedian(P["R"][ti[g]][P["ok"][ti[g]]])) if g in ti else np.nan for k, g in enumerate(T.giris)]
+            T["ham"] = [T.r60.iat[k] - float(np.nanmean(P["R"][ti[g]][P["ok"][ti[g]]])) if g in ti else np.nan for k, g in enumerate(T.giris)]   # ortalama (28 Eki düzeltme, K42 notu)
             grup = "trend" if ad in K["trend"] else ("dip" if ad in K["dip"] else "oteki")
             for dn, a, b in K["donem"]:
                 Td = T[(T.giris >= a) & (T.giris <= b)]; hm = Td.ham.dropna(); row = {"sinyal": ad, "grup": grup, "pazar": pz, "donem": dn, "n": int(len(hm))}
