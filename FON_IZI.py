@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.30 (2026-10-28, denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.31 (2026-10-28, K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -8590,6 +8590,60 @@ def fon_izi_k41(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
     for ad, R in out.items():
         R["ozet"].drop(columns=[c for c in R["ozet"] if c.startswith("_")]).to_csv(os.path.join(A.cikti, f"k41_{ad.lower()}.csv"), index=False)
     return out
+
+# K42 BİLİNEN ETKİLER KIYASI (Cemal 28 Eki: 'hiçbir yerde iz yok, o zaman kesin sen hata yapıyorsun'). ÖNCEDEN YAZILDI (sonuç görülmeden).
+# Amaç: hat, LİTERATÜRDE kırk yıldır belgelenmiş üç etkiyi görüyor mu? Görüyorsa hat sağlamdır ve 'iz yok' sonucu ölçütün sertliğinden
+# gelir (eşler aynı momentum ve likidite diliminden seçilir; momentum / küçüklük gibi etkiler eşli farkta TASARIM GEREĞİ silinir).
+#   E1 MOMENTUM 12-1: her ayın ilk işlem günü, son 250 günün (son 20 gün hariç) getirisi pazar içinde en yüksek onda bir -> alım.
+#   E2 KISA VADE TERSİNE DÖNÜŞ: son 20 gün getirisi en düşük onda bir -> alım (1 aylık kaybedenler toparlar).
+#   E3 KÜÇÜKLÜK: 60 günlük işlem değeri medyanı en düşük onda bir -> alım.
+# İki cetvel: HAM = r60 - aynı gün pazar medyanı r60 (literatürün ölçtüğü); EŞLİ = FI_OLCUT (bizim ölçüt). Hücreler 2016-22 / 2023 /
+# 2024-26, üç pazar. BEKLENTİ (önceden): E1 ve E3 HAM cetvelde birden çok hücrede artı ve aralık artı (hat görür), EŞLİ cetvelde sıfıra
+# yakın (eşleme siler). E2 ham cetvelde ABD'de artı beklenir (literatür), BIST'te belirsiz. Hat bunları ham cetvelde görmezse HAT KUSURLU.
+FI_K42 = {"dilim": 0.10, "mom_uzun": 250, "mom_kisa": 20, "likit_gun": 60, "ayri": 60,
+          "donem": (("2016-22", "2016-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-12-31"))}
+
+
+def fi_k42_sinyaller(V: Dict[str, pd.DataFrame], K: Dict[str, Any] = FI_K42) -> Dict[str, pd.DataFrame]:
+    """Aylık kesit sinyalleri (sembol, gun): E1 momentum, E2 tersine dönüş, E3 küçüklük (hepsi d-1'e kadar bilgi, ay başı günü)."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index().ffill(limit=5)
+    Tl = pd.DataFrame({s: d.Close * d.Volume * (d["Kur"] if "Kur" in d else 1.0) for s, d in V.items()}).sort_index()
+    mom = (C.shift(K["mom_kisa"]) / C.shift(K["mom_uzun"]) - 1).shift(1); kisa = (C / C.shift(K["mom_kisa"]) - 1).shift(1)
+    lik = Tl.rolling(K["likit_gun"], min_periods=40).median().shift(1)
+    ay_basi = C.index.to_series().groupby(C.index.to_period("M")).min().values
+    out = {}
+    for ad, M, ust in (("E1_momentum_12_1", mom, True), ("E2_tersine_donus_1ay", kisa, False), ("E3_kucukluk", lik, False)):
+        R = M.loc[ay_basi]; rk = R.rank(axis=1, pct=True)
+        S = (rk >= 1 - K["dilim"]) if ust else (rk <= K["dilim"]); S = S & R.notna()
+        st = S.stack(); st = st[st]
+        out[ad] = pd.DataFrame({"sembol": st.index.get_level_values(1), "gun": st.index.get_level_values(0)})
+    return out
+
+
+def fon_izi_k42(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], A: Optional[FIAyar] = None,
+                K: Dict[str, Any] = FI_K42, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K42 sürücü: üç bilinen etki x üç pazar x üç dönem, ham ve eşli cetvel. Çıktı k42_ozet.csv."""
+    A = A or FIAyar(); Od = {**O, "donem": K["donem"]}; Z = []
+    for pz, V in Vs.items():
+        P = Pn[pz]; ti = {t: i for i, t in enumerate(P["tarih"])}; gun = pd.DatetimeIndex(sorted(set().union(*[d.index for d in V.values()])))
+        for ad, S in fi_k42_sinyaller(V, K).items():
+            j = gun.searchsorted(pd.DatetimeIndex(S.gun), side="right"); ok = j < len(gun); S = S[ok].assign(giris=gun[j[ok]])
+            S = S[[g in V[s].index for s, g in zip(S.sembol, S.giris)]].sort_values("giris").assign(_b=True).reset_index(drop=True)
+            E = fi_k27_tekil(S, "_b", V, K["ayri"]); T = fi_olcut_olay(P, E[["sembol", "giris"]])
+            T["ham"] = [T.r60.iat[k] - float(np.nanmedian(P["R"][ti[g]][P["ok"][ti[g]]])) if g in ti else np.nan for k, g in enumerate(T.giris)]
+            for dn, a, b in K["donem"]:
+                Td = T[(T.giris >= a) & (T.giris <= b)]; h = fi_olcut_hucre(Td, Od); hm = Td.ham.dropna()
+                rng = np.random.default_rng(42); ay = Td.dropna(subset=["ham"]).giris.dt.to_period("M").astype(str).to_numpy(); aylar = np.unique(ay)
+                grup = {x: hm.to_numpy()[ay == x] for x in aylar}
+                bs = [np.concatenate([grup[x] for x in rng.choice(aylar, len(aylar), replace=True)]).mean() for _ in range(1000)] if len(aylar) else [np.nan]
+                Z.append({"etki": ad, "pazar": pz, "donem": dn, "n": h.get("n", 0), "ham_fark": float(hm.mean()) if len(hm) else np.nan,
+                          "ham_alt95": float(np.nanquantile(bs, 0.025)), "ham_ust95": float(np.nanquantile(bs, 0.975)),
+                          "esli_fark": h.get("ort_fark", np.nan), "esli_alt95": h.get("alt95", np.nan), "esli_sira": h.get("sira", np.nan)})
+    Z = pd.DataFrame(Z); Z["ham_tutar"] = (Z.ham_fark > 0) & (Z.ham_alt95 > 0); Z["esli_tutar"] = (Z.esli_fark > 0) & (Z.esli_alt95 > 0) & (Z.esli_sira > 0.5)
+    hat = {ad: int(Z[(Z.etki == ad)].ham_tutar.sum()) for ad in Z.etki.unique()}
+    karar = "HAT BİLİNEN ETKİLERİ GÖRÜYOR" if hat.get("E1_momentum_12_1", 0) >= 2 and hat.get("E3_kucukluk", 0) >= 2 else "HAT KUSURLU OLABİLİR"
+    Z.to_csv(os.path.join(A.cikti, "k42_ozet.csv"), index=False)
+    return {"ozet": Z, "ham_tutan_hucre": hat, "karar": karar}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
