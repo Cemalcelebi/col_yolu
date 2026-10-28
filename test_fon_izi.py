@@ -610,6 +610,11 @@ def sina():
     ok45 = ok45a and abs(Z45.loc[("2021-22", "hepsi"), "oran"] - 0.1) < 1e-12
     if not ok45:
         hata.append(f"45) K35 sektör / batma oranı yanlış: {S45.to_dict()} {Z45.to_dict('index')}")
+    # 46) K35-C zirve günü: pencere içindeki en yüksek kapanış.
+    ix46 = pd.bdate_range("2024-01-01", periods=80); c46 = np.r_[np.linspace(10, 30, 30), np.linspace(30, 12, 50)]
+    d46 = pd.DataFrame({"Close": c46}, index=ix46)
+    if F.fi_k35_zirve(d46, ix46[5]) != ix46[29] or F.fi_k35_zirve(d46, pd.Timestamp("2023-01-01")) is not None:
+        hata.append(f"46) K35-C zirve günü yanlış: {F.fi_k35_zirve(d46, ix46[5])}")
     return hata
 
 
@@ -617,4 +622,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 45/45 OK")
+    print("test_fon_izi: 46/46 OK")

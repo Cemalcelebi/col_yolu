@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.23 (2026-10-28, K35 rüzgâr batanları ayırır mı; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.23 (2026-10-28, K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -7474,7 +7474,74 @@ def fon_izi_k35(E34: pd.DataFrame, B: pd.DataFrame, eski: pd.DataFrame, sic: pd.
                       and (h.ust95 < 1).all() else "AYIRMIYOR")
     Zb.to_csv(os.path.join(A.cikti, "k35_batma.csv"), index=False); Zg.to_csv(os.path.join(A.cikti, "k35_getiri.csv"), index=False)
     Zs.reset_index().to_csv(os.path.join(A.cikti, "k35_sektor_batma.csv"), index=False)
-    return {"batma": Zb, "getiri": Zg, "sektor": Zs, "karar": karar, "olay_batma": Ol, "olay_getiri": E}
+    return {"batma": Zb, "getiri": Zg, "sektor": Zs, "karar": karar, "olay_batma": Ol, "olay_getiri": E, "ruzgar": W}
+
+# K35-C PATLAYANLARIN ARKASINDA RÜZGÂR (Cemal 28 Eki: 'patlayanların arkasında rüzgâr var mıydı, patlama zamanında rüzgâr var mıydı').
+# ÖNCEDEN YAZILDI (K35 sonuçları görülmeden). Olaylar = K34 ölçülmüş olaylar (batanlar dahil, ağırlıklı). PATLAYAN = aynı ay eşlerine
+# fark >= +%40 (K33 sıçrama eşiği). Rüzgâr (D9b, sepette hisse hariç, yani hissenin kendi sıçraması rüzgâr yaratmaz):
+#   GİRİŞTE = girişten önceki son işlem günü; ZİRVEDE = 60 günlük penceredeki en yüksek kapanış günü (patlama zamanı). Aynı iki ölçü
+#   patlamayanlarda da (onların penceresindeki en yüksek kapanış günü) alınır.
+# Ölçü: dönem (2021-22, 2023, 2024-26) başına rüzgârlı payı patlayan / öteki ve oran (kaldıraç), şirketlerden bootstrap %95.
+#   'PATLAMA ANINDA RÜZGÂR' = üç dönemde de zirve oranı >= 1,5 ve alt uç > 1. 'GİRİŞTE RÜZGÂR PATLAMAYI ÖNCELER' = 2023 ve 2024-26'da
+#   giriş oranı >= 1,5 ve alt uç > 1 (alınabilir bilgi; değilse rüzgâr patlamanın sebebi değil, eşlikçisi).
+FI_K35C = {"patlama": 0.40, "kaldirac": 1.5}
+
+
+def fi_k35_zirve(d: pd.DataFrame, giris: pd.Timestamp, ufuk: int = 60) -> Optional[pd.Timestamp]:
+    """Giriş gününden itibaren ufuk işlem günündeki en yüksek kapanış günü (seri erken biterse var olan kısım)."""
+    if d is None or not len(d) or pd.Timestamp(giris) not in d.index:
+        return None
+    j = int(d.index.get_loc(pd.Timestamp(giris))); p = d.Close.iloc[j:j + ufuk]
+    return p.idxmax() if len(p) and p.notna().any() else None
+
+
+def fon_izi_k35c(E: pd.DataFrame, W: pd.DataFrame, fiyat: Dict[str, pd.DataFrame], A: Optional[FIAyar] = None,
+                 K: Dict[str, Any] = FI_K35, C: Dict[str, Any] = FI_K35C, K34: Dict[str, Any] = FI_K34) -> Dict[str, Any]:
+    """E: fi_k35_esfark çıktısı (cik, giris, fark, w); W: rüzgâr paneli (fi_k14_ruzgar, sütun cik). Çıktı k35c_patlama.csv."""
+    A = A or FIAyar(); ti = W.index
+
+    def ruz(cik: str, gun: Optional[pd.Timestamp], once: bool) -> float:
+        if gun is None or cik not in W.columns:
+            return np.nan
+        j = int(ti.searchsorted(pd.Timestamp(gun), side="left")) - (1 if once else 0)
+        if not once and (j >= len(ti) or ti[j] != pd.Timestamp(gun)):
+            j -= 1
+        return float(W[cik].iloc[j]) if 0 <= j < len(ti) else np.nan
+    E = E.dropna(subset=["fark"]).copy(); E["patlayan"] = E.fark >= C["patlama"]
+    E["zirve"] = [fi_k35_zirve(fiyat.get(c), g) for c, g in zip(E.cik, E.giris)]
+    E["ruz_giris"] = [ruz(c, g, True) for c, g in zip(E.cik, E.giris)]
+    E["ruz_zirve"] = [ruz(c, z, False) for c, z in zip(E.cik, E.zirve)]
+    rng = np.random.default_rng(K["tohum"]); Z = []
+    for dn, a, b in K34["donem"]:
+        X = E[(E.giris >= a) & (E.giris <= b)]
+        for ol in ("ruz_giris", "ruz_zirve"):
+            Y = X.dropna(subset=[ol])
+            if not len(Y) or Y.patlayan.sum() < 10:
+                Z.append({"donem": dn, "olcu": ol, "n_patlayan": int(Y.patlayan.sum()) if len(Y) else 0}); continue
+
+            def pay(T: pd.DataFrame) -> Tuple[float, float, float]:
+                p, o = T[T.patlayan], T[~T.patlayan]
+                pp = (p[ol] * p.w).sum() / p.w.sum(); oo = (o[ol] * o.w).sum() / o.w.sum()
+                return pp, oo, pp / oo if oo > 0 else np.nan
+            pp, oo, kd = pay(Y); sirket = Y.cik.unique(); gi = {c: g.index for c, g in Y.groupby("cik")}; bs = []
+            for _ in range(K["bootstrap"]):
+                sec = rng.choice(sirket, len(sirket)); T = Y.loc[np.concatenate([gi[c] for c in sec])]
+                if T.patlayan.any() and (~T.patlayan).any():
+                    bs.append(pay(T)[2])
+            Z.append({"donem": dn, "olcu": ol, "n_patlayan": int(Y.patlayan.sum()), "n_oteki": int((~Y.patlayan).sum()),
+                      "ruzgarli_pay_patlayan": pp, "ruzgarli_pay_oteki": oo, "oran": kd,
+                      "alt95": float(np.nanquantile(bs, 0.025)), "ust95": float(np.nanquantile(bs, 0.975)),
+                      "patlama_orani_ruzgarli": float((Y[Y[ol] == 1].patlayan * Y[Y[ol] == 1].w).sum() / max(Y[Y[ol] == 1].w.sum(), 1e-9)),
+                      "patlama_orani_ruzgarsiz": float((Y[Y[ol] == 0].patlayan * Y[Y[ol] == 0].w).sum() / max(Y[Y[ol] == 0].w.sum(), 1e-9))})
+    Z = pd.DataFrame(Z)
+
+    def gec(dn: str, ol: str) -> bool:
+        r = Z[(Z.donem == dn) & (Z.olcu == ol)]
+        return bool(len(r) and pd.notna(r.oran.iat[0]) and r.oran.iat[0] >= C["kaldirac"] and r.alt95.iat[0] > 1)
+    karar = {"zirvede": "PATLAMA ANINDA RÜZGÂR VAR" if all(gec(d[0], "ruz_zirve") for d in K34["donem"]) else "AYIRMIYOR",
+             "giriste": "GİRİŞTE RÜZGÂR PATLAMAYI ÖNCELER" if all(gec(d, "ruz_giris") for d in ("2023", "2024-26")) else "AYIRMIYOR"}
+    Z.to_csv(os.path.join(A.cikti, "k35c_patlama.csv"), index=False)
+    return {"ozet": Z, "karar": karar, "olay": E}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
