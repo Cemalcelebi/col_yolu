@@ -715,6 +715,35 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "getirisi düşük (%5-40) = 'düşen piyasada aşırı satılmış oynak hisse'. BIST'te tam tersi profil: yükselen piyasada (piyasa "
                "%93-95) trendde güçlü hisse (r20 %70-80, SMA'ların üstü). En önemli özellikler: piyasanın 60 / 20 gün getirisi, oynaklık, "
                "pazar, SMA200, fiyat, düşüş, likidite."),
+    _ik_k("Ç126", "2026-10-28", "ECOGR HAFTALIK YUKARI YUVARLANMA + BBIO DÜŞÜŞ -> İKİ DİP -> YUVARLANMA: parmak izi eşleşmeleri (haftalık ve "
+          "günlük) ve açık kural, üç pazar, eşli / piyasa / kısa ufuk / portföy (K47)", "FON_IZI.py (k47)",
+          "Cemal: 'birinci slayt haftalık yukarı yuvarlanma, eğim pozitif; ikinci slayt sert düşüş, ufak dip, derin dip, orta bandın altı, "
+          "sonra orta-üst bant arası yuvarlanma; bunlarda iz yok mu'",
+          "Yeni deneme (karar önceden: eşli ABD + AVR, piyasa ABD + AVR 2023 / 2024-26, kısa ufuk K45 kuralı)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k47_ozet.csv",
+          notu="A) ECOGR haftalık (13 hafta, 9 kendi-içi ölçü; eşleşme ABD 154, AVR 122, BIST 59; band 0,20): eşli fark ABD -%1 / +%7 (n 12) / "
+               "-%7, AVR 0 / 0 / -%1, BIST -%4 / - / +%1; piyasaya fark sıfır / eksi; kısa ufuk +%8 önce ABD -3 puan, AVR +4, BIST -2 -> hiçbiri. "
+               "ECOGR'nin kendisi bölgeden sonra +%40 (tek örnek). B1) BBIO taban sonu (14 Eki; eşleşme ABD 232, AVR 121, BIST 657): eşli ABD "
+               "+%3 / -%4 / -%3, AVR +%1 / +%7 (n 9) / 0, BIST -%2 / -%6 / +%5; kısa ufuk ABD +11 puan (aralık +5) ama 2023-26 +6, AVR +7 (aralık "
+               "eksi) -> İZ DEĞİL. B2) BBIO yuvarlanma (22 Eki; ABD 68, AVR 27): eşli / piyasa sıfır ve eksi, kısa ufuk ABD -2 / AVR +10 (n 27). "
+               "C) AÇIK KURAL (son 40 günde >= -%20, 15-40 barlık taban, iki dip ikincisi derin, kapanışların >= %60'ı SMA20 altı, SMA20 üstü "
+               "ilk kapanışta al; ABD 2.988, AVR 402, BIST 1.515 olay): ABD piyasaya fark +%0,6 / +%7,2 / +%12,5 (2023 ve 2024-26 aralık artı), "
+               "portföy 2023 +%68 (piyasa +%29), 2024-26 +%207 (piyasa +%89, düşüş -%39'a karşı -%24); AMA eşli fark +%0,8 / +%9,0 (aralık "
+               "-%1; aynı momentum ve likidite dilimindeki rastgele hisseye göre fark yok); AVR -%5 / +%1,5; BIST -%5 / 0; kısa ufuk ABD +7 "
+               "puan, AVR +8, BIST +4 (hepsi < 10). Dördü de İZ DEĞİL. BBIO kuralının ABD'deki piyasa üstü getirisi, çökmüş hisselerin "
+               "2023-26'da sıçraması (K42 tersine dönüş etkisi); aynı momentum dilimindeki öteki çökmüş hisse de aynı sıçrıyor, kuralın "
+               "kendisi ayırmıyor; Avrupa ve BIST'te yok."),
+    _ik_k("Ç127", "2026-10-28", "SERT DÜŞÜŞ SONRASI MAKİNE: K46 makinesi yalnız son 40 gün tepesinden >= %20 düşmüş hisse-günlerinde (135 bin "
+          "satır) (K46-B)", "FON_IZI.py (k46, filtre)", "Cemal: 'burada makine çalıştır; belki ben yanlış tarif ediyorum; sert düşüşten sonra olan bir şey'",
+          "Keşif (K46 kuralı: ABD + AVR 2023 ve 2024-26'da üst %5 fark >= +10 puan, aralık artı, işlem > 0)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k46b_ozet.csv",
+          notu="AUC 0,50-0,60 (K46'nın 0,6-0,7'sinden zayıf; alt küme zaten 'düşmüş' olduğundan ayrım azalıyor); karışık etiket 0,508. ÜST %5 "
+               "vs oynaklık eşli rastgele: ABD 2023 +21,8 puan (aralık +17,5), 2024-26 +16,6 (+14,3), işlem +%2,9 / +%2,4; AVR 2023 +15,3 "
+               "(n 59, aralık +3), 2024-26 0,0 (aralık -8) -> İZ DEĞİL; BIST +18,8 / +7,7. PORTFÖY (10 yuva, 20 gün): ABD 2023 +%19 (piyasa "
+               "+%29), 2024-26 +%43 (piyasa +%89); AVR +%7 / +%10 (piyasa +%10 / +%41); BIST +%35 / +%118 (piyasa +%34 / +%114): hiçbirinde "
+               "piyasayı geçmiyor. Makinenin sert düşüş sonrasında seçtiği: piyasanın kendisi düşmüşken (piyasa 20 / 60 gün getirisi en alt "
+               "%5-30), Bollinger genişliği yüksek, mumlar büyük, likit ve fiyatı yüksek hisse = 'piyasa çöküşünde büyük hisse sıçrar'. "
+               "Yine piyasa hâli, hisse biçimi değil."),
 ]
 
 
@@ -1062,6 +1091,17 @@ IK_GOREV: List[Dict[str, str]] = [
               "+%1-2; 2023'te +4-5 (kural eşiği 10'un altı) -> İZ DEĞİL. Portföyde avantaj kayboluyor (piyasa kadar, düşüş daha derin; "
               "BIST 2023 hariç). Tipik dönüş noktası ABD / Avrupa'da 'düşen piyasada aşırı satılmış oynak hisse', BIST'te 'yükselen "
               "piyasada güçlü trend'",
+     "durum": "TAMAMLANDI (Cemal: iki bölge + sert düşüş makinesi, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "ECOGR haftalık yukarı yuvarlanma ve BBIO sert düşüş -> ufak dip -> derin dip -> orta bant altı -> orta-üst "
+                                     "bant arası yuvarlanma: bunlarda iz yok mu, dene; burada makine çalıştır, benim dediğim sert düşüşten sonra "
+                                     "olan bir şey",
+     "yapilan": "K47: ECOGR haftalık parmak izi (9 kendi-içi ölçü), BBIO günlük parmak izi (taban sonu, yuvarlanma) ve açık BBIO kuralı; üç "
+                "pazar; eşli, piyasa, kısa ufuk (oynaklık eşli), portföy. K46-B: makine yalnız sert düşüş sonrası satırlarda. IZ_KARNE "
+                "Ç126-Ç127; test 59",
+     "sonuc": "Dört bölge kümesi İZ DEĞİL. BBIO kuralı ABD'de piyasayı geçiyor (2023 +%7, 2024-26 +%12,5; portföy +%68 / +%207) ama aynı "
+              "momentum dilimindeki rastgele çökmüş hisse de geçiyor (eşli fark 0): çökmüş hisse sıçraması, kuralın kendisi değil; Avrupa / "
+              "BIST'te yok. Sert düşüş makinesi: ABD'de +17-22 puan, Avrupa 2024-26'da sıfır, portföyde piyasa altı; seçtiği 'piyasa "
+              "çöküşünde büyük hisse'",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
@@ -1074,7 +1114,7 @@ IK_ACIK: List[str] = [
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi, K45 kısa ufuk, K46 makine) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi, K45 kısa ufuk, K46 makine, K47 iki bölge, K46-B) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
