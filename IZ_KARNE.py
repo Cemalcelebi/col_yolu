@@ -582,6 +582,47 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "gerçek açılış ihalesi olduğu için doğru ölçü. Örtüşme saatlerinde (16:30-18:30 TR) S&P ile Avrupa eşzamanlı: korelasyon "
                "0,36-0,48. Karar: İZ DEĞİL (günlük gün içi 2024-26 tutmadı). En iyi kalıntı: sektör düzeyinde 5 günde +%0,3-0,5 (iki dönem), "
                "%0,1 maliyet sonrası küçük artı, 2023'te yok."),
+    _ik_k("Ç116", "2026-10-28", "KLASİK GÖSTERGELER 3 PAZARDA: Bollinger alt bant dönüşü / üst bant, RSI 30 / 70, MACD kesişimi, altın / "
+          "ölüm kesişimi, Fibonacci %61,8 dönüşü (K41-A)", "FON_IZI.py (k41)",
+          "Cemal: 'eski adamların icat ettiği formasyonlar, Bollinger / RSI / MACD / Fibo ile al-sat ne kadar başarılı'",
+          "Yeni deneme (8 kural, karar pazarları ABD + AVR, BIST bilgi; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k41_a.csv",
+          notu="Eşli fark ABD 2023 / 2024-26, AVR 2023 / 2024-26, BIST 2023 / 2024-26 (on binlerce olay): Bollinger alt dönüş +%0,5 / +%1,7, "
+               "-%0,1 / -%0,2, -%0,2 / -%0,7; Bollinger üst (kaçınma) +%0,5 / +%0,6, +%0,5 / +%0,3, -%2 / +%0,3; RSI < 30 -%0,4 / 0, +%0,1 / "
+               "-%0,4, +%1,3 / +%0,1; RSI > 70 (kaçınma) +%0,4 / +%0,8, +%0,1 / -%0,2, -%0,8 / -%0,5; MACD kesişimi +%0,3 / +%0,4, +%0,2 / "
+               "+%0,1, -%1,9 / -%0,4; altın kesişim 0 / -%0,3, -%0,7 / -%1,1, -%0,8 / -%0,1; ölüm kesişimi (kaçınma) -%1 / -%1, +%0,2 / "
+               "+%0,4, -%1,5 / +%1,7; Fibonacci %61,8 +%3,7 / +%4,6 (ABD aralık artı ama sıra 0,52 / 0,50 ve 2023 portföy tabanın altında), "
+               "-%0,6 / +%0,1, +%0,6 / -%1,0. Sekizi de İZ DEĞİL. Klasik al-sat kuralları üç pazarda eşlerinden ayrışmıyor; tek kalıntı "
+               "ABD Fibonacci (ortalama artı, tipik olay değil)."),
+    _ik_k("Ç117", "2026-10-28", "RÜZGÂR SÜREKLİLİĞİ: sektör rüzgârı başladığı gün üyeleri almak (eşli fark + ham fark) ve çöl + rüzgâr (K41-B)",
+          "FON_IZI.py (k41)", "Cemal: 'd seçeneğini yap (rüzgâr göründükten sonra ne kadar sürüyor)'",
+          "Yeni deneme (kapalı 'sektör ısısı', Cemal istedi; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k41_b.csv",
+          notu="Rüzgâr başlangıcında üyeler, HAM fark (pazar medyanına göre r60): ABD +%1,2 / +%5,7, BIST +%11,8 / +%8,3, AVR -%3,8 / +%0,9; "
+               "EŞLİ fark (aynı momentum ve likidite dilimindeki hisseye göre): ABD -%0,7 / +%0,9, AVR -%4,1 / -%0,1, BIST +%1,0 / -%0,1. "
+               "Çöl + rüzgâr (rüzgârdan önceki 60 günde K24 çölü): ABD -%1,3 / -%0,4, BIST +%0,4 / -%0,8, AVR n 3 / 35. İZ DEĞİL. Rüzgârlı "
+               "sektörün üyeleri pazarı geçiyor ama aynı momentumdaki başka hisseleri geçmiyor: rüzgâr = üyelerin kendi momentumu, üstüne "
+               "bir şey katmıyor."),
+    _ik_k("Ç118", "2026-10-28", "ABD ÇÖL ADAYI OLAY SÜZGECİ: K24 çöl sinyalleri + son 60 günde iyi bilanço (K28) / son 90 günde içeriden alım "
+          "(K30) / temiz temel (K31) ve birleşimleri (K41-C)", "FON_IZI.py (k41)", "Cemal: 'e seçeneğini yap'",
+          "Yeni deneme (yalnız ABD, en fazla ABD-ADAY; karar önceden)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k41_c.csv",
+          notu="6.912 çöl sinyali; iyi bilanço 253, içeriden alım 710, temiz temel 1.821. Eşli fark ABD 2023 / 2024-26: hepsi +%3,1 / -%0,5; "
+               "iyi bilanço +%7,7 / -%0,4 (n 52 / 170; 2023 aralık artı, portföy tabanın altında); içeriden alım +%9,3 / -%1,7 (aralık 0'a "
+               "değiyor); temiz temel +%0,3 / -%1,5; bilanço + temel +%0,2 / +%3,3 (n 19 / 71); alım + temel +%3,7 / -%1,5. Hiçbiri iki "
+               "hücrede tutmadı -> İZ DEĞİL. 2023'teki artılar 2024-26'da yok (K30'daki 'çölde alım' sonucuyla aynı: tek dönem)."),
+    _ik_k("Ç119", "2026-10-28", "K40 SEKTÖR 5 GÜN KALINTISI DIŞ ÖRNEK + MALİYET: hücreler 2016-19 / 2020-22 / 2023 / 2024-26, BIST hedef bilgi (K41-D)",
+          "FON_IZI.py (k41)", "Cemal: 'kalıntıyı dış örnekle ayrıca ölç'", "Yeni deneme (karar önceden: dört hücrede fazla - %0,1 > 0 ve alt uç > %0,1)",
+          "IZ C", 3, cikti="arastirma_cikti/fon_izi/k41_d.csv",
+          notu="Avrupa aynı sektör 5 gün fazlası: 2016-19 +%0,73 (aralık artı), 2020-22 +%0,11 (aralık 0'ı içerir), 2023 -%0,02, 2024-26 "
+               "+%0,52 (aralık artı); gün içi +%0,26 / +%0,18 / +%0,12 / +%0,12 (ilk ikisi aralık artı). BIST hedef: sıfır civarı. KALINTI "
+               "SAĞLAM DEĞİL (dört hücreden ikisi). Bilgi olarak kalır."),
+    _ik_k("Ç120", "2026-10-28", "ÖLÇÜM HATTI KONTROLÜ: geleceğe bakan sinyal (pozitif), yarı pozitif ve rastgele sinyal (negatif, 20 tohum) "
+          "üç pazarda FI_OLCUT'tan geçirildi", "scratchpad kontrol.py / kontrol.csv", "Cemal: 'ya sen hata yapıyorsun, görmüyorsun'",
+          "Kontrol (iz testi değil)", "IZ C", 0, cikti="arastirma_cikti/fon_izi/kontrol_hat.csv",
+          notu="POZİTİF (60 gün sonra >= +%20 olacağı bilinen olaylar): altı hücrede de tutar (eşli fark +%21 .. +%40, sıra 0,68-0,95). "
+               "YARI POZİTİF (yarısı iyi, yarısı rastgele): altı hücrede de tutar (+%11 .. +%23, sıra 0,62-0,71); ilk koşuda kontrol "
+               "betiğimde hata vardı (tarih sırasına göre ilk 1.500 olay alınmış, test hücrelerine yalnız rastgele düşmüştü), düzeltildi. "
+               "NEGATİF (rastgele, 20 tohum x 3 pazar x 2 dönem = 120 hücre): yanlış 'tutar' 0 / 120; aralık alt ucu > 0 oranı %1,7 "
+               "(beklenen <= %2,5); dört karar hücresi birden tutan tohum 0 / 20. Hat kör değil (gerçek izi görüyor), sağır da değil "
+               "(gürültüye iz demiyor). Bağımsız kod denetimi (ayrı model) ayrıca yapıldı; bulgular görev günlüğünde."),
 ]
 
 
@@ -870,20 +911,28 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Gecikme saat değil dakika: ABD'nin gece hareketi Avrupa'nın açılış boşluğuna giriyor (+%0,2 hisse, DAX +%1,1); açılıştan "
               "sonra alınabilir fazla yok ya da tutarsız (gün içi +%0,03 .. +%0,24). Kalıntı: sektör düzeyinde 5 günde +%0,3-0,5, iki "
               "dönemde, maliyet sonrası küçük. İZ DEĞİL",
+     "durum": "TAMAMLANDI (Cemal: d ve e, klasikler, kalıntı; bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "d ve e seçeneklerini yap; K40 kalıntısını dış örnekle ölç; eski formasyonlar (Bollinger, RSI, MACD, Fibo) "
+                                     "başarılı mı; benim çölüm halüsinasyon mu; ya sen hata yapıyorsun görmüyorsun",
+     "yapilan": "K41: A klasik 8 kural, B rüzgâr sürekliliği (+ çöl + rüzgâr), C ABD çöl adayı olay süzgeci, D K40 kalıntısı 4 hücre + maliyet; "
+                "üç pazar; IZ_KARNE Ç116-Ç119; test 54. Hat kontrolü (Ç120): pozitif / yarı pozitif / negatif sinyaller; bağımsız kod "
+                "denetimi (ayrı model) K38-K41 + ölçüt fonksiyonları",
+     "sonuc": "Klasik kurallar üç pazarda eşlerinden ayrışmıyor (tek kalıntı ABD Fibonacci ortalaması, tipik olay değil); rüzgâr = üyelerin "
+              "momentumu, üstüne katkı yok; ABD olay süzgeçleri yalnız 2023'te artı; K40 kalıntısı dört hücreden ikisinde. Hat kontrolü: "
+              "gerçek iz her hücrede yakalanıyor, rastgele sinyal 120 hücrede 0 yanlış iz",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K40). Karar pazarları ABD + Avrupa (BIST bilgi, Çin sonra); veri paketi hazır. ABD -> "
-    "Avrupa öncülüğü gün (K39) ve saat (K40) düzeyinde alınabilir değil; açılış boşluğunda fiyatlanıyor. Seçenekler Cemal'in: (a) çöl "
-    "taramasını aday listesi olarak canlı izlemek, (b) ara, (c) Çin evreni, (d) rüzgâr göründükten sonra ne kadar sürüyor (kapalı "
-    "konu, onay), (e) ABD olay verisiyle çöl adayı süzme, (f) K40 sektör 5 gün kalıntısını 2016-22 dış örnekle + maliyetle ayrıca ölçmek.",
+    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K41): şekil, çöl, bilgi olayı, risk, analist, portföy, sıçrayan, batanlar, rüzgâr (sebep, "
+    "süreklilik, büyükler önce), ABD -> Avrupa (gün, saat), klasik göstergeler. Ölçüm hattı kontrolden geçti (Ç120). Seçenekler Cemal'in: "
+    "(a) çöl taramasını aday listesi olarak canlı izlemek, (b) ara, (c) Çin evreni, (g) ücretli veri (13F, opsiyon akışı, batan fiyatları).",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
