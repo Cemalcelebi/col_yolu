@@ -697,6 +697,24 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "kırılımında al kuralı: ABD +10,9 (aralık 0'a değiyor), AVR +1,9 -> tutmadı. SONUÇ: kural harfiyen tutuyor ama etki eski "
                "(2016-22), son dönemlerde ABD'de işlem başına +%0,2-0,3 (çok ince), Avrupa'da örnek az, BIST'te ters. 'KISA İZ (ZAYIF, "
                "2016-22 ağırlıklı)'; ALINABİLİR İZ listesine girmez, canlı izlemeye aday."),
+    _ik_k("Ç125", "2026-10-28", "DÖNÜŞ NOKTASINI MAKİNEYE ÖĞRETME: 1,09 milyon hisse-günü (ABD + AVR + BIST, her 5. gün, 2016-26), 36 özellik, "
+          "etiket = 20 günde +%8 -%8'den önce; yıl yıl ileri yürüyen LightGBM; üst %5 sinyal vs oynaklık eşli rastgele; portföy (K46)",
+          "FON_IZI.py (k46)", "Cemal: 'tipik dönüş noktasını bul; sen ara, makineye öğret'",
+          "Keşif (karar önceden: ABD + AVR 2023 ve 2024-26'da üst %5 fark >= +10 puan, aralık artı, işlem > 0)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k46_ozet.csv",
+          notu="Makine öğreniyor: AUC ABD 0,59-0,70, AVR 0,64-0,70, BIST 0,47-0,58 (yıl yıl, görmediği yılda); etiket karıştırılınca 0,505 "
+               "(sızıntı yok). ÜST %5 sinyalde +%8 önce gelme payı - oynaklık eşli rastgele: ABD 2023 +3,6 puan (aralık +2), 2024-26 +12,2 "
+               "(+11,3); AVR 2023 +4,6 (+1,9), 2024-26 +12,8 (+11,1); BIST 2023 +27,7, 2024-26 +12,6. Gerçekçi işlem (+%8 hedef, -%8 stop, "
+               "maliyet) sinyalde ABD +%0,4 / +%2,1, AVR 0 / +%1,2, BIST +%4,4 / +%2,2 (rastgele ~0). KARAR: önceden yazılı kural 2023 "
+               "hücrelerinde tutmadı (+4-5 puan < 10) -> İZ DEĞİL; 2024-26'da ikisinde de tutuyor. PORTFÖY (10 yuva, 20 gün tut, sinyal "
+               "sırasıyla): ABD 2023 +%27 (piyasa +%29), 2024-26 +%90 (piyasa +%89, düşüş -%30'a karşı -%24); AVR -%2 / +%7 (piyasa +%10 / "
+               "+%41); BIST 2023 +%147 (piyasa +%34), 2024-26 +%69 (piyasa +%114). Satır düzeyindeki avantaj portföye taşınmıyor: sinyaller "
+               "çöküş günlerinde kümeleniyor, 10 yuva ilk gelenleri alıyor, 20 gün tutma +8 / -8 kuralı değil. MAKİNENİN BULDUĞU TİPİK "
+               "DÖNÜŞ NOKTASI (ABD / AVR üst %5 ortanca yüzdelikleri): oynaklık %70-95, son 20 gün en büyük gün %65-85, 20 gün getirisi "
+               "%15-35 (düşmüş), 52 hafta konumu %10-35, tepeden düşüş derin, SMA20 / 50 / 200 altında (%15-40), RSI %25-40, piyasanın 20 gün "
+               "getirisi düşük (%5-40) = 'düşen piyasada aşırı satılmış oynak hisse'. BIST'te tam tersi profil: yükselen piyasada (piyasa "
+               "%93-95) trendde güçlü hisse (r20 %70-80, SMA'ların üstü). En önemli özellikler: piyasanın 60 / 20 gün getirisi, oynaklık, "
+               "pazar, SMA200, fiyat, düşüş, likidite."),
 ]
 
 
@@ -1035,19 +1053,28 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Önceden yazılı kural tutuyor (ABD +11, AVR +15 puan, aralık artı) -> KISA İZ ama ZAYIF: etki 2016-22'den, 2023-26'da ABD "
               "işlem başına +%0,2-0,3, Avrupa'da az olay, BIST'te ters (INTEM'in kendisi gibi). Oynak bölge +%8'e de -%8'e de çabuk gidiyor; "
               "+%8 hedefi tek başına iz değil",
-     "durum": "TAMAMLANDI, AÇIK: canlı izleme kararı Cemal'in (BIST'te ters; ABD / AVR'de ince)"},
+     "durum": "TAMAMLANDI (Cemal: 'makineye öğret', bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Tipik dönüş noktasını bul; sen ara, makineye öğret",
+     "yapilan": "K46: 1,09 milyon hisse-günü, 36 özellik (K33 + K23 + bağlam), etiket 20 günde +%8 -%8'den önce, yıl yıl ileri yürüyen "
+                "LightGBM (2019-26), üst %5 sinyal vs oynaklık eşli rastgele, etiket karıştırma kontrolü, özellik profili, 10 yuvalı "
+                "portföy; IZ_KARNE Ç125; test 58",
+     "sonuc": "Makine öğreniyor (AUC 0,6-0,7, kontrol 0,5). Üst %5 sinyal 2024-26'da ABD ve Avrupa'da rastgeleye +12 puan, işlem başına "
+              "+%1-2; 2023'te +4-5 (kural eşiği 10'un altı) -> İZ DEĞİL. Portföyde avantaj kayboluyor (piyasa kadar, düşüş daha derin; "
+              "BIST 2023 hariç). Tipik dönüş noktası ABD / Avrupa'da 'düşen piyasada aşırı satılmış oynak hisse', BIST'te 'yükselen "
+              "piyasada güçlü trend'",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): eşli ve piyasa cetvelinde K13-K44 İZ DEĞİL; K45 kısa ufuk (INTEM bölgesi, +%8 önce) önceden yazılı kuralı tutan ilk "
-    "ölçü ama zayıf ve eski (2016-22), BIST'te ters. Seçenekler Cemal'in: (a) K45 kuralını ABD / Avrupa'da canlı izlemek (kağıt üstünde, "
-    "işlem başına +%0,2-0,3 beklenti), (b) çöl taramasını aday listesi olarak izlemek, (c) ara, (d) ücretli veri.",
+    "YOL (28 Eki): K46 makine öğrenmesi: satır düzeyinde 2024-26 ABD + AVR +12 puan, 2023 +4-5 (kural tutmadı), portföyde piyasa kadar. "
+    "Olası devam (Cemal'in kararı): (1) K46 sinyalini +8 / -8 çıkış kuralı ve günlük en çok 2 yeni yuva ile portföy olarak ölçmek, (2) K46 "
+    "profilini (düşen piyasada aşırı satılmış oynak hisse) canlı izlemek, (3) çöl taramasını aday listesi olarak izlemek, (4) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi, K45 kısa ufuk) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi, K45 kısa ufuk, K46 makine) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
