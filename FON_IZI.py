@@ -7709,6 +7709,38 @@ def fon_izi_k36(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, 
         X.to_csv(os.path.join(A.cikti, "k36_olay.csv"), index=False)
     return {"oncelik": ONC, "toplu": toplu, "ozet": Z, "karar": karar, "olay": X}
 
+
+# K36 DEVAM (ÖNCEDEN YAZILDI 28 Eki; ilk turda sebep sinyali rüzgârdan önce gelmedi (öncü oranı BIST 1,03 / ABD 1,08) ve getiri dört
+# hücrede tutmadı; bu üçünün sonucu görülmeden). Aynı eşleme, aynı ölçütler (öncelik + FI_OLCUT dört hücre):
+#   D1 GÜÇLÜ SEBEP: z eşiği 2,0 (sürücüde nadir, büyük hareket).
+#   D2 YAVAŞ SEBEP: 60 günlük değişimin z-skoru (trend; 20 gün yerine), eşik 1,0.
+#   D3 KÖTÜ SEBEP = KAÇINMA: yön ters (sürücü sektör aleyhine hareket eder), olaylar aynı; karar fi_olcut_karar_kacinma (ayna).
+FI_K36_DENEME = {"D1_guclu": {"z_esik": 2.0}, "D2_yavas": {"z_pencere": 60}, "D3_kacinma": {"ters": True}}
+
+
+def fon_izi_k36_deneme(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], S: Dict[str, pd.Series],
+                       A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K36, D: Dict[str, Any] = FI_K36_DENEME,
+                       O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K36 devam: D1..D3 fon_izi_k36 ile; D3'te eşleme yönleri ters ve kaçınma kararı. Çıktı k36_deneme.csv."""
+    A = A or FIAyar(); Z, karar = [], {}
+    for ad, dk in D.items():
+        Kd = {**K, **{k: v for k, v in dk.items() if k != "ters"}}
+        if dk.get("ters"):
+            Kd["esleme"] = {pz: [(a, s_, -y) for a, s_, y in L] for pz, L in K["esleme"].items()}
+        Kd["klasor"] = K["klasor"]
+        Ad = FIAyar(); Ad.cikti = os.path.join(A.cikti, "k36_" + ad); os.makedirs(Ad.cikti, exist_ok=True)
+        R = fon_izi_k36(Vs, Pn, S, Ad, Kd, O)
+        Zr = R["ozet"]; Zr = Zr[Zr.kume.isin(["hepsi", "erken", "erken_col"])].assign(deneme=ad); Z.append(Zr)
+        for k in ("hepsi", "erken", "erken_col"):
+            g = Zr[Zr.kume == k]
+            if len(g):
+                karar[f"{ad}:{k}"] = fi_olcut_karar_kacinma(g, O) if dk.get("ters") else fi_olcut_karar(g, O)
+        karar[f"{ad}:oncelik"] = R["karar"]["oncelik"]; karar[f"{ad}:toplu"] = R["toplu"]
+    Z = pd.concat(Z, ignore_index=True) if Z else pd.DataFrame()
+    if len(Z):
+        Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k36_deneme.csv"), index=False)
+    return {"ozet": Z, "karar": karar}
+
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
 # gününde bölgenin en yüksek High'ı x 1,002'de bekleyen alış (yan ölçü: gövde tepesi max(O,C) x 1,002); dolum max(Open, seviye); dolmazsa
