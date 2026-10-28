@@ -717,6 +717,14 @@ def sina():
     ok55 = len(T55["T3_sma200_ustu"]) == 1 and 1 <= len(T55["T1_52h_zirve"]) <= 3 and all(len(v) == 0 for v in duz.values())
     if not ok55:
         hata.append(f"55) K43 trend sinyalleri yanlış: {({k: len(v) for k, v in T55.items()})} {({k: len(v) for k, v in duz.items()})}")
+    # 56) K44 eşleşme: havuzda hedefle aynı değerli pencereler band içinde kalır, uzaktakiler kalmaz.
+    r56 = np.random.default_rng(56); z56 = r56.normal(0, 1, 500)     # ölçüler tam bağımlı: band içi payı tek ölçüdeki gibi %25
+    P56 = pd.DataFrame({k: z56 + i * 1e-6 for i, k in enumerate(F.FI_K44["olcu"])}); P56["sembol"] = "X"; P56["tarih"] = pd.bdate_range("2020-01-01", periods=500)
+    H56 = pd.Series({k: 0.5 for k in F.FI_K44["olcu"]}); E56 = F.fi_k44_eslesme(P56, H56, 0.125)
+    Y56 = F.fi_k44_yuzdelik(P56, E56)
+    ok56 = len(E56) > 0 and all(((Y56[k] >= 0.375 - 1e-9) & (Y56[k] <= 0.625 + 1e-9)).all() for k in F.FI_K44["olcu"]) and len(F.fi_k44_eslesme(P56, pd.Series({k: 1.5 for k in F.FI_K44["olcu"]}), 0.1)) == 0
+    if not ok56:
+        hata.append(f"56) K44 eşleşme yanlış: {len(E56)}")
     return hata
 
 
@@ -724,4 +732,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 55/55 OK")
+    print("test_fon_izi: 56/56 OK")
