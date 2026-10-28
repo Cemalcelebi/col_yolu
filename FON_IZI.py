@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.23 (2026-10-28, K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.24 (2026-10-28, K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -7542,6 +7542,177 @@ def fon_izi_k35c(E: pd.DataFrame, W: pd.DataFrame, fiyat: Dict[str, pd.DataFrame
              "giriste": "GİRİŞTE RÜZGÂR PATLAMAYI ÖNCELER" if all(gec(d, "ruz_giris") for d in ("2023", "2024-26")) else "AYIRMIYOR"}
     Z.to_csv(os.path.join(A.cikti, "k35c_patlama.csv"), index=False)
     return {"ozet": Z, "karar": karar, "olay": E}
+
+# K36 RÜZGÂRIN SEBEBİ (Cemal 28 Eki: 'rüzgâr fiyattan görülünce geç kalınır; 1 ile başla, sebebe bak'). Kapalı konu 'sektör ısısı' ve
+# 'VIX/DXY'ye komşu; Cemal istedi (DXY kullanılmaz, kur USDTRY / EURUSD). ÖNCEDEN YAZILDI (sürücü verisi inmeden, sonuç görülmeden).
+# SEBEP -> SEKTÖR eşlemesi (iktisadi mantıkla önceden; ABD endüstri adları sektor_ABD.csv, BIST alt endeksler sektor_BIST.csv):
+#   BIST: XBANK, XGMYO <- Türkiye CDS DÜŞER (cds_2022.csv; 2022'den); XMADN <- altın YÜKSELİR (GC=F); XTEKS <- USDTRY YÜKSELİR (ihracatçı);
+#         XMANA <- sıcak haddelenmiş çelik YÜKSELİR (HRC=F); XULAS <- petrol DÜŞER (CL=F).
+#   ABD:  Gold <- altın; Silver <- gümüş (SI=F); Oil & Gas E&P, Oil & Gas Equipment & Services <- petrol YÜKSELİR; Airlines <- petrol DÜŞER;
+#         Steel <- HRC YÜKSELİR; Copper, Other Industrial Metals & Mining <- bakır YÜKSELİR (HG=F); Aluminum <- ALI=F YÜKSELİR;
+#         Agricultural Inputs <- buğday YÜKSELİR (ZW=F); Banks - Regional <- ABD 10 yıllık faiz YÜKSELİR (^TNX, ders kitabı: faiz marjı);
+#         REIT - * (hepsi), Residential Construction, Utilities - Regulated Electric, Biotechnology, Solar <- 10 yıllık faiz DÜŞER.
+#   Teşvik / yasa gibi sayısallaşmayan sebepler (güneş enerjisi teşviki) bu turda yok; Solar yalnız faizle.
+# SEBEP SİNYALİ: sürücünün 20 günlük log değişimi (CDS ve 'düşer' sürücülerde işaret ters) son 250 günün 20 günlük değişimlerine göre
+#   z-skor (pencere d-1'e kadar, geleceğe bakmaz); sinyal günü = z >= 1,0'a ilk geçiş (önceki gün < 1,0). Aynı sürücüde 20 işlem günü
+#   içinde ikinci sinyal yok.
+# Ö1 ÖNCELİK (sebep rüzgârdan önce mi gelir): sinyal günü d'de sektörün fiyat rüzgârı (D9b, fi_k14_ruzgar; sektör üyesi hisselerin
+#   çoğunluğu rüzgârlı) VAR mı; yoksa sonraki 60 işlem gününde çıkıyor mu. Taban = rüzgârsız rastgele günlerden sonraki 60 günde rüzgâr
+#   çıkma oranı (aynı sektör). ÖNCÜ ORANI = P(60 günde rüzgâr | sinyal, d'de rüzgâr yok) / taban. 'SEBEP ÖNCE GELİR' = iki pazarda da
+#   öncü oranı >= 1,5 ve sinyalde zaten rüzgârlı payı < %50 (2016-26 birleşik; BIST CDS çiftleri 2022'den).
+# Ö2 GETİRİ (FI_OLCUT, dört hücre): olay = sektör üyesi hisse, giriş = sinyal gününden sonraki ilk açılış, aynı hissede 60 günde tek.
+#   Kümeler: HEPSİ; ERKEN = sinyal günü sektörde fiyat rüzgârı henüz yok (Cemal'in sorusu: rüzgâr görünmeden binmek); ERKEN+ÇÖL = ERKEN ve
+#   hisse K23 çöl süzgecinde (düşüş <= -%30, eğim >= -0,001, mum <= 1,0, 20 bar, sinyal gününde). Karar fi_olcut_karar; bilgi: sürücü başına.
+# Hayatta kalma: V_BIST / V_ABD bugün işlem görenler (K34 notu); sektör sepetleri de öyle. ABD petrol / biyoteknoloji gibi sektörlerde
+#   iyimserlik payı var, kayda yazılır.
+FI_K36 = {"z_pencere": 20, "z_gecmis": 250, "z_esik": 1.0, "ayri": 20, "ruz_bekle": 60, "oncu_esik": 1.5, "zaten_esik": 0.5, "coğunluk": 0.5,
+          "ayri_hisse": 60, "tohum": 36, "taban_n": 2000, "cds": "cds_2022.csv",
+          "surucu": {"GC=F": "altın", "SI=F": "gümüş", "CL=F": "petrol", "HG=F": "bakır", "ZW=F": "buğday", "HRC=F": "çelik",
+                     "ALI=F": "alüminyum", "USDTRY=X": "USDTRY", "^TNX": "ABD10y", "CDS": "TR_CDS"},
+          "esleme": {"BIST": [("XBANK", "CDS", -1), ("XGMYO", "CDS", -1), ("XMADN", "GC=F", 1), ("XTEKS", "USDTRY=X", 1),
+                              ("XMANA", "HRC=F", 1), ("XULAS", "CL=F", -1)],
+                     "ABD": [("Gold", "GC=F", 1), ("Silver", "SI=F", 1), ("Oil & Gas E&P", "CL=F", 1),
+                             ("Oil & Gas Equipment & Services", "CL=F", 1), ("Airlines", "CL=F", -1), ("Steel", "HRC=F", 1),
+                             ("Copper", "HG=F", 1), ("Other Industrial Metals & Mining", "HG=F", 1), ("Aluminum", "ALI=F", 1),
+                             ("Agricultural Inputs", "ZW=F", 1), ("Banks - Regional", "^TNX", 1), ("REIT - *", "^TNX", -1),
+                             ("Residential Construction", "^TNX", -1), ("Utilities - Regulated Electric", "^TNX", -1),
+                             ("Biotechnology", "^TNX", -1), ("Solar", "^TNX", -1)]},
+          "klasor": os.environ.get("FI_K36", "/content/drive/MyDrive/COLAB_VERILER/col_tarayici/k36")}
+
+
+def fi_k36_surucu_indir(K: Dict[str, Any] = FI_K36, kok: Optional[str] = None) -> Dict[str, pd.Series]:
+    """Sürücü serileri: Yahoo (kapanış, 2015'ten) + repo cds_2022.csv. Pickle önbellek K['klasor']/surucu.pkl."""
+    import yfinance as yf
+    os.makedirs(K["klasor"], exist_ok=True); yol = os.path.join(K["klasor"], "surucu.pkl")
+    if os.path.exists(yol):
+        return pd.read_pickle(yol)
+    kok = kok or os.path.dirname(os.path.abspath(__file__)); S: Dict[str, pd.Series] = {}
+    for t in K["surucu"]:
+        if t == "CDS":
+            c = pd.read_csv(os.path.join(kok, K["cds"]), parse_dates=["date"]).set_index("date").price.astype(float)
+            S[t] = c.sort_index(); continue
+        try:
+            d = yf.download(t, start="2015-01-01", progress=False, auto_adjust=False)
+            s = d["Close"] if "Close" in d else d.xs("Close", axis=1, level=0)
+            s = s.iloc[:, 0] if isinstance(s, pd.DataFrame) else s
+            S[t] = s.dropna().astype(float); S[t].index = pd.DatetimeIndex(S[t].index).tz_localize(None)
+        except Exception as e:
+            filog.warning("K36 sürücü %s inmedi: %s", t, e)
+    pd.to_pickle(S, yol)
+    return S
+
+
+def fi_k36_sinyal(s: pd.Series, yon: int, K: Dict[str, Any] = FI_K36) -> pd.Series:
+    """Sürücü sinyal günleri (bool, sürücü takvimi): 20 günlük log değişimi x yön, son 250 günün (d-1'e kadar) z-skoru >= z_esik'e ilk
+    geçiş; 20 gün içinde tekrar yok."""
+    s = s[s > 0].dropna().sort_index(); x = np.log(s).diff(K["z_pencere"]) * yon
+    mu = x.rolling(K["z_gecmis"], min_periods=120).mean().shift(1); sd = x.rolling(K["z_gecmis"], min_periods=120).std().shift(1)
+    z = (x - mu) / sd; gec = (z >= K["z_esik"]) & (z.shift(1) < K["z_esik"])
+    out = pd.Series(False, index=s.index); son = -10 ** 9; ix = np.flatnonzero(gec.to_numpy())
+    for i in ix:
+        if i - son >= K["ayri"]:
+            out.iloc[i] = True; son = i
+    return out
+
+
+def fi_k36_sektor_ruzgar(W: pd.DataFrame, uyeler: List[str], K: Dict[str, Any] = FI_K36) -> pd.Series:
+    """Sektör düzeyinde rüzgâr (bool, gün): üyelerin (hisse hariç sepetle ölçülen) rüzgârlı payı > çoğunluk."""
+    u = [s for s in uyeler if s in W.columns]
+    return (W[u].mean(axis=1) > K["coğunluk"]) if u else pd.Series(False, index=W.index)
+
+
+def fi_k36_uyeler(sek: Dict[str, str], ad: str) -> List[str]:
+    """Eşlemedeki sektör adı -> üyeler; 'REIT - *' gibi yıldızlı ad önekle eşleşir."""
+    if ad.endswith("*"):
+        on = ad[:-1]; return [s for s, a in sek.items() if a.startswith(on)]
+    return [s for s, a in sek.items() if a == ad]
+
+
+def fi_k36_oncelik(G: pd.Series, sinyal_gun: List[pd.Timestamp], rng: np.random.Generator, K: Dict[str, Any] = FI_K36) -> Dict[str, Any]:
+    """Bir sektör-sürücü çifti: sinyal günlerinde rüzgâr zaten var mı; yoksa 60 günde çıkıyor mu; taban (rastgele rüzgârsız günler)."""
+    ix = G.index; g = G.to_numpy(bool); n = len(g); h = K["ruz_bekle"]
+    sonra = np.array([g[i + 1:i + 1 + h].any() if i + 1 < n else False for i in range(n)])
+    pos = [int(ix.searchsorted(t, side="right")) - 1 for t in sinyal_gun]
+    pos = [p for p in pos if 0 <= p < n - h]
+    if not pos:
+        return {"n_sinyal": 0}
+    zaten = np.array([g[p] for p in pos]); yok = [p for p, z in zip(pos, zaten) if not z]
+    cik = float(np.mean([sonra[p] for p in yok])) if yok else np.nan
+    aday = np.flatnonzero(~g[:n - h]); taban = float(sonra[rng.choice(aday, min(K["taban_n"], len(aday)), replace=False)].mean()) if len(aday) else np.nan
+    return {"n_sinyal": len(pos), "zaten_ruzgarli": float(zaten.mean()), "n_yok": len(yok), "sonra_cikis": cik, "taban": taban,
+            "oncu_orani": cik / taban if taban and taban > 0 and np.isfinite(cik) else np.nan}
+
+
+def fon_izi_k36(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], S: Dict[str, pd.Series],
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K36, O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K36 sürücü: sebep sinyali -> Ö1 öncelik, Ö2 getiri (HEPSİ / ERKEN / ERKEN+ÇÖL). Çıktı k36_oncelik.csv, k36_ozet.csv, k36_olay.csv."""
+    A = A or FIAyar(); rng = np.random.default_rng(K["tohum"]); ONC, OLAY = [], []
+    sin = {}
+    for pz in Vs:
+        V = Vs[pz]; sek = fi_k14_sektor(pz); W = fi_k14_ruzgar(V, sek); gun = W.index
+        for ad, sur, yon in K["esleme"][pz]:
+            if sur not in S:
+                continue
+            uy = [s for s in fi_k36_uyeler(sek, ad) if s in V]
+            if len(uy) < FI_K14_ESIK["ruz_uye"]:
+                ONC.append({"pazar": pz, "sektor": ad, "surucu": K["surucu"][sur], "uye": len(uy), "n_sinyal": 0}); continue
+            if (sur, yon) not in sin:
+                sin[(sur, yon)] = fi_k36_sinyal(S[sur], yon, K)
+            sg = list(sin[(sur, yon)][sin[(sur, yon)]].index); G = fi_k36_sektor_ruzgar(W, uy, K)
+            ONC.append({"pazar": pz, "sektor": ad, "surucu": K["surucu"][sur], "uye": len(uy), **fi_k36_oncelik(G, sg, rng, K)})
+            for t in sg:
+                j = int(gun.searchsorted(t, side="right"))      # sinyal gününden sonraki ilk işlem günü (sinyal günü işlem günü ise j = o+1)
+                if j >= len(gun):
+                    continue
+                d0 = gun[j - 1] if j >= 1 else None
+                erken = not bool(G.iloc[j - 1]) if j >= 1 else False
+                for s in uy:
+                    d = V[s]
+                    if gun[j] not in d.index or d0 is None or d0 not in d.index:
+                        continue
+                    OLAY.append({"pazar": pz, "sektor": ad, "surucu": K["surucu"][sur], "sembol": s, "sinyal": t, "giris": gun[j],
+                                 "d0": d0, "erken": erken})
+    X = pd.DataFrame(OLAY)
+    if len(X):
+        col = []
+        for s, g in X.groupby(["pazar", "sembol"]):
+            F = fi_k23_parmak(Vs[s[0]][s[1]], 20)
+            for r in g.itertuples():
+                p = F.loc[r.d0] if r.d0 in F.index else None
+                col.append((r.Index, bool(p is not None and p.dusus <= FI_K23_KOR["dusus"] and p.egim >= FI_K23_KOR["egim"] and p.mum <= 1.0)))
+        X["col"] = pd.Series(dict(col)).reindex(X.index).fillna(False).astype(bool)
+        X["erken_col"] = X.erken & X.col; X["hepsi"] = True
+    Z = []
+    for kume in ("hepsi", "erken", "erken_col"):
+        for pz in Vs:
+            Xp = X[(X.pazar == pz) & X[kume]].sort_values("giris") if len(X) else X
+            if not len(Xp):
+                continue
+            T = pd.concat([fi_olcut_olay(Pn[pz], fi_k27_tekil(g.assign(_b=True).reset_index(drop=True), "_b", Vs[pz], K["ayri_hisse"])[["sembol", "giris"]])
+                           for _, g in Xp.groupby("sektor")], ignore_index=True)
+            for dn, a, b in O["donem"]:
+                Z.append({"kume": kume, "pazar": pz, "donem": dn, **fi_olcut_hucre(T[(T.giris >= a) & (T.giris <= b)], O)})
+            if kume == "hepsi":
+                for sur, g in T.assign(surucu=T.sembol.map(Xp.drop_duplicates("sembol").set_index("sembol").surucu)).groupby("surucu"):
+                    for dn, a, b in O["donem"]:
+                        Z.append({"kume": f"hepsi:{sur}", "pazar": pz, "donem": dn, **fi_olcut_hucre(g[(g.giris >= a) & (g.giris <= b)], O)})
+    Z = pd.DataFrame(Z); ONC = pd.DataFrame(ONC)
+    karar = {k: fi_olcut_karar(Z[Z.kume == k], O) for k in ("hepsi", "erken", "erken_col") if len(Z) and (Z.kume == k).any()}
+    o = ONC.dropna(subset=["oncu_orani"]) if "oncu_orani" in ONC else ONC.iloc[0:0]
+    toplu = {}
+    for pz in Vs:
+        g = o[o.pazar == pz]
+        toplu[pz] = {"oncu_orani": float((g.sonra_cikis * g.n_yok).sum() / g.n_yok.sum() / ((g.taban * g.n_yok).sum() / g.n_yok.sum()))
+                     if len(g) and g.n_yok.sum() else np.nan,
+                     "zaten_ruzgarli": float((g.zaten_ruzgarli * g.n_sinyal).sum() / g.n_sinyal.sum()) if len(g) and g.n_sinyal.sum() else np.nan}
+    karar["oncelik"] = ("SEBEP ÖNCE GELİR" if all(np.isfinite(t["oncu_orani"]) and t["oncu_orani"] >= K["oncu_esik"]
+                                                  and t["zaten_ruzgarli"] < K["zaten_esik"] for t in toplu.values()) else "ÖNCE GELMİYOR")
+    ONC.to_csv(os.path.join(A.cikti, "k36_oncelik.csv"), index=False)
+    if len(Z):
+        Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k36_ozet.csv"), index=False)
+    if len(X):
+        X.to_csv(os.path.join(A.cikti, "k36_olay.csv"), index=False)
+    return {"oncelik": ONC, "toplu": toplu, "ozet": Z, "karar": karar, "olay": X}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş

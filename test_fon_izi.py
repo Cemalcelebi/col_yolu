@@ -615,6 +615,14 @@ def sina():
     d46 = pd.DataFrame({"Close": c46}, index=ix46)
     if F.fi_k35_zirve(d46, ix46[5]) != ix46[29] or F.fi_k35_zirve(d46, pd.Timestamp("2023-01-01")) is not None:
         hata.append(f"46) K35-C zirve günü yanlış: {F.fi_k35_zirve(d46, ix46[5])}")
+    # 47) K36 sebep sinyali: 300 gün ufak gürültülü düz seri, sonra 20 günde +%30 rampa -> rampanın ilk 6 gününde yön +1 sinyali
+    # çıkar; yön -1'de rampa boyunca sinyal yok.
+    ix47 = pd.bdate_range("2022-01-03", periods=340); r47 = np.random.default_rng(47)
+    v47 = np.r_[10 + r47.normal(0, 0.02, 300), np.linspace(10, 13, 40)]; s47 = pd.Series(v47, index=ix47)
+    g47 = F.fi_k36_sinyal(s47, 1); t47 = F.fi_k36_sinyal(s47, -1)
+    ok47 = g47.iloc[301:307].any() and not t47.iloc[301:340].any()
+    if not ok47:
+        hata.append(f"47) K36 sinyal yanlış: {list(g47[g47].index[-3:])} {t47.iloc[301:].sum()}")
     return hata
 
 
@@ -622,4 +630,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 46/46 OK")
+    print("test_fon_izi: 47/47 OK")
