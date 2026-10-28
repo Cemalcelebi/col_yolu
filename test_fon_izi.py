@@ -599,6 +599,17 @@ def sina():
     ok44 = ok44a and E44.tiingo.iloc[0] == "ABCQ"
     if not ok44:
         hata.append(f"44) K34 r60 / Tiingo eşlemesi yanlış: {(g1, r1, k1, g2, r2, k2)} {E44.to_dict('records')}")
+    # 45) K35: SIC 3 hane, evrende az ise 2 hane; batma oranı (rüzgârlı 1/20, rüzgârsız 10/20 -> 0,1).
+    sic45 = pd.Series(["3674", "3679", "2834"], index=["a", "b", "c"]); ev45 = pd.Series(["3674"] * 8 + ["2834"] * 3)
+    S45 = F.fi_k35_sektor(sic45, ev45)
+    ok45a = S45["a"] == "367" and S45["b"] == "367" and S45["c"] == "G28"
+    ol45 = pd.DataFrame({"cik": [str(k) for k in range(40)], "filed": pd.Timestamp("2021-06-01"),
+                         "son": [pd.Timestamp("2021-12-01") if (k < 20 and k == 0) or (k >= 20 and k < 30) else pd.Timestamp("2026-06-01")
+                                 for k in range(40)], "ruzgar": [1.0] * 20 + [0.0] * 20, "kucuk": False})
+    Z45 = F.fi_k35_batma(ol45, {**F.FI_K35, "bootstrap": 50}).set_index(["kohort", "kume"])
+    ok45 = ok45a and abs(Z45.loc[("2021-22", "hepsi"), "oran"] - 0.1) < 1e-12
+    if not ok45:
+        hata.append(f"45) K35 sektör / batma oranı yanlış: {S45.to_dict()} {Z45.to_dict('index')}")
     return hata
 
 
@@ -606,4 +617,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 44/44 OK")
+    print("test_fon_izi: 45/45 OK")

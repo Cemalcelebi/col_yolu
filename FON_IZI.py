@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.22 (2026-10-27, K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.23 (2026-10-28, K35 rüzgâr batanları ayırır mı; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -7344,6 +7344,137 @@ def fon_izi_k34(klasor_fs: str, eski: pd.DataFrame, T: pd.DataFrame, A: Optional
     Z.to_csv(os.path.join(A.cikti, "k34_ozet.csv"), index=False)
     E.to_csv(os.path.join(K["klasor"], "k34_olay.csv"), index=False)
     return {"ozet": Z, "karar": karar, "sayim": sayim, "olay": E}
+
+# K35 RÜZGÂR BATANLARI AYIRIR MI (Cemal 28 Eki: 'nakdi yetmeyen, batan şirketlerin arkasında rüzgâr olanlar da batıyor mu bakılmalı;
+# rüzgâra göre alım yapacağım; rüzgârı olan daha iyi mi; BIST'te tekstil batıyor, güneş enerjisi kolay batmaz'). Sektör rüzgârı
+# CLAUDE.md'de kapalı konu 'sektör ısısı'na dokunur; Cemal kendisi istedi. ÖNCEDEN YAZILDI (sonuç görülmeden).
+# EVREN: K34 olayları (ABD, nakdi 4 çeyrekten kısa yeten, nakdi >= 1 M$, 2021-01 .. 2026-06, batanlar dahil). SEKTÖR = SEC SIC kodu
+#   (batanlar dahil herkeste var): ilk 3 hane, fiyat evreninde o 3 haneden < 8 şirket varsa ilk 2 hane.
+# RÜZGÂR = üretimdeki D9b tanımı (COL_v1, fi_k14_ruzgar): aynı sektör sepeti (hisse hariç) 60 gün ortalama getirisi - piyasa ortancası
+#   >= +%10 VE sepet > 0, üye >= 4; girişten önceki son işlem günü. Sepet / piyasa evreni: V_ABD + K34 fiyatları (Yahoo + Tiingo).
+# Ö1 BATMA: bildirimden sonra 730 gün içinde SEC bildirimi kesildi mi (birleşme / satın alma da 'kesilme' sayılır; ayrılamıyor).
+#   Kohortlar: 2021-22 ve 2023-01 .. 2024-06 (2 yıl gözlenebilsin); şirket başına kohortta ilk olay; fiyat gerekmez, bütün sembollü
+#   şirketler (Tiingo örneğine girmeyen batanlar dahil). Oran = batma(rüzgârlı) / batma(rüzgârsız), şirketlerden bootstrap %95.
+#   'RÜZGÂR BATMAYI AZALTIR' = iki kohortta da oran <= 0,8 ve üst uç < 1. Aynısı en küçük beşte bir nakit dilimi içinde (bilgi).
+# Ö2 GETİRİ: K34 ölçüsü (aynı ay nakdi biten eşlere fark, ağırlıklı, batanlar dahil). Kümeler: R = rüzgârlı; RK = rüzgârlı ve en küçük
+#   beşte bir piyasa değeri (K34 izi). Hücre 2023 / 2024-26, K34 kuralı (n >= 30, fark > 0, alt uç > 0, sıra > 0,50) -> ABD-ADAY.
+# BİLGİ: SIC ana grup (2 hane) başına batma oranı (2021-22 kohortu), n >= 30 gruplar.
+FI_K35 = {"sic_min": 8, "batma_gun": 730, "kohort": (("2021-22", "2021-01-01", "2022-12-31"), ("2023-24", "2023-01-01", "2024-06-30")),
+          "oran_esik": 0.8, "bootstrap": 2000, "tohum": 35, "grup_n": 30}
+
+
+def fi_k35_sektor(sic: pd.Series, evren_sic: pd.Series, K: Dict[str, Any] = FI_K35) -> pd.Series:
+    """SIC -> sektör kodu: 3 hane; fiyat evreninde (evren_sic) o 3 haneden < sic_min şirket varsa 2 hane. Boş SIC -> NaN."""
+    s3 = sic.astype(str).str.zfill(4).str[:3].where(sic.notna() & (sic.astype(str).str.len() > 0))
+    say = evren_sic.dropna().astype(str).str.zfill(4).str[:3].value_counts()
+    az = s3.map(say).fillna(0) < K["sic_min"]
+    return s3.where(~az, "G" + s3.str[:2])
+
+
+def fi_k35_batma(Ol: pd.DataFrame, K: Dict[str, Any] = FI_K35) -> pd.DataFrame:
+    """Ol: cik, filed, son, ruzgar, kucuk (bool). Kohort x küme: rüzgârlı / rüzgârsız batma oranı, oran, şirket bootstrap %95."""
+    rng = np.random.default_rng(K["tohum"]); Z = []
+    for kh, a, b in K["kohort"]:
+        X = Ol[(Ol.filed >= a) & (Ol.filed <= b)].sort_values("filed").groupby("cik").head(1).dropna(subset=["ruzgar"])
+        X = X.assign(batti=(X.son < X.filed + pd.Timedelta(days=K["batma_gun"])).astype(float))
+        for kume, M in (("hepsi", X), ("en_kucuk_nakit", X[X.kucuk])):
+            r = M[M.ruzgar.astype(bool)].batti.to_numpy(); y = M[~M.ruzgar.astype(bool)].batti.to_numpy()
+            if len(r) < 10 or len(y) < 10:
+                Z.append({"kohort": kh, "kume": kume, "n_ruzgarli": len(r), "n_ruzgarsiz": len(y)}); continue
+            bs = [rng.choice(r, len(r)).mean() / max(rng.choice(y, len(y)).mean(), 1e-9) for _ in range(K["bootstrap"])]
+            Z.append({"kohort": kh, "kume": kume, "n_ruzgarli": len(r), "n_ruzgarsiz": len(y), "batma_ruzgarli": r.mean(),
+                      "batma_ruzgarsiz": y.mean(), "oran": r.mean() / y.mean() if y.mean() > 0 else np.nan,
+                      "alt95": float(np.quantile(bs, 0.025)), "ust95": float(np.quantile(bs, 0.975))})
+    return pd.DataFrame(Z)
+
+
+def fi_k35_esfark(E: pd.DataFrame) -> pd.DataFrame:
+    """K34 eş farkı (aynı takvim ayındaki öteki olayların ağırlıklı ortalaması) ve ağırlıklı sıra; E'ye fark, sira ekler."""
+    E = E.dropna(subset=["r60"]).copy(); E["ay"] = E.giris.dt.to_period("M")
+    fark, sira = pd.Series(np.nan, index=E.index), pd.Series(np.nan, index=E.index)
+    for _, g in E.groupby("ay"):
+        r = g.r60.to_numpy(float); w = g.w.to_numpy(float)
+        for k, ix in enumerate(g.index):
+            m = np.ones(len(g), bool); m[k] = False
+            if w[m].sum() > 0:
+                fark[ix] = r[k] - (r[m] * w[m]).sum() / w[m].sum()
+                sira[ix] = (w[m] * ((r[m] < r[k]) + 0.5 * (r[m] == r[k]))).sum() / w[m].sum()
+    E["fark"], E["sira"] = fark, sira
+    return E
+
+
+def fon_izi_k35(E34: pd.DataFrame, B: pd.DataFrame, eski: pd.DataFrame, sic: pd.DataFrame, fiyat: Dict[str, pd.DataFrame],
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K35, K34: Dict[str, Any] = FI_K34) -> Dict[str, Any]:
+    """K35 sürücü. E34: K34 ölçülmüş olaylar; B: SEC bildirimleri (fi_k34_bildirim); eski: kodsuzların eski kodu; sic: cik, sic, sic_ad;
+    fiyat: {cik: günlük fiyat} (sepet / piyasa evreni). Çıktı k35_batma.csv, k35_getiri.csv, k35_sektor_batma.csv."""
+    A = A or FIAyar()
+    sic = sic.assign(cik=sic.cik.astype(str), sic=pd.to_numeric(sic.sic, errors="coerce").astype("Int64").astype(str).replace("<NA>", np.nan))
+    sek = fi_k35_sektor(sic.set_index("cik").sic, sic[sic.cik.isin(list(fiyat))].sic, K).dropna().to_dict()
+    W = fi_k14_ruzgar(fiyat, sek); ti = W.index
+
+    def ruz(cik: str, gun: pd.Timestamp) -> float:
+        if cik not in W.columns or cik not in sek:
+            return np.nan
+        j = int(ti.searchsorted(pd.Timestamp(gun), side="left")) - 1
+        return float(W[cik].iloc[j]) if j >= 0 else np.nan
+    # Ö1 batma: bütün sembollü olaylar (kodlu + kodsuz sembollü), fiyat gerekmez; olay günü = bildirim ertesi
+    O = fi_k34_olaylar(B, K34); semb = set(eski[eski.kod.fillna("").astype(str).str.len() > 0].cik)
+    Ol = O[O.kod.notna() | O.cik.isin(semb)].copy()
+    Ol["ruzgar"] = [ruz(c, f) if c in sek else np.nan for c, f in zip(Ol.cik, Ol.filed + pd.Timedelta(days=1))]
+    if any(c not in W.columns for c in Ol.cik.unique()):
+        # sepette fiyatı olmayan şirket: rüzgârı sektör sepetinin kendisinden (hisse hariç tutulacak fiyat yok) aynı tanımla
+        C = pd.DataFrame({c: d.Close for c, d in fiyat.items()}).sort_index().ffill(limit=5); r = C / C.shift(60) - 1; piy = r.median(axis=1)
+        gr: Dict[str, List[str]] = {}
+        for c in r.columns:
+            if c in sek:
+                gr.setdefault(sek[c], []).append(c)
+        sep = {g: (r[u].mean(axis=1), r[u].notna().sum(axis=1)) for g, u in gr.items()}
+        eks = Ol.ruzgar.isna() & Ol.cik.isin([c for c in sek if c not in W.columns])
+        v = []
+        for c, f in zip(Ol.loc[eks, "cik"], Ol.loc[eks, "filed"] + pd.Timedelta(days=1)):
+            g = sek.get(c); j = int(r.index.searchsorted(pd.Timestamp(f), side="left")) - 1
+            if g not in sep or j < 0:
+                v.append(np.nan); continue
+            m, n = sep[g][0].iloc[j], sep[g][1].iloc[j]
+            v.append(float(n >= FI_K14_ESIK["ruz_uye"] and m > 0 and m - piy.iloc[j] >= FI_K14_ESIK["ruz"]))
+        Ol.loc[eks, "ruzgar"] = v
+    Ol["kucuk"] = Ol.groupby(Ol.filed.dt.to_period("Q")).nakit.transform(lambda x: x <= x.quantile(0.2))
+    Zb = fi_k35_batma(Ol, K)
+    # bilgi: SIC ana grup batma oranı (2021-22 kohortu)
+    a, b = K["kohort"][0][1], K["kohort"][0][2]
+    X = Ol[(Ol.filed >= a) & (Ol.filed <= b)].sort_values("filed").groupby("cik").head(1).copy()
+    X["batti"] = X.son < X.filed + pd.Timedelta(days=K["batma_gun"])
+    sad = sic.set_index("cik"); X["sic2"] = X.cik.map(sad.sic).astype(str).str.zfill(4).str[:2]; X["ornek_ad"] = X.cik.map(sad.sic_ad)
+    Zs = X.groupby("sic2").agg(n=("cik", "size"), batma=("batti", "mean"), ornek=("ornek_ad", lambda x: x.mode().iat[0] if len(x.mode()) else ""))
+    Zs = Zs[Zs.n >= K["grup_n"]].sort_values("batma")
+    # Ö2 getiri
+    E = fi_k35_esfark(E34.assign(giris=pd.to_datetime(E34.giris), cik=E34.cik.astype(str)))
+    E["ruzgar"] = [ruz(c, g) for c, g in zip(E.cik, E.giris)]
+    E["ceyrek"] = E.giris.dt.to_period("Q")
+
+    def kucuk(g: pd.DataFrame) -> pd.Series:
+        g = g.dropna(subset=["pd"]).sort_values("pd"); c = g.w.cumsum() / g.w.sum()
+        return pd.Series(c.to_numpy() <= 0.2 + 1e-12, index=g.index)
+    E["iz"] = pd.concat([kucuk(g) for _, g in E.groupby("ceyrek")]).reindex(E.index).fillna(False).astype(bool)
+    Zg = []
+    R = E[E.ruzgar == 1.0]
+    for kume, M in (("R_ruzgarli", R), ("RK_ruzgarli_kucuk", R[R.iz]), ("K_ruzgarsiz_kucuk", E[(E.ruzgar == 0.0) & E.iz])):
+        for dn, a_, b_ in K34["donem"]:
+            Zg.append({"kume": kume, "donem": dn, **fi_k34_hucre(M[(M.giris >= a_) & (M.giris <= b_)], K34)})
+    Zg = pd.DataFrame(Zg)
+
+    def tut(r) -> bool:
+        return bool(r.n >= K34["n_esik"] and r.ort_fark > 0 and r.alt95 > 0 and r.sira > 0.5)
+    karar = {}
+    for kume in ("R_ruzgarli", "RK_ruzgarli_kucuk"):
+        t = Zg[Zg.kume == kume].set_index("donem")
+        karar[kume] = "ABD-ADAY (batanlar dahil)" if all(d in t.index and tut(t.loc[d]) for d in ("2023", "2024-26")) else "İZ DEĞİL"
+    h = Zb[Zb.kume == "hepsi"]
+    karar["batma"] = ("RÜZGÂR BATMAYI AZALTIR" if len(h) == 2 and h.oran.notna().all() and (h.oran <= K["oran_esik"]).all()
+                      and (h.ust95 < 1).all() else "AYIRMIYOR")
+    Zb.to_csv(os.path.join(A.cikti, "k35_batma.csv"), index=False); Zg.to_csv(os.path.join(A.cikti, "k35_getiri.csv"), index=False)
+    Zs.reset_index().to_csv(os.path.join(A.cikti, "k35_sektor_batma.csv"), index=False)
+    return {"batma": Zb, "getiri": Zg, "sektor": Zs, "karar": karar, "olay_batma": Ol, "olay_getiri": E}
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş
