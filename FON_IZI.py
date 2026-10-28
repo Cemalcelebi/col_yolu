@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.24 (2026-10-28, K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.25 (2026-10-28, K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -7740,6 +7740,168 @@ def fon_izi_k36_deneme(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dic
     if len(Z):
         Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, "k36_deneme.csv"), index=False)
     return {"ozet": Z, "karar": karar}
+
+# K37 BÜYÜKLER ÖNCE, KÜÇÜKLER SONRA (Cemal 28 Eki: '2 ile başla'; dikkat: para akışı OBV / CMF / A-D iyileşmesi tek başına yetmez; temel
+# durum = gerçek faaliyet, gelir, aşırı borç ve sürekli hisse ihracı olmaması; haber zamanlaması = sonraki haberden önce oluşan sinyal
+# geçmişte tekrarlanabilir olmalı; küçük hissede düşük likidite / sert hareket / manipülasyon riski). Kapalı 'sektör ısısı'na dokunur,
+# Cemal istedi. ÖNCEDEN YAZILDI (sonuç görülmeden).
+# SEKTÖR: K14 sektörü (BIST alt endeks, ABD endüstri), üye >= 6. BÜYÜKLÜK: 60 günlük medyan işlem değeri (fiyat x hacim, d-1'e kadar),
+#   sektör içinde her gün üst üçte bir = BÜYÜK, alt üçte bir = KÜÇÜK (BIST'te piyasa değeri yok; işlem değeri büyüklük vekili).
+# SİNYAL (sektör, gün d): büyük sepeti ortalama 20 günlük getirisi - piyasa medyanı >= +%10 ve sepet > 0 VE küçük sepeti - piyasa < +%5
+#   (küçükler henüz gelmedi); geçiş günü (önceki gün şart yok). OLAY: d'deki küçük üyeler; giriş d'den sonraki ilk açılış; hissede 60
+#   günde tek. ÖLÇÜ: FI_OLCUT dört hücre (eşli fark; eşler aynı gün aynı momentum x likidite hücresi -> sığ hisse kendi likidite dilimiyle
+#   kıyaslanır, 'küçük hisse riski' ortak payda). Bilgi: fark - %1 (sığ hissede gidiş-dönüş maliyeti), en kötü olay, -%30 altı payı.
+# SÜZGEÇLER (d'de bilinen):
+#   P PARA AKIŞI: CMF(20) > 0 VE OBV > OBV'nin 20 günlük ortalaması (A/D çizgisi aynı para akışı hacmine dayanır, ayrıca sayılmaz).
+#   T TEMEL: BIST temel_duz.csv, d'den önce açıklanmış son çeyrek: (satış TTM büyümesi > 0 ya da net kâr > 0) VE borç/özkaynak < 1,0 VE
+#     özkaynak pozitif (BIST'te hisse ihracı verisi yok). ABD K31 SEC özeti, d'den önceki son bildirim: yıllık pay artışı < %10 (sürekli
+#     ihraç yok) VE (faaliyet nakit akışı >= 0 ya da nakit pisti >= 8 çeyrek) (borç kalemi SEC özetinde çekilmedi, not).
+#   Kümeler: HEPSİ, P, P+T, T (bilgi). Karar fi_olcut_karar her küme.
+# H HABER ZAMANLAMASI (süzgeç değil, sınama; ileriye bakar): sinyalden sonraki 60 işlem günü içinde hissenin bilanço açıklaması (K28) var
+#   ve tepkisi 'ust' (çeyreğin en iyi beşte biri) ise 'sinyal haberden önce oluştu, haber iyi geldi'. Yıl yıl (2023, 2024, 2025)
+#   P(ust | sinyal ve haber) / 0,20 >= 1,3 ise o pazarda TEKRARLANIYOR; iki pazarda da tutmalı.
+# DEVAM (aynı anda önceden yazıldı): D1 GEVŞEK eşik (büyük >= +%5, küçük < +%2); D2 YAVAŞ pencere 60 gün (büyük >= +%15, küçük < +%5);
+#   D3 AYNA kaçınma: büyükler piyasanın %10 altına düşmüş, küçükler henüz düşmemiş -> küçük üyelerde fi_olcut_karar_kacinma.
+FI_K37 = {"uye_min": 6, "likit_gun": 60, "getiri_gun": 20, "buyuk_esik": 0.10, "kucuk_esik": 0.05, "ayri": 60, "haber_gun": 60,
+          "haber_kat": 1.3, "haber_taban": 0.20, "haber_yil": (2023, 2024, 2025), "maliyet": 0.01, "cmf_gun": 20, "obv_gun": 20,
+          "borc_oz": 1.0, "pay_yil": 0.10, "pist": 8.0, "temel": "temel_duz.csv",
+          "deneme": {"D1_gevsek": {"buyuk_esik": 0.05, "kucuk_esik": 0.02}, "D2_yavas": {"getiri_gun": 60, "buyuk_esik": 0.15},
+                     "D3_ayna": {"ayna": True}}}
+
+
+def fi_k37_para_akisi(d: pd.DataFrame, K: Dict[str, Any] = FI_K37) -> pd.Series:
+    """P süzgeci (bool, gün): CMF(20) > 0 ve OBV > OBV'nin 20 günlük ortalaması; d günü kapanışıyla."""
+    h, l, c, v = d.High.astype(float), d.Low.astype(float), d.Close.astype(float), d.Volume.astype(float)
+    mfm = ((c - l) - (h - c)) / (h - l).replace(0, np.nan); mfv = (mfm * v).fillna(0.0)
+    cmf = mfv.rolling(K["cmf_gun"]).sum() / v.rolling(K["cmf_gun"]).sum().replace(0, np.nan)
+    obv = (np.sign(c.diff()).fillna(0.0) * v).cumsum()
+    return ((cmf > 0) & (obv > obv.rolling(K["obv_gun"]).mean())).fillna(False)
+
+
+def fi_k37_temel_bist(kok: Optional[str] = None, K: Dict[str, Any] = FI_K37) -> pd.DataFrame:
+    """temel_duz.csv -> sembol, aciklama (gün), temel_ok."""
+    kok = kok or os.path.dirname(os.path.abspath(__file__))
+    t = pd.read_csv(os.path.join(kok, K["temel"]), parse_dates=["aciklama"])
+    sb = pd.to_numeric(t.st_buyume, errors="coerce").replace([np.inf, -np.inf], np.nan)
+    ok = ((sb > 0) | (t.nk_pozitif == 1)) & (pd.to_numeric(t.borc_oz, errors="coerce") < K["borc_oz"]) & (t.oz_negatif == 0)
+    return pd.DataFrame({"sembol": t.sembol.astype(str).str.upper(), "aciklama": t.aciklama, "temel_ok": ok.fillna(False)}).dropna(
+        subset=["aciklama"]).sort_values("aciklama")
+
+
+def fi_k37_temel_abd(Fin: pd.DataFrame, K: Dict[str, Any] = FI_K37) -> pd.DataFrame:
+    """K31 SEC özeti -> sembol, aciklama (filed), temel_ok (pay artışı < %10 ve (ocf >= 0 ya da pist >= 8))."""
+    ok = (Fin.pay_yil < K["pay_yil"]) & ((Fin.ocf_ceyrek >= 0) | (Fin.pist >= K["pist"]))
+    return pd.DataFrame({"sembol": Fin.sembol.astype(str).str.upper(), "aciklama": pd.to_datetime(Fin.filed),
+                         "temel_ok": ok.fillna(False)}).dropna(subset=["aciklama"]).sort_values("aciklama")
+
+
+def fi_k37_son_temel(T: pd.DataFrame, sembol: str, gun: pd.Timestamp) -> Optional[bool]:
+    """gun'den önce açıklanmış son temel kaydının temel_ok'u; yoksa None."""
+    g = T[(T.sembol == sembol) & (T.aciklama < gun)]
+    return bool(g.temel_ok.iloc[-1]) if len(g) else None
+
+
+def fi_k37_sinyal(V: Dict[str, pd.DataFrame], sek: Dict[str, str], K: Dict[str, Any] = FI_K37, ayna: bool = False
+                  ) -> Tuple[pd.DataFrame, Dict[str, List[str]]]:
+    """Sektör sinyal günleri: satırlar (sektor, gun, buyuk_fark, kucuk_fark); ayrıca gün -> o günkü küçük üyeler (olay adayları)."""
+    C = pd.DataFrame({s: d.Close for s, d in V.items()}).sort_index().ffill(limit=5)
+    r = C / C.shift(K["getiri_gun"]) - 1; piy = r.median(axis=1)
+    L = pd.DataFrame({s: (d.Close * d.Volume) for s, d in V.items()}).sort_index().rolling(K["likit_gun"], min_periods=40).median().shift(1)
+    grup: Dict[str, List[str]] = {}
+    for s in C.columns:
+        a = sek.get(str(s).upper())
+        if a:
+            grup.setdefault(a, []).append(s)
+    sat, kucuk_uye = [], {}
+    for a, uy in grup.items():
+        if len(uy) < K["uye_min"]:
+            continue
+        Lu = L[uy]; Ru = r[uy]; rank = Lu.rank(axis=1, pct=True); n = Lu.notna().sum(axis=1)
+        buyuk = (rank > 2 / 3); kucuk = (rank <= 1 / 3)
+        rb = Ru.where(buyuk).mean(axis=1) - piy; rk = Ru.where(kucuk).mean(axis=1) - piy; sb = Ru.where(buyuk).mean(axis=1)
+        if ayna:
+            sart = (rb <= -K["buyuk_esik"]) & (sb < 0) & (rk > -K["kucuk_esik"]) & (n >= K["uye_min"])
+        else:
+            sart = (rb >= K["buyuk_esik"]) & (sb > 0) & (rk < K["kucuk_esik"]) & (n >= K["uye_min"])
+        gec = sart & ~sart.shift(1).fillna(False).astype(bool)
+        for t in gec[gec].index:
+            sat.append({"sektor": a, "gun": t, "buyuk_fark": float(rb[t]), "kucuk_fark": float(rk[t])})
+            kucuk_uye[(a, t)] = [s for s in uy if bool(kucuk.at[t, s])]
+    return pd.DataFrame(sat), kucuk_uye
+
+
+def fon_izi_k37(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], Fin: pd.DataFrame, X28: Dict[str, pd.DataFrame],
+                A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K37, O: Dict[str, Any] = FI_OLCUT, ad: str = "k37") -> Dict[str, Any]:
+    """K37 sürücü (ana ve devam için ortak; devamda K değişir, ad 'k37_D1' gibi). X28: pazar -> K28 olay tablosu (D, sembol, ust).
+    Çıktı <ad>_sinyal.csv, <ad>_ozet.csv, <ad>_haber.csv."""
+    A = A or FIAyar(); ayna = bool(K.get("ayna")); SIN, OL, Z, HB = [], [], [], []
+    T_ = {"BIST": fi_k37_temel_bist(K=K), "ABD": fi_k37_temel_abd(Fin, K) if Fin is not None and len(Fin) else pd.DataFrame(columns=["sembol", "aciklama", "temel_ok"])}
+    for pz, V in Vs.items():
+        sek = fi_k14_sektor(pz); S, KU = fi_k37_sinyal(V, sek, K, ayna); SIN.append(S.assign(pazar=pz))
+        gun = pd.DatetimeIndex(sorted(set().union(*[d.index for d in V.values()]))); PA: Dict[str, pd.Series] = {}
+        for r in S.itertuples():
+            j = int(gun.searchsorted(r.gun, side="right"))
+            if j >= len(gun):
+                continue
+            for s in KU.get((r.sektor, r.gun), []):
+                d = V[s]
+                if gun[j] not in d.index or r.gun not in d.index:
+                    continue
+                if s not in PA:
+                    PA[s] = fi_k37_para_akisi(d, K)
+                tm = fi_k37_son_temel(T_[pz], s, r.gun)
+                OL.append({"pazar": pz, "sektor": r.sektor, "sembol": s, "sinyal": r.gun, "giris": gun[j], "P": bool(PA[s].get(r.gun, False)),
+                           "T": tm, "hepsi": True})
+    X = pd.DataFrame(OL)
+    if len(X):
+        X["T"] = X["T"].astype("boolean"); X["PT"] = X.P & X["T"].fillna(False).astype(bool); X["T_"] = X["T"].fillna(False).astype(bool)
+    for kume in ("hepsi", "P", "PT", "T_"):
+        for pz in Vs:
+            Xp = X[(X.pazar == pz) & X[kume].astype(bool)].sort_values("giris") if len(X) else X
+            if not len(Xp):
+                continue
+            E = fi_k27_tekil(Xp.assign(_b=True).reset_index(drop=True), "_b", Vs[pz], K["ayri"])
+            T = fi_olcut_olay(Pn[pz], E[["sembol", "giris"]])
+            for dn, a, b in O["donem"]:
+                Td = T[(T.giris >= a) & (T.giris <= b)]; h = fi_olcut_hucre(Td, O); f = Td.fark.dropna()
+                Z.append({"kume": kume, "pazar": pz, "donem": dn, **h, "ort_fark_maliyetli": h.get("ort_fark", np.nan) - K["maliyet"],
+                          "en_kotu": float(Td.r60.min()) if Td.r60.notna().any() else np.nan,
+                          "eksi30_payi": float((Td.r60 <= -0.30).mean()) if Td.r60.notna().any() else np.nan})
+            if kume == "hepsi" and pz in X28 and len(X28[pz]):
+                H = X28[pz].assign(D=pd.to_datetime(X28[pz].D)); hs = {s: g.sort_values("D") for s, g in H.groupby("sembol")}
+                for r in E.itertuples():
+                    g = hs.get(r.sembol)
+                    if g is None:
+                        continue
+                    ix = Vs[pz][r.sembol].index; j = int(ix.get_loc(r.giris)); son = ix[min(j + K["haber_gun"], len(ix) - 1)]
+                    w = g[(g.D > r.sinyal) & (g.D <= son)]
+                    if len(w):
+                        HB.append({"pazar": pz, "yil": r.sinyal.year, "sembol": r.sembol, "sinyal": r.sinyal, "haber": w.D.iloc[0], "ust": bool(w.ust.iloc[0])})
+    Z = pd.DataFrame(Z); HB = pd.DataFrame(HB); SIN = pd.concat(SIN, ignore_index=True) if SIN else pd.DataFrame()
+    karar = {k: (fi_olcut_karar_kacinma if ayna else fi_olcut_karar)(Z[Z.kume == k], O) for k in ("hepsi", "P", "PT", "T_") if len(Z) and (Z.kume == k).any()}
+    hz = {}
+    if len(HB):
+        for pz, g in HB.groupby("pazar"):
+            y = g.groupby("yil").ust.agg(["mean", "size"]); y["kat"] = y["mean"] / K["haber_taban"]
+            hz[pz] = {int(k): (round(float(v["kat"]), 2), int(v["size"])) for k, v in y.iterrows()}
+        tut = all(all(hz.get(pz, {}).get(y, (0, 0))[0] >= K["haber_kat"] for y in K["haber_yil"]) for pz in Vs)
+        karar["haber"] = "HABER ÖNCESİ SİNYAL TEKRARLANIYOR" if tut else "TEKRARLANMIYOR"
+    SIN.to_csv(os.path.join(A.cikti, f"{ad}_sinyal.csv"), index=False)
+    if len(Z):
+        Z.drop(columns=[c for c in Z if c.startswith("_")]).to_csv(os.path.join(A.cikti, f"{ad}_ozet.csv"), index=False)
+    if len(HB):
+        HB.to_csv(os.path.join(A.cikti, f"{ad}_haber.csv"), index=False)
+    return {"sinyal": SIN, "olay": X, "ozet": Z, "haber": HB, "haber_yil": hz, "karar": karar}
+
+
+def fon_izi_k37_deneme(Vs: Dict[str, Dict[str, pd.DataFrame]], Pn: Dict[str, Dict[str, Any]], Fin: pd.DataFrame,
+                       X28: Dict[str, pd.DataFrame], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K37,
+                       O: Dict[str, Any] = FI_OLCUT) -> Dict[str, Any]:
+    """K37 devam: D1 gevşek, D2 yavaş, D3 ayna kaçınma."""
+    out = {}
+    for ad, dk in K["deneme"].items():
+        out[ad] = fon_izi_k37(Vs, Pn, Fin, X28, A, {**K, **dk}, O, ad=f"k37_{ad}")
+    return out
 
 # KÖR SET DEĞERLENDİRME (Cemal 26 Eki: 'önceki tepeler aşılmıyorsa çok risk var; çoğu kutu içindeki tepe aşılıp alış emri gelmiş gibi
 # işaret koydum'). ÖNCEDEN YAZILDI (✓/✗ görülmeden): ✓ = 'benzer + kutu içindeki tepe aşılırsa alırım'. Emir: bölge sonundan sonraki 60 iş

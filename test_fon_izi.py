@@ -623,6 +623,25 @@ def sina():
     ok47 = g47.iloc[301:307].any() and not t47.iloc[301:340].any()
     if not ok47:
         hata.append(f"47) K36 sinyal yanlış: {list(g47[g47].index[-3:])} {t47.iloc[301:].sum()}")
+    # 48) K37: para akışı (düz yükselişte kapanış tepeye yakın -> CMF > 0, OBV artan -> True; düşüşte False); sinyal (büyükler +%20,
+    # küçükler 0, piyasa 0 -> tek geçiş günü; küçük üyeler doğru).
+    ix48 = pd.bdate_range("2024-01-01", periods=60); c48 = np.linspace(10, 14, 60)
+    d48 = pd.DataFrame({"Open": c48, "High": c48 + 0.1, "Low": c48 - 0.3, "Close": c48, "Volume": 100.0}, index=ix48)
+    d48b = d48.assign(Close=c48[::-1], High=c48[::-1] + 0.3, Low=c48[::-1] - 0.1, Open=c48[::-1])
+    pa = F.fi_k37_para_akisi(d48); pb = F.fi_k37_para_akisi(d48b)
+    ok48a = bool(pa.iloc[-1]) and not bool(pb.iloc[-1])
+    ix = pd.bdate_range("2024-01-01", periods=120); V48 = {}
+    for k in range(6):
+        c = np.full(120, 10.0)
+        if k < 2:
+            c[100:] = np.linspace(10, 12.4, 20)        # büyükler son 20 günde +%24
+        V48[f"S{k}"] = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1000.0 * (6 - k)}, index=ix)
+    for k in range(6, 12):                                # sektör dışı piyasa, düz
+        V48[f"M{k}"] = pd.DataFrame({"Open": 10.0, "High": 10.0, "Low": 10.0, "Close": 10.0, "Volume": 1000.0}, index=ix)
+    S48, KU48 = F.fi_k37_sinyal(V48, {f"S{k}": "SEK" for k in range(6)})
+    ok48 = ok48a and len(S48) == 1 and S48.gun.iloc[0] > ix[100] and sorted(KU48[("SEK", S48.gun.iloc[0])]) == ["S4", "S5"]
+    if not ok48:
+        hata.append(f"48) K37 para akışı / sinyal yanlış: {ok48a} {S48.to_dict('records')} {KU48}")
     return hata
 
 
@@ -630,4 +649,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 47/47 OK")
+    print("test_fon_izi: 48/48 OK")
