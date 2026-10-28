@@ -622,7 +622,13 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "betiğimde hata vardı (tarih sırasına göre ilk 1.500 olay alınmış, test hücrelerine yalnız rastgele düşmüştü), düzeltildi. "
                "NEGATİF (rastgele, 20 tohum x 3 pazar x 2 dönem = 120 hücre): yanlış 'tutar' 0 / 120; aralık alt ucu > 0 oranı %1,7 "
                "(beklenen <= %2,5); dört karar hücresi birden tutan tohum 0 / 20. Hat kör değil (gerçek izi görüyor), sağır da değil "
-               "(gürültüye iz demiyor). Bağımsız kod denetimi (ayrı model) ayrıca yapıldı; bulgular görev günlüğünde."),
+               "(gürültüye iz demiyor). BAĞIMSIZ KOD DENETİMİ (ayrı model, K38-K41 + ölçüt zinciri, yapay evrende sayısal doğrulama): iz lehine "
+               "ağır geleceğe bakma YOK; giriş zamanı, kriz kesiği, eş seçimi, bootstrap, karar mantığı doğrulandı. Düzeltilen 4 orta / küçük "
+               "bulgu (sonuç görüldükten sonra, hepsi yeniden koşuldu, hiçbir karar değişmedi): (1) r60 çıkış günü kapanışı NaN ise olay "
+               "düşüyordu (Avrupa birleşik takviminde tatil, askı) -> son bilinen kapanış; (2) K39 küçükler alt kümesi giriş - 1 takvim günü "
+               "hafta sonuna düşünce boş kalıyordu; (3) K40 saatlik bar etiketi (Yahoo bar zamanı başlangıç; 11:30 barı açılışı) ve aynı "
+               "Avrupa gününe düşen iki sinyalin çift sayımı; (4) sterline inen Londra hisselerinde Kur birimi. Not edilen, düzeltilmeyen: "
+               "K28 'iyi bilanço' etiketi çeyrek içi dağılımla (etiket sızıntısı, yön belirsiz; K41-C zaten İZ DEĞİL)."),
 ]
 
 
@@ -919,7 +925,8 @@ IK_GOREV: List[Dict[str, str]] = [
                 "denetimi (ayrı model) K38-K41 + ölçüt fonksiyonları",
      "sonuc": "Klasik kurallar üç pazarda eşlerinden ayrışmıyor (tek kalıntı ABD Fibonacci ortalaması, tipik olay değil); rüzgâr = üyelerin "
               "momentumu, üstüne katkı yok; ABD olay süzgeçleri yalnız 2023'te artı; K40 kalıntısı dört hücreden ikisinde. Hat kontrolü: "
-              "gerçek iz her hücrede yakalanıyor, rastgele sinyal 120 hücrede 0 yanlış iz",
+              "gerçek iz her hücrede yakalanıyor, rastgele sinyal 120 hücrede 0 yanlış iz. Bağımsız denetim: ağır hata yok, 4 küçük "
+              "düzeltme, hepsi yeniden koşuldu, karar değişmedi",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
