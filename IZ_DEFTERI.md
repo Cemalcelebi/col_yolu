@@ -1,4 +1,4 @@
-# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 28 Ekim 2026, 07:00)
+# İZ DEFTERİ — BIST, ölçülmüş bulgular (güncelleme: 28 Ekim 2026, 05:50)
 
 **24 Ekim 2026 — OKUMA NOTU:** Aşağıdaki A/B/C tablolarındaki 'GEÇERLİ / ADAY / ÇÜRÜDÜ' kararları ESKİ cetvellerle verildi (ar60, piy, her 5. gün tabanı, ABD'siz). Güncel ve tek geçerli karar aşağıdaki 0. İNDEKS'teki TEK CETVEL kararıdır (IZ_KARNE.py). Tablolar tarihçe olarak duruyor.
 
