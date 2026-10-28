@@ -9161,7 +9161,7 @@ def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
 #    sonu 27 Şub 2026 (sonrası: 13-20 Mar +%40; bu bilgi aramada kullanılmaz). Hisse kısa geçmişli olduğundan K23 parmak izi (200 bar ister)
 #    yerine kendi içinde ölçülen 9 haftalık ölçü (fi_k47_olcu, L = 13 hafta): egim (günlük kapanış eğimi / ortalama), mum ((H-L)/C ortancası),
 #    yesil payı, alt_fitil, ust_fitil, bbw (std / ortalama), hacim (ikinci yarı / ilk yarı hacim), konum (son kapanışın aralıktaki yeri),
-#    once_dusus (bölge öncesi 8 haftanın tepesinden bölge başına düşüş). Üç pazarın haftalık havuzunda (W-FRI) yüzdelik bandı +-0,125
+#    once_dusus (bölge öncesi 4 haftanın tepesinden bölge başına düşüş; ECOGR halka arz). Üç pazarın haftalık havuzunda (W-FRI) yüzdelik bandı +-0,125
 #    (eşleşme < 30 ise 0,20); hissede 8 haftada tek; giriş = bölge haftasından sonraki ilk işlem günü açılışı.
 # B) BBIO GÜNLÜK (K23 parmak izi, L = 20, K44 yöntemi): B1 = 2. bölge sonu 14 Eki 2026 (derin dip günü sonrası), B2 = 3. bölge içi 22 Eki
 #    2026 (orta bant üstü yuvarlanma). Üç pazarın günlük havuzunda +-0,125 (yoksa 0,20).
@@ -9173,7 +9173,7 @@ def fon_izi_k46(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
 # KARAR (önceden): her küme için fi_olcut_karar (ABD + AVR), 'PİYASAYI GEÇER' (ham ABD + AVR 2023 ve 2024-26 aralık artı), 'KISA İZ' (K45
 #    kuralı: ABD ve AVR'de n >= 30, fark >= +10 puan, alt uç > 0). BIST bilgi.
 FI_K47 = {"ecogr": ("ECOGR", "2026-02-27", 13), "bbio": ("BBIO", ("2026-10-14", "2026-10-22"), 20), "band": 0.125, "band_genis": 0.20, "n_min": 30,
-          "hafta_ayri": 8, "ayri": 60, "once_hafta": 8,
+          "hafta_ayri": 8, "ayri": 60, "once_hafta": 4,      # 4: ECOGR halka arz, bölge öncesi yalnız 4 hafta var (sonuç görülmeden, veri kısıtı)
           "olcu_h": ("egim", "mum", "yesil", "alt_fitil", "ust_fitil", "bbw", "hacim", "konum", "once_dusus"),
           "kural": {"dusus_bar": 40, "dusus": -0.20, "taban_min": 15, "taban_max": 40, "dip_pencere": 10, "ikinci_dip": 0.02, "alt_pay": 0.60}}
 
