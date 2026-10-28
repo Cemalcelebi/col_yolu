@@ -9481,7 +9481,7 @@ def fi_k49_panel(V: Dict[str, pd.DataFrame], pazar: str, K: Dict[str, Any] = FI_
         E = E[(E.index >= pd.Timestamp(K["bas"])) & (E.index <= pd.Timestamp(K["test"][-1][2]))]
         if len(E):
             parca.append(E.assign(sembol=s).rename_axis("gun").reset_index())
-    P = pd.concat(parca, ignore_index=True).dropna(subset=["vol60"]); P["pazar"] = pazar; P["yil"] = P.gun.dt.year.astype(np.int16)
+    P = pd.concat(parca, ignore_index=True).dropna(subset=["vol60"]); P["gun"] = P.gun.astype("datetime64[ns]"); P["pazar"] = pazar; P["yil"] = P.gun.dt.year.astype(np.int16)
     P["vd"] = np.minimum((P.groupby("yil").vol60.rank(pct=True) * 10).astype(int), 9).astype(np.int8)
     for c in ("y8", "pl", "a8", "pls"):
         P["e_" + c] = P.groupby(["yil", "vd"])[c].transform("mean")
@@ -9575,7 +9575,7 @@ def fi_k49_olaylar(Vs: Dict[str, Dict[str, pd.DataFrame]], cikti: str, K: Dict[s
             ekle("ABD", f"iceriden_{ol}", "K30 ABD içeriden", onceki("ABD", g, "giris"))
     except Exception as ex:
         filog.error("K49 olay dosyası okunamadı: %s", ex); raise
-    E = pd.concat(out, ignore_index=True).drop_duplicates(["pazar", "olcu", "sembol", "gun"]).sort_values(["pazar", "olcu", "sembol", "gun"])
+    E = pd.concat(out, ignore_index=True); E["gun"] = pd.to_datetime(E.gun).astype("datetime64[ns]"); E = E.drop_duplicates(["pazar", "olcu", "sembol", "gun"]).sort_values(["pazar", "olcu", "sembol", "gun"])
     # hissede ayri_gun takvim günü aralık (20 işlem günü ufkunda örtüşmesin)
     tut = np.ones(len(E), bool); gv = E.gun.to_numpy(); key = (E.pazar + "|" + E.olcu + "|" + E.sembol).to_numpy(); son_k = None; son_t = None
     for k in range(len(E)):
@@ -9607,17 +9607,20 @@ def fi_k49_secim_test(rows: pd.DataFrame, K: Dict[str, Any], rng: np.random.Gene
     return sonuc
 
 
-def fi_k49_surekli_satir(Z: pd.DataFrame, ozl: List[str], K: Dict[str, Any]) -> pd.DataFrame:
-    """Sürekli ölçü bankası: her ölçü için haftalık pazar içi yüzdelik; normal = üst dilim, ters = alt dilim satırları (uzun)."""
-    parca = []; grp = [Z.pazar, Z.hafta]; boy = Z.groupby(["pazar", "hafta"]).sembol.transform("size")
+def fi_k49_surekli(Z: pd.DataFrame, ozl: List[str], K: Dict[str, Any], rng: np.random.Generator) -> List[Dict[str, Any]]:
+    """Sürekli ölçü bankası: her ölçü için haftalık pazar içi yüzdelik; normal = üst dilim, ters = alt dilim satırları (uzun). Ölçü ölçü
+    seçim + test (bellek: bütün ölçülerin satırları birlikte tutulmaz)."""
+    out = []; grp = [Z.pazar, Z.hafta]; boy = Z.groupby(["pazar", "hafta"]).sembol.transform("size")
     for f in ozl:
         r = Z[f].groupby(grp).rank(pct=True); r[boy < K["grup_min"]] = np.nan
         if r.nunique() < 5:
             continue
+        parca = []
         for yon, m in (("normal", r >= 1 - K["dilim"]), ("ters", r <= K["dilim"])):
-            g = Z.loc[m.fillna(False), ["pazar", "gun", "y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls"]]
+            g = Z.loc[m.fillna(False).to_numpy(), ["pazar", "gun", "y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls"]]
             parca.append(g.assign(olcu=f, kaynak="K48 sürekli", yon=yon))
-    return pd.concat(parca, ignore_index=True)
+        out.extend(fi_k49_secim_test(pd.concat(parca, ignore_index=True), K, rng))
+    return out
 
 
 def fon_izi_k49(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = None, K: Dict[str, Any] = FI_K49,
@@ -9629,22 +9632,23 @@ def fon_izi_k49(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
     et = ["y8", "pl", "a8", "pls", "e_y8", "e_pl", "e_a8", "e_pls", "vd"]
     if Z is None:
         Z = pd.concat([fi_k46_satirlar(V, pz, FI_K48) for pz, V in Vs.items()], ignore_index=True)
+    Z["gun"] = pd.to_datetime(Z.gun).astype("datetime64[ns]")                 # tarih birimi (s / us / ns) birleştirmede eşit olmalı
     Z = Z.drop(columns=[c for c in ("y8", "pl", "y20") if c in Z.columns]).merge(P[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"], how="inner")
     Z["hafta"] = Z.gun.dt.to_period("W").astype(str)
     ozl = [c for c in Z.columns if c not in ("sembol", "gun", "pazar", "hafta", "pazar_k", "puan") + tuple(et)]
     filog.info("K49 sürekli bankası: %d satır, %d ölçü", len(Z), len(ozl))
     # 1) sürekli ölçüler
-    R1 = fi_k49_secim_test(fi_k49_surekli_satir(Z, ozl, K), K, rng)
+    R1 = fi_k49_surekli(Z, ozl, K, rng); filog.info("K49 sürekli bankası ölçüldü")
     # 2) olaylar (normal = al, ters = açığa sat)
     E = fi_k49_olaylar(Vs, A.cikti, K).merge(P[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"], how="inner")
-    E["gun"] = pd.to_datetime(E.gun); filog.info("K49 olay bankası: %d olay, %d küme", len(E), E.groupby(["pazar", "olcu"]).ngroups)
+    E["gun"] = pd.to_datetime(E.gun).astype("datetime64[ns]"); filog.info("K49 olay bankası: %d olay, %d küme", len(E), E.groupby(["pazar", "olcu"]).ngroups)
     R2 = fi_k49_secim_test(pd.concat([E.assign(yon="normal"), E.assign(yon="ters_kisa")], ignore_index=True), K, rng)
     D = pd.DataFrame(R1 + R2)
     sec_sayi = D.groupby("pazar").secildi.sum().to_dict(); iz_sayi = D.groupby("pazar").pazar_izi.sum().to_dict()
     # 3) şans denetimi (sürekli banka; olay bankası için aynı pipeline karıştırılmış panelden)
     sans = []
     for t in range(K["null_tekrar"]):
-        Zk = fi_k49_karistir(Z, 1000 + t); Rk = pd.DataFrame(fi_k49_secim_test(fi_k49_surekli_satir(Zk, ozl, K), K, rng))
+        Zk = fi_k49_karistir(Z, 1000 + t); Rk = pd.DataFrame(fi_k49_surekli(Zk, ozl, K, rng)); del Zk
         Pk = fi_k49_karistir(P, 2000 + t); Ek = E[["pazar", "olcu", "kaynak", "sembol", "gun"]].merge(Pk[["pazar", "sembol", "gun"] + et], on=["pazar", "sembol", "gun"])
         Rek = pd.DataFrame(fi_k49_secim_test(pd.concat([Ek.assign(yon="normal"), Ek.assign(yon="ters_kisa")], ignore_index=True), K, rng))
         for pz in Vs:
@@ -9687,7 +9691,8 @@ def fon_izi_k49(Vs: Dict[str, Dict[str, pd.DataFrame]], A: Optional[FIAyar] = No
             K32 = {**FI_K32, "tut": 20, "donem": ((dn, a, b2),)}; g = Sg[(Sg.pazar == pz) & (Sg.gun >= a) & (Sg.gun <= b)].sort_values(["gun", "skor"], ascending=[True, False])
             j = gun.searchsorted(pd.DatetimeIndex(g.gun), side="right"); ok = j < len(gun); g = g[ok].assign(giris=gun[j[ok]])
             gir = [(r.giris, r.sembol) for r in g.itertuples() if r.giris in V[r.sembol].index]
-            po = fi_k32_olc(**{k: v for k, v in fi_k32_benzet(V, gir, "tut", a, b2, mal, K32, None, C).items() if k in ("deger", "islem")}) if gir else {}
+            Rb = fi_k32_benzet(V, gir, "tut", a, b2, mal, K32, None, C) if gir else {}
+            po = fi_k32_olc(Rb.get("deger"), Rb.get("islem")) if gir else {}
             P0 = fi_k32_olc(fi_k32_piyasa(V, a, b2, K32))
             prow.append({"pazar": pz, "donem": dn, "sinyal_n": len(gir), "port_toplam": po.get("toplam"), "port_mdd": po.get("mdd"), "piyasa": P0.get("toplam"), "piyasa_mdd": P0.get("mdd")})
     Pf = pd.DataFrame(prow)
