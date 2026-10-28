@@ -1,15 +1,13 @@
-COL GUNLUK RAPOR — 2026-10-27 23:56 (TR)
+COL GUNLUK RAPOR — 2026-10-29 00:18 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
 Onbellek: sarildi (583 hisse)
-Veri: 583 hisse | son bar 2026-10-27
-Ozet: aday 12 | pozisyon 8 | kapanan 9 | sure 120 sn
+Veri: 583 hisse | son bar 2026-10-28
+Ozet: aday 12 | pozisyon 8 | kapanan 9 | sure 118 sn
+UYARI: bugunun bari yok (son bar 2026-10-28). Yahoo gecikmis olabilir.
 ============================================================
 
-== 2026-10-27  CDS 0.84 -> 1.5x
+== 2026-10-28  CDS 0.84 -> 1.5x
 aday 12 | poz 8 | kapanan 9
-
-SAT  (hisse  kar%  endeks%)
-  DURDO  +8%  ?  trail
 
 TUT  (hisse  kar%  durum  tabana%)
   ENTRA    -1%  117g  taban -15%
@@ -23,8 +21,6 @@ TUT  (hisse  kar%  durum  tabana%)
 
 BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 12]
   ALBRK    -6%   %5.0   0.227  0.271  -      +14  (serbest)
-
-COL BOZULDU (taban kirildi, aday dustu): FLAP, EFOR, NUHCM, MAVI
 
 KAPANAN 9: kazanan %11  ort -30.7% | acilis->acilis ort -36.7% (n=8)
 
