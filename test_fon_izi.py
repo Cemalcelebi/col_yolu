@@ -777,6 +777,15 @@ def sina():
     ok61 &= bool((Q61.groupby(["gun", "vd"]).y8.apply(sorted) == P61.groupby(["gun", "vd"]).y8.apply(sorted)).all() and (Q61.y8 != P61.y8).any() and (Q61.y8 == Q61.pl).all())
     if not ok61:
         hata.append("61) K49 vektör etiket / kısa yön / karıştırma yanlış")
+    # 62) K50 hs8 çıkışı: 3. gün High +%9 -> çıkış 1,08; Low -%9 önce -> 0,92; ikisi yoksa 20. gün kapanışı. Günlük giriş sınırı 2.
+    ix62 = pd.bdate_range("2024-01-01", periods=40); o62 = np.full(40, 100.0); d62 = pd.DataFrame({"Open": o62, "High": o62 + 1, "Low": o62 - 1, "Close": o62 + 0.5, "Volume": 1.0}, index=ix62)
+    d62a = d62.copy(); d62a.iloc[12, d62a.columns.get_loc("High")] = 109.0; d62b = d62.copy(); d62b.iloc[11, d62b.columns.get_loc("Low")] = 91.0
+    K62 = {**F.FI_K32, "tut": 20}; e1, y1 = F.fi_k32_islem(d62a, 10, "hs8", K62); e2, y2 = F.fi_k32_islem(d62b, 10, "hs8", K62); e3, y3 = F.fi_k32_islem(d62, 10, "hs8", K62)
+    ok62 = e1 == 12 and abs(y1[-1] - 1.08) < 1e-12 and e2 == 11 and abs(y2[-1] - 0.92) < 1e-12 and e3 == 29 and abs(y3[-1] - 1.005) < 1e-12
+    V62 = {f"S{k}": d62 for k in range(5)}; R62 = F.fi_k32_benzet(V62, [(ix62[25], f"S{k}") for k in range(5)], "hs8", "2024-01-01", "2024-02-23", 0.0, {**K62, "dip_gun": 5, "gunluk_azami": 2})
+    ok62 &= len(R62["islem"]) == 2
+    if not ok62:
+        hata.append(f"62) K50 hs8 çıkışı / günlük sınır yanlış: {e1} {e2} {e3} {len(R62['islem'])}")
     return hata
 
 
@@ -784,4 +793,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 61/61 OK")
+    print("test_fon_izi: 62/62 OK")
