@@ -522,6 +522,20 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "sebep (z >= 2) ve yavaş sebep (60 gün) öncelik 1,0-1,2, getiri sıfır civarı; kötü sebep kaçınması hepsi -%4 / -%3 / -%4 / "
                "-%2 (yön doğru, ayna şart iki hücrede tutmadı). İZ DEĞİL. Not: ölçülebilen sebepler de fiyattır (emtia, kur, faiz); sektör "
                "fiyatı onlarla aynı anda hareket ediyor. Teşvik / yasa gibi fiyat olmayan sebepler bedava veride yok."),
+    _ik_k("Ç111", "2026-10-28", "BÜYÜKLER ÖNCE, KÜÇÜKLER SONRA: sektörün büyükleri (işlem değeri üst üçte bir) 20 günde piyasayı +%10 "
+          "geçmiş, küçükleri (alt üçte bir) henüz gelmemişken küçükleri almak; para akışı (CMF + OBV), temel (BIST temel_duz, ABD SEC), "
+          "haber zamanlaması (K28) ve 3 devam (K37)", "FON_IZI.py (k37)",
+          "Cemal: '2 ile başla; para akışı tek başına yetmez; temel durum ve haber zamanlamasını atlama; küçük hisse riski sonucu değiştirir mi'",
+          "Yeni deneme (kapalı 'sektör ısısı', Cemal istedi; kurallar ve devamlar önceden)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k37_ozet.csv",
+          notu="2.700 sektör sinyali (BIST 1.023, ABD 1.677), 11.609 küçük üye olayı. Eşli fark (BIST 2023 / 2024-26 / ABD 2023 / 2024-26): "
+               "hepsi +%6,0 / +%1,8 / -%6,4 / +%0,8 (BIST 2023 aralığı 0'ı içeriyor); para akışı iyi +%4 / +%2 / -%1 / -%1; para akışı + temel "
+               "-%1 / +%2 / +%2 / -%5; temel -%3 / +%2 / -%4 / -%4. Sığ hisse maliyeti (%1) düşülünce hepsi sıfırın altı. -%30 altı olay payı "
+               "BIST %2-3, ABD %7-9; en kötü olay -%60 .. -%89. Haber zamanlaması: sinyalden sonraki 60 günde bilanço gelen olaylarda iyi "
+               "tepki olasılığı tabana göre ABD 1,5 / 1,4 / 1,6 (2023 / 24 / 25: tekrarlıyor), BIST 1,2 / 1,3 / 1,05 (tekrarlamıyor) -> şart "
+               "iki pazarda da tutmadı. Devam: gevşek eşik, 60 günlük pencere, ayna kaçınma da tutmadı. İZ DEĞİL. Küçük hisse riskine "
+               "cevap: eşli ölçü zaten aynı likidite dilimindeki hisseyle kıyaslar; risk bilinince sonuç değişmez, maliyetle birlikte "
+               "aleyhe döner. Notlar: BIST büyüklük vekili işlem değeri (piyasa değeri yok); BIST'te hisse ihracı ve ABD'de borç verisi yok."),
 ]
 
 
@@ -768,20 +782,29 @@ IK_GOREV: List[Dict[str, str]] = [
                 "Sinyal kuralındaki aralık hatası test 47 ile sonuç görülmeden düzeltildi. IZ_KARNE Ç110; test 47",
      "sonuc": "Sebep sinyali rüzgârdan önce gelmiyor (öncü oranı 1,0-1,2); sebep sinyalinde sektör üyeleri eşlerinden iyi değil (BIST "
               "2023 -%9). Ölçülebilen sebepler de fiyat; sektörle aynı anda hareket ediyor. İZ DEĞİL",
-     "durum": "TAMAMLANDI, AÇIK: 2 (büyükler önce, küçükler sonra) Cemal'in kararı"},
+     "durum": "TAMAMLANDI (Cemal: 2 ile başla, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "2 ile başla (büyükler önce, küçükler sonra); para akışı tek başına yetmez; temel durum ve haber "
+                                     "zamanlamasını atlama; küçük hissede likidite / sert hareket / manipülasyon riski sonucu değiştirir mi",
+     "yapilan": "K37: sektörde büyük / küçük sepet sinyali; P (CMF + OBV), T (BIST temel_duz: satış ya da kâr, borç/özkaynak < 1, özkaynak "
+                "pozitif; ABD SEC: pay artışı < %10, nakit sağlam), H (K28 bilanço tepkisi, yıl yıl tekrarlanabilirlik); maliyet, en kötü "
+                "olay, -%30 payı; 3 devam (gevşek, yavaş, ayna); IZ_KARNE Ç111; test 48",
+     "sonuc": "İz değil: büyükler öne geçtiğinde küçükleri almak eşlerini geçmiyor (BIST 2023 +%6 ama aralık 0'ı içeriyor, ABD 2023 -%6); "
+              "para akışı ve temel süzgeci düzeltmiyor; haber öncesi sinyal ABD'de tekrarlıyor (1,4-1,6 kat) ama BIST'te değil; küçük hisse "
+              "riski bilinince sonuç değişmez, maliyetle aleyhe döner",
+     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
     "YOL (28 Eki): şekil, bilgi olayı, risk süzgeci, analist izleri, sade portföy, sıçrayan hisse, batanlar dahil nakit tükenmesi, "
-    "rüzgâr ve batma, rüzgârın sebebi (K36) hepsi İZ DEĞİL. Rüzgâr fiyattan ve fiyat sebeplerinden önce görülemiyor. Sırada Cemal'in "
-    "onayıyla: (2) büyükler önce küçükler sonra (sektörde büyük şirketler öne geçince küçükleri sonraki 60 günde eşlerini geçiyor mu; "
-    "kapalı 'sektör ısısı'na dokunur). Seçenekler: (2), (a) çöl taramasını aday listesi olarak canlı izlemek, (b) ara.",
+    "rüzgâr ve batma, rüzgârın sebebi, büyükler önce küçükler sonra (K37) hepsi İZ DEĞİL. Rüzgâr fiyattan, fiyat sebeplerinden ve "
+    "büyüklerin hareketinden önce görülemiyor. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak piyasayla karşılaştırmalı "
+    "canlı izlemek, (b) ara, (c) rüzgâr göründükten sonra ne kadar sürdüğü (kapalı konu, onay gerekir).",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
