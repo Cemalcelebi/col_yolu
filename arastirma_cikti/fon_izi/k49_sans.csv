@@ -1,0 +1,10 @@
+tekrar,pazar,surekli_secilen,surekli_iz,olay_secilen,olay_iz
+0,ABD,0,0,1,0
+0,AVR,2,0,0,0
+0,BIST,3,0,2,0
+1,ABD,1,0,0,0
+1,AVR,2,0,0,0
+1,BIST,2,0,2,0
+2,ABD,1,0,1,0
+2,AVR,3,0,0,0
+2,BIST,2,0,2,0

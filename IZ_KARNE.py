@@ -744,6 +744,51 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "piyasayı geçmiyor. Makinenin sert düşüş sonrasında seçtiği: piyasanın kendisi düşmüşken (piyasa 20 / 60 gün getirisi en alt "
                "%5-30), Bollinger genişliği yüksek, mumlar büyük, likit ve fiyatı yüksek hisse = 'piyasa çöküşünde büyük hisse sıçrar'. "
                "Yine piyasa hâli, hisse biçimi değil."),
+    _ik_k("Ç128", "2026-10-28", "GENİŞ PARMAK İZİ MAKİNESİ: TradingView örneğindeki üç aile (mum fiziği, trend / konum, kesişim) çok pencereli "
+          "ve ölçeksiz + osilatör, para akışı, Fibonacci = 166 yeni ölçü, K46'nın 37'siyle 204 ölçü; aynı makine ve karar (K48)",
+          "FON_IZI.py (k48)", "Cemal: 'makineye çok metrik yüklesem belki bir şey bulur; bunun gibi çok detaylı düzgün kod yaz'",
+          "Keşif (K46 kuralı: ABD + AVR 2023 ve 2024-26'da üst %5 fark >= +10 puan, aralık artı, işlem > 0)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k48_ozet.csv",
+          notu="AUC K46 ile aynı (0,59-0,71; 166 yeni ölçü bilgi eklemiyor); karışık etiket 0,497. ÜST %5 vs oynaklık eşli rastgele: ABD 2023 "
+               "+6,9 puan (aralık +5,2), 2024-26 +12,4 (+11,4); AVR +10,8 (+8,2) / +11,3 (+9,6); BIST +23,5 / +9,3. ABD 2023 eşiğin (10) "
+               "altında -> İZ DEĞİL (K46'dan iyi: ABD 2023 +3,6 -> +6,9, AVR 2023 +4,6 -> +10,8). İşlem başına ABD +%0,6 / +%2,0, AVR "
+               "+%0,4 / +%1,0, BIST +%4,3 / +%2,1. PORTFÖY (10 yuva, 20 gün tut): ABD +%11 / +%218 (piyasa +%29 / +%89), AVR -%1 / +%52 "
+               "(+%10 / +%41), BIST +%110 / +%150 (+%34 / +%114); 2022'de (ayı yılı) ABD ve AVR farkı sıfır, BIST 2026 -13 puan. En "
+               "önemli ölçüler yine piyasanın 60 / 20 gün getirisi, pazar, 250 gün dibinden bu yana geçen gün, oynaklık, mum boyu, "
+               "likidite. Örnek Pine kodundaki 'gap = ta.pvt' hatalı (PVT hacim göstergesi), düzeltilerek kullanıldı."),
+    _ik_k("Ç129", "2026-10-28", "GENİŞ MAKİNE SERT DÜŞÜŞ SONRASI: K48'in 204 ölçüsü, yalnız dd40 <= -%20 satırları (135 bin) (K48-B)",
+          "FON_IZI.py (k48, filtre)", "Cemal: 'sert düşüşten sonra olan bir şey' (K46-B'nin geniş ölçülü tekrarı)",
+          "Keşif (K46 kuralı)", "IZ C", 3, cikti="arastirma_cikti/fon_izi/k48b_ozet.csv",
+          notu="AUC 0,49-0,57. ÜST %5: ABD 2023 +15,1 puan (aralık +11,1), 2024-26 +19,5 (+17,2), işlem +%2,2 / +%2,8; AVR +1,7 / +0,6 "
+               "(aralık eksi) -> İZ DEĞİL; BIST +32,6 / +8,6. PORTFÖY (20 gün): ABD +%26 / +%125 (piyasa +%29 / +%89), AVR +%4 / +%3, BIST "
+               "+%10 / +%165 (+%34 / +%114)."),
+    _ik_k("Ç130", "2026-10-28", "KABUK DIŞI DERLEME: her ölçü iki yönde (normal / ters, olayda açığa satış), pazar pazar, bütün birleşimi; "
+          "banka = K48'in 203 sürekli ölçüsü + 114 olay kümesi (K43 bankası, K47 BBIO, K24 çöl, K26, K18 kutular, K36 rüzgâr, K27, K28, "
+          "K30; 1,01 milyon olay); yön ve seçim yalnız 2016-22'de, karar 2023 ve 2024-26'da; şans denetimi 3 karıştırma (K49)",
+          "FON_IZI.py (k49)", "Cemal: 'kural bizi sınırlıyor olabilir, kabuğumuzdan çıkalım; her ölçünün tersi olursa ne olur; bütünü ile ele "
+          "alalım; iz değil dediklerimizi derle, tekrar koştur'",
+          "Keşif (önceden: öğrenmede >= +5 puan, aralık artı, işlem > 0 seçilir; aynı pazarda iki test döneminde aynı şart = PAZAR İZİ)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k49_derleme.csv",
+          notu="Öğrenmede seçilen ölçü-yön (yaklaşık 470 aday / pazar): ABD 4, AVR 10, BIST 9; etiketler karıştırılınca ortalama ABD 1,3, "
+               "AVR 2,3, BIST 4,3 (gerçek seçim şansın biraz üstü, en çok AVR). PAZAR İZİ: üç pazarda 0 (şansta da 0). En yakınlar: BIST "
+               "'blok taban yukarı' AÇIĞA SATIŞ 2023 +28,9 puan (n 9, az), 2024-26 +28,1 (n 31, aralık +9,6, işlem +%4,5); BIST 'tavan "
+               "sonrası' açığa satış 2024-26 +6,6 (aralık +2,7) ama 2023 -1,6; AVR RSI 30 alımı +7,6 / +5,7 (aralık sıfır / eksi). "
+               "BÜTÜN (seçilenlerin yönlü ortalaması + olay oyları, haftalık üst %5): test farkı ABD -2,5 / -0,2, AVR -1,9 / +0,7, BIST "
+               "-2,2 / +0,8 puan (sıfır); portföy AVR +%13 / +%103 (piyasa +%10,5 / +%41, düşüş -%10) piyasayı geçiyor, ABD +%13 / +%85 "
+               "(+%29 / +%89) ve BIST +%10 / +%163 (+%34 / +%114) geçmiyor -> BÜTÜN İZİ yok. Sonuç: kural gevşetilince (iki yön, pazar "
+               "pazar, birleşim) de görülmemiş dönemde tutan ölçü yok; 'iz değil' kararlarını eşik sertliği değil, ölçülerin kendisi "
+               "veriyor. Not: ikili ölçülerde (fib_tepe_once, p_yesil_1) haftalık yüzdelik eşik bazı dönemlerde boş kalıyor (hepsi zaten "
+               "geçmedi)."),
+    _ik_k("Ç131", "2026-10-28", "MAKİNE SİNYALİYLE GERÇEKÇİ PORTFÖY: K48 / K48-B üst %5 sinyalleri, 10 yuva, günde en çok 2 yeni giriş, +%8 "
+          "hedef / -%8 stop ya da 20 gün; piyasa ve aynı kurallı 20 rastgele portföy (K50)", "FON_IZI.py (k50)",
+          "K49 'iz yok çıkarsa durma' sıradaki deneme; Cemal: 'kâr getirecek mi, tek derdimiz bu'",
+          "Keşif (önceden: pazar başına 2023 ve 2024-26'da portföy hem piyasayı hem rastgeleyi geçerse ALINABİLİR)", "IZ C", 3,
+          cikti="arastirma_cikti/fon_izi/k50_portfoy.csv",
+          notu="K48: ABD 2023 +%1 (rastgele +%6, piyasa +%29), 2024-26 +%67 (+%20 / +%89); AVR -%8 / +%4 (+%4 / +%19; piyasa +%10 / "
+               "+%41); BIST +%15 / +%38 (+%10 / +%43; piyasa +%34 / +%114); 2019-22 ABD -%30, AVR -%22. K48-B: ABD +%11 / +%31, AVR "
+               "+%5 / +%15, BIST +%10 / +%51; hepsi piyasanın altında. Karar: üç pazarda DEĞİL. İşlem başına ortalama artı (BIST +%1,6-2,7, "
+               "ABD 2024-26 +%1,2-1,3) ama sinyal seyrek (pazar başına yılda 20-160 işlem), para çoğu zaman nakitte ve +%8 tavanı "
+               "kazananı kesiyor: piyasanın güçlü yükseldiği 2023-26'da elde tutmanın gerisinde kalıyor."),
 ]
 
 
@@ -1102,12 +1147,23 @@ IK_GOREV: List[Dict[str, str]] = [
               "momentum dilimindeki rastgele çökmüş hisse de geçiyor (eşli fark 0): çökmüş hisse sıçraması, kuralın kendisi değil; Avrupa / "
               "BIST'te yok. Sert düşüş makinesi: ABD'de +17-22 puan, Avrupa 2024-26'da sıfır, portföyde piyasa altı; seçtiği 'piyasa "
               "çöküşünde büyük hisse'",
+     "durum": "TAMAMLANDI (devam: Cemal'in geniş metrik ve kabuk dışı istekleri, alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Makineye TradingView örneğindeki gibi çok metrik yükle; sonra: kural bizi sınırlıyor olabilir, kabuktan çık, her "
+                                     "ölçünün tersini de dene, bütünü ile ele al, iz değil dediklerimizi derleyip tekrar koştur",
+     "yapilan": "K48: 166 yeni ölçeksiz ölçü (toplam 204) ile makine, bütün satırlar ve sert düşüş sonrası (K48-B), portföy. K49: 203 ölçü + "
+                "114 olay kümesi (1,01 milyon olay) iki yönde, pazar pazar, 2016-22'de seçim, 2023 / 2024-26'da karar, 3 karıştırmalı şans "
+                "denetimi, bütün birleşimi ve portföy. K50 (sıradaki deneme): makine sinyaliyle gerçekçi portföy (günde 2, +8 / -8). IZ_KARNE "
+                "Ç128-Ç131; test 62",
+     "sonuc": "Hiçbiri iz değil. K48 makinesi K46'dan biraz iyi (ABD 2023 +6,9, diğer hücreler +11-12 puan) ama ABD 2023 eşik altı; "
+              "portföyde ABD 2024-26 +%218 / piyasa +%89, 2023 +%11 / +%29. Kabuk dışı: seçilen ölçü sayısı şansa yakın, görülmemiş "
+              "dönemde tutan 0. Gerçekçi portföy (K50): üç pazarda da piyasanın altında; işlem başına küçük artı var, para nakitte bekliyor",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): K46 makine öğrenmesi: satır düzeyinde 2024-26 ABD + AVR +12 puan, 2023 +4-5 (kural tutmadı), portföyde piyasa kadar. "
-    "Olası devam (Cemal'in kararı): (1) K46 sinyalini +8 / -8 çıkış kuralı ve günlük en çok 2 yeni yuva ile portföy olarak ölçmek, (2) K46 "
-    "profilini (düşen piyasada aşırı satılmış oynak hisse) canlı izlemek, (3) çöl taramasını aday listesi olarak izlemek, (4) ara.",
+    "YOL (28 Eki, 22:15): K48 geniş ölçülü makine, K49 kabuk dışı derleme (iki yön, pazar pazar, bütün, şans denetimi) ve K50 gerçekçi "
+    "portföy: alınabilir iz yok. Olası devam (Cemal'in kararı): (1) K48 makinesinin haftalık üst %5 listesini kağıt üzerinde canlı "
+    "izlemek (alım yok, 3 ay sonra bak), (2) çöl taramasını aday listesi olarak izlemek, (3) ücretli veri (opsiyon akışı, kurumsal "
+    "pozisyon), (4) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
