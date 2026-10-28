@@ -566,6 +566,22 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "ABD -> BIST de sıfır civarı (en iyi 20 gün %20 eşik 2024-26 +%7 ama sıra 0,56, portföy altta; 2023 olay yok). Ayna AVR -> "
                "ABD: 2023 -%7 / -%13 (Avrupa öne geçince ABD sektörü geride kalıyor, az sinyal), 2024-26 sıfır civarı. İZ DEĞİL. ABD sektör "
                "hareketi Avrupa'ya 'sonradan' geçmiyor; Avrupa aynı gün ya da ertesi açılışta fiyatlıyor, 60 günlük eşli farkta iz kalmıyor."),
+    _ik_k("Ç115", "2026-10-28", "SAAT FARKI: ABD güçlü günü / sektör günü / geç seansı -> Avrupa ertesi gün boşluk, ilk saat, gün içi, 5 gün "
+          "(günlük hisse 2016-26 + saatlik endeks son 730 gün) (K40)", "FON_IZI.py (k40)",
+          "Cemal: 'Avrupa ile Amerika arasında gün değil saat farkı; Amerika'da yükseliş Avrupa'da ne kadar gecikmeli; gecikmeden alım kazandırır mı'",
+          "Yeni deneme (karar önceden: alınabilir gecikme = açılıştan sonraki fazla >= +%0,2 ve aralık artı, günlük 2023 + 2024-26 ve saatlik en az 2 endeks)",
+          "IZ C", 3, cikti="arastirma_cikti/fon_izi/k40_gunluk.csv",
+          notu="GÜNLÜK (ABD eşit ağırlık >= +%1,5 gün; Avrupa ertesi gün, fazla = taban üstü): BOŞLUK +%0,23 / +%0,19 / +%0,23 (2016-22 / "
+               "2023 / 2024-26; üçünde aralık artı) -> ABD'nin gece hareketi Avrupa açılış boşluğuna giriyor; GÜN İÇİ (açılıştan alınabilir) "
+               "+%0,10 / +%0,24 / +%0,03 (yalnız 2023 aralık artı); 5 GÜN -%0,1 / +%0,1 / +%0,1. Ayna (ABD güçlü düşüş): boşluk -%0,3 .. "
+               "-%0,5, gün içi 2016-22 -%0,2, sonra sıfır. SEKTÖR (ABD sektör günü >= +%2 göreli; Avrupa aynı sektör göreli): gün içi +%0,21 "
+               "/ +%0,12 / +%0,12 (2016-22 aralık artı, 2024-26 alt uç 0,0000), 5 gün +%0,33 / -%0,02 / +%0,52 (2016-22 ve 2024-26 aralık "
+               "artı, 2023 yok). SAATLİK (S&P 500 Avrupa kapanışından sonra >= +%0,7; 29 sinyal / 730 gün): DAX boşluk +%1,1 (aralık artı), "
+               "ilk saat -%0,2, gün -%0,04 -> hepsi açılış boşluğunda; Euro Stoxx 50 ve FTSE 'boşluk' ~0 ama ilk saat +%0,5 / +%0,6: bu iki "
+               "endeksin açılış değeri eski bileşen fiyatlarıyla basılır (gerçek açılış kotasyonu değil), boşluk ilk dakikalara kayar; DAX "
+               "gerçek açılış ihalesi olduğu için doğru ölçü. Örtüşme saatlerinde (16:30-18:30 TR) S&P ile Avrupa eşzamanlı: korelasyon "
+               "0,36-0,48. Karar: İZ DEĞİL (günlük gün içi 2024-26 tutmadı). En iyi kalıntı: sektör düzeyinde 5 günde +%0,3-0,5 (iki dönem), "
+               "%0,1 maliyet sonrası küçük artı, 2023'te yok."),
 ]
 
 
@@ -845,20 +861,29 @@ IK_GOREV: List[Dict[str, str]] = [
                 "ayna AVR -> ABD; FI_OLCUT 2016-22 / 2023 / 2024-26; IZ_KARNE Ç114; test 52",
      "sonuc": "İz değil: ABD sektör öne geçince Avrupa'daki aynı sektör sonraki 60 günde eşlerinden ayrışmıyor (bütün olasılıklar -%0,5 .. "
               "+%1,3); BIST de öyle. Avrupa ABD'yi aynı gün / ertesi açılış fiyatlıyor, gecikme yok",
+     "durum": "TAMAMLANDI (Cemal: saat farkı, bir alttaki satır)"},
+    {"tarih": "2026-10-28", "istek": "Avrupa ile Amerika arasında gün değil saat farkı mı; Amerika'da yükseliş Avrupa'da ne kadar gecikmeli; "
+                                     "gecikme esas alınıp alım yapılır mı, kazanılır mı",
+     "yapilan": "K40: günlük hisse düzeyi (ABD güçlü gün / sektör günü -> Avrupa ertesi gün boşluk, gün içi, 5 gün; ayna) 2016-26 + saatlik "
+                "endeks (S&P geç seansı -> Euro Stoxx 50, DAX, FTSE ertesi gün boşluk / ilk saat / gün) son 730 gün; endeks açılış kotasyonu "
+                "denetimi; IZ_KARNE Ç115; test 53",
+     "sonuc": "Gecikme saat değil dakika: ABD'nin gece hareketi Avrupa'nın açılış boşluğuna giriyor (+%0,2 hisse, DAX +%1,1); açılıştan "
+              "sonra alınabilir fazla yok ya da tutarsız (gün içi +%0,03 .. +%0,24). Kalıntı: sektör düzeyinde 5 günde +%0,3-0,5, iki "
+              "dönemde, maliyet sonrası küçük. İZ DEĞİL",
      "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K39). Karar pazarları ABD + Avrupa (BIST bilgi, Çin sonra); veri paketi hazır. ABD -> "
-    "Avrupa öncülüğü (K39) da yok. Seçenekler Cemal'in: (a) çöl taramasını aday listesi olarak canlı izlemek, (b) ara, (c) Çin evreni "
-    "kurup bilgi olarak eklemek, (d) rüzgâr göründükten sonra ne kadar sürüyor (kapalı konu, onay), (e) ABD'de olay verisi "
-    "(bilanço, içeriden alım, 13F ücretli) ile çöl adayı süzme.",
+    "YOL (28 Eki): bütün yollar İZ DEĞİL (K13-K40). Karar pazarları ABD + Avrupa (BIST bilgi, Çin sonra); veri paketi hazır. ABD -> "
+    "Avrupa öncülüğü gün (K39) ve saat (K40) düzeyinde alınabilir değil; açılış boşluğunda fiyatlanıyor. Seçenekler Cemal'in: (a) çöl "
+    "taramasını aday listesi olarak canlı izlemek, (b) ara, (c) Çin evreni, (d) rüzgâr göründükten sonra ne kadar sürüyor (kapalı "
+    "konu, onay), (e) ABD olay verisiyle çöl adayı süzme, (f) K40 sektör 5 gün kalıntısını 2016-22 dış örnekle + maliyetle ayrıca ölçmek.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
     "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
-    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
+    "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
     "pozisyon ve aday fiyatları ölçeklenmiyor (sahte −%48 satış); AL ekran satırı yanlış sütunlar; T10 boşluk dolumu ve taban önceliği; T9 ölü; "
