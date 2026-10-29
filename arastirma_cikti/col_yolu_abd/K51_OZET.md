@@ -108,3 +108,25 @@ Karar doğrulandı. Ham fiyatlardan kurulan üçlü bariyer, 6.892 test olayınd
 6. **Önceki "hacimli taban" adayının artısı da yalnız hayatta kalanlarda.** Bugün işlem görenlerde 2024-26 +7,5 puan; sıkıntılı ve batmışlarda −5,4 puan.
 
 **Ders.** Bugün işlem gören hisselerle yapılan testler (eski K38, FI_OLCUT panelleri) küçük hisse ve düşüş sonrası formasyonlarda iyimser çıkar. Batmış şirketler eklenince artı kaybolur.
+
+## 6. Colab'da yeniden koşmak
+
+Tek hücre, aşağıda. Hücre kodu GitHub main'den çeker ve Drive'da `col_tarayici/COL_YOLU_ABD.py` olarak yazar. Veriyi `islenmis-veri` dalından açar ve bütün çıktıları `COLAB_VERILER/OUTPUT/COL_YOLU_ABD` altına yazar.
+
+Gerekenler:
+- Colab gizli anahtarı `GH_TOKEN` (repo okuma).
+- İsteğe bağlı `TIINGO_TOKEN`: batan şirketler için. Ücretsiz kota ayda 500 sembol, saatte 50 istek; indirme saatler sürer.
+- Yüksek RAM: tam koşu yaklaşık 10 GB ve CPU'da yaklaşık 1 saat sürer.
+  - GPU ile CNN hızlanır.
+  - RAM yetmezse `os.environ["CY_CNN"] = "0"` ile CNN ve LSTM'siz koşar.
+
+```
+from google.colab import drive, userdata; drive.mount('/content/drive')
+import os, urllib.request
+tok = userdata.get('GH_TOKEN'); os.environ['GH_TOKEN'] = tok
+rq = urllib.request.Request('https://api.github.com/repos/Cemalcelebi/col_yolu/contents/COL_YOLU_ABD.py?ref=main', headers={'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github.raw'})
+open('/content/drive/MyDrive/col_tarayici/COL_YOLU_ABD.py', 'wb').write(urllib.request.urlopen(rq).read())
+exec(open('/content/drive/MyDrive/col_tarayici/COL_YOLU_ABD.py').read()); R = cy_calistir()
+```
+
+Kod değiştiyse önce çalışma zamanını yeniden başlat.
