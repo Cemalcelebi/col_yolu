@@ -814,6 +814,24 @@ IK_KAYIT: List[Dict[str, Any]] = [
           cikti="arastirma_cikti/col_yolu_abd/cy_d1.csv",
           notu="İZ DEĞİL. ABD 2016-22 -7,5 puan (n 210), Avrupa 2016-26 +4,6 [-1,6] (n 138); esin dönemi ABD 2023 +2,2, 2024-26 -0,8; BIST "
                "0. Ders: 'süren kırılım' grubunun iyi görünmesi tamamen sonradan bilinen bilgiydi; 10 gün bekleyip girince avantaj yok."),
+    _ik_k("Ç134", "2026-10-29", "K51 SONRASI BAĞIMSIZ DENETİM (v1.2): veri bütünlüğü (sayı uzlaşması, point-in-time evren, çıkış sınıflaması, delist / "
+          "ham fiyat / kod yeniden kullanımı duyarlılığı, eski-yeni kod), kırılganlık (kaynak, hisse katkısı, yıl, rejim, iki kümeleme), eşleşmiş "
+          "kontrollerle beş önceden tanımlı hipotez (H-A sert düşüş + yataylaşma, H-B küçük mum, H-C hacim kuruması, H-D hacimli taban, H-E rejim), "
+          "Holm", "COL_YOLU_ABD.py (cy_v12_calistir)", "Cemal'in 'K51 sonrası bağımsız araştırma planı' + 11 maddelik ön kayıt eki (29 Eki)",
+          "Keşif (ön kayıt commit 8e99902 / 8e99902+V8; karar koşulları: n >= 30, isabet farkı >= +5 puan, ay kümeli alt uç > 0, net fark > 0, üç "
+          "dönemde; 2023-26 bağımsız değil)", "IZ C", 2, cikti="arastirma_cikti/col_yolu_abd/K51_HIPOTEZ_KARARLARI.csv",
+          notu="K51 kararı korundu (İZ DEĞİL). Beş hipotezin beşi DESTEKLENMİYOR (H-E AYI 2024-26 yetersiz örneklem). H-A (ÇEK, n 2.300 / 1.104 / "
+               "2.536, kapsam %57): eşleşmiş kontrole fark 0,0 / +2,9 / +3,2 puan; 2023-26 birleşik +3,1 [+0,8] (Holm p 0,027) ama eşik 5'in altı "
+               "ve 2016-22'de sıfır. H-B (P1 vs imzasız eş, kapsam %17): -1,2 / -1,5 / +4,1. H-C (hacim kuruması, kapsam %10): -3,2 / +6,1 / +9,3 "
+               "(aralıklar 0'ı içerir). H-D (HT, kapsam %68): +9,2 / +2,7 / -3,0; HT'den önceki 60 günde ÇEK payı %30 (bağımsız). H-E: AYI 2016-22 "
+               "+3,0, 2023 +5,5 (n 35), 2024-26 n 28; BOĞA +3,9 / +2,0 / +3,1. VERİ: 3.267 tekil sembol (1.410 + 1.435 + 422), 2.752 likit; 4 "
+               "yinelenen sembol farklı CIK (şirket yeniden kaydı). Tiingo 'batan' 422'nin yalnız 51'i batma benzeri; 171 satın alma benzeri, "
+               "153'ünün serisi şirket SEC bildirimini kestikten sonra da sürüyor (kod yeniden kullanımı şüphesi 249 hisse). Delist -30 / 0 / "
+               "-100 ve kod kesme senaryoları hücreleri <= 0,3 puan oynatıyor; ham-düzeltilmiş etiket uyumu %99,7; eski kod (b3835d8) ile yeni "
+               "kod olay sayıları birebir, farklar <= 0,6 puan. KIRILGANLIK: P1 artısı yalnız bugün işlem görenlerde (2023 +5,3 [+1,9], 2024-26 "
+               "+6,4); batanlarda eksi; 2026 (kısmi) -4,3 [-7,5, -2,3] TERS YÖN; en iyi 20 hisse çıkınca 2024-26 +0,6; ilk 20 hisse farkın "
+               "%89-139'u. Ders: sert düşüş + yataylaşmanın ~3 puanlık küçük, eşik altı, hayatta kalanlara bağlı etkisi var; küçük mum, hacim "
+               "ve hacimli taban ek bilgi taşımıyor. İleri doğrulama: sinyal >= 01.09.2026 (fon krizi istisnası kalkınca), en erken Mart 2027."),
 ]
 
 
@@ -1205,13 +1223,22 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "İZ DEĞİL. P1 rastgeleden +2,5 / +2,4 puan (eşik 5), net getiri taban kadar; meta, CNN, LSTM, özellik gruplarının hiçbiri "
               "bağımsız testte katkı vermedi; portföyler SPY'nin çok altında. Önceki 'hacimli taban' adayı tekrarlanmadı. Kontroller hattın "
               "çalıştığını gösterdi",
-     "durum": "TAMAMLANDI, AÇIK: Kasım Tiingo kotasıyla kalan batanlar; devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (devam: K51 sonrası bağımsız denetim, alttaki satır)"},
+    {"tarih": "2026-10-29", "istek": "K51 sonrası bağımsız araştırma planı + 11 maddelik ön kayıt eki: veri bütünlüğü, kırılganlık, model eklemeden beş "
+                                     "hipotezi ayır, eşleşmiş kontroller, test disiplini, beş çıktı dosyası; K51 kararını değiştirme; önce özet, "
+                                     "sonra 'yaz' ile başla",
+     "yapilan": "Ön kayıt (8e99902 + V8) sonuç görülmeden commit; COL_YOLU_ABD.py v1.2 (panel + senaryolar, eşleştirme, H-A..H-E, Holm, veri "
+                "denetimi, kırılganlık, eski kod kıyası, tekrar üretim; test 17/17); tam koşu 10,7 dk; K51_VERI_DENETIMI.md, K51_KIRILGANLIK.md, "
+                "K51_ESLESMIS_KONTROL.csv.gz, K51_HIPOTEZ_KARARLARI.csv, K51_TEKRAR_URETIM.md, K51_EVREN_PIT.csv; IZ_KARNE Ç134; Drive OUTPUT",
+     "sonuc": "K51 kararı korundu: beş hipotez de DESTEKLENMİYOR. H-A'da küçük (+3 puan), eşik altı, 2016-22'de sıfır bir etki var. Veri: "
+              "Tiingo 'batan' örnekleminin çoğu batan değil (51 batma benzeri, 171 satın alma, 153 kod yeniden kullanımı); duyarlılık senaryoları "
+              "sonucu değiştirmiyor; P1 artısı yalnız bugün işlem görenlerde",
+     "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (29 Eki, akşam): K51 ABD Çöl Yolu (akademik yöntemler, batanlar dahil) ve D1: İZ DEĞİL; meta, CNN, LSTM katkı vermedi. "
-    "Olası devam (Cemal'in kararı): (1) Kasım Tiingo kotasıyla kalan ~374 batan şirketi ekleyip K51'i yeniden koşmak, (2) P1 + "
-    "oynaklığa bağlı bariyeri (en yakın aday, 2024-26 +4,3 puan) Kasım'dan itibaren kağıt üzerinde izlemek, (3) yeni veri (opsiyon, "
-    "kurumsal akış; ücretli), (4) ara.",
+    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim: beş hipotez DESTEKLENMİYOR, K51 kararı korundu; H-A'da +3 puanlık eşik altı etki "
+    "(2016-22'de yok). Olası devam (Cemal'in kararı): (1) ileri doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo "
+    "kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "

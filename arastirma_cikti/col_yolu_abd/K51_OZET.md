@@ -130,3 +130,17 @@ exec(open('/content/drive/MyDrive/col_tarayici/COL_YOLU_ABD.py').read()); R = cy
 ```
 
 Kod değiştiyse önce çalışma zamanını yeniden başlat.
+
+## 7. K51 sonrası bağımsız denetim (v1.2, 29 Ekim akşam)
+
+Cemal'in planıyla, ön kayıt 8e99902 sabitlenerek koşuldu. K51 kararı korundu. Beş çıktı: K51_VERI_DENETIMI.md, K51_KIRILGANLIK.md, K51_ESLESMIS_KONTROL.csv.gz, K51_HIPOTEZ_KARARLARI.csv, K51_TEKRAR_URETIM.md (+ K51_EVREN_PIT.csv).
+
+| Hipotez | Kapsam (eşleşen pay) | Fark 2016-22 / 2023 / 2024-26 (puan) | Karar |
+|---|---|---|---|
+| H-A sert düşüş + yataylaşma vs eşleşmiş kontrol | %57 | 0,0 / +2,9 / +3,2 | DESTEKLENMİYOR (eşik 5; 2023-26 birleşik +3,1 [+0,8], Holm p 0,027) |
+| H-B küçük mum imzaları vs imzasız eş | %17 | −1,2 / −1,5 / +4,1 | DESTEKLENMİYOR |
+| H-C hacim kuruması vs kurumama | %10 | −3,2 / +6,1 / +9,3 (aralıklar 0'ı içerir) | DESTEKLENMİYOR |
+| H-D hacimli taban vs eşleşmiş kontrol | %68 | +9,2 / +2,7 / −3,0 | DESTEKLENMİYOR (HT bağımsız: ÇEK örtüşmesi %30) |
+| H-E rejim (AYI / BOĞA) | %53 | AYI +3,0 / +5,5 / n 28; BOĞA +3,9 / +2,0 / +3,1 | AYI yetersiz örneklem; BOĞA DESTEKLENMİYOR |
+
+Veri bütünlüğü: Tiingo "batan" 422 hissenin yalnız 51'i batma benzeri; 171 satın alma benzeri; 153'ünün serisi şirket SEC bildirimini kestikten sonra sürüyor (kod başka şirkete geçmiş olabilir). Delist (−30 / 0 / −100), kod kesme ve ham fiyat senaryoları hücreleri en çok 0,3 puan oynatıyor; eski kod (b3835d8) ile olay sayıları birebir.

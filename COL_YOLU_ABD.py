@@ -1963,7 +1963,10 @@ def cy_v12_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY) -> Dict[
     son_bild = {}
     yb = os.path.join(A.veri, "k34_bildirim.pkl")
     if os.path.exists(yb) and len(kev):
-        Bd = pd.read_pickle(yb); sb = Bd.groupby("cik").filed.max(); son_bild = {s_: sb.get(c) for c, s_ in zip(kev.cik, kev.sembol) if c in sb.index}
+        Bd = pd.read_pickle(yb); Bd = Bd.assign(cik=pd.to_numeric(Bd.cik, errors="coerce")).dropna(subset=["cik"])      # CIK türü: metin -> sayı
+        sb = Bd.groupby(Bd.cik.astype(np.int64)).filed.max(); kv1 = kev.drop_duplicates("sembol", keep="first")          # yüklenen şirket = ilk satır
+        son_bild = {s_: sb.get(int(c)) for c, s_ in zip(kv1.cik, kv1.sembol) if int(c) in sb.index}
+        cylog.info("v1.2 son SEC bildirimi eşleşen K34 şirketi: %d / %d", len(son_bild), len(kv1))
     tk = A.tiingo or os.path.join(A.veri, "tiingo"); V = Vs["ABD"]; le = cy_likit_esik(V, "ABD", K); evp = EV[EV.pazar == "ABD"].set_index("sembol")
     def ham_oku(s_):
         yol = os.path.join(tk, f"{s_}.csv")
@@ -2009,7 +2012,8 @@ def cy_v12_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY) -> Dict[
         if r["cikti_mi"]:
             tur = "batma benzeri" if (r["r60_son"] <= V12["batma_r60"] or r["son_kapanis"] < V12["batma_fiyat"]) else ("satın alma / birleşme benzeri" if r["r60_son"] >= 0 else "belirsiz çıkış")
         suphe = bool(ev.kaynak.startswith("K34") and sb is not None and pd.notna(sb) and r["son"] > pd.Timestamp(sb) + pd.Timedelta(days=V12["kes_gun"]) and not r["cikti_mi"])
-        satir.append({"sembol": s_, "cik": ";".join(str(c) for c in cik) if cik else "", "cik_sayisi": len(cik), "kaynak": ev.kaynak, "evren_bas": ev.evren_bas,
+        bild_suruyor = bool(sb is not None and pd.notna(sb) and pd.Timestamp(sb) >= pd.Timestamp(K["kriz"]) - pd.Timedelta(days=120))
+        satir.append({"sembol": s_, "cik": ";".join(str(c) for c in cik) if cik else "", "cik_sayisi": len(cik), "kaynak": ev.kaynak, "evren_bas": ev.evren_bas, "sec_bildirimi_suruyor": bild_suruyor,
                       "dayanak": "seri başı" if ev.kaynak == "V_ABD" else "ilk SEC nakit pisti bildirimi", "ilk_fiyat": r["ilk"], "son_fiyat": r["son"], "n_gun": r["n_gun"],
                       "son_kapanis": r["son_kapanis"], "r60_son": r["r60_son"], "seri_erken_bitti": r["cikti_mi"], "cikis_turu_tahmin": tur, "son_sec_bildirimi": sb,
                       "kod_yeniden_kullanim_suphesi": suphe, "kes_uygulandi": r["kes_uygulandi"], "agirlik": float(ev.agirlik),
@@ -2031,7 +2035,8 @@ def cy_v12_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY) -> Dict[
             for ad, yc, ec, nc in (("ana (-%30)", "y", "e_y", "net"), ("delist %0", "y_d0", "e_y_d0", "net_d0"), ("delist -%100", "y_d100", "e_y_d100", "net_d100"),
                                    ("V8 kod kesme", "y_kes", "e_y_kes", "net_kes")):
                 Dd = D[D.kes_gecerli] if ad.startswith("V8") else D
-                sen.append({"kume": tip, "donem": dn, "senaryo": ad, **hucre_taban(Dd, yc, ec, nc), "etkilenen_olay": int((Dd[yc] != Dd.y).sum())})
+                sen.append({"kume": tip, "donem": dn, "senaryo": ad, **hucre_taban(Dd, yc, ec, nc), "etkilenen_olay": int((Dd[nc] != Dd.net).sum()),
+                            "seri_sonunda_cikan_olay": int(Dd.sembol.map(lambda z: meta[z]["cikti_mi"]).to_numpy().astype(bool).sum())})
     SEN = pd.DataFrame(sen)
     hm = P[P.y_ham.notna()]; ham_t = {"satir": int(len(hm)), "uyum": float((hm.y_ham == hm.y).mean()) if len(hm) else np.nan,
                                      "olay_satir": int(hm[hm.P1 | hm.P2 | hm.HT].shape[0]), "olay_uyum": float((hm[hm.P1 | hm.P2 | hm.HT].y_ham == hm[hm.P1 | hm.P2 | hm.HT].y).mean()) if (hm.P1 | hm.P2 | hm.HT).any() else np.nan,
@@ -2167,13 +2172,16 @@ def cy_v12_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
           "## V3 2016-20 eğitim evreni", "", f"- Evrene 2021 öncesi giren hisse: {int((EVT.evren_bas < '2021-01-01').sum())} (hepsi V_ABD = bugün işlem görenler). K34 girişleri {str(pd.to_datetime(EVT[EVT.kaynak != 'V_ABD'].evren_bas).min().date()) if (EVT.kaynak != 'V_ABD').any() else '-'} ve sonrası.",
           "- 2016-20 dönemi yalnız hayatta kalanlardan oluşur; doldurulmadı. Bu dönemin hücreleri bu yüzden iyimser olabilir; kaynak kırılımı K51_KIRILGANLIK.md'de.", "",
           "## V4 Çıkış sınıflaması (tahmin; gerçek delist nedeni değil)", ""]
-    ct = EVT.groupby(["kaynak", "cikis_turu_tahmin"]).size().reset_index(name="n"); L += tablo(ct, ["kaynak", "cikis_turu_tahmin", "n"])
+    ct = EVT.groupby(["kaynak", "cikis_turu_tahmin", "sec_bildirimi_suruyor"]).size().reset_index(name="n"); L += tablo(ct, ["kaynak", "cikis_turu_tahmin", "sec_bildirimi_suruyor", "n"])
+    L += ["", "- 'sec_bildirimi_suruyor' = şirketin (yüklenen CIK) son 10-K / 10-Q bildirimi 31.08.2026'dan en çok 120 gün önce ya da sonra: şirket yaşıyor. Tiingo serisi sürüp şirket bildirim vermiyorsa kod başka şirkete geçmiş olabilir (V8).",
+          "- Yinelenen 4 sembolde (BG, RDUS, SBGI, ZYME) iki CIK aynı şirketin yeniden kaydı (yeniden yapılanma / yer değişimi) ya da kodun yeni şirkete geçişi olabilir; K34 evreninde 'batan' sayılıp 1,83 ağırlık almışlardır, seri bugün sürüyor."]
     L += ["", f"- Kural: seri 2026-08-01'den önce bitiyorsa çıkış; son 60 gün getirisi <= {V12['batma_r60']:.0%} ya da son kapanış < {V12['batma_fiyat']} $ -> 'batma benzeri'; son 60 gün >= 0 -> 'satın alma / birleşme benzeri'; arası 'belirsiz çıkış'.",
           "- Tiingo örneklemi tam batan evreni DEĞİLDİR: SEC nakit pisti olan ve kodu kapakta bulunan şirketlerden 450'lik rastgele örneklem (K34, ağırlık 1,83); K34 dışındaki (nakit sorunu olmayan) batanlar evrende yoktur.",
           f"- Kod yeniden kullanımı şüphesi (Tiingo / Yahoo serisi şirketin son SEC bildiriminden {V12['kes_gun']} günden fazla sürüyor ve seri bugün devam ediyor): {int(EVT.kod_yeniden_kullanim_suphesi.sum())} hisse. Bu serilerde eski şirketin fiyatları, kodu sonradan alan şirketin fiyatlarıyla birleşmiş olabilir (V8 senaryosu).", "",
           "## V5 / V6 / V8 Duyarlılık senaryoları (olay isabeti - K51 tabanı; ağırlıklı)", "",
           "Senaryolar varsayımsaldır: 'ana' = seri vadeden önce bitince son kapanış, son 60 gün eksiyse ek -%30; 'delist %0' = ek kayıp yok; 'delist -%100' = tam kayıp; 'V8 kod kesme' = K34 serisi son SEC bildirimi + 120 günde kesilir (kesilen seri borsadan çıkmış sayılır), yalnız kesmeden önceki olaylar. Baz fiyat = serinin son kapanışı; uygulama günü = serinin son günü.", ""]
-    L += tablo(R["SEN"], ["kume", "donem", "senaryo", "n", "isabet", "taban", "fark", "fark_alt", "fark_ust", "net", "etkilenen_olay"])
+    L += tablo(R["SEN"], ["kume", "donem", "senaryo", "n", "isabet", "taban", "fark", "fark_alt", "fark_ust", "net", "etkilenen_olay", "seri_sonunda_cikan_olay"])
+    L += ["", "- 'etkilenen_olay' = senaryoda net getirisi değişen olay sayısı; 'seri_sonunda_cikan_olay' = serisi 01.08.2026'dan önce biten hissedeki olay sayısı (delist kuralının uygulanabildiği küme). Üst bariyer etiketi (y) delist cezasından etkilenmez; yalnız net getiri etkilenir."]
     h = R["ham"]; L += ["", "## V6 Ham ve düzeltilmiş fiyat (yalnız Tiingo altkümesi; Yahoo serileri yalnız düzeltilmiş)", "",
                         f"- Tiingo hisse {h['hisse']}, likit satır {h['satir']}: ham fiyatla etiket uyumu {f(h['uyum'])}; olay satırı {h['olay_satir']}: uyum {f(h['olay_uyum'])}.",
                         "- Sınır: düzeltilmiş fiyatla bariyer, temettü ve bölünme sonrası gerçek işlem fiyatından sapabilir; Yahoo altkümesinde ölçülemedi. Temettü, düşüş sonrası küçük hisselerde azdır.", "",
