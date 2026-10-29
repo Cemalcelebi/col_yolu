@@ -109,7 +109,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in dict(globals()).items()}   # çakışma kapısı: yüklenmeden önceki adlar
 
-CY_SURUM = "CY v1.2 (2026-10-29, K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
+CY_SURUM = "CY v1.3 (2026-10-29, K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
 cylog = logging.getLogger("col.cy")
 
 CY: Dict[str, Any] = {
@@ -2219,6 +2219,349 @@ def cy_v12_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
          "- Çıktı özetleri (sha256 ilk 16): " + ", ".join(f"{ad}={sha(os.path.join(A.cikti, ad))}" for ad in dosyalar if os.path.exists(os.path.join(A.cikti, ad))),
          f"- Holm (aile = 5 hipotez, 2023-26 tek yönlü bootstrap p): {json.dumps({k_: round(v, 4) for k_, v in R['holm'].items()})}", ""]
     open(os.path.join(A.cikti, "K51_TEKRAR_URETIM.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
+
+
+# ---------------------------------------------------------------- v1.3 K52 GRAFİK İZİ + ANALİST REVİZYONLARI (ön kayıt commit c33a10e:
+# arastirma_cikti/col_yolu_abd/K52_onkayit.md). K51 kuralları ve kararı değişmez. Kaynak: Yahoo analist not günlüğü (yfinance
+# upgrades_downgrades; EPS revizyonu ve gerekçe YOK). Sızıntı: olay günü d için yalnız tarih <= d-1 kayıtları. Pencere 20 işlem günü.
+CY_V13: Dict[str, Any] = {
+    "pencere": 20, "tohum": 513, "boot": 2000, "fark_esik": 0.05, "n_min": 30, "kapsama_gun": 365, "dogruluk_min": 10, "dogruluk_gecikme_gun": 90,
+    "h4_yukselis": 0.10, "gun_tol": 10, "k_es": 3,
+    "alim": ("BUY", "STRONG BUY", "OUTPERFORM", "OVERWEIGHT", "POSITIVE", "ACCUMULATE", "MARKET OUTPERFORM", "SECTOR OUTPERFORM", "TOP PICK", "CONVICTION BUY"),
+    "donem": (("2016-22", "2016-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-06-05")),
+    "yillar": ((2023, "2023-01-01", "2023-12-31"), (2024, "2024-01-01", "2024-12-31"), (2025, "2025-01-01", "2025-12-31"), (2026, "2026-01-01", "2026-06-05")),
+}
+
+
+def cy_v13_kurum(ad: Any) -> str:
+    """Kurum adı normalizasyonu (kopya ayıklama için): büyük harf, noktalama ve yaygın ekler atılır."""
+    s = " " + " ".join(str(ad).upper().replace("&", " AND ").replace(".", " ").replace(",", " ").split()) + " "
+    for ek in (" SECURITIES ", " CAPITAL MARKETS ", " CAPITAL ", " RESEARCH ", " PARTNERS ", " GROUP ", " AND COMPANY ", " AND CO ", " INC ", " LLC ", " LTD ", " CO "):
+        while ek in s:
+            s = s.replace(ek, " ")
+    return "".join(ch for ch in s if ch.isalnum())
+
+
+def cy_v13_gunluk_yukle(yol: str, K: Dict[str, Any] = CY_V13) -> pd.DataFrame:
+    """Yahoo not günlüğü (sembol -> DataFrame) -> tek tablo: sembol, zaman, tarih, saat_var, kurum, eski, yeni, eylem, hedef_eylem, hedef, eski_hedef,
+    olumlu, olumsuz (ön kayıt 2). Aynı kurum aynı tarih tek kayıt."""
+    import pickle
+    ham = pickle.load(open(yol, "rb")); parca = []
+    for s, u in ham.items():
+        if u is None or not isinstance(u, pd.DataFrame) or not len(u):
+            continue
+        d = u.reset_index(); d.columns = [str(c) for c in d.columns]
+        d = d.rename(columns={"GradeDate": "zaman", "Firm": "kurum", "ToGrade": "yeni", "FromGrade": "eski", "Action": "eylem", "priceTargetAction": "hedef_eylem",
+                              "currentPriceTarget": "hedef", "priorPriceTarget": "eski_hedef"})
+        d["sembol"] = s; parca.append(d)
+    if not parca:
+        return pd.DataFrame()
+    G = pd.concat(parca, ignore_index=True); G["zaman"] = pd.to_datetime(G.zaman, errors="coerce"); G = G.dropna(subset=["zaman"])
+    try:
+        G["zaman"] = G.zaman.dt.tz_localize(None)
+    except Exception:
+        pass
+    G["zaman"] = G.zaman.astype("datetime64[ns]"); G["tarih"] = G.zaman.dt.normalize(); G["saat_var"] = (G.zaman != G.tarih)
+    G["kurum_n"] = G.kurum.map(cy_v13_kurum); G["eylem"] = G.eylem.astype(str).str.lower(); G["hedef_eylem"] = G.hedef_eylem.astype(str)
+    for c in ("hedef", "eski_hedef"):
+        G[c] = pd.to_numeric(G[c], errors="coerce").replace(0, np.nan)
+    yeni_u = G.yeni.astype(str).str.upper().str.strip()
+    G["olumlu"] = (G.eylem == "up") | (G.hedef_eylem == "Raises") | ((G.eylem == "init") & yeni_u.isin(K["alim"]))
+    G["olumsuz"] = (G.eylem == "down") | (G.hedef_eylem == "Lowers")
+    G["hedef_degisim"] = np.where(G.eski_hedef > 0, G.hedef / G.eski_hedef - 1, np.nan)
+    G = G.sort_values(["sembol", "tarih"]).drop_duplicates(["sembol", "kurum_n", "tarih"], keep="last").reset_index(drop=True)
+    return G
+
+
+def cy_v13_kapsam(G: pd.DataFrame, EVT: pd.DataFrame, P: pd.DataFrame) -> pd.DataFrame:
+    """K51_ANALIST_VERI_KAPSAMI: alan / kaynak grubu / yıl bazında kapsama, eksik ve zaman damgası güvenilirliği."""
+    rows = []; var = set(G.sembol) if len(G) else set()
+    for ky, g in EVT.groupby("kaynak"):
+        rows.append({"boyut": "kaynak", "deger": ky, "hisse": len(g), "analist_kaydi_olan_hisse": int(g.sembol.isin(var).sum()), "kapsama_oran": float(g.sembol.isin(var).mean()),
+                     "kayit": int(G.sembol.isin(g.sembol).sum()) if len(G) else 0})
+    if len(G):
+        for y, g in G.groupby(G.tarih.dt.year):
+            rows.append({"boyut": "yil", "deger": int(y), "hisse": int(g.sembol.nunique()), "kayit": len(g), "saat_var_oran": float(g.saat_var.mean()),
+                         "hedef_var_oran": float(g.hedef.notna().mean()), "eski_hedef_var_oran": float(g.eski_hedef.notna().mean()),
+                         "eski_tavsiye_var_oran": float(G.loc[g.index, "eski"].astype(str).str.strip().ne("").mean()), "olumlu_oran": float(g.olumlu.mean()), "olumsuz_oran": float(g.olumsuz.mean())})
+        for alan, ad in (("zaman", "yayım tarih-saati"), ("kurum", "kurum kimliği"), ("eski", "önceki tavsiye"), ("yeni", "yeni tavsiye"), ("eski_hedef", "önceki hedef fiyat"),
+                         ("hedef", "yeni hedef fiyat"), ("hedef_degisim", "hedef fiyat revizyon yüzdesi")):
+            v = G[alan]; eksik = float(v.isna().mean()) if alan != "eski" else float(v.astype(str).str.strip().eq("").mean())
+            rows.append({"boyut": "alan", "deger": ad, "kaynak": "Yahoo not günlüğü", "kayit": int(len(G)), "eksik_oran": eksik, "baslangic": str(G.tarih.min().date()), "bitis": str(G.tarih.max().date())})
+        for ad in ("EPS / kâr tahmini revizyonu", "rapor gerekçesi ve riskler", "analist kişi kimliği", "rapor kimliği / tarihsel sürüm"):
+            rows.append({"boyut": "alan", "deger": ad, "kaynak": "YOK (Yahoo günlüğünde bulunmuyor)", "eksik_oran": 1.0})
+        pz = P[P.P1 | P.P2]
+        rows.append({"boyut": "olay", "deger": "P1 / P2 olaylarında sembolün d'den önce kaydı olan pay", "kapsama_oran": float(pz.sembol.isin(var).mean()), "hisse": int(pz.sembol.nunique())})
+    return pd.DataFrame(rows)
+
+
+def cy_v13_ozellik(E: pd.DataFrame, G: pd.DataFrame, H: Dict[str, Dict[str, Any]], K: Dict[str, Any] = CY_V13) -> pd.DataFrame:
+    """Olay (sembol, tarih, i) başına pencere özellikleri (ön kayıt 2): yalnız tarih <= d-1 kayıtları. Kurum doğruluğu: kurumun d - 90 günden
+    önceki 'up' kayıtlarının isabeti (sonucu d'den önce bilinen). H4 zamanlaması: olumlu revizyon pencere dibinden >= %10 yükseliş SONRASI mı."""
+    W = K["pencere"]; out = []; Gs = {s: g.sort_values("tarih") for s, g in G.groupby("sembol")} if len(G) else {}
+    # kurum doğruluğu: her 'up' kaydını (sembol, ilk işlem günü >= tarih) etiketiyle eşle
+    dog = {}
+    if len(G):
+        up = G[G.eylem == "up"][["sembol", "tarih", "kurum_n"]].copy(); yy = []
+        for r in up.itertuples():
+            h = H.get(r.sembol)
+            if h is None:
+                yy.append(np.nan); continue
+            j = int(np.searchsorted(h["ptarih"], np.datetime64(r.tarih)))        # kaydı izleyen ilk likit panel günü (<= 7 takvim günü)
+            yy.append(float(h["py"][j]) if (j < len(h["py"]) and h["ptarih"][j] - np.datetime64(r.tarih) <= np.timedelta64(7, "D")) else np.nan)
+        up["y"] = yy; up = up.dropna(subset=["y"]).sort_values("tarih")
+        for k_, g in up.groupby("kurum_n"):
+            dog[k_] = (g.tarih.to_numpy(), np.cumsum(g.y.to_numpy()), np.arange(1, len(g) + 1))
+    for r in E.itertuples():
+        h = H[r.sembol]; d = np.datetime64(r.tarih); i = int(r.i); bas = h["tarih"][max(0, i - W)]; dmin1 = h["tarih"][i - 1] if i >= 1 else bas
+        g = Gs.get(r.sembol); kayit_var = bool(g is not None and (g.tarih.to_numpy() <= dmin1).any())
+        w = g[(g.tarih.to_numpy() >= bas) & (g.tarih.to_numpy() <= dmin1)] if g is not None else None
+        f = {"sembol": r.sembol, "tarih": r.tarih, "i": i, "kayit_var": kayit_var, "n_kayit": 0, "n_yukari": 0, "n_asagi": 0, "n_baslangic_al": 0, "n_hedef_yukari": 0, "n_hedef_asagi": 0,
+             "hedef_degisim_ort": np.nan, "olumlu": 0, "olumsuz": 0, "kurum_olumlu": 0, "kurum_toplam": 0, "genislik_oran": np.nan, "tazelik_gun": np.nan,
+             "kurum_dogruluk": np.nan, "kapsama_365": 0, "olumlu_sonra_pay": np.nan, "teyit": False, "ters_teyit": False, "teyit_turu": "yok"}
+        if g is not None:
+            f["kapsama_365"] = int(((g.tarih.to_numpy() <= dmin1) & (g.tarih.to_numpy() > dmin1 - np.timedelta64(K["kapsama_gun"], "D"))).sum())
+        if w is not None and len(w):
+            f.update({"n_kayit": int(len(w)), "n_yukari": int((w.eylem == "up").sum()), "n_asagi": int((w.eylem == "down").sum()),
+                      "n_baslangic_al": int(((w.eylem == "init") & w.olumlu).sum()), "n_hedef_yukari": int((w.hedef_eylem == "Raises").sum()),
+                      "n_hedef_asagi": int((w.hedef_eylem == "Lowers").sum()), "hedef_degisim_ort": float(w.hedef_degisim.mean()) if w.hedef_degisim.notna().any() else np.nan,
+                      "olumlu": int(w.olumlu.sum()), "olumsuz": int(w.olumsuz.sum()), "kurum_olumlu": int(w[w.olumlu].kurum_n.nunique()), "kurum_toplam": int(w.kurum_n.nunique())})
+            f["genislik_oran"] = f["kurum_olumlu"] / f["kurum_toplam"] if f["kurum_toplam"] else np.nan
+            wo = w[w.olumlu]
+            if len(wo):
+                son = wo.tarih.max(); f["tazelik_gun"] = int(np.searchsorted(h["tarih"], d) - np.searchsorted(h["tarih"], np.datetime64(son)))
+                # H4: pencere dibinden >= %10 yükseliş sonrası gelen olumlu revizyon payı
+                c = h["kapanis"][max(0, i - W):i]; t_ = h["tarih"][max(0, i - W):i]; sonra = []
+                for tt in wo.tarih.to_numpy():
+                    k_ = int(np.searchsorted(t_, np.datetime64(tt), side="right")) - 1
+                    if k_ >= 1:
+                        sonra.append(float(c[k_] >= np.nanmin(c[:k_ + 1]) * (1 + K["h4_yukselis"])))
+                f["olumlu_sonra_pay"] = float(np.mean(sonra)) if sonra else np.nan
+                acc = []
+                for k_ in wo.kurum_n.unique():
+                    if k_ in dog:
+                        t2, cs, cn = dog[k_]; j = int(np.searchsorted(t2, d - np.timedelta64(K["dogruluk_gecikme_gun"], "D")))
+                        if j >= K["dogruluk_min"]:
+                            acc.append(cs[j - 1] / cn[j - 1])
+                f["kurum_dogruluk"] = float(np.mean(acc)) if acc else np.nan
+            f["teyit"] = bool(f["olumlu"] >= 1 and f["olumlu"] > f["olumsuz"]); f["ters_teyit"] = bool(f["olumsuz"] >= 1 and f["olumsuz"] > f["olumlu"])
+            if f["teyit"]:
+                f["teyit_turu"] = "yalniz_tavsiye" if (f["n_yukari"] + f["n_baslangic_al"] > 0 and f["n_hedef_yukari"] == 0) else ("yalniz_hedef" if (f["n_yukari"] + f["n_baslangic_al"] == 0) else "ikisi")
+        out.append(f)
+    return pd.DataFrame(out)
+
+
+def cy_v13_fark(A_: pd.DataFrame, B_: pd.DataFrame, K: Dict[str, Any], rng: np.random.Generator) -> Dict[str, Any]:
+    """Taban-ayarlı isabet farkı Δ = ort(y - e_y | A) - ort(y - e_y | B); ay kümeli aralık ve p; hisse x çeyrek aralığı (iki grubun ayrı kümeli
+    varyanslarının toplamı); net fark; ham isabetler."""
+    if not len(A_) or not len(B_):
+        return {"n_a": int(len(A_)), "n_b": int(len(B_))}
+    A2 = A_.assign(_f=A_.y - A_.e_y, _fn=A_.net - A_.e_net); B2 = B_.assign(_f=B_.y - B_.e_y, _fn=B_.net - B_.e_net); B = K["boot"]
+    f, a, b = cy_boot_iki(A2, B2, "_f", B, rng); fn, an, bn = cy_boot_iki(A2, B2, "_fn", B, rng)
+    ka = cy_boot_kume(A2, "_f", 1000, rng); kb = cy_boot_kume(B2, "_f", 1000, rng)
+    if all(np.isfinite(v) for v in ka + kb):
+        sa = (ka[1] - ka[0]) / 3.92; sb = (kb[1] - kb[0]) / 3.92; s = float(np.sqrt(sa ** 2 + sb ** 2)); hq = (f - 1.96 * s, f + 1.96 * s)
+    else:
+        hq = (np.nan, np.nan)
+    # tek yönlü p: ay kümeli bootstrap farkının <= 0 payı
+    ay = lambda D: (D.tarih.dt.year * 12 + D.tarih.dt.month).to_numpy()
+    aa, ba = ay(A2), ay(B2); ua = np.unique(np.r_[aa, ba]); wa = A2["agirlik"].to_numpy(float) if "agirlik" in A2 else np.ones(len(A2)); wb = B2["agirlik"].to_numpy(float) if "agirlik" in B2 else np.ones(len(B2))
+    sA = pd.DataFrame({"ay": aa, "s": A2._f.to_numpy() * wa, "c": wa}).groupby("ay").sum().reindex(ua, fill_value=0); sB = pd.DataFrame({"ay": ba, "s": B2._f.to_numpy() * wb, "c": wb}).groupby("ay").sum().reindex(ua, fill_value=0)
+    ix = rng.integers(0, len(ua), (B, len(ua))); bs = sA.s.to_numpy()[ix].sum(1) / np.maximum(sA.c.to_numpy()[ix].sum(1), 1e-9) - sB.s.to_numpy()[ix].sum(1) / np.maximum(sB.c.to_numpy()[ix].sum(1), 1e-9)
+    return {"n_a": int(len(A_)), "n_b": int(len(B_)), "hisse_a": int(A_.sembol.nunique()), "hisse_b": int(B_.sembol.nunique()), "isabet_a": float(np.average(A_.y, weights=wa)),
+            "isabet_b": float(np.average(B_.y, weights=wb)), "taban_a": float(np.average(A_.e_y, weights=wa)), "taban_b": float(np.average(B_.e_y, weights=wb)),
+            "delta": f, "delta_alt": a, "delta_ust": b, "delta_alt_hisse_ceyrek": hq[0], "delta_ust_hisse_ceyrek": hq[1], "ham_fark": float(np.average(A_.y, weights=wa) - np.average(B_.y, weights=wb)),
+            "net_a": float(np.average(A_.net, weights=wa)), "net_b": float(np.average(B_.net, weights=wb)), "net_fark": fn, "net_fark_alt": an, "net_fark_ust": bn,
+            "p": float((np.sum(bs <= 0) + 1) / (B + 1))}
+
+
+def cy_v13_karar(h: Dict[str, Any], K: Dict[str, Any]) -> str:
+    if min(h.get("n_a", 0), h.get("n_b", 0)) < K["n_min"]:
+        return "YETERSİZ ÖRNEKLEM"
+    if h["delta"] >= K["fark_esik"] and h["delta_alt"] > 0 and h["net_fark"] > 0:
+        return "TUTAR"
+    if h["delta"] <= -K["fark_esik"] and h["delta_ust"] < 0:
+        return "TERS YÖN"
+    return "TUTMAZ"
+
+
+def cy_v13_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_yol: Optional[str] = None) -> Dict[str, Any]:
+    """K52 sürücü: v1.2 paneli (P1 / P2 / ÇEK, y, e_y) + Yahoo not günlüğü -> kapsama, revizyon özellikleri, dört grup, H0-H6, çıktılar."""
+    import hashlib, subprocess
+    A = A or CYAyar(); os.makedirs(A.cikti, exist_ok=True); K = {**K, "_v12": CY_V12, "_v13": CY_V13}; V13 = CY_V13; t0 = time.time()
+    if not logging.getLogger().handlers:
+        logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
+    rng = np.random.default_rng(V13["tohum"]); cy_veri_hazirla(A); Vs, EV = cy_veri_yukle(A, K); cy_v12_tekil(EV); K["_endeks"] = cy_endeks(A, K)
+    V = Vs["ABD"]; le = cy_likit_esik(V, "ABD", K); evp = EV[EV.pazar == "ABD"].set_index("sembol")
+    args = [("ABD", s_, d, evp.loc[s_].to_dict(), le, K, None, None) for s_, d in V.items() if s_ in evp.index]
+    import multiprocessing as mp
+    with mp.get_context("fork").Pool(max(1, A.is_parcacigi)) as hv:
+        son = [x for x in hv.imap_unordered(cy_v12_hisse, args, chunksize=8) if x is not None]
+    P = pd.concat([r["panel"].assign(sembol=r["sembol"]) for r in son if len(r["panel"])], ignore_index=True)
+    P["tarih"] = pd.to_datetime(P.tarih).astype("datetime64[ns]"); P["agirlik"] = P.sembol.map(evp.agirlik).fillna(1.0).astype(np.float32); P["kaynak"] = P.sembol.map(evp.kaynak)
+    sek = cy_sektor(A, EV); P["sektor"] = P.sembol.map(sek).fillna("bilinmiyor")
+    P["vd"] = np.minimum((P.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
+    P["lt"] = np.minimum((P.groupby("tarih").log_dv20.rank(pct=True) * 3).fillna(1).astype(int), 2).astype(np.int8)
+    ww = P.agirlik.where(P.y.notna()); grp = [P.tarih, P.vd]
+    P["e_y"] = ((P.y * ww).groupby(grp).transform("sum") / ww.groupby(grp).transform("sum")).astype(np.float32)
+    P["e_net"] = ((P.net * ww).groupby(grp).transform("sum") / ww.groupby(grp).transform("sum")).astype(np.float32)
+    En = K.get("_endeks", pd.DataFrame())
+    if isinstance(En, pd.DataFrame) and "SPY" in En:
+        sp = En["SPY"].dropna(); boga = (sp > sp.rolling(200).mean()).reindex(P.tarih.values, method="ffill").to_numpy(); P["rejim"] = np.where(boga, "BOĞA", "AYI")
+    else:
+        P["rejim"] = "bilinmiyor"
+    Hs = {}
+    for r in son:                                                            # tam seri (tarih, kapanis) + likit panel etiketi (ptarih, py)
+        d = V[r["sembol"]]; pn = r["panel"]
+        Hs[r["sembol"]] = {"tarih": d.index.to_numpy().astype("datetime64[ns]"), "kapanis": d.Close.to_numpy(float),
+                           "ptarih": pd.to_datetime(pn.tarih).to_numpy().astype("datetime64[ns]"), "py": pn.y.to_numpy(float)}
+    cylog.info("v1.3 panel %d satır, %d hisse (%ds)", len(P), P.sembol.nunique(), time.time() - t0)
+    # günlük
+    gy = gunluk_yol or os.path.join(A.veri, "analist", "yahoo_grades.pkl")
+    if not os.path.exists(gy):
+        raise FileNotFoundError(f"analist günlüğü yok: {gy}")
+    G = cy_v13_gunluk_yukle(gy, V13); EVT = pd.read_csv(os.path.join(A.cikti, "K51_EVREN_PIT.csv")) if os.path.exists(os.path.join(A.cikti, "K51_EVREN_PIT.csv")) else EV[EV.pazar == "ABD"].rename(columns={"kaynak": "kaynak"})
+    KAP = cy_v13_kapsam(G, EVT, P); KAP.to_csv(os.path.join(A.cikti, "K51_ANALIST_VERI_KAPSAMI.csv"), index=False)
+    cylog.info("v1.3 günlük %d kayıt, %d hisse", len(G), G.sembol.nunique() if len(G) else 0)
+    # olay özellikleri: P1, P2 ve genel (ÇEK dışı) örneklem (G3 / G4 için her 5. likit gün)
+    rng_g = np.random.default_rng(V13["tohum"]); genel = P[~P.cek_ham & ~P.P1 & ~P.P2]; genel = genel[rng_g.random(len(genel)) < min(1.0, 60000 / max(len(genel), 1))]
+    olaylar = pd.concat([P[P.P1].assign(iz="P1"), P[P.P2].assign(iz="P2"), genel.assign(iz="YOK")], ignore_index=True)
+    F = cy_v13_ozellik(olaylar[["sembol", "tarih", "i"]], G, Hs, V13); X = pd.concat([olaylar.reset_index(drop=True), F.drop(columns=["sembol", "tarih", "i"])], axis=1)
+    X["grup"] = np.where(X.iz != "YOK", np.where(X.teyit, "G1", np.where(X.kayit_var, "G2a", "G2b")), np.where(X.teyit, "G3", np.where(X.kayit_var, "G4a", "G4b")))
+    X["donem"] = ""
+    for dn, a, b in V13["donem"]:
+        X.loc[(X.tarih >= a) & (X.tarih <= b), "donem"] = dn
+    kol = ["iz", "grup", "sembol", "tarih", "i", "donem", "rejim", "kaynak", "sektor", "vd", "lt", "dd250", "r60", "log_dv20", "y", "net", "e_y", "e_net", "agirlik", "kayit_var",
+           "n_kayit", "n_yukari", "n_asagi", "n_baslangic_al", "n_hedef_yukari", "n_hedef_asagi", "hedef_degisim_ort", "olumlu", "olumsuz", "kurum_olumlu", "kurum_toplam",
+           "genislik_oran", "tazelik_gun", "kurum_dogruluk", "kapsama_365", "olumlu_sonra_pay", "teyit", "ters_teyit", "teyit_turu"]
+    X[X.iz != "YOK"][kol].to_csv(os.path.join(A.cikti, "K51_ANALIST_REVIZYONLARI.csv.gz"), index=False)
+    # dört grup tablosu
+    G4 = []
+    for (iz, grup, dn), g in X.groupby(["iz", "grup", "donem"]):
+        w = g.agirlik.to_numpy(float)
+        G4.append({"iz": iz, "grup": grup, "donem": dn, "n": len(g), "hisse": g.sembol.nunique(), "isabet": float(np.average(g.y, weights=w)), "taban_e_y": float(np.average(g.e_y, weights=w)),
+                   "taban_ayarli": float(np.average(g.y - g.e_y, weights=w)), "net": float(np.average(g.net, weights=w)), "net_taban": float(np.average(g.e_net, weights=w)),
+                   "kapsama_365_ort": float(g.kapsama_365.mean()), "log_dv20_ort": float(g.log_dv20.mean()), "dd250_ort": float(g.dd250.mean()), "r60_ort": float(g.r60.mean()),
+                   "boga_pay": float((g.rejim == "BOĞA").mean()), "V_ABD_pay": float((g.kaynak == "V_ABD").mean()), "en_buyuk_sektor_pay": float(g.sektor.value_counts(normalize=True).iloc[0]) if len(g) else np.nan})
+    G4 = pd.DataFrame(G4); G4.to_csv(os.path.join(A.cikti, "K51_GRAFIK_ANALIST_4GRUP.csv"), index=False)
+    # hipotez testleri
+    T = []; p23 = {}
+    def test(kod, ad, Aset, Bset, hucre="tum"):
+        kar = []
+        for dn, a, b in V13["donem"]:
+            h = cy_v13_fark(Aset[(Aset.tarih >= a) & (Aset.tarih <= b)], Bset[(Bset.tarih >= a) & (Bset.tarih <= b)], V13, rng); kr = cy_v13_karar(h, V13) if "delta" in h else "YETERSİZ ÖRNEKLEM"
+            T.append({"kod": kod, "hipotez": ad, "hucre": hucre, "donem": dn, **h, "karar_hucre": kr}); kar.append(kr)
+        h23 = cy_v13_fark(Aset[Aset.tarih >= "2023-01-01"], Bset[Bset.tarih >= "2023-01-01"], V13, rng); p23[(kod, hucre)] = h23.get("p", np.nan)
+        T.append({"kod": kod, "hipotez": ad, "hucre": hucre, "donem": "2023-26 (Holm için)", **h23, "karar_hucre": cy_v13_karar(h23, V13) if "delta" in h23 else "YETERSİZ ÖRNEKLEM"})
+        son_k = "YETERSİZ ÖRNEKLEM" if "YETERSİZ ÖRNEKLEM" in kar else ("DESTEKLENİYOR (KEŞİFSEL; 2023-26 bağımsız değil)" if all(k_ == "TUTAR" for k_ in kar) else ("DESTEKLENMİYOR (TERS YÖN)" if "TERS YÖN" in kar else "DESTEKLENMİYOR"))
+        T.append({"kod": kod, "hipotez": ad, "hucre": hucre, "donem": "KARAR", "karar_hucre": son_k, "donem_kararlari": " | ".join(f"{d_[0]}: {k_}" for d_, k_ in zip(V13["donem"], kar))})
+        return son_k
+    for iz in ("P1", "P2"):
+        Xi = X[X.iz == iz]; G1 = Xi[Xi.grup == "G1"]; G2a = Xi[Xi.grup == "G2a"]
+        h0 = test(f"H0-{iz}", f"{iz}: yeni olumlu revizyon (G1) vs analist verisi var, teyit yok (G2a)", G1, G2a)
+        test(f"H0b-{iz}", f"{iz}: G1 vs G2b (veri yok; bilgi, karışık nedensellik)", G1, Xi[Xi.grup == "G2b"])
+        test(f"H2-{iz}", f"{iz}: yalnız tavsiye teyidi vs yalnız hedef fiyat teyidi", G1[G1.teyit_turu == "yalniz_tavsiye"], G1[G1.teyit_turu == "yalniz_hedef"])
+        test(f"H3-{iz}", f"{iz}: >= 2 farklı kurumdan teyit vs tek kurum", G1[G1.kurum_olumlu >= 2], G1[G1.kurum_olumlu == 1])
+        test(f"H4-{iz}", f"{iz}: olumlu revizyon fiyat hareketinden ÖNCE (sonra payı 0) vs SONRA (sonra payı 1)", G1[G1.olumlu_sonra_pay == 0], G1[G1.olumlu_sonra_pay == 1])
+        for rj in ("AYI", "BOĞA"):
+            test(f"H6-{iz}", f"{iz}: G1 vs G2a, rejim {rj}", G1[G1.rejim == rj], G2a[G2a.rejim == rj], hucre=rj)
+        test(f"TERS-{iz}", f"{iz}: olumsuz teyit (bilgi) vs G2a", Xi[Xi.ters_teyit & Xi.kayit_var], G2a)
+        dm = G1.kurum_dogruluk.median()
+        test(f"DOG-{iz}", f"{iz}: kurum geçmiş doğruluğu üst yarı vs alt yarı (bilgi)", G1[G1.kurum_dogruluk > dm], G1[G1.kurum_dogruluk <= dm])
+        # H5: eşleşmiş G2a (v1.2 eşleştirme + kapsama üçte biri)
+        G1m = G1.copy(); G2m = G2a.copy(); kt = pd.qcut(Xi.kapsama_365.rank(method="first"), 3, labels=False)
+        G1m["imza_h"] = kt.loc[G1m.index].astype(int); G2m["imza_h"] = kt.loc[G2m.index].astype(int); G1m["trend"] = Xi.loc[G1m.index, "trend"]; G2m["trend"] = Xi.loc[G2m.index, "trend"]
+        G1m["ar20"] = Xi.loc[G1m.index, "ar20"]; G2m["ar20"] = Xi.loc[G2m.index, "ar20"]; G1m["vol60"] = Xi.loc[G1m.index, "vol60"]; G2m["vol60"] = Xi.loc[G2m.index, "vol60"]
+        M5 = cy_v12_eslestir(P, G1m, G2m, K, V13["k_es"], V13["gun_tol"], rng, es_imza=True); G1e = pd.concat([G1m, M5], axis=1); G1e = G1e[G1e.kontrol_n > 0]
+        kar5 = []
+        for dn, a, b in V13["donem"]:
+            D = G1e[(G1e.tarih >= a) & (G1e.tarih <= b)]
+            if len(D) < V13["n_min"]:
+                T.append({"kod": f"H5-{iz}", "hipotez": f"{iz}: G1 - eşleşmiş G2a (kapsama, sektör, oynaklık, likidite, düşüş, trend)", "hucre": "tum", "donem": dn, "n_a": len(D), "karar_hucre": "YETERSİZ ÖRNEKLEM"}); kar5.append("YETERSİZ ÖRNEKLEM"); continue
+            h = cy_v12_hucre(D, K, rng); kr = cy_v12_karar(h, K)
+            T.append({"kod": f"H5-{iz}", "hipotez": f"{iz}: G1 - eşleşmiş G2a (kapsama, sektör, oynaklık, likidite, düşüş, trend)", "hucre": "tum", "donem": dn, "n_a": h["n"], "delta": h["fark"], "delta_alt": h["fark_alt"], "delta_ust": h["fark_ust"],
+                      "net_fark": h["net_fark"], "p": h["p"], "karar_hucre": kr, "eslesen_pay": float(len(G1e) / max(len(G1m), 1))}); kar5.append(kr)
+        h5 = cy_v12_hucre(G1e[G1e.tarih >= "2023-01-01"], K, rng); p23[(f"H5-{iz}", "tum")] = h5.get("p", np.nan)
+        T.append({"kod": f"H5-{iz}", "hipotez": f"{iz}: G1 - eşleşmiş G2a", "hucre": "tum", "donem": "KARAR", "karar_hucre": ("H5 DESTEKLENİYOR (katkı eşleşince kayboluyor)" if (h0.startswith("DESTEKLENİYOR") and not all(k_ == "TUTAR" for k_ in kar5)) else ("H5 DESTEKLENMİYOR (eşleşince de tutuyor)" if all(k_ == "TUTAR" for k_ in kar5) else "UYGULANAMAZ (H0 desteklenmiyor)")),
+                  "donem_kararlari": " | ".join(f"{d_[0]}: {k_}" for d_, k_ in zip(V13["donem"], kar5))})
+        # H4 zamanlama payı
+        g1 = G1[G1.olumlu_sonra_pay.notna()]
+        T.append({"kod": f"H4-{iz}", "hipotez": f"{iz}: W'deki olumlu revizyonların pencere dibinden >= %10 yükseliş SONRASI gelen payı", "hucre": "zamanlama", "donem": "hepsi", "n_a": len(g1),
+                  "delta": float(g1.olumlu_sonra_pay.mean()) if len(g1) else np.nan, "karar_hucre": ("H4 DESTEKLENİYOR (çoğu sonra, H0 desteklenmiyor)" if (len(g1) and g1.olumlu_sonra_pay.mean() >= 0.5 and not h0.startswith("DESTEKLENİYOR")) else "H4 DESTEKLENMİYOR")})
+    Td = pd.DataFrame(T)
+    # Holm: aile = ölçülebilen hipotez hücreleri (H0, H2, H3, H4, H5, H6), P1 ve P2 ayrı aile
+    for iz in ("P1", "P2"):
+        pl = {k_: (v if np.isfinite(v) else 1.0) for k_, v in p23.items() if k_[0].endswith(iz) and k_[0].split("-")[0] in ("H0", "H2", "H3", "H4", "H5", "H6")}
+        sr = sorted(pl.items(), key=lambda x: x[1]); m = len(sr); cum = 0.0
+        for r_, (k_, p) in enumerate(sr):
+            cum = max(cum, (m - r_) * p); Td.loc[(Td.kod == k_[0]) & (Td.hucre == k_[1]), "holm_p_2023_26"] = min(1.0, cum)
+    Td["holm_gecer"] = Td.holm_p_2023_26 < 0.05
+    Td.to_csv(os.path.join(A.cikti, "K51_ANALIST_EK_KATKI_TESTI.csv"), index=False)
+    # kırılganlık: en iyi 20 hisse çıkarma (H0-P1), yıl, kaynak
+    KR = []
+    for iz in ("P1", "P2"):
+        Xi = X[X.iz == iz]; G1 = Xi[Xi.grup == "G1"]; G2a = Xi[Xi.grup == "G2a"]
+        if len(G1) >= 30:
+            kat = (G1.y - G1.e_y).groupby(G1.sembol).sum().sort_values(ascending=False); top = set(kat.head(20).index)
+            for dn, a, b in V13["donem"]:
+                h = cy_v13_fark(G1[~G1.sembol.isin(top) & (G1.tarih >= a) & (G1.tarih <= b)], G2a[(G2a.tarih >= a) & (G2a.tarih <= b)], V13, rng)
+                KR.append({"iz": iz, "kirilim": "en_iyi_20_cikarildi", "deger": dn, **{k_: h.get(k_) for k_ in ("n_a", "n_b", "delta", "delta_alt", "delta_ust", "net_fark")}})
+        for yl, a, b in V13["yillar"]:
+            h = cy_v13_fark(G1[(G1.tarih >= a) & (G1.tarih <= b)], G2a[(G2a.tarih >= a) & (G2a.tarih <= b)], V13, rng)
+            KR.append({"iz": iz, "kirilim": "yil", "deger": f"{yl}{' (kısmi)' if yl == 2026 else ''}", **{k_: h.get(k_) for k_ in ("n_a", "n_b", "delta", "delta_alt", "delta_ust", "net_fark")}})
+        for ky in ("V_ABD", "K34_yahoo", "K34_tiingo"):
+            h = cy_v13_fark(G1[G1.kaynak == ky], G2a[G2a.kaynak == ky], V13, rng)
+            KR.append({"iz": iz, "kirilim": "kaynak", "deger": ky, **{k_: h.get(k_) for k_ in ("n_a", "n_b", "delta", "delta_alt", "delta_ust", "net_fark")}})
+    KRd = pd.DataFrame(KR)
+    R = {"G": G, "KAP": KAP, "X": X, "G4": G4, "T": Td, "KR": KRd, "sure_dk": round((time.time() - t0) / 60, 1), "panel_n": int(len(P)), "hisse": int(P.sembol.nunique())}
+    cy_v13_yaz(R, A, K); return R
+
+
+def cy_v13_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
+    """K51_ANALIST_TARIHSEL_VERI_DENETIMI.md ve K51_GRAFIK_ANALIST_ARASTIRMA.md."""
+    import hashlib, subprocess
+    f = lambda x, p=3: ("" if x is None or (isinstance(x, float) and not np.isfinite(x)) else (f"{x:+.{p}f}" if isinstance(x, float) else str(x)))
+    def tablo(D: pd.DataFrame, kol: List[str]) -> List[str]:
+        kol = [c for c in kol if c in D.columns]; L = ["| " + " | ".join(kol) + " |", "|" + "---|" * len(kol)]
+        for r in D[kol].itertuples(index=False):
+            L.append("| " + " | ".join((f(v) if isinstance(v, float) else str(v)) for v in r) + " |")
+        return L
+    G, KAP, X, G4, T, KR = R["G"], R["KAP"], R["X"], R["G4"], R["T"], R["KR"]; V13 = K["_v13"]
+    L = ["# K52 — ANALİST VERİSİ TARİHSEL DENETİMİ (v1.3, ön kayıt c33a10e)", "", "Kaynak: Yahoo Finance analist not günlüğü (yfinance `upgrades_downgrades`), çekim 29 Ekim 2026. Ücretsiz; EPS revizyonu, gerekçe, analist kişi kimliği, rapor kimliği YOK.", "",
+         "## Kapsama (kaynak grubuna göre)", ""] + tablo(KAP[KAP.boyut == "kaynak"], ["deger", "hisse", "analist_kaydi_olan_hisse", "kapsama_oran", "kayit"])
+    L += ["", "## Yıl yıl kayıt, zaman damgası ve alan doluluğu", ""] + tablo(KAP[KAP.boyut == "yil"], ["deger", "hisse", "kayit", "saat_var_oran", "hedef_var_oran", "eski_hedef_var_oran", "eski_tavsiye_var_oran", "olumlu_oran", "olumsuz_oran"])
+    L += ["", "## Alanlar", ""] + tablo(KAP[KAP.boyut == "alan"], ["deger", "kaynak", "kayit", "eksik_oran", "baslangic", "bitis"])
+    ol = KAP[KAP.boyut == "olay"]
+    L += ["", "## Zaman sızıntısı ve güvenilirlik", "",
+          "- Kural: olay günü d için yalnız tarih <= d-1 kayıtları (saat dilimi belgelenmediğinden aynı gün kayıtları kullanılmadı). Giriş d+1 açılışı. Hedef fiyatlar kayıt anındaki değer; sonraki güncelleme kullanılmadı. Aynı kurum aynı tarih tek kayıt.",
+          "- Zaman damgası: kayıtların saat bilgisi olan payı yıl tablosundadır; saat 00:00 olan kayıtların gün içi sırası bilinmez.",
+          "- Tarihsel sürüm: Yahoo günlüğü olay kaydıdır; geriye dönük yeniden yazılıp yazılmadığı doğrulanamaz. Bu yüzden sonuçlar 'sağlayıcı günlüğü doğru kabul edilerek' okunmalıdır.",
+          f"- Hayatta kalma / seçilim: P1 ve P2 olaylarında sembolün d'den önce kaydı olan pay {f(float(ol.kapsama_oran.iloc[0])) if len(ol) else ''}; kaydı olmayanlar G2b / G4b alt grubudur, olumsuz görüşle karıştırılmadı. Borsadan çıkmış şirketlerde veri çoğunlukla yoktur (yukarıdaki kaynak tablosu).",
+          "- Ölçülemeyen hipotez: H1 (EPS revizyonu) — alan yok; karar verilmedi.", ""]
+    open(os.path.join(A.cikti, "K51_ANALIST_TARIHSEL_VERI_DENETIMI.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
+    kok = os.path.dirname(os.path.abspath(globals().get("__file__", "COL_YOLU_ABD.py"))) or "."
+    try:
+        commit = subprocess.run(["git", "-C", kok, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
+    except Exception:
+        commit = "?"
+    L = ["# K52 — GRAFİK İZİ + ANALİST REVİZYONLARI ARAŞTIRMASI (v1.3, ön kayıt c33a10e)", "",
+         "K51 kararı (İZ DEĞİL) ve grafik kuralları değişmedi. 2023-26 bağımsız test değildir; üç dönemde tutma şartı sağlamlık kontrolüdür. AL sinyali yok.", "",
+         f"- Veri: Yahoo not günlüğü {len(G)} kayıt, {G.sembol.nunique() if len(G) else 0} hisse; panel {R['panel_n']} likit hisse-gün, {R['hisse']} hisse; süre {R['sure_dk']} dk; kod {CY_SURUM}, commit {commit}.",
+         "- Teyit = olay öncesi 20 işlem günü (tarih <= d-1) içinde olumlu revizyon (tavsiye yükseltme, hedef fiyat yükseltme ya da alım notuyla başlangıç) sayısı >= 1 ve olumsuzdan çok.",
+         "- Birincil ölçüt Δ = ortalama(y - e_y | G1) - ortalama(y - e_y | G2a); y = +%20 / -%10 / 60 gün üst bariyer önce; e_y = K51 tabanı (aynı gün aynı oynaklık ondalığı). Koşullar: n >= 30, Δ >= +5 puan, ay kümeli alt uç > 0, net fark > 0, her dönemde.", "",
+         "## Dört grup", "", "G1 = iz + teyit; G2a = iz + analist verisi var, teyit yok; G2b = iz + veri yok; G3 / G4a / G4b = iz yok (ÇEK dışı likit günlerden rastgele örnek). 'isabet' ağırlıklı; 'taban_ayarli' = isabet - K51 tabanı.", ""]
+    L += tablo(G4, ["iz", "grup", "donem", "n", "hisse", "isabet", "taban_e_y", "taban_ayarli", "net", "kapsama_365_ort", "log_dv20_ort", "dd250_ort", "r60_ort", "boga_pay", "V_ABD_pay"])
+    L += ["", "## Hipotez kararları", "", "| Kod | Hipotez | Hücre | Karar | Dönem kararları |", "|---|---|---|---|---|"]
+    for r in T[T.donem == "KARAR"].itertuples():
+        L.append(f"| {r.kod} | {r.hipotez} | {r.hucre} | **{r.karar_hucre}** | {getattr(r, 'donem_kararlari', '')} |")
+    L += ["", "H1 (EPS revizyonu): ÖLÇÜLEMEZ, karar yok. H4 zamanlama satırları aşağıdaki tabloda ('zamanlama' hücresi).", "", "## Hücreler (Δ, aralıklar, net, p, Holm)", ""]
+    L += tablo(T[T.donem != "KARAR"], ["kod", "hucre", "donem", "n_a", "n_b", "isabet_a", "isabet_b", "delta", "delta_alt", "delta_ust", "delta_alt_hisse_ceyrek", "delta_ust_hisse_ceyrek", "ham_fark", "net_fark", "net_fark_alt", "p", "holm_p_2023_26", "karar_hucre", "eslesen_pay"])
+    L += ["", "## Kırılganlık (G1 - G2a)", ""] + tablo(KR, ["iz", "kirilim", "deger", "n_a", "n_b", "delta", "delta_alt", "delta_ust", "net_fark"])
+    L += ["", "## Olumsuz bulgular ve sınırlar", "", "- Yalnız bugün Yahoo'da bulunan hisselerde veri var; G2b / G4b büyük ölçüde borsadan çıkmış ya da takip edilmeyen hisselerdir.",
+          "- Saat dilimi belirsiz; aynı gün kayıtları atıldığı için 'teyit' bazı gerçek teyitleri kaçırır (muhafazakâr).", "- Hedef fiyat yükseltmeleri çoğunlukla fiyat hareketini izler (H4 payı tabloda).",
+          "- Kurum doğruluğu yalnız 'up' kayıtlarının geçmiş isabetiyle ölçüldü; kişi kimliği yok.", "", "## Yeniden üretim", "",
+          f"- `R = cy_v13_calistir(gunluk_yol='.../yahoo_grades.pkl')`; günlük çekimi `yfinance.Ticker(s).upgrades_downgrades` ile (29 Ekim 2026). Tohum {V13['tohum']}, bootstrap {V13['boot']}. Çıktılar: K51_ANALIST_VERI_KAPSAMI.csv, K51_ANALIST_REVIZYONLARI.csv.gz, K51_GRAFIK_ANALIST_4GRUP.csv, K51_ANALIST_EK_KATKI_TESTI.csv, bu belge ve K51_ANALIST_TARIHSEL_VERI_DENETIMI.md."]
+    open(os.path.join(A.cikti, "K51_GRAFIK_ANALIST_ARASTIRMA.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 
 
 def _cakisma_kontrol_cy(_once=_CK_ONCE_CY, _dosya="COL_YOLU_ABD.py"):

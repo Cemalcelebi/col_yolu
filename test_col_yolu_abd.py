@@ -157,6 +157,41 @@ def sina():
                 hata.append("17) eski kodda cy_hisse_isle / cy_birlestir yok")
         except Exception as ex:
             hata.append(f"17) eski kod yüklenemedi: {ex}")
+    # ---------------- v1.3 (K52 analist revizyonları)
+    # 18) günlük yükleme: aynı kurum aynı tarih tek kayıt, kurum adı normalize, olumlu / olumsuz bayrakları
+    import pickle, tempfile
+    g18 = pd.DataFrame({"Firm": ["JP Morgan & Co", "JPMorgan", "Barclays", "Citi", "UBS"], "ToGrade": ["Overweight", "Overweight", "Hold", "Buy", "Sell"],
+                        "FromGrade": ["Neutral", "Neutral", "Buy", "", "Hold"], "Action": ["up", "up", "down", "init", "main"],
+                        "priceTargetAction": ["Raises", "Raises", "Lowers", "Announces", "Maintains"], "currentPriceTarget": [10.0, 10.0, 5.0, 12.0, 0.0], "priorPriceTarget": [8.0, 8.0, 7.0, 0.0, 0.0]},
+                       index=pd.DatetimeIndex(["2024-03-01 09:30", "2024-03-01 11:00", "2024-03-05", "2024-03-06", "2024-03-07"], name="GradeDate"))
+    y18 = os.path.join(tempfile.gettempdir(), "cy_test_grades.pkl"); pickle.dump({"AAA": g18, "BBB": None}, open(y18, "wb"))
+    G18 = C.cy_v13_gunluk_yukle(y18)
+    if not (len(G18) == 4 and G18.olumlu.tolist() == [True, False, True, False] and G18.olumsuz.tolist() == [False, True, False, False]
+            and G18.kurum_n.iloc[0] == "JPMORGAN" and G18.hedef.isna().iloc[3] and abs(G18.hedef_degisim.iloc[0] - 0.25) < 1e-9):
+        hata.append(f"18) v1.3 günlük yükleme yanlış: n={len(G18)} olumlu={G18.olumlu.tolist()} kurum={G18.kurum_n.tolist()}")
+    # 19) sızıntı: olay günü d için yalnız tarih <= d-1 kayıtları; aynı gün ve sonrası sayılmaz; kaydı olmayan sembolde kayit_var False
+    t19 = pd.bdate_range("2024-01-01", periods=60); h19 = {"tarih": t19.to_numpy().astype("datetime64[ns]"), "kapanis": np.linspace(10, 12, 60),
+                                                          "ptarih": t19.to_numpy().astype("datetime64[ns]"), "py": np.ones(60)}
+    G19 = C.cy_v13_gunluk_yukle(y18); G19 = pd.concat([G19.assign(sembol="AAA", tarih=t19[29], zaman=t19[29]), G19.assign(sembol="AAA", tarih=t19[30], zaman=t19[30]),
+                                                       G19.assign(sembol="AAA", tarih=t19[31], zaman=t19[31])], ignore_index=True)
+    G19 = G19[G19.kurum_n.isin(["JPMORGAN", "BARCLAYS"])].drop_duplicates(["sembol", "kurum_n", "tarih"])   # her tarihte 1 olumlu (JPM) + 1 olumsuz (Barclays)
+    E19 = pd.DataFrame({"sembol": ["AAA", "AAA", "ZZZ"], "tarih": [t19[30], t19[31], t19[30]], "i": [30, 31, 30]})
+    F19 = C.cy_v13_ozellik(E19, G19, {"AAA": h19, "ZZZ": h19})
+    if not (F19.n_kayit.tolist() == [2, 4, 0] and F19.kayit_var.tolist() == [True, True, False] and (not F19.teyit.any()) and F19.olumlu.tolist() == [1, 2, 0]):
+        hata.append(f"19) v1.3 sızıntı kuralı yanlış: n_kayit={F19.n_kayit.tolist()} kayit_var={F19.kayit_var.tolist()} olumlu={F19.olumlu.tolist()}")
+    # 20) teyit kuralı ve grup ayrımı: olumlu >= 1 ve olumlu > olumsuz -> teyit; veri var teyit yok -> G2a; veri yok -> G2b
+    G20 = G19[G19.kurum_n == "JPMORGAN"]; F20 = C.cy_v13_ozellik(E19, G20, {"AAA": h19, "ZZZ": h19})
+    grp20 = np.where(F20.teyit, "G1", np.where(F20.kayit_var, "G2a", "G2b")).tolist(); grp19 = np.where(F19.teyit, "G1", np.where(F19.kayit_var, "G2a", "G2b")).tolist()
+    if not (grp20 == ["G1", "G1", "G2b"] and grp19 == ["G2a", "G2a", "G2b"] and F20.teyit_turu.tolist()[0] == "ikisi" and F20.tazelik_gun.tolist()[0] == 1):
+        hata.append(f"20) v1.3 teyit / grup yanlış: {grp20} {grp19} {F20.teyit_turu.tolist()} {F20.tazelik_gun.tolist()}")
+    # 21) hücre hesabı: Δ = ort(y - e_y | A) - ort(y - e_y | B) ve karar
+    K13 = C.CY_V13; tt = pd.bdate_range("2023-01-02", periods=40, freq="3B")
+    A21 = pd.DataFrame({"tarih": tt, "sembol": [f"S{i % 7}" for i in range(40)], "y": [1.0, 0.0] * 20, "e_y": 0.25, "net": 0.03, "e_net": 0.01, "agirlik": 1.0})
+    B21 = pd.DataFrame({"tarih": tt, "sembol": [f"T{i % 7}" for i in range(40)], "y": 0.25, "e_y": 0.25, "net": 0.01, "e_net": 0.01, "agirlik": 1.0})
+    h21 = C.cy_v13_fark(A21, B21, K13, np.random.default_rng(1))
+    if not (abs(h21["delta"] - 0.25) < 1e-9 and abs(h21["net_fark"] - 0.02) < 1e-9 and h21["n_a"] == 40 and C.cy_v13_karar(h21, K13) == "TUTAR"
+            and C.cy_v13_karar({"n_a": 10, "n_b": 40, "delta": 0.3, "delta_alt": 0.1, "net_fark": 0.1}, K13) == "YETERSİZ ÖRNEKLEM"):
+        hata.append(f"21) v1.3 hücre hesabı yanlış: {h21.get('delta')} {h21.get('net_fark')}")
     return hata
 
 
@@ -164,4 +199,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 17/17 OK")
+    print("test_col_yolu_abd: 21/21 OK")
