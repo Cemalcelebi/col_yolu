@@ -2151,11 +2151,17 @@ def cy_v12_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY) -> Dict[
 def cy_v12_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
     """K51_VERI_DENETIMI.md, K51_KIRILGANLIK.md, K51_TEKRAR_URETIM.md."""
     import hashlib, subprocess
-    f = lambda x, p=3: ("" if x is None or (isinstance(x, float) and not np.isfinite(x)) else (f"{x:+.{p}f}" if isinstance(x, float) else str(x)))
+    TAM = {"n", "n_a", "n_b", "hisse", "hisse_a", "hisse_b", "analist_kaydi_olan_hisse", "kayit", "deger"}
+    def f(x, p=3, tam=False):
+        if x is None or (isinstance(x, float) and not np.isfinite(x)):
+            return ""
+        if isinstance(x, (float, np.floating)):
+            return str(int(round(x))) if tam else f"{x:+.{p}f}"
+        return str(x)
     def tablo(D: pd.DataFrame, kol: List[str]) -> List[str]:
         kol = [c for c in kol if c in D.columns]; L = ["| " + " | ".join(kol) + " |", "|" + "---|" * len(kol)]
         for r in D[kol].itertuples(index=False):
-            L.append("| " + " | ".join((f(v) if isinstance(v, float) else str(v)) for v in r) + " |")
+            L.append("| " + " | ".join(f(v, tam=(c in TAM)) for c, v in zip(kol, r)) + " |")
         return L
     EVT = R["EVT"]; V12 = K["_v12"]
     L = ["# K51 — VERİ BÜTÜNLÜĞÜ DENETİMİ (v1.2, ön kayıt 8e99902)", "", "K51 kararı değişmez. Bu belge veri evreninin sınırlarını belgeler.", "",
@@ -2290,6 +2296,10 @@ def cy_v13_kapsam(G: pd.DataFrame, EVT: pd.DataFrame, P: pd.DataFrame) -> pd.Dat
             rows.append({"boyut": "alan", "deger": ad, "kaynak": "Yahoo not günlüğü", "kayit": int(len(G)), "eksik_oran": eksik, "baslangic": str(G.tarih.min().date()), "bitis": str(G.tarih.max().date())})
         for ad in ("EPS / kâr tahmini revizyonu", "rapor gerekçesi ve riskler", "analist kişi kimliği", "rapor kimliği / tarihsel sürüm"):
             rows.append({"boyut": "alan", "deger": ad, "kaynak": "YOK (Yahoo günlüğünde bulunmuyor)", "eksik_oran": 1.0})
+        sa = G.zaman.dt.hour
+        rows.append({"boyut": "zaman", "deger": "saat dağılımı (UTC varsayımı): 00:00 payı / 10-16 payı / medyan saat", "kayit": int(len(G)),
+                     "eksik_oran": float((G.zaman == G.tarih).mean()), "kapsama_oran": float(sa.between(10, 16).mean()), "hisse": int(sa.median()),
+                     "saat_var_oran": float(G.saat_var.mean()), "olumlu_oran": float(G.tarih.dt.dayofweek.ge(5).mean())})
         pz = P[P.P1 | P.P2]
         rows.append({"boyut": "olay", "deger": "P1 / P2 olaylarında sembolün d'den önce kaydı olan pay", "kapsama_oran": float(pz.sembol.isin(var).mean()), "hisse": int(pz.sembol.nunique())})
     return pd.DataFrame(rows)
@@ -2431,6 +2441,7 @@ def cy_v13_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_y
     X["donem"] = ""
     for dn, a, b in V13["donem"]:
         X.loc[(X.tarih >= a) & (X.tarih <= b), "donem"] = dn
+    X = X[X.donem != ""].reset_index(drop=True)                               # dönem dışı (fon krizi kesiti sonrası) olaylar girmez
     kol = ["iz", "grup", "sembol", "tarih", "i", "donem", "rejim", "kaynak", "sektor", "vd", "lt", "dd250", "r60", "log_dv20", "y", "net", "e_y", "e_net", "agirlik", "kayit_var",
            "n_kayit", "n_yukari", "n_asagi", "n_baslangic_al", "n_hedef_yukari", "n_hedef_asagi", "hedef_degisim_ort", "olumlu", "olumsuz", "kurum_olumlu", "kurum_toplam",
            "genislik_oran", "tazelik_gun", "kurum_dogruluk", "kapsama_365", "olumlu_sonra_pay", "teyit", "ters_teyit", "teyit_turu"]
@@ -2520,11 +2531,17 @@ def cy_v13_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_y
 def cy_v13_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
     """K51_ANALIST_TARIHSEL_VERI_DENETIMI.md ve K51_GRAFIK_ANALIST_ARASTIRMA.md."""
     import hashlib, subprocess
-    f = lambda x, p=3: ("" if x is None or (isinstance(x, float) and not np.isfinite(x)) else (f"{x:+.{p}f}" if isinstance(x, float) else str(x)))
+    TAM = {"n", "n_a", "n_b", "hisse", "hisse_a", "hisse_b", "analist_kaydi_olan_hisse", "kayit", "deger"}
+    def f(x, p=3, tam=False):
+        if x is None or (isinstance(x, float) and not np.isfinite(x)):
+            return ""
+        if isinstance(x, (float, np.floating)):
+            return str(int(round(x))) if tam else f"{x:+.{p}f}"
+        return str(x)
     def tablo(D: pd.DataFrame, kol: List[str]) -> List[str]:
         kol = [c for c in kol if c in D.columns]; L = ["| " + " | ".join(kol) + " |", "|" + "---|" * len(kol)]
         for r in D[kol].itertuples(index=False):
-            L.append("| " + " | ".join((f(v) if isinstance(v, float) else str(v)) for v in r) + " |")
+            L.append("| " + " | ".join(f(v, tam=(c in TAM)) for c, v in zip(kol, r)) + " |")
         return L
     G, KAP, X, G4, T, KR = R["G"], R["KAP"], R["X"], R["G4"], R["T"], R["KR"]; V13 = K["_v13"]
     L = ["# K52 — ANALİST VERİSİ TARİHSEL DENETİMİ (v1.3, ön kayıt c33a10e)", "", "Kaynak: Yahoo Finance analist not günlüğü (yfinance `upgrades_downgrades`), çekim 29 Ekim 2026. Ücretsiz; EPS revizyonu, gerekçe, analist kişi kimliği, rapor kimliği YOK.", "",
@@ -2534,7 +2551,7 @@ def cy_v13_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
     ol = KAP[KAP.boyut == "olay"]
     L += ["", "## Zaman sızıntısı ve güvenilirlik", "",
           "- Kural: olay günü d için yalnız tarih <= d-1 kayıtları (saat dilimi belgelenmediğinden aynı gün kayıtları kullanılmadı). Giriş d+1 açılışı. Hedef fiyatlar kayıt anındaki değer; sonraki güncelleme kullanılmadı. Aynı kurum aynı tarih tek kayıt.",
-          "- Zaman damgası: kayıtların saat bilgisi olan payı yıl tablosundadır; saat 00:00 olan kayıtların gün içi sırası bilinmez.",
+          "- Zaman damgası: kayıtların saat bilgisi olan payı yıl tablosundadır; saat 00:00 olan kayıtların gün içi sırası bilinmez. Saat dağılımı 10-16 UTC'de yoğundur (ABD piyasa öncesi notları), bu yüzden damga UTC kabul edildi; aynı gün kayıtları zaten dışarıda.",
           "- Tarihsel sürüm: Yahoo günlüğü olay kaydıdır; geriye dönük yeniden yazılıp yazılmadığı doğrulanamaz. Bu yüzden sonuçlar 'sağlayıcı günlüğü doğru kabul edilerek' okunmalıdır.",
           f"- Hayatta kalma / seçilim: P1 ve P2 olaylarında sembolün d'den önce kaydı olan pay {f(float(ol.kapsama_oran.iloc[0])) if len(ol) else ''}; kaydı olmayanlar G2b / G4b alt grubudur, olumsuz görüşle karıştırılmadı. Borsadan çıkmış şirketlerde veri çoğunlukla yoktur (yukarıdaki kaynak tablosu).",
           "- Ölçülemeyen hipotez: H1 (EPS revizyonu) — alan yok; karar verilmedi.", ""]
@@ -2552,12 +2569,15 @@ def cy_v13_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
          "## Dört grup", "", "G1 = iz + teyit; G2a = iz + analist verisi var, teyit yok; G2b = iz + veri yok; G3 / G4a / G4b = iz yok (ÇEK dışı likit günlerden rastgele örnek). 'isabet' ağırlıklı; 'taban_ayarli' = isabet - K51 tabanı.", ""]
     L += tablo(G4, ["iz", "grup", "donem", "n", "hisse", "isabet", "taban_e_y", "taban_ayarli", "net", "kapsama_365_ort", "log_dv20_ort", "dd250_ort", "r60_ort", "boga_pay", "V_ABD_pay"])
     L += ["", "## Hipotez kararları", "", "| Kod | Hipotez | Hücre | Karar | Dönem kararları |", "|---|---|---|---|---|"]
-    for r in T[T.donem == "KARAR"].itertuples():
-        L.append(f"| {r.kod} | {r.hipotez} | {r.hucre} | **{r.karar_hucre}** | {getattr(r, 'donem_kararlari', '')} |")
-    L += ["", "H1 (EPS revizyonu): ÖLÇÜLEMEZ, karar yok. H4 zamanlama satırları aşağıdaki tabloda ('zamanlama' hücresi).", "", "## Hücreler (Δ, aralıklar, net, p, Holm)", ""]
+    for r in T[T.donem.isin(("KARAR", "hepsi"))].itertuples():
+        dk = getattr(r, "donem_kararlari", ""); dk = dk if isinstance(dk, str) else ""
+        ek = f"sonra gelen pay {r.delta:+.3f}, n {int(r.n_a)}" if r.hucre == "zamanlama" else dk
+        L.append(f"| {r.kod} | {r.hipotez} | {r.hucre} | **{r.karar_hucre}** | {ek} |")
+    L += ["", "H1 (EPS revizyonu): ÖLÇÜLEMEZ, karar yok. H4'ün zamanlama satırı ('zamanlama' hücresi) olumlu revizyonların pencere dibinden >= %10 yükseliş SONRASI gelen payıdır.", "", "## Hücreler (Δ, aralıklar, net, p, Holm)", ""]
     L += tablo(T[T.donem != "KARAR"], ["kod", "hucre", "donem", "n_a", "n_b", "isabet_a", "isabet_b", "delta", "delta_alt", "delta_ust", "delta_alt_hisse_ceyrek", "delta_ust_hisse_ceyrek", "ham_fark", "net_fark", "net_fark_alt", "p", "holm_p_2023_26", "karar_hucre", "eslesen_pay"])
     L += ["", "## Kırılganlık (G1 - G2a)", ""] + tablo(KR, ["iz", "kirilim", "deger", "n_a", "n_b", "delta", "delta_alt", "delta_ust", "net_fark"])
-    L += ["", "## Olumsuz bulgular ve sınırlar", "", "- Yalnız bugün Yahoo'da bulunan hisselerde veri var; G2b / G4b büyük ölçüde borsadan çıkmış ya da takip edilmeyen hisselerdir.",
+    L += ["", "## Olumsuz bulgular ve sınırlar", "", "- Yalnız bugün Yahoo'da bulunan hisselerde veri var; G2b / G4b büyük ölçüde borsadan çıkmış ya da takip edilmeyen hisselerdir. G1 - G2b farkı (H0b) veri yokluğunun kendisiyle (hayatta kalma, küçüklük, takipsizlik) karışıktır; nedensel okunmaz.",
+          "- Dengesizlik: G1'in r60 (son 60 gün getirisi) ve kapsama ortalaması G2a'dan yüksektir (dört grup tablosu); teyit alan izler daha önce yükselmeye başlamış ve daha çok takip edilen hisselerdir. K51 tabanı bunu ayarlamaz; H5 eşleştirmesi bunun için konmuştu ama eş bulunan olay sayısı 30'un altında kaldı (aynı gün ±10, aynı oynaklık ondalığı, likidite üçte biri, sektör, trend, |dd250| <= 0,10 ve kapsama üçte biri şartı G2a havuzunda çok az aday bırakıyor). Bu yüzden H5 KARARSIZ kaldı; ham Δ zaten eşik altında olduğu için karar değişmez.",
           "- Saat dilimi belirsiz; aynı gün kayıtları atıldığı için 'teyit' bazı gerçek teyitleri kaçırır (muhafazakâr).", "- Hedef fiyat yükseltmeleri çoğunlukla fiyat hareketini izler (H4 payı tabloda).",
           "- Kurum doğruluğu yalnız 'up' kayıtlarının geçmiş isabetiyle ölçüldü; kişi kimliği yok.", "", "## Yeniden üretim", "",
           f"- `R = cy_v13_calistir(gunluk_yol='.../yahoo_grades.pkl')`; günlük çekimi `yfinance.Ticker(s).upgrades_downgrades` ile (29 Ekim 2026). Tohum {V13['tohum']}, bootstrap {V13['boot']}. Çıktılar: K51_ANALIST_VERI_KAPSAMI.csv, K51_ANALIST_REVIZYONLARI.csv.gz, K51_GRAFIK_ANALIST_4GRUP.csv, K51_ANALIST_EK_KATKI_TESTI.csv, bu belge ve K51_ANALIST_TARIHSEL_VERI_DENETIMI.md."]

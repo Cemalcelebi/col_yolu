@@ -832,6 +832,26 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "+6,4); batanlarda eksi; 2026 (kısmi) -4,3 [-7,5, -2,3] TERS YÖN; en iyi 20 hisse çıkınca 2024-26 +0,6; ilk 20 hisse farkın "
                "%89-139'u. Ders: sert düşüş + yataylaşmanın ~3 puanlık küçük, eşik altı, hayatta kalanlara bağlı etkisi var; küçük mum, hacim "
                "ve hacimli taban ek bilgi taşımıyor. İleri doğrulama: sinyal >= 01.09.2026 (fon krizi istisnası kalkınca), en erken Mart 2027."),
+    _ik_k("Ç135", "2026-10-29", "K52 GRAFİK İZİ + ANALİST REVİZYONLARI (v1.3): Yahoo analist not günlüğü ile K51 izlerine (P1, P2) olay öncesi 20 "
+          "işlem günü içindeki yeni olumlu revizyonun (tavsiye yükseltme / hedef fiyat yükseltme / alım notuyla başlangıç) ek bilgi katıp "
+          "katmadığı; dört grup (G1 iz + teyit, G2a veri var teyit yok, G2b veri yok, G3 / G4 iz yok), H0-H6, Holm, kırılganlık",
+          "COL_YOLU_ABD.py (cy_v13_calistir)", "Cemal'in 'K51 — grafik izi + analist revizyonları: yeni araştırma görevi' (29 Eki)",
+          "Keşif (ön kayıt commit c33a10e; birincil ölçüt Δ = ortalama(y - e_y | G1) - ortalama(y - e_y | G2a); koşullar n >= 30, Δ >= +5 puan, ay "
+          "kümeli alt uç > 0, net fark > 0, üç dönemde; AL sinyali yok; K51 kararı değişmez)", "IZ C", 2,
+          cikti="arastirma_cikti/col_yolu_abd/K51_ANALIST_EK_KATKI_TESTI.csv",
+          notu="K51 kararı korundu (İZ DEĞİL); analist revizyonu grafik izine EK BİLGİ KATMIYOR. VERİ: Yahoo not günlüğü 310.568 kayıt, 2.515 / "
+               "3.267 hisse (V_ABD %99, K34 Yahoo %75, Tiingo 'batan' %10; borsadan çıkanlarda yok); alanlar tarih-saat (UTC, 10-16 yoğun; "
+               "aynı gün kayıtları dışarıda), kurum, eski / yeni tavsiye, eylem, hedef fiyat eylemi ve değeri; EPS revizyonu, gerekçe, analist "
+               "kişi kimliği, rapor kimliği / tarihsel sürüm YOK (H1 ölçülemez). P1 / P2 olaylarında kaydı olan pay %94. SONUÇ: H0-P1 (n 178 / "
+               "122 / 197 vs 990 / 626 / 985) Δ +1,7 / +2,1 / -2,0 puan DESTEKLENMİYOR; H0-P2 (108 / 79 / 128 vs 377 / 320 / 493) +11,4 "
+               "[+1,7] / +5,5 [-7,7] / +2,0 [-5,1]: yalnız 2016-22 tutar, DESTEKLENMİYOR (Holm p 0,90). G1 - G2b (veri yok) P1 +10 puan "
+               "ama hayatta kalma / takipsizlikle karışık. H2 (tavsiye vs hedef) yetersiz / tutmaz; H3 (>= 2 kurum) TERS işaretli (-5 "
+               "puan); H4-P2: olumlu revizyonların %50,4'ü pencere dibinden >= %10 yükseliş SONRASI gelmiş ve H0 tutmuyor -> H4 "
+               "DESTEKLENİYOR (P1'de %38,6); H5 eşleşme n < 30 kararsız; H6 AYI yetersiz, BOĞA tutmaz; olumsuz teyit P1 2016-22 -5,7 TERS "
+               "YÖN; kurum geçmiş doğruluğu fark yaratmıyor. DENGESİZLİK: G1'in son 60 gün getirisi (+8) G2a'dan (+0,6) ve kapsaması "
+               "(15 vs 11,5 kayıt / yıl) yüksek: teyit alan izler zaten yükselmeye başlamış, takip edilen hisseler. KIRILGANLIK: en iyi "
+               "20 hisse çıkınca P1 eksi; 2026 kısmi P2 -8,9 ters; V_ABD'de P2 +7,3 [+0,9] (hayatta kalanlar). Ders: analist revizyonu "
+               "fiyatı izliyor, grafik izine bağımsız bilgi eklemiyor; sonraki adım analist verisi değil, ileri doğrulama."),
 ]
 
 
@@ -1234,11 +1254,24 @@ IK_GOREV: List[Dict[str, str]] = [
               "Tiingo 'batan' örnekleminin çoğu batan değil (51 batma benzeri, 171 satın alma, 153 kod yeniden kullanımı); duyarlılık senaryoları "
               "sonucu değiştirmiyor; P1 artısı yalnız bugün işlem görenlerde",
      "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
+    {"tarih": "2026-10-29", "istek": "K51 — grafik izi + analist revizyonları: yeni araştırma görevi (önce veri kaynağı ve tarihsel kapsam "
+                                     "denetimi; A-H değişkenleri ayrı; sızıntı kuralları; dört grup; H1-H6 ön kayıt; K51 ölçütü; altı çıktı; "
+                                     "K51 kararı değişmez; AL sinyali yok)",
+     "yapilan": "Ön kayıt K52_onkayit.md (c33a10e) sonuç görülmeden; Yahoo analist not günlüğü 3.267 sembol için çekildi (boş dönenler iki "
+                "kez yeniden denendi: 56 düzeldi, 752 kesin boş); COL_YOLU_ABD.py v1.3 (cy_v13_calistir: kapsama, pencere özellikleri, dört "
+                "grup, H0-H6, Holm, kırılganlık; test 21/21); koşu 3,6 dk; altı çıktı (K51_ANALIST_VERI_KAPSAMI.csv, "
+                "K51_ANALIST_REVIZYONLARI.csv.gz, K51_GRAFIK_ANALIST_4GRUP.csv, K51_ANALIST_EK_KATKI_TESTI.csv, "
+                "K51_ANALIST_TARIHSEL_VERI_DENETIMI.md, K51_GRAFIK_ANALIST_ARASTIRMA.md); IZ_KARNE Ç135; Drive OUTPUT",
+     "sonuc": "Analist revizyonu grafik izine ek bilgi katmıyor: H0-P1 +1,7 / +2,1 / -2,0 puan, H0-P2 +11,4 / +5,5 / +2,0 (yalnız 2016-22 "
+              "tutar); H2, H3, H5, H6 desteklenmiyor / yetersiz; H4 (revizyon fiyattan sonra geliyor) P2'de destekleniyor. EPS, gerekçe ve "
+              "tarihsel sürüm verisi yok; H1 ölçülemedi. K51 kararı korundu",
+     "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim: beş hipotez DESTEKLENMİYOR, K51 kararı korundu; H-A'da +3 puanlık eşik altı etki "
-    "(2016-22'de yok). Olası devam (Cemal'in kararı): (1) ileri doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo "
-    "kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut örneklemin çoğu batan değil), (3) ara.",
+    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim ve K52 analist revizyonu eki bitti: hepsi DESTEKLENMİYOR, K51 kararı korundu; H-A'da "
+    "+3 puanlık eşik altı etki (2016-22'de yok); analist revizyonu fiyatı izliyor, ek bilgi yok. Olası devam (Cemal'in kararı): (1) ileri "
+    "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
+    "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
