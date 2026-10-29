@@ -24,7 +24,7 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 
 ## Dosyalar
 - Üretim zinciri: `BASLAT.py` (tek satır başlatma) → `COL_v1.py` (segment + AL kuralı + `bugun_liste`) → `takip.py` (`gun()`, pozisyon takibi). Yardımcılar: `temel.py`, `fon_takip.py`, `onbellek.py`, `veri_koru.py`.
-- Ölçüm: `OLCUM.py`, `olcum_denetimi.py`, `zincir_denetimi.py`, `DENETIM.py`.
+- Ölçüm: `OLCUM.py`, `olcum_denetimi.py`, `zincir_denetimi.py`, `DENETIM.py`. ABD Çöl Yolu akademik araştırması (K51, 29 Ekim 2026): `COL_YOLU_ABD.py` (tek dosya, Colab; testi `test_col_yolu_abd.py`; çıktılar `arastirma_cikti/col_yolu_abd/` ve Drive `COLAB_VERILER/OUTPUT/COL_YOLU_ABD`).
 - Proje özeti: `COL_OZET.md` (kurallar, dosyalar, bütün testler). Bulgu defteri: `IZ_DEFTERI.md`. Yeni bulgu bu deftere eklenir, ama yalnızca gerçek iz eklenir.
 - `col_atilim_TEK.py`, `tema_col.py`, `tema_sepet.py` ve `selale.py` eski ve kapalı denemelerdir. Ana üretim zincirine karıştırma.
 

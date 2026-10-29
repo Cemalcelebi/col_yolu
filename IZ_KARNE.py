@@ -789,6 +789,28 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "+%5 / +%15, BIST +%10 / +%51; hepsi piyasanın altında. Karar: üç pazarda DEĞİL. İşlem başına ortalama artı (BIST +%1,6-2,7, "
                "ABD 2024-26 +%1,2-1,3) ama sinyal seyrek (pazar başına yılda 20-160 işlem), para çoğu zaman nakitte ve +%8 tavanı "
                "kazananı kesiyor: piyasanın güçlü yükseldiği 2023-26'da elde tutmanın gerisinde kalıyor."),
+    _ik_k("Ç132", "2026-10-29", "ABD ÇÖL YOLU, AKADEMİK YÖNTEMLERLE: sert düşüş -> küçük mumlu sıkışma (P1 oluşurken) -> kırılım (P2); batanlar dahil ABD "
+          "evreni (1.411 + 1.435 nakdi biten + 422 batan); üçlü bariyer (+%20 / -%10 / 60 gün; ayrıca oynaklığa bağlı); meta-etiketleme; "
+          "LR -> GBM -> CNN (grafik resmi) -> LSTM merdiveni; özellik grubu katkısı; PBO / DSR; kontroller; Avrupa ve BIST çoğaltma (K51)",
+          "COL_YOLU_ABD.py", "Cemal'in iki araştırma görevi (29 Eki): 'formasyon oluşurken gelecekteki performans ihtimali'; birleştirilmiş plan",
+          "Keşif (ön kayıt v1.0 + v1.1 dosya başında; denetim düzeltmeleri sonuç görülmeden)", "IZ C", 2,
+          cikti="arastirma_cikti/col_yolu_abd/K51_OZET.md",
+          notu="İZ DEĞİL. P1 (n 906 / 1.316) üst bariyer isabeti aynı gün aynı oynaklıktaki rastgeleden +2,5 / +2,4 puan (eşik 5; aralık "
+               "-0,5 / +0,1), işlem başına net -%1,8 / -%1,1 (taban kadar). İmzasız eşlerden fark yok (H2), kırılım (P2) +1 / +0,6. Oynaklığa "
+               "bağlı bariyerle P1 2024-26 +4,3 [+1,6] ama 2023 +2,6 [-0,7] (en yakın aday). Meta-etiketleme +6,6 / +2,6 puan (aralık 0 "
+               "içinde); LR, GBM, CNN, LSTM merdiveninde hiçbir basamak kabul edilmedi (CNN sayısal modelden kötü; yığma katkısı yok); 8 "
+               "özellik grubunun hiçbiri ek bilgi taşımıyor (akış CMF/OBV/A-D olumlu değil). Kontroller doğru: karışık etiket AUC ~0,5, "
+               "geleceği gören özellik 0,78-0,83, plasebo 0. Portföy: P1 bütün adaylar 2024-26 -%48 (beta 0,85), meta 2023 +%12,5 / "
+               "2024-26 -%29,5; SPY +%26,7 / +%67,7. PBO ızgara 0,39, DSR 0,03; model x pay PBO 0,57. Önceki aday 'hacimli taban' "
+               "tekrarlanmadı (TB -5,5 / -1,2 puan; FI_OLCUT 2024-26 +%12,5 [-3,3]). Resmi ölçüt FI_OLCUT P1 / P2 / HT İZ DEĞİL. Avrupa ve "
+               "BIST'te de tutmuyor. Bilgi: kırılımdan sonra 10 gün kutu üstünde kalan P2'ler +13 / +19 puan ama bu gelecekle ayrılmış "
+               "grup (bkz. Ç133). Kısıt: 2016-20 yalnız bugün işlem görenler; batan örneklemi 2020-10 sonrası."),
+    _ik_k("Ç133", "2026-10-29", "KIRILIM DEVAMLILIĞI GİRİŞİ: P2 kırılımından sonra 10 gün kapanışlar kutu tavanı üstünde kalırsa 11. gün al (K51-D1; "
+          "veri esinli, bağımsız hücreler ABD 2016-22 + Avrupa)", "COL_YOLU_ABD.py (betik k51d1)",
+          "K51 'iz yok çıkarsa durma' sıradaki deneme", "Keşif (ön kayıt arastirma_cikti/col_yolu_abd/K51_D1_onkayit.md)", "IZ C", 2,
+          cikti="arastirma_cikti/col_yolu_abd/cy_d1.csv",
+          notu="İZ DEĞİL. ABD 2016-22 -7,5 puan (n 210), Avrupa 2016-26 +4,6 [-1,6] (n 138); esin dönemi ABD 2023 +2,2, 2024-26 -0,8; BIST "
+               "0. Ders: 'süren kırılım' grubunun iyi görünmesi tamamen sonradan bilinen bilgiydi; 10 gün bekleyip girince avantaj yok."),
 ]
 
 
@@ -1168,13 +1190,25 @@ IK_GOREV: List[Dict[str, str]] = [
               "makine kârının çoğu mikro / sıkıntılı hisse ve oynak dönemlerden (bizim bulgumuzla aynı). Bir iz üzerinde gel gitin "
               "disiplinli hâli META-ETİKETLEME: senin kuralın yönü verir, makine yalnız 'bu sinyali al / alma / ne kadar' der; deneme "
               "sayısı kayıtlı tutulmalı. Bizde eksik: meta-etiketleme, piyasa yönünden arınmış (göreli) etiket, grafik resmi (CNN), yeni veri",
-     "durum": "TAMAMLANDI, AÇIK: hangi denemenin yapılacağı Cemal'in kararı"},
+     "durum": "TAMAMLANDI (devam: Cemal'in ABD Çöl Yolu araştırma görevi, alttaki satır)"},
+    {"tarih": "2026-10-29", "istek": "ABD hisselerinde Çöl Yolu formasyonu araştırması (meta-labeling, triple barrier, Gu-Kelly-Xiu, Jiang-Kelly-Xiu "
+                                     "CNN, PBO; batanlar dahil; Colab tek parça; çıktılar COLAB_VERILER/OUTPUT); sonra birleştirilmiş plan "
+                                     "(LR referans, oynak bariyer, LSTM, grup katkısı, hacimli taban yeniden, kalibrasyon, Sharpe/Calmar); "
+                                     "ajanlarla ters düz denetim; HT kayıtlarının CSV'de olduğunu doğrula",
+     "yapilan": "COL_YOLU_ABD.py (CY v1.1, tek dosya, çakışma kapılı, test 11/11): ön kayıt v1.0 + v1.1 sonuç görülmeden commit; "
+                "iki bağımsız denetçinin (kod, plan uyumu) bulguları sonuç görülmeden düzeltildi; tam koşu (ABD 2.752 hisse, 3,2 milyon "
+                "hisse-gün; Avrupa, BIST); resmi FI_OLCUT; olay CSV'leri HT dahil yeniden üretildi ve sayılar doğrulandı; D1 deneme; "
+                "üçüncü denetçi sonuçları ters düz etti; IZ_KARNE Ç132-Ç133; K51_OZET.md",
+     "sonuc": "İZ DEĞİL. P1 rastgeleden +2,5 / +2,4 puan (eşik 5), net getiri taban kadar; meta, CNN, LSTM, özellik gruplarının hiçbiri "
+              "bağımsız testte katkı vermedi; portföyler SPY'nin çok altında. Önceki 'hacimli taban' adayı tekrarlanmadı. Kontroller hattın "
+              "çalıştığını gösterdi",
+     "durum": "TAMAMLANDI, AÇIK: Kasım Tiingo kotasıyla kalan batanlar; devam yönü Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (29 Eki): K48-K50 alınabilir iz yok. Makine öğrenmesi araştırmasına göre sıradaki adaylar (Cemal'in kararı): (1) META-ETİKETLEME: "
-    "Cemal'in bir kuralı (çöl ya da BBIO) sinyal verir, makine yalnız al / alma ve büyüklük kararı verir; (2) GÖRELİ ETİKET: hisse aynı gün "
-    "öteki hisselere göre sıralanır, piyasa yönü etiketten çıkar; (3) GRAFİK RESMİNDEN ÖĞRENEN AĞ (Jiang-Kelly-Xiu CNN; GPU yok, küçük "
-    "ağ CPU ile, uzun sürer); (4) yeni veri (ücretli); (5) kağıt üzerinde canlı izleme; (6) ara.",
+    "YOL (29 Eki, akşam): K51 ABD Çöl Yolu (akademik yöntemler, batanlar dahil) ve D1: İZ DEĞİL; meta, CNN, LSTM katkı vermedi. "
+    "Olası devam (Cemal'in kararı): (1) Kasım Tiingo kotasıyla kalan ~374 batan şirketi ekleyip K51'i yeniden koşmak, (2) P1 + "
+    "oynaklığa bağlı bariyeri (en yakın aday, 2024-26 +4,3 puan) Kasım'dan itibaren kağıt üzerinde izlemek, (3) yeni veri (opsiyon, "
+    "kurumsal akış; ücretli), (4) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
