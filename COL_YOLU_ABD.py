@@ -2765,7 +2765,7 @@ def cy_v14_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_y
     kol = ["grup", "sembol", "d0_tarih", "tarih", "i", "donem", "kaynak", "sektor", "y", "net", "e_y", "e_net", "agirlik", "P1", "CEK", "bds", "fiyat_zayif", "satis_azaliyor", "oyn_dusuyor",
            "r5", "rel_spy5", "rel_sek5", "hacim_deg", "asagi_gun", "atr_deg", "neg_oran_A", "neg_buyukluk_A", "asagi_hacim_payi_A", "clv_A", "neg_oran_B", "neg_buyukluk_B",
            "asagi_hacim_payi_B", "clv_B", "iyilesme", "kgs", "kgs_kova", "kgs_tarih", "y_kgs", "net_kgs", "e_y_kgs", "e_net_kgs", "ade", "ade_kurum", "sonra_yukselis", "n_kurum_d0"]
-    XX[[c for c in kol if c in XX.columns]].to_csv(os.path.join(A.cikti, "K53_OLAYLAR.csv.gz"), index=False)
+    XX[XX.grup.isin(["G1", "G2"])][[c for c in kol if c in XX.columns]].to_csv(os.path.join(A.cikti, "K53_OLAYLAR.csv.gz"), index=False)   # kontrol satırları (190 bin) repoya girmez; kod yeniden üretir
     # grup tablosu
     GR = []
     for (gr, dn), g in XX.groupby(["grup", "donem"]):
@@ -2815,9 +2815,11 @@ def cy_v14_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_y
         g = X[X.bds == b_]; pay = g.kgs_kova.value_counts(normalize=True)
         T.append({"kod": "T7", "test": f"BDS {b_} olaylarda KGS kova payı: hızlı / geç / yok", "donem": "hepsi", "n_a": len(g), "delta": float(pay.get("hızlı", 0)), "delta_alt": float(pay.get("geç", 0)), "delta_ust": float(pay.get("yok", 0)), "karar_hucre": "bilgi"})
     test("T7b", "geç tepki ∧ BDS 3 − geri kalan olaylar (karar anı tepki günü)", XK[(XK.kgs_kova == "geç") & (XK.bds == 3)], XK[~((XK.kgs_kova == "geç") & (XK.bds == 3))], aile=False)
-    test("T8", "G1 içinde revizyon yükselişten SONRA − ÖNCE gelen [çürütme B]", G1[G1.sonra_yukselis], G1[~G1.sonra_yukselis], aile=False)
+    sy = G1.sonra_yukselis.fillna(False).astype(bool)                       # concat sonrası nesne türü olabilir
+    test("T8", "G1 içinde revizyon yükselişten SONRA − ÖNCE gelen [çürütme B]", G1[sy], G1[~sy], aile=False)
     for bil in ("fiyat_zayif", "satis_azaliyor", "oyn_dusuyor"):
-        test(f"BIL-{bil}", f"olaylarda {bil} = 1 − 0 (bileşen tek başına)", E[E[bil]], E[~E[bil]], aile=False)
+        b_ = E[bil].fillna(False).astype(bool)
+        test(f"BIL-{bil}", f"olaylarda {bil} = 1 − 0 (bileşen tek başına)", E[b_], E[~b_], aile=False)
     Td = pd.DataFrame(T)
     sr = sorted([(k_, (v if np.isfinite(v) else 1.0)) for k_, v in p23.items()], key=lambda x: x[1]); m = len(sr); cum = 0.0
     for r_, (k_, p) in enumerate(sr):

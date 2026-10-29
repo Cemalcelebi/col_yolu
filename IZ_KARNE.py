@@ -852,6 +852,23 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "(15 vs 11,5 kayıt / yıl) yüksek: teyit alan izler zaten yükselmeye başlamış, takip edilen hisseler. KIRILGANLIK: en iyi "
                "20 hisse çıkınca P1 eksi; 2026 kısmi P2 -8,9 ters; V_ABD'de P2 +7,3 [+0,9] (hayatta kalanlar). Ders: analist revizyonu "
                "fiyatı izliyor, grafik izine bağımsız bilgi eklemiyor; sonraki adım analist verisi değil, ileri doğrulama."),
+    _ik_k("Ç136", "2026-10-29", "K53 BİLGİ DİRENCİ (v1.4): ilk olumlu analist revizyonundan sonraki 5 günde fiyat zayıf + satış baskısı azalıyor + "
+          "oynaklık düşüyor (BDS 0-3); analist dağınıklığı (ADE, hedef fiyat değişim katsayısı); karar gecikmesi (KGS, SPY göreli +%5'e ilk "
+          "ulaşma günü: hızlı 1-5 / geç 6-20 / yok); G1-G5 ve destekleyen + çürüten testler (T1-T8)", "COL_YOLU_ABD.py (cy_v14_calistir)",
+          "Cemal'in K53 mesajı (29 Eki; ADE / KGS tanımları kesik geldi, Claude ön kayıtta sabitledi)",
+          "Keşif (ön kayıt commit 488a407; Δ = ortalama(y - e_y | A) - ortalama(y - e_y | B); n >= 30, Δ >= +5 puan, ay kümeli alt uç > 0, net "
+          "fark > 0, üç dönem; T1 / T5 / T6 hiçbiri desteklenmezse hipotez kapanır, eşik uydurulmaz)", "IZ C", 2,
+          cikti="arastirma_cikti/col_yolu_abd/K53_HIPOTEZ_TESTI.csv",
+          notu="K53 KAPANDI: T1, T5, T6 hiçbiri desteklenmiyor; K51 kararı değişmedi. OLAY: 166 bin olumlu kayıt -> 43.153 ilk olay -> 33.955 "
+               "ölçülen (karar günü d0+4 likit); BDS 3 olan %5,9 (1.991). T1 (BDS 3 vs < 3): +0,8 / -1,2 / +2,0 puan; doz-yanıt yok (BDS 2 vs 0 "
+               "2024-26 -2,6 ters). T2 (vs grafik var revizyon yok) -0,1 / -4,1 / 0,0; T3 (vs hiçbiri) +0,4 / -2,7 / +1,4; T4 (vs aynı şekil "
+               "bilgi yok, G5) +1,2 / -4,0 / +3,5 [0,0]: bilgi eklemiyor; desenin kendi etkisi de yok (G5 - G4 -0,8 / +1,3 / -2,1). T5 KGS: "
+               "geç - hızlı -1,2 / -0,3 / -0,1; geç - yok -0,9 / -1,3 / +1,4; hızlı - yok +0,3 / -0,9 / +1,5: gecikmiş tepki primi yok. T6 ADE "
+               "üst - alt üçte bir: ham isabet 0,32 vs 0,16 ama tabanla ayarlı +2,4 [+0,2] / +2,8 / +2,5 [+0,6] (Holm p 0,017): dağınıklık "
+               "oynaklıkla aynı şey, eşik altı. T7: BDS 3 olayların %74'ü 20 günde hiç tepki vermiyor (BDS 0'da %25), hızlı tepki yalnız %3: "
+               "yüksek direnç = haberin yok sayılması; geç ∧ BDS 3 2016-22 +6,9 tutar ama 2024-26 -0,1 (n 184). T8: revizyon yükselişten "
+               "sonra / önce fark yok. Bileşenler tek tek: hiçbiri. Kırılganlık: en iyi 20 çıkınca T1 eksi; yıl yıl -1,2 / +1,8 / +4,8 / -3,8. "
+               "Ders: 'olumlu habere tepki vermeme' bir iz değil; tepkisizlik çoğunlukla kalıcı."),
 ]
 
 
@@ -1266,10 +1283,23 @@ IK_GOREV: List[Dict[str, str]] = [
               "tutar); H2, H3, H5, H6 desteklenmiyor / yetersiz; H4 (revizyon fiyattan sonra geliyor) P2'de destekleniyor. EPS, gerekçe ve "
               "tarihsel sürüm verisi yok; H1 ölçülemedi. K51 kararı korundu",
      "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
+    {"tarih": "2026-10-29", "istek": "K53: bilgi direnci hipotezi (olumlu analist revizyonuna rağmen fiyatın tepki vermemesi + satış baskısının "
+                                     "zayıflaması, BDS), analist dağınıklık endeksi (ADE), karar gecikmesi süresi (KGS); üçünü ayrı ayrı 60 günlük "
+                                     "üçlü bariyerle karşılaştır; destekleyen ve çürüten testleri birlikte koştur; hiçbiri işe yaramazsa eşik "
+                                     "uydurmadan kapat; K51 ve bariyer değişmez",
+     "yapilan": "Ön kayıt K53_onkayit.md (488a407; ADE / KGS tanımları Claude tarafından sabitlendi, mesaj kesikti); COL_YOLU_ABD.py v1.4 "
+                "(cy_v14_calistir: olay = ilk olumlu revizyon, 5 günlük tepki + satış baskısı A10 / B10 + BDS, KGS, ADE, G1-G5, T1-T8, Holm, "
+                "kırılganlık; ortak panel kurucu cy_v13_panel; test 25/25); koşu 4,3 dk; K53_OLAYLAR.csv.gz, K53_GRUPLAR.csv, "
+                "K53_HIPOTEZ_TESTI.csv, K53_RAPOR.md; IZ_KARNE Ç136; Drive OUTPUT",
+     "sonuc": "K53 KAPANDI: T1 (BDS) +0,8 / -1,2 / +2,0, T5 (KGS geç - hızlı) -1,2 / -0,3 / -0,1, T6 (ADE) +2,4 / +2,8 / +2,5 (Holm p 0,017 ama "
+              "eşik altı, oynaklıkla aynı); aynı şekil bilgi yok kontrolü (T4) fark göstermedi; BDS 3 olayların %74'ü 20 günde tepki vermiyor. "
+              "K51 kararı korundu",
+     "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim ve K52 analist revizyonu eki bitti: hepsi DESTEKLENMİYOR, K51 kararı korundu; H-A'da "
-    "+3 puanlık eşik altı etki (2016-22'de yok); analist revizyonu fiyatı izliyor, ek bilgi yok. Olası devam (Cemal'in kararı): (1) ileri "
+    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim, K52 analist revizyonu ve K53 bilgi direnci / ADE / KGS bitti: hepsi DESTEKLENMİYOR, K51 "
+    "kararı korundu; H-A'da +3 puanlık eşik altı etki (2016-22'de yok); analist revizyonu fiyatı izliyor, ek bilgi yok; olumlu habere "
+    "tepkisizlik çoğunlukla kalıcı. Olası devam (Cemal'in kararı): (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
