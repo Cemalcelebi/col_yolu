@@ -102,6 +102,15 @@ def sina():
     a3 = M["F"][yeni].iloc[:-60].to_numpy(float); b3 = Mk["F"][yeni].to_numpy(float); m3 = ~(np.isnan(a3) & np.isnan(b3))
     if not np.allclose(np.nan_to_num(a3[m3]), np.nan_to_num(b3[m3]), rtol=1e-6, atol=1e-9):
         hata.append("10) v1.1 özellikleri geleceğe bakıyor")
+    # 11) olay CSV'si dört kümeyi (P1, P2, ES, HT) eksiksiz yazar ve geri okuyup doğrular
+    import tempfile
+    E11 = pd.DataFrame({"tip": ["P1", "P2", "ES", "HT", "HT", "P1|-0.35|60|0.8|3"], "i": range(6), "sembol": "X", "vd": 1,
+                        "tarih": pd.bdate_range("2024-01-01", periods=6)})
+    with tempfile.TemporaryDirectory() as td:
+        say = C.cy_olay_yaz(E11, td, "ABD")
+        geri = pd.read_csv(os.path.join(td, "cy_olay_ABD.csv.gz"))
+    if not (say == {"P1": 1, "P2": 1, "ES": 1, "HT": 2} and (geri.tip == "HT").sum() == 2 and "vd" not in geri):
+        hata.append(f"11) olay CSV'sinde HT / küme eksik: {say}")
     return hata
 
 
@@ -109,4 +118,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 10/10 OK")
+    print("test_col_yolu_abd: 11/11 OK")

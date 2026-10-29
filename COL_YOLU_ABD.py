@@ -157,6 +157,7 @@ CY: Dict[str, Any] = {
     "lr_C": 1.0,
     "lstm": {"gizli": 32, "epoch": 5, "sabir": 1, "batch": 512, "lr": 1e-3, "tohum": 52},
     "boot_auc": 300,
+    "olay_kumeleri": ("P1", "P2", "ES", "HT"),
 }
 
 
@@ -1010,6 +1011,20 @@ def cy_birlestir(sonuc: List[Dict[str, Any]], EV: pd.DataFrame, pz: str, K: Dict
     return {"H": H, "P": P, "E": E, "X": X, "resim": resim, "dizi": dizi, "pazar": pz}
 
 
+def cy_olay_yaz(E: pd.DataFrame, cikti: str, pz: str, K: Dict[str, Any] = CY) -> Dict[str, int]:
+    """Olay CSV'si (cy_olay_<pazar>.csv.gz): K['olay_kumeleri'] (P1, P2, ES, HT) eksiksiz yazılır; yazılan dosya geri okunup küme sayıları
+    bellektekiyle karşılaştırılır (Cemal 29 Eki: HT kayıtları CSV'ye girmiyordu)."""
+    X = E[E.tip.isin(K["olay_kumeleri"])].drop(columns=["vd"], errors="ignore"); yol = os.path.join(cikti, f"cy_olay_{pz}.csv.gz"); X.to_csv(yol, index=False)
+    beklenen = X.tip.value_counts().to_dict(); okunan = pd.read_csv(yol, usecols=["tip"]).tip.value_counts().to_dict()
+    if beklenen != okunan:
+        raise RuntimeError(f"cy_olay_{pz}: yazılan küme sayıları tutmuyor: {beklenen} / {okunan}")
+    eksik = [t for t in K["olay_kumeleri"] if t not in okunan and (E.tip == t).any()]
+    if eksik:
+        raise RuntimeError(f"cy_olay_{pz}: bellekte olup CSV'ye yazılmayan küme: {eksik}")
+    cylog.info("cy_olay_%s yazıldı: %s", pz, okunan)
+    return okunan
+
+
 def _cy_donem(D: pd.DataFrame, a: str, b: str) -> pd.DataFrame:
     return D[(D.tarih >= pd.Timestamp(a)) & (D.tarih <= pd.Timestamp(b))]
 
@@ -1178,7 +1193,7 @@ def cy_analiz(SON: Dict[str, Dict[str, Any]], A: CYAyar, K: Dict[str, Any], rng:
     Sc.to_csv(os.path.join(A.cikti, "cy_secim.csv"), index=False); Pf.to_csv(os.path.join(A.cikti, "cy_portfoy.csv"), index=False)
     pd.DataFrame(R["cnn_kayit"]).to_csv(os.path.join(A.cikti, "cy_cnn_kayit.csv"), index=False)
     for pz, S in SON.items():
-        S["E"][S["E"].tip.isin(["P1", "P2", "ES"])].drop(columns=["vd"], errors="ignore").to_csv(os.path.join(A.cikti, f"cy_olay_{pz}.csv.gz"), index=False)
+        cy_olay_yaz(S["E"], A.cikti, pz, K)
         cols = ["sembol", "tarih", "tip", "y", "net", "e_y", "meta_p", "genel_p", "cnn_p", "col_dusus", "col_kucuk", "col_imza", "batan"]
         S["X"][S["X"].tip.isin(["P1", "P2"])][[c for c in cols if c in S["X"]]].to_csv(os.path.join(A.cikti, f"cy_aday_{pz}.csv.gz"), index=False)
     R["H"] = cy_hipotez(Hc, Pf, R, K)
