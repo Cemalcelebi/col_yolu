@@ -868,7 +868,12 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "oynaklıkla aynı şey, eşik altı. T7: BDS 3 olayların %74'ü 20 günde hiç tepki vermiyor (BDS 0'da %25), hızlı tepki yalnız %3: "
                "yüksek direnç = haberin yok sayılması; geç ∧ BDS 3 2016-22 +6,9 tutar ama 2024-26 -0,1 (n 184). T8: revizyon yükselişten "
                "sonra / önce fark yok. Bileşenler tek tek: hiçbiri. Kırılganlık: en iyi 20 çıkınca T1 eksi; yıl yıl -1,2 / +1,8 / +4,8 / -3,8. "
-               "Ders: 'olumlu habere tepki vermeme' bir iz değil; tepkisizlik çoğunlukla kalıcı."),
+               "Ders: 'olumlu habere tepki vermeme' bir iz değil; tepkisizlik çoğunlukla kalıcı. EK DENETİM (Cemal'in 6 maddesi, sonuç "
+               "görüldükten sonra; karar değişmedi): eksik SPY / OHLC / hacim ölçülemez sayılır (0 olay düştü); G1 ile G5 dengesiz (kapsama SMD "
+               "0,68, likidite 0,72, oynaklık ondalığı -0,85), v1.2 eşleştirmesiyle yalnız %6 (121) olaya eş bulundu, eşleşince denge SMD <= "
+               "0,26 ve fark -3,9 / yetersiz / +3,0 (negatif kontrol, nedensel değil); KGS-sonra (d0 kapanışı) geç - hızlı -0,8 / -3,3 / -1,4, "
+               "ulaşmayan %57; günlük 311.015 ham kayıt, 447 kopya atıldı, 393 kurum adı -> 371; hedef fiyatı eksik %8; d0+4 panel dışı 9.162 "
+               "olay (likit değil / delist K51 kuralı)."),
 ]
 
 
@@ -1290,7 +1295,9 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Ön kayıt K53_onkayit.md (488a407; ADE / KGS tanımları Claude tarafından sabitlendi, mesaj kesikti); COL_YOLU_ABD.py v1.4 "
                 "(cy_v14_calistir: olay = ilk olumlu revizyon, 5 günlük tepki + satış baskısı A10 / B10 + BDS, KGS, ADE, G1-G5, T1-T8, Holm, "
                 "kırılganlık; ortak panel kurucu cy_v13_panel; test 25/25); koşu 4,3 dk; K53_OLAYLAR.csv.gz, K53_GRUPLAR.csv, "
-                "K53_HIPOTEZ_TESTI.csv, K53_RAPOR.md; IZ_KARNE Ç136; Drive OUTPUT",
+                "K53_HIPOTEZ_TESTI.csv, K53_RAPOR.md; IZ_KARNE Ç136; Drive OUTPUT. Sonra Cemal'in 6 maddelik geçerlilik listesi (sonuç "
+                "görüldükten sonra; ön kayıt EK olarak yazıldı, karar kuralları değişmedi): eksik veri ölçülemez, G1-G5 eşleşmiş negatif kontrol + "
+                "denge (K53_DENGE.csv), KGS-sonra, veri denetimi (K53_VERI_DENETIMI.md), test 27/27, yeniden koşu 4,5 dk",
      "sonuc": "K53 KAPANDI: T1 (BDS) +0,8 / -1,2 / +2,0, T5 (KGS geç - hızlı) -1,2 / -0,3 / -0,1, T6 (ADE) +2,4 / +2,8 / +2,5 (Holm p 0,017 ama "
               "eşik altı, oynaklıkla aynı); aynı şekil bilgi yok kontrolü (T4) fark göstermedi; BDS 3 olayların %74'ü 20 günde tepki vermiyor. "
               "K51 kararı korundu",

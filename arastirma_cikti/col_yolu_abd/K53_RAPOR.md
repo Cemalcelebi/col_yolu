@@ -3,7 +3,7 @@
 **KARAR: K53 KAPANDI: T1, T5, T6 hiçbiri desteklenmiyor.** K51 kararı (İZ DEĞİL) ve kuralları değişmedi; hiçbir eşik sonuca göre oynatılmadı. T1 DESTEKLENMİYOR; T4 DESTEKLENMİYOR; T5 DESTEKLENMİYOR; T6 DESTEKLENMİYOR.
 
 - Olay: ilk olumlu analist revizyonu (önceki 20 işlem günü temiz). Sayaç: olumlu kayıt 166000, işlem gününe eşlenmeyen tarih 23651, ilk olay 43153, karar günü panelde likit değil 9162, ölçü hesaplanamayan 0, ölçülen 33955; dönem içi ve etiketli olay 33955.
-- Panel 3175671 likit hisse-gün, 2752 hisse; süre 4.3 dk; kod CY v1.4 (2026-10-29, K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil), commit 75c9b66; tohum 514, bootstrap 2000.
+- Panel 3175671 likit hisse-gün, 2752 hisse; süre 4.4 dk; kod CY v1.4 (2026-10-29, K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil), commit 12429ee; tohum 514, bootstrap 2000.
 - Karar anı d0+4 kapanışı, giriş d0+5 açılışı; KGS testinde karar anı tepki günü (yok kovasında d0+20). Δ = ortalama(y − e_y | A) − ortalama(y − e_y | B); koşullar n ≥ 30, Δ ≥ +5 puan, ay kümeli alt uç > 0, net fark > 0, üç dönem.
 
 ## Gruplar
@@ -65,6 +65,8 @@ G1 = olay ∧ BDS 3; G2 = olay ∧ BDS < 3; G3 = P1 ∪ ÇEK günü, olumlu revi
 | BIL-fiyat_zayif | olaylarda fiyat_zayif = 1 − 0 (bileşen tek başına) | **DESTEKLENMİYOR** | 2016-22: TUTMAZ | 2023: TUTMAZ | 2024-26: TUTMAZ |
 | BIL-satis_azaliyor | olaylarda satis_azaliyor = 1 − 0 (bileşen tek başına) | **DESTEKLENMİYOR** | 2016-22: TUTMAZ | 2023: TUTMAZ | 2024-26: TUTMAZ |
 | BIL-oyn_dusuyor | olaylarda oyn_dusuyor = 1 − 0 (bileşen tek başına) | **DESTEKLENMİYOR** | 2016-22: TUTMAZ | 2023: TUTMAZ | 2024-26: TUTMAZ |
+| EK-KGS-sonra | KGS-sonra geç (6-20) − hızlı (1-5), başlangıç d0 kapanışı [bilgi, EK 3] | **DESTEKLENMİYOR** | 2016-22: TUTMAZ | 2023: TUTMAZ | 2024-26: TUTMAZ |
+| EK-KGS-sonra-b | KGS-sonra geç − ulaşmadı [bilgi, EK 3] | **DESTEKLENMİYOR** | 2016-22: TUTMAZ | 2023: TUTMAZ | 2024-26: TUTMAZ |
 
 ## Hücreler
 
@@ -137,6 +139,20 @@ G1 = olay ∧ BDS 3; G2 = olay ∧ BDS < 3; G3 = P1 ∪ ÇEK günü, olumlu revi
 | BIL-oyn_dusuyor | 2023 | 1713 | 2636 | +0.198 | +0.229 | -0.008 | -0.037 | +0.026 | -0.030 | +0.015 | -0.004 | +0.662 |  | TUTMAZ |
 | BIL-oyn_dusuyor | 2024-26 | 4939 | 8058 | +0.261 | +0.274 | -0.012 | -0.027 | +0.003 | -0.027 | +0.003 | -0.002 | +0.941 |  | TUTMAZ |
 | BIL-oyn_dusuyor | 2023-26 (Holm için) | 6652 | 10694 | +0.245 | +0.263 | -0.011 | -0.024 | +0.004 | -0.023 | +0.001 | -0.003 | +0.938 |  | TUTMAZ |
+| EK-KGS-sonra | 2016-22 | 4119 | 2621 | +0.221 | +0.296 | -0.008 | -0.030 | +0.012 | -0.029 | +0.012 | -0.002 | +0.781 |  | TUTMAZ |
+| EK-KGS-sonra | 2023 | 1050 | 729 | +0.236 | +0.320 | -0.033 | -0.077 | +0.011 | -0.071 | +0.004 | -0.009 | +0.941 |  | TUTMAZ |
+| EK-KGS-sonra | 2024-26 | 3297 | 2742 | +0.260 | +0.320 | -0.014 | -0.033 | +0.006 | -0.036 | +0.008 | -0.001 | +0.928 |  | TUTMAZ |
+| EK-KGS-sonra | 2023-26 (Holm için) | 4347 | 3471 | +0.254 | +0.320 | -0.018 | -0.037 | +0.001 | -0.037 | +0.000 | -0.002 | +0.976 |  | TUTMAZ |
+| EK-KGS-sonra-b | 2016-22 | 4119 | 9608 | +0.221 | +0.182 | -0.008 | -0.022 | +0.007 | -0.022 | +0.006 | -0.003 | +0.825 |  | TUTMAZ |
+| EK-KGS-sonra-b | 2023 | 1050 | 2539 | +0.236 | +0.211 | -0.013 | -0.051 | +0.024 | -0.041 | +0.016 | -0.002 | +0.728 |  | TUTMAZ |
+| EK-KGS-sonra-b | 2024-26 | 3297 | 6886 | +0.260 | +0.239 | +0.002 | -0.017 | +0.021 | -0.016 | +0.020 | +0.003 | +0.447 |  | TUTMAZ |
+| EK-KGS-sonra-b | 2023-26 (Holm için) | 4347 | 9425 | +0.254 | +0.232 | -0.002 | -0.020 | +0.016 | -0.016 | +0.012 | +0.001 | +0.609 |  | TUTMAZ |
+| EK-KGS-sonra | hepsi | 8527 |  |  |  | +0.251 |  |  |  |  |  |  |  | bilgi |
+| EK-KGS-sonra | hepsi | 6137 |  |  |  | +0.181 |  |  |  |  |  |  |  | bilgi |
+| EK-KGS-sonra | hepsi | 19291 |  |  |  | +0.568 |  |  |  |  |  |  |  | bilgi |
+| EK-G1-G5-eslesik | 2016-22 | 71 |  | +0.181 | +0.220 | -0.039 | -0.171 | +0.101 | -0.161 | +0.092 | -0.002 | +0.678 |  | TUTMAZ (bilgi) |
+| EK-G1-G5-eslesik | 2023 | 17 |  |  |  |  |  |  |  |  |  |  |  | YETERSİZ ÖRNEKLEM |
+| EK-G1-G5-eslesik | 2024-26 | 33 |  | +0.273 | +0.242 | +0.030 | -0.257 | +0.280 | -0.182 | +0.242 | +0.002 | +0.456 |  | TUTMAZ (bilgi) |
 
 T7 satırlarında delta / delta_alt / delta_ust = hızlı / geç / yok kova payları; T6 'hepsi' satırında delta = ADE ölçülebilen olay payı.
 
@@ -144,16 +160,21 @@ T7 satırlarında delta / delta_alt / delta_ust = hızlı / geç / yok kova payl
 
 | test | n_a | n_b | delta | delta_alt | delta_ust | net_fark |
 |---|---|---|---|---|---|---|
-| en_iyi_20_cikarildi 2016-22 | 969 | 15602 | -0.011 | -0.035 | +0.013 | +0.000 |
-| en_iyi_20_cikarildi 2023 | 229 | 4114 | -0.010 | -0.074 | +0.050 | +0.002 |
-| en_iyi_20_cikarildi 2024-26 | 729 | 12248 | +0.003 | -0.027 | +0.032 | -0.001 |
-| yil 2023 | 235 | 4114 | -0.012 | -0.075 | +0.051 | +0.001 |
-| yil 2024 | 302 | 4846 | +0.018 | -0.018 | +0.055 | -0.000 |
-| yil 2025 | 302 | 5059 | +0.048 | -0.018 | +0.104 | +0.014 |
+| en_iyi_20_cikarildi 2016-22 | 969 | 15602 | -0.011 | -0.034 | +0.012 | +0.000 |
+| en_iyi_20_cikarildi 2023 | 229 | 4114 | -0.010 | -0.071 | +0.053 | +0.002 |
+| en_iyi_20_cikarildi 2024-26 | 729 | 12248 | +0.003 | -0.029 | +0.033 | -0.001 |
+| yil 2023 | 235 | 4114 | -0.012 | -0.075 | +0.050 | +0.001 |
+| yil 2024 | 302 | 4846 | +0.018 | -0.018 | +0.053 | -0.000 |
+| yil 2025 | 302 | 5059 | +0.048 | -0.019 | +0.104 | +0.014 |
 | yil 2026 (kısmi) | 145 | 2343 | -0.038 | -0.101 | +0.006 | -0.016 |
-| kaynak V_ABD | 1801 | 28294 | +0.010 | -0.012 | +0.030 | +0.004 |
-| kaynak K34_yahoo | 186 | 3569 | +0.014 | -0.046 | +0.075 | +0.001 |
-| kaynak K34_tiingo | 4 | 101 | +0.026 | -0.281 | +0.530 | -0.024 |
+| kaynak V_ABD | 1801 | 28294 | +0.010 | -0.010 | +0.029 | +0.004 |
+| kaynak K34_yahoo | 186 | 3569 | +0.014 | -0.048 | +0.079 | +0.001 |
+| kaynak K34_tiingo | 4 | 101 | +0.026 | -0.291 | +0.527 | -0.024 |
+
+## EK denetim (ön kayıt EK 1-6; karar değişmez)
+
+- Eşleşmiş G1 − G5 (negatif kontrol, nedensel kanıt değil), KGS-sonra (bilgi) ve bileşen testleri yukarıdaki hücre tablosunda ('EK-' kodları). Denge ve örneklem kaybı K53_VERI_DENETIMI.md ve K53_DENGE.csv'de.
+- Bu denetim listesi ilk koşu sonuçları görüldükten sonra geldi; T1 / T5 / T6 kuralı ve karar değişmedi. Ölçülemeyen olay nedenleri: {}.
 
 ## Sınırlar
 
