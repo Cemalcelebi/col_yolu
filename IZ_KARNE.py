@@ -1157,13 +1157,24 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Hiçbiri iz değil. K48 makinesi K46'dan biraz iyi (ABD 2023 +6,9, diğer hücreler +11-12 puan) ama ABD 2023 eşik altı; "
               "portföyde ABD 2024-26 +%218 / piyasa +%89, 2023 +%11 / +%29. Kabuk dışı: seçilen ölçü sayısı şansa yakın, görülmemiş "
               "dönemde tutan 0. Gerçekçi portföy (K50): üç pazarda da piyasanın altında; işlem başına küçük artı var, para nakitte bekliyor",
-     "durum": "TAMAMLANDI, AÇIK: devam yönü Cemal'in kararı"},
+     "durum": "TAMAMLANDI (devam: Cemal'in makine öğrenmesi araştırma sorusu, alttaki satır)"},
+    {"tarih": "2026-10-29", "istek": "Sen mi makine öğrenmesi mi yapıyor; makine öğrenmesinin en iyi yollarını araştır: daha çok metrik mi, bir iz "
+                                     "üzerinde daha çok gel git mi",
+     "yapilan": "Kaynak taraması (ölçüm yok): Gu-Kelly-Xiu 2020, Kelly-Malamud-Zhou 2024, Avramov-Cheng-Metzker 2023, Jiang-Kelly-Xiu "
+                "2023 (grafik resminden CNN), López de Prado 2018 (üçlü bariyer, meta-etiketleme, arındırılmış doğrulama), Bailey ve ark. "
+                "(backtest aşırı uyumu), Harvey-Liu-Zhu 2016 (t > 3), McLean-Pontiff 2016 (yayın sonrası -%58); K46-K50 ile kıyas",
+     "sonuc": "Öğrenmeyi LightGBM yapıyor, Claude kodu / ölçüleri / etiketi / kuralı yazıp ölçüyor. Aynı fiyat-hacimden türetilen fazla metrik "
+              "yeni bilgi değil (K48'de AUC değişmedi; literatürde de bütün yöntemler momentum, likidite, oynaklığı buluyor). Literatürde "
+              "makine kârının çoğu mikro / sıkıntılı hisse ve oynak dönemlerden (bizim bulgumuzla aynı). Bir iz üzerinde gel gitin "
+              "disiplinli hâli META-ETİKETLEME: senin kuralın yönü verir, makine yalnız 'bu sinyali al / alma / ne kadar' der; deneme "
+              "sayısı kayıtlı tutulmalı. Bizde eksik: meta-etiketleme, piyasa yönünden arınmış (göreli) etiket, grafik resmi (CNN), yeni veri",
+     "durum": "TAMAMLANDI, AÇIK: hangi denemenin yapılacağı Cemal'in kararı"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (28 Eki, 22:15): K48 geniş ölçülü makine, K49 kabuk dışı derleme (iki yön, pazar pazar, bütün, şans denetimi) ve K50 gerçekçi "
-    "portföy: alınabilir iz yok. Olası devam (Cemal'in kararı): (1) K48 makinesinin haftalık üst %5 listesini kağıt üzerinde canlı "
-    "izlemek (alım yok, 3 ay sonra bak), (2) çöl taramasını aday listesi olarak izlemek, (3) ücretli veri (opsiyon akışı, kurumsal "
-    "pozisyon), (4) ara.",
+    "YOL (29 Eki): K48-K50 alınabilir iz yok. Makine öğrenmesi araştırmasına göre sıradaki adaylar (Cemal'in kararı): (1) META-ETİKETLEME: "
+    "Cemal'in bir kuralı (çöl ya da BBIO) sinyal verir, makine yalnız al / alma ve büyüklük kararı verir; (2) GÖRELİ ETİKET: hisse aynı gün "
+    "öteki hisselere göre sıralanır, piyasa yönü etiketten çıkar; (3) GRAFİK RESMİNDEN ÖĞRENEN AĞ (Jiang-Kelly-Xiu CNN; GPU yok, küçük "
+    "ağ CPU ile, uzun sürer); (4) yeni veri (ücretli); (5) kağıt üzerinde canlı izleme; (6) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
