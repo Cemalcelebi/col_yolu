@@ -90,6 +90,18 @@ def sina():
         exec(compile(kod, "COL_YOLU_ABD.py", "exec"), g2); exec(compile(kod, "COL_YOLU_ABD.py", "exec"), g2)
     except RuntimeError as ex:
         hata.append(f"8b) aynı dosyanın yeniden yüklenmesi durdu: {ex}")
+    # 9) v1.1: aynı gün hem hedef hem stop -> belirsiz = 1 (etiket 0); gün başına dizi bariyer: 10. gün için üst +%5 -> 13. gün 121 değil 106 yeter
+    if not (t3.belirsiz.iloc[10] == 1 and t1.belirsiz.iloc[10] == 0):
+        hata.append("9) belirsiz işareti yanlış")
+    d9b = d.copy(); d9b.iloc[13, d9b.columns.get_loc("High")] = 106.0; ust = np.full(n, 0.20); ust[10] = 0.05
+    t9 = C.cy_uclu_bariyer(d9b, ust, -0.10, 60, False)
+    if not (t9.y.iloc[10] == 1 and abs(t9.brut.iloc[10] - 0.05) < 1e-12 and t9.y.iloc[11] == 0):
+        hata.append(f"9b) dizi bariyer yanlış: {t9.y.iloc[10]} {t9.brut.iloc[10]}")
+    # 10) v1.1 özellikleri geleceğe bakmıyor
+    yeni = ["kapanis_yer", "kir_hacim", "tepe_bar250", "dus_sure", "dus_atr", "cmf20", "obv_egim20", "ad_egim20", "mfi14", "macd_hist"]
+    a3 = M["F"][yeni].iloc[:-60].to_numpy(float); b3 = Mk["F"][yeni].to_numpy(float); m3 = ~(np.isnan(a3) & np.isnan(b3))
+    if not np.allclose(np.nan_to_num(a3[m3]), np.nan_to_num(b3[m3]), rtol=1e-6, atol=1e-9):
+        hata.append("10) v1.1 özellikleri geleceğe bakıyor")
     return hata
 
 
@@ -97,4 +109,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 8/8 OK")
+    print("test_col_yolu_abd: 10/10 OK")

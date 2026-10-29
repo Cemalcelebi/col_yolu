@@ -58,6 +58,30 @@
 #   H10 ÇOĞALTMA: donmuş sistem (ABD'de eğitilmiş modeller) AVR'de H1 ve H4; BIST bilgi.
 #  SONUÇ: ÇÖL YOLU ÖNGÖRÜ DEĞERİ = H1 (ya da H3) VE H2 ABD'de tutar VE AVR'de H1 / H3 tutar -> 'İZ'; yalnız ABD -> 'ABD-ADAY'; yoksa 'İZ DEĞİL'.
 #
+# ÖN KAYIT v1.1 (29 Eki 2026, Cemal'in birleştirilmiş araştırma planı; v1.0'ın TEST sonucu görülmeden yazıldı). v1.0 kararları aynen kalır
+#  (v1.0 özellik listesi CY['oz_v10'] ile dondurulur). Ekler (cy_analiz_b):
+#  B1 ETİKET: oynaklığa bağlı üçlü bariyer (σ = 60 gün günlük getiri std, s = σ x √60; üst = s, [%5, %100]; alt = -0,5 s, [-%3, -%50];
+#     60 gün) sabit +%20 / -%10 ile aynı örneklerde karşılaştırılır. Aynı gün hem hedef hem stop (boşluksuz) = BELİRSİZ: ana etikette
+#     muhafazakâr (stop) sayılır, ayrıca belirsizler çıkarılarak duyarlılık yazılır; sayısı raporlanır.
+#  B2 ÖNCEKİ ADAY 'ABD HACİMLİ TABAN' (K38 / Ç112, eşli +%14,9 2024-26): hacim >= 20 x önceki 20 gün medyanı ve gün getirisi <= -%9,5;
+#     aynı üçlü bariyer, taban, H1 kuralı ve portföyle yeniden ölçülür (HT).
+#  B3 SAFHA ÖLÇÜLERİ: düşüş süresi (250 gün tepesinden dibe bar), düşüş / ATR, kırılım günü göreli hacmi, kapanışın mum içindeki yeri,
+#     kutu tavanına uzaklık, para akışı (CMF20, OBV eğimi, A/D eğimi, MFI14; olumlu sinyal VARSAYILMAZ, açıklayıcı özellik), MACD histogramı.
+#  B4 MODEL MERDİVENİ (ABD; P1 sessizlik ve P2 kırılım AYRI; aynı örnekler, yıl yıl ileri yürüyen, arındırma + ambargo): M0 birincil kural
+#     (model yok) -> LR (medyan doldurma + ölçekleme + L2 lojistik, C = 1) -> GBM (LightGBM, v1.1 özellikleri) -> CNN (grafik resmi) ->
+#     LSTM (60 günlük mum dizisi: getiri, aralık, gövde, fitiller, göreli hacim; 32 gizli). CNN / LSTM havuzda (2016-20) bir kez eğitilir.
+#     KATKI kuralları (iki test hücresinde de): LR kabul = LR seçimi bütün adaylardan isabet >= +5 puan, alt uç > 0, net fark > 0;
+#     GBM kabul = AUC(GBM) - AUC(LR) alt uç > 0 VE seçilmiş net getiri >= LR'ninki; CNN katkısı = doğrulamada (2021-22) kurulan yığma
+#     lojistik [GBM, CNN] - [GBM] test AUC farkı alt uç > 0; LSTM katkısı = [GBM, LSTM] - [GBM] aynı kural (bilgi: [GBM, CNN, LSTM] - [GBM, CNN]).
+#     Karmaşık model kuralı geçmezse 'katkı yok' yazılır, sisteme alınmaz.
+#  B5 ÖZELLİK GRUPLARI (mum, oynaklık, hacim-akış, trend, momentum-düşüş, likidite-piyasa, çöl ölçüleri): GBM tam - grubu çıkarılmış AUC
+#     farkı (ay kümeli aralık); 'ek bilgi var' = iki test hücresinde alt uç > 0. Yalnız-grup AUC'si bilgi.
+#  B6 ÖLÇÜTLER: precision, recall, PR-AUC, ROC-AUC, Brier, kalibrasyon ondalıkları; portföyde Sharpe (günlük, √252), Calmar (yıllık / |MDD|).
+#     Kırılımlar: yıl yıl, piyasa rejimi (SPY 200 gün ortalamasının üstü / altı), likidite üçte biri (yıl içi), sektör yoğunlaşması (HHI).
+#  B7 KONTROLLER: negatif (aday etiketleri ay içinde karıştırılır -> GBM AUC ~0,5), plasebo (her P1 için aynı gün aynı oynaklık ondalığından
+#     rastgele hisse -> H1 farkı ~0), pozitif (geleceği gören 5 gün getirisi özellik olarak eklenir -> AUC belirgin yükselmeli; hat sinyali görür).
+#  B8 ÇOKLU TEST: ana farkların tek yönlü bootstrap p değerleri, Holm düzeltmesi.
+#
 #  KURAL_MOTORU: Y1 veri + evren + likidite   Y2 günlük ölçüler + birincil model   Y3 üçlü bariyer + maliyet   Y4 taban / eş
 #                Y5 özellikler   Y6 meta-etiketleme   Y7 görsel model (CNN)   Y8 ızgara + PBO + DSR   Y9 portföy   Y10 rapor
 #  ÇALIŞTIRMA (Colab, tek hücre): drive bağla; exec(open('/content/drive/MyDrive/col_tarayici/COL_YOLU_ABD.py').read()); cy_calistir()
@@ -85,7 +109,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in dict(globals()).items()}   # çakışma kapısı: yüklenmeden önceki adlar
 
-CY_SURUM = "CY v1.0 (2026-10-29, K51 ABD Çöl Yolu: üçlü bariyer, meta-etiketleme, CNN, PBO/DSR, batanlar dahil)"
+CY_SURUM = "CY v1.1 (2026-10-29, K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
 cylog = logging.getLogger("col.cy")
 
 CY: Dict[str, Any] = {
@@ -111,6 +135,24 @@ CY: Dict[str, Any] = {
     "karar": {"fark": 0.05, "n_min": 30, "boot": 2000, "tohum": 51},
     "pbo_blok": 16,
     "endeks": {"ABD": ("SPY", "IWM"), "AVR": ("^STOXX",), "BIST": ("XU100.IS",)},
+    # ---- v1.1 (cy_analiz_b) ----
+    "b_etkin": True,
+    "tb_vol": {"kat_ust": 1.0, "kat_alt": 0.5, "ufuk": 60, "ust_sinir": (0.05, 1.0), "alt_sinir": (0.03, 0.50)},
+    "ht": {"kat": 20.0, "esik": -0.095, "pencere": 20, "ayri": 40},
+    "oz_v10": ("ar1", "ar5", "ar20", "ar60", "go20", "go60", "uw20", "lw20", "doji20", "doji60", "bbw", "bbw_yuzde250", "bbw_deg20", "atr14",
+               "atr_oran", "v10_50", "v20_120", "ema20_egim5", "ema20_egim20", "ema50_egim20", "c_ema20", "c_ema50", "c_sma200", "r5", "r20",
+               "r60", "r120", "r250", "dd250", "konum250", "dip_bar250", "log_dv20", "vol60", "rsi14", "col_dusus", "col_konum", "col_savunma",
+               "col_bant", "col_kucuk", "col_bb_ok", "col_doji_ok", "col_hacim_ok", "col_imza", "piy_r20", "piy_r60"),
+    "gruplar": {"mum": ("ar1", "ar5", "ar20", "ar60", "go20", "go60", "uw20", "lw20", "doji20", "doji60", "kapanis_yer"),
+                "oynaklik": ("bbw", "bbw_yuzde250", "bbw_deg20", "atr14", "atr_oran", "vol60"),
+                "hacim_akis": ("v10_50", "v20_120", "kir_hacim", "cmf20", "obv_egim20", "ad_egim20", "mfi14"),
+                "trend": ("ema20_egim5", "ema20_egim20", "ema50_egim20", "c_ema20", "c_ema50", "c_sma200", "rsi14", "macd_hist"),
+                "momentum_dusus": ("r5", "r20", "r60", "r120", "r250", "dd250", "konum250", "dip_bar250", "tepe_bar250", "dus_sure", "dus_atr"),
+                "likidite_piyasa": ("log_dv20", "piy_r20", "piy_r60"),
+                "col": ("col_dusus", "col_konum", "col_savunma", "col_bant", "col_kucuk", "col_bb_ok", "col_doji_ok", "col_hacim_ok", "col_imza", "kir_pay")},
+    "lr_C": 1.0,
+    "lstm": {"gizli": 32, "epoch": 5, "sabir": 1, "batch": 512, "lr": 1e-3, "tohum": 52},
+    "boot_auc": 300,
 }
 
 
@@ -341,6 +383,17 @@ def cy_olculer(d: pd.DataFrame, K: Dict[str, Any] = CY, Ls: Optional[Tuple[int, 
         "dip_bar250": pd.Series(_cy_kayan_argmin(L_.to_numpy(float), 251), index=d.index),
         "log_dv20": np.log10(dv20.clip(lower=1.0)), "vol60": g.rolling(60, min_periods=40).std(), "rsi14": 100 - 100 / (1 + yu / (du + eps)),
     }, index=d.index)
+    # v1.1 safha ve akış ölçüleri (hepsi yalnız o gün ve öncesi)
+    tepe_bar = pd.Series(_cy_kayan_argmin(-H.to_numpy(float), 251), index=d.index)
+    mfm = (((C - L_) - (H - C)) / rng.where(rng > 0)).fillna(0.0); Vs20 = V.rolling(20).sum() + eps
+    obv = (np.sign(C.diff()).fillna(0) * V).cumsum(); adl = (mfm * V).cumsum(); tp = (H + L_ + C) / 3; para = tp * V
+    pozp = para.where(tp > tp.shift(1), 0.0).rolling(14).sum(); negp = para.where(tp < tp.shift(1), 0.0).rolling(14).sum()
+    e12 = C.ewm(span=12, adjust=False).mean(); e26 = C.ewm(span=26, adjust=False).mean(); macd = e12 - e26
+    F = F.assign(kapanis_yer=((C - L_) / rng.where(rng > 0)).fillna(0.5),
+                 kir_hacim=V / (V.shift(1).rolling(20, min_periods=16).median() + eps),
+                 tepe_bar250=tepe_bar, dus_sure=tepe_bar - F.dip_bar250, dus_atr=(maxH250 - minL250) / (atr14 + eps),
+                 cmf20=(mfm * V).rolling(20).sum() / Vs20, obv_egim20=(obv - obv.shift(20)) / Vs20, ad_egim20=(adl - adl.shift(20)) / Vs20,
+                 mfi14=100 - 100 / (1 + pozp / (negp + eps)), macd_hist=(macd - macd.ewm(span=9, adjust=False).mean()) / C)
     Ls = Ls or tuple(sorted(set(K["izgara"]["L"]) | {K["col"]["L"]}))
     Kc = K["col"]; cl: Dict[int, pd.DataFrame] = {}
     bbq = bbw.rolling(250, min_periods=120).quantile(Kc["bb_yuzde"]); dj_pre250 = doji.rolling(250, min_periods=120).mean()
@@ -414,14 +467,17 @@ def cy_uclu_bariyer(d: pd.DataFrame, ust: float, alt: float, ufuk: int, batan: b
     ikisi = zarar. Seri vadeden önce biterse (borsadan çıkış, batan): son kapanış, son 60 gün eksi ise ek delist_kayip.
     Seri kriz kesiğine kadar sürüyor ve vade dolmuyorsa NaN (ölçülmez). Dönüş: y, brut, cikis (indis), gun."""
     O = d.Open.to_numpy(float); H = d.High.to_numpy(float); L = d.Low.to_numpy(float); C = d.Close.to_numpy(float); n = len(C)
-    y = np.full(n, np.nan); br = np.full(n, np.nan); ck = np.full(n, -1, dtype=np.int64)
+    y = np.full(n, np.nan); br = np.full(n, np.nan); ck = np.full(n, -1, dtype=np.int64); bl = np.zeros(n, np.int8)
     ii = np.arange(n - 1); o = O[ii + 1]; ok = o > 0; ii = ii[ok]; o = o[ok]
+    ust = np.broadcast_to(np.asarray(ust, float), (n,))[ii]; alt = np.broadcast_to(np.asarray(alt, float), (n,))[ii]   # v1.1: gün başına bariyer
     yy = np.zeros(len(ii)); bb = np.full(len(ii), np.nan); cc = np.full(len(ii), -1, dtype=np.int64); bit = np.zeros(len(ii), bool)
+    bel = np.zeros(len(ii), bool)                                    # v1.1: aynı gün (boşluksuz) hem hedef hem stop = belirsiz sıra
     for t in range(ufuk):
         k = ii + 1 + t; var = k < n; kk = np.where(var, k, n - 1)
         Ok = O[kk]; gd = var & (t > 0) & (Ok <= o * (1 + alt)); gu = var & (t > 0) & (Ok >= o * (1 + ust))
         lh = var & (L[kk] <= o * (1 + alt)); hh = var & (H[kk] >= o * (1 + ust))
-        for kos, deger, kaz in ((gd, Ok / o - 1, 0.0), (gu, Ok / o - 1, 1.0), (lh, np.full(len(ii), alt), 0.0), (hh, np.full(len(ii), ust), 1.0)):
+        bel |= lh & hh & ~gd & ~gu & ~bit
+        for kos, deger, kaz in ((gd, Ok / o - 1, 0.0), (gu, Ok / o - 1, 1.0), (lh, alt.copy(), 0.0), (hh, ust.copy(), 1.0)):
             w = kos & ~bit; bb[w] = deger[w]; yy[w] = kaz; cc[w] = kk[w]; bit |= w
     son = ii + ufuk; tam = son < n
     w = ~bit & tam; bb[w] = C[son[w]] / o[w] - 1; cc[w] = son[w]
@@ -434,9 +490,9 @@ def cy_uclu_bariyer(d: pd.DataFrame, ust: float, alt: float, ufuk: int, batan: b
             bb[w] = (1 + bb[w]) * (1 + K["delist_kayip"]) - 1
         gecerli = np.ones(len(ii), bool)
     tam = gecerli
-    y[ii[tam]] = yy[tam]; br[ii[tam]] = bb[tam]; ck[ii[tam]] = cc[tam]
+    y[ii[tam]] = yy[tam]; br[ii[tam]] = bb[tam]; ck[ii[tam]] = cc[tam]; bl[ii[tam]] = bel[tam]
     gun = np.where(ck >= 0, ck - np.arange(n), -1)
-    return pd.DataFrame({"y": y, "brut": br, "cikis": ck, "gun": gun}, index=d.index)
+    return pd.DataFrame({"y": y, "brut": br, "cikis": ck, "gun": gun, "belirsiz": bl}, index=d.index)
 
 
 # ---------------------------------------------------------------- Y7a GÖRSEL (OHLC RESMİ)
@@ -489,12 +545,22 @@ def cy_hisse_isle(arg: Tuple[str, str, pd.DataFrame, Dict[str, Any], pd.Series, 
         Tk = cy_uclu_bariyer(d, K["tb_kisa"]["ust"], K["tb_kisa"]["alt"], K["tb_kisa"]["ufuk"], cikti_mi, K)
         mal = 2 * (K["komisyon"][pz] + M["kayma"].to_numpy())
         net = T.brut.to_numpy() - mal; netk = Tk.brut.to_numpy() - mal
+        # v1.1: hacimli taban (K38 / Ç112 tanımı) ve oynaklığa bağlı bariyer
+        Kh = K["ht"]; Vv = d.Volume.astype(float); medv = Vv.shift(1).rolling(Kh["pencere"], min_periods=int(0.8 * Kh["pencere"])).median()
+        r1 = d.Close / d.Close.shift(1) - 1
+        S["HT"] = _cy_aralik(np.flatnonzero(((Vv >= Kh["kat"] * medv) & (medv > 0) & (r1 <= Kh["esik"])).to_numpy() & uygun), Kh["ayri"])
+        Kv = K["tb_vol"]; sg = M["vol60"].to_numpy() * np.sqrt(Kv["ufuk"])
+        u_v = np.clip(Kv["kat_ust"] * sg, *Kv["ust_sinir"]); a_v = -np.clip(Kv["kat_alt"] * sg, *Kv["alt_sinir"])
+        Tv = cy_uclu_bariyer(d, np.nan_to_num(u_v, nan=0.2), np.nan_to_num(a_v, nan=-0.1), Kv["ufuk"], cikti_mi, K)
+        yv = np.where(np.isfinite(sg), Tv.y.to_numpy(), np.nan); netv = Tv.brut.to_numpy() - mal
         pm = uygun & np.isfinite(T.y.to_numpy())
         pan = pd.DataFrame({"tarih": idx[pm], "i": np.flatnonzero(pm).astype(np.int32), "y": T.y.to_numpy()[pm].astype(np.float32),
                             "net": net[pm].astype(np.float32), "brut": T.brut.to_numpy()[pm].astype(np.float32),
                             "cikis": T.cikis.to_numpy()[pm].astype(np.int32), "yk": Tk.y.to_numpy()[pm].astype(np.float32),
                             "netk": netk[pm].astype(np.float32), "vol60": M["vol60"].to_numpy()[pm].astype(np.float32),
-                            "r20": M["F"].r20.to_numpy()[pm].astype(np.float32), "r60": M["F"].r60.to_numpy()[pm].astype(np.float32)})
+                            "r20": M["F"].r20.to_numpy()[pm].astype(np.float32), "r60": M["F"].r60.to_numpy()[pm].astype(np.float32),
+                            "yv": yv[pm].astype(np.float32), "netv": netv[pm].astype(np.float32), "belirsiz": T.belirsiz.to_numpy()[pm].astype(np.int8),
+                            "log_dv20": M["F"].log_dv20.to_numpy()[pm].astype(np.float32)})
         olay = []
         for tip, ix in S.items():
             ix = ix[np.isfinite(T.y.to_numpy()[ix])] if len(ix) else ix
@@ -510,13 +576,14 @@ def cy_hisse_isle(arg: Tuple[str, str, pd.DataFrame, Dict[str, Any], pd.Series, 
                 sec = cand[rng.random(len(cand)) < p]
                 hv.append(pd.DataFrame({"tip": f"HAVUZ_{ad}", "i": sec.astype(np.int32)}))
         H_ = pd.concat(hv, ignore_index=True) if hv else pd.DataFrame(columns=["tip", "i"])
-        satir = pd.concat([O[O.tip.isin(["P1", "P2", "ES"])], H_], ignore_index=True)
+        satir = pd.concat([O[O.tip.isin(["P1", "P2", "ES", "HT"])], H_], ignore_index=True)
         ii = np.unique(satir.i.to_numpy().astype(int)) if len(satir) else np.array([], dtype=int)
         Kc = K["col"]; c = M["col"][Kc["L"]]
         Fi = M["F"].iloc[ii].copy()
         for k2 in ("dusus", "konum", "savunma", "bant", "kucuk", "bb_ok", "doji_ok", "hacim_ok"):
             Fi["col_" + k2] = c[k2].to_numpy()[ii]
         Fi["col_imza"] = cy_imza(c, Kc["kucuk"]).to_numpy()[ii]
+        Fi["kir_pay"] = (d.Close / c.tavan.shift(1) - 1).to_numpy()[ii]          # v1.1: dünkü kutu tavanına uzaklık
         Fi["i"] = ii; Fi = Fi.astype(np.float32); Fi["i"] = ii
         R = None
         if resim_ok and len(ii):
@@ -527,7 +594,16 @@ def cy_hisse_isle(arg: Tuple[str, str, pd.DataFrame, Dict[str, Any], pd.Series, 
                 if im is not None:
                     R[j] = im; okr[j] = True
             Fi["resim_ok"] = okr
-        return {"pazar": pz, "sembol": s, "cikti_mi": cikti_mi, "panel": pan, "olay": O, "satir": satir, "F": Fi, "R": R,
+        Q = None
+        if resim_ok and len(ii):                                     # v1.1: LSTM için 60 günlük mum dizisi (yalnız i ve öncesi)
+            Oa, Ha, La, Ca, Va = (d[k].to_numpy(float) for k in ("Open", "High", "Low", "Close", "Volume")); Cp = np.r_[np.nan, Ca[:-1]]
+            ham = np.column_stack([np.log(Ca / Cp), (Ha - La) / Cp, (Ca - Oa) / Cp, (Ha - np.maximum(Oa, Ca)) / Cp, (np.minimum(Oa, Ca) - La) / Cp,
+                                   np.log((Va + 1) / (pd.Series(Va).rolling(60, min_periods=20).median().to_numpy() + 1))])
+            ham = np.nan_to_num(np.clip(ham, -5, 5)); G = K["cnn"]["gun"]; Q = np.zeros((len(ii), G, ham.shape[1]), np.float16)
+            for j, i in enumerate(ii):
+                if i + 1 >= G:
+                    Q[j] = ham[i - G + 1:i + 1]
+        return {"pazar": pz, "sembol": s, "cikti_mi": cikti_mi, "panel": pan, "olay": O, "satir": satir, "F": Fi, "R": R, "Q": Q,
                 "tarih": idx.to_numpy(), "kapanis": d.Close.to_numpy(np.float32), "acilis": d.Open.to_numpy(np.float32),
                 "kayma": M["kayma"].to_numpy(np.float32), "T": T[["brut", "cikis"]].to_numpy(np.float64)}
     except Exception as ex:
@@ -539,7 +615,7 @@ def cy_hisse_isle(arg: Tuple[str, str, pd.DataFrame, Dict[str, Any], pd.Series, 
 def cy_panel_taban(P: pd.DataFrame) -> pd.DataFrame:
     """Aynı gün, aynı oynaklık ondalığı ortalamaları: e_y, e_net, e_yk, e_netk."""
     P = P.copy(); P["vd"] = np.minimum((P.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
-    for c in ("y", "net", "yk", "netk"):
+    for c in [k for k in ("y", "net", "yk", "netk", "yv", "netv") if k in P]:
         P["e_" + c] = P.groupby(["tarih", "vd"])[c].transform("mean").astype(np.float32)
     return P
 
@@ -764,7 +840,10 @@ def cy_portfoy(H: Dict[str, Dict[str, Any]], gir: List[Tuple[pd.Timestamp, str, 
     D = pd.Series(deger, index=gun); r = np.array(islem)
     yil = max((gun[-1] - gun[0]).days / 365.25, 1e-9) if len(gun) > 1 else np.nan
     mdd = float((D / D.cummax() - 1).min()) if len(D) else np.nan
-    return {"toplam": float(D.iloc[-1] - 1) if len(D) else np.nan, "yillik": float(D.iloc[-1] ** (1 / yil) - 1) if len(D) and yil else np.nan,
+    gr = D.pct_change().dropna(); yl = float(D.iloc[-1] ** (1 / yil) - 1) if len(D) and yil else np.nan
+    return {"toplam": float(D.iloc[-1] - 1) if len(D) else np.nan, "yillik": yl,
+            "sharpe": float(gr.mean() / gr.std() * np.sqrt(252)) if len(gr) > 20 and gr.std() > 0 else np.nan,
+            "calmar": float(yl / abs(mdd)) if mdd and np.isfinite(mdd) and mdd < 0 else np.nan,
             "mdd": mdd, "islem_n": int(len(r)), "kazanma": float(np.mean(r > 0)) if len(r) else np.nan,
             "ort_islem": float(r.mean()) if len(r) else np.nan, "ort_kazanc": float(r[r > 0].mean()) if (r > 0).any() else np.nan,
             "ort_kayip": float(r[r <= 0].mean()) if (r <= 0).any() else np.nan, "deger": D}
@@ -820,6 +899,11 @@ def cy_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY) -> Dict[str,
         SON[pz] = cy_birlestir(sonuc, EV[EV.pazar == pz], pz, K)
     K = {**K, "_endeks": cy_endeks(A, K)}
     R = cy_analiz(SON, A, K, rng)
+    if K.get("b_etkin"):
+        try:
+            R["B"] = cy_analiz_b(SON, R, A, K, rng); pd.DataFrame(R["secim"]).to_csv(os.path.join(A.cikti, "cy_secim.csv"), index=False)
+        except Exception as ex:
+            cylog.exception("v1.1 analizi tamamlanamadı: %s", ex); R["notlar"].append(f"v1.1 analizi tamamlanamadı: {ex}")
     R["sure_dk"] = round((time.time() - t_bas) / 60, 1)
     cy_rapor(R, A, K)
     return R
@@ -838,28 +922,33 @@ def cy_birlestir(sonuc: List[Dict[str, Any]], EV: pd.DataFrame, pz: str, K: Dict
             o = r["olay"].copy(); o["sembol"] = r["sembol"]; olay.append(o)
     E = pd.concat(olay, ignore_index=True) if olay else pd.DataFrame(columns=["tip", "i", "sembol"])
     E["i"] = E.i.astype(int)
-    E = E.merge(P[["sembol", "i", "tarih", "y", "net", "brut", "cikis", "yk", "netk", "vol60", "vd", "e_y", "e_net", "e_yk", "e_netk"]], on=["sembol", "i"], how="inner")
+    ek = [c for c in ("yv", "netv", "e_yv", "e_netv", "belirsiz", "log_dv20") if c in P]          # v1.1
+    E = E.merge(P[["sembol", "i", "tarih", "y", "net", "brut", "cikis", "yk", "netk", "vol60", "vd", "e_y", "e_net", "e_yk", "e_netk"] + ek], on=["sembol", "i"], how="inner")
     E["gun"] = E.cikis - E.i
     E["cikis_tarih"] = [pd.Timestamp(H[s]["tarih"][min(int(c), len(H[s]["tarih"]) - 1)]) for s, c in zip(E.sembol, E.cikis)]
     E["batan"] = E.sembol.map(ev.batan).fillna(False).astype(bool); E["agirlik"] = E.sembol.map(ev.agirlik).fillna(1.0)
     F = pd.concat([r["F"].assign(sembol=r["sembol"]) for r in sonuc if len(r["F"])], ignore_index=True)
     F["i"] = F.i.astype(int)
-    Rm, Rk = [], []
+    Rm, Rk, Qm = [], [], []
     for r in sonuc:
         if r["R"] is not None and len(r["F"]):
             Rm.append(r["R"]); Rk.append(pd.DataFrame({"sembol": r["sembol"], "i": r["F"].i.astype(int).to_numpy()}))
+            if r.get("Q") is not None:
+                Qm.append(r["Q"])
     resim = np.concatenate(Rm) if Rm else None; rk = pd.concat(Rk, ignore_index=True) if Rk else None
+    dizi = np.concatenate(Qm) if (Qm and len(Qm) == len(Rm)) else None                     # v1.1 LSTM dizileri (resimle aynı sıra)
     if rk is not None:
         rk["r_ix"] = np.arange(len(rk))
         F = F.merge(rk, on=["sembol", "i"], how="left")
     S = pd.concat([r["satir"].assign(sembol=r["sembol"]) for r in sonuc if len(r["satir"])], ignore_index=True)
     S["i"] = S.i.astype(int)
     X = S.merge(F, on=["sembol", "i"], how="inner").merge(
-        P[["sembol", "i", "tarih", "y", "net", "brut", "cikis", "yk", "netk", "vd", "e_y", "e_net", "e_yk", "e_netk"]], on=["sembol", "i"], how="inner")
+        P[["sembol", "i", "tarih", "y", "net", "brut", "cikis", "yk", "netk", "vd", "e_y", "e_net", "e_yk", "e_netk"] + [c for c in ek if c != "log_dv20"]],
+        on=["sembol", "i"], how="inner")
     X = X.merge(piy, left_on="tarih", right_index=True, how="left")
     X["cikis_tarih"] = [pd.Timestamp(H[s]["tarih"][min(int(c), len(H[s]["tarih"]) - 1)]) for s, c in zip(X.sembol, X.cikis)]
     X["gun"] = X.cikis - X.i; X["batan"] = X.sembol.map(ev.batan).fillna(False).astype(bool)
-    return {"H": H, "P": P, "E": E, "X": X, "resim": resim, "pazar": pz}
+    return {"H": H, "P": P, "E": E, "X": X, "resim": resim, "dizi": dizi, "pazar": pz}
 
 
 def _cy_donem(D: pd.DataFrame, a: str, b: str) -> pd.DataFrame:
@@ -906,7 +995,7 @@ def cy_analiz(SON: Dict[str, Dict[str, Any]], A: CYAyar, K: Dict[str, Any], rng:
     R["pbo"] = {**pbo, **{f"dsr_{k}": v for k, v in dsr.items()}, "secilen_yapi": secilen,
                 "ana_yapi": f"P1|{K['col']['dusus']}|{K['col']['L']}|{K['col']['kucuk']}|{K['col']['imza_min']}"}
     # Y6 meta (ABD), Y7 CNN + genel model (ABD), donmuş uygulama AVR / BIST
-    X = SON["ABD"]["X"]; ozl = cy_ozellik_adlari(X); ozl = [c for c in ozl if c not in ("r_ix", "cikis_tarih", "tip")]
+    X = SON["ABD"]["X"]; ozl = [c for c in K["oz_v10"] if c in X.columns]          # v1.0 özellik listesi dondurulmuş (v1.1 ekleri cy_analiz_b'de)
     P1 = X[X.tip == "P1"].copy()
     P1m, sec, izg = cy_meta(P1, ozl, K, rng); R["secim"] += izg; R["meta_secim"] = {k: v for k, v in sec.items() if k != "modeller"}
     pd.DataFrame(sec["yillik"]).to_csv(os.path.join(A.cikti, "cy_meta_yillik.csv"), index=False)
@@ -915,6 +1004,7 @@ def cy_analiz(SON: Dict[str, Dict[str, Any]], A: CYAyar, K: Dict[str, Any], rng:
     tr = tr.drop_duplicates(["sembol", "i"]); dg = X[(X.tip.isin(["HAVUZ_dogrulama", "P1"])) & (X.tarih >= K["dogrulama"][0]) & (X.tarih <= K["dogrulama"][1])
                                                    & (X.cikis_tarih < pd.Timestamp(K["test"][0][1]) - pd.Timedelta(days=K["embargo_gun"]))].drop_duplicates(["sembol", "i"])
     import lightgbm as lgb
+    R["_havuz"] = (tr.index, dg.index)                                # v1.1 LSTM aynı havuzu kullanır
     gm = lgb.LGBMClassifier(**K["genel_lgbm"], random_state=K["karar"]["tohum"]); gm.fit(tr[ozl], tr.y.astype(int))
     R["veri"]["havuz"] = {"egitim": int(len(tr)), "dogrulama": int(len(dg)), "egitim_isabet": float(tr.y.mean())}
     cnn = None
@@ -1036,6 +1126,357 @@ def cy_analiz(SON: Dict[str, Dict[str, Any]], A: CYAyar, K: Dict[str, Any], rng:
     return R
 
 
+# ---------------------------------------------------------------- v1.1 ANALİZ (cy_analiz_b): model merdiveni, katkı, kontroller, kırılımlar
+def cy_lstm_egit(Xtr: np.ndarray, ytr: np.ndarray, Xdg: np.ndarray, ydg: np.ndarray, K: Dict[str, Any]) -> Tuple[Any, List[Dict[str, Any]]]:
+    """60 günlük mum dizisinden LSTM (32 gizli). Özellikler eğitim ortalaması / std ile ölçeklenir; erken durma doğrulama kaybıyla."""
+    import torch
+    import torch.nn as nn
+    Kl = K["lstm"]; torch.manual_seed(Kl["tohum"]); np.random.seed(Kl["tohum"]); cihaz = "cuda" if torch.cuda.is_available() else "cpu"
+    mu = Xtr.astype(np.float32).reshape(-1, Xtr.shape[2]).mean(0); sd = Xtr.astype(np.float32).reshape(-1, Xtr.shape[2]).std(0) + 1e-6
+
+    class Ag(nn.Module):
+        def __init__(self):
+            super().__init__(); self.l = nn.LSTM(Xtr.shape[2], Kl["gizli"], batch_first=True); self.o = nn.Linear(Kl["gizli"], 1)
+
+        def forward(self, x):
+            h, _ = self.l(x); return self.o(h[:, -1, :]).squeeze(1)
+    net = Ag().to(cihaz); opt = torch.optim.Adam(net.parameters(), lr=Kl["lr"]); kf = nn.BCEWithLogitsLoss(); kayit = []; en_iyi = (np.inf, None); sabir = 0
+    hz = lambda X: torch.from_numpy(((X.astype(np.float32) - mu) / sd)).to(cihaz)
+
+    def tahmin(X):
+        net.eval(); out = []
+        with torch.no_grad():
+            for a in range(0, len(X), 4096):
+                out.append(net(hz(X[a:a + 4096])).cpu())
+        return torch.cat(out)
+    for ep in range(Kl["epoch"]):
+        net.train(); sira = np.random.permutation(len(Xtr)); t0 = time.time(); top = 0.0
+        for a in range(0, len(sira), Kl["batch"]):
+            b = sira[a:a + Kl["batch"]]; yb = torch.from_numpy(ytr[b]).float().to(cihaz)
+            opt.zero_grad(); ls = kf(net(hz(Xtr[b])), yb); ls.backward(); opt.step(); top += float(ls.detach()) * len(b)
+        dk = float(kf(tahmin(Xdg), torch.from_numpy(ydg).float()))
+        kayit.append({"epoch": ep + 1, "egitim_kayip": top / len(sira), "dogrulama_kayip": dk, "sure_sn": round(time.time() - t0)})
+        cylog.info("LSTM epoch %d: eğitim %.4f doğrulama %.4f (%ds)", ep + 1, top / len(sira), dk, time.time() - t0)
+        if dk < en_iyi[0] - 1e-4:
+            en_iyi = (dk, {k: v.detach().clone() for k, v in net.state_dict().items()}); sabir = 0
+        else:
+            sabir += 1
+            if sabir > Kl["sabir"]:
+                break
+    if en_iyi[1] is not None:
+        net.load_state_dict(en_iyi[1])
+    net._cy_tahmin = lambda X: torch.sigmoid(tahmin(X)).numpy()     # type: ignore[attr-defined]
+    return net, kayit
+
+
+def cy_ileri(E: pd.DataFrame, ozl: List[str], kur: Any, K: Dict[str, Any], ycol: str = "y") -> pd.Series:
+    """Yıl yıl ileri yürüyen OOS olasılık (2021..2026): her yıl yalnız çıkışı o yıldan (ambargo payıyla) önce biten satırlarla eğitilir."""
+    p = pd.Series(np.nan, index=E.index); X = E[ozl].replace([np.inf, -np.inf], np.nan)
+    for Y in range(int(K["dogrulama"][0][:4]), 2027):
+        sinir = pd.Timestamp(f"{Y}-01-01") - pd.Timedelta(days=K["embargo_gun"])
+        tr = (E.cikis_tarih < sinir) & E[ycol].notna(); te = (E.tarih.dt.year == Y) & E[ycol].notna()
+        if tr.sum() < K["meta"]["n_min_egitim"] or E.loc[tr, ycol].nunique() < 2 or not te.any():
+            continue
+        m = kur(); m.fit(X[tr], E.loc[tr, ycol].astype(int)); p[te] = m.predict_proba(X[te])[:, 1]
+    return p
+
+
+def cy_auc_fark(y: np.ndarray, p1: np.ndarray, p2: np.ndarray, tarih: pd.Series, B: int, rng: np.random.Generator) -> Dict[str, float]:
+    """AUC(p1) - AUC(p2), aynı örnekler, ay kümeli bootstrap; tek yönlü p = farkın <= 0 olma payı."""
+    from sklearn.metrics import roc_auc_score
+    ok = np.isfinite(y) & np.isfinite(p1) & np.isfinite(p2); y, p1, p2 = y[ok], p1[ok], p2[ok]; ay = (tarih.dt.year * 12 + tarih.dt.month).to_numpy()[ok]
+    if len(y) < 30 or len(np.unique(y)) < 2:
+        return {"n": int(len(y)), "fark": np.nan, "alt": np.nan, "ust": np.nan, "p": np.nan}
+    d0 = roc_auc_score(y, p1) - roc_auc_score(y, p2); ua = np.unique(ay); gr = {u: np.flatnonzero(ay == u) for u in ua}; bs = []
+    for _ in range(B):
+        ix = np.concatenate([gr[u] for u in rng.choice(ua, len(ua))])
+        if len(np.unique(y[ix])) == 2:
+            bs.append(roc_auc_score(y[ix], p1[ix]) - roc_auc_score(y[ix], p2[ix]))
+    bs = np.array(bs)
+    return {"n": int(len(y)), "fark": float(d0), "alt": float(np.quantile(bs, 0.025)), "ust": float(np.quantile(bs, 0.975)), "p": float(np.mean(bs <= 0))}
+
+
+def cy_boot_p(D: pd.DataFrame, kol: str, B: int, rng: np.random.Generator) -> float:
+    """Tek yönlü bootstrap p: ay kümeli ortalamanın <= 0 olma payı."""
+    v = D[kol].to_numpy(float); ok = np.isfinite(v); v = v[ok]
+    if len(v) < 10:
+        return np.nan
+    ay = (D.tarih.dt.year * 12 + D.tarih.dt.month).to_numpy()[ok]; ua, inv = np.unique(ay, return_inverse=True)
+    sv = np.bincount(inv, v); sn = np.bincount(inv).astype(float); ix = rng.integers(0, len(ua), (B, len(ua)))
+    return float(np.mean(sv[ix].sum(1) / sn[ix].sum(1) <= 0))
+
+
+def cy_secim_olc(D: pd.DataFrame, kol: str, p_esik: float, K: Dict[str, Any], rng: np.random.Generator, ycol: str = "y", ncol: str = "net") -> Dict[str, Any]:
+    """Bir hücrede model seçimi: precision, recall, ROC-AUC (+aralık), PR-AUC, Brier, seçilen - bütün isabet ve net farkı (aralık, p)."""
+    from sklearn.metrics import average_precision_score
+    D = D[D[kol].notna() & D[ycol].notna()]
+    if not len(D) or not np.isfinite(p_esik):
+        return {"n_hepsi": int(len(D))}
+    S = D[D[kol] >= p_esik]; y = D[ycol].to_numpy(float); p = D[kol].to_numpy(float)
+    auc = cy_auc_boot(y, p, D.tarih, K["boot_auc"], rng)
+    fi = cy_boot_iki(S.assign(_f=S[ycol]), D.assign(_f=D[ycol]), "_f", K["karar"]["boot"], rng)
+    fn = cy_boot_iki(S.assign(_f=S[ncol]), D.assign(_f=D[ncol]), "_f", K["karar"]["boot"], rng)
+    r = S[ncol].to_numpy(float)
+    return {"n_hepsi": int(len(D)), "n_secilen": int(len(S)), "taban_isabet": float(y.mean()), "precision": float(S[ycol].mean()) if len(S) else np.nan,
+            "recall": float(S[ycol].sum() / max(D[ycol].sum(), 1)), "roc_auc": auc[0], "roc_auc_alt": auc[1], "roc_auc_ust": auc[2],
+            "pr_auc": float(average_precision_score(y, p)) if len(np.unique(y)) == 2 else np.nan, "brier": float(np.mean((p - y) ** 2)),
+            "net_secilen": float(np.nanmean(r)) if len(r) else np.nan, "net_hepsi": float(D[ncol].mean()), "isabet_fark": fi[0], "isabet_fark_alt": fi[1],
+            "net_fark": fn[0], "net_fark_alt": fn[1], "kazanma": float(np.mean(r > 0)) if len(r) else np.nan,
+            "ort_kayip": float(np.mean(r[r <= 0])) if (r <= 0).any() else np.nan}
+
+
+def cy_sektor(A: CYAyar, EV: pd.DataFrame) -> pd.Series:
+    """Sembol -> sektör: sektor_ABD.csv (Yahoo sektörü; repo kökü ya da veri klasörü), K34 şirketleri SIC bölümü (k35_sic.csv varsa)."""
+    out = {}
+    for yol in (os.path.join(A.veri, "sektor_ABD.csv"), os.path.join(os.path.dirname(os.path.abspath(globals().get("__file__", "."))), "sektor_ABD.csv")):
+        if os.path.exists(yol):
+            s = pd.read_csv(yol); out.update({str(k).split(".")[0]: v for k, v in zip(s.sembol, s.sektor)}); break
+    sic = next((p for p in (os.path.join(A.veri, "k35_sic.csv"),) if os.path.exists(p)), None)
+    ev = os.path.join(A.veri, "k34_evren.csv")
+    if sic and os.path.exists(ev):
+        bol = [(100, "Tarım"), (1000, "Madencilik"), (1500, "İnşaat"), (4000, "İmalat"), (5000, "Ulaştırma-Kamu"), (5200, "Toptan"),
+               (6000, "Perakende"), (6800, "Finans"), (9100, "Hizmet"), (10000, "Kamu")]
+        sc = pd.read_csv(sic).set_index("cik").sic; e = pd.read_csv(ev)
+        for c, s_ in zip(e.cik, e.sembol):
+            if s_ not in out and c in sc.index and np.isfinite(sc.loc[c]):
+                out[s_] = next((ad for sin, ad in bol if sc.loc[c] < sin), "Diğer")
+    return pd.Series(out)
+
+
+def cy_analiz_b(SON: Dict[str, Dict[str, Any]], R: Dict[str, Any], A: CYAyar, K: Dict[str, Any], rng: np.random.Generator) -> Dict[str, Any]:
+    """v1.1 ön kaydı (B1-B8). Çıktılar cy_b_*.csv; karar satırları R['H_b']."""
+    import lightgbm as lgb
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import make_pipeline
+    from sklearn.impute import SimpleImputer
+    from sklearn.preprocessing import StandardScaler
+    tests = list(K["test"]); dg_ = ("dogrulama", *K["dogrulama"]); B = {"hucre": [], "model": [], "katki": [], "grup": [], "kontrol": [], "kirilim": [],
+                                                                       "portfoy": [], "kalibrasyon": [], "coklu": [], "notlar": []}
+    S = SON["ABD"]; X = S["X"]; E = S["E"]; P = S["P"]
+    ozl10 = [c for c in K["oz_v10"] if c in X]; ozl = list(dict.fromkeys(ozl10 + [c for g in K["gruplar"].values() for c in g if c in X]))
+    LR = lambda: make_pipeline(SimpleImputer(strategy="median"), StandardScaler(), LogisticRegression(C=K["lr_C"], max_iter=3000))
+    GB = lambda: lgb.LGBMClassifier(**K["meta"]["lgbm"], random_state=K["karar"]["tohum"])
+    donemler = [("egitim", *K["egitim"]), dg_] + tests
+    # B1 / B2: etiket türleri, belirsiz, hacimli taban
+    for tip in ("P1", "P2", "ES", "HT"):
+        for dn, a, b in donemler:
+            D = _cy_donem(E[E.tip == tip], a, b)
+            for et, kol in (("sabit_20_10_60", ("y", "net", "e_y", "e_net")), ("oynak_s_0.5s_60", ("yv", "netv", "e_yv", "e_netv"))):
+                if kol[0] not in D:
+                    continue
+                Dk = D.rename(columns={kol[0]: "_y", kol[1]: "_n", kol[2]: "_ey", kol[3]: "_en"})[["tarih", "_y", "_n", "_ey", "_en", "gun"]].rename(
+                    columns={"_y": "y", "_n": "net", "_ey": "e_y", "_en": "e_net"}).dropna(subset=["y"])
+                o = cy_ozet(Dk, K, rng); o["p"] = cy_boot_p(Dk.assign(_f=Dk.y - Dk.e_y), "_f", K["karar"]["boot"], rng) if len(Dk) else np.nan
+                B["hucre"].append({"kume": tip, "donem": dn, "etiket": et, **o})
+            if "belirsiz" in D and len(D):
+                Db = D[D.belirsiz == 0]
+                B["hucre"].append({"kume": tip + "_belirsizsiz", "donem": dn, "etiket": "sabit_20_10_60", "belirsiz_pay": float(D.belirsiz.mean()), **cy_ozet(Db, K, rng)})
+    Hb = pd.DataFrame(B["hucre"])
+    # B7 plasebo: her P1 olayına aynı gün aynı oynaklık ondalığından rastgele panel satırı
+    p1 = E[E.tip == "P1"]; gr = P.groupby(["tarih", "vd"]).indices; sec = []
+    for t, v in zip(p1.tarih, p1.vd):
+        ix = gr.get((t, v))
+        if ix is not None and len(ix):
+            sec.append(ix[rng.integers(0, len(ix))])
+    Pl = P.iloc[sec]
+    for dn, a, b in donemler:
+        o = cy_ozet(_cy_donem(Pl.assign(gun=Pl.cikis - Pl.i), a, b), K, rng); B["kontrol"].append({"kontrol": "plasebo_P1_esli_rastgele", "donem": dn, **o})
+    # B4 / B5 / B7: model merdiveni ve gruplar (P1 ve P2 ayrı)
+    H = S["H"]; tr_ix, dg_ix = R.get("_havuz", (None, None))
+    lstm = None
+    if S.get("dizi") is not None and tr_ix is not None and A.cnn:
+        try:
+            Q = S["dizi"]; trr = X.loc[tr_ix]; trr = trr[trr.r_ix.notna()]; dgr = X.loc[dg_ix]; dgr = dgr[dgr.r_ix.notna()]
+            lstm, lk = cy_lstm_egit(Q[trr.r_ix.astype(int).to_numpy()], trr.y.to_numpy(np.float32), Q[dgr.r_ix.astype(int).to_numpy()], dgr.y.to_numpy(np.float32), K)
+            B["notlar"].append(f"LSTM epoch kaydı: {lk}")
+            ok = X.r_ix.notna(); X["lstm_p"] = np.nan; X.loc[ok, "lstm_p"] = lstm._cy_tahmin(Q[X.loc[ok, "r_ix"].astype(int).to_numpy()])
+        except Exception as ex:
+            cylog.error("LSTM eğitilemedi: %s", ex); B["notlar"].append(f"LSTM eğitilemedi: {ex}")
+    if "lstm_p" not in X:
+        X["lstm_p"] = np.nan
+    if "cnn_p" not in X:
+        X["cnn_p"] = np.nan
+    gel = []                                                         # pozitif kontrol: geleceği gören 5 gün getirisi
+    for s_, i_ in zip(X.sembol, X.i):
+        h = H[s_]; gel.append(float(h["kapanis"][i_ + 5] / h["acilis"][i_ + 1] - 1) if i_ + 5 < len(h["kapanis"]) else np.nan)
+    X["_gelecek5"] = gel
+    for faz in ("P1", "P2"):
+        Ef = X[X.tip == faz].copy()
+        if len(Ef) < 200:
+            B["notlar"].append(f"{faz}: aday az ({len(Ef)}), model merdiveni atlandı"); continue
+        Ef["p_LR"] = cy_ileri(Ef, ozl, LR, K); Ef["p_GBM10"] = cy_ileri(Ef, ozl10, GB, K); Ef["p_GBM"] = cy_ileri(Ef, ozl, GB, K)
+        Ef["p_GBM_oynak"] = cy_ileri(Ef, ozl, GB, K, ycol="yv") if "yv" in Ef else np.nan
+        Ek = Ef.copy(); Ek["y"] = Ek.groupby(Ek.tarih.dt.to_period("M")).y.transform(lambda v: v.sample(frac=1.0, random_state=int(rng.integers(1 << 30))).to_numpy())
+        Ef["p_KARISIK"] = cy_ileri(Ek, ozl, GB, K); Ef["y_karisik"] = Ek.y
+        Ef["p_SIZINTI"] = cy_ileri(Ef, ozl + ["_gelecek5"], GB, K)
+        for g, kols in K["gruplar"].items():
+            Ef[f"p_cikar_{g}"] = cy_ileri(Ef, [c for c in ozl if c not in kols], GB, K)
+            Ef[f"p_yalniz_{g}"] = cy_ileri(Ef, [c for c in kols if c in Ef], GB, K)
+        # yığma: doğrulamada (2021-22) kurulur, testte uygulanır
+        dgm = _cy_donem(Ef, *K["dogrulama"])
+        for ad, kols in (("Y_G", ["p_GBM"]), ("Y_GC", ["p_GBM", "cnn_p"]), ("Y_GL", ["p_GBM", "lstm_p"]), ("Y_GCL", ["p_GBM", "cnn_p", "lstm_p"])):
+            Ef[ad] = np.nan; d0 = dgm.dropna(subset=kols + ["y"])
+            if len(d0) >= 100 and d0.y.nunique() == 2:
+                lg = lambda Z: np.log(np.clip(Z, 1e-4, 1 - 1e-4) / (1 - np.clip(Z, 1e-4, 1 - 1e-4)))
+                m = LogisticRegression(max_iter=2000).fit(lg(d0[kols].to_numpy()), d0.y.astype(int)); w = Ef[kols].notna().all(axis=1)
+                Ef.loc[w, ad] = m.predict_proba(lg(Ef.loc[w, kols].to_numpy()))[:, 1]
+        # eşik seçimi (doğrulama) ve test hücreleri
+        dgm = _cy_donem(Ef, *K["dogrulama"]); esik = {}
+        modeller = ["p_LR", "p_GBM10", "p_GBM", "cnn_p", "lstm_p", "Y_GC", "Y_GL", "Y_GCL", "p_KARISIK", "p_SIZINTI"]
+        for mk in modeller:
+            ycol = "y_karisik" if mk == "p_KARISIK" else "y"
+            sc, izg = cy_esik_sec(dgm[dgm[mk].notna()].assign(y=dgm[ycol]), mk, K, f"{faz}_{mk}"); esik[mk] = sc; R["secim"] += izg
+            for dn, a, b in [dg_] + tests:
+                D = _cy_donem(Ef, a, b)
+                o = cy_secim_olc(D.assign(y=D[ycol]), mk, sc.get("p", np.nan), K, rng)
+                B["model"].append({"faz": faz, "model": mk, "donem": dn, "secim_pay": sc.get("pay"), **o})
+        if "yv" in Ef:
+            sc, _ = cy_esik_sec(dgm[dgm.p_GBM_oynak.notna()].assign(y=dgm.yv, net=dgm.netv), "p_GBM_oynak", K, f"{faz}_GBM_oynak")
+            for dn, a, b in [dg_] + tests:
+                D = _cy_donem(Ef, a, b); o = cy_secim_olc(D, "p_GBM_oynak", sc.get("p", np.nan), K, rng, ycol="yv", ncol="netv")
+                B["model"].append({"faz": faz, "model": "p_GBM_oynak_etiket", "donem": dn, "secim_pay": sc.get("pay"), **o})
+        # katkı farkları (aynı örnekler)
+        for dn, a, b in tests:
+            D = _cy_donem(Ef, a, b)
+            for ad, p1, p2 in (("GBM-LR", "p_GBM", "p_LR"), ("GBM-GBM10 (v1.1 ölçüleri)", "p_GBM", "p_GBM10"), ("CNN katkısı [G,C]-[G]", "Y_GC", "Y_G"),
+                               ("LSTM katkısı [G,L]-[G]", "Y_GL", "Y_G"), ("LSTM üstüne [G,C,L]-[G,C]", "Y_GCL", "Y_GC"), ("CNN tek - GBM", "cnn_p", "p_GBM"),
+                               ("LSTM tek - GBM", "lstm_p", "p_GBM"), ("LR - rastgele(0,5)", "p_LR", "_sabit")):
+                q2 = np.full(len(D), 0.5) if p2 == "_sabit" else D[p2].to_numpy(float)
+                if p2 == "_sabit":
+                    from sklearn.metrics import roc_auc_score
+                    a0 = cy_auc_boot(D.y.to_numpy(float), D[p1].to_numpy(float), D.tarih, K["boot_auc"], rng)
+                    B["katki"].append({"faz": faz, "kiyas": ad, "donem": dn, "fark": a0[0] - 0.5 if np.isfinite(a0[0]) else np.nan, "alt": a0[1] - 0.5 if np.isfinite(a0[1]) else np.nan,
+                                       "ust": a0[2] - 0.5 if np.isfinite(a0[2]) else np.nan, "p": np.nan, "n": int(D[p1].notna().sum())})
+                    continue
+                B["katki"].append({"faz": faz, "kiyas": ad, "donem": dn, **cy_auc_fark(D.y.to_numpy(float), D[p1].to_numpy(float), q2, D.tarih, K["boot_auc"], rng)})
+            for g in K["gruplar"]:
+                f = cy_auc_fark(D.y.to_numpy(float), D.p_GBM.to_numpy(float), D[f"p_cikar_{g}"].to_numpy(float), D.tarih, K["boot_auc"], rng)
+                yal = cy_auc_boot(D.y.to_numpy(float), D[f"p_yalniz_{g}"].to_numpy(float), D.tarih, 100, rng)
+                B["grup"].append({"faz": faz, "grup": g, "donem": dn, "tam_eksi_cikarilmis": f["fark"], "alt": f["alt"], "ust": f["ust"], "p": f["p"],
+                                  "yalniz_auc": yal[0], "yalniz_auc_alt": yal[1], "n": f["n"]})
+            # kontroller
+            for kk, mk, ycol in (("negatif_karisik_etiket", "p_KARISIK", "y_karisik"), ("pozitif_gelecek5_sizinti", "p_SIZINTI", "y")):
+                au = cy_auc_boot(D[ycol].to_numpy(float), D[mk].to_numpy(float), D.tarih, 100, rng)
+                B["kontrol"].append({"kontrol": f"{faz}_{kk}", "donem": dn, "auc": au[0], "auc_alt": au[1], "auc_ust": au[2], "n": int(D[mk].notna().sum())})
+        # kalibrasyon (test, GBM ve LR)
+        Dt = _cy_donem(Ef, tests[0][1], tests[-1][2])
+        for mk in ("p_LR", "p_GBM", "Y_GC"):
+            q = Dt[[mk, "y"]].dropna()
+            if len(q) >= 50:
+                q["dil"] = pd.qcut(q[mk].rank(method="first"), 10, labels=False)
+                for k_, g in q.groupby("dil"):
+                    B["kalibrasyon"].append({"faz": faz, "model": mk, "ondalik": int(k_), "tahmin": float(g[mk].mean()), "gercek": float(g.y.mean()), "n": len(g)})
+        # kırılımlar: yıl, rejim, likidite (bütün adaylar ve GBM seçimi)
+        spy = K.get("_endeks", pd.DataFrame()).get("SPY") if isinstance(K.get("_endeks"), pd.DataFrame) else None
+        if spy is not None and len(spy.dropna()):
+            sp = spy.dropna(); boga = (sp > sp.rolling(200).mean()).reindex(Ef.tarih.values, method="ffill").to_numpy()
+            Ef["rejim"] = np.where(boga, "boga (SPY > SMA200)", "ayi (SPY < SMA200)")
+        else:
+            Ef["rejim"] = "bilinmiyor"
+        Ef["likit_ucte"] = Ef.groupby(Ef.tarih.dt.year).log_dv20.transform(lambda v: pd.qcut(v.rank(method="first"), 3, labels=["dusuk", "orta", "yuksek"]))
+        pg = esik.get("p_GBM", {}).get("p", np.nan)
+        for kir, kol in (("yil", Ef.tarih.dt.year.astype(str)), ("rejim", Ef.rejim), ("likidite", Ef.likit_ucte.astype(str))):
+            for v, g in Ef.groupby(kol):
+                o = cy_ozet(g, K, rng); gt = g[(g.tarih >= tests[0][1]) & (g.p_GBM >= pg)] if np.isfinite(pg) else g.iloc[0:0]
+                B["kirilim"].append({"faz": faz, "kirilim": kir, "deger": v, **o, "gbm_secilen_test_n": len(gt),
+                                     "gbm_secilen_test_isabet": float(gt.y.mean()) if len(gt) else np.nan, "gbm_secilen_test_net": float(gt.net.mean()) if len(gt) else np.nan})
+        # portföy: model seçimleri (test)
+        takvim = pd.DatetimeIndex(sorted(P.tarih.unique()))
+        for dn, a, b in tests:
+            b2 = K["kriz"] if dn == "2024-26" else b
+            for mk in ("p_LR", "p_GBM", "Y_GC", "Y_GL"):
+                sc = esik.get(mk, {})
+                if not np.isfinite(sc.get("p", np.nan)):
+                    continue
+                D = _cy_donem(Ef, a, b); D = D[D[mk] >= sc["p"]].sort_values(["tarih", mk], ascending=[True, False])
+                po = cy_portfoy(H, [(t, s_, int(i_)) for t, s_, i_ in zip(D.tarih, D.sembol, D.i)], a, b2, "ABD", K, None, takvim)
+                B["portfoy"].append({"pazar": "ABD", "donem": dn, "strateji": f"{faz}_{mk}", "sinyal_n": len(D), **{k: v for k, v in po.items() if k != "deger"}})
+        Ef.drop(columns=[c for c in Ef if c.startswith("p_cikar_") or c.startswith("p_yalniz_")]).to_csv(os.path.join(A.cikti, f"cy_b_aday_{faz}.csv.gz"), index=False)
+    # hacimli taban portföyü ve sektör yoğunlaşması
+    takvim = pd.DatetimeIndex(sorted(P.tarih.unique()))
+    for dn, a, b in tests:
+        b2 = K["kriz"] if dn == "2024-26" else b; D = _cy_donem(E[E.tip == "HT"], a, b).sort_values(["tarih", "sembol"])
+        po = cy_portfoy(H, [(t, s_, int(i_)) for t, s_, i_ in zip(D.tarih, D.sembol, D.i)], a, b2, "ABD", K, None, takvim)
+        B["portfoy"].append({"pazar": "ABD", "donem": dn, "strateji": "HT_hepsi", "sinyal_n": len(D), **{k: v for k, v in po.items() if k != "deger"}})
+    sek = cy_sektor(A, pd.DataFrame()); sk = []
+    for tip in ("P1", "P2", "HT"):
+        D = E[E.tip == tip].assign(sektor=lambda x: x.sembol.map(sek).fillna("bilinmiyor"))
+        for Y, g in D.groupby(D.tarih.dt.year):
+            pay = g.sektor.value_counts(normalize=True)
+            sk.append({"kume": tip, "yil": int(Y), "n": len(g), "en_buyuk_sektor": pay.index[0], "en_buyuk_pay": float(pay.iloc[0]), "hhi": float((pay ** 2).sum()),
+                       "bilinmiyor_pay": float(pay.get("bilinmiyor", 0.0))})
+    # B8 çoklu test: test hücrelerindeki ana farklar
+    for r in Hb[(Hb.donem.isin([t[0] for t in tests])) & Hb.kume.isin(["P1", "P2", "HT"]) & Hb.p.notna()].itertuples():
+        B["coklu"].append({"test": f"{r.kume} {r.etiket} {r.donem} fark>0", "p": r.p})
+    for r in B["katki"]:
+        if np.isfinite(r.get("p", np.nan)):
+            B["coklu"].append({"test": f"{r['faz']} {r['kiyas']} {r['donem']}", "p": r["p"]})
+    for r in B["grup"]:
+        if np.isfinite(r.get("p", np.nan)):
+            B["coklu"].append({"test": f"{r['faz']} grup {r['grup']} {r['donem']}", "p": r["p"]})
+    Cm = pd.DataFrame(B["coklu"])
+    if len(Cm):
+        Cm = Cm.sort_values("p").reset_index(drop=True); m = len(Cm)
+        Cm["holm_p"] = np.minimum(1.0, np.maximum.accumulate([(m - k) * p for k, p in enumerate(Cm.p)]))
+    # yazım
+    T = {"hucre": Hb, "model": pd.DataFrame(B["model"]), "katki": pd.DataFrame(B["katki"]), "grup": pd.DataFrame(B["grup"]), "kontrol": pd.DataFrame(B["kontrol"]),
+         "kirilim": pd.DataFrame(B["kirilim"]), "portfoy": pd.DataFrame(B["portfoy"]), "kalibrasyon": pd.DataFrame(B["kalibrasyon"]), "sektor": pd.DataFrame(sk), "coklu": Cm}
+    for k, v in T.items():
+        v.to_csv(os.path.join(A.cikti, f"cy_b_{k}.csv"), index=False)
+    B["T"] = T; B["H_b"] = cy_hipotez_b(T, K)
+    pd.DataFrame(B["H_b"]).to_csv(os.path.join(A.cikti, "cy_b_hipotez.csv"), index=False)
+    return B
+
+
+def cy_hipotez_b(T: Dict[str, pd.DataFrame], K: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """v1.1 önceden yazılı kabul kuralları."""
+    tests = [t[0] for t in K["test"]]; out = []; fe = K["karar"]["fark"]; M = T["model"]; Kt = T["katki"]; G = T["grup"]; Hb = T["hucre"]
+
+    def ekle(kod, ad, ok, ay):
+        out.append({"kod": kod, "hipotez": ad, "karar": "ÖLÇÜLEMEDİ" if ok is None else ("DESTEKLENİYOR" if ok else "DESTEKLENMİYOR"), "ayrinti": ay})
+    cs = [Hb[(Hb.kume == "HT") & (Hb.donem == dn) & (Hb.etiket == "sabit_20_10_60")] for dn in tests]
+    ok = all(len(c) and cy_tutar(c.iloc[0].to_dict(), K) for c in cs) if all(len(c) for c in cs) else None
+    ekle("B2", "Önceki aday 'ABD hacimli taban' üçlü bariyerde rastgeleden iyi", ok,
+         "; ".join(f"{dn}: n {c.iloc[0].n}, isabet {c.iloc[0].isabet:.3f}, taban {c.iloc[0].taban:.3f}, fark {c.iloc[0].fark:+.3f} [{c.iloc[0].fark_alt:+.3f}], net {c.iloc[0].net:+.4f}"
+                   for dn, c in zip(tests, cs) if len(c) and c.iloc[0].n))
+    for et in ("oynak_s_0.5s_60",):
+        cs = [Hb[(Hb.kume == "P1") & (Hb.donem == dn) & (Hb.etiket == et)] for dn in tests]
+        ok = all(len(c) and cy_tutar(c.iloc[0].to_dict(), K) for c in cs) if all(len(c) for c in cs) else None
+        ekle("B1", "P1 oynaklığa bağlı bariyerle rastgeleden iyi", ok, "; ".join(f"{dn}: n {c.iloc[0].n}, fark {c.iloc[0].fark:+.3f} [{c.iloc[0].fark_alt:+.3f}]" for dn, c in zip(tests, cs) if len(c) and c.iloc[0].n))
+    for faz in ("P1", "P2"):
+        q = M[(M.faz == faz) & (M.model == "p_LR") & M.donem.isin(tests)]
+        ok = (len(q) == len(tests) and all((r.n_secilen or 0) >= K["karar"]["n_min"] and (r.isabet_fark or -1) >= fe and (r.isabet_fark_alt or -1) > 0 and (r.net_fark or -1) > 0
+                                            for r in q.itertuples())) if len(q) else None
+        ekle(f"B4-{faz}-LR", f"{faz}: lojistik referans modeli adayları iyileştiriyor", ok,
+             "; ".join(f"{r.donem}: seçilen {r.n_secilen}/{r.n_hepsi}, precision {r.precision:.3f} (taban {r.taban_isabet:.3f}), AUC {r.roc_auc:.3f}, net fark {r.net_fark:+.4f}" for r in q.itertuples()))
+        k = Kt[(Kt.faz == faz) & (Kt.kiyas == "GBM-LR")]; q2 = M[(M.faz == faz) & M.donem.isin(tests)]
+        ok = (len(k) == len(tests) and all((r.alt or -1) > 0 for r in k.itertuples()) and all(
+            (q2[(q2.model == "p_GBM") & (q2.donem == dn)].net_secilen.iloc[0] >= q2[(q2.model == "p_LR") & (q2.donem == dn)].net_secilen.iloc[0]) for dn in tests)) if len(k) == len(tests) else None
+        ekle(f"B4-{faz}-GBM", f"{faz}: ağaç modeli lojistik modeli geçiyor", ok, "; ".join(f"{r.donem}: AUC farkı {r.fark:+.3f} [{r.alt:+.3f}, {r.ust:+.3f}]" for r in k.itertuples()))
+        for kod, ad in (("CNN", "CNN katkısı [G,C]-[G]"), ("LSTM", "LSTM katkısı [G,L]-[G]")):
+            k = Kt[(Kt.faz == faz) & (Kt.kiyas == ad)]
+            ok = (all((r.alt or -1) > 0 for r in k.itertuples())) if len(k) == len(tests) and k.fark.notna().all() else None
+            ekle(f"B4-{faz}-{kod}", f"{faz}: {kod} sayısal modelin üstüne bilgi ekliyor", ok, "; ".join(f"{r.donem}: {r.fark:+.3f} [{r.alt:+.3f}, {r.ust:+.3f}]" for r in k.itertuples()))
+        for g in K["gruplar"]:
+            k = G[(G.faz == faz) & (G.grup == g)]
+            ok = all((r.alt or -1) > 0 for r in k.itertuples()) if len(k) == len(tests) and k.tam_eksi_cikarilmis.notna().all() else None
+            ekle(f"B5-{faz}-{g}", f"{faz}: '{g}' özellik grubu ek bilgi taşıyor", ok,
+                 "; ".join(f"{r.donem}: tam - çıkarılmış AUC {r.tam_eksi_cikarilmis:+.3f} [{r.alt:+.3f}], yalnız grup AUC {r.yalniz_auc:.3f}" for r in k.itertuples()))
+    C = T["kontrol"]
+    for kk, beklenen in (("negatif_karisik_etiket", "AUC ~0,5"), ("pozitif_gelecek5_sizinti", "AUC belirgin yüksek")):
+        q = C[C.kontrol.str.endswith(kk)]
+        ok = (all(abs(r.auc - 0.5) < 0.06 for r in q.itertuples()) if kk.startswith("negatif") else all(r.auc > 0.65 for r in q.itertuples())) if len(q) else None
+        ekle(f"B7-{kk}", f"Kontrol: {kk} ({beklenen})", ok, "; ".join(f"{r.kontrol} {r.donem}: AUC {r.auc:.3f} [{r.auc_alt:.3f}, {r.auc_ust:.3f}]" for r in q.itertuples()))
+    q = C[C.kontrol == "plasebo_P1_esli_rastgele"]
+    ok = all(abs(r.fark) < fe for r in q[q.donem.isin(tests)].itertuples()) if len(q) else None
+    ekle("B7-plasebo", "Kontrol: plasebo (aynı gün aynı oynaklık rastgele) farkı ~0", ok, "; ".join(f"{r.donem}: fark {r.fark:+.3f} [{r.fark_alt:+.3f}, {r.fark_ust:+.3f}] n {r.n}" for r in q.itertuples()))
+    Cm = T["coklu"]
+    if len(Cm):
+        ekle("B8", "Çoklu test (Holm): düzeltme sonrası anlamlı (p < 0,05) testler", None,
+             f"{int((Cm.holm_p < 0.05).sum())} / {len(Cm)} test; " + "; ".join(f"{r.test} (p {r.p:.3f}, Holm {r.holm_p:.3f})" for r in Cm[Cm.holm_p < 0.05].head(12).itertuples()))
+    return out
+
+
 def _cy_h(Hc: pd.DataFrame, pz: str, kume: str, dn: str, et: str = "ana_20_10_60") -> Dict[str, Any]:
     q = Hc[(Hc.pazar == pz) & (Hc.kume == kume) & (Hc.donem == dn) & (Hc.etiket == et)]
     return q.iloc[0].to_dict() if len(q) else {}
@@ -1132,10 +1573,41 @@ def cy_rapor(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> str:
                  f"{f(r.ort_kazanc, 3)} | {f(r.ort_kayip, 3)} | {f(r.piyasa_toplam, 3)} | {f(r.piyasa_mdd, 3)} | {f(r.rastgele_toplam, 3)} | {en} |")
     L += ["", "## Parametre arama ve aşırı uyum", "", f"- {R.get('pbo')}", f"- Meta seçim: {R.get('meta_secim')}; genel: {R.get('genel_secim')}; CNN: {R.get('cnn_secim')}",
           f"- CNN epoch kaydı: {R.get('cnn_kayit')}", "", "## Notlar", ""] + [f"- {n}" for n in R.get("notlar", [])]
+    if R.get("B"):
+        L += cy_rapor_b(R["B"], K)
     metin = "\n".join(L) + "\n"
     with open(os.path.join(A.cikti, "cy_rapor.md"), "w", encoding="utf-8") as fh:
         fh.write(metin)
     return metin
+
+
+def cy_rapor_b(Bb: Dict[str, Any], K: Dict[str, Any]) -> List[str]:
+    """v1.1 rapor bölümü (markdown satırları)."""
+    T = Bb["T"]; f = lambda x, p=3: ("" if x is None or (isinstance(x, float) and not np.isfinite(x)) else (f"{x:+.{p}f}" if isinstance(x, float) else str(x)))
+    L = ["", "## v1.1 — birleştirilmiş plan (model merdiveni, katkı, kontroller)", "", "| Kod | Hipotez | Karar | Ayrıntı |", "|---|---|---|---|"]
+    L += [f"| {h['kod']} | {h['hipotez']} | **{h['karar']}** | {h['ayrinti']} |" for h in Bb["H_b"]]
+    Hb = T["hucre"]; L += ["", "### Etiket türleri, belirsiz mumlar, hacimli taban", "", "| Küme | Dönem | Etiket | n | İsabet | Taban | Fark [alt] | Net | Belirsiz payı |", "|---|---|---|---|---|---|---|---|---|"]
+    for r in Hb.itertuples():
+        L.append(f"| {r.kume} | {r.donem} | {r.etiket} | {r.n} | {f(getattr(r, 'isabet', np.nan))} | {f(getattr(r, 'taban', np.nan))} | {f(getattr(r, 'fark', np.nan))} [{f(getattr(r, 'fark_alt', np.nan))}] | "
+                 f"{f(getattr(r, 'net', np.nan), 4)} | {f(getattr(r, 'belirsiz_pay', np.nan), 3)} |")
+    M = T["model"]; L += ["", "### Model merdiveni (seçim eşiği doğrulamada, 2021-22)", "",
+                          "| Faz | Model | Dönem | Seçilen / hepsi | Precision | Taban | Recall | ROC-AUC [alt] | PR-AUC | Brier | Net seçilen | Net fark [alt] |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for r in M.itertuples():
+        L.append(f"| {r.faz} | {r.model} | {r.donem} | {getattr(r, 'n_secilen', '')} / {r.n_hepsi} | {f(getattr(r, 'precision', np.nan))} | {f(getattr(r, 'taban_isabet', np.nan))} | "
+                 f"{f(getattr(r, 'recall', np.nan))} | {f(getattr(r, 'roc_auc', np.nan))} [{f(getattr(r, 'roc_auc_alt', np.nan))}] | {f(getattr(r, 'pr_auc', np.nan))} | {f(getattr(r, 'brier', np.nan))} | "
+                 f"{f(getattr(r, 'net_secilen', np.nan), 4)} | {f(getattr(r, 'net_fark', np.nan), 4)} [{f(getattr(r, 'net_fark_alt', np.nan), 4)}] |")
+    for ad, kol in (("katki", ("faz", "kiyas", "donem", "n", "fark", "alt", "ust", "p")), ("grup", ("faz", "grup", "donem", "n", "tam_eksi_cikarilmis", "alt", "ust", "yalniz_auc")),
+                    ("kontrol", None), ("portfoy", ("donem", "strateji", "sinyal_n", "toplam", "yillik", "mdd", "sharpe", "calmar", "islem_n", "kazanma", "ort_islem", "ort_kayip")),
+                    ("sektor", None), ("kirilim", ("faz", "kirilim", "deger", "n", "isabet", "taban", "fark", "fark_alt", "net", "gbm_secilen_test_n", "gbm_secilen_test_isabet"))):
+        Dt = T[ad]
+        if not len(Dt):
+            continue
+        kol = [c for c in (kol or Dt.columns) if c in Dt.columns]
+        L += ["", f"### {ad}", "", "| " + " | ".join(kol) + " |", "|" + "---|" * len(kol)]
+        for r in Dt[kol].itertuples(index=False):
+            L.append("| " + " | ".join(f(v) if isinstance(v, float) else str(v) for v in r) + " |")
+    L += ["", "### Notlar v1.1", ""] + [f"- {n}" for n in Bb.get("notlar", [])]
+    return L
 
 
 def _cakisma_kontrol_cy(_once=_CK_ONCE_CY, _dosya="COL_YOLU_ABD.py"):
