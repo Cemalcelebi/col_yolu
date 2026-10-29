@@ -2408,6 +2408,7 @@ def cy_v13_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, gunluk_y
     with mp.get_context("fork").Pool(max(1, A.is_parcacigi)) as hv:
         son = [x for x in hv.imap_unordered(cy_v12_hisse, args, chunksize=8) if x is not None]
     P = pd.concat([r["panel"].assign(sembol=r["sembol"]) for r in son if len(r["panel"])], ignore_index=True)
+    P = P.sort_values(["sembol", "tarih"], kind="stable").reset_index(drop=True)      # işçi sırası rastgele; G3 / G4 örneklemi tekrar üretilebilsin
     P["tarih"] = pd.to_datetime(P.tarih).astype("datetime64[ns]"); P["agirlik"] = P.sembol.map(evp.agirlik).fillna(1.0).astype(np.float32); P["kaynak"] = P.sembol.map(evp.kaynak)
     sek = cy_sektor(A, EV); P["sektor"] = P.sembol.map(sek).fillna("bilinmiyor")
     P["vd"] = np.minimum((P.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
