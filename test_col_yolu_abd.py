@@ -140,7 +140,7 @@ def sina():
     if not (np.array_equal(np.nan_to_num(t15a.y, nan=-1), np.nan_to_num(t15b.y, nan=-1)) and np.allclose(np.nan_to_num(t15a.brut), np.nan_to_num(t15b.brut))):
         hata.append("15) ölçekli seride etiket değişti")
     # 16) hücre hesabı: fark = ağırlıklı ortalama (y - kontrol_y); net fark aynı; maliyet = brüt - net
-    D16 = pd.DataFrame({"tarih": pd.bdate_range("2023-01-02", periods=40, freq="3B"), "sembol": [f"S{i % 7}" for i in range(40)], "y": [1.0] * 20 + [0.0] * 20, "kontrol_y": 0.25,
+    D16 = pd.DataFrame({"tarih": pd.bdate_range("2023-01-02", periods=40, freq="3B"), "sembol": [f"S{i % 7}" for i in range(40)], "y": [1.0, 0.0] * 20, "kontrol_y": 0.25,
                         "net": 0.02, "kontrol_net": 0.01, "brut": 0.03, "agirlik": 1.0})
     h16 = C.cy_v12_hucre(D16, K12, np.random.default_rng(1))
     if not (abs(h16["fark"] - 0.25) < 1e-9 and abs(h16["net_fark"] - 0.01) < 1e-9 and h16["n"] == 40 and C.cy_v12_karar(h16, K12) == "TUTAR"):
