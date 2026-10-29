@@ -111,6 +111,52 @@ def sina():
         geri = pd.read_csv(os.path.join(td, "cy_olay_ABD.csv.gz"))
     if not (say == {"P1": 1, "P2": 1, "ES": 1, "HT": 2} and (geri.tip == "HT").sum() == 2 and "vd" not in geri):
         hata.append(f"11) olay CSV'sinde HT / küme eksik: {say}")
+    # 12) v1.2 eşleştirme: yalnız aynı gün (gun_tol 0), aynı vd / lt / trend, |dd250| <= 0,10, hisse farklı; gelecek günün etiketi eşleşmeyi değiştirmez; aynı tohumla aynı sonuç
+    K12 = {**C.CY, "_v12": C.CY_V12}; g12 = pd.bdate_range("2024-01-01", periods=3)
+    def satir(sem, t, dd, y, vd=3, lt=1, tr=1, sk="Tech"):
+        return {"sembol": sem, "tarih": t, "dd250": dd, "vol60": 0.02, "log_dv20": 7.0, "r60": 0.0, "ar20": 1.0, "vd": vd, "lt": lt, "trend": tr, "sektor": sk, "y": y, "net": y - 0.01, "imza_h": 1}
+    P12 = pd.DataFrame([satir("E", g12[0], -0.40, 1.0), satir("A", g12[0], -0.38, 0.0), satir("B", g12[0], -0.42, 1.0), satir("C", g12[0], -0.60, 1.0), satir("D", g12[0], -0.40, 1.0, vd=5),
+                        satir("F", g12[0], -0.40, 1.0, tr=0), satir("G", g12[1], -0.40, 1.0), satir("H", g12[0], -0.40, 1.0, sk="Energy")])
+    ol = P12.iloc[[0]]; hv = P12.iloc[1:]; rng12 = np.random.default_rng(5)
+    M12 = C.cy_v12_eslestir(P12, ol, hv, K12, 5, 0, rng12); kim = set(M12.kontrol_kimlik.iloc[0].split("@")[0].split(";"))
+    P12b = P12.copy(); P12b.loc[P12b.sembol == "G", "y"] = 0.0; M12b = C.cy_v12_eslestir(P12b, ol, P12b.iloc[1:], K12, 5, 0, rng12)
+    semler = [x.split("@")[0] for x in M12.kontrol_kimlik.iloc[0].split(";")]
+    if not (sorted(semler) == ["A", "B"] and abs(M12.kontrol_y.iloc[0] - 0.5) < 1e-9 and M12.kontrol_kimlik.iloc[0] == M12b.kontrol_kimlik.iloc[0] and M12.kontrol_n.iloc[0] == 2):
+        hata.append(f"12) v1.2 eşleştirme yanlış: {semler} {M12.kontrol_y.iloc[0]}")
+    # 13) sembol tekilliği
+    try:
+        C.cy_v12_tekil(pd.DataFrame({"pazar": ["ABD", "ABD"], "sembol": ["X", "X"]})); hata.append("13) yinelenen sembol yakalanmadı")
+    except RuntimeError:
+        pass
+    # 14) delist senaryoları: seri 100 -> 50'de biter (vade dolmadan), son 60 gün eksi: ek kayıp -30 / 0 / -100 beklenen brüt getiriyi verir
+    c14 = np.r_[np.full(100, 100.0), np.linspace(100, 50, 30)]; d14 = _seri(c14, h=c14 * 1.001, l=c14 * 0.999); o14 = d14.Open.iloc[101]
+    bek = {-0.30: (50 / o14) * 0.7 - 1, 0.0: 50 / o14 - 1, -1.0: -1.0}; ok14 = True
+    for sn, b_ in bek.items():
+        t14 = C.cy_uclu_bariyer(d14, 0.20, -0.60, 60, True, {**C.CY, "delist_kayip": sn}); ok14 &= abs(t14.brut.iloc[100] - b_) < 1e-9 and t14.y.iloc[100] == 0
+    if not ok14:
+        hata.append("14) delist senaryoları yanlış")
+    # 15) ham / düzeltilmiş: orantılı ölçekli seri aynı etiketleri verir (bariyerler göreli)
+    t15a = C.cy_uclu_bariyer(d7, 0.20, -0.10, 60, False); t15b = C.cy_uclu_bariyer(d7.assign(**{k: d7[k] * 3.0 for k in ("Open", "High", "Low", "Close")}), 0.20, -0.10, 60, False)
+    if not (np.array_equal(np.nan_to_num(t15a.y, nan=-1), np.nan_to_num(t15b.y, nan=-1)) and np.allclose(np.nan_to_num(t15a.brut), np.nan_to_num(t15b.brut))):
+        hata.append("15) ölçekli seride etiket değişti")
+    # 16) hücre hesabı: fark = ağırlıklı ortalama (y - kontrol_y); net fark aynı; maliyet = brüt - net
+    D16 = pd.DataFrame({"tarih": pd.bdate_range("2023-01-02", periods=40, freq="3B"), "sembol": [f"S{i % 7}" for i in range(40)], "y": [1.0] * 20 + [0.0] * 20, "kontrol_y": 0.25,
+                        "net": 0.02, "kontrol_net": 0.01, "brut": 0.03, "agirlik": 1.0})
+    h16 = C.cy_v12_hucre(D16, K12, np.random.default_rng(1))
+    if not (abs(h16["fark"] - 0.25) < 1e-9 and abs(h16["net_fark"] - 0.01) < 1e-9 and h16["n"] == 40 and C.cy_v12_karar(h16, K12) == "TUTAR"):
+        hata.append(f"16) v1.2 hücre hesabı yanlış: {h16.get('fark')} {h16.get('net_fark')}")
+    # 17) eski kod yüklenebilir (git show b3835d8) ve aynı imzalı işleyici var
+    import subprocess
+    r17 = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(__file__)), "show", f"{C.CY_V12['eski_commit']}:COL_YOLU_ABD.py"], capture_output=True, text=True)
+    if r17.returncode == 0:
+        import types
+        m17 = types.ModuleType("cy_eski_test"); sys.modules["cy_eski_test"] = m17; m17.__dict__.update({"get_ipython": None, "__file__": __file__})
+        try:
+            exec(compile(r17.stdout, "eski.py", "exec"), m17.__dict__)
+            if not (callable(m17.__dict__.get("cy_hisse_isle")) and callable(m17.__dict__.get("cy_birlestir"))):
+                hata.append("17) eski kodda cy_hisse_isle / cy_birlestir yok")
+        except Exception as ex:
+            hata.append(f"17) eski kod yüklenemedi: {ex}")
     return hata
 
 
@@ -118,4 +164,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 11/11 OK")
+    print("test_col_yolu_abd: 17/17 OK")
