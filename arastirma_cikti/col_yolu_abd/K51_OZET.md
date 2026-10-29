@@ -85,3 +85,26 @@ Resmi ölçüt (CLAUDE.md, FI_OLCUT: ABD + Avrupa dört hücre) P1, P2 ve HT iç
 - batan bayrağı
 
 Sonuç denetçisinin bulguları aşağıdaki bölümdedir.
+
+### Sonuç denetçisinin bulguları (bağımsız yeniden hesap)
+
+Karar doğrulandı. Ham fiyatlardan kurulan üçlü bariyer, 6.892 test olayında etiketle %100 eşleşti; H1 sayıları birebir tuttu. Kararı tersine çevirecek bir hata yok. Rapora eklenmesi gerekenler:
+
+1. **Küçük artı etkinin tamamı bugün hâlâ işlem gören hisselerden geliyor.**
+
+   | Kaynak | 2023 | 2024-26 |
+   |---|---|---|
+   | Bugün işlem gören (V_ABD) | +5,3 puan | +6,4 puan |
+   | Sıkıntılı + batmış (K34) | −3,2 puan | −2,5 puan |
+   | Yalnız batmış (Tiingo) | −9,7 puan | −5,9 puan |
+
+   - "Bugün işlem görüyor" bilgisi sinyal günü bilinemez. Yani bu ayrım gelecekle yapılmış bir seçimdir, alınabilir değildir.
+   - Kırılım tablosundaki "rüzgâr yok +3,8" satırı da aynı ayrımdır: sektörü bilinmeyen hisseler tam olarak K34 hisseleridir. Sektör rüzgârının bir etkisi değildir.
+   - Resmi ölçüt dosyası `cy_fi_olcut.csv` yalnız bugün işlem görenlerle hesaplandı (FON_IZI eşli panel; betik: oturum betiği k51olcut). Buna rağmen tutmuyor: medyan fark eksi, 2023 alt uç −0,3 puan, 2024-26 sıra 0,498.
+2. **+2,4 puan birkaç hisseye dayanıyor.** En çok katkı veren 20 hisse çıkarılınca fark sıfır oluyor. 2026'da yön dönüyor (−4,3 puan). Yüksek oynaklık üçte biri 2023'te artı, 2024-26'da eksi.
+3. **İmza yönü ters.** Dört imzanın hepsi olan olaylar, üç imzalılardan kötü (−1,0 / −4,4 puan). Modellerin en yüksek olasılık verdiği adaylar en düşüklerden iyi değil.
+4. **Portföy kaybının sebebi.** Gidiş-dönüş maliyeti küçük hisselerde %2,2-2,4. Olayların %61'i stopla çıkıyor. Aynı kurallarla rastgele portföy de 2024-26'da −%19. SPY'nin altında kalmak sinyalden çok −%10 stop ve maliyet kuralından geliyor. Göreli sonuç (taban kadar) değişmiyor.
+5. **"Belirsiz" bayrağı doğru.** P1'de %30'dan büyük gün içi aralık 235 kez var, ama hepsinde bariyer o günden önce değmiş.
+6. **Önceki "hacimli taban" adayının artısı da yalnız hayatta kalanlarda.** Bugün işlem görenlerde 2024-26 +7,5 puan; sıkıntılı ve batmışlarda −5,4 puan.
+
+**Ders.** Bugün işlem gören hisselerle yapılan testler (eski K38, FI_OLCUT panelleri) küçük hisse ve düşüş sonrası formasyonlarda iyimser çıkar. Batmış şirketler eklenince artı kaybolur.

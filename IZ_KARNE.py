@@ -804,7 +804,10 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "2024-26 -%29,5; SPY +%26,7 / +%67,7. PBO ızgara 0,39, DSR 0,03; model x pay PBO 0,57. Önceki aday 'hacimli taban' "
                "tekrarlanmadı (TB -5,5 / -1,2 puan; FI_OLCUT 2024-26 +%12,5 [-3,3]). Resmi ölçüt FI_OLCUT P1 / P2 / HT İZ DEĞİL. Avrupa ve "
                "BIST'te de tutmuyor. Bilgi: kırılımdan sonra 10 gün kutu üstünde kalan P2'ler +13 / +19 puan ama bu gelecekle ayrılmış "
-               "grup (bkz. Ç133). Kısıt: 2016-20 yalnız bugün işlem görenler; batan örneklemi 2020-10 sonrası."),
+               "grup (bkz. Ç133). Kısıt: 2016-20 yalnız bugün işlem görenler; batan örneklemi 2020-10 sonrası. SONUÇ DENETÇİSİ: küçük artı etkinin "
+               "tamamı bugün işlem görenlerden (V_ABD +5,3 / +6,4 puan); sıkıntılı ve batmışlarda -3,2 / -2,5 (Tiingo -9,7 / -5,9); bu ayrım "
+               "gelecekle seçim, alınabilir değil; 'rüzgâr yok' kırılımı ve FI_OLCUT paneli de aynı yanlılığı taşıyor; en iyi 20 hisse çıkınca "
+               "fark 0; imza 4, imza 3'ten kötü. Ders: yalnız hayatta kalanlarla yapılan küçük hisse testleri iyimser çıkar."),
     _ik_k("Ç133", "2026-10-29", "KIRILIM DEVAMLILIĞI GİRİŞİ: P2 kırılımından sonra 10 gün kapanışlar kutu tavanı üstünde kalırsa 11. gün al (K51-D1; "
           "veri esinli, bağımsız hücreler ABD 2016-22 + Avrupa)", "COL_YOLU_ABD.py (betik k51d1)",
           "K51 'iz yok çıkarsa durma' sıradaki deneme", "Keşif (ön kayıt arastirma_cikti/col_yolu_abd/K51_D1_onkayit.md)", "IZ C", 2,
