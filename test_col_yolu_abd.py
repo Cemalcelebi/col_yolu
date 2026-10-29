@@ -208,8 +208,14 @@ def sina():
     f22b = C.cy_v14_sekil(C22b, H22b, L22b, V22, R22b, np.zeros(n22), rk22, 59)
     if not (f22b and f22b["bds"] == 0 and not f22b["fiyat_zayif"] and not f22b["oyn_dusuyor"]):
         hata.append(f"22b) v1.4 BDS 0 bekleniyordu: {f22b}")
-    if C.cy_v14_sekil(C22, H22, L22, V22, R22, rs22, rk22, 20) is not None:
-        hata.append("22c) v1.4 yetersiz geçmişte None dönmeli")
+    if C.cy_v14_sekil(C22, H22, L22, V22, R22, rs22, rk22, 20)["gecerli"]:
+        hata.append("22c) v1.4 yetersiz geçmişte geçersiz dönmeli")
+    # 26) EK 1: eksik veri sıfır sayılmaz: pencerede SPY eksik -> ölçülemez (neden SPY); hacim sıfır -> hacim; ATR 0 -> ATR
+    rs26 = rs22.copy(); rs26[57] = np.nan; f26 = C.cy_v14_sekil(C22, H22, L22, V22, R22, rs26, rk22, 59)
+    V26 = V22.copy(); V26[35:55] = 0.0; f26b = C.cy_v14_sekil(C22, H22, L22, V26, R22, rs22, rk22, 59)
+    f26c = C.cy_v14_sekil(np.full(60, 100.0), np.full(60, 100.0), np.full(60, 100.0), V22, np.zeros(60), rs22, rk22, 59)
+    if not (not f26["gecerli"] and "SPY" in f26["neden"] and not f26b["gecerli"] and "hacim" in f26b["neden"] and not f26c["gecerli"] and "ATR" in f26c["neden"]):
+        hata.append(f"26) v1.4 eksik veri işleme yanlış: {f26.get('neden')} {f26b.get('neden')} {f26c.get('neden')}")
     # 23) KGS: d0 = 10; 8. günde SPY göreli +%6 -> 8 (geç); hiç olmazsa 21 (yok); 3. günde -> hızlı
     C23 = np.full(50, 100.0); S23 = np.full(50, 100.0); C23[17:] = 106.0
     if not (C.cy_v14_kgs(C23, S23, 10) == 8 and C.cy_v14_kgs(np.full(50, 100.0), S23, 10) == 21):
@@ -217,6 +223,10 @@ def sina():
     C23c = np.full(50, 100.0); C23c[12:] = 110.0; S23c = np.full(50, 100.0); S23c[12:] = 104.0        # göreli +%5,8 -> 3. gün
     if C.cy_v14_kgs(C23c, S23c, 10) != 3:
         hata.append(f"23b) v1.4 KGS hızlı yanlış: {C.cy_v14_kgs(C23c, S23c, 10)}")
+    # 27) EK 3: KGS-sonra başlangıç d0 kapanışı: sıçrama d0 günündeyse KGS-önce 1, KGS-sonra ulaşmadı (21); sıçrama 17. günde ise önce 8, sonra 7 (bir gün geç başlar)
+    C27 = np.full(50, 100.0); C27[10:] = 106.0
+    if not (C.cy_v14_kgs(C27, S23, 10) == 1 and C.cy_v14_kgs(C27, S23, 10, baslangic="sonra") == 21 and C.cy_v14_kgs(C23, S23, 10, baslangic="sonra") == 7):
+        hata.append(f"27) v1.4 KGS-sonra yanlış: {C.cy_v14_kgs(C27, S23, 10)} {C.cy_v14_kgs(C27, S23, 10, baslangic='sonra')} {C.cy_v14_kgs(C23, S23, 10, baslangic='sonra')}")
     # 24) olay günleri: hafta sonu kaydı pazartesiye eşlenir; 5 gün arayla iki kayıt tek 'ilk' olay; 30 gün sonraki kayıt yeni olay; 10 gün boşluk kaydı düşer
     idx24 = pd.bdate_range("2024-01-01", periods=80).to_numpy().astype("datetime64[ns]")
     t24 = np.array(["2024-01-13", "2024-01-22", "2024-02-26", "2024-03-15"], dtype="datetime64[ns]")      # 13 Oca cumartesi -> 15 Oca (i=10); 22 Oca i=15; 26 Şub i=40; 15 Mar i=54
@@ -237,4 +247,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 25/25 OK")
+    print("test_col_yolu_abd: 27/27 OK")
