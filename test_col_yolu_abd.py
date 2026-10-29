@@ -192,6 +192,44 @@ def sina():
     if not (abs(h21["delta"] - 0.25) < 1e-9 and abs(h21["net_fark"] - 0.02) < 1e-9 and h21["n_a"] == 40 and C.cy_v13_karar(h21, K13) == "TUTAR"
             and C.cy_v13_karar({"n_a": 10, "n_b": 40, "delta": 0.3, "delta_alt": 0.1, "net_fark": 0.1}, K13) == "YETERSİZ ÖRNEKLEM"):
         hata.append(f"21) v1.3 hücre hesabı yanlış: {h21.get('delta')} {h21.get('net_fark')}")
+    # ---------------- v1.4 (K53 bilgi direnci)
+    # 22) BDS: sentetik seri; pencerede fiyat SPY'ye göre zayıf, satış baskısı azalıyor (A10 B10'dan iyi), ATR düşüyor -> BDS 3; tersi -> BDS 0
+    n22 = 60; C22 = np.full(n22, 100.0); H22 = C22 + 2.0; L22 = C22 - 2.0; V22 = np.full(n22, 1000.0)
+    # B10 = [40, 49]: her gün -%2, geniş aralık, kapanış dipte, hacim yüksek; A10 = [50, 59] (pencere [55, 59]): hafif düşüş, dar aralık, kapanış tepede
+    for t in range(40, 50):
+        C22[t] = C22[t - 1] * 0.98; H22[t] = C22[t] + 3.0; L22[t] = C22[t] - 0.2; V22[t] = 3000.0
+    for t in range(50, 60):
+        C22[t] = C22[t - 1] * (0.999 if t % 2 else 1.0005); H22[t] = C22[t] + 0.2; L22[t] = C22[t] - 0.5; V22[t] = 800.0
+    R22 = np.r_[np.nan, C22[1:] / C22[:-1] - 1]; rs22 = np.full(n22, 0.001); rk22 = np.full(n22, np.nan)
+    f22 = C.cy_v14_sekil(C22, H22, L22, V22, R22, rs22, rk22, 59)
+    if not (f22 and f22["bds"] == 3 and f22["fiyat_zayif"] and f22["satis_azaliyor"] and f22["oyn_dusuyor"] and f22["iyilesme"] >= 3 and np.isnan(f22["rel_sek5"])):
+        hata.append(f"22) v1.4 BDS hesabı yanlış: {f22}")
+    C22b = np.linspace(100, 130, n22); H22b = C22b + 1.0 + np.arange(n22) * 0.1; L22b = C22b - 1.0 - np.arange(n22) * 0.1; R22b = np.r_[np.nan, C22b[1:] / C22b[:-1] - 1]
+    f22b = C.cy_v14_sekil(C22b, H22b, L22b, V22, R22b, np.zeros(n22), rk22, 59)
+    if not (f22b and f22b["bds"] == 0 and not f22b["fiyat_zayif"] and not f22b["oyn_dusuyor"]):
+        hata.append(f"22b) v1.4 BDS 0 bekleniyordu: {f22b}")
+    if C.cy_v14_sekil(C22, H22, L22, V22, R22, rs22, rk22, 20) is not None:
+        hata.append("22c) v1.4 yetersiz geçmişte None dönmeli")
+    # 23) KGS: d0 = 10; 8. günde SPY göreli +%6 -> 8 (geç); hiç olmazsa 21 (yok); 3. günde -> hızlı
+    C23 = np.full(50, 100.0); S23 = np.full(50, 100.0); C23[17:] = 106.0
+    if not (C.cy_v14_kgs(C23, S23, 10) == 8 and C.cy_v14_kgs(np.full(50, 100.0), S23, 10) == 21):
+        hata.append(f"23) v1.4 KGS yanlış: {C.cy_v14_kgs(C23, S23, 10)} {C.cy_v14_kgs(np.full(50, 100.0), S23, 10)}")
+    C23c = np.full(50, 100.0); C23c[12:] = 110.0; S23c = np.full(50, 100.0); S23c[12:] = 104.0        # göreli +%5,8 -> 3. gün
+    if C.cy_v14_kgs(C23c, S23c, 10) != 3:
+        hata.append(f"23b) v1.4 KGS hızlı yanlış: {C.cy_v14_kgs(C23c, S23c, 10)}")
+    # 24) olay günleri: hafta sonu kaydı pazartesiye eşlenir; 5 gün arayla iki kayıt tek 'ilk' olay; 30 gün sonraki kayıt yeni olay; 10 gün boşluk kaydı düşer
+    idx24 = pd.bdate_range("2024-01-01", periods=80).to_numpy().astype("datetime64[ns]")
+    t24 = np.array(["2024-01-13", "2024-01-22", "2024-02-26", "2024-03-15"], dtype="datetime64[ns]")      # 13 Oca cumartesi -> 15 Oca (i=10); 22 Oca i=15; 26 Şub i=40; 15 Mar i=54
+    idx24b = np.delete(idx24, np.arange(54, 64))                                                          # 15 Mar..28 Mar işlem günleri yok -> 15 Mar kaydı 10+ gün sonraya eşlenir, düşer
+    hepsi24, ilk24 = C.cy_v14_olay_gunleri(idx24b, t24)
+    if not (hepsi24.tolist() == [10, 15, 40] and ilk24.tolist() == [10, 40]):
+        hata.append(f"24) v1.4 olay günleri yanlış: {hepsi24.tolist()} {ilk24.tolist()}")
+    # 25) ADE: 90 gün içinde 3 kurumun son hedefleri (JPM 10 -> 12, Barclays 9, Citi 15) -> std/ort; 2 kurum -> boş
+    g25 = pd.DataFrame({"tarih": pd.to_datetime(["2024-01-05", "2024-02-01", "2024-02-10", "2024-02-20", "2023-10-01"]), "kurum_n": ["JPM", "JPM", "BARCLAYS", "CITI", "UBS"], "hedef": [10.0, 12.0, 9.0, 15.0, 30.0]})
+    a25, n25 = C.cy_v14_ade(g25, np.datetime64("2024-03-01"))
+    bek = np.std([12.0, 9.0, 15.0]) / 12.0
+    if not (n25 == 3 and abs(a25 - bek) < 1e-9 and np.isnan(C.cy_v14_ade(g25[g25.kurum_n != "CITI"], np.datetime64("2024-03-01"))[0])):
+        hata.append(f"25) v1.4 ADE yanlış: {a25} {n25} (beklenen {bek})")
     return hata
 
 
@@ -199,4 +237,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 21/21 OK")
+    print("test_col_yolu_abd: 25/25 OK")
