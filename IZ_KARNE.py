@@ -1375,14 +1375,30 @@ IK_GOREV: List[Dict[str, str]] = [
                 "ve kapalı konular, 4 faz maliyet, 6 karar maddesi; K51-K54 arşiv noktası commit 83e5de8 (etiket gönderimi 403)",
      "sonuc": "100 hücrenin 71'i yalnız OHLCV ile ölçülebilir; 9 hücre eski çalışmayla çakışır (yalnız yeni boyut), 6 hücre kapalı konuya "
               "dokunur (onaysız koşulmaz); D07 yalnız 2021+ (SEC FS), D08 için 13F ve Form 4 satışları indirilmeli. Kod yazılmadı, koşu yok",
-     "durum": "ONAY BEKLİYOR: K55_PLAN.md bölüm 8'deki 6 karar (kod yapısı, dönem kilidi, sec_ozet'in islenmis-veri'ye konması, 13F / Form 4 "
-              "indirme izni, kapalı konu hücreleri, olay tanımı ve ölçüt kilidi)"},
+     "durum": "TAMAMLANDI: Cemal 6 kararı onayladı (30 Eki), Faz 0 başlatıldı"},
+    {"tarih": "2026-10-30", "istek": "K55 FAZ 0 (Cemal'in 6 kararıyla): K55/ modüller + K55.py; dönem kilidi 2016-21 / 2022-23 / 2024-26; SEC özeti ve "
+                                     "Tiingo listesi islenmis-veri'de sürümlü; 13F / Form 4 yalnız Faz 2; kapalı hücreler kapalı; olay tanımı ve ölçütler "
+                                     "kilitli; veri kalitesi, fonsuz evren, ortak panel, eşleştirme kontrolü, sızıntı testleri, sentetik testler, 50 "
+                                     "hisselik deneme, rapor; iz sonucu optimize edilmez",
+     "yapilan": "K55/ONKAYIT_K55.md kilit (commit c5304ae, koşudan önce) + v1.1 açıklamaları; islenmis-veri k55/ paketi (sec_ozet 105 MB -> 6,6 MB xz, "
+                "supported_tickers, sembol_cik, company_tickers; manifest: kaynak, tarih, dönem, sürüm, sha256, işleme kodu; fce5d94); K55/ 15 modül "
+                "(ortak, evren, veri_kalitesi, olay_tanimlari, panel, istatistik, eslestirme, sizinti, hucre A/B/C, hucreler D01-S01, raporlama, "
+                "veri_paket, faz0) + K55.py (çakışma kapısı) + test_k55 10/10 sentetik; 50 hisselik deneme (15 sn, iki koşu aynı sonuç) ve tam evren "
+                "Faz 0 (3,2 dk): arastirma_cikti/k55_dallanma/ ve tam_evren/ (K55_FAZ0_RAPOR, VERI_KAPSAMI, VERI_KALITESI, EVREN, OLAYLAR, "
+                "SIZINTI_TESTI, HUCRE_ISKELE, KOSU.json)",
+     "sonuc": "7 soru: eksiksiz 2.411 / 3.260 (sıkı tanım; sıçrama bayrağı 738 çoğu haber günü, Faz 1 başında elle örnek), tarihsel eksik 242, CIK "
+              "eşleşen 3.259 / 3.260, delist: sınıf 2 -%100 / 3 bedel / 5 K51 kuralı, 4b kesim, sınıf 6 dışarı; sızıntı testleri HEPSİ GEÇTİ (olumlu "
+              "kontrol d +1,19 AUC 0,83; olumsuz d -0,00); modüller hatasız; panel 4,9 M satır 0,6 GB, olaylar Y60 13.894 / Y120 6.201 / Y250 2.407 "
+              "(örtüşme 0); Faz 1 tahmini ~3,5 saat. İskele D01-S01 ETKİ YOK / TUTMAZ (pipeline denetimi, iz sonucu değil). BAĞIMSIZ dönem açılmadı",
+     "durum": "TAMAMLANDI, FAZ 1 ONAY BEKLİYOR: Faz 1 = D01-D06 + D10 OHLCV hücreleri (80), yalnız KEŞİF; başlamadan Cemal 'Faz 1 başlat' der"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
     "K54 (ek 8 düzeltilmiş koşu dahil): evren düzeltmesi sonuçları değiştirmiyor (55 ana hücrenin 54'ü SAĞLAM; evren etkisi <= 1,1 puan, etiket "
     "etkisi <= 0,06 puan), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama evren çoğunlukla hayatta kalanlardan (266 çıkış / "
-    "3.267); 7 fon (6 emtia / döviz ETF'si + BTCW) 30 Eki'de evren_disi_ABD.csv ile evrenden çıkarıldı, sonraki koşular fonsuz. Olası devam (Cemal'in kararı): (1) ileri "
+    "3.267); 7 fon (6 emtia / döviz ETF'si + BTCW) 30 Eki'de evren_disi_ABD.csv ile evrenden çıkarıldı, sonraki koşular fonsuz. K55 DALLANMALI İZ ARAMA: "
+    "plan (K55_PLAN.md) ve Faz 0 altyapısı (K55/, kilit ONKAYIT_K55.md, sızıntı testleri geçti, tam evren 3,2 dk) bitti; Faz 1 (80 OHLCV hücresi, "
+    "yalnız KEŞİF 2016-21) Cemal'in 'Faz 1 başlat' onayını bekliyor. Olası devam (Cemal'in kararı): (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
