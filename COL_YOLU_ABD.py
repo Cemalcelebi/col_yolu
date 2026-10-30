@@ -3060,8 +3060,9 @@ def cy_v15_hucre(D: pd.DataFrame, ycol: str, ecol: str, ncol: str, encol: str, K
     w = D.agirlik.to_numpy(float) if "agirlik" in D else np.ones(len(D)); X = D.assign(_f=D[ycol] - D[ecol], _fn=D[ncol] - D[encol])
     f, a, b = cy_boot_fark(X, "_f", K["boot"], rng); fn, an, bn = cy_boot_fark(X, "_fn", K["boot"], rng)
     brut = D["brut_k"] if "brut_k" in D else D.brut
-    h = {"n": int(len(D)), "hisse": int(D.sembol.nunique()), "ust_oran": float(np.average(D[ycol] == 1, weights=w)), "alt_oran": float(np.average((D[ycol] == 0) & (brut <= -0.10), weights=w)),
-         "zaman_asimi_oran": float(np.average((D[ycol] == 0) & (brut > -0.10), weights=w)), "isabet": float(np.average(D[ycol], weights=w)), "taban": float(np.average(D[ecol], weights=w)),
+    es = -0.10 + 1e-4                                                      # tam −%10'da çıkan bariyer, float32 toplama payı
+    h = {"n": int(len(D)), "hisse": int(D.sembol.nunique()), "ust_oran": float(np.average(D[ycol] == 1, weights=w)), "alt_oran": float(np.average((D[ycol] == 0) & (brut <= es), weights=w)),
+         "zaman_asimi_oran": float(np.average((D[ycol] == 0) & (brut > es), weights=w)), "isabet": float(np.average(D[ycol], weights=w)), "taban": float(np.average(D[ecol], weights=w)),
          "net": float(np.average(D[ncol], weights=w)), "fark": f, "fark_alt": a, "fark_ust": b, "net_fark": fn, "net_fark_alt": an, "net_fark_ust": bn}
     h["karar"] = "YETERSİZ ÖRNEKLEM" if h["n"] < K["n_min"] else ("TUTAR" if (f >= K["fark_esik"] and a > 0 and fn > 0) else ("TERS YÖN" if (f <= -K["fark_esik"] and b < 0) else "TUTMAZ"))
     return h
