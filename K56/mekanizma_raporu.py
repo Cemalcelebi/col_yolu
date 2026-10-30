@@ -196,10 +196,10 @@ def suzgec() -> pd.DataFrame:
     """Cemal'in K56 talimatının süzgeçten geçirilmesi: öneri, karar (AYNEN / DEĞİŞTİRİLDİ / ERTELENDİ / YAPILMADI), gerekçe."""
     S = [
         ("Etki envanteri (10 alan, bütün bulgular)", "AYNEN", "K51-K55'in bütün hipotez / hücre / denetim bulguları; K55 sayıları CSV'den otomatik, öteki metinler kaynakla mekanik denetimli"),
-        ("Her bulgu için mekanizma araştırması", "DEĞİŞTİRİLDİ", "etkisi olmayan (başarısız) bulgular için mekanizma aranmaz (ETKİ YOK); ölçüm hattı / evren denetimleri bulgu sayılmaz (YÖNTEM DENETİMİ). İki ek etiket bu yüzden"),
+        ("Her bulgu için mekanizma araştırması", "DEĞİŞTİRİLDİ", "etkisi olmayan ya da kaynakta tutmayan bulgular için mekanizma aranmaz (ETKİ YOK, ETKİ SAĞLAM DEĞİL); ölçüm hattı / evren denetimleri bulgu sayılmaz (YÖNTEM DENETİMİ); kararsız bilgi notları BETİMLEYİCİ. Bütün bulgular envanterde kalır, sınıfları ön kayıtlı kuralla"),
         ("K55'in ters yönlü KEŞİF'leri özellikle (20; IZ_KARNE'de 19 yazılı, D03-S02 vekil sayılmıştı)", "AYNEN + ÖNE ALINDI", "önce mekanik açıklama (M01) sentetik sıfır sınamasıyla sınandı: bilgisiz veride etki yeniden üretiliyor (aday); kesin karar Faz 1'in ilk adımında gerçek veride seçimsiz kontrolle"),
         ("Bağımsız veri kaynakları A-E", "AYNEN + GENİŞLETİLDİ", "28 kaynak (kasıt kanıtı ve veri hatası kaynakları eklendi); erişim testleri; KEŞİF kapsamı açık alanla (tam / kısmi / yok); kapsam / gecikme / maliyet / lisans tablosu"),
-        ("13F, Form 4, MIDAS gibi büyük indirmeler", "ERTELENDİ (koşullu)", "ancak yerel ve indirmesiz adımlardan (M01, M03, M04, M15, M16, M18) sonra AÇIKLANMAMIŞ gerçek etki kalırsa; bugünkü envanterde kaynakta destekleniyor kararı alan ve eser adayı olmayan etki çok az"),
+        ("13F, Form 4, MIDAS gibi büyük indirmeler", "ERTELENDİ (koşullu)", "ancak yerel ve indirmesiz adımlardan (M01, M03, M04, M15, M16, M18) sonra AÇIKLANMAMIŞ gerçek etki kalırsa; bugün yalnız 4 K55 hücresi (sentetik sınamada belirsiz) bu durumda, K51-K54'te hiç yok"),
         ("Ortalama getiri testleri (açığa satış, içeriden alım / satış, sulandırma, nakit, bilanço sürprizi)", "YAPILMADI (zaten var)", "Ç100, Ç102, Ç103, Ç107: hepsi İZ DEĞİL (dört şart tutmadı); bazı ortalama farklar sıfırdan büyük (Ç107 batanlar dahil +%2,8 / +%7,9; Ç102 çölde alım 2023 +%7,3); bu testler 2023 / 2024-26'da, KEŞİF'i kapsamıyor. Yeniden yapılmaz; eksik olan olay düzeyi bağlantı"),
         ("İşlem bazlı veri (TAQ, emir defteri)", "YAPILMADI", "ücretli; dağıtım / emilim ayrımına en yakın ücretsiz vekil MIDAS (işlem büyüklüğü, gizli emir) + 13F; ücretli veri yalnız Cemal kararıyla"),
         ("Kasıtlı yanıltma", "DAHA SIKI", "kasıt kanıtı yalnız kesinleşmiş karar (mahkeme, SEC / FINRA idari karar, uzlaşma); askıya alma ve dava bülteni 'resmî kuşku kaydı'; K55 evreninde tarih şartlı 9 askıya alma eşleşmesi, hiçbiri panel penceresinde değil; fiyat / hacim kanıt sayılmaz"),
@@ -240,11 +240,20 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
         if Zk is not None and len(Zk):
             hk = Zk.groupby("hucre").karar.agg(lambda s: s.value_counts().index[0]); L += [f"- KEŞİF'i sağlayan (varyant, ufuk) satırlarında (v1.1-3, {len(Zk)} satır, {Zk.varyant.nunique()} varyant): "
                   f"satır kararları {Zk.karar.value_counts().to_dict()}; hücre çoğunluğu MEKANİK AÇIKLAR {int((hk == 'MEKANIK_ACIKLAR').sum())} / 25."]
+        if Zk is not None and len(Zk):
+            hk = Zk.groupby("hucre").karar.agg(lambda s: s.value_counts().index[0]); y60 = Z.set_index("hucre").karar
+            ayr = [h for h in hk.index if (y60.get(h) == "MEKANIK_ACIKLAR") != (hk[h] == "MEKANIK_ACIKLAR")]
+            L += [f"- Y60 ile KEŞİF ufku ayrışan hücreler: {', '.join(f'{h} (Y60 {y60.get(h)}, KEŞİF ufku {hk[h]})' for h in ayr)}. Ön sınıf ön kayda göre Y60'tan verildi (v1.1-3); "
+                  "bu hücrelerin KEŞİF'i Y120 / Y250'den geldiği için kesin karar seçimsiz kontrolde."]
         L += ["- Bağımsız denetçinin ön kayıt dışı kontrolü (K55 tam paneli, KEŞİF, Y60): olay etiketi seçimsiz kurulunca (eşiği aşan BÜTÜN günler) gerçek d -0,016 .. -0,049'a iniyor "
               "(ilk geçiş etiketiyle -0,25 .. -0,43): ters yönlü farkların ~%90'ı olay tanımından. Küçük, aynı yönlü bir kalıntı kalıyor (kısa dönem tersine dönüş adayı, M02). t0 günü kapanışı "
               "düşen olay payı gerçek 0,743 / sentetik 0,736.",
               "- Anlamı: K55'in ters yönlü KEŞİF'leri bir piyasa davranışı değil, olay tanımının (t0 = ileri pencerenin +%30'u ilk yakaladığı gün, giriş t0+1) eseri olmaya ADAY. "
               "Kesin sınıf ön kayıtlı seçimsiz kontrolle (v1.1-2; uygulama sırası 1; yerel, indirme yok). Gecikme (t0−k) yalnız Y60'ta söner; Y250'de ayırt edici değil."]
+    iv = E[E.faz0_on_sinif == "İLİŞKİ VAR, NEDEN BELİRSİZ"]
+    L += [f"- **Faz 0 sonucu**: mekanizması aranacak sağlam etki çok az. K51-K54'te kaynakta desteklenen ve eser adayı olmayan bulgu YOK (desteklenen tek bulgu K52 H4: "
+          f"olumlu analist revizyonlarının yarısı fiyat yükseldikten sonra geliyor = ALTERNATİF AÇIKLAMA, M19). 'İLİŞKİ VAR, NEDEN BELİRSİZ' kalan {len(iv)} bulgu: "
+          f"{', '.join(iv.kimlik)} (K55'te sentetik sınamada belirsiz). Büyük veri indirmeleri ancak Faz 1 adım 1-3'ten sonra gerçek etki kalırsa anlamlı."]
     L += [f"- Envanter: {len(E)} bulgu ({', '.join(f'{k} {v}' for k, v in E.kaynak_calisma.value_counts().sort_index().items())}); ön sınıf: "
           + ", ".join(f"{k} {v}" for k, v in E.faz0_on_sinif.value_counts().items()) + ".",
           f"- Açıklanmamış listesi: {', '.join(f'{k} {v}' for k, v in Ac.faz0_durum.value_counts().items())}.",
