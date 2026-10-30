@@ -109,7 +109,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in dict(globals()).items()}   # çakışma kapısı: yüklenmeden önceki adlar
 
-CY_SURUM = "CY v1.5 (2026-10-30, K54 tarihsel evren sağlamlık denetimi + ek 8: sınıf 1 / 2 / 4a doğrulama, sınıf 6 bandı, ortak örneklem A / B / C; v1.4 K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
+CY_SURUM = "CY v1.5 (2026-10-30, evren_disi_ABD.csv: 7 emtia / döviz / kripto fonu evren dışı; K54 tarihsel evren sağlamlık denetimi + ek 8: sınıf 1 / 2 / 4a doğrulama, sınıf 6 bandı, ortak örneklem A / B / C; v1.4 K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
 cylog = logging.getLogger("col.cy")
 
 CY: Dict[str, Any] = {
@@ -266,8 +266,46 @@ def _cy_temizle(d: pd.DataFrame, kriz: pd.Timestamp) -> pd.DataFrame:
     return d[ok]
 
 
+def _cy_kok() -> str:
+    return os.path.dirname(os.path.abspath(__file__)) if "__file__" in globals() else "."
+
+
+def cy_evren_disi_yukle(A: CYAyar, pz: str = "ABD") -> pd.DataFrame:
+    """Evren dışı liste (Cemal, 30 Eki 2026: 'ETF'leri evrenden çıkar'): evren_disi_<pazar>.csv (sembol, neden, kaynak, tarih). Veri klasörü,
+    kod klasörü, çalışma klasörü sırayla aranır; bulunamazsa main dalından indirilir (GH_TOKEN); yine yoksa HATA (evren sessizce yanlış kalmasın)."""
+    ad = f"evren_disi_{pz}.csv"
+    for yol in (os.path.join(A.veri, ad), os.path.join(_cy_kok(), ad), ad):
+        if os.path.exists(yol):
+            D = pd.read_csv(yol); D["sembol"] = D.sembol.astype(str).str.strip().str.upper(); return D
+    tok = os.environ.get("GH_TOKEN", "")
+    if not tok:
+        try:
+            from google.colab import userdata          # type: ignore
+            tok = userdata.get("GH_TOKEN") or ""
+        except Exception:
+            tok = ""
+    if tok:
+        import urllib.request
+        rq = urllib.request.Request(f"https://api.github.com/repos/Cemalcelebi/col_yolu/contents/{ad}?ref=main", headers={"Authorization": f"Bearer {tok}", "Accept": "application/vnd.github.raw"})
+        try:
+            with urllib.request.urlopen(rq, timeout=60) as r:
+                os.makedirs(A.veri, exist_ok=True); yol = os.path.join(A.veri, ad); open(yol, "wb").write(r.read())
+            D = pd.read_csv(yol); D["sembol"] = D.sembol.astype(str).str.strip().str.upper(); return D
+        except Exception as ex:
+            raise FileNotFoundError(f"{ad} main dalından indirilemedi: {ex}")
+    raise FileNotFoundError(f"{ad} bulunamadı (veri klasörü, kod klasörü, çalışma klasörü) ve GH_TOKEN yok; evren dışı liste olmadan koşulmaz")
+
+
+def cy_evren_filtre(Vt: Dict[str, pd.DataFrame], ev: List[Dict[str, Any]], pz: str, disi: pd.DataFrame) -> Tuple[Dict[str, pd.DataFrame], List[Dict[str, Any]], List[str]]:
+    """Evren dışı sembolleri fiyat sözlüğünden ve evren tablosundan çıkarır; çıkarılanların listesini döndürür (loga ve rapora)."""
+    cik = set(disi.sembol.astype(str).str.upper()); atilan = sorted(s for s in Vt if str(s).upper() in cik)
+    Vt = {s: d for s, d in Vt.items() if str(s).upper() not in cik}
+    ev = [r for r in ev if not (r["pazar"] == pz and str(r["sembol"]).upper() in cik)]
+    return Vt, ev, atilan
+
+
 def cy_veri_yukle(A: CYAyar, K: Dict[str, Any] = CY) -> Tuple[Dict[str, Dict[str, pd.DataFrame]], pd.DataFrame]:
-    """Pazar -> sembol -> OHLCV(+Kur) ve evren tablosu (pazar, sembol, kaynak, evren_bas, batan, agirlik)."""
+    """Pazar -> sembol -> OHLCV(+Kur) ve evren tablosu (pazar, sembol, kaynak, evren_bas, batan, agirlik). ABD'de evren_disi_ABD.csv uygulanır."""
     kriz = pd.Timestamp(K["kriz"]); Vs: Dict[str, Dict[str, pd.DataFrame]] = {}; ev = []
     for pz in A.pazarlar:
         yol = os.path.join(A.veri, f"V_{pz}.pkl")
@@ -318,6 +356,9 @@ def cy_veri_yukle(A: CYAyar, K: Dict[str, Any] = CY) -> Tuple[Dict[str, Dict[str
             ev.append({"pazar": "ABD", "sembol": r.sembol, "kaynak": f"K34_{r.kaynak}", "evren_bas": max(pd.Timestamp(r.ilk_giris), d.index[0]),
                        "batan": bool(r.kaynak == "tiingo"), "agirlik": float(r.w) if r.kaynak == "tiingo" else 1.0})
         cylog.info("K34 eklendi: Yahoo %d, Tiingo (batan) %d", n_y, n_t)
+    if "ABD" in Vs:
+        disi = cy_evren_disi_yukle(A, "ABD"); Vs["ABD"], ev, atilan = cy_evren_filtre(Vs["ABD"], ev, "ABD", disi)
+        cylog.info("evren dışı (evren_disi_ABD.csv, %d kayıt): %d sembol çıkarıldı %s", len(disi), len(atilan), atilan)
     return Vs, pd.DataFrame(ev)
 
 

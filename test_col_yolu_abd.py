@@ -274,6 +274,13 @@ def sina():
     if not (d30a["baglandi"] and d30a["yeni_sembol"] == "YY" and not d30b["baglandi"] and "dışında" in d30b["neden"] and not d30c["baglandi"] and "1:1 değil" in d30c["neden"]
             and not d30d["baglandi"] and "evrende yok" in d30d["neden"] and not d30e["baglandi"]):
         hata.append(f"30d) 4a doğrulama yanlış: {d30a} | {d30b['neden']} | {d30c['neden']} | {d30d['neden']}")
+    # 32) evren dışı listesi: evren_disi_ABD.csv okunur, 7 fon çıkar; filtre fiyat sözlüğünü ve evren tablosunu birlikte süzer
+    d32 = C.cy_evren_disi_yukle(C.CYAyar(veri="/nonexistent_dir_32"), "ABD")
+    V32 = {"DBA": pd.DataFrame({"Close": [1.0]}), "AAPL": pd.DataFrame({"Close": [1.0]}), "btcw": pd.DataFrame({"Close": [1.0]})}
+    e32 = [{"pazar": "ABD", "sembol": "DBA"}, {"pazar": "ABD", "sembol": "AAPL"}, {"pazar": "ABD", "sembol": "btcw"}, {"pazar": "BIST", "sembol": "DBA"}]
+    Vf, ef, at = C.cy_evren_filtre(V32, e32, "ABD", d32)
+    if not (len(d32) == 7 and set(d32.sembol) == {"DBA", "DBB", "DBO", "UNG", "UNL", "UUP", "BTCW"} and list(Vf) == ["AAPL"] and at == ["DBA", "btcw"] and [r["sembol"] for r in ef] == ["AAPL", "DBA"]):
+        hata.append(f"32) evren dışı filtresi yanlış: {len(d32)} {list(Vf)} {at} {[r['sembol'] for r in ef]}")
     # 31) ortak örneklem ayrıştırması: evren + etiket = toplam
     ay31 = C.cy_v15_ayristir({"fark": 0.030}, {"fark": 0.025}, {"fark": 0.041})
     if not (abs(ay31["evren_etkisi"] + 0.005) < 1e-12 and abs(ay31["etiket_etkisi"] - 0.016) < 1e-12 and abs(ay31["fark_fark"] - 0.011) < 1e-12 and abs(ay31["evren_etkisi"] + ay31["etiket_etkisi"] - ay31["fark_fark"]) < 1e-12):
@@ -290,4 +297,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 31/31 OK")
+    print("test_col_yolu_abd: 32/32 OK")

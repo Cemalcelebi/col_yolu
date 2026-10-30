@@ -1357,12 +1357,21 @@ IK_GOREV: List[Dict[str, str]] = [
               "1.03 başvurusu 18 / 19'da T'den önce, 4a n = 0, sınıf 6 n = 0. K51 İZ DEĞİL korundu",
      "durum": "TAMAMLANDI, AÇIK: K51 evreninde 6 emtia ETF'si (DBA, DBB, DBO, UNG, UNL, UUP) var, evren temizliği Cemal'in kararı; Kasım "
               "Tiingo kotasıyla eksik batanlar; ileri doğrulama Mart 2027"},
+    {"tarih": "2026-10-30", "istek": "ETF'leri evrenden çıkar (K54 ek 8'in bulduğu 6 emtia / döviz fonu)",
+     "yapilan": "Evren taraması: Tiingo ETF türü + SEC SIC 6221 + ad 'Fund' -> 7 fon (DBA, DBB, DBO, UNG, UNL, UUP + BTCW kripto fonu); "
+                "evren_disi_ABD.csv (sembol, neden, kaynak, tarih) repo kökünde; COL_YOLU_ABD.py cy_evren_disi_yukle (veri / kod / çalışma "
+                "klasörü, yoksa main'den GH_TOKEN ile indirir, yine yoksa durur) + cy_evren_filtre, cy_veri_yukle sonunda uygulanır ve loglanır; "
+                "test_col_yolu_abd 32/32 (test 32); gerçek veriyle doğrulama: 3.267 -> 3.260 sembol, 7 fon yok; CLAUDE.md ayar dosyası satırı",
+     "sonuc": "Bundan sonraki her koşu (K51 zinciri, K54) fonsuz evrende. Eski K51 / K52 / K53 / K54 çıktıları fonlu evrenle kaldı; etkisi K54 "
+              "duyarlılık satırlarıyla sınırlı (11 belirsiz çıkarılınca P1 / P2 en çok 0,10 puan), karar değişmez. BDC'ler (BXSL, MSDL), "
+              "REIT ve MLP'ler şirket sayıldı, evrende kaldı",
+     "durum": "TAMAMLANDI, AÇIK: K51 tam koşusunun (52 dk) fonsuz evrenle yenilenmesi Cemal'in kararı (gerekli görülmedi, etki <= 0,1 puan)"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
     "K54 (ek 8 düzeltilmiş koşu dahil): evren düzeltmesi sonuçları değiştirmiyor (55 ana hücrenin 54'ü SAĞLAM; evren etkisi <= 1,1 puan, etiket "
     "etkisi <= 0,06 puan), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama evren çoğunlukla hayatta kalanlardan (266 çıkış / "
-    "3.267) ve içinde 6 emtia ETF'si var (evren temizliği). Olası devam (Cemal'in kararı): (1) ileri "
+    "3.267); 7 fon (6 emtia / döviz ETF'si + BTCW) 30 Eki'de evren_disi_ABD.csv ile evrenden çıkarıldı, sonraki koşular fonsuz. Olası devam (Cemal'in kararı): (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
