@@ -44,7 +44,8 @@ def _isci(arg: Tuple[Any, ...]) -> Optional[Dict[str, Any]]:
 def panel_kur(V: Dict[str, pd.DataFrame], EV: pd.DataFrame, A: K55Ayar, endeks: Optional[pd.DataFrame] = None) -> Tuple[pd.DataFrame, Dict[str, np.ndarray], Dict[str, Any]]:
     """Ortak panel. Dönüş: P (satır = sembol-gün, MIN_GUN sonrası), likit_map (sembol -> tam uzunlukta likit bayrağı), bilgi (süre, sayılar)."""
     C = cy(); t0 = time.time(); esik = C.cy_likit_esik(V, "ABD", C.CY); ev = EV.set_index("sembol")
-    args = [(s, d, ev.loc[s, "evren_bas"], esik, bool(ev.loc[s, "seri_erken"]), str(ev.loc[s, "seri_sonu"])) for s, d in V.items() if s in ev.index]
+    sk = "seri_sonu_getiri" if "seri_sonu_getiri" in ev else "seri_sonu"
+    args = [(s, d, ev.loc[s, "evren_bas"], esik, bool(ev.loc[s, "seri_erken"]), str(ev.loc[s, sk])) for s, d in V.items() if s in ev.index]
     if A.isci > 1 and len(args) > 8:
         with mp.get_context("fork").Pool(A.isci) as hv:
             son = [x for x in hv.imap_unordered(_isci, args, chunksize=8) if x is not None]

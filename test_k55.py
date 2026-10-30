@@ -10,6 +10,7 @@ import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from K55 import eslestirme, hucre, hucreler, istatistik, olay_tanimlari, ortak, sizinti, veri_kalitesi, veri_paket  # noqa: E402
+from K55 import evren as evm  # noqa: E402
 from K55.evren import evren_daralt, ornek_sec  # noqa: E402
 
 
@@ -79,8 +80,9 @@ def testler():
     # 7) örneklem seçimi ve daraltma: tabakalı, tohumlu, tekrar üretilebilir
     EV = pd.DataFrame({"sembol": [f"S{i}" for i in range(400)], "kaynak": ["V_ABD"] * 200 + ["K34_yahoo"] * 100 + ["K34_tiingo"] * 100,
                        "sinif": [1] * 300 + [2] * 30 + [3] * 40 + [5] * 20 + [4] * 10})
-    o1 = ornek_sec(EV, 50, 7); o2 = ornek_sec(EV, 50, 7); V7 = {s: 1 for s in EV.sembol}; V7d, EVd = evren_daralt(V7, EV, o1)
-    if not (len(o1) == 50 and o1.sembol.tolist() == o2.sembol.tolist() and (o1.sinif == 2).sum() == 4 and (o1.kaynak == "V_ABD").sum() == 30 and len(V7d) == 50 and len(EVd) == 50):
+    EV["lik_uclu"] = (np.arange(len(EV)) % 3)
+    o1, d1 = ornek_sec(EV, 50, 7); o2, _ = ornek_sec(EV, 50, 7); V7 = {s: 1 for s in EV.sembol}; V7d, EVd = evren_daralt(V7, EV, o1)
+    if not (len(o1) == 50 and o1.sembol.is_unique and o1.sembol.tolist() == o2.sembol.tolist() and (o1.sinif == 2).sum() == 4 and (o1.kaynak == "V_ABD").sum() == 30 and len(V7d) == 50 and len(EVd) == 50 and d1.eksik.sum() == 0):
         hata.append(f"7) örneklem seçimi yanlış: {len(o1)} {o1.sinif.value_counts().to_dict()} {o1.kaynak.value_counts().to_dict()}")
     # 8) veri paketi: paketle -> aç -> sha256 aynı; bozuk parça -> durur; beklenen sha farklı -> durur
     with tempfile.TemporaryDirectory() as tmp:
@@ -171,6 +173,79 @@ def testler():
     Rc, yuk = istatistik.coklu_test_ozeti(R15, 0.10)
     if not (yuk.test.iloc[0] == 4 and yuk.hucre.iloc[0] == 3 and bool(Rc[Rc.hucre == "H1"].ret.iloc[0]) and not bool(Rc[Rc.hucre == "H2"].ret.iloc[0]) and abs(Rc[Rc.hucre == "H1"].p_holm.iloc[0] - 0.002) < 1e-12):
         hata.append(f"15) çoklu test özeti yanlış: {yuk.to_dict('records')} {Rc[['hucre', 'p_holm', 'q_bh', 'ret']].to_dict('records')}")
+    # ---------------- 16-26) evren inşası (saf) sentetik vakalar (Cemal, 30 Eki): K54 sınıfı yok, yinelenen sembol, 'False' metni, boş çıkış işlemi,
+    # kesim tarihi olmayan 4b, kesim günü işlem günü olmayan 4b, fiyat serisi olmayan sembol, kısa seri, iki tabakada aynı sembol, eksik tabaka, ağ çağrısı
+    def seri(n, bas="2018-01-01"):
+        return _seri(n, tohum=n, bas=bas)
+    idx = pd.bdate_range("2018-01-01", periods=600); kes_gun = idx[400]; kes_tatil = kes_gun + pd.Timedelta(days=(5 - kes_gun.weekday()) % 7 or 6)   # bir hafta sonu
+    V16 = {"AAA": seri(600), "BBB": seri(600), "CCC": seri(600), "DDD": seri(600), "EEE": seri(600), "FFF": seri(600), "GGG": seri(600), "HHH": seri(600), "KSA": seri(600), "ZZZ": seri(600)}
+    EV16 = pd.DataFrame({"pazar": "ABD", "sembol": list(V16), "kaynak": "V_ABD", "evren_bas": pd.Timestamp("2018-01-01"), "batan": False, "agirlik": 1.0})
+    EV16 = pd.concat([EV16, pd.DataFrame([{"pazar": "ABD", "sembol": "YOK", "kaynak": "V_ABD", "evren_bas": pd.Timestamp("2018-01-01"), "batan": False, "agirlik": 1.0}])], ignore_index=True)   # serisi yok
+    SD16 = pd.DataFrame([
+        {"sembol": "AAA", "sinif": 1, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "False"},
+        {"sembol": "BBB", "sinif": 2, "alt": "", "cikis_islemi": "y_d100", "kesim_tarihi": "", "erken_bitti": "True"},
+        {"sembol": "CCC", "sinif": 3, "alt": "", "cikis_islemi": "", "kesim_tarihi": "", "erken_bitti": "True"},                       # boş çıkış işlemi -> belirsiz
+        {"sembol": "DDD", "sinif": 4, "alt": "4b kod yeniden kullanımı", "cikis_islemi": "y_kes", "kesim_tarihi": "", "erken_bitti": "False"},   # kesim yok -> tutarsız
+        {"sembol": "EEE", "sinif": 4, "alt": "4b kod yeniden kullanımı", "cikis_islemi": "y_kes", "kesim_tarihi": str(kes_tatil.date()), "erken_bitti": "False"},   # kesim hafta sonu
+        {"sembol": "FFF", "sinif": 4, "alt": "4b kod yeniden kullanımı", "cikis_islemi": "y_kes", "kesim_tarihi": str(kes_gun.date()), "erken_bitti": "False"},
+        {"sembol": "GGG", "sinif": 6, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "False"},
+        {"sembol": "HHH", "sinif": 5, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "belki"},                  # geçersiz boolean -> tutarsız
+        {"sembol": "KSA", "sinif": 1, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "False"},
+        {"sembol": "KSA", "sinif": 1, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "False"},                  # yinelenen sembol
+        {"sembol": "YOK", "sinif": 1, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": "False"},
+    ])                                                                                                                                # ZZZ: K54'te yok
+    ES16 = pd.DataFrame({"sembol": list(V16) + ["YOK"], "cik": [1, 2, 3, 4, 5, 6, 7, 8, 9, np.nan, 11], "sec_ad": "x"})
+    # 22) fiyat serisi bulunmayan sembol (EV'de var, V'de yok) -> durur
+    try:
+        evm.evren_insa(V16, EV16, SD16, ES16, {"UUP"}); hata.append("22) serisi olmayan EV sembolü durdurmadı")
+    except RuntimeError:
+        pass
+    EV16b = EV16[EV16.sembol != "YOK"]; kisa16 = pd.DataFrame([{"sembol": "KIS", "kaynak": "V_ABD", "n_gun": 100}]); eksik16 = pd.DataFrame([{"sembol": "TNG", "ayrinti": "Tiingo dosyası yok"}])
+    R16 = evm.evren_insa(V16, EV16b, SD16, ES16, {"UUP"}, kisa16, eksik16); EVr = R16["EV"].set_index("sembol"); D16 = R16["disi"]; kat = dict(zip(D16.sembol, D16.kategori))
+    # 16) K54 sınıfı olmayan (ZZZ) -> k54_yok; 17) yinelenen (KSA) -> k54_tutarsiz; 18) 'False' metni False; 19) boş çıkış işlemi (CCC) -> cikis_belirsiz
+    # 20) kesim tarihi olmayan 4b (DDD) -> k54_tutarsiz; 21) hafta sonu kesim (EEE) etkin kesim son işlem günü; FFF kesim satır sayıları; GGG sınıf 6; HHH geçersiz boolean
+    bek = {"ZZZ": "k54_yok", "KSA": "k54_tutarsiz", "CCC": "cikis_belirsiz", "DDD": "k54_tutarsiz", "GGG": "sinif6", "HHH": "k54_tutarsiz", "KIS": "kisa_seri_yukleyici", "TNG": "veri_saglayici_eksik", "UUP": "fon_evren_disi", "ZZZ": "k54_yok"}
+    yanlis = {k: kat.get(k) for k, v in bek.items() if kat.get(k) != v}
+    if yanlis:
+        hata.append(f"16-20) dışlama kategorileri yanlış: {yanlis}")
+    if not (set(EVr.index) == {"AAA", "BBB", "EEE", "FFF"} and EVr.loc["AAA", "erken_bitti_k54"] is False or EVr.loc["AAA", "erken_bitti_k54"] == False):
+        hata.append(f"18) evren üyeleri / boolean yanlış: {sorted(EVr.index)} {EVr.loc['AAA', 'erken_bitti_k54']!r}")
+    KS = R16["kesim"].set_index("sembol")
+    if not (len(R16["V"]["FFF"]) == 401 and KS.loc["FFF", "once"] == 600 and KS.loc["FFF", "sonra"] == 401 and KS.loc["FFF", "atilan"] == 199 and bool(KS.loc["FFF", "kesim_islem_gunu"])
+            and not bool(KS.loc["EEE", "kesim_islem_gunu"]) and R16["V"]["EEE"].index[-1] <= kes_tatil and (R16["V"]["EEE"].index > kes_tatil).sum() == 0 and EVr.loc["FFF", "seri_sonu_getiri"] == "k51"
+            and EVr.loc["BBB", "seri_sonu"] == "d100" and R16["tutarlilik"]["gecti"]):
+        hata.append(f"20-21) 4b kesimi yanlış: {KS.to_dict('index')}")
+    if not (evm.bool_cevir("False") is False and evm.bool_cevir("true") is True and evm.bool_cevir("belki") is None and evm.bool_cevir(np.nan) is None and evm.bool_cevir(1) is True):
+        hata.append("18b) bool_cevir yanlış")
+    # 23) kısa seri eşiği: yükleyici 320 doğrulanır; 24) evren sürümü girdilere duyarlı
+    try:
+        evm.yukleyici_esigi_dogrula()
+    except Exception as ex:
+        hata.append(f"23) yükleyici eşiği doğrulanamadı: {ex}")
+    s1 = evm.evren_surum(R16["EV"], {"a": "1"}, {"v": "1"}); s2 = evm.evren_surum(R16["EV"], {"a": "1"}, {"v": "2"}); s3 = evm.evren_surum(R16["EV"], {"a": "2"}, {"v": "1"})
+    EV24 = R16["EV"].copy(); EV24.loc[0, "sinif"] = 5; s4 = evm.evren_surum(EV24, {"a": "1"}, {"v": "1"})
+    if len({s1, s2, s3, s4}) != 4:
+        hata.append("24) evren sürümü veri / dosya / sınıf değişimine duyarlı değil")
+    # 25) örneklem: aynı sembol iki tabakaya uyabilir (lik_uclu eksik) -> tekrarsız; eksik tabaka raporlanır ve tamamlanır; boş aday hata vermez
+    EV25 = pd.DataFrame({"sembol": [f"S{i}" for i in range(60)], "kaynak": ["V_ABD"] * 40 + ["K34_yahoo"] * 20, "sinif": [1] * 60})      # sınıf 2 / 3 / 4 / 5 yok
+    o25, d25 = ornek_sec(EV25, 50, 3)
+    if not (len(o25) == 50 and o25.sembol.is_unique and (d25.eksik > 0).sum() >= 4 and d25[d25.tabaka.str.startswith("tamamlama")].secilen.iloc[0] > 0 and d25.toplam_secilen.iloc[0] == 50):
+        hata.append(f"25) örneklem eksik tabaka / tekrarsızlık yanlış: {d25.to_dict('records')}")
+    o25b, d25b = ornek_sec(EV25.head(30), 50, 3)
+    if not (len(o25b) == 30 and o25b.sembol.is_unique):
+        hata.append("25b) evren n'den küçükken hepsi alınmadı")
+    # 26) ağ erişimi gerektiren çağrı kapı içinde durur
+    ok26 = False
+    try:
+        with evm.ag_kapali():
+            import socket as _sk
+            _sk.create_connection(("example.com", 80), timeout=1)
+    except RuntimeError as ex:
+        ok26 = "ağ erişimi yasak" in str(ex)
+    except Exception:
+        ok26 = False
+    if not ok26:
+        hata.append("26) ağ kapalı kapısı bağlantıyı durdurmadı")
     return hata
 
 
@@ -178,4 +253,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k55: 15/15 OK")
+    print("test_k55: 26/26 OK")
