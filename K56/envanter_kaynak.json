@@ -1,5 +1,15 @@
 {
- "surum": "v1 (30 Ekim 2026)",
+ "surum": "v1.1 (30 Ekim 2026; denetim düzeltmeleri)",
+ "duzeltmeler": [
+  {
+   "kimlik": "K51-H1",
+   "alan": "gecen_testler",
+   "eski": "delist, kod kesme, eski kod ve K54 evren düzeltmesinde değişmiyor",
+   "yeni": "delist, kod kesme ve eski kodda değişmiyor; K54 evren düzeltmesinde 2024-26 alt ucu +0,0002 (A) -> -0,0002 (B), K54 ETKİLENMİŞ (karar TUTMAZ aynı)",
+   "kaynak": "K54_ESKI_YENI_TEST_KARSILASTIRMA.csv (K51 P1, 2024-26)",
+   "gerekce": "envanter denetçisi: 'K54 evren düzeltmesinde değişmiyor' iddiası K54 ile çelişiyor (ETKİLENMİŞ)"
+  }
+ ],
  "aciklama": "K51-K55 okuyucu ajanlarının kaynak dosyalardan çıkardığı bulgular; K56/etki_envanteri mekanik denetler (K55 sayıları CSV'den yeniden yazılır).",
  "okuyucular": [
   "envanter_K51",
@@ -209,7 +219,7 @@
    "yon": "pozitif",
    "buyukluk": "2023 isabet 0,313 / taban 0,288, fark +2,5 puan [alt -0,5]; 2024-26 0,357 / 0,333, +2,4 [alt +0,1]; net -%1,83 / -%1,09 (taban farkı +0,09 / -0,10 puan); eğitim +1,9, doğrulama +1,7",
    "kontrol_farki": "Taban: +2,5 [-0,5, +5,8] / +2,4 [0,0, +5,0] (KIRILGANLIK ay kümeli). Plasebo (aynı yöntem, rastgele hisse) -1,3 / 0,0",
-   "gecen_testler": "Yön iki test döneminde +; 2024-26 alt uç > 0; plasebo ~0; delist, kod kesme, eski kod ve K54 evren düzeltmesinde değişmiyor",
+   "gecen_testler": "Yön iki test döneminde +; 2024-26 alt uç > 0; plasebo ~0; delist, kod kesme ve eski kodda değişmiyor; K54 evren düzeltmesinde 2024-26 alt ucu +0,0002 (A) -> -0,0002 (B), K54 ETKİLENMİŞ (karar TUTMAZ aynı)",
    "kalan_testler": "Eşik +5 puan (iki dönem); 2023 alt uç > 0; net - taban > 0 (2024-26 -0,10); Holm (0/84); FI_OLCUT sıra ve portföy",
    "eski_karar": "DESTEKLENMİYOR",
    "sinif": "KUCUK_ETKI",

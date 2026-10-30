@@ -72,7 +72,7 @@ def testler():
     if G.url.str.contains("@").any():
         hata.append("3) istek günlüğü e-posta temizlemiyor")
     for f in os.listdir(os.path.join(O.KOK, "K56")):
-        if f.endswith(".py") and "@gmail" in open(os.path.join(O.KOK, "K56", f), encoding="utf-8").read():
+        if f.endswith(".py") and __import__("re").search(r"[\w.+-]+@(gmail|hotmail|yahoo|outlook)\.", open(os.path.join(O.KOK, "K56", f), encoding="utf-8").read()):
             hata.append(f"3) kodda e-posta: {f}")
     # 4) zip merkez dizini ve üye başı (Range ile kısmi okuma)
     b = io.BytesIO()
@@ -118,8 +118,13 @@ def testler():
         hata.append("8) kasıt hipotezi resmî kayıt şartını yazmıyor")
     # 9) envanter: ön sınıf kuralları ve denetim
     r = pd.Series({"kimlik": "K55-D01-S02", "kaynak_calisma": "K55", "sinif": "TERS_YONLU", "m01_sentetik": "MEKANIK_ACIKLAR", "m01_oran_Y60": 1.1})
-    if EE.on_sinif(r)[0] != "YANLIŞ BULGU":
-        hata.append("9) M01 mekanik -> YANLIŞ BULGU kuralı")
+    if not EE.on_sinif(r)[0].startswith(M.YANLIS_ADAY):
+        hata.append("9) M01 mekanik -> YANLIŞ BULGU ADAYI kuralı (sentetik tek başına kesin sınıf vermez)")
+    for kar, sin, bek in (("DESTEKLENMİYOR (2016-22: TUTMAZ | 2023: TUTAR)", "DONEM_CELISKILI", M.ETKI_SAGLAM_DEGIL), ("TUTMAZ / TUTMAZ / TUTMAZ", "KUCUK_ETKI", M.ETKI_SAGLAM_DEGIL),
+                          ("H4 DESTEKLENİYOR", "KUCUK_ETKI", "İLİŞKİ VAR, NEDEN BELİRSİZ"), ("kaynakta karar yok (bilgi)", "TERS_YONLU", M.BETIMLEYICI), ("ÖLÇÜLEMEDİ", "VERI_YETERSIZ", "VERİ YETERSİZ")):
+        o_ = EE.on_sinif(pd.Series({"kimlik": "K51-X", "kaynak_calisma": "K51", "sinif": sin, "eski_karar": kar}))[0]
+        if o_ != bek:
+            hata.append(f"9) ön sınıf kuralı: '{kar}' / {sin} -> {o_} (beklenen {bek})")
     if EE.on_sinif(pd.Series({"kimlik": "K51-H3", "kaynak_calisma": "K51", "sinif": "BASARISIZ"}))[0] != M.ETKI_YOK:
         hata.append("9) başarısız bulgu sonradan sınıf aldı")
     E = pd.DataFrame([{"kimlik": "K51-H1", "eski_karar": "DESTEKLENMİYOR (küçük)", "kaynak_calisma": "K51", "olasi_aciklamalar": ["a"], "dogrulayici_veri": ["b"]},
@@ -135,6 +140,16 @@ def testler():
             EE.kurasyon_yukle(y); hata.append("9) yinelenen kimlik kabul edildi")
         except ValueError:
             pass
+    # 9b) tam kimlik önce: H10 kodu H10-BIST-META'ya eşlenmez
+    E2 = pd.DataFrame([{"kimlik": k, "eski_karar": "DESTEKLENMİYOR", "kaynak_calisma": "K51", "olasi_aciklamalar": ["a"], "dogrulayici_veri": ["b"]} for k in ("K51-H10-P1", "K51-H10-BIST-META", "K51-H10")]) 
+    D2 = EE.denetle(E2, {EE._norm("K51-H10"): {"kod": "H10", "karar": "DESTEKLENMİYOR", "dosya": "cy_hipotez.csv"}}); D2 = D2[D2.tur != "k55_hucre_sayisi"]
+    if len(D2):
+        hata.append(f"9b) tam kimlik eşleşmesi: {D2.to_dict('records')}")
+    # 9c) hatalı / boş sentetik satır TANIMSIZ (HATA) olur
+    Zt = M.sentetik_ozet(pd.DataFrame([{"hucre": "X", "ufuk": "Y60", "gecikme": 0, "d": np.nan, "d_alt": np.nan, "d_ust": np.nan, "spek": "gauss", "tohum": 1}]),
+                         pd.DataFrame([{"hucre": "X", "durum": "KEŞİF", "varyant": "X|5", "yon": 1, "d_gercek_Y60": -0.2, "d_gercek_Y120": np.nan, "d_gercek_Y250": np.nan}]))
+    if Zt.karar.iloc[0] != "TANIMSIZ (HATA)":
+        hata.append(f"9c) hatalı sentetik satır: {Zt.karar.iloc[0]}")
     # 10) olay sayıları ve ad normalizasyonu
     T = pd.DataFrame({"form": ["8-K", "8-K", "S-3", "424B2", "SC 13D/A", "25-NSE"], "tarih": pd.to_datetime(["2017-01-01"] * 6), "madde": ["2.02,9.01", "1.03", "", "", "", ""]})
     s = KOL.olay_sayilari(T)
@@ -142,6 +157,21 @@ def testler():
         hata.append(f"10) olay sayıları: {s}")
     if KOL._ad_norm("Moleculin Biotech, Inc.") != KOL._ad_norm("MOLECULIN BIOTECH INC") or KOL._ad_norm("Inc.") != "":
         hata.append("10) ad normalizasyonu")
+    # 10b) askıya alma eşlemesi: tarih şartı (ilk başvurudan önce eşleşmez), belirsiz ad, panel penceresi
+    Jt = {"1": {"name": "Meridian Corp", "date": ["2018-08-24", "2020-01-01"], "form": [], "formerNames": []},
+          "2": {"name": "Acme Inc", "date": ["2010-01-01"], "form": [], "formerNames": []}, "3": {"name": "ACME CORP", "date": ["2011-01-01"], "form": [], "formerNames": []},
+          "4": {"name": "Yeni Ad Inc", "date": ["2012-01-01"], "form": [], "formerNames": [{"name": "Eski Ad Inc", "from": "2012-01-01T00:00:00Z", "to": "2015-06-01T00:00:00Z"}]}}
+    St = pd.DataFrame([{"tarih": pd.Timestamp("2017-09-18"), "ad": "Meridian Co., Ltd.", "no": "34-1"}, {"tarih": pd.Timestamp("2016-01-05"), "ad": "Acme, Inc.", "no": "34-2"},
+                       {"tarih": pd.Timestamp("2014-03-01"), "ad": "Eski Ad Inc.", "no": "34-3"}, {"tarih": pd.Timestamp("2016-03-01"), "ad": "Eski Ad Inc.", "no": "34-4"}])
+    EVt = pd.DataFrame({"cik": [4], "ilk_islem": ["2013-01-01"], "son_islem": ["2020-01-01"]})
+    Et = KOL.askiya_eslestir(St, Jt, EVt).set_index("no")
+    if not (Et.loc["34-1", "durum"] == "yok" and Et.loc["34-2", "durum"] == "belirsiz" and Et.loc["34-3", "durum"] == "eslesti" and bool(Et.loc["34-3", "panel_penceresinde"])
+            and Et.loc["34-4", "durum"] == "yok"):
+        hata.append(f"10b) askıya alma eşlemesi: {Et.durum.to_dict()}")
+    # 10c) SEC e-postalı başlık yalnız sec.gov sunucularına
+    if not (O.Istemci.sec_mi("https://data.sec.gov/x") and O.Istemci.sec_mi("https://www.sec.gov/") and not O.Istemci.sec_mi("https://evil.example/?u=sec.gov")
+            and not O.Istemci.sec_mi("https://sec.gov.evil.example/")):
+        hata.append("10c) SEC sunucu denetimi")
     # 11) sulandırma ölçüsü
     T = pd.DataFrame({"filed": pd.to_datetime(["2017-01-10", "2017-04-10", "2017-07-10", "2018-01-10", "2018-04-10"]), "val": [100, 100, 110, 130, 140]})
     if not abs(FM.sulandirma(T) - 0.40) < 1e-9:
@@ -164,10 +194,27 @@ def testler():
         if pd.to_datetime(EVk.loc[r.sembol, "ilk_islem"]) > r.tarih or pd.to_datetime(EVk.loc[r.sembol, "son_islem"]) < r.tarih:
             hata.append(f"13) G2 {r.sembol} o tarihte işlemde değil")
     # 14) rapor tabloları
-    if not (len(MR.riskler()) >= 10 and len(MR.uygulama_sirasi()) >= 8 and MR.uygulama_sirasi().sira.is_monotonic_increasing):
+    if not (len(MR.riskler()) >= 10 and len(MR.uygulama_sirasi()) >= 8 and MR.uygulama_sirasi().sira.is_monotonic_increasing and "donem" in MR.uygulama_sirasi()):
         hata.append("14) risk / sıra tabloları")
+    if MR._durum_birlestir(pd.Series(["ATLANDI"])) != "ATLANDI" or MR._durum_birlestir(pd.Series(["GECTI", "ATLANDI"])) != "GECTI" or MR._durum_birlestir(pd.Series(["GECTI", "KISMI"])) != "KISMI":
+        hata.append("14) erişim durumu birleştirme")
+    if [k["kimlik"] for k in MR.KAYNAKLAR if k["kimlik"] not in MR.KESIF_KAPSAM]:
+        hata.append(f"14) KEŞİF kapsamı tanımsız kaynak: {[k['kimlik'] for k in MR.KAYNAKLAR if k['kimlik'] not in MR.KESIF_KAPSAM]}")
     if MR.KAYNAKLAR and len({k["kimlik"] for k in MR.KAYNAKLAR}) != len(MR.KAYNAKLAR):
         hata.append("14) yinelenen kaynak kimliği")
+    # 14b) Drive kopyası: sha doğrulamalı, yasak köke yazmaz
+    with tempfile.TemporaryDirectory() as td:
+        os.makedirs(os.path.join(td, "k"), exist_ok=True); open(os.path.join(td, "k", "a.csv"), "w").write("x,y\n1,2\n")
+        os.environ["K56_CIKTI_EK"] = td
+        from K56 import surucu as SU
+        Mf = SU.drive_kopyala(os.path.join(td, "k"), os.path.join(td, "h"))
+        if len(Mf) != 1 or not os.path.exists(os.path.join(td, "h", "K56_DRIVE_MANIFEST.csv")):
+            hata.append("14b) drive_kopyala")
+        try:
+            SU.drive_kopyala(os.path.join(td, "k"), os.path.join(O.KOK, "arastirma_cikti", "k55_dallanma", "x")); hata.append("14b) yasak köke kopyaladı")
+        except PermissionError:
+            pass
+        os.environ.pop("K56_CIKTI_EK", None)
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():

@@ -13,7 +13,7 @@ import os
 import pickle
 import re
 import zipfile
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -45,22 +45,34 @@ def abdi_ranaldo(d: pd.DataFrame) -> pd.Series:
     return np.sqrt(v.clip(lower=0))
 
 
-def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str, Any]]:
+def _midas_ceyrek(ist: Istemci, y: int, q: int) -> pd.DataFrame:
+    u = MIDAS_HISSE.format(y=y, q=q); d, veri, _ = ist.al(u, ad=f"midas_hisse_{y}q{q}.zip")
+    if d != 200:
+        return pd.DataFrame()
+    zf = zipfile.ZipFile(io.BytesIO(veri))
+    return pd.concat([pd.read_csv(zf.open(n), dtype=str, usecols=lambda c: c in ("Date", "Ticker", "Security")) for n in zf.namelist() if n.lower().endswith(".csv")], ignore_index=True)
+
+
+def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame, EV: Optional[pd.DataFrame] = None) -> List[Dict[str, Any]]:
     out: List[Dict[str, Any]] = []; semb = list(Ornek.sembol)
     # 1) MIDAS hisse bazlı ölçüler
     try:
         d, h, _ = ist.al(MIDAS_SAYFA, sinir=2_000_000); z = sorted(set("https://www.sec.gov" + u for u in re.findall(r'href="(/files/[^"]+individual_security_exchange_[^"]+\.zip)"', h.decode("utf-8", "replace"))))
         cey = sorted(re.search(r"_(\d{4})_q(\d)", u).group(1) + "q" + re.search(r"_(\d{4})_q(\d)", u).group(2) for u in z if re.search(r"_(\d{4})_q(\d)", u))
         out.append(erisim_satiri(MODUL, "SEC_MIDAS", "liste", "GECTI" if z else "BASARISIZ", "zip sayısı", len(z), f"çeyrek {cey[0] if cey else '-'} .. {cey[-1] if cey else '-'}", MIDAS_SAYFA))
-        u = MIDAS_HISSE.format(y=2016, q=1); dd, bh = ist.bas(u); boy = int(bh.get("Content-Length", "0") or 0)
-        if dd == 200 and boy and boy <= ist.sinir:
-            d2, veri, _ = ist.al(u, ad="midas_hisse_2016q1.zip"); zf = zipfile.ZipFile(io.BytesIO(veri)); csvler = [n for n in zf.namelist() if n.lower().endswith(".csv")]
-            T = pd.concat([pd.read_csv(zf.open(n), dtype=str) for n in csvler], ignore_index=True); tk = next((c for c in T.columns if c.lower() in ("ticker", "symbol")), T.columns[1])
-            bul = sorted(set(T[tk].str.upper()) & set(semb))
-            out.append(erisim_satiri(MODUL, "SEC_MIDAS", "hisse dosyası 2016q1 indirme + örneklem", "GECTI" if bul else "KISMI", "bulunan sembol", f"{len(bul)}/{len(semb)}",
-                                     f"{round(len(veri) / 2 ** 20, 1)} MB; {csvler}; {len(T)} satır (gün × hisse); sütunlar {list(T.columns)[:20]}; bulunmayan: {sorted(set(semb) - set(bul))}", u))
-        else:
-            out.append(erisim_satiri(MODUL, "SEC_MIDAS", "hisse dosyası 2016q1", "BASARISIZ", "HTTP / MB", f"{dd} / {round(boy / 2 ** 20, 1)}", "borsa kırılımlı dosyaya düşülmeli (çeyrek ~87 MB)", u))
+        T = _midas_ceyrek(ist, 2016, 1)
+        if len(T) and EV is not None:
+            akt = EV[(pd.to_datetime(EV.ilk_islem) <= "2016-01-04") & (pd.to_datetime(EV.son_islem) >= "2016-03-31")]
+            bul = akt.sembol.isin(set(T.Ticker.str.upper())); sek = akt.assign(b=bul).groupby("sektor").b.mean().sort_values().head(4).round(2).to_dict()
+            out.append(erisim_satiri(MODUL, "SEC_MIDAS", "hisse dosyası 2016q1: K55 evreni kapsamı", "KISMI", "2016q1'de işlemde olan K55 hissesi payı", round(float(bul.mean()), 3),
+                                     f"{len(akt)} hisse; en düşük sektör kapsamı {sek}; MIDAS evreni CRSP adi hisse (SHRCD 10/11) + ETP: REIT, yabancı, BDC / MLP yok", MIDAS_HISSE.format(y=2016, q=1)))
+        rows = []; bulunan = 0; uygun = 0
+        for r in Ornek[Ornek.grup.isin(["G1", "G2"])].itertuples():
+            t = pd.Timestamp(r.tarih); Tq = _midas_ceyrek(ist, t.year, (t.month - 1) // 3 + 1)
+            var = bool(len(Tq) and (Tq.Ticker.str.upper() == r.sembol).any()); bulunan += int(var); uygun += 1
+            rows.append(f"{r.sembol}({r.grup}) {t.year}q{(t.month - 1) // 3 + 1}: {'var' if var else 'yok'}")
+        out.append(erisim_satiri(MODUL, "SEC_MIDAS", "örneklem G1 / G2: olay çeyreğinde", "GECTI" if uygun and bulunan >= 0.6 * uygun else "KISMI", "bulunan / uygun", f"{bulunan}/{uygun}",
+                                 "; ".join(rows) + "; G3 / G6 (batan, birleşen) olay çeyrekleri 2022-23 (İÇ dönem) olduğu için indirilmedi", MIDAS_HISSE.format(y=2017, q=1)))
     except Exception as ex:
         out.append(erisim_satiri(MODUL, "SEC_MIDAS", "erişim", "BASARISIZ", ayrinti=f"{type(ex).__name__}: {ex}", url=MIDAS_SAYFA))
     # 2) FINRA Reg SHO günlük açığa satış hacmi: konsolide (CNMS, 2018-08+) ve tesis dosyaları (FNYX / FNSQ, 2009-08+)
@@ -106,12 +118,17 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
     # 5) SEC başarısız teslim (FTD)
     try:
         d, h, _ = ist.al(FTD_SAYFA, sinir=3_000_000); z = sorted(set("https://www.sec.gov" + u for u in re.findall(r'href="(/files/[^"]+\.zip)"', h.decode("utf-8", "replace"))))
-        u = next((x for x in z if "cnsfails201601a" in x), None)
-        if u:
-            dd, veri, _ = ist.al(u, ad="ftd_201601a.zip", sinir=20_000_000); zf = zipfile.ZipFile(io.BytesIO(veri))
-            T = pd.read_csv(zf.open(zf.namelist()[0]), sep="|", dtype=str, encoding="latin-1", on_bad_lines="skip"); bul = sorted(set(T.get("SYMBOL", pd.Series(dtype=str))) & set(semb))
-            out.append(erisim_satiri(MODUL, "SEC_FTD", "2016-01 (ilk yarı) indirme + örneklem", "GECTI", "bulunan sembol", f"{len(bul)}/{len(semb)}",
-                                     f"{len(z)} dosya listede; {round(len(veri) / 2 ** 20, 2)} MB; sütunlar {list(T.columns)}; yalnız eşik üstü başarısız teslim bakiyesi (sıfırlar yok)", u))
+        rows = []; bulunan = 0
+        for r in Ornek.itertuples():
+            t = pd.Timestamp(r.tarih); kod = f"cnsfails{t.year}{t.month:02d}{'a' if t.day <= 15 else 'b'}"
+            u = next((x for x in z if f"/{kod}.zip" in x), None)
+            if u is None:
+                rows.append(f"{r.sembol}: {kod} yok"); continue
+            dd, veri, _ = ist.al(u, ad=f"ftd_{kod}.zip", sinir=20_000_000); zf = zipfile.ZipFile(io.BytesIO(veri))
+            T = pd.read_csv(zf.open(zf.namelist()[0]), sep="|", dtype=str, encoding="latin-1", on_bad_lines="skip")
+            var = bool((T.get("SYMBOL", pd.Series(dtype=str)) == r.sembol).any()); bulunan += int(var); rows.append(f"{r.sembol}({r.grup}) {kod}: {'var' if var else 'yok'}")
+        out.append(erisim_satiri(MODUL, "SEC_FTD", "örneklem: olay yarım ayında başarısız teslim kaydı", "GECTI", "kaydı olan / örneklem", f"{bulunan}/{len(Ornek)}",
+                                 f"{len(z)} dosya listede; " + "; ".join(rows) + "; yalnız eşik üstü bakiye yayımlanır: kayıt yokluğu veri eksikliği değildir", FTD_SAYFA))
     except Exception as ex:
         out.append(erisim_satiri(MODUL, "SEC_FTD", "erişim", "BASARISIZ", ayrinti=f"{type(ex).__name__}: {ex}", url=FTD_SAYFA))
     # 6) OHLC spread tahmini (yerel V_ABD; vekil)

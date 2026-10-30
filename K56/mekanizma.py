@@ -4,8 +4,8 @@ seçim etkisi' için sentetik sıfır sınaması (yöntem kalibrasyonu; gerçek 
 Sentetik sıfır sınaması: getirisi tanım gereği öngörülemeyen (sıfır beklenen getirili, ortak piyasa + sektör + özel bileşenli) yapay hisselerde
 K55'in KİLİTLİ olay tanımı (K55/olay_tanimlari.sembol_olaylari) ve K55 hücre değişkenleri (K55/dal*.py, aynı fonksiyonlar) aynen uygulanır;
 A yöntemi (gün × oynaklık ondalığı içinde z; Cohen d; ay kümeli bootstrap) aynı kodla (K55/hucre._z_gun_vd, K55/istatistik.d_boot_ay) ölçülür.
-Yapay veride değişkenlerin geleceğe dair hiçbir bilgisi yoktur; bu yüzden çıkan her d, olay tanımının (t0 = ileri pencerenin eşiği ilk yakaladığı
-gün, giriş t0+1 açılışı) ve oynaklık seçiminin mekanik izidir. Gerçek K55 d'siyle oran ONKAYIT_K56 bölüm 6'daki önceden yazılı eşiklerle
+Yapay veride değişkenlerin gelecek getirinin YÖNÜNE dair bilgisi yoktur (garch_t spekinde oynaklık öngörülebilir, yön değil); bu yüzden çıkan her
+d, olay tanımının (t0 = ileri pencerenin eşiği ilk yakaladığı gün, giriş t0+1 açılışı) ve oynaklık seçiminin mekanik izidir. Gerçek K55 d'siyle oran ONKAYIT_K56 bölüm 6'daki önceden yazılı eşiklerle
 sınıflanır. Gecikme sınaması: değişken t0−k'da (k = 1, 5, 20) ölçülürse mekanik iz hızla sönmeli.
 """
 from __future__ import annotations
@@ -124,8 +124,9 @@ def k55_hucre_varyantlari(A: K56Ayar, kk: KaynakKaydi) -> pd.DataFrame:
 
 
 def secim_sentetik(A: K56Ayar, kk: KaynakKaydi, hucre_listesi: Optional[List[str]] = None, spekler: Tuple[Tuple[str, int], ...] = SENTETIK_SPEK,
-                   n: int = SENTETIK_HISSE, gun: int = SENTETIK_GUN, B: int = SENTETIK_BOOT) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """M01 sentetik sıfır sınaması. Dönüş: (satırlar: hücre × spek × ufuk × gecikme, hücre özeti + sınıf)."""
+                   n: int = SENTETIK_HISSE, gun: int = SENTETIK_GUN, B: int = SENTETIK_BOOT, varyantlar: Optional[pd.DataFrame] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """M01 sentetik sıfır sınaması. Dönüş: (satırlar: hücre × spek × ufuk × gecikme, hücre özeti + sınıf). varyantlar (hucre, varyant) verilirse
+    v1.1-3 ek sınaması: yalnız o varyantlar, gecikmesiz, üç ufuk."""
     from K55 import dal_ortak
     from K55.faz1 import D10_BILESEN, ek_kur, hucreleri_kur
     from K55.hucre import degisken_hesapla
@@ -133,6 +134,9 @@ def secim_sentetik(A: K56Ayar, kk: KaynakKaydi, hucre_listesi: Optional[List[str
     hucreleri_kur(); T = k55_hucre_varyantlari(A, kk)
     if hucre_listesi:
         T = T[T.hucre.isin(hucre_listesi)].reset_index(drop=True)
+    gecikmeler = GECIKME
+    if varyantlar is not None:
+        T = varyantlar[["hucre", "varyant"]].drop_duplicates().reset_index(drop=True); gecikmeler = (0,)
     satir: List[Dict[str, Any]] = []
     for tur, tohum in spekler:
         t0 = time.time(); V, EV, endeks = sentetik_veri(n, gun, tohum, tur); P, O = sentetik_panel(V, EV, endeks); ek_kur(V, EV, endeks)
@@ -149,14 +153,39 @@ def secim_sentetik(A: K56Ayar, kk: KaynakKaydi, hucre_listesi: Optional[List[str
                 satir.append({"hucre": r.hucre, "varyant": r.varyant, "spek": tur, "tohum": tohum, "hata": str(ex)[:200]}); continue
             P["_x"] = np.asarray(x, np.float64)
             for uf in ("Y60", "Y120", "Y250"):
-                for k in GECIKME:
+                for k in gecikmeler:
                     if uf != "Y60" and k:
                         continue
                     satir.append({"hucre": r.hucre, "varyant": r.varyant, "spek": tur, "tohum": tohum, "ufuk": uf, "gecikme": k, "eksik_pay": float(P["_x"].isna().mean()),
                                   **a_d(P, O, "_x", uf, B, rng, k)})
         P.drop(columns=["_x"], inplace=True, errors="ignore"); dal_ortak.EK.clear()
     S = pd.DataFrame(satir)
-    return S, sentetik_ozet(S, T)
+    return S, (sentetik_ozet(S, T) if varyantlar is None else pd.DataFrame())
+
+
+def _bool(x: Any) -> bool:
+    return str(x).strip().lower() in ("true", "1", "1.0", "evet")
+
+
+def kesif_satirlari(A: K56Ayar, kk: KaynakKaydi) -> pd.DataFrame:
+    """K55'te KEŞİF ölçütünü geçen bütün A satırları (K55/faz1.durum_etiketi ile aynı kural): (hücre, varyant, ufuk, d, d_alt, d_ust)."""
+    H = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_VARYANTLAR.csv"), "kiyas", "K55 KEŞİF ölçütünü geçen (varyant, ufuk) satırları"))
+    a = H[H.yontem == "A"].copy(); yn = a.yil_n.fillna(0); yt = a.yil_tekrar.fillna(0)
+    ok = (a.karar == "ETKİ") & a.ret.map(_bool) & (yt >= np.minimum(5, yn)) & (yn >= 5) & a.rejim_tutarli.map(_bool)
+    return a.loc[ok, ["hucre", "varyant", "ufuk", "d", "d_alt", "d_ust", "auc", "n_olay"]].reset_index(drop=True)
+
+
+def sentetik_kesif_ozet(S: pd.DataFrame, K: pd.DataFrame) -> pd.DataFrame:
+    """v1.1-3: KEŞİF'i sağlayan her (hücre, varyant, ufuk) için dört spekin sınıfı ve uyum kararı; hücre kararı = KEŞİF satırlarının çoğunluğu."""
+    rows = []
+    for r in K.itertuples():
+        g = S[(S.hucre == r.hucre) & (S.varyant == r.varyant) & (S.ufuk == r.ufuk) & (S.gecikme == 0)] if len(S) else S
+        sinif = [sentetik_sinif(x.d, x.d_alt, x.d_ust, r.d) for x in g.itertuples()]
+        say = pd.Series(sinif).value_counts() if sinif else pd.Series(dtype=int)
+        karar = "TANIMSIZ (HATA)" if not len(g) or g.d.isna().all() else (say.index[0] if say.iloc[0] >= SPEK_UYUM else "BELIRSIZ")
+        rows.append({"hucre": r.hucre, "varyant": r.varyant, "ufuk": r.ufuk, "d_gercek": r.d, "d_sent": float(g.d.mean()) if len(g) else np.nan,
+                     "oran": float(g.d.mean()) / r.d if (len(g) and r.d) else np.nan, "spek_siniflari": ";".join(sinif), "karar": karar})
+    return pd.DataFrame(rows)
 
 
 def sentetik_sinif(d_s: float, alt: float, ust: float, d_g: float) -> str:
@@ -182,7 +211,7 @@ def sentetik_ozet(S: pd.DataFrame, T: pd.DataFrame) -> pd.DataFrame:
         g = S[(S.hucre == r.hucre) & (S.ufuk == "Y60")]
         g0 = g[g.gecikme == 0]; sinif = [sentetik_sinif(x.d, x.d_alt, x.d_ust, r.d_gercek_Y60) for x in g0.itertuples()]
         say = pd.Series(sinif).value_counts() if sinif else pd.Series(dtype=int); ust = say.index[0] if len(say) else "TANIMSIZ"
-        karar = ust if (len(say) and say.iloc[0] >= SPEK_UYUM) else "BELIRSIZ"
+        karar = "TANIMSIZ (HATA)" if not len(g0) or g0.d.isna().all() else (ust if (len(say) and say.iloc[0] >= SPEK_UYUM) else "BELIRSIZ")
         gec = {f"d_sent_gecikme{k}": float(g[g.gecikme == k].d.mean()) if (g.gecikme == k).any() else np.nan for k in GECIKME}
         uz = {f"d_sent_{u}": float(S[(S.hucre == r.hucre) & (S.ufuk == u) & (S.gecikme == 0)].d.mean()) for u in ("Y120", "Y250")}
         d_s = float(g0.d.mean()) if len(g0) else np.nan
@@ -196,29 +225,34 @@ def sentetik_ozet(S: pd.DataFrame, T: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------- kanıt sınıfları (ONKAYIT_K56 3) ve mekanizma hipotez kaydı (ONKAYIT_K56 4)
 KANIT_SINIFLARI: Tuple[str, ...] = ("DOĞRULANMIŞ MEKANİZMA", "GÜÇLÜ AÇIKLAMA", "ALTERNATİF AÇIKLAMA", "İLİŞKİ VAR, NEDEN BELİRSİZ", "VERİ YETERSİZ", "YANLIŞ BULGU")
 ETKI_YOK = "ETKİ YOK (başarısız kalır; açıklanacak etki yok)"
+ETKI_SAGLAM_DEGIL = "ETKİ SAĞLAM DEĞİL (kaynakta başarısız / zayıf / dönem çelişkili; mekanizma aranmaz)"
+BETIMLEYICI = "BETİMLEYİCİ (kaynakta karar yok)"
 YONTEM_DENETIMI = "YÖNTEM DENETİMİ (bulgu değil)"
+YANLIS_ADAY = "YANLIŞ BULGU ADAYI"
 
 # Her hipotez: kimlik, ad, açıklama, hangi bulguları açıklar (kimlik desenleri, düzenli ifade), doğruysa / yanlışsa bağımsız veride ne görülmeli,
 # gerekli veri (veri modülü kaynak kimlikleri), karşıt gruplar (karsit_ornekler.GRUPLAR), ölçü, çürütme ölçütü (önceden; sonuçla değişmez),
-# öncelik (1 = önce), yarışan hipotezler. Sürüm: v1.1 kilidiyle donar (Faz 1 öncesi).
+# öncelik (1 = önce), yarışan hipotezler, on_kanit (Faz 0'da bilinen sayılar: TEST DEĞİL). Sürüm HIPOTEZ_SURUM (ONKAYIT_K56 v1.1-6).
 HIPOTEZLER: List[Dict[str, Any]] = [
     {"kimlik": "M01", "ad": "Olay başlangıcı seçim etkisi (mekanik eser)", "tur": "yontem",
      "aciklama": "Olay günü t0 = ileri pencerenin eşiği İLK yakaladığı gün ve giriş t0+1 açılışı; etiket giriş fiyatına göre tanımlandığından t0 öncesi düşüş, zayıf kapanış, negatif göreli güç TANIM GEREĞİ seçilir. Bilgi yok.",
-     "aciklar": [r"^K55-D\d\d-S\d\d$"], "dogruysa": "bilgisiz yapay veride aynı tanım + aynı kod gerçek d'nin >= %50'sini aynı işaretle üretir; etki t0−k gecikmesiyle hızla söner (k=5'te <= 1/3); seçimsiz ileri ölçüde (K55 B) etki yok",
-     "yanlissa": "yapay veride |d| < 0,05; gerçek veride etki gecikmeyle sönmez; B ileri getiride iz verir", "veri": ["YEREL_K55_PANEL", "SENTETIK"], "karsit": ["G1", "G7"],
-     "olcu": "d_sentetik / d_gerçek (Y60); gecikme 0/1/5/20 sönümü (gerçek ve sentetik)", "curutme": "ONKAYIT_K56 6 eşikleri; gerçek veride k=5'te |d| >= 0,7 × |d(k=0)| -> M01 tek başına açıklamaz",
-     "oncelik": 1, "yarisan": ["M02", "M03"], "faz0": "SENTETİK SINAMA YAPILDI (K56_SECIM_SENTETIK_OZET.csv)"},
+     "aciklar": [r"^K55-D\d\d-S\d\d$"], "dogruysa": "bilgisiz yapay veride aynı tanım + aynı kod gerçek d'nin >= %50'sini aynı işaretle üretir; gerçek veride seçimsiz etiketle d küçülür (|d(seçimsiz)| <= 0,2 × |d(ilk geçiş)|); seçimsiz ileri ölçüde (K55 B) etki yok",
+     "yanlissa": "yapay veride |d| < 0,05; gerçek veride seçimsiz etiketle (bütün nitelikli günler) etki >= ilk geçiş etkisinin yarısı ve aralık 0'ı dışlıyor", "veri": ["YEREL_K55_PANEL", "SENTETIK"], "karsit": ["G1", "G7"],
+     "olcu": "d_sentetik / d_gerçek (Y60 ve KEŞİF ufku); gerçek veride d(seçimsiz) / d(ilk geçiş); gecikme yalnız bilgi", "curutme": "ONKAYIT_K56 v1.1-2: |d(seçimsiz)| >= 0,5 × |d(ilk geçiş)| ve aralık 0'ı dışlıyor -> GERÇEK ETKİ KALIYOR (M01 açıklamaz)",
+     "oncelik": 1, "yarisan": ["M02", "M03"], "faz0": "sentetik sınama yapıldı (Y60: 25 KEŞİF'in 21'i YANLIŞ BULGU ADAYI; KEŞİF ufkunda ayrıca raporlanır); Faz 1: v1.1-2 seçimsiz kontrol protokolü",
+     "on_kanit": "denetçi ön kayıt dışı kontrolü (K55 tam paneli, KEŞİF, Y60): seçimsiz etiketle gerçek d -0,016..-0,049 (ilk geçiş d'nin ~%5-11'i); t0 kapanış < 0 payı gerçek 0,743 / sentetik 0,736"},
     {"kimlik": "M02", "ad": "Kısa dönem tersine dönüş / likidite sağlama (gerçek fiyat baskısı)", "tur": "piyasa",
      "aciklama": "Bilgisiz satış baskısı fiyatı geçici iter, likidite sağlayan alıcı primle karşılar; dönüş likiditesi düşük hisselerde büyük olur (Jegadeesh 1990, Nagel 2012).",
      "aciklar": [r"^K55-D0[1256]-", r"^K53-T", r"^K51-.*(CEK|ÇEK|H-A)"], "dogruysa": "M01 gecikme denetiminden sonra kalan ters etki yüksek spread / düşük derinlik (Corwin-Schultz, MIDAS gizli emir ve tek lot altı payı) grubunda büyük; 8-K haberi yok; seçimsiz ileri getiride (sinyal günü sabit) zayıf kapanışlı hisseler pozitif 5-20 gün getirisi verir",
-     "yanlissa": "kalan etki likiditeyle değişmez ya da ileri getiri sıfır (K55 B 0/164 bunun 60 gün için ön kanıtı)", "veri": ["OHLC_SPREAD_VEKIL", "SEC_MIDAS", "FINRA_REGSHO", "SEC_SUBMISSIONS_OZET"],
+     "yanlissa": "kalan etki likiditeyle değişmez ya da ileri getiri sıfır", "veri": ["OHLC_SPREAD_VEKIL", "SEC_MIDAS", "FINRA_REGSHO", "SEC_SUBMISSIONS_OZET"],
      "karsit": ["G2", "G7"], "olcu": "ileri 5 / 20 gün eşli fark × spread üçlüsü; etkileşim katsayısı ve ay kümeli aralık", "curutme": "yüksek spread üçlüsünde 20 gün eşli fark aralığı 0'ı kapsıyor", "oncelik": 2,
-     "yarisan": ["M01", "M04"], "faz0": "veri erişimi: spread vekili yerel, MIDAS 2012+, Reg SHO 2018-08+"},
+     "yarisan": ["M01", "M04"], "faz0": "veri erişimi: spread vekili yerel; MIDAS 2012+ (REIT / yabancı / BDC yok); Reg SHO hacmi tesis dosyalarıyla 2009-08+",
+     "on_kanit": "K55 B 0/164 (60 gün ileri getiri yok); denetçi kontrolü: seçimsiz etiketle küçük aynı yönlü kalıntı (Y60 d ~ -0,02..-0,05)"},
     {"kimlik": "M03", "ad": "Oynaklık / risk seçimi (oynaklık ondalığı denetimi yetersiz)", "tur": "yontem",
      "aciklama": "Büyük yükseliş eşiği oynak hisselerde ve oynaklığın arttığı dönemlerde kolay aşılır; gün içi 60 gün oynaklık ondalığı koşullu (GARCH) oynaklığı ve ondalık içi farkı denetlemez.",
      "aciklar": [r"^K55-D03-", r"^K55-D0[1-6]-", r"^K51-.*OYNAK"], "dogruysa": "yalnız GARCH'lı yapay evrende mekanik iz (BELİRSİZ hücreler); ince oynaklık denetimi (yüzdelik, koşullu oynaklık, beta) gerçek d'yi >= %50 küçültür",
      "yanlissa": "ince denetim d'yi değiştirmez", "veri": ["YEREL_K55_PANEL"], "karsit": ["G2", "G7"], "olcu": "d (vd 10'luk) − d (oynaklık yüzdeliği 50'lik + GARCH koşullu oynaklık)",
-     "curutme": "küçülme < %25", "oncelik": 1, "yarisan": ["M01"], "faz0": "sentetik: 4 KEŞİF hücresi yalnız GARCH spekinde mekanik (BELİRSİZ)"},
+     "curutme": "küçülme < %25", "oncelik": 1, "yarisan": ["M01"], "faz0": "sentetik Y60: 4 KEŞİF hücresi BELİRSİZ (D01-S05, D02-S05, D04-S04 yalnız GARCH spekinde mekanik; D06-S04 her spekte kısmen / tam mekanik); oynaklık / hacim hücrelerinin sınıfı DGP'ye duyarlı"},
     {"kimlik": "M04", "ad": "Haber / bilanço / kurumsal olay kaynaklı sıçrama", "tur": "sirket",
      "aciklama": "Büyük yükselişler çoğunlukla ayrık bir habere (bilanço 8-K 2.02, sözleşme 1.01, FDA / ürün 7.01-8.01, birleşme) bağlı; olay öncesi zayıflık tesadüf ya da haber öncesi belirsizlik.",
      "aciklar": [r"^K55-", r"^K53-", r"^K52-"], "dogruysa": "G1 olaylarının G2'den belirgin büyük payında [t0−5, t0+10] içinde 8-K var (madde koduyla); haber türüne koşullu iken olay öncesi fark küçülür",
@@ -228,12 +262,14 @@ HIPOTEZLER: List[Dict[str, Any]] = [
      "aciklama": "Açığa satış pozisyonu yüksek, fiyatı düşmüş hisselerde kapatma alımları ani yükseliş üretir (tema / meme dönemleri).",
      "aciklar": [r"^K51-.*(KR|KAZANAN|EN20)", r"^K55-D0[156]-", r"^K52-KIR-EN20"], "dogruysa": "G1'de t0 öncesi açığa satış / dolaşım ve kapatma gün sayısı G2'den yüksek; t0 sonrası pozisyon düşer; FTD artar",
      "yanlissa": "açığa satış ölçüleri G1 ve G2'de aynı", "veri": ["FINRA_SI", "FINRA_REGSHO", "SEC_FTD"], "karsit": ["G2", "G4"], "olcu": "kapatma gün sayısı ve SI değişimi farkı; FTD payı",
-     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M18", "M02"], "faz0": "KAPSAM: FINRA SI API ~2017-12+, Reg SHO CDN 2018-08+ -> KEŞİF'in yalnız 2018-21'i; FTD 2004+"},
+     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M18", "M02"], "faz0": "KAPSAM: açığa satış POZİSYONU (FINRA SI API) 2017-12-29+ -> KEŞİF'in 2016-01..2017-11'i yok; açığa satış HACMİ (Reg SHO tesis dosyaları) 2009-08+ tam; FTD 2004+",
+     "on_kanit": "Ç103 (K31 M4): kapatma süresi üst %10, 2023 / 2024-26 ortalama fark -%0,5 / -%0,8 (İZ DEĞİL); olay düzeyi bağlantı yok"},
     {"kimlik": "M06", "ad": "Sulandırma / finansman döngüsü (hisse ihracı)", "tur": "sermaye",
      "aciklama": "Nakit ihtiyacı olan şirketler zayıf fiyatta ya da yükselişe satarak (ATM, 424B5, S-3, 8-K 3.02) hisse çıkarır; sayı artışı dağıtımdır (şirket satıcı).",
      "aciklar": [r"^K51-.*(KAYNAK|TIINGO|BATAN)", r"^K55-D02-", r"^K54-"], "dogruysa": "G5 (12 ayda > %20 hisse artışı) ve ihraç başvurusu G4 / G3'te ve G1'in olay SONRASI penceresinde sık; G1 olay öncesinde değil",
      "yanlissa": "ihraç sıklığı gruplar arasında aynı", "veri": ["SEC_COMPANYFACTS", "SEC_SUBMISSIONS_OZET"], "karsit": ["G1", "G3", "G4", "G5"], "olcu": "olay öncesi / sonrası ihraç ve hisse artışı payı farkı",
-     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M07"], "faz0": "XBRL hisse sayısı bölünmeye göre düzeltilmemiş (TRMB, TLGTQ sıçramaları): bölünme verisiyle düzeltme şart"},
+     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M07"], "faz0": "XBRL hisse sayısı bölünmeye göre düzeltilmemiş ve birleşme artışını ayırmıyor (TRMB 2013 2:1 bölünme, EXR 2023 birleşme, IRM 2016 satın alma; TLGTQ 2020-21 artışı ters bölünme SONRASI gerçek sulandırma): pencere KEŞİF'le sınırlanmalı, bölünme ve birleşme ayrılmalı",
+     "on_kanit": "Ç103 (K31 M2): çeyreklik hisse artışı >= %10 / %30, 2023 / 2024-26 +%0,1 / +%1,2, ağır +%0,4 / +%2,6 (İZ DEĞİL); ihraç GÜNÜ olay testi yok"},
     {"kimlik": "M07", "ad": "Temel iyileşme / bozulma", "tur": "sirket",
      "aciklama": "Satış, faaliyet nakit akışı ya da kârdaki değişim yükselişi açıklar; fiyat bilgiyi bildirim tarihinde (filed) alır.",
      "aciklar": [r"^K55-", r"^K51-.*(H-B|H-D)"], "dogruysa": "G1'de t0 sonrası ilk bildirimde (filed) satış / FNA iyileşmesi G2'den büyük; t0 öncesi bildirimlerde fark yok",
@@ -248,11 +284,13 @@ HIPOTEZLER: List[Dict[str, Any]] = [
      "aciklama": "Düşüş ve 'yüksek hacimli düşüş' içeriden / kurumsal satışın izidir; yükselmeyenlerde (G2, G4) daha sık beklenir.",
      "aciklar": [r"^K53-", r"^K55-D02-S02", r"^K55-D05-"], "dogruysa": "plansız (10b5-1 dışı) içeriden S ve 13F azaltımı G4'te ve G2'de G1'den sık",
      "yanlissa": "fark yok", "veri": ["SEC_INSIDER_DS", "SEC_13F_DS"], "karsit": ["G1", "G2", "G4"], "olcu": "plansız S sayısı / değeri, 13F azaltım payı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 2,
-     "yarisan": ["M11", "M02"], "faz0": "Form 4 2006q1+; KEŞİF 248 MB; 10b5-1 işareti yalnız 2023+ (öncesi dipnot %2,7)"},
+     "yarisan": ["M11", "M02"], "faz0": "Form 4 2006q1+; KEŞİF ~248 MB (ham zipler bu oturumun karalama klasöründe); 10b5-1 işareti fiilen 2023q2+ ('1' ve 'true'); öncesi dipnot / açıklama metni vekili: S içeren Form 4'lerin %43,5'i (2016q1)",
+     "on_kanit": "Ç103 (K31 M1): içeriden satış 60 gün ileri fark 2023 / 2024-26 +%0,0 / -%0,5 (İZ DEĞİL)"},
     {"kimlik": "M10", "ad": "İçeriden bilgi (açık piyasa alımı)", "tur": "yatirimci",
      "aciklama": "Yöneticilerin kendi parasıyla açık piyasa alımı (P) bilgi taşır; yükseliş öncesi sıklaşır.",
      "aciklar": [r"^K55-", r"^K51-.*P1"], "dogruysa": "t0 öncesi 90 günde P alımı G1'de G2'den sık", "yanlissa": "fark yok", "veri": ["SEC_INSIDER_DS", "K30_ALIM"], "karsit": ["G2", "G7"],
-     "olcu": "P alımı olan hisse payı farkı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 3, "yarisan": ["M07"], "faz0": "K30 (Ç102) daha önce ölçtü: yeniden yapılmaz, yalnız K55 olaylarına eşlenir"},
+     "olcu": "P alımı olan hisse payı farkı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 3, "yarisan": ["M07"], "faz0": "K30 özeti (k30_alim) yalnız 2022-01..2026-03: KEŞİF YOK; KEŞİF için Insider DS'teki P kodları kullanılır",
+     "on_kanit": "Ç102 (K30): alım 2023 / 2024-26 +%0,1 / +%0,2 (İZ DEĞİL); çölde alım 2023 +%7,3 tek dönem"},
     {"kimlik": "M11", "ad": "Emilim (büyük satışın başka alıcılarca karşılanması)", "tur": "yatirimci",
      "aciklama": "Yüksek hacimli satış günlerinde fiyat az düşer çünkü büyük alıcı (kurum, blok) karşılar; olumlu habere tepkisizlik (K53) de emilim olabilir.",
      "aciklar": [r"^K53-", r"^K55-D02-S0[2-8]", r"^K55-D05-S0[68]"], "dogruysa": "satış baskılı günlerde işlem başına hacim (MIDAS TradeVol / Trades) ve gizli / ATS payı artar; aynı çeyrekte 13F sahip sayısı ya da 13D / 13G başvurusu artar; fiyat etkisi (Amihud) düşer",
@@ -271,10 +309,10 @@ HIPOTEZLER: List[Dict[str, Any]] = [
      "olcu": "kaynak × etki etkileşimi; bölünme ±3 gün çakışma payı", "curutme": "etkileşim aralığı 0'ı kapsıyor ve çakışma payı taban kadar", "oncelik": 1, "yarisan": ["M17"],
      "faz0": "V_ABD bölünme günlerinde düzeltilmiş (AAPL / TSLA / NVDA gece oranı ~1); XBRL hisse sayısı düzeltilmemiş"},
     {"kimlik": "M14", "ad": "Kasıtlı yanıltma (manipülasyon / pompala-boşalt)", "tur": "kasit",
-     "aciklama": "Fiyat / hacim kasıtlı olarak yanıltıcı gösterilir. Varsayılan açıklama DEĞİL; yalnız resmî kayıtla (SEC askıya alma, dava, idari karar, mahkeme, FINRA disiplin) desteklenir.",
-     "aciklar": [r"^K51-.*(KR|KAZANAN|EN20)", r"^K55-"], "dogruysa": "G1 olaylarının sembol + tarih eşleşmeli resmî kayıtla çakışma payı G2'den büyük", "yanlissa": "çakışma payı aynı ya da sıfır (kasıt kanıtı yok)",
+     "aciklama": "Fiyat / hacim kasıtlı olarak yanıltıcı gösterilir. Varsayılan açıklama DEĞİL; kasıt kanıtı yalnız kesinleşmiş resmî kayıttır (mahkeme kararı, SEC / FINRA idari karar ya da uzlaşma). SEC işlem askıya alması ve dava bülteni yalnız RESMÎ KUŞKU KAYDI'dır.",
+     "aciklar": [r"^K51-.*(KR|KAZANAN|EN20)", r"^K55-"], "dogruysa": "G1 olaylarının sembol + tarih eşleşmeli kesinleşmiş kararla çakışma payı G2'den büyük (resmî kuşku kaydı ayrı sütun)", "yanlissa": "çakışma payı aynı ya da sıfır (kasıt kanıtı yok)",
      "veri": ["SEC_ASKIYA_ALMA", "SEC_DAVA"], "karsit": ["G2", "G7"], "olcu": "resmî kayıt çakışma payı; üç sütun: gözlenen davranış / olası mekanizma / kasıt kanıtı", "curutme": "kayıt yok -> KASIT KANITI YOK",
-     "oncelik": 3, "yarisan": ["M05", "M18"], "faz0": "SEC askıya alma 1995-2026, 1.349 bülten; sembol yok, ad eşlemesiyle evrende 10 şirket; dava bültenleri sayfalı"},
+     "oncelik": 3, "yarisan": ["M05", "M18"], "faz0": "SEC askıya alma 1995-2026 (resmî kuşku kaydı; sembol yok): tarih şartlı ad eşlemesi erişim testinde; tarih şartsız 10 eşleşmenin 1'i yanlış, hiçbiri K55 panel penceresinde değil"},
     {"kimlik": "M15", "ad": "Birleşme / satın alma teklifi", "tur": "sirket",
      "aciklama": "Yükselişin bir kısmı satın alma primi; hedef şirketler çoğu zaman zayıf fiyatlı.",
      "aciklar": [r"^K55-", r"^K54-"], "dogruysa": "G1'in [t0, t0+60] içinde SC TO-T / DEFM14A / 425 / 8-K 1.01-2.01 başvurusu payı G2'den büyük; birleşmeli olaylar çıkarılınca olay öncesi fark küçülür",
@@ -298,12 +336,18 @@ HIPOTEZLER: List[Dict[str, Any]] = [
      "aciklama": "Olumlu revizyonlar fiyat yükseldikten sonra gelir (izleme); bilgi taşımaz.",
      "aciklar": [r"^K52-", r"^K53-"], "dogruysa": "revizyonların çoğu pencere dibinden >= %10 yükseliş SONRASI (K52 H4 zamanlama payı); revizyon sonrası eşli fark sıfır",
      "yanlissa": "revizyon yükselişten önce gelir ve sonrası pozitif", "veri": ["YEREL_ANALIST"], "karsit": ["G2"], "olcu": "zamanlama payı ve sonrası eşli fark", "curutme": "zamanlama payı < 0,3",
-     "oncelik": 3, "yarisan": ["M04"], "faz0": "K52 H4-P2 zamanlama payı 0,504 (ön kanıt)"},
+     "oncelik": 3, "yarisan": ["M04"], "faz0": "bilinen sonuç test sayılmaz; M19 yeni dönem verisiyle sınanır (Cemal kararı)", "on_kanit": "K52 H4-P2 zamanlama payı 0,504 (n 310), P1 0,386"},
 ]
 
 
+HIPOTEZ_SURUM = "v1.1 (30 Ekim 2026; Faz 0 sentetik ve erişim sonuçları ile bağımsız denetimden SONRA yazıldı; Faz 1'den önce donduruldu)"
+
+
 def hipotez_tablosu() -> pd.DataFrame:
-    T = pd.DataFrame(HIPOTEZLER)
+    T = pd.DataFrame(HIPOTEZLER); T["surum"] = HIPOTEZ_SURUM
+    if "on_kanit" not in T:
+        T["on_kanit"] = ""
+    T["on_kanit"] = T.on_kanit.fillna("")
     for c in ("aciklar", "veri", "karsit", "yarisan"):
         T[c] = T[c].map(lambda x: "; ".join(x))
     if T.kimlik.duplicated().any():

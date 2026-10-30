@@ -60,8 +60,34 @@ def sentetik_birlestir(A: K56Ayar, ana: str, ekler: List[str]) -> pd.DataFrame:
         kim.append(json.load(open(os.path.join(e, "K56_KOSU_SENTETIK.json"), encoding="utf-8")))
     Z = Z.sort_values("hucre").reset_index(drop=True)
     S.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK.csv"), index=False); Z.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK_OZET.csv"), index=False)
+    kay = [pd.read_csv(os.path.join(d, "K56_KAYNAK_KAYDI_SENTETIK.csv")) for d in [ana] + ekler if os.path.exists(os.path.join(d, "K56_KAYNAK_KAYDI_SENTETIK.csv"))]
+    if kay:
+        pd.concat(kay, ignore_index=True).drop_duplicates().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI_SENTETIK.csv"), index=False)
     _json_yaz(os.path.join(A.cikti, "K56_KOSU_SENTETIK.json"), {"birlesik": True, "kosular": kim, "karar": Z.karar.value_counts().to_dict()})
     return Z
+
+
+def _kesif_isci(arg):
+    spek, V_, A = arg
+    from . import mekanizma as M
+    kk = KaynakKaydi(); S, _ = M.secim_sentetik(A, kk, spekler=(spek,), varyantlar=V_); return S
+
+
+def sentetik_kesif_kos(A: K56Ayar, isci: int = 4) -> Dict[str, Any]:
+    """ONKAYIT_K56 v1.1-3: KEŞİF'i sağlayan bütün (varyant, ufuk) satırlarında aynı dört spek ve eşiklerle sentetik sınama."""
+    from . import mekanizma as M
+    gunluk_log(); A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True); t0 = time.time()
+    kimlik = kosu_kimligi(A, "SENTETIK-KESIF"); kk = KaynakKaydi(); K = M.kesif_satirlari(A, kk)
+    log.info("v1.1-3 sentetik: %d KEŞİF satırı, %d varyant × %d spek", len(K), K.varyant.nunique(), len(M.SENTETIK_SPEK))
+    args = [(sp, K[["hucre", "varyant"]].drop_duplicates(), A) for sp in M.SENTETIK_SPEK]
+    with mp.get_context("fork").Pool(min(isci, len(args))) as hv:
+        S = pd.concat(hv.map(_kesif_isci, args, chunksize=1), ignore_index=True)
+    Zk = M.sentetik_kesif_ozet(S, K)
+    S.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF_SATIR.csv"), index=False); Zk.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF.csv"), index=False)
+    kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI_SENTETIK_KESIF.csv"), index=False)
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_SENTETIK_KESIF.json"), {**kimlik, "sure_dk": round((time.time() - t0) / 60, 1), "satir": len(K), "karar": Zk.karar.value_counts().to_dict()})
+    log.info("v1.1-3 sentetik bitti: %.1f dk; %s", (time.time() - t0) / 60, Zk.karar.value_counts().to_dict())
+    return {"S": S, "Zk": Zk}
 
 
 def faz0_kos(A: K56Ayar) -> Dict[str, Any]:
@@ -73,9 +99,11 @@ def faz0_kos(A: K56Ayar) -> Dict[str, Any]:
     gunluk_log(); A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True); A.ag = False
     kimlik = kosu_kimligi(A, "FAZ0"); kk = KaynakKaydi()
     zy = os.path.join(A.cikti, "K56_SECIM_SENTETIK_OZET.csv"); Z = pd.read_csv(zy) if os.path.exists(zy) else None
+    zk = os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF.csv"); Zk = pd.read_csv(zk) if os.path.exists(zk) else None
+    dn = os.path.join(A.cikti, "K56_DENETIM_BULGULARI.csv"); Dn = pd.read_csv(dn) if os.path.exists(dn) else None
     if Z is None:
         log.warning("M01 sentetik özeti yok (%s): K55 bulgularında sentetik sütunu boş kalır", zy)
-    E, Den = EE.envanter_kur(A, kk, Z); Ac = EE.aciklanmamislar(E); H = M.hipotez_tablosu()
+    E, Den = EE.envanter_kur(A, kk, Z, Zk=Zk); Ac = EE.aciklanmamislar(E); H = M.hipotez_tablosu()
     ey = os.path.join(A.cikti, "K56_VERI_ERISIM_TESTI.csv"); Er = pd.read_csv(ey) if os.path.exists(ey) else pd.DataFrame()
     VK = MR.veri_kaynaklari(Er); HV = MR.hipotez_veri(H, VK); R = MR.riskler(); Sira = MR.uygulama_sirasi()
     E.to_csv(os.path.join(A.cikti, "K56_ETKI_ENVANTERI.csv"), index=False); Den.to_csv(os.path.join(A.cikti, "K56_ENVANTER_DENETIMI.csv"), index=False)
@@ -84,8 +112,8 @@ def faz0_kos(A: K56Ayar) -> Dict[str, Any]:
     R.to_csv(os.path.join(A.cikti, "K56_RISKLER.csv"), index=False); Sira.to_csv(os.path.join(A.cikti, "K56_UYGULAMA_SIRASI.csv"), index=False)
     MR.suzgec().to_csv(os.path.join(A.cikti, "K56_TALIMAT_SUZGECI.csv"), index=False)
     kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI.csv"), index=False)
-    yol = MR.faz0_yaz(A.cikti, kimlik, E, Den, Ac, H, HV, VK, Er, Z, R, Sira)
-    _json_yaz(os.path.join(A.cikti, "K56_KOSU_FAZ0.json"), {**kimlik, "envanter": len(E), "denetim_uyusmazlik": len(Den), "aciklanmamis": len(Ac), "hipotez": len(H),
+    yol = MR.faz0_yaz(A.cikti, kimlik, E, Den, Ac, H, HV, VK, Er, Z, R, Sira, Zk, Dn)
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_FAZ0.json"), {**kimlik, "hipotez_sha": __import__("hashlib").sha256(H.to_csv(index=False).encode()).hexdigest(), "envanter": len(E), "denetim_uyusmazlik": len(Den), "aciklanmamis": len(Ac), "hipotez": len(H),
                                                            "on_sinif": E.faz0_on_sinif.value_counts().to_dict()})
     log.info("Faz 0 raporu: %s (envanter %d, denetim %d, açıklanmamış %d)", yol, len(E), len(Den), len(Ac))
     return {"E": E, "Den": Den, "Ac": Ac, "H": H, "VK": VK, "rapor": yol}
@@ -101,7 +129,7 @@ def erisim_kos(A: K56Ayar) -> Dict[str, Any]:
     satir: List[Dict[str, Any]] = []; tablolar: Dict[str, Any] = {}
     for ad, f in (("kurumsal_sahiplik", lambda: kurumsal_sahiplik.erisim_testi(A, ist, Orn)), ("iceriden_islemler", lambda: iceriden_islemler.erisim_testi(A, ist, Orn, EV)),
                   ("finansal_mekanizma", lambda: finansal_mekanizma.erisim_testi(A, ist, Orn)), ("kurumsal_olaylar", lambda: kurumsal_olaylar.erisim_testi(A, ist, Orn, EV)),
-                  ("islem_davranisi", lambda: islem_davranisi.erisim_testi(A, ist, Orn))):
+                  ("islem_davranisi", lambda: islem_davranisi.erisim_testi(A, ist, Orn, EV))):
         t0 = time.time()
         try:
             rr = f()
@@ -123,3 +151,21 @@ def erisim_kos(A: K56Ayar) -> Dict[str, Any]:
                                                              "onbellekten_mb": round(float(pd.to_numeric(G.loc[G.durum.astype(str) == "onbellek", "bayt"], errors="coerce").fillna(0).sum()) / 2 ** 20, 1),
                                                              "durum": T.durum.value_counts().to_dict()})
     return {"T": T, "Orn": Orn, "G": G}
+
+
+def drive_kopyala(kaynak: Optional[str] = None, hedef: Optional[str] = None) -> pd.DataFrame:
+    """Colab: repodaki K56 çıktılarını (arastirma_cikti/k56_mekanizma) Drive OUTPUT/K56_MEKANIZMA'ya kopyalar; her dosya kopyadan sonra sha256 ile
+    doğrulanır (eşit değilse durur). K51-K55 klasörlerine yazmaz (cikti_dogrula)."""
+    import shutil
+    from .ortak import CIKTI_ALT, DRIVE_OUTPUT, REPO_CIKTI, sha256_dosya
+    kaynak = kaynak or REPO_CIKTI; hedef = cikti_dogrula(hedef or os.path.join(DRIVE_OUTPUT, CIKTI_ALT)); os.makedirs(hedef, exist_ok=True); rows = []
+    for f in sorted(os.listdir(kaynak)):
+        a = os.path.join(kaynak, f)
+        if not os.path.isfile(a):
+            continue
+        b = os.path.join(hedef, f); shutil.copyfile(a, b); sa, sb = sha256_dosya(a), sha256_dosya(b)
+        if sa != sb:
+            raise RuntimeError(f"kopya bozuk: {f}")
+        rows.append({"dosya": f, "bayt": os.path.getsize(b), "sha256": sa})
+    M = pd.DataFrame(rows); M.to_csv(os.path.join(hedef, "K56_DRIVE_MANIFEST.csv"), index=False); log.info("Drive'a %d dosya kopyalandı (sha eşit): %s", len(M), hedef)
+    return M

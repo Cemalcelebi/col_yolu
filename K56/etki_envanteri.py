@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from .mekanizma import ETKI_YOK, YONTEM_DENETIMI, bulgu_hipotezleri
+from .mekanizma import BETIMLEYICI, ETKI_SAGLAM_DEGIL, ETKI_YOK, YANLIS_ADAY, YONTEM_DENETIMI, bulgu_hipotezleri
 from .ortak import KOK, K56Ayar, KaynakKaydi
 
 KURASYON = os.path.join(KOK, "K56", "envanter_kaynak.json")
@@ -42,7 +42,7 @@ def kurasyon_yukle(yol: str = KURASYON) -> pd.DataFrame:
     return T
 
 
-def k55_otomatik(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], kur: pd.DataFrame) -> pd.DataFrame:
+def k55_otomatik(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], kur: pd.DataFrame, Zk: Optional[pd.DataFrame] = None) -> pd.DataFrame:
     """K55'in 63 hücresi: sayılar ve durum CSV'den; varsayılan yön kayıttan; vekil ve sentetik sonucu eklenir. Açıklama alanları kürasyondan
     (aynı kimlikle varsa) alınır, yoksa boş kalır ve denetimde işaretlenir."""
     from K55.faz1 import hucreleri_kur
@@ -74,8 +74,22 @@ def k55_otomatik(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], kur: pd
                      "sinirlamalar": kf("sinirlamalar", "yalnız OHLCV; olay tanımı ileri pencereye bağlı (seçim etkisi); KEŞİF dışı açılmadı; hayatta kalan ağırlıklı evren"),
                      "olasi_aciklamalar": kf("olasi_aciklamalar", []), "dogrulayici_veri": kf("dogrulayici_veri", []), "aciklanmis": kf("aciklanmis", "hayir"), "aciklanma_gerekcesi": kf("aciklanma_gerekcesi", ""),
                      "m01_sentetik": (z.karar if z is not None else ""), "m01_oran_Y60": (float(z.oran_Y60) if z is not None else np.nan),
-                     "m01_d_sentetik_Y60": (float(z.d_sent_Y60) if z is not None else np.nan), "m01_gecikme5": (float(z.d_sent_gecikme5) if z is not None else np.nan), "kaynak": "otomatik + kürasyon (açıklamalar)"})
+                     "m01_d_sentetik_Y60": (float(z.d_sent_Y60) if z is not None else np.nan), "m01_gecikme5": (float(z.d_sent_gecikme5) if z is not None else np.nan),
+                     "m01_spek": (z.spek_siniflari if z is not None else ""), "m01_kesif_karar": _kesif_karar(Zk, r.hucre), "kaynak": "otomatik + kürasyon (açıklamalar)"})
+    n_k = int((D.durum == "KEŞİF").sum()); n_r = int((D.durum == "REDDEDİLDİ").sum()); n_v = int((D.durum == "VERİ YETERSİZ").sum())
+    rows.append({"kimlik": "K55-SONUC", "ad": "K55 Faz 1 genel karar (63 OHLCV hücresi, KEŞİF 2016-21)", "kaynak_calisma": "K55", "kaynak_dosya": "arastirma_cikti/k55_dallanma/tam_evren/K55_FAZ1_RAPOR.md",
+                 "veri_donem": "ABD 3.260 hisse, KEŞİF 2016-21", "olculen": "63 hücre, A / B / C yöntemleri", "yon": "sifir", "buyukluk": f"KEŞİF {n_k}, REDDEDİLDİ {n_r}, VERİ YETERSİZ {n_v}; B 0 / 164 TUTMAZ",
+                 "kontrol_farki": "B eşleşmiş ileri 60 gün: en büyük fark +0,010 (eşik +0,05)", "gecen_testler": "-", "kalan_testler": "B (ileri getiri) hiçbir varyantta", "eski_karar": "Faz 1'de İZ YOK",
+                 "sinif": "BASARISIZ", "sinirlamalar": "yalnız KEŞİF; İÇ / BAĞIMSIZ açılmadı", "olasi_aciklamalar": ["OHLCV ölçüleri ileri getiri taşımıyor", "A farkları olay tanımı eseri (M01)"],
+                 "dogrulayici_veri": ["v1.1-2 seçimsiz kontrol"], "aciklanmis": "kismen", "aciklanma_gerekcesi": "İZ YOK kararı değişmez", "kaynak": "otomatik"})
     return pd.DataFrame(rows)
+
+
+def _kesif_karar(Zk: Optional[pd.DataFrame], hucre: str) -> str:
+    """v1.1-3: KEŞİF'i sağlayan (varyant, ufuk) satırlarındaki sentetik kararların özeti (ör. 'MEKANIK_ACIKLAR 3/4')."""
+    if Zk is None or not len(Zk) or not (Zk.hucre == hucre).any():
+        return ""
+    v = Zk[Zk.hucre == hucre].karar.value_counts(); return f"{v.index[0]} {int(v.iloc[0])}/{int(v.sum())}"
 
 
 def kaynak_kodlari(A: K56Ayar, kk: KaynakKaydi) -> Dict[str, Dict[str, str]]:
@@ -98,16 +112,26 @@ def denetle(E: pd.DataFrame, kod: Dict[str, Dict[str, str]]) -> pd.DataFrame:
     (c) K55 hücre sayısı 63, (d) zorunlu alan boşlukları. Uyuşmazlık düzeltilmez, raporlanır."""
     rows = []; env = {_norm(k): k for k in E.kimlik}; alias = {_norm(k): [_norm(x) for x in v] for k, v in KOD_ESLEME.items()}
     for nk, v in kod.items():
-        hit = next((env[e] for e in env if e == nk or e.startswith(nk) or (len(e) >= 10 and nk.startswith(e))), None)
+        hit = env.get(nk)
         if hit is None and nk in alias:
             hit = next((env[a] for a in alias[nk] if a in env), None)
         if hit is None:
+            ad = sorted((e for e in env if e.startswith(nk)), key=len)
+            hit = env[ad[0]] if ad else None
+        if hit is None:
+            ad = sorted((e for e in env if len(e) >= 10 and nk.startswith(e)), key=len, reverse=True)
+            hit = env[ad[0]] if ad else None
+        if hit is None:
             rows.append({"tur": "envanterde_yok", "kimlik": v["kod"], "kaynak": v["dosya"], "ayrinti": f"kaynak karar: {v['karar']}"})
             continue
-        ek = str(E.loc[E.kimlik == hit, "eski_karar"].iloc[0])
-        if v["dosya"] in ("cy_hipotez.csv", "cy_b_hipotez.csv") and v["karar"] and _norm(v["karar"])[:12] not in _norm(ek):
+        ek = str(E.loc[E.kimlik == hit, "eski_karar"].iloc[0]); nek = _norm(ek)
+        if v["dosya"] in ("cy_hipotez.csv", "cy_b_hipotez.csv") and v["karar"] and _norm(v["karar"])[:12] not in nek:
             rows.append({"tur": "karar_uyusmuyor", "kimlik": hit, "kaynak": v["dosya"], "ayrinti": f"kaynak '{v['karar']}' / envanter '{ek[:120]}'"})
-    n55 = int((E.kaynak_calisma == "K55").sum() - E.kimlik.str.startswith("K55-F0").sum())
+        elif v["dosya"] not in ("cy_hipotez.csv", "cy_b_hipotez.csv") and v["karar"]:
+            eksik = [t for t in (x.strip() for x in v["karar"].split("/")) if t and t.lower() != "nan" and _norm(t) not in nek]
+            if eksik:
+                rows.append({"tur": "karar_eksik_sozcuk", "kimlik": hit, "kaynak": v["dosya"], "ayrinti": f"kaynak kararları {v['karar']}; envanterde geçmeyen: {eksik}"})
+    n55 = int(E.kimlik.str.match(r"^K55-D\d\d-S\d\d$").sum())
     if n55 != 63:
         rows.append({"tur": "k55_hucre_sayisi", "kimlik": "K55", "kaynak": "K55_HUCRE_SONUC.csv", "ayrinti": f"{n55} != 63"})
     for a in ("olasi_aciklamalar", "dogrulayici_veri"):
@@ -128,35 +152,48 @@ ON_SINIF_OZEL: Dict[str, Tuple[str, str]] = {
     "K51-P2-SUREN": (YONTEM_DENETIMI, "gelecek bilgisiyle ayrılmış gruplar (süren / başarısız kırılım): öngörü iddiası yok, tanım gereği fark"),
     "K51-H9": ("VERİ YETERSİZ", "kaynakta ÖLÇÜLEMEDİ (batanlar eksik); hayatta kalma Faz 1'de M17 ile (Tiingo kotası)"),
     "K54-HAYATTA-KALMA": ("VERİ YETERSİZ", "evrende hiç olmayan batanlar ölçülemiyor (K54)"),
+    **{k: (YONTEM_DENETIMI, "sonuca göre seçilmiş alt küme ('en iyi 20 hisse' sonuç değişkenine göre çıkarıldı): fark mekanik olarak eksiye kayar; kırılganlık denetimi")
+       for k in ("K54-K51P1-E20", "K54-K51P2-E20", "K54-K51ES-E20", "K54-K51HT-E20", "K54-K51CEK-E20", "K52-KIR-EN20-P1", "K52-KIR-EN20-P2")},
+    "K53-T7": (YANLIS_ADAY + " (tanımsal)", "BDS 'fiyat zayıf' ile KGS 'hızlı' aynı pencereyi (d0−1..d0+4) kullanıyor: örüntü tanımdan doğar (ONKAYIT_K56 v1.1-1)"),
     "K52-H4Z-P2": ("ALTERNATİF AÇIKLAMA", "olumlu revizyonların yarısı fiyat yükseldikten sonra (M19 ile uyumlu) ama M04 (haber) ile ayrıştırılmadı; karşıt grup / aracılık yok"),
 }
 # kaynak kodu -> envanterde farklı adla bölünmüş kimlikler (ör. rejime göre ikiye ayrılan K52 H6)
 KOD_ESLEME: Dict[str, List[str]] = {"K52-H6-P1": ["K52-H6AYI-P1", "K52-H6BOGA-P1"], "K52-H6-P2": ["K52-H6AYI-P2", "K52-H6BOGA-P2"]}
 
 
+_BASARISIZ_SOZ = ("DESTEKLENMIYOR", "TUTMAZ", "IZDEGIL", "TERSYON", "OLCULEMEDI", "GECERSIZ", "IZYOK")
+
+
 def on_sinif(r: pd.Series) -> Tuple[str, str]:
+    """Faz 0 ön sınıfı (ONKAYIT_K56 v1.1-4): bulguya özel gerekçeli atama, yoksa mekanik kural."""
     if r.kimlik in ON_SINIF_OZEL:
         return ON_SINIF_OZEL[r.kimlik]
-    m01 = r.get("m01_sentetik", "")
-    if r.kaynak_calisma == "K55" and r.sinif in ("TERS_YONLU", "BASARILI", "KUCUK_ETKI", "VEKIL") and m01 == "MEKANIK_ACIKLAR":
-        return ("YANLIŞ BULGU", f"M01 sentetik sıfır sınaması gerçek etkinin {r.m01_oran_Y60:.0%}'ini dört yapay evrende yeniden üretiyor (ONKAYIT_K56 3-1a); "
-                "kesinleşmesi için gerçek veride gecikme sınaması (Faz 1, M01)")
-    if r.kaynak_calisma == "K55" and r.sinif in ("TERS_YONLU", "BASARILI", "KUCUK_ETKI", "VEKIL") and m01 == "BELIRSIZ":
-        return ("İLİŞKİ VAR, NEDEN BELİRSİZ", "M01 yalnız GARCH'lı yapay evrende mekanik; M03 (oynaklık seçimi) ile ayrıştırılacak")
-    if r.sinif in ("BASARISIZ",):
+    etkili = r.get("sinif") in ("TERS_YONLU", "BASARILI", "KUCUK_ETKI", "VEKIL", "DONEM_CELISKILI")
+    if r.get("sinif") == "BASARISIZ":
         return (ETKI_YOK, "kaynak kararı başarısız; sonradan başarılı sayılmaz")
-    if r.sinif == "VERI_YETERSIZ":
+    if r.get("sinif") == "VERI_YETERSIZ":
         return ("VERİ YETERSİZ", "kaynakta ölçülemedi / n yetersiz")
-    if r.sinif == "VEKIL":
-        return ("ALTERNATİF AÇIKLAMA", "bilinen ölçünün vekili (|ρ| > 0,8 ya da kaynakta vekil işareti); bağımsız bilgi iddiası yok")
-    if r.sinif == "DONEM_CELISKILI":
-        return ("İLİŞKİ VAR, NEDEN BELİRSİZ", "dönemler arası işaret / karar çelişkisi: iz sayılmaz (CLAUDE.md); mekanizma testi yalnız tutarlı alt kümede")
-    return ("İLİŞKİ VAR, NEDEN BELİRSİZ", "etki kaynakta var ama mekanizma sınanmadı")
+    if r.kaynak_calisma == "K55" and str(r.kimlik).startswith("K55-D") and etkili:
+        m01 = r.get("m01_sentetik", ""); ku = r.get("m01_kesif_karar", "")
+        if m01 == "MEKANIK_ACIKLAR":
+            return (YANLIS_ADAY + " (M01)", f"Y60'ta sentetik / gerçek d oranı {r.m01_oran_Y60:.2f}, dört spek {r.get('m01_spek', '')}; KEŞİF ufkunda: {ku or 'koşulmadı'}"
+                    + ("; ayrıca r20 vekili (|ρ| > 0,8)" if r.sinif == "VEKIL" else "") + "; kesinleşmesi v1.1-2 seçimsiz kontrolle (Faz 1)")
+        if m01 == "BELIRSIZ":
+            return ("İLİŞKİ VAR, NEDEN BELİRSİZ", f"M01 sentetik Y60 dört spek: {r.get('m01_spek', '')} (çoğunluk yok); KEŞİF ufkunda: {ku or 'koşulmadı'}; M03 / M01 Faz 1'de")
+        if r.sinif == "VEKIL":
+            return ("ALTERNATİF AÇIKLAMA", "hesaplanmış vekil (|ρ| > 0,8)")
+        return ("İLİŞKİ VAR, NEDEN BELİRSİZ", f"M01 sentetik {m01 or 'yok'}")
+    karar = _norm(r.get("eski_karar", ""))
+    if "DESTEKLENIYOR" in karar or "KESIF" in karar:
+        return ("İLİŞKİ VAR, NEDEN BELİRSİZ", "kaynak kararı destekleniyor; mekanizma sınanmadı")
+    if any(t in karar for t in _BASARISIZ_SOZ):
+        return (ETKI_SAGLAM_DEGIL, "kaynak kararı başarısız / tutmaz; küçük, ters ya da dönem çelişkili etki iz sayılmaz (CLAUDE.md, ONKAYIT_K56 v1.1-4)")
+    return (BETIMLEYICI, "kaynakta karar yok (bilgi / denetçi notu); etki iddiası değil")
 
 
-def envanter_kur(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], yol: str = KURASYON) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def envanter_kur(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], yol: str = KURASYON, Zk: Optional[pd.DataFrame] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
     kk.oku(yol, "envanter", "K56 envanter kürasyonu (okuyucu ajanlar + denetim)")
-    kur = kurasyon_yukle(yol); k55 = k55_otomatik(A, kk, Z, kur)
+    kur = kurasyon_yukle(yol); k55 = k55_otomatik(A, kk, Z, kur, Zk)
     diger = kur[~kur.kimlik.str.match(r"^K55-D\d\d-S\d\d$")].copy(); diger["kaynak"] = "kürasyon"
     E = pd.concat([diger, k55], ignore_index=True, sort=False)
     E["mekanizma_hipotezleri"] = E.kimlik.map(lambda k: "; ".join(bulgu_hipotezleri(k)))
@@ -168,14 +205,17 @@ def envanter_kur(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], yol: st
     # K55: okuyucu ajanın sınıfı otomatik kuraldan farklıysa kural geçerli (REDDEDİLDİ hücre BAŞARISIZ kalır; vekil yalnız |ρ| > 0,8), fark kayda geçer
     ka = kur.set_index("kimlik").sinif if len(kur) else pd.Series(dtype=str); ko = k55.set_index("kimlik").sinif
     fark = [{"tur": "k55_sinif_kurali", "kimlik": k, "kaynak": "K55_HUCRE_SONUC + K55_VEKIL", "ayrinti": f"okuyucu {ka[k]} -> kural {ko[k]}"} for k in ko.index if k in ka.index and ka[k] != ko[k]]
+    for d in json.load(open(yol, encoding="utf-8")).get("duzeltmeler", []):
+        fark.append({"tur": "kurasyon_duzeltmesi", "kimlik": d["kimlik"], "kaynak": d.get("kaynak", ""), "ayrinti": f"{d['alan']}: {d['gerekce']}"})
     return E, pd.concat([Den, pd.DataFrame(fark, columns=Den.columns)], ignore_index=True)
 
 
 def aciklanmamislar(E: pd.DataFrame) -> pd.DataFrame:
-    """Etkisi olan (başarısız ya da yöntem denetimi olmayan) bütün bulgular ve Faz 0 açıklama durumu: AÇIKLANMADI (neden belirsiz / veri
-    yetersiz) ya da ADAY AÇIKLAMA (M01 mekanik eser adayı ya da vekil; Faz 1 doğrulaması bekliyor). Hiçbiri 'açıklandı' sayılmaz."""
-    m = ~E.faz0_on_sinif.isin([ETKI_YOK, YONTEM_DENETIMI])
-    T = E.loc[m].copy()
-    T["faz0_durum"] = np.where(T.faz0_on_sinif.isin(["YANLIŞ BULGU", "ALTERNATİF AÇIKLAMA"]), "ADAY AÇIKLAMA (Faz 1 doğrulaması bekliyor)", "AÇIKLANMADI")
+    """Faz 0 açıklama durumu (hiçbiri 'açıklandı' sayılmaz): AÇIKLANMADI (İLİŞKİ VAR, NEDEN BELİRSİZ: gerçek, mekanizması bilinmeyen etki),
+    ADAY AÇIKLAMA (YANLIŞ BULGU ADAYI / ALTERNATİF AÇIKLAMA: Faz 1 doğrulaması bekliyor), VERİ YETERSİZ (ölçülemedi), BETİMLEYİCİ (karar yok).
+    ETKİ YOK, ETKİ SAĞLAM DEĞİL ve YÖNTEM DENETİMİ listede yok (mekanizma aranmaz)."""
+    dur = {"İLİŞKİ VAR, NEDEN BELİRSİZ": "AÇIKLANMADI", "ALTERNATİF AÇIKLAMA": "ADAY AÇIKLAMA (Faz 1 doğrulaması bekliyor)", "VERİ YETERSİZ": "VERİ YETERSİZ (ölçülemedi)", BETIMLEYICI: "BETİMLEYİCİ (karar yok)"}
+    T = E.copy(); T["faz0_durum"] = T.faz0_on_sinif.map(lambda x: "ADAY AÇIKLAMA (Faz 1 doğrulaması bekliyor)" if str(x).startswith(YANLIS_ADAY) else dur.get(x))
+    T = T[T.faz0_durum.notna()]
     kol = ["kimlik", "kaynak_calisma", "ad", "sinif", "yon", "buyukluk", "faz0_durum", "faz0_on_sinif", "faz0_gerekce", "mekanizma_hipotezleri", "olasi_aciklamalar", "dogrulayici_veri"]
     return T[[c for c in kol if c in T]].sort_values(["faz0_durum", "kaynak_calisma", "kimlik"]).reset_index(drop=True)

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import json
 import os
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 import pandas as pd
@@ -49,11 +49,17 @@ def kavram_serisi(J: Dict[str, Any], adlar: List[str]) -> pd.DataFrame:
     return pd.DataFrame()
 
 
-def sulandirma(T: pd.DataFrame) -> float:
-    """Hisse sayısı (kapak) 12 ayda en büyük artış oranı (bildirim tarihine göre sıralı)."""
+def sulandirma(T: pd.DataFrame, bas: Optional[str] = None, son: Optional[str] = None) -> float:
+    """Hisse sayısı (kapak) 12 ayda en büyük artış oranı (bildirim tarihine göre sıralı; isteğe bağlı bildirim penceresi). HAM: bölünme / ters
+    bölünme ve birleşme artışı ayrılmaz (Faz 1'de bölünme katsayısı ve 8-K 2.01 / DEFM14A ile ayrılmalı)."""
     if not len(T):
         return np.nan
-    s = T.dropna(subset=["filed"]).sort_values("filed").drop_duplicates("filed", keep="last").set_index("filed").val.astype(float)
+    T = T.dropna(subset=["filed"])
+    if bas:
+        T = T[T.filed >= pd.Timestamp(bas)]
+    if son:
+        T = T[T.filed <= pd.Timestamp(son)]
+    s = T.sort_values("filed").drop_duplicates("filed", keep="last").set_index("filed").val.astype(float)
     if len(s) < 2:
         return np.nan
     oran = [s.iloc[j] / s[(s.index <= t - pd.Timedelta(days=330)) & (s.index >= t - pd.Timedelta(days=400))].iloc[-1] - 1
@@ -75,8 +81,9 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
                 kesif = T[(T.end >= "2016-01-01") & (T.end <= "2021-12-31")] if len(T) else T
                 sat[ad] = int(kesif.end.nunique()) if len(T) else 0
                 if ad == "hisse_sayisi_kapak":
-                    sat["ilk_filed"] = str(T.filed.min().date()) if len(T) else ""; sat["sulandirma_12ay_max"] = round(sulandirma(T), 3) if len(T) else np.nan
+                    sat["ilk_filed"] = str(T.filed.min().date()) if len(T) else ""; sat["sulandirma_12ay_max_kesif_ham"] = round(sulandirma(T, "2016-01-01", "2021-12-31"), 3) if len(T) else np.nan
                     sat["filed_gecikme_medyan_gun"] = float((T.filed - T.end).dt.days.median()) if len(T) else np.nan
+            sat["bolunme_orani_kavrami"] = bool(len(kavram_serisi(J, ["us-gaap:StockholdersEquityNoteStockSplitConversionRatio1"])))
             ozet.append(sat)
         except Exception as ex:
             ozet.append({"sembol": r.sembol, "grup": r.grup, "durum": f"{type(ex).__name__}: {str(ex)[:120]}"})
@@ -90,9 +97,11 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
                                  json.dumps(dolu, ensure_ascii=False), "; ".join(f"{x.sembol}({x.grup}) ilk_filed {x.ilk_filed} ifrs {x.ifrs}" for x in ok.itertuples())))
         out.append(erisim_satiri(MODUL, "SEC_COMPANYFACTS", "point-in-time: filed − end (kapak hisse sayısı)", "GECTI", "medyan gün", float(ok.filed_gecikme_medyan_gun.median()),
                                  "her değer bildirim tarihinden sonra kullanılabilir (bilgi gecikmesi)"))
-        s = ok[["sembol", "grup", "sulandirma_12ay_max"]].dropna()
-        out.append(erisim_satiri(MODUL, "SEC_COMPANYFACTS", "sulandırma ölçüsü (G5: 12 ayda > %20)", "GECTI" if len(s) else "KISMI", "G5'e giren", int((s.sulandirma_12ay_max > 0.20).sum()),
-                                 "; ".join(f"{x.sembol}({x.grup}) {x.sulandirma_12ay_max:+.2f}" for x in s.itertuples())))
+        s = ok[["sembol", "grup", "sulandirma_12ay_max_kesif_ham", "bolunme_orani_kavrami"]].dropna(subset=["sulandirma_12ay_max_kesif_ham"])
+        out.append(erisim_satiri(MODUL, "SEC_COMPANYFACTS", "sulandırma ölçüsü HAM (KEŞİF bildirimleri; G5 adayı > %20)", "KISMI", "G5 adayı (ham)", int((s.sulandirma_12ay_max_kesif_ham > 0.20).sum()),
+                                 "; ".join(f"{x.sembol}({x.grup}) {x.sulandirma_12ay_max_kesif_ham:+.2f}" for x in s.itertuples())
+                                 + f"; bölünme oranı kavramı olan şirket {int(s.bolunme_orani_kavrami.sum())}/{len(s)}; HAM: bölünme / birleşme ayrılmadı (TRMB 2013 bölünmesi, EXR 2023 birleşmesi pencere dışı)"))
+        out[-1]["tablo"] = Z.to_dict("records")
     # Financial Statement Data Sets: projede 2021q1+; KEŞİF çeyrekleri boyu (eksik 2016-20)
     try:
         yerel = sorted(f for f in os.listdir(os.path.join(A.iv, "secfs")) if f.startswith("fs_")) if os.path.isdir(os.path.join(A.iv, "secfs")) else []
@@ -104,5 +113,4 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
                                  f"yerel özüt {yerel[0] if yerel else '-'} .. {yerel[-1] if yerel else '-'} ({len(yerel)} dosya); HEAD hatası {hata}", FS_DS.format(c="2016q1")))
     except Exception as ex:
         out.append(erisim_satiri(MODUL, "SEC_FS_DS", "boy", "BASARISIZ", ayrinti=f"{type(ex).__name__}: {ex}"))
-    out[-1]["tablo"] = Z.to_dict("records") if len(Z) else []
     return out

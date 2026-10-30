@@ -15,7 +15,8 @@ KAYNAKLAR: List[Dict[str, str]] = [
      "kapsam": "2013q2 -> 2026; KEŞİF tam", "gecikme": "çeyrek sonundan 45 güne kadar; point-in-time için başvuru tarihi", "maliyet": "ücretsiz (kamu verisi)", "boyut": "KEŞİF 24 çeyrek ~1,1 GB zip (INFOTABLE çeyrek başına ~160 MB açık)",
      "eslesme": "CUSIP (9) -> sembol OpenFIGI; FIGI sütunu 2016'da çoğu boş", "olcer": "yönetici uzun pozisyonları, sahip sayısı, pay değişimi", "olcemez": "açığa satış, gün içi akış, 100 mn $ altı yöneticiler", "projede": "yok (Ç103'te CUSIP eşlemesinde tıkandı)"},
     {"kimlik": "OPENFIGI", "sinif": "A_kurumsal_sahiplik", "ad": "OpenFIGI eşleme API'si", "erisim": "POST api.openfigi.com/v3/mapping (anahtarsız 25 istek / dk, istek başına 10 kimlik; ücretsiz anahtarla daha fazla)",
-     "kapsam": "güncel + tarihsel CUSIP'lerin çoğu", "gecikme": "-", "maliyet": "ücretsiz", "boyut": "-", "eslesme": "ID_CUSIP -> ticker, securityType, exchCode", "olcer": "13F CUSIP -> sembol", "olcemez": "değişmiş / kaldırılmış CUSIP'lerin bir kısmı", "projede": "yok"},
+     "kapsam": "GÜNCEL referans: eski CUSIP için bugünkü sembolü döndürür (tarihli değil)", "gecikme": "-", "maliyet": "ücretsiz", "boyut": "-", "eslesme": "ID_CUSIP -> ticker, securityType, exchCode (CUSIP başına onlarca listeleme; Common Stock + US süzgeci şart)",
+     "olcer": "13F CUSIP -> sembol", "olcemez": "o tarihteki sembol, batan şirketlerin bir kısmı", "projede": "yok"},
     {"kimlik": "SEC_NPORT_DS", "sinif": "A_kurumsal_sahiplik", "ad": "SEC Form N-PORT veri setleri (fon portföyleri)", "erisim": "www.sec.gov/data-research/sec-markets-data/form-n-port-data-sets", "kapsam": "2019q4 -> 2026; KEŞİF yalnız 2019q4-2021q4",
      "gecikme": "çeyrek sonu + 60 gün (yayın)", "maliyet": "ücretsiz", "boyut": "çeyrek ~440 MB zip", "eslesme": "CUSIP / ISIN / sembol", "olcer": "fon (yatırım şirketi) pozisyonları", "olcemez": "13F dışı kurumlar, 2019 öncesi", "projede": "yok"},
     {"kimlik": "SEC_INSIDER_DS", "sinif": "B_iceriden", "ad": "SEC Insider Transactions Data Sets (Form 3 / 4 / 5)", "erisim": "www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
@@ -57,16 +58,17 @@ KAYNAKLAR: List[Dict[str, str]] = [
      "kapsam": "uzun geçmiş", "gecikme": "-", "maliyet": "ücretli: Faz 0'da istek yok; fiyat kaynak araştırmasında", "boyut": "çok büyük (TB)", "eslesme": "sembol",
      "olcer": "işlem sırası, alıcı / satıcı başlatmalı akış (Lee-Ready), blok işlemler, derinlik", "olcemez": "kurum kimliği", "projede": "yok"},
     {"kimlik": "SEC_ASKIYA_ALMA", "sinif": "F_kasit_kaniti", "ad": "SEC işlem askıya alma bültenleri", "erisim": "www.sec.gov/enforcement-litigation/trading-suspensions (sayfalı tablo, 100 satır / sayfa)",
-     "kapsam": "1995-10 -> 2026-10; 1.349 bülten (şirket satırı)", "gecikme": "askıya alma günü", "maliyet": "ücretsiz", "boyut": "~3 MB HTML", "eslesme": "SEMBOL YOK: şirket adı eşlemesi (normalize ad + eski adlar) -> evrende 10 şirket",
-     "olcer": "resmî kasıt / yanıltma şüphesi kaydı", "olcemez": "yakalanmayan manipülasyon", "projede": "yok"},
+     "kapsam": "1995-10 -> 2026-10; 1.349 şirket satırı (bültenlerde birden çok şirket olabilir; 'et al.' emirlerinde ötekiler PDF'te)", "gecikme": "askıya alma günü", "maliyet": "ücretsiz", "boyut": "~3 MB HTML",
+     "eslesme": "SEMBOL YOK: tarih şartlı ad eşlemesi (CIK'in ilk başvurusu ve adın geçerlilik aralığı) -> K55 evreninde 9 şirket, hiçbiri panel penceresinde değil",
+     "olcer": "RESMÎ KUŞKU KAYDI (en çok 10 günlük askıya alma; kasıt kanıtı DEĞİL)", "olcemez": "kasıt (kesinleşmiş karar gerekir), yakalanmayan manipülasyon", "projede": "yok"},
     {"kimlik": "SEC_DAVA", "sinif": "F_kasit_kaniti", "ad": "SEC dava bültenleri (litigation releases) ve idari kararlar", "erisim": "www.sec.gov/enforcement-litigation/litigation-releases (sayfalı)", "kapsam": "uzun geçmiş",
-     "gecikme": "olaydan yıllar sonra", "maliyet": "ücretsiz", "boyut": "küçük-orta (metin)", "eslesme": "kişi / şirket adı; sembol metinde", "olcer": "manipülasyon / pompala-boşalt davaları", "olcemez": "yakalanmayan", "projede": "yok"},
+     "gecikme": "olaydan yıllar sonra", "maliyet": "ücretsiz", "boyut": "küçük-orta (metin)", "eslesme": "kişi / şirket adı; sembol metinde", "olcer": "dava duyurusu = RESMÎ KUŞKU KAYDI (iddia); kesinleşmiş karar ayrıca doğrulanmalı", "olcemez": "yakalanmayan", "projede": "yok"},
     {"kimlik": "SEC_13F_LISTE", "sinif": "A_kurumsal_sahiplik", "ad": "SEC 'Official List of Section 13(f) Securities' (CUSIP + ihraççı adı)", "erisim": "sec.gov 13(f) listeleri (çeyreklik; 2016-19 yalnız PDF)", "kapsam": "1996q1 -> 2026",
      "gecikme": "çeyrek başı", "maliyet": "ücretsiz (CUSIP lisans tartışması: repoya konmaz)", "boyut": "küçük", "eslesme": "CUSIP -> ihraççı adı (tarihli)", "olcer": "OpenFIGI'nin güncel sembol döndürmesi sorununa karşı tarihli ad", "olcemez": "sembol", "projede": "yok"},
     {"kimlik": "SEC_FORM144", "sinif": "B_iceriden", "ad": "Form 144 (satış niyeti bildirimi)", "erisim": "EDGAR", "kapsam": "elektronik zorunluluk 2023-04-13; öncesi çoğu kâğıt (2021'de ~30.000'in ~234'ü elektronik)", "gecikme": "satışla aynı gün",
      "maliyet": "ücretsiz", "boyut": "küçük", "eslesme": "CIK", "olcer": "planlanan içeriden satış", "olcemez": "KEŞİF dönemi (kâğıt)", "projede": "yok"},
     {"kimlik": "NASDAQ_HALT", "sinif": "F_kasit_kaniti", "ad": "Nasdaq işlem durdurma geçmişi", "erisim": "nasdaqtrader.com işlem durdurma arşivi (gün parametreli)", "kapsam": "2016 ve 2025 günleri denendi, veri var", "gecikme": "aynı gün",
-     "maliyet": "ücretsiz (yeniden dağıtım koşulu doğrulanmadı)", "boyut": "küçük", "eslesme": "sembol", "olcer": "haber bekleniyor / düzenleyici durdurma (T1, T12, H10)", "olcemez": "kasıt (yalnız durdurma)", "projede": "yok"},
+     "maliyet": "ücretsiz (yeniden dağıtım koşulu doğrulanmadı)", "boyut": "küçük", "eslesme": "sembol", "olcer": "haber bekleniyor / düzenleyici durdurma (T1, T12, H10)", "olcemez": "kasıt (yalnız durdurma)", "projede": "yok (belgeden; bu koşuda istek yok)"},
     {"kimlik": "DOJ_FINRA_AAER", "sinif": "F_kasit_kaniti", "ad": "DOJ basın bültenleri, FINRA disiplin kararları, SEC AAER", "erisim": "justice.gov / finra.org / sec.gov", "kapsam": "DOJ 2009+, FINRA 2005+, AAER 1982+",
      "gecikme": "olaydan yıllar sonra", "maliyet": "ücretsiz", "boyut": "metin", "eslesme": "ad (sembol metinde)", "olcer": "dava / yaptırım (kasıt kanıtı)", "olcemez": "yakalanmayan", "projede": "yok"},
     {"kimlik": "NYSE_SI_UCRETLI", "sinif": "E_islem", "ad": "NYSE / Compustat tarihsel açığa satış pozisyonu", "erisim": "NYSE veri ürünleri / WRDS Compustat", "kapsam": "NYSE 1988+, Compustat yarım aylık 2007+", "gecikme": "yarım ay",
@@ -74,14 +76,41 @@ KAYNAKLAR: List[Dict[str, str]] = [
     {"kimlik": "POLYGON_DATABENTO", "sinif": "E_islem", "ad": "Massive (Polygon) / Databento gün içi işlem verisi", "erisim": "ücretli API", "kapsam": "Polygon Advanced 20+ yıl; Databento Nasdaq ITCH 2018-05+",
      "gecikme": "-", "maliyet": "Polygon Starter 29 $/ay (5 yıl), Advanced 199 $/ay (bireysel kullanım); Databento kullanım bazlı (yeni hesaba kredi)", "boyut": "çok büyük", "eslesme": "sembol",
      "olcer": "işlem sırası, alış / satış başlatmalı akış, blok işlem", "olcemez": "kurum kimliği", "projede": "yok"},
-    {"kimlik": "YEREL_K55_PANEL", "sinif": "yerel", "ad": "K55 ortak paneli + olay tablosu", "erisim": "K55 Faz 0 çıktısı (panel 725 MB; Drive OUTPUT/K55)", "kapsam": "2016-2026, 3.260 hisse",
+    {"kimlik": "YEREL_K55_PANEL", "sinif": "yerel", "ad": "K55 ortak paneli + olay tablosu", "erisim": "K55 Faz 0 çıktısı (panel 725 MB; Drive OUTPUT/K55)",
+     "kapsam": "2016-2026; işlemdeki hisse 2016-06: 943, 2020-06: 1.131, 2021-06: 2.816 (K34 batanları 2020-10'dan); KEŞİF olaylarının tamamı V_ABD (bugün yaşayan)",
      "gecikme": "-", "maliyet": "-", "boyut": "-", "eslesme": "-", "olcer": "M01 gecikme sınaması, M03 / M16 / M18 denetimleri", "olcemez": "-", "projede": "VAR"},
     {"kimlik": "YEREL_ANALIST", "sinif": "yerel", "ad": "Yahoo analist not günlüğü (K52)", "erisim": "K52 verisi", "kapsam": "K52 veri kapsamı raporu", "gecikme": "-", "maliyet": "-", "boyut": "-", "eslesme": "sembol",
      "olcer": "revizyon zamanlaması (M19)", "olcemez": "-", "projede": "VAR"},
     {"kimlik": "SENTETIK", "sinif": "yerel", "ad": "Bilgisiz yapay evren (K56/mekanizma)", "erisim": "kod", "kapsam": "-", "gecikme": "-", "maliyet": "-", "boyut": "-", "eslesme": "-", "olcer": "mekanik eser (M01, M03)", "olcemez": "-", "projede": "VAR"},
-    {"kimlik": "K30_ALIM", "sinif": "B_iceriden", "ad": "K30 açık piyasa alımları özeti", "erisim": "islenmis-veri veri2/k30_alim", "kapsam": "K30 kapsamı", "gecikme": "-", "maliyet": "-", "boyut": "-", "eslesme": "sembol",
+    {"kimlik": "K30_ALIM", "sinif": "B_iceriden", "ad": "K30 açık piyasa alımları özeti", "erisim": "islenmis-veri veri2/k30_alim", "kapsam": "2022-01 .. 2026-03 (7.821 satır): KEŞİF YOK", "gecikme": "-", "maliyet": "-", "boyut": "-", "eslesme": "sembol",
      "olcer": "P alımları", "olcemez": "satış / plan", "projede": "VAR"},
 ]
+
+
+# KEŞİF (2016-21) kapsamı: ölçüm / belgeye göre açık atama (anahtar kelimeyle tahmin YOK); not = gerekçe
+KESIF_KAPSAM: Dict[str, Any] = {
+    "SEC_13F_DS": ("tam", "2013q2+"), "OPENFIGI": ("kısmi", "güncel sembol"), "SEC_NPORT_DS": ("kısmi", "2019q4+"), "SEC_INSIDER_DS": ("tam", "2006q1+"),
+    "SEC_COMPANYFACTS": ("kısmi", "XBRL var; CIK değişimi ve IFRS'li yabancılar boşluk"), "SEC_FS_DS": ("tam", "indirme gerekir (2016-20 ~1,6 GB)"),
+    "SEC_SUBMISSIONS_OZET": ("tam", "yerel"), "YAHOO_SPLITS": ("kısmi", "yalnız bugün yaşayan semboller"), "TIINGO_BATAN": ("kısmi", "kota: ayda 500 sembol"),
+    "SEC_MIDAS": ("kısmi", "2016q1'de işlemdeki K55 hisselerinin ~%66'sı; REIT / yabancı / BDC yok"), "FINRA_REGSHO": ("tam", "tesis dosyaları 2009-08+ (yalnız borsa dışı hacim)"),
+    "FINRA_SI": ("kısmi", "2017-12-29+"), "FINRA_ATS": ("yok", "genel API yakın geçmiş; tarihsel dosya elle"), "SEC_FTD": ("tam", "2004+"),
+    "OHLC_SPREAD_VEKIL": ("tam", "fiyat kadar (vekil)"), "TAQ_ITCH_UCRETLI": ("tam", "ücretli"), "SEC_ASKIYA_ALMA": ("tam", "resmî kuşku kaydı"), "SEC_DAVA": ("tam", "resmî kuşku kaydı"),
+    "SEC_13F_LISTE": ("tam", "2016-19 PDF"), "SEC_FORM144": ("yok", "elektronik 2023-04+"), "NASDAQ_HALT": ("tam", "belgeden"), "DOJ_FINRA_AAER": ("tam", "belgeden"),
+    "NYSE_SI_UCRETLI": ("tam", "ücretli"), "POLYGON_DATABENTO": ("kısmi", "Databento ITCH 2018-05+; Polygon plana bağlı"), "YEREL_K55_PANEL": ("kısmi", "2020-10 öncesi batanlar yok"),
+    "YEREL_ANALIST": ("kısmi", "Yahoo, yaşayanlar"), "SENTETIK": ("tam", "-"), "K30_ALIM": ("yok", "2022-01+"),
+}
+
+
+def _durum_birlestir(s: pd.Series) -> str:
+    s = s.astype(str)
+    if (s == "ATLANDI").all():
+        return "ATLANDI"
+    s = s[s != "ATLANDI"]
+    if (s == "GECTI").all():
+        return "GECTI"
+    if (s == "BASARISIZ").all():
+        return "BASARISIZ"
+    return "KISMI"
 
 
 def veri_kaynaklari(Er: pd.DataFrame) -> pd.DataFrame:
@@ -89,12 +118,13 @@ def veri_kaynaklari(Er: pd.DataFrame) -> pd.DataFrame:
     T = pd.DataFrame(KAYNAKLAR)
     if len(Er) and "kaynak" in Er:
         g = Er.groupby("kaynak").apply(lambda x: "; ".join(f"{r.test}: {r.durum} ({r.olcu} = {r.deger})" for r in x.itertuples()), include_groups=False).rename("erisim_testi")
-        d = Er.groupby("kaynak").durum.agg(lambda s: "BASARISIZ" if (s == "BASARISIZ").all() else ("GECTI" if (s == "GECTI").all() else "KISMI")).rename("erisim_durumu")
+        d = Er.groupby("kaynak").durum.agg(_durum_birlestir).rename("erisim_durumu")
         T = T.merge(g, left_on="kimlik", right_index=True, how="left").merge(d, left_on="kimlik", right_index=True, how="left")
     else:
         T["erisim_testi"] = ""; T["erisim_durumu"] = "TEST EDİLMEDİ"
     T["erisim_durumu"] = np.where(T.erisim_durumu.isna(), np.where(T.sinif == "yerel", "YEREL", "TEST EDİLMEDİ (belgeden)"), T.erisim_durumu)
     T["erisim_testi"] = T.erisim_testi.fillna("")
+    T["kesif_kapsam"] = T.kimlik.map(lambda k: KESIF_KAPSAM.get(k, ("bilinmiyor", ""))[0]); T["kesif_not"] = T.kimlik.map(lambda k: KESIF_KAPSAM.get(k, ("", ""))[1])
     return T
 
 
@@ -106,51 +136,60 @@ def hipotez_veri(H: pd.DataFrame, VK: pd.DataFrame) -> pd.DataFrame:
             v = vk.loc[k] if k in vk.index else None
             rows.append({"hipotez": h.kimlik, "hipotez_ad": h.ad, "kaynak": k, "kaynak_ad": v["ad"] if v is not None else "TANIMSIZ", "kapsam": v["kapsam"] if v is not None else "",
                          "maliyet": v["maliyet"] if v is not None else "", "boyut": v["boyut"] if v is not None else "", "erisim_durumu": v["erisim_durumu"] if v is not None else "TANIMSIZ",
-                         "kesif_eksik": bool(v is not None and "EKSİK" in str(v["kapsam"]).upper()) or bool(v is not None and "boş" in str(v["kapsam"]))})
+                         "kesif_kapsam": v["kesif_kapsam"] if v is not None else "bilinmiyor", "kesif_not": v["kesif_not"] if v is not None else ""})
     return pd.DataFrame(rows)
 
 
 def riskler() -> pd.DataFrame:
     R = [
-        ("Olay tanımı seçim etkisi (M01)", "K55'in olay-öncesi (A) karşılaştırmaları bilgisiz veride de aynı farkı üretiyor; olay tanımlı her mekanizma testi aynı esere açık",
-         "yüksek", "mekanizma testlerinde olay günü değil sinyal günü sabit tasarım (ileri ölçü) ya da t0−k gecikmeli ölçüm; her testte sentetik sıfır koşusu"),
+        ("Olay tanımı seçim etkisi (M01)", "K55 A farkları ilk geçiş etiketinin eseri olmaya aday: bilgisiz veride aynı fark; denetçi kontrolünde seçimsiz etiketle gerçek d ~%90 küçülüyor (Y60)",
+         "yüksek", "mekanizma testlerinde olay günü etiketi yerine seçimsiz / sinyal sabit tasarım; her testte sentetik sıfır koşusu (ONKAYIT_K56 v1.1-2)"),
+        ("Sentetik sınama DGP'ye duyarlı", "oran oynaklık düzeyi ve GARCH / kaldıraç spekine bağlı; oynaklık / hacim hücrelerinin sınıfı spekle değişiyor; sentetik Y60 olay oranı gerçeğin ~2 katı",
+         "orta", "gerçeğe kalibre oynaklık, GJR kaldıraç, sıçrama spekleri; olay oranını rapora yaz"),
+        ("Varyant ve ufuk seçimi", "v1.0 her hücrede en kısa pencere ve Y60'ı sınadı; 12 hücrenin KEŞİF'i Y120 / Y250'den; Y250'de gecikme ölçütü mekanik eseri ayırmıyor", "orta",
+         "KEŞİF'i sağlayan bütün (varyant, ufuk) satırları (v1.1-3); gecikme yalnız bilgi"),
         ("Keşif verisinin yeniden kullanımı", "K56 hipotezleri K55 KEŞİF 2016-21 sonuçlarından üretildi; aynı dönemde doğrulama döngüseldir", "yüksek",
          "DOĞRULANMIŞ sınıfı için İÇ / BAĞIMSIZ dönem gerekir (Cemal kararı); yeniden kullanım kaydı (K56_KAYNAK_KAYDI)"),
-        ("Açığa satış verisi KEŞİF'i kapsamıyor", "FINRA SI API ~2017-12+, Reg SHO CDN 2018-08+", "orta", "M05 yalnız 2018-21 alt döneminde; ya da ücretli borsa dosyaları"),
-        ("13F eşleme ve gecikme", "CUSIP -> sembol (OpenFIGI hız sınırı, fon / tahvil CUSIP'leri), 45 gün gecikme, yalnız 100 mn $ üstü yöneticiler, çeyrek sonu anlık görüntü", "orta",
-         "OpenFIGI ücretsiz anahtar + yerel önbellek; Common Stock / US süzgeci; başvuru tarihi point-in-time"),
-        ("CIK değişimi", "yeniden yapılanmada yeni CIK (APO 2022): companyfacts / Form 4 eski dönemi kaçırır", "orta", "SEC eski ad / CIK zinciri (formerNames, 8-K 2.01 / 425) ile CIK geçmişi kurulmalı"),
-        ("Yabancı özel ihraççılar", "20-F / 40-F (BNS): Form 4 yok, IFRS kalemleri", "düşük-orta", "ayrı alt grup; ifrs-full eşlemesi ya da dışlama (önceden yazılı)"),
-        ("XBRL hisse sayısı bölünmeye göre düzeltilmemiş", "TRMB +%104, TLGTQ +16 kat görünen 'sulandırma' bölünme / ters bölünme", "yüksek (M06 için)", "bölünme verisiyle düzeltme (Yahoo / Tiingo splitFactor) ve 8-K 5.03 denetimi"),
-        ("İhraç formu hisse / borç ayırmıyor", "424B2 çoğunlukla banka notu (BNS 10.925 başvuru)", "orta", "424B2 / 424B3 ayrı; hisse sayısı artışıyla doğrulama"),
-        ("10b5-1 planı 2023 öncesi görünmez", "plansız satış ayrımı yalnız dipnot metninden (%2,7)", "orta", "dipnot metin araması + 2023 sonrası işaretle duyarlılık"),
-        ("Hayatta kalma yanlılığı", "evren 266 çıkış / 3.267; batanlar eksik (K54)", "orta", "Tiingo kotasıyla batan evren genişletme (Cemal kararı)"),
-        ("Kasıt kanıtı kapsamı", "askıya alma listesi sembolsüz (ad eşlemesi hatalı olabilir), yalnız yakalananlar, yıllar sonra", "yüksek (M14)", "yalnız sembol + tarih doğrulanmış kayıt kanıt; kayıt yoksa 'KASIT KANITI YOK'"),
-        ("Gün içi veri yok", "dağıtım / emilim işlem sırası düzeyinde ayrılamaz; MIDAS yalnız günlük toplam", "yüksek (M09 / M11)", "MIDAS + 13F + FINRA ATS üçlemesi; ücretli TAQ yalnız Cemal kararıyla"),
-        ("İndirme hacmi ve süre", "13F ~1,1 GB, MIDAS ~2 GB, FS 2016-20 ~1,6 GB, Form 4 ~0,25 GB, companyfacts ~5 GB", "orta", "Drive önbelleği, sürümlü özet (islenmis-veri), bir kez indir"),
-        ("Yahoo erişim kararsızlığı", "yfinance crumb 401 / 429 (bu ortamda bir kez)", "düşük", "Tiingo splitFactor ile çapraz"),
+        ("KEŞİF'te hayatta kalma", "K55 KEŞİF olaylarının tamamı bugün yaşayan V_ABD hisselerinden; K34 batanları 2020-10'dan önce yok", "yüksek",
+         "M17: batan evren genişletme (Tiingo kotası, Cemal kararı); sonuçlar 'yaşayanlar içinde' diye sınırlanır"),
+        ("Açığa satış POZİSYONU KEŞİF'i tam kapsamıyor", "FINRA SI API 2017-12-29+; hacim (Reg SHO tesis dosyaları) 2009-08+ tam", "orta", "M05 pozisyon ölçüsü 2018-21 alt döneminde; 2016-17 için ücretli borsa dosyaları"),
+        ("13F eşleme ve gecikme", "CUSIP -> sembol (OpenFIGI GÜNCEL sembol döndürür; CUSIP başına onlarca listeleme), 45 gün gecikme, yalnız 100 mn $ üstü yöneticiler", "orta",
+         "Common Stock + US süzgeci, SEC 13(f) listesiyle tarihli ad; başvuru tarihi point-in-time"),
+        ("CIK değişimi", "yeniden yapılanmada yeni CIK (APO 2022): companyfacts / Form 4 eski dönemi kaçırır", "orta", "SEC eski ad / CIK zinciri (formerNames, 8-K 2.01 / 425) ile CIK geçmişi"),
+        ("Yabancı özel ihraççılar ve REIT", "20-F / 40-F (BNS): Form 4 yok, IFRS; MIDAS'ta REIT / yabancı / BDC yok (2016q1 K55 kapsamı ~%66)", "orta", "ayrı alt grup; kapsam payını her testte raporla"),
+        ("XBRL hisse sayısı ham", "bölünme ve birleşme artışını ayırmaz (TRMB 2013 bölünmesi, EXR 2023 birleşmesi, IRM 2016 satın alma); TLGTQ 2020-21 artışı ters bölünme sonrası gerçek sulandırma",
+         "yüksek (M06 için)", "bölünme katsayısı (XBRL / Tiingo splitFactor) ve 8-K 2.01 / DEFM14A ile ayırma; pencereyi olaya bağla"),
+        ("İhraç formu hisse / borç ayırmıyor", "424B2 çoğunlukla banka notu (BNS); 424B5 ATM, halka arz ya da doğrudan satış olabilir", "orta", "hisse sayısı artışıyla ya da EDGAR metin aramasıyla doğrulama"),
+        ("10b5-1 planı 2023 öncesi işaretsiz", "işaret fiilen 2023q2+ ('1' / 'true'); öncesi dipnot / açıklama metni vekili (2016q1 S içeren Form 4'lerin %43,5'i)", "orta",
+         "dipnot vekili + 2023q2+ işaretle duyarlılık; olumsuz cümleleri ayıklama"),
+        ("Kasıt kanıtı kapsamı", "askıya alma ve dava bülteni kasıt kanıtı değil (resmî kuşku kaydı); kesinleşmiş karar gerekir; ad eşlemesi tarih şartlı ve 'et al.' emirleri eksik", "yüksek (M14)",
+         "üç sütun: gözlenen davranış / olası mekanizma / kasıt kanıtı; kayıt yoksa 'KASIT KANITI YOK'"),
+        ("Gün içi veri yok", "dağıtım / emilim işlem sırası düzeyinde ayrılamaz; MIDAS yalnız günlük toplam", "yüksek (M09 / M11)", "MIDAS + 13F + Reg SHO üçlemesi; ücretli TAQ yalnız Cemal kararıyla"),
+        ("İndirme hacmi ve süre", "13F ~1,1 GB, MIDAS hisse ~0,4 GB, FS 2016-20 ~1,6 GB, Form 4 ~0,25 GB, companyfacts ~5 GB", "orta", "Drive önbelleği, sürümlü özet (islenmis-veri), bir kez indir"),
+        ("Yahoo erişim kararsızlığı", "yfinance crumb 401 / 429 (bu ortamda bir kez); batanlar yok", "düşük", "Tiingo splitFactor ile çapraz"),
         ("Çoklu test", "19 hipotez × gruplar × dönemler", "orta", "aile = hipotez × dönem; BH q 0,10; önceden yazılı birincil ölçü"),
-        ("Lisans", "Tiingo fiyatları repoya konmaz; SEC / FINRA ham verileri büyük", "düşük", "yalnız türetilmiş özet + manifest sha"),
+        ("Lisans", "Tiingo fiyatları ve FINRA ham verisi dağıtılmaz; SEC verisi kamu malı", "düşük", "yalnız türetilmiş özet + manifest sha"),
     ]
     return pd.DataFrame(R, columns=["risk", "ayrinti", "etki", "onlem"])
 
 
 def uygulama_sirasi() -> pd.DataFrame:
     S = [
-        (1, "M01 gerçek veri gecikme sınaması", "K55 paneli: 25 KEŞİF hücresi t0−1 / 5 / 20'de; olay tanımı seçimsiz biçimde (sinyal günü sabit, ileri getiri üst %5) yeniden", "yerel, indirme yok, ~15 dk",
-         "hayır (KEŞİF yeniden kullanımı kayıtlı)", "MEKANİK AÇIKLAR kesinleşirse K55'in 25 KEŞİF'i YANLIŞ BULGU; K55 tabanlı mekanizma araştırması gereksizleşir"),
-        (2, "M03 / M16 / M18 yerel denetimler", "ince oynaklık + GARCH, 2020 dışlama + beta, sektör × gün: 1. adımda kalan hücreler için", "yerel, ~15 dk", "hayır", "kalan etkinin oynaklık / piyasa / tema bileşeni"),
-        (3, "M04 / M15 haber ve birleşme bileşimi", "yerel SEC başvuru özetiyle G1 / G2 / G7'de [t0−5, t0+60] 8-K maddeleri, SC TO, DEFM14A", "yerel, ~10 dk", "hayır",
+        (1, "M01 gerçek veri seçimsiz kontrol (v1.1-2)", "K55 paneli: KEŞİF'i sağlayan 125 (varyant, ufuk) satırında d(ilk geçiş), d(bütün nitelikli günler), d(epizotta rastgele gün); kalibre sentetik spekler",
+         "KEŞİF (yeniden kullanım kayıtlı)", "yerel, indirme yok, ~30 dk", "hayır", "MEKANİK çıkan hücreler kesin YANLIŞ BULGU; kalan küçük aynı yönlü etki (Y60 ~-0,02..-0,05) ayrı bulgu olarak M02'ye"),
+        (2, "M03 / M16 / M18 yerel denetimler", "ince oynaklık + GARCH, 2020-03 dışlama + beta, sektör × gün: yalnız 1. adımda kalan etki için", "KEŞİF", "yerel, ~15 dk", "hayır", "kalan etkinin oynaklık / piyasa / tema bileşeni"),
+        (3, "M04 / M15 haber ve birleşme bileşimi", "yerel SEC başvuru özetiyle G1 / G2 / G7'de [t0−5, t0+60] 8-K maddeleri, SC TO, DEFM14A", "KEŞİF", "yerel, ~10 dk", "hayır",
          "büyük yükselişlerin ne kadarının ayrık habere bağlı olduğu (mekanizmanın kendisi)"),
-        (4, "M13 / M17 evren ve sağlayıcı (K51 P1)", "K51 P1 artısının yalnız V_ABD'de olması: sağlayıcı × etki; batan evren genişletme", "yerel + Tiingo kotası (Kasım)", "EVET (Tiingo kotası)", "K51 küçük artısının hayatta kalma eseri olup olmadığı"),
-        (5, "M09 / M10 Form 4 (yalnız 1-3'ten sonra kalan açıklanmamış etki varsa)", "Insider DS KEŞİF ~250 MB; plansız S, P", "indirme ~250 MB, ~30 dk", "hayır (SEC izni var)", "dağıtım / içeriden bilgi"),
-        (6, "M08 / M11 13F + OpenFIGI (yalnız kalan etki varsa)", "13F KEŞİF ~1,1 GB, CUSIP eşleme", "indirme ~1,1 GB + eşleme ~1-2 saat", "EVET (Drive alanı / süre)", "kurumsal birikim / emilim"),
-        (7, "M02 / M11 / M12 MIDAS (yalnız kalan etki varsa)", "MIDAS KEŞİF ~2 GB; işlem büyüklüğü, gizli / tek lot altı pay", "indirme ~2 GB", "EVET", "likidite / emilim"),
-        (8, "M05 açığa satış (2018-21 alt dönemi)", "FINRA SI + Reg SHO + FTD", "küçük-orta indirme", "hayır", "sıkışma; KEŞİF'in yalnız bir kısmı"),
-        (9, "M14 resmî kayıt eşlemesi", "askıya alma (1.349) + dava bültenleri, ad + CIK eşleme, sembol / tarih doğrulama", "küçük", "hayır", "kasıt yalnız resmî kayıtla"),
-        (10, "Doğrulama dönemi", "kalan her GÜÇLÜ AÇIKLAMA için İÇ 2022-23 (ve BAĞIMSIZ 2024-26)", "-", "EVET (dönem açma)", "DOĞRULANMIŞ MEKANİZMA sınıfı için zorunlu"),
+        (4, "M13 / M17 evren ve sağlayıcı (K51 P1, K52)", "K51 P1 artısının yalnız V_ABD'de olması: sağlayıcı × etki; batan evren genişletme", "K51'in 2023 / 2024-26 dönemleri = K55 İÇ / BAĞIMSIZ ile örtüşür",
+         "yerel + Tiingo kotası", "EVET (dönem açma + Tiingo kotası)", "K51 küçük artısının hayatta kalma eseri olup olmadığı"),
+        (5, "M09 / M10 Form 4 (yalnız 1-3'ten sonra AÇIKLANMAMIŞ gerçek etki kalırsa)", "Insider DS KEŞİF (ham zipler yerelde); plansız S, P", "KEŞİF", "yerel / ~250 MB", "hayır (SEC izni var)", "dağıtım / içeriden bilgi"),
+        (6, "M08 / M11 13F + OpenFIGI (yalnız kalan etki varsa)", "13F KEŞİF ~1,1 GB, CUSIP eşleme (Common Stock + US)", "KEŞİF", "indirme ~1,1 GB + eşleme ~1-2 saat", "EVET (Drive alanı / süre)", "kurumsal birikim / emilim"),
+        (7, "M02 / M11 / M12 MIDAS (yalnız kalan etki varsa)", "MIDAS hisse dosyası KEŞİF ~0,4 GB; işlem büyüklüğü, gizli / tek lot altı pay", "KEŞİF", "indirme ~0,4 GB", "EVET", "likidite / emilim (REIT / yabancı hariç)"),
+        (8, "M05 açığa satış (yalnız kalan etki varsa)", "Reg SHO tesis dosyaları (2016+), FINRA SI (2017-12+), FTD", "KEŞİF (pozisyon 2018-21)", "küçük-orta indirme", "hayır", "sıkışma"),
+        (9, "M14 resmî kayıt eşlemesi", "kesinleşmiş kararlar (mahkeme, SEC / FINRA idari karar, uzlaşma) + resmî kuşku kayıtları; tarih şartlı ad + CIK eşleme", "KEŞİF", "küçük", "hayır", "kasıt yalnız kesinleşmiş kararla"),
+        (10, "Doğrulama dönemi", "kalan her GÜÇLÜ AÇIKLAMA için İÇ 2022-23 (ve BAĞIMSIZ 2024-26)", "İÇ / BAĞIMSIZ", "-", "EVET (dönem açma)", "DOĞRULANMIŞ MEKANİZMA sınıfı için zorunlu"),
     ]
-    return pd.DataFrame(S, columns=["sira", "adim", "icerik", "maliyet_sure", "karar_gerekir", "ne_kazanilir"])
+    return pd.DataFrame(S, columns=["sira", "adim", "icerik", "donem", "maliyet_sure", "karar_gerekir", "ne_kazanilir"])
 
 
 def suzgec() -> pd.DataFrame:
@@ -158,15 +197,15 @@ def suzgec() -> pd.DataFrame:
     S = [
         ("Etki envanteri (10 alan, bütün bulgular)", "AYNEN", "K51-K55'in bütün hipotez / hücre / denetim bulguları; K55 sayıları CSV'den otomatik, öteki metinler kaynakla mekanik denetimli"),
         ("Her bulgu için mekanizma araştırması", "DEĞİŞTİRİLDİ", "etkisi olmayan (başarısız) bulgular için mekanizma aranmaz (ETKİ YOK); ölçüm hattı / evren denetimleri bulgu sayılmaz (YÖNTEM DENETİMİ). İki ek etiket bu yüzden"),
-        ("K55'in 19 ters yönlü KEŞİF'i özellikle", "AYNEN + ÖNE ALINDI", "önce mekanik açıklama (M01) sentetik sıfır sınamasıyla sınandı: bilgisiz veride etki yeniden üretiliyor; gerçek veride gecikme sınaması Faz 1'in ilk adımı"),
-        ("Bağımsız veri kaynakları A-E", "AYNEN + GENİŞLETİLDİ", "28 kaynak (kasıt kanıtı ve veri hatası kaynakları eklendi); 35 erişim testi; kapsam / gecikme / maliyet / lisans tablosu"),
-        ("13F, Form 4, MIDAS gibi büyük indirmeler", "ERTELENDİ (koşullu)", "ancak yerel ve indirmesiz adımlardan (M01, M03, M04, M15, M16, M18) sonra AÇIKLANMAMIŞ gerçek etki kalırsa; bugünkü envanterde mekanizma bekleyen sağlam etki yok denecek kadar az"),
-        ("Ortalama getiri testleri (açığa satış, içeriden alım / satış, sulandırma, nakit, bilanço sürprizi)", "YAPILMADI (zaten var)", "Ç102, Ç103, Ç100, Ç107: hepsi sıfır; yeniden yapılmaz. Eksik olan yalnız olay düzeyi bağlantı (K55 olayı öncesinde ne vardı)"),
+        ("K55'in ters yönlü KEŞİF'leri özellikle (20; IZ_KARNE'de 19 yazılı, D03-S02 vekil sayılmıştı)", "AYNEN + ÖNE ALINDI", "önce mekanik açıklama (M01) sentetik sıfır sınamasıyla sınandı: bilgisiz veride etki yeniden üretiliyor (aday); kesin karar Faz 1'in ilk adımında gerçek veride seçimsiz kontrolle"),
+        ("Bağımsız veri kaynakları A-E", "AYNEN + GENİŞLETİLDİ", "28 kaynak (kasıt kanıtı ve veri hatası kaynakları eklendi); erişim testleri; KEŞİF kapsamı açık alanla (tam / kısmi / yok); kapsam / gecikme / maliyet / lisans tablosu"),
+        ("13F, Form 4, MIDAS gibi büyük indirmeler", "ERTELENDİ (koşullu)", "ancak yerel ve indirmesiz adımlardan (M01, M03, M04, M15, M16, M18) sonra AÇIKLANMAMIŞ gerçek etki kalırsa; bugünkü envanterde kaynakta destekleniyor kararı alan ve eser adayı olmayan etki çok az"),
+        ("Ortalama getiri testleri (açığa satış, içeriden alım / satış, sulandırma, nakit, bilanço sürprizi)", "YAPILMADI (zaten var)", "Ç100, Ç102, Ç103, Ç107: hepsi İZ DEĞİL (dört şart tutmadı); bazı ortalama farklar sıfırdan büyük (Ç107 batanlar dahil +%2,8 / +%7,9; Ç102 çölde alım 2023 +%7,3); bu testler 2023 / 2024-26'da, KEŞİF'i kapsamıyor. Yeniden yapılmaz; eksik olan olay düzeyi bağlantı"),
         ("İşlem bazlı veri (TAQ, emir defteri)", "YAPILMADI", "ücretli; dağıtım / emilim ayrımına en yakın ücretsiz vekil MIDAS (işlem büyüklüğü, gizli emir) + 13F; ücretli veri yalnız Cemal kararıyla"),
-        ("Kasıtlı yanıltma", "AYNEN (kanıt kuralıyla)", "yalnız sembol + tarih doğrulanmış resmî kayıt; SEC askıya alma listesi 1.349 bülten, K55 evreninde ad eşlemesiyle 10 şirket; fiyat / hacim kanıt sayılmaz"),
+        ("Kasıtlı yanıltma", "DAHA SIKI", "kasıt kanıtı yalnız kesinleşmiş karar (mahkeme, SEC / FINRA idari karar, uzlaşma); askıya alma ve dava bülteni 'resmî kuşku kaydı'; K55 evreninde tarih şartlı 9 askıya alma eşleşmesi, hiçbiri panel penceresinde değil; fiyat / hacim kanıt sayılmaz"),
         ("Karşıt örnekler (yükselmeyen, batan, düşen, sulanan, birleşen)", "AYNEN", "G1-G7 tasarımı; erişim örnekleminde G1 / G2 / G3 / G6 temsilcileri"),
-        ("Kanıt sınıfları (6)", "AYNEN", "karar kuralları ön kayıtta (ONKAYIT_K56 3); Faz 0 sınıfı ön sınıftır"),
-        ("Ayrı modül ve kimlik, tek giriş, Drive OUTPUT", "AYNEN", "K56/ (11 modül) + K56.py; çıktı yolu denetimi K51-K55 klasörlerine yazmayı engeller; Drive OUTPUT/K56_MEKANIZMA"),
+        ("Kanıt sınıfları (6)", "AYNEN + 4 yardımcı etiket", "karar kuralları ön kayıtta (ONKAYIT_K56 3, v1.1-4); Faz 0 sınıfı ön sınıftır; sentetik kanıt yalnız YANLIŞ BULGU ADAYI verir; ETKİ YOK / ETKİ SAĞLAM DEĞİL / BETİMLEYİCİ / YÖNTEM DENETİMİ mekanizma aranmayan bulgular için"),
+        ("Ayrı modül ve kimlik, tek giriş, Drive OUTPUT", "AYNEN; Drive kopyası BEKLİYOR", "K56/ (11 modül) + K56.py; çıktı yolu denetimi K51-K55 klasörlerine yazmayı engeller; bu ortamda çıktılar repoda, Drive OUTPUT/K56_MEKANIZMA'ya Colab'da 'python K56.py drive' ile sha doğrulamalı kopyalanır"),
         ("Eski sonuçların keşif verisi olarak kullanımı kaydı", "AYNEN", "K56_KAYNAK_KAYDI*.csv (dosya, sha256, amaç); K55 KEŞİF yeniden kullanımı ön kayıtta işaretli"),
         ("Doğrulama dönemi", "ERTELENDİ (karar)", "K55'in İÇ / BAĞIMSIZ dönemleri açılmadı; DOĞRULANMIŞ sınıf bunları gerektirir"),
     ]
@@ -186,7 +225,7 @@ def _md(T: pd.DataFrame, kol: List[str], n: int = 0) -> List[str]:
 
 
 def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFrame, Ac: pd.DataFrame, H: pd.DataFrame, HV: pd.DataFrame, VK: pd.DataFrame,
-             Er: pd.DataFrame, Z: Any, R: pd.DataFrame, Sira: pd.DataFrame) -> str:
+             Er: pd.DataFrame, Z: Any, R: pd.DataFrame, Sira: pd.DataFrame, Zk: Any = None, Dn: Any = None) -> str:
     L = [f"# K56 — K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI: FAZ 0 RAPORU ({kimlik['kimlik']})", "",
          f"- Kod {kimlik['surum']}; commit {kimlik['commit']}; kilit sha {kimlik['onkayit_sha'][:12]}. K51-K55 dosyaları yalnız okundu (K56_KAYNAK_KAYDI.csv: dosya, sha256, amaç).",
          "- Faz 0: envanter, hipotezler, veri kaynakları, küçük örneklem erişim testi ve M01 sentetik yöntem sınaması. Bütün evrene mekanizma testi YOK; büyük indirme YOK.",
@@ -194,16 +233,24 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
     # özet
     L += ["## 0. Özet", ""]
     if Z is not None and len(Z):
-        k = Z[Z.durum_k55 == "KEŞİF"]; mk = int((k.karar == "MEKANIK_ACIKLAR").sum())
-        L += [f"- **M01 seçim etkisi**: bilgisiz yapay veride (4 evren × 400 hisse) K55'in olay tanımı ve aynı kod, 25 KEŞİF hücresinin {mk}'inde gerçek etkinin en az yarısını "
-              f"aynı işaretle üretiyor (çoğunda tamamını: oran medyanı {k.oran_Y60.median():.2f}); {int((k.karar == 'BELIRSIZ').sum())} hücre BELİRSİZ (yalnız GARCH'lı evrende mekanik), "
-              f"MEKANİK İZ YOK {int((k.karar == 'MEKANIK_IZ_YOK').sum())}. Yön uyumlu 5 hücre dahil. Etki t0−5'te üçte birine, t0−20'de sıfıra iniyor (mekanik imza).",
-              "- Anlamı: K55'in 19 ters yönlü KEŞİF'i bir piyasa davranışı değil, olay tanımının (t0 = ileri pencerenin +%30'u ilk yakaladığı gün, giriş t0+1) eseri olmaya ADAY. "
-              "Kesinleşmesi için gerçek veride gecikme sınaması gerekir (uygulama sırası 1; yerel, indirme yok)."]
+        k = Z[Z.durum_k55 == "KEŞİF"]; mk = int((k.karar == "MEKANIK_ACIKLAR").sum()); ters = int((np.sign(k.d_gercek_Y60) != k.yon).sum())
+        L += [f"- **M01 seçim etkisi (aday)**: bilgisiz yapay veride (4 evren × 400 hisse) K55'in olay tanımı ve aynı kod, 25 KEŞİF hücresinin Y60'ta {mk}'inde gerçek A farkının "
+              f"en az yarısını aynı işaretle üretiyor (oran medyanı {k.oran_Y60.median():.2f}); {int((k.karar == 'BELIRSIZ').sum())} hücre BELİRSİZ, MEKANİK İZ YOK "
+              f"{int((k.karar == 'MEKANIK_IZ_YOK').sum())}. Yön uyumlu 5 hücre dahil. Ters yönlü KEŞİF sayısı {ters} (IZ_KARNE'deki 19, D03-S02 vekil sayıldığı için).",]
+        if Zk is not None and len(Zk):
+            hk = Zk.groupby("hucre").karar.agg(lambda s: s.value_counts().index[0]); L += [f"- KEŞİF'i sağlayan (varyant, ufuk) satırlarında (v1.1-3, {len(Zk)} satır, {Zk.varyant.nunique()} varyant): "
+                  f"satır kararları {Zk.karar.value_counts().to_dict()}; hücre çoğunluğu MEKANİK AÇIKLAR {int((hk == 'MEKANIK_ACIKLAR').sum())} / 25."]
+        L += ["- Bağımsız denetçinin ön kayıt dışı kontrolü (K55 tam paneli, KEŞİF, Y60): olay etiketi seçimsiz kurulunca (eşiği aşan BÜTÜN günler) gerçek d -0,016 .. -0,049'a iniyor "
+              "(ilk geçiş etiketiyle -0,25 .. -0,43): ters yönlü farkların ~%90'ı olay tanımından. Küçük, aynı yönlü bir kalıntı kalıyor (kısa dönem tersine dönüş adayı, M02). t0 günü kapanışı "
+              "düşen olay payı gerçek 0,743 / sentetik 0,736.",
+              "- Anlamı: K55'in ters yönlü KEŞİF'leri bir piyasa davranışı değil, olay tanımının (t0 = ileri pencerenin +%30'u ilk yakaladığı gün, giriş t0+1) eseri olmaya ADAY. "
+              "Kesin sınıf ön kayıtlı seçimsiz kontrolle (v1.1-2; uygulama sırası 1; yerel, indirme yok). Gecikme (t0−k) yalnız Y60'ta söner; Y250'de ayırt edici değil."]
     L += [f"- Envanter: {len(E)} bulgu ({', '.join(f'{k} {v}' for k, v in E.kaynak_calisma.value_counts().sort_index().items())}); ön sınıf: "
           + ", ".join(f"{k} {v}" for k, v in E.faz0_on_sinif.value_counts().items()) + ".",
-          f"- Mekanik denetim: {len(Den)} uyuşmazlık / eksik (K56_ENVANTER_DENETIMI.csv; sessiz düzeltme yok).",
-          f"- Erişim testi: {', '.join(f'{k} {v}' for k, v in Er.durum.value_counts().items()) if len(Er) else 'koşulmadı'}.", ""]
+          f"- Açıklanmamış listesi: {', '.join(f'{k} {v}' for k, v in Ac.faz0_durum.value_counts().items())}.",
+          f"- Mekanik denetim: {len(Den)} kayıt (uyuşmazlık, K55 sınıf kuralı farkı, kürasyon düzeltmesi; K56_ENVANTER_DENETIMI.csv; sessiz düzeltme yok).",
+          f"- Erişim testi: {', '.join(f'{k} {v}' for k, v in Er.durum.value_counts().items()) if len(Er) else 'koşulmadı'}.",
+          f"- Bağımsız denetim: {len(Dn) if Dn is not None else 0} bulgu (K56_DENETIM_BULGULARI.csv); düzeltme durumu aşağıda 'Denetim' bölümünde.", ""]
     L += ["## 0b. Talimatın süzgeçten geçirilmesi", ""] + _md(suzgec(), ["oneri", "karar", "gerekce"]) + [""]
     # 1
     L += ["## 1. K51-K55 etki envanteri", "", "Tam tablo (18 alan + ön sınıf + hipotezler): K56_ETKI_ENVANTERI.csv. Çalışma × ön sınıf:", ""]
@@ -217,9 +264,9 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
     L += ["", "## 3. Mekanizma hipotezleri", "", "Önceden yazılı tahmin ve çürütme ölçütü; tam metin K56_HIPOTEZLER.csv. Her bulgu için en az üç yarışan açıklama envanterde (olasi_aciklamalar).", ""]
     L += _md(H, ["kimlik", "ad", "tur", "dogruysa", "yanlissa", "curutme", "oncelik", "faz0"])
     # 4
-    L += ["", "## 4. Hipotez başına gerekli veri", ""] + _md(HV, ["hipotez", "kaynak", "kapsam", "maliyet", "erisim_durumu", "kesif_eksik"])
+    L += ["", "## 4. Hipotez başına gerekli veri", ""] + _md(HV, ["hipotez", "kaynak", "kesif_kapsam", "kesif_not", "maliyet", "erisim_durumu"])
     # 5
-    L += ["", "## 5. Veri kaynakları: kapsam, gecikme, maliyet (erişim testiyle)", ""] + _md(VK, ["kimlik", "ad", "kapsam", "gecikme", "maliyet", "boyut", "eslesme", "erisim_durumu", "projede"])
+    L += ["", "## 5. Veri kaynakları: kapsam, gecikme, maliyet (erişim testiyle)", ""] + _md(VK, ["kimlik", "ad", "kapsam", "kesif_kapsam", "gecikme", "maliyet", "boyut", "eslesme", "erisim_durumu", "projede"])
     if len(Er):
         L += ["", "Erişim testi ayrıntısı (K56_VERI_ERISIM_TESTI.csv; örneklem K56_ERISIM_ORNEKLEM.csv; istek günlüğü K56_ISTEK_GUNLUGU.csv):", ""]
         L += _md(Er, ["modul", "kaynak", "test", "durum", "olcu", "deger", "ayrinti"])
@@ -229,7 +276,7 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
           "yanlış pozitif oranı = P(yükseliş yok | mekanizma var), kesinlik, etki ve ay kümeli %95 aralık.",
           "- Aracılık (mediation): mekanizma değişkeni denetlenince asıl etkinin küçülme payı (bootstrap aralığı); >= %50 DOĞRULANMIŞ / GÜÇLÜ için şart.",
           "- Sentetik sıfır sınaması: bilgisiz yapay evrende aynı tanım ve aynı kod (M01, M03); gerçek etkinin >= %50'sini üreten bulgu YANLIŞ BULGU adayı.",
-          "- Gecikme sınaması: ölçü t0−k'da; mekanik eser k ile söner, gerçek birikim sönmez.",
+          "- Seçimsiz kontrol (v1.1-2): aynı ölçü, eşiği aşan BÜTÜN günlerle / epizotta rastgele günle; ilk geçiş farkının ne kadarının kaldığı karar ölçütüdür. Gecikme (t0−k) yalnız bilgi (Y250'de mekanik eser k ile sönmez).",
           "- Sağlayıcı / evren duyarlılığı: V_ABD / K34 Yahoo / Tiingo ayrı; batan evren genişletme (M13, M17).",
           "- Point-in-time: bütün SEC / FINRA verisi bildirim / yayın tarihinden sonra kullanılır (13F 45 gün, Form 4 ~2 gün, 10-Q ~40 gün).",
           "- Kasıt: üç sütun (gözlenen davranış / olası mekanizma / kasıt kanıtı); kanıt yalnız sembol + tarih doğrulanmış resmî kayıt.", ""]
@@ -237,11 +284,17 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
         L += ["M01 sentetik sınama (K56_SECIM_SENTETIK_OZET.csv; satırlar K56_SECIM_SENTETIK.csv):", ""]
         L += _md(Z.sort_values(["durum_k55", "hucre"]), ["hucre", "durum_k55", "varyant", "d_gercek_Y60", "d_sent_Y60", "oran_Y60", "karar", "d_sent_gecikme1", "d_sent_gecikme5", "d_sent_gecikme20"])
         L += ["", "Karar × K55 durumu:", ""] + _md(pd.crosstab(Z.durum_k55, Z.karar).reset_index(), list(pd.crosstab(Z.durum_k55, Z.karar).reset_index().columns))
+    if Zk is not None and len(Zk):
+        L += ["", "KEŞİF'i sağlayan (varyant, ufuk) satırlarında sentetik sınama (v1.1-3; K56_SECIM_SENTETIK_KESIF.csv):", ""]
+        L += _md(Zk.sort_values(["hucre", "varyant", "ufuk"]), ["hucre", "varyant", "ufuk", "d_gercek", "d_sent", "oran", "spek_siniflari", "karar"])
     # 7
     L += ["", "## 7. Veri eksiklikleri ve teknik riskler", ""] + _md(R, ["risk", "ayrinti", "etki", "onlem"])
     # 8
     L += ["", "## 8. Önerilen uygulama sırası", "", "İlk üç adım yerel ve indirmesizdir; büyük indirmeler (5-7) yalnız 1-3'ten sonra AÇIKLANMAMIŞ etki kalırsa anlamlıdır.", ""]
-    L += _md(Sira, ["sira", "adim", "icerik", "maliyet_sure", "karar_gerekir", "ne_kazanilir"])
+    L += _md(Sira, ["sira", "adim", "icerik", "donem", "maliyet_sure", "karar_gerekir", "ne_kazanilir"])
+    if Dn is not None and len(Dn):
+        L += ["", "## Denetim: bağımsız gözden geçirme bulguları ve durumu", "", "Dört denetçi (sentetik geçerlilik, envanter doğruluğu, veri kaynakları, ön kayıt / aşırı iddia); tam metin K56_DENETIM_BULGULARI.csv.", ""]
+        L += _md(Dn, ["mercek", "ciddiyet", "baslik", "durum", "nasil"])
     if len(Den):
         L += ["", "## Ek: envanter denetimi uyuşmazlıkları", ""] + _md(Den, ["tur", "kimlik", "kaynak", "ayrinti"])
     yol = os.path.join(cikti, "K56_FAZ0_RAPOR.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n"); return yol

@@ -17,7 +17,7 @@ import json
 import os
 import pickle
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
@@ -70,6 +70,34 @@ def olay_sayilari(T: pd.DataFrame) -> Dict[str, int]:
 def _ad_norm(s: str) -> str:
     s = re.sub(r"[^A-Z0-9 ]", " ", str(s).upper()); s = re.sub(r"\b(INC|CORP|CORPORATION|CO|LTD|LIMITED|PLC|HOLDINGS|HOLDING|GROUP|THE|LLC|LP|SA|NV|AG)\b", " ", s)
     return re.sub(r"\s+", " ", s).strip()
+
+
+def askiya_eslestir(S: pd.DataFrame, J: Dict[str, Any], EV: pd.DataFrame) -> pd.DataFrame:
+    """Askıya alma satırı (tarih, ad) -> CIK: normalize ad SEC adlarında (güncel + eski adlar, geçerlilik aralığıyla) aranır; askıya alma günü CIK'in ilk
+    başvurusundan sonra ve adın geçerli olduğu aralıkta olmalı. Birden çok CIK -> belirsiz. panel_penceresinde: K55 evreninde ilk_islem..son_islem içinde."""
+    idx: Dict[str, List[Tuple[str, pd.Timestamp, pd.Timestamp, pd.Timestamp]]] = {}
+    for cik, v in J.items():
+        tarihler = _liste(v["date"]); ilk = pd.to_datetime(min(tarihler)) if tarihler else pd.NaT
+        eski = v.get("formerNames") if isinstance(v.get("formerNames"), list) else []
+        son_eski = max((pd.to_datetime(x.get("to"), errors="coerce") for x in eski), default=pd.NaT)
+        adlar = [(v.get("name", ""), son_eski if pd.notna(son_eski) else ilk, pd.Timestamp("2100-01-01"))]
+        adlar += [(x.get("name", ""), pd.to_datetime(x.get("from"), errors="coerce"), pd.to_datetime(x.get("to"), errors="coerce")) for x in eski]
+        for ad, a, b in adlar:
+            n = _ad_norm(ad)
+            if n:
+                idx.setdefault(n, []).append((cik, a.tz_localize(None) if getattr(a, "tzinfo", None) else a, b.tz_localize(None) if getattr(b, "tzinfo", None) else b, ilk))
+    ev = EV.dropna(subset=["cik"]).assign(cik=lambda x: x.cik.astype(int).astype(str)).set_index("cik")
+    rows = []
+    for r in S.itertuples():
+        aday = [(c, a, b, ilk) for c, a, b, ilk in idx.get(_ad_norm(r.ad), []) if pd.notna(ilk) and r.tarih >= ilk and (pd.isna(a) or r.tarih >= a - pd.Timedelta(days=1)) and (pd.isna(b) or r.tarih <= b + pd.Timedelta(days=1))]
+        ciks = sorted({c for c, *_ in aday})
+        if not ciks:
+            rows.append({"ad": r.ad, "tarih": r.tarih, "no": r.no, "cik": None, "durum": "yok", "panel_penceresinde": False}); continue
+        if len(ciks) > 1:
+            rows.append({"ad": r.ad, "tarih": r.tarih, "no": r.no, "cik": ";".join(ciks), "durum": "belirsiz", "panel_penceresinde": False}); continue
+        c = ciks[0]; pen = bool(c in ev.index and pd.to_datetime(ev.loc[c, "ilk_islem"]) <= r.tarih <= pd.to_datetime(ev.loc[c, "son_islem"])) if c in ev.index else False
+        rows.append({"ad": r.ad, "tarih": r.tarih, "no": r.no, "cik": c, "durum": "eslesti", "panel_penceresinde": pen})
+    return pd.DataFrame(rows)
 
 
 def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame, EV: pd.DataFrame) -> List[Dict[str, Any]]:
@@ -128,9 +156,10 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame, EV: pd.DataFrame
                                      "seçenekler: Tiingo splitFactor (kota), XBRL StockholdersEquityNoteStockSplitConversionRatio1, Nasdaq / NYSE bildirimleri", "https://query1.finance.yahoo.com"))
             raise StopIteration
         bozuk = [r.sembol for r in ok.itertuples() if isinstance(r.V_ABD_gece_orani, list) and any(abs(x - 1) > 0.25 for x in r.V_ABD_gece_orani)]
-        out.append(erisim_satiri(MODUL, "YAHOO_SPLITS", "bölünme listesi + V_ABD düzeltme denetimi", "GECTI" if len(ok) else "BASARISIZ", "düzeltilmemiş sıçrama", len(bozuk),
+        out.append(erisim_satiri(MODUL, "YAHOO_SPLITS", "bölünme listesi + V_ABD düzeltme denetimi (yalnız V_ABD sembolleri)", "KISMI" if len(ok) else "BASARISIZ", "düzeltilmemiş sıçrama", len(bozuk),
                                  "; ".join(f"{r.sembol}: {r.bolunme_2016} bölünme {r.oranlar} V_ABD gece oranı {r.V_ABD_gece_orani}" for r in ok.itertuples() if r.bolunme_2016)[:580]
-                                 + f"; V_ABD {'yüklü' if V else 'YOK (CY_VERI ayarlı değil)'}", "https://query1.finance.yahoo.com (yfinance)"))
+                                 + f"; V_ABD {'yüklü' if V else 'YOK (CY_VERI ayarlı değil)'}; batan / K34 sembolleri (TLGTQ, STRYQ, AERI, CHRA) V_ABD'de yok, denetlenmedi; "
+                                 "TLGTQ'nun 2020 ters bölünmesi (XBRL hisse sayısı 53,9 mn -> 5,39 mn) Yahoo listesinde yok", "https://query1.finance.yahoo.com (yfinance)"))
     except StopIteration:
         pass
     except Exception as ex:
@@ -153,16 +182,13 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame, EV: pd.DataFrame
             if not yeni:
                 break
         S = pd.DataFrame(rows).drop_duplicates(["no", "ad"]) if rows else pd.DataFrame(columns=["tarih", "ad", "no"])
-        adlar = {}
-        for cik, v in sec_ozet_yukle(A).items():
-            for a in [v.get("name", "")] + [x.get("name", "") for x in (v.get("formerNames") if isinstance(v.get("formerNames"), list) else [])]:
-                if a and _ad_norm(a):
-                    adlar[_ad_norm(a)] = cik
-        S["eslesen_cik"] = S.ad.map(lambda a: adlar.get(_ad_norm(a)) if _ad_norm(a) else None)
-        es = S[S.eslesen_cik.notna()]
-        out.append(erisim_satiri(MODUL, "SEC_ASKIYA_ALMA", "liste (bütün sayfalar) + evren ad eşlemesi", "GECTI" if len(S) else "BASARISIZ", "askıya alma / evrenle eşleşen",
-                                 f"{len(S)} / {len(es)}", f"{S.no.nunique()} bülten; tarih {S.tarih.min().date() if len(S) else '-'} .. {S.tarih.max().date() if len(S) else '-'}; sembol YOK, ad eşlemesi; eşleşenler: "
-                                 + "; ".join(f"{r.ad} {r.tarih.date()}" for r in es.head(8).itertuples()), ASKIYA_ALMA))
+        Es = askiya_eslestir(S, sec_ozet_yukle(A), EV)
+        tek = Es[Es.durum == "eslesti"]; pen = tek[tek.panel_penceresinde]
+        out.append(erisim_satiri(MODUL, "SEC_ASKIYA_ALMA", "liste + tarih şartlı ad eşlemesi (RESMÎ KUŞKU KAYDI, kasıt kanıtı değil)", "GECTI" if len(S) else "BASARISIZ",
+                                 "satır / bülten / eşleşen / belirsiz / panel penceresinde", f"{len(S)} / {S.no.nunique()} / {len(tek)} / {int((Es.durum == 'belirsiz').sum())} / {len(pen)}",
+                                 f"tarih {S.tarih.min().date() if len(S) else '-'} .. {S.tarih.max().date() if len(S) else '-'}; sembol YOK; şart: askıya alma günü CIK'in ilk başvurusundan sonra ve ad o "
+                                 f"tarihte geçerli; birden çok CIK'e düşen ad belirsiz; 'et al.' emirlerinde ilk şirketten sonrakiler PDF'te; eşleşenler: "
+                                 + "; ".join(f"{r.ad} {r.tarih.date()} (panelde {'evet' if r.panel_penceresinde else 'hayır'})" for r in tek.head(10).itertuples()), ASKIYA_ALMA))
         d, h, _ = ist.al(DAVA, ad="dava_0.html", sinir=3_000_000); tr = re.findall(r"LR-\d+", h.decode("utf-8", "replace")) if d == 200 else []
         out.append(erisim_satiri(MODUL, "SEC_DAVA", "ilk sayfa", "GECTI" if tr else "BASARISIZ", "bülten no (ilk sayfa)", len(set(tr)), "başlıklarda kişi / şirket adı; sembol yok; ayrıntı metinde", DAVA))
     except Exception as ex:

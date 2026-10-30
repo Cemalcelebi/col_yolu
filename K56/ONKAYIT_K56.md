@@ -78,3 +78,36 @@ sonuç görüldükten sonra eşik, tanım ya da sınıflama kuralı değiştiril
 ## v1.0-a (30 Ekim 2026, tam sentetik koşudan sonra; eşik ve tasarım DEĞİŞMEDİ)
 - Hata düzeltmesi: yapay panelde K55 panelinin 'dv20' sütunu yoktu; kesitsel D02-S10 hücresi (REDDEDİLDİ) hesaplanamadı (TANIMSIZ). Sütun
   eklendi ve yalnız bu hücre aynı dört spekle yeniden koşuldu; öteki 62 hücrenin sonuçları değişmedi (aynı kod yolu).
+
+## v1.1 (30 Ekim 2026; Faz 0 sonuçları ve bağımsız denetim GÖRÜLDÜKTEN SONRA, Faz 1'den ÖNCE; gerekçeli ek — v1.0 eşikleri değişmedi)
+Gerekçe: dört bağımsız denetçi (sentetik geçerlilik, envanter doğruluğu, veri kaynakları, ön kayıt / aşırı iddia) Faz 0 çıktılarında sınıflama ve
+özet katmanında aşırı iddia, ön kayıtta iç çelişki ve birkaç olgusal hata buldu. Aşağıdakiler bu yüzden eklendi; hepsi sonuç görüldükten sonra
+yazıldığı için "v1.1 (sonuç sonrası)" diye işaretlidir ve Faz 1 testlerinden ÖNCE kilitlenir.
+1. **3-1(a) ile 6. bölümün uzlaştırılması**: sentetik sıfır sınaması TEK BAŞINA yalnız "YANLIŞ BULGU ADAYI (M01)" verir. Kesin YANLIŞ BULGU
+   için ayrıca gerçek veride SEÇİMSİZ KONTROL gerekir (aşağıda 2). v1.0'daki "biri yeter" ifadesi sentetik ölçüt için geçersizdir.
+2. **M01 Faz 1 doğrulama protokolü** (KEŞİF verisi, yeniden kullanım işaretli): her K55 KEŞİF hücresinde KEŞİF ölçütünü geçen HER (varyant, ufuk)
+   satırı için gerçek veride üç d: (i) K55 ilk geçiş etiketi, (ii) seçimsiz etiket = pencere eşiği aşan BÜTÜN nitelikli günler, (iii) her
+   epizotta rastgele bir nitelikli gün (tohum 56). Sınıf: |d(ii)| <= 0,2 × |d(i)| ya da d(ii) aralığı 0'ı kapsıyor VE sentetik oran (aynı
+   varyant, ufuk) >= 0,5 -> MEKANİK (kesin YANLIŞ BULGU); 0,2 < |d(ii)| / |d(i)| < 0,5 -> KISMEN MEKANİK (kalan etki ayrı bulgu, İLİŞKİ VAR
+   adayı); >= 0,5 ve aralık 0'ı dışlıyor -> GERÇEK ETKİ KALIYOR. Gecikme (t0−k) ölçüsü yalnız bilgi; Y250'de mekanik eser k ile sönmediği için
+   karar ölçütü değildir. Sentetik kalibrasyon genişletilir: gerçek panele eşlenmiş oynaklık düzeyi (yıllık ~%30), GJR kaldıraç ve sıçrama
+   spekleri; olay oranı raporlanır.
+3. **Sentetik sınama kapsamı**: v1.0 her hücrede K55'in seçtiği varyantı (en küçük p'de ilk satır = en kısa pencere) ve Y60'ı kullandı. Ek
+   sınama: KEŞİF ölçütünü geçen bütün (varyant, ufuk) satırları aynı dört spek ve aynı eşiklerle; karar "KEŞİF ufkunda" ayrıca raporlanır.
+   Y60 kararı (21 / 25) birincil kalır, KEŞİF ufku kararı yanına yazılır.
+4. **Ek etiketler ve mekanik ön sınıf kuralı** (Faz 0 envanteri): ETKİ YOK (kaynakta BASARISIZ), ETKİ SAĞLAM DEĞİL (kaynak kararı DESTEKLENMİYOR /
+   TUTMAZ / İZ DEĞİL / TERS YÖN / ÖLÇÜLEMEDİ / GEÇERSİZ içeriyor ve DESTEKLENİYOR içermiyor; küçük, ters ya da dönem çelişkili etkiler),
+   BETİMLEYİCİ (kaynakta karar yok: bilgi / denetçi notu), YÖNTEM DENETİMİ (ölçüm hattı, evren, veri denetimi; sonuca göre seçilmiş alt kümeler,
+   ör. 'en iyi 20 çıkarıldı'). İLİŞKİ VAR, NEDEN BELİRSİZ yalnız kaynak kararı DESTEKLENİYOR / KEŞİF olan ve YANLIŞ BULGU ADAYI olmayan
+   bulgulara verilir. ALTERNATİF AÇIKLAMA yalnız hesaplanmış vekil (|ρ| > 0,8) ya da bulguya özel gerekçeli atama ile.
+5. **Kasıt kanıtı daraltıldı**: kasıt kanıtı yalnız KESİNLEŞMİŞ karardır (mahkeme kararı, SEC / FINRA idari karar ya da uzlaşma). SEC işlem
+   askıya alması (en çok 10 günlük, bilgi doğruluğu kuşkusu) ve dava bülteni (iddia duyurusu) "RESMÎ KUŞKU KAYDI" diye ayrı sütunda tutulur,
+   kasıt kanıtı sayılmaz. Ad eşlemesi tarih şartlıdır (askıya alma günü CIK'in ilk başvurusundan sonra ve adın geçerli olduğu aralıkta; birden çok
+   CIK'e düşen ad belirsiz).
+6. **Hipotez kaydı v1.1 donduruldu**: K56/mekanizma.py HIPOTEZLER (sürüm alanı "v1.1"); Faz 0'da bilinen sayılar tahmin sütunundan ayrılıp
+   "on_kanit" alanına taşındı; bu sayılar test sayılmaz (M19'un K52 zamanlama payı 0,504 bilinen sonuçtur, M19 yeni dönem verisiyle sınanır).
+   Hipotez kaydının sha256'sı Faz 1 koşu kimliğine yazılır; Faz 1'de değişiklik = yeni sürüm.
+7. **Erişim örneklemi sapması**: v1.0 G5 temsilcisi istedi; G5 ayrı seçilmedi, örneklem içinde companyfacts hisse sayısıyla belirlendi (bölünme /
+   birleşme düzeltmesiz, ham). Eşleşme oranları olay çeyreğindeki dosyayla ölçülür; durum GECTI yalnız uygun sembollerin >= %60'ı eşleşirse.
+8. **Denetçilerin ön kayıt dışı kontrolleri** (sentetik denetçi, K55 tam paneli, KEŞİF): seçimsiz etiketle gerçek d -0,016 .. -0,049 (Y60; ilk geçiş
+   d'nin ~%5-11'i), t0 günü kapanış < 0 payı gerçek 0,743 / sentetik 0,736. Bunlar bilgi olarak raporlanır; resmî sınıf 2'deki protokolle verilir.

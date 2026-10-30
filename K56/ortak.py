@@ -171,9 +171,15 @@ class Istemci:
             raise RuntimeError("SEC_EPOSTA ortam değişkeni yok: SEC adil erişim kuralı User-Agent'ta iletişim e-postası ister (koda yazılmaz)")
         return f"col_yolu-arastirma {e}"
 
+    @staticmethod
+    def sec_mi(url: str) -> bool:
+        from urllib.parse import urlparse
+        h = (urlparse(url).hostname or "").lower()
+        return h == "sec.gov" or h.endswith(".sec.gov")
+
     def _basliklar(self, url: str, ek: Optional[Dict[str, str]]) -> Dict[str, str]:
         b = {"User-Agent": "col_yolu-arastirma", "Accept-Encoding": "gzip, deflate"}
-        if "sec.gov" in url:
+        if self.sec_mi(url):
             b["User-Agent"] = self.sec_ua()
             gecen = time.time() - self._son_sec
             if gecen < SEC_HIZ:
@@ -198,7 +204,12 @@ class Istemci:
         for k in range(deneme):
             t0 = time.time()
             try:
-                with requests.request(yontem, url, headers=bas, data=govde, stream=True, timeout=60) as r:
+                with requests.request(yontem, url, headers=bas, data=govde, stream=True, timeout=60, allow_redirects=not self.sec_mi(url)) as r:
+                    if r.is_redirect and self.sec_mi(url):
+                        yeni = requests.compat.urljoin(url, r.headers.get("Location", ""))
+                        if not self.sec_mi(yeni):
+                            raise RuntimeError(f"SEC isteği SEC dışına yönlendi ({yeni}); e-postalı başlık gönderilmedi")
+                        url = yeni; continue
                     boy = int(r.headers.get("Content-Length", "0") or 0)
                     if boy and boy > sinir and r.status_code in (200, 206):
                         raise RuntimeError(f"boyut sınırı aşıldı: {boy} > {sinir} bayt ({url}); Faz 0'da büyük indirme yok")
@@ -230,7 +241,7 @@ class Istemci:
         import requests
         t0 = time.time()
         try:
-            r = requests.head(url, headers=self._basliklar(url, ek_baslik), timeout=30, allow_redirects=True)
+            r = requests.head(url, headers=self._basliklar(url, ek_baslik), timeout=30, allow_redirects=not self.sec_mi(url))
             self.gunluk.append({"url": url, "yontem": "HEAD", "durum": r.status_code, "bayt": 0, "dosya_boyu": int(r.headers.get("Content-Length", "0") or 0), "sn": round(time.time() - t0, 2), "hata": ""})
             return r.status_code, dict(r.headers)
         except Exception as ex:
