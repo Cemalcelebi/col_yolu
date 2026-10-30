@@ -287,6 +287,53 @@ def testler():
         ok26 = False
     if not ok26:
         hata.append("26) ağ kapalı kapısı bağlantıyı durdurmadı")
+    # 27) Faz 1 hücre tanımları: bütün kayıtlı hücreler (D01-D06, D10 sembol fonksiyonları) sentetik seride kesme testini geçer; NaN payı < %60
+    from K55 import dal_ortak, faz1 as f1m
+    f1m.hucreleri_kur(); n27 = 700; idx27 = pd.bdate_range("2017-01-02", periods=n27); d27 = _seri(n27, tohum=27); d27.index = idx27; d27.attrs["sektor"] = "Tek"
+    spy = pd.Series(100 * np.exp(np.cumsum(np.random.default_rng(1).normal(0, 0.008, n27))), index=idx27)
+    dal_ortak.EK.clear(); dal_ortak.EK.update({"SPY": spy, "IWM": spy * 1.1, "sektor_getiri": {"Tek": spy.pct_change()}, "lider_getiri": {"Tek": spy.pct_change()}, "sektor_of": {"X": "Tek"}})
+    kalan27 = []; nan27 = []
+    for kimlik, t in hucreler.HUCRELER.items():
+        if t.get("panel_fonk") is not None:
+            continue
+        for pz in t["pencereler"]:
+            f = t["fabrika"](pz) if (t.get("fabrika") is not None and pz is not None) else t["fonk"]
+            r = sizinti.kesme_testi(f, d27, [400, 550, 699])
+            if not r["gecti"]:
+                kalan27.append(f"{kimlik}|{pz}")
+            x = np.asarray(f(d27), float)
+            if len(x) != n27 or np.isnan(x[400:]).mean() > 0.6:
+                nan27.append(f"{kimlik}|{pz}")
+    if kalan27 or nan27:
+        hata.append(f"27) hücre tanımları: kesme testi kalan {kalan27}; NaN yüksek / uzunluk {nan27}")
+    say27 = sum(1 for v in hucreler.HUCRELER.values())
+    if say27 < 60:
+        hata.append(f"27b) kayıtlı hücre sayısı az: {say27}")
+    # 28) kesitsel bileşik (D10) ve panel fonksiyonları sentetik panelde çalışır; 29) hucre_kos bütün yöntem satırlarını üretir
+    rng = np.random.default_rng(28); gunler = pd.bdate_range("2018-01-01", periods=30); semboller = [f"S{j}" for j in range(40)]; rows = []
+    V28 = {}
+    for j, sm in enumerate(semboller):
+        dd = _seri(400, tohum=100 + j); dd.index = pd.bdate_range("2016-06-01", periods=400); dd.attrs["sektor"] = "Tek" if j % 2 else "Fin"; V28[sm] = dd
+    for g in gunler:
+        for j, sm in enumerate(semboller):
+            i = int(V28[sm].index.get_indexer([g])[0]) if g in V28[sm].index else 300
+            rows.append({"tarih": g, "sembol": sm, "i": i, "vd": j % 10, "lt": j % 3, "trend": 1, "rejim": "BOGA", "sektor": V28[sm].attrs["sektor"], "likit": True, "r60_tanimli": True, "r60_ileri": rng.normal(0, 0.1), "mal": 0.002,
+                         "dv20": 1e6 * (j + 1), "r60": rng.normal(0, 0.1), "vol60": 0.3, "log_dv20": 14.0, "dd250": -0.2, "ar20": 1.0, "close": float(V28[sm].Close.get(g, 100.0))})
+    P28 = pd.DataFrame(rows); P28["ay"] = P28.tarih.dt.to_period("M").astype(str); P28["ceyrek"] = P28.tarih.dt.to_period("Q").astype(str); P28["blok60"] = 0
+    for h_ in (60, 120, 250):
+        P28[f"donem{h_}"] = "KESIF"
+    P28["donem"] = "KESIF"; P28 = P28.sort_values(["sembol", "tarih"]).reset_index(drop=True)
+    O28 = P28.sample(60, random_state=1)[["sembol", "tarih", "i"]].assign(ufuk="Y60", donem="KESIF")
+    for kb, pz in f1m.D10_BILESEN:
+        P28[kb], _ = hucre.degisken_hesapla(P28, V28, hucreler.HUCRELER[kb], pz, kb)
+    x28 = hucreler.HUCRELER["D10-S01"]["panel_fonk"](P28); x28b = hucreler.HUCRELER["D02-S10"]["fabrika"](20)(P28)
+    if not (len(x28) == len(P28) and np.isfinite(x28).mean() > 0.5 and len(x28b) == len(P28)):
+        hata.append(f"28) D10 / kesitsel panel fonksiyonu yanlış: {np.isfinite(x28).mean():.2f}")
+    r29 = hucre.hucre_kos("D01-S02", hucreler.HUCRELER["D01-S02"], P28, V28, O28, np.random.default_rng(29), donemler=("KESIF",), ufuklar=("Y60",))
+    y29 = pd.Series([r["yontem"] for r in r29]).value_counts().to_dict(); v29 = {r["varyant"] for r in r29}
+    if not (y29.get("A") == 5 and y29.get("B") == 5 and y29.get("C") == 5 and len(v29) == 5 and all("karar" in r for r in r29) and "D01-S02|5" not in P28):
+        hata.append(f"29) hucre_kos varyant / yöntem satırları yanlış: {y29} {sorted(v29)}")
+    hucreler.temizle(); dal_ortak.EK.clear(); hucreler.kaydet("D01-S01", "D01", "iskele", +1, hucreler.d01_s01_dip_band_gun)
     return hata
 
 
@@ -294,4 +341,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k55: 26/26 OK (3 = veri kalitesi 11 vakası)")
+    print("test_k55: 29/29 OK")

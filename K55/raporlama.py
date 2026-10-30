@@ -21,7 +21,7 @@ def _f(x: Any, p: int = 3) -> str:
     return str(x)
 
 
-TAM = {"fiyat_yok", "kisa_seri_320", "eksik_islem_gunu", "ciddi_bosluk_sayi", "yinelenen_islem_gunu", "takvim_disi_satir", "ohlc_high_low", "getiri_100_ustu_sayi", "muhtemel_bolunme", "aciklanamayan_sicrama", "sert_haber_hareketi", "cik_bos", "sektor_bos", "kota", "aday", "secilen", "eksik", "toplam_secilen", "istenen", "evren", "once", "sonra", "atilan", "n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "hucre", "varyant", "test", "ret",
+TAM = {"n_degisim", "varyant", "A_etki_varyant", "B_tutar_varyant", "C_etki_varyant", "yil_tekrar", "yil_n", "fiyat_yok", "kisa_seri_320", "eksik_islem_gunu", "ciddi_bosluk_sayi", "yinelenen_islem_gunu", "takvim_disi_satir", "ohlc_high_low", "getiri_100_ustu_sayi", "muhtemel_bolunme", "aciklanamayan_sicrama", "sert_haber_hareketi", "cik_bos", "sektor_bos", "kota", "aday", "secilen", "eksik", "toplam_secilen", "istenen", "evren", "once", "sonra", "atilan", "n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "hucre", "varyant", "test", "ret",
        "sinif", "yil", "Y60", "Y120", "Y250", "slot_n_islem", "yil_tekrar", "yon_yukari", "yon_asagi", "sinanan_olay", "kontrol"}
 
 
@@ -104,3 +104,29 @@ def faz0_yaz(R: Dict[str, Any], cikti: str) -> str:
     with open(os.path.join(cikti, "K55_KOSU.json"), "w", encoding="utf-8") as f:
         json.dump(k, f, ensure_ascii=False, indent=1, default=str)
     return yol
+
+
+def faz1_yaz(R: Dict[str, Any], cikti: str) -> str:
+    """K55_FAZ1_RAPOR.md + K55_ADAYLAR.md (dal dal; her dal bittiğinde yenilenir). Başarısızlar da yazılır."""
+    k = R["kimlik"]; H = R.get("H", pd.DataFrame()); D = R.get("D", pd.DataFrame()); yuk = R.get("yuk", pd.DataFrame()); sure = R.get("sure", {})
+    L = [f"# K55 — FAZ 1 RAPORU ({k['kimlik']}; yalnız KEŞİF 2016-21; İÇ DOĞRULAMA ve BAĞIMSIZ açılmadı)", "",
+         f"- Kod {k['kod_surum']}; commit {k['commit']}; kilit sha {k['onkayit_sha'][:12]}; ayar sha {k.get('ayar_sha', '')[:12]}; evren sürümü {k['evren_surum'][:12]}; örnek: {k['ayar']['ornek'] or 'tam evren'}.",
+         f"- Tamamlanan dallar: {R.get('tamamlanan', [])}; süreler (sn): {sure}; toplam {R.get('toplam_sure_dk', '')} dk.",
+         "- Yöntem: A olay öncesi (gün × oynaklık ondalığı içinde z; Cohen d, ay / blok kümeli aralık, bootstrap p, AUC, yıl tekrarı, rejim), B eşleşmiş ileri (beşte bir sinyal, örtüşmez; r60 − kontrol; aralıklar; slot portföyü), C değişim noktası (CUSUM lift). Hücre içi Holm, aile (dal × yöntem × KEŞİF) BH q = 0,10.",
+         "- Durum: KEŞİF = A (FDR + ETKİ + yıl tekrarı ≥ 5 / 6 + rejim tutarlı) ya da B (FDR + TUTAR + yıl tekrarı); REDDEDİLDİ; VERİ YETERSİZ; HATA. KEŞİF iz değildir: dallanma (10 alt hücre) ve İÇ DOĞRULAMA sonra.", ""]
+    if len(D):
+        L += ["## Hücre durumları (özet)", ""] + [f"- {dal}: {g.durum.value_counts().to_dict()}" for dal, g in D.groupby("dal")]
+        L += ["", "## KEŞİF adayları", ""]
+        K_ = D[D.durum == "KEŞİF"]
+        L += tablo(K_, ["hucre", "soru", "A_en_iyi", "A_d", "A_auc", "A_p_holm", "A_q", "B_en_iyi", "B_fark", "B_fark_alt", "B_p_holm", "B_q", "C_lift_max"]) if len(K_) else ["(KEŞİF yok)"]
+        L += ["", "## Bütün hücreler", ""] + tablo(D, ["hucre", "durum", "varyant", "A_etki_varyant", "B_tutar_varyant", "C_etki_varyant", "A_en_iyi", "A_d", "A_auc", "A_p_holm", "A_q", "B_en_iyi", "B_fark", "B_fark_alt", "B_q", "C_lift_max", "eksik_pay_max", "not"])
+    if len(yuk):
+        L += ["", "## Çoklu test yükü (aile = dal × yöntem × dönem)", ""] + tablo(yuk, ["dal", "yontem", "donem", "hucre", "varyant", "test", "ret"])
+    if len(H):
+        L += ["", "## Varyant satırları (A ve B; tamamı K55_VARYANTLAR.csv)", ""]
+        kol = ["hucre", "varyant", "yontem", "ufuk", "n_olay", "n", "d", "d_alt", "d_ust", "auc", "yil_tekrar", "yil_n", "rejim_tutarli", "fark", "fark_alt", "fark_alt_blok", "net_fark", "slot_rastgele_yuzdelik", "p", "p_holm", "q_bh", "ret", "karar"]
+        L += tablo(H[H.yontem.isin(["A", "B"])], kol)
+        L += ["", "## C değişim noktası satırları", ""] + tablo(H[H.yontem == "C"], ["hucre", "varyant", "ufuk", "n_degisim", "degisim_sonrasi_olay_orani", "taban_orani", "lift", "yanlis_pozitif_pay", "karar"])
+    yol = os.path.join(cikti, "K55_FAZ1_RAPOR.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n")
+    A_ = ["# K55 — ADAYLAR (KEŞİF; dallanma ve İÇ DOĞRULAMA bekliyor)", ""] + ([f"- {r.hucre}: {r.soru} — A {r.A_en_iyi} d {_f(r.A_d)} q {_f(r.A_q)}; B {r.B_en_iyi} fark {_f(r.B_fark)} q {_f(r.B_q)}" for r in D[D.durum == "KEŞİF"].itertuples()] if len(D) else [])
+    open(os.path.join(cikti, "K55_ADAYLAR.md"), "w", encoding="utf-8").write("\n".join(A_ or ["(yok)"]) + "\n"); return yol

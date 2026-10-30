@@ -16,6 +16,7 @@ if KOK_K55 not in sys.path:
 
 from K55.ortak import K55Ayar, K55_SURUM  # noqa: E402
 from K55.faz0 import faz0  # noqa: E402
+from K55.faz1 import DALLAR, faz1  # noqa: E402
 
 
 def k55_faz0(ornek=None, veri=None, cikti=None, isci=None, tohum=55, paketler=None):
@@ -28,6 +29,18 @@ def k55_faz0(ornek=None, veri=None, cikti=None, isci=None, tohum=55, paketler=No
     if isci:
         kw["isci"] = int(isci)
     return faz0(K55Ayar(**kw), paketler)
+
+
+def k55_faz1(ornek=None, veri=None, cikti=None, isci=None, tohum=55, dallar=None, paketler=None):
+    """Faz 1: D01-D06 + D10 OHLCV hücreleri, yalnız KEŞİF; Faz 0 paneli ve olay tablosu gerekir (aynı evren sürümü)."""
+    kw = {"ornek": ornek, "tohum": tohum}
+    if veri:
+        kw["veri"] = veri
+    if cikti:
+        kw["cikti"] = cikti
+    if isci:
+        kw["isci"] = int(isci)
+    return faz1(K55Ayar(**kw), tuple(dallar) if dallar else DALLAR, paketler=paketler)
 
 
 def _cakisma_kontrol_k55(_once=_CK_ONCE_K55, _dosya="K55.py"):
@@ -46,8 +59,10 @@ _cakisma_kontrol_k55()
 
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
-    ap = argparse.ArgumentParser(description=K55_SURUM); ap.add_argument("komut", choices=["faz0"]); ap.add_argument("--ornek", type=int, default=None)
+    ap = argparse.ArgumentParser(description=K55_SURUM); ap.add_argument("komut", choices=["faz0", "faz1"]); ap.add_argument("--ornek", type=int, default=None); ap.add_argument("--dallar", default=None)
     ap.add_argument("--veri", default=None); ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=None); ap.add_argument("--tohum", type=int, default=55)
     a = ap.parse_args()
     if a.komut == "faz0":
         k55_faz0(ornek=a.ornek, veri=a.veri, cikti=a.cikti, isci=a.isci, tohum=a.tohum)
+    elif a.komut == "faz1":
+        k55_faz1(ornek=a.ornek, veri=a.veri, cikti=a.cikti, isci=a.isci, tohum=a.tohum, dallar=a.dallar.split(",") if a.dallar else None)

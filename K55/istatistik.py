@@ -41,11 +41,12 @@ def auc(pozitif: np.ndarray, negatif: np.ndarray) -> float:
     return float((r[: len(p)].sum() - len(p) * (len(p) + 1) / 2) / (len(p) * len(n)))
 
 
-def d_boot_ay(z: np.ndarray, olay: np.ndarray, ay: np.ndarray, B: int, rng: np.random.Generator) -> Tuple[float, float, float]:
-    """Cohen d'nin ay kümeli bootstrap aralığı: ay başına (n, toplam, kare toplam) olay / olay dışı; aylar yerine koyarak örneklenir."""
+def d_boot_ay(z: np.ndarray, olay: np.ndarray, ay: np.ndarray, B: int, rng: np.random.Generator) -> Tuple[float, float, float, float]:
+    """Cohen d'nin kümeli bootstrap aralığı (küme = ay ya da blok): küme başına (n, toplam, kare toplam) olay / olay dışı; kümeler yerine koyarak
+    örneklenir. Dönüş: d, %2,5, %97,5, iki yönlü bootstrap p (d = 0 hipotezi)."""
     z = np.asarray(z, float); ok = np.isfinite(z); z = z[ok]; olay = np.asarray(olay, bool)[ok]; ay = np.asarray(ay)[ok]
     if olay.sum() < 2 or (~olay).sum() < 2:
-        return np.nan, np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan
     k, inv = np.unique(ay, return_inverse=True); K = len(k)
     def agg(m):
         return (np.bincount(inv[m], minlength=K), np.bincount(inv[m], weights=z[m], minlength=K), np.bincount(inv[m], weights=z[m] ** 2, minlength=K))
@@ -55,10 +56,11 @@ def d_boot_ay(z: np.ndarray, olay: np.ndarray, ay: np.ndarray, B: int, rng: np.r
         s = np.sqrt(((N1 - 1) * v1 + (N0 - 1) * v0) / np.maximum(N1 + N0 - 2, 1)); return (m1 - m0) / np.where(s > 0, s, np.nan)
     d = float(d_hesap(n1.sum(), s1.sum(), q1.sum(), n0.sum(), s0.sum(), q0.sum()))
     if K < 2:
-        return d, np.nan, np.nan
+        return d, np.nan, np.nan, np.nan
     sec = rng.integers(0, K, size=(B, K))
-    bs = d_hesap(n1[sec].sum(1), s1[sec].sum(1), q1[sec].sum(1), n0[sec].sum(1), s0[sec].sum(1), q0[sec].sum(1))
-    return d, float(np.nanpercentile(bs, 2.5)), float(np.nanpercentile(bs, 97.5))
+    bs = d_hesap(n1[sec].sum(1), s1[sec].sum(1), q1[sec].sum(1), n0[sec].sum(1), s0[sec].sum(1), q0[sec].sum(1)); bs = bs[np.isfinite(bs)]
+    p = float(min(1.0, 2 * min((bs <= 0).mean(), (bs >= 0).mean()) + 1.0 / B)) if len(bs) else np.nan
+    return d, float(np.nanpercentile(bs, 2.5)), float(np.nanpercentile(bs, 97.5)), p
 
 
 def boot_p(x: np.ndarray, kume: np.ndarray, B: int, rng: np.random.Generator) -> float:
