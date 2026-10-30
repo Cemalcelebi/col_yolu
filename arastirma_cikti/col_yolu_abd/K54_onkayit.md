@@ -56,3 +56,8 @@ K51 kararı hiçbir sınıfta değişmez; K54 yalnız güvenilirliği etiketler.
 ## 6. Çıktılar
 
 K54_EVREN_ESLESTIRME.csv (sembol, kaynak, CIK, SEC güncel semboller, eski adlar, Tiingo borsa / başlangıç / bitiş, analist kaydı var mı), K54_SIRKET_DURUMU.csv (sınıf, kural, T, Tiingo bitiş, 25-NSE tarihi, son 10-K/10-Q, 8-K 1.03 / 2.01 tarihleri, kesim tarihi), K54_ESKI_YENI_TEST_KARSILASTIRMA.csv, K54_DELIST_DUYARLILIK.csv, K54_RAPOR.md. Kod: COL_YOLU_ABD.py v1.5 (`cy_v15_calistir`), test_col_yolu_abd.py ekleri (sınıflandırma kuralları sentetik başvuru geçmişiyle). Ham SEC başvuru geçmişleri repoya konmaz (özet CSV konur).
+
+## 7. Açıklama (kod yazılırken, sonuç görülmeden; 30 Ekim 2026)
+
+Sınıf 4 iki alt duruma ayrılır: **4a sembol değişimi** (serimiz T'de bitmiş, şirket SEC'e 10-K / 10-Q vermeye devam ediyor; hisse başka sembolle işlem görmüş) → çıkışta ek kayıp yok (`y_d0`), çünkü seri sonu borsadan çıkış değil veri kesintisidir. **4b kod yeniden kullanımı** (bugünkü sembol company_tickers'ta başka CIK'e bağlı ve serimiz şirketin son 10-K / 10-Q tarihinden sonra da sürüyor) → seri son 10-K / 10-Q + 120 gün ile kesilir (`y_kes`), kesimden sonraki günler çıkar. Her ikisi de "sembol değiştiren / başka şirkete dönüşen" sınıfında raporlanır.
+Sessiz ML özellikleri (sabit): vol60, log_dv20, dd250, r60, ar20, imza, hacim_ok, trend, rejim (BOĞA = 1). LightGBM ayarları K51 `meta.lgbm`; tohum 515; yıllar 2019-2026; embargo 10 gün (çıkış tarihi eğitim yılı başından önce).
