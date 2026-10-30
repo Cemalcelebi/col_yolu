@@ -16,6 +16,7 @@ import pandas as pd
 
 from .eslestirme import eslestir
 from .istatistik import auc, boot_kume, boot_p, cusum, d_boot_ay, slot_portfoy
+EKSIK_PAY_ESIK = 0.20
 from .ortak import A_AUC_ESIK, A_D_ESIK, B_FARK_ESIK, BOOT, C_LIFT_ESIK, CUSUM_H, N_MIN, OLAY, log
 
 
@@ -200,4 +201,6 @@ def hucre_kos(kimlik: str, tanim: Dict[str, Any], P: pd.DataFrame, V: Dict[str, 
         P.drop(columns=[ad], inplace=True)
     for r in rows:
         r["soru"] = tanim.get("soru", ""); r["dal"] = kimlik.split("-")[0]; r["yon"] = int(tanim.get("yon", 1)); r["not"] = tanim.get("not", "")
+        if r.get("eksik_pay", 0) > EKSIK_PAY_ESIK and not str(r.get("karar", "")).startswith("HATA"):
+            r["karar_olcut"] = r.get("karar"); r["karar"] = "VERİ YETERSİZ"                 # ONKAYIT 6: değişken eksik payı > %20 -> VERİ YETERSİZ (ölçüt sonucu ayrıca saklanır)
     return rows
