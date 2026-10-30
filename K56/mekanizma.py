@@ -61,7 +61,7 @@ def sentetik_veri(n: int, gun: int, tohum: int, tur: str) -> Tuple[Dict[str, pd.
 
 
 def sentetik_panel(V: Dict[str, pd.DataFrame], EV: pd.DataFrame, endeks: pd.DataFrame, min_gun: int = 260) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """K55 paneliyle aynı sütun anlamları (tarih, i, sembol, likit, close, r60, vol60, log_dv20, dd250, vd, lt, rejim, ay, blok60, donem{h}) ve
+    """K55 paneliyle aynı sütun anlamları (tarih, i, sembol, likit, close, dv20, r60, vol60, log_dv20, dd250, vd, lt, rejim, ay, blok60, donem{h}) ve
     K55 olay tablosu (K55/olay_tanimlari.sembol_olaylari; likit = ilk min_gun sonrası)."""
     from K55.olay_tanimlari import sembol_olaylari
     from K55.ortak import OLAY
@@ -70,7 +70,7 @@ def sentetik_panel(V: Dict[str, pd.DataFrame], EV: pd.DataFrame, endeks: pd.Data
         n = len(d); C = d.Close.to_numpy(float); lr = np.r_[np.nan, np.diff(np.log(C))]; likit = np.arange(n) >= min_gun
         rows, _ = sembol_olaylari(s, d, likit); olay += rows
         dv = pd.Series(C * d.Volume.to_numpy(float)).rolling(20, min_periods=10).median().to_numpy()
-        P = pd.DataFrame({"tarih": d.index, "i": np.arange(n, dtype=np.int32), "sembol": s, "likit": likit, "close": C, "open": d.Open.to_numpy(float),
+        P = pd.DataFrame({"tarih": d.index, "i": np.arange(n, dtype=np.int32), "sembol": s, "likit": likit, "close": C, "open": d.Open.to_numpy(float), "dv20": dv,
                           "vol60": pd.Series(lr).rolling(60, min_periods=40).std().to_numpy(), "log_dv20": np.log(np.maximum(dv, 1.0)),
                           "dd250": C / pd.Series(C).rolling(250, min_periods=60).max().to_numpy() - 1, "r60": C / np.r_[np.full(60, np.nan), C[:-60]] - 1,
                           "ar20": (pd.Series(d.High.to_numpy() - d.Low.to_numpy()) / pd.Series(C)).rolling(20).mean().to_numpy(), "sektor": sek.get(s, "bilinmiyor")})

@@ -74,3 +74,7 @@ sonuç görüldükten sonra eşik, tanım ya da sınıflama kuralı değiştiril
 - SEC: User-Agent'taki iletişim e-postası yalnız SEC_EPOSTA ortam değişkeninden; saniyede < 7 istek. Tiingo kotası korunur (Faz 0'da Tiingo
   isteği yok). Ücretli kaynağa istek yok; yalnız belge / fiyat bilgisi.
 - Erişim testi hiçbir hipotezi sınamaz; yalnız kapsam, gecikme, eşleşme oranı, alan dolu payı ölçer.
+
+## v1.0-a (30 Ekim 2026, tam sentetik koşudan sonra; eşik ve tasarım DEĞİŞMEDİ)
+- Hata düzeltmesi: yapay panelde K55 panelinin 'dv20' sütunu yoktu; kesitsel D02-S10 hücresi (REDDEDİLDİ) hesaplanamadı (TANIMSIZ). Sütun
+  eklendi ve yalnız bu hücre aynı dört spekle yeniden koşuldu; öteki 62 hücrenin sonuçları değişmedi (aynı kod yolu).

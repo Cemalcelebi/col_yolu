@@ -254,7 +254,33 @@ def zip_icerik_listesi(ist: Istemci, url: str, ad: str) -> pd.DataFrame:
     cd_boy, cd_ofs = struct.unpack("<II", kuyruk[j + 12:j + 20]); bas_ofs = cd_ofs - a
     rows = []; k = bas_ofs
     while 0 <= k < j and kuyruk[k:k + 4] == b"PK\x01\x02":
-        comp, unc = struct.unpack("<II", kuyruk[k + 20:k + 28]); nl, el, cl = struct.unpack("<HHH", kuyruk[k + 28:k + 34])
-        rows.append({"dosya": kuyruk[k + 46:k + 46 + nl].decode("utf-8", "replace"), "sikistirilmis": comp, "acik": unc}); k += 46 + nl + el + cl
+        comp, unc = struct.unpack("<II", kuyruk[k + 20:k + 28]); nl, el, cl = struct.unpack("<HHH", kuyruk[k + 28:k + 34]); lofs = struct.unpack("<I", kuyruk[k + 42:k + 46])[0]
+        rows.append({"dosya": kuyruk[k + 46:k + 46 + nl].decode("utf-8", "replace"), "sikistirilmis": comp, "acik": unc, "ofs": lofs}); k += 46 + nl + el + cl
     T = pd.DataFrame(rows); T.attrs["zip_boy"] = toplam
     return T
+
+
+# ---------------------------------------------------------------- erişim testi satırı ve zip üye başı (kısmi okuma)
+ERISIM_DURUM = ("GECTI", "KISMI", "BASARISIZ", "ATLANDI")
+
+
+def erisim_satiri(modul: str, kaynak: str, test: str, durum: str, olcu: str = "", deger: Any = None, ayrinti: str = "", url: str = "") -> Dict[str, Any]:
+    if durum not in ERISIM_DURUM:
+        raise ValueError(durum)
+    return {"modul": modul, "kaynak": kaynak, "test": test, "durum": durum, "olcu": olcu, "deger": deger, "ayrinti": ayrinti[:600], "url": url}
+
+
+def zip_uye_bas(ist: "Istemci", url: str, uyeler: pd.DataFrame, uye: str, n_bayt: int, ad: str) -> bytes:
+    """Zip içindeki bir üyenin ilk n_bayt sıkıştırılmış verisini HTTP Range ile alıp açar (kısmi; deflate akışı). Büyük dosyayı indirmeden
+    ilk satırları okumak için. uyeler: zip_icerik_listesi çıktısı (yerel başlık konumu 'ofs' sütunu gerekir)."""
+    import struct
+    import zlib
+    r = uyeler[uyeler.dosya.str.endswith(uye)]
+    if not len(r) or "ofs" not in r:
+        raise KeyError(f"zip üyesi yok: {uye}")
+    ofs = int(r.ofs.iloc[0]); d, bas, _ = ist.al(url, ad=ad + ".lh", aralik=(ofs, ofs + 29), sinir=1000)
+    if bas[:4] != b"PK\x03\x04":
+        raise RuntimeError("yerel başlık okunamadı")
+    nl, el = struct.unpack("<HH", bas[26:30]); veri_bas = ofs + 30 + nl + el
+    d, parca, _ = ist.al(url, ad=ad + ".parca", aralik=(veri_bas, veri_bas + n_bayt - 1), sinir=n_bayt + 1000)
+    return zlib.decompressobj(-15).decompress(parca)
