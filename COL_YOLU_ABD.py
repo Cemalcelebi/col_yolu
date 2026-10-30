@@ -3235,12 +3235,13 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
         a, b = sinir[s_]; j = a + int(np.searchsorted(Pi[a:b], i)); return j if (j < b and Pi[j] == i) else -1
     def yeni_etiket(X, icol="i"):
         js = np.array([satir(s_, int(i)) for s_, i in zip(X.sembol.to_numpy(), X[icol].to_numpy())])
-        ok = js >= 0; out = X.copy(); out["_j"] = js
-        for c in ("y_yeni", "net_yeni", "e_y_yeni", "e_net_yeni", "gecerli_yeni", "sinif"):
-            out[c] = np.nan
-        out.loc[ok, "y_yeni"] = P.y_yeni.to_numpy()[js[ok]]; out.loc[ok, "net_yeni"] = P.net_yeni.to_numpy()[js[ok]]; out.loc[ok, "e_y_yeni"] = P.e_y_yeni.to_numpy()[js[ok]]
-        out.loc[ok, "e_net_yeni"] = P.e_net_yeni.to_numpy()[js[ok]]; out.loc[ok, "gecerli_yeni"] = P.gecerli_yeni.to_numpy()[js[ok]]; out.loc[ok, "sinif"] = P.sinif.to_numpy()[js[ok]]
-        out["gecerli_yeni"] = out.gecerli_yeni.fillna(False).astype(bool); return out
+        ok = js >= 0; out = X.copy(); out["_j"] = js; jj = np.where(ok, js, 0)
+        def al(col, bos):
+            v = P[col].to_numpy()[jj].copy(); v = np.where(ok, v, bos); return v
+        out["y_yeni"] = al("y_yeni", np.nan).astype(float); out["net_yeni"] = al("net_yeni", np.nan).astype(float); out["e_y_yeni"] = al("e_y_yeni", np.nan).astype(float)
+        out["e_net_yeni"] = al("e_net_yeni", np.nan).astype(float); out["gecerli_yeni"] = al("gecerli_yeni", False).astype(bool); out["sinif"] = al("sinif", 0).astype(int)
+        out.loc[~ok, "sinif"] = 6                                              # panelde bulunamayan olay: doğrulanamayan sayılır
+        return out
     Kf = {"boot": V15["boot"], "n_min": V15["n_min"], "fark_esik": V15["fark_esik"]}
     def cift_fark(ad, kume, Aold, Bold):
         An = yeni_etiket(Aold); Bn = yeni_etiket(Bold)
