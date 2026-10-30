@@ -1351,7 +1351,7 @@ IK_GOREV: List[Dict[str, str]] = [
                 "ek 8: cy_v15_sinifla (dogrulama / belirsiz, b103_T_fark_gun / b103_zaman / b103_tarihler, 4a doğrulama bekler), "
                 "cy_v15_4a_dogrula, cy_v15_ayristir, cy_v15_calistir (A / B / C-eski / C-yeni, sınıf 6 ve sınıf 1 belirsiz varyantları, "
                 "4a bağlama ve bandı, ML dört örneklem), cy_v15_yaz; test_col_yolu_abd 31/31 (28 güncel, 30-31 yeni); koşu 3,2 dk; "
-                "K54_* beş çıktı yenilendi (ilk koşu ac63f0d git geçmişinde); IZ_KARNE Ç137 notu; IZ_DEFTERI DERS 43; Drive: rapor, ön kayıt, delist CSV yenilendi (bayt bayt doğrulandı), karşılaştırma CSV'si (56 KB) Drive bağlayıcısından geçmedi, eski kopyası çöpe atıldı, güncel kopya yalnız GitHub'da",
+                "K54_* beş çıktı yenilendi (ilk koşu ac63f0d git geçmişinde); IZ_KARNE Ç137 notu; IZ_DEFTERI DERS 43; Drive: rapor, ön kayıt, delist CSV yenilendi (bayt bayt doğrulandı), karşılaştırma CSV\'sini (56 KB) Cemal elle yükledi, Drive kopyası bayt bayt doğrulandı (sha256 aynı); dört K54 dosyası Drive\'da güncel",
      "sonuc": "Düzeltmeler sonucu değiştirmedi: 55 ana hücrenin 54'ü SAĞLAM, 1 sınırda ETKİLENMİŞ (P1 2024-26, karar aynı), 1 GEÇERSİZ; "
               "evren etkisi en çok 1,1 puan, etiket etkisi en çok 0,06 puan; sınıf 1 belirsiz 11 (6'sı ETF: evren temizliği), sınıf 2'de "
               "1.03 başvurusu 18 / 19'da T'den önce, 4a n = 0, sınıf 6 n = 0. K51 İZ DEĞİL korundu",
