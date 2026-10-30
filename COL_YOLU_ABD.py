@@ -3028,6 +3028,10 @@ def cy_v15_sinifla(sembol: str, T: Any, cik: Optional[int], sec: Optional[Dict[s
         b201 = _cy_v15_tarihler(sec, lambda f, it: f.startswith("8-K") and "2.01" in it); nse = _cy_v15_tarihler(sec, lambda f, it: f in K["nse"])
         bir = _cy_v15_tarihler(sec, lambda f, it: f in K["birlesme_form"]); kd = _cy_v15_tarihler(sec, lambda f, it: f in K["kayit_dis"])
         out["son_10k_10q"] = str(kq[-1]) if len(kq) else ""; out["nse25_tarih"] = str(_cy_v15_arada(nse, T, 400, 400) or ""); out["kayit_dis_tarih"] = str(_cy_v15_arada(kd, T, 400, 400) or "")
+    son_kq = kq[-1] if (sec and len(kq)) else None
+    if bugun_cik is not None and cik is not None and int(bugun_cik) != int(cik) and son_kq is not None and (son_kq + np.timedelta64(K["kes_gun"], "D")) < T:
+        kes = son_kq + np.timedelta64(K["kes_gun"], "D")                   # 4b: şirket dosyalamayı bırakmış, seri (bugün başka CIK'in sembolü) sürüyor
+        out.update({"sinif": 4, "alt": "4b kod yeniden kullanımı", "kural": f"4b: bugünkü sembol başka CIK'e ({bugun_cik}) bağlı; şirketin son 10-K / 10-Q {son_kq}, seri {T}'ye sürüyor", "kesim_tarihi": str(kes), "cikis_islemi": "y_kes"}); return out
     if not erken:
         if (tb is not None and tb >= sinir) or (sembol.upper() in sec_sem):
             out.update({"sinif": 1, "kural": "1: seri sürüyor; Tiingo bitiş >= sınır ya da SEC güncel sembol"}); return out
@@ -3041,12 +3045,10 @@ def cy_v15_sinifla(sembol: str, T: Any, cik: Optional[int], sec: Optional[Dict[s
     out["b201_tarih"] = str(a201 or ""); out["birlesme_belge_tarih"] = str(abir or "")
     if (a201 is not None or anse is not None) and abir is not None:
         out.update({"sinif": 3, "kural": f"3: 8-K 2.01 / 25-NSE {a201 or anse} + birleşme belgesi {abir}", "cikis_islemi": "y_d0"}); return out
-    son_kq = kq[-1] if len(kq) else None
     if son_kq is not None and son_kq >= T + np.timedelta64(K["devam_gun"], "D"):
         out.update({"sinif": 4, "alt": "4a sembol değişimi", "kural": f"4a: şirket T'den sonra 10-K / 10-Q veriyor (son {son_kq})", "cikis_islemi": "y_d0"}); return out
     if bugun_cik is not None and cik is not None and int(bugun_cik) != int(cik):
-        kes = (son_kq + np.timedelta64(K["kes_gun"], "D")) if son_kq is not None else None
-        out.update({"sinif": 4, "alt": "4b kod yeniden kullanımı", "kural": f"4b: bugünkü sembol başka CIK'e ({bugun_cik}) bağlı", "kesim_tarihi": str(kes or ""), "cikis_islemi": "y_kes" if (kes is not None and kes < T) else "y"}); return out
+        out.update({"sinif": 4, "alt": "4b kod yeniden kullanımı (seri erken bitmiş)", "kural": f"4b: bugünkü sembol başka CIK'e ({bugun_cik}) bağlı; seri {T}'de bitmiş", "cikis_islemi": "y"}); return out
     out.update({"sinif": 5, "kural": "5: erken bitti; 1.03 / 2.01+belge / devam / kod kullanımı yok" + (" (kayıt dışı " + out["kayit_dis_tarih"] + ")" if out["kayit_dis_tarih"] else "")}); return out
 
 
