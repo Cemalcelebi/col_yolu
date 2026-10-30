@@ -3345,7 +3345,13 @@ def cy_v15_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
           "## 5. Değerlendirme özeti", ""]
     oz = KR[KR.degerlendirme.notna()].groupby("test").degerlendirme.apply(lambda v: ", ".join(f"{k_}: {n}" for k_, n in v.value_counts().items()))
     L += [f"- {t}: {v}" for t, v in oz.items()]
-    L += ["", "Sınıf 6 (doğrulanamayan) ve sınıf 5 (belirsiz) hiçbir hücrede iflas ya da aktif sayılmadı; 6 düzeltilmiş evrenden çıktı, 5 K51 kuralıyla kaldı ve bandı yazıldı.", "",
+    L += ["", "Sınıf 6 (doğrulanamayan) ve sınıf 5 (belirsiz) hiçbir hücrede iflas ya da aktif sayılmadı; 6 düzeltilmiş evrenden çıktı, 5 K51 kuralıyla kaldı ve bandı yazıldı.", ""]
+    cikis = SD[SD.sinif.isin([2, 3, 4, 5, 6])]; L += ["## 6. Yorum ve sınırlar (sonuç görüldükten sonra yazılan açıklama; kararlar değişmedi)", "",
+          f"- Evren düzeltmesi eski sonuçları değiştirmiyor: hücrelerin neredeyse hepsi SAĞLAM. Sebep: evrendeki {len(SD)} sembolün {len(cikis)}'ü borsadan çıkmış ya da belirsiz; P1 / P2 olaylarının çok azı seri erken biten şirketlerde ve bunların 60 günlük penceresi nadiren seri sonuna çarpıyor. Bu yüzden delist varsayımı (−%0 / −%30 / −%100) hücreleri oynatmıyor (bant genişliği tabloda).",
+          "- Bu 'SAĞLAM' etiketi yalnız MEVCUT evren içindeki sınıflandırma ve çıkış işlemi düzeltmesi için geçerlidir. Evrenin kendisi çoğunlukla hayatta kalanlardan oluşur (V_ABD ve K34 Yahoo yalnız bugün Yahoo'da olanlar; batanlar yalnız 422'lik Tiingo örnekleminden). Eksik batan şirketler eklenmeden hayatta kalma yanlılığı tam ölçülemez; bu K54'ün kapsamı dışında kalan açık maddedir (Kasım Tiingo kotasıyla gerçek batan evreni).",
+          "- Sınıf 4b (kod yeniden kullanımı) listesi aynı şirketin yeniden kaydını da yakalayabilir (örn. aynı adlı şirketin başka CIK'i); kesim bu durumda geçerli veriyi atar, yani düzeltme muhafazakârdır (9 sembol).",
+          "- K51'in eski 'batma benzeri' tahmininin bir bölümü SEC kanıtına göre birleşme / satın alma ya da belirsiz çıktı; 'satın alma benzeri' tahmininin bir bölümü belirsiz. Sembol başına eski tahmin ve yeni sınıf K54_SIRKET_DURUMU.csv ile K51_EVREN_PIT.csv birleştirilerek görülür.",
+          "- ETKİLENMİŞ etiketi alan hücrelerde etki değişimi 2 puanın altındadır; etiket yalnız aralık alt ucunun sıfırın öbür yanına geçmesinden gelir (sınırda hücre; karar değişmedi).", "",
           "## Yeniden üretim", "", "- `R = cy_v15_calistir(k54_yol='.../k54')` (k54: sec_ozet.json, sembol_cik.json, company_tickers.json, supported_tickers.csv; SEC indirmesi e-posta User-Agent ile, kodda yok). Çıktılar: K54_EVREN_ESLESTIRME.csv, K54_SIRKET_DURUMU.csv, K54_ESKI_YENI_TEST_KARSILASTIRMA.csv, K54_DELIST_DUYARLILIK.csv, bu belge."]
     open(os.path.join(A.cikti, "K54_RAPOR.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 

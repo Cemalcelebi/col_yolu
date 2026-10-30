@@ -874,6 +874,23 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "0,26 ve fark -3,9 / yetersiz / +3,0 (negatif kontrol, nedensel değil); KGS-sonra (d0 kapanışı) geç - hızlı -0,8 / -3,3 / -1,4, "
                "ulaşmayan %57; günlük 311.015 ham kayıt, 447 kopya atıldı, 393 kurum adı -> 371; hedef fiyatı eksik %8; d0+4 panel dışı 9.162 "
                "olay (likit değil / delist K51 kuralı)."),
+    _ik_k("Ç137", "2026-10-30", "K54 TARİHSEL HİSSE EVRENİ SAĞLAMLIK DENETİMİ (v1.5): 3.267 sembol SEC başvuru geçmişi (8-K 1.03 / 2.01, 25-NSE, "
+          "birleşme belgeleri, 10-K / 10-Q devamı, güncel semboller) + Tiingo sembol listesi (bitiş tarihi) + company_tickers ile 6 sınıfa ayrıldı; "
+          "düzeltilmiş evrende (iflas -%100, satın alma ek kayıp yok, kod yeniden kullanımı kesim, belirsiz K51 kuralı, doğrulanamayan çıkar) K51 "
+          "P1 / P2 / ES / HT / ÇEK, H-B / H-C / H-D, sessiz ML, K52 H0, K53 T1 / T5 / T6 eski-yeni karşılaştırması", "COL_YOLU_ABD.py (cy_v15_calistir)",
+          "Cemal'in K54 görevi (30 Eki)", "Denetim (ön kayıt d4dcdfb; SAĞLAM <= 2 puan + aynı karar + örtüşen aralık; ETKİLENMİŞ; GEÇERSİZ > %30 "
+          "belirsiz ya da evren kurulamıyor; K51 / K52 / K53 kararları değişmez)", "IZ C", 2, cikti="arastirma_cikti/col_yolu_abd/K54_ESKI_YENI_TEST_KARSILASTIRMA.csv",
+          notu="SINIFLAR: 3.001 halen işlem gören, 19 iflas / tasfiye (hepsi Tiingo, 8-K 1.03), 159 birleşme / satın alma, 9 sembol-kod yeniden "
+               "kullanımı (AXP, BG, NE, ZYME gibi aynı şirketin yeni CIK'i de dahil; kesim muhafazakâr), 79 belirsiz (hepsi Tiingo), 0 "
+               "doğrulanamayan (3.262 CIK'in hepsi indi, hata 0). K51'in eski 'batma benzeri' 51 tahmininin 19'u iflas, 21'i birleşme, 11'i "
+               "belirsiz çıktı. SONUÇ: 66 hücrenin 64'ü SAĞLAM; fark_fark en çok 1,1 puan (H-C 2023 -1,1); ETKİLENMİŞ yalnız K51 P1 2024-26 "
+               "(etki +2,39 -> +2,30 puan, aralık alt ucu +0,07'den -0,04'e; karar TUTMAZ aynı; sınırda); GEÇERSİZ: BB sıkışması / EMA (K48 / "
+               "K49 / K50 yalnız hayatta kalan V_ABD evreninde koştu, kod K34 evrenini almıyor). Delist bandı (-%0 / -%30 / -%100) P1 / P2 "
+               "isabetini 4 ondalıkta oynatmıyor: seri erken biten şirketlerde olay az (P1'de 27 / 42 / 23) ve pencere nadiren seri sonuna "
+               "çarpıyor. Sessiz ML AUC 0,51 her iki evrende. K52 / K53: analist kaydı payı sınıf 1'de %84, iflas ve belirsizde %0, birleşmede "
+               "%1; sonuçlar yalnız Yahoo kapsamındaki (hayatta kalan) şirketler için geçerli; batıklara sıfır revizyon atanmadı, Tiingo fiyatı "
+               "analist yerine kullanılmadı. SINIR: 'SAĞLAM' yalnız mevcut evren içindeki düzeltme için; evren çoğunlukla hayatta kalanlardan "
+               "(266 çıkış / 3.267), eksik batanlar olmadan hayatta kalma yanlılığı tam ölçülemez (Kasım Tiingo kotası açık madde)."),
 ]
 
 
@@ -1302,11 +1319,23 @@ IK_GOREV: List[Dict[str, str]] = [
               "eşik altı, oynaklıkla aynı); aynı şekil bilgi yok kontrolü (T4) fark göstermedi; BDS 3 olayların %74'ü 20 günde tepki vermiyor. "
               "K51 kararı korundu",
      "durum": "TAMAMLANDI, AÇIK: ileri doğrulama (sinyal >= 01.09.2026, en erken Mart 2027); Kasım Tiingo kotası ile gerçek batan evreni"},
+    {"tarih": "2026-10-30", "istek": "K54 tarihsel hisse evreni sağlamlık denetimi: her sembolü 6 sınıfa ayır (aktif, iflas, birleşme, sembol "
+                                     "değişimi, belirsiz, doğrulanamayan), eski testleri eski ve düzeltilmiş evrenle karşılaştır, K52 / K53 "
+                                     "analist kapsaması, SAĞLAM / ETKİLENMİŞ / GEÇERSİZ etiketi; K51 kararı ve kurallar değişmez; Cemal: yeni iz "
+                                     "aramadan önce K54 bitsin",
+     "yapilan": "Ön kayıt K54_onkayit.md (d4dcdfb + açıklama) sonuç görülmeden; SEC başvuru geçmişi 3.262 CIK (e-posta UA yalnız indirmede), "
+                "Tiingo sembol listesi (ücretsiz, fiyat kotası kullanılmadı), company_tickers; COL_YOLU_ABD.py v1.5 (cy_v15_calistir: sınıflama, "
+                "düzeltilmiş panel, 66 eski-yeni hücre, sessiz ML, K52 / K53 yeniden etiket; test 29/29); koşu 1,6 dk; K54_EVREN_ESLESTIRME.csv, "
+                "K54_SIRKET_DURUMU.csv, K54_ESKI_YENI_TEST_KARSILASTIRMA.csv, K54_DELIST_DUYARLILIK.csv, K54_RAPOR.md; IZ_KARNE Ç137; Drive",
+     "sonuc": "Evren düzeltmesi eski sonuçları değiştirmiyor: 64 / 66 hücre SAĞLAM, 1 sınırda ETKİLENMİŞ (karar aynı), BB / EMA deneyleri "
+              "GEÇERSİZ (yalnız hayatta kalan evren). Teknik hipotezlerin başarısızlığı evren hatasından gelmiyor. Ama evren çoğunlukla hayatta "
+              "kalanlardan; eksik batanlar olmadan hayatta kalma yanlılığı tam ölçülemez",
+     "durum": "TAMAMLANDI, AÇIK: Kasım Tiingo kotasıyla eksik batan şirketler (hayatta kalma yanlılığı); ileri doğrulama Mart 2027"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (29 Eki, gece): K51 v1.2 bağımsız denetim, K52 analist revizyonu ve K53 bilgi direnci / ADE / KGS bitti: hepsi DESTEKLENMİYOR, K51 "
-    "kararı korundu; H-A'da +3 puanlık eşik altı etki (2016-22'de yok); analist revizyonu fiyatı izliyor, ek bilgi yok; olumlu habere "
-    "tepkisizlik çoğunlukla kalıcı. Olası devam (Cemal'in kararı): (1) ileri "
+    "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
+    "K54: evren düzeltmesi sonuçları değiştirmiyor (64 / 66 hücre SAĞLAM), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama "
+    "evren çoğunlukla hayatta kalanlardan (266 çıkış / 3.267). Olası devam (Cemal'in kararı): (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
