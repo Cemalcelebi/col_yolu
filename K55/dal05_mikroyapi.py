@@ -68,6 +68,6 @@ def kaydet_hucreler() -> None:
     kaydet("D05-S04", "D05", "Kapanışa doğru davranış VEKİLİ (C > (H+L)/2 günlerin payı, p gün)", +1, fabrika=s04_orta_ustu_payi, pencereler=PENCERE_KISA, not_="VEKİL (gün içi veri yok)")
     kaydet("D05-S05", "D05", "Boşluklar (p günde yukarı − aşağı %2 açılış boşluğu sayısı)", +1, fabrika=s05_bosluk_net, pencereler=PENCERE_ORTA)
     kaydet("D05-S06", "D05", "Fiyat etkisi VEKİLİ (60 gün |getiri| ~ log işlem değeri eğimi; Kyle λ benzeri)", -1, fonk=s06_fiyat_etkisi, not_="VEKİL; D02-S03 ile korelasyon denetimi")
-    kaydet("D05-S07", "D05", "Yüksek hacimli güne (> 1,5 × medyan) ertesi gün tepki (devam = +1; p gün ortalama, bir gün gecikmeli)", +1, fabrika=s07_hacimli_gun_devam, pencereler=PENCERE_ORTA)
+    kaydet("D05-S07", "D05", "Yüksek hacimli güne (> 1,5 × medyan) ertesi gün tepki (devam = +1; p gün ortalama, bir gün gecikmeli)", +1, fabrika=s07_hacimli_gun_devam, pencereler=(40, 60), not_="20 günde yüksek hacimli gün sayısı yetersiz (NaN payı); 40 / 60")
     kaydet("D05-S08", "D05", "Alış–satış dengesizliği VEKİLİ (işaretli hacim payı, p gün)", +1, fabrika=s08_isaretli_hacim_payi, pencereler=PENCERE_KISA, not_="VEKİL; OBV vekil denetimi")
     kaydet("D05-S10", "D05", "Gün içi tersine dönüş payı (açılış yönü ≠ kapanış yönü, p gün)", +1, fabrika=s10_gun_ici_donus_payi, pencereler=PENCERE_KISA)
