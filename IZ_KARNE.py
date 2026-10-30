@@ -1390,7 +1390,23 @@ IK_GOREV: List[Dict[str, str]] = [
               "eşleşen 3.259 / 3.260, delist: sınıf 2 -%100 / 3 bedel / 5 K51 kuralı, 4b kesim, sınıf 6 dışarı; sızıntı testleri HEPSİ GEÇTİ (olumlu "
               "kontrol d +1,19 AUC 0,83; olumsuz d -0,00); modüller hatasız; panel 4,9 M satır 0,6 GB, olaylar Y60 13.894 / Y120 6.201 / Y250 2.407 "
               "(örtüşme 0); Faz 1 tahmini ~3,5 saat. İskele D01-S01 ETKİ YOK / TUTMAZ (pipeline denetimi, iz sonucu değil). BAĞIMSIZ dönem açılmadı",
-     "durum": "TAMAMLANDI, FAZ 1 ONAY BEKLİYOR: Faz 1 = D01-D06 + D10 OHLCV hücreleri (80), yalnız KEŞİF; başlamadan Cemal 'Faz 1 başlat' der"},
+     "durum": "TAMAMLANDI (ilk koşu); Cemal'in 9 maddelik denetimiyle v1.2'de yeniden koşuldu (sonraki satır)"},
+    {"tarih": "2026-10-30", "istek": "K55 ortak ayarlar denetimi, 9 zorunlu düzeltme: purge >= 250 + embargo ayrı; BAĞIMSIZ bitişi gerekçesi; getiri / "
+                                     "düzeltme / delist / olay başlangıcı / örtüşme açık kilit; koşu kimliği (kilit sha boşsa dur, git ağacı, kod + veri sha, "
+                                     "ayar özeti); dönem etiketi gün sonu / saat dilimi / NaT; MIN_GUN özellik gereksinimi, kısa seri silinmez; blok bootstrap + "
+                                     "FDR ailesi + test yükü; çıktılar Drive OUTPUT altında + yol denetimi; COL_YOLU_ABD yan etkisiz içe aktarma testi; "
+                                     "önce testler, sonra 50'lik deneme, sonra tam evren; kilitli kararlar sonuca bakarak değişmez",
+     "yapilan": "ONKAYIT_K55.md v1.2 (koddan önce commit e4f4737, 9 madde + veri kalitesi notu); K55 v0.2: ortak (PURGE_GUN = 250, EMBARGO 10 / 14 gün, "
+                "donem_etiketi_ufuk PURGE / EMBARGO / TANIMSIZ, kosu_kimligi: kilit / git kirli / 18 kod sha / 8 veri sha / ayar sha, cikti_dogrula), panel "
+                "(bitis60-120-250, donem60-120-250, blok60), olay (bitis, donem), hucre (ufuk bazlı dönem, blok aralıkları), istatistik (coklu_test_ozeti), "
+                "evren (kısa seri listesi, Tiingo indirme kapalı), kalite (sert hareket bilgi); test_k55 15/15 (dönem kenarları, purge / embargo, kimlik / yol, "
+                "ağ kapalı içe aktarma, çoklu test); 50'lik deneme (sızıntı hepsi geçti) ve tam evren yeniden koşu 3,5 dk (commit 8bed3ef, temiz ağaç); "
+                "çıktılar arastirma_cikti/k55_dallanma/ ve tam_evren/ (+ K55_EVREN_DISI_KISA.csv, K55_COKLU_TEST.csv, K55_KOSU.json sha'lı)",
+     "sonuc": "Düzeltmeler bölünme / temettü doğrulamasını da içerdi (V_ABD, K34 Yahoo, Tiingo adj: AAPL 2015 kapanış 29,1; bölünme günleri sürekli); "
+              "'sıçrama' bayrağı haber günleri çıktı (ABEO, AGEN, ALNY), eksiksizlikten çıkarıldı. Tam evren: eksiksiz 3.012 / 3.260, kısa geçmişli 60 "
+              "(VERİ YETERSİZ, silinmedi), CIK 3.259 / 3.260; purge: Y60 KEŞİF 4.292 olay (1.427 PURGE), Y250 KEŞİF 895 (570 PURGE); sızıntı testleri "
+              "hepsi geçti (olumlu d +1,18, olumsuz −0,003); iskele D01-S01 ETKİ YOK / TUTMAZ (iz değil). BAĞIMSIZ açılmadı",
+     "durum": "TAMAMLANDI, FAZ 1 ONAY BEKLİYOR: Faz 1 = D01-D06 + D10 OHLCV hücreleri (80), yalnız KEŞİF; ~3 saat; Cemal 'Faz 1 başlat' der"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
