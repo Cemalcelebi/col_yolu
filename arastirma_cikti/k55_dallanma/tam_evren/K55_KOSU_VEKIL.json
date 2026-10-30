@@ -1,0 +1,147 @@
+{
+ "kimlik": "K55-20261030-145030-6f149f7",
+ "kod_surum": "K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi)",
+ "commit": "6f149f7",
+ "git_kirli": [],
+ "onkayit_sha": "e0c60c1e73ced61c13f284da855e1ab1bcd24116147ff9b8f1a3e5953abd634e",
+ "ayar_sha": "1f994b8d8ea9601009a285f006f43be0aee1775218a2d5f3123189f74e141cc5",
+ "ayarlar": {
+  "DONEM": {
+   "KESIF": [
+    "2016-01-01",
+    "2021-12-31"
+   ],
+   "IC_DOGRULAMA": [
+    "2022-01-01",
+    "2023-12-31"
+   ],
+   "BAGIMSIZ": [
+    "2024-01-01",
+    "2026-06-05"
+   ]
+  },
+  "ILERI_BASLANGIC": "2026-09-01",
+  "OLAY": {
+   "Y60": [
+    60,
+    0.3
+   ],
+   "Y120": [
+    120,
+    0.5
+   ],
+   "Y250": [
+    250,
+    1.0
+   ]
+  },
+  "PENCERE": [
+   5,
+   10,
+   20,
+   40,
+   60
+  ],
+  "KRIZ": "2026-08-31",
+  "ALIVE_SINIR": "2026-08-01",
+  "MIN_GUN": 260,
+  "N_MIN": 30,
+  "BOOT": 2000,
+  "K_ES": 5,
+  "GUN_TOL": 10,
+  "DD_TOL": 0.1,
+  "PURGE_GUN": 250,
+  "EMBARGO_GUN": 10,
+  "EMBARGO_TAKVIM_GUN": 14,
+  "BLOK_GUN": 60,
+  "FDR_Q": 0.1,
+  "A_D_ESIK": 0.2,
+  "A_AUC_ESIK": 0.06,
+  "B_FARK_ESIK": 0.05,
+  "C_LIFT_ESIK": 1.3,
+  "CUSUM_H": 4.0
+ },
+ "kod_sha": {
+  "K55/__init__.py": "5486d82cbda87a77d1d405095272d510dd492ca456f19e749a93d5c1fbfc7025",
+  "K55/dal01_fiyat.py": "a83e74ccea16e62aeb14cda11ea4e61863cbda1ddad6de1706c515c900c26a7a",
+  "K55/dal02_hacim.py": "3a2675602c5780e50462e8b3d2769b441e51a9d18361e84f43170637c86524c4",
+  "K55/dal03_volatilite.py": "6180d29a4ac2887483298053c20034534a0d9072286270150188c53e59e1c773",
+  "K55/dal04_zaman.py": "685affdfbc9fc4163254880a1423b210f2a3a0e1f4a3c09d707470d9db43a0cc",
+  "K55/dal05_mikroyapi.py": "d9eea1ac70862b7849f46c0dec3e383cce3fe5539d03512283f6a60fdd95cda3",
+  "K55/dal06_goreli_guc.py": "8009261a864d850f19d4fc0b3daceec4ecfa8c70264d3814bc757a97d4266d71",
+  "K55/dal10_birlesik.py": "d6b8f5f32a8ae3554a7473705ba4ca32b2597a01cb857526359decb8a519be0f",
+  "K55/dal_ortak.py": "1ef63431b0b0e39901e9daacfa8072ccc5695f480a7e5ef992260c5a6d6d8564",
+  "K55/eslestirme.py": "46ed9c2b7054286e951530a83446be60c008b9c3af00daf49aab45b99304cd7f",
+  "K55/evren.py": "62ddb8d0c749a68fe3992fde8397ba24763f7e2af1e9e91f148b7c0cdca528b1",
+  "K55/faz0.py": "34b06fe221790252dff62da0fbc098948adadb25068b0c13ebb8ab8eea9d012f",
+  "K55/faz1.py": "27c2e9ec2db5e9a1c8cd8e8c258e6a0f6709ba8b681fc0e2f5bc0f802747aa27",
+  "K55/hucre.py": "b0ed81915aad408bbaf3b9bef5e861700ede071d1c63db37466c033d00cd9b59",
+  "K55/hucreler.py": "f770028b2740ead0fd3693ae9c985c54566b2d8e3f54ec5fc368b85e615d7065",
+  "K55/istatistik.py": "036d40f35562f3ca355890dd592c8bd24cd2f6e228c5e30344c0f3f93868ad1a",
+  "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4",
+  "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
+  "K55/panel.py": "bae62a63dada08a5ebef247264ab0e184a92842f626091abded365fc9757a645",
+  "K55/raporlama.py": "a8875fd2aa594df0c4607231923cfe35cc60c451d0999aaa4996d100aceba3dd",
+  "K55/sizinti.py": "e91d969a1e6e749d701c48d88c569173bf8dab9fdf18d9a9311fe5ef04384821",
+  "K55/vekil.py": "277ca0e604d5563a9f0c616c15594ffecfd7882e80386a4d2b2bf1579e49e76e",
+  "K55/veri_kalitesi.py": "76d902dcf2f1d0b193b398092856fdb180e3f3aa2813cb70ce9cee24b9223b74",
+  "K55/veri_paket.py": "7ac39caec38f831cd72f944658384ef29a2c07cbfaf8ebec87aaba7314cfd728",
+  "K55.py": "a2b7495a8ac8fd1a4a9b5c9d4c71089703a836492cda383c17bf23059130ebca",
+  "COL_YOLU_ABD.py": "d0aa94ee5990aff32e077967f847cd67503d359e83fe21db949214aeba61a2b1",
+  "evren_disi_ABD.csv": "0133a39870577b6981ca0860882b82f607f52a9f83f837d2e17ab34f46702f41",
+  "K55/ONKAYIT_K55.md": "e0c60c1e73ced61c13f284da855e1ab1bcd24116147ff9b8f1a3e5953abd634e"
+ },
+ "veri_sha": {
+  "V_ABD.pkl": "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+  "k34_yahoo.pkl": "eab8e2147cd13ecc268b4c92148a4877e3a359f78d5bb3a30e76c9cda413636a",
+  "k34_evren.csv": "e138026a00492c25698dc5464d37c9f56769ab38f3ff1829252cc96c6e4946f1",
+  "endeks.pkl": "7c0dba41ee59d9bf7aab7521a57277c4781f9aaee0965d346ad0e2a8132b906b",
+  "tiingo/": "e552194b4ee4ab0bd780a7d0da0aa6d50fb355b35fa78b28c204b85e7d1ff76d",
+  "sektor_ABD.csv": "f715c532d83cce13c53927a8134442f5f1be60c65322ecc60321f0ad355eef32",
+  "K54_SIRKET_DURUMU.csv": "12512958683276c9565793f3b958c6f2c159318b3bf241ff70597e5d051aed54",
+  "K54_EVREN_ESLESTIRME.csv": "b9a4a338827ead6cbad0e5373fb5bea02fc1fbe90cc74ac96b9003df4f255a9d"
+ },
+ "evren_surum": "0d00d2c976083737da1a60b71e9360ca543c2add2bb31c8db94136e5f4793524",
+ "veri_paketleri": {},
+ "ayar": {
+  "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri",
+  "cikti": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k55/tam3",
+  "k54": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
+  "isci": 4,
+  "tohum": 55,
+  "ornek": null
+ },
+ "python": "3.13.16",
+ "numpy": "2.5.3",
+ "pandas": "3.0.5",
+ "faz": "1-vekil",
+ "hucreler": [
+  "D01-S02",
+  "D01-S05",
+  "D01-S06",
+  "D01-S07",
+  "D01-S08",
+  "D01-S10",
+  "D02-S02",
+  "D02-S05",
+  "D02-S06",
+  "D02-S08",
+  "D03-S02",
+  "D04-S04",
+  "D04-S06",
+  "D05-S01",
+  "D05-S02",
+  "D05-S03",
+  "D05-S04",
+  "D05-S08",
+  "D06-S01",
+  "D06-S03",
+  "D06-S04",
+  "D06-S05",
+  "D06-S09",
+  "D10-S02",
+  "D10-S09",
+  "D10-S10"
+ ],
+ "sure_dk": 12.9
+}

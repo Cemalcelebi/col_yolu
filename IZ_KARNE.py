@@ -902,6 +902,32 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "olay), etiket etkisi (çıkış işlemi) en çok 0,06 puan; ML dört örneklemde AUC 0,512 / 0,513, üst-alt üçte bir farkı +0,3 / +0,4 "
                "puan. 55 ana hücrenin 54'ü SAĞLAM, 1 sınırda ETKİLENMİŞ (P1 2024-26: aralık alt ucu +0,02 -> -0,02 puan, karar TUTMAZ aynı; "
                "C-eski'de de -0,08, yani evren etkisi), 1 GEÇERSİZ (BB / EMA). K51 İZ DEĞİL değişmedi."),
+    _ik_k("Ç138", "2026-10-30", "K55 DALLANMALI İZ ARAMA — FAZ 0 (tam evren) + FAZ 1 (63 OHLCV hücresi, yalnız KEŞİF 2016-21) + vekil kıyası: "
+          "büyük yükselişlerden (Y60 +%30 / Y120 +%50 / Y250 +%100; giriş ertesi gün açılışı; örtüşmez) ÖNCE yalnız o güne kadar bilinen OHLCV "
+          "ölçülerinde (D01 fiyat, D02 hacim, D03 oynaklık, D04 zaman / süre, D05 mikro yapı vekilleri, D06 göreli güç, D10 bileşik) fark var mı? "
+          "A olay öncesi (gün × oynaklık ondalığı z; Cohen d, ay / blok kümeli aralık, AUC, yıl tekrarı, rejim), B eşleşmiş ileri (beşte bir sinyal, "
+          "r60 − kontrol, slot portföyü), C CUSUM; hücre içi Holm + aile BH q 0,10", "K55.py + K55/ (faz0, faz1, vekil; kilit ONKAYIT_K55.md v1.0-v1.4)",
+          "Cemal'in K55 planı (30 Eki) ve 'Tam evren Faz 0 koşusu ve Faz 1 başlatma onayı. Kostur'", "Keşif taraması (iz kararı değil: KEŞİF = A etkisi "
+          "+ FDR + yıl tekrarı ≥ 5 / 6 + rejim tutarlı YA DA B TUTAR; iz için B tutması + İÇ DOĞRULAMA 2022-23 + BAĞIMSIZ 2024-26 gerekir, ikisi "
+          "açılmadı)", "IZ C", 2, cikti="arastirma_cikti/k55_dallanma/tam_evren/K55_FAZ1_RAPOR.md",
+          notu="FAZ 0 (koşu K55-20261030-131453-8e47761, evren sürümü 0d00d2c9): 3.260 sembol (sınıf 1: 2.994, 2: 19, 3: 159, 4: 9, 5: 79); dışlama "
+               "kısa seri 60, fon 7, 4b kesim 9; 22.502 olay (Y60 13.894); veri kalitesi: kullanılabilir 3.012, hatalı 9, yetersiz 242; sızıntı "
+               "testleri (kesme, olumlu / olumsuz kontrol, etiket, eşleşme) geçti. FAZ 1 (K55-20261030-132822-f0034d6, 81,5 dk, 4 işçi; 63 hücre, "
+               "1.318 varyant satırı, HATA 0): KEŞİF 25, REDDEDİLDİ 36, VERİ YETERSİZ 2 (D04-S01, D04-S03; eksik pay > %20). B (ileri getiri) "
+               "HİÇBİR varyantta TUTMAZ (0 / 164; en büyük eşleşmiş fark +0,010, eşik +0,05); KEŞİF'lerin hepsi A'dan. 25 KEŞİF'in 19'u varsayılan "
+               "yönün TERSİNE: olaydan önceki son 5-20 günde hızlanan düşüş (D01-S02 d −0,25, D01-S08 −0,22), zayıf kapanışlar (D05-S01 / S02 / S04 / S08 "
+               "d −0,27 .. −0,40), aşağı günlerde hacim payı yüksek (D02-S02 +0,32), SPY / sektör / IWM'ye göre negatif göreli güç (D06-S01 −0,43, "
+               "D06-S03 −0,39, D06-S09 −0,28). Bu tek bir bilinen tablodur (sert düşüş sonrası tepki; Ç121) ve olay başlangıcı seçiminin (t0 = +%30'u "
+               "ilk yakalayan gün, giriş bir önceki güne göre düşük) mekanik izidir. Yön uyumlu 6: D01-S07 (mum dizisi düzenli, d −0,13), D01-S10 "
+               "(KS sapması +0,12), D02-S06 (olağan dışı hacim günü +0,14), D10-S09 (lider−takipçi +0,25), D10-S10 (Mahalanobis +0,14); hepsi küçük "
+               "etki ve B'de sıfır. VEKİL KIYASI (bölüm 2.7; 26 hücre; r20, r60, mom12_1, dd250, vol60, log_dv20, ar20, hacim oranı; Spearman; 12,9 dk): "
+               "VEKİL 1 (D03-S02 yarı-varyans oranı ← r20 ρ −0,87); eşiğe yakın D06-S09 (r20 +0,79), D10-S09 (r20 −0,79); dd250 katmanlı A'da d'ler "
+               "≈ aynı (düşüş derinliği açıklamıyor). C (CUSUM) yanlış pozitif payı 0,61-0,85, tek başına KEŞİF üretmedi. SONUÇ: Faz 1'de İZ YOK; "
+               "OHLCV'den türetilen 63 ölçünün hiçbiri eşleşmiş kontrole göre ileri 60 gün getirisi vermiyor; A farkları bilinen tersine dönüş + seçim "
+               "etkisi. Dallanma (10 alt hücre) yalnız yön uyumlu ve vekil olmayan 5 hücre için anlamlı, Cemal'in kararı; Faz 2 (D07 / D08: 13F, Form 4) "
+               "ve Faz 3 (D09) Cemal'in onayını bekliyor. Çıktılar: tam_evren/ K55_FAZ0_RAPOR, VERI_KAPSAMI, VERI_KALITESI, EVREN, EVREN_DISI, KESIM, "
+               "K54_TUTARLILIK, OLAYLAR, SIZINTI_TESTI, HUCRE_ISKELE, FAZ1_RAPOR (+ koşu sonrası notlar), ADAYLAR, HUCRE_SONUC, VARYANTLAR, "
+               "COKLU_TEST, VEKIL, KOSU / KOSU_FAZ1 / KOSU_VEKIL json (kod + veri + ayar sha)."),
 ]
 
 
@@ -1435,14 +1461,27 @@ IK_GOREV: List[Dict[str, str]] = [
               "şüpheli sıçrama 11 (muhtemel bölünme 8, açıklanamayan 7; kurumsal işlem verisi YOK -> kesin yok; seriler düzeltmeli, bayrak uyarı); "
               "boşluklu 1 (1 gün); CIK geçerli 50 / 50; sektör boş 5; 4b kesilmiş 2; sonuç penceresi Y250 yeterli 46; sızıntı testleri geçti. Tam evren koşulmadı",
      "durum": "TAMAMLANDI, AÇIK: tam evren koşusu ve Faz 1 Cemal'in onayını bekliyor; kurumsal işlem (bölünme) verisi kaynağı yok (Yahoo splits ücretsiz, karar)"},
+    {"tarih": "2026-10-30", "istek": "Tam evren Faz 0 koşusu ve Faz 1 başlatma onayı. Kostur",
+     "yapilan": "Faz 0 tam evren (v1.3 + veri kalitesi; 3.260 sembol, 22.502 olay, sızıntı testleri geçti, 5 dk); Faz 1 kodu: dal modülleri D01-D06 + "
+                "D10 (63 hücre; D03-S07 kapalı, D04-S10 bilgi, D05-S09 kontrol, D10-S05 / S07 Faz 2), hücre motoru A / B / C varyantlı, blok "
+                "bootstrap, rejim, yıl tekrarı, Holm + BH, eksik payı > %20 -> VERİ YETERSİZ; 50'lik duman koşusu, sonra tam evren Faz 1 (81,5 dk); "
+                "vekil kıyası modülü K55/vekil.py (ön kayıt ek v1.4; python K55.py vekil) ve koşusu (26 hücre, 12,9 dk); koşu sonrası notlar "
+                "(yön uyumu, seçim etkisi, B sonucu) K55_FAZ1_RAPOR.md sonunda; test_k55 30/30; IZ_KARNE Ç138; çıktılar arastirma_cikti/k55_dallanma/tam_evren/",
+     "sonuc": "63 hücre: KEŞİF 25, REDDEDİLDİ 36, VERİ YETERSİZ 2, HATA 0. B (eşleşmiş ileri getiri) hiçbir varyantta tutmadı (0 / 164). 25 KEŞİF'in "
+              "19'u ters yönlü (sert düşüş sonrası tepki + olay başlangıcı seçim etkisi), yön uyumlu 5'i küçük etkili; VEKİL 1 (D03-S02 ← r20). "
+              "FAZ 1'DE İZ YOK. Drive OUTPUT'a yükleme Colab'dan (connector büyük dosyada güvenilmez)",
+     "durum": "TAMAMLANDI, AÇIK: dallanma (yön uyumlu 5 hücre) ve İÇ DOĞRULAMA açılsın mı, Faz 2 (13F / Form 4) ve Faz 3 (D09) Cemal'in kararı; "
+              "bölünme verisi kaynağı; Kasım Tiingo kotası; IZ_DEFTERI Drive kopyası (DRIVE maddesi)"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
     "K54 (ek 8 düzeltilmiş koşu dahil): evren düzeltmesi sonuçları değiştirmiyor (55 ana hücrenin 54'ü SAĞLAM; evren etkisi <= 1,1 puan, etiket "
     "etkisi <= 0,06 puan), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama evren çoğunlukla hayatta kalanlardan (266 çıkış / "
     "3.267); 7 fon (6 emtia / döviz ETF'si + BTCW) 30 Eki'de evren_disi_ABD.csv ile evrenden çıkarıldı, sonraki koşular fonsuz. K55 DALLANMALI İZ ARAMA: "
-    "plan (K55_PLAN.md) ve Faz 0 altyapısı (K55/, kilit ONKAYIT_K55.md, sızıntı testleri geçti, tam evren 3,2 dk) bitti; Faz 1 (80 OHLCV hücresi, "
-    "yalnız KEŞİF 2016-21) Cemal'in 'Faz 1 başlat' onayını bekliyor. Olası devam (Cemal'in kararı): (1) ileri "
+    "plan (K55_PLAN.md), Faz 0 (tam evren 3.260 sembol, 22.502 olay) ve Faz 1 (63 OHLCV hücresi, yalnız KEŞİF 2016-21; Ç138) bitti: KEŞİF 25 / "
+    "REDDEDİLDİ 36 / VERİ YETERSİZ 2, ama B (eşleşmiş ileri getiri) 0 / 164 TUTMAZ -> Faz 1'de İZ YOK; KEŞİF'lerin 19'u ters yönlü (sert düşüş sonrası "
+    "tepki + olay başlangıcı seçim etkisi), vekil 1 (D03-S02 ← r20). KARAR (Cemal): (a) yön uyumlu 5 hücrede (D01-S07, D01-S10, D02-S06, D10-S09, "
+    "D10-S10) dallanma + İÇ DOĞRULAMA açılsın mı, (b) Faz 2 D07 / D08 (13F, Form 4 indirme; SEC e-postası) ve Faz 3 D09, (c) dur. Olası devam: (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "

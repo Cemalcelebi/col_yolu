@@ -1,0 +1,27 @@
+# K55 — ADAYLAR (KEŞİF; dallanma ve İÇ DOĞRULAMA bekliyor)
+
+- D01-S02: Düşüş hızı değişiyor mu? (son p gün eğimi − önceki p gün eğimi) — A D01-S02|5 d -0.251 q +0.015; B D01-S02|10 fark -0.000 q +1.000
+- D01-S05: Getiri asimetrisi (p gün çarpıklık) — A D01-S05|20 d -0.121 q +0.015; B D01-S05|60 fark +0.001 q +1.000
+- D01-S07: Mum dizisinin düzeni (p gün yön dizisi entropisi; düşük = düzenli) — A D01-S07|5 d -0.126 q +0.015; B D01-S07|40 fark +0.004 q +0.733
+- D01-S08: Son sert düşüşün geri alınan payı (p gün) — A D01-S08|20 d -0.215 q +0.015; B D01-S08|60 fark +0.001 q +1.000
+- D01-S10: Hisse kendi normalinden saptı mı? (son p gün getirisi vs önceki 120 gün, KS) — A D01-S10|20 d +0.123 q +0.015; B D01-S10|60 fark +0.004 q +0.728
+- D02-S02: Aşağı günlerin hacim payı (p gün; düşük = satıcı zayıf) — A D02-S02|5 d +0.319 q +0.011; B D02-S02|40 fark +0.005 q +1.000
+- D02-S05: Hacim zamana nasıl yayılmış? (p gün Gini; düşük = yayılmış) — A D02-S05|20 d +0.110 q +0.011; B D02-S05|40 fark +0.001 q +1.000
+- D02-S06: Olağan dışı hacim günleri sayısı (p gün; > 2 × 20 gün medyan) — A D02-S06|5 d +0.144 q +0.011; B D02-S06|20 fark +0.003 q +1.000
+- D02-S08: Satıcı tükenmesi: hacim azalıyor, fiyat düşmüyor (p gün) — A D02-S08|5 d -0.386 q +0.011; B D02-S08|60 fark +0.003 q +1.000
+- D03-S02: Aşağı / yukarı yarı-varyans oranı (p gün; düşük = aşağı sakin) — A D03-S02|20 d +0.220 q +0.017; B D03-S02|60 fark +0.003 q +0.673
+- D04-S04: Büyük hareketler arası boşluk (son büyük hareketten bu yana süre × sıklık) — A D04-S04|tek d -0.105 q +0.004; B D04-S04|tek fark +0.003 q +0.622
+- D04-S06: Kanalda bekleme süresi (son 20 gün kanal kırılımından bu yana gün) — A D04-S06|tek d -0.196 q +0.004; B D04-S06|tek fark +0.001 q +0.622
+- D05-S01: Kapanış gün içi nerede? ((C−L)/(H−L), p gün ortalama) — A D05-S01|5 d -0.324 q +0.011; B D05-S01|60 fark +0.006 q +0.090
+- D05-S02: Gövde yönü ve payı ((C−O)/(H−L), p gün) — A D05-S02|5 d -0.396 q +0.011; B D05-S02|60 fark +0.006 q +0.188
+- D05-S03: Gün içi aralık (p / 120 gün) — A D05-S03|5 d +0.177 q +0.011; B D05-S03|40 fark +0.006 q +0.229
+- D05-S04: Kapanışa doğru davranış VEKİLİ (C > (H+L)/2 günlerin payı, p gün) — A D05-S04|5 d -0.268 q +0.011; B D05-S04|60 fark +0.004 q +0.707
+- D05-S08: Alış–satış dengesizliği VEKİLİ (işaretli hacim payı, p gün) — A D05-S08|5 d -0.336 q +0.011; B D05-S08|40 fark +0.004 q +0.928
+- D06-S01: Göreli güç ivmesi (p gün RS − 60 gün RS'nin p payı) — A D06-S01|5 d -0.433 q +0.015; B D06-S01|40 fark -0.002 q +1.000
+- D06-S03: Sektörden ayrışma (hisse − sektör sepeti, p gün) — A D06-S03|5 d -0.391 q +0.015; B D06-S03|60 fark +0.006 q +0.558
+- D06-S04: Sektör içi sıra değişimi (r60 sektör yüzdeliğinin p gün değişimi; kesitsel) — A D06-S04|20 d -0.159 q +0.015; B D06-S04|60 fark -0.001 q +1.000
+- D06-S05: Endeksten önce dip (60 gün: SPY dip günü − hisse dip günü) — A D06-S05|tek d -0.174 q +0.015; B D06-S05|tek fark +0.006 q +0.120
+- D06-S09: Küçüklere göre konum (IWM'ye göre p gün) — A D06-S09|20 d -0.278 q +0.015; B D06-S09|60 fark +0.004 q +0.643
+- D10-S02: Vol düşerken göreli güç yükseliyor (D03-S01 düşük VE D06-S01 yüksek) — A D10-S02|tek d -0.177 q +0.002; B D10-S02|tek fark +0.002 q +0.348
+- D10-S09: Lider–takipçi gecikmesi (sektör liderleri 20 gün getirisi − hisse 20 gün getirisi) — A D10-S09|tek d +0.252 q +0.002; B D10-S09|tek fark -0.002 q +0.722
+- D10-S10: Çok değişkenli sapma (8 temel ölçünün kendi 250 gün geçmişine köşegen Mahalanobis uzaklığı) — A D10-S10|tek d +0.140 q +0.002; B D10-S10|tek fark -0.001 q +0.701

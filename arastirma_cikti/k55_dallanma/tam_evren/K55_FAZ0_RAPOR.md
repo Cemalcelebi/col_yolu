@@ -1,31 +1,32 @@
-# K55 — FAZ 0 RAPORU (K55-20261030-115506-8bed3ef)
+# K55 — FAZ 0 RAPORU (K55-20261030-131453-8e47761)
 
-- Kod K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi); commit 8bed3ef; kilit sha 142d57ec3ef0; ayar sha 1f994b8d8ea9; kod dosyası sha 18 adet, veri dosyası sha 8 adet (K55_KOSU.json); evren sürümü 811989df4fda; örnek: tam evren; veri paketleri: {}.
+- Kod K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi); commit 8e47761; kilit sha 87bf7f6c0777; ayar sha 1f994b8d8ea9; kod dosyası sha 18 adet, veri dosyası sha 8 adet (K55_KOSU.json); evren sürümü 0d00d2c97608; örnek: tam evren; veri paketleri: {}.
 - Faz 0 amacı altyapıyı kanıtlamaktır; hücre sonuçları iskele denetimidir, iz iddiası değildir (optimize edilmedi).
 
 ## Cemal'in 7 sorusu
 
-1. Kaç hisse eksiksiz işlendi? 3012 / 3260 (eksiksiz = ≥ 260 gün, boşluksuz, sıfır hacim payı ≤ %20, OHLC hatasız, yinelenen tarih yok; sert hareket bayrağı bilgi, eksiksizliğe girmez).
-2. Kaç hissede tarihsel veri eksik? 242 (boşluklu 86, kısa seri 0, sıfır hacim yüksek 179); yükleyici dışı kısa geçmişli (< 320 gün, VERİ YETERSİZ, K55_EVREN_DISI_KISA.csv) 60; özellik için yeterli (≥ 320 gün) 3260; sert hareketli (bilgi, bölünme değil) 738, aşırı getirili 704, OHLC hatalı 9.
-3. Kaç sembol şirketle güvenilir eşleştirildi? CIK eşleşen 3259 / 3260; sektör bilinen 3235; K54 sınıfı olmayan (doğrulanamayan) semboller evren dışı.
-4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten 266; sınıf dağılımı {1: 2994, 2: 19, 3: 159, 4: 9, 5: 79}; seri sonu işlemi {'k51': 3082, 'd0': 159, 'd100': 19} (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).
+1. Kaç hisse eksiksiz işlendi? Veri hatası ve veri yetersizliği olmayan (kullanılabilir) 3012 / 3260. Veri hatalı 9 (sırasız 0, yinelenen işlem günü 0, takvim dışı satır 0, NaN fiyat 0, sıfır / negatif fiyat 0, negatif hacim 0, OHLC ilişki 2 / 7 / 0); veri yetersiz 242; olağan piyasa davranışı (bilgi, hata değil) 1067; şüpheli sıçrama 499 (muhtemel bölünme 352, açıklanamayan 317; kurumsal işlem verisi YOK, kesin sınıflandırma yapılmadı).
+2. Kaç hissede tarihsel veri eksik? Fiyat yok 0, boş seri 0, kısa seri (< 320) 0, ciddi boşluklu (> 5 işlem günü) 86 (boşluklu 162, eksik işlem günü toplam 18007, en uzun 849; ABD işlem takvimi, tatiller eksik sayılmaz), eksik hacim payı yüksek 0, sıfır hacim payı yüksek 179; K54 kesilmiş seri 9; yükleyici dışı kısa geçmişli 60 (K55_EVREN_DISI.csv); özellik penceresi yeterli 3260, sonuç penceresi yeterli Y60 3260 / Y120 3235 / Y250 3129; olay penceresi eksik 0; dönem kapsamı {'KESIF': 2978, 'IC_DOGRULAMA': 3143, 'BAGIMSIZ': 3126}.
+3. Kaç sembol şirketle güvenilir eşleştirildi? CIK geçerli 3259 / 3260 (boş 1, geçersiz 0, bir CIK'ye birden fazla sembol 8, sembol yeniden kullanımı (4b) 9); şirket adı boş 1; sektör bilinen 3098 (boş / NaN 162); seri_erken geçersiz 0; EV yinelenen 0; V'de fazla 0.
+3b. Evren dışı kalanlar (kategori ayrı; K55_EVREN_DISI.csv): {'kisa_seri_yukleyici': 60, 'fon_evren_disi': 7, 'eslesme_yok_cik': 1}. V / EV çift yönlü tutarlılık: {'ev_serisiz': [], 'v_fazla': [], 'bos_seri': [], 'kesim_sonrasi_satir': [], 'gecti': True}.
+4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten 266; sınıf dağılımı {1: 2994, 2: 19, 3: 159, 4: 9, 5: 79} (4a 0, 4b 9); seri sonu işlemi (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).
 5. Gelecek bilgisi sızıntısı testleri geçti mi? EVET — a_kesme_testi: geçti; a2_kesme_dedektor: geçti; d_olay_etiketi: geçti; b_olumlu_kontrol: geçti; c_olumsuz_kontrol: geçti; e_eslesme: geçti.
-6. Denemede bütün modüller doğru çalıştı mı? EVET — evren: 3260 sembol; veri_kalitesi: eksiksiz 3012 / 3260; panel: 4909423 satır, 3291650 likit; olaylar: 22502 olay, tekillik geçti; sizinti: hepsi geçti; hucre_motoru: 3 satır (A / B / C), hata yok.
-7. Tam evren koşusunun tahmini süresi ve kaynağı: {'sembol': 3260, 'panel_satir_tahmini': 4909423, 'bellek_GB_tahmini': 0.59, 'panel_sn': 69.0, 'olaylar_sn': 7.0, 'sizinti_sn': 31.0, 'hucre_basina_sn_tahmini': 27.0, 'isci': 4, 'not': 'Faz 1 = 80 OHLCV hücresi × (5 pencere) × 3 yöntem; bootstrap 2.000'}.
+6. Denemede bütün modüller doğru çalıştı mı? EVET — evren: 3260 sembol; dışlama {'kisa_seri_yukleyici': 60, 'fon_evren_disi': 7, 'eslesme_yok_cik': 1}; 4b kesim 9; V/EV tutarlılık geçti; panel: 4909423 satır, 3291650 likit; olaylar: 22502 olay, tekillik geçti; veri_kalitesi: kullanılabilir 3012 / 3260; veri hatalı 9; veri yetersiz 242; sizinti: hepsi geçti; hucre_motoru: 3 satır (A / B / C), hata yok.
+7. Tam evren koşusunun tahmini süresi ve kaynağı: {'sembol': 3260, 'panel_satir_tahmini': 4909423, 'bellek_GB_tahmini': 0.59, 'panel_sn': 59.0, 'olaylar_sn': 4.0, 'sizinti_sn': 46.0, 'hucre_basina_sn_tahmini': 31.0, 'isci': 4, 'not': 'Faz 1 = 80 OHLCV hücresi × (5 pencere) × 3 yöntem; bootstrap 2.000'}.
 
 ## Süreler (sn)
 
-- veri_sha: 0.3
-- evren: 10.7
-- kalite: 56.4
-- panel: 69.2
-- olaylar: 6.7
-- sizinti: 31.4
-- hucre_iskele: 27.4
+- veri_sha: 1.5
+- evren: 11.6
+- panel: 58.7
+- olaylar: 4.2
+- kalite: 127.2
+- sizinti: 45.9
+- hucre_iskele: 31.1
 
 ## Panel
 
-- sure_sn: 69.2
+- sure_sn: 58.7
 - sembol: 3260
 - satir: 4909423
 - likit_satir: 3291650
@@ -35,6 +36,20 @@
 - donem250_purge_embargo: {'KESIF': 937262, 'PURGE': 811871, 'BAGIMSIZ': 621558, 'TANIMSIZ': 405934, 'IC_DOGRULAMA': 364285, 'DISI': 120751, 'EMBARGO': 29989}
 - ozelliksiz_satir_toplam: 847600
 - atlanan: 0
+
+## 4b kod yeniden kullanımı kesimi (kesim öncesi / sonrası satır; kesim günü işlem günü mü)
+
+| sembol | kesim | kesim_islem_gunu | etkin_kesim | once | sonra | atilan |
+|---|---|---|---|---|---|---|
+| ARIS | 2025-12-09 | True | 2025-12-09 | 2830 | 2649 | 181 |
+| UNIT | 2025-11-28 | True | 2025-11-28 | 2830 | 2642 | 188 |
+| AXP | 2022-02-25 | True | 2022-02-25 | 1485 | 354 | 1131 |
+| BG | 2024-02-23 | True | 2024-02-23 | 1485 | 854 | 631 |
+| KNDI | 2024-07-12 | True | 2024-07-12 | 1485 | 950 | 535 |
+| ZYME | 2022-12-02 | True | 2022-12-02 | 1485 | 548 | 937 |
+| NE | 2022-12-07 | True | 2022-12-07 | 1313 | 379 | 934 |
+| LOGC | 2025-09-06 | False | 2025-09-05 | 1421 | 1185 | 236 |
+| HCIC | 2023-03-09 | False | 2022-12-21 | 561 | 454 | 107 |
 
 ## Olay tekilliği ve dönem (purge / embargo) dağılımı
 
@@ -58,14 +73,4 @@
 
 ## Çıktılar
 
-- K55_VERI_KALITESI.csv, K55_VERI_KAPSAMI.md, K55_EVREN.csv, K55_EVREN_DISI_KISA.csv, K55_OLAYLAR.csv.gz, K55_SIZINTI_TESTI.md, K55_HUCRE_ISKELE.csv, K55_COKLU_TEST.csv, K55_KOSU.json (kod / veri / ayar sha), panel/ pickle (repoya girmez).
-
-## 9. Notlar (koşudan sonra, Claude; ön kayıt v1.2 ile yeniden koşu; kararlar ve kilit değişmedi)
-
-- Bu koşu Cemal'in 9 maddelik denetiminden sonra v1.2 kodla (commit 8bed3ef, git ağacı temiz, kilit sha 142d57ec…, ayar sha 1f994b8d…, 18 kod ve 8 veri dosyası sha256'sı K55_KOSU.json'da) yapıldı; önceki koşu (c5304ae) geçersiz sayılır.
-- Purge / embargo etkisi: likit satırların Y60 için 303.056'sı PURGE, 29.989'u EMBARGO; Y250 için 811.871 PURGE. Olaylar: Y60 KEŞİF 4.292 (PURGE 1.427), Y120 KEŞİF 2.062 (PURGE 937), Y250 KEŞİF 895 (PURGE 570). Dönem sınırını aşan pencereler hiçbir döneme girmiyor.
-- Eksiksiz 3.012 / 3.260: v1.2'de "sert hareket" bayrağı (738 sembol; bölünme değil haber günü hareketi) eksiksizlik tanımından çıkarıldı, bilgi sütunu oldu. Kalan eksikler: sıfır hacim payı yüksek 179 (çoğu Tiingo / pembe tahta), boşluklu 86, OHLC hatalı 9. Yükleyici dışı kısa geçmişli 60 sembol K55_EVREN_DISI_KISA.csv'de (silinmedi; VERİ YETERSİZ).
-- Sızıntı testleri geçti: olumlu kontrol d +1,18 / AUC 0,83; olumsuz kontrol d −0,003, aralık sıfırı kapsıyor, AUC 0,50 (tohumlu, tekrar üretilebilir); kesme testi 0 hata; eşleşmeler tolerans içinde (eşleşmeyen pay %17; purge sonrası havuz küçüldü, 50 hisselik denemede %94).
-- Hücre iskelesi D01-S01 (KEŞİF, Y60, purge sonrası): A ETKİ YOK (d +0,02; ay ve blok aralıkları sıfırı kapsıyor), C ETKİ YOK (lift 1,02), B TUTMAZ. Pipeline denetimi; iz sonucu değil. Çoklu test yükü bu koşuda 1 test (iskele); Faz 1'de aile başına yük K55_COKLU_TEST.csv'de.
-- Süre: 3,5 dk (veri sha 0,3 sn, evren 11 sn, kalite 56 sn, panel 69 sn, olaylar 7 sn, sızıntı 31 sn, iskele 27 sn); panel 4,9 M satır, 0,6 GB. Faz 1 tahmini: 80 hücre × 5 pencere × 3 yöntem ≈ 27 s / varyant → ~3 saat (KEŞİF), 4 işçi, 16 GB yeter.
-- BAĞIMSIZ dönem açılmadı; İÇ DOĞRULAMA yalnız sentetik kontrol değişkenlerinde kullanıldı; Tiingo indirme kapalı (ağdan veri çekilmedi); K51-K54 çıktı klasörüne yazılmadı (yol denetimi).
+- K55_VERI_KALITESI.csv, K55_VERI_KAPSAMI.md, K55_EVREN.csv, K55_EVREN_DISI.csv (kategori ayrı), K55_KESIM.csv, K55_K54_TUTARLILIK.csv, K55_ORNEKLEM.csv, K55_OLAYLAR.csv.gz, K55_SIZINTI_TESTI.md, K55_HUCRE_ISKELE.csv, K55_COKLU_TEST.csv, K55_KOSU.json (kod / veri / ayar sha), panel/ pickle (repoya girmez).

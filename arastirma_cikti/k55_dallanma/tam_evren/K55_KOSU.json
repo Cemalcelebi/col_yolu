@@ -1,9 +1,9 @@
 {
- "kimlik": "K55-20261030-115506-8bed3ef",
+ "kimlik": "K55-20261030-131453-8e47761",
  "kod_surum": "K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi)",
- "commit": "8bed3ef",
+ "commit": "8e47761",
  "git_kirli": [],
- "onkayit_sha": "142d57ec3ef05a8c045bae02bf070783e04b46d53b11e1f2a08b5538fdcd06d5",
+ "onkayit_sha": "87bf7f6c0777c032a46e941467f0bb0f1af2d2ee1c654efe802629e69caf582b",
  "ayar_sha": "1f994b8d8ea9601009a285f006f43be0aee1775218a2d5f3123189f74e141cc5",
  "ayarlar": {
   "DONEM": {
@@ -64,22 +64,22 @@
  "kod_sha": {
   "K55/__init__.py": "5486d82cbda87a77d1d405095272d510dd492ca456f19e749a93d5c1fbfc7025",
   "K55/eslestirme.py": "46ed9c2b7054286e951530a83446be60c008b9c3af00daf49aab45b99304cd7f",
-  "K55/evren.py": "cd6dcacb05a1372c3fa2e989b1650a52d278dec5ea54c081b7108068d40cba89",
-  "K55/faz0.py": "7407d2c44adb8ce5b42d51720bacb93c775929eb3f8feab93764be65936f0c77",
+  "K55/evren.py": "62ddb8d0c749a68fe3992fde8397ba24763f7e2af1e9e91f148b7c0cdca528b1",
+  "K55/faz0.py": "34b06fe221790252dff62da0fbc098948adadb25068b0c13ebb8ab8eea9d012f",
   "K55/hucre.py": "c6fe7dc1d985f94b533e9bbd9497cadbf0776b7f3a21db1a3ed4dce7528b6065",
   "K55/hucreler.py": "373d335fbb4158cec6de1fb302d819ee364c4403f11d48707ae21a9248367763",
   "K55/istatistik.py": "f8f0a240486043c0d574b6155c6cc1d4414b62ff45b2ddd87a23e46d191bead7",
   "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4",
   "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
-  "K55/panel.py": "e0335c55fd072dc75a80de32a13dc19df6a65059b31c0ed31c707f2da0ea8178",
-  "K55/raporlama.py": "37764a2f2739f8da315d3269a3cf64940a10bed66531d435432090ddbccf31c6",
+  "K55/panel.py": "bae62a63dada08a5ebef247264ab0e184a92842f626091abded365fc9757a645",
+  "K55/raporlama.py": "7e8bf4fc16d8589a9a6ce16e590e95929cb8859798f73fac8c29451d420d43cc",
   "K55/sizinti.py": "e91d969a1e6e749d701c48d88c569173bf8dab9fdf18d9a9311fe5ef04384821",
-  "K55/veri_kalitesi.py": "95d13186b5fb7a19c408c9e1f68ca6258064b07580f88dc629169644d5b77c70",
+  "K55/veri_kalitesi.py": "76d902dcf2f1d0b193b398092856fdb180e3f3aa2813cb70ce9cee24b9223b74",
   "K55/veri_paket.py": "7ac39caec38f831cd72f944658384ef29a2c07cbfaf8ebec87aaba7314cfd728",
   "K55.py": "d3da6a6e450f678cf3a670c548e07e1c3aa3b0fa8c7cc7ce7af5f4791d5a810d",
   "COL_YOLU_ABD.py": "d0aa94ee5990aff32e077967f847cd67503d359e83fe21db949214aeba61a2b1",
   "evren_disi_ABD.csv": "0133a39870577b6981ca0860882b82f607f52a9f83f837d2e17ab34f46702f41",
-  "K55/ONKAYIT_K55.md": "142d57ec3ef05a8c045bae02bf070783e04b46d53b11e1f2a08b5538fdcd06d5"
+  "K55/ONKAYIT_K55.md": "87bf7f6c0777c032a46e941467f0bb0f1af2d2ee1c654efe802629e69caf582b"
  },
  "veri_sha": {
   "V_ABD.pkl": "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
@@ -91,11 +91,11 @@
   "K54_SIRKET_DURUMU.csv": "12512958683276c9565793f3b958c6f2c159318b3bf241ff70597e5d051aed54",
   "K54_EVREN_ESLESTIRME.csv": "b9a4a338827ead6cbad0e5373fb5bea02fc1fbe90cc74ac96b9003df4f255a9d"
  },
- "evren_surum": "811989df4fda621fcb2a297b2e2bb474e0a913c83e65dd1ec027903439774169",
+ "evren_surum": "0d00d2c976083737da1a60b71e9360ca543c2add2bb31c8db94136e5f4793524",
  "veri_paketleri": {},
  "ayar": {
   "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri",
-  "cikti": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k55/tam2",
+  "cikti": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k55/tam3",
   "k54": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
   "isci": 4,
   "tohum": 55,
@@ -103,5 +103,10 @@
  },
  "python": "3.13.16",
  "numpy": "2.5.3",
- "pandas": "3.0.5"
+ "pandas": "3.0.5",
+ "evren_dosya_sha": {
+  "K54_SIRKET_DURUMU.csv": "12512958683276c9565793f3b958c6f2c159318b3bf241ff70597e5d051aed54",
+  "K54_EVREN_ESLESTIRME.csv": "b9a4a338827ead6cbad0e5373fb5bea02fc1fbe90cc74ac96b9003df4f255a9d",
+  "evren_disi_ABD.csv": "0133a39870577b6981ca0860882b82f607f52a9f83f837d2e17ab34f46702f41"
+ }
 }
