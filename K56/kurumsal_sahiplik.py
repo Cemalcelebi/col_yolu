@@ -36,7 +36,7 @@ def _ceyrek(u: str) -> str:
 
 
 def openfigi_esle(ist: Istemci, cusipler: List[str]) -> pd.DataFrame:
-    """CUSIP -> (securityType 'Common Stock' ve exchCode 'US' olan) güncel ABD sembolü. Anahtarsız: istek başına en çok 10 kimlik, 25 istek / dk."""
+    """CUSIP -> (securityType Common Stock / REIT / ADR / MLP ve exchCode 'US' olan) güncel ABD sembolü. Anahtarsız: istek başına en çok 10 kimlik, 25 istek / dk."""
     import json
     rows = []
     for i in range(0, len(cusipler), 10):
@@ -45,7 +45,7 @@ def openfigi_esle(ist: Istemci, cusipler: List[str]) -> pd.DataFrame:
                          ek_baslik={"Content-Type": "application/json"}, sinir=2_000_000)
         J = json.loads(j.decode()) if d == 200 else [{}] * len(parca)
         for c, x in zip(parca, J):
-            us = [y for y in (x.get("data") or []) if y.get("exchCode") == "US" and "Common Stock" in str(y.get("securityType", ""))] if isinstance(x, dict) else []
+            us = [y for y in (x.get("data") or []) if y.get("exchCode") == "US" and str(y.get("securityType", "")) in ("Common Stock", "REIT", "ADR", "MLP")] if isinstance(x, dict) else []
             rows.append({"cusip": c, "ticker_us": us[0].get("ticker") if us else None, "listeleme": len(x.get("data") or []) if isinstance(x, dict) else 0, "http": d})
     return pd.DataFrame(rows)
 
@@ -74,7 +74,8 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
             if len(m):
                 R = openfigi_esle(ist, list(m.CUSIP.str.upper())); R["sembol"] = list(m.SYMBOL); dogru = R[R.ticker_us == R.sembol]
                 out.append(erisim_satiri(MODUL, "OPENFIGI", "örneklem CUSIP'i (FTD 2016-01) -> sembol geri eşleme", "GECTI" if len(dogru) >= 0.6 * len(R) else "KISMI", "doğru / bulunan",
-                                         f"{len(dogru)}/{len(R)}", "; ".join(f"{r.sembol}:{r.cusip}->{r.ticker_us}" for r in R.itertuples())[:400], OPENFIGI))
+                                         f"{len(dogru)}/{len(R)}", "; ".join(f"{r.sembol}:{r.cusip}->{r.ticker_us}" for r in R.itertuples())[:400]
+                                         + "; bulunamayanlar: yeniden yapılanma / satın almayla kapanmış eski CUSIP (APO 2016, AERI) — OpenFIGI tarihli eşleme vermez", OPENFIGI))
     except Exception as ex:
         out.append(erisim_satiri(MODUL, "OPENFIGI", "örneklem CUSIP geri eşleme", "BASARISIZ", ayrinti=f"{type(ex).__name__}: {ex}"))
     # 1) 13F veri seti listesi ve KEŞİF çeyrek boyları
@@ -99,7 +100,7 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame) -> List[Dict[str
                 if cus:
                     R = openfigi_esle(ist, cus); ok = R[R.ticker_us.notna()]
                     out.append(erisim_satiri(MODUL, "OPENFIGI", "13F adi hisse CUSIP'i -> ABD sembolü (10 kimlik, anahtarsız)", "GECTI" if len(ok) >= 6 else ("KISMI" if len(ok) else "BASARISIZ"),
-                                             "Common Stock + exchCode US eşleşen / 10", len(ok), "; ".join(f"{r.cusip}->{r.ticker_us}" for r in ok.itertuples())[:400]
+                                             "adi hisse / REIT + exchCode US eşleşen / 10", len(ok), "; ".join(f"{r.cusip}->{r.ticker_us}" for r in ok.itertuples())[:400]
                                              + "; NOT: OpenFIGI GÜNCEL sembolü döndürür (tarihli değil); tarihli ad için SEC 13(f) listesi", OPENFIGI))
             else:
                 out.append(erisim_satiri(MODUL, "SEC_13F_DS", "zip içeriği (Range)", "BASARISIZ", ayrinti=str(L.to_dict()), url=u))
