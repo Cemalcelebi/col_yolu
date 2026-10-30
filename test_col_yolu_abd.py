@@ -240,6 +240,26 @@ def sina():
     bek = np.std([12.0, 9.0, 15.0]) / 12.0
     if not (n25 == 3 and abs(a25 - bek) < 1e-9 and np.isnan(C.cy_v14_ade(g25[g25.kurum_n != "CITI"], np.datetime64("2024-03-01"))[0])):
         hata.append(f"25) v1.4 ADE yanlış: {a25} {n25} (beklenen {bek})")
+    # ---------------- v1.5 (K54 evren sınıflandırması)
+    # 28) sınıflandırma kuralları (sentetik SEC özeti): 1 aktif, 2 iflas (8-K 1.03), 3 satın alma (2.01 + DEFM14A), 4a devam eden şirket, 4b kod yeniden kullanımı, 5 belirsiz, 6 doğrulanamayan
+    def sec28(forms, dates, items=None):
+        return {"name": "X", "tickers": ["XX"], "formerNames": [], "form": forms, "date": dates, "items": items or [""] * len(forms)}
+    ti = {"endDate": "2026-10-29", "exchange": "NASDAQ"}
+    r1 = C.cy_v15_sinifla("XX", "2026-08-28", 1, sec28(["10-Q"], ["2026-06-01"]), ti, 1)
+    r2 = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["8-K", "10-Q"], ["2021-02-15", "2020-11-10"], ["1.03,9.01", ""]), {"endDate": "2021-03-10", "exchange": "NASDAQ"}, None)
+    r3 = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["8-K", "DEFM14A", "10-Q"], ["2021-03-20", "2020-12-01", "2020-11-10"], ["2.01,9.01", "", ""]), None, None)
+    r4a = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["10-Q", "10-K", "10-Q"], ["2023-05-10", "2022-03-01", "2020-11-10"]), None, 1)
+    r4b = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["10-Q", "10-Q"], ["2020-06-30", "2020-03-31"]), None, 999)
+    r5 = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["15-12G", "10-Q"], ["2021-04-01", "2020-11-10"]), None, None)
+    r6 = C.cy_v15_sinifla("XX", "2021-03-10", None, None, None, None)
+    bek = [(r1, 1, "y"), (r2, 2, "y_d100"), (r3, 3, "y_d0"), (r4a, 4, "y_d0"), (r4b, 4, "y_kes"), (r5, 5, "y"), (r6, 6, "y")]
+    if not all(r["sinif"] == sn and r["cikis_islemi"] == isl for r, sn, isl in bek) or r4b["kesim_tarihi"] != "2020-10-28" or r2["b103_tarih"] != "2021-02-15":
+        hata.append("28) v1.5 sınıflandırma yanlış: " + "; ".join(f"{r['sinif']}/{r['cikis_islemi']} (bek {sn}/{isl})" for r, sn, isl in bek) + f" kes={r4b['kesim_tarihi']} b103={r2['b103_tarih']}")
+    # 29) değerlendirme sınıfları
+    e29 = {"n": 100, "fark": 0.03, "fark_alt": 0.01, "fark_ust": 0.05, "karar": "TUTMAZ"}; y29 = {"n": 95, "fark": 0.04, "fark_alt": 0.02, "fark_ust": 0.06, "karar": "TUTMAZ"}
+    y29b = {"n": 95, "fark": 0.08, "fark_alt": 0.06, "fark_ust": 0.10, "karar": "TUTAR"}
+    if not (C.cy_v15_degerlendir(e29, y29, 0.1, C.CY_V15) == "SAĞLAM" and C.cy_v15_degerlendir(e29, y29b, 0.1, C.CY_V15) == "ETKİLENMİŞ" and C.cy_v15_degerlendir(e29, y29, 0.5, C.CY_V15).startswith("GEÇERSİZ")):
+        hata.append(f"29) v1.5 değerlendirme yanlış: {C.cy_v15_degerlendir(e29, y29, 0.1, C.CY_V15)} {C.cy_v15_degerlendir(e29, y29b, 0.1, C.CY_V15)}")
     return hata
 
 
@@ -247,4 +267,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 27/27 OK")
+    print("test_col_yolu_abd: 29/29 OK")
