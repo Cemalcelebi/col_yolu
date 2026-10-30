@@ -67,13 +67,13 @@ def faz0(A: Optional[K55Ayar] = None, paketler: Optional[Dict[str, str]] = None)
     A = A or K55Ayar(); gunluk_log(); A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True)    # v1.2 madde 8: çıkış yolu denetimi
     sure: Dict[str, float] = {}; durum: Dict[str, str] = {}; rng = np.random.default_rng(A.tohum)
     t = time.time(); vsha = veri_sha(A); sure["veri_sha"] = round(time.time() - t, 1)                      # v1.2 madde 4: veri sha zorunlu (eksik -> durur)
-    t = time.time(); V, EV, surum = evren_kur(A)
+    t = time.time(); V, EV, surum, kisa = evren_kur(A)
     tam_n = len(EV)
     if A.ornek:
         EVo = ornek_sec(EV, A.ornek, A.tohum); V, EV = evren_daralt(V, EV, EVo); log.info("deneme örneklemi: %d sembol %s", len(EV), EV.sinif.value_counts().sort_index().to_dict())
     sure["evren"] = round(time.time() - t, 1); durum["evren"] = f"{len(EV)} sembol"
     kimlik = kosu_kimligi(A, surum, paketler, vsha)
-    kisa = EV.attrs.get("kisa_seri", pd.DataFrame()); kisa.to_csv(os.path.join(A.cikti, "K55_EVREN_DISI_KISA.csv"), index=False)
+    kisa.to_csv(os.path.join(A.cikti, "K55_EVREN_DISI_KISA.csv"), index=False)
     t = time.time(); Q, ozet = evren_kalite(V, EV); Q.to_csv(os.path.join(A.cikti, "K55_VERI_KALITESI.csv"), index=False); ozet["kisa_seri_yukleyici_disi"] = int(len(kisa))
     EV.to_csv(os.path.join(A.cikti, "K55_EVREN.csv"), index=False); sure["kalite"] = round(time.time() - t, 1); durum["veri_kalitesi"] = f"eksiksiz {ozet['eksiksiz']} / {ozet['sembol']}"
     C = cy(); Ac = C.CYAyar(veri=A.veri, cikti=A.cikti, pazarlar=("ABD",)); endeks = C.cy_endeks(Ac, C.CY)
