@@ -252,9 +252,32 @@ def sina():
     r4b = C.cy_v15_sinifla("XX", "2026-08-28", 1, sec28(["10-Q", "10-Q"], ["2020-06-30", "2020-03-31"]), ti, 999)       # seri bugüne sürüyor ama şirket 2020'de susmuş, sembol başka CIK'te
     r5 = C.cy_v15_sinifla("XX", "2021-03-10", 1, sec28(["15-12G", "10-Q"], ["2021-04-01", "2020-11-10"]), None, None)
     r6 = C.cy_v15_sinifla("XX", "2021-03-10", None, None, None, None)
-    bek = [(r1, 1, "y"), (r2, 2, "y_d100"), (r3, 3, "y_d0"), (r4a, 4, "y_d0"), (r4b, 4, "y_kes"), (r5, 5, "y"), (r6, 6, "y")]
-    if not all(r["sinif"] == sn and r["cikis_islemi"] == isl for r, sn, isl in bek) or r4b["kesim_tarihi"] != "2020-10-28" or r2["b103_tarih"] != "2021-02-15":
-        hata.append("28) v1.5 sınıflandırma yanlış: " + "; ".join(f"{r['sinif']}/{r['cikis_islemi']} (bek {sn}/{isl})" for r, sn, isl in bek) + f" kes={r4b['kesim_tarihi']} b103={r2['b103_tarih']}")
+    bek = [(r1, 1, "y"), (r2, 2, "y_d100"), (r3, 3, "y_d0"), (r4a, 4, "y"), (r4b, 4, "y_kes"), (r5, 5, "y"), (r6, 6, "y")]       # ek 8.3: 4a artık y_d0 değil, doğrulama bekler
+    if not all(r["sinif"] == sn and r["cikis_islemi"] == isl for r, sn, isl in bek) or r4b["kesim_tarihi"] != "2020-10-28" or r2["b103_tarih"] != "2021-02-15" or not r4a["alt"].startswith("4a"):
+        hata.append("28) v1.5 sınıflandırma yanlış: " + "; ".join(f"{r['sinif']}/{r['cikis_islemi']} (bek {sn}/{isl})" for r, sn, isl in bek) + f" kes={r4b['kesim_tarihi']} b103={r2['b103_tarih']} 4a={r4a['alt']}")
+    # 30) ek 8: sınıf 1 doğrulama (yalnız SEC -> belirsiz; Tiingo + SEC -> değil; SEC listesi boş -> yalnız Tiingo), sınıf 2 kronoloji (15 Şub - 10 Mar = -23 gün), 4a doğrulama
+    if not (r1["dogrulama"] == "Tiingo + SEC" and not r1["belirsiz"]):
+        hata.append(f"30a) sınıf 1 doğrulama yanlış: {r1['dogrulama']} {r1['belirsiz']}")
+    r30b = C.cy_v15_sinifla("XX", "2026-08-28", 1, sec28(["10-Q"], ["2026-06-01"]), {"endDate": "2025-01-10", "exchange": "NASDAQ"}, 1)
+    r30c = C.cy_v15_sinifla("XX", "2026-08-28", 1, sec28(["10-Q"], ["2026-06-01"]), None, 1)
+    s30 = sec28(["10-Q"], ["2026-06-01"]); s30["tickers"] = []; r30d = C.cy_v15_sinifla("XX", "2026-08-28", 1, s30, ti, 1)
+    s30e = sec28(["10-Q"], ["2026-06-01"]); s30e["tickers"] = ["YY"]; r30e = C.cy_v15_sinifla("XX", "2026-08-28", 1, s30e, ti, 1)
+    if not (r30b["sinif"] == 1 and r30b["belirsiz"] and "çelişiyor" in r30b["dogrulama"] and r30c["sinif"] == 1 and r30c["belirsiz"] and "yok" in r30c["dogrulama"]
+            and r30d["sinif"] == 1 and not r30d["belirsiz"] and r30d["dogrulama"].startswith("yalnız Tiingo") and r30e["sinif"] == 1 and r30e["belirsiz"]):
+        hata.append(f"30b) sınıf 1 belirsiz kuralı yanlış: {r30b['dogrulama']} | {r30c['dogrulama']} | {r30d['dogrulama']} | {r30e['dogrulama']}")
+    if not (r2["b103_T_fark_gun"] == -23 and r2["b103_zaman"] == "T'den 23 gün önce" and r2["b103_tarihler"] == "2021-02-15"):
+        hata.append(f"30c) sınıf 2 kronoloji yanlış: {r2['b103_T_fark_gun']} {r2['b103_zaman']} {r2['b103_tarihler']}")
+    ix30 = pd.bdate_range("2021-03-11", periods=120); yeni_ok = pd.DataFrame({"Close": np.full(120, 10.1)}, index=ix30); yeni_gec = pd.DataFrame({"Close": np.full(120, 10.0)}, index=pd.bdate_range("2021-06-01", periods=120))
+    yeni_oran = pd.DataFrame({"Close": np.full(120, 5.0)}, index=ix30)
+    d30a = C.cy_v15_4a_dogrula("XX", "2021-03-10", 10.0, ["XX", "YY"], {"YY": yeni_ok}); d30b = C.cy_v15_4a_dogrula("XX", "2021-03-10", 10.0, ["YY"], {"YY": yeni_gec})
+    d30c = C.cy_v15_4a_dogrula("XX", "2021-03-10", 10.0, ["YY"], {"YY": yeni_oran}); d30d = C.cy_v15_4a_dogrula("XX", "2021-03-10", 10.0, ["YY"], {}); d30e = C.cy_v15_4a_dogrula("XX", "2021-03-10", 10.0, [], {})
+    if not (d30a["baglandi"] and d30a["yeni_sembol"] == "YY" and not d30b["baglandi"] and "dışında" in d30b["neden"] and not d30c["baglandi"] and "1:1 değil" in d30c["neden"]
+            and not d30d["baglandi"] and "evrende yok" in d30d["neden"] and not d30e["baglandi"]):
+        hata.append(f"30d) 4a doğrulama yanlış: {d30a} | {d30b['neden']} | {d30c['neden']} | {d30d['neden']}")
+    # 31) ortak örneklem ayrıştırması: evren + etiket = toplam
+    ay31 = C.cy_v15_ayristir({"fark": 0.030}, {"fark": 0.025}, {"fark": 0.041})
+    if not (abs(ay31["evren_etkisi"] + 0.005) < 1e-12 and abs(ay31["etiket_etkisi"] - 0.016) < 1e-12 and abs(ay31["fark_fark"] - 0.011) < 1e-12 and abs(ay31["evren_etkisi"] + ay31["etiket_etkisi"] - ay31["fark_fark"]) < 1e-12):
+        hata.append(f"31) ayrıştırma aritmetiği yanlış: {ay31}")
     # 29) değerlendirme sınıfları
     e29 = {"n": 100, "fark": 0.03, "fark_alt": 0.01, "fark_ust": 0.05, "karar": "TUTMAZ"}; y29 = {"n": 95, "fark": 0.04, "fark_alt": 0.02, "fark_ust": 0.06, "karar": "TUTMAZ"}
     y29b = {"n": 95, "fark": 0.08, "fark_alt": 0.06, "fark_ust": 0.10, "karar": "TUTAR"}
@@ -267,4 +290,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_col_yolu_abd: 29/29 OK")
+    print("test_col_yolu_abd: 31/31 OK")

@@ -109,7 +109,7 @@ import pandas as pd
 
 _CK_ONCE_CY = {k: id(v) for k, v in dict(globals()).items()}   # çakışma kapısı: yüklenmeden önceki adlar
 
-CY_SURUM = "CY v1.5 (2026-10-30, K54 tarihsel evren sağlamlık denetimi; v1.4 K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
+CY_SURUM = "CY v1.5 (2026-10-30, K54 tarihsel evren sağlamlık denetimi + ek 8: sınıf 1 / 2 / 4a doğrulama, sınıf 6 bandı, ortak örneklem A / B / C; v1.4 K53 bilgi direnci / analist dağınıklığı / karar gecikmesi; v1.3 K52 grafik izi + analist revizyonları: Yahoo not günlüğü, dört grup, H0-H6; v1.2 K51 sonrası bağımsız denetim: veri bütünlüğü, kırılganlık, eşleşmiş kontrollerle H-A..H-E; v1.1 K51 ABD Çöl Yolu: üçlü bariyer (sabit + oynaklık), meta-etiketleme, model merdiveni LR/GBM/CNN/LSTM, PBO/DSR, batanlar dahil)"
 cylog = logging.getLogger("col.cy")
 
 CY: Dict[str, Any] = {
@@ -2994,10 +2994,11 @@ def cy_v14_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
 # semboller), company_tickers.json. Ham SEC verisi repoya girmez.
 CY_V15: Dict[str, Any] = {
     "tohum": 515, "boot": 2000, "n_min": 30, "fark_esik": 0.05, "saglam_puan": 0.02, "gecersiz_pay": 0.30, "kes_gun": 120, "alive_sinir": "2026-08-01",
-    "b103_gun": 365, "b201_gun": 120, "birlesme_gun": (400, 60), "devam_gun": 180,
+    "b103_gun": 365, "b201_gun": 120, "birlesme_gun": (400, 60), "devam_gun": 180, "baglama_gun": 30, "oran_tol": 0.02,
     "donem": (("2016-22", "2016-01-01", "2022-12-31"), ("2023", "2023-01-01", "2023-12-31"), ("2024-26", "2024-01-01", "2026-06-05")),
     "ml_yillar": (2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026), "ml_oz": ("vol60", "log_dv20", "dd250", "r60", "ar20", "imza", "hacim_ok", "trend", "boga"),
     "embargo_gun": 10, "birlesme_form": ("DEFM14A", "SC TO-T", "SC 14D9", "S-4", "425"), "nse": ("25-NSE",), "kayit_dis": ("15-12G", "15-12B", "15-15D"),
+    "sinif6_senaryo": (("sınıf 6 −%30 dahil", "y"), ("sınıf 6 −%100 dahil", "y_d100")),
     "sinif_ad": {1: "halen işlem gören", 2: "iflas / tasfiye", 3: "birleşme / satın alma", 4: "sembol değiştiren / başka şirkete dönüşen", 5: "veri sağlayıcısında kaybolan, belirsiz", 6: "işlem geçmişi doğrulanamayan"},
 }
 
@@ -3015,13 +3016,15 @@ def _cy_v15_arada(t: np.ndarray, T: np.datetime64, once: int, sonra: int) -> Opt
 
 def cy_v15_sinifla(sembol: str, T: Any, cik: Optional[int], sec: Optional[Dict[str, Any]], tiingo: Optional[Dict[str, Any]], bugun_cik: Optional[int],
                    K: Dict[str, Any] = CY_V15) -> Dict[str, Any]:
-    """Ön kayıt 2 sıralı kuralları. T = fiyat serisinin son günü. Dönüş: sinif (1-6), kural, kanıt tarihleri, kesim tarihi (4b), ek çıkış işlemi."""
+    """Ön kayıt 2 sıralı kuralları + ek 8 (sınıf 1 doğrulama, sınıf 2 kronoloji, 4a doğrulama bekler). T = fiyat serisinin son günü.
+    Dönüş: sinif (1-6), kural, kanıt tarihleri, kesim tarihi (4b), ek çıkış işlemi, dogrulama / belirsiz (sınıf 1), b103 zamanı (sınıf 2)."""
     T = np.datetime64(pd.Timestamp(T).date()); sinir = np.datetime64(K["alive_sinir"]); erken = bool(T < sinir)
     tb = np.datetime64(tiingo["endDate"]) if tiingo and isinstance(tiingo.get("endDate"), str) else None
     sec_sem = [str(x).upper() for x in (sec.get("tickers") or [])] if sec else []
     out = {"sembol": sembol, "cik": cik, "son_islem": str(T), "erken_bitti": erken, "tiingo_bitis": str(tb) if tb is not None else "", "tiingo_borsa": (tiingo or {}).get("exchange", ""),
            "sec_semboller": ";".join(sec_sem), "sec_ad": (sec or {}).get("name", ""), "eski_adlar": ";".join(str(x.get("name")) for x in ((sec or {}).get("formerNames") or [])[:5]),
-           "bugun_cik": bugun_cik, "nse25_tarih": "", "son_10k_10q": "", "b103_tarih": "", "b201_tarih": "", "birlesme_belge_tarih": "", "kayit_dis_tarih": "", "kesim_tarihi": "",
+           "bugun_cik": bugun_cik, "nse25_tarih": "", "son_10k_10q": "", "b103_tarih": "", "b103_T_fark_gun": np.nan, "b103_zaman": "", "b103_tarihler": "", "b201_tarih": "",
+           "birlesme_belge_tarih": "", "kayit_dis_tarih": "", "kesim_tarihi": "", "dogrulama": "", "belirsiz": False, "yeni_sembol": "", "baglama": "",
            "sinif": 5, "alt": "", "kural": "", "cikis_islemi": "y"}
     if sec:
         kq = _cy_v15_tarihler(sec, lambda f, it: f in ("10-K", "10-Q", "10-K/A", "10-Q/A", "20-F", "40-F")); b103 = _cy_v15_tarihler(sec, lambda f, it: f.startswith("8-K") and "1.03" in it)
@@ -3033,33 +3036,82 @@ def cy_v15_sinifla(sembol: str, T: Any, cik: Optional[int], sec: Optional[Dict[s
         kes = son_kq + np.timedelta64(K["kes_gun"], "D")                   # 4b: şirket dosyalamayı bırakmış, seri (bugün başka CIK'in sembolü) sürüyor
         out.update({"sinif": 4, "alt": "4b kod yeniden kullanımı", "kural": f"4b: bugünkü sembol başka CIK'e ({bugun_cik}) bağlı; şirketin son 10-K / 10-Q {son_kq}, seri {T}'ye sürüyor", "kesim_tarihi": str(kes), "cikis_islemi": "y_kes"}); return out
     if not erken:
-        if (tb is not None and tb >= sinir) or (sembol.upper() in sec_sem):
-            out.update({"sinif": 1, "kural": "1: seri sürüyor; Tiingo bitiş >= sınır ya da SEC güncel sembol"}); return out
-        out.update({"sinif": 6, "kural": "6: seri sürüyor ama Tiingo listesinde ve SEC güncel sembollerinde yok"}); return out
+        # ek 8.1: SEC güncel sembolü tek başına kanıt değil; Tiingo bitişi ile SEC sembolü çelişiyorsa belirsiz
+        tiingo_ok = tb is not None and tb >= sinir; sec_ok = sembol.upper() in sec_sem
+        if tiingo_ok and sec_ok:
+            dg, bl = "Tiingo + SEC", False
+        elif tiingo_ok and not sec_sem:
+            dg, bl = "yalnız Tiingo (SEC sembol listesi boş)", False
+        elif tiingo_ok:
+            dg, bl = "Tiingo tamam, SEC sembolü farklı → belirsiz", True
+        elif sec_ok and tb is not None:
+            dg, bl = "yalnız SEC, Tiingo bitiş çelişiyor → belirsiz", True
+        elif sec_ok:
+            dg, bl = "yalnız SEC, Tiingo'da yok → belirsiz", True
+        else:
+            out.update({"sinif": 6, "kural": "6: seri sürüyor ama Tiingo listesinde ve SEC güncel sembollerinde yok"}); return out
+        out.update({"sinif": 1, "kural": "1: seri sürüyor; " + dg, "dogrulama": dg, "belirsiz": bl}); return out
     if cik is None or not sec:
         out.update({"sinif": 6, "kural": "6: CIK yok ya da SEC başvuru geçmişi yok"}); return out
-    a103 = _cy_v15_arada(b103, T, K["b103_gun"], K["b103_gun"])
-    if a103 is not None:
-        out.update({"sinif": 2, "kural": f"2: 8-K madde 1.03 {a103}", "b103_tarih": str(a103), "cikis_islemi": "y_d100"}); return out
+    w103 = b103[(b103 >= T - np.timedelta64(K["b103_gun"], "D")) & (b103 <= T + np.timedelta64(K["b103_gun"], "D"))]
+    if len(w103):
+        a103 = w103[0]; fg = int((a103 - T).astype("timedelta64[D]").astype(int))       # ek 8.2: kronoloji (başvuru − T, gün)
+        zaman = "T ile aynı gün" if fg == 0 else (f"T'den {-fg} gün önce" if fg < 0 else f"T'den {fg} gün sonra")
+        out.update({"sinif": 2, "kural": f"2: 8-K madde 1.03 {a103} ({zaman})", "b103_tarih": str(a103), "b103_T_fark_gun": fg, "b103_zaman": zaman,
+                    "b103_tarihler": ";".join(str(x) for x in w103), "cikis_islemi": "y_d100"}); return out
     a201 = _cy_v15_arada(b201, T, K["b201_gun"], K["b201_gun"]); anse = _cy_v15_arada(nse, T, K["b201_gun"], K["b201_gun"]); abir = _cy_v15_arada(bir, T, K["birlesme_gun"][0], K["birlesme_gun"][1])
     out["b201_tarih"] = str(a201 or ""); out["birlesme_belge_tarih"] = str(abir or "")
     if (a201 is not None or anse is not None) and abir is not None:
         out.update({"sinif": 3, "kural": f"3: 8-K 2.01 / 25-NSE {a201 or anse} + birleşme belgesi {abir}", "cikis_islemi": "y_d0"}); return out
     if son_kq is not None and son_kq >= T + np.timedelta64(K["devam_gun"], "D"):
-        out.update({"sinif": 4, "alt": "4a sembol değişimi", "kural": f"4a: şirket T'den sonra 10-K / 10-Q veriyor (son {son_kq})", "cikis_islemi": "y_d0"}); return out
+        # ek 8.3: son kapanış otomatik nakit bedel değil; cy_v15_4a_dogrula bağlar ya da belirsiz bırakır (K51 kuralı + bant)
+        out.update({"sinif": 4, "alt": "4a sembol değişimi (doğrulama bekliyor)", "kural": f"4a: şirket T'den sonra 10-K / 10-Q veriyor (son {son_kq})", "cikis_islemi": "y",
+                    "yeni_sembol": ";".join(x for x in sec_sem if x != sembol.upper()), "baglama": "doğrulanmadı"}); return out
     if bugun_cik is not None and cik is not None and int(bugun_cik) != int(cik):
         out.update({"sinif": 4, "alt": "4b kod yeniden kullanımı (seri erken bitmiş)", "kural": f"4b: bugünkü sembol başka CIK'e ({bugun_cik}) bağlı; seri {T}'de bitmiş", "cikis_islemi": "y"}); return out
     out.update({"sinif": 5, "kural": "5: erken bitti; 1.03 / 2.01+belge / devam / kod kullanımı yok" + (" (kayıt dışı " + out["kayit_dis_tarih"] + ")" if out["kayit_dis_tarih"] else "")}); return out
 
 
+def cy_v15_4a_dogrula(sembol: str, T: Any, son_kapanis: float, yeni_semboller: List[str], V: Dict[str, pd.DataFrame], K: Dict[str, Any] = CY_V15) -> Dict[str, Any]:
+    """Ek 8.3: sınıf 4a doğrulaması. Yeni sembol evrende VE yeni seri T ± baglama_gun içinde başlıyor VE eski son kapanış / yeni ilk kapanış 1'den en çok
+    oran_tol sapıyor (1:1) -> bağlanır. Aksi halde doğrulanamadı (belirsiz); nedenler yazılır. Dış kurumsal işlem oranı kaynağı yok: 1:1 dışı doğrulanmaz."""
+    T = pd.Timestamp(T); adaylar = [str(s).upper() for s in yeni_semboller if s and str(s).upper() != str(sembol).upper()]
+    if not adaylar:
+        return {"baglandi": False, "yeni_sembol": "", "oran": np.nan, "neden": "SEC güncel sembolü yok"}
+    nedenler = []
+    for ns in adaylar:
+        d = V.get(ns)
+        if d is None or not len(d):
+            nedenler.append(f"{ns}: evrende yok"); continue
+        bas = d.index[0]
+        if abs((bas - T).days) > K["baglama_gun"]:
+            nedenler.append(f"{ns}: yeni seri {bas.date()} başlıyor (T ±{K['baglama_gun']} gün dışında; aynı şirketin paralel ya da geriye doldurulmuş serisi olabilir)"); continue
+        sonra = d[d.index > T]
+        if not len(sonra):
+            nedenler.append(f"{ns}: T'den sonra fiyat yok"); continue
+        oran = float(son_kapanis) / float(sonra.Close.iloc[0])
+        if not np.isfinite(oran) or abs(oran - 1.0) > K["oran_tol"]:
+            nedenler.append(f"{ns}: oran {oran:.3f} 1:1 değil, kurumsal işlem oranı doğrulanamadı"); continue
+        return {"baglandi": True, "yeni_sembol": ns, "oran": oran, "neden": f"{ns}: yeni seri {bas.date()} başlıyor, oran {oran:.3f} (1:1)"}
+    return {"baglandi": False, "yeni_sembol": adaylar[0], "oran": np.nan, "neden": "; ".join(nedenler)}
+
+
+def cy_v15_ayristir(he: Dict[str, Any], hc: Dict[str, Any], hy: Dict[str, Any]) -> Dict[str, float]:
+    """Ek 8 ortak örneklem ayrıştırması (taban-ayarlı isabet farkı, puan): evren etkisi = C-eski − A, etiket etkisi = C-yeni − C-eski, toplam = B − A.
+    C-yeni ≡ B (düzeltilmiş evren eski evrenin alt kümesi), bu yüzden toplam = evren + etiket."""
+    g = lambda h: h.get("fark", np.nan) if h else np.nan
+    a, c, b = g(he), g(hc), g(hy)
+    return {"evren_etkisi": c - a, "etiket_etkisi": b - c, "fark_fark": b - a}
+
+
 def cy_v15_hucre(D: pd.DataFrame, ycol: str, ecol: str, ncol: str, encol: str, K: Dict[str, Any], rng: np.random.Generator) -> Dict[str, Any]:
-    """Olay kümesi: n, +%20 / −%10 / zaman aşımı oranı, net, taban-ayarlı isabet (y − e_y) ay kümeli aralık, net fark, karar."""
+    """Olay kümesi: n, +%20 / −%10 / zaman aşımı oranı, net, taban-ayarlı isabet (y − e_y) ay kümeli aralık, net fark, karar. Brüt = net + maliyet."""
     D = D[D[ycol].notna() & D[ecol].notna()]
     if not len(D):
         return {"n": 0}
     w = D.agirlik.to_numpy(float) if "agirlik" in D else np.ones(len(D)); X = D.assign(_f=D[ycol] - D[ecol], _fn=D[ncol] - D[encol])
     f, a, b = cy_boot_fark(X, "_f", K["boot"], rng); fn, an, bn = cy_boot_fark(X, "_fn", K["boot"], rng)
-    brut = D["brut_k"] if "brut_k" in D else D.brut
+    brut = (D[ncol] + D.mal) if "mal" in D else (D["brut_k"] if "brut_k" in D else D.brut)
     es = -0.10 + 1e-4                                                      # tam −%10'da çıkan bariyer, float32 toplama payı
     h = {"n": int(len(D)), "hisse": int(D.sembol.nunique()), "ust_oran": float(np.average(D[ycol] == 1, weights=w)), "alt_oran": float(np.average((D[ycol] == 0) & (brut <= es), weights=w)),
          "zaman_asimi_oran": float(np.average((D[ycol] == 0) & (brut > es), weights=w)), "isabet": float(np.average(D[ycol], weights=w)), "taban": float(np.average(D[ecol], weights=w)),
@@ -3069,7 +3121,7 @@ def cy_v15_hucre(D: pd.DataFrame, ycol: str, ecol: str, ncol: str, encol: str, K
 
 
 def cy_v15_degerlendir(eski: Dict[str, Any], yeni: Dict[str, Any], gecersiz_pay: float, K: Dict[str, Any]) -> str:
-    """Ön kayıt 5: SAĞLAM / ETKİLENMİŞ / GEÇERSİZ (tek hücre)."""
+    """Ön kayıt 5: SAĞLAM / ETKİLENMİŞ / GEÇERSİZ (tek hücre; A ile B arasında)."""
     if gecersiz_pay > K["gecersiz_pay"]:
         return "GEÇERSİZ (belirsiz + doğrulanamayan çıkış payı > %30)"
     if eski.get("n", 0) == 0 or yeni.get("n", 0) == 0:
@@ -3084,7 +3136,7 @@ def cy_v15_degerlendir(eski: Dict[str, Any], yeni: Dict[str, Any], gecersiz_pay:
 
 
 def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol: Optional[str] = None) -> Dict[str, Any]:
-    """K54 sürücü: sınıflandırma -> düzeltilmiş panel -> eski / yeni test hücreleri -> K52 / K53 denetimi -> çıktılar."""
+    """K54 sürücü: sınıflandırma (+ ek 8 doğrulamalar) -> düzeltilmiş panel -> A / B / C örneklemleri -> duyarlılıklar -> ML -> K52 / K53 -> çıktılar."""
     import json
     A = A or CYAyar(); os.makedirs(A.cikti, exist_ok=True); K = {**K, "_v12": CY_V12, "_v13": CY_V13, "_v15": CY_V15}; V15 = CY_V15; t0 = time.time()
     if not logging.getLogger().handlers:
@@ -3108,11 +3160,22 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
         cik = scik.get(s_); sc = sec.get(str(cik)) if cik is not None else None; tr = tt.loc[s_.upper()].to_dict() if s_.upper() in tt.index else None
         r = cy_v15_sinifla(s_, d.index[-1], int(cik) if cik is not None else None, sc, tr, bugun.get(s_.upper()), V15)
         r.update({"kaynak": evp.loc[s_, "kaynak"], "analist_kaydi": bool(s_ in analist_var), "n_gun": int(len(d)), "son_kapanis": float(d.Close.iloc[-1]), "agirlik": float(evp.loc[s_, "agirlik"])}); SD.append(r)
-    SD = pd.DataFrame(SD); SD["sinif_ad"] = SD.sinif.map(V15["sinif_ad"]); sinif = SD.set_index("sembol").sinif.to_dict(); islem = SD.set_index("sembol").cikis_islemi.to_dict()
+    SD = pd.DataFrame(SD)
+    # ek 8.3: sınıf 4a doğrulaması (yeni sembol evrende, seri T ± 30 gün, oran 1:1) -> bağla; değilse belirsiz (K51 kuralı) + bant
+    bagla: Dict[str, str] = {}
+    for ix in SD.index[SD.alt.astype(str).str.startswith("4a")]:
+        r = SD.loc[ix]; dg = cy_v15_4a_dogrula(r.sembol, r.son_islem, r.son_kapanis, [x for x in str(r.sec_semboller).split(";") if x], V, V15)
+        SD.loc[ix, "yeni_sembol"] = dg["yeni_sembol"]; SD.loc[ix, "baglama"] = ("doğrulandı: " if dg["baglandi"] else "doğrulanamadı (belirsiz): ") + dg["neden"]
+        SD.loc[ix, "alt"] = "4a sembol değişimi, " + ("seri bağlandı" if dg["baglandi"] else "doğrulanamadı (belirsiz)"); SD.loc[ix, "cikis_islemi"] = "bagla" if dg["baglandi"] else "y"
+        if dg["baglandi"]:
+            bagla[r.sembol] = dg["yeni_sembol"]
+    SD["sinif_ad"] = SD.sinif.map(V15["sinif_ad"]); sinif = SD.set_index("sembol").sinif.to_dict(); islem = SD.set_index("sembol").cikis_islemi.to_dict()
     kes_map = {r.sembol: pd.Timestamp(r.kesim_tarihi) for r in SD.itertuples() if r.cikis_islemi == "y_kes" and r.kesim_tarihi}
-    cylog.info("v1.5 sınıflar: %s (%ds)", SD.sinif.value_counts().sort_index().to_dict(), time.time() - t0)
+    belirsiz1 = set(SD.sembol[(SD.sinif == 1) & SD.belirsiz.astype(bool)]); erken_map = SD.set_index("sembol").erken_bitti
+    cylog.info("v1.5 sınıflar: %s; sınıf 1 belirsiz %d; 4a bağlanan %d (%ds)", SD.sinif.value_counts().sort_index().to_dict(), len(belirsiz1), len(bagla), time.time() - t0)
     SD[["sembol", "kaynak", "cik", "sec_ad", "sec_semboller", "eski_adlar", "bugun_cik", "tiingo_borsa", "tiingo_bitis", "son_islem", "n_gun", "analist_kaydi", "agirlik"]].to_csv(os.path.join(A.cikti, "K54_EVREN_ESLESTIRME.csv"), index=False)
-    SD[["sembol", "kaynak", "cik", "sinif", "sinif_ad", "alt", "kural", "cikis_islemi", "son_islem", "erken_bitti", "tiingo_bitis", "nse25_tarih", "son_10k_10q", "b103_tarih", "b201_tarih", "birlesme_belge_tarih", "kayit_dis_tarih", "kesim_tarihi", "son_kapanis", "analist_kaydi"]].to_csv(os.path.join(A.cikti, "K54_SIRKET_DURUMU.csv"), index=False)
+    SD[["sembol", "kaynak", "cik", "sinif", "sinif_ad", "alt", "kural", "cikis_islemi", "dogrulama", "belirsiz", "son_islem", "erken_bitti", "tiingo_bitis", "nse25_tarih", "son_10k_10q", "b103_tarih", "b103_T_fark_gun", "b103_zaman", "b103_tarihler",
+        "b201_tarih", "birlesme_belge_tarih", "kayit_dis_tarih", "kesim_tarihi", "yeni_sembol", "baglama", "son_kapanis", "analist_kaydi"]].to_csv(os.path.join(A.cikti, "K54_SIRKET_DURUMU.csv"), index=False)
     # ---------- panel (v1.2 işçisi; 4b kesimi)
     le = cy_likit_esik(V, "ABD", K)
     args = [("ABD", s_, d, evp.loc[s_].to_dict(), le, K, None, kes_map.get(s_)) for s_, d in V.items() if s_ in evp.index]
@@ -3131,68 +3194,108 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
     P["boga"] = (P.rejim == "BOĞA").astype(np.int8)
     Hs = {r["sembol"]: V[r["sembol"]].index.to_numpy().astype("datetime64[ns]") for r in son}
     P["cikis_tarih"] = [Hs[s_][int(c)] if (0 <= int(c) < len(Hs[s_])) else np.datetime64("NaT") for s_, c in zip(P.sembol.to_numpy(), P.cikis.to_numpy())]
-    # eski evren: K51 etiketi (y, net), K51 tabanı
-    def taban(Q, yc, nc, maske):
-        ww = Q.agirlik.where(Q[yc].notna() & maske); grp = [Q.tarih, Q.vd]
+    # ek 8.3: bağlanan 4a serileri (eski seri + T sonrası yeni seri; etiket bağlı seriden, çıkış işlemi yeni sembolün sınıfına göre; yalnız T ve öncesi satırlar)
+    yk = {"y": ("y", "net"), "y_d100": ("y_d100", "net_d100"), "y_d0": ("y_d0", "net_d0"), "y_kes": ("y_kes", "net_kes")}
+    bagli: Dict[str, pd.DataFrame] = {}
+    for s_, ns in bagla.items():
+        try:
+            d = V[s_]; dn = V[ns]; dm = pd.concat([d, dn[dn.index > d.index[-1]]]); dm = dm[~dm.index.duplicated(keep="first")]
+            rm = cy_v12_hisse(("ABD", s_, dm, evp.loc[s_].to_dict(), le, K, None, kes_map.get(ns)))
+            if rm is None:
+                continue
+            Pm = rm["panel"]; Pm = Pm[pd.to_datetime(Pm.tarih) <= d.index[-1]]; yc, nc = yk.get(islem.get(ns, "y"), ("y", "net"))
+            bagli[s_] = pd.DataFrame({"y_b": Pm[yc].to_numpy(), "net_b": Pm[nc].to_numpy(), "kes_b": Pm.kes_gecerli.astype(bool).to_numpy()}, index=Pm.i.to_numpy())
+        except Exception as ex:
+            cylog.warning("v1.5 4a bağlama %s -> %s atlandı: %s", s_, ns, ex)
+    # eski evren (A): K51 etiketi (y, net), K51 tabanı
+    def taban(Q, yc, nc):
+        ww = Q.agirlik.where(Q[yc].notna()); grp = [Q.tarih, Q.vd]
         ey = (Q[yc] * ww).groupby(grp).transform("sum") / ww.groupby(grp).transform("sum"); en = (Q[nc] * ww).groupby(grp).transform("sum") / ww.groupby(grp).transform("sum")
         return ey.astype(np.float32), en.astype(np.float32)
-    P["vd"] = np.minimum((P.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
-    P["lt"] = np.minimum((P.groupby("tarih").log_dv20.rank(pct=True) * 3).fillna(1).astype(int), 2).astype(np.int8)
-    P["e_y"], P["e_net"] = taban(P, "y", "net", pd.Series(True, index=P.index))
-    # düzeltilmiş evren: sınıfa göre etiket; 6 çıkar; 4b kesim sonrası çıkar
-    yk = {"y": ("y", "net"), "y_d100": ("y_d100", "net_d100"), "y_d0": ("y_d0", "net_d0"), "y_kes": ("y_kes", "net_kes")}
-    P["y_yeni"] = np.nan; P["net_yeni"] = np.nan
+    vd_hesap = lambda Q: np.minimum((Q.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
+    P["vd"] = vd_hesap(P); P["lt"] = np.minimum((P.groupby("tarih").log_dv20.rank(pct=True) * 3).fillna(1).astype(int), 2).astype(np.int8)
+    P["e_y"], P["e_net"] = taban(P, "y", "net")
+    # düzeltilmiş evren (B): sınıfa göre etiket; 6 çıkar; 4b kesim sonrası çıkar; bağlanan 4a bağlı seriden
+    P["y_yeni"] = np.nan; P["net_yeni"] = np.nan; P["kes_ok"] = (P.islem != "y_kes") | P.kes_gecerli.astype(bool)
     for isl, (yc, nc) in yk.items():
         m = P.islem == isl; P.loc[m, "y_yeni"] = P.loc[m, yc].to_numpy(); P.loc[m, "net_yeni"] = P.loc[m, nc].to_numpy()
-    P["gecerli_yeni"] = (P.sinif != 6) & P.y_yeni.notna() & ((P.islem != "y_kes") | P.kes_gecerli.astype(bool))
-    Q = P[P.gecerli_yeni].copy(); Q["vd"] = np.minimum((Q.groupby("tarih").vol60.rank(pct=True) * 10).fillna(5).astype(int), 9).astype(np.int8)
-    Q["e_y_yeni"], Q["e_net_yeni"] = taban(Q, "y_yeni", "net_yeni", pd.Series(True, index=Q.index))
-    P["e_y_yeni"] = np.nan; P["e_net_yeni"] = np.nan; P.loc[Q.index, "e_y_yeni"] = Q.e_y_yeni; P.loc[Q.index, "e_net_yeni"] = Q.e_net_yeni
-    # brut karşılığı (−%10 oranı için) düzeltilmiş: y_yeni == 0 ve seri sonu kaybı; brut sütunu K51 etiketi; düzeltilmişte net_yeni + mal
-    P["brut_k"] = P.brut; P["brut_yeni"] = P.net_yeni + P.mal
-    cylog.info("v1.5 panel %d satır; düzeltilmiş %d; (%ds)", len(P), int(P.gecerli_yeni.sum()), time.time() - t0)
-    # ---------- 1) K51 temel hücreleri + 2) delist duyarlılığı
+    for s_, Bm in bagli.items():
+        m = P.sembol == s_; ii = P.loc[m, "i"].to_numpy()
+        P.loc[m, "y_yeni"] = Bm.y_b.reindex(ii).to_numpy(); P.loc[m, "net_yeni"] = Bm.net_b.reindex(ii).to_numpy(); P.loc[m, "kes_ok"] = Bm.kes_b.reindex(ii).fillna(False).to_numpy()
+    P["gecerli_yeni"] = (P.sinif != 6) & P.y_yeni.notna() & P.kes_ok
+    def varyant(maske, yc, nc):
+        """Alt evrende oynaklık ondalığı ve taban yeniden; P hizalı (maske dışı NaN)."""
+        Q = P[maske].copy(); Q["vd"] = vd_hesap(Q); ey, en = taban(Q, yc, nc)
+        return ey.reindex(P.index).astype(np.float32), en.reindex(P.index).astype(np.float32), Q["vd"].reindex(P.index)
+    P["e_y_yeni"], P["e_net_yeni"], _ = varyant(P.gecerli_yeni, "y_yeni", "net_yeni")
+    # C: ortak örneklem = düzeltilmiş evrende kalan satırlar (B ⊂ A); C-eski = K51 etiketi, taban ortak satırlarda yeniden; C-yeni ≡ B
+    P["ortak"] = P.gecerli_yeni; P["e_y_ce"], P["e_net_ce"], _ = varyant(P.ortak, "y", "net")
+    # ek 8.4: sınıf 6 dahil (−%30 K51 kuralı; −%100) ve ek 8.1: sınıf 1 belirsiz çıkarılmış
+    P["y_6_30"] = P.y_yeni; P["net_6_30"] = P.net_yeni; P["y_6_100"] = np.where(P.sinif == 6, P.y_d100, P.y_yeni); P["net_6_100"] = np.where(P.sinif == 6, P.net_d100, P.net_yeni)
+    P["gecerli_6"] = P.y_6_30.notna() & P.kes_ok
+    P["e_y_6_30"], P["e_net_6_30"], _ = varyant(P.gecerli_6, "y_6_30", "net_6_30"); P["e_y_6_100"], P["e_net_6_100"], _ = varyant(P.gecerli_6, "y_6_100", "net_6_100")
+    P["gecerli_b1"] = P.gecerli_yeni & ~P.sembol.isin(belirsiz1); P["e_y_b1"], P["e_net_b1"], _ = varyant(P.gecerli_b1, "y_yeni", "net_yeni")
+    ORN = {"eski": (pd.Series(True, index=P.index), "y", "e_y", "net", "e_net"), "yeni": (P.gecerli_yeni, "y_yeni", "e_y_yeni", "net_yeni", "e_net_yeni"),
+           "ortak_eski": (P.ortak, "y", "e_y_ce", "net", "e_net_ce")}
+    DUY = {"sınıf 6 −%30 dahil": (P.gecerli_6, "y_6_30", "e_y_6_30", "net_6_30", "e_net_6_30"), "sınıf 6 −%100 dahil": (P.gecerli_6, "y_6_100", "e_y_6_100", "net_6_100", "e_net_6_100"),
+           "sınıf 1 belirsiz çıkarıldı": (P.gecerli_b1, "y_yeni", "e_y_b1", "net_yeni", "e_net_b1")}
+    cylog.info("v1.5 panel %d satır; düzeltilmiş %d; ortak %d; sınıf 6 dahil %d; (%ds)", len(P), int(P.gecerli_yeni.sum()), int(P.ortak.sum()), int(P.gecerli_6.sum()), time.time() - t0)
+    # ---------- 1) K51 temel hücreleri (A / B / C-eski / C-yeni + ayrıştırma) + duyarlılık satırları + 2) delist duyarlılığı
     KR = []; DL = []
-    def cift(ad, kume, maske_e, maske_y, ek=None):
+    def hucre(orn, maske, a, b, cikar=None):
+        mk, yc, ec, nc, enc = orn; D = P[maske & mk & (P.tarih >= a) & (P.tarih <= b)]
+        if cikar is not None:
+            D = D[~D.sembol.isin(cikar)]
+        return cy_v15_hucre(D, yc, ec, nc, enc, V15, rng)
+    def satir(ad, kume, dn, he, hy, hc, gp, gp2=np.nan, ek=None):
+        row = {"test": ad, "kume": kume, "donem": dn, **{f"eski_{k_}": v for k_, v in he.items()}, **{f"yeni_{k_}": v for k_, v in hy.items()}}
+        if hc is not None:
+            row.update({f"ortak_eski_{k_}": v for k_, v in hc.items()}); row.update({f"ortak_yeni_{k_}": v for k_, v in hy.items()}); row.update(cy_v15_ayristir(he, hc, hy))
+        else:
+            row["fark_fark"] = hy.get("fark", np.nan) - he.get("fark", np.nan)
+        row.update({"fark_n": hy.get("n", 0) - he.get("n", 0), "fark_ust_oran": hy.get("ust_oran", np.nan) - he.get("ust_oran", np.nan), "fark_alt_oran": hy.get("alt_oran", np.nan) - he.get("alt_oran", np.nan),
+                    "fark_net": hy.get("net", np.nan) - he.get("net", np.nan), "sinif56_pay_olay": gp, "sinif56_pay_erken_biten_olay": gp2, "degerlendirme": cy_v15_degerlendir(he, hy, gp, V15)})
+        if ek:
+            row.update(ek)
+        KR.append(row)
+    def cift(ad, kume, maske):
         for dn, a, b in V15["donem"]:
-            De = P[maske_e & (P.tarih >= a) & (P.tarih <= b)]; Dy = P[maske_y & P.gecerli_yeni & (P.tarih >= a) & (P.tarih <= b)].assign(brut_k=lambda t: t.brut_yeni)
-            he = cy_v15_hucre(De, "y", "e_y", "net", "e_net", V15, rng); hy = cy_v15_hucre(Dy, "y_yeni", "e_y_yeni", "net_yeni", "e_net_yeni", V15, rng)
-            cik_ = De[De.sinif.isin([5, 6])]; gp = float(len(cik_) / max(len(De), 1)) if len(De) else 0.0
-            # yalnız seri erken biten (çıkış) olaylarının payı değil, tüm olaylar içinde 5 + 6 payı; ayrıca erken bitenler içinde 5 + 6 payı
-            erk = De[De.sembol.map(SD.set_index("sembol").erken_bitti)]; gp2 = float(erk.sinif.isin([5, 6]).mean()) if len(erk) else 0.0
-            row = {"test": ad, "kume": kume, "donem": dn, **{f"eski_{k_}": v for k_, v in he.items()}, **{f"yeni_{k_}": v for k_, v in hy.items()},
-                   "fark_n": hy.get("n", 0) - he.get("n", 0), "fark_fark": (hy.get("fark", np.nan) - he.get("fark", np.nan)), "fark_ust_oran": hy.get("ust_oran", np.nan) - he.get("ust_oran", np.nan),
-                   "fark_alt_oran": hy.get("alt_oran", np.nan) - he.get("alt_oran", np.nan), "fark_net": hy.get("net", np.nan) - he.get("net", np.nan),
-                   "sinif56_pay_olay": gp, "sinif56_pay_erken_biten_olay": gp2, "degerlendirme": cy_v15_degerlendir(he, hy, gp, V15)}
-            if ek:
-                row.update(ek)
-            KR.append(row)
-            if he.get("n", 0) >= 30 and dn != "":
+            De = P[maske & (P.tarih >= a) & (P.tarih <= b)]; gp = float(De.sinif.isin([5, 6]).mean()) if len(De) else 0.0
+            erk = De[De.sembol.map(erken_map).fillna(False).astype(bool)]; gp2 = float(erk.sinif.isin([5, 6]).mean()) if len(erk) else 0.0
+            he = hucre(ORN["eski"], maske, a, b); hy = hucre(ORN["yeni"], maske, a, b); hc = hucre(ORN["ortak_eski"], maske, a, b)
+            satir(ad, kume, dn, he, hy, hc, gp, gp2, {"orneklem": "A / B / C"})
+            if he.get("n", 0) >= 30:
                 kat = (De.y - De.e_y).groupby(De.sembol).sum().sort_values(ascending=False); top = set(kat.head(20).index)
-                he2 = cy_v15_hucre(De[~De.sembol.isin(top)], "y", "e_y", "net", "e_net", V15, rng); hy2 = cy_v15_hucre(Dy[~Dy.sembol.isin(top)], "y_yeni", "e_y_yeni", "net_yeni", "e_net_yeni", V15, rng)
-                KR.append({"test": ad, "kume": kume + " (en iyi 20 çıkarıldı)", "donem": dn, **{f"eski_{k_}": v for k_, v in he2.items()}, **{f"yeni_{k_}": v for k_, v in hy2.items()},
-                           "fark_n": hy2.get("n", 0) - he2.get("n", 0), "fark_fark": hy2.get("fark", np.nan) - he2.get("fark", np.nan), "degerlendirme": cy_v15_degerlendir(he2, hy2, gp, V15)})
+                satir(ad, kume + " (en iyi 20 çıkarıldı)", dn, hucre(ORN["eski"], maske, a, b, top), hucre(ORN["yeni"], maske, a, b, top), hucre(ORN["ortak_eski"], maske, a, b, top), gp, gp2, {"orneklem": "A / B / C"})
+            for dad, orn in DUY.items():
+                if dad.startswith("sınıf 1") and kume not in ("K51 P1", "K51 P2"):
+                    continue
+                satir(ad, f"{kume} ({dad})", dn, he, hucre(orn, maske, a, b), None, gp, gp2, {"orneklem": "duyarlılık: A / " + dad})
     for ad, kol in (("K51 P1", "P1"), ("K51 P2", "P2"), ("K51 ES", "ES"), ("K51 HT", "HT"), ("K51 ÇEK", "CEK")):
-        cift("1 K51 temel", ad, P[kol].astype(bool), P[kol].astype(bool))
-    # delist duyarlılığı: sınıf başına sayılar ve P1 / P2 hücrelerinin −%0 / −%30 / −%100 bandı (yalnız seri erken bitenler değişir)
+        cift("1 K51 temel", ad, P[kol].astype(bool))
+    # delist duyarlılığı: sınıf başına sayılar; P1 / P2 hücrelerinin −%0 / −%30 / −%100 bandı; 4a doğrulanamayan bandı
+    sdx = SD.set_index("sembol")
     for sn_, g in SD.groupby("sinif"):
         DL.append({"kume": "sınıf", "sinif": int(sn_), "sinif_ad": V15["sinif_ad"][int(sn_)], "hisse": int(len(g)), "V_ABD": int((g.kaynak == "V_ABD").sum()), "K34_yahoo": int((g.kaynak == "K34_yahoo").sum()),
                    "K34_tiingo": int((g.kaynak == "K34_tiingo").sum()), "analist_kaydi_pay": float(g.analist_kaydi.mean()), "panel_satir": int((P.sinif == sn_).sum()),
                    "P1_olay": int((P.P1 & (P.sinif == sn_)).sum()), "P2_olay": int((P.P2 & (P.sinif == sn_)).sum()), "son_kapanis_medyan": float(g.son_kapanis.median())})
+    a4_bel = set(SD.sembol[SD.alt.astype(str).str.contains("doğrulanamadı")])
     for kol in ("P1", "P2"):
         for dn, a, b in V15["donem"]:
             D = P[P[kol].astype(bool) & (P.tarih >= a) & (P.tarih <= b)]
-            row = {"kume": f"{kol} bandı", "donem": dn, "n": int(len(D)), "erken_biten_olay": int(D.sembol.map(SD.set_index('sembol').erken_bitti).sum())}
-            for sc_, yc in (("d0", "y_d0"), ("d30", "y"), ("d100", "y_d100"), ("yeni", "y_yeni")):
-                ww = D.agirlik.to_numpy(float); v = D[yc].to_numpy(float); ok = np.isfinite(v)
-                row[f"isabet_{sc_}"] = float(np.average(v[ok], weights=ww[ok])) if ok.any() else np.nan
-            row["bant_genislik_puan"] = (row["isabet_d0"] - row["isabet_d100"]) * 100; DL.append(row)
+            for kume, Dx in ((f"{kol} bandı", D), (f"{kol} bandı, yalnız 4a doğrulanamayan", D[D.sembol.isin(a4_bel)])):
+                row = {"kume": kume, "donem": dn, "n": int(len(Dx)), "erken_biten_olay": int(Dx.sembol.map(erken_map).fillna(False).astype(bool).sum())}
+                for sc_, yc in (("d0", "y_d0"), ("d30", "y"), ("d100", "y_d100"), ("yeni", "y_yeni")):
+                    ww = Dx.agirlik.to_numpy(float); v = Dx[yc].to_numpy(float); ok = np.isfinite(v)
+                    row[f"isabet_{sc_}"] = float(np.average(v[ok], weights=ww[ok])) if ok.any() else np.nan
+                row["bant_genislik_puan"] = (row["isabet_d0"] - row["isabet_d100"]) * 100 if np.isfinite(row["isabet_d0"]) else np.nan; DL.append(row)
     DLd = pd.DataFrame(DL); DLd.to_csv(os.path.join(A.cikti, "K54_DELIST_DUYARLILIK.csv"), index=False)
-    # ---------- 3) H-B / H-C / H-D (v1.2 tanımları; eşleştirme havuzu eski ve düzeltilmiş evren)
+    # ---------- 3) H-B / H-C / H-D (v1.2 tanımları; eşleştirme havuzu her örneklemde ayrı; A / B / C-eski; C-yeni ≡ B)
     V12 = CY_V12
     def esl(ad, O, havuz, k, gt, es_imza):
-        for ev, yc, nc, maske in (("eski", "y", "net", pd.Series(True, index=P.index)), ("yeni", "y_yeni", "net_yeni", P.gecerli_yeni)):
-            Oo = O[maske.loc[O.index]].assign(y=lambda t: t[yc], net=lambda t: t[nc]); Hv = havuz[maske.loc[havuz.index]].assign(y=lambda t: t[yc], net=lambda t: t[nc])
+        for ev in ("eski", "yeni", "ortak_eski"):
+            mk, yc, ec, nc, enc = ORN[ev]
+            Oo = O[mk.loc[O.index]].assign(y=lambda t: t[yc], net=lambda t: t[nc]); Hv = havuz[mk.loc[havuz.index]].assign(y=lambda t: t[yc], net=lambda t: t[nc])
             M_ = cy_v12_eslestir(P, Oo, Hv, K, k, gt, rng, es_imza=es_imza); X = pd.concat([Oo, M_], axis=1)
             for dn, a, b in V15["donem"]:
                 D = X[(X.tarih >= a) & (X.tarih <= b) & (X.kontrol_n > 0)]
@@ -3203,12 +3306,13 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
     esl("H-C ÇEK + hacim kuruması vs ÇEK hacimsiz", P[P.CEK & (P.hacim_ok == 1)], P[P.CEK & (P.hacim_ok == 0)], V12["k_es"], V12["gun_tol"], True)
     esl("H-D hacimli taban (HT) vs genel", P[P.HT], genel, V12["k"], 0, False)
     KR.append({"test": "3 BB sıkışması / EMA (K48, FON_IZI)", "kume": "K48 / K49 / K50 deneyleri", "donem": "hepsi", "degerlendirme": "GEÇERSİZ (evren yeniden kurulamıyor: yalnız bugün işlem gören V_ABD evreninde koştu; kod K34 evrenini almıyor)"})
-    # ---------- 4) sessiz ML (LightGBM meta, P1 olayları, yıl yıl ileri)
+    # ---------- 4) sessiz ML (LightGBM meta, P1 olayları, yıl yıl ileri; A / B / C-eski; özellik, yıl, embargo, ayar, tohum sabit)
     try:
         import lightgbm as lgb
         from sklearn.metrics import roc_auc_score
-        for ev, yc, ec, maske in (("eski", "y", "e_y", pd.Series(True, index=P.index)), ("yeni", "y_yeni", "e_y_yeni", P.gecerli_yeni)):
-            E = P[P.P1.astype(bool) & maske & P[yc].notna() & P.cikis_tarih.notna()].copy(); oz = list(V15["ml_oz"]); E["meta_p"] = np.nan; sat = []
+        for ev in ("eski", "yeni", "ortak_eski"):
+            mk, yc, ec, nc, enc = ORN[ev]
+            E = P[P.P1.astype(bool) & mk & P[yc].notna() & P.cikis_tarih.notna()].copy(); oz = list(V15["ml_oz"]); E["meta_p"] = np.nan; sat = []
             for Y in V15["ml_yillar"]:
                 sinir = pd.Timestamp(f"{Y}-01-01") - pd.Timedelta(days=V15["embargo_gun"]); tr = E[E.cikis_tarih < sinir]; te = E[E.tarih.dt.year == Y]
                 if len(tr) < 100 or tr[yc].nunique() < 2 or len(te) < 30:
@@ -3221,26 +3325,25 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
             genel_auc = float(roc_auc_score(Et[yc].astype(int), Et.meta_p)) if len(Et) and Et[yc].nunique() > 1 else np.nan
             q = Et.meta_p.quantile([1 / 3, 2 / 3]).to_numpy() if len(Et) else [np.nan, np.nan]
             ust = Et[Et.meta_p >= q[1]]; alt = Et[Et.meta_p <= q[0]]
-            hu = cy_v15_hucre(ust, yc, ec, "net" if ev == "eski" else "net_yeni", "e_net" if ev == "eski" else "e_net_yeni", V15, rng)
-            ha = cy_v15_hucre(alt, yc, ec, "net" if ev == "eski" else "net_yeni", "e_net" if ev == "eski" else "e_net_yeni", V15, rng)
+            hu = cy_v15_hucre(ust, yc, ec, nc, enc, V15, rng); ha = cy_v15_hucre(alt, yc, ec, nc, enc, V15, rng)
             KR.append({"test": "4 sessiz ML (LightGBM meta, P1, yıl yıl ileri 2019-26)", "kume": "model üst üçte biri vs alt üçte biri", "donem": "2019-26 test yılları", "evren": ev, "n": int(len(Et)),
-                       "auc": genel_auc, "fark": (hu.get("fark", np.nan) - ha.get("fark", np.nan)), "ust_fark": hu.get("fark"), "ust_fark_alt": hu.get("fark_alt"), "ust_fark_ust": hu.get("fark_ust"),
+                       "egitim_son_n": int(S_.egitim_n.max()) if len(S_) else 0, "auc": genel_auc, "fark": (hu.get("fark", np.nan) - ha.get("fark", np.nan)), "ust_fark": hu.get("fark"), "ust_fark_alt": hu.get("fark_alt"), "ust_fark_ust": hu.get("fark_ust"),
                        "alt_fark": ha.get("fark"), "yillik_auc": "; ".join(f"{int(r.yil)}: {r.auc:.3f}" for r in S_.itertuples() if np.isfinite(r.auc)),
                        "karar": "TUTAR" if (hu.get("n", 0) >= 30 and (hu.get("fark", 0) - ha.get("fark", 0)) >= V15["fark_esik"] and hu.get("fark_alt", 0) > 0) else "TUTMAZ"})
     except Exception as ex:
         KR.append({"test": "4 sessiz ML", "kume": "hata", "donem": "", "degerlendirme": f"koşulamadı: {ex}"})
-    # ---------- 5) K52 / K53 kayıtlı olay dosyalarıyla düzeltilmiş etiket
+    # ---------- 5) K52 / K53 kayıtlı olay dosyalarıyla düzeltilmiş etiket (A / B / C-eski)
     sinir = {}
     bas = 0; sem_arr = P.sembol.to_numpy(); Pi = P.i.to_numpy()
     for k_ in range(1, len(P) + 1):
         if k_ == len(P) or sem_arr[k_] != sem_arr[bas]:
             sinir[sem_arr[bas]] = (bas, k_); bas = k_
-    def satir(s_, i):
+    def satir_bul(s_, i):
         if s_ not in sinir:
             return -1
         a, b = sinir[s_]; j = a + int(np.searchsorted(Pi[a:b], i)); return j if (j < b and Pi[j] == i) else -1
     def yeni_etiket(X, icol="i"):
-        js = np.array([satir(s_, int(i)) for s_, i in zip(X.sembol.to_numpy(), X[icol].to_numpy())])
+        js = np.array([satir_bul(s_, int(i)) for s_, i in zip(X.sembol.to_numpy(), X[icol].to_numpy())])
         ok = js >= 0; out = X.copy(); out["_j"] = js; jj = np.where(ok, js, 0)
         def al(col, bos):
             v = P[col].to_numpy()[jj].copy(); v = np.where(ok, v, bos); return v
@@ -3249,19 +3352,20 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
         out.loc[~ok, "sinif"] = 6                                              # panelde bulunamayan olay: doğrulanamayan sayılır
         return out
     Kf = {"boot": V15["boot"], "n_min": V15["n_min"], "fark_esik": V15["fark_esik"]}
+    def ozet(h):
+        return {"n": h.get("n_a", 0), "fark": h.get("delta", np.nan), "fark_alt": h.get("delta_alt", np.nan), "fark_ust": h.get("delta_ust", np.nan), "karar": cy_v13_karar(h, Kf) if "delta" in h else "YETERSİZ ÖRNEKLEM"}
     def cift_fark(ad, kume, Aold, Bold):
         An = yeni_etiket(Aold); Bn = yeni_etiket(Bold)
-        An = An[An.gecerli_yeni].assign(y=lambda t: t.y_yeni, net=lambda t: t.net_yeni, e_y=lambda t: t.e_y_yeni, e_net=lambda t: t.e_net_yeni)
-        Bn = Bn[Bn.gecerli_yeni].assign(y=lambda t: t.y_yeni, net=lambda t: t.net_yeni, e_y=lambda t: t.e_y_yeni, e_net=lambda t: t.e_net_yeni)
+        Ac = An[An.gecerli_yeni]; Bc = Bn[Bn.gecerli_yeni]                    # C-eski: düzeltilmiş evrende kalan olaylar, kayıtlı (eski) etiket ve taban
+        An = Ac.assign(y=lambda t: t.y_yeni, net=lambda t: t.net_yeni, e_y=lambda t: t.e_y_yeni, e_net=lambda t: t.e_net_yeni); Bn = Bc.assign(y=lambda t: t.y_yeni, net=lambda t: t.net_yeni, e_y=lambda t: t.e_y_yeni, e_net=lambda t: t.e_net_yeni)
+        dz = lambda X, a, b: X[(X.tarih >= a) & (X.tarih <= b)]
         for dn, a, b in V15["donem"]:
-            he = cy_v13_fark(Aold[(Aold.tarih >= a) & (Aold.tarih <= b)], Bold[(Bold.tarih >= a) & (Bold.tarih <= b)], Kf, rng); hy = cy_v13_fark(An[(An.tarih >= a) & (An.tarih <= b)], Bn[(Bn.tarih >= a) & (Bn.tarih <= b)], Kf, rng)
-            ke = cy_v13_karar(he, Kf) if "delta" in he else "YETERSİZ ÖRNEKLEM"; ky = cy_v13_karar(hy, Kf) if "delta" in hy else "YETERSİZ ÖRNEKLEM"
-            e_ = {"n": he.get("n_a", 0), "fark": he.get("delta", np.nan), "fark_alt": he.get("delta_alt", np.nan), "fark_ust": he.get("delta_ust", np.nan), "karar": ke}
-            y_ = {"n": hy.get("n_a", 0), "fark": hy.get("delta", np.nan), "fark_alt": hy.get("delta_alt", np.nan), "fark_ust": hy.get("delta_ust", np.nan), "karar": ky}
-            Ad = Aold[(Aold.tarih >= a) & (Aold.tarih <= b)]; gp = float(yeni_etiket(Ad).sinif.isin([5, 6]).mean()) if len(Ad) else 0.0
-            KR.append({"test": ad, "kume": kume, "donem": dn, "eski_n": e_["n"], "eski_n_b": he.get("n_b", 0), "eski_fark": e_["fark"], "eski_fark_alt": e_["fark_alt"], "eski_fark_ust": e_["fark_ust"], "eski_net_fark": he.get("net_fark"), "eski_karar": ke,
-                       "yeni_n": y_["n"], "yeni_n_b": hy.get("n_b", 0), "yeni_fark": y_["fark"], "yeni_fark_alt": y_["fark_alt"], "yeni_fark_ust": y_["fark_ust"], "yeni_net_fark": hy.get("net_fark"), "yeni_karar": ky,
-                       "fark_fark": y_["fark"] - e_["fark"] if np.isfinite(y_["fark"]) and np.isfinite(e_["fark"]) else np.nan, "sinif56_pay_olay": gp, "degerlendirme": cy_v15_degerlendir(e_, y_, gp, V15)})
+            he = cy_v13_fark(dz(Aold, a, b), dz(Bold, a, b), Kf, rng); hy = cy_v13_fark(dz(An, a, b), dz(Bn, a, b), Kf, rng); hc = cy_v13_fark(dz(Ac, a, b), dz(Bc, a, b), Kf, rng)
+            e_, y_, c_ = ozet(he), ozet(hy), ozet(hc); Ad = dz(Aold, a, b); gp = float(yeni_etiket(Ad).sinif.isin([5, 6]).mean()) if len(Ad) else 0.0
+            KR.append({"test": ad, "kume": kume, "donem": dn, "orneklem": "A / B / C", "eski_n": e_["n"], "eski_n_b": he.get("n_b", 0), "eski_fark": e_["fark"], "eski_fark_alt": e_["fark_alt"], "eski_fark_ust": e_["fark_ust"], "eski_net_fark": he.get("net_fark"), "eski_karar": e_["karar"],
+                       "yeni_n": y_["n"], "yeni_n_b": hy.get("n_b", 0), "yeni_fark": y_["fark"], "yeni_fark_alt": y_["fark_alt"], "yeni_fark_ust": y_["fark_ust"], "yeni_net_fark": hy.get("net_fark"), "yeni_karar": y_["karar"],
+                       "ortak_eski_n": c_["n"], "ortak_eski_n_b": hc.get("n_b", 0), "ortak_eski_fark": c_["fark"], "ortak_eski_fark_alt": c_["fark_alt"], "ortak_eski_fark_ust": c_["fark_ust"], "ortak_eski_karar": c_["karar"],
+                       "ortak_yeni_n": y_["n"], "ortak_yeni_fark": y_["fark"], "ortak_yeni_karar": y_["karar"], **cy_v15_ayristir(e_, c_, y_), "sinif56_pay_olay": gp, "degerlendirme": cy_v15_degerlendir(e_, y_, gp, V15)})
     kap = {}
     f52 = os.path.join(A.cikti, "K51_ANALIST_REVIZYONLARI.csv.gz")
     if os.path.exists(f52):
@@ -3281,28 +3385,33 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
         if len(XA) >= 90:
             q = XA.ade.quantile([1 / 3, 2 / 3]).to_numpy(); cift_fark("5 K53 T6 (ADE üst − alt üçte bir)", "K53 T6", XA[XA.ade > q[1]], XA[XA.ade <= q[0]])
         k53 = yeni_etiket(R53); kap["K53 olaylarında sınıf dağılımı"] = k53.sinif.value_counts(dropna=False).to_dict()
-    # analist kapsaması sınıf başına
     for sn_, g in SD.groupby("sinif"):
         kap[f"sınıf {sn_} ({V15['sinif_ad'][int(sn_)]}) analist kaydı olan pay"] = float(g.analist_kaydi.mean())
-    # 3 ve 4 numaralı testlerde eski / yeni satır çiftlerinden değerlendirme
-    KRd = pd.DataFrame(KR)
-    for t_, anahtar in (("3 ", ["kume", "donem"]), ("4 ", ["kume", "donem"])):
+    # 3 ve 4 numaralı testlerde eski / yeni / ortak_eski satırlarından değerlendirme ve ayrıştırma; C-yeni satırı B'nin kopyası
+    KRd = pd.DataFrame(KR); ekle = []
+    for t_ in ("3 ", "4 "):
         m = KRd.test.str.startswith(t_) & KRd.evren.notna() if "evren" in KRd else pd.Series(False, index=KRd.index)
-        for key, g in KRd[m].groupby(anahtar):
-            e_ = g[g.evren == "eski"]; y_ = g[g.evren == "yeni"]
+        for key, g in KRd[m].groupby(["kume", "donem"]):
+            e_ = g[g.evren == "eski"]; y_ = g[g.evren == "yeni"]; c_ = g[g.evren == "ortak_eski"]
             if len(e_) and len(y_):
-                e1 = e_.iloc[0].to_dict(); y1 = y_.iloc[0].to_dict(); dg = cy_v15_degerlendir(e1, y1, 0.0, V15)
-                KRd.loc[y_.index, "degerlendirme"] = dg; KRd.loc[y_.index, "fark_fark"] = (y1.get("fark", np.nan) - e1.get("fark", np.nan))
+                e1 = e_.iloc[0].to_dict(); y1 = y_.iloc[0].to_dict(); c1 = c_.iloc[0].to_dict() if len(c_) else None
+                KRd.loc[y_.index, "degerlendirme"] = cy_v15_degerlendir(e1, y1, 0.0, V15)
+                for kk, vv in cy_v15_ayristir(e1, c1, y1).items():
+                    KRd.loc[y_.index, kk] = vv
+                ekle.append({**y1, "evren": "ortak_yeni", "degerlendirme": "C-yeni ≡ B (düzeltilmiş evren eski evrenin alt kümesi)"})
+    if ekle:
+        KRd = pd.concat([KRd, pd.DataFrame(ekle)], ignore_index=True)
     KRd.to_csv(os.path.join(A.cikti, "K54_ESKI_YENI_TEST_KARSILASTIRMA.csv"), index=False)
-    R = {"SD": SD, "KR": KRd, "DL": DLd, "kap": kap, "sure_dk": round((time.time() - t0) / 60, 1), "panel_n": int(len(P)), "gecerli_n": int(P.gecerli_yeni.sum()), "hisse": int(P.sembol.nunique())}
+    R = {"SD": SD, "KR": KRd, "DL": DLd, "kap": kap, "sure_dk": round((time.time() - t0) / 60, 1), "panel_n": int(len(P)), "gecerli_n": int(P.gecerli_yeni.sum()), "ortak_n": int(P.ortak.sum()),
+         "gecerli6_n": int(P.gecerli_6.sum()), "hisse": int(P.sembol.nunique()), "belirsiz1": sorted(belirsiz1), "bagla": bagla}
     cy_v15_yaz(R, A, K); return R
 
 
 def cy_v15_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
-    """K54_RAPOR.md."""
+    """K54_RAPOR.md (ek 8 düzenine göre: doğrulamalar, A / B / C ayrıştırması, duyarlılıklar, hayatta kalma yanlılığı tartışması)."""
     import subprocess
     V15 = K["_v15"]; SD, KR, DL, kap = R["SD"], R["KR"], R["DL"], R["kap"]
-    TAM = {"n", "eski_n", "yeni_n", "eski_n_b", "yeni_n_b", "fark_n", "hisse", "eski_hisse", "yeni_hisse", "V_ABD", "K34_yahoo", "K34_tiingo", "panel_satir", "P1_olay", "P2_olay", "erken_biten_olay", "sinif"}
+    TAM = {"n", "eski_n", "yeni_n", "ortak_eski_n", "ortak_yeni_n", "eski_n_b", "yeni_n_b", "ortak_eski_n_b", "fark_n", "hisse", "eski_hisse", "yeni_hisse", "V_ABD", "K34_yahoo", "K34_tiingo", "panel_satir", "P1_olay", "P2_olay", "erken_biten_olay", "sinif", "egitim_son_n", "b103_T_fark_gun"}
     def f(x, p=3, tam=False):
         if x is None or (isinstance(x, float) and not np.isfinite(x)):
             return ""
@@ -3319,40 +3428,70 @@ def cy_v15_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
         commit = subprocess.run(["git", "-C", kok, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
     except Exception:
         commit = "?"
-    sd = SD.sinif.value_counts().sort_index(); erken = SD[SD.erken_bitti]
-    L = ["# K54 — TARİHSEL HİSSE EVRENİ SAĞLAMLIK DENETİMİ (v1.5, ön kayıt d4dcdfb)", "",
-         "K54 yeni iz araştırması değildir. K51 / K52 / K53 ön kayıtları ve kararları değişmedi (K51 İZ DEĞİL). Eski dosyalar üzerine yazılmadı; eski ve düzeltilmiş evren değerleri yan yana.", "",
-         f"- Evren {len(SD)} sembol; panel {R['panel_n']} likit hisse-gün, düzeltilmiş evren {R['gecerli_n']} satır ({R['hisse']} hisse); süre {R['sure_dk']} dk; kod {CY_SURUM}, commit {commit}.",
+    sd = SD.sinif.value_counts().sort_index(); erken = SD[SD.erken_bitti]; c1 = SD[SD.sinif == 1]; c2 = SD[SD.sinif == 2]; c4a = SD[SD.alt.astype(str).str.startswith("4a")]; n6 = int((SD.sinif == 6).sum())
+    L = ["# K54 — TARİHSEL HİSSE EVRENİ SAĞLAMLIK DENETİMİ (v1.5, ön kayıt d4dcdfb + ek 8 5fa687d; düzeltilmiş koşu)", "",
+         "K54 yeni iz araştırması değildir. K51 / K52 / K53 ön kayıtları ve kararları değişmedi (K51 İZ DEĞİL). Eski dosyalar üzerine yazılmadı; ilk K54 koşusu (ac63f0d) git geçmişinde. Bu koşu ek 8'in dört düzeltmesini ve ortak örneklem deneyini uygular.", "",
+         f"- Evren {len(SD)} sembol; panel {R['panel_n']} likit hisse-gün (A); düzeltilmiş evren {R['gecerli_n']} satır (B); ortak örneklem {R['ortak_n']} satır (C); sınıf 6 dahil {R['gecerli6_n']} satır; {R['hisse']} hisse; süre {R['sure_dk']} dk; kod {CY_SURUM}, commit {commit}.",
          "- Kaynaklar: Tiingo desteklenen sembol listesi (bitiş tarihi, fiyat değil), SEC başvuru geçmişi (8-K madde 1.03 / 2.01, 25-NSE, 15-12G, birleşme belgeleri, 10-K / 10-Q devamı, güncel semboller, eski adlar), company_tickers.json. Tiingo fiyatı analist kaydının yerine kullanılmadı.", "",
          "## 1. Şirket durumu sınıfları", "", "| sınıf | ad | hisse | V_ABD | K34 Yahoo | K34 Tiingo | erken biten | analist kaydı payı |", "|---|---|---|---|---|---|---|---|"]
     for sn_, g in SD.groupby("sinif"):
         L.append(f"| {int(sn_)} | {V15['sinif_ad'][int(sn_)]} | {len(g)} | {(g.kaynak == 'V_ABD').sum()} | {(g.kaynak == 'K34_yahoo').sum()} | {(g.kaynak == 'K34_tiingo').sum()} | {g.erken_bitti.sum()} | {g.analist_kaydi.mean():+.3f} |")
     L += ["", f"- Seri erken biten (T < {V15['alive_sinir']}) {len(erken)} sembol: " + ", ".join(f"sınıf {int(k_)}: {int(v)}" for k_, v in erken.sinif.value_counts().sort_index().items()) + ".",
-          "- K51'in eski tahmini (K51_EVREN_PIT 'cikis_turu_tahmin') ile karşılaştırma K54_SIRKET_DURUMU.csv'de (sembol başına kural ve kanıt tarihleri).", "",
-          "## 2. Delist duyarlılığı (sınıf başına sayılar; P1 / P2 hücrelerinin −%0 / −%30 / −%100 bandı ve düzeltilmiş etiket)", ""]
+          "- Sembol başına kural ve kanıt tarihleri K54_SIRKET_DURUMU.csv'de; K51'in eski tahmini K51_EVREN_PIT.csv 'cikis_turu_tahmin' ile birleştirilerek görülür.", "",
+          "### 1.1 Sınıf 1 doğrulaması (ek 8.1: SEC güncel sembolü tek başına kanıt değil)", ""]
+    for dg, n_ in c1.dogrulama.value_counts().items():
+        L.append(f"- {dg}: {n_}")
+    L += [f"- Belirsiz işaretli sınıf 1: {len(R['belirsiz1'])} sembol ({', '.join(R['belirsiz1'][:20])}{'…' if len(R['belirsiz1']) > 20 else ''}). Seri 2026-08-01 sonrasına sürdüğü için çıkış işlemi yok; K51 P1 / P2 hücreleri bu semboller çıkarılarak ayrıca hesaplandı (3.1 duyarlılık satırları).", "",
+          "### 1.2 Sınıf 2 kronolojisi (ek 8.2: 8-K madde 1.03 başvurusunun T'ye göre zamanı)", ""]
+    if len(c2):
+        fg = c2.b103_T_fark_gun.astype(float)
+        L += [f"- {len(c2)} sembol; başvuru T'den önce {int((fg < 0).sum())}, aynı gün {int((fg == 0).sum())}, T'den sonra {int((fg > 0).sum())}; fark (başvuru − T, gün) en az {int(fg.min())}, medyan {int(fg.median())}, en çok {int(fg.max())}.",
+              "- Başvuru çoğunlukla T'den önce: iflas duyurusundan sonra hisse pembe tahtada ('Q' eki) bir süre daha işlem görmüş, T o işlemin bittiği gündür. Sınıf atanması (±365 gün) değişmedi; kronoloji kanıt olarak aşağıda.", ""]
+        L += tablo(c2.assign(b103_T_fark_gun=c2.b103_T_fark_gun.astype(float)).sort_values("b103_T_fark_gun"), ["sembol", "son_islem", "b103_tarih", "b103_T_fark_gun", "b103_zaman", "b103_tarihler", "nse25_tarih", "son_10k_10q"])
+    else:
+        L.append("- Sınıf 2 kaydı yok.")
+    L += ["", "### 1.3 Sınıf 4a doğrulaması (ek 8.3: son kapanış otomatik nakit bedel değil)", ""]
+    if len(c4a):
+        L += [f"- {len(c4a)} sembol T'den ≥ 180 gün sonra 10-K / 10-Q veriyor; seri bağlanan (yeni sembol evrende, T ± {V15['baglama_gun']} gün, oran 1:1 ± %{int(V15['oran_tol'] * 100)}): {len(R['bagla'])}; doğrulanamayan (belirsiz; ana sonuçta K51 kuralı, bant 2. bölümde): {len(c4a) - len(R['bagla'])}.", ""]
+        L += tablo(c4a, ["sembol", "son_islem", "son_10k_10q", "yeni_sembol", "baglama", "cikis_islemi"])
+    else:
+        L.append(f"- Bu evrende seri erken bitip T'den ≥ {V15['devam_gun']} gün sonra 10-K / 10-Q vermeye devam eden şirket yok (sınıf 4a n = 0); doğrulama kuralı kodda ve testte var, uygulanacak kayıt çıkmadı. Sebep: V_ABD ve K34 Yahoo serileri bugünkü sembol altında geriye doğru doldurulmuştur (sembol değiştiren şirket yeni sembolüyle tam seri taşır); eski sembollü seriler yalnız Tiingo'nun nakdi biten 422'lik örneklemindedir.")
+    L += ["", "## 2. Delist duyarlılığı (sınıf başına sayılar; P1 / P2 hücrelerinin −%0 / −%30 / −%100 bandı ve düzeltilmiş etiket; 4a doğrulanamayan bandı)", ""]
     L += tablo(DL[DL.kume == "sınıf"], ["sinif", "sinif_ad", "hisse", "V_ABD", "K34_yahoo", "K34_tiingo", "analist_kaydi_pay", "panel_satir", "P1_olay", "P2_olay", "son_kapanis_medyan"])
     L += [""] + tablo(DL[DL.kume != "sınıf"], ["kume", "donem", "n", "erken_biten_olay", "isabet_d0", "isabet_d30", "isabet_d100", "isabet_yeni", "bant_genislik_puan"])
-    L += ["", "## 3. Eski evren / düzeltilmiş evren / fark (aynı tanım ve eşikler)", "", "Taban-ayarlı isabet = y − e_y (K51 tabanı aynı gün aynı oynaklık ondalığı); 'fark_fark' = düzeltilmiş − eski (puan, ×100 değil). Değerlendirme: SAĞLAM (≤ 2 puan, karar ve aralık aynı), ETKİLENMİŞ, GEÇERSİZ (sınıf 5 + 6 payı > %30 ya da evren kurulamıyor).", ""]
-    t1 = KR[KR.test.str.startswith("1 ")]
-    L += ["### 3.1 K51 temel hücreleri", ""] + tablo(t1, ["kume", "donem", "eski_n", "yeni_n", "eski_ust_oran", "yeni_ust_oran", "eski_alt_oran", "yeni_alt_oran", "eski_net", "yeni_net", "eski_fark", "eski_fark_alt", "eski_fark_ust", "yeni_fark", "yeni_fark_alt", "yeni_fark_ust", "fark_fark", "eski_karar", "yeni_karar", "sinif56_pay_olay", "degerlendirme"])
+    L += ["", "## 3. A (eski evren) / B (düzeltilmiş evren) / C (ortak örneklem) — aynı tanım ve eşikler", "",
+          "Taban-ayarlı isabet = y − e_y (aynı gün, aynı oynaklık ondalığı; taban her örneklemde kendi satırlarında yeniden). A: K51 etiketi, bütün satırlar. B: düzeltilmiş etiket, sınıf 6 ve 4b kesim sonrası çıkarılmış. C: iki evrende ortak satırlar; C-eski = K51 etiketi, C-yeni = düzeltilmiş etiket (C-yeni ≡ B, çünkü B ⊂ A). Ayrıştırma (puan): evren etkisi = C-eski − A; etiket etkisi = C-yeni − C-eski; toplam (fark_fark) = B − A. Değerlendirme A ile B arasında: SAĞLAM (≤ 2 puan, karar ve aralık aynı), ETKİLENMİŞ, GEÇERSİZ (sınıf 5 + 6 payı > %30 ya da evren kurulamıyor).", ""]
+    t1 = KR[KR.test.str.startswith("1 ") & (KR.orneklem == "A / B / C")]
+    L += ["### 3.1 K51 temel hücreleri (A / B / C ve ayrıştırma)", ""] + tablo(t1, ["kume", "donem", "eski_n", "ortak_eski_n", "yeni_n", "eski_ust_oran", "yeni_ust_oran", "eski_alt_oran", "yeni_alt_oran", "eski_net", "yeni_net", "eski_fark", "eski_fark_alt", "eski_fark_ust", "ortak_eski_fark", "ortak_eski_fark_alt", "ortak_eski_fark_ust", "yeni_fark", "yeni_fark_alt", "yeni_fark_ust", "evren_etkisi", "etiket_etkisi", "fark_fark", "eski_karar", "ortak_eski_karar", "yeni_karar", "sinif56_pay_olay", "degerlendirme"])
+    td = KR[KR.test.str.startswith("1 ") & KR.orneklem.astype(str).str.startswith("duyarlılık")]
+    L += ["", "### 3.1b Duyarlılık satırları (ek 8.1 sınıf 1 belirsiz çıkarılmış; ek 8.4 sınıf 6 −%30 / −%100 dahil; 'yeni_*' sütunları bu varyantı, 'eski_*' A'yı gösterir)", ""]
+    L += [f"- Sınıf 6 sembol sayısı: {n6}. Sınıf 6 boşsa 'sınıf 6 dahil' varyantları B ile birebir aynıdır (satırlar yine de yazıldı)."] + [""] + tablo(td, ["kume", "donem", "eski_n", "yeni_n", "eski_fark", "eski_fark_alt", "eski_fark_ust", "yeni_fark", "yeni_fark_alt", "yeni_fark_ust", "fark_fark", "eski_karar", "yeni_karar", "degerlendirme"])
     t3 = KR[KR.test.str.startswith("3 ")]
-    L += ["", "### 3.2 Küçük mum / hacim kuruması / hacimli taban (v1.2 eşleşmiş kontrol; eşleştirme havuzu her evrende ayrı)", ""] + tablo(t3, ["kume", "donem", "evren", "n", "fark", "fark_alt", "fark_ust", "net_fark", "karar", "eslesmeyen_pay", "degerlendirme"])
+    L += ["", "### 3.2 Küçük mum / hacim kuruması / hacimli taban (v1.2 eşleşmiş kontrol; eşleştirme havuzu her örneklemde ayrı; evren: eski = A, yeni = B, ortak_eski = C-eski, ortak_yeni = C-yeni)", ""] + tablo(t3, ["kume", "donem", "evren", "n", "fark", "fark_alt", "fark_ust", "net_fark", "karar", "eslesmeyen_pay", "evren_etkisi", "etiket_etkisi", "fark_fark", "degerlendirme"])
     t4 = KR[KR.test.str.startswith("4 ")]
-    L += ["", "### 3.3 Sessiz ML (LightGBM meta-etiketleme, P1, yıl yıl ileri)", ""] + tablo(t4, ["kume", "donem", "evren", "n", "auc", "fark", "ust_fark", "ust_fark_alt", "ust_fark_ust", "alt_fark", "karar", "yillik_auc", "degerlendirme"])
+    L += ["", "### 3.3 Sessiz ML (LightGBM meta-etiketleme, P1, yıl yıl ileri 2019-26; özellikler, yıllar, embargo 10 gün, ayarlar, tohum 515 sabit; evren: A / B / C-eski / C-yeni)", ""] + tablo(t4, ["kume", "donem", "evren", "n", "egitim_son_n", "auc", "fark", "ust_fark", "ust_fark_alt", "ust_fark_ust", "alt_fark", "karar", "yillik_auc", "evren_etkisi", "etiket_etkisi", "fark_fark", "degerlendirme"])
     t5 = KR[KR.test.str.startswith("5 ")]
-    L += ["", "### 3.4 K52 / K53 (kayıtlı olay dosyaları, düzeltilmiş etiket; sınıf 6 çıkarıldı)", ""] + tablo(t5, ["test", "kume", "donem", "eski_n", "eski_n_b", "yeni_n", "yeni_n_b", "eski_fark", "eski_fark_alt", "eski_fark_ust", "yeni_fark", "yeni_fark_alt", "yeni_fark_ust", "fark_fark", "eski_karar", "yeni_karar", "sinif56_pay_olay", "degerlendirme"])
+    L += ["", "### 3.4 K52 / K53 (kayıtlı olay dosyaları; A = kayıtlı etiket, B = düzeltilmiş etiket, C-eski = düzeltilmiş evrende kalan olaylar kayıtlı etiketle; sınıf 6 çıkarıldı)", ""] + tablo(t5, ["test", "kume", "donem", "eski_n", "eski_n_b", "ortak_eski_n", "yeni_n", "yeni_n_b", "eski_fark", "eski_fark_alt", "eski_fark_ust", "ortak_eski_fark", "yeni_fark", "yeni_fark_alt", "yeni_fark_ust", "evren_etkisi", "etiket_etkisi", "fark_fark", "eski_karar", "ortak_eski_karar", "yeni_karar", "sinif56_pay_olay", "degerlendirme"])
     L += ["", "## 4. K52 / K53 özel denetimi", ""] + [f"- {k_}: {v}" for k_, v in kap.items()]
     L += ["- Analist geçmişi olmayan şirketlere sıfır revizyon atanmadı; K52 / K53'te bunlar 'veri yok' (G2b / G4b) alt grubundaydı. Yahoo günlüğü yalnız bugün Yahoo'da bulunan sembolleri kapsadığından K52 / K53 sonuçları **yalnız Yahoo kapsamındaki (çoğu halen işlem gören) şirketler için geçerlidir**; batan / birleşen şirketlerin analist geçmişi yoktur ve Tiingo fiyatı bunun yerine kullanılmamıştır.", "",
-          "## 5. Değerlendirme özeti", ""]
-    oz = KR[KR.degerlendirme.notna()].groupby("test").degerlendirme.apply(lambda v: ", ".join(f"{k_}: {n}" for k_, n in v.value_counts().items()))
+          "## 5. Değerlendirme özeti (A ile B)", ""]
+    ana = KR[KR.degerlendirme.notna() & ~KR.orneklem.astype(str).str.startswith("duyarlılık") & (KR.evren.astype(str) != "ortak_yeni")] if "orneklem" in KR else KR[KR.degerlendirme.notna()]
+    oz = ana.groupby("test").degerlendirme.apply(lambda v: ", ".join(f"{k_}: {n}" for k_, n in v.value_counts().items()))
     L += [f"- {t}: {v}" for t, v in oz.items()]
-    L += ["", "Sınıf 6 (doğrulanamayan) ve sınıf 5 (belirsiz) hiçbir hücrede iflas ya da aktif sayılmadı; 6 düzeltilmiş evrenden çıktı, 5 K51 kuralıyla kaldı ve bandı yazıldı.", ""]
-    cikis = SD[SD.sinif.isin([2, 3, 4, 5, 6])]; L += ["## 6. Yorum ve sınırlar (sonuç görüldükten sonra yazılan açıklama; kararlar değişmedi)", "",
-          f"- Evren düzeltmesi eski sonuçları değiştirmiyor: hücrelerin neredeyse hepsi SAĞLAM. Sebep: evrendeki {len(SD)} sembolün {len(cikis)}'ü borsadan çıkmış ya da belirsiz; P1 / P2 olaylarının çok azı seri erken biten şirketlerde ve bunların 60 günlük penceresi nadiren seri sonuna çarpıyor. Bu yüzden delist varsayımı (−%0 / −%30 / −%100) hücreleri oynatmıyor (bant genişliği tabloda).",
-          "- Bu 'SAĞLAM' etiketi yalnız MEVCUT evren içindeki sınıflandırma ve çıkış işlemi düzeltmesi için geçerlidir. Evrenin kendisi çoğunlukla hayatta kalanlardan oluşur (V_ABD ve K34 Yahoo yalnız bugün Yahoo'da olanlar; batanlar yalnız 422'lik Tiingo örnekleminden). Eksik batan şirketler eklenmeden hayatta kalma yanlılığı tam ölçülemez; bu K54'ün kapsamı dışında kalan açık maddedir (Kasım Tiingo kotasıyla gerçek batan evreni).",
-          "- Sınıf 4b (kod yeniden kullanımı) listesi aynı şirketin yeniden kaydını da yakalayabilir (örn. aynı adlı şirketin başka CIK'i); kesim bu durumda geçerli veriyi atar, yani düzeltme muhafazakârdır (9 sembol).",
-          "- K51'in eski 'batma benzeri' tahmininin bir bölümü SEC kanıtına göre birleşme / satın alma ya da belirsiz çıktı; 'satın alma benzeri' tahmininin bir bölümü belirsiz. Sembol başına eski tahmin ve yeni sınıf K54_SIRKET_DURUMU.csv ile K51_EVREN_PIT.csv birleştirilerek görülür.",
-          "- ETKİLENMİŞ etiketi alan hücrelerde etki değişimi 2 puanın altındadır; etiket yalnız aralık alt ucunun sıfırın öbür yanına geçmesinden gelir (sınırda hücre; karar değişmedi).", "",
+    ay = KR[KR.evren_etkisi.notna()] if "evren_etkisi" in KR else KR.iloc[0:0]
+    if len(ay):
+        L += ["", f"- Ayrıştırma (bütün hücreler): |evren etkisi| en çok {ay.evren_etkisi.abs().max():.4f}, |etiket etkisi| en çok {ay.etiket_etkisi.abs().max():.4f}, |toplam| en çok {ay.fark_fark.abs().max():.4f} (taban-ayarlı isabet, oran birimi; 0,02 = 2 puan)."]
+    L += ["", "Sınıf 6 (doğrulanamayan) ve sınıf 5 (belirsiz) hiçbir hücrede iflas ya da aktif sayılmadı; 6 ana sonuçta evrenden çıktı (−%30 / −%100 varyantları 3.1b'de), 5 K51 kuralıyla kaldı ve bandı yazıldı; sınıf 1 belirsiz ve 4a doğrulanamayan kayıtlar ayrıca işaretlendi.", ""]
+    cikis = SD[SD.sinif.isin([2, 3, 4, 5, 6])]; tdx = td[td.kume.str.contains("sınıf 6")]; d6 = float(tdx.fark_fark.abs().max()) if len(tdx) and tdx.fark_fark.notna().any() else np.nan
+    L += ["## 6. Hayatta kalma yanlılığı ve sınıf 6 (ek 8.4 tartışması)", "",
+          f"- Sınıf 6 bu evrende {n6} sembol. Sınıf 6'yı çıkarmak, geçmişi doğrulanamayan (dolayısıyla batmış olma olasılığı yüksek) şirketleri dışarıda bırakır; bu tek başına hayatta kalma yanlılığı üretir. Bu yüzden −%30 ve −%100 varsayımlı sonuçlar da üretildi: sınıf 6 varyantlarında B'ye göre en büyük değişim {f(d6, 4)} (oran birimi)." + (" Sınıf 6 boş olduğu için bu varyantlar B'yi değiştirmedi; yanlılık sınırı bu evrende sınıf 6'dan değil, evrende hiç bulunmayan şirketlerden gelir." if n6 == 0 else ""),
+          f"- Asıl sınır evrenin kuruluşudur: {len(SD)} sembolün {len(cikis)}'ü borsadan çıkmış ya da belirsiz; V_ABD ve K34 Yahoo yalnız bugün Yahoo'da olan sembollerdir, eski sembolle biten seriler yalnız 422'lik Tiingo örnekleminden gelir. 2015-2026 arasında ABD'de borsadan çıkan şirket sayısı bunun çok üstündedir; eksik batık şirketler panelde yoktur, bu yüzden hiçbir K54 hücresi onların etkisini ölçemez. 'SAĞLAM' etiketi yalnız mevcut evren içindeki sınıflandırma ve çıkış işlemi düzeltmesi için geçerlidir; evren tamamlanmadan (Kasım Tiingo kotasıyla gerçek batan evreni) hayatta kalma yanlılığı tam ölçülemez.",
+          "- Yönü: eksik batık şirketler hem olay hem taban tarafına girerdi; eksikliğin taban-ayarlı isabeti hangi yönde oynatacağı önceden bilinemez, K51'in İZ DEĞİL kararını lehine çevirecek bir mekanizma da görünmüyor (desen olayları çoğunlukla hayatta kalanlarda; batıklar eklenince olay tarafı daha çok düşer).", "",
+          "## 7. Yorum ve sınırlar (sonuç görüldükten sonra yazılan açıklama; kararlar ve eşikler değişmedi)", "",
+          f"- A ile B arasında değerlendirme dağılımı 5. bölümde. Ortak örneklem ayrıştırması evren etkisi (satır çıkarma: sınıf 6, 4b kesimi) ile etiket etkisini (çıkış işlemi) ayırır; iki etki de 5. bölümdeki en büyük mutlak değerlerle sınırlıdır.",
+          "- Sınıf 4b (kod yeniden kullanımı) listesi aynı şirketin yeniden kaydını da yakalayabilir; kesim bu durumda geçerli veriyi atar, yani düzeltme muhafazakârdır.",
+          "- K51'in eski 'batma benzeri' tahmininin bir bölümü SEC kanıtına göre birleşme / satın alma ya da belirsiz çıktı; sembol başına eski tahmin ve yeni sınıf K54_SIRKET_DURUMU.csv ile K51_EVREN_PIT.csv birleştirilerek görülür.",
+          "- ETKİLENMİŞ etiketi 2 puanın altındaki değişimlerde de çıkabilir (aralık alt ucunun sıfırın öbür yanına geçmesi); böyle hücrelerde karar değişip değişmediği tabloda 'eski_karar / yeni_karar' sütunlarındadır.", "",
           "## Yeniden üretim", "", "- `R = cy_v15_calistir(k54_yol='.../k54')` (k54: sec_ozet.json, sembol_cik.json, company_tickers.json, supported_tickers.csv; SEC indirmesi e-posta User-Agent ile, kodda yok). Çıktılar: K54_EVREN_ESLESTIRME.csv, K54_SIRKET_DURUMU.csv, K54_ESKI_YENI_TEST_KARSILASTIRMA.csv, K54_DELIST_DUYARLILIK.csv, bu belge."]
     open(os.path.join(A.cikti, "K54_RAPOR.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 
