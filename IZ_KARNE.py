@@ -1406,7 +1406,22 @@ IK_GOREV: List[Dict[str, str]] = [
               "'sıçrama' bayrağı haber günleri çıktı (ABEO, AGEN, ALNY), eksiksizlikten çıkarıldı. Tam evren: eksiksiz 3.012 / 3.260, kısa geçmişli 60 "
               "(VERİ YETERSİZ, silinmedi), CIK 3.259 / 3.260; purge: Y60 KEŞİF 4.292 olay (1.427 PURGE), Y250 KEŞİF 895 (570 PURGE); sızıntı testleri "
               "hepsi geçti (olumlu d +1,18, olumsuz −0,003); iskele D01-S01 ETKİ YOK / TUTMAZ (iz değil). BAĞIMSIZ açılmadı",
-     "durum": "TAMAMLANDI, FAZ 1 ONAY BEKLİYOR: Faz 1 = D01-D06 + D10 OHLCV hücreleri (80), yalnız KEŞİF; ~3 saat; Cemal 'Faz 1 başlat' der"},
+     "durum": "TAMAMLANDI (v1.2 koşusu); evren modülü denetimiyle v1.3'te yeniden koşuldu (sonraki satır)"},
+    {"tarih": "2026-10-30", "istek": "K55 evren modülü denetimi, 11 madde: ornek_sec tam 50 benzersiz + eksik tabaka raporu + CSV; evren sürümü K54 dosyaları, "
+                                     "evren_disi, veri sha ve kurallarla; eksik cikis_islemi 'y' sayılmasın, K54 sınıf / işlem / kesim tutarlılığı; kontrollü boolean; "
+                                     "SERI_SONU gerçek değerlerle, 4a halef kesin değil, 4b yanlış şirket fiyatları kesilir + satır sayıları; 320 / 260 açıklaması; "
+                                     "normalize sembol (nokta / tire birleştirilmez); ağ erişimi testi (network=False); V/EV çift yönlü; dışlamalar ayrı ayrı; "
+                                     "örneklem sınıf 1-5, kaynak, likidite, büyüklük; 11 sentetik test; sonra 50'lik deneme; tam evren BAŞLATILMASIN",
+     "yapilan": "ONKAYIT_K55.md v1.3 notu; K55/evren.py yeniden: saf evren_insa + I/O evren_kur(network=False, ag_kapali soket kapısı), k54_tutarlilik "
+                "(sınıf × izinli işlem tablosu SINIF_ISLEM; boş işlem BELİRSİZ; y_kes kesim ister; 'False' metni kontrollü; yinelenen sembol tutarsız), "
+                "kesim_uygula (işlem günü olmayan kesimde son <= kesim; önce / sonra / atılan), tutarlilik_V_EV (hata -> durur), evren_surum (EV + 3 dosya sha + "
+                "8 veri sha + kurallar), ornek_sec (kaynak × sınıf × likidite tabakası, tekrarsız, eksik tabaka + tamamlama CSV), yukleyici_esigi_dogrula "
+                "(320 kaynak koddan), sembol_normalize; test_k55 26/26 (11 sentetik vaka dahil); 50'lik deneme koşusu (commit 7ce1627): çıktılar "
+                "K55_EVREN_DISI.csv, K55_KESIM.csv, K55_K54_TUTARLILIK.csv, K55_ORNEKLEM.csv + öncekiler",
+     "sonuc": "Tam evren 3.260 (sınıf 1: 2.994, 2: 19, 3: 159, 4: 9, 5: 79); dışlamalar ayrı: kısa seri 60, fon 7, CIK eşleşmesi yok 1 (evrende, bilgi); "
+              "K54 tutarsızlık 0, boş çıkış işlemi 0; 4b kesim 9 sembol (satır sayıları CSV'de); V/EV tutarlılık geçti; örneklem 50 benzersiz, eksik tabaka "
+              "V_ABD sınıf 1 düşük likidite (7 aday / 10 kota, 3 tamamlama ile) raporlandı; sızıntı testleri hepsi geçti; eksiksiz 46 / 50. Tam evren koşulmadı",
+     "durum": "TAMAMLANDI, AÇIK: tam evren koşusu ve Faz 1 Cemal'in onayını bekliyor"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "

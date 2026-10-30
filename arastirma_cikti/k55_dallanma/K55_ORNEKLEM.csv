@@ -1,0 +1,10 @@
+tabaka,kaynak,sinif,lik_uclu,kota,aday,secilen,eksik,toplam_secilen,istenen,evren
+V_ABD sınıf 1 lik 0,V_ABD,1,0.0,10,7,7,3,50,50,3260
+V_ABD sınıf 1 lik 1,V_ABD,1,1.0,10,455,10,0,50,50,3260
+V_ABD sınıf 1 lik 2,V_ABD,1,2.0,10,946,10,0,50,50,3260
+K34_yahoo sınıf 1,K34_yahoo,1,,8,1428,8,0,50,50,3260
+K34_tiingo sınıf 2,K34_tiingo,2,,4,19,4,0,50,50,3260
+K34_tiingo sınıf 3,K34_tiingo,3,,4,159,4,0,50,50,3260
+K34_tiingo sınıf 5,K34_tiingo,5,,2,79,2,0,50,50,3260
+K34_tiingo sınıf 4,K34_tiingo,4,,2,7,2,0,50,50,3260
+"tamamlama (eksik tabakalar yerine, tekrarsız)",,-1,,3,3213,3,0,50,50,3260

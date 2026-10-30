@@ -1,51 +1,51 @@
 sembol,n_gun,ilk,son,yinelenen_tarih,sirali,bosluk_sayi,bosluk_max_gun,sifir_hacim_pay,asiri_getiri_sayi,sert_hareket_sayi,ohlc_hata,ozellik_yeterli,eksiksiz,kaynak,sinif,seri_sonu,seri_erken,cik,sec_ad,sektor,evren_bas,cik_var,sektor_var,tarihsel_eksik
-ACIW,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,935036.0,"ACI WORLDWIDE, INC.",Technology,2015-06-01,True,True,False
-AIFA,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1708341.0,"All In FutureTech Alliance, Inc.",Hizmet,2023-05-12,True,True,False
-AIOT,2830,2015-06-01,2026-08-31,0,True,0,0,0.0007067137809187279,0,0,0,True,True,V_ABD,1,k51,False,1774170.0,"Powerfleet, Inc.",Technology,2015-06-01,True,True,False
-AMPX,993,2022-09-15,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1899287.0,"Amprius Technologies, Inc.",Industrials,2022-09-15,True,True,False
-AQST,2036,2018-07-25,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1398733.0,"Aquestive Therapeutics, Inc.",Healthcare,2018-07-25,True,True,False
-ATOS,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1488039.0,"ATOSSA THERAPEUTICS, INC.",İmalat,2026-05-11,True,True,False
-BAC,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,70858.0,BANK OF AMERICA CORP /DE/,Financial Services,2015-06-01,True,True,False
-BG,854,2020-10-01,2024-02-23,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,4,k51,True,1144519.0,BUNGELTD,İmalat,2021-02-22,True,True,False
-CDAKQ,735,2020-10-14,2023-09-18,0,True,0,0,0.06938775510204082,1,2,0,True,True,K34_tiingo,2,d100,True,1659352.0,"Codiak BioSciences, Inc.",İmalat,2022-05-06,True,True,False
-CNI,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,16868.0,CANADIAN NATIONAL RAILWAY CO,Industrials,2015-06-01,True,True,False
-CNQ,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1017413.0,CANADIAN NATURAL RESOURCES Ltd,Energy,2015-06-01,True,True,False
-COO,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,711404.0,"COOPER COMPANIES, INC.",Healthcare,2015-06-01,True,True,False
-ETR,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,65984.0,ENTERGY CORP /DE/,Utilities,2015-06-01,True,True,False
-EVC,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,1,0,True,True,V_ABD,1,k51,False,1109116.0,ENTRAVISION COMMUNICATIONS CORP,Communication Services,2015-06-01,True,True,False
-EWTX,1364,2021-03-26,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1710072.0,"Edgewise Therapeutics, Inc.",Healthcare,2021-03-26,True,True,False
-FCX,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,831259.0,FREEPORT-MCMORAN INC,Basic Materials,2015-06-01,True,True,False
-FLL,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,891482.0,FULL HOUSE RESORTS INC,Hizmet,2025-05-12,True,True,False
-FRD,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,39092.0,FRIEDMAN INDUSTRIES INC,İmalat,2021-11-22,True,True,False
-GBLI,1485,2020-10-01,2026-08-31,0,True,0,0,0.0632996632996633,0,0,0,True,True,K34_yahoo,1,k51,False,1494904.0,"Global Indemnity Group, LLC",Finans,2021-03-15,True,True,False
-GDYN,1968,2018-10-30,2026-08-31,0,True,0,0,0.046239837398373985,0,0,0,True,True,V_ABD,1,k51,False,1743725.0,"GRID DYNAMICS HOLDINGS, INC.",Technology,2018-10-30,True,True,False
-GPN,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1123360.0,GLOBAL PAYMENTS INC,Industrials,2015-06-01,True,True,False
-IRT,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1466085.0,"INDEPENDENCE REALTY TRUST, INC.",Real Estate,2015-06-01,True,True,False
-ITW,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,49826.0,ILLINOIS TOOL WORKS INC,Industrials,2015-06-01,True,True,False
-JSPR,1485,2020-10-01,2026-08-31,0,True,0,0,0.01818181818181818,2,2,0,True,True,K34_yahoo,1,k51,False,1788028.0,"Jasper Therapeutics, Inc.",İmalat,2023-03-09,True,True,False
-KGS,796,2023-06-29,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1767042.0,"Kodiak Gas Services, Inc.",Energy,2023-06-29,True,True,False
-LBPH,938,2021-03-12,2024-12-02,0,True,0,0,0.0010660980810234541,1,0,0,True,True,K34_tiingo,3,d0,True,1832168.0,"Longboard Pharmaceuticals, Inc.",İmalat,2022-05-06,True,True,False
-LITTU,507,2021-06-11,2023-06-15,0,True,0,0,0.40236686390532544,0,0,0,True,False,K34_tiingo,5,k51,True,1848364.0,Logistics Innovation Technologies Corp.,Finans,2021-08-17,True,True,True
+AEHL,2830,2015-06-01,2026-08-31,0,True,0,0,0.33568904593639576,6,1,0,True,False,V_ABD,1,k51,False,1470683.0,Antelope Enterprise Holdings Ltd,Industrials,2015-06-01,True,True,True
+AGGRU,505,2021-03-10,2023-03-10,0,True,0,0,0.28316831683168314,0,0,0,True,False,K34_tiingo,5,k51,True,1842329.0,Agile Growth Corp.,Finans,2021-06-03,True,True,True
+ALVO,1055,2022-06-16,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1898416.0,Alvotech,Healthcare,2022-06-16,True,True,False
+AMRSQ,905,2020-10-01,2024-05-07,0,True,0,0,0.0,13,10,0,True,True,K34_tiingo,2,d100,True,1365916.0,"AMYRIS, INC.",İmalat,2021-03-08,True,True,False
+ASPI,953,2022-11-10,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1921865.0,ASP Isotopes Inc.,Basic Materials,2022-11-10,True,True,False
+BRBS,2830,2015-06-01,2026-08-31,0,True,0,0,0.2823321554770318,0,0,0,True,False,V_ABD,1,k51,False,842717.0,"BLUE RIDGE BANKSHARES, INC.",Financial Services,2015-06-01,True,True,True
+CCI,2830,2015-06-01,2026-08-31,0,True,0,0,0.00035335689045936394,0,0,0,True,True,V_ABD,1,k51,False,1051470.0,CROWN CASTLE INC.,Real Estate,2015-06-01,True,True,False
+CHRS,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1512762.0,"Coherus Oncology, Inc.",İmalat,2023-03-07,True,True,False
+CTRI,593,2024-04-19,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1981599.0,"Centuri Holdings, Inc.",Utilities,2024-04-19,True,True,False
+CYTH,1126,2020-10-01,2025-03-26,0,True,0,0,0.0008880994671403197,0,1,0,True,True,K34_tiingo,3,d0,True,922247.0,"Cyclo Therapeutics, Inc.",İmalat,2021-05-17,True,True,False
+EAR,844,2020-10-16,2024-02-26,0,True,0,0,0.0071090047393364926,1,1,0,True,True,K34_tiingo,3,d0,True,1719395.0,"Eargo, Inc.",İmalat,2022-08-09,True,True,False
+EPM,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1006655.0,EVOLUTION PETROLEUM CORP,Energy,2015-06-01,True,True,False
+EXTR,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1078271.0,EXTREME NETWORKS INC,Technology,2015-06-01,True,True,False
+FDUS,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1513363.0,FIDUS INVESTMENT Corp,bilinmiyor,2022-11-04,True,False,False
+FND,2349,2017-04-27,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1507079.0,"Floor & Decor Holdings, Inc.",Consumer Cyclical,2017-04-27,True,True,False
+FSRDQ,483,2021-04-06,2023-03-06,0,True,0,0,0.006211180124223602,2,2,0,True,True,K34_tiingo,2,d100,True,1832351.0,"Fast Radius, Inc.",İmalat,2022-05-13,True,True,False
+GDC,1485,2020-10-01,2026-08-31,0,True,0,0,0.00202020202020202,3,3,0,True,True,K34_yahoo,1,k51,False,1641398.0,GD Culture Group Ltd,Toptan,2021-11-23,True,True,False
+GFR,1183,2021-12-13,2026-08-31,0,True,0,0,0.08875739644970414,0,0,0,True,True,V_ABD,1,k51,False,1966287.0,Greenfire Resources Ltd.,Energy,2021-12-13,True,True,False
+GORO,2830,2015-06-01,2026-08-31,0,True,0,0,0.22190812720848058,3,20,0,True,False,V_ABD,1,k51,False,1515964.0,Goldgroup Mining Inc.,Basic Materials,2015-06-01,True,True,True
+HARP,865,2020-10-01,2024-03-11,0,True,0,0,0.0011560693641618498,1,0,0,True,True,K34_tiingo,3,d0,True,1708493.0,"Harpoon Therapeutics, Inc.",İmalat,2021-05-07,True,True,False
+IMBIQ,878,2020-10-01,2024-04-01,0,True,0,0,0.02050113895216401,6,15,0,True,True,K34_tiingo,2,d100,True,870826.0,"Legacy IMBDS, Inc.",Perakende,2021-06-10,True,True,False
+INN,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1497645.0,"Summit Hotel Properties, Inc.",Real Estate,2015-06-01,True,True,False
+JANX,1311,2021-06-11,2026-08-31,0,True,0,0,0.0,1,1,0,True,True,V_ABD,1,k51,False,1817713.0,"Janux Therapeutics, Inc.",Healthcare,2021-06-11,True,True,False
+KIM,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,879101.0,KIMCO REALTY CORP,Real Estate,2015-06-01,True,True,False
+LOGC,1185,2020-12-16,2025-09-05,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,4,kes,True,1822250.0,ContextLogic Inc.,Perakende,2021-11-11,True,True,False
+MCHP,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,827054.0,MICROCHIP TECHNOLOGY INC,Technology,2015-06-01,True,True,False
 MNDY,1312,2021-06-10,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1845338.0,monday.com Ltd.,Technology,2021-06-10,True,True,False
-MWA,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1350593.0,"Mueller Water Products, Inc.",Industrials,2015-06-01,True,True,False
-NE,379,2021-06-09,2022-12-07,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,4,k51,True,1458891.0,Noble Corp,İnşaat,2022-05-04,True,True,False
-NOGNQ,660,2021-09-20,2024-05-03,0,True,0,0,0.03636363636363636,2,1,0,True,True,K34_tiingo,2,d100,True,1841800.0,"Nogin, Inc.",Hizmet,2022-11-15,True,True,False
-NSTGQ,1017,2020-10-01,2024-10-16,0,True,0,0,0.0776794493608653,3,2,0,True,True,K34_tiingo,2,d100,True,1401708.0,"NS Wind Down Co., Inc.",İmalat,2022-05-11,True,True,False
-PCT,1541,2020-07-14,2026-08-31,0,True,0,0,0.01752109020116807,0,0,0,True,True,V_ABD,1,k51,False,1830033.0,"PureCycle Technologies, Inc.",Industrials,2020-07-14,True,True,False
-PCTI,808,2020-10-01,2023-12-15,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,3,d0,True,1057083.0,PC TEL INC,İmalat,2022-05-11,True,True,False
-PFG,2830,2015-06-01,2026-08-31,0,True,0,0,0.0007067137809187279,0,0,0,True,True,V_ABD,1,k51,False,1126328.0,PRINCIPAL FINANCIAL GROUP INC,Financial Services,2015-06-01,True,True,False
-PGR,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,80661.0,PROGRESSIVE CORP/OH/,Financial Services,2015-06-01,True,True,False
-PLXPQ,754,2020-10-01,2023-09-29,0,True,0,0,0.013262599469496022,1,0,0,True,True,K34_tiingo,2,d100,True,1497504.0,PLx Pharma Winddown Corp.,İmalat,2022-05-16,True,True,False
-PRCH,1667,2020-01-13,2026-08-31,0,True,0,0,0.028794241151769647,0,0,0,True,True,V_ABD,1,k51,False,1784535.0,"Porch Group, Inc.",Financial Services,2020-01-13,True,True,False
-RCL,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,884887.0,ROYAL CARIBBEAN CRUISES LTD,Consumer Cyclical,2015-06-01,True,True,False
-ROL,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,84839.0,ROLLINS INC,Consumer Cyclical,2015-06-01,True,True,False
-RPID,1288,2021-07-15,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1380106.0,"RAPID MICRO BIOSYSTEMS, INC.",İmalat,2022-05-11,True,True,False
-RTX,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,101829.0,RTX Corp,Industrials,2015-06-01,True,True,False
-SAGE,1213,2020-10-01,2025-07-31,0,True,0,0,0.0008244023083264633,0,1,0,True,True,K34_tiingo,3,d0,True,1597553.0,"Sage Therapeutics, Inc.",İmalat,2022-02-25,True,True,False
-SCNX,1485,2020-10-01,2026-08-31,0,True,0,0,0.0006734006734006734,2,1,0,True,True,K34_yahoo,1,k51,False,1382574.0,"Scienture Holdings, Inc.",İmalat,2022-05-10,True,True,False
-SMR,1130,2022-03-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1822966.0,NUSCALE POWER Corp,Industrials,2022-03-01,True,True,False
-SPTN,1249,2020-10-01,2025-09-22,0,True,0,0,0.0008006405124099279,0,0,0,True,True,K34_tiingo,3,d0,True,877422.0,SpartanNash Co,Toptan,2021-06-04,True,True,False
-TAP,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,24545.0,MOLSON COORS BEVERAGE CO,Consumer Defensive,2015-06-01,True,True,False
-TETC,467,2021-05-20,2023-03-28,0,True,0,0,0.02569593147751606,0,0,0,True,True,K34_tiingo,5,k51,True,1840920.0,Tech & Energy Transition Corp,Finans,2021-08-16,True,True,False
-VKTX,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,2,0,0,True,True,V_ABD,1,k51,False,1607678.0,"Viking Therapeutics, Inc.",BILINMIYOR,2015-06-01,True,True,False
-VNT,1490,2020-09-24,2026-08-31,0,True,0,0,0.0006711409395973154,0,0,0,True,True,V_ABD,1,k51,False,1786842.0,Vontier Corp,BILINMIYOR,2020-09-24,True,True,False
+MSGE,847,2023-04-17,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1952073.0,Madison Square Garden Entertainment Corp.,Hizmet,2024-11-11,True,True,False
+MTRN,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1104657.0,MATERION Corp,İmalat,2022-04-29,True,True,False
+NNBR,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,918541.0,NN INC,Industrials,2015-06-01,True,True,False
+NWTG,764,2023-08-15,2026-08-31,0,True,0,0,0.0,0,4,0,True,True,K34_yahoo,1,k51,False,1934245.0,"Newton Golf Company, Inc.",İmalat,2024-05-01,True,True,False
+OABI,1234,2021-09-30,2026-08-31,0,True,0,0,0.07050243111831442,0,1,0,True,True,V_ABD,1,k51,False,1846253.0,"OmniAb, Inc.",Healthcare,2021-09-30,True,True,False
+ONB,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,707179.0,OLD NATIONAL BANCORP /IN/,Financial Services,2015-06-01,True,True,False
+PBI,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,78814.0,PITNEY BOWES INC /DE/,Industrials,2015-06-01,True,True,False
+PDYN,1237,2021-09-27,2026-08-31,0,True,0,0,0.0,1,0,0,True,True,V_ABD,1,k51,False,1826681.0,Palladyne AI Corp.,Technology,2021-09-27,True,True,False
+PLCE,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1041859.0,"Childrens Place, Inc.",Perakende,2021-06-04,True,True,False
+RBBN,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1708055.0,Ribbon Communications Inc.,Hizmet,2022-07-29,True,True,False
+RMO,514,2020-10-01,2022-10-14,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,3,d0,True,1757932.0,"Romeo Power, Inc.",İmalat,2021-05-18,True,True,False
+RNW,1402,2021-02-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1848763.0,ReNew Energy Global plc,Utilities,2021-02-01,True,True,False
+ROKU,2242,2017-09-28,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1428439.0,"ROKU, INC",Communication Services,2017-09-28,True,True,False
+SEPN,462,2024-10-25,2026-08-31,0,True,0,0,0.0,0,1,0,True,True,K34_yahoo,1,k51,False,1984086.0,"Septerna, Inc.",İmalat,2026-05-12,True,True,False
+SUNLQ,735,2021-01-15,2023-12-15,0,True,0,0,0.0013605442176870747,2,3,0,True,True,K34_tiingo,2,d100,True,1821850.0,Sunlight Financial Holdings Inc.,Finans,2021-11-16,True,True,False
+SVFB,505,2021-03-09,2023-03-09,0,True,0,0,0.013861386138613862,0,0,0,True,True,K34_tiingo,5,k51,True,1837238.0,SVF Investment Corp. 2,Finans,2021-05-14,True,True,False
+TBCH,1485,2020-10-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,K34_yahoo,1,k51,False,1493761.0,Turtle Beach Corp,İmalat,2022-05-05,True,True,False
+TNON,1090,2022-04-27,2026-08-31,0,True,0,0,0.0,3,3,0,True,True,V_ABD,1,k51,False,1560293.0,"Tenon Medical, Inc.",Healthcare,2022-04-27,True,True,False
+VIR,1730,2019-10-11,2026-08-31,0,True,0,0,0.0,0,1,0,True,True,V_ABD,1,k51,False,1706431.0,"Vir Biotechnology, Inc.",BILINMIYOR,2019-10-11,True,True,False
+WDAY,2830,2015-06-01,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1327811.0,"Workday, Inc.",BILINMIYOR,2015-06-01,True,True,False
+WING,2821,2015-06-12,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1636222.0,Wingstop Inc.,BILINMIYOR,2015-06-12,True,True,False
+WRBY,1235,2021-09-29,2026-08-31,0,True,0,0,0.0,0,0,0,True,True,V_ABD,1,k51,False,1504776.0,Warby Parker Inc.,BILINMIYOR,2021-09-29,True,True,False
+ZYME,548,2020-10-01,2022-12-02,0,True,0,0,0.0,0,0,0,True,True,K34_tiingo,4,kes,True,1403752.0,Zymeworks BC Inc.,İmalat,2022-08-05,True,True,False
