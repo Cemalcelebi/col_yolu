@@ -890,7 +890,18 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "çarpıyor. Sessiz ML AUC 0,51 her iki evrende. K52 / K53: analist kaydı payı sınıf 1'de %84, iflas ve belirsizde %0, birleşmede "
                "%1; sonuçlar yalnız Yahoo kapsamındaki (hayatta kalan) şirketler için geçerli; batıklara sıfır revizyon atanmadı, Tiingo fiyatı "
                "analist yerine kullanılmadı. SINIR: 'SAĞLAM' yalnız mevcut evren içindeki düzeltme için; evren çoğunlukla hayatta kalanlardan "
-               "(266 çıkış / 3.267), eksik batanlar olmadan hayatta kalma yanlılığı tam ölçülemez (Kasım Tiingo kotası açık madde)."),
+               "(266 çıkış / 3.267), eksik batanlar olmadan hayatta kalma yanlılığı tam ölçülemez (Kasım Tiingo kotası açık madde). "
+               "EK 8 DÜZELTİLMİŞ KOŞU (30 Eki, ön kayıt eki 5fa687d sonuç görülmeden): (1) sınıf 1'de SEC sembolü tek başına kanıt değil: "
+               "2.831 Tiingo + SEC, 159 yalnız Tiingo, 11 belirsiz (6 gerçek ETF: DBA / DBB / DBO / UNG / UNL / UUP = evren temizliği maddesi; "
+               "BOXL / CIRC / FIEE Tiingo'da 'ETF' türlü; NGTF / SNBRQ Tiingo'da yok); belirsizler çıkarılınca P1 / P2 en çok 0,10 puan oynuyor. "
+               "(2) sınıf 2 kronolojisi: 19 iflasın 18'inde 8-K 1.03 T'den ÖNCE (medyan 174 gün; -322 .. 0), hisse iflas sonrası pembe tahtada "
+               "sürmüş; T'den sonra başvuru yok. (3) sınıf 4a: son kapanış otomatik nakit bedel değil, bağlama doğrulaması (yeni sembol evrende, "
+               "T ±30 gün, oran 1:1 ±%2) kodda ve testte; bu evrende 4a kaydı yok (n = 0; Yahoo serileri bugünkü sembolle geriye dolu). "
+               "(4) sınıf 6 = 0, bu yüzden -%30 / -%100 varyantları B ile aynı; hayatta kalma sınırı sınıf 6'dan değil evrende hiç olmayan "
+               "batıklardan. ORTAK ÖRNEKLEM: C-yeni = B (B, A'nın alt kümesi); evren etkisi (satır çıkarma) en çok 1,1 puan (H-C 2023, 68 -> 67 "
+               "olay), etiket etkisi (çıkış işlemi) en çok 0,06 puan; ML dört örneklemde AUC 0,512 / 0,513, üst-alt üçte bir farkı +0,3 / +0,4 "
+               "puan. 55 ana hücrenin 54'ü SAĞLAM, 1 sınırda ETKİLENMİŞ (P1 2024-26: aralık alt ucu +0,02 -> -0,02 puan, karar TUTMAZ aynı; "
+               "C-eski'de de -0,08, yani evren etkisi), 1 GEÇERSİZ (BB / EMA). K51 İZ DEĞİL değişmedi."),
 ]
 
 
@@ -1331,11 +1342,27 @@ IK_GOREV: List[Dict[str, str]] = [
               "GEÇERSİZ (yalnız hayatta kalan evren). Teknik hipotezlerin başarısızlığı evren hatasından gelmiyor. Ama evren çoğunlukla hayatta "
               "kalanlardan; eksik batanlar olmadan hayatta kalma yanlılığı tam ölçülemez",
      "durum": "TAMAMLANDI, AÇIK: Kasım Tiingo kotasıyla eksik batan şirketler (hayatta kalma yanlılığı); ileri doğrulama Mart 2027"},
+    {"tarih": "2026-10-30", "istek": "K54 v1.5 kodlama öncesi zorunlu metodoloji düzeltmeleri: sınıf 1 (SEC sembolü tek başına kanıt değil, "
+                                     "Tiingo çelişirse belirsiz), sınıf 2 (8-K 1.03'ün T'ye göre zamanı), sınıf 4a (son kapanış otomatik nakit "
+                                     "bedel değil; doğrulanırsa seri bağla, yoksa belirsiz + duyarlılık), sınıf 6 (-%30 / -%100 varyantı + "
+                                     "hayatta kalma tartışması); her testte A eski / B düzeltilmiş / C ortak örneklem; ML'de de A / B / C sabit "
+                                     "ayarlarla; sonuç dosyaları açılmadan; K51 İZ DEĞİL değişmesin",
+     "yapilan": "Ön kayıt eki (K54_onkayit.md bölüm 8, commit 5fa687d) ve kod (0ad1c90) sonuç görülmeden commit'lendi; COL_YOLU_ABD.py v1.5 "
+                "ek 8: cy_v15_sinifla (dogrulama / belirsiz, b103_T_fark_gun / b103_zaman / b103_tarihler, 4a doğrulama bekler), "
+                "cy_v15_4a_dogrula, cy_v15_ayristir, cy_v15_calistir (A / B / C-eski / C-yeni, sınıf 6 ve sınıf 1 belirsiz varyantları, "
+                "4a bağlama ve bandı, ML dört örneklem), cy_v15_yaz; test_col_yolu_abd 31/31 (28 güncel, 30-31 yeni); koşu 3,2 dk; "
+                "K54_* beş çıktı yenilendi (ilk koşu ac63f0d git geçmişinde); IZ_KARNE Ç137 notu; IZ_DEFTERI DERS 43; Drive",
+     "sonuc": "Düzeltmeler sonucu değiştirmedi: 55 ana hücrenin 54'ü SAĞLAM, 1 sınırda ETKİLENMİŞ (P1 2024-26, karar aynı), 1 GEÇERSİZ; "
+              "evren etkisi en çok 1,1 puan, etiket etkisi en çok 0,06 puan; sınıf 1 belirsiz 11 (6'sı ETF: evren temizliği), sınıf 2'de "
+              "1.03 başvurusu 18 / 19'da T'den önce, 4a n = 0, sınıf 6 n = 0. K51 İZ DEĞİL korundu",
+     "durum": "TAMAMLANDI, AÇIK: K51 evreninde 6 emtia ETF'si (DBA, DBB, DBO, UNG, UNL, UUP) var, evren temizliği Cemal'in kararı; Kasım "
+              "Tiingo kotasıyla eksik batanlar; ileri doğrulama Mart 2027"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
-    "K54: evren düzeltmesi sonuçları değiştirmiyor (64 / 66 hücre SAĞLAM), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama "
-    "evren çoğunlukla hayatta kalanlardan (266 çıkış / 3.267). Olası devam (Cemal'in kararı): (1) ileri "
+    "K54 (ek 8 düzeltilmiş koşu dahil): evren düzeltmesi sonuçları değiştirmiyor (55 ana hücrenin 54'ü SAĞLAM; evren etkisi <= 1,1 puan, etiket "
+    "etkisi <= 0,06 puan), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama evren çoğunlukla hayatta kalanlardan (266 çıkış / "
+    "3.267) ve içinde 6 emtia ETF'si var (evren temizliği). Olası devam (Cemal'in kararı): (1) ileri "
     "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
     "örneklemin çoğu batan değil), (3) ara.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "

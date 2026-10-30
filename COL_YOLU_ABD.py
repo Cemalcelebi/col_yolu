@@ -3146,8 +3146,9 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
     # ---------- kaynaklar
     sec = json.load(open(os.path.join(k54, "sec_ozet.json"))); scik = json.load(open(os.path.join(k54, "sembol_cik.json")))
     ct = json.load(open(os.path.join(k54, "company_tickers.json"))); bugun = {str(v["ticker"]).upper(): int(v["cik_str"]) for v in ct.values()}
-    tt = pd.read_csv(os.path.join(k54, "supported_tickers.csv")); tt = tt[tt.assetType == "Stock"].copy(); tt["ticker"] = tt.ticker.astype(str).str.upper()
-    tt = tt.sort_values("endDate").drop_duplicates("ticker", keep="last").set_index("ticker")
+    tt = pd.read_csv(os.path.join(k54, "supported_tickers.csv")); tt["ticker"] = tt.ticker.astype(str).str.upper()
+    tt_tur = tt.groupby("ticker").assetType.apply(lambda v: " / ".join(sorted(set(map(str, v))))).to_dict()      # ham tür (ek 8.1: belirsizlerin açıklaması için)
+    tt = tt[tt.assetType == "Stock"].copy(); tt = tt.sort_values("endDate").drop_duplicates("ticker", keep="last").set_index("ticker")
     gy = os.path.join(A.veri, "analist", "yahoo_grades.pkl"); analist_var = set()
     if os.path.exists(gy):
         import pickle
@@ -3403,7 +3404,7 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
         KRd = pd.concat([KRd, pd.DataFrame(ekle)], ignore_index=True)
     KRd.to_csv(os.path.join(A.cikti, "K54_ESKI_YENI_TEST_KARSILASTIRMA.csv"), index=False)
     R = {"SD": SD, "KR": KRd, "DL": DLd, "kap": kap, "sure_dk": round((time.time() - t0) / 60, 1), "panel_n": int(len(P)), "gecerli_n": int(P.gecerli_yeni.sum()), "ortak_n": int(P.ortak.sum()),
-         "gecerli6_n": int(P.gecerli_6.sum()), "hisse": int(P.sembol.nunique()), "belirsiz1": sorted(belirsiz1), "bagla": bagla}
+         "gecerli6_n": int(P.gecerli_6.sum()), "hisse": int(P.sembol.nunique()), "belirsiz1": sorted(belirsiz1), "belirsiz1_tur": {s_: tt_tur.get(s_.upper(), "Tiingo'da yok") for s_ in sorted(belirsiz1)}, "bagla": bagla}
     cy_v15_yaz(R, A, K); return R
 
 
@@ -3441,7 +3442,8 @@ def cy_v15_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
           "### 1.1 Sınıf 1 doğrulaması (ek 8.1: SEC güncel sembolü tek başına kanıt değil)", ""]
     for dg, n_ in c1.dogrulama.value_counts().items():
         L.append(f"- {dg}: {n_}")
-    L += [f"- Belirsiz işaretli sınıf 1: {len(R['belirsiz1'])} sembol ({', '.join(R['belirsiz1'][:20])}{'…' if len(R['belirsiz1']) > 20 else ''}). Seri 2026-08-01 sonrasına sürdüğü için çıkış işlemi yok; K51 P1 / P2 hücreleri bu semboller çıkarılarak ayrıca hesaplandı (3.1 duyarlılık satırları).", "",
+    L += [f"- Belirsiz işaretli sınıf 1: {len(R['belirsiz1'])} sembol ({', '.join(R['belirsiz1'][:20])}{'…' if len(R['belirsiz1']) > 20 else ''}). Seri 2026-08-01 sonrasına sürdüğü için çıkış işlemi yok; K51 P1 / P2 hücreleri bu semboller çıkarılarak ayrıca hesaplandı (3.1 duyarlılık satırları).",
+          "- Belirsizlerin Tiingo ham türü (Stock süzgeci dışında kalma nedeni): " + "; ".join(f"{k_}: {v}" for k_, v in R.get("belirsiz1_tur", {}).items()) + ". Tiingo'nun 'ETF' dediği semboller ya gerçekten ETF'dir (K51 evreninde hisse olmayan sembol: evren temizliği maddesi) ya da Tiingo tür hatasıdır; hangisi olduğu bu çalışmada çözülmedi, kayıt belirsiz kaldı.", "",
           "### 1.2 Sınıf 2 kronolojisi (ek 8.2: 8-K madde 1.03 başvurusunun T'ye göre zamanı)", ""]
     if len(c2):
         fg = c2.b103_T_fark_gun.astype(float)
@@ -3482,7 +3484,11 @@ def cy_v15_yaz(R: Dict[str, Any], A: CYAyar, K: Dict[str, Any]) -> None:
     if len(ay):
         L += ["", f"- Ayrıştırma (bütün hücreler): |evren etkisi| en çok {ay.evren_etkisi.abs().max():.4f}, |etiket etkisi| en çok {ay.etiket_etkisi.abs().max():.4f}, |toplam| en çok {ay.fark_fark.abs().max():.4f} (taban-ayarlı isabet, oran birimi; 0,02 = 2 puan)."]
     L += ["", "Sınıf 6 (doğrulanamayan) ve sınıf 5 (belirsiz) hiçbir hücrede iflas ya da aktif sayılmadı; 6 ana sonuçta evrenden çıktı (−%30 / −%100 varyantları 3.1b'de), 5 K51 kuralıyla kaldı ve bandı yazıldı; sınıf 1 belirsiz ve 4a doğrulanamayan kayıtlar ayrıca işaretlendi.", ""]
-    cikis = SD[SD.sinif.isin([2, 3, 4, 5, 6])]; tdx = td[td.kume.str.contains("sınıf 6")]; d6 = float(tdx.fark_fark.abs().max()) if len(tdx) and tdx.fark_fark.notna().any() else np.nan
+    cikis = SD[SD.sinif.isin([2, 3, 4, 5, 6])]; tdx = td[td.kume.str.contains("sınıf 6")].copy(); d6 = np.nan
+    if len(tdx):                                                           # sınıf 6 varyantı − B (aynı küme ve dönemdeki ana satır)
+        ana1 = t1[~t1.kume.str.contains("en iyi 20", regex=False)]; anah = ana1.assign(_k=ana1.kume.str.split(" (", regex=False).str[0]).set_index(["_k", "donem"]).yeni_fark.to_dict()
+        tdx["_k"] = tdx.kume.str.split(" (", regex=False).str[0]
+        tdx["_b"] = [anah.get((k_, d_), np.nan) for k_, d_ in zip(tdx._k, tdx.donem)]; d6 = float((tdx.yeni_fark - tdx._b).abs().max()) if (tdx.yeni_fark - tdx._b).notna().any() else np.nan
     L += ["## 6. Hayatta kalma yanlılığı ve sınıf 6 (ek 8.4 tartışması)", "",
           f"- Sınıf 6 bu evrende {n6} sembol. Sınıf 6'yı çıkarmak, geçmişi doğrulanamayan (dolayısıyla batmış olma olasılığı yüksek) şirketleri dışarıda bırakır; bu tek başına hayatta kalma yanlılığı üretir. Bu yüzden −%30 ve −%100 varsayımlı sonuçlar da üretildi: sınıf 6 varyantlarında B'ye göre en büyük değişim {f(d6, 4)} (oran birimi)." + (" Sınıf 6 boş olduğu için bu varyantlar B'yi değiştirmedi; yanlılık sınırı bu evrende sınıf 6'dan değil, evrende hiç bulunmayan şirketlerden gelir." if n6 == 0 else ""),
           f"- Asıl sınır evrenin kuruluşudur: {len(SD)} sembolün {len(cikis)}'ü borsadan çıkmış ya da belirsiz; V_ABD ve K34 Yahoo yalnız bugün Yahoo'da olan sembollerdir, eski sembolle biten seriler yalnız 422'lik Tiingo örnekleminden gelir. 2015-2026 arasında ABD'de borsadan çıkan şirket sayısı bunun çok üstündedir; eksik batık şirketler panelde yoktur, bu yüzden hiçbir K54 hücresi onların etkisini ölçemez. 'SAĞLAM' etiketi yalnız mevcut evren içindeki sınıflandırma ve çıkış işlemi düzeltmesi için geçerlidir; evren tamamlanmadan (Kasım Tiingo kotasıyla gerçek batan evreni) hayatta kalma yanlılığı tam ölçülemez.",
