@@ -10,6 +10,8 @@ from typing import Any, Dict, List
 import numpy as np
 import pandas as pd
 
+from .veri_kalitesi import kapsam_md
+
 
 def _f(x: Any, p: int = 3) -> str:
     if x is None or (isinstance(x, float) and not np.isfinite(x)):
@@ -19,7 +21,7 @@ def _f(x: Any, p: int = 3) -> str:
     return str(x)
 
 
-TAM = {"kota", "aday", "secilen", "eksik", "toplam_secilen", "istenen", "evren", "once", "sonra", "atilan", "n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "hucre", "varyant", "test", "ret",
+TAM = {"fiyat_yok", "kisa_seri_320", "eksik_islem_gunu", "ciddi_bosluk_sayi", "yinelenen_islem_gunu", "takvim_disi_satir", "ohlc_high_low", "getiri_100_ustu_sayi", "muhtemel_bolunme", "aciklanamayan_sicrama", "sert_haber_hareketi", "cik_bos", "sektor_bos", "kota", "aday", "secilen", "eksik", "toplam_secilen", "istenen", "evren", "once", "sonra", "atilan", "n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "hucre", "varyant", "test", "ret",
        "sinif", "yil", "Y60", "Y120", "Y250", "slot_n_islem", "yil_tekrar", "yon_yukari", "yon_asagi", "sinanan_olay", "kontrol"}
 
 
@@ -44,8 +46,7 @@ def tablo(D: pd.DataFrame, kol: List[str]) -> List[str]:
 
 
 def veri_kapsami_yaz(Q: pd.DataFrame, ozet: Dict[str, Any], bilgi: Dict[str, Any], O: pd.DataFrame, say: pd.DataFrame, cikti: str, kimlik: Dict[str, Any]) -> str:
-    L = [f"# K55 — VERİ KAPSAMI ({kimlik['kimlik']}; kod {kimlik['kod_surum']}; evren sürümü {kimlik['evren_surum'][:12]})", "",
-         "## Evren ve seri kalitesi", ""] + [f"- {k}: {v}" for k, v in ozet.items()]
+    L = kapsam_md(Q, ozet, f"({kimlik['kimlik']}; kod {kimlik['kod_surum']}; evren sürümü {kimlik['evren_surum'][:12]})")
     L += ["", "## Panel", ""] + [f"- {k}: {v}" for k, v in bilgi.items()]
     if len(O):
         L += ["", "## Olaylar (kilitli tanımlar: Y60 +%30, Y120 +%50, Y250 +%100; örtüşmez; tam pencere)", ""]
@@ -56,8 +57,9 @@ def veri_kapsami_yaz(Q: pd.DataFrame, ozet: Dict[str, Any], bilgi: Dict[str, Any
         L += tablo(g, ["ufuk", "olay", "hisse", "tanimli_likit_gun", "taban_orani", "getiri_medyan", "en_yuksek_medyan"])
         O2 = O.assign(yil=O.tarih.dt.year); yt = O2.pivot_table(index="yil", columns="ufuk", values="sembol", aggfunc="size", fill_value=0).reset_index()
         L += ["", "Yıl başına olay sayısı:", ""] + tablo(yt, list(yt.columns))
-    L += ["", "## Sembol başına kalite (ilk 60 satır; tamamı K55_VERI_KALITESI.csv)", ""]
-    L += tablo(Q.head(60), ["sembol", "kaynak", "sinif", "n_gun", "ilk", "son", "bosluk_sayi", "bosluk_max_gun", "sifir_hacim_pay", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "cik_var", "eksiksiz", "ozellik_yeterli", "tarihsel_eksik"])
+    L += ["", "## Sembol başına kalite (ilk 60 satır; tamamı K55_VERI_KALITESI.csv; her sorun ayrı sütun)", ""]
+    L += tablo(Q.head(60), ["sembol", "kaynak", "sinif", "n_gun", "ilk", "son", "fiyat_yok", "kisa_seri_320", "eksik_islem_gunu", "ciddi_bosluk_sayi", "yinelenen_islem_gunu", "takvim_disi_satir", "sifir_hacim_pay", "eksik_hacim_pay",
+                           "ohlc_high_low", "getiri_100_ustu_sayi", "muhtemel_bolunme", "aciklanamayan_sicrama", "sert_haber_hareketi", "cik_bos", "sektor_bos", "veri_hatasi", "veri_yetersiz", "kullanilabilir"])
     yol = os.path.join(cikti, "K55_VERI_KAPSAMI.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n"); return yol
 
 
@@ -77,11 +79,11 @@ def faz0_yaz(R: Dict[str, Any], cikti: str) -> str:
          f"kod dosyası sha {len(k.get('kod_sha', {}))} adet, veri dosyası sha {len(k.get('veri_sha', {}))} adet (K55_KOSU.json); evren sürümü {k['evren_surum'][:12]}; örnek: {k['ayar']['ornek'] or 'tam evren'}; veri paketleri: {k['veri_paketleri']}.",
          "- Faz 0 amacı altyapıyı kanıtlamaktır; hücre sonuçları iskele denetimidir, iz iddiası değildir (optimize edilmedi).", "",
          "## Cemal'in 7 sorusu", "",
-         f"1. Kaç hisse eksiksiz işlendi? {oz['eksiksiz']} / {oz['sembol']} (eksiksiz = ≥ 260 gün, boşluksuz, sıfır hacim payı ≤ %20, OHLC hatasız, yinelenen tarih yok; sert hareket bayrağı bilgi, eksiksizliğe girmez).",
-         f"2. Kaç hissede tarihsel veri eksik? {oz['tarihsel_eksik']} (boşluklu {oz['bosluklu']}, kısa seri {oz['kisa_seri']}, sıfır hacim yüksek {oz['sifir_hacim_yuksek']}); yükleyici dışı kısa geçmişli (< 320 gün, VERİ YETERSİZ, K55_EVREN_DISI_KISA.csv) {oz.get('kisa_seri_yukleyici_disi', 0)}; özellik için yeterli (≥ 320 gün) {oz.get('ozellik_yeterli', '')}; sert hareketli (bilgi, bölünme değil) {oz.get('sert_hareketli_bilgi', '')}, aşırı getirili {oz['asiri_getirili']}, OHLC hatalı {oz['ohlc_hatali']}.",
-         f"3. Kaç sembol şirketle güvenilir eşleştirildi? CIK eşleşen {oz['cik_eslesen']} / {oz['sembol']}; sektör bilinen {oz['sektor_bilinen']}; K54 sınıfı olmayan (doğrulanamayan) semboller evren dışı.",
+         f"1. Kaç hisse eksiksiz işlendi? Veri hatası ve veri yetersizliği olmayan (kullanılabilir) {oz['kullanilabilir']} / {oz['sembol_ev']}. Veri hatalı {oz['veri_hatali']} (sırasız {oz['sirasiz']}, yinelenen işlem günü {oz['yinelenen_islem_gunlu']}, takvim dışı satır {oz['takvim_disi_satirli']}, NaN fiyat {oz['nan_fiyatli']}, sıfır / negatif fiyat {oz['sifir_negatif_fiyatli']}, negatif hacim {oz['negatif_hacimli']}, OHLC ilişki {oz['ohlc_high_dusuk']} / {oz['ohlc_low_yuksek']} / {oz['ohlc_high_low']}); veri yetersiz {oz['veri_yetersiz']}; olağan piyasa davranışı (bilgi, hata değil) {oz['piyasa_davranisli']}; şüpheli sıçrama {oz['supheli_sicramali']} (muhtemel bölünme {oz['muhtemel_bolunme']}, açıklanamayan {oz['aciklanamayan_sicrama']}; kurumsal işlem verisi {'var' if oz['kurumsal_veri_var'] else 'YOK, kesin sınıflandırma yapılmadı'}).",
+         f"2. Kaç hissede tarihsel veri eksik? Fiyat yok {oz['fiyat_yok']}, boş seri {oz['bos_seri']}, kısa seri (< 320) {oz['kisa_seri_320']}, ciddi boşluklu (> 5 işlem günü) {oz['ciddi_bosluklu']} (boşluklu {oz['bosluklu']}, eksik işlem günü toplam {oz['eksik_islem_gunu_toplam']}, en uzun {oz['en_uzun_bosluk_max']}; ABD işlem takvimi, tatiller eksik sayılmaz), eksik hacim payı yüksek {oz['eksik_hacim_pay_yuksek']}, sıfır hacim payı yüksek {oz['sifir_hacim_pay_yuksek']}; K54 kesilmiş seri {oz['kesilmis_k54']}; yükleyici dışı kısa geçmişli {oz.get('dislama_kategorileri', {}).get('kisa_seri_yukleyici', 0)} (K55_EVREN_DISI.csv); özellik penceresi yeterli {oz['ozellik_yeterli']}, sonuç penceresi yeterli Y60 {oz['sonuc_Y60_yeterli']} / Y120 {oz['sonuc_Y120_yeterli']} / Y250 {oz['sonuc_Y250_yeterli']}; olay penceresi eksik {oz['olay_pencere_eksik']}; dönem kapsamı {oz['donem_kapsami']}.",
+         f"3. Kaç sembol şirketle güvenilir eşleştirildi? CIK geçerli {oz['cik_eslesen']} / {oz['sembol_ev']} (boş {oz['cik_bos']}, geçersiz {oz['cik_gecersiz']}, bir CIK'ye birden fazla sembol {oz['cik_coklu_sembol']}, sembol yeniden kullanımı (4b) {oz['sembol_yeniden_kullanim']}); şirket adı boş {oz['sec_ad_bos']}; sektör bilinen {oz['sektor_bilinen']} (boş / NaN {oz['sektor_bos']}); seri_erken geçersiz {oz['seri_erken_gecersiz']}; EV yinelenen {oz['ev_yinelenen']}; V'de fazla {oz['v_fazla']}.",
          f"3b. Evren dışı kalanlar (kategori ayrı; K55_EVREN_DISI.csv): {oz.get('dislama_kategorileri', {})}. V / EV çift yönlü tutarlılık: {oz.get('v_ev_tutarlilik', {})}.",
-         f"4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten {oz['seri_erken_biten']}; sınıf dağılımı {oz['sinif']}; seri sonu işlemi {oz['seri_sonu']} (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).",
+         f"4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten {oz['seri_erken']}; sınıf dağılımı {oz['sinif']} (4a {oz['sinif_4a']}, 4b {oz['sinif_4b']}); seri sonu işlemi (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).",
          f"5. Gelecek bilgisi sızıntısı testleri geçti mi? {'EVET' if all(r.get('gecti') for r in S.values()) else 'HAYIR'} — " + "; ".join(f"{ad}: {'geçti' if r.get('gecti') else 'KALDI'}" for ad, r in S.items()) + ".",
          f"6. Denemede bütün modüller doğru çalıştı mı? {'EVET' if R['moduller_ok'] else 'HAYIR'} — " + "; ".join(f"{m}: {d}" for m, d in R['modul_durum'].items()) + ".",
          f"7. Tam evren koşusunun tahmini süresi ve kaynağı: {tam}.", "",

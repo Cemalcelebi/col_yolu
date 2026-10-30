@@ -80,16 +80,18 @@ def faz0(A: Optional[K55Ayar] = None, paketler: Optional[Dict[str, str]] = None)
         dag = pd.DataFrame()
     sure["evren"] = round(time.time() - t, 1); durum["evren"] = f"{len(EV)} sembol; dışlama {disi_say}; 4b kesim {len(E['kesim'])}; V/EV tutarlılık {'geçti' if E['tutarlilik']['gecti'] else 'KALDI'}"
     kimlik = kosu_kimligi(A, surum, paketler, vsha); kimlik["evren_dosya_sha"] = E["dosya_sha"]
-    t = time.time(); Q, ozet = evren_kalite(V, EV); Q.to_csv(os.path.join(A.cikti, "K55_VERI_KALITESI.csv"), index=False)
-    ozet["dislama_kategorileri"] = disi_say; ozet["kisa_seri_yukleyici_disi"] = int(disi_say.get("kisa_seri_yukleyici", 0)); ozet["kesim_4b"] = E["kesim"][["sembol", "once", "sonra", "atilan"]].to_dict("records")
-    ozet["v_ev_tutarlilik"] = E["tutarlilik"]; ozet["orneklem_eksik_tabaka"] = dag[dag.eksik > 0][["tabaka", "kota", "aday", "secilen", "eksik"]].to_dict("records") if len(dag) else []
-    EV.to_csv(os.path.join(A.cikti, "K55_EVREN.csv"), index=False); sure["kalite"] = round(time.time() - t, 1); durum["veri_kalitesi"] = f"eksiksiz {ozet['eksiksiz']} / {ozet['sembol']}"
+    EV.to_csv(os.path.join(A.cikti, "K55_EVREN.csv"), index=False)
     C = cy(); Ac = C.CYAyar(veri=A.veri, cikti=A.cikti, pazarlar=("ABD",)); endeks = C.cy_endeks(Ac, C.CY)
     t = time.time(); P, likit_map, bilgi = panel_kur(V, EV, A, endeks); sure["panel"] = bilgi["sure_sn"]
     os.makedirs(os.path.join(A.cikti, "panel"), exist_ok=True); pyol = panel_kaydet(P, os.path.join(A.cikti, "panel", f"k55_panel_{A.ornek or 'tam'}.pkl"))
     durum["panel"] = f"{bilgi['satir']} satır, {bilgi['likit_satir']} likit"
     t = time.time(); O, say = olaylar(V, likit_map); tek = olay_tekillik_denetimi(O); sure["olaylar"] = round(time.time() - t, 1)
     O.to_csv(os.path.join(A.cikti, "K55_OLAYLAR.csv.gz"), index=False, compression="gzip"); durum["olaylar"] = f"{len(O)} olay, tekillik {'geçti' if tek.get('gecti') else 'KALDI'}"
+    # veri kalitesi (yalnız denetim; olay tablosuyla pencere denetimi dahil)
+    t = time.time(); Q, ozet = evren_kalite(V, EV, O); Q.to_csv(os.path.join(A.cikti, "K55_VERI_KALITESI.csv"), index=False)
+    ozet["dislama_kategorileri"] = disi_say; ozet["kesim_4b"] = E["kesim"][["sembol", "once", "sonra", "atilan"]].to_dict("records"); ozet["v_ev_tutarlilik"] = E["tutarlilik"]
+    ozet["orneklem_eksik_tabaka"] = dag[dag.eksik > 0][["tabaka", "kota", "aday", "secilen", "eksik"]].to_dict("records") if len(dag) else []
+    sure["kalite"] = round(time.time() - t, 1); durum["veri_kalitesi"] = f"kullanılabilir {ozet['kullanilabilir']} / {ozet['sembol_ev']}; veri hatalı {ozet['veri_hatali']}; veri yetersiz {ozet['veri_yetersiz']}"
     t = time.time(); S = sizinti_testleri(P, V, O, likit_map, rng, A.tohum); sure["sizinti"] = round(time.time() - t, 1); durum["sizinti"] = "hepsi geçti" if all(r.get("gecti") for r in S.values()) else "KALAN VAR"
     # hücre iskelesi: kayıtlı hücreler, yalnız KESIF (İÇ DOĞRULAMA adaylar için saklanır; BAĞIMSIZ hiç açılmaz)
     t = time.time(); rows = []
@@ -103,8 +105,8 @@ def faz0(A: Optional[K55Ayar] = None, paketler: Optional[Dict[str, str]] = None)
     tam = {"sembol": tam_n, "panel_satir_tahmini": int(bilgi["satir"] * olcek), "bellek_GB_tahmini": round(bilgi["satir"] * olcek * 30 * 4 / 1e9, 2),
            "panel_sn": round(sure["panel"] * olcek, 0), "olaylar_sn": round(sure["olaylar"] * olcek, 0), "sizinti_sn": round(sure["sizinti"] * olcek, 0),
            "hucre_basina_sn_tahmini": round(sure["hucre_iskele"] * olcek / max(1, len(HUCRELER)), 0), "isci": A.isci, "not": "Faz 1 = 80 OHLCV hücresi × (5 pencere) × 3 yöntem; bootstrap 2.000"}
-    R = {"kimlik": kimlik, "kalite_ozet": ozet, "panel_bilgi": bilgi, "sizinti": S, "hucre": H, "coklu_test": yuk, "sure": sure, "tekillik": tek, "modul_durum": durum, "olay_donem": O.groupby(["ufuk", "donem"]).size().to_dict() if len(O) else {}, "evren_disi": E["disi"], "kesim": E["kesim"], "orneklem": dag,
-         "moduller_ok": bool(tek.get("gecti") and all(r.get("gecti") for r in S.values()) and len(H)), "tam_tahmin": tam, "panel_yol": pyol, "EV": EV, "O": O, "Q": Q}
+    R = {"kimlik": kimlik, "kalite_ozet": ozet, "Q": Q, "panel_bilgi": bilgi, "sizinti": S, "hucre": H, "coklu_test": yuk, "sure": sure, "tekillik": tek, "modul_durum": durum, "olay_donem": O.groupby(["ufuk", "donem"]).size().to_dict() if len(O) else {}, "evren_disi": E["disi"], "kesim": E["kesim"], "orneklem": dag,
+         "moduller_ok": bool(tek.get("gecti") and all(r.get("gecti") for r in S.values()) and len(H)), "tam_tahmin": tam, "panel_yol": pyol, "EV": EV, "O": O}
     veri_kapsami_yaz(Q, ozet, bilgi, O, say, A.cikti, kimlik); sizinti_yaz(S, A.cikti); faz0_yaz(R, A.cikti); durum["rapor"] = "yazıldı"
     log.info("FAZ 0 bitti: %s; süreler %s", durum, sure)
     return R

@@ -41,14 +41,55 @@ def testler():
     rn, tamn = olay_tanimlari.ileri_getiri(O_, C_, 60, False, "k51")
     if not (r100[50] == -1.0 and abs(r0[50] - (-0.2)) < 1e-9 and abs(rk[50] - (8 * 0.7 / 10 - 1)) < 1e-9 and np.isnan(rn[50]) and tam[10] and not tam[50] and abs(rk[10] - (C_[70] / 10 - 1)) < 1e-9):
         hata.append(f"2) ileri getiri seri sonu işlemi yanlış: {r100[50]} {r0[50]} {rk[50]} {rn[50]}")
-    # 3) veri kalitesi: temiz seri eksiksiz; 10 iş günü boşluk; bölünme sıçraması
-    q = veri_kalitesi.sembol_kalite("T", _seri(400))
-    if not (q["eksiksiz"] and q["bosluk_sayi"] == 0 and q["sert_hareket_sayi"] == 0):
-        hata.append(f"3a) temiz seri eksiksiz değil: {q}")
-    db = _seri(400); db = db.drop(db.index[200:210]); qb = veri_kalitesi.sembol_kalite("B", db)
-    ds = _seri(400); ds.iloc[250:, 3] = ds.Close.iloc[250:] / 2; ds.iloc[250:, 4] = ds.Volume.iloc[250:] * 3; qs = veri_kalitesi.sembol_kalite("S", ds)
-    if not (qb["bosluk_sayi"] == 1 and qb["bosluk_max_gun"] == 10 and not qb["eksiksiz"] and qs["sert_hareket_sayi"] >= 1):
-        hata.append(f"3b) boşluk / sıçrama tespiti yanlış: {qb['bosluk_sayi']} {qb['bosluk_max_gun']} {qs['sicrama_sayi']}")
+    # 3) veri kalitesi (yeni modül, Cemal'in 11 vakası): temiz seri kullanılabilir; sırasız; yinelenen işlem günü; eksik OHLC; sıfır hacim; eksik hacim;
+    # negatif fiyat; bölünme benzeri sıçrama; borsa tatili eksik gün değil; altı işlem günü boşluk ciddi; EV'de olup V'de olmayan; yanlış CIK
+    tak = veri_kalitesi.abd_islem_gunleri("2023-01-01", "2023-12-31")
+    if not (len(tak) == 250 and pd.Timestamp("2023-07-04") not in tak and pd.Timestamp("2023-04-07") not in tak and pd.Timestamp("2023-06-19") not in tak and pd.Timestamp("2023-01-02") not in tak and pd.Timestamp("2022-12-30") in veri_kalitesi.abd_islem_gunleri("2022-12-26", "2022-12-31")):
+        hata.append(f"3a) ABD işlem takvimi yanlış: {len(tak)} gün")
+    tz = veri_kalitesi.abd_islem_gunleri("2018-01-01", "2018-12-31")
+    if pd.Timestamp("2018-12-05") in tz or len(tz) != 251:
+        hata.append(f"3a2) özel kapanış / 2018 gün sayısı yanlış: {len(tz)}")
+    def seri_tak(n=400, bas="2022-01-03"):
+        g = veri_kalitesi.abd_islem_gunleri(bas, pd.Timestamp(bas) + pd.Timedelta(days=int(n * 1.6)))[:n]; d = _seri(n); d.index = g; return d
+    temiz = seri_tak(); q0 = veri_kalitesi.sembol_kalite("T", temiz)
+    if not (q0["kullanilabilir"] and q0["eksik_islem_gunu"] == 0 and q0["takvim_disi_satir"] == 0 and q0["veri_hatasi"] == "" and q0["veri_yetersiz"] == ""):
+        hata.append(f"3b) temiz seri (tatiller dahil aralık) kullanılabilir değil: {q0['veri_hatasi']} {q0['veri_yetersiz']} eksik {q0['eksik_islem_gunu']}")
+    ds = temiz.iloc[::-1]; qs = veri_kalitesi.sembol_kalite("S", ds)                                   # sırasız
+    dy = pd.concat([temiz, temiz.iloc[[100]]]); qy = veri_kalitesi.sembol_kalite("Y", dy)              # yinelenen işlem günü
+    dtz = temiz.copy(); dtz.index = dtz.index.tz_localize("UTC") + pd.Timedelta(hours=21); qtz = veri_kalitesi.sembol_kalite("Z", dtz)   # saat dilimi (21:00 UTC = 17:00 NY aynı gün)
+    do = temiz.drop(columns=["High"]); qo = veri_kalitesi.sembol_kalite("O", do)                        # eksik OHLC sütunu
+    dn = temiz.copy(); dn.iloc[50, dn.columns.get_loc("Close")] = np.nan; qn = veri_kalitesi.sembol_kalite("N", dn)
+    dz = temiz.copy(); dz.iloc[10:110, dz.columns.get_loc("Volume")] = 0; qz = veri_kalitesi.sembol_kalite("ZV", dz)   # sıfır hacim %25
+    de = temiz.copy(); de.iloc[10:110, de.columns.get_loc("Volume")] = np.nan; qe = veri_kalitesi.sembol_kalite("EV_", de)  # eksik hacim
+    dneg = temiz.copy(); dneg.iloc[20, dneg.columns.get_loc("Low")] = -1.0; dneg.iloc[21, dneg.columns.get_loc("High")] = dneg.Close.iloc[21] * 0.5; qneg = veri_kalitesi.sembol_kalite("NEG", dneg)
+    dsp = temiz.copy(); dsp.iloc[200:, dsp.columns.get_loc("Close")] /= 4; dsp.iloc[200:, dsp.columns.get_loc("Open")] /= 4; dsp.iloc[200:, dsp.columns.get_loc("High")] /= 4; dsp.iloc[200:, dsp.columns.get_loc("Low")] /= 4
+    dsp.iloc[200:, dsp.columns.get_loc("Volume")] *= 4; qsp = veri_kalitesi.sembol_kalite("SP", dsp)                                      # 4:1 bölünme benzeri
+    qsp_k = veri_kalitesi.sembol_kalite("SPK", dsp, kurumsal=pd.DataFrame({"tarih": [dsp.index[200]], "oran": [4]}))                     # kurumsal veriyle kesin
+    dh = temiz.copy(); dh.iloc[300, dh.columns.get_loc("Close")] *= 2.2; dh.iloc[300, dh.columns.get_loc("High")] = dh.Close.iloc[300] * 1.01; dh.iloc[300, dh.columns.get_loc("Volume")] *= 8
+    qh = veri_kalitesi.sembol_kalite("H", dh)                                                           # sert haber (High tutarlı; ertesi gün dönüş açıklanamayan)
+    dg = temiz.drop(temiz.index[150:156]); qg = veri_kalitesi.sembol_kalite("G", dg)                   # altı işlem günü boşluk
+    kontrol = {"sirasiz": qs["sirasiz"] == 1 and qs["eksik_islem_gunu"] == 0, "yinelenen": qy["yinelenen_islem_gunu"] == 1 and "yinelenen_islem_gunu" in qy["veri_hatasi"],
+               "saat_dilimi": qtz["saat_dilimli"] and qtz["yinelenen_islem_gunu"] == 0 and qtz["eksik_islem_gunu"] == 0 and qtz["takvim_disi_satir"] == 0,
+               "sutun": qo["sutun_eksik"] == 1 and "High" in qo["sutun_eksik_liste"] and not qo["kullanilabilir"], "nan": qn["nan_fiyat"] == 1 and "nan_fiyat" in qn["veri_hatasi"],
+               "sifir_hacim": qz["sifir_hacim_sayi"] == 100 and qz["sifir_hacim_pay_yuksek"] == 1 and qz["eksik_hacim_sayi"] == 0, "eksik_hacim": qe["eksik_hacim_sayi"] == 100 and qe["sifir_hacim_sayi"] == 0 and qe["eksik_hacim_pay_yuksek"] == 1,
+               "negatif": qneg["sifir_negatif_fiyat"] == 1 and qneg["ohlc_high_dusuk"] == 1, "bolunme": qsp["muhtemel_bolunme"] == 1 and qsp["kesin_bolunme"] == 0 and qsp_k["kesin_bolunme"] == 1,
+               "haber": qh["sert_haber_hareketi"] == 1 and qh["getiri_100_ustu_sayi"] == 1 and qh["veri_hatasi"] == "" and "sert_haber_hareketi" in qh["piyasa_davranisi"],
+               "bosluk": qg["bosluk_sayi"] == 1 and qg["en_uzun_bosluk"] == 6 and qg["ciddi_bosluk_sayi"] == 1 and "ciddi_bosluk_sayi" in qg["veri_yetersiz"]}
+    kalan = [k for k, v in kontrol.items() if not v]
+    if kalan:
+        hata.append(f"3c) veri kalitesi vakaları yanlış: {kalan}")
+    # orijinal değişmedi
+    if not (ds.index[0] > ds.index[-1] and dtz.index.tz is not None):
+        hata.append("3d) orijinal seri değiştirildi")
+    # evren düzeyi: EV'de olup V'de olmayan sembol, yanlış CIK, bir CIK iki sembol, NaN sektör, 'False' metni, V'de fazla
+    EV3 = pd.DataFrame({"sembol": ["AAA", "BBB", "CCC", "DDD"], "kaynak": "V_ABD", "sinif": [1, 1, 1, 4], "alt": ["", "", "", "4b kod"], "seri_sonu": ["k51", "k51", "k51", "kes"], "cik": [100, 100, -5, np.nan],
+                        "sec_ad": ["A", "B", np.nan, "D"], "sektor": ["Tek", np.nan, "nan", "Fin"], "seri_erken": ["False", "True", "belki", False]})
+    V3 = {"AAA": temiz, "BBB": temiz, "DDD": temiz, "FAZLA": temiz}
+    Q3, oz3 = veri_kalitesi.evren_kalite(V3, EV3)
+    if not (len(Q3) == 4 and oz3["fiyat_yok"] == 1 and oz3["v_fazla"] == 1 and oz3["v_fazla_liste"] == ["FAZLA"] and oz3["cik_coklu_sembol"] == 2 and oz3["cik_gecersiz"] == 1 and oz3["cik_bos"] == 1
+            and oz3["sektor_bilinen"] == 2 and oz3["sektor_bos"] == 2 and oz3["seri_erken"] == 1 and oz3["seri_erken_gecersiz"] == 1 and oz3["sinif_4b"] == 1 and oz3["kesilmis_k54"] == 1 and oz3["sec_ad_bos"] == 1
+            and Q3.set_index("sembol").loc["CCC", "fiyat_yok"] == 1):
+        hata.append(f"3e) evren düzeyi kalite yanlış: {{k: oz3[k] for k in ('fiyat_yok', 'v_fazla', 'cik_coklu_sembol', 'cik_gecersiz', 'cik_bos', 'sektor_bilinen', 'sektor_bos', 'seri_erken', 'seri_erken_gecersiz', 'sinif_4b', 'kesilmis_k54', 'sec_ad_bos')}}")
     # 4) kesme testi: D01-S01 geçer, geleceğe bakan değişken kalır
     k1 = sizinti.kesme_testi(hucreler.d01_s01_dip_band_gun, d, [300, 400, 599]); k2 = sizinti.kesme_testi(sizinti.gelecek_degisken, d, [300, 400])
     if not (k1["gecti"] and not k2["gecti"]):
@@ -253,4 +294,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k55: 26/26 OK")
+    print("test_k55: 26/26 OK (3 = veri kalitesi 11 vakası)")
