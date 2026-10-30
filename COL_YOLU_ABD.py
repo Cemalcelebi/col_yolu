@@ -3072,8 +3072,11 @@ def cy_v15_degerlendir(eski: Dict[str, Any], yeni: Dict[str, Any], gecersiz_pay:
     if eski.get("n", 0) == 0 or yeni.get("n", 0) == 0:
         return "GEÇERSİZ (hücre boş)"
     fark = abs(yeni["fark"] - eski["fark"]) if np.isfinite(yeni.get("fark", np.nan)) and np.isfinite(eski.get("fark", np.nan)) else np.inf
-    ortusur = not (yeni.get("fark_alt", np.nan) > eski.get("fark_ust", np.nan) or eski.get("fark_alt", np.nan) > yeni.get("fark_ust", np.nan))
-    isaret = (np.sign(eski.get("fark_alt", 0)) == np.sign(yeni.get("fark_alt", 0))) and (np.sign(eski.get("fark_ust", 0)) == np.sign(yeni.get("fark_ust", 0)))
+    ar = [eski.get("fark_alt", np.nan), eski.get("fark_ust", np.nan), yeni.get("fark_alt", np.nan), yeni.get("fark_ust", np.nan)]
+    if all(isinstance(x, (int, float, np.floating)) and np.isfinite(x) for x in ar):
+        ortusur = not (ar[2] > ar[1] or ar[0] > ar[3]); isaret = (np.sign(ar[0]) == np.sign(ar[2])) and (np.sign(ar[1]) == np.sign(ar[3]))
+    else:
+        ortusur = True; isaret = True                                        # aralık yoksa (ML satırı) yalnız etki ve karar ölçütü
     return "SAĞLAM" if (fark <= K["saglam_puan"] and eski.get("karar") == yeni.get("karar") and ortusur and isaret) else "ETKİLENMİŞ"
 
 
