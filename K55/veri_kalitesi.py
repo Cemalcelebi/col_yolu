@@ -30,9 +30,9 @@ YETERSIZ_SUTUN = ("fiyat_yok", "bos_seri", "kisa_seri_320", "ciddi_bosluk_sayi",
 
 # ---------------------------------------------------------------- ABD işlem takvimi (NYSE kuralları; dış kütüphane yok)
 def _nyse_yilbasi(dt):
-    """NYSE: 1 Ocak cumartesiye gelirse cuma tatil DEĞİL; pazara gelirse pazartesi tatil."""
+    """NYSE: 1 Ocak cumartesiye gelirse o yıl yılbaşı tatili yoktur (cuma ve pazartesi açık, ör. 2021-12-31 ve 2022-01-03); pazara gelirse pazartesi tatil."""
     if dt.weekday() == 5:
-        return dt + pd.Timedelta(days=2)       # cumartesi -> izleyen pazartesi değil; kuralda tatil yok: iş günü olmayan bir güne it (etkisiz)
+        return dt                              # cumartesi kalır; hafta sonu olduğu için takvimden zaten düşer (tatil etkisi yok)
     if dt.weekday() == 6:
         return dt + pd.Timedelta(days=1)
     return dt

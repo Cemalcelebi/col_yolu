@@ -46,9 +46,9 @@ def testler():
     tak = veri_kalitesi.abd_islem_gunleri("2023-01-01", "2023-12-31")
     if not (len(tak) == 250 and pd.Timestamp("2023-07-04") not in tak and pd.Timestamp("2023-04-07") not in tak and pd.Timestamp("2023-06-19") not in tak and pd.Timestamp("2023-01-02") not in tak and pd.Timestamp("2022-12-30") in veri_kalitesi.abd_islem_gunleri("2022-12-26", "2022-12-31")):
         hata.append(f"3a) ABD işlem takvimi yanlış: {len(tak)} gün")
-    tz = veri_kalitesi.abd_islem_gunleri("2018-01-01", "2018-12-31")
-    if pd.Timestamp("2018-12-05") in tz or len(tz) != 251:
-        hata.append(f"3a2) özel kapanış / 2018 gün sayısı yanlış: {len(tz)}")
+    tz = veri_kalitesi.abd_islem_gunleri("2018-01-01", "2018-12-31"); t22 = veri_kalitesi.abd_islem_gunleri("2021-12-27", "2022-01-07")
+    if pd.Timestamp("2018-12-05") in tz or len(tz) != 251 or pd.Timestamp("2022-01-03") not in t22 or pd.Timestamp("2021-12-31") not in t22 or pd.Timestamp("2023-01-02") in veri_kalitesi.abd_islem_gunleri("2023-01-01", "2023-01-05"):
+        hata.append(f"3a2) özel kapanış / yılbaşı cumartesi kuralı yanlış: {len(tz)} {list(t22.date)}")
     def seri_tak(n=400, bas="2022-01-03"):
         g = veri_kalitesi.abd_islem_gunleri(bas, pd.Timestamp(bas) + pd.Timedelta(days=int(n * 1.6)))[:n]; d = _seri(n); d.index = g; return d
     temiz = seri_tak(); q0 = veri_kalitesi.sembol_kalite("T", temiz)
