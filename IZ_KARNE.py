@@ -1421,7 +1421,20 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Tam evren 3.260 (sınıf 1: 2.994, 2: 19, 3: 159, 4: 9, 5: 79); dışlamalar ayrı: kısa seri 60, fon 7, CIK eşleşmesi yok 1 (evrende, bilgi); "
               "K54 tutarsızlık 0, boş çıkış işlemi 0; 4b kesim 9 sembol (satır sayıları CSV'de); V/EV tutarlılık geçti; örneklem 50 benzersiz, eksik tabaka "
               "V_ABD sınıf 1 düşük likidite (7 aday / 10 kota, 3 tamamlama ile) raporlandı; sızıntı testleri hepsi geçti; eksiksiz 46 / 50. Tam evren koşulmadı",
-     "durum": "TAMAMLANDI, AÇIK: tam evren koşusu ve Faz 1 Cemal'in onayını bekliyor"},
+     "durum": "TAMAMLANDI (evren v1.3); veri kalitesi modülü denetimiyle yeniden koşuldu (sonraki satır)"},
+    {"tarih": "2026-10-30", "istek": "K55 veri kalitesi modülü yeniden (8 madde): bütün EV evreni (V'de olmayanlar kaybolmasın, V fazlası, yinelenen / çoklu "
+                                     "CIK), ABD işlem takvimi (tatil eksik gün değil, boşluk tarihleri, > 5 gün ciddi), normalize kopya ile tarih / saat dilimi, "
+                                     "OHLCV ihlalleri ayrı sayım, sıfır / eksik hacim ayrı, %100 getiri hata değil, bölünme kesin / muhtemel / açıklanamayan / "
+                                     "haber (kurumsal veri yoksa kesin denmez), CIK / ad / sektör / boolean denetimi, özellik ve sonuç pencereleri ayrı, dönem "
+                                     "kapsamı, her sorun ayrı sütun ('eksiksiz' yok), 11 yapay vaka testi; K51 / K54 / ortak.py değişmez; sessiz silme / düzeltme yok",
+     "yapilan": "K55/veri_kalitesi.py tek parça yeniden: NYSE takvimi (pandas holiday kuralları, Juneteenth 2022+, özel kapanışlar, 1 Ocak cumartesi "
+                "istisnası), _normalize_kopya, _ohlcv_denetim, _takvim_denetim, _sicrama_sinifla, _pencere_denetim, _cik_denetim, evren_kalite (EV tam), "
+                "kapsam_md; raporlama / faz0 uyarlandı; test_k55 26/26 (3 = 11 kalite vakası + takvim testleri). İlk koşuda 2022-01-03 takvim dışı "
+                "sayıldı (yılbaşı cumartesi kuralı hatası), düzeltildi ve test eklendi; 50'lik deneme yeniden (commit sonrası)",
+     "sonuc": "50 hisse: veri hatası 0; veri yetersiz 4 (sıfır hacim payı > %20: AEHL, AGGRU, BRBS, GORO); kullanılabilir 46; olağan piyasa davranışı 18 (bilgi); "
+              "şüpheli sıçrama 11 (muhtemel bölünme 8, açıklanamayan 7; kurumsal işlem verisi YOK -> kesin yok; seriler düzeltmeli, bayrak uyarı); "
+              "boşluklu 1 (1 gün); CIK geçerli 50 / 50; sektör boş 5; 4b kesilmiş 2; sonuç penceresi Y250 yeterli 46; sızıntı testleri geçti. Tam evren koşulmadı",
+     "durum": "TAMAMLANDI, AÇIK: tam evren koşusu ve Faz 1 Cemal'in onayını bekliyor; kurumsal işlem (bölünme) verisi kaynağı yok (Yahoo splits ücretsiz, karar)"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "

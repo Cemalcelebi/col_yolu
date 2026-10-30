@@ -1,32 +1,32 @@
-# K55 — FAZ 0 RAPORU (K55-20261030-123258-7ce1627)
+# K55 — FAZ 0 RAPORU (K55-20261030-130849-e726670)
 
-- Kod K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi); commit 7ce1627; kilit sha 87bf7f6c0777; ayar sha 1f994b8d8ea9; kod dosyası sha 18 adet, veri dosyası sha 8 adet (K55_KOSU.json); evren sürümü 0d00d2c97608; örnek: 50; veri paketleri: {}.
+- Kod K55 v0.2 (2026-10-30, Faz 0 + ön kayıt v1.2: purge = ufuk, embargo, güçlü koşu kimliği, çıktı yolu denetimi, blok bootstrap, FDR ailesi); commit e726670; kilit sha 87bf7f6c0777; ayar sha 1f994b8d8ea9; kod dosyası sha 18 adet, veri dosyası sha 8 adet (K55_KOSU.json); evren sürümü 0d00d2c97608; örnek: 50; veri paketleri: {}.
 - Faz 0 amacı altyapıyı kanıtlamaktır; hücre sonuçları iskele denetimidir, iz iddiası değildir (optimize edilmedi).
 
 ## Cemal'in 7 sorusu
 
-1. Kaç hisse eksiksiz işlendi? 46 / 50 (eksiksiz = ≥ 260 gün, boşluksuz, sıfır hacim payı ≤ %20, OHLC hatasız, yinelenen tarih yok; sert hareket bayrağı bilgi, eksiksizliğe girmez).
-2. Kaç hissede tarihsel veri eksik? 4 (boşluklu 0, kısa seri 0, sıfır hacim yüksek 4); yükleyici dışı kısa geçmişli (< 320 gün, VERİ YETERSİZ, K55_EVREN_DISI_KISA.csv) 60; özellik için yeterli (≥ 320 gün) 50; sert hareketli (bilgi, bölünme değil) 15, aşırı getirili 12, OHLC hatalı 0.
-3. Kaç sembol şirketle güvenilir eşleştirildi? CIK eşleşen 50 / 50; sektör bilinen 49; K54 sınıfı olmayan (doğrulanamayan) semboller evren dışı.
+1. Kaç hisse eksiksiz işlendi? Veri hatası ve veri yetersizliği olmayan (kullanılabilir) 46 / 50. Veri hatalı 0 (sırasız 0, yinelenen işlem günü 0, takvim dışı satır 0, NaN fiyat 0, sıfır / negatif fiyat 0, negatif hacim 0, OHLC ilişki 0 / 0 / 0); veri yetersiz 4; olağan piyasa davranışı (bilgi, hata değil) 18; şüpheli sıçrama 11 (muhtemel bölünme 8, açıklanamayan 7; kurumsal işlem verisi YOK, kesin sınıflandırma yapılmadı).
+2. Kaç hissede tarihsel veri eksik? Fiyat yok 0, boş seri 0, kısa seri (< 320) 0, ciddi boşluklu (> 5 işlem günü) 0 (boşluklu 1, eksik işlem günü toplam 1, en uzun 1; ABD işlem takvimi, tatiller eksik sayılmaz), eksik hacim payı yüksek 0, sıfır hacim payı yüksek 4; K54 kesilmiş seri 2; yükleyici dışı kısa geçmişli 60 (K55_EVREN_DISI.csv); özellik penceresi yeterli 50, sonuç penceresi yeterli Y60 50 / Y120 50 / Y250 46; olay penceresi eksik 0; dönem kapsamı {'KESIF': 43, 'IC_DOGRULAMA': 48, 'BAGIMSIZ': 44}.
+3. Kaç sembol şirketle güvenilir eşleştirildi? CIK geçerli 50 / 50 (boş 0, geçersiz 0, bir CIK'ye birden fazla sembol 0, sembol yeniden kullanımı (4b) 2); şirket adı boş 0; sektör bilinen 45 (boş / NaN 5); seri_erken geçersiz 0; EV yinelenen 0; V'de fazla 0.
 3b. Evren dışı kalanlar (kategori ayrı; K55_EVREN_DISI.csv): {'kisa_seri_yukleyici': 60, 'fon_evren_disi': 7, 'eslesme_yok_cik': 1}. V / EV çift yönlü tutarlılık: {'ev_serisiz': [], 'v_fazla': [], 'bos_seri': [], 'kesim_sonrasi_satir': [], 'gecti': True}.
-4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten 12; sınıf dağılımı {1: 38, 2: 4, 3: 4, 4: 2, 5: 2}; seri sonu işlemi {'k51': 40, 'd100': 4, 'd0': 4, 'kes': 2} (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).
+4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten 12; sınıf dağılımı {1: 38, 2: 4, 3: 4, 4: 2, 5: 2} (4a 0, 4b 2); seri sonu işlemi (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).
 5. Gelecek bilgisi sızıntısı testleri geçti mi? EVET — a_kesme_testi: geçti; a2_kesme_dedektor: geçti; d_olay_etiketi: geçti; b_olumlu_kontrol: geçti; c_olumsuz_kontrol: geçti; e_eslesme: geçti.
-6. Denemede bütün modüller doğru çalıştı mı? EVET — evren: 50 sembol; dışlama {'kisa_seri_yukleyici': 60, 'fon_evren_disi': 7, 'eslesme_yok_cik': 1}; 4b kesim 9; V/EV tutarlılık geçti; veri_kalitesi: eksiksiz 46 / 50; panel: 67098 satır, 45948 likit; olaylar: 352 olay, tekillik geçti; sizinti: hepsi geçti; hucre_motoru: 3 satır (A / B / C), hata yok.
-7. Tam evren koşusunun tahmini süresi ve kaynağı: {'sembol': 3260, 'panel_satir_tahmini': 4374789, 'bellek_GB_tahmini': 0.52, 'panel_sn': 98.0, 'olaylar_sn': 0.0, 'sizinti_sn': 26.0, 'hucre_basina_sn_tahmini': 59.0, 'isci': 4, 'not': 'Faz 1 = 80 OHLCV hücresi × (5 pencere) × 3 yöntem; bootstrap 2.000'}.
+6. Denemede bütün modüller doğru çalıştı mı? EVET — evren: 50 sembol; dışlama {'kisa_seri_yukleyici': 60, 'fon_evren_disi': 7, 'eslesme_yok_cik': 1}; 4b kesim 9; V/EV tutarlılık geçti; panel: 67098 satır, 45948 likit; olaylar: 352 olay, tekillik geçti; veri_kalitesi: kullanılabilir 46 / 50; veri hatalı 0; veri yetersiz 4; sizinti: hepsi geçti; hucre_motoru: 3 satır (A / B / C), hata yok.
+7. Tam evren koşusunun tahmini süresi ve kaynağı: {'sembol': 3260, 'panel_satir_tahmini': 4374789, 'bellek_GB_tahmini': 0.52, 'panel_sn': 104.0, 'olaylar_sn': 0.0, 'sizinti_sn': 26.0, 'hucre_basina_sn_tahmini': 65.0, 'isci': 4, 'not': 'Faz 1 = 80 OHLCV hücresi × (5 pencere) × 3 yöntem; bootstrap 2.000'}.
 
 ## Süreler (sn)
 
-- veri_sha: 2.2
-- evren: 12.7
-- kalite: 0.7
-- panel: 1.5
+- veri_sha: 0.3
+- evren: 9.8
+- panel: 1.6
 - olaylar: 0.0
+- kalite: 1.5
 - sizinti: 0.4
-- hucre_iskele: 0.9
+- hucre_iskele: 1.0
 
 ## Panel
 
-- sure_sn: 1.5
+- sure_sn: 1.6
 - sembol: 50
 - satir: 67098
 - likit_satir: 45948
