@@ -19,7 +19,7 @@ def _f(x: Any, p: int = 3) -> str:
     return str(x)
 
 
-TAM = {"n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sicrama_sayi", "ohlc_hata",
+TAM = {"n", "n_olay", "n_olmayan", "n_degisim", "hisse", "olay", "tanimli_likit_gun", "n_gun", "bosluk_sayi", "bosluk_max_gun", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "hucre", "varyant", "test", "ret",
        "sinif", "yil", "Y60", "Y120", "Y250", "slot_n_islem", "yil_tekrar", "yon_yukari", "yon_asagi", "sinanan_olay", "kontrol"}
 
 
@@ -57,7 +57,7 @@ def veri_kapsami_yaz(Q: pd.DataFrame, ozet: Dict[str, Any], bilgi: Dict[str, Any
         O2 = O.assign(yil=O.tarih.dt.year); yt = O2.pivot_table(index="yil", columns="ufuk", values="sembol", aggfunc="size", fill_value=0).reset_index()
         L += ["", "Yıl başına olay sayısı:", ""] + tablo(yt, list(yt.columns))
     L += ["", "## Sembol başına kalite (ilk 60 satır; tamamı K55_VERI_KALITESI.csv)", ""]
-    L += tablo(Q.head(60), ["sembol", "kaynak", "sinif", "n_gun", "ilk", "son", "bosluk_sayi", "bosluk_max_gun", "sifir_hacim_pay", "asiri_getiri_sayi", "sicrama_sayi", "ohlc_hata", "cik_var", "eksiksiz", "tarihsel_eksik"])
+    L += tablo(Q.head(60), ["sembol", "kaynak", "sinif", "n_gun", "ilk", "son", "bosluk_sayi", "bosluk_max_gun", "sifir_hacim_pay", "asiri_getiri_sayi", "sert_hareket_sayi", "ohlc_hata", "cik_var", "eksiksiz", "ozellik_yeterli", "tarihsel_eksik"])
     yol = os.path.join(cikti, "K55_VERI_KAPSAMI.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n"); return yol
 
 
@@ -73,11 +73,12 @@ def faz0_yaz(R: Dict[str, Any], cikti: str) -> str:
     k = R["kimlik"]; oz = R["kalite_ozet"]; b = R["panel_bilgi"]; S = R["sizinti"]; H = R.get("hucre", pd.DataFrame()); sure = R["sure"]
     tam = R.get("tam_tahmin", {})
     L = [f"# K55 — FAZ 0 RAPORU ({k['kimlik']})", "",
-         f"- Kod {k['kod_surum']}; commit {k['commit']}; kilit sha {k['onkayit_sha'][:12]}; evren sürümü {k['evren_surum'][:12]}; örnek: {k['ayar']['ornek'] or 'tam evren'}; veri paketleri: {k['veri_paketleri']}.",
+         f"- Kod {k['kod_surum']}; commit {k['commit']}{' (KİRLİ: ' + str(k['git_kirli']) + ')' if k.get('git_kirli') else ''}; kilit sha {k['onkayit_sha'][:12]}; ayar sha {k.get('ayar_sha', '')[:12]}; "
+         f"kod dosyası sha {len(k.get('kod_sha', {}))} adet, veri dosyası sha {len(k.get('veri_sha', {}))} adet (K55_KOSU.json); evren sürümü {k['evren_surum'][:12]}; örnek: {k['ayar']['ornek'] or 'tam evren'}; veri paketleri: {k['veri_paketleri']}.",
          "- Faz 0 amacı altyapıyı kanıtlamaktır; hücre sonuçları iskele denetimidir, iz iddiası değildir (optimize edilmedi).", "",
          "## Cemal'in 7 sorusu", "",
          f"1. Kaç hisse eksiksiz işlendi? {oz['eksiksiz']} / {oz['sembol']} (eksiksiz = ≥ 260 gün, boşluksuz, sıfır hacim payı ≤ %20, OHLC hatasız, bölünme sıçraması yok, yinelenen tarih yok).",
-         f"2. Kaç hissede tarihsel veri eksik? {oz['tarihsel_eksik']} (boşluklu {oz['bosluklu']}, kısa seri {oz['kisa_seri']}, sıfır hacim yüksek {oz['sifir_hacim_yuksek']}); sıçramalı {oz['sicramali']}, aşırı getirili {oz['asiri_getirili']}, OHLC hatalı {oz['ohlc_hatali']}.",
+         f"2. Kaç hissede tarihsel veri eksik? {oz['tarihsel_eksik']} (boşluklu {oz['bosluklu']}, kısa seri {oz['kisa_seri']}, sıfır hacim yüksek {oz['sifir_hacim_yuksek']}); yükleyici dışı kısa geçmişli (< 320 gün, VERİ YETERSİZ, K55_EVREN_DISI_KISA.csv) {oz.get('kisa_seri_yukleyici_disi', 0)}; özellik için yeterli (≥ 320 gün) {oz.get('ozellik_yeterli', '')}; sert hareketli (bilgi, bölünme değil) {oz.get('sert_hareketli_bilgi', '')}, aşırı getirili {oz['asiri_getirili']}, OHLC hatalı {oz['ohlc_hatali']}.",
          f"3. Kaç sembol şirketle güvenilir eşleştirildi? CIK eşleşen {oz['cik_eslesen']} / {oz['sembol']}; sektör bilinen {oz['sektor_bilinen']}; K54 sınıfı olmayan (doğrulanamayan) semboller evren dışı.",
          f"4. Delist olmuş şirketler nasıl ele alındı? Seri erken biten {oz['seri_erken_biten']}; sınıf dağılımı {oz['sinif']}; seri sonu işlemi {oz['seri_sonu']} (d100 = iflas −%100, d0 = birleşme bedeli, k51 = son kapanış ve negatifse −%30); 4b kod yeniden kullanımı kesimi uygulandı; sınıf 6 dışarıda; olay tanımında tam pencere şartı (seri sonunu aşan pencere tanımsız).",
          f"5. Gelecek bilgisi sızıntısı testleri geçti mi? {'EVET' if all(r.get('gecti') for r in S.values()) else 'HAYIR'} — " + "; ".join(f"{ad}: {'geçti' if r.get('gecti') else 'KALDI'}" for ad, r in S.items()) + ".",
@@ -85,11 +86,13 @@ def faz0_yaz(R: Dict[str, Any], cikti: str) -> str:
          f"7. Tam evren koşusunun tahmini süresi ve kaynağı: {tam}.", "",
          "## Süreler (sn)", ""] + [f"- {ad}: {s}" for ad, s in sure.items()]
     L += ["", "## Panel", ""] + [f"- {kk}: {v}" for kk, v in b.items()]
-    L += ["", "## Olay tekilliği", "", f"- {R['tekillik']}"]
+    L += ["", "## Olay tekilliği ve dönem (purge / embargo) dağılımı", "", f"- {R['tekillik']}", f"- olay × ufuk × dönem: {R.get('olay_donem', {})}"]
+    if len(R.get("coklu_test", pd.DataFrame())):
+        L += ["", "## Çoklu test yükü (aile = dal × yöntem × dönem; hücre içi Holm, aile içinde BH q = 0,10)", ""] + tablo(R["coklu_test"], ["dal", "yontem", "donem", "hucre", "varyant", "test", "ret"])
     if len(H):
         L += ["", "## Hücre iskelesi (D01-S01 + olumlu / olumsuz kontrol; yalnız pipeline denetimi)", ""]
-        L += tablo(H, ["hucre", "yontem", "donem", "ufuk", "n_olay", "n", "n_degisim", "d", "d_alt", "d_ust", "auc", "fark", "fark_alt", "net_fark", "slot_rastgele_yuzdelik", "lift", "eksik_pay", "karar"])
-    L += ["", "## Çıktılar", "", "- K55_VERI_KALITESI.csv, K55_VERI_KAPSAMI.md, K55_EVREN.csv, K55_OLAYLAR.csv.gz, K55_SIZINTI_TESTI.md, K55_HUCRE_ISKELE.csv, K55_KOSU.json, panel pickle (veri klasörü, repoya girmez)."]
+        L += tablo(H, ["hucre", "yontem", "donem", "ufuk", "n_olay", "n", "n_degisim", "d", "d_alt", "d_ust", "d_alt_blok", "d_ust_blok", "auc", "fark", "fark_alt", "fark_alt_blok", "fark_alt_hisse_ceyrek", "net_fark", "slot_rastgele_yuzdelik", "lift", "eksik_pay", "karar"])
+    L += ["", "## Çıktılar", "", "- K55_VERI_KALITESI.csv, K55_VERI_KAPSAMI.md, K55_EVREN.csv, K55_EVREN_DISI_KISA.csv, K55_OLAYLAR.csv.gz, K55_SIZINTI_TESTI.md, K55_HUCRE_ISKELE.csv, K55_COKLU_TEST.csv, K55_KOSU.json (kod / veri / ayar sha), panel/ pickle (repoya girmez)."]
     yol = os.path.join(cikti, "K55_FAZ0_RAPOR.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n")
     with open(os.path.join(cikti, "K55_KOSU.json"), "w", encoding="utf-8") as f:
         json.dump(k, f, ensure_ascii=False, indent=1, default=str)

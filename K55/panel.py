@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 
 from .olay_tanimlari import ileri_getiri
-from .ortak import ALIVE_SINIR, DONEM, K55Ayar, MIN_GUN, cy, donem_etiketi, log
+from .ortak import ALIVE_SINIR, DONEM, K55Ayar, MIN_GUN, OLAY, cy, donem_etiketi, donem_etiketi_ufuk, log
 
 PANEL_KOL = ["tarih", "i", "likit", "open", "close", "dv20", "vol60", "log_dv20", "dd250", "r60", "ar20", "trend", "kayma", "mal", "r60_ileri", "r60_tanimli"]
 
@@ -32,8 +32,11 @@ def _isci(arg: Tuple[Any, ...]) -> Optional[Dict[str, Any]]:
                           "dd250": F.dd250.to_numpy(np.float32), "r60": F.r60.to_numpy(np.float32), "ar20": F.ar20.to_numpy(np.float32),
                           "trend": (F.c_sma200.to_numpy(float) > 0).astype(np.int8), "kayma": kayma.astype(np.float32), "mal": mal.astype(np.float32),
                           "r60_ileri": r60.astype(np.float32), "r60_tanimli": tam | (seri_erken & np.isfinite(r60))})
-        P = P[np.arange(n) >= MIN_GUN]                                   # ölçüler ilk 260 günde tanımsız
-        return {"sembol": s, "panel": P, "likit": likit}
+        for ad, (h, _) in OLAY.items():                                  # etiket penceresinin son günü (purge için); seri dışına taşarsa NaT
+            bt = np.full(n, np.datetime64("NaT"), dtype="datetime64[ns]"); ok = np.arange(n) + h < n; bt[ok] = idx.to_numpy()[np.arange(n)[ok] + h]
+            P[f"bitis{h}"] = bt
+        P = P[np.arange(n) >= MIN_GUN]                                   # ölçüler ilk MIN_GUN günde tanımsız (özellik gereksinimi; evren dışı değil)
+        return {"sembol": s, "panel": P, "likit": likit, "ozelliksiz": int(min(n, MIN_GUN))}
     except Exception as ex:
         log.warning("panel %s atlandı: %s", s, ex); return None
 
@@ -62,11 +65,17 @@ def panel_kur(V: Dict[str, pd.DataFrame], EV: pd.DataFrame, A: K55Ayar, endeks: 
         P["rejim"] = np.where(boga, "BOGA", "AYI")
     else:
         P["rejim"] = "bilinmiyor"
-    P["donem"] = donem_etiketi(P.tarih).to_numpy(); P["ay"] = P.tarih.dt.to_period("M").astype(str); P["ceyrek"] = P.tarih.dt.to_period("Q").astype(str)
+    P["donem"] = donem_etiketi(P.tarih).to_numpy()                       # t0 dönemi (bilgi); ölçümde ufuk bazlı purge / embargo etiketleri kullanılır
+    for ad, (h, _) in OLAY.items():
+        P[f"donem{h}"] = donem_etiketi_ufuk(P.tarih, P[f"bitis{h}"]).to_numpy()
+    P["ay"] = P.tarih.dt.to_period("M").astype(str); P["ceyrek"] = P.tarih.dt.to_period("Q").astype(str)
+    gunler = np.array(sorted(P.tarih.unique())); gix = pd.Series(np.arange(len(gunler)) // 60, index=gunler); P["blok60"] = P.tarih.map(gix).astype(np.int32)
     P = P.sort_values(["sembol", "tarih"], kind="stable").reset_index(drop=True)
     likit_map = {r["sembol"]: r["likit"] for r in son}
     bilgi = {"sure_sn": round(time.time() - t0, 1), "sembol": int(P.sembol.nunique()), "satir": int(len(P)), "likit_satir": int(P.likit.sum()),
-             "r60_tanimli_likit": int((P.likit & P.r60_tanimli).sum()), "donem": P[P.likit].donem.value_counts().to_dict(), "atlanan": int(len(args) - len(son))}
+             "r60_tanimli_likit": int((P.likit & P.r60_tanimli).sum()), "donem_t0": P[P.likit].donem.value_counts().to_dict(),
+             "donem60_purge_embargo": P[P.likit].donem60.value_counts().to_dict(), "donem250_purge_embargo": P[P.likit].donem250.value_counts().to_dict(),
+             "ozelliksiz_satir_toplam": int(sum(r["ozelliksiz"] for r in son)), "atlanan": int(len(args) - len(son))}
     log.info("panel: %s", bilgi)
     return P, likit_map, bilgi
 

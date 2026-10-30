@@ -42,11 +42,11 @@ def testler():
         hata.append(f"2) ileri getiri seri sonu işlemi yanlış: {r100[50]} {r0[50]} {rk[50]} {rn[50]}")
     # 3) veri kalitesi: temiz seri eksiksiz; 10 iş günü boşluk; bölünme sıçraması
     q = veri_kalitesi.sembol_kalite("T", _seri(400))
-    if not (q["eksiksiz"] and q["bosluk_sayi"] == 0 and q["sicrama_sayi"] == 0):
+    if not (q["eksiksiz"] and q["bosluk_sayi"] == 0 and q["sert_hareket_sayi"] == 0):
         hata.append(f"3a) temiz seri eksiksiz değil: {q}")
     db = _seri(400); db = db.drop(db.index[200:210]); qb = veri_kalitesi.sembol_kalite("B", db)
     ds = _seri(400); ds.iloc[250:, 3] = ds.Close.iloc[250:] / 2; ds.iloc[250:, 4] = ds.Volume.iloc[250:] * 3; qs = veri_kalitesi.sembol_kalite("S", ds)
-    if not (qb["bosluk_sayi"] == 1 and qb["bosluk_max_gun"] == 10 and not qb["eksiksiz"] and qs["sicrama_sayi"] >= 1):
+    if not (qb["bosluk_sayi"] == 1 and qb["bosluk_max_gun"] == 10 and not qb["eksiksiz"] and qs["sert_hareket_sayi"] >= 1):
         hata.append(f"3b) boşluk / sıçrama tespiti yanlış: {qb['bosluk_sayi']} {qb['bosluk_max_gun']} {qs['sicrama_sayi']}")
     # 4) kesme testi: D01-S01 geçer, geleceğe bakan değişken kalır
     k1 = sizinti.kesme_testi(hucreler.d01_s01_dip_band_gun, d, [300, 400, 599]); k2 = sizinti.kesme_testi(sizinti.gelecek_degisken, d, [300, 400])
@@ -103,9 +103,9 @@ def testler():
     for g in gunler:
         for j in range(120):
             rows.append({"tarih": g, "sembol": f"S{j}", "vd": j % 10, "lt": j % 3, "trend": 1, "rejim": "BOGA", "sektor": "tek", "likit": True, "r60_tanimli": True, "olay": (j % 7 == 0)})
-    P9 = pd.DataFrame(rows); P9["ay"] = P9.tarih.dt.to_period("M").astype(str); P9["ceyrek"] = P9.tarih.dt.to_period("Q").astype(str); P9["donem"] = "KESIF"
+    P9 = pd.DataFrame(rows); P9["ay"] = P9.tarih.dt.to_period("M").astype(str); P9["ceyrek"] = P9.tarih.dt.to_period("Q").astype(str); P9["donem"] = "KESIF"; P9["donem60"] = "KESIF"; P9["blok60"] = 0
     P9["x_pos"] = rng.normal(0, 1, len(P9)) + 2.0 * P9.olay; P9["x_neg"] = rng.normal(0, 1, len(P9))
-    O9 = P9[P9.olay][["sembol", "tarih"]].assign(ufuk="Y60", i=0)
+    O9 = P9[P9.olay][["sembol", "tarih"]].assign(ufuk="Y60", i=0, donem="KESIF")
     ra = hucre.yontem_A(P9, O9, "x_pos", "Y60", rng, "KESIF"); rb = hucre.yontem_A(P9, O9, "x_neg", "Y60", rng, "KESIF")
     if not (ra["d"] > 1.5 and ra["auc"] > 0.85 and ra["karar"] == "ETKİ" and abs(rb["d"]) < 0.15 and rb["karar"] == "ETKİ YOK" and ra["n_olay"] == 40 * 18):
         hata.append(f"9) hücre A kontrolleri yanlış: {ra['d']:.2f} {ra['auc']:.2f} {ra['karar']} | {rb['d']:.2f} {rb['karar']}")
@@ -118,6 +118,59 @@ def testler():
     sp = istatistik.slot_portfoy(sinyal, havuz, rng, slot=10, gun_tut=60, gunde=2, R=50)
     if not (sp["n_islem"] == 10 and abs(sp["ort_net"] - 0.10) < 1e-9 and sp["rastgele_yuzdelik"] == 1.0):
         hata.append(f"10b) slot portföyü yanlış: {sp}")
+    # 11) dönem etiketi kenarları: gün sonu damgası bitiş gününe dahil, saat dilimli damga yerel güne indirgenir, NaT -> DISI
+    t11 = pd.Series([pd.Timestamp("2021-12-31 23:59:59"), pd.Timestamp("2021-12-31 23:00", tz="UTC"), pd.NaT, pd.Timestamp("2026-06-05 16:00"), pd.Timestamp("2022-01-01 00:00:01")])
+    e11a = ortak.donem_etiketi(t11.iloc[[0, 2, 3, 4]]).tolist(); e11b = ortak.donem_etiketi(t11.iloc[[1]]).tolist()
+    if not (e11a == ["KESIF", "DISI", "BAGIMSIZ", "IC_DOGRULAMA"] and e11b == ["KESIF"]):
+        hata.append(f"11) dönem etiketi kenarları yanlış: {e11a} {e11b}")
+    # 12) purge / embargo: pencere dönem sınırını aşan -> PURGE; dönem başındaki 14 takvim günü -> EMBARGO; bitis NaT -> TANIMSIZ; PURGE_GUN = 250
+    t12 = pd.Series(pd.to_datetime(["2021-10-01", "2021-10-01", "2021-06-01", "2022-01-05", "2022-02-01", "2016-01-10"]))
+    b12 = pd.Series(pd.to_datetime(["2022-02-15", "2021-12-30", None, "2022-04-10", "2022-05-01", "2016-04-15"]))
+    e12 = ortak.donem_etiketi_ufuk(t12, b12).tolist()
+    if not (e12 == ["PURGE", "KESIF", "TANIMSIZ", "EMBARGO", "IC_DOGRULAMA", "EMBARGO"] and ortak.PURGE_GUN == 250 and ortak.EMBARGO_GUN == 10):
+        hata.append(f"12) purge / embargo etiketi yanlış: {e12} {ortak.PURGE_GUN}")
+    # 13) koşu kimliği: kilit sha boşsa durur; eksik veri dosyası durur; çıkış yolu denetimi (yasak / izinsiz / izinli)
+    A13 = ortak.K55Ayar(veri="/nonexistent_13", cikti=os.path.join(ortak.KOK, "arastirma_cikti", "k55_dallanma", "deneme"))
+    ok13 = True
+    try:
+        ortak.veri_sha(A13); ok13 = False
+    except FileNotFoundError:
+        pass
+    eski = ortak.onkayit_sha
+    try:
+        ortak.onkayit_sha = lambda: ""
+        try:
+            ortak.kosu_kimligi(A13, "x", None, {}); ok13 = False
+        except RuntimeError:
+            pass
+    finally:
+        ortak.onkayit_sha = eski
+    for yasak in (os.path.join(ortak.KOK, "arastirma_cikti", "col_yolu_abd"), "/tmp/k55_baska", os.path.join(ortak.KOK, "arastirma_cikti", "k55_dallanma", "..", "col_yolu_abd")):
+        try:
+            ortak.cikti_dogrula(yasak); ok13 = False
+        except PermissionError:
+            pass
+    if not (ok13 and ortak.cikti_dogrula(A13.cikti).endswith("k55_dallanma/deneme") and ortak.ayar_sha() and len(ortak.kod_dosyalari()) >= 15):
+        hata.append("13) koşu kimliği / çıkış yolu denetimi yanlış")
+    # 14) COL_YOLU_ABD içe aktarma yan etkisiz: ağ kapalı, K51-K54 çıktı dosyalarının sha256'sı aynı, yeni dosya yok
+    import socket
+    kl = os.path.join(ortak.KOK, "arastirma_cikti", "col_yolu_abd"); dosyalar = sorted(f for f in os.listdir(kl) if f.endswith((".md", ".csv", ".json"))) if os.path.isdir(kl) else []
+    once = {f: ortak.sha256_dosya(os.path.join(kl, f)) for f in dosyalar[:40]}; eski_sock = socket.socket.connect
+    def _yasak(*a, **k):
+        raise RuntimeError("test: ağ kapalı")
+    socket.socket.connect = _yasak
+    try:
+        sys.modules.pop("COL_YOLU_ABD", None); C = ortak.cy(); _ = C.CY_SURUM
+    finally:
+        socket.socket.connect = eski_sock
+    sonra = {f: ortak.sha256_dosya(os.path.join(kl, f)) for f in dosyalar[:40]}; yeni = sorted(f for f in os.listdir(kl) if f.endswith((".md", ".csv", ".json"))) if os.path.isdir(kl) else []
+    if not (once == sonra and yeni == dosyalar):
+        hata.append("14) COL_YOLU_ABD içe aktarması yan etkili (dosya değişti ya da yeni dosya)")
+    # 15) çoklu test özeti: hücre içi Holm, aile içi BH; test yükü sayımı
+    R15 = pd.DataFrame({"hucre": ["H1", "H1", "H2", "H3"], "dal": "D01", "yontem": "A", "donem": "KESIF", "p": [0.001, 0.02, 0.5, 0.04]})
+    Rc, yuk = istatistik.coklu_test_ozeti(R15, 0.10)
+    if not (yuk.test.iloc[0] == 4 and yuk.hucre.iloc[0] == 3 and bool(Rc[Rc.hucre == "H1"].ret.iloc[0]) and not bool(Rc[Rc.hucre == "H2"].ret.iloc[0]) and abs(Rc[Rc.hucre == "H1"].p_holm.iloc[0] - 0.002) < 1e-12):
+        hata.append(f"15) çoklu test özeti yanlış: {yuk.to_dict('records')} {Rc[['hucre', 'p_holm', 'q_bh', 'ret']].to_dict('records')}")
     return hata
 
 
@@ -125,4 +178,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k55: 10/10 OK")
+    print("test_k55: 15/15 OK")

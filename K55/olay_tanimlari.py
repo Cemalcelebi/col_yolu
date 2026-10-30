@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 import pandas as pd
 
-from .ortak import OLAY, ALIVE_SINIR
+from .ortak import OLAY, ALIVE_SINIR, donem_etiketi_ufuk
 
 
 def ileri_getiri(O: np.ndarray, C: np.ndarray, h: int, seri_erken: bool, seri_sonu: str) -> Tuple[np.ndarray, np.ndarray]:
@@ -53,7 +53,7 @@ def sembol_olaylari(s: str, d: pd.DataFrame, likit: np.ndarray) -> Tuple[List[Di
         for i in np.flatnonzero(aday & (r >= esik)):
             if i < son + h:                                       # örtüşme: önceki olayın penceresi bitmeden yeni olay yok
                 continue
-            rows.append({"sembol": s, "tarih": idx[i], "i": int(i), "ufuk": ad, "giris": float(O[i + 1]), "getiri": float(r[i]), "en_yuksek_getiri": float(enyuk[i])}); son = i
+            rows.append({"sembol": s, "tarih": idx[i], "i": int(i), "ufuk": ad, "giris": float(O[i + 1]), "getiri": float(r[i]), "en_yuksek_getiri": float(enyuk[i]), "bitis": idx[i + h]}); son = i
     return rows, tanimli
 
 
@@ -65,10 +65,13 @@ def olaylar(V: Dict[str, pd.DataFrame], likit_map: Dict[str, np.ndarray]) -> Tup
         if lk is None or len(lk) != len(d):
             continue
         r, t = sembol_olaylari(s, d, lk); rows += r; say.append({"sembol": s, **{f"tanimli_{k}": v for k, v in t.items()}})
-    kol = ["sembol", "tarih", "i", "ufuk", "giris", "getiri", "en_yuksek_getiri"]
+    kol = ["sembol", "tarih", "i", "ufuk", "giris", "getiri", "en_yuksek_getiri", "bitis"]
     O = pd.DataFrame(rows, columns=kol) if rows else pd.DataFrame(columns=kol)
     if len(O):
-        O["tarih"] = pd.to_datetime(O.tarih); O = O.sort_values(["ufuk", "sembol", "tarih"]).reset_index(drop=True)
+        O["tarih"] = pd.to_datetime(O.tarih); O["bitis"] = pd.to_datetime(O.bitis); O["donem"] = donem_etiketi_ufuk(O.tarih, O.bitis).to_numpy()   # purge / embargo
+        O = O.sort_values(["ufuk", "sembol", "tarih"]).reset_index(drop=True)
+    else:
+        O["donem"] = pd.Series(dtype=object)
     return O, pd.DataFrame(say)
 
 

@@ -138,3 +138,21 @@ def slot_portfoy(sinyal: pd.DataFrame, havuz: pd.DataFrame, rng: np.random.Gener
             top += arr[rng.integers(0, len(arr))]; say += 1
         rast[r_] = top / say if say else np.nan
     return {"n_islem": int(len(A)), "ort_net": ort, "rastgele_yuzdelik": float(np.nanmean(rast < ort)), "rastgele_ort": float(np.nanmean(rast))}
+
+
+def coklu_test_ozeti(R: pd.DataFrame, q: float = 0.10) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Çoklu test yükü ve düzeltme (ONKAYIT v1.2 madde 7). R satırları: hucre, dal, yontem, donem, p (varyant başına). Hücre içi Holm,
+    aile = (dal, yontem, donem) içinde hücre başına en küçük Holm p ile BH q. Dönüş: (satır tablosu p_holm / q_bh / ret ile, aile yükü tablosu)."""
+    R = R.copy()
+    if not len(R) or "p" not in R:
+        return R, pd.DataFrame(columns=["dal", "yontem", "donem", "hucre", "varyant", "test", "ret"])
+    R["p_holm"] = np.nan
+    for _, ix in R.groupby(["hucre", "yontem", "donem"]).groups.items():
+        R.loc[ix, "p_holm"] = holm(R.loc[ix, "p"].to_numpy(float))
+    H = R.groupby(["dal", "yontem", "donem", "hucre"], as_index=False).agg(p_hucre=("p_holm", "min"), varyant=("p", "size"))
+    H["q_bh"] = np.nan; H["ret"] = False
+    for _, ix in H.groupby(["dal", "yontem", "donem"]).groups.items():
+        qq, rr = bh_fdr(H.loc[ix, "p_hucre"].to_numpy(float), q); H.loc[ix, "q_bh"] = qq; H.loc[ix, "ret"] = rr
+    R = R.merge(H[["dal", "yontem", "donem", "hucre", "q_bh", "ret"]], on=["dal", "yontem", "donem", "hucre"], how="left")
+    yuk = H.groupby(["dal", "yontem", "donem"], as_index=False).agg(hucre=("hucre", "nunique"), varyant=("varyant", "sum"), ret=("ret", "sum"))
+    yuk["test"] = yuk.varyant; return R, yuk

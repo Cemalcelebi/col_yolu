@@ -29,7 +29,12 @@ def _k54_oku(A: K55Ayar) -> Tuple[pd.DataFrame, pd.DataFrame]:
 def evren_kur(A: K55Ayar) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame, str]:
     """Evreni kurar. Sınıf 6 ve K54'te bulunmayan semboller dışarıda; 4b kesimi seriye uygulanır; evren sürümü hesaplanır."""
     C = cy(); Ac = C.CYAyar(veri=A.veri, cikti=A.cikti, pazarlar=("ABD",), is_parcacigi=A.isci)
-    Vs, EV = C.cy_veri_yukle(Ac, C.CY)
+    eski_indir = C.cy_tiingo_indir
+    try:
+        C.cy_tiingo_indir = lambda *a, **k: 0                               # ONKAYIT v1.2 madde 9: K55 evren kurulurken ağdan veri indirilmez
+        Vs, EV = C.cy_veri_yukle(Ac, C.CY)
+    finally:
+        C.cy_tiingo_indir = eski_indir
     if "ABD" not in Vs:
         raise RuntimeError("ABD verisi yüklenemedi")
     V = Vs["ABD"]; EV = EV[EV.pazar == "ABD"].copy(); EV["sembol"] = EV.sembol.astype(str)
@@ -61,10 +66,35 @@ def evren_kur(A: K55Ayar) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame, str]:
     EV["seri_erken"] = EV.son_islem < pd.Timestamp(ALIVE_SINIR)
     sek = C.cy_sektor(Ac, EV); EV["sektor"] = EV.sembol.map(sek).fillna("bilinmiyor")
     EV = EV[EV.n_gun > 0].sort_values("sembol").reset_index(drop=True)
+    EV.attrs["kisa_seri"] = _kisa_seriler(A, V, SD)                       # v1.2 madde 6: yükleyici dışı kısa geçmişli semboller silinmez, raporlanır
     evren_surum = _evren_surum(EV)
     log.info("evren: %d sembol (sınıf: %s); 4b kesilen %d; sınıf 6 / K54 dışı çıkarılan %d; sürüm %s", len(EV), EV.sinif.value_counts().sort_index().to_dict(),
              kesilen, len(disari), evren_surum[:12])
     return V, EV, evren_surum
+
+
+def _kisa_seriler(A: K55Ayar, V: Dict[str, pd.DataFrame], SD: pd.DataFrame) -> pd.DataFrame:
+    """K51 yükleyicisinin (< 320 gün) dışarıda bıraktığı ya da K55 evreninde bulunmayan semboller: VERİ YETERSİZ (kısa geçmiş) listesi."""
+    rows = []
+    try:
+        import pickle
+        with open(os.path.join(A.veri, "V_ABD.pkl"), "rb") as f:
+            ham = pickle.load(f)
+        ham = ham.get("veri", ham) if isinstance(ham, dict) and "veri" in ham else ham
+        for s, d in ham.items():
+            if str(s) not in V and hasattr(d, "__len__") and len(d) < 320:
+                rows.append({"sembol": str(s), "kaynak": "V_ABD", "n_gun": int(len(d)), "neden": "VERİ YETERSİZ (kısa geçmiş < 320 gün; K51 yükleyicisi dışı)"})
+    except Exception as ex:
+        log.warning("kısa seri taraması (V_ABD) yapılamadı: %s", ex)
+    ky = os.path.join(A.veri, "k34_evren.csv")
+    if os.path.exists(ky):
+        E = pd.read_csv(ky); disi = set(pd.read_csv(os.path.join(KOK, "evren_disi_ABD.csv")).sembol.astype(str).str.upper()) if os.path.exists(os.path.join(KOK, "evren_disi_ABD.csv")) else set()
+        sdx = SD.set_index("sembol").sinif.to_dict() if len(SD) else {}
+        for r in E.itertuples():
+            s = str(r.sembol)
+            if s not in V and s.upper() not in disi and sdx.get(s) != 6:
+                rows.append({"sembol": s, "kaynak": f"K34_{r.kaynak}", "n_gun": np.nan, "neden": "VERİ YETERSİZ (K34 fiyat serisi yok ya da < 320 gün; yükleyici dışı)"})
+    return pd.DataFrame(rows, columns=["sembol", "kaynak", "n_gun", "neden"])
 
 
 def _evren_surum(EV: pd.DataFrame) -> str:
