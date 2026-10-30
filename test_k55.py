@@ -9,7 +9,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from K55 import eslestirme, hucre, hucreler, istatistik, olay_tanimlari, ortak, sizinti, veri_kalitesi, veri_paket  # noqa: E402
+from K55 import eslestirme, hucre, hucreler, istatistik, olay_tanimlari, ortak, sizinti, vekil as vkm, veri_kalitesi, veri_paket  # noqa: E402
 from K55 import evren as evm  # noqa: E402
 from K55.evren import evren_daralt, ornek_sec  # noqa: E402
 
@@ -333,6 +333,25 @@ def testler():
     y29 = pd.Series([r["yontem"] for r in r29]).value_counts().to_dict(); v29 = {r["varyant"] for r in r29}
     if not (y29.get("A") == 5 and y29.get("B") == 5 and y29.get("C") == 5 and len(v29) == 5 and all("karar" in r for r in r29) and "D01-S02|5" not in P28):
         hata.append(f"29) hucre_kos varyant / yöntem satırları yanlış: {y29} {sorted(v29)}")
+    # 30) vekil kıyası (2.7): r60'ın kendisi olan değişken VEKİL (en yakın r60, |ρ| > 0,8); rastgele değişken vekil değil; seçim KEŞİF + not
+    rng30 = np.random.default_rng(30); P30 = P28.copy()
+    P30["r60"] = [float(V28[sm].Close.iloc[i] / V28[sm].Close.iloc[i - 60] - 1) for sm, i in zip(P30.sembol, P30.i)]
+    P30["dd250"] = rng30.uniform(-0.6, 0, len(P30)); P30["likit"] = True
+    hucreler.temizle()
+    hucreler.kaydet("T-VEK", "T", "r60 kopyası", +1, lambda d: d.Close / d.Close.shift(60) - 1, not_="")
+    hucreler.kaydet("T-RAST", "T", "rastgele", +1, lambda d: pd.Series(np.random.default_rng(int(d.Close.iloc[0] * 1000) % 2**31).normal(size=len(d)), index=d.index), not_="OBV vekil denetimi")
+    hucreler.kaydet("T-DIS", "T", "seçilmez", +1, lambda d: d.Close * 0, not_="")
+    D30 = pd.DataFrame([{"hucre": "T-VEK", "durum": "KEŞİF", "A_en_iyi": "T-VEK|tek", "B_en_iyi": "", "A_d": 0.3}, {"hucre": "T-RAST", "durum": "REDDEDİLDİ", "A_en_iyi": "", "B_en_iyi": "T-RAST|tek", "A_d": 0.0},
+                        {"hucre": "T-DIS", "durum": "REDDEDİLDİ", "A_en_iyi": "T-DIS|tek", "B_en_iyi": "", "A_d": 0.0}])
+    sec30 = vkm.hucre_sec(D30); T30 = vkm.vekil_kiyas(D30, P30, V28, O28, rng30)
+    r_vek = T30[T30.hucre == "T-VEK"].iloc[0] if (T30.hucre == "T-VEK").any() else None; r_rast = T30[T30.hucre == "T-RAST"].iloc[0] if (T30.hucre == "T-RAST").any() else None
+    if not (sec30 == ["T-VEK", "T-RAST"] and r_vek is not None and r_rast is not None and bool(r_vek.vekil) and r_vek.en_yakin_bilinen == "r60" and r_vek.rho_r60 > 0.95
+            and not bool(r_rast.vekil) and abs(r_rast.en_yakin_rho) < 0.5 and "T-VEK|tek" not in P30 and all(f"rho_{b}" in T30 for b in vkm.BILINEN)):
+        hata.append(f"30) vekil kıyası yanlış: seçim {sec30}; " + (f"VEK ρ_r60={r_vek.rho_r60:.2f} vekil={r_vek.vekil} en={r_vek.en_yakin_bilinen}; " if r_vek is not None else "VEK yok; ") + (f"RAST en ρ={r_rast.en_yakin_rho:.2f} vekil={r_rast.vekil}" if r_rast is not None else "RAST yok"))
+    with tempfile.TemporaryDirectory() as td30:
+        vkm.vekil_yaz(T30, {"kimlik": "test"}, td30)
+        if "VEKİL işaretli hücre: 1" not in open(os.path.join(td30, "K55_VEKIL.md"), encoding="utf-8").read():
+            hata.append("30b) K55_VEKIL.md vekil sayısı yanlış")
     hucreler.temizle(); dal_ortak.EK.clear(); hucreler.kaydet("D01-S01", "D01", "iskele", +1, hucreler.d01_s01_dip_band_gun)
     return hata
 
@@ -341,4 +360,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k55: 29/29 OK")
+    print("test_k55: 30/30 OK")

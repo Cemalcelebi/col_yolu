@@ -1,7 +1,7 @@
 """K55 — DALLANMALI İZ ARAMA, tek giriş dosyası (Cemal, 30 Ekim 2026: K55/ klasöründe bağımsız modüller + bu giriş).
 
 Colab:  exec(open('K55.py').read()); R = k55_faz0(ornek=50)        (CY_VERI ortam değişkeni ya da K55Ayar(veri=...) ile veri klasörü)
-Komut:  python K55.py faz0 --ornek 50 --veri /tmp/veri --cikti arastirma_cikti/k55_dallanma
+Komut:  python K55.py faz0 --ornek 50 --veri /tmp/veri --cikti arastirma_cikti/k55_dallanma  (sonra faz1, sonra vekil)
 Ön kayıt ve kilit: K55/ONKAYIT_K55.md. Eski K51-K54 dosyaları değiştirilmez (COL_YOLU_ABD yalnız içe aktarılır).
 """
 from __future__ import annotations
@@ -17,6 +17,7 @@ if KOK_K55 not in sys.path:
 from K55.ortak import K55Ayar, K55_SURUM  # noqa: E402
 from K55.faz0 import faz0  # noqa: E402
 from K55.faz1 import DALLAR, faz1  # noqa: E402
+from K55.vekil import vekil  # noqa: E402
 
 
 def k55_faz0(ornek=None, veri=None, cikti=None, isci=None, tohum=55, paketler=None):
@@ -43,6 +44,18 @@ def k55_faz1(ornek=None, veri=None, cikti=None, isci=None, tohum=55, dallar=None
     return faz1(K55Ayar(**kw), tuple(dallar) if dallar else DALLAR, paketler=paketler)
 
 
+def k55_vekil(ornek=None, veri=None, cikti=None, isci=None, tohum=55, hucreler=None, paketler=None):
+    """Faz 1 sonrası vekil / bilinen etki kıyası (bölüm 2.7): KEŞİF hücreleri + notunda vekil / kıyas geçenler; K55_VEKIL.csv / .md."""
+    kw = {"ornek": ornek, "tohum": tohum}
+    if veri:
+        kw["veri"] = veri
+    if cikti:
+        kw["cikti"] = cikti
+    if isci:
+        kw["isci"] = int(isci)
+    return vekil(K55Ayar(**kw), list(hucreler) if hucreler else None, paketler=paketler)
+
+
 def _cakisma_kontrol_k55(_once=_CK_ONCE_K55, _dosya="K55.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka modülün) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -59,10 +72,12 @@ _cakisma_kontrol_k55()
 
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
-    ap = argparse.ArgumentParser(description=K55_SURUM); ap.add_argument("komut", choices=["faz0", "faz1"]); ap.add_argument("--ornek", type=int, default=None); ap.add_argument("--dallar", default=None)
+    ap = argparse.ArgumentParser(description=K55_SURUM); ap.add_argument("komut", choices=["faz0", "faz1", "vekil"]); ap.add_argument("--ornek", type=int, default=None); ap.add_argument("--dallar", default=None); ap.add_argument("--hucreler", default=None)
     ap.add_argument("--veri", default=None); ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=None); ap.add_argument("--tohum", type=int, default=55)
     a = ap.parse_args()
     if a.komut == "faz0":
         k55_faz0(ornek=a.ornek, veri=a.veri, cikti=a.cikti, isci=a.isci, tohum=a.tohum)
     elif a.komut == "faz1":
         k55_faz1(ornek=a.ornek, veri=a.veri, cikti=a.cikti, isci=a.isci, tohum=a.tohum, dallar=a.dallar.split(",") if a.dallar else None)
+    elif a.komut == "vekil":
+        k55_vekil(ornek=a.ornek, veri=a.veri, cikti=a.cikti, isci=a.isci, tohum=a.tohum, hucreler=a.hucreler.split(",") if a.hucreler else None)
