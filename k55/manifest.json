@@ -1,0 +1,68 @@
+{
+ "paket_surum": "K55 v0.1 (2026-10-30, Faz 0: evren, veri kalitesi, ortak panel, olay tanımları, sızıntı testleri, hücre iskelesi A / B / C)",
+ "olusturma": "2026-10-30 09:33:09",
+ "veri": {
+  "sec_ozet.json": {
+   "boy": 105291574,
+   "sha256": "6d25ce126bec9b9c782661a848199dcb16cac725f8d778a5c8ee9923743a96e7",
+   "parca": 1,
+   "kaynak": "https://data.sec.gov/submissions/CIK##########.json (SEC EDGAR; User-Agent e-posta yalnız indirmede)",
+   "indirme_tarihi": "2026-10-30",
+   "donem": "başvuru geçmişi 1990'lar -> 2026-10-30; 3.262 CIK (K51 evreni + K34)",
+   "surum": "k54-1",
+   "isleme_kodu": "sec_indir.py sha256 101a4accb063874f (K54, commit d1bf7b4); alanlar: name, tickers, exchanges, sic, formerNames, form, date, items",
+   "tur": "islenmis (ham submissions JSON'ları saklanmadı; sec_indir.py ile yeniden üretilir)"
+  },
+  "supported_tickers.csv": {
+   "boy": 5048360,
+   "sha256": "e5c9ec7773965ea1c9471f2c3513a7acfa6bc23e92f37b52ceb047af5e91979c",
+   "parca": 1,
+   "kaynak": "https://apimedia.tiingo.com/docs/tiingo/daily/supported_tickers.zip (Tiingo, ücretsiz)",
+   "indirme_tarihi": "2026-10-29",
+   "donem": "liste anlık görüntüsü (startDate / endDate sütunları 1960'lar -> 2026-10-29)",
+   "surum": "k54-1",
+   "isleme_kodu": "yok (ham)",
+   "tur": "ham"
+  },
+  "sembol_cik.json": {
+   "boy": 53591,
+   "sha256": "7294b9a1ae708f64609b5ff7056e119b4dd4092612ba4bf8929c96dcfa269b86",
+   "parca": 1,
+   "kaynak": "K51 evreni sembolleri -> CIK (k34_evren.csv CIK'i; V_ABD için company_tickers.json)",
+   "indirme_tarihi": "2026-10-30",
+   "donem": "3.267 sembol (fon çıkarma öncesi evren)",
+   "surum": "k54-1",
+   "isleme_kodu": "K54 cy_v15 hazırlığı (COL_YOLU_ABD.py v1.5)",
+   "tur": "islenmis"
+  },
+  "company_tickers.json": {
+   "boy": 798077,
+   "sha256": "b5be63822ef78687908848b349820d9d6a962af9287e2164f44f4b217259f4ea",
+   "parca": 1,
+   "kaynak": "https://www.sec.gov/files/company_tickers.json",
+   "indirme_tarihi": "2026-10-30",
+   "donem": "anlık görüntü",
+   "surum": "k54-1",
+   "isleme_kodu": "yok (ham)",
+   "tur": "ham"
+  }
+ },
+ "parcalar": {
+  "company_tickers.json.xz.000": {
+   "boy": 155052,
+   "sha256": "aed83f65b4aa2223b556164c591a59f486a466b2a3f0ac85499c64e59702dc29"
+  },
+  "sec_ozet.json.xz.000": {
+   "boy": 6569684,
+   "sha256": "39418fc751582d489663a3269115e9c2327065803c3cac2b402b53d149e1b226"
+  },
+  "sembol_cik.json.xz.000": {
+   "boy": 17144,
+   "sha256": "3cce57f7d90fb6bf55b31a4dfd10cc4e98342aa8a5cb8c1c3bce58ed8fd9c1bf"
+  },
+  "supported_tickers.csv.xz.000": {
+   "boy": 542320,
+   "sha256": "018e05b69d1394cb70bb22a69504f8e0c1b8f3009cca2d6573a01319c7c57b54"
+  }
+ }
+}

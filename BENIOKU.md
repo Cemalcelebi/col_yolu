@@ -33,3 +33,10 @@ pead/ (27 Ekim 2026, K28): BIST KAP 'Finansal Rapor' listesi 2022-07 -> 2026-10 
 - k35/: k35_sic.csv (SIC kodları). k36/: surucu.pkl (emtia, kur, faiz, CDS serileri). avr/: evren_avr_ham.csv (Avrupa evren listesi).
 - Tiingo fiyatları (batan şirketler, 450 csv) lisans gereği repoya KONMAZ; anahtar .env TIINGO_TOKEN, `fi_k34_tiingo_indir` yeniden indirir.
 - SEC Form 4 ham zipleri (sec/) repoya konmaz (27 Ekim kuralı), `fi_k30_indir` ile iner.
+
+## K55 ekleri (30 Ekim 2026, Cemal'in Faz 0 onayı: 'SEC özeti ve Tiingo listesi islenmis-veri altında, sürümlü')
+- k55/: `python -c "from K55 import veri_paket; veri_paket.ac('/tmp/iv/k55', '/tmp/k55')"` (repo kökünde, main dalındaki K55/ paketiyle). manifest.json her
+  dosya için kaynak, indirme tarihi, veri dönemi, sürüm, orijinal sha256, işleme kodu sürümü ve tür (ham / işlenmiş) tutar; açarken parça ve
+  dosya sha256'ları doğrulanır, tutmazsa durur. İçerik: sec_ozet.json (SEC başvuru geçmişi özeti, 3.262 CIK, işlenmiş; ham JSON'lar
+  saklanmadı, sec_indir.py ile yeniden üretilir, e-posta yalnız SEC_EPOSTA ortam değişkeninden), supported_tickers.csv (Tiingo sembol listesi, ham),
+  sembol_cik.json (işlenmiş), company_tickers.json (SEC, ham). Her oturumda yeniden indirme yok; sürüm doğrulanmadan kullanılmaz.
