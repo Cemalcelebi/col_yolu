@@ -1,0 +1,19 @@
+risk,ayrinti,etki,onlem
+Olay tanımı seçim etkisi (M01),K55 A farkları ilk geçiş etiketinin eseri olmaya aday: bilgisiz veride aynı fark; denetçi kontrolünde seçimsiz etiketle gerçek d ~%90 küçülüyor (Y60),yüksek,mekanizma testlerinde olay günü etiketi yerine seçimsiz / sinyal sabit tasarım; her testte sentetik sıfır koşusu (ONKAYIT_K56 v1.1-2)
+Sentetik sınama DGP'ye duyarlı,oran oynaklık düzeyi ve GARCH / kaldıraç spekine bağlı; oynaklık / hacim hücrelerinin sınıfı spekle değişiyor; sentetik Y60 olay oranı gerçeğin ~2 katı,orta,"gerçeğe kalibre oynaklık, GJR kaldıraç, sıçrama spekleri; olay oranını rapora yaz"
+Varyant ve ufuk seçimi,v1.0 her hücrede en kısa pencere ve Y60'ı sınadı; 12 hücrenin KEŞİF'i Y120 / Y250'den; Y250'de gecikme ölçütü mekanik eseri ayırmıyor,orta,"KEŞİF'i sağlayan bütün (varyant, ufuk) satırları (v1.1-3); gecikme yalnız bilgi"
+Keşif verisinin yeniden kullanımı,K56 hipotezleri K55 KEŞİF 2016-21 sonuçlarından üretildi; aynı dönemde doğrulama döngüseldir,yüksek,DOĞRULANMIŞ sınıfı için İÇ / BAĞIMSIZ dönem gerekir (Cemal kararı); yeniden kullanım kaydı (K56_KAYNAK_KAYDI)
+KEŞİF'te hayatta kalma,K55 KEŞİF olaylarının tamamı bugün yaşayan V_ABD hisselerinden; K34 batanları 2020-10'dan önce yok,yüksek,"M17: batan evren genişletme (Tiingo kotası, Cemal kararı); sonuçlar 'yaşayanlar içinde' diye sınırlanır"
+Açığa satış POZİSYONU KEŞİF'i tam kapsamıyor,FINRA SI API 2017-12-29+; hacim (Reg SHO tesis dosyaları) 2009-08+ tam,orta,M05 pozisyon ölçüsü 2018-21 alt döneminde; 2016-17 için ücretli borsa dosyaları
+13F eşleme ve gecikme,"CUSIP -> sembol (OpenFIGI GÜNCEL sembol döndürür; CUSIP başına onlarca listeleme), 45 gün gecikme, yalnız 100 mn $ üstü yöneticiler",orta,"Common Stock + US süzgeci, SEC 13(f) listesiyle tarihli ad; başvuru tarihi point-in-time"
+CIK değişimi,yeniden yapılanmada yeni CIK (APO 2022): companyfacts / Form 4 eski dönemi kaçırır,orta,"SEC eski ad / CIK zinciri (formerNames, 8-K 2.01 / 425) ile CIK geçmişi"
+Yabancı özel ihraççılar ve REIT,"20-F / 40-F (BNS): Form 4 yok, IFRS; MIDAS'ta REIT / yabancı / BDC yok (2016q1 K55 kapsamı ~%66)",orta,ayrı alt grup; kapsam payını her testte raporla
+XBRL hisse sayısı ham,"bölünme ve birleşme artışını ayırmaz (TRMB 2013 bölünmesi, EXR 2023 birleşmesi, IRM 2016 satın alma); TLGTQ 2020-21 artışı ters bölünme sonrası gerçek sulandırma",yüksek (M06 için),bölünme katsayısı (XBRL / Tiingo splitFactor) ve 8-K 2.01 / DEFM14A ile ayırma; pencereyi olaya bağla
+İhraç formu hisse / borç ayırmıyor,"424B2 çoğunlukla banka notu (BNS); 424B5 ATM, halka arz ya da doğrudan satış olabilir",orta,hisse sayısı artışıyla ya da EDGAR metin aramasıyla doğrulama
+10b5-1 planı 2023 öncesi işaretsiz,"işaret fiilen 2023q2+ ('1' / 'true'); öncesi dipnot / açıklama metni vekili (2016q1 S içeren Form 4'lerin %43,5'i)",orta,dipnot vekili + 2023q2+ işaretle duyarlılık; olumsuz cümleleri ayıklama
+Kasıt kanıtı kapsamı,askıya alma ve dava bülteni kasıt kanıtı değil (resmî kuşku kaydı); kesinleşmiş karar gerekir; ad eşlemesi tarih şartlı ve 'et al.' emirleri eksik,yüksek (M14),üç sütun: gözlenen davranış / olası mekanizma / kasıt kanıtı; kayıt yoksa 'KASIT KANITI YOK'
+Gün içi veri yok,dağıtım / emilim işlem sırası düzeyinde ayrılamaz; MIDAS yalnız günlük toplam,yüksek (M09 / M11),MIDAS + 13F + Reg SHO üçlemesi; ücretli TAQ yalnız Cemal kararıyla
+İndirme hacmi ve süre,"13F ~1,1 GB, MIDAS hisse ~0,4 GB, FS 2016-20 ~1,6 GB, Form 4 ~0,25 GB, companyfacts ~5 GB",orta,"Drive önbelleği, sürümlü özet (islenmis-veri), bir kez indir"
+Yahoo erişim kararsızlığı,yfinance crumb 401 / 429 (bu ortamda bir kez); batanlar yok,düşük,Tiingo splitFactor ile çapraz
+Çoklu test,19 hipotez × gruplar × dönemler,orta,"aile = hipotez × dönem; BH q 0,10; önceden yazılı birincil ölçü"
+Lisans,Tiingo fiyatları ve FINRA ham verisi dağıtılmaz; SEC verisi kamu malı,düşük,yalnız türetilmiş özet + manifest sha

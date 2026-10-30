@@ -1,0 +1,11 @@
+sira,adim,icerik,donem,maliyet_sure,karar_gerekir,ne_kazanilir
+1,M01 gerçek veri seçimsiz kontrol (v1.1-2),"K55 paneli: KEŞİF'i sağlayan 125 (varyant, ufuk) satırında d(ilk geçiş), d(bütün nitelikli günler), d(epizotta rastgele gün); kalibre sentetik spekler",KEŞİF (yeniden kullanım kayıtlı),"yerel, indirme yok, ~30 dk",hayır,"MEKANİK çıkan hücreler kesin YANLIŞ BULGU; kalan küçük aynı yönlü etki (Y60 ~-0,02..-0,05) ayrı bulgu olarak M02'ye"
+2,M03 / M16 / M18 yerel denetimler,"ince oynaklık + GARCH, 2020-03 dışlama + beta, sektör × gün: yalnız 1. adımda kalan etki için",KEŞİF,"yerel, ~15 dk",hayır,kalan etkinin oynaklık / piyasa / tema bileşeni
+3,M04 / M15 haber ve birleşme bileşimi,"yerel SEC başvuru özetiyle G1 / G2 / G7'de [t0−5, t0+60] 8-K maddeleri, SC TO, DEFM14A",KEŞİF,"yerel, ~10 dk",hayır,büyük yükselişlerin ne kadarının ayrık habere bağlı olduğu (mekanizmanın kendisi)
+4,"M13 / M17 evren ve sağlayıcı (K51 P1, K52)",K51 P1 artısının yalnız V_ABD'de olması: sağlayıcı × etki; batan evren genişletme,K51'in 2023 / 2024-26 dönemleri = K55 İÇ / BAĞIMSIZ ile örtüşür,yerel + Tiingo kotası,EVET (dönem açma + Tiingo kotası),K51 küçük artısının hayatta kalma eseri olup olmadığı
+5,M09 / M10 Form 4 (yalnız 1-3'ten sonra AÇIKLANMAMIŞ gerçek etki kalırsa),"Insider DS KEŞİF (ham zipler yerelde); plansız S, P",KEŞİF,yerel / ~250 MB,hayır (SEC izni var),dağıtım / içeriden bilgi
+6,M08 / M11 13F + OpenFIGI (yalnız kalan etki varsa),"13F KEŞİF ~1,1 GB, CUSIP eşleme (Common Stock + US)",KEŞİF,"indirme ~1,1 GB + eşleme ~1-2 saat",EVET (Drive alanı / süre),kurumsal birikim / emilim
+7,M02 / M11 / M12 MIDAS (yalnız kalan etki varsa),"MIDAS hisse dosyası KEŞİF ~0,4 GB; işlem büyüklüğü, gizli / tek lot altı pay",KEŞİF,"indirme ~0,4 GB",EVET,likidite / emilim (REIT / yabancı hariç)
+8,M05 açığa satış (yalnız kalan etki varsa),"Reg SHO tesis dosyaları (2016+), FINRA SI (2017-12+), FTD",KEŞİF (pozisyon 2018-21),küçük-orta indirme,hayır,sıkışma
+9,M14 resmî kayıt eşlemesi,"kesinleşmiş kararlar (mahkeme, SEC / FINRA idari karar, uzlaşma) + resmî kuşku kayıtları; tarih şartlı ad + CIK eşleme",KEŞİF,küçük,hayır,kasıt yalnız kesinleşmiş kararla
+10,Doğrulama dönemi,kalan her GÜÇLÜ AÇIKLAMA için İÇ 2022-23 (ve BAĞIMSIZ 2024-26),İÇ / BAĞIMSIZ,-,EVET (dönem açma),DOĞRULANMIŞ MEKANİZMA sınıfı için zorunlu

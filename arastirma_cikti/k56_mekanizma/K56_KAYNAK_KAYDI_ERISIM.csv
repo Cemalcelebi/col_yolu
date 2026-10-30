@@ -1,0 +1,4 @@
+yol,sha256,amac,aciklama
+arastirma_cikti/k55_dallanma/tam_evren/K55_EVREN.csv,aefd29afe9d8e12c4d227e9208ebdb9b4c2baeefddd23d1cbe0412b2cbd926cd,orneklem_secimi,"erişim örneklemi: sınıf, CIK, sektör, likidite"
+arastirma_cikti/k55_dallanma/tam_evren/K55_OLAYLAR.csv.gz,01decf291cf7bfb31e6391f2c6fd4a53c7683ef655a548dc4b34e9f0fb127440,orneklem_secimi,erişim örneklemi: G1 olay günleri
+arastirma_cikti/k55_dallanma/tam_evren/K55_EVREN.csv,aefd29afe9d8e12c4d227e9208ebdb9b4c2baeefddd23d1cbe0412b2cbd926cd,veri,evren CIK / işlem tarihleri (eşleşme payı)

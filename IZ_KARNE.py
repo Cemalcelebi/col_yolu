@@ -928,6 +928,28 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "ve Faz 3 (D09) Cemal'in onayını bekliyor. Çıktılar: tam_evren/ K55_FAZ0_RAPOR, VERI_KAPSAMI, VERI_KALITESI, EVREN, EVREN_DISI, KESIM, "
                "K54_TUTARLILIK, OLAYLAR, SIZINTI_TESTI, HUCRE_ISKELE, FAZ1_RAPOR (+ koşu sonrası notlar), ADAYLAR, HUCRE_SONUC, VARYANTLAR, "
                "COKLU_TEST, VEKIL, KOSU / KOSU_FAZ1 / KOSU_VEKIL json (kod + veri + ayar sha)."),
+    _ik_k("Ç139", "2026-10-30", "K56 K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI — FAZ 0: bütün K51-K55 bulgularının envanteri, mekanizma hipotezleri (M01-M19), "
+          "veri kaynakları (28; kapsam / gecikme / maliyet / lisans), küçük örneklem erişim testi (12 sembol, G1 / G2 / G3 / G6), M01 olay başlangıcı "
+          "seçim etkisi için sentetik sıfır sınaması, dört bağımsız denetim", "K56.py + K56/ (ortak, etki_envanteri, mekanizma, kurumsal_sahiplik, "
+          "iceriden_islemler, finansal_mekanizma, kurumsal_olaylar, islem_davranisi, karsit_ornekler, mekanizma_raporu, surucu; kilit ONKAYIT_K56.md v1.0 / v1.0-a / v1.1)",
+          "Cemal'in 'K51-K55 Etki ve Mekanizma Araştırması' talimatı (30 Eki)", "Mekanizma araştırması Faz 0 (iz kararı yok; K51 İZ DEĞİL ve K55 İZ YOK değişmedi)",
+          "IZ C", 2, cikti="arastirma_cikti/k56_mekanizma/K56_FAZ0_RAPOR.md",
+          notu="ENVANTER 265 bulgu (K51 90, K52 34, K53 22, K54 52, K55 67); K55 sayıları CSV'den otomatik, öteki metinler okuyucu ajanlardan, kaynak "
+               "kararlarıyla mekanik denetimli (her kaynak kodu envanterde; 1 kürasyon düzeltmesi). Ön sınıf (ön kayıtlı mekanik kural): ETKİ YOK 103, "
+               "ETKİ SAĞLAM DEĞİL 49, YÖNTEM DENETİMİ 39, VERİ YETERSİZ 29, YANLIŞ BULGU ADAYI 22 (21 M01 + K53-T7 tanımsal), BETİMLEYİCİ 18, İLİŞKİ VAR "
+               "NEDEN BELİRSİZ 4 (K55 D01-S05, D02-S05, D04-S04, D06-S04), ALTERNATİF AÇIKLAMA 1 (K52 H4: revizyonlar fiyatı izliyor). K51-K54'te "
+               "kaynakta desteklenen ve eser adayı olmayan etki YOK. M01 SENTETİK (bilgisiz yapay veri, 4 evren × 400 hisse, K55'in olay tanımı ve aynı "
+               "kod; kilit sentetik koşudan önce): 25 KEŞİF hücresinin Y60'ta 21'inde yapay veri gerçek A farkının >= %50'sini üretiyor (oran medyanı "
+               "1,18); KEŞİF'i sağlayan 125 (varyant, ufuk) satırında 109 mekanik, hücre çoğunluğu 18 / 25. Denetçinin ön kayıt dışı kontrolü (K55 paneli, "
+               "KEŞİF, Y60): olay etiketi seçimsiz kurulunca gerçek d -0,25..-0,43'ten -0,016..-0,049'a iniyor (ters farkların ~%90'ı olay tanımından; "
+               "küçük kısa dönem dönüş kalıntısı). Ters yönlü KEŞİF 20 (Ç138'deki 19, D03-S02 vekil sayılmıştı). ERİŞİM (temiz önbellek, 131,9 MB): "
+               "GECTI 27 / KISMI 9 / ATLANDI 1. 13F 2013q2+ (KEŞİF ~1,1 GB; OpenFIGI adi hisse CUSIP 9/10, örneklem geri eşleme 5/7; kapanmış eski "
+               "CUSIP'ler bulunamıyor), Form 4 2006q1+ (KEŞİF ~248 MB; 10b5-1 işareti 2023q2+, öncesi dipnot vekili %43,5), companyfacts 12/12 (CIK "
+               "değişimi ve IFRS boşluğu; hisse sayısı bölünme / birleşme düzeltmesiz), SEC başvuru özeti YEREL (8-K madde kodu tam), MIDAS 2012+ (2016q1 "
+               "K55 kapsamı %66: REIT / yabancı yok), Reg SHO hacmi 2009-08+ (tesis dosyaları), FINRA SI 2017-12+, ATS genel API'de KEŞİF yok, FTD 2004+, "
+               "SEC askıya alma 1.349 (resmî kuşku kaydı; tarih şartlı 9 eşleşme, panelde 0). DENETİM: 4 bağımsız denetçi 45 bulgu; 42 düzeltildi, 3 kısmen "
+               "(DGP kalibrasyonu, bölünme denetimi, oran yorumu -> Faz 1). Kasıt kanıtı yalnız kesinleşmiş karar. Ön kayıt v1.1 (sonuç sonrası, Faz 1 "
+               "öncesi): seçimsiz kontrol protokolü, aday etiketi, hipotez kaydı donduruldu. test_k56 15/15. Çıktılar arastirma_cikti/k56_mekanizma/."),
 ]
 
 
@@ -1472,18 +1494,25 @@ IK_GOREV: List[Dict[str, str]] = [
               "FAZ 1'DE İZ YOK. Drive OUTPUT'a yükleme Colab'dan (connector büyük dosyada güvenilmez)",
      "durum": "TAMAMLANDI, AÇIK: dallanma (yön uyumlu 5 hücre) ve İÇ DOĞRULAMA açılsın mı, Faz 2 (13F / Form 4) ve Faz 3 (D09) Cemal'in kararı; "
               "bölünme verisi kaynağı; Kasım Tiingo kotası; IZ_DEFTERI Drive kopyası (DRIVE maddesi)"},
+    {"tarih": "2026-10-30", "istek": "K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI, Faz 0 (envanter, açıklanmamışlar, hipotezler, veri kaynakları, kapsam / maliyet, "
+                                     "doğrulama yöntemleri, riskler, sıra; küçük örneklem erişim testi); 'önerileri süzgecinden geçir, yapılması gereken ne ise yap'",
+     "yapilan": "K56/ ayrı paket + K56.py (çakışma kapısı); ön kayıt ONKAYIT_K56 v1.0 (sentetik koşudan önce), v1.0-a, v1.1 (denetim sonrası, Faz 1 öncesi); "
+                "envanter (6 okuyucu ajan + mekanik denetim), M01 sentetik sıfır sınaması (63 hücre + 125 KEŞİF satırı), hipotez kaydı M01-M19, 28 kaynak, "
+                "erişim testi (12 sembol, temiz önbellek 131,9 MB), dört bağımsız denetçi (45 bulgu, 42 düzeltildi), K56_FAZ0_RAPOR.md + 20 CSV; test_k56 15/15; "
+                "K51-K55 dosyaları değişmedi (test 15); IZ_KARNE Ç139",
+     "sonuc": "Mekanizması aranacak sağlam etki çok az: K51-K54'te kaynakta desteklenen ve eser adayı olmayan etki yok; K55'in ters yönlü KEŞİF'leri "
+              "olay tanımı eseri ADAYI (Y60 21 / 25, KEŞİF ufku 18 / 25; denetçi kontrolünde seçimsiz etiketle etki ~%90 küçülüyor); 4 K55 hücresi neden "
+              "belirsiz. Önceki ortalama getiri testleri (Ç100-Ç107) yeniden yapılmadı. Büyük indirmeler (13F, MIDAS, FS 2016-20) ertelendi (koşullu)",
+     "durum": "TAMAMLANDI, AÇIK: Faz 1 adım 1 (seçimsiz kontrol, yerel) Cemal onayı; İÇ / BAĞIMSIZ dönem açma kararı; Drive kopyası (Colab: python K56.py drive); "
+              "Tiingo kotası (batanlar)"},
 ]
 IK_ACIK: List[str] = [
-    "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
-    "K54 (ek 8 düzeltilmiş koşu dahil): evren düzeltmesi sonuçları değiştirmiyor (55 ana hücrenin 54'ü SAĞLAM; evren etkisi <= 1,1 puan, etiket "
-    "etkisi <= 0,06 puan), teknik hipotezlerin başarısızlığı evren hatasından gelmiyor; ama evren çoğunlukla hayatta kalanlardan (266 çıkış / "
-    "3.267); 7 fon (6 emtia / döviz ETF'si + BTCW) 30 Eki'de evren_disi_ABD.csv ile evrenden çıkarıldı, sonraki koşular fonsuz. K55 DALLANMALI İZ ARAMA: "
-    "plan (K55_PLAN.md), Faz 0 (tam evren 3.260 sembol, 22.502 olay) ve Faz 1 (63 OHLCV hücresi, yalnız KEŞİF 2016-21; Ç138) bitti: KEŞİF 25 / "
-    "REDDEDİLDİ 36 / VERİ YETERSİZ 2, ama B (eşleşmiş ileri getiri) 0 / 164 TUTMAZ -> Faz 1'de İZ YOK; KEŞİF'lerin 19'u ters yönlü (sert düşüş sonrası "
-    "tepki + olay başlangıcı seçim etkisi), vekil 1 (D03-S02 ← r20). KARAR (Cemal): (a) yön uyumlu 5 hücrede (D01-S07, D01-S10, D02-S06, D10-S09, "
-    "D10-S10) dallanma + İÇ DOĞRULAMA açılsın mı, (b) Faz 2 D07 / D08 (13F, Form 4 indirme; SEC e-postası) ve Faz 3 D09, (c) dur. Olası devam: (1) ileri "
-    "doğrulama (sinyal >= 01.09.2026, Mart 2027'de bak), (2) Kasım Tiingo kotasıyla gerçek batan evreni (iflas / delist listesi; mevcut "
-    "örneklemin çoğu batan değil), (3) ara.",
+    "YOL (30 Eki): K51 İZ DEĞİL, K52 / K53 desteklenmedi, K54 evren denetimi sonuçları değiştirmedi, K55 Faz 1 İZ YOK (Ç138). K56 Faz 0 (Ç139): "
+    "265 bulguluk etki envanteri; K51-K54'te mekanizması aranacak sağlam etki yok; K55'in ters yönlü KEŞİF'leri olay tanımının eseri ADAYI (sentetik "
+    "sınama Y60 21 / 25; denetçi kontrolünde seçimsiz etiketle ~%90 küçülüyor); 4 K55 hücresi neden belirsiz. KARAR (Cemal): (a) K56 Faz 1 adım 1-3 "
+    "(yerel, indirmesiz: seçimsiz kontrol, oynaklık / piyasa / tema denetimi, haber ve birleşme bileşimi) başlasın mı; (b) K55 İÇ / BAĞIMSIZ dönemleri "
+    "açılsın mı (DOĞRULANMIŞ sınıf ve K51-K54 bulguları için gerekli); (c) büyük indirmeler (13F ~1,1 GB, MIDAS ~0,4 GB, FS 2016-20 ~1,6 GB) yalnız "
+    "kalan gerçek etki varsa; (d) dur. Olası devam: ileri doğrulama (sinyal >= 01.09.2026, Mart 2027), Kasım Tiingo kotasıyla batan evren.",
     "VERİ (27 Eki): V_BIST (581) ve V_ABD (1411) yalnız bugün işlem gören hisseleri içeriyor (hayatta kalma yanlılığı). BIST'te "
     "borsadan çıkma seyrek; ABD'de küçük / zarar eden şirketlerde büyük. K34'te ABD nakit tükenmesi testi batanlar dahil yapıldı "
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "

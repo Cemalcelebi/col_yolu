@@ -1,0 +1,13 @@
+grup,sembol,cik,tarih,sektor,lik_uclu,not
+G1,APO,1858681,2017-01-31,Financial Services,2,"Y60 olayı, getiri +0.30"
+G1,NTLA,1652130,2017-07-10,Healthcare,2,"Y60 olayı, getiri +0.88"
+G1,DOCU,1261333,2019-06-26,Technology,2,"Y60 olayı, getiri +0.31"
+G1,IRM,1020569,2020-05-13,Real Estate,2,"Y60 olayı, getiri +0.37"
+G2,BNS,9631,2017-01-31,Financial Services,2,"APO eşi, ±90 günde olay yok"
+G2,ABT,1800,2017-07-10,Healthcare,2,"NTLA eşi, ±90 günde olay yok"
+G2,TRMB,864749,2019-06-26,Technology,2,"DOCU eşi, ±90 günde olay yok"
+G2,EXR,1289490,2020-05-13,Real Estate,2,"IRM eşi, ±90 günde olay yok"
+G3,TLGTQ,352998,2022-07-27,İmalat,0,"sınıf 2 (y_d100), son işlem 2022-07-27"
+G3,STRYQ,1884697,2023-09-01,Ulaştırma-Kamu,0,"sınıf 2 (y_d100), son işlem 2023-09-01"
+G6,AERI,1337553,2023-01-03,İmalat,1,"sınıf 3 (y_d0), son işlem 2023-01-03"
+G6,CHRA,1730346,2023-07-17,Ulaştırma-Kamu,0,"sınıf 3 (y_d0), son işlem 2023-07-17"

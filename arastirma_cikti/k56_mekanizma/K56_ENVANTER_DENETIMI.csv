@@ -1,0 +1,31 @@
+tur,kimlik,kaynak,ayrinti
+karar_eksik_sozcuk,K51v12-H-E-AYI,K51_HIPOTEZ_KARARLARI.csv,kaynak kararları DESTEKLENMİYOR / TUTMAZ / YETERSİZ ÖRNEKLEM; envanterde geçmeyen: ['DESTEKLENMİYOR']
+karar_eksik_sozcuk,K52-H0b-P1,K51_ANALIST_EK_KATKI_TESTI.csv,kaynak kararları DESTEKLENMİYOR / TUTAR / TUTMAZ; envanterde geçmeyen: ['TUTAR']
+karar_eksik_sozcuk,K52-H4-P1,K51_ANALIST_EK_KATKI_TESTI.csv,kaynak kararları DESTEKLENMİYOR / H4 DESTEKLENMİYOR / TUTMAZ; envanterde geçmeyen: ['H4 DESTEKLENMİYOR']
+karar_eksik_sozcuk,K52-H6AYI-P1,K51_ANALIST_EK_KATKI_TESTI.csv,kaynak kararları DESTEKLENMİYOR / TUTMAZ / YETERSİZ ÖRNEKLEM; envanterde geçmeyen: ['DESTEKLENMİYOR']
+karar_eksik_sozcuk,K52-H4-P2,K51_ANALIST_EK_KATKI_TESTI.csv,"kaynak kararları DESTEKLENMİYOR / H4 DESTEKLENİYOR (çoğu sonra, H0 desteklenmiyor) / TUTMAZ; envanterde geçmeyen: ['H4 DESTEKLENİYOR (çoğu sonra, H0 desteklenmiyor)']"
+karar_eksik_sozcuk,K52-H6AYI-P2,K51_ANALIST_EK_KATKI_TESTI.csv,"kaynak kararları DESTEKLENMİYOR / TUTAR / TUTMAZ / YETERSİZ ÖRNEKLEM; envanterde geçmeyen: ['DESTEKLENMİYOR', 'TUTAR']"
+karar_eksik_sozcuk,K53-T6,K53_HIPOTEZ_TESTI.csv,kaynak kararları DESTEKLENMİYOR / TUTMAZ / bilgi; envanterde geçmeyen: ['bilgi']
+k55_sinif_kurali,K55-D01-S04,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D01-S09,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D02-S01,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D02-S03,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D02-S04,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D02-S07,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S01,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S04,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S05,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S06,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S08,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S09,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D03-S10,K55_HUCRE_SONUC + K55_VEKIL,okuyucu TERS_YONLU -> kural BASARISIZ
+k55_sinif_kurali,K55-D04-S05,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D04-S07,K55_HUCRE_SONUC + K55_VEKIL,okuyucu VERI_YETERSIZ -> kural BASARISIZ
+k55_sinif_kurali,K55-D04-S08,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D05-S05,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D05-S06,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D05-S07,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D06-S02,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D10-S04,K55_HUCRE_SONUC + K55_VEKIL,okuyucu KUCUK_ETKI -> kural BASARISIZ
+k55_sinif_kurali,K55-D10-S09,K55_HUCRE_SONUC + K55_VEKIL,okuyucu VEKIL -> kural BASARILI
+kurasyon_duzeltmesi,K51-H1,"K54_ESKI_YENI_TEST_KARSILASTIRMA.csv (K51 P1, 2024-26)",gecen_testler: envanter denetçisi: 'K54 evren düzeltmesinde değişmiyor' iddiası K54 ile çelişiyor (ETKİLENMİŞ)

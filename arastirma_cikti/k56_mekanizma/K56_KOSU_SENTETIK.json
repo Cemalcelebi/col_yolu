@@ -1,0 +1,129 @@
+{
+ "birlesik": true,
+ "kosular": [
+  {
+   "kimlik": "K56-SENTETIK-20261030-164848-9982119",
+   "surum": "K56 v0.1 (2026-10-30, Faz 0: etki envanteri, mekanizma hipotezleri, veri kaynakları, küçük örneklem erişim testi, seçim etkisi sentetik sınaması)",
+   "commit": "9982119",
+   "git_kirli": [],
+   "onkayit_sha": "609310f54c1373e5d5203a5690e8ee6c5299332f82f5373403db49d8219069df",
+   "kod_sha": {
+    "K56/ONKAYIT_K56.md": "609310f54c1373e5d5203a5690e8ee6c5299332f82f5373403db49d8219069df",
+    "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
+    "K56/mekanizma.py": "b632130ddc42fe2001e45c73b0e59dab4629ea3013de6fe3d8c5a35646db1db5",
+    "K56/ortak.py": "a69224272217d97acd40d0c270302240e2d809591b4ccd25f703be7e452779d6",
+    "K56/surucu.py": "1155432d019136e948e6cdfbc138d7ed79cced54255e9bbbc5b2942a26993439",
+    "K56.py": "7ed98414696288009480ad6b13bb1986f42985b27bcd46a3147e4e89860d7067",
+    "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
+    "K55/istatistik.py": "036d40f35562f3ca355890dd592c8bd24cd2f6e228c5e30344c0f3f93868ad1a",
+    "K55/hucre.py": "b0ed81915aad408bbaf3b9bef5e861700ede071d1c63db37466c033d00cd9b59",
+    "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4"
+   },
+   "ayar": {
+    "cikti": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k56/sentetik",
+    "abd": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
+    "k55": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren",
+    "veri": "/content/drive/MyDrive/COLAB_VERILER/OUTPUT/COL_YOLU_ABD/veri",
+    "iv": "/tmp/iv",
+    "ag": false,
+    "ornek": 12,
+    "tohum": 56
+   },
+   "python": "3.13.16",
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "sure_dk": 7.8,
+   "hucre": 63,
+   "spek": [
+    [
+     "gauss",
+     561
+    ],
+    [
+     "gauss",
+     562
+    ],
+    [
+     "garch_t",
+     563
+    ],
+    [
+     "garch_t",
+     564
+    ]
+   ],
+   "karar": {
+    "MEKANIK_ACIKLAR": 29,
+    "MEKANIK_IZ_YOK": 24,
+    "BELIRSIZ": 9,
+    "TANIMSIZ": 1
+   }
+  },
+  {
+   "kimlik": "K56-SENTETIK-20261030-170006-3d56d0d",
+   "surum": "K56 v0.1 (2026-10-30, Faz 0: etki envanteri, mekanizma hipotezleri, veri kaynakları, küçük örneklem erişim testi, seçim etkisi sentetik sınaması)",
+   "commit": "3d56d0d",
+   "git_kirli": [],
+   "onkayit_sha": "77125db70b827dd9320a801fad2e85f9c4a80232a44d97160778fabb2ed85df9",
+   "kod_sha": {
+    "K56/ONKAYIT_K56.md": "77125db70b827dd9320a801fad2e85f9c4a80232a44d97160778fabb2ed85df9",
+    "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
+    "K56/finansal_mekanizma.py": "6d97c34630fcff1df949643c41335048a2d254c6e8602312155cca8a121efe4f",
+    "K56/iceriden_islemler.py": "8011a0d33ea4322f0e57da9c2b193cd87eb12134add8a822478f66f1d8cd4cc3",
+    "K56/karsit_ornekler.py": "6dea4ad8c1391f828be956337185db2934a1da11d81c4af397e788d1fe5ca75a",
+    "K56/kurumsal_olaylar.py": "54770c4ebbd6802653850e92021292a554bc6c8b5d6bdf52755c0470cf5f462e",
+    "K56/kurumsal_sahiplik.py": "6cca8025026192e87a6403f0e57e7d94215d1c5a2c8ff47856a57fdcf9c53470",
+    "K56/mekanizma.py": "8d6cfeb23dcc96201439662f1e362f4c877e70ed6dd431cd0b7b9466b9bee8e4",
+    "K56/ortak.py": "1daedec85bb8147159959d39c02a5c5471951665ad7e43ec148c17152dc09b7d",
+    "K56/surucu.py": "1155432d019136e948e6cdfbc138d7ed79cced54255e9bbbc5b2942a26993439",
+    "K56.py": "7ed98414696288009480ad6b13bb1986f42985b27bcd46a3147e4e89860d7067",
+    "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
+    "K55/istatistik.py": "036d40f35562f3ca355890dd592c8bd24cd2f6e228c5e30344c0f3f93868ad1a",
+    "K55/hucre.py": "b0ed81915aad408bbaf3b9bef5e861700ede071d1c63db37466c033d00cd9b59",
+    "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4"
+   },
+   "ayar": {
+    "cikti": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k56/sentetik_d02s10",
+    "abd": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
+    "k55": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren",
+    "veri": "/content/drive/MyDrive/COLAB_VERILER/OUTPUT/COL_YOLU_ABD/veri",
+    "iv": "/tmp/iv",
+    "ag": false,
+    "ornek": 12,
+    "tohum": 56
+   },
+   "python": "3.13.16",
+   "numpy": "2.5.3",
+   "pandas": "3.0.5",
+   "sure_dk": 0.4,
+   "hucre": 1,
+   "spek": [
+    [
+     "gauss",
+     561
+    ],
+    [
+     "gauss",
+     562
+    ],
+    [
+     "garch_t",
+     563
+    ],
+    [
+     "garch_t",
+     564
+    ]
+   ],
+   "karar": {
+    "MEKANIK_IZ_YOK": 1
+   }
+  }
+ ],
+ "karar": {
+  "MEKANIK_ACIKLAR": 29,
+  "MEKANIK_IZ_YOK": 25,
+  "BELIRSIZ": 8,
+  "TANIMSIZ": 1
+ }
+}
