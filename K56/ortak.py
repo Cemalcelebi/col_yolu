@@ -190,7 +190,7 @@ class Istemci:
         import requests
         sinir = sinir or self.sinir; yol = os.path.join(self.A.onbellek, ad) if ad else None
         if yol and os.path.exists(yol):
-            veri = open(yol, "rb").read(); self.gunluk.append({"url": url, "durum": "onbellek", "bayt": len(veri), "sn": 0.0, "hata": ""}); return 200, veri, {}
+            veri = open(yol, "rb").read(); self.gunluk.append({"url": url, "yontem": yontem, "durum": "onbellek", "bayt": len(veri), "sn": 0.0, "hata": ""}); return 200, veri, {}
         bas = self._basliklar(url, ek_baslik)
         if aralik:
             bas["Range"] = f"bytes={aralik[0]}-{aralik[1]}"
@@ -208,7 +208,7 @@ class Istemci:
                         if top > sinir:
                             raise RuntimeError(f"boyut sınırı aşıldı (akış): > {sinir} bayt ({url})")
                     veri = b"".join(parca); durum = r.status_code; bh = dict(r.headers)
-                self.gunluk.append({"url": url, "durum": durum, "bayt": len(veri), "sn": round(time.time() - t0, 2), "hata": ""})
+                self.gunluk.append({"url": url, "yontem": yontem + (" Range" if aralik else ""), "durum": durum, "bayt": len(veri), "sn": round(time.time() - t0, 2), "hata": ""})
                 if durum in (429, 500, 502, 503, 504) and k < deneme - 1:
                     time.sleep(2 ** (k + 1)); continue
                 if yol and durum == 200:
@@ -218,7 +218,7 @@ class Istemci:
             except RuntimeError:
                 raise
             except Exception as ex:
-                hata = f"{type(ex).__name__}: {str(ex)[:200]}"; self.gunluk.append({"url": url, "durum": "hata", "bayt": 0, "sn": round(time.time() - t0, 2), "hata": hata})
+                hata = f"{type(ex).__name__}: {str(ex)[:200]}"; self.gunluk.append({"url": url, "yontem": yontem, "durum": "hata", "bayt": 0, "sn": round(time.time() - t0, 2), "hata": hata})
                 if k < deneme - 1:
                     time.sleep(2 ** (k + 1))
         return -1, b"", {"hata": hata}
@@ -231,10 +231,10 @@ class Istemci:
         t0 = time.time()
         try:
             r = requests.head(url, headers=self._basliklar(url, ek_baslik), timeout=30, allow_redirects=True)
-            self.gunluk.append({"url": url, "durum": r.status_code, "bayt": int(r.headers.get("Content-Length", "0") or 0), "sn": round(time.time() - t0, 2), "hata": ""})
+            self.gunluk.append({"url": url, "yontem": "HEAD", "durum": r.status_code, "bayt": 0, "dosya_boyu": int(r.headers.get("Content-Length", "0") or 0), "sn": round(time.time() - t0, 2), "hata": ""})
             return r.status_code, dict(r.headers)
         except Exception as ex:
-            self.gunluk.append({"url": url, "durum": "hata", "bayt": 0, "sn": round(time.time() - t0, 2), "hata": f"{type(ex).__name__}: {str(ex)[:200]}"})
+            self.gunluk.append({"url": url, "yontem": "HEAD", "durum": "hata", "bayt": 0, "sn": round(time.time() - t0, 2), "hata": f"{type(ex).__name__}: {str(ex)[:200]}"})
             return -1, {}
 
 

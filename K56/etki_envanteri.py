@@ -96,9 +96,11 @@ def kaynak_kodlari(A: K56Ayar, kk: KaynakKaydi) -> Dict[str, Dict[str, str]]:
 def denetle(E: pd.DataFrame, kod: Dict[str, Dict[str, str]]) -> pd.DataFrame:
     """(a) kaynakta olup envanterde olmayan kod, (b) envanter kararının kaynak kararla uyuşmaması (K51 H / B: karar metni içerilmeli),
     (c) K55 hücre sayısı 63, (d) zorunlu alan boşlukları. Uyuşmazlık düzeltilmez, raporlanır."""
-    rows = []; env = {_norm(k): k for k in E.kimlik}
+    rows = []; env = {_norm(k): k for k in E.kimlik}; alias = {_norm(k): [_norm(x) for x in v] for k, v in KOD_ESLEME.items()}
     for nk, v in kod.items():
-        hit = next((env[e] for e in env if e == nk or e.startswith(nk)), None)
+        hit = next((env[e] for e in env if e == nk or e.startswith(nk) or (len(e) >= 10 and nk.startswith(e))), None)
+        if hit is None and nk in alias:
+            hit = next((env[a] for a in alias[nk] if a in env), None)
         if hit is None:
             rows.append({"tur": "envanterde_yok", "kimlik": v["kod"], "kaynak": v["dosya"], "ayrinti": f"kaynak karar: {v['karar']}"})
             continue
@@ -116,7 +118,20 @@ def denetle(E: pd.DataFrame, kod: Dict[str, Dict[str, str]]) -> pd.DataFrame:
 
 
 # Faz 0 ön sınıf: varsayılan kurallar + bulguya özel (gerekçeli) atamalar. Kesin sınıf Faz 1'de (ONKAYIT_K56 3).
-ON_SINIF_OZEL: Dict[str, Tuple[str, str]] = {}
+_YD = "ölçüm hattı / veri / evren denetimi; etki iddiası değil (M13 / M17 kanıtı olarak kullanılır)"
+ON_SINIF_OZEL: Dict[str, Tuple[str, str]] = {
+    **{k: (YONTEM_DENETIMI, "K51 B7 olumlu / olumsuz / plasebo kontrolü: ölçüm hattının çalıştığını gösterir") for k in ("K51-B7-negatif", "K51-B7-pozitif", "K51-B7-plasebo")},
+    **{k: (YONTEM_DENETIMI, _YD) for k in ("K51-V1", "K51-V5", "K51-V6", "K51-V7", "K51-V8", "K54-S1", "K54-S1-OTC", "K54-S1-BELIRSIZ", "K54-S2", "K54-S2-KRONO", "K54-S3",
+                                           "K54-S4A", "K54-S4B", "K54-S5", "K54-S6", "K54-ETF", "K54-K51TAHMIN", "K54-DL-P1", "K54-DL-P2", "K54-DL4A-P1", "K54-DL4A-P2",
+                                           "K54-EVREN-ETKI", "K54-ETIKET-ETKI", "K54-ANALIST", "K53-EK-DENGE")},
+    **{k: (YONTEM_DENETIMI, "K55 Faz 0 evren / veri kalitesi / sızıntı denetimi; etki iddiası değil") for k in ("K55-F0-EVREN", "K55-F0-KALITE", "K55-F0-SIZINTI")},
+    "K51-P2-SUREN": (YONTEM_DENETIMI, "gelecek bilgisiyle ayrılmış gruplar (süren / başarısız kırılım): öngörü iddiası yok, tanım gereği fark"),
+    "K51-H9": ("VERİ YETERSİZ", "kaynakta ÖLÇÜLEMEDİ (batanlar eksik); hayatta kalma Faz 1'de M17 ile (Tiingo kotası)"),
+    "K54-HAYATTA-KALMA": ("VERİ YETERSİZ", "evrende hiç olmayan batanlar ölçülemiyor (K54)"),
+    "K52-H4Z-P2": ("ALTERNATİF AÇIKLAMA", "olumlu revizyonların yarısı fiyat yükseldikten sonra (M19 ile uyumlu) ama M04 (haber) ile ayrıştırılmadı; karşıt grup / aracılık yok"),
+}
+# kaynak kodu -> envanterde farklı adla bölünmüş kimlikler (ör. rejime göre ikiye ayrılan K52 H6)
+KOD_ESLEME: Dict[str, List[str]] = {"K52-H6-P1": ["K52-H6AYI-P1", "K52-H6BOGA-P1"], "K52-H6-P2": ["K52-H6AYI-P2", "K52-H6BOGA-P2"]}
 
 
 def on_sinif(r: pd.Series) -> Tuple[str, str]:
@@ -149,7 +164,11 @@ def envanter_kur(A: K56Ayar, kk: KaynakKaydi, Z: Optional[pd.DataFrame], yol: st
     for c in ("olasi_aciklamalar", "dogrulayici_veri"):
         E[c] = E[c].map(lambda x: " | ".join(x) if isinstance(x, list) else ("" if (x is None or (isinstance(x, float) and np.isnan(x))) else str(x)))
     E = E.sort_values(["kaynak_calisma", "kimlik"], kind="stable").reset_index(drop=True)
-    return E, denetle(E, kaynak_kodlari(A, kk))
+    Den = denetle(E, kaynak_kodlari(A, kk))
+    # K55: okuyucu ajanın sınıfı otomatik kuraldan farklıysa kural geçerli (REDDEDİLDİ hücre BAŞARISIZ kalır; vekil yalnız |ρ| > 0,8), fark kayda geçer
+    ka = kur.set_index("kimlik").sinif if len(kur) else pd.Series(dtype=str); ko = k55.set_index("kimlik").sinif
+    fark = [{"tur": "k55_sinif_kurali", "kimlik": k, "kaynak": "K55_HUCRE_SONUC + K55_VEKIL", "ayrinti": f"okuyucu {ka[k]} -> kural {ko[k]}"} for k in ko.index if k in ka.index and ka[k] != ko[k]]
+    return E, pd.concat([Den, pd.DataFrame(fark, columns=Den.columns)], ignore_index=True)
 
 
 def aciklanmamislar(E: pd.DataFrame) -> pd.DataFrame:

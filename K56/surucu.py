@@ -82,6 +82,7 @@ def faz0_kos(A: K56Ayar) -> Dict[str, Any]:
     Ac.to_csv(os.path.join(A.cikti, "K56_ACIKLANMAMIS_BULGULAR.csv"), index=False); H.to_csv(os.path.join(A.cikti, "K56_HIPOTEZLER.csv"), index=False)
     HV.to_csv(os.path.join(A.cikti, "K56_HIPOTEZ_VERI.csv"), index=False); VK.to_csv(os.path.join(A.cikti, "K56_VERI_KAYNAKLARI.csv"), index=False)
     R.to_csv(os.path.join(A.cikti, "K56_RISKLER.csv"), index=False); Sira.to_csv(os.path.join(A.cikti, "K56_UYGULAMA_SIRASI.csv"), index=False)
+    MR.suzgec().to_csv(os.path.join(A.cikti, "K56_TALIMAT_SUZGECI.csv"), index=False)
     kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI.csv"), index=False)
     yol = MR.faz0_yaz(A.cikti, kimlik, E, Den, Ac, H, HV, VK, Er, Z, R, Sira)
     _json_yaz(os.path.join(A.cikti, "K56_KOSU_FAZ0.json"), {**kimlik, "envanter": len(E), "denetim_uyusmazlik": len(Den), "aciklanmamis": len(Ac), "hipotez": len(H),
@@ -118,6 +119,7 @@ def erisim_kos(A: K56Ayar) -> Dict[str, Any]:
             pd.DataFrame(v).to_csv(os.path.join(A.cikti, f"K56_ERISIM_{k.split(':')[1]}.csv"), index=False)
     G = pd.DataFrame(ist.gunluk); G["url"] = G.url.str.replace(r"[\w.+-]+@[\w-]+\.[\w.]+", "<e-posta>", regex=True)
     G.to_csv(os.path.join(A.cikti, "K56_ISTEK_GUNLUGU.csv"), index=False); kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI_ERISIM.csv"), index=False)
-    _json_yaz(os.path.join(A.cikti, "K56_KOSU_ERISIM.json"), {**kimlik, "istek": len(G), "indirilen_mb": round(float(pd.to_numeric(G.bayt, errors="coerce").fillna(0).sum()) / 2 ** 20, 1),
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_ERISIM.json"), {**kimlik, "istek": len(G), "indirilen_mb": round(float(pd.to_numeric(G.loc[G.durum.astype(str) != "onbellek", "bayt"], errors="coerce").fillna(0).sum()) / 2 ** 20, 1),
+                                                             "onbellekten_mb": round(float(pd.to_numeric(G.loc[G.durum.astype(str) == "onbellek", "bayt"], errors="coerce").fillna(0).sum()) / 2 ** 20, 1),
                                                              "durum": T.durum.value_counts().to_dict()})
     return {"T": T, "Orn": Orn, "G": G}

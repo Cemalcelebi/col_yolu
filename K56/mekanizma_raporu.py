@@ -93,7 +93,8 @@ def veri_kaynaklari(Er: pd.DataFrame) -> pd.DataFrame:
         T = T.merge(g, left_on="kimlik", right_index=True, how="left").merge(d, left_on="kimlik", right_index=True, how="left")
     else:
         T["erisim_testi"] = ""; T["erisim_durumu"] = "TEST EDİLMEDİ"
-    T["erisim_durumu"] = T.erisim_durumu.fillna(np.where(T.sinif == "yerel", "YEREL", "TEST EDİLMEDİ"))
+    T["erisim_durumu"] = np.where(T.erisim_durumu.isna(), np.where(T.sinif == "yerel", "YEREL", "TEST EDİLMEDİ (belgeden)"), T.erisim_durumu)
+    T["erisim_testi"] = T.erisim_testi.fillna("")
     return T
 
 
@@ -152,6 +153,26 @@ def uygulama_sirasi() -> pd.DataFrame:
     return pd.DataFrame(S, columns=["sira", "adim", "icerik", "maliyet_sure", "karar_gerekir", "ne_kazanilir"])
 
 
+def suzgec() -> pd.DataFrame:
+    """Cemal'in K56 talimatının süzgeçten geçirilmesi: öneri, karar (AYNEN / DEĞİŞTİRİLDİ / ERTELENDİ / YAPILMADI), gerekçe."""
+    S = [
+        ("Etki envanteri (10 alan, bütün bulgular)", "AYNEN", "K51-K55'in bütün hipotez / hücre / denetim bulguları; K55 sayıları CSV'den otomatik, öteki metinler kaynakla mekanik denetimli"),
+        ("Her bulgu için mekanizma araştırması", "DEĞİŞTİRİLDİ", "etkisi olmayan (başarısız) bulgular için mekanizma aranmaz (ETKİ YOK); ölçüm hattı / evren denetimleri bulgu sayılmaz (YÖNTEM DENETİMİ). İki ek etiket bu yüzden"),
+        ("K55'in 19 ters yönlü KEŞİF'i özellikle", "AYNEN + ÖNE ALINDI", "önce mekanik açıklama (M01) sentetik sıfır sınamasıyla sınandı: bilgisiz veride etki yeniden üretiliyor; gerçek veride gecikme sınaması Faz 1'in ilk adımı"),
+        ("Bağımsız veri kaynakları A-E", "AYNEN + GENİŞLETİLDİ", "28 kaynak (kasıt kanıtı ve veri hatası kaynakları eklendi); 35 erişim testi; kapsam / gecikme / maliyet / lisans tablosu"),
+        ("13F, Form 4, MIDAS gibi büyük indirmeler", "ERTELENDİ (koşullu)", "ancak yerel ve indirmesiz adımlardan (M01, M03, M04, M15, M16, M18) sonra AÇIKLANMAMIŞ gerçek etki kalırsa; bugünkü envanterde mekanizma bekleyen sağlam etki yok denecek kadar az"),
+        ("Ortalama getiri testleri (açığa satış, içeriden alım / satış, sulandırma, nakit, bilanço sürprizi)", "YAPILMADI (zaten var)", "Ç102, Ç103, Ç100, Ç107: hepsi sıfır; yeniden yapılmaz. Eksik olan yalnız olay düzeyi bağlantı (K55 olayı öncesinde ne vardı)"),
+        ("İşlem bazlı veri (TAQ, emir defteri)", "YAPILMADI", "ücretli; dağıtım / emilim ayrımına en yakın ücretsiz vekil MIDAS (işlem büyüklüğü, gizli emir) + 13F; ücretli veri yalnız Cemal kararıyla"),
+        ("Kasıtlı yanıltma", "AYNEN (kanıt kuralıyla)", "yalnız sembol + tarih doğrulanmış resmî kayıt; SEC askıya alma listesi 1.349 bülten, K55 evreninde ad eşlemesiyle 10 şirket; fiyat / hacim kanıt sayılmaz"),
+        ("Karşıt örnekler (yükselmeyen, batan, düşen, sulanan, birleşen)", "AYNEN", "G1-G7 tasarımı; erişim örnekleminde G1 / G2 / G3 / G6 temsilcileri"),
+        ("Kanıt sınıfları (6)", "AYNEN", "karar kuralları ön kayıtta (ONKAYIT_K56 3); Faz 0 sınıfı ön sınıftır"),
+        ("Ayrı modül ve kimlik, tek giriş, Drive OUTPUT", "AYNEN", "K56/ (11 modül) + K56.py; çıktı yolu denetimi K51-K55 klasörlerine yazmayı engeller; Drive OUTPUT/K56_MEKANIZMA"),
+        ("Eski sonuçların keşif verisi olarak kullanımı kaydı", "AYNEN", "K56_KAYNAK_KAYDI*.csv (dosya, sha256, amaç); K55 KEŞİF yeniden kullanımı ön kayıtta işaretli"),
+        ("Doğrulama dönemi", "ERTELENDİ (karar)", "K55'in İÇ / BAĞIMSIZ dönemleri açılmadı; DOĞRULANMIŞ sınıf bunları gerektirir"),
+    ]
+    return pd.DataFrame(S, columns=["oneri", "karar", "gerekce"])
+
+
 def _md(T: pd.DataFrame, kol: List[str], n: int = 0) -> List[str]:
     kol = [c for c in kol if c in T.columns]
     if not len(T) or not kol:
@@ -183,6 +204,7 @@ def faz0_yaz(cikti: str, kimlik: Dict[str, Any], E: pd.DataFrame, Den: pd.DataFr
           + ", ".join(f"{k} {v}" for k, v in E.faz0_on_sinif.value_counts().items()) + ".",
           f"- Mekanik denetim: {len(Den)} uyuşmazlık / eksik (K56_ENVANTER_DENETIMI.csv; sessiz düzeltme yok).",
           f"- Erişim testi: {', '.join(f'{k} {v}' for k, v in Er.durum.value_counts().items()) if len(Er) else 'koşulmadı'}.", ""]
+    L += ["## 0b. Talimatın süzgeçten geçirilmesi", ""] + _md(suzgec(), ["oneri", "karar", "gerekce"]) + [""]
     # 1
     L += ["## 1. K51-K55 etki envanteri", "", "Tam tablo (18 alan + ön sınıf + hipotezler): K56_ETKI_ENVANTERI.csv. Çalışma × ön sınıf:", ""]
     L += _md(pd.crosstab(E.kaynak_calisma, E.faz0_on_sinif).reset_index(), list(pd.crosstab(E.kaynak_calisma, E.faz0_on_sinif).reset_index().columns))
