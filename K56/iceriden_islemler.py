@@ -61,9 +61,12 @@ def erisim_testi(A: K56Ayar, ist: Istemci, Ornek: pd.DataFrame, EV: pd.DataFrame
             gec = (pd.to_datetime(M.FILING_DATE, errors="coerce", format="mixed") - pd.to_datetime(M.TRANS_DATE, errors="coerce", format="mixed")).dt.days
             out.append(erisim_satiri(MODUL, "SEC_INSIDER_DS", "işlem kodları + gecikme (2016q1, bütün)", "GECTI", "medyan bildirim gecikmesi (gün)", float(np.nanmedian(gec)),
                                      f"kod payları {kod}; gecikme %90 {float(np.nanpercentile(gec.dropna(), 90)) if gec.notna().any() else 'yok'} gün; P = açık piyasa alımı payı {kod.get('P', 0)}"))
-            plan = Fo.FOOTNOTE_TXT.fillna("").str.contains(r"10b5-1|10b5\-1|Rule 10b5", case=False, regex=True)
-            out.append(erisim_satiri(MODUL, "SEC_INSIDER_DS", "10b5-1 dipnot metni (2016q1)", "KISMI", "dipnot payı", round(float(plan.mean()), 3),
-                                     "2023 öncesi plan işareti yok; yalnız dipnot metninden yakalanır (eksik / tutarsız olabilir)"))
+            sat = set(M.loc[M.TRANS_CODE == "S", "ACCESSION_NUMBER"]); dip = Fo[Fo.ACCESSION_NUMBER.isin(sat)]
+            plan_acc = set(dip.loc[dip.FOOTNOTE_TXT.fillna("").str.contains(r"10b5\s*-?\s*1", case=False, regex=True), "ACCESSION_NUMBER"])
+            if "REMARKS" in Su:
+                plan_acc |= set(Su.loc[Su.ACCESSION_NUMBER.isin(sat) & Su.REMARKS.fillna("").str.contains(r"10b5\s*-?\s*1", case=False, regex=True), "ACCESSION_NUMBER"])
+            out.append(erisim_satiri(MODUL, "SEC_INSIDER_DS", "10b5-1 dipnot vekili (2016q1, S içeren Form 4)", "KISMI", "plan geçen pay", round(len(plan_acc) / max(1, len(sat)), 3),
+                                     f"{len(sat)} satışlı bildirim; 2023 öncesi işaret sütunu yok, plan yalnız dipnot / açıklama metninden (olumsuz cümleleri de yakalar)"))
             if Ornek is not None and len(Ornek):
                 rows = []
                 for r in Ornek.itertuples():

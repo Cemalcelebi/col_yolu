@@ -191,3 +191,127 @@ def sentetik_ozet(S: pd.DataFrame, T: pd.DataFrame) -> pd.DataFrame:
                      "d_sent_alt_min": float(g0.d_alt.min()) if len(g0) else np.nan, "d_sent_ust_max": float(g0.d_ust.max()) if len(g0) else np.nan,
                      "spek_siniflari": ";".join(sinif), "karar": karar, **gec, "d_gercek_Y120": r.d_gercek_Y120, "d_gercek_Y250": r.d_gercek_Y250, **uz})
     return pd.DataFrame(rows)
+
+
+# ---------------------------------------------------------------- kanıt sınıfları (ONKAYIT_K56 3) ve mekanizma hipotez kaydı (ONKAYIT_K56 4)
+KANIT_SINIFLARI: Tuple[str, ...] = ("DOĞRULANMIŞ MEKANİZMA", "GÜÇLÜ AÇIKLAMA", "ALTERNATİF AÇIKLAMA", "İLİŞKİ VAR, NEDEN BELİRSİZ", "VERİ YETERSİZ", "YANLIŞ BULGU")
+ETKI_YOK = "ETKİ YOK (başarısız kalır; açıklanacak etki yok)"
+YONTEM_DENETIMI = "YÖNTEM DENETİMİ (bulgu değil)"
+
+# Her hipotez: kimlik, ad, açıklama, hangi bulguları açıklar (kimlik desenleri, düzenli ifade), doğruysa / yanlışsa bağımsız veride ne görülmeli,
+# gerekli veri (veri modülü kaynak kimlikleri), karşıt gruplar (karsit_ornekler.GRUPLAR), ölçü, çürütme ölçütü (önceden; sonuçla değişmez),
+# öncelik (1 = önce), yarışan hipotezler. Sürüm: v1.1 kilidiyle donar (Faz 1 öncesi).
+HIPOTEZLER: List[Dict[str, Any]] = [
+    {"kimlik": "M01", "ad": "Olay başlangıcı seçim etkisi (mekanik eser)", "tur": "yontem",
+     "aciklama": "Olay günü t0 = ileri pencerenin eşiği İLK yakaladığı gün ve giriş t0+1 açılışı; etiket giriş fiyatına göre tanımlandığından t0 öncesi düşüş, zayıf kapanış, negatif göreli güç TANIM GEREĞİ seçilir. Bilgi yok.",
+     "aciklar": [r"^K55-D\d\d-S\d\d$"], "dogruysa": "bilgisiz yapay veride aynı tanım + aynı kod gerçek d'nin >= %50'sini aynı işaretle üretir; etki t0−k gecikmesiyle hızla söner (k=5'te <= 1/3); seçimsiz ileri ölçüde (K55 B) etki yok",
+     "yanlissa": "yapay veride |d| < 0,05; gerçek veride etki gecikmeyle sönmez; B ileri getiride iz verir", "veri": ["YEREL_K55_PANEL", "SENTETIK"], "karsit": ["G1", "G7"],
+     "olcu": "d_sentetik / d_gerçek (Y60); gecikme 0/1/5/20 sönümü (gerçek ve sentetik)", "curutme": "ONKAYIT_K56 6 eşikleri; gerçek veride k=5'te |d| >= 0,7 × |d(k=0)| -> M01 tek başına açıklamaz",
+     "oncelik": 1, "yarisan": ["M02", "M03"], "faz0": "SENTETİK SINAMA YAPILDI (K56_SECIM_SENTETIK_OZET.csv)"},
+    {"kimlik": "M02", "ad": "Kısa dönem tersine dönüş / likidite sağlama (gerçek fiyat baskısı)", "tur": "piyasa",
+     "aciklama": "Bilgisiz satış baskısı fiyatı geçici iter, likidite sağlayan alıcı primle karşılar; dönüş likiditesi düşük hisselerde büyük olur (Jegadeesh 1990, Nagel 2012).",
+     "aciklar": [r"^K55-D0[1256]-", r"^K53-T", r"^K51-.*(CEK|ÇEK|H-A)"], "dogruysa": "M01 gecikme denetiminden sonra kalan ters etki yüksek spread / düşük derinlik (Corwin-Schultz, MIDAS gizli emir ve tek lot altı payı) grubunda büyük; 8-K haberi yok; seçimsiz ileri getiride (sinyal günü sabit) zayıf kapanışlı hisseler pozitif 5-20 gün getirisi verir",
+     "yanlissa": "kalan etki likiditeyle değişmez ya da ileri getiri sıfır (K55 B 0/164 bunun 60 gün için ön kanıtı)", "veri": ["OHLC_SPREAD_VEKIL", "SEC_MIDAS", "FINRA_REGSHO", "SEC_SUBMISSIONS_OZET"],
+     "karsit": ["G2", "G7"], "olcu": "ileri 5 / 20 gün eşli fark × spread üçlüsü; etkileşim katsayısı ve ay kümeli aralık", "curutme": "yüksek spread üçlüsünde 20 gün eşli fark aralığı 0'ı kapsıyor", "oncelik": 2,
+     "yarisan": ["M01", "M04"], "faz0": "veri erişimi: spread vekili yerel, MIDAS 2012+, Reg SHO 2018-08+"},
+    {"kimlik": "M03", "ad": "Oynaklık / risk seçimi (oynaklık ondalığı denetimi yetersiz)", "tur": "yontem",
+     "aciklama": "Büyük yükseliş eşiği oynak hisselerde ve oynaklığın arttığı dönemlerde kolay aşılır; gün içi 60 gün oynaklık ondalığı koşullu (GARCH) oynaklığı ve ondalık içi farkı denetlemez.",
+     "aciklar": [r"^K55-D03-", r"^K55-D0[1-6]-", r"^K51-.*OYNAK"], "dogruysa": "yalnız GARCH'lı yapay evrende mekanik iz (BELİRSİZ hücreler); ince oynaklık denetimi (yüzdelik, koşullu oynaklık, beta) gerçek d'yi >= %50 küçültür",
+     "yanlissa": "ince denetim d'yi değiştirmez", "veri": ["YEREL_K55_PANEL"], "karsit": ["G2", "G7"], "olcu": "d (vd 10'luk) − d (oynaklık yüzdeliği 50'lik + GARCH koşullu oynaklık)",
+     "curutme": "küçülme < %25", "oncelik": 1, "yarisan": ["M01"], "faz0": "sentetik: 4 KEŞİF hücresi yalnız GARCH spekinde mekanik (BELİRSİZ)"},
+    {"kimlik": "M04", "ad": "Haber / bilanço / kurumsal olay kaynaklı sıçrama", "tur": "sirket",
+     "aciklama": "Büyük yükselişler çoğunlukla ayrık bir habere (bilanço 8-K 2.02, sözleşme 1.01, FDA / ürün 7.01-8.01, birleşme) bağlı; olay öncesi zayıflık tesadüf ya da haber öncesi belirsizlik.",
+     "aciklar": [r"^K55-", r"^K53-", r"^K52-"], "dogruysa": "G1 olaylarının G2'den belirgin büyük payında [t0−5, t0+10] içinde 8-K var (madde koduyla); haber türüne koşullu iken olay öncesi fark küçülür",
+     "yanlissa": "8-K sıklığı G1 ve G2'de aynı", "veri": ["SEC_SUBMISSIONS_OZET"], "karsit": ["G2", "G7"], "olcu": "8-K (madde) payı farkı G1 − G2, ay kümeli aralık; haber türü dağılımı",
+     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 1, "yarisan": ["M02", "M15"], "faz0": "veri yerel (sec_ozet: 8-K madde kodu dolu pay 1,0); indirme yok"},
+    {"kimlik": "M05", "ad": "Açığa satış sıkışması", "tur": "yatirimci",
+     "aciklama": "Açığa satış pozisyonu yüksek, fiyatı düşmüş hisselerde kapatma alımları ani yükseliş üretir (tema / meme dönemleri).",
+     "aciklar": [r"^K51-.*(KR|KAZANAN|EN20)", r"^K55-D0[156]-", r"^K52-KIR-EN20"], "dogruysa": "G1'de t0 öncesi açığa satış / dolaşım ve kapatma gün sayısı G2'den yüksek; t0 sonrası pozisyon düşer; FTD artar",
+     "yanlissa": "açığa satış ölçüleri G1 ve G2'de aynı", "veri": ["FINRA_SI", "FINRA_REGSHO", "SEC_FTD"], "karsit": ["G2", "G4"], "olcu": "kapatma gün sayısı ve SI değişimi farkı; FTD payı",
+     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M18", "M02"], "faz0": "KAPSAM: FINRA SI API ~2017-12+, Reg SHO CDN 2018-08+ -> KEŞİF'in yalnız 2018-21'i; FTD 2004+"},
+    {"kimlik": "M06", "ad": "Sulandırma / finansman döngüsü (hisse ihracı)", "tur": "sermaye",
+     "aciklama": "Nakit ihtiyacı olan şirketler zayıf fiyatta ya da yükselişe satarak (ATM, 424B5, S-3, 8-K 3.02) hisse çıkarır; sayı artışı dağıtımdır (şirket satıcı).",
+     "aciklar": [r"^K51-.*(KAYNAK|TIINGO|BATAN)", r"^K55-D02-", r"^K54-"], "dogruysa": "G5 (12 ayda > %20 hisse artışı) ve ihraç başvurusu G4 / G3'te ve G1'in olay SONRASI penceresinde sık; G1 olay öncesinde değil",
+     "yanlissa": "ihraç sıklığı gruplar arasında aynı", "veri": ["SEC_COMPANYFACTS", "SEC_SUBMISSIONS_OZET"], "karsit": ["G1", "G3", "G4", "G5"], "olcu": "olay öncesi / sonrası ihraç ve hisse artışı payı farkı",
+     "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M07"], "faz0": "XBRL hisse sayısı bölünmeye göre düzeltilmemiş (TRMB, TLGTQ sıçramaları): bölünme verisiyle düzeltme şart"},
+    {"kimlik": "M07", "ad": "Temel iyileşme / bozulma", "tur": "sirket",
+     "aciklama": "Satış, faaliyet nakit akışı ya da kârdaki değişim yükselişi açıklar; fiyat bilgiyi bildirim tarihinde (filed) alır.",
+     "aciklar": [r"^K55-", r"^K51-.*(H-B|H-D)"], "dogruysa": "G1'de t0 sonrası ilk bildirimde (filed) satış / FNA iyileşmesi G2'den büyük; t0 öncesi bildirimlerde fark yok",
+     "yanlissa": "temel değişim farkı yok", "veri": ["SEC_COMPANYFACTS", "SEC_FS_DS"], "karsit": ["G2", "G3"], "olcu": "bildirim tarihine göre çeyrek değişimi farkı (ay kümeli aralık)", "curutme": "aralık 0'ı kapsıyor",
+     "oncelik": 2, "yarisan": ["M04"], "faz0": "companyfacts 12/12 indi; yabancı ihraççı (IFRS) ve CIK değişimi boşluk bırakıyor"},
+    {"kimlik": "M08", "ad": "Kurumsal birikim (13F pozisyon artışı)", "tur": "yatirimci",
+     "aciklama": "Büyük yöneticiler sıkışma / dip döneminde pozisyon büyütür; fiyat sonra yükselir (Çöl Yolu 'birikim' anlatısı).",
+     "aciklar": [r"^K51-H(1|2|3)$", r"^K51-.*P1", r"^K55-D02-"], "dogruysa": "olay ya da P1 öncesi çeyrekte (bildirim tarihine göre) kurumsal sahiplik payı ve sahip sayısı artışı G1'de G2'den büyük",
+     "yanlissa": "artış farkı yok ya da sonra geliyor", "veri": ["SEC_13F_DS", "OPENFIGI"], "karsit": ["G2", "G7"], "olcu": "Δ kurumsal pay (13F toplam hisse / dolaşım), Δ sahip sayısı", "curutme": "fark aralığı 0'ı kapsıyor",
+     "oncelik": 2, "yarisan": ["M11"], "faz0": "13F 2013q2+, KEŞİF ~1,1 GB; CUSIP -> sembol OpenFIGI 9/10 (süzgeç gerekli); 45 gün gecikme"},
+    {"kimlik": "M09", "ad": "Kurumsal / içeriden dağıtım (pozisyon azaltma)", "tur": "yatirimci",
+     "aciklama": "Düşüş ve 'yüksek hacimli düşüş' içeriden / kurumsal satışın izidir; yükselmeyenlerde (G2, G4) daha sık beklenir.",
+     "aciklar": [r"^K53-", r"^K55-D02-S02", r"^K55-D05-"], "dogruysa": "plansız (10b5-1 dışı) içeriden S ve 13F azaltımı G4'te ve G2'de G1'den sık",
+     "yanlissa": "fark yok", "veri": ["SEC_INSIDER_DS", "SEC_13F_DS"], "karsit": ["G1", "G2", "G4"], "olcu": "plansız S sayısı / değeri, 13F azaltım payı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 2,
+     "yarisan": ["M11", "M02"], "faz0": "Form 4 2006q1+; KEŞİF 248 MB; 10b5-1 işareti yalnız 2023+ (öncesi dipnot %2,7)"},
+    {"kimlik": "M10", "ad": "İçeriden bilgi (açık piyasa alımı)", "tur": "yatirimci",
+     "aciklama": "Yöneticilerin kendi parasıyla açık piyasa alımı (P) bilgi taşır; yükseliş öncesi sıklaşır.",
+     "aciklar": [r"^K55-", r"^K51-.*P1"], "dogruysa": "t0 öncesi 90 günde P alımı G1'de G2'den sık", "yanlissa": "fark yok", "veri": ["SEC_INSIDER_DS", "K30_ALIM"], "karsit": ["G2", "G7"],
+     "olcu": "P alımı olan hisse payı farkı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 3, "yarisan": ["M07"], "faz0": "K30 (Ç102) daha önce ölçtü: yeniden yapılmaz, yalnız K55 olaylarına eşlenir"},
+    {"kimlik": "M11", "ad": "Emilim (büyük satışın başka alıcılarca karşılanması)", "tur": "yatirimci",
+     "aciklama": "Yüksek hacimli satış günlerinde fiyat az düşer çünkü büyük alıcı (kurum, blok) karşılar; olumlu habere tepkisizlik (K53) de emilim olabilir.",
+     "aciklar": [r"^K53-", r"^K55-D02-S0[2-8]", r"^K55-D05-S0[68]"], "dogruysa": "satış baskılı günlerde işlem başına hacim (MIDAS TradeVol / Trades) ve gizli / ATS payı artar; aynı çeyrekte 13F sahip sayısı ya da 13D / 13G başvurusu artar; fiyat etkisi (Amihud) düşer",
+     "yanlissa": "işlem büyüklüğü ve kurumsal sahiplik değişmez (o zaman dağıtım ya da likidite)", "veri": ["SEC_MIDAS", "SEC_13F_DS", "SEC_SUBMISSIONS_OZET", "FINRA_ATS"], "karsit": ["G2", "G4"],
+     "olcu": "MIDAS işlem büyüklüğü ve gizli pay farkı; 13F Δ sahip sayısı", "curutme": "fark aralığı 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M09", "M12"],
+     "faz0": "MIDAS günlük hisse × borsa 2012+ (çeyrek ~87 MB); FINRA ATS genel API yakın geçmiş (KEŞİF yok)"},
+    {"kimlik": "M12", "ad": "Likidite / piyasa derinliği değişimi", "tur": "piyasa",
+     "aciklama": "Spread ve derinlik değişimi fiyat tepkisini değiştirir; düşük derinlik hem sert düşüş hem sert yükseliş üretir.",
+     "aciklar": [r"^K55-D02-S03", r"^K55-D05-", r"^K51-.*LIKIDITE"], "dogruysa": "olay öncesi spread / Amihud / iptal-işlem oranı G1'de G2'den farklı ve bu fark olay öncesi farkı açıklar",
+     "yanlissa": "fark yok", "veri": ["OHLC_SPREAD_VEKIL", "SEC_MIDAS"], "karsit": ["G2", "G7"], "olcu": "spread / derinlik farkı ve aracılık payı", "curutme": "aracılık < %25 ve fark aralığı 0'ı kapsıyor",
+     "oncelik": 3, "yarisan": ["M02", "M11"], "faz0": "spread vekili yerel (dolu pay 0,99); MIDAS erişilebilir"},
+    {"kimlik": "M13", "ad": "Veri / fiyat düzeltmesi / evren kaynaklı yanlış görüntü", "tur": "veri",
+     "aciklama": "Bölünme / ters bölünme düzeltme hatası, sembol yeniden kullanımı, sağlayıcı farkı ve hayatta kalanlardan oluşan evren yapay etki ya da yapay olay üretir.",
+     "aciklar": [r"^K54-", r"^K55-F0-", r"^K51-.*(KAYNAK|V\d|DEN)"], "dogruysa": "etki sağlayıcıya göre işaret değiştirir (K51 P1: V_ABD +, Tiingo −); olay günleri bölünme / sembol değişimi tarihlerine yığılır; ikinci sağlayıcı (Tiingo) sıçramayı doğrulamaz",
+     "yanlissa": "etki sağlayıcıdan bağımsız; olaylar bölünme tarihlerinden bağımsız", "veri": ["YAHOO_SPLITS", "SEC_SUBMISSIONS_OZET", "TIINGO_BATAN"], "karsit": ["G3", "G6"],
+     "olcu": "kaynak × etki etkileşimi; bölünme ±3 gün çakışma payı", "curutme": "etkileşim aralığı 0'ı kapsıyor ve çakışma payı taban kadar", "oncelik": 1, "yarisan": ["M17"],
+     "faz0": "V_ABD bölünme günlerinde düzeltilmiş (AAPL / TSLA / NVDA gece oranı ~1); XBRL hisse sayısı düzeltilmemiş"},
+    {"kimlik": "M14", "ad": "Kasıtlı yanıltma (manipülasyon / pompala-boşalt)", "tur": "kasit",
+     "aciklama": "Fiyat / hacim kasıtlı olarak yanıltıcı gösterilir. Varsayılan açıklama DEĞİL; yalnız resmî kayıtla (SEC askıya alma, dava, idari karar, mahkeme, FINRA disiplin) desteklenir.",
+     "aciklar": [r"^K51-.*(KR|KAZANAN|EN20)", r"^K55-"], "dogruysa": "G1 olaylarının sembol + tarih eşleşmeli resmî kayıtla çakışma payı G2'den büyük", "yanlissa": "çakışma payı aynı ya da sıfır (kasıt kanıtı yok)",
+     "veri": ["SEC_ASKIYA_ALMA", "SEC_DAVA"], "karsit": ["G2", "G7"], "olcu": "resmî kayıt çakışma payı; üç sütun: gözlenen davranış / olası mekanizma / kasıt kanıtı", "curutme": "kayıt yok -> KASIT KANITI YOK",
+     "oncelik": 3, "yarisan": ["M05", "M18"], "faz0": "SEC askıya alma 1995-2026, 1.349 bülten; sembol yok, ad eşlemesiyle evrende 10 şirket; dava bültenleri sayfalı"},
+    {"kimlik": "M15", "ad": "Birleşme / satın alma teklifi", "tur": "sirket",
+     "aciklama": "Yükselişin bir kısmı satın alma primi; hedef şirketler çoğu zaman zayıf fiyatlı.",
+     "aciklar": [r"^K55-", r"^K54-"], "dogruysa": "G1'in [t0, t0+60] içinde SC TO-T / DEFM14A / 425 / 8-K 1.01-2.01 başvurusu payı G2'den büyük; birleşmeli olaylar çıkarılınca olay öncesi fark küçülür",
+     "yanlissa": "pay farkı yok", "veri": ["SEC_SUBMISSIONS_OZET"], "karsit": ["G2", "G6"], "olcu": "birleşme başvurusu payı farkı", "curutme": "aralık 0'ı kapsıyor", "oncelik": 2, "yarisan": ["M04"],
+     "faz0": "veri yerel (sec_ozet)"},
+    {"kimlik": "M16", "ad": "Toplu piyasa dibi / beta (2020 Mart gibi)", "tur": "piyasa",
+     "aciklama": "Olaylar piyasa diplerinde kümelenir; yüksek betalı hisseler önce çok düşer sonra çok yükselir.",
+     "aciklar": [r"^K55-D06-", r"^K55-D0[1-5]-"], "dogruysa": "olaylar ay bazında kümelenir; 2020-03..06 çıkarılınca ya da beta denetlenince d küçülür", "yanlissa": "değişmez",
+     "veri": ["YEREL_K55_PANEL"], "karsit": ["G7"], "olcu": "dönem dışlama ve beta denetimi duyarlılığı", "curutme": "küçülme < %25", "oncelik": 2, "yarisan": ["M03"], "faz0": "veri yerel"},
+    {"kimlik": "M17", "ad": "Hayatta kalma yanlılığı (evren)", "tur": "veri",
+     "aciklama": "Evren çoğunlukla bugün işlem görenlerden; düşüp batanlar eksik olduğu için 'düşüş sonrası yükseliş' fazla görünür.",
+     "aciklar": [r"^K51-.*(KAYNAK|H9|KR-)", r"^K54-", r"^K55-"], "dogruysa": "batan şirketler eklendikçe ters etki ve P1 artısı küçülür / işaret değiştirir", "yanlissa": "değişmez",
+     "veri": ["TIINGO_BATAN", "SEC_SUBMISSIONS_OZET"], "karsit": ["G3"], "olcu": "evren genişletme duyarlılığı", "curutme": "değişim < ölçüm aralığı", "oncelik": 2, "yarisan": ["M13"],
+     "faz0": "K54: 266 çıkış / 3.267; eksik batanlar Tiingo kotasıyla (ayda 500) eklenebilir (Cemal kararı)"},
+    {"kimlik": "M18", "ad": "Tema / sektör rüzgârı (tema rallisi)", "tur": "piyasa",
+     "aciklama": "Yükselişler sektör / tema dalgalarında kümelenir (kripto, yapay zekâ, meme); bireysel hisse belirtisi tema üyeliğinin vekilidir.",
+     "aciklar": [r"^K51-.*(KR|SEKTOR|RUZGAR)", r"^K55-D06-", r"^K55-D10-S09"], "dogruysa": "olaylar sektör × hafta kümelenir; sektör × gün sabit etkisiyle olay öncesi fark küçülür",
+     "yanlissa": "değişmez", "veri": ["YEREL_K55_PANEL", "SEC_SUBMISSIONS_OZET"], "karsit": ["G7"], "olcu": "sektör × gün sabit etkili d", "curutme": "küçülme < %25", "oncelik": 2, "yarisan": ["M05", "M16"],
+     "faz0": "K35-K37 rüzgâr çalışmaları var (Ç108-Ç111)"},
+    {"kimlik": "M19", "ad": "Bilgi gecikmesi: analist fiyatı izler", "tur": "bilgi",
+     "aciklama": "Olumlu revizyonlar fiyat yükseldikten sonra gelir (izleme); bilgi taşımaz.",
+     "aciklar": [r"^K52-", r"^K53-"], "dogruysa": "revizyonların çoğu pencere dibinden >= %10 yükseliş SONRASI (K52 H4 zamanlama payı); revizyon sonrası eşli fark sıfır",
+     "yanlissa": "revizyon yükselişten önce gelir ve sonrası pozitif", "veri": ["YEREL_ANALIST"], "karsit": ["G2"], "olcu": "zamanlama payı ve sonrası eşli fark", "curutme": "zamanlama payı < 0,3",
+     "oncelik": 3, "yarisan": ["M04"], "faz0": "K52 H4-P2 zamanlama payı 0,504 (ön kanıt)"},
+]
+
+
+def hipotez_tablosu() -> pd.DataFrame:
+    T = pd.DataFrame(HIPOTEZLER)
+    for c in ("aciklar", "veri", "karsit", "yarisan"):
+        T[c] = T[c].map(lambda x: "; ".join(x))
+    if T.kimlik.duplicated().any():
+        raise RuntimeError("yinelenen hipotez kimliği")
+    return T
+
+
+def bulgu_hipotezleri(kimlik: str) -> List[str]:
+    """Bir envanter bulgusunu açıklayabilecek hipotezler (kimlik desenlerinden)."""
+    import re
+    return [h["kimlik"] for h in HIPOTEZLER if any(re.search(p, kimlik) for p in h["aciklar"])]

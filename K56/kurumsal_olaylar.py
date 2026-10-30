@@ -1,7 +1,8 @@
 """K56 D (+ F, G) — kurumsal olaylar, kasıt kanıtı kaynakları ve veri hatası denetimi.
 
 D: SEC başvuru geçmişi (islenmis-veri k55/sec_ozet.json: 3.262 CIK, bütün başvurular 1990'lar -> 2026-10-30, form + tarih + 8-K madde kodları).
-   Olaylar: hisse ihracı / izahname (S-1, S-3, S-3ASR, 424B1-5), kayıtsız satış (8-K 3.02), önemli sözleşme / borç (1.01 / 2.03), iflas
+   Olaylar: hisse ihracı / izahname (S-1, S-3, S-3ASR, 424B1 / 4 / 5; 424B2 çoğunlukla banka yapılandırılmış borç notu, ayrı sayılır; form türü
+   hisse mi borç mu ayırmaz -> hisse sayısıyla doğrulanır), kayıtsız satış (8-K 3.02), önemli sözleşme / borç (1.01 / 2.03), iflas
    (1.03), birleşme tamamlanması (2.01), borsa kotu (3.01; 25-NSE), kayıt sonu (15-12B / 15-12G), %5 üstü sahiplik (SC 13D / 13G ve
    değişiklikleri; konu şirketin başvuru listesinde), birleşme oy belgesi (DEFM14A), ihale teklifi (SC TO-T / TO-I), geç bildirim (NT 10-K / Q),
    bölünme / ters bölünme için 8-K 5.03 (esas sözleşme; tek başına bölünme kanıtı değil). Bölünmeler ayrıca Yahoo (yfinance splits).
@@ -27,7 +28,7 @@ MODUL = "kurumsal_olaylar"
 SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
 ASKIYA_ALMA = "https://www.sec.gov/enforcement-litigation/trading-suspensions"
 DAVA = "https://www.sec.gov/enforcement-litigation/litigation-releases"
-OLAY_FORMLARI = {"ihrac_izahname": r"^(S-1|S-3|S-3ASR|424B[1-5])$", "sahiplik_13D": r"^SC 13D(/A)?$", "sahiplik_13G": r"^SC 13G(/A)?$", "ihale": r"^SC TO-(T|I)(/A)?$",
+OLAY_FORMLARI = {"ihrac_izahname": r"^(S-1|S-3|S-3ASR|424B1|424B4|424B5)$", "borc_notu_424B2": r"^424B2$", "sahiplik_13D": r"^SC 13D(/A)?$", "sahiplik_13G": r"^SC 13G(/A)?$", "ihale": r"^SC TO-(T|I)(/A)?$",
                  "birlesme_oy": r"^DEFM14A$", "kot_cikis": r"^(25-NSE|15-12B|15-12G)$", "gec_bildirim": r"^NT 10-(K|Q)$"}
 OLAY_MADDELERI = {"8K_kayitsiz_satis": "3.02", "8K_iflas": "1.03", "8K_birlesme": "2.01", "8K_kot": "3.01", "8K_esas_sozlesme": "5.03", "8K_borc": "2.03", "8K_sozlesme": "1.01"}
 

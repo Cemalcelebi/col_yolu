@@ -48,9 +48,76 @@ def sentetik_kos(A: K56Ayar, isci: int = 4, hucreler: Optional[List[str]] = None
     return {"S": S, "Z": Z, "kimlik": kimlik}
 
 
+def sentetik_birlestir(A: K56Ayar, ana: str, ekler: List[str]) -> pd.DataFrame:
+    """Ana sentetik koşu + yalnız belirli hücreler için yeniden koşulan ekler (ör. v1.0-a D02-S10 düzeltmesi): ekteki hücrelerin satırları
+    anadakilerin yerine geçer. Kimlik dosyaları birlikte saklanır. Çıktı A.cikti'ye."""
+    A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True)
+    S = pd.read_csv(os.path.join(ana, "K56_SECIM_SENTETIK.csv")); Z = pd.read_csv(os.path.join(ana, "K56_SECIM_SENTETIK_OZET.csv"))
+    kim = [json.load(open(os.path.join(ana, "K56_KOSU_SENTETIK.json"), encoding="utf-8"))]
+    for e in ekler:
+        Se = pd.read_csv(os.path.join(e, "K56_SECIM_SENTETIK.csv")); Ze = pd.read_csv(os.path.join(e, "K56_SECIM_SENTETIK_OZET.csv")); h = set(Ze.hucre)
+        S = pd.concat([S[~S.hucre.isin(h)], Se], ignore_index=True); Z = pd.concat([Z[~Z.hucre.isin(h)], Ze], ignore_index=True)
+        kim.append(json.load(open(os.path.join(e, "K56_KOSU_SENTETIK.json"), encoding="utf-8")))
+    Z = Z.sort_values("hucre").reset_index(drop=True)
+    S.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK.csv"), index=False); Z.to_csv(os.path.join(A.cikti, "K56_SECIM_SENTETIK_OZET.csv"), index=False)
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_SENTETIK.json"), {"birlesik": True, "kosular": kim, "karar": Z.karar.value_counts().to_dict()})
+    return Z
+
+
 def faz0_kos(A: K56Ayar) -> Dict[str, Any]:
-    raise NotImplementedError("faz0 raporları henüz bağlanmadı")
+    """Faz 0 raporları (ağ yok): envanter + denetim, açıklanmamışlar, hipotezler, hipotez × veri, veri kaynakları (+ erişim testi sonucu varsa),
+    yöntemler (+ M01 sentetik), riskler, uygulama sırası. Sentetik ve erişim çıktıları A.cikti'de olmalı (önce sentetik / erisim)."""
+    from . import etki_envanteri as EE
+    from . import mekanizma as M
+    from . import mekanizma_raporu as MR
+    gunluk_log(); A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True); A.ag = False
+    kimlik = kosu_kimligi(A, "FAZ0"); kk = KaynakKaydi()
+    zy = os.path.join(A.cikti, "K56_SECIM_SENTETIK_OZET.csv"); Z = pd.read_csv(zy) if os.path.exists(zy) else None
+    if Z is None:
+        log.warning("M01 sentetik özeti yok (%s): K55 bulgularında sentetik sütunu boş kalır", zy)
+    E, Den = EE.envanter_kur(A, kk, Z); Ac = EE.aciklanmamislar(E); H = M.hipotez_tablosu()
+    ey = os.path.join(A.cikti, "K56_VERI_ERISIM_TESTI.csv"); Er = pd.read_csv(ey) if os.path.exists(ey) else pd.DataFrame()
+    VK = MR.veri_kaynaklari(Er); HV = MR.hipotez_veri(H, VK); R = MR.riskler(); Sira = MR.uygulama_sirasi()
+    E.to_csv(os.path.join(A.cikti, "K56_ETKI_ENVANTERI.csv"), index=False); Den.to_csv(os.path.join(A.cikti, "K56_ENVANTER_DENETIMI.csv"), index=False)
+    Ac.to_csv(os.path.join(A.cikti, "K56_ACIKLANMAMIS_BULGULAR.csv"), index=False); H.to_csv(os.path.join(A.cikti, "K56_HIPOTEZLER.csv"), index=False)
+    HV.to_csv(os.path.join(A.cikti, "K56_HIPOTEZ_VERI.csv"), index=False); VK.to_csv(os.path.join(A.cikti, "K56_VERI_KAYNAKLARI.csv"), index=False)
+    R.to_csv(os.path.join(A.cikti, "K56_RISKLER.csv"), index=False); Sira.to_csv(os.path.join(A.cikti, "K56_UYGULAMA_SIRASI.csv"), index=False)
+    kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI.csv"), index=False)
+    yol = MR.faz0_yaz(A.cikti, kimlik, E, Den, Ac, H, HV, VK, Er, Z, R, Sira)
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_FAZ0.json"), {**kimlik, "envanter": len(E), "denetim_uyusmazlik": len(Den), "aciklanmamis": len(Ac), "hipotez": len(H),
+                                                           "on_sinif": E.faz0_on_sinif.value_counts().to_dict()})
+    log.info("Faz 0 raporu: %s (envanter %d, denetim %d, açıklanmamış %d)", yol, len(E), len(Den), len(Ac))
+    return {"E": E, "Den": Den, "Ac": Ac, "H": H, "VK": VK, "rapor": yol}
 
 
 def erisim_kos(A: K56Ayar) -> Dict[str, Any]:
-    raise NotImplementedError("erişim testi henüz bağlanmadı")
+    """Küçük örneklem veri erişim testi (ONKAYIT_K56 7): örneklem (karsit_ornekler), beş veri modülü; istek günlüğü (e-posta yok)."""
+    from . import finansal_mekanizma, iceriden_islemler, islem_davranisi, karsit_ornekler, kurumsal_olaylar, kurumsal_sahiplik
+    from .ortak import Istemci
+    gunluk_log(); A.cikti = cikti_dogrula(A.cikti); os.makedirs(A.cikti, exist_ok=True); A.ag = True
+    kimlik = kosu_kimligi(A, "ERISIM"); kk = KaynakKaydi(); ist = Istemci(A); Istemci.sec_ua()
+    Orn = karsit_ornekler.ornek_sec(A, kk, A.ornek); EV = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_EVREN.csv"), "veri", "evren CIK / işlem tarihleri (eşleşme payı)"))
+    satir: List[Dict[str, Any]] = []; tablolar: Dict[str, Any] = {}
+    for ad, f in (("kurumsal_sahiplik", lambda: kurumsal_sahiplik.erisim_testi(A, ist, Orn)), ("iceriden_islemler", lambda: iceriden_islemler.erisim_testi(A, ist, Orn, EV)),
+                  ("finansal_mekanizma", lambda: finansal_mekanizma.erisim_testi(A, ist, Orn)), ("kurumsal_olaylar", lambda: kurumsal_olaylar.erisim_testi(A, ist, Orn, EV)),
+                  ("islem_davranisi", lambda: islem_davranisi.erisim_testi(A, ist, Orn))):
+        t0 = time.time()
+        try:
+            rr = f()
+        except Exception as ex:
+            rr = [{"modul": ad, "kaynak": "-", "test": "modül", "durum": "BASARISIZ", "olcu": "", "deger": None, "ayrinti": f"{type(ex).__name__}: {ex}", "url": ""}]
+        for r in rr:
+            if "tablo" in r:
+                tablolar[f"{ad}:{r['kaynak']}"] = r.pop("tablo")
+            r["sure_sn"] = round(time.time() - t0, 1)
+        satir += rr; log.info("erişim %s: %s", ad, pd.Series([r["durum"] for r in rr]).value_counts().to_dict())
+    T = pd.DataFrame(satir); T.to_csv(os.path.join(A.cikti, "K56_VERI_ERISIM_TESTI.csv"), index=False)
+    Orn.to_csv(os.path.join(A.cikti, "K56_ERISIM_ORNEKLEM.csv"), index=False)
+    for k, v in tablolar.items():
+        if v:
+            pd.DataFrame(v).to_csv(os.path.join(A.cikti, f"K56_ERISIM_{k.split(':')[1]}.csv"), index=False)
+    G = pd.DataFrame(ist.gunluk); G["url"] = G.url.str.replace(r"[\w.+-]+@[\w-]+\.[\w.]+", "<e-posta>", regex=True)
+    G.to_csv(os.path.join(A.cikti, "K56_ISTEK_GUNLUGU.csv"), index=False); kk.tablo().to_csv(os.path.join(A.cikti, "K56_KAYNAK_KAYDI_ERISIM.csv"), index=False)
+    _json_yaz(os.path.join(A.cikti, "K56_KOSU_ERISIM.json"), {**kimlik, "istek": len(G), "indirilen_mb": round(float(pd.to_numeric(G.bayt, errors="coerce").fillna(0).sum()) / 2 ** 20, 1),
+                                                             "durum": T.durum.value_counts().to_dict()})
+    return {"T": T, "Orn": Orn, "G": G}
