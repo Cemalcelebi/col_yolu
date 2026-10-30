@@ -1366,6 +1366,17 @@ IK_GOREV: List[Dict[str, str]] = [
               "duyarlılık satırlarıyla sınırlı (11 belirsiz çıkarılınca P1 / P2 en çok 0,10 puan), karar değişmez. BDC'ler (BXSL, MSDL), "
               "REIT ve MLP'ler şirket sayıldı, evrende kaldı",
      "durum": "TAMAMLANDI, AÇIK: K51 tam koşusunun (52 dk) fonsuz evrenle yenilenmesi Cemal'in kararı (gerekli görülmedi, etki <= 0,1 puan)"},
+    {"tarih": "2026-10-30", "istek": "K55 KUANTUM DALLANMALI İZ ARAMA: evreni 10 ana dala, her dalı 10 hücreye böl; büyük yükselişlerden geriye "
+                                     "doğru + eşleşmiş kontrol + değişim noktası; ön kayıt, FDR, kronolojik dönemler, fonsuz evren; ilk teslimat kod "
+                                     "değil PLAN (veri gereksinimi, değişken, yöntem, maliyet); plan onaylanmadan büyük koşu yok",
+     "yapilan": "arastirma_cikti/k55_dallanma/K55_PLAN.md: ortak kurallar (evren, dönem kilidi 2016-21 / 2022-23 / 2024-26, olay tanımları "
+                "Y60 +%30 / Y120 +%50 / Y250 +%100, üç yöntem, ölçütler, FDR aile = dal, durum etiketleri, dallanma şablonu), veri envanteri "
+                "(hazır / gerek / yok), 10 dal x 10 hücre = 100 hücre (kimlik, soru, değişken, veri, yöntem, not), eski çalışma çakışmaları "
+                "ve kapalı konular, 4 faz maliyet, 6 karar maddesi; K51-K54 arşiv noktası commit 83e5de8 (etiket gönderimi 403)",
+     "sonuc": "100 hücrenin 71'i yalnız OHLCV ile ölçülebilir; 9 hücre eski çalışmayla çakışır (yalnız yeni boyut), 6 hücre kapalı konuya "
+              "dokunur (onaysız koşulmaz); D07 yalnız 2021+ (SEC FS), D08 için 13F ve Form 4 satışları indirilmeli. Kod yazılmadı, koşu yok",
+     "durum": "ONAY BEKLİYOR: K55_PLAN.md bölüm 8'deki 6 karar (kod yapısı, dönem kilidi, sec_ozet'in islenmis-veri'ye konması, 13F / Form 4 "
+              "indirme izni, kapalı konu hücreleri, olay tanımı ve ölçüt kilidi)"},
 ]
 IK_ACIK: List[str] = [
     "YOL (30 Eki): K51 v1.2 bağımsız denetim, K52, K53 ve K54 evren sağlamlık denetimi bitti: hipotezler DESTEKLENMİYOR, K51 kararı korundu; "
