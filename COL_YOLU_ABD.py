@@ -3402,7 +3402,7 @@ def cy_v15_calistir(A: Optional[CYAyar] = None, K: Dict[str, Any] = CY, k54_yol:
                 ekle.append({**y1, "evren": "ortak_yeni", "degerlendirme": "C-yeni ≡ B (düzeltilmiş evren eski evrenin alt kümesi)"})
     if ekle:
         KRd = pd.concat([KRd, pd.DataFrame(ekle)], ignore_index=True)
-    KRd.to_csv(os.path.join(A.cikti, "K54_ESKI_YENI_TEST_KARSILASTIRMA.csv"), index=False)
+    KRd.to_csv(os.path.join(A.cikti, "K54_ESKI_YENI_TEST_KARSILASTIRMA.csv"), index=False, float_format="%.6g")      # 6 anlamlı basamak (Drive kopyası için küçük dosya)
     R = {"SD": SD, "KR": KRd, "DL": DLd, "kap": kap, "sure_dk": round((time.time() - t0) / 60, 1), "panel_n": int(len(P)), "gecerli_n": int(P.gecerli_yeni.sum()), "ortak_n": int(P.ortak.sum()),
          "gecerli6_n": int(P.gecerli_6.sum()), "hisse": int(P.sembol.nunique()), "belirsiz1": sorted(belirsiz1), "belirsiz1_tur": {s_: tt_tur.get(s_.upper(), "Tiingo'da yok") for s_ in sorted(belirsiz1)}, "bagla": bagla}
     cy_v15_yaz(R, A, K); return R
