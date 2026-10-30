@@ -53,3 +53,8 @@ Bu belge K55 olay tanımlarını, karşılaştırma grubunu, ölçütleri, çokl
 - Delist ve sembol değişimi: K54 sınıfı ve kesim tarihi her sembolde; sınıf 6 dışarıda; seri sonu işlemi 1. bölümdeki kural.
 - Karşılaştırma grubu: 5. bölüm; sentetik testle (bilinen eşleşme) doğrulanır.
 - Çoklu test: 7. bölüm. Asgari olay sayısı: 6. bölüm. Başarısız raporlama: 8. bölüm.
+
+## v1.1 açıklamaları (30 Ekim 2026, 50 hisselik deneme koşusundan sonra, tam evren koşusundan ÖNCE; eşik ve tanım değişmedi)
+- A yöntemi z-skoru: gün × oynaklık ondalığı hücresinde en az 5 satır yoksa yalnız gün içinde z (deneme koşusunda hücreler boş kaldığı için; tam evrende nadiren devreye girer). Ölçütler aynı.
+- B yöntemi sinyalleri: gün içi beşte bir üyeliği her gün sinyal sayılırsa aynı hisse ardışık günlerde yüzlerce kez sayılır ve eşleştirme tam evrende hücre başına yüz binlerce satıra çıkar; sinyal = sembol başına 60 işlem günü örtüşmeyen ilk giriş (olay tanımındaki örtüşme kuralının eşi, slot portföyü tutma süresiyle aynı). Eşikler aynı.
+- Bu iki madde yöntem ayrıntısıdır; sonuç görülmeden (deneme koşusunda yalnız olumlu / olumsuz kontrol değişkenleri koştu) yazıldı.

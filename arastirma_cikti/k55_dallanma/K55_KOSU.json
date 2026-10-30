@@ -1,0 +1,18 @@
+{
+ "kimlik": "K55-20261030-093840-c5304ae",
+ "kod_surum": "K55 v0.1 (2026-10-30, Faz 0: evren, veri kalitesi, ortak panel, olay tanımları, sızıntı testleri, hücre iskelesi A / B / C)",
+ "commit": "c5304ae",
+ "onkayit_sha": "0563ff3c7d0f6e039053201a7d9ab4010719b44a351d665d5e222412149d5f7c",
+ "evren_surum": "811989df4fda621fcb2a297b2e2bb474e0a913c83e65dd1ec027903439774169",
+ "veri_paketleri": {},
+ "ayar": {
+  "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri",
+  "cikti": "/home/user/col_yolu/arastirma_cikti/k55_dallanma",
+  "isci": 4,
+  "tohum": 55,
+  "ornek": 50
+ },
+ "python": "3.13.16",
+ "numpy": "2.5.3",
+ "pandas": "3.0.5"
+}
