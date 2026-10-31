@@ -653,7 +653,7 @@ def ayrisma_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     from .mekanizma_raporu import _md
     gunluk_log(); A.ag = False; kimlik = kosu_kimligi(A, "AYR"); out = _kosu_klasoru(A, "ayrisma", kimlik); kk = KaynakKaydi(); p, o = _panel_yollari(A); t0 = time.time()
     K = M.kesif_satirlari(A, kk); VR = F1.k55_veri(A, kk, p, o)
-    S, Dz = AY.calistir("gercek", VR["P"], VR["V"], VR["O"], K, ("KESIF", "IC_DOGRULAMA"), isci=isci); del VR
+    S, Dz = AY.calistir(AY.ETIKET_GERCEK, VR["P"], VR["V"], VR["O"], K, ("KESIF", "IC_DOGRULAMA"), isci=isci); del VR
     Ss, Dzs = [], []
     for tur, toh in tuple(M.SENTETIK_SPEK) + (("kalibre_gjr", 565), ("kalibre_sicrama", 566)):
         R = AY.sentetik_motor_verisi(tur, toh, M.SENTETIK_HISSE, M.SENTETIK_GUN); s_, d_ = AY.calistir(f"sent:{tur}:{toh}", R["P"], R["V"], R["O"], K, ("KESIF",), isci=isci)
@@ -726,6 +726,9 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
         F, z = SZ.karsilastir(ref_t, yeni); F.to_csv(os.path.join(out, f"K56SIZ_{ad}_FARK.csv"), index=False); return R, yeni, F, z
     if mod in ("hepsi", "T1"):
         VR = SZ.kesik_veri(A, "IC_DOGRULAMA", "", isci); R1, y1, F1_, z1 = kos("T1b", VR, ref); oz["T1b"] = z1
+        bl_k = F1_[(F1_.tablo == "Bl") & (F1_.sutun == "karar")]; oz["T1b_bilesim_karar_degisen"] = bl_k.anahtar.tolist()     # beklenen fark (sec_var kesik özetten); bilgi
+        L += [f"- T1b bileşim farkı (beklenen, v1.3-G: başvuru geçmişi sec_var kesik özetten; A3 açıklayıcı, karar vermez): {int((F1_.tablo == 'Bl').sum())} hücre; "
+              f"karar değişen satır {bl_k.anahtar.tolist() or 'yok'}"]
         Bl_a = F1.bilesim(VR["P"], VR["V"], VR["O"], VR["J_tam"], _cikmap(A), "IC_DOGRULAMA"); Bl_a = _csv_yuvarla(Bl_a); Bl_a.to_csv(os.path.join(out, "K56SIZ_T1a_Bl.csv"), index=False)
         Fa, za = SZ.karsilastir({"Bl": ref["Bl"]}, {"Bl": Bl_a}); Fa.to_csv(os.path.join(out, "K56SIZ_T1a_FARK.csv"), index=False); oz["T1a_bilesim"] = za
         L += [f"- T1b (kesik fiyat + kesik başvuru özeti) vs İÇ: {z1}", f"- T1a bileşim (tam başvuru özeti) vs İÇ: {za}"]
@@ -733,9 +736,9 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
         from . import ayrisma as AY, mekanizma as M_, pbo_dsr as PB
         from K55.faz1 import DALLAR, hucreleri_kur
         from K55.hucreler import HUCRELER
-        Kk = M_.kesif_satirlari(A, kk); Sa, _ = AY.calistir("T1", VR["P"], VR["V"], VR["O"], Kk, ("IC_DOGRULAMA",), isci=isci)
+        Kk = M_.kesif_satirlari(A, kk); Sa, _ = AY.calistir(AY.ETIKET_GERCEK, VR["P"], VR["V"], VR["O"], Kk, ("IC_DOGRULAMA",), isci=isci)   # v1.3-c: AYR koşusuyla aynı tohum etiketi
         ra = pd.read_csv(os.path.join(_son_oku(A, "ayrisma"), "K56AYR_SATIR.csv")); ra = ra[ra.donem == "IC_DOGRULAMA"]
-        kol = [c for c in Sa.columns if c not in ("etiket", "sure_sn")]; Fy, zy = SZ.karsilastir({"S": _csv_yuvarla(ra[kol])}, {"S": _csv_yuvarla(Sa[kol])})
+        Fy, zy = SZ.ayr_karsilastir(_csv_yuvarla(ra), _csv_yuvarla(Sa), AY.AYR["kimlik_tol"])          # v1.3-c: kimlik_fark özdeşlik olarak, sayısal TOL_AYR
         Fy.to_csv(os.path.join(out, "K56SIZ_T1_AYR_FARK.csv"), index=False); oz["T1_ayrisma"] = zy
         hucreleri_kur(DALLAR); Yp, Tp, _ = PB.calistir(VR["P"], VR["V"], Kk, {h: int(HUCRELER[h].get("yon", 1)) for h in Kk.hucre.unique()}, isci=isci)
         pk = _son_oku(A, "pbo_dsr"); Fp, zp = SZ.karsilastir({"B3": _csv_yuvarla(pd.read_csv(os.path.join(pk, "K56PBO_YAPI.csv")).drop(columns=["sure_sn"], errors="ignore"))},
@@ -764,7 +767,8 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
     t_ay = oz.get("T1_ayrisma", {}).get("birebir", {}); t_pb = oz.get("T1_pbo", {})
     gecti = (mod == "hepsi" and t0_.get("panel_esit") and t0_.get("olay_esit") and all(t1.get(k) for k in ("S", "H", "B3")) and t1a.get("Bl")
              and t_ay.get("S") and t_pb.get("yapi", {}).get("birebir", {}).get("B3") and t_pb.get("sonuc", {}).get("birebir", {}).get("Bl"))
-    oz["karar"] = ("İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK (T0 yeniden üretim + T1b S / H / B3 + T1a bileşim + ayrışma İÇ + PBO birebir)" if gecti
+    oz["karar"] = ("İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK (T0 yeniden üretim + T1b S / H / B3 + T1a bileşim + ayrışma İÇ + PBO birebir; "
+                   "ayrışma v1.3-c toleransıyla)" if gecti
                    else f"GEÇMEDİ: mod {mod}, T0 {t0_.get('panel_esit')} / {t0_.get('olay_esit')}, T1b {t1}, T1a {t1a}, ayrışma {t_ay}, PBO {t_pb} — İÇ geçersiz sayılır, BAĞIMSIZ açılmaz (açıklanana kadar)")
     L += ["", f"## Karar: {oz['karar']}", "", "Görünmeyen sınırlamalar (T1 / T2 ölçemez; beyan): hayatta kalma (evren 2026'da işlem görenler + K34), 2026 sürümü bölünme / temettü düzeltmesi, "
           "güncel sektör / CIK etiketleri; BAĞIMSIZ dönem K51-K54 programında test dönemi olarak kullanıldı."]

@@ -361,3 +361,17 @@ güvenlik içindir.
   tolerans 0 kalır.
 - PBO bilgi sütunu "dsr_etkinT_bilgi" ilk koşuda alt örneklemeyle (her üçüncü ay) hesaplanmıştı (yanlış yöntem; karar vermiyordu); artık cy_dsr formülüyle
   aynı SR / SR0, T yerine T / 3. Kod değiştiği için ayrışma ve PBO / DSR kilit şartı gereği yeniden koşulur (sayılar değişmez, yalnız bilgi sütunu).
+
+### v1.3-c (31 Ekim 2026; ilk tam sızıntı denemesi sonrası; BAĞIMSIZ açılmadan)
+- İlk tam sızıntı koşusu (K56-SIZ-20261031-152744-255ae9d, geçersiz, NOT.md): T0, T1b S / H / B3, T1a bileşim ve T1 PBO / DSR birebir; T1 ayrışma
+  karşılaştırması test hatasıyla farklı çıktı: bootstrap tohum metni koşu etiketini içerir, karşılaştırma "T1", AYR koşusu "gercek" etiketiyle koştu.
+  Nokta değerleri birebir, farklar yalnız güven aralıklarında.
+- Düzeltme: gerçek veri ayrışma etiketi tek sabit (ayrisma.ETIKET_GERCEK = "gercek"); AYR koşusu ve sızıntı T1 ayrışma karşılaştırması bunu kullanır
+  (test 28 mekanik denetler). kimlik_fark (E1 − E2 + Cov(L, f) / ort L; cebirsel özdeşlik kalıntısı, ~1e-16, son bit toplama sırasına bağlı) değer olarak
+  değil özdeşlik olarak karşılaştırılır: iki tarafta da NaN ya da |.| <= 1e-9. Ayrışma karşılaştırmasının öteki sayısal sütunları 1e-12 içinde (karar
+  eşiklerinin çok altında; bilgi sızıntısı bu büyüklükte fark üretmez), sınıf / metin sütunları birebir; en büyük sayısal fark raporlanır. T0, T1b
+  S / H / B3, T1a ve PBO / DSR karşılaştırmaları değişmez (tolerans 0).
+- T1b bileşim farkı (beklenen, v1.3-G) raporda açık yazılır: İÇ A3 bileşimi başvuru geçmişini (sec_var) tam SEC özetinden okur; kesik özetle Y60 2731 →
+  2711 olay, bir satırın sınıfı değişir. A3 açıklayıcıdır, karar vermez; İÇ kararları (S / H / B3) bundan etkilenmez.
+- Kod değiştiği için sızıntı, ayrışma ve PBO / DSR kilitten önce bu kodla yeniden koşulur.
+

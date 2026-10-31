@@ -21,6 +21,7 @@ from .ortak import donem_kapisi, log
 
 AYR: Dict[str, Any] = {"bantlar": ((1, 1), (2, 5), (6, 20), (21, 10 ** 9)), "boot": 2000, "n_min": 30, "cekilis": 200, "cekilis_tohum0": 56,
                        "grup_en_az": 5, "kimlik_tol": 1e-9, "e2_sifir_oran": 0.20}
+ETIKET_GERCEK = "gercek"   # v1.3-c: bootstrap tohum metni etiketi içerir; gerçek veri koşuları (AYR ve sızıntı T1 ayrışma karşılaştırması) bu etiketle koşar
 BANT_AD = ("1", "2-5", "6-20", "21+")
 
 

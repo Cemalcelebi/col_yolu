@@ -23,6 +23,7 @@ import pandas as pd
 from .ortak import K56Ayar, log
 
 KESIM = {"IC_DOGRULAMA": "2023-12-31", "KESIF": "2021-12-31"}
+TOL_AYR = 1e-12   # v1.3-c: T1 ayrışma (İÇ) karşılaştırmasında sayısal tolerans (kayan nokta toplama sırası; karar eşiklerinin çok altında); metin / sınıf birebir
 
 
 def _kes(d: pd.DataFrame, kesim: pd.Timestamp) -> pd.DataFrame:
@@ -159,3 +160,22 @@ def karsilastir(ref: Dict[str, pd.DataFrame], yeni: Dict[str, pd.DataFrame], tol
     F = pd.DataFrame(rows, columns=["tablo", "anahtar", "sutun", "ref", "yeni"])
     ozet["birebir"] = {t: v["fark_hucre"] == 0 for t, v in ozet.items() if isinstance(v, dict)}
     return F, ozet
+
+
+def ayr_karsilastir(ref: pd.DataFrame, yeni: pd.DataFrame, kimlik_tol: float) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    """v1.3-c: T1 ayrışma (İÇ) satırları AYR koşusuyla (aynı tohum etiketi). kimlik_fark (E1 − E2 + Cov(L, f) / ort L: cebirsel özdeşlik kalıntısı, ~1e-16)
+    değer olarak değil özdeşlik olarak karşılaştırılır: iki tarafta da NaN ya da |.| <= kimlik_tol. Öteki sayısal sütunlar TOL_AYR içinde, metin / sınıf
+    sütunları birebir, tek tarafta olan sütun ya da satır fark. Dönüş: fark tablosu, özet (birebir, kimlik özdeşliği, en büyük sayısal fark)."""
+    at = ["etiket", "sure_sn", "kimlik_fark"]; kk_ = ["hucre", "varyant", "ufuk"]
+    F, z = karsilastir({"S": ref.drop(columns=at, errors="ignore")}, {"S": yeni.drop(columns=at, errors="ignore")}, tol=TOL_AYR)
+    M = ref.reindex(columns=kk_ + ["kimlik_fark"]).merge(yeni.reindex(columns=kk_ + ["kimlik_fark"]), on=kk_, how="outer", suffixes=("_ref", "_yeni"))
+    a, b = M.kimlik_fark_ref.to_numpy(float), M.kimlik_fark_yeni.to_numpy(float); ab = np.r_[a, b]
+    ok = (np.isnan(a) & np.isnan(b)) | ((np.abs(a) <= kimlik_tol) & (np.abs(b) <= kimlik_tol))
+    z["kimlik_ozdeslik"] = {"tutar": bool(ok.all()), "bozulan": int((~ok).sum()), "en_buyuk_mutlak": float(np.nanmax(np.abs(ab))) if np.isfinite(ab).any() else 0.0}
+    M2 = ref.drop(columns=at, errors="ignore").merge(yeni.drop(columns=at, errors="ignore"), on=kk_, how="inner", suffixes=("_ref", "_yeni")); en = 0.0
+    for c in [c[:-4] for c in M2.columns if c.endswith("_ref")]:
+        x, y = M2[f"{c}_ref"], M2[f"{c}_yeni"]
+        if pd.api.types.is_numeric_dtype(x) and pd.api.types.is_numeric_dtype(y) and not pd.api.types.is_bool_dtype(x):
+            d = np.abs(x.to_numpy(float) - y.to_numpy(float)); en = max(en, float(np.nanmax(d)) if np.isfinite(d).any() else 0.0)
+    z["en_buyuk_sayisal_fark"] = en; z["birebir"]["S"] = bool(z["birebir"].get("S") and ok.all())
+    return F, z

@@ -1,0 +1,18 @@
+{
+ "karar": "K55 NİHAİ: İZ YOK — ters yönlü farklar olay tanımının seçim eseri (KEŞİF, İÇ, BAĞIMSIZ)",
+ "notlar": [
+  "KEŞİF ve İÇ'te seçimsiz kontrolle gerçek etki 0 / 125 (K56-F1A, K56-IC); K55 B KEŞİF 0 TUTAR, İÇ 0 / 64.",
+  "B1 (K55 A, ilk geçiş) BAĞIMSIZ'da geçen satır 6 / 6: destek sayılmaz (seçim etkisi tekrarı; İÇ'te B1 119 / 125, B2 0).",
+  "Üst sınır: Avrupa olmadan en fazla ABD-ADAY (CLAUDE.md); DOĞRULANDI için K55 ön kaydına göre AVR şart. Karar yeni eşikle kurtarılmaz (Cemal madde 9)."
+ ],
+ "satir_b2": {
+  "MEKANİK (gerçek + sentetik)": 6
+ },
+ "hucre_b2": {
+  "MEKANİK": 1
+ },
+ "b1_gecen": 6,
+ "b3": {
+  "TUTMAZ": 2
+ }
+}

@@ -469,6 +469,17 @@ def testler():
     if not (k1.startswith("K55 NİHAİ: İZ YOK — ters") and "TEK DÖNEM SAPMASI" in k2 and "ölçülemedi" in k3 and k4["karar"].startswith("K55 NİHAİ: İZ YOK")
             and any("İZ DEĞİL" in x for x in k4["notlar"])):
         hata.append(f"27) K55 nihai karar eşlemesi: {k1} | {k2} | {k3}")
+    # 28) v1.3-c: T1 ayrışma karşılaştırması AYR koşusuyla aynı tohum etiketi; kimlik_fark özdeşlik olarak, sayısal TOL_AYR, sınıf birebir
+    import inspect
+    if not all("AY.calistir(AY.ETIKET_GERCEK" in inspect.getsource(f_) for f_ in (SU2.ayrisma_kos, SU2.sizinti_kos)):
+        hata.append("28) ayrışma koşusu ile sızıntı T1 ayrışma karşılaştırması aynı tohum etiketini kullanmıyor")
+    Ra = pd.DataFrame({"hucre": ["a", "b"], "varyant": ["a|1", "b|1"], "ufuk": "Y60", "E1": [-0.3, np.nan], "karar": ["AYRIŞMA YOK", "VERİ YETERSİZ"], "kimlik_fark": [1.94e-16, np.nan],
+                       "etiket": "gercek", "sure_sn": 1.0})
+    _, za = SZ.ayr_karsilastir(Ra, Ra.assign(kimlik_fark=[2.2e-16, np.nan], E1=[-0.3 + 1e-14, np.nan], sure_sn=9.0), 1e-9)
+    _, zb = SZ.ayr_karsilastir(Ra, Ra.assign(E1=[-0.3 + 1e-6, np.nan]), 1e-9); _, zc = SZ.ayr_karsilastir(Ra, Ra.assign(kimlik_fark=[1e-6, np.nan]), 1e-9)
+    _, zd = SZ.ayr_karsilastir(Ra, Ra.assign(karar=["AYRIŞMA VAR", "VERİ YETERSİZ"]), 1e-9); _, ze = SZ.ayr_karsilastir(Ra, Ra.assign(kimlik_fark=[1e-16, 1e-16]), 1e-9)
+    if not (za["birebir"]["S"] and not zb["birebir"]["S"] and not zc["birebir"]["S"] and not zd["birebir"]["S"] and not ze["birebir"]["S"]):
+        hata.append(f"28) ayr_karsilastir {za['birebir']} {zb['birebir']} {zc['birebir']} {zd['birebir']} {ze['birebir']}")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -480,4 +491,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 29/29 OK")
+    print("test_k56: 30/30 OK")
