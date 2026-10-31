@@ -365,10 +365,12 @@ def testler():
     if not (abs(out23.get("kimlik_fark", 1)) < 1e-9 and abs(out23["iii_cekilis_ort"] - out23["E1"]) < 0.05):
         hata.append(f"23) kimlik / çekiliş: {out23.get('kimlik_fark')}, {out23.get('iii_cekilis_ort')} vs {out23.get('E1')}")
     r_ = {"G": 0.3, "G_ay_alt": 0.2, "G_ay_ust": 0.4, "G_sembol_yil_alt": 0.1, "G_sembol_yil_ust": 0.5, "G_blok60_alt": 0.15, "G_blok60_ust": 0.45, "E1": -0.3, "E2": 0.0,
-          "E2_ay_alt": -0.05, "E2_ay_ust": 0.05}
+          "E2_ay_alt": -0.05, "E2_ay_ust": 0.05, "kimlik_fark": 0.0}
     if AY.satir_karari(r_, "MEKANIK_ACIKLAR") != "AĞIRLIK ETKİSİ + MEKANİK (yapay veri üretiyor)" or AY.satir_karari({**r_, "G_ay_alt": -0.1}, "MEKANIK_ACIKLAR") != "AYRIŞMA YOK" \
             or AY.satir_karari(r_, "MEKANIK_IZ_YOK") != "AĞIRLIK ETKİSİ (gerçek veriye özgü, öngörü değil)" or AY.satir_karari({**r_, "E2": -0.2, "E2_ay_alt": -0.25, "E2_ay_ust": -0.15}, "MEKANIK_IZ_YOK") != "AÇIKLANMADI" \
             or AY.satir_karari({**r_, "G_blok60_alt": -0.01}, "MEKANIK_ACIKLAR") != "AYRIŞMA YOK" \
+            or AY.satir_karari({**r_, "kimlik_fark": 1e-6}, "MEKANIK_ACIKLAR") != "HESAP HATASI (kimlik)" or AY.spek_cogunluk(["TANIMSIZ"] * 3 + ["MEKANIK_ACIKLAR"]) != "VERİ YETERSİZ (yapay)" \
+            or AY.hucre_karari_ayr(["AĞIRLIK ETKİSİ + MEKANİK (yapay veri üretiyor)"] * 2 + ["MEKANİK (yapay veri üretiyor)"] * 2 + ["AYRIŞMA YOK"] * 3) != "MEKANİK (yapay veri üretiyor)" \
             or AY.spek_cogunluk(["MEKANIK_ACIKLAR"] * 3 + ["MEKANIK_IZ_YOK"]) != "MEKANIK_ACIKLAR" or AY.spek_cogunluk(["MEKANIK_ACIKLAR"] * 2 + ["MEKANIK_IZ_YOK"] * 2) != "BELİRSİZ (yapay)":
         hata.append("23) ayrışma satır kararı / spek çoğunluğu")
     # 24) v1.3 bir kez kuralı ve açık kayıt kapısı; BAĞIMSIZ'da sinir reddi; BAGIMSIZ_B sınırları; kilitte git etiketi zorunlu

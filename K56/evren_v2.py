@@ -227,6 +227,8 @@ def adi_hisse_ad(ad: Optional[str], aciklama: Optional[str]) -> Tuple[str, str]:
         return "DIŞI", f"ad: {re.search(AD_DISI, a).group(0)}"
     if re.search(r"\bUNITS?\b", a):
         return ("İŞARET", "ad: COMMON UNITS / LP (MLP)") if (re.search(r"COMMON UNITS", a) or re.search(r"\bL\.?P\.?\b", a)) else ("DIŞI", "ad: UNIT")
+    if re.search(r"\bL\.?P\.?$|\bLIMITED PARTNERSHIP\b", a):
+        return "İŞARET", "ad: LP (ortaklık payı)"
     if "DEPOSITARY" in a:
         return ("İŞARET", "ad: AMERICAN DEPOSITARY (ADR)") if "AMERICAN DEPOSITARY" in a else ("DIŞI", "ad: DEPOSITARY")
     if re.search(AD_ISARET, a):
@@ -296,11 +298,11 @@ def meta_dogrulama(A: K56Ayar, ist: Any, ADAY: pd.DataFrame, klasor: str, N25: p
             dis.append("CIK bağlanamadı (sınıf 6)")
         elif s is None:
             dis.append("SEC geçmişi yok")
-        if kim == "UYUMSUZ" and str(d["kaynak"]).startswith("Ö1"):
+        if kim == "UYUMSUZ":                                              # v1.3-a: Ö1 ve Ö2'de (sembol + tarih bağlamasında ad uyumsuzsa başka şirket)
             dis.append(f"KİMLİK: Tiingo adı SEC adlarıyla uyumsuz (Jaccard {j:.2f})")
         elif kim == "YAKIN":
             isr.append("kimlik YAKIN")
-        otc = str(d["aday_borsa"]).upper() in OTC_BORSA or str(d["sembol"]).upper().endswith("Q")
+        otc = str(d["aday_borsa"]).upper() in OTC_BORSA or str(d["sembol"]).upper().endswith("Q") or "OTC devamı" in str(d["isaret_on"])
         if otc:
             isr.append("OTC")
         if s is not None:
@@ -308,6 +310,8 @@ def meta_dogrulama(A: K56Ayar, ist: Any, ADAY: pd.DataFrame, klasor: str, N25: p
             d["son_donemsel"] = donemsel[-1].date() if donemsel else None; ilk = _tarihler(s, lambda f, it: True); d["ilk_sec_basvuru"] = ilk[0].date() if ilk else None
             if donemsel and (bit - donemsel[-1]).days > 400:
                 (isr if otc else dis).append(f"SEC KAPSAM: son dönemsel rapor {donemsel[-1].date()} (> 400 gün önce)")
+            elif not donemsel:
+                (isr if otc else dis).append("SEC KAPSAM: dönemsel rapor yok")
             seri_bas = max(pd.Timestamp(str(d["meta_baslangic"] or d["aday_baslangic"])[:10]), pd.Timestamp("2015-01-01"))
             if ilk and ilk[0] >= pd.Timestamp("2003-01-01") and (ilk[0] - seri_bas).days > 400:
                 dis.append(f"ÖN EK: seri başı {seri_bas.date()} ilk SEC başvurusundan ({ilk[0].date()}) > 400 gün önce")
@@ -348,7 +352,7 @@ def fiyat_son_islem_denetimi(Y: pd.DataFrame, M: pd.DataFrame, klasor: str, sec:
                 isr.append(f"son gün düzeltilmiş / ham oranı {d['adj_oran_son']:.3f}")
             # C-4
             s = sec.get(str(int(r.cik))) if pd.notna(r.cik) else None; s = s if (s and "hata" not in s) else None
-            T = pd.Timestamp(r.seri_son) if pd.notna(r.seri_son) else None; otc = str(Mi.aday_borsa.get(r.sembol, "")).upper() in OTC_BORSA or str(r.sembol).upper().endswith("Q")
+            T = pd.Timestamp(r.seri_son) if pd.notna(r.seri_son) else None; otc = str(Mi.aday_borsa.get(r.sembol, "")).upper() in OTC_BORSA or str(r.sembol).upper().endswith("Q") or "OTC devamı" in str(Mi.isaret_on.get(r.sembol, ""))
             if s is not None and T is not None:
                 E = _tarihler(s, lambda f, it: f in CIKIS or (f.startswith("8-K") and ("2.01" in it or "3.01" in it)))
                 fark = min((abs((e - T).days) for e in E), default=np.nan); d["cikis_belge_fark_gun"] = fark
@@ -356,7 +360,7 @@ def fiyat_son_islem_denetimi(Y: pd.DataFrame, M: pd.DataFrame, klasor: str, sec:
                     d["son_islem"] = "TUTARLI" if fark <= 10 else ("YAKIN" if fark <= 45 else "UYUMSUZ")
                 else:
                     E2_ = [e for e in E + _tarihler(s, lambda f, it: f.startswith("8-K") and "1.03" in it) if e <= T + pd.Timedelta(days=10)]
-                    dayanak = max(_tarihler(s, lambda f, it: f in ("15-12B", "15-12G") or f in DONEMSEL) or [pd.NaT])
+                    dayanak = max([x for x in _tarihler(s, lambda f, it: f in ("15-12B", "15-12G") or f in DONEMSEL) if x <= T] or [pd.NaT])
                     d["son_islem"] = "TUTARLI" if (E2_ and pd.notna(dayanak) and (T - dayanak).days <= 180) else "OTC KUYRUĞU"
                 if d["son_islem"] in ("UYUMSUZ", "OTC KUYRUĞU"):
                     isr.append(f"son işlem {d['son_islem']} (en yakın çıkış belgesi {fark} gün)")
@@ -368,7 +372,7 @@ def fiyat_son_islem_denetimi(Y: pd.DataFrame, M: pd.DataFrame, klasor: str, sec:
     return pd.DataFrame(rows)
 
 
-ISARET_ALT_KUME = ("SPAC", "OTC", "ADR", "kimlik YAKIN", "OTC KUYRUĞU", "5. harf F", "5. harf Y")
+ISARET_ALT_KUME = ("SPAC", "OTC", "ADR", "kimlik YAKIN", "OTC KUYRUĞU", "5. harf F", "5. harf Y", "CIK benzer adla", "LP", "meta ")
 
 
 def dogrulama_tablosu(M: pd.DataFrame, F: pd.DataFrame, yeni: pd.DataFrame) -> pd.DataFrame:

@@ -147,12 +147,16 @@ def satir_karari(r: Dict[str, Any], sent_sinif: Optional[str]) -> str:
     from .mekanizma import ANLAMSIZ_D
     if r.get("karar_veri") == "VERİ YETERSİZ" or not np.isfinite(r.get("G", np.nan)):
         return "VERİ YETERSİZ"
+    if not np.isfinite(r.get("kimlik_fark", np.nan)) or abs(r["kimlik_fark"]) > AYR["kimlik_tol"]:
+        return "HESAP HATASI (kimlik)"
     kapsar = lambda a, b: not (a > 0 or b < 0)
     if any(kapsar(r.get(f"G_{k}_alt", np.nan), r.get(f"G_{k}_ust", np.nan)) for k in ("ay", "sembol_yil", "blok60")) or r["G"] < ANLAMSIZ_D:
         return "AYRIŞMA YOK"                                              # ayrışma var = üç küme tanımında da (ay, sembol|yıl, blok60) aralık 0'ı dışlar
     e2_sifir = kapsar(r["E2_ay_alt"], r["E2_ay_ust"]) or abs(r["E2"]) <= AYR["e2_sifir_oran"] * abs(r["E1"])
     if sent_sinif is None or sent_sinif.startswith("BELİRSİZ"):
         return "BELİRSİZ (yapay)"
+    if sent_sinif.startswith("VERİ YETERSİZ"):
+        return "VERİ YETERSİZ (yapay)"
     if sent_sinif == "MEKANIK_ACIKLAR":
         return ("AĞIRLIK ETKİSİ + " if e2_sifir else "") + "MEKANİK (yapay veri üretiyor)"
     if sent_sinif == "KISMEN_MEKANIK":
@@ -163,7 +167,17 @@ def satir_karari(r: Dict[str, Any], sent_sinif: Optional[str]) -> str:
 def spek_cogunluk(siniflar: List[str]) -> str:
     from .mekanizma import SPEK_UYUM
     s = pd.Series(siniflar).value_counts()
-    return s.index[0] if len(s) and s.iloc[0] >= SPEK_UYUM else "BELİRSİZ (yapay)"
+    if len(s) and s.index[0] == "TANIMSIZ" and s.iloc[0] >= SPEK_UYUM:
+        return "VERİ YETERSİZ (yapay)"
+    return s.index[0] if len(s) and s.iloc[0] >= SPEK_UYUM and s.index[0] != "TANIMSIZ" else "BELİRSİZ (yapay)"
+
+
+def hucre_karari_ayr(siniflar: List[str]) -> str:
+    """Ayrışma hücre kararı: 'AĞIRLIK ETKİSİ + ' öneki atılarak ana sınıfın çoğunluğu (önek ayrı sayılır); eşitlikte BELİRSİZ."""
+    ana = pd.Series([str(c).replace("AĞIRLIK ETKİSİ + ", "") for c in siniflar]).value_counts()
+    if not len(ana):
+        return "TANIMSIZ"
+    return ana.index[0] if (len(ana) == 1 or ana.iloc[0] > ana.iloc[1]) else "BELİRSİZ"
 
 
 # ---------------------------------------------------------------- koşu motoru (gerçek veri: KEŞİF / İÇ; yapay: tek dönem 'KESIF')
@@ -180,9 +194,14 @@ def hazirla(P: pd.DataFrame, V: Dict[str, pd.DataFrame], O: pd.DataFrame, doneml
             don_ok = P[f"donem{h}"].to_numpy() == donem; nit_d = nit[u] & don_ok; ol = olay_maskesi(P, O, u, donem); oix = np.flatnonzero(ol)
             L = diziler(sem, ii, oix, nit_d); neden = kesilme_nedeni(sem, ii, oix + L - 1, lk, nit[u], don_ok)
             t0 = P.tarih.to_numpy()[oix]
-            out[(donem, u)] = {"oix": oix, "L": L, "neden": neden, "nit_d": nit_d, "t0": t0, "sembol": sem[oix],
+            ortus = np.zeros(len(oix), bool); zincir = np.arange(len(oix))
+            for j in range(1, len(oix)):                                  # önceki olayın dizisi içinde başlayan olay: örtüşen; zincir = birleşik küme (bilgi)
+                if sem[oix[j]] == sem[oix[j - 1]] and oix[j] < oix[j - 1] + L[j - 1]:
+                    ortus[j] = True; zincir[j] = zincir[j - 1]
+            out[(donem, u)] = {"oix": oix, "L": L, "neden": neden, "nit_d": nit_d, "t0": t0, "sembol": sem[oix], "ortusen": ortus,
                                "kume": {"ay": pd.to_datetime(t0).to_period("M").astype(str).to_numpy(), "sembol_yil": np.char.add(np.char.add(sem[oix].astype(str), "|"), pd.to_datetime(t0).year.astype(str).to_numpy()),
-                                        "olay": np.arange(len(oix)), "blok60": P.blok60.to_numpy()[oix] if "blok60" in P else pd.to_datetime(t0).to_period("Q").astype(str).to_numpy()}}
+                                        "olay": np.arange(len(oix)), "blok60": P.blok60.to_numpy()[oix] if "blok60" in P else pd.to_datetime(t0).to_period("Q").astype(str).to_numpy(),
+                                        "zincir": zincir}}
     return out
 
 
@@ -205,6 +224,8 @@ def _isci(arg) -> List[Dict[str, Any]]:
         for k, Lj in zip(H["oix"], H["L"]):
             mi = mix[k + np.arange(Lj)]; v = mi >= 0; gunler.append(mi[v]); pozlar.append((np.arange(Lj) + 1)[v])
         r = satir_olc(z, Dm.tarih.to_numpy(), Dm.vd.to_numpy(), gunler, pozlar, H["L"], s, H["kume"], H["t0"], f"{etiket}|{hucre}|{varyant}|{u}|{donem}|ayrisma")
+        tum = np.concatenate([g for g in gunler if len(g)]) if any(len(g) for g in gunler) else np.empty(0, np.int64)
+        r.update({"ortusen_olay": int(H["ortusen"].sum()), "cift_gun_pay": float(1 - len(np.unique(tum)) / len(tum)) if len(tum) else np.nan})
         r.update({"etiket": etiket, "hucre": hucre, "varyant": varyant, "ufuk": u, "donem": donem, "s": s, "L_tam_ort": float(H["L"].mean()) if len(H["L"]) else np.nan,
                   "L_gecerli_ort": float(np.mean([len(g) for g in gunler if len(g)])) if any(len(g) for g in gunler) else np.nan, "sure_sn": round(time.time() - t0, 1)})
         rows.append(r)

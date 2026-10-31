@@ -70,6 +70,9 @@ def calistir(P: pd.DataFrame, V: Dict[str, pd.DataFrame], K: pd.DataFrame, yon_k
         pb = C.cy_pbo(Mf, PBO["blok"]) if Mf.shape[1] >= 2 else {"pbo": np.nan}
         sr = Mx.mean() / Mx.std(ddof=1); en = sr.idxmax() if len(sr.dropna()) else None
         ds = C.cy_dsr(Mx[en].to_numpy(float), sr.to_numpy(float)) if en is not None else {"dsr": np.nan}
+        if en is not None:                                                # bilgi: aylık seri örtüşen 60 günlük getirilerden; otokorelasyon ve etkin T (T / 3) ile DSR
+            ser = Mx[en].dropna(); ds["ac1"] = float(ser.autocorr(1)) if len(ser) > 3 else np.nan; ds["ac2"] = float(ser.autocorr(2)) if len(ser) > 4 else np.nan
+            ser3 = ser.to_numpy(float)[::3]; d3 = C.cy_dsr(ser3, sr.to_numpy(float)) if len(ser3) >= 10 else {"dsr": np.nan}; ds["dsr_etkinT_bilgi"] = d3.get("dsr", np.nan)
         karar = ("aşırı uyum riski düşük" if (pb.get("pbo", np.nan) < PBO["pbo_esik"] and ds.get("dsr", np.nan) >= PBO["dsr_esik"]) else "aşırı uyum riski yüksek") \
             if np.isfinite(pb.get("pbo", np.nan)) and np.isfinite(ds.get("dsr", np.nan)) else "VERİ YETERSİZ"
         sonuc.append({"yon": "A (keşfedilen)" if ad == "a" else "kayıt (K55 B)", "yapi": int(Mf.shape[1]), "ay": int(Mf.shape[0]), **{f"pbo_{k}": v for k, v in pb.items()},

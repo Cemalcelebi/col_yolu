@@ -103,6 +103,8 @@ def k56_v13(komut, cikti=None, isci=3, mod="hepsi"):
         return SU.pbo_kos(A, isci=int(isci))
     if komut == "sizinti":
         return SU.sizinti_kos(A, isci=int(isci), mod=mod)
+    if komut == "bagimsiz_prova":
+        return SU.bagimsiz_prova_kos(A, isci=int(isci))
     raise ValueError(komut)
 
 
@@ -122,7 +124,7 @@ _cakisma_kontrol_k56()
 
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
-    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive", "evren2_aday", "faz1a", "ic", "evren2_indir", "evren2_kur", "kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti"])
+    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive", "evren2_aday", "faz1a", "ic", "evren2_indir", "evren2_kur", "kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti", "bagimsiz_prova"])
     ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=4); ap.add_argument("--hucreler", default=None); ap.add_argument("--ornek", type=int, default=12); ap.add_argument("--mod", default="hepsi")
     a = ap.parse_args()
     if a.komut == "sentetik":
@@ -131,7 +133,7 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         k56_sentetik_kesif(a.cikti, a.isci)
     elif a.komut == "faz0":
         k56_faz0(a.cikti)
-    elif a.komut in ("kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti"):
+    elif a.komut in ("kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti", "bagimsiz_prova"):
         k56_v13(a.komut, a.cikti, a.isci, a.mod)
     elif a.komut == "evren2_indir":
         k56_evren2_indir(a.cikti)

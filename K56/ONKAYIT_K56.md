@@ -321,3 +321,35 @@ koşular yaptı (ayrışma, T1 sentetik) ve BAĞIMSIZ olay sayılarını gördü
 - Duyarlılık: işaretli alt kümeler (SPAC, OTC, ADR / yabancı, YAKIN kimlik, OTC kuyruğu) hariç ikinci evren; KEŞİF ve İÇ etkisi ayrı tabloda.
 - EVREN2 BAĞIMSIZ'da KOŞULMAZ (v1.2-C aynen: etki KEŞİF ve İÇ'te; BAĞIMSIZ bir kez açılır — ikinci açılış Cemal'in 1. ve 5. maddesiyle çelişir).
   EVREN2 kodu kilide girer; açılıştan sonra yapılan EVREN2 düzeltmeleri BAĞIMSIZ sonucunu etkilemez.
+
+### v1.3-a (31 Ekim 2026; çok merceğli kod incelemesi sonrası; BAĞIMSIZ açılmadan, EVREN2 fiyatı görülmeden)
+İnceleme (iş akışı wf_36227bae; dört mercek + çekişmeli doğrulama) bulgularıyla eklenen / netleşen kurallar. Eşik değişmedi; yeni kurallar yalnız uygulama ve
+güvenlik içindir.
+1. Bir kez kuralı (kod): açılışta atomik kilit dosyası (K56_BAGIMSIZ.lock) + BAŞLADI satırında süreç kimliği ve makine; kapı yalnız o süreç ya da çocukları için
+   açılır. Önceki denemede sonuç dosyası oluştuysa (K56BAG_* ya da ÇÖKTÜ notunda "SONUÇ DOSYASI OLUŞTU") gerekçe olsa da yeniden koşu YOK; en çok bir
+   gerekçeli yeniden deneme. BAŞLADI / TAMAMLANDI commit'i ve push'u doğrulanır (uzak dal yeni commit'i göstermeli). Asıl sonuçlar ve K55 nihai kararı
+   DUYARLILIK-B'den önce commit + push edilir; B ayrı denemede koşar, çökmesi asıl sonucu geçersiz kılmaz (not olarak yazılır).
+2. Kilit: panel / olay yolu ve A ayarları (veri, k55, abd, cikti) kilitte; açılışta birebir. Etiket push edilemezse kilit yok; kilit dosyası commit'li ve
+   değişmemiş olmalı. Kilit yalnız şu koşullarda üretilir: sızıntı sınaması PASS (T0 panel + olay eşit, T1b S / H / B3, T1a bileşim, T1 ayrışma İÇ ve T1
+   PBO / DSR birebir) ve o PASS aynı veri tanımıyla (panel, içerik, olay, veri, ek veri sha'ları, evren sürümü), aynı İÇ referansıyla, temiz ağaçta alınmış;
+   ayrışma (E) ve PBO / DSR (F) koşuları kilit commit'iyle aynı kodla ve temiz ağaçta alınmış; 125 satır eki birebir; ek veri dosyası "YOK" ya da eşik
+   "okunamadı" ise kilit yok. Kıyas tabanı: F1A, IC, AYR, PBO SON koşuları ve çıktı sha'ları.
+3. Sızıntı T2 ihmal edilebilir = sınıf değişmez VE en büyük d farkı <= 0,05 VE hiçbir satırda d farkı o satırın aralık yarı genişliğinin %25'ini aşmaz;
+   karşılaştırmada tek tarafta olan sütun fark sayılır.
+4. Ayrışma: hücre kararı "AĞIRLIK ETKİSİ + " öneki atılmış ana sınıfın çoğunluğu (önek sayısı ayrı sütun); "ayrışma var" için ay, sembol|yıl ve blok60
+   aralıklarının üçü de 0'ı dışlamalı (blok60 karar kümesindedir; v1.3-E'deki "bilgi" ifadesi bu ekle düzeltildi); yapay spek çoğunluğu TANIMSIZ ise
+   "VERİ YETERSİZ (yapay)"; kimlik farkı > 1e-9 ise "HESAP HATASI (kimlik)". Bilgi sütunları: örtüşen olay sayısı, çift sayılan gün payı, zincir kümesiyle
+   (örtüşen diziler tek küme) G aralığı. Kesilme nedeni dönem dışı etiketli günün getirisini okumaz. İlk ayrışma koşusu (3b61627) geçersiz (sızıntılı
+   kesilme etiketi, bozuk JSON), saklandı.
+5. PBO / DSR bilgi sütunları: en iyi yapının aylık serisinde gecikme 1 / 2 otokorelasyonu ve etkin T (her üç aydan biri) ile DSR (seriler örtüşen 60 günlük
+   getirilerden kurulu; ön kayıtlı K51 hesabı aynen, karar vermez).
+6. K55 nihai karar eşlemesi (v1.3-H) netleştirme: "seçim eseri" gerekçesi yalnız BAĞIMSIZ hücre çoğunluğu MEKANİK iken; değilse karar yine İZ YOK, gerekçe
+   çoğunluk sınıfıyla adlandırılır (KISMEN MEKANİK / TERS KALINTI / BELİRSİZ / TANIMSIZ). Raporlarda (iii) için sabit uyarı: seçimsiz kontrol değildir.
+7. EVREN2 (fiyat görülmeden): meta'sı olmayan ya da okunamayan Ö1 adayı DIŞI (kimlik doğrulanamadı; Cemal madde 6); kimlik UYUMSUZ Ö1 ve Ö2'de DIŞI; OTC
+   devamı istisnası yalnız devam satırı OTC borsasında ve bugün işlem görmüyorsa (aksi DIŞI: MPU); listeli adayda dönemsel rapor hiç yoksa DIŞI (OTC'de
+   işaret); OTC tespiti "OTC devamı" işaretini de sayar; OTC son işlem kuralında dayanak yalnız T'ye kadar olan 15-12 / dönemsel rapor, çıkış belgesine
+   8-K 1.03 dahil; LP adı ayrıca işaret; duyarlılık dışı işaretler: SPAC, OTC, ADR / 5. harf F-Y, kimlik YAKIN, OTC kuyruğu, CIK benzer adla, LP, meta
+   yok. Geçici ağ hataları koşu içinde en çok 3 kez denenir; ön denetim geçici hata ya da kota durumunda evren kurmaz. EVREN2 raporlarında BAĞIMSIZ /
+   PURGE / EMBARGO olay sayıları ve 2024 sonrası gün sayıları yer almaz (kapı dışı hesap yok). Fiyat denetimi tablosunun sha'sı evren sürümüne girer.
+8. Prova: BAĞIMSIZ koşusunun kod yolu (rapor, nihai karar, JSON, ikinci koşu) İÇ verisinde küçük ölçekte prova edilir (bagimsiz_prova; karar vermez).
+9. Drive kopyası (drive_kopyala) yalnız Colab'da Drive bağlıyken çalışır; bu kapta Drive bağlayıcısıyla (CLAUDE.md yöntemi) yapılır.
