@@ -89,6 +89,17 @@ def rastgele_gun_maskesi(P: pd.DataFrame, olay: np.ndarray, nit: np.ndarray, toh
     return out
 
 
+def olay_dizisi_maskesi(P: pd.DataFrame, olay: np.ndarray, nit: np.ndarray) -> np.ndarray:
+    """Her olay satırından başlayan kesintisiz nitelikli dizinin BÜTÜN günleri ((iii)'ün çekildiği küme). Ön kayıt dışı açıklayıcı tanı (yalnız KEŞİF)."""
+    out = np.zeros(len(P), bool); sem = P.sembol.to_numpy(); ii = P.i.to_numpy()
+    for k in np.flatnonzero(olay):
+        L = 1
+        while k + L < len(P) and sem[k + L] == sem[k] and ii[k + L] == ii[k] + L and nit[k + L]:
+            L += 1
+        out[k:k + L] = True
+    return out
+
+
 # ---------------------------------------------------------------- A ölçüsü (K55 ile aynı tahminci) ve karar tablosu
 def z_tabaka(D: pd.DataFrame, x: str, gruplar: List[str], en_az: int = 5) -> np.ndarray:
     """K55/_z_gun_vd'nin genellemesi: z (tarih + gruplar) içinde; grup < en_az ise yalnız gün içi z (K55 v1.1 yedeği)."""
@@ -290,6 +301,11 @@ def _isci(arg) -> Dict[str, Any]:
                **{f"ii_{k}": v for k, v in rii.items() if k != "yil_isaret"}, **{f"iii_{k}": v for k, v in riii.items() if k != "yil_isaret"},
                "r_ii": rii["d"] / ri["d"] if (np.isfinite(ri["d"]) and ri["d"]) else np.nan, "sinif_a1": k1, "sinif_iii": k3, "iii_farkli": k1 != k3,
                "ayr_d": ra["d"], "ayr_d_alt": ra["d_alt"], "ayr_d_ust": ra["d_ust"], "ayr_cikan_nitelikli": int((ev_ii & ~ayr).sum())}
+        if donem == "KESIF":                                              # ön kayıt dışı açıklayıcı tanı ((ii) / (iii) ayrışması); karar değiştirmez
+            dz = olay_dizisi_maskesi(P, C["olay"][u], nit)[m]; dis = ev_ii & ~dz
+            riv = a_olc(z, dz, ay, yil, ESIKLER["boot"], rng); rv = a_olc(np.where(dz, np.nan, z), dis, ay, yil, ESIKLER["boot"], rng)
+            sat.update({"tani_dizi_n": riv["n_olay"], "tani_dizi_d": riv["d"], "tani_dizi_d_alt": riv["d_alt"], "tani_dizi_d_ust": riv["d_ust"],
+                        "tani_dis_n": rv["n_olay"], "tani_dis_d": rv["d"], "tani_dis_d_alt": rv["d_alt"], "tani_dis_d_ust": rv["d_ust"]})
         if k1 in ("KISMEN MEKANİK", "GERÇEK ETKİ KALIYOR", "TERS KALINTI") and not C.get("yalniz_a1"):
             for ad, gruplar, dis in A2_DENETIMLER:
                 if dis == "m16_dis":

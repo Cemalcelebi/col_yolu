@@ -208,15 +208,45 @@ def _panel_yollari(A: K56Ayar) -> Tuple[str, str]:
     return p, o
 
 
+def faz1_ozet(R: Dict[str, Any]) -> List[str]:
+    """Sayılardan üretilen özet (yorum yok; ön kayıtlı karar adları)."""
+    S, H, Bl = R["S"], R["H"], R["Bl"]; L = ["## Özet (sayılardan)", ""]
+    L.append(f"- A1 / B2 seçimsiz kontrol, satır: {S.sinif_a1.value_counts().to_dict()}; hücre: {H.a1.value_counts().to_dict()}.")
+    L.append(f"- GERÇEK ETKİ KALIYOR satırı: {int((S.sinif_a1 == 'GERÇEK ETKİ KALIYOR').sum())} / {len(S)}. d(ii) / d(i) medyanı {S.r_ii.median():.3f} "
+             f"(d(i) medyanı {S.i_d.median():+.3f}, d(ii) medyanı {S.ii_d.median():+.3f}).")
+    L.append(f"- (iii) duyarlılık (olay dizisinden rastgele gün): {S.sinif_iii.value_counts().to_dict()}; (ii) ile sınıfı farklı satır {int(S.iii_farkli.sum())}.")
+    if "tani_dizi_d" in S:
+        L.append(f"- Açıklayıcı tanı (ön kayıt dışı, karar değiştirmez): olay dizisinin bütün günleri d medyanı {S.tani_dizi_d.median():+.3f}; olay dizisi DIŞINDAKİ "
+                 f"nitelikli günler d medyanı {S.tani_dis_d.median():+.3f} (işareti d(i)'ye ters satır {int((np.sign(S.tani_dis_d) == -np.sign(S.i_d)).sum())} / {len(S)}). "
+                 "(iii) yalnız ilk günün seçimini kaldırır; olayın başlattığı dizinin (yükseliş epizodunun ilk dizisi) seçimini kaldırmaz. Bir günün nitelikli "
+                 "olup olmayacağı sorusunun karşılığı (ii)'dir.")
+    a2 = [c for c in S.columns if c.startswith("a2_") and c.endswith("_kuculme")]
+    if a2:
+        K = S[S[a2].notna().any(axis=1)]
+        if len(K):
+            L.append(f"- A2 kalan etki: {len(K)} satır; en az bir denetimin AÇIKLADIĞI (küçülme >= 0,50) satır {int((K[a2] >= 0.5).any(axis=1).sum())}; denetim başına "
+                     f"AÇIKLAR sayısı {{{', '.join(f'{c[3:-8]}: {int((K[c] >= 0.5).sum())}' for c in a2)}}}. (Küçük d(ii)'de küçülme oranı oynaktır.)")
+    if len(Bl) and "karar" in Bl:
+        z = Bl[Bl.karar.isin(["G1 > G7", "G1 < G7"])]
+        L.append("- A3 bileşim, aralığı 0'ı dışlayan: " + ("; ".join(f"{r.ufuk} {r.olcu} {r.karar} ({r.fark:+.3f})" for r in z.itertuples()) or "yok") + ".")
+    if "b1_gecti" in S:
+        L.append(f"- B1 (K55 A, ilk geçiş) İÇ'te geçen satır {int(S.b1_gecti.sum())} / {len(S)}; hücre {H.b1_durum.value_counts().to_dict()}. B1 geçişi seçim etkisi "
+                 "tekrarlandığında da olur; gerçek etki için belirleyici B2'dir (ön kayıt v1.2-B).")
+    if len(R.get("B3", [])):
+        L.append(f"- B3 (K55 B, eşleşmiş ileri getiri) İÇ: {R['B3'].karar.value_counts().to_dict()}.")
+    return L + [""]
+
+
 def faz1_yaz(alt: str, baslik: str, kimlik: Dict[str, Any], R: Dict[str, Any], ek: List[str]) -> str:
     from .mekanizma_raporu import _md
     S, H, Bl = R["S"], R["H"], R["Bl"]; L = [f"# {baslik} ({kimlik['kimlik']})", "", f"- commit {kimlik['commit']}; kilit sha {kimlik['onkayit_sha'][:12]}; evren sürümü {R['evren_surum'][:12]}; süre {R['sure_dk']} dk.",
-                                            f"- Olay oranı (olay / likit satır): {json.dumps({k: round(v, 5) for k, v in R['olay_orani'].items()})}."] + ek + [""]
+                                            f"- Olay oranı (olay / likit satır): {json.dumps({k: round(v, 5) for k, v in R['olay_orani'].items()})}."] + ek + [""] + faz1_ozet(R)
     L += ["## A1 seçimsiz kontrol: satır sınıfları", ""] + _md(S.sinif_a1.value_counts().rename("n").reset_index(), ["sinif_a1", "n"])
     L += ["", "Ufuk × sınıf:", ""] + _md(pd.crosstab(S.ufuk, S.sinif_a1).reset_index(), list(pd.crosstab(S.ufuk, S.sinif_a1).reset_index().columns))
     L += ["", "## Hücre sınıfları (KEŞİF satırlarının çoğunluğu)", ""] + _md(H, list(H.columns))
     L += ["", "## Satırlar (d: (i) ilk geçiş, (ii) bütün nitelikli günler, (iii) rastgele gün)", ""]
-    L += _md(S.sort_values(["hucre", "varyant", "ufuk"]), ["hucre", "varyant", "ufuk", "i_n_olay", "i_d", "ii_n_olay", "ii_d", "ii_d_alt", "ii_d_ust", "iii_d", "r_ii", "sent_oran_faz0", "sinif_a1", "sinif_iii", "ayr_d"])
+    L += _md(S.sort_values(["hucre", "varyant", "ufuk"]), ["hucre", "varyant", "ufuk", "i_n_olay", "i_d", "ii_n_olay", "ii_d", "ii_d_alt", "ii_d_ust", "iii_d", "r_ii", "sent_oran_faz0", "sinif_a1", "sinif_iii", "ayr_d",
+                                                         "tani_dizi_d", "tani_dis_d"])
     a2 = [c for c in S.columns if c.startswith("a2_") and c.endswith("_kuculme")]
     if a2:
         K = S[S[a2].notna().any(axis=1)]
@@ -240,11 +270,14 @@ def faz1a_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     for sp in ("kalibre_gjr", "kalibre_sicrama"):
         z = M.sentetik_kesif_ozet(Sk[Sk.spek == sp], K); z["spek"] = sp; Kc.append(z)
     Kc = pd.concat(Kc, ignore_index=True); oran = {}
+    Kc["sinif_tek_spek"] = Kc.spek_siniflari                              # tek spek: 4 spek uyum kuralı (karar sütunu) burada uygulanamaz -> BELIRSIZ yazar
+    Kc = Kc.rename(columns={"karar": "karar_4spek_kurali_uygulanamaz"})
     for sp, th in (("kalibre_gjr", 565), ("kalibre_sicrama", 566)):
         Vs, EVs, Es = M.sentetik_veri(M.SENTETIK_HISSE, M.SENTETIK_GUN, th, sp); Ps, Os = M.sentetik_panel(Vs, EVs, Es); oran[sp] = (Os.ufuk.value_counts() / Ps.likit.sum()).round(5).to_dict()
     R["S"].to_csv(os.path.join(out, "K56F1_A1_SATIR.csv"), index=False); R["H"].to_csv(os.path.join(out, "K56F1_A1_HUCRE.csv"), index=False); R["Bl"].to_csv(os.path.join(out, "K56F1_A3_BILESIM.csv"), index=False)
     Kc.to_csv(os.path.join(out, "K56F1_SENTETIK_KALIBRE.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56F1_KAYNAK_KAYDI.csv"), index=False)
-    ek = [f"- Kalibre sentetik (duyarlılık): satır kararları {Kc.groupby('spek').karar.value_counts().to_dict()}; yapay olay oranı {oran}.",
+    ek = [f"- Kalibre sentetik (duyarlılık, bilgisiz yapay veri): tek spek sınıfları {Kc.groupby('spek').sinif_tek_spek.value_counts().to_dict()}; sentetik / gerçek d oranı "
+          f"medyanı {Kc.groupby('spek').oran.median().round(2).to_dict()}; yapay olay oranı {oran} (gerçeğin altında: kalibrasyon kuyrukları tam üretmiyor).",
           "- A3 SONRASI sütunları AÇIKLAYICIDIR (olaydan sonraki bilgi); hiçbir sinyalde kullanılmaz. ÖNCESİ yalnız t0−1'e kadar başvurular (sızıntı kapısı)."]
     faz1_yaz(out, "K56-F1A FAZ 1 YEREL ANALİZLER (KEŞİF 2016-21; keşif verisi yeniden kullanımı)", kimlik, R, ek)
     _json_yaz(os.path.join(out, "K56_KOSU_F1A.json"), {**kimlik, "sure_dk": R["sure_dk"], "a1": R["S"].sinif_a1.value_counts().to_dict(), "hucre": R["H"].a1.value_counts().to_dict(), "sentetik_olay_orani": oran})

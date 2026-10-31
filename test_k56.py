@@ -235,6 +235,9 @@ def testler():
     Pz = pd.DataFrame({"sembol": sem, "i": i}); iii = F1.rastgele_gun_maskesi(Pz, ilk, nit, "test|56")
     if iii.sum() != ilk.sum() or (iii & ~nit).any():
         hata.append("17) rastgele gün nitelikli dizi dışında / sayısı yanlış")
+    dz = F1.olay_dizisi_maskesi(Pz, ilk, nit)
+    if (dz & ~nit).any() or not (dz[ilk]).all() or dz.sum() > nit.sum():
+        hata.append("17) olay dizisi maskesi")
     x = rng.normal(size=n); x[ilk] -= 1.0                                                    # yalnız ilk günde yapay (seçim) farkı
     ay = np.repeat(np.arange(40), n // 40); yil = np.repeat([2020, 2021], n // 2)
     di = F1.a_olc(x, ilk, ay, yil, 300, rng)["d"]; dii = F1.a_olc(x, nit, ay, yil, 300, rng)["d"]
@@ -306,6 +309,27 @@ def testler():
         y = os.path.join(td, "x.csv"); pd.DataFrame({"date": pd.bdate_range("2017-01-02", "2019-07-03").strftime("%Y-%m-%dT00:00:00.000Z")}).to_csv(y, index=False)
         if BE.seri_denetimi(y, pd.Timestamp("2019-07-10"))[0] != "TAMAM" or BE.seri_denetimi(y, pd.Timestamp("2021-07-10"))[0] != "TIINGO SERİSİ UYUŞMADI" or BE.seri_denetimi(y + "z", pd.Timestamp("2019-07-10"))[0] != "İNMEDİ":
             hata.append("20) seri denetimi")
+    # 21) evren v2 yardımcıları: SIC bölümü (K34 tablosu), Tiingo okuma (düzeltilmiş OHLCV), K54 satırının K55 tutarlılık denetiminden geçmesi, olay karşılaştırması
+    from K56 import evren_v2 as E2
+    from K55.evren import k54_tutarlilik
+    if E2.sic_bolum(2834) != "İmalat" or E2.sic_bolum(6021) != "Finans" or E2.sic_bolum(None) != "bilinmiyor" or E2.sic_bolum("x") != "bilinmiyor":
+        hata.append("21) SIC bölümü")
+    with tempfile.TemporaryDirectory() as td:
+        g = pd.bdate_range("2017-01-02", periods=400); y = os.path.join(td, "ABC.csv")
+        pd.DataFrame({"date": g.strftime("%Y-%m-%dT00:00:00.000Z"), "open": 10, "high": 11, "low": 9, "close": 10, "volume": 1000, "adjOpen": 5.0, "adjHigh": 5.5, "adjLow": 4.5,
+                      "adjClose": 5.0, "adjVolume": 2000}).to_csv(y, index=False)
+        d = E2.yeni_seri_oku(y, pd.Timestamp("2026-08-31"))
+        if d is None or list(d.columns) != ["Open", "High", "Low", "Close", "Volume"] or float(d.Close.iloc[0]) != 5.0 or len(d) != 400:
+            hata.append("21) Tiingo okuma")
+    SDt = pd.DataFrame([{"sembol": "AAA", "sinif": 2, "alt": "", "cikis_islemi": "y_d100", "kesim_tarihi": "", "erken_bitti": True},
+                        {"sembol": "BBB", "sinif": 3, "alt": "", "cikis_islemi": "y_d0", "kesim_tarihi": "", "erken_bitti": True},
+                        {"sembol": "CCC", "sinif": 5, "alt": "", "cikis_islemi": "y", "kesim_tarihi": "", "erken_bitti": True}])
+    if not k54_tutarlilik(SDt)[0].tutarli.all():
+        hata.append(f"21) K54 satırları K55 tutarlılık denetiminden geçmedi: {k54_tutarlilik(SDt)[1].to_dict('records')}")
+    Oa = pd.DataFrame({"sembol": ["X", "Y"], "donem": "KESIF", "ufuk": "Y60"}); Ob = pd.DataFrame({"sembol": ["X", "Y", "N1"], "donem": "KESIF", "ufuk": "Y60"})
+    OKt = E2.olay_karsilastir(Oa, Ob, pd.DataFrame({"sembol": ["X", "Y", "N1"], "kaynak": ["V_ABD", "V_ABD", "K56_O2"]}))
+    if OKt[["k55", "v2", "v2_yeni_sirket", "fark"]].iloc[0].tolist() != [2, 3, 1, 1]:
+        hata.append(f"21) olay karşılaştırması {OKt.to_dict('records')}")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -317,4 +341,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 22/22 OK")
+    print("test_k56: 23/23 OK")
