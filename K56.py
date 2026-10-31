@@ -54,6 +54,13 @@ def k56_drive(kaynak=None, hedef=None):
     return drive_kopyala(kaynak, hedef)
 
 
+def k56_evren2_aday(cikti=None):
+    """K56-EVREN2: batan şirket adayları (Ö1 + Ö2), SEC başvuru geçmişi, ön sınıflandırma; Tiingo fiyat isteği yok."""
+    from K56.surucu import evren2_aday_kos
+    A = K56Ayar(**({"cikti": cikti} if cikti else {}))
+    return evren2_aday_kos(A)
+
+
 def _cakisma_kontrol_k56(_once=_CK_ONCE_K56, _dosya="K56.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka modülün) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -70,7 +77,7 @@ _cakisma_kontrol_k56()
 
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
-    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive"])
+    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive", "evren2_aday"])
     ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=4); ap.add_argument("--hucreler", default=None); ap.add_argument("--ornek", type=int, default=12)
     a = ap.parse_args()
     if a.komut == "sentetik":
@@ -79,6 +86,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         k56_sentetik_kesif(a.cikti, a.isci)
     elif a.komut == "faz0":
         k56_faz0(a.cikti)
+    elif a.komut == "evren2_aday":
+        k56_evren2_aday(a.cikti)
     elif a.komut == "erisim":
         k56_erisim(a.cikti, a.ornek)
     else:
