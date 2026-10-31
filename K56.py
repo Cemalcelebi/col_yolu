@@ -89,6 +89,23 @@ def k56_evren2_kur(cikti=None, isci=3):
     return evren2_kur_kos(A, isci=int(isci))
 
 
+def k56_v13(komut, cikti=None, isci=3, mod="hepsi"):
+    """v1.3 komutları: kilit_uret, bagimsiz (bir kez; K56_BAGIMSIZ_AC=1), ayrisma, pbo, sizinti."""
+    from K56 import surucu as SU
+    A = K56Ayar(**({"cikti": cikti} if cikti else {}))
+    if komut == "kilit_uret":
+        return SU.kilit_uret_kos(A)
+    if komut == "bagimsiz":
+        return SU.bagimsiz_kos(A, isci=int(isci))
+    if komut == "ayrisma":
+        return SU.ayrisma_kos(A, isci=int(isci))
+    if komut == "pbo":
+        return SU.pbo_kos(A, isci=int(isci))
+    if komut == "sizinti":
+        return SU.sizinti_kos(A, isci=int(isci), mod=mod)
+    raise ValueError(komut)
+
+
 def _cakisma_kontrol_k56(_once=_CK_ONCE_K56, _dosya="K56.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka modülün) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -105,8 +122,8 @@ _cakisma_kontrol_k56()
 
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
-    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive", "evren2_aday", "faz1a", "ic", "evren2_indir", "evren2_kur"])
-    ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=4); ap.add_argument("--hucreler", default=None); ap.add_argument("--ornek", type=int, default=12)
+    ap = argparse.ArgumentParser(description=K56_SURUM); ap.add_argument("komut", choices=["sentetik", "sentetik_kesif", "faz0", "erisim", "drive", "evren2_aday", "faz1a", "ic", "evren2_indir", "evren2_kur", "kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti"])
+    ap.add_argument("--cikti", default=None); ap.add_argument("--isci", type=int, default=4); ap.add_argument("--hucreler", default=None); ap.add_argument("--ornek", type=int, default=12); ap.add_argument("--mod", default="hepsi")
     a = ap.parse_args()
     if a.komut == "sentetik":
         k56_sentetik(a.cikti, a.isci, a.hucreler.split(",") if a.hucreler else None)
@@ -114,6 +131,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         k56_sentetik_kesif(a.cikti, a.isci)
     elif a.komut == "faz0":
         k56_faz0(a.cikti)
+    elif a.komut in ("kilit_uret", "bagimsiz", "ayrisma", "pbo", "sizinti"):
+        k56_v13(a.komut, a.cikti, a.isci, a.mod)
     elif a.komut == "evren2_indir":
         k56_evren2_indir(a.cikti)
     elif a.komut == "evren2_kur":

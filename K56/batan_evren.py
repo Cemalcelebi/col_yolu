@@ -59,9 +59,68 @@ def aday_o1(A: K56Ayar, kk: KaynakKaydi, EV: pd.DataFrame, T: pd.DataFrame) -> p
     E["kaynak"] = "Ö1 (K34 kalan)"; E["sembol"] = E.tiingo
     E = E[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].drop_duplicates("cik").reset_index(drop=True)
     # v1.2-b (fiyat görülmeden): adi hisse olmayan menkul kıymet (SPAC birimi / varant / hak) ve sembolü K55 evreninde başka şirkete ait olanlar indirilmez
-    E["dislama"] = np.where(E.sembol.map(adi_hisse_degil), "adi hisse değil (birim / varant / hak)",
-                            np.where(E.sembol.isin(set(EV.sembol.astype(str).str.upper())), "sembol K55 evreninde (başka CIK; yeniden kullanım)", ""))
+    # v1.3 (fiyat görülmeden): indirme öncesi sembol kuralları (sonek, paylaşılan sembol, beklenen gün < 320); işaretler (F / Y) ayrı sütunda
+    ev_sem = set(EV.sembol.astype(str).str.upper()); dis, isaret, bit = [], [], []
+    for r in E.itertuples():
+        if r.sembol in ev_sem:
+            dis.append("sembol K55 evreninde (başka CIK; yeniden kullanım)"); isaret.append(""); bit.append(r.bitis); continue
+        k, n = indirme_oncesi_suzgec(T, r.sembol, r.borsa, r.baslangic, r.bitis); d = devam_satiri(T, r.sembol, r.baslangic, r.bitis)
+        dis.append(n if k == "DIŞI" else ""); isaret.append(n if k == "İŞARET" else ""); bit.append(d.endDate if (d is not None and k != "DIŞI") else r.bitis)
+    E["dislama"] = dis; E["isaret_on"] = isaret; E["bitis"] = bit                # OTC devamında seri sonu = devam satırının bitişi
     return E[E.dislama == ""].drop(columns="dislama").reset_index(drop=True), E[E.dislama != ""].reset_index(drop=True)
+
+
+def sonek_sinifi(sembol: str, borsa: str) -> Tuple[str, str]:
+    """v1.3 C-2 (indirme öncesi, yalnız sembol + borsa): ('DIŞI' | 'İŞARET' | '', neden). NASDAQ / OTC 5 harf ve 5. harf G H I L M N O P R T U W X Z -> DIŞI
+    (imtiyazlı, borç senedi, birim, varant, hak ...); NYSE / NYSE MKT / AMEX 5 harf ve son harf Q değil -> DIŞI; -U / -WS / -R biçimleri -> DIŞI;
+    5. harf F / Y -> İŞARET (yabancı / ADR)."""
+    s = str(sembol).upper(); b = str(borsa).upper()
+    if adi_hisse_degil(s) and ("-" in s):
+        return "DIŞI", "sembol biçimi (birim / varant / hak)"
+    if len(s) == 5 and s.isalpha():
+        if b in ("NYSE", "NYSE MKT", "AMEX", "NYSE ARCA") and s[-1] != "Q":
+            return "DIŞI", "NYSE grubunda 5 harf (adi hisse değil)"
+        if s[-1] in "GHILMNOPRTUWXZ":
+            return "DIŞI", f"5. harf {s[-1]} (adi hisse değil)"
+        if s[-1] in "FY":
+            return "İŞARET", f"5. harf {s[-1]} (yabancı / ADR)"
+    return "", ""
+
+
+def cakisan_satir(T: pd.DataFrame, sembol: str, bas: pd.Timestamp, bitis: pd.Timestamp, gun: int = 14) -> int:
+    """v1.3: aynı sembolün adayın kendi satırı dışında, aday bitişinden gun günden fazla sonra biten başka Tiingo satırı sayısı (API yeni varlığı döndürür).
+    Devam satırı (aday bitişinden en çok 10 iş günü sonra başlayan; aynı şirketin OTC devamı) sayılmaz: devam_satiri ile ayrı işaretlenir."""
+    g = T[T.ticker == str(sembol).upper()]
+    g = g[~((g.startDate == pd.Timestamp(bas)) & (g.endDate == pd.Timestamp(bitis)))]
+    g = g[g.endDate > pd.Timestamp(bitis) + pd.Timedelta(days=gun)]
+    devam = g.startDate.map(lambda x: pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10)
+    return int((~devam).sum())
+
+
+def devam_satiri(T: pd.DataFrame, sembol: str, bas: Any, bitis: Any) -> Optional[pd.Series]:
+    """Aday bitişinden en çok 10 iş günü sonra başlayan ve daha geç biten Tiingo satırı (OTC devamı); varsa satır."""
+    g = T[(T.ticker == str(sembol).upper()) & (T.endDate > pd.Timestamp(bitis) + pd.Timedelta(days=14))]
+    g = g[g.startDate.map(lambda x: pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10)]
+    return g.sort_values("endDate").iloc[-1] if len(g) else None
+
+
+def beklenen_gun(bas: Any, bitis: Any, indirme_bas: str = "2015-01-01") -> int:
+    return int(len(pd.bdate_range(max(pd.Timestamp(bas), pd.Timestamp(indirme_bas)), pd.Timestamp(bitis))))
+
+
+def indirme_oncesi_suzgec(T: pd.DataFrame, sembol: str, borsa: str, bas: Any, bitis: Any) -> Tuple[str, str]:
+    """v1.3 (fiyat görülmeden): sonek kuralı, paylaşılan sembol, beklenen gün < 320. Dönüş: (DIŞI | İŞARET | '', neden)."""
+    k, n = sonek_sinifi(sembol, borsa)
+    if k == "DIŞI":
+        return k, n
+    if cakisan_satir(T, sembol, bas, bitis):
+        return "DIŞI", "paylaşılan sembol (adaydan sonra biten başka Tiingo satırı)"
+    d = devam_satiri(T, sembol, bas, bitis)
+    if d is not None:                                                    # aynı şirketin OTC devamı: seri sonu devam satırının bitişi, işaret
+        bitis = d.endDate; k, n = "İŞARET", "; ".join(x for x in (n, f"OTC devamı (Tiingo {d.exchange} {d.startDate.date()}..{d.endDate.date()})") if x)
+    if beklenen_gun(bas, bitis) < 320:
+        return "DIŞI", "beklenen işlem günü < 320 (2015 başlangıçlı indirme)"
+    return k, n
 
 
 def adi_hisse_degil(sembol: str) -> bool:
@@ -114,17 +173,44 @@ def aday_o2(A: K56Ayar, ist: Istemci, EV: pd.DataFrame, T: pd.DataFrame, n: int,
     N25 = efts_25nse(ist)
     havuz = o2_havuz(T, set(EV.sembol.astype(str).str.upper()) | set(haric_ek or ()))
     uygun = havuz[~havuz.sonraki_kullanim & ~havuz.haric].reset_index(drop=True)
-    rng = np.random.default_rng(56); sec = uygun.iloc[rng.permutation(len(uygun))[: max(0, n)]].copy()
-    sec["kaynak"] = "Ö2 (Tiingo KEŞİF bitişi)"; sec["cik"] = np.nan
-    return sec[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].reset_index(drop=True), havuz, N25
+    rng = np.random.default_rng(56); sira = rng.permutation(len(uygun)); al, atla = [], []
+    for k in sira:                                                       # v1.3: aynı tohum-56 sırasının devamı; indirme öncesi kurala takılan atlanır
+        r = uygun.iloc[k]; kk, nn = indirme_oncesi_suzgec(T, r.sembol, r.borsa, r.baslangic, r.bitis)
+        if kk == "DIŞI":
+            atla.append({**r.to_dict(), "dislama": nn}); continue
+        d = devam_satiri(T, r.sembol, r.baslangic, r.bitis)
+        al.append({**r.to_dict(), "isaret_on": nn if kk == "İŞARET" else "", **({"bitis": d.endDate} if d is not None else {})})
+        if len(al) >= max(0, n):
+            break
+    sec = pd.DataFrame(al); sec["kaynak"] = "Ö2 (Tiingo KEŞİF bitişi)"; sec["cik"] = np.nan
+    havuz = havuz.merge(pd.DataFrame(atla)[["sembol", "dislama"]] if atla else pd.DataFrame(columns=["sembol", "dislama"]), on="sembol", how="left")
+    return sec[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa", "isaret_on"]].reset_index(drop=True), havuz, N25
 
 
-AD_EK = r"\b(INC|INCORPORATED|CORP|CORPORATION|CO|COMPANY|LTD|LIMITED|PLC|HOLDINGS?|GROUP|LP|L P|LLC|NV|N V|SA|S A|AG|THE|DE|/DE/|/NEW/|NEW)\b"
+AD_EK = {"INC", "INCORPORATED", "CORP", "CORPORATION", "CO", "COMPANY", "LTD", "LIMITED", "PLC", "HOLDING", "HOLDINGS", "GROUP", "LP", "LLC", "NV", "SA", "AG",
+         "DE", "NEW", "THE"}
+AD_GURULTU = r"(TRADING SYMBOL|STATE OF INCORPORATION|COMMISSION FILE).*$"
 
 
 def ad_norm(ad: Any) -> str:
-    x = re.sub(r"[^A-Z0-9 ]", " ", str(ad or "").upper().replace("&", " AND "))
-    return re.sub(r"\s+", " ", re.sub(AD_EK, " ", x)).strip()
+    """v1.3: büyük harf; sondaki eyalet etiketi (/FL/, /DE) ve K34 kapak gürültüsü silinir; noktalama boşluk; L P / N V / S A birleşir; ek sözcükler
+    (INC, CORP, CO ...) atılır, ama ilk sözcükse kalır (Co-Diagnostics -> CO DIAGNOSTICS); THE her yerde atılır."""
+    x = str(ad or "").upper().replace("&", " AND ")
+    x = re.sub(AD_GURULTU, "", x); x = re.sub(r"\s*[/\\][A-Z]{2,4}[/\\]?\s*$", "", x.strip())
+    x = re.sub(r"[^A-Z0-9 ]", " ", x); x = re.sub(r"\b([LNS]) ([PVA])\b", r"\1\2", x)
+    t = [w for i, w in enumerate(x.split()) if w != "THE" and (w not in AD_EK or i == 0 or (i == 1 and x.split()[0] == "THE"))]
+    t = [w for i, w in enumerate(t) if not (w in AD_EK and i > 0)]
+    return " ".join(t).strip()
+
+
+def ad_benzerlik(a: Any, b: Any) -> Tuple[float, float]:
+    """(kelime Jaccard, SequenceMatcher oranı) normalize adlarda."""
+    from difflib import SequenceMatcher
+    x, y = ad_norm(a), ad_norm(b)
+    if not x or not y:
+        return 0.0, 0.0
+    sx, sy = set(x.split()), set(y.split())
+    return len(sx & sy) / len(sx | sy), SequenceMatcher(None, x, y).ratio()
 
 
 def cik_bagla(sembol: str, ad: Optional[str], bitis: pd.Timestamp, N25: pd.DataFrame, gun: int = 45) -> Tuple[Optional[int], str]:
@@ -141,6 +227,10 @@ def cik_bagla(sembol: str, ad: Optional[str], bitis: pd.Timestamp, N25: pd.DataF
     c = W[W.sembol == sembol].cik.unique()
     if len(c) == 1:
         return int(c[0]), "sembol + tarih"
+    if ad and len(W):                                                   # v1.3 ikinci kademe: tek CIK Jaccard >= 0,80 ve ikinci en iyi < 0,50
+        J = W.assign(j=W.ad.map(lambda x: ad_benzerlik(ad, x)[0])).groupby("cik").j.max().sort_values(ascending=False)
+        if len(J) and J.iloc[0] >= 0.80 and (len(J) == 1 or J.iloc[1] < 0.50):
+            return int(J.index[0]), "benzer ad + tarih"
     return None, "BAĞLANAMADI"
 
 
@@ -229,7 +319,7 @@ class KotaDoldu(RuntimeError):
 
 
 def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None, saatlik: int = TIINGO_SAATLIK, durum_yolu: Optional[str] = None,
-                 meta: Optional[set] = None) -> pd.DataFrame:
+                 meta: Optional[set] = None, fiyat: bool = True) -> pd.DataFrame:
     """Tiingo günlük fiyat (2015-01-01 ->), kod başına csv; `meta` içindeki kodlar için önce meta (ad; aynı sembol) meta/<kod>.json. 1 Kasım 2026'dan
     önce İSTEK YOK (ValueError). Var olan dosya atlanır; saatte en çok `saatlik` istek; 429 ya da kota iletisinde KotaDoldu. Anahtar başlıkta,
     loglanmaz. Durum tablosu her istekten sonra yazılır (kaldığı yerden sürer)."""
@@ -241,8 +331,11 @@ def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None
         raise RuntimeError("TIINGO_TOKEN yok (.env ya da Colab gizli anahtarı)")
     import requests
     os.makedirs(os.path.join(klasor, "meta"), exist_ok=True); s = requests.Session(); s.headers.update({"Content-Type": "application/json", "Authorization": f"Token {tok}"})
-    durum = pd.read_csv(durum_yolu).to_dict("records") if (durum_yolu and os.path.exists(durum_yolu)) else []; zaman: List[float] = []
-    bitti = {(d["sembol"], d["tur"] if isinstance(d.get("tur"), str) else "fiyat") for d in durum if d.get("durum") in ("indi", "bos")}
+    durum = pd.read_csv(durum_yolu).to_dict("records") if (durum_yolu and os.path.exists(durum_yolu)) else []
+    zaman: List[float] = sorted(pd.to_datetime([d["zaman"] for d in durum if isinstance(d.get("zaman"), str)], errors="coerce").dropna().map(lambda t: t.timestamp()).tolist())
+    zaman = [t for t in zaman if time.time() - t < 3600]                 # yeniden başlatmada son saatin istekleri hız sınırına sayılır
+    kalici = ("indi", "bos", "HTTP 404")                                 # 404 kalıcı (yeniden istenmez); öteki hatalar sürdürmede yeniden denenir
+    bitti = {(d["sembol"], d["tur"] if isinstance(d.get("tur"), str) else "fiyat") for d in durum if d.get("durum") in kalici}
 
     def yaz():
         if durum_yolu:
@@ -272,8 +365,8 @@ def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None
         if meta and k in meta and not os.path.exists(ym) and (k, "meta") not in bitti:
             istek(k, "meta", f"https://api.tiingo.com/tiingo/daily/{k}", {}, ym, lambda t: t.lstrip().startswith("{"))
         yol = os.path.join(klasor, f"{k}.csv")
-        if os.path.exists(yol) or (k, "fiyat") in bitti:
+        if not fiyat or os.path.exists(yol) or (k, "fiyat") in bitti:
             continue
         istek(k, "fiyat", f"https://api.tiingo.com/tiingo/daily/{k}/prices", {"startDate": "2015-01-01", "format": "csv",
-              "columns": "date,open,high,low,close,volume,adjOpen,adjHigh,adjLow,adjClose,adjVolume"}, yol, lambda t: t.startswith("date"))
+              "columns": "date,open,high,low,close,volume,adjOpen,adjHigh,adjLow,adjClose,adjVolume,divCash,splitFactor"}, yol, lambda t: t.startswith("date"))
     return pd.DataFrame(durum)

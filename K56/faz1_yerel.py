@@ -368,13 +368,15 @@ def bilesim(P: pd.DataFrame, V: Dict[str, pd.DataFrame], O: pd.DataFrame, J: Dic
 
 
 def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], olay_yol: Optional[str], isci: int = 3, b3: bool = False, sinir: Optional[int] = None,
-             veri: Optional[Dict[str, Any]] = None, yalniz_a1: bool = False) -> Dict[str, Any]:
+             veri: Optional[Dict[str, Any]] = None, yalniz_a1: bool = False, veri_dondur: bool = False) -> Dict[str, Any]:
     """Ortak motor: KEŞİF (A1-A3) ya da İÇ (B1-B4). Satırlar = K55 KEŞİF ölçütünü geçen 125 (hücre, varyant, ufuk). sinir: yalnız ilk n varyant (duman
     sınaması; rapora yazılmaz). veri: hazır P / V / O / EV / endeks / evren_surum (evren v2); yalniz_a1: A2, ayrıştırma ve A3 yok (evren v2 etkisi)."""
     import multiprocessing as mp
     from K55.istatistik import bh_fdr
     from . import mekanizma as M
     from .kurumsal_olaylar import sec_ozet_yukle
+    if donem.startswith("BAGIMSIZ") and sinir is not None:
+        raise ValueError("BAĞIMSIZ'da duman sınaması (sinir) yok: her BAĞIMSIZ hesabı açılış sayılır (v1.3-D)")
     donem_kapisi(donem); t0 = time.time()
     VERI = veri if veri is not None else k55_veri(A, kk, panel_yol, olay_yol); P, V, O, EV = VERI["P"], VERI["V"], VERI["O"], VERI["EV"]
     K = M.kesif_satirlari(A, kk)
@@ -385,7 +387,10 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], 
     X = a2_sutunlari(P, V, VERI["endeks"])
     for c in X.columns:
         P[c] = X[c].to_numpy()
-    J = sec_ozet_yukle(A); kk.oku("/tmp/k55/sec_ozet.json", "veri", "SEC başvuru özeti (islenmis-veri k55)")
+    if VERI.get("J") is not None:                                         # sızıntı denetimi: kesik başvuru özeti
+        J = VERI["J"]
+    else:
+        J = sec_ozet_yukle(A); kk.oku("/tmp/k55/sec_ozet.json", "veri", "SEC başvuru özeti (islenmis-veri k55)")
     k55ev = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_EVREN.csv"), "veri", "sembol -> CIK")); cikmap = {r.sembol: int(r.cik) for r in k55ev.dropna(subset=["cik"]).itertuples()}
     nit = nitelikli_gunler(P, V); olay = {u: olay_maskesi(P, O, u, donem) for u in nit}
     bayrak = basvuru_bayrak_dizileri(P, V, J, cikmap) if not yalniz_a1 else None
@@ -405,7 +410,7 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], 
     # İÇ ölçütleri (B1): KEŞİF ile aynı işaret + |d| >= 0,20 + aralık 0'ı dışlar + AUC + iki yıl aynı işaret + BH q (125 satır)
     kd = K.set_index(["hucre", "varyant", "ufuk"]).d
     S["kesif_d"] = [kd.get((r.hucre, r.varyant, r.ufuk), np.nan) for r in S.itertuples()]
-    if donem == "IC_DOGRULAMA" and "i_p" in S:
+    if donem in ("IC_DOGRULAMA", "BAGIMSIZ", "BAGIMSIZ_B") and "i_p" in S:                # B1 ölçütleri İÇ ile aynı (BAĞIMSIZ: v1.3, yeni eşik yok)
         S["q_bh"] = bh_fdr(S.i_p.fillna(1.0).to_numpy())[0]                     # aile = 125 satır; ölçülemeyen satır p = 1
         def gecti(r):
             yil = json.loads(r.i_yil) if isinstance(r.i_yil, str) else {}
@@ -419,7 +424,9 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], 
         agg["b1_gecen"] = ("b1_gecti", "sum")
     H = S.groupby("hucre").agg(**agg).reset_index()
     if "b1_gecti" in S:
-        H["b1_durum"] = np.where(H.b1_gecen > H.satir / 2, "DOĞRULAMA BEKLİYOR (A, ilk geçiş)", "İÇ'TE TUTMADI (A, ilk geçiş)")
+        etk = {"IC_DOGRULAMA": ("DOĞRULAMA BEKLİYOR (A, ilk geçiş)", "İÇ'TE TUTMADI (A, ilk geçiş)"), "BAGIMSIZ": ("BAĞIMSIZ'DA TEKRARLADI (A, ilk geçiş)", "BAĞIMSIZ'DA TUTMADI (A, ilk geçiş)"),
+               "BAGIMSIZ_B": ("DUYARLILIK-B: TEKRARLADI (A, ilk geçiş)", "DUYARLILIK-B: TUTMADI (A, ilk geçiş)")}[donem]
+        H["b1_durum"] = np.where(H.b1_gecen > H.satir / 2, etk[0], etk[1])
     Bl = bilesim(P, V, O, J, cikmap, donem) if not yalniz_a1 else pd.DataFrame()
-    return {"S": S, "H": H, "B3": B3, "Bl": Bl, "evren_surum": VERI["evren_surum"], "olay_orani": {u: float(olay[u].sum() / max(1, (P.likit & (P[f"donem{h}"] == donem)).sum()))
+    return {**({"VERI": VERI} if veri_dondur else {}), "S": S, "H": H, "B3": B3, "Bl": Bl, "evren_surum": VERI["evren_surum"], "olay_orani": {u: float(olay[u].sum() / max(1, (P.likit & (P[f"donem{h}"] == donem)).sum()))
                                                                                                     for u, h in (("Y60", 60), ("Y120", 120), ("Y250", 250))}, "sure_dk": round((time.time() - t0) / 60, 1)}

@@ -347,6 +347,95 @@ def testler():
                 hata.append(f"22) indirme_sonrasi {Yt[['sembol', 'seri_durum', 'cik']].to_dict('records')}")
         except Exception as ex:
             hata.append(f"22) indirme_sonrasi çöktü: {type(ex).__name__}: {ex}")
+    # 23) v1.3 ayrışma: ortak bootstrap = boot_kume; kimlik E1 − E2 = −Cov(L, f) / ort L; satır kararı; spek çoğunluğu
+    from K56 import ayrisma as AY
+    from K55.istatistik import boot_kume
+    rr = np.random.default_rng(3); xs = rr.normal(size=300); ks = rr.integers(0, 40, 300)
+    nk, lo, hi = boot_kume(xs, ks, 500, np.random.default_rng(9)); inv, sec = AY.kume_cekilis(ks, 500, np.random.default_rng(9)); nn, bs = AY.oran_boot(xs, np.ones(300), inv, sec)
+    if not (abs(nk - nn) < 1e-12 and abs(np.percentile(bs, 2.5) - lo) < 1e-12 and abs(np.percentile(bs, 97.5) - hi) < 1e-12):
+        hata.append("23) ortak bootstrap boot_kume ile aynı değil")
+    nz = 400; zz = rr.normal(size=nz); gun = np.repeat(np.arange(40), 10); vd = np.tile(np.arange(2), 200)
+    gl = [np.arange(k, k + L) for k, L in zip(range(0, 380, 20), rr.integers(1, 15, 19))]; pl = [np.arange(1, len(g) + 1) for g in gl]; Ls = np.array([len(g) for g in gl])
+    out23 = AY.satir_olc(zz, gun, vd, gl, pl, Ls, -1.0, {"ay": np.arange(19) % 7, "sembol_yil": np.arange(19) % 5}, np.arange(19), "test", B=200)
+    if out23.get("karar_veri") != "VERİ YETERSİZ":
+        hata.append("23) 19 olayda VERİ YETERSİZ beklenirdi")
+    nz = 2000; zz = rr.normal(size=nz); gun = np.repeat(np.arange(100), 20); vd = np.tile(np.arange(2), 1000)
+    gl = [np.arange(k, k + L) for k, L in zip(range(0, 1980, 30), rr.integers(1, 11, 66))]; pl = [np.arange(1, len(g) + 1) for g in gl]; Ls = np.array([len(g) for g in gl])
+    out23 = AY.satir_olc(zz, gun, vd, gl, pl, Ls, -1.0, {"ay": np.arange(66) % 9, "sembol_yil": np.arange(66) % 11}, np.arange(66), "test", B=200)
+    if not (abs(out23.get("kimlik_fark", 1)) < 1e-9 and abs(out23["iii_cekilis_ort"] - out23["E1"]) < 0.05):
+        hata.append(f"23) kimlik / çekiliş: {out23.get('kimlik_fark')}, {out23.get('iii_cekilis_ort')} vs {out23.get('E1')}")
+    r_ = {"G": 0.3, "G_ay_alt": 0.2, "G_ay_ust": 0.4, "G_sembol_yil_alt": 0.1, "G_sembol_yil_ust": 0.5, "G_blok60_alt": 0.15, "G_blok60_ust": 0.45, "E1": -0.3, "E2": 0.0,
+          "E2_ay_alt": -0.05, "E2_ay_ust": 0.05}
+    if AY.satir_karari(r_, "MEKANIK_ACIKLAR") != "AĞIRLIK ETKİSİ + MEKANİK (yapay veri üretiyor)" or AY.satir_karari({**r_, "G_ay_alt": -0.1}, "MEKANIK_ACIKLAR") != "AYRIŞMA YOK" \
+            or AY.satir_karari(r_, "MEKANIK_IZ_YOK") != "AĞIRLIK ETKİSİ (gerçek veriye özgü, öngörü değil)" or AY.satir_karari({**r_, "E2": -0.2, "E2_ay_alt": -0.25, "E2_ay_ust": -0.15}, "MEKANIK_IZ_YOK") != "AÇIKLANMADI" \
+            or AY.satir_karari({**r_, "G_blok60_alt": -0.01}, "MEKANIK_ACIKLAR") != "AYRIŞMA YOK" \
+            or AY.spek_cogunluk(["MEKANIK_ACIKLAR"] * 3 + ["MEKANIK_IZ_YOK"]) != "MEKANIK_ACIKLAR" or AY.spek_cogunluk(["MEKANIK_ACIKLAR"] * 2 + ["MEKANIK_IZ_YOK"] * 2) != "BELİRSİZ (yapay)":
+        hata.append("23) ayrışma satır kararı / spek çoğunluğu")
+    # 24) v1.3 bir kez kuralı ve açık kayıt kapısı; BAĞIMSIZ'da sinir reddi; BAGIMSIZ_B sınırları; kilitte git etiketi zorunlu
+    with tempfile.TemporaryDirectory() as td:
+        kim = {"kimlik": "K56-BAG-test", "commit": "abc"}; O.acilis_baslat("K55_125_B", kim, td)
+        for f_, bek in ((lambda: O.acilis_baslat("K55_125_B", kim, td), "BAŞLADI"),):
+            try:
+                f_(); hata.append("24) bitmemiş kayıt varken ikinci açılış")
+            except O.DonemKapali:
+                pass
+        os.environ["K56_BAGIMSIZ_KIMLIK"] = "K56-BAG-test"; O.acik_kayit_dogrula(td); os.environ["K56_BAGIMSIZ_KIMLIK"] = "baska"
+        try:
+            O.acik_kayit_dogrula(td); hata.append("24) yanlış kimlikle açık kayıt geçti")
+        except O.DonemKapali:
+            pass
+        os.environ.pop("K56_BAGIMSIZ_KIMLIK", None); O.acilis_bitir("K55_125_B", kim, "ÇÖKTÜ", td, notu="test")
+        try:
+            O.acilis_baslat("K55_125_B", {"kimlik": "K56-BAG-2", "commit": "abc"}, td); hata.append("24) çöküş sonrası gerekçesiz yeniden deneme")
+        except O.DonemKapali:
+            pass
+        os.environ["K56_BAGIMSIZ_YENIDEN"] = "test gerekçesi"; O.acilis_baslat("K55_125_B", {"kimlik": "K56-BAG-2", "commit": "abc"}, td); os.environ.pop("K56_BAGIMSIZ_YENIDEN", None)
+        O.acilis_bitir("K55_125_B", {"kimlik": "K56-BAG-2", "commit": "abc"}, "TAMAMLANDI", td)
+        try:
+            os.environ["K56_BAGIMSIZ_YENIDEN"] = "x"; O.acilis_baslat("K55_125_B", {"kimlik": "K56-BAG-3", "commit": "abc"}, td); hata.append("24) TAMAMLANDI sonrası yeniden koşu")
+        except O.DonemKapali:
+            pass
+        finally:
+            os.environ.pop("K56_BAGIMSIZ_YENIDEN", None)
+    try:
+        F1.calistir(O.K56Ayar(), O.KaynakKaydi(), "BAGIMSIZ", None, None, sinir=1); hata.append("24) BAĞIMSIZ'da sinir kabul edildi")
+    except ValueError:
+        pass
+    try:
+        O.git_kilit_dogrula({"etiket": "", "commit_tam": ""}); hata.append("24) etiketsiz kilit geçti")
+    except O.DonemKapali:
+        pass
+    from K56 import surucu as SU2
+    Pb = pd.DataFrame({"tarih": pd.to_datetime(["2024-01-05", "2024-03-01", "2026-05-01", "2026-06-10"]), "donem60": ["EMBARGO", "BAGIMSIZ", "PURGE", "DISI"],
+                       "donem120": "X", "donem250": "X", "bitis60": pd.to_datetime(["2024-04-01", "2024-05-24", "2026-07-28", "2026-09-04"]), "bitis120": pd.NaT, "bitis250": pd.NaT})
+    Ob = pd.DataFrame({"tarih": pd.to_datetime(["2026-05-01"]), "bitis": pd.to_datetime(["2026-07-28"]), "donem": ["PURGE"]})
+    SU2.bagimsiz_b_etiketle({"P": Pb, "O": Ob})
+    if Pb.donem60.tolist() != ["EMBARGO", "BAGIMSIZ_B", "BAGIMSIZ_B", "DISI"] or Ob.donem.tolist() != ["BAGIMSIZ_B"]:
+        hata.append(f"24) BAGIMSIZ_B etiketi {Pb.donem60.tolist()} {Ob.donem.tolist()}")
+    # 25) sızıntı karşılaştırması: aynı tablo birebir, tek hücre farkı yakalanır
+    from K56 import sizinti_denetimi as SZ
+    Sx = pd.DataFrame({"hucre": ["a", "b"], "varyant": ["a|1", "b|1"], "ufuk": "Y60", "i_d": [0.1, np.nan], "sinif_a1": ["MEKANİK", "X"], "sure_sn": [1.0, 2.0]})
+    _, z1 = SZ.karsilastir({"S": Sx}, {"S": Sx.assign(sure_sn=[5.0, 6.0])}); Sy = Sx.copy(); Sy.loc[0, "i_d"] = 0.1000001
+    F25, z2 = SZ.karsilastir({"S": Sx}, {"S": Sy})
+    if not z1["birebir"]["S"] or z2["birebir"]["S"] or len(F25) != 1:
+        hata.append(f"25) sızıntı karşılaştırması {z1} {z2}")
+    # 26) EVREN2 v1.3: ad normalizasyonu, sonek, paylaşılan sembol, adi hisse adı, kimlik
+    if BE.ad_norm("Co-Diagnostics, Inc.") != "CO DIAGNOSTICS" or BE.ad_norm("JACKSONVILLE BANCORP INC /FL/") != "JACKSONVILLE BANCORP" or BE.ad_norm("The Xyz Co., Inc.") != "XYZ":
+        hata.append("26) ad normalizasyonu")
+    if BE.sonek_sinifi("CBSHP", "NASDAQ")[0] != "DIŞI" or BE.sonek_sinifi("DXBCL", "NYSE")[0] != "DIŞI" or BE.sonek_sinifi("ABCDF", "NASDAQ")[0] != "İŞARET" or BE.sonek_sinifi("CHMA", "NASDAQ")[0] != "":
+        hata.append("26) sonek kuralı")
+    Tp = pd.DataFrame({"ticker": ["DNB", "DNB"], "startDate": pd.to_datetime(["2010-01-04", "2020-07-01"]), "endDate": pd.to_datetime(["2019-02-08", "2026-10-29"])})
+    Tq = pd.DataFrame({"ticker": ["GWGHQ", "GWGHQ"], "exchange": ["NASDAQ", "EXPM"], "startDate": pd.to_datetime(["2015-01-02", "2022-05-03"]), "endDate": pd.to_datetime(["2022-04-25", "2023-08-25"])})
+    if BE.cakisan_satir(Tq, "GWGHQ", "2015-01-02", "2022-04-25") != 0 or BE.devam_satiri(Tq, "GWGHQ", "2015-01-02", "2022-04-25") is None \
+            or "OTC devamı" not in BE.indirme_oncesi_suzgec(Tq, "GWGHQ", "NASDAQ", "2015-01-02", "2022-04-25")[1]:
+        hata.append("26) OTC devamı istisnası")
+    if BE.cakisan_satir(Tp, "DNB", "2010-01-04", "2019-02-08") != 1 or BE.beklenen_gun("2010-01-01", "2016-01-29") >= 320:
+        hata.append("26) paylaşılan sembol / beklenen gün")
+    if E2.adi_hisse_ad("XYZ Corp 6.5% Senior Notes", None)[0] != "DIŞI" or E2.adi_hisse_ad("Kinder Morgan Energy Partners LP Common Units", None)[0] != "İŞARET" \
+            or E2.adi_hisse_ad("Foo American Depositary Shares", None)[0] != "İŞARET" or E2.adi_hisse_ad("Chiasma Inc", None)[0] != "":
+        hata.append("26) adi hisse adı kuralı")
+    if E2.kimlik_ad("Chiasma Inc", {"name": "CHIASMA, INC", "formerNames": []})[0] != "UYUMLU" or E2.kimlik_ad("Totally Different LLC", {"name": "CHIASMA, INC", "formerNames": []})[0] != "UYUMSUZ":
+        hata.append("26) kimlik kuralı")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -358,4 +447,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 24/24 OK")
+    print("test_k56: 28/28 OK")

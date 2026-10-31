@@ -220,3 +220,104 @@ düzeltmeler sonuç sınıfına göre değil, önceden yazılı kuralın uygulan
 ### Genel
 - Üç çalışma ayrı kimlik (K56-F1A-…, K56-IC-…, K56-EVREN2-…), ayrı alt klasör (faz1_yerel/, ic_dogrulama/, evren_v2/), ayrı rapor. Faz 0 çıktıları
   değiştirilmez; başarısız sonuçlar silinmez.
+
+## v1.3 (31 Ekim 2026; Cemal'in BAĞIMSIZ dönem kararı — 9 madde; BAĞIMSIZ açılmadan, kilit üretilmeden ÖNCE commit'lenir)
+Gerekçe ve kaynak: Cemal'in 31 Ekim kararı (BAĞIMSIZ 2024-26 yalnız mevcut ön kayıtlı testler için açılır; önce kod sabitlenir, ön kayıt yeniden üretilir,
+kod / veri / evren / ayar hash'leri kaydedilir, kilit yeniden oluşturulur, İÇ'te dolaylı erişim olmadığı doğrulanır; BAĞIMSIZ'da yeni keşif / eşik / gösterge /
+geriye dönük hipotez ayarı yok; ayrışma özel incelenir; 125 satır + B bir kez; EVREN2 adayları ayrı ayrı doğrulanır; eski sonuçlar değişmez; nihai K55
+kararı, kurtarma yok). Tasarım dört bağımsız uzman raporu ve bir eleştirmenle yapıldı (iş akışı wf_9abc0e52); uzmanlar yalnız yapay veride küçük
+koşular yaptı (ayrışma, T1 sentetik) ve BAĞIMSIZ olay sayılarını gördü (K55 Faz 0 raporunda zaten yayımlı); BAĞIMSIZ değişken / sonuç ilişkisi görülmedi.
+
+### D. BAĞIMSIZ açılışı (çalışma kimliği K56-BAG; açılış adı K55_125_B; BİR KEZ)
+- Testler yalnız v1.2-B'dekiler, ölçütler İÇ ile AYNEN (yeni eşik yok): B1 = 125 KEŞİF satırı K55 A (ilk geçiş): KEŞİF işaretiyle aynı, |d| >= 0,20, ay
+  kümeli 2.000 bootstrap %95 aralığı 0'ı dışlar, |AUC − 0,5| >= 0,06, olay >= 10 ve olay dışı >= 10 olan BÜTÜN takvim yıllarında (kısmi yıl dahil) işaret
+  KEŞİF'le aynı ve en az bir yıl, BH q <= 0,10 (aile = BAĞIMSIZ'daki 125 satır, ölçülemeyen p = 1). Hücre: satır çoğunluğu geçerse "BAĞIMSIZ'DA TEKRARLADI
+  (A, ilk geçiş)", değilse "BAĞIMSIZ'DA TUTMADI". B2 = seçimsiz kontrol (v1.2-A karar tablosu aynen; gerçek etki için belirleyici). B3 = K55 B (yontem_B
+  aynen; donem60; yön kayıttan; n >= 30, fark >= 0,05, alt uçlar > 0, net > 0, slot >= 0,90). B4 = bileşim (A3 kuralları; sec_var kuralı aynen) + A2
+  (M16a COVID penceresi BAĞIMSIZ'da UYGULANAMAZ).
+- Dönem etiketi (asıl): K55 kod etiketleri AYNEN (donem{h} = BAGIMSIZ: t0 ve pencere sonu 2024-01-15..2026-06-05; embargo 14 takvim günü). Gerekçe: K55
+  sonuçları bu etiketlerle üretildi, v1.2-B "aynen" dedi, Cemal Faz 1 kararlarında (31 Ekim, madde 2) "mevcut K55 dönem sınırları geriye dönük
+  değiştirilmesin" dedi. Bilinen çelişki K55 ön kaydının kendi içinde: v1.2-1 (pencere sonu dönem dışı -> PURGE; kod bunu uygular) ile v1.2-2
+  ("2026-06-06..08-31 yalnız sonuç penceresi"); K55 sonuçları değişmez, çelişki sapma olarak kaydedilir.
+- Duyarlılık (aynı tek açılışta, ayrı etiketli "DUYARLILIK-B"; karar tablosunda rolü yok): K55 ön kaydı v1.2-2 tanımı (BAGIMSIZ_B: t0
+  2024-01-15..2026-06-05 ve pencere sonu <= 2026-08-31; olaylar da aynı kuralla). B1 / B2 / B3 aynı kodla. Koşu parametreleri: sinir yok, b3 = True.
+- Ayrışma (E), PBO / DSR (F), açıklayıcı tanı sütunları ve EVREN2 BAĞIMSIZ'da KOŞULMAZ (yalnız mevcut testler). (iii) v1.2-A'nın mevcut duyarlılığı
+  olarak hesaplanır, karar vermez. (iii) seçimsiz bir kontrol DEĞİLDİR: sıfır etkili yapay veride d(iii) ≈ d(i) (tasarım uzmanı ve eleştirmen yapay
+  sınamaları); KEŞİF / İÇ'teki "(iii) GERÇEK ETKİ KALIYOR" etiketleri gerçek etki kanıtı sayılmaz. B3 kayıt yönüyle okunur; işareti çevrilerek
+  (karşı uç) okunmaz.
+- 125 satır listesi ve KEŞİF d'leri sha'lı ek: K56/ONKAYIT_K56_SATIRLAR.csv (sha256 f53683abc0d6...); kod sha'sına girer.
+- Bir kez: açılış kaydı (K56_BAGIMSIZ_ACILIS.csv) hesaptan ÖNCE BAŞLADI satırıyla yazılır, commit + push edilir (push olmazsa hesap başlamaz); dönem kapısı
+  BAĞIMSIZ için açık BAŞLADI kaydı + eşleşen kimlik ister; duman sınaması (sinir) BAĞIMSIZ'da reddedilir. Sonuç dosyaları yazılınca TAMAMLANDI (sonuç
+  sha'larıyla) commit + push. Çökme: ÇÖKTÜ kaydı; koşu klasöründe sonuç dosyası yoksa gerekçeyle bir yeniden deneme; sonuç dosyası oluşmuşsa yeniden koşu
+  yok. Rapor yalnız kaydedilmiş CSV'lerden üretilir.
+- Kilit (kilit_uret komutu; açılış kaydı boşken): temiz git ağacı + etiket (K56-BAG-KILIT-<tarih>) + tam commit; kod sha (K56/*, K56.py, K55/*.py, K55.py,
+  K55/ONKAYIT_K55.md, COL_YOLU_ABD.py, FON_IZI.py); ön kayıt sha (bu sürüm); hipotez sha; eşikler (K56 M, F1 ESIKLER, AYR, K55 AYARLAR, HUCRELER dökümü,
+  CY, CY_V15); veri: panel dosya + içerik sha, olay tablosu sha, K55 evren sürümü, veri_sha (V_ABD, K34, Tiingo, endeks, sektör, K54) ve ek veri (sec_ozet,
+  evren_disi, K55_VARYANTLAR, K55_EVREN, k35_sic, K56_SECIM_SENTETIK_KESIF); kıyas tabanı (F1A ve IC SON koşu kimlikleri + çıktı sha'ları); ortam
+  (python / numpy / pandas, zorunlu). Açılışta hepsi yeniden hesaplanır; biri tutmazsa DonemKapali.
+
+### E. Ayrışma incelemesi (çalışma kimliği K56-AYR; KEŞİF, İÇ ve yapay veri; Cemal madde 4)
+- Tanımlar K56/ayrisma.py başlığındaki gibi: olay dizisi (dönem içinde kesik), u = z − c (c: aynı gün × vd grubunda dizi dışı satırların z ortalaması, grup
+  < 5 ise gün içi), f_e (dizinin geçerli günlerinde u ortalaması), E1 olay ağırlıklı, E2 gün ağırlıklı, G = s (E1 − E2), s = KEŞİF d(i) işareti; kimlik
+  E1 − E2 = −Cov(L, f) / ortalama L (1e-9 sınaması). Konum bantları 1 / 2-5 / 6-20 / 21+; uzunluk katmanları aynı; L dağılımı; gün eşit ağırlık; (iii)
+  200 çekiliş (tohum 56-255) ortalaması = E1 sınaması. Kümeli bootstrap 2.000, bütün istatistikler aynı çekilişten: birincil ay(t0), ikinci sembol|yıl(t0);
+  bilgi: olay, blok60.
+- Yapay veri: dört Faz 0 spek (gauss 561 / 562, garch_t 563 / 564; karar) + kalibre_gjr 565, kalibre_sicrama 566 (duyarlılık); 400 hisse × 1.600 gün;
+  aynı 125 satır; sentetik_sinif(G_s, aralık, G_gerçek) ve SPEK_UYUM 3 (mevcut sabitler 0,50 / 0,20 / 0,05).
+- Etiket: bu protokol KEŞİF / İÇ'teki (iii) ve tanı sonuçları GÖRÜLDÜKTEN SONRA tasarlandı; betimleyicidir. Yeni karar kuralları (e2 ≈ 0 için 0,20 oranı,
+  bantlar, katman n >= 30, çoğunluk) bu çalışmaya özgüdür, K55 kararına girmez. "isaret" = KEŞİF d(i) işareti (±1).
+- Satır kararı (sırayla): f geçerli olay < 30 -> VERİ YETERSİZ; G'nin ay, sembol|yıl ya da blok60 aralıklarından biri 0'ı kapsıyor ya da G < 0,05 -> AYRIŞMA YOK; yapay
+  çoğunluk MEKANIK_ACIKLAR -> "MEKANİK (yapay veri üretiyor)", KISMEN_MEKANIK -> "KISMEN MEKANİK" (ikisinde de E2 ≈ 0 ise başa "AĞIRLIK ETKİSİ +"; E2 ≈ 0 =
+  E2 aralığı 0'ı kapsıyor ya da |E2| <= 0,20 |E1|); yapay sınıf yok / ters -> E2 ≈ 0 ise "AĞIRLIK ETKİSİ (gerçek veriye özgü, öngörü değil)", değilse
+  "AÇIKLANMADI"; dört spekten üçü aynı değilse "BELİRSİZ (yapay)". Hücre: KEŞİF satırlarının çoğunluğu (dönem başına).
+- Öngörü sorusunun ölçüsü (ii)'dir (bir günün nitelikli olacağını önceden bilmek; E1 / (iii) / (i) geleceğe bağlı ağırlık taşır); K55 B onun getiri biçimidir.
+  Ayrışma sonucu hiçbir satırı "gerçek etki"ye çevirmez; K55 kararına girmez. Beyan: tasarım sırasında küçük yapay koşular görüldü (yalnız yapay veri).
+
+### F. PBO / Deflated Sharpe (çalışma kimliği K56-PBO; K55 ön kaydı §7 "DOĞRULAMA BEKLİYOR adayları için PBO ve DSR"; yalnız KEŞİF + İÇ, açılıştan önce)
+- Yapı başına (64 KEŞİF varyantı) aylık seri: K55 B seçimi (gün içi sıra >= 0,80 ya da <= 0,20; örtüşmez 60 gün), eşleşmiş net fark (r60 − maliyet − eş
+  ortalaması, K55 eslestir k = 5), t0 ayı ortalaması; dönem donem60 ∈ {KEŞİF, İÇ}. Yön: asıl = KEŞİF A işareti (adayın keşfedilen yönü); bilgi = kayıt
+  yönü. PBO = CSCV (COL_YOLU_ABD.cy_pbo, 16 blok, aylık), DSR = cy_dsr (en iyi IS yapı, N = 64 deneme). K51 H8 ölçütü aynen: PBO < 0,5 ve DSR >= 0,95 ->
+  "aşırı uyum riski düşük"; değilse "aşırı uyum riski yüksek". Karar vermez; BAĞIMSIZ'da koşulmaz.
+
+### G. İÇ → BAĞIMSIZ dolaylı erişim sınaması (çalışma kimliği K56-SIZ; açılıştan önce; K56/sizinti_denetimi.py)
+- T0: K55 evren / panel / olay baştan kurulur; kilitli panel ve olay tablosuyla eşit olmalı. T1: aynı evren, fiyat / endeks / SEC özeti 2023-12-31'de
+  kesik; İÇ motoru (B3 dahil): S, H, B3 TAM EŞİT (tolerans 0, NaN = NaN, süre hariç); bileşim tam başvuru özetiyle (T1a) eşit, kesik özetle (T1b) farkı
+  kaydedilir (sec_var). Bir fark çıkarsa açıklanana kadar K56-IC geçersiz ve BAĞIMSIZ açılmaz; kilit yalnız T1 PASS iken üretilir. Meşru farklar
+  (karşılaştırılmayan): panel indeks numaraları, panel bilgi sayıları, evren sürüm metni, penceresi kesimi aşan satırların PURGE -> TANIMSIZ etiketi.
+  T2a: evren de kesik veriden (>= 320 gün, ALIVE_SINIR kesimden bir ay önce); T2b: ayrıca kesimden sonra evrene giren K34 sembolleri dışarıda; T1b'ye karşı
+  fark "evren tasarımı etkisi" olarak raporlanır (ihlal değil): ihmal edilebilir = sınıf değişmez, en büyük d farkı <= 0,05 ve satır d farkı o satırın
+  aralık yarı genişliğinin %25'ini aşmaz. Ek beyan: ilk İÇ koşusundaki sızıntı (6cf01ae) görüldü ve düzeltildi. Görünmeyen sınırlamalar beyan edilir: hayatta kalma (evren 2026'da işlem görenler + K34),
+  2026 sürümü bölünme / temettü düzeltmesi, güncel sektör / CIK etiketleri; K51-K54 ABD 2024-26'yı test dönemi olarak kullandığı için BAĞIMSIZ araştırma
+  programına göre görülmüş bir dönemdir (K55 hipotezlerine göre görülmemiş).
+
+### H. K55 nihai karar eşlemesi (sonuç görülmeden; Cemal madde 9)
+- Bugün: B2 GERÇEK ETKİ KEŞİF 0 / 125, İÇ 0 / 125; K55 B KEŞİF 0 TUTAR, İÇ 0 / 64.
+- BAĞIMSIZ B2 hücre çoğunluğu MEKANİK -> "K55 NİHAİ: İZ YOK — ters yönlü farklar olay tanımının seçim eseri (üç dönemde)".
+- Bazı satırlar GERÇEK ETKİ / KISMEN MEKANİK / TERS KALINTI ama hücre çoğunluğu değil -> aynı karar; satırlar raporlanır. KISMEN MEKANİK ve TERS
+  KALINTI hiçbir durumda iz sayılmaz (kalan küçük etki ya da ters yönlü kalıntı; KEŞİF'te 2 / 7, İÇ'te 10 / 3 satır).
+- Bir hücrenin çoğunluğu GERÇEK ETKİ KALIYOR -> İZ YOK korunur + "TEK DÖNEM SAPMASI" notu (KEŞİF ve İÇ'te seçimsiz etki yok; tek dönem tekrar sayılmaz;
+  yeni hipotez ancak ayrı ön kayıtla ve K55 dışı veride).
+- B1 geçerse destek sayılmaz ("seçim etkisi tekrarladı"; İÇ'te B1 119 / 125, B2 0). B3 TUTAR çıkarsa "tek dönemde tuttu: İZ DEĞİL" (yeni eşik aranmaz).
+  BAĞIMSIZ ölçülemezse KEŞİF + İÇ'e göre İZ YOK. Ayrışma, PBO / DSR, duyarlılık pencere tanımı ve EVREN2 kararı değiştirmez. Üst sınır: Avrupa olmadan
+  en fazla ABD-ADAY (CLAUDE.md); DOĞRULANDI için K55 ön kaydına göre AVR şart.
+
+### I. EVREN2 v1.3 (fiyat görülmeden; 1 Kasım indirmesinden önce)
+- İndirme öncesi sembol kuralları (Ö1 ve Ö2): NASDAQ / OTC 5 harf ve 5. harf G H I L M N O P R T U W X Z -> DIŞI; NYSE grubunda 5 harf ve son harf Q değil ->
+  DIŞI; -U / -WS / -R -> DIŞI; 5. harf F / Y -> İŞARET; aynı sembolün aday bitişinden 14 günden fazla sonra biten başka Tiingo satırı -> DIŞI (API yeni varlığı
+  döndürür) — istisna: aday bitişinden en çok 10 iş günü sonra başlayan devam satırı (aynı şirketin OTC devamı) -> İŞARET, seri sonu = devam satırının
+  bitişi; 2015 başlangıçlı indirmede beklenen işlem günü < 320 -> DIŞI. Ö2 boşalanları aynı tohum-56 sırasının devamıyla doldurulur.
+- İki aşama: (1) bütün adaylar için Tiingo meta; (2) fiyatsız doğrulama: meta başlangıç / bitişi liste satırından > 10 iş günü sapıyorsa DIŞI; ad / açıklama
+  kuralı (WARRANT, RIGHT, PREFERRED, PFD, NOTE, DEBENTURE, BOND, SENIOR, SUBORDINATED, CUMULATIVE, PERPETUAL, CONTINGENT VALUE, CVR, ETF, ETN, EXCHANGE
+  TRADED, % -> DIŞI; UNIT -> DIŞI, COMMON UNITS / LP -> İŞARET; DEPOSITARY -> DIŞI, AMERICAN DEPOSITARY -> İŞARET; TRUST / FUND / BDC ve açıklamada fon /
+  boş çek -> İŞARET); Ö2 CIK: ad + tarih, sembol + tarih, ikinci kademe tek CIK Jaccard >= 0,80 ve ikinci en iyi < 0,50 ("benzer ad" işareti), yoksa sınıf 6;
+  kimlik: Tiingo adı ile SEC adı / eski adları UYUMLU (birebir) / YAKIN (Jaccard >= 0,50 ya da oran >= 0,85; işaret) / UYUMSUZ (Ö1'de DIŞI); SEC kapsamı:
+  listeli adayda son dönemsel rapor seri sonundan > 400 gün önce -> DIŞI (OTC'de işaret); ön ek: seri başı ilk SEC başvurusundan > 400 gün önce (ilk başvuru
+  >= 2003) -> DIŞI; SPAC (SIC 6770 ya da ad) ve OTC -> İŞARET; ön sınıf. (3) yalnız DIŞI olmayanların fiyatı (divCash, splitFactor dahil).
+- Fiyat aşaması: seri sonu Tiingo bitişinden > 10 iş günü sapıyorsa DIŞI (v1.2-a); temizlik sonrası < 320 gün DIŞI; K55 veri_kalitesi işaretleri,
+  düzeltilmiş / ham oranı ve bölünme / temettü sayıları İŞARET; son işlem: listeli grupta en yakın çıkış belgesi (25-NSE, 15-12B / G, 15-15D, 8-K 2.01 /
+  3.01) ±10 gün TUTARLI, ±45 YAKIN, değilse UYUMSUZ (işaret); OTC grubunda belge T+10'dan önce ve T, son 15-12 / dönemsel rapordan en çok 180 gün sonra
+  ise TUTARLI, değilse "OTC KUYRUĞU" (işaret); ön / son sınıf çapraz tablosu (değişim işaret; son sınıf 6 / tutarsız K55 kuralıyla dışarıda). Getiriye
+  dayalı dışlama yok. Aday doğrulama tablosu (K56_EVREN2_DOGRULAMA.csv) ve sha'sı evren sürümüne girer.
+- Duyarlılık: işaretli alt kümeler (SPAC, OTC, ADR / yabancı, YAKIN kimlik, OTC kuyruğu) hariç ikinci evren; KEŞİF ve İÇ etkisi ayrı tabloda.
+- EVREN2 BAĞIMSIZ'da KOŞULMAZ (v1.2-C aynen: etki KEŞİF ve İÇ'te; BAĞIMSIZ bir kez açılır — ikinci açılış Cemal'in 1. ve 5. maddesiyle çelişir).
+  EVREN2 kodu kilide girer; açılıştan sonra yapılan EVREN2 düzeltmeleri BAĞIMSIZ sonucunu etkilemez.

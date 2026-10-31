@@ -6,6 +6,7 @@ SEC: User-Agent'taki iletişim e-postası YALNIZ SEC_EPOSTA ortam değişkeninde
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
@@ -32,7 +33,7 @@ REPO_CIKTI = os.path.join(KOK, "arastirma_cikti", "k56_mekanizma")
 IZINLI_KOKLER: Tuple[str, ...] = (os.path.join(DRIVE_OUTPUT, CIKTI_ALT), REPO_CIKTI)
 YASAK_KOKLER: Tuple[str, ...] = (os.path.join(KOK, "arastirma_cikti", "col_yolu_abd"), os.path.join(KOK, "arastirma_cikti", "k55_dallanma"),
                                  os.path.join(DRIVE_OUTPUT, "COL_YOLU_ABD"), os.path.join(DRIVE_OUTPUT, "K55"))
-KOD_YOLLARI: Tuple[str, ...] = ("K56", "K56.py", "K55", "COL_YOLU_ABD.py", "FON_IZI.py")     # K56'nın çağırdığı K55 / COL_YOLU_ABD / FON_IZI kodu da kimliğe girer
+KOD_YOLLARI: Tuple[str, ...] = ("K56", "K56.py", "K55", "K55.py", "COL_YOLU_ABD.py", "FON_IZI.py")     # K56'nın çağırdığı K55 / COL_YOLU_ABD / FON_IZI kodu da kimliğe girer
 BUYUK_INDIRME_SINIR = 64 * 1024 * 1024        # Faz 0: tek dosya en çok 64 MB (büyük veri indirme yok)
 SEC_HIZ = 0.15                                # SEC adil erişim: saniyede en çok ~7 istek (sınır 10)
 
@@ -124,10 +125,10 @@ def kod_sha() -> Dict[str, str]:
     out = {}
     kd = os.path.join(KOK, "K56")
     for f in sorted(os.listdir(kd)):
-        if f.endswith(".py") or f.endswith(".md"):
+        if f.endswith((".py", ".md", ".json", ".csv")):                    # .csv: ön kayıt eki (125 satır listesi)
             out[f"K56/{f}"] = sha256_dosya(os.path.join(kd, f))
     k55 = os.path.join(KOK, "K55")
-    for g in ["K56.py", "COL_YOLU_ABD.py", "FON_IZI.py"] + [f"K55/{f}" for f in sorted(os.listdir(k55)) if f.endswith(".py")]:
+    for g in ["K56.py", "K55.py", "COL_YOLU_ABD.py", "FON_IZI.py", "K55/ONKAYIT_K55.md"] + [f"K55/{f}" for f in sorted(os.listdir(k55)) if f.endswith(".py")]:
         y = os.path.join(KOK, g)
         if os.path.exists(y):
             out[g] = sha256_dosya(y)
@@ -299,7 +300,9 @@ def zip_uye_bas(ist: "Istemci", url: str, uyeler: pd.DataFrame, uye: str, n_bayt
 
 
 # ---------------------------------------------------------------- dönem kapısı (ONKAYIT_K56 v1.2-B): BAĞIMSIZ kapalı
-DONEM_SON = {"KESIF": "2021-12-31", "IC_DOGRULAMA": "2023-12-31", "BAGIMSIZ": "2026-06-05"}
+DONEM_SON = {"KESIF": "2021-12-31", "IC_DOGRULAMA": "2023-12-31", "BAGIMSIZ": "2026-06-05", "BAGIMSIZ_B": "2026-08-31"}   # BAGIMSIZ_B: v1.3-D duyarlılık (pencere sonu)
+DONEM_T0_SON = {"BAGIMSIZ_B": "2026-06-05"}                             # BAGIMSIZ_B'de t0 sınırı (son giriş günü) ayrı
+KILIT_ETIKET_ON = "K56-BAG-KILIT-"
 BAGIMSIZ_KILIT = "K56_BAGIMSIZ_KILIT.json"
 
 
@@ -312,14 +315,16 @@ def donem_kapisi(donem: str, D: Optional[pd.DataFrame] = None, h: Optional[int] 
     etiket penceresinin son günü dönem sonunu aşamaz (sızıntı denetimi)."""
     if donem not in DONEM_SON:
         raise ValueError(f"bilinmeyen dönem: {donem}")
-    if donem == "BAGIMSIZ":
+    if donem.startswith("BAGIMSIZ"):
         if os.environ.get("K56_BAGIMSIZ_AC") != "1":
             raise DonemKapali("BAĞIMSIZ dönem kapalı (Cemal kararı + K56_BAGIMSIZ_KILIT.json + K56_BAGIMSIZ_AC=1 gerekir)")
+        acik_kayit_dogrula(kilit_klasoru)                                # v1.3-D: açık BAŞLADI kaydı + eşleşen kimlik (bir kez kuralı)
         bagimsiz_kilit_dogrula(kilit_klasoru)
     if D is not None and len(D):
-        son = pd.Timestamp(DONEM_SON[donem])
+        son = pd.Timestamp(DONEM_T0_SON.get(donem, DONEM_SON[donem]))
         if (pd.to_datetime(D.tarih) > son).any():
             raise DonemKapali(f"{donem} dışına taşan satır var (son {son.date()})")
+        son = pd.Timestamp(DONEM_SON[donem])
         if h is not None and f"bitis{h}" in D and (pd.to_datetime(D[f"bitis{h}"]) > son).any():
             raise DonemKapali(f"{donem}: etiket penceresi dönem sonunu aşan satır var (h={h})")
 
@@ -334,8 +339,25 @@ def kilit_icerigi(veri_tanimi: Dict[str, str]) -> Dict[str, Any]:
         esik["K56_F1"] = F1.ESIKLER
     except Exception:
         pass
+    try:
+        from K55.ortak import cy
+        C = cy(); esik["COL_YOLU_ABD"] = {"CY": C.CY, "CY_V15": getattr(C, "CY_V15", {})}             # likit eşiği, kriz kesimi, K54 sınıflama ayarları
+    except Exception as ex:
+        esik["COL_YOLU_ABD"] = f"okunamadı: {type(ex).__name__}"
+    try:
+        from . import ayrisma as AY
+        esik["K56_AYR"] = AY.AYR
+    except Exception as ex:
+        esik["K56_AYR"] = f"okunamadı: {type(ex).__name__}"
+    try:
+        from K55.faz1 import DALLAR, hucreleri_kur
+        from K55.hucreler import HUCRELER
+        hucreleri_kur(DALLAR); esik["K55_HUCRELER"] = {k: {a_: str(b_) for a_, b_ in v.items() if not callable(b_)} for k, v in sorted(HUCRELER.items())}
+    except Exception as ex:
+        esik["K55_HUCRELER"] = f"okunamadı: {type(ex).__name__}"
     return {"kod_sha": kod_sha(), "onkayit_sha": onkayit_sha(), "hipotez_sha": sha256_metin(M.hipotez_tablosu().drop(columns=["surum"]).to_csv(index=False)),
-            "esik_sha": sha256_metin(json.dumps(esik, sort_keys=True, default=str)), "esikler": esik, "veri_tanimi": veri_tanimi}
+            "esik_sha": sha256_metin(json.dumps(esik, sort_keys=True, default=str)), "esikler": esik, "veri_tanimi": veri_tanimi,
+            "ortam": {"python": sys.version.split()[0], "numpy": np.__version__, "pandas": pd.__version__}}
 
 
 def bagimsiz_kilit_dogrula(klasor: Optional[str]) -> None:
@@ -346,19 +368,103 @@ def bagimsiz_kilit_dogrula(klasor: Optional[str]) -> None:
     for a in ("kod_sha", "onkayit_sha", "hipotez_sha", "esik_sha"):
         if k.get(a) != simdi.get(a):
             raise DonemKapali(f"kilit tutmuyor: {a} değişmiş; BAĞIMSIZ açılamaz")
-    vt = k.get("veri_tanimi", {}); yeni = veri_tanimi_hesapla(vt.get("panel_yol", ""), vt.get("olay_yol", ""), evren=True)   # açılış anında yeniden hesap
-    for a in ("panel_sha", "olay_sha", "evren_surum"):
+    vt = k.get("veri_tanimi", {}); yeni = _VT_ONB.get((vt.get("panel_yol", ""), vt.get("olay_yol", "")))
+    if yeni is None:                                                    # açılış anında dosyalardan yeniden hesap (süreç içinde bir kez; ~3 dk)
+        yeni = veri_tanimi_hesapla(vt.get("panel_yol", ""), vt.get("olay_yol", ""), evren=True); _VT_ONB[(vt.get("panel_yol", ""), vt.get("olay_yol", ""))] = yeni
+    for a in ("panel_sha", "panel_icerik_sha", "olay_sha", "evren_surum", "veri_sha", "ek_veri_sha"):
         if not vt.get(a) or vt.get(a) != yeni.get(a):
             raise DonemKapali(f"kilit tutmuyor: veri tanımı {a} değişmiş ya da hesaplanamadı; BAĞIMSIZ açılamaz")
+    if not k.get("ortam") or k["ortam"] != simdi.get("ortam"):
+        raise DonemKapali(f"kilit tutmuyor: ortam (python / numpy / pandas) {k.get('ortam')} -> {simdi.get('ortam')}")
+    git_kilit_dogrula(k)
 
 
-def veri_tanimi_hesapla(panel_yol: str, olay_yol: str, evren: bool = True) -> Dict[str, str]:
+def git_kilit_dogrula(k: Dict[str, Any]) -> None:
+    """Etiket var, etiketin commit'i kilitteki tam commit, HEAD'in atası ve etiket..HEAD arasında kod / ön kayıt değişmemiş; kod yolları temiz."""
+    et, c = k.get("etiket"), k.get("commit_tam")
+    if not et or not c:
+        raise DonemKapali("kilit tutmuyor: etiket / tam commit yok (kilit_uret ile üretilmeli)")
+    try:
+        ec = subprocess.run(["git", "-C", KOK, "rev-list", "-n", "1", et], capture_output=True, text=True, timeout=20).stdout.strip()
+        anc = subprocess.run(["git", "-C", KOK, "merge-base", "--is-ancestor", c, "HEAD"], capture_output=True, timeout=20).returncode == 0
+        fark = subprocess.run(["git", "-C", KOK, "diff", "--quiet", c, "HEAD", "--", *KOD_YOLLARI], capture_output=True, timeout=30).returncode != 0
+    except Exception as ex:
+        raise DonemKapali(f"kilit tutmuyor: git denetimi yapılamadı ({ex})")
+    if ec != c or not anc or fark or git_kirli():
+        raise DonemKapali(f"kilit tutmuyor: etiket {et} -> {ec[:12]} (kilit {c[:12]}), ata {anc}, kod farkı {fark}, kirli {git_kirli()[:5]}")
+
+
+def acik_kayit_dogrula(klasor: Optional[str] = None) -> None:
+    """BAĞIMSIZ veri yalnız açık (BAŞLADI) bir açılış kaydı varken ve süreç o kaydın kimliğini taşıyorken okunur (K56_BAGIMSIZ_KIMLIK)."""
+    kim = os.environ.get("K56_BAGIMSIZ_KIMLIK", "")
+    K = acilis_kaydi(klasor)
+    if not kim or not ((K.kimlik == kim) & (K.durum == "BAŞLADI") & (K.calisma == "K55_125_B")).any():
+        raise DonemKapali("BAĞIMSIZ için açık açılış kaydı yok (yalnız bagimsiz_kos açar; bir kez)")
+
+
+_VT_ONB: Dict[Tuple[str, str], Dict[str, Any]] = {}
+
+
+def panel_icerik_sha(panel_yol: str) -> str:
+    """Pickle baytından bağımsız içerik sha'sı (sütun adı sıralı; pd.util.hash_pandas_object, index dahil)."""
+    if not os.path.exists(panel_yol):
+        return ""
+    P = pd.read_pickle(panel_yol); h = hashlib.sha256()
+    for c in sorted(P.columns):
+        h.update(c.encode()); h.update(pd.util.hash_pandas_object(P[c], index=True).to_numpy().tobytes())
+    return h.hexdigest()
+
+
+def veri_tanimi_hesapla(panel_yol: str, olay_yol: str, evren: bool = True, A: Optional["K56Ayar"] = None) -> Dict[str, str]:
     """BAĞIMSIZ kilidinin veri tanımı: panel ve olay tablosu sha256 + K55 evren sürümü (evren=True: K55 evren_kur ağ kapalı, ~3 dk)."""
     out = {"panel_yol": panel_yol, "olay_yol": olay_yol, "panel_sha": sha256_dosya(panel_yol) if os.path.exists(panel_yol) else "",
            "olay_sha": sha256_dosya(olay_yol) if os.path.exists(olay_yol) else "", "donem": "K55 DONEM (değişmedi)", "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)"}
+    from K55.ortak import K55Ayar, veri_sha
+    A = A or K56Ayar(); out["panel_icerik_sha"] = panel_icerik_sha(panel_yol)
+    A55 = K55Ayar(veri=A.veri, cikti=os.path.dirname(os.path.dirname(panel_yol)) or "/tmp", k54=A.abd, isci=1)
+    vs = veri_sha(A55); out["veri_sha"] = sha256_metin(json.dumps(vs, sort_keys=True)); out["veri_dosyalari"] = vs              # V_ABD, K34, Tiingo, endeks, sektör, K54
+    ek = {}
+    for ad, y in (("sec_ozet.json", "/tmp/k55/sec_ozet.json"), ("evren_disi_ABD.csv", os.path.join(KOK, "evren_disi_ABD.csv")),
+                  ("K56_SECIM_SENTETIK_KESIF.csv", os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF.csv")), ("K55_VARYANTLAR", os.path.join(A.k55, "K55_VARYANTLAR.csv")),
+                  ("K55_EVREN.csv", os.path.join(A.k55, "K55_EVREN.csv")), ("k35_sic.csv", os.path.join(A.veri, "k35_sic.csv")), ("sektor_ABD.csv", os.path.join(KOK, "sektor_ABD.csv"))):
+        ek[ad] = sha256_dosya(y) if os.path.exists(y) else "YOK"
+    out["ek_veri_sha"] = sha256_metin(json.dumps(ek, sort_keys=True)); out["ek_veri_dosyalari"] = ek
     if evren:
         from K55.evren import evren_kur
-        from K55.ortak import K55Ayar, veri_sha
-        A55 = K55Ayar(veri=K56Ayar().veri, cikti=os.path.dirname(os.path.dirname(panel_yol)) or "/tmp", k54=K56Ayar().abd, isci=1)
-        out["evren_surum"] = evren_kur(A55, veri_sha(A55), network=False)["surum"]
+        out["evren_surum"] = evren_kur(A55, vs, network=False)["surum"]
     return out
+
+
+# ---------------------------------------------------------------- BAĞIMSIZ "bir kez" kaydı (Cemal, 31 Eki: önceden belirlenmiş karşılaştırmalar bir kez çalıştırılır)
+BAGIMSIZ_ACILIS = "K56_BAGIMSIZ_ACILIS.csv"
+
+
+def acilis_kaydi(klasor: Optional[str] = None) -> pd.DataFrame:
+    y = os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_ACILIS)
+    return pd.read_csv(y, dtype=str, keep_default_na=False) if os.path.exists(y) else pd.DataFrame(columns=["calisma", "kimlik", "commit", "durum", "baslangic", "bitis", "not"], dtype=str)
+
+
+def acilis_baslat(calisma: str, kimlik: Dict[str, Any], klasor: Optional[str] = None) -> None:
+    """Bir BAĞIMSIZ çalışması (ör. K55_125_B) yalnız bir kez TAMAMLANABİLİR. Önceki deneme ÇÖKTÜ ise yeniden deneme yalnız K56_BAGIMSIZ_YENIDEN=<gerekçe>
+    ile; TAMAMLANDI ya da BAŞLADI (bitmemiş) kayıt varken durur. Kayıt koşu başlamadan yazılır (sonuç görülüp yeniden koşma kaydı silinemez: repo geçmişi)."""
+    K = acilis_kaydi(klasor); onceki = K[K.calisma == calisma]
+    if (onceki.durum == "TAMAMLANDI").any():
+        raise DonemKapali(f"BAĞIMSIZ {calisma} zaten bir kez tamamlandı ({onceki[onceki.durum == 'TAMAMLANDI'].kimlik.iloc[0]}); yeniden koşulmaz")
+    if (onceki.durum == "BAŞLADI").any():
+        raise DonemKapali(f"BAĞIMSIZ {calisma} için bitmemiş (BAŞLADI) kayıt var; çökme ise kaydı ÇÖKTÜ olarak kapat (acilis_bitir) ve gerekçeyle yeniden dene")
+    gerekce = os.environ.get("K56_BAGIMSIZ_YENIDEN", "")
+    if (onceki.durum == "ÇÖKTÜ").any() and not gerekce:
+        raise DonemKapali(f"BAĞIMSIZ {calisma} önceki denemesi çöktü; yeniden deneme için K56_BAGIMSIZ_YENIDEN=<gerekçe> gerekir")
+    satir = {"calisma": calisma, "kimlik": kimlik["kimlik"], "commit": kimlik["commit"], "durum": "BAŞLADI", "baslangic": time.strftime("%Y-%m-%d %H:%M:%S"), "bitis": "",
+             "not": (f"yeniden deneme: {gerekce}" if gerekce else "")}
+    pd.concat([K, pd.DataFrame([satir])], ignore_index=True).to_csv(os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_ACILIS), index=False)
+
+
+def acilis_bitir(calisma: str, kimlik: Dict[str, Any], durum: str, klasor: Optional[str] = None, notu: str = "") -> None:
+    if durum not in ("TAMAMLANDI", "ÇÖKTÜ"):
+        raise ValueError(durum)
+    K = acilis_kaydi(klasor); m = (K.calisma == calisma) & (K.kimlik == kimlik["kimlik"]) & (K.durum == "BAŞLADI")
+    if not m.any():
+        raise RuntimeError(f"açık BAĞIMSIZ kaydı yok: {calisma} {kimlik['kimlik']}")
+    K.loc[m, "durum"] = durum; K.loc[m, "bitis"] = time.strftime("%Y-%m-%d %H:%M:%S"); K.loc[m, "not"] = (K.loc[m, "not"].fillna("").astype(str) + " " + notu).str.strip()
+    K.to_csv(os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_ACILIS), index=False)
