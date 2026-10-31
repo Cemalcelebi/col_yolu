@@ -1,18 +1,18 @@
 {
- "kimlik": "K56-EVREN2-ADAY-20261031-120116-0b6d1db",
+ "kimlik": "K56-EVREN2-ADAY-20261031-123250-fa3fd96",
  "surum": "K56 v0.1 (2026-10-30, Faz 0: etki envanteri, mekanizma hipotezleri, veri kaynakları, küçük örneklem erişim testi, seçim etkisi sentetik sınaması)",
- "commit": "0b6d1db",
+ "commit": "fa3fd96",
  "git_kirli": [],
  "onkayit_sha": "f68a1b4baf766d41f1d38ab4bfa55256aaacba55206e27a3ab6fe27d9b1bf274",
  "kod_sha": {
   "K56/ONKAYIT_K56.md": "f68a1b4baf766d41f1d38ab4bfa55256aaacba55206e27a3ab6fe27d9b1bf274",
   "K56/ONKAYIT_K56_SATIRLAR.csv": "f53683abc0d67412979e8cc0b7e29d706c4f0469848527610946d0574f352f34",
   "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
-  "K56/ayrisma.py": "3068ab313d75dfcb1f80f1c78c64d67d3e078372eef260abb9dc4306968f1d65",
-  "K56/batan_evren.py": "3150bf62550e754fc36a1603188c2f487a03f877a1e015168af6025c65dc7c3c",
+  "K56/ayrisma.py": "8a61710da733506bd12e48ecb95c9e2c9010f795201b1108e995909b1fef553f",
+  "K56/batan_evren.py": "aa9e052bc87edff1d539b2cd3c323b1abdbbecf6e41ff63c04884d5be19947ea",
   "K56/envanter_kaynak.json": "5528f65faa467116b903298d782a5a5aa3e58e4c2b2162f16bee1275444d025c",
   "K56/etki_envanteri.py": "43a4d81774aabc718b617d1fe0d2adf279495aa08682deda6b5e3b1fb93f3abc",
-  "K56/evren_v2.py": "930b749cc715dd3f80055fd49d1eb0e91cb23c603eb92b9b9192b55b5d794be8",
+  "K56/evren_v2.py": "ede1a552cec3b265a48b3ee040c7cef1dc6278d16d65f1854300222583fdf294",
   "K56/faz1_yerel.py": "aa8d7263eb090946100c5d207744e3729783614baceeedf7f00a2d0cfd90f440",
   "K56/finansal_mekanizma.py": "68b0a23a81a45d31274cc09628f30c3402b3fe3540af137e441b85f9d8b2aa77",
   "K56/iceriden_islemler.py": "b26c44886f44506acd8504ab60a2fe4bd2b7d29db1124510b662a17466ffd6fc",
@@ -22,10 +22,10 @@
   "K56/kurumsal_sahiplik.py": "53fa11ee947207c52c2f526b6c853ab0727430bb8870c0210e771bb664ab5f7c",
   "K56/mekanizma.py": "29ec71f0693ccad01ab14cc841983f432091d691439027130219853869fcf184",
   "K56/mekanizma_raporu.py": "d1012196238281a97b03027a24cef63a4d36b214b317fceec762b928ef0d1d78",
-  "K56/ortak.py": "2d2d74bb4d9a1bc13b2b3d0c87b003bbfd771363975ef0a9cce10286e81a6d40",
+  "K56/ortak.py": "bdf82450a59e4dd932f45a07a7fe00b5b87e7b0c2ee033e94e60ea67fbeccc15",
   "K56/pbo_dsr.py": "8cf9a337856b292a99db01471f7ba916fdcc1e9af9e213658142d89db3afaa42",
-  "K56/sizinti_denetimi.py": "84bc3145dbe5afc51ed8cd375a6a15955b803b2f561795a57478fdde53d8b09a",
-  "K56/surucu.py": "572e98cd95570f6c1df4636b2326b6b570cd5420b6572a4b338193cfc34746ea",
+  "K56/sizinti_denetimi.py": "4c670ee59bc5a2742f734d56ca56956353afbc9d832b08365c94215f210543e7",
+  "K56/surucu.py": "6e9b6c642b862e71ef461632c5ba6e36a811fcbc896f72c6dbf8e2f53e74b79f",
   "K56.py": "83a94e21b6a1f3e20f2d0509c5d4c678eb602adb6e2ced3483e17ab750e1f268",
   "K55.py": "a2b7495a8ac8fd1a4a9b5c9d4c71089703a836492cda383c17bf23059130ebca",
   "COL_YOLU_ABD.py": "d0aa94ee5990aff32e077967f847cd67503d359e83fe21db949214aeba61a2b1",
@@ -70,7 +70,7 @@
  "python": "3.13.16",
  "numpy": "2.5.3",
  "pandas": "3.0.5",
- "o1": 200,
+ "o1": 199,
  "o1_dislanan": {
   "5. harf U (adi hisse değil)": 21,
   "sembol biçimi (birim / varant / hak)": 17,
@@ -78,19 +78,19 @@
   "sembol K55 evreninde (başka CIK; yeniden kullanım)": 4,
   "5. harf W (adi hisse değil)": 2,
   "beklenen işlem günü < 320 (2015 başlangıçlı indirme)": 2,
-  "5. harf Z (adi hisse değil)": 1
+  "5. harf Z (adi hisse değil)": 1,
+  "devam satırı OTC değil ya da bugün işlem görüyor (Tiingo NYSE MKT 2024-10-09..2026-10-29)": 1
  },
- "o2": 290,
+ "o2": 291,
  "o2_havuz": 1859,
  "o2_uygun": 1626,
  "n25": 4825,
  "aday": 490,
- "sec_var": 200,
+ "sec_var": 199,
  "sinif_on": {
   "BİRLEŞME": 140,
   "VERİ SAĞLAYICISI KAYBOLMASI": 26,
   "İFLAS": 23,
-  "TASFİYE": 10,
-  "SEMBOL DEĞİŞİKLİĞİ": 1
+  "TASFİYE": 10
  }
 }

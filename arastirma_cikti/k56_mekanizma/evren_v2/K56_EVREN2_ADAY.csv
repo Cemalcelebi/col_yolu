@@ -131,7 +131,6 @@ cik,sembol,kaynak,baslangic,bitis,borsa,isaret_on
 1722438.0,DOMA,Ö1 (K34 kalan),2021-07-29,2024-09-27,NYSE,
 944480.0,GVP,Ö1 (K34 kalan),1995-07-27,2024-11-01,NASDAQ,
 1929589.0,MRDB,Ö1 (K34 kalan),2021-07-09,2024-09-04,NYSE,
-1036848.0,MPU,Ö1 (K34 kalan),1998-01-20,2026-10-29,NYSE MKT,OTC devamı (Tiingo NYSE MKT 2024-10-09..2026-10-29)
 1621563.0,SUM,Ö1 (K34 kalan),2015-03-12,2025-02-10,NYSE,
 1661460.0,PSTX,Ö1 (K34 kalan),2020-07-10,2025-01-08,NASDAQ,
 1126234.0,LUMO,Ö1 (K34 kalan),2011-11-11,2024-12-12,NASDAQ,
@@ -489,3 +488,4 @@ cik,sembol,kaynak,baslangic,bitis,borsa,isaret_on
 ,HW,Ö2 (Tiingo KEŞİF bitişi),1995-06-15,2017-07-14,NYSE,
 ,RMP,Ö2 (Tiingo KEŞİF bitişi),2014-12-17,2018-07-20,NYSE,
 ,HEOP,Ö2 (Tiingo KEŞİF bitişi),2001-01-02,2017-04-10,NASDAQ,
+,FBM,Ö2 (Tiingo KEŞİF bitişi),2017-02-10,2021-01-28,NYSE,

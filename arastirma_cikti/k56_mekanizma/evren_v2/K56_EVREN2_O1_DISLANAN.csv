@@ -47,6 +47,7 @@ cik,sembol,kaynak,baslangic,bitis,borsa,dislama,isaret_on
 1825962,QDROU,Ö1 (K34 kalan),2021-02-18,2024-06-05,NASDAQ,5. harf U (adi hisse değil),
 811532,FUN,Ö1 (K34 kalan),1987-04-23,2024-07-16,NYSE,sembol K55 evreninde (başka CIK; yeniden kullanım),
 1340122,CLMT,Ö1 (K34 kalan),2006-01-26,2024-07-10,NASDAQ,sembol K55 evreninde (başka CIK; yeniden kullanım),
+1036848,MPU,Ö1 (K34 kalan),1998-01-20,2024-10-08,NYSE MKT,devam satırı OTC değil ya da bugün işlem görüyor (Tiingo NYSE MKT 2024-10-09..2026-10-29),
 1807427,OBDE,Ö1 (K34 kalan),2024-01-25,2025-01-24,NYSE,beklenen işlem günü < 320 (2015 başlangıçlı indirme),
 1868269,LATGU,Ö1 (K34 kalan),2022-01-25,2025-01-15,NASDAQ,5. harf U (adi hisse değil),
 1902794,MGOL,Ö1 (K34 kalan),2023-01-13,2025-02-19,NASDAQ,paylaşılan sembol (adaydan sonra biten başka Tiingo satırı),
