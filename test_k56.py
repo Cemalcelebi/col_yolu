@@ -429,6 +429,8 @@ def testler():
     if BE.cakisan_satir(Tq, "GWGHQ", "2015-01-02", "2022-04-25") != 0 or BE.devam_satiri(Tq, "GWGHQ", "2015-01-02", "2022-04-25") is None \
             or "OTC devamı" not in BE.indirme_oncesi_suzgec(Tq, "GWGHQ", "NASDAQ", "2015-01-02", "2022-04-25")[1]:
         hata.append("26) OTC devamı istisnası")
+    if BE.cakisan_satir(Tp, "YOKSEMBOL", "2010-01-04", "2019-02-08") != 0 or BE.devam_satiri(Tp, "YOKSEMBOL", "2010-01-04", "2019-02-08") is not None:
+        hata.append("26) boş Tiingo satırında paylaşılan sembol")
     if BE.cakisan_satir(Tp, "DNB", "2010-01-04", "2019-02-08") != 1 or BE.beklenen_gun("2010-01-01", "2016-01-29") >= 320:
         hata.append("26) paylaşılan sembol / beklenen gün")
     if E2.adi_hisse_ad("XYZ Corp 6.5% Senior Notes", None)[0] != "DIŞI" or E2.adi_hisse_ad("Kinder Morgan Energy Partners LP Common Units", None)[0] != "İŞARET" \

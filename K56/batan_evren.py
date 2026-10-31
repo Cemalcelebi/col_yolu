@@ -93,14 +93,14 @@ def cakisan_satir(T: pd.DataFrame, sembol: str, bas: pd.Timestamp, bitis: pd.Tim
     g = T[T.ticker == str(sembol).upper()]
     g = g[~((g.startDate == pd.Timestamp(bas)) & (g.endDate == pd.Timestamp(bitis)))]
     g = g[g.endDate > pd.Timestamp(bitis) + pd.Timedelta(days=gun)]
-    devam = g.startDate.map(lambda x: pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10)
+    devam = np.array([pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10 for x in g.startDate], dtype=bool)
     return int((~devam).sum())
 
 
 def devam_satiri(T: pd.DataFrame, sembol: str, bas: Any, bitis: Any) -> Optional[pd.Series]:
     """Aday bitişinden en çok 10 iş günü sonra başlayan ve daha geç biten Tiingo satırı (OTC devamı); varsa satır."""
     g = T[(T.ticker == str(sembol).upper()) & (T.endDate > pd.Timestamp(bitis) + pd.Timedelta(days=14))]
-    g = g[g.startDate.map(lambda x: pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10)]
+    g = g[np.array([pd.notna(x) and pd.Timestamp(bitis) <= x and len(pd.bdate_range(pd.Timestamp(bitis), x)) - 1 <= 10 for x in g.startDate], dtype=bool)]
     return g.sort_values("endDate").iloc[-1] if len(g) else None
 
 
