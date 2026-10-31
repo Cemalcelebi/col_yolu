@@ -111,3 +111,74 @@ yazıldığı için "v1.1 (sonuç sonrası)" diye işaretlidir ve Faz 1 testleri
    birleşme düzeltmesiz, ham). Eşleşme oranları olay çeyreğindeki dosyayla ölçülür; durum GECTI yalnız uygun sembollerin >= %60'ı eşleşirse.
 8. **Denetçilerin ön kayıt dışı kontrolleri** (sentetik denetçi, K55 tam paneli, KEŞİF): seçimsiz etiketle gerçek d -0,016 .. -0,049 (Y60; ilk geçiş
    d'nin ~%5-11'i), t0 günü kapanış < 0 payı gerçek 0,743 / sentetik 0,736. Bunlar bilgi olarak raporlanır; resmî sınıf 2'deki protokolle verilir.
+
+## v1.2 (31 Ekim 2026; Cemal'in Faz 1 kararları — üç ayrı çalışma; HİÇBİR koşudan önce commit'lenir)
+Cemal: (1) ilk üç yerel analiz başlasın, yeni veri indirilmesin, haber / birleşme bilgisi geçmişe dönük sızıntı üretmesin; (2) İÇ 2022-23 açılabilir,
+yalnız önceden belirlenmiş hipotez ve değişkenlerle; BAĞIMSIZ 2024-26 kapalı, açılmadan önce kod / hipotez / eşik / veri tanımı / ön kayıt hash ile
+sabitlenir; K55 dönem sınırları değişmez; (3) Tiingo Kasım kotasıyla batan şirketler yeni evren sürümüne eklenir; (4) üç çalışma ayrı rapor, veri
+sürümü ve kimlik taşır; başarısız sonuçlar korunur, eski sonuçların üzerine yazılmaz.
+
+### A. Faz 1 yerel analizler (çalışma kimliği K56-F1A; KEŞİF 2016-21, keşif verisi yeniden kullanımı işaretli; indirme YOK)
+- Girdiler: K55 Faz 0 tam evren paneli ve olay tablosu (evren sürümü 0d00d2c97608), K55 hücre tanımları (K55/dal*.py, degisken_hesapla), yerel SEC
+  başvuru özeti (islenmis-veri k55/sec_ozet.json), V_ABD / K34 / Tiingo fiyatları (K55 ile aynı), endeks.pkl.
+- Satırlar: K55'te KEŞİF ölçütünü geçen 125 (hücre, varyant, ufuk) satırı (K56/mekanizma.kesif_satirlari). Başka satır, varyant, pencere yok.
+**A1 seçimsiz kontrol (M01, v1.1-2'nin uygulaması):**
+- Nitelikli gün (ufuk h, eşik e): likit gün ve C[t+h] / O[t+1] − 1 >= e, pencere tam (K55/olay_tanimlari.ileri_getiri, seri_erken = False).
+- Etiketler: (i) K55 olay tablosu (ilk geçiş); (ii) bütün nitelikli günler; (iii) her K55 olayı için t0'dan başlayan kesintisiz nitelikli likit gün
+  dizisinden tek tip rastgele bir gün (tohum: sha256(hücre|varyant|ufuk|56)). Olay olmayan: (i) ve (iii)'te etiketsiz bütün satırlar (K55 gibi), (ii)'de
+  nitelikli olmayan satırlar.
+- Ölçü K55 A ile aynı: likit, donem{h} == KESIF, x tanımlı; z gün × vd (K55/hucre._z_gun_vd); Cohen d; ay kümeli bootstrap 2.000; AUC.
+- Karar tablosu (satır): r = d(ii) / d(i) (aynı işaret için; ters işaret ayrı). (a) d(ii) aralığı 0'ı kapsıyor ya da 0 <= r <= 0,2 -> MEKANİK. Faz 0
+  sentetik oranı (4 spek, aynı varyant + ufuk) >= 0,5 ise "MEKANİK (gerçek + sentetik)", < 0,5 ise "MEKANİK (gerçek veri; sentetik DGP yeniden
+  üretmiyor)" — iki durum da kesin YANLIŞ BULGU (v1.1-2 bu ikinci durumu tanımsız bırakmıştı; seçimsiz kontrol seçimi doğrudan kaldıran sınamadır,
+  sentetik oran kalibrasyondur). (b) 0,2 < r < 0,5 ve aralık 0'ı dışlıyor -> KISMEN MEKANİK (kalan etki d(ii)). (c) r >= 0,5 ve aralık 0'ı dışlıyor
+  -> GERÇEK ETKİ KALIYOR. (d) d(ii) ters işaretli ve aralık 0'ı dışlıyor -> TERS KALINTI. (iii) duyarlılık olarak raporlanır; (ii) ile sınıfı farklıysa
+  işaretlenir. Hücre sınıfı: KEŞİF satırlarının çoğunluğu; eşitlikte BELİRSİZ.
+- Kalibre sentetik spekler (v1.1-2; duyarlılık, karar ölçütü değil): kalibre_gjr (yıllık oynaklık medyanı 0,30, GJR-GARCH α 0,05 γ 0,08 β 0,90,
+  t(4)), kalibre_sicrama (aynı + günde %0,5 olasılıkla N(0, 5σ) sıçrama); 400 hisse × 1.600 gün; aynı 125 satırda oran ve olay oranı.
+**A2 kalan etki denetimi (M03 / M16 / M18):** yalnız A1'de (b), (c) ya da (d) çıkan satırlarda, (ii) etiketiyle:
+- M03a z gün × oynaklık yüzdeliği (50 kova); M03b z gün × vd × kısa oynaklık oranı üçlüsü (vol20 / vol60). M16a 2020-02-15..2020-06-30 dışlama;
+  M16b z gün × vd × beta üçlüsü (250 gün, SPY). M18 z gün × sektör (grup >= 5; değilse gün içi).
+- Küçülme = 1 − |d_denetim| / |d(ii)|: >= %50 AÇIKLAR (KEŞİF yeniden kullanımı: en çok GÜÇLÜ AÇIKLAMA adayı), %25-50 KISMEN, < %25 AÇIKLAMAZ.
+**A3 haber ve birleşme bileşimi (M04 / M15):**
+- G1 = K55 olayları (ufuk başına, KEŞİF). G7 = olay başına 5 eş: aynı gün, aynı sektör (bilinmiyorsa şartsız), aynı likidite üçlüsü, |vd farkı| <= 1,
+  likit, pencere tanımlı, ±h gün içinde aynı ufukta olayı olmayan; tohum 56.
+- ÖNCESİ (sızıntısız; yalnız t0'da bilinen): başvuru tarihi ∈ [t0−20, t0−1] (sec_ozet'te saat yok: t0 günü başvurusu ÖNCESİ'ye GİRMEZ): herhangi 8-K,
+  8-K 2.02, hisse ihracı (S-1, S-3, S-3ASR, 424B1 / 4 / 5, 8-K 3.02), SC 13D / 13G (/A dahil).
+- SONRASI (AÇIKLAYICI bileşim; öngörü ya da özellik DEĞİL, hiçbir sinyalde kullanılmaz): [t0+1, t0+10] 8-K 2.02; 8-K 1.01 / 7.01 / 8.01;
+  [t0+1, t0+h] birleşme (SC TO-T, SC TO-I, SC 14D9, DEFM14A, 425, S-4, 8-K 2.01); hisse ihracı (yükselişe satış).
+- Ölçü: pay(G1) − pay(G7), ay kümeli bootstrap %95. Destek: SONRASI farkının alt ucu > 0. Ayrıştırma (açıklayıcı): SONRASI haberi ya da birleşmesi
+  olan olaylar çıkarılınca (ii) etiketli d.
+- Sızıntı kapısı: ÖNCESİ'de kullanılan her başvuru tarihi <= t0 − 1 gün (kod denetimi + test); SONRASI sütunları ayrı tabloda ve 'aciklayici' adıyla.
+
+### B. İÇ DOĞRULAMA (çalışma kimliği K56-IC; 2022-01-01..2023-12-31; K55 dönem ve purge / embargo etiketleri aynen)
+- Yalnız önceden belirlenmiş olanlar sınanır: (B1) 125 KEŞİF satırı K55 A yöntemiyle (ilk geçiş); İÇ GEÇTİ = KEŞİF ile aynı işaret, |d| >= 0,20, ay
+  kümeli %95 aralık 0'ı dışlar, AUC >= 0,56 ya da <= 0,44, 2022 ve 2023'te işaret aynı (n >= 10 olan yıllarda), İÇ ailesinde (125 satır) BH q <= 0,10.
+  Hücre KEŞİF satırlarının çoğunluğu geçerse K55 durumu "DOĞRULAMA BEKLİYOR (A, ilk geçiş)". (B2) aynı satırlarda A1 seçimsiz kontrol (aynı karar
+  tablosu); gerçek etki için belirleyici olan budur. (B3) K55 B yöntemi (eşleşmiş ileri, K55 eşikleri, yön kayıttan) 64 KEŞİF varyantında. (B4) A3
+  bileşimi İÇ olaylarında; A2 yalnız B2'de kalan etki çıkan satırlarda.
+- İÇ sonucuna göre yeni eşik, değişken, varyant, pencere türetilmez; sonuç yalnız durum etiketini değiştirir.
+- BAĞIMSIZ (2024-01-01..2026-06-05) KAPALI: kod kapısı (K56/ortak.donem_kapisi) BAGIMSIZ etiketli satır ya da penceresi 2023-12-31'i aşan İÇ satırı
+  kullanılırsa durur. Açılış ancak: Cemal kararı + K56_BAGIMSIZ_KILIT.json (kod dosyaları, ONKAYIT, hipotez kaydı, eşik sözlüğü, veri tanımları:
+  evren sürümü, panel ve olay tablosu sha256) açılış anında yeniden hesaplanıp birebir eşleşir + K56_BAGIMSIZ_AC=1. Açılış tarihi ve commit
+  K56_BAGIMSIZ_ACILIS.csv'ye. Kilit dosyası bu çalışmanın sonunda üretilir; üretmek dönemi açmaz.
+
+### C. Batan şirketlerle yeni evren sürümü (çalışma kimliği K56-EVREN2; K51-K55 evren ve sonuçları DEĞİŞMEZ)
+- Aday listesi (sonuç görmeden): Ö1 = K34 geçerli batan listesinden (SEC kapak sayfası eski kodu olan) Tiingo örnekleminde olmayanlar. Ö2 = KEŞİF dönemi
+  (2016-01..2021-12) borsadan çıkanlar: SEC EDGAR tam metin aramasında 25-NSE başvuruları (görünen adda sembol olan), Tiingo listesinde aynı sembolün
+  bitişi 25-NSE tarihinin ±45 günü içinde, assetType Stock, borsa NYSE / NASDAQ / NYSE MKT, seri >= 320 işlem günü, K55 evreninde olmayan; tohum 56
+  ile rastgele, kota kalanı kadar (Ö1 + Ö2 <= 490, 10 yedek). Ö1 neden yetmez: K34 listesi SEC finansal veri setlerinden (2021+) geldiği için
+  çoğu 2021-26'da çıkmış; KEŞİF dönemindeki hayatta kalma boşluğunu Ö2 kapatmaya çalışır.
+- Tiingo yalnız Kasım kotasıyla (1 Kasım 2026'dan önce fiyat isteği yok); saatte en çok 45 istek; kaldığı yerden sürer; kota / 429 hatasında durur.
+- Sınıflandırma: SEC başvuru geçmişi (Ö1 / Ö2 için data.sec.gov submissions, e-posta yalnız SEC_EPOSTA) + Tiingo listesi; K54 kuralı (COL_YOLU_ABD
+  cy_v15_sinifla, içe aktarılarak, değiştirilmeden) + K56 alt ayrımı: İFLAS (8-K 1.03), TASFİYE (1.03 yok; ad LIQUIDAT / WIND DOWN / DISSOLUTION ya
+  da varlık satışı 8-K 2.01 + birleşme belgesi yok + kayıt dışı 15-12), BİRLEŞME (sınıf 3), SEMBOL DEĞİŞİKLİĞİ (sınıf 4a / 4b), VERİ SAĞLAYICISI
+  KAYBOLMASI (sınıf 5), DOĞRULANAMAYAN (sınıf 6).
+- Getiri (asıl): seri bitince pencere TANIMSIZ; son işlem fiyatı tasfiye ödemesi sayılmaz; eksik delist getirisi uydurulmaz. Duyarlılık (ayrı etiketli):
+  iflas −%100, birleşme son kapanış.
+- Rapor: aday / indirilen / eksik sayıları, kaynak (Ö1 / Ö2), sınıf dağılımı, tarihsel kapsam, veri eksikleri. Etki (yeni evrende aynı kodla): olay
+  sayıları dönem × ufuk; 125 KEŞİF satırının ilk geçiş ve seçimsiz d'si (KEŞİF ve İÇ; BAĞIMSIZ kapalı); eski / yeni farkı.
+
+### Genel
+- Üç çalışma ayrı kimlik (K56-F1A-…, K56-IC-…, K56-EVREN2-…), ayrı alt klasör (faz1_yerel/, ic_dogrulama/, evren_v2/), ayrı rapor. Faz 0 çıktıları
+  değiştirilmez; başarısız sonuçlar silinmez.
