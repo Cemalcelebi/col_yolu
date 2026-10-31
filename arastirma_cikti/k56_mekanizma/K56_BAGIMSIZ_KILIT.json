@@ -1,11 +1,14 @@
 {
  "kod_sha": {
-  "K56/ONKAYIT_K56.md": "43d25ae2039d4a375c26e128ec0b900b1ac184d0d77da9b884d14818db9ca263",
+  "K56/ONKAYIT_K56.md": "2d3814e1aa2e5e57289c1ed5d21938773608f4d1eda9fc1328e9b72987bc0abd",
+  "K56/ONKAYIT_K56_SATIRLAR.csv": "f53683abc0d67412979e8cc0b7e29d706c4f0469848527610946d0574f352f34",
   "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
-  "K56/batan_evren.py": "7e6cc4cc7010b4919c1aadee72f0100b6094e8b95872cd045e9d20ee509eb56a",
+  "K56/ayrisma.py": "22932858b5216dced4b8b3b2f0e6fd7f92fc6b383ec5c0349e00c89a504a06e9",
+  "K56/batan_evren.py": "aa9e052bc87edff1d539b2cd3c323b1abdbbecf6e41ff63c04884d5be19947ea",
+  "K56/envanter_kaynak.json": "5528f65faa467116b903298d782a5a5aa3e58e4c2b2162f16bee1275444d025c",
   "K56/etki_envanteri.py": "43a4d81774aabc718b617d1fe0d2adf279495aa08682deda6b5e3b1fb93f3abc",
-  "K56/evren_v2.py": "f5dde6ba7d92633cf8dce8f389ff380e93c4de827c726a6637823e0e044acc9e",
-  "K56/faz1_yerel.py": "44545d7d8ded6ba377a818148ba56edeca7dabc37f08aa485aa3538fb077a06f",
+  "K56/evren_v2.py": "ecd3fcce3dc2e924f62d28fc4d7c3fe8b172f19f7eda7084d7761345a6fca655",
+  "K56/faz1_yerel.py": "aa8d7263eb090946100c5d207744e3729783614baceeedf7f00a2d0cfd90f440",
   "K56/finansal_mekanizma.py": "68b0a23a81a45d31274cc09628f30c3402b3fe3540af137e441b85f9d8b2aa77",
   "K56/iceriden_islemler.py": "b26c44886f44506acd8504ab60a2fe4bd2b7d29db1124510b662a17466ffd6fc",
   "K56/islem_davranisi.py": "56ceae2ea63d9e12146feced6162246b8fc1bb9f83abcea159fcf80489c9973c",
@@ -14,11 +17,15 @@
   "K56/kurumsal_sahiplik.py": "53fa11ee947207c52c2f526b6c853ab0727430bb8870c0210e771bb664ab5f7c",
   "K56/mekanizma.py": "29ec71f0693ccad01ab14cc841983f432091d691439027130219853869fcf184",
   "K56/mekanizma_raporu.py": "d1012196238281a97b03027a24cef63a4d36b214b317fceec762b928ef0d1d78",
-  "K56/ortak.py": "3f8a327aa1c82e38c534b54211f5c4d99e7e84b6a003832be6df23e4f3aadec5",
-  "K56/surucu.py": "a6083a28c2f2883d06672c06a09c54279d1c8c96ce04002e7253329d5dedf5de",
-  "K56.py": "5a0fb9934b32d31538122db908c1878428a171b5309b8da39b93925f77245247",
+  "K56/ortak.py": "5488393bb57061dd082548d94211da8f3066bba208265ab0a5fc540fbec5fbff",
+  "K56/pbo_dsr.py": "e796e3b88d4f8dc61caf249066dc28c4f99d8ad9605a53274ae41a823fdd0b4b",
+  "K56/sizinti_denetimi.py": "e764fe643737d17be5ac7df8a1d0ac6600044fb8cddbc98d3faf3bb2370b8f91",
+  "K56/surucu.py": "e4c5d7d8dfae47d9eb9737cf011c70772926e3cbb72bf752c46fe5ad290d6725",
+  "K56.py": "c98aa54e07a48d34ed76097634e7c5db40938229f066610239bece8d2940a379",
+  "K55.py": "a2b7495a8ac8fd1a4a9b5c9d4c71089703a836492cda383c17bf23059130ebca",
   "COL_YOLU_ABD.py": "d0aa94ee5990aff32e077967f847cd67503d359e83fe21db949214aeba61a2b1",
   "FON_IZI.py": "ea0cc19f9b6514c50340df0e331c8d1a5e7961083918eefec45de6d7eb10ac7b",
+  "K55/ONKAYIT_K55.md": "e0c60c1e73ced61c13f284da855e1ab1bcd24116147ff9b8f1a3e5953abd634e",
   "K55/__init__.py": "5486d82cbda87a77d1d405095272d510dd492ca456f19e749a93d5c1fbfc7025",
   "K55/dal01_fiyat.py": "a83e74ccea16e62aeb14cda11ea4e61863cbda1ddad6de1706c515c900c26a7a",
   "K55/dal02_hacim.py": "3a2675602c5780e50462e8b3d2769b441e51a9d18361e84f43170637c86524c4",
@@ -44,9 +51,9 @@
   "K55/veri_kalitesi.py": "76d902dcf2f1d0b193b398092856fdb180e3f3aa2813cb70ce9cee24b9223b74",
   "K55/veri_paket.py": "7ac39caec38f831cd72f944658384ef29a2c07cbfaf8ebec87aaba7314cfd728"
  },
- "onkayit_sha": "43d25ae2039d4a375c26e128ec0b900b1ac184d0d77da9b884d14818db9ca263",
+ "onkayit_sha": "2d3814e1aa2e5e57289c1ed5d21938773608f4d1eda9fc1328e9b72987bc0abd",
  "hipotez_sha": "f1b4b5b5a4d632c596f60a5ef57279fc8f1bec5e5849cd8532010395ffc978aa",
- "esik_sha": "0ae2029b07bea34a89d6754d33598a4dc0e8c9e37acf52d2fe38bb73f96f7848",
+ "esik_sha": "974690af3e42902e6f7af6fa41558502678e94476a5186a64fbd6b073f3b92c9",
  "esikler": {
   "K56": {
    "MEKANIK_ORAN": 0.5,
@@ -135,6 +142,1056 @@
     "2020-02-15",
     "2020-06-30"
    ]
+  },
+  "COL_YOLU_ABD": {
+   "CY": {
+    "kriz": "2026-08-31",
+    "alive_sinir": "2026-08-01",
+    "ilk_gun": "2015-06-01",
+    "egitim": [
+     "2016-01-01",
+     "2020-12-31"
+    ],
+    "dogrulama": [
+     "2021-01-01",
+     "2022-12-31"
+    ],
+    "test": [
+     [
+      "2023",
+      "2023-01-01",
+      "2023-12-31"
+     ],
+     [
+      "2024-26",
+      "2024-01-01",
+      "2026-06-05"
+     ]
+    ],
+    "embargo_gun": 10,
+    "tb": {
+     "ust": 0.2,
+     "alt": -0.1,
+     "ufuk": 60
+    },
+    "tb_kisa": {
+     "ust": 0.08,
+     "alt": -0.08,
+     "ufuk": 20
+    },
+    "komisyon": {
+     "ABD": 0.0005,
+     "AVR": 0.0005,
+     "BIST": 0.001
+    },
+    "kayma_kat": 0.25,
+    "kayma_min": 0.0005,
+    "kayma_tavan": 0.02,
+    "delist_kayip": -0.3,
+    "likit": {
+     "ABD": 1000000.0,
+     "AVR": 1000000.0,
+     "BIST": null
+    },
+    "fiyat_min": {
+     "ABD": 1.0,
+     "AVR": 0.0,
+     "BIST": 0.0
+    },
+    "likit_yuzde": 0.2,
+    "col": {
+     "dusus": -0.35,
+     "L": 60,
+     "kucuk": 0.8,
+     "imza_min": 3,
+     "konum": 0.35,
+     "bant_kat": 6.0,
+     "son_pay": 0.4,
+     "bb_yuzde": 0.15,
+     "doji_esik": 0.1,
+     "doji_kat": 1.0,
+     "hacim_kat": 0.9,
+     "ayri": 40,
+     "kirilim_gun": 60,
+     "kirilim_pay": 1.002,
+     "es_imza_max": 1
+    },
+    "izgara": {
+     "dusus": [
+      -0.25,
+      -0.35,
+      -0.5
+     ],
+     "L": [
+      40,
+      60,
+      90
+     ],
+     "kucuk": [
+      0.65,
+      0.8
+     ],
+     "imza_min": [
+      2,
+      3
+     ]
+    },
+    "meta": {
+     "pay": [
+      0.3,
+      0.5,
+      0.7
+     ],
+     "n_min_egitim": 100,
+     "lgbm": {
+      "n_estimators": 300,
+      "learning_rate": 0.03,
+      "num_leaves": 15,
+      "max_depth": 4,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "subsample_freq": 1,
+      "colsample_bytree": 0.8,
+      "reg_lambda": 1.0,
+      "verbose": -1,
+      "n_jobs": 4
+     }
+    },
+    "genel_lgbm": {
+     "n_estimators": 400,
+     "learning_rate": 0.03,
+     "num_leaves": 31,
+     "max_depth": 6,
+     "min_child_samples": 200,
+     "subsample": 0.8,
+     "subsample_freq": 1,
+     "colsample_bytree": 0.8,
+     "reg_lambda": 1.0,
+     "verbose": -1,
+     "n_jobs": 4
+    },
+    "havuz": {
+     "egitim": 100000,
+     "dogrulama": 25000,
+     "test": 25000
+    },
+    "cnn": {
+     "gun": 60,
+     "yuk": 64,
+     "fiyat_px": 51,
+     "kanal": [
+      16,
+      32,
+      64
+     ],
+     "epoch": 5,
+     "sabir": 1,
+     "batch": 256,
+     "lr": 0.001,
+     "tohum": 51
+    },
+    "portfoy": {
+     "slot": 10,
+     "gunluk_azami": 2,
+     "rastgele_n": 20
+    },
+    "karar": {
+     "fark": 0.05,
+     "n_min": 30,
+     "boot": 2000,
+     "tohum": 51
+    },
+    "pbo_blok": 16,
+    "endeks": {
+     "ABD": [
+      "SPY",
+      "IWM"
+     ],
+     "AVR": [
+      "^STOXX"
+     ],
+     "BIST": [
+      "XU100.IS"
+     ]
+    },
+    "b_etkin": true,
+    "tb_vol": {
+     "kat_ust": 1.0,
+     "kat_alt": 0.5,
+     "ufuk": 60,
+     "ust_sinir": [
+      0.05,
+      1.0
+     ],
+     "alt_sinir": [
+      0.03,
+      0.5
+     ]
+    },
+    "ht": {
+     "kat": 20.0,
+     "esik": -0.095,
+     "pencere": 20,
+     "ayri": 40
+    },
+    "oz_v10": [
+     "ar1",
+     "ar5",
+     "ar20",
+     "ar60",
+     "go20",
+     "go60",
+     "uw20",
+     "lw20",
+     "doji20",
+     "doji60",
+     "bbw",
+     "bbw_yuzde250",
+     "bbw_deg20",
+     "atr14",
+     "atr_oran",
+     "v10_50",
+     "v20_120",
+     "ema20_egim5",
+     "ema20_egim20",
+     "ema50_egim20",
+     "c_ema20",
+     "c_ema50",
+     "c_sma200",
+     "r5",
+     "r20",
+     "r60",
+     "r120",
+     "r250",
+     "dd250",
+     "konum250",
+     "dip_bar250",
+     "log_dv20",
+     "vol60",
+     "rsi14",
+     "col_dusus",
+     "col_konum",
+     "col_savunma",
+     "col_bant",
+     "col_kucuk",
+     "col_bb_ok",
+     "col_doji_ok",
+     "col_hacim_ok",
+     "col_imza",
+     "piy_r20",
+     "piy_r60"
+    ],
+    "gruplar": {
+     "mum": [
+      "ar1",
+      "ar5",
+      "ar20",
+      "ar60",
+      "go20",
+      "go60",
+      "uw20",
+      "lw20",
+      "doji20",
+      "doji60",
+      "kapanis_yer"
+     ],
+     "oynaklik": [
+      "bbw",
+      "bbw_yuzde250",
+      "bbw_deg20",
+      "atr14",
+      "atr_oran",
+      "vol60"
+     ],
+     "hacim": [
+      "v10_50",
+      "v20_120",
+      "kir_hacim",
+      "dus_hacim"
+     ],
+     "akis": [
+      "cmf20",
+      "obv_egim20",
+      "ad_egim20",
+      "mfi14"
+     ],
+     "trend": [
+      "ema20_egim5",
+      "ema20_egim20",
+      "ema50_egim20",
+      "c_ema20",
+      "c_ema50",
+      "c_sma200",
+      "rsi14",
+      "macd_hist"
+     ],
+     "momentum_dusus": [
+      "r5",
+      "r20",
+      "r60",
+      "r120",
+      "r250",
+      "dd250",
+      "konum250",
+      "dip_bar250",
+      "tepe_bar250",
+      "dus_sure",
+      "dus_atr",
+      "dus_atr_gercek",
+      "onceki_trend"
+     ],
+     "likidite_piyasa": [
+      "log_dv20",
+      "piy_r20",
+      "piy_r60"
+     ],
+     "col": [
+      "col_dusus",
+      "col_konum",
+      "col_savunma",
+      "col_bant",
+      "col_kucuk",
+      "col_bb_ok",
+      "col_doji_ok",
+      "col_hacim_ok",
+      "col_imza",
+      "kir_pay",
+      "sikisma_gun"
+     ]
+    },
+    "kir_basarisiz_gun": 10,
+    "lr_C": 1.0,
+    "lstm": {
+     "gizli": 32,
+     "epoch": 5,
+     "sabir": 1,
+     "batch": 512,
+     "lr": 0.001,
+     "tohum": 52
+    },
+    "boot_auc": 300,
+    "olay_kumeleri": [
+     "P1",
+     "P2",
+     "ES",
+     "HT"
+    ]
+   },
+   "CY_V15": {
+    "tohum": 515,
+    "boot": 2000,
+    "n_min": 30,
+    "fark_esik": 0.05,
+    "saglam_puan": 0.02,
+    "gecersiz_pay": 0.3,
+    "kes_gun": 120,
+    "alive_sinir": "2026-08-01",
+    "b103_gun": 365,
+    "b201_gun": 120,
+    "birlesme_gun": [
+     400,
+     60
+    ],
+    "devam_gun": 180,
+    "baglama_gun": 30,
+    "oran_tol": 0.02,
+    "donem": [
+     [
+      "2016-22",
+      "2016-01-01",
+      "2022-12-31"
+     ],
+     [
+      "2023",
+      "2023-01-01",
+      "2023-12-31"
+     ],
+     [
+      "2024-26",
+      "2024-01-01",
+      "2026-06-05"
+     ]
+    ],
+    "ml_yillar": [
+     2019,
+     2020,
+     2021,
+     2022,
+     2023,
+     2024,
+     2025,
+     2026
+    ],
+    "ml_oz": [
+     "vol60",
+     "log_dv20",
+     "dd250",
+     "r60",
+     "ar20",
+     "imza",
+     "hacim_ok",
+     "trend",
+     "boga"
+    ],
+    "embargo_gun": 10,
+    "birlesme_form": [
+     "DEFM14A",
+     "SC TO-T",
+     "SC 14D9",
+     "S-4",
+     "425"
+    ],
+    "nse": [
+     "25-NSE"
+    ],
+    "kayit_dis": [
+     "15-12G",
+     "15-12B",
+     "15-15D"
+    ],
+    "sinif6_senaryo": [
+     [
+      "sınıf 6 −%30 dahil",
+      "y"
+     ],
+     [
+      "sınıf 6 −%100 dahil",
+      "y_d100"
+     ]
+    ],
+    "sinif_ad": {
+     "1": "halen işlem gören",
+     "2": "iflas / tasfiye",
+     "3": "birleşme / satın alma",
+     "4": "sembol değiştiren / başka şirkete dönüşen",
+     "5": "veri sağlayıcısında kaybolan, belirsiz",
+     "6": "işlem geçmişi doğrulanamayan"
+    }
+   }
+  },
+  "K56_AYR": {
+   "bantlar": [
+    [
+     1,
+     1
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     6,
+     20
+    ],
+    [
+     21,
+     1000000000
+    ]
+   ],
+   "boot": 2000,
+   "n_min": 30,
+   "cekilis": 200,
+   "cekilis_tohum0": 56,
+   "grup_en_az": 5,
+   "kimlik_tol": 1e-09,
+   "e2_sifir_oran": 0.2
+  },
+  "K55_HUCRELER": {
+   "D01-S01": {
+    "dal": "D01",
+    "soru": "Dip ne kadar sürede oluştu? (250 günde dip bandında geçirilen gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S02": {
+    "dal": "D01",
+    "soru": "Düşüş hızı değişiyor mu? (son p gün eğimi − önceki p gün eğimi)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S03": {
+    "dal": "D01",
+    "soru": "Dip kaç kez test edilip savunuldu? (120 gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S04": {
+    "dal": "D01",
+    "soru": "Alt fitiller büyüyor mu? (p gün alt / üst fitil)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S05": {
+    "dal": "D01",
+    "soru": "Getiri asimetrisi (p gün çarpıklık)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S06": {
+    "dal": "D01",
+    "soru": "Dar alanda kalma süresi (20 gün aralığı 250 gün en düşük %10'unda ardışık gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "K51 imza ile vekil denetimi"
+   },
+   "D01-S07": {
+    "dal": "D01",
+    "soru": "Mum dizisinin düzeni (p gün yön dizisi entropisi; düşük = düzenli)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S08": {
+    "dal": "D01",
+    "soru": "Son sert düşüşün geri alınan payı (p gün)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S09": {
+    "dal": "D01",
+    "soru": "Direnç aşınması: p gün tepesine %3 yaklaşma sayısı",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D01-S10": {
+    "dal": "D01",
+    "soru": "Hisse kendi normalinden saptı mı? (son p gün getirisi vs önceki 120 gün, KS)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S01": {
+    "dal": "D02",
+    "soru": "Hacim fiyattan önce mi değişiyor? (p / 120 gün hacim oranı, fiyat hareketi cezalı)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S02": {
+    "dal": "D02",
+    "soru": "Aşağı günlerin hacim payı (p gün; düşük = satıcı zayıf)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "OBV / CMF vekil denetimi"
+   },
+   "D02-S03": {
+    "dal": "D02",
+    "soru": "Aynı hacme fiyat tepkisi değişiyor mu? (Amihud p / 120)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "bilinen ölçü (Amihud), değişimi"
+   },
+   "D02-S04": {
+    "dal": "D02",
+    "soru": "Yukarı / aşağı gün medyan hacim oranı (p gün)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S05": {
+    "dal": "D02",
+    "soru": "Hacim zamana nasıl yayılmış? (p gün Gini; düşük = yayılmış)",
+    "yon": "-1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S06": {
+    "dal": "D02",
+    "soru": "Olağan dışı hacim günleri sayısı (p gün; > 2 × 20 gün medyan)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S07": {
+    "dal": "D02",
+    "soru": "Emilim: hacim artıyor, fiyat ilerlemiyor (p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S08": {
+    "dal": "D02",
+    "soru": "Satıcı tükenmesi: hacim azalıyor, fiyat düşmüyor (p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "K51 H-C hacim kuruması ile kısmen çakışır (koşullu biçim yeni)"
+   },
+   "D02-S09": {
+    "dal": "D02",
+    "soru": "Hacim–oynaklık bağı değişimi (p gün − 120 gün korelasyon)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D02-S10": {
+    "dal": "D02",
+    "soru": "Evren içinde ilgi artıyor mu? (işlem değeri yüzdeliğinin p gün değişimi; kesitsel)",
+    "yon": "1",
+    "fonk": "None",
+    "pencereler": "(20, 40, 60)",
+    "yontemler": "('A', 'B')",
+    "not": "kesitsel bileşik: C uygulanmaz"
+   },
+   "D03-S01": {
+    "dal": "D03",
+    "soru": "Kısa vol uzun vole göre nerede? (vol p / vol 250)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "vol60 K51 kontrolü; oran yeni; BB kullanılmaz"
+   },
+   "D03-S02": {
+    "dal": "D03",
+    "soru": "Aşağı / yukarı yarı-varyans oranı (p gün; düşük = aşağı sakin)",
+    "yon": "-1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S03": {
+    "dal": "D03",
+    "soru": "Vol kümelenmesi (|getiri| 1. gecikme otokorelasyonu, p gün)",
+    "yon": "1",
+    "pencereler": "(40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S04": {
+    "dal": "D03",
+    "soru": "Daralma hızı (vol20 ardışık kaç gündür düşüyor)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S05": {
+    "dal": "D03",
+    "soru": "Aralık değişimi |getiri|den önce mi? (60 gün, ±5 gün öncü-gecikme farkı)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'C')",
+    "not": ""
+   },
+   "D03-S06": {
+    "dal": "D03",
+    "soru": "Hareket verimliliği (p gün gerçek aralık toplamı / net hareket; düşük = verimli)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S08": {
+    "dal": "D03",
+    "soru": "Boşluk volatilitesi payı (p gün açılış boşluğu varyansı / kapanış varyansı)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S09": {
+    "dal": "D03",
+    "soru": "Uzun düşük vol süresi (vol20 250 gün yüzdeliği < 10 ardışık gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D03-S10": {
+    "dal": "D03",
+    "soru": "Aşağı vol zamanla azalıyor mu? (aşağı yarı-varyans 60 / 120)",
+    "yon": "-1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S01": {
+    "dal": "D04",
+    "soru": "Düşüş süresi / dipten bugüne süre (250 gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S02": {
+    "dal": "D04",
+    "soru": "Toparlanma yavaşlığı (250 günde tepenin %80 altında geçirilen gün; yaklaşım)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "plan tanımının yaklaşımı"
+   },
+   "D04-S03": {
+    "dal": "D04",
+    "soru": "Dip testleri sıklaşıyor mu? (son aralık / önceki aralıklar; < 1 sıklaşma)",
+    "yon": "-1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S04": {
+    "dal": "D04",
+    "soru": "Büyük hareketler arası boşluk (son büyük hareketten bu yana süre × sıklık)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S05": {
+    "dal": "D04",
+    "soru": "Önce hacim mi fiyat mı? (60 günde ilk hacim olayı − ilk fiyat olayı, gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B')",
+    "not": ""
+   },
+   "D04-S06": {
+    "dal": "D04",
+    "soru": "Kanalda bekleme süresi (son 20 gün kanal kırılımından bu yana gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S07": {
+    "dal": "D04",
+    "soru": "Haftanın günü (bilgi; tek başına iz değil)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A',)",
+    "not": "düşük öncelik"
+   },
+   "D04-S08": {
+    "dal": "D04",
+    "soru": "Uzun hareketsizlik süresi (|r20| < %5 ve dar aralık ardışık gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D04-S09": {
+    "dal": "D04",
+    "soru": "Değişimlerin sırası (hacim -> aralık -> fiyat CUSUM; tamamlanmadan bu yana gün, negatif)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B')",
+    "not": "D10-S06 aynı değişken"
+   },
+   "D05-S01": {
+    "dal": "D05",
+    "soru": "Kapanış gün içi nerede? ((C−L)/(H−L), p gün ortalama)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D05-S02": {
+    "dal": "D05",
+    "soru": "Gövde yönü ve payı ((C−O)/(H−L), p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D05-S03": {
+    "dal": "D05",
+    "soru": "Gün içi aralık (p / 120 gün)",
+    "yon": "-1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "K51 imza aralık tabanlı; oran"
+   },
+   "D05-S04": {
+    "dal": "D05",
+    "soru": "Kapanışa doğru davranış VEKİLİ (C > (H+L)/2 günlerin payı, p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "VEKİL (gün içi veri yok)"
+   },
+   "D05-S05": {
+    "dal": "D05",
+    "soru": "Boşluklar (p günde yukarı − aşağı %2 açılış boşluğu sayısı)",
+    "yon": "1",
+    "pencereler": "(20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D05-S06": {
+    "dal": "D05",
+    "soru": "Fiyat etkisi VEKİLİ (60 gün |getiri| ~ log işlem değeri eğimi; Kyle λ benzeri)",
+    "yon": "-1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "VEKİL; D02-S03 ile korelasyon denetimi"
+   },
+   "D05-S07": {
+    "dal": "D05",
+    "soru": "Yüksek hacimli güne (> 1,5 × medyan) ertesi gün tepki (devam = +1; p gün ortalama, bir gün gecikmeli)",
+    "yon": "1",
+    "pencereler": "(40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "20 günde yüksek hacimli gün sayısı yetersiz (NaN payı); 40 / 60"
+   },
+   "D05-S08": {
+    "dal": "D05",
+    "soru": "Alış–satış dengesizliği VEKİLİ (işaretli hacim payı, p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "VEKİL; OBV vekil denetimi"
+   },
+   "D05-S10": {
+    "dal": "D05",
+    "soru": "Gün içi tersine dönüş payı (açılış yönü ≠ kapanış yönü, p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S01": {
+    "dal": "D06",
+    "soru": "Göreli güç ivmesi (p gün RS − 60 gün RS'nin p payı)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "momentum (Ç121) kıyası zorunlu"
+   },
+   "D06-S02": {
+    "dal": "D06",
+    "soru": "Piyasa düşerken direnç (SPY < −%1 günlerinde hisse ortalama getirisi, p gün)",
+    "yon": "1",
+    "pencereler": "(60, 120)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S03": {
+    "dal": "D06",
+    "soru": "Sektörden ayrışma (hisse − sektör sepeti, p gün)",
+    "yon": "1",
+    "pencereler": "(5, 10, 20, 40, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "Ç117 sektör düzeyi; hisse ayrışması yeni"
+   },
+   "D06-S04": {
+    "dal": "D06",
+    "soru": "Sektör içi sıra değişimi (r60 sektör yüzdeliğinin p gün değişimi; kesitsel)",
+    "yon": "1",
+    "fonk": "None",
+    "pencereler": "(20, 40, 60)",
+    "yontemler": "('A', 'B')",
+    "not": ""
+   },
+   "D06-S05": {
+    "dal": "D06",
+    "soru": "Endeksten önce dip (60 gün: SPY dip günü − hisse dip günü)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S06": {
+    "dal": "D06",
+    "soru": "Göreli güç değişim noktası (CUSUM; son yukarı değişimden bu yana gün, negatif)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B')",
+    "not": ""
+   },
+   "D06-S07": {
+    "dal": "D06",
+    "soru": "Düşüşte sınırlı kayıp (aşağı beta, 120 gün; düşük = dirençli)",
+    "yon": "-1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S08": {
+    "dal": "D06",
+    "soru": "Yükselişte güçlenen tepki (yukarı beta − aşağı beta, 120 gün)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S09": {
+    "dal": "D06",
+    "soru": "Küçüklere göre konum (IWM'ye göre p gün)",
+    "yon": "1",
+    "pencereler": "(20, 60)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D06-S10": {
+    "dal": "D06",
+    "soru": "Korelasyon kopuşu (hisse–SPY 60 gün − 250 gün korelasyon)",
+    "yon": "-1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": ""
+   },
+   "D10-S01": {
+    "dal": "D10",
+    "soru": "Fiyat düşerken hacim farklı (r20 düşük VE aşağı gün hacim payı düşük)",
+    "yon": "1",
+    "fonk": "None",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "yontemler": "('A', 'B')",
+    "not": "kesitsel bileşik; D02-S02 (20) gerekli"
+   },
+   "D10-S02": {
+    "dal": "D10",
+    "soru": "Vol düşerken göreli güç yükseliyor (D03-S01 düşük VE D06-S01 yüksek)",
+    "yon": "1",
+    "fonk": "None",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "yontemler": "('A', 'B')",
+    "not": "kesitsel bileşik"
+   },
+   "D10-S03": {
+    "dal": "D10",
+    "soru": "Piyasa düşerken hisse yatay (D06-S02 yüksek VE dar alan süresi uzun)",
+    "yon": "1",
+    "fonk": "None",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "yontemler": "('A', 'B')",
+    "not": "kesitsel bileşik"
+   },
+   "D10-S04": {
+    "dal": "D10",
+    "soru": "Uzun hareketsizlik + hacim yapısı değişimi (D04-S08 uzun VE Gini 20 gün düşüşü)",
+    "yon": "1",
+    "fonk": "None",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "yontemler": "('A', 'B')",
+    "not": "kesitsel bileşik"
+   },
+   "D10-S09": {
+    "dal": "D10",
+    "soru": "Lider–takipçi gecikmesi (sektör liderleri 20 gün getirisi − hisse 20 gün getirisi)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "liderler: önceki yıl işlem değeri üst üçte bir (Ç111 hisse düzeyi)"
+   },
+   "D10-S10": {
+    "dal": "D10",
+    "soru": "Çok değişkenli sapma (8 temel ölçünün kendi 250 gün geçmişine köşegen Mahalanobis uzaklığı)",
+    "yon": "1",
+    "fabrika": "None",
+    "pencereler": "(None,)",
+    "panel_fonk": "None",
+    "yontemler": "('A', 'B', 'C')",
+    "not": "makine öğrenmesi değil; anomali"
+   }
   }
  },
  "veri_tanimi": {
@@ -144,10 +1201,174 @@
   "olay_sha": "01decf291cf7bfb31e6391f2c6fd4a53c7683ef655a548dc4b34e9f0fb127440",
   "donem": "K55 DONEM (değişmedi)",
   "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)",
+  "panel_icerik_sha": "a88f5696084e5eaafecd0e81c280a9ea5814a9857cb774b6006da618a80684d8",
+  "veri_sha": "c5f346f77576769456e9ea43269f759f2161a66e6104c4a3556fb208e527212a",
+  "veri_dosyalari": {
+   "V_ABD.pkl": "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+   "k34_yahoo.pkl": "eab8e2147cd13ecc268b4c92148a4877e3a359f78d5bb3a30e76c9cda413636a",
+   "k34_evren.csv": "e138026a00492c25698dc5464d37c9f56769ab38f3ff1829252cc96c6e4946f1",
+   "endeks.pkl": "7c0dba41ee59d9bf7aab7521a57277c4781f9aaee0965d346ad0e2a8132b906b",
+   "tiingo/": "e552194b4ee4ab0bd780a7d0da0aa6d50fb355b35fa78b28c204b85e7d1ff76d",
+   "sektor_ABD.csv": "f715c532d83cce13c53927a8134442f5f1be60c65322ecc60321f0ad355eef32",
+   "K54_SIRKET_DURUMU.csv": "12512958683276c9565793f3b958c6f2c159318b3bf241ff70597e5d051aed54",
+   "K54_EVREN_ESLESTIRME.csv": "b9a4a338827ead6cbad0e5373fb5bea02fc1fbe90cc74ac96b9003df4f255a9d"
+  },
+  "ek_veri_sha": "7981b521c6e20ffc6a22860a2b9e4ed61cde213d148b0825c6091fb22ae32756",
+  "ek_veri_dosyalari": {
+   "sec_ozet.json": "6d25ce126bec9b9c782661a848199dcb16cac725f8d778a5c8ee9923743a96e7",
+   "evren_disi_ABD.csv": "0133a39870577b6981ca0860882b82f607f52a9f83f837d2e17ab34f46702f41",
+   "K56_SECIM_SENTETIK_KESIF.csv": "802b51abecb032593b847af55ee259f0ae03b860c50a553913fc89fd16aa66d3",
+   "K55_VARYANTLAR": "b92536fb9dbfe25d1ac546bd8d63dc5b35f3e293420864ea4ef680ac3fe3dcde",
+   "K55_EVREN.csv": "aefd29afe9d8e12c4d227e9208ebdb9b4c2baeefddd23d1cbe0412b2cbd926cd",
+   "k35_sic.csv": "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+   "sektor_ABD.csv": "f715c532d83cce13c53927a8134442f5f1be60c65322ecc60321f0ad355eef32"
+  },
   "evren_surum": "0d00d2c976083737da1a60b71e9360ca543c2add2bb31c8db94136e5f4793524"
  },
- "uretim": "2026-10-31 07:37:05",
- "commit": "d1922e5",
- "kimlik": "K56-IC-20261031-070828-d1922e5",
- "not": "BAĞIMSIZ açılmadı; açılış için Cemal kararı + K56_BAGIMSIZ_AC=1 + bu dosyanın birebir doğrulanması (kod, ön kayıt, eşik, veri tanımı yeniden hesaplanır)"
+ "ortam": {
+  "python": "3.13.16",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "etiket": "K56-BAG-KILIT-20261031-231806",
+ "commit_tam": "a6cbe6a785b390686ef35746e0c501128cae9bbc",
+ "uretim": "2026-10-31 23:18:06",
+ "kiyas_tabani": {
+  "faz1_yerel": {
+   "klasor": "K56-F1A-20261031-073957-5d41245",
+   "sha": {
+    "K56F1_A1_HUCRE.csv": "e70d008687d3ca7512184891d086f38669f791756c5e1b8084c4762c1a5fcd05",
+    "K56F1_A1_SATIR.csv": "8a4d6cef599a64f38ab5a5af408bb246c82cac8802632cfe154d057933ee7956",
+    "K56F1_A3_BILESIM.csv": "092ed5f10918422b7a129bf6836040ba578f98c8119da3e7fc7f16fc2909feff",
+    "K56F1_KAYNAK_KAYDI.csv": "0460cf3655e1aab5aa57dd816aeea1edec5fdc2c1a6be73c9b836ff3681f7fb2",
+    "K56F1_SENTETIK_KALIBRE.csv": "221508ca30a9447bbe2117c16f81443660e75b05517a7a41e4dea62082182d54",
+    "K56_KOSU_F1A.json": "97db6e84c4ccb8b822a87f3dba38e0d25a74d76a2def54e5c5c32e5b0eccbf9b"
+   }
+  },
+  "ic_dogrulama": {
+   "klasor": "K56-IC-20261031-070828-d1922e5",
+   "sha": {
+    "K56IC_B3.csv": "fd060facd493098505be182d1a86634d439ac3f09c4c06a4748e2ad5e4c57034",
+    "K56IC_BILESIM.csv": "71d8d3a2004bc10371f18a628b3f883e72bc2f3080275768a42f36ec85c3939a",
+    "K56IC_HUCRE.csv": "237c769f25cc6a970024ae270b88ca9fb0c12e83412c1ef478454faea0ef40d9",
+    "K56IC_KAYNAK_KAYDI.csv": "13a8124e49ba8f354571677ab9f6382edec839edf6d485bd82b37b0714cfb817",
+    "K56IC_SATIR.csv": "2a803bbe4366e2f7422563ba290086c57e368ccac0455cd6c08ab0366b5f3f98",
+    "K56_BAGIMSIZ_KILIT.json": "27283c59dca4bbdaabf42d3e13ca2370dacc43f96e5fe7f5b14612e7af0e151b",
+    "K56_KOSU_IC.json": "13ece13782647cbac462c25c456a5ce5338a5dfc6493a3b2322811621ef74c12"
+   }
+  },
+  "ayrisma": {
+   "klasor": "K56-AYR-20261031-202454-a6cbe6a",
+   "sha": {
+    "K56AYR_DIZI.csv.gz": "4a7bc3deb6d734ef37a2028eab1b0e82d3a837c58d01fee1528ad27c04da82ab",
+    "K56AYR_DIZI_SENTETIK_OZET.csv": "41ca945338e4fdd6e39a1d04c8756c1e278ca5fb6c6976f81cbb6e0a34a2c31c",
+    "K56AYR_HUCRE.csv": "baa98fed87a20fc1dcaf29fe33f4be23b6851f942127dba5023645f8dd6cf108",
+    "K56AYR_KAYNAK_KAYDI.csv": "0056695c2857af834e1e74c14211ccaf3cb7cbc83d76d8fa4d05a46c8ec7f8c9",
+    "K56AYR_SATIR.csv": "433580de8cee13d537d07a611ce547eb51b2f191698135166524912ceedd38eb",
+    "K56AYR_SENTETIK.csv": "f90903682de7b2f9aaa5dfe70113fe712b34cd44b5275182635cc258f96c2c0d",
+    "K56_KOSU_AYR.json": "36af646c260bbfc2ac80c9b91f0fe8c1c5829f15c115c403211fbf74c4d79945"
+   }
+  },
+  "pbo_dsr": {
+   "klasor": "K56-PBO-20261031-204727-a6cbe6a",
+   "sha": {
+    "K56PBO_AYLIK_a.csv": "544895f88a0e3605ea69da7cfd0ef0d1ac5efcc4e63e06b900517e7660c564c0",
+    "K56PBO_AYLIK_kayit.csv": "8c525e66b90c0fc21f7d1c008cc09f74773e9a1f230a5f9b73cdd636dafbfb13",
+    "K56PBO_SONUC.csv": "9ebdf401c189cfb7ccbb559503f9d36a8d351956f2103a194ac2dc25926b7cca",
+    "K56PBO_YAPI.csv": "3ed14de612cccb4b5605bfc38e1ed5819ea53b11cc801616d65aae272703949b",
+    "K56_KOSU_PBO.json": "f86b4d2cddc6108d6081d06a5f9bafd3e20a3dc63cc8d419ab58054acf32971e"
+   }
+  }
+ },
+ "sizinti": {
+  "kosu": "K56-SIZ-20261031-213309-a6cbe6a",
+  "karar": "İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK (T0 yeniden üretim + T1b S / H / B3 + T1a bileşim + ayrışma İÇ + PBO birebir; ayrışma v1.3-c toleransıyla)",
+  "T2a": {
+   "S": {
+    "satir_ref": 125,
+    "satir_yeni": 125,
+    "fark_hucre": 264
+   },
+   "H": {
+    "satir_ref": 25,
+    "satir_yeni": 25,
+    "fark_hucre": 0
+   },
+   "B3": {
+    "satir_ref": 64,
+    "satir_yeni": 64,
+    "fark_hucre": 88
+   },
+   "Bl": {
+    "satir_ref": 24,
+    "satir_yeni": 24,
+    "fark_hucre": 0
+   },
+   "birebir": {
+    "S": false,
+    "H": true,
+    "B3": false,
+    "Bl": true
+   },
+   "en_buyuk_d_farki": 0.0014530591053258934,
+   "sinif_degisimi": 0,
+   "yari_genislik_25_asan": 0,
+   "ihmal_edilebilir": true
+  },
+  "T2b": {
+   "S": {
+    "satir_ref": 125,
+    "satir_yeni": 125,
+    "fark_hucre": 283
+   },
+   "H": {
+    "satir_ref": 25,
+    "satir_yeni": 25,
+    "fark_hucre": 0
+   },
+   "B3": {
+    "satir_ref": 64,
+    "satir_yeni": 64,
+    "fark_hucre": 90
+   },
+   "Bl": {
+    "satir_ref": 24,
+    "satir_yeni": 24,
+    "fark_hucre": 0
+   },
+   "birebir": {
+    "S": false,
+    "H": true,
+    "B3": false,
+    "Bl": true
+   },
+   "en_buyuk_d_farki": 0.010399975822467655,
+   "sinif_degisimi": 0,
+   "yari_genislik_25_asan": 0,
+   "ihmal_edilebilir": true
+  }
+ },
+ "kosu_tanimi": {
+  "K55_125_B": {
+   "donem": "BAGIMSIZ",
+   "b3": true,
+   "yalniz_a1": false,
+   "sinir": null,
+   "duyarlilik": "BAGIMSIZ_B (pencere sonu <= 2026-08-31)"
+  },
+  "ayar": {
+   "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri",
+   "k55": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren",
+   "abd": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
+   "cikti": "/home/user/col_yolu/arastirma_cikti/k56_mekanizma",
+   "panel": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k55/tam3/panel/k55_panel_tam.pkl",
+   "olay": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren/K55_OLAYLAR.csv.gz"
+  }
+ },
+ "not": "BAĞIMSIZ açılmadı; açılış: Cemal kararı (31 Eki) + K56_BAGIMSIZ_AC=1 + python K56.py bagimsiz (bir kez)",
+ "uzak_capa": {
+  "etiket_itildi": false,
+  "dal": "ccr-e5e013aa-eqeyj8",
+  "yontem": "kilit commit'i çalışma dalına push edilir ve ls-remote ile doğrulanır; açılışta kilit commit'inin uzak dalın atası olduğu denetlenir (etiket yalnız yerelde: vekil etiket push'unu reddetti)"
+ }
 }
