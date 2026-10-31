@@ -5,7 +5,7 @@ import json
 import multiprocessing as mp
 import os
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -197,3 +197,73 @@ def evren2_aday_kos(A: K56Ayar) -> Dict[str, Any]:
                                                               "sinif_on": S.sinif_k56.value_counts().to_dict()})
     log.info("evren v2 adaylar: Ö1 %d, Ö2 %d (havuz %d); sınıf %s", len(O1), len(O2), len(havuz), S.sinif_k56.value_counts().to_dict())
     return {"ADAY": ADAY, "S": S, "havuz": havuz}
+
+
+# ---------------------------------------------------------------- K56-F1A (KEŞİF) ve K56-IC (İÇ) (ONKAYIT v1.2-A / B)
+def _panel_yollari(A: K56Ayar) -> Tuple[str, str]:
+    p = os.environ.get("K56_K55_PANEL", os.path.join(A.k55, "panel", "k55_panel_tam.pkl")); o = os.path.join(A.k55, "K55_OLAYLAR.csv.gz")
+    if not os.path.exists(p):
+        raise FileNotFoundError(f"K55 paneli yok: {p} (K56_K55_PANEL ile verin)")
+    return p, o
+
+
+def faz1_yaz(alt: str, baslik: str, kimlik: Dict[str, Any], R: Dict[str, Any], ek: List[str]) -> str:
+    from .mekanizma_raporu import _md
+    S, H, Bl = R["S"], R["H"], R["Bl"]; L = [f"# {baslik} ({kimlik['kimlik']})", "", f"- commit {kimlik['commit']}; kilit sha {kimlik['onkayit_sha'][:12]}; evren sürümü {R['evren_surum'][:12]}; süre {R['sure_dk']} dk.",
+                                            f"- Olay oranı (olay / likit satır): {json.dumps({k: round(v, 5) for k, v in R['olay_orani'].items()})}."] + ek + [""]
+    L += ["## A1 seçimsiz kontrol: satır sınıfları", ""] + _md(S.sinif_a1.value_counts().rename("n").reset_index(), ["sinif_a1", "n"])
+    L += ["", "Ufuk × sınıf:", ""] + _md(pd.crosstab(S.ufuk, S.sinif_a1).reset_index(), list(pd.crosstab(S.ufuk, S.sinif_a1).reset_index().columns))
+    L += ["", "## Hücre sınıfları (KEŞİF satırlarının çoğunluğu)", ""] + _md(H, list(H.columns))
+    L += ["", "## Satırlar (d: (i) ilk geçiş, (ii) bütün nitelikli günler, (iii) rastgele gün)", ""]
+    L += _md(S.sort_values(["hucre", "varyant", "ufuk"]), ["hucre", "varyant", "ufuk", "i_n_olay", "i_d", "ii_n_olay", "ii_d", "ii_d_alt", "ii_d_ust", "iii_d", "r_ii", "sent_oran_faz0", "sinif_a1", "sinif_iii", "ayr_d"])
+    a2 = [c for c in S.columns if c.startswith("a2_") and c.endswith("_kuculme")]
+    if a2:
+        K = S[S[a2].notna().any(axis=1)]
+        L += ["", "## A2 kalan etki denetimi (küçülme = 1 − |d_denetim| / |d(ii)|; >= 0,50 açıklar, 0,25-0,50 kısmen, < 0,25 açıklamaz)", ""] + _md(K, ["hucre", "varyant", "ufuk", "ii_d"] + a2)
+    L += ["", "## A3 haber ve birleşme bileşimi (G1 olay − G7 eş; ÖNCESİ sızıntısız, SONRASI açıklayıcı)", ""] + _md(Bl, ["ufuk", "olcu", "tur", "n_olay", "pay_g1", "pay_g7", "fark", "fark_alt", "fark_ust", "karar"])
+    if "b1_gecti" in S:
+        L += ["", "## B1 İÇ (A, ilk geçiş; KEŞİF satırlarıyla)", "", f"- geçen satır {int(S.b1_gecti.sum())} / {len(S)}", ""] + _md(S[S.b1_gecti], ["hucre", "varyant", "ufuk", "kesif_d", "i_d", "i_d_alt", "i_d_ust", "i_auc", "q_bh"])
+    if len(R.get("B3", [])):
+        L += ["", "## B3 İÇ (K55 B, eşleşmiş ileri)", ""] + _md(R["B3"], ["hucre", "varyant", "n", "fark", "fark_alt", "net_fark", "slot_rastgele_yuzdelik", "karar"])
+    yol = os.path.join(alt, "RAPOR.md"); open(yol, "w", encoding="utf-8").write("\n".join(L) + "\n"); return yol
+
+
+def faz1a_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
+    """K56-F1A: A1 + A2 + A3 KEŞİF'te; ayrıca kalibre sentetik spekler (125 satır). İndirme yok."""
+    from . import faz1_yerel as F1
+    from . import mekanizma as M
+    gunluk_log(); A.ag = False; out = _alt_cikti(A, "faz1_yerel"); kimlik = kosu_kimligi(A, "F1A"); kk = KaynakKaydi(); p, o = _panel_yollari(A)
+    R = F1.calistir(A, kk, "KESIF", p, o, isci=isci, b3=False)
+    K = M.kesif_satirlari(A, kk); Sk, _ = M.secim_sentetik(A, kk, spekler=(("kalibre_gjr", 565), ("kalibre_sicrama", 566)), varyantlar=K)
+    Kc = []
+    for sp in ("kalibre_gjr", "kalibre_sicrama"):
+        z = M.sentetik_kesif_ozet(Sk[Sk.spek == sp], K); z["spek"] = sp; Kc.append(z)
+    Kc = pd.concat(Kc, ignore_index=True); oran = {}
+    for sp, th in (("kalibre_gjr", 565), ("kalibre_sicrama", 566)):
+        Vs, EVs, Es = M.sentetik_veri(M.SENTETIK_HISSE, M.SENTETIK_GUN, th, sp); Ps, Os = M.sentetik_panel(Vs, EVs, Es); oran[sp] = (Os.ufuk.value_counts() / Ps.likit.sum()).round(5).to_dict()
+    R["S"].to_csv(os.path.join(out, "K56F1_A1_SATIR.csv"), index=False); R["H"].to_csv(os.path.join(out, "K56F1_A1_HUCRE.csv"), index=False); R["Bl"].to_csv(os.path.join(out, "K56F1_A3_BILESIM.csv"), index=False)
+    Kc.to_csv(os.path.join(out, "K56F1_SENTETIK_KALIBRE.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56F1_KAYNAK_KAYDI.csv"), index=False)
+    ek = [f"- Kalibre sentetik (duyarlılık): satır kararları {Kc.groupby('spek').karar.value_counts().to_dict()}; yapay olay oranı {oran}.",
+          "- A3 SONRASI sütunları AÇIKLAYICIDIR (olaydan sonraki bilgi); hiçbir sinyalde kullanılmaz. ÖNCESİ yalnız t0−1'e kadar başvurular (sızıntı kapısı)."]
+    faz1_yaz(out, "K56-F1A FAZ 1 YEREL ANALİZLER (KEŞİF 2016-21; keşif verisi yeniden kullanımı)", kimlik, R, ek)
+    _json_yaz(os.path.join(out, "K56_KOSU_F1A.json"), {**kimlik, "sure_dk": R["sure_dk"], "a1": R["S"].sinif_a1.value_counts().to_dict(), "hucre": R["H"].a1.value_counts().to_dict(), "sentetik_olay_orani": oran})
+    return R
+
+
+def ic_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
+    """K56-IC: İÇ 2022-23 (B1 ilk geçiş A, B2 seçimsiz, B3 K55 B, B4 bileşim + A2). BAĞIMSIZ kapalı; sonunda BAĞIMSIZ kilit dosyası üretilir (açmaz)."""
+    from . import faz1_yerel as F1
+    from .ortak import BAGIMSIZ_KILIT, kilit_icerigi, sha256_dosya
+    gunluk_log(); A.ag = False; out = _alt_cikti(A, "ic_dogrulama"); kimlik = kosu_kimligi(A, "IC"); kk = KaynakKaydi(); p, o = _panel_yollari(A)
+    R = F1.calistir(A, kk, "IC_DOGRULAMA", p, o, isci=isci, b3=True)
+    R["S"].to_csv(os.path.join(out, "K56IC_SATIR.csv"), index=False); R["H"].to_csv(os.path.join(out, "K56IC_HUCRE.csv"), index=False)
+    R["B3"].to_csv(os.path.join(out, "K56IC_B3.csv"), index=False); R["Bl"].to_csv(os.path.join(out, "K56IC_BILESIM.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56IC_KAYNAK_KAYDI.csv"), index=False)
+    ek = ["- Yalnız önceden belirlenmiş 125 satır ve 64 varyant; İÇ sonucuna göre eşik / değişken türetilmez. BAĞIMSIZ (2024-26) kapalı (kod kapısı).",
+          "- B1 = K55 A (ilk geçiş) ölçütleri; B2 = seçimsiz kontrol (gerçek etki için belirleyici); B3 = K55 B; B4 = bileşim + A2."]
+    faz1_yaz(out, "K56-IC İÇ DOĞRULAMA 2022-23", kimlik, R, ek)
+    vt = {"evren_surum": R["evren_surum"], "panel_sha": sha256_dosya(p), "olay_sha": sha256_dosya(o), "donem": "K55 DONEM (değişmedi)", "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)"}
+    kil = {**kilit_icerigi(vt), "uretim": time.strftime("%Y-%m-%d %H:%M:%S"), "commit": kimlik["commit"], "not": "BAĞIMSIZ açılmadı; açılış için Cemal kararı + K56_BAGIMSIZ_AC=1 + bu dosyanın birebir doğrulanması"}
+    _json_yaz(os.path.join(A.cikti, BAGIMSIZ_KILIT), kil)
+    _json_yaz(os.path.join(out, "K56_KOSU_IC.json"), {**kimlik, "sure_dk": R["sure_dk"], "b1_gecen": int(R["S"].b1_gecti.sum()), "b2": R["S"].sinif_a1.value_counts().to_dict(),
+                                                      "b3": R["B3"].karar.value_counts().to_dict() if len(R["B3"]) else {}, "hucre": R["H"].to_dict("records")})
+    return R

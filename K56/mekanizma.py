@@ -35,8 +35,10 @@ def sentetik_veri(n: int, gun: int, tohum: int, tur: str) -> Tuple[Dict[str, pd.
     """Sıfır beklenen getirili yapay evren. tur: 'gauss' (sabit oynaklık, normal) | 'garch_t' (GARCH(1,1), t(4) yenilik).
     Getiri = beta × piyasa + sektör + özel; gece / gün içi ayrımı, fitil ve hacim (|getiri| ile ilişkili ama geleceğe bilgisiz).
     Dönüş: V (sembol -> OHLCV), EV (sembol, sektor), endeks (SPY, IWM)."""
-    if tur not in ("gauss", "garch_t"):
+    if tur not in ("gauss", "garch_t", "kalibre_gjr", "kalibre_sicrama"):
         raise ValueError(tur)
+    if tur.startswith("kalibre"):
+        return _sentetik_kalibre(n, gun, tohum, sicrama=(tur == "kalibre_sicrama"))
     rng = np.random.default_rng(tohum); idx = pd.bdate_range("2012-01-02", periods=gun); sm = 0.0095
     m = rng.standard_t(4, gun) / np.sqrt(2) * sm if tur == "garch_t" else rng.normal(0, sm, gun)
     spy = pd.Series(100 * np.exp(np.cumsum(m)), index=idx); iwm = pd.Series(100 * np.exp(np.cumsum(1.15 * m + rng.normal(0, 0.004, gun))), index=idx)
@@ -51,6 +53,31 @@ def sentetik_veri(n: int, gun: int, tohum: int, tur: str) -> Tuple[Dict[str, pd.
             sig = np.sqrt(np.maximum(pd.Series(e ** 2).ewm(alpha=0.06).mean().to_numpy(), 1e-8))
         else:
             e = rng.normal(0, np.sqrt(ozel_var), gun); sig = np.full(gun, np.sqrt(ozel_var))
+        r = beta * m + sf[s] + e; sig_t = np.sqrt(sig ** 2 + (beta * sm) ** 2)
+        r_o = rng.normal(0, 0.45, gun) * sig_t; r_o = np.clip(r_o, -np.abs(r) - 3 * sig_t, np.abs(r) + 3 * sig_t)
+        C = 50 * np.exp(np.cumsum(r)); onceki = np.r_[50.0, C[:-1]]; O = onceki * np.exp(r_o)
+        H = np.maximum(O, C) * np.exp(np.abs(rng.normal(0, 0.6, gun)) * sig_t); L = np.minimum(O, C) * np.exp(-np.abs(rng.normal(0, 0.6, gun)) * sig_t)
+        Vol = np.exp(13 + rng.normal(0, 0.8) + 0.6 * np.abs(r) / sig_t + rng.normal(0, 0.35, gun))
+        ad = f"S{i:04d}"; V[ad] = pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": Vol}, index=idx); ev.append({"sembol": ad, "sektor": f"SEK{s:02d}"})
+    return V, pd.DataFrame(ev), pd.DataFrame({"SPY": spy, "IWM": iwm})
+
+
+def _sentetik_kalibre(n: int, gun: int, tohum: int, sicrama: bool) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame, pd.DataFrame]:
+    """ONKAYIT_K56 v1.2-A kalibre spekler: yıllık oynaklık medyanı 0,30 (lognormal σ 0,5; 0,10-1,2), GJR-GARCH (α 0,05, γ 0,08, β 0,90; t(4)),
+    isteğe bağlı günde %0,5 olasılıkla N(0, 5σ) sıçrama. Sıfır beklenen getiri (yön bilgisi yok); öteki yapı gauss / garch_t ile aynı."""
+    rng = np.random.default_rng(tohum); idx = pd.bdate_range("2012-01-02", periods=gun); sm = 0.0095
+    m = rng.standard_t(4, gun) / np.sqrt(2) * sm
+    spy = pd.Series(100 * np.exp(np.cumsum(m)), index=idx); iwm = pd.Series(100 * np.exp(np.cumsum(1.15 * m + rng.normal(0, 0.004, gun))), index=idx)
+    n_sek = 11; sf = rng.normal(0, 0.006, (n_sek, gun)); V: Dict[str, pd.DataFrame] = {}; ev = []
+    for i in range(n):
+        yillik = float(np.clip(np.exp(rng.normal(np.log(0.30), 0.5)), 0.10, 1.2)); sd = yillik / np.sqrt(252); beta = rng.uniform(0.5, 1.6); s = i % n_sek
+        ozel_var = max(sd ** 2 - (beta * sm) ** 2 - 0.006 ** 2, (0.3 * sd) ** 2)
+        a, g_, b = 0.05, 0.08, 0.90; w = ozel_var * (1 - a - g_ / 2 - b); h = ozel_var; e = np.empty(gun); zz = rng.standard_t(4, gun) / np.sqrt(2)
+        for t in range(gun):
+            e[t] = np.sqrt(h) * zz[t]; h = w + (a + g_ * (e[t] < 0)) * e[t] ** 2 + b * h
+        if sicrama:
+            e = e + (rng.random(gun) < 0.005) * rng.normal(0, 5 * np.sqrt(ozel_var), gun)
+        sig = np.sqrt(np.maximum(pd.Series(e ** 2).ewm(alpha=0.06).mean().to_numpy(), 1e-8))
         r = beta * m + sf[s] + e; sig_t = np.sqrt(sig ** 2 + (beta * sm) ** 2)
         r_o = rng.normal(0, 0.45, gun) * sig_t; r_o = np.clip(r_o, -np.abs(r) - 3 * sig_t, np.abs(r) + 3 * sig_t)
         C = 50 * np.exp(np.cumsum(r)); onceki = np.r_[50.0, C[:-1]]; O = onceki * np.exp(r_o)

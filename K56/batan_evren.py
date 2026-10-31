@@ -84,16 +84,30 @@ def efts_25nse(ist: Istemci, bas: str = O2_DONEM[0], son: str = O2_DONEM[1]) -> 
     return X.drop_duplicates(["cik", "sembol", "nse_tarih"]).reset_index(drop=True) if len(X) else X
 
 
+def o2_eslem(X: pd.DataFrame, T: pd.DataFrame, tolerans: int = 45) -> pd.DataFrame:
+    """25-NSE satırlarını sembolün BÜTÜN Tiingo satırlarıyla eşler (semboller yeniden kullanılır; tek satır seçmek yanlış eşler): Stock, borsa listesi,
+    |bitiş − 25-NSE| <= tolerans, seri >= 465 takvim günü; birden çok uyan satırda en yakın bitiş. Aynı sembolün eşleşen satırdan SONRA başlayan Tiingo
+    satırı varsa (sonraki kullanım) Tiingo kod sorgusu yeni şirketin serisini döndürebilir: satır havuzda kalır, sonraki_kullanim=True, seçilmez."""
+    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR)][["ticker", "startDate", "endDate", "exchange"]].rename(
+        columns={"ticker": "sembol", "startDate": "baslangic", "endDate": "bitis", "exchange": "borsa"})
+    M = X.merge(Ts, on="sembol", how="inner")
+    M = M[((M.bitis - M.nse_tarih).dt.days.abs() <= tolerans) & ((M.bitis - M.baslangic).dt.days >= 465)].copy()
+    M["_f"] = (M.bitis - M.nse_tarih).dt.days.abs(); M = M.sort_values(["cik", "sembol", "_f"]).drop_duplicates(["cik", "sembol"]).drop(columns="_f")
+    sonra = T[["ticker", "startDate"]].rename(columns={"ticker": "sembol"})
+    ilk_sonra = M[["sembol", "bitis"]].merge(sonra, on="sembol"); ilk_sonra = ilk_sonra[ilk_sonra.startDate > ilk_sonra.bitis]
+    tekrar = set(zip(ilk_sonra.sembol, ilk_sonra.bitis)); M["sonraki_kullanim"] = [(a, b) in tekrar for a, b in zip(M.sembol, M.bitis)]
+    return M.reset_index(drop=True)
+
+
 def aday_o2(A: K56Ayar, ist: Istemci, EV: pd.DataFrame, T: pd.DataFrame, n: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """Ö2: 25-NSE (KEŞİF dönemi) + Tiingo: aynı sembolün bitişi 25-NSE ±45 gün, Stock, borsa listesi, seri >= 320 işlem günü (~465 takvim günü), K55 evreni
     dışı; tohum 56 rastgele n. Dönüş: (seçilen, bütün uygun havuz)."""
     X = efts_25nse(ist)
-    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR)].drop_duplicates("ticker").set_index("ticker")
-    X = X[X.sembol.isin(Ts.index)].copy(); X["bitis"] = X.sembol.map(Ts.endDate); X["baslangic"] = X.sembol.map(Ts.startDate); X["borsa"] = X.sembol.map(Ts.exchange)
-    X = X[((X.bitis - X.nse_tarih).dt.days.abs() <= 45) & ((X.bitis - X.baslangic).dt.days >= 465)]
-    X = X[~X.sembol.isin(set(EV.sembol)) & ~X.cik.isin(EV.cik.dropna().astype(int))].drop_duplicates("cik")
-    havuz = X.reset_index(drop=True); rng = np.random.default_rng(56)
-    sec = havuz.iloc[rng.permutation(len(havuz))[: max(0, n)]].copy() if len(havuz) else havuz
+    havuz = o2_eslem(X, T)
+    havuz = havuz[~havuz.sembol.isin(set(EV.sembol)) & ~havuz.cik.isin(EV.cik.dropna().astype(int))].drop_duplicates("cik").reset_index(drop=True)
+    rng = np.random.default_rng(56)
+    uygun = havuz[~havuz.sonraki_kullanim].reset_index(drop=True) if len(havuz) else havuz
+    sec = uygun.iloc[rng.permutation(len(uygun))[: max(0, n)]].copy() if len(uygun) else uygun.copy()
     sec["kaynak"] = "Ö2 (KEŞİF 25-NSE)"
     return sec[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa", "nse_tarih", "ad"]].reset_index(drop=True), havuz
 
@@ -126,10 +140,11 @@ def sec_gecmis(ist: Istemci, ciks: List[int], hedef: str) -> Dict[str, Any]:
 def siniflandir(aday: pd.DataFrame, sec: Dict[str, Any], T: pd.DataFrame, bugun: Dict[str, int], son_gun: Optional[Dict[str, pd.Timestamp]] = None) -> pd.DataFrame:
     """K54 kuralı (COL_YOLU_ABD.cy_v15_sinifla, değiştirilmeden) + K56 ayrımı. T = fiyat serisinin son günü (indirme öncesi Tiingo bitişi; sonra gerçek son gün)."""
     from K55.ortak import cy
-    C = cy(); Ti = T.drop_duplicates("ticker").set_index("ticker"); rows = []
+    C = cy(); G = {k: g for k, g in T.groupby("ticker")}; rows = []
     for r in aday.itertuples():
         s = sec.get(str(int(r.cik))); s = s if (s and "hata" not in s) else None
-        tg = Ti.loc[r.sembol].to_dict() if r.sembol in Ti.index else None
+        g = G.get(r.sembol)                                              # yeniden kullanılan sembol: adayın bitişine en yakın Tiingo satırı
+        tg = g.loc[(g.endDate - pd.Timestamp(r.bitis)).abs().idxmin()].to_dict() if g is not None and len(g) else None
         if tg is not None:
             tg = {k: (v.strftime("%Y-%m-%d") if isinstance(v, pd.Timestamp) else v) for k, v in tg.items()}
         son = (son_gun or {}).get(r.sembol, r.bitis)

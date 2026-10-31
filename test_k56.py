@@ -215,6 +215,72 @@ def testler():
         except PermissionError:
             pass
         os.environ.pop("K56_CIKTI_EK", None)
+    # 16) K56-F1A karar tablosu ve hücre çoğunluğu (ONKAYIT v1.2-A)
+    from K56 import batan_evren as BE, faz1_yerel as F1
+    vaka = [((-0.5, -0.02, -0.1, 0.06, 0.8), "MEKANİK (gerçek + sentetik)"), ((-0.5, -0.05, -0.08, -0.02, 0.1), "MEKANİK (gerçek veri; sentetik DGP yeniden üretmiyor)"),
+            ((-0.5, -0.2, -0.25, -0.15, 0.8), "KISMEN MEKANİK"), ((-0.5, -0.4, -0.45, -0.35, 0.8), "GERÇEK ETKİ KALIYOR"), ((-0.5, 0.2, 0.1, 0.3, 0.8), "TERS KALINTI"),
+            ((np.nan, -0.2, -0.3, -0.1, 0.8), "TANIMSIZ")]
+    for g, bek in vaka:
+        if F1.karar_a1(*g) != bek:
+            hata.append(f"16) karar_a1{g} = {F1.karar_a1(*g)} (beklenen {bek})")
+    if F1.hucre_karari(["MEKANİK (gerçek + sentetik)", "MEKANİK (gerçek veri; sentetik DGP yeniden üretmiyor)", "GERÇEK ETKİ KALIYOR"]) != "MEKANİK" or \
+            F1.hucre_karari(["KISMEN MEKANİK", "GERÇEK ETKİ KALIYOR"]) != "BELİRSİZ":
+        hata.append("16) hücre çoğunluğu")
+    # 17) seçimsiz etiketler: sentetik veride (ii) bütün nitelikli günler seçim etkisini taşımaz, (i) ilk geçiş taşır; (iii) dizi içinde
+    rng = np.random.default_rng(5); n = 4000; sem = np.repeat(["A", "B"], n // 2); i = np.tile(np.arange(n // 2), 2)
+    nit = np.zeros(n, bool)
+    for k in range(0, n, 97):
+        nit[k:k + 25] = True                                                                 # 25 günlük kesintisiz nitelikli diziler
+    ilk = nit & ~np.r_[False, nit[:-1]] ; ilk[n // 2] = nit[n // 2]
+    Pz = pd.DataFrame({"sembol": sem, "i": i}); iii = F1.rastgele_gun_maskesi(Pz, ilk, nit, "test|56")
+    if iii.sum() != ilk.sum() or (iii & ~nit).any():
+        hata.append("17) rastgele gün nitelikli dizi dışında / sayısı yanlış")
+    x = rng.normal(size=n); x[ilk] -= 1.0                                                    # yalnız ilk günde yapay (seçim) farkı
+    ay = np.repeat(np.arange(40), n // 40); yil = np.repeat([2020, 2021], n // 2)
+    di = F1.a_olc(x, ilk, ay, yil, 300, rng)["d"]; dii = F1.a_olc(x, nit, ay, yil, 300, rng)["d"]
+    if not (di < -0.8 and abs(dii) < abs(di) * 0.2):
+        hata.append(f"17) seçimsiz etiket ayırmıyor: d(i) {di:.2f}, d(ii) {dii:.2f}")
+    # 18) sızıntı kapısı: t0 günü ya da sonrası başvuru ÖNCESİ penceresine girerse durur; SONRASI t0'ı içermez
+    gunler = pd.bdate_range("2020-01-01", periods=60); i0 = 30
+    t_ok = np.array([gunler[i0 - 5], gunler[i0 + 3]], dtype="datetime64[D]"); f_ = np.array(["8-K", "8-K"], dtype=object); it_ = np.array(["2.02", "8.01"], dtype=object)
+    ob = F1.oncesi_bayraklar(t_ok, f_, it_, gunler, i0); sb = F1.sonrasi_bayraklar(t_ok, f_, it_, gunler, i0, 20)
+    if ob["once_8k_202"] != 1 or sb["sonra_haber"] != 1 or sb["sonra_202"] != 0:
+        hata.append(f"18) bayraklar {ob} {sb}")
+    t0b = np.array([gunler[i0]], dtype="datetime64[D]")
+    if F1.oncesi_bayraklar(t0b, f_[:1], it_[:1], gunler, i0)["once_8k"] != 0 or F1.sonrasi_bayraklar(t0b, f_[:1], it_[:1], gunler, i0, 20)["sonra_202"] != 0:
+        hata.append("18) t0 günü başvurusu ÖNCESİ ya da SONRASI sayıldı")
+    _eski = F1.ESIKLER["oncesi"]; F1.ESIKLER["oncesi"] = (-20, 0)                               # kural bozulursa kapı durdurmalı
+    try:
+        F1.oncesi_bayraklar(t0b, f_[:1], it_[:1], gunler, i0); hata.append("18) sızıntı kapısı t0 başvurusunu geçirdi")
+    except RuntimeError:
+        pass
+    finally:
+        F1.ESIKLER["oncesi"] = _eski
+    # 19) dönem kapısı: BAĞIMSIZ kapalı; dönem dışı satır ve dönem sonunu aşan etiket penceresi durdurur
+    os.environ.pop("K56_BAGIMSIZ_AC", None)
+    for g, bek in ((("BAGIMSIZ",), True), (("KESIF", pd.DataFrame({"tarih": ["2022-01-03"]})), True),
+                   (("IC_DOGRULAMA", pd.DataFrame({"tarih": ["2023-06-01"], "bitis120": ["2024-01-10"]}), 120), True),
+                   (("IC_DOGRULAMA", pd.DataFrame({"tarih": ["2023-01-03"], "bitis60": ["2023-04-01"]}), 60), False), (("KESIF",), False)):
+        try:
+            O.donem_kapisi(*g); dur = False
+        except O.DonemKapali:
+            dur = True
+        if dur != bek:
+            hata.append(f"19) donem_kapisi{tuple(type(x).__name__ if not isinstance(x, str) else x for x in g)} durdu={dur}")
+    os.environ["K56_BAGIMSIZ_AC"] = "1"
+    try:
+        O.donem_kapisi("BAGIMSIZ", kilit_klasoru=tempfile.mkdtemp()); hata.append("19) kilit dosyası olmadan BAĞIMSIZ açıldı")
+    except O.DonemKapali:
+        pass
+    finally:
+        os.environ.pop("K56_BAGIMSIZ_AC", None)
+    # 20) Ö2 eşleme: yeniden kullanılan sembolde bitişi 25-NSE'ye yakın satır seçilir; sonradan yeniden kullanılan sembol seçilmez
+    T = pd.DataFrame({"ticker": ["ABC", "ABC", "XYZ", "QQQ"], "exchange": ["NYSE", "NASDAQ", "NASDAQ", "NASDAQ"], "assetType": ["Stock"] * 4,
+                      "startDate": pd.to_datetime(["2012-01-03", "2019-05-01", "2014-01-02", "2010-01-04"]), "endDate": pd.to_datetime(["2018-03-01", "2026-10-29", "2019-07-10", "2017-02-01"])})
+    X = pd.DataFrame({"cik": [1, 2, 3], "sembol": ["ABC", "XYZ", "QQQ"], "nse_tarih": pd.to_datetime(["2018-02-20", "2019-07-01", "2018-06-01"]), "ad": ["a", "b", "c"]})
+    M2 = BE.o2_eslem(X, T)
+    if sorted(M2.cik) != [1, 2] or M2.set_index("cik").bitis[1] != pd.Timestamp("2018-03-01") or not M2.set_index("cik").sonraki_kullanim[1] or M2.set_index("cik").sonraki_kullanim[2]:
+        hata.append(f"20) Ö2 eşleme: {M2.to_dict('records')}")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -226,4 +292,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 15/15 OK")
+    print("test_k56: 20/20 OK")

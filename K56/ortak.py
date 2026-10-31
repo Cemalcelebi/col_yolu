@@ -295,3 +295,53 @@ def zip_uye_bas(ist: "Istemci", url: str, uyeler: pd.DataFrame, uye: str, n_bayt
     nl, el = struct.unpack("<HH", bas[26:30]); veri_bas = ofs + 30 + nl + el
     d, parca, _ = ist.al(url, ad=ad + ".parca", aralik=(veri_bas, veri_bas + n_bayt - 1), sinir=n_bayt + 1000)
     return zlib.decompressobj(-15).decompress(parca)
+
+
+# ---------------------------------------------------------------- dönem kapısı (ONKAYIT_K56 v1.2-B): BAĞIMSIZ kapalı
+DONEM_SON = {"KESIF": "2021-12-31", "IC_DOGRULAMA": "2023-12-31", "BAGIMSIZ": "2026-06-05"}
+BAGIMSIZ_KILIT = "K56_BAGIMSIZ_KILIT.json"
+
+
+class DonemKapali(PermissionError):
+    pass
+
+
+def donem_kapisi(donem: str, D: Optional[pd.DataFrame] = None, h: Optional[int] = None, kilit_klasoru: Optional[str] = None) -> None:
+    """KESIF ve IC_DOGRULAMA serbest; BAGIMSIZ yalnız kilit dosyası doğrulanır ve K56_BAGIMSIZ_AC=1 ise. D verilirse: satırların tarihi ve (h verilirse)
+    etiket penceresinin son günü dönem sonunu aşamaz (sızıntı denetimi)."""
+    if donem not in DONEM_SON:
+        raise ValueError(f"bilinmeyen dönem: {donem}")
+    if donem == "BAGIMSIZ":
+        if os.environ.get("K56_BAGIMSIZ_AC") != "1":
+            raise DonemKapali("BAĞIMSIZ dönem kapalı (Cemal kararı + K56_BAGIMSIZ_KILIT.json + K56_BAGIMSIZ_AC=1 gerekir)")
+        bagimsiz_kilit_dogrula(kilit_klasoru)
+    if D is not None and len(D):
+        son = pd.Timestamp(DONEM_SON[donem])
+        if (pd.to_datetime(D.tarih) > son).any():
+            raise DonemKapali(f"{donem} dışına taşan satır var (son {son.date()})")
+        if h is not None and f"bitis{h}" in D and (pd.to_datetime(D[f"bitis{h}"]) > son).any():
+            raise DonemKapali(f"{donem}: etiket penceresi dönem sonunu aşan satır var (h={h})")
+
+
+def kilit_icerigi(veri_tanimi: Dict[str, str]) -> Dict[str, Any]:
+    """BAĞIMSIZ açılmadan önce sabitlenecek her şeyin sha256'sı: kod (K56 + kullanılan K55 modülleri), ön kayıt, hipotez kaydı, eşik sözlüğü, veri tanımları."""
+    from . import mekanizma as M
+    from K55.ortak import AYARLAR
+    esik = {"K56": {"MEKANIK_ORAN": M.MEKANIK_ORAN, "KISMI_ORAN": M.KISMI_ORAN, "ANLAMSIZ_D": M.ANLAMSIZ_D, "SPEK_UYUM": M.SPEK_UYUM}, "K55": AYARLAR}
+    try:
+        from . import faz1_yerel as F1
+        esik["K56_F1"] = F1.ESIKLER
+    except Exception:
+        pass
+    return {"kod_sha": kod_sha(), "onkayit_sha": onkayit_sha(), "hipotez_sha": sha256_metin(M.hipotez_tablosu().drop(columns=["surum"]).to_csv(index=False)),
+            "esik_sha": sha256_metin(json.dumps(esik, sort_keys=True, default=str)), "esikler": esik, "veri_tanimi": veri_tanimi}
+
+
+def bagimsiz_kilit_dogrula(klasor: Optional[str]) -> None:
+    y = os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_KILIT)
+    if not os.path.exists(y):
+        raise DonemKapali(f"kilit dosyası yok: {y}")
+    k = json.load(open(y, encoding="utf-8")); simdi = kilit_icerigi(k.get("veri_tanimi", {}))
+    for a in ("kod_sha", "onkayit_sha", "hipotez_sha", "esik_sha"):
+        if k.get(a) != simdi.get(a):
+            raise DonemKapali(f"kilit tutmuyor: {a} değişmiş; BAĞIMSIZ açılamaz")
