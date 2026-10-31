@@ -189,7 +189,12 @@ sürümü ve kimlik taşır; başarısız sonuçlar korunur, eski sonuçların �
 - CIK bağlama (indirmeden sonra, sabit kural): Tiingo meta adı (aynı sembol, kota sayısını artırmaz) normalize edilir (büyük harf, noktalama ve
   INC / CORP / CO / LTD / PLC / HOLDINGS / GROUP / LP / LLC / THE gibi ekler atılır); 25-NSE başvurularında (2015-11..2022-02) tarihi Tiingo
   bitişinin ±45 günü içinde ve normalize adı birebir aynı TEK CIK bağlanır; yoksa aynı pencerede EFTS sembolü Tiingo sembolüne eşit tek CIK; yoksa CIK
-  BAĞLANAMADI -> sınıf DOĞRULANAMAYAN (K54 sınıf 6), fiyatı yine evrene girer, raporda ayrı sayılır.
+  BAĞLANAMADI -> sınıf DOĞRULANAMAYAN (K54 sınıf 6). K55 evren kuralı aynen uygulanır (K55/evren.evren_insa: sınıf 6 ve K54 tutarsızları evren dışı);
+  bağlanamayanlar raporda ayrı sayılır (aynı gün düzeltme: ilk yazımdaki "fiyatı yine evrene girer" K55 kuralıyla çelişiyordu; sonuç görülmeden).
+- Evren v2 inşası: K55 evren_insa / panel_kur / olaylar AYNEN, girdiye yeni seriler eklenerek (Tiingo düzeltilmiş OHLCV, COL_YOLU_ABD K34 okuma
+  biçimi, _cy_temizle, >= 320 gün). Yeni şirketlerde seri_erken = False: pencere seri sonunu aşarsa TANIMSIZ (asıl). Sektör: SEC SIC bölümü (K34 ile
+  aynı tablo), CIK yoksa 'bilinmiyor'. Duyarlılık (ayrı etiketli): yeni şirketlerde İFLAS -> d100 (−%100), BİRLEŞME -> d0 (son kapanış), diğerleri
+  TANIMSIZ. K55 şirketlerinin seri sonu kuralı değişmez.
 - İndirme sonrası seri denetimi (Ö1 ve Ö2): indirilen serinin son günü Tiingo listesindeki bitişten 10 iş gününden çok sapıyorsa "TIINGO SERİSİ
   UYUŞMADI" (sembol yeniden kullanımı ya da sağlayıcı hatası), evrene alınmaz, sayılır. Ö1'de 21 sembolün Tiingo'da birden çok satırı var (K34 kuralı
   değiştirilmedi; denetim bunları yakalar).

@@ -175,13 +175,14 @@ def siniflandir(aday: pd.DataFrame, sec: Dict[str, Any], T: pd.DataFrame, bugun:
     from K55.ortak import cy
     C = cy(); G = {k: g for k, g in T.groupby("ticker")}; rows = []
     for r in aday.itertuples():
-        s = sec.get(str(int(r.cik))); s = s if (s and "hata" not in s) else None
+        cik = int(r.cik) if pd.notna(r.cik) else None
+        s = sec.get(str(cik)) if cik is not None else None; s = s if (s and "hata" not in s) else None
         g = G.get(r.sembol)                                              # yeniden kullanılan sembol: adayın bitişine en yakın Tiingo satırı
         tg = g.loc[(g.endDate - pd.Timestamp(r.bitis)).abs().idxmin()].to_dict() if g is not None and len(g) else None
         if tg is not None:
             tg = {k: (v.strftime("%Y-%m-%d") if isinstance(v, pd.Timestamp) else v) for k, v in tg.items()}
         son = (son_gun or {}).get(r.sembol, r.bitis)
-        k = C.cy_v15_sinifla(r.sembol, son, int(r.cik), s, tg, bugun.get(r.sembol))
+        k = C.cy_v15_sinifla(r.sembol, son, cik, s, tg, bugun.get(r.sembol))
         ad = " ".join([str((s or {}).get("name", ""))] + [str(x.get("name", "")) for x in ((s or {}).get("formerNames") or [])]).upper()
         if k["sinif"] == 2:
             k56 = "iflas"
@@ -191,7 +192,8 @@ def siniflandir(aday: pd.DataFrame, sec: Dict[str, Any], T: pd.DataFrame, bugun:
             k56 = k["sinif"]
         rows.append({**{c: getattr(r, c) for c in aday.columns}, "k54_sinif": k["sinif"], "k54_alt": k.get("alt", ""), "k54_kural": k["kural"], "sinif_k56": SINIF_K56.get(k56, str(k56)),
                      "b103_tarih": k.get("b103_tarih", ""), "b201_tarih": k.get("b201_tarih", ""), "nse25_tarih": k.get("nse25_tarih", ""), "kayit_dis_tarih": k.get("kayit_dis_tarih", ""),
-                     "sec_ad": (s or {}).get("name", ""), "sic": (s or {}).get("sic", ""), "sec_var": s is not None})
+                     "sec_ad": (s or {}).get("name", ""), "sic": (s or {}).get("sic", ""), "sec_var": s is not None,
+                     "cikis_islemi": k.get("cikis_islemi", ""), "kesim_tarihi": k.get("kesim_tarihi", ""), "erken_bitti": k.get("erken_bitti"), "k54_son_islem": k.get("son_islem", "")})
     return pd.DataFrame(rows)
 
 

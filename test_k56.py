@@ -256,6 +256,23 @@ def testler():
         pass
     finally:
         F1.ESIKLER["oncesi"] = _eski
+    # 18b) G7 eşleri: aynı gün, aynı likidite üçlüsü, |vd farkı| <= 1, sektör, ±h içinde olayı olan eş yok
+    Pg = pd.DataFrame({"tarih": pd.to_datetime(["2018-05-01"] * 6), "sembol": list("ABCDEF"), "i": [100] * 6, "sektor": ["s1", "s1", "s1", "s2", "s1", "s1"],
+                       "lt": np.array([1, 1, 1, 1, 2, 1], np.int8), "vd": np.array([5, 6, 4, 5, 5, 8], np.int8), "likit": True, "donem60": "KESIF"})
+    Og = pd.DataFrame({"sembol": ["A", "C"], "tarih": pd.to_datetime(["2018-05-01", "2018-03-01"]), "i": [100, 60], "ufuk": "Y60", "donem": "KESIF"})
+    Gg = F1.g7_esleri(Pg, Og, "Y60", "KESIF", np.random.default_rng(1))
+    if sorted(Gg.sembol) != ["B"]:
+        hata.append(f"18b) G7 eşleri {sorted(Gg.sembol)} (beklenen ['B'])")
+    # 18c) A3 bileşim: aynı günde çok olay olsa da olay başına tek satır (eş tablosu olay anahtarıyla birleşir)
+    gun3 = pd.bdate_range("2017-01-02", periods=300); n3 = 35; sem3 = [f"E{k:02d}" for k in range(n3)] + [f"Q{k:02d}" for k in range(10)]
+    P3 = pd.DataFrame({"tarih": gun3[100], "sembol": sem3, "i": 100, "sektor": "s1", "lt": np.int8(1), "vd": np.int8(5), "likit": True,
+                       "donem60": "KESIF", "donem120": "KESIF", "donem250": "KESIF"})
+    O3 = pd.DataFrame({"sembol": sem3[:n3], "tarih": gun3[100], "i": 100, "ufuk": "Y60", "donem": "KESIF"})
+    V3 = {s_: pd.DataFrame({"Close": 1.0}, index=gun3) for s_ in sem3}; cm3 = {s_: k + 1 for k, s_ in enumerate(sem3)}
+    J3 = {str(k + 1): {"date": [str(gun3[95].date()), str(gun3[103].date())], "form": ["8-K", "8-K"], "items": ["2.02", "8.01"]} for k in range(len(sem3))}
+    B3_ = F1.bilesim(P3, V3, O3, J3, cm3, "KESIF")
+    if not len(B3_) or (B3_.n_olay != n3).any() or not np.allclose(B3_[B3_.olcu == "once_8k_202"].pay_g1, 1.0):
+        hata.append(f"18c) bileşim olay sayısı {B3_.n_olay.unique().tolist() if len(B3_) else 'boş'} (beklenen {n3})")
     # 19) dönem kapısı: BAĞIMSIZ kapalı; dönem dışı satır ve dönem sonunu aşan etiket penceresi durdurur
     os.environ.pop("K56_BAGIMSIZ_AC", None)
     for g, bek in ((("BAGIMSIZ",), True), (("KESIF", pd.DataFrame({"tarih": ["2022-01-03"]})), True),
@@ -300,4 +317,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 20/20 OK")
+    print("test_k56: 22/22 OK")

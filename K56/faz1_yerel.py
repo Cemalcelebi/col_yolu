@@ -157,13 +157,24 @@ A2_DENETIMLER = (("M03a", ["v_yuzde50"], None), ("M03b", ["vd", "v_oran3"], None
 
 
 # ---------------------------------------------------------------- A3 başvuru bayrakları (ÖNCESİ sızıntısız / SONRASI açıklayıcı)
+_BASVURU_ONB: Dict[Tuple[int, int], Tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
+
+
 def basvuru_tablosu(J: Dict[str, Any], cik: int) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """CIK başına (tarih, form, madde) dizileri, tarihe göre sıralı; (id(J), cik) ile önbellekli (olay başına yeniden ayrıştırma yok)."""
     from .kurumsal_olaylar import _liste
-    v = J.get(str(int(cik))) if cik is not None and np.isfinite(cik) else None
-    if not v:
+    if cik is None or not np.isfinite(cik):
         return np.array([], dtype="datetime64[D]"), np.array([], dtype=object), np.array([], dtype=object)
-    t = np.array(_liste(v["date"]), dtype="datetime64[D]"); f = np.array(_liste(v["form"]), dtype=object); it = np.array(_liste(v.get("items", "[]")) or [""] * len(f), dtype=object)
-    s = np.argsort(t, kind="stable"); return t[s], f[s], it[s]
+    k = (id(J), int(cik))
+    if k in _BASVURU_ONB:
+        return _BASVURU_ONB[k]
+    v = J.get(str(int(cik)))
+    if not v:
+        r = (np.array([], dtype="datetime64[D]"), np.array([], dtype=object), np.array([], dtype=object))
+    else:
+        t = np.array(_liste(v["date"]), dtype="datetime64[D]"); f = np.array(_liste(v["form"]), dtype=object); it = np.array(_liste(v.get("items", "[]")) or [""] * len(f), dtype=object)
+        s = np.argsort(t, kind="stable"); r = (t[s], f[s], it[s])
+    _BASVURU_ONB[k] = r; return r
 
 
 def oncesi_bayraklar(t: np.ndarray, f: np.ndarray, it: np.ndarray, gunler: pd.DatetimeIndex, i0: int) -> Dict[str, int]:
@@ -206,7 +217,7 @@ def g7_esleri(P: pd.DataFrame, O: pd.DataFrame, ufuk: str, donem: str, rng: np.r
         e = g[g.sembol == r.sembol]
         if not len(e):
             continue
-        e = e.iloc[0]; m = (g.sembol != r.sembol) & (g.lt == e.lt) & ((g.vd - e.vd).abs() <= ESIKLER["vd_tol"])
+        e = e.iloc[0]; m = (g.sembol != r.sembol) & (g["lt"] == e["lt"]) & ((g["vd"] - e["vd"]).abs() <= ESIKLER["vd_tol"])     # g.lt = DataFrame.lt metodu
         if isinstance(e.sektor, str) and e.sektor.lower() != "bilinmiyor":
             m &= g.sektor == e.sektor
         c = g[m]
@@ -269,14 +280,17 @@ def _isci(arg) -> Dict[str, Any]:
         so = C["sent"].get((hucre, varyant, u), np.nan)
         k1 = karar_a1(ri["d"], rii["d"], rii["d_alt"], rii["d_ust"], so); k3 = karar_a1(ri["d"], riii["d"], riii["d_alt"], riii["d_ust"], so)
         # ayrıştırma (AÇIKLAYICI): SONRASI haberi / birleşmesi olan nitelikli günler analizden çıkarılır
-        ayr = ~(nit & (C["bayrak"]["haber10"] | C["bayrak"][f"birlesme{h}"]))[m]
-        Da = Dm[ayr]; ra = a_olc(_z_gun_vd(Da, "_x"), ev_ii[ayr], Da.ay.to_numpy(), Da.tarih.dt.year.to_numpy(), ESIKLER["boot"], rng) if ayr.any() else {"d": np.nan, "d_alt": np.nan, "d_ust": np.nan}
+        if C.get("yalniz_a1"):
+            ayr = np.ones(int(m.sum()), bool); ra = {"d": np.nan, "d_alt": np.nan, "d_ust": np.nan}
+        else:
+            ayr = ~(nit & (C["bayrak"]["haber10"] | C["bayrak"][f"birlesme{h}"]))[m]
+            Da = Dm[ayr]; ra = a_olc(_z_gun_vd(Da, "_x"), ev_ii[ayr], Da.ay.to_numpy(), Da.tarih.dt.year.to_numpy(), ESIKLER["boot"], rng) if ayr.any() else {"d": np.nan, "d_alt": np.nan, "d_ust": np.nan}
         sat = {"hucre": hucre, "varyant": varyant, "ufuk": u, "donem": donem, "n_satir": int(m.sum()), "sent_oran_faz0": so,
                **{f"i_{k}": v for k, v in ri.items() if k != "yil_isaret"}, "i_yil": json.dumps(ri["yil_isaret"]),
                **{f"ii_{k}": v for k, v in rii.items() if k != "yil_isaret"}, **{f"iii_{k}": v for k, v in riii.items() if k != "yil_isaret"},
                "r_ii": rii["d"] / ri["d"] if (np.isfinite(ri["d"]) and ri["d"]) else np.nan, "sinif_a1": k1, "sinif_iii": k3, "iii_farkli": k1 != k3,
                "ayr_d": ra["d"], "ayr_d_alt": ra["d_alt"], "ayr_d_ust": ra["d_ust"], "ayr_cikan_nitelikli": int((ev_ii & ~ayr).sum())}
-        if k1 in ("KISMEN MEKANİK", "GERÇEK ETKİ KALIYOR", "TERS KALINTI"):
+        if k1 in ("KISMEN MEKANİK", "GERÇEK ETKİ KALIYOR", "TERS KALINTI") and not C.get("yalniz_a1"):
             for ad, gruplar, dis in A2_DENETIMLER:
                 if dis == "m16_dis":
                     a_, b_ = pd.Timestamp(ESIKLER["m16_dis"][0]), pd.Timestamp(ESIKLER["m16_dis"][1]); keep = ~((Dm.tarih >= a_) & (Dm.tarih <= b_)).to_numpy()
@@ -321,8 +335,10 @@ def bilesim(P: pd.DataFrame, V: Dict[str, pd.DataFrame], O: pd.DataFrame, J: Dic
         for olc in ("once_8k", "once_8k_202", "once_ihrac", "once_13dg", "sonra_202", "sonra_haber", "sonra_birlesme", "sonra_ihrac"):
             if not len(es):
                 continue
-            em = es[es.sec_var == 1].groupby(["olay_sembol", "tarih"])[olc].mean().rename("es")
+            em = es[es.sec_var == 1].groupby(["olay_sembol", "tarih"])[olc].mean().rename("es"); em.index.names = ["sembol", "tarih"]   # ad farklıysa join yalnız tarihte birleşir
             X = g1.set_index(["sembol", "tarih"])[[olc]].join(em, how="inner")
+            if X.index.duplicated().any() or len(X) > len(g1):
+                raise RuntimeError(f"A3 birleştirme olay başına tek satır değil ({len(X)} > {len(g1)})")
             if len(X) < 30:
                 rows.append({"donem": donem, "ufuk": u, "olcu": olc, "n_olay": len(X), "karar": "VERİ YETERSİZ"}); continue
             f = (X[olc] - X.es).to_numpy(float); ayk = pd.to_datetime(X.index.get_level_values(1)).to_period("M").astype(str).to_numpy()
@@ -333,15 +349,16 @@ def bilesim(P: pd.DataFrame, V: Dict[str, pd.DataFrame], O: pd.DataFrame, J: Dic
     return pd.DataFrame(rows)
 
 
-def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: str, olay_yol: str, isci: int = 3, b3: bool = False, sinir: Optional[int] = None) -> Dict[str, Any]:
+def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], olay_yol: Optional[str], isci: int = 3, b3: bool = False, sinir: Optional[int] = None,
+             veri: Optional[Dict[str, Any]] = None, yalniz_a1: bool = False) -> Dict[str, Any]:
     """Ortak motor: KEŞİF (A1-A3) ya da İÇ (B1-B4). Satırlar = K55 KEŞİF ölçütünü geçen 125 (hücre, varyant, ufuk). sinir: yalnız ilk n varyant (duman
-    sınaması; rapora yazılmaz)."""
+    sınaması; rapora yazılmaz). veri: hazır P / V / O / EV / endeks / evren_surum (evren v2); yalniz_a1: A2, ayrıştırma ve A3 yok (evren v2 etkisi)."""
     import multiprocessing as mp
     from K55.istatistik import bh_fdr
     from . import mekanizma as M
     from .kurumsal_olaylar import sec_ozet_yukle
     donem_kapisi(donem); t0 = time.time()
-    VERI = k55_veri(A, kk, panel_yol, olay_yol); P, V, O, EV = VERI["P"], VERI["V"], VERI["O"], VERI["EV"]
+    VERI = veri if veri is not None else k55_veri(A, kk, panel_yol, olay_yol); P, V, O, EV = VERI["P"], VERI["V"], VERI["O"], VERI["EV"]
     K = M.kesif_satirlari(A, kk)
     zk = os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF.csv")
     sent = {(r.hucre, r.varyant, r.ufuk): r.oran for r in pd.read_csv(kk.oku(zk, "kiyas", "Faz 0 sentetik oran (KEŞİF satırları)")).itertuples()} if os.path.exists(zk) else {}
@@ -350,8 +367,9 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: str, olay_yol: 
         P[c] = X[c].to_numpy()
     J = sec_ozet_yukle(A); kk.oku("/tmp/k55/sec_ozet.json", "veri", "SEC başvuru özeti (islenmis-veri k55)")
     k55ev = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_EVREN.csv"), "veri", "sembol -> CIK")); cikmap = {r.sembol: int(r.cik) for r in k55ev.dropna(subset=["cik"]).itertuples()}
-    nit = nitelikli_gunler(P, V); olay = {u: olay_maskesi(P, O, u, donem) for u in nit}; bayrak = basvuru_bayrak_dizileri(P, V, J, cikmap)
-    _CTX.clear(); _CTX.update({"P": P, "V": V, "donem": donem, "nit": nit, "olay": olay, "bayrak": bayrak, "sent": sent, "b3": b3})
+    nit = nitelikli_gunler(P, V); olay = {u: olay_maskesi(P, O, u, donem) for u in nit}
+    bayrak = basvuru_bayrak_dizileri(P, V, J, cikmap) if not yalniz_a1 else None
+    _CTX.clear(); _CTX.update({"P": P, "V": V, "donem": donem, "nit": nit, "olay": olay, "bayrak": bayrak, "sent": sent, "b3": b3, "yalniz_a1": yalniz_a1})
     isler = [(h, v, sorted(g.ufuk.unique())) for (h, v), g in K.groupby(["hucre", "varyant"], sort=True)][: sinir or None]
     log.info("%s motoru: %d varyant, %d satır, işçi %d (veri %.0f sn)", donem, len(isler), len(K), isci, time.time() - t0)
     if isci > 1:
@@ -364,7 +382,7 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: str, olay_yol: 
     kd = K.set_index(["hucre", "varyant", "ufuk"]).d
     S["kesif_d"] = [kd.get((r.hucre, r.varyant, r.ufuk), np.nan) for r in S.itertuples()]
     if donem == "IC_DOGRULAMA" and "i_p" in S:
-        S["q_bh"] = bh_fdr(S.i_p.fillna(1.0).to_numpy())
+        S["q_bh"] = bh_fdr(S.i_p.fillna(1.0).to_numpy())[0]                     # aile = 125 satır; ölçülemeyen satır p = 1
         def gecti(r):
             yil = json.loads(r.i_yil) if isinstance(r.i_yil, str) else {}
             ayni = np.isfinite(r.i_d) and np.sign(r.i_d) == np.sign(r.kesif_d); etki = abs(r.i_d) >= ESIKLER["ic_d"] if np.isfinite(r.i_d) else False
@@ -372,9 +390,12 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: str, olay_yol: 
             yl = all(v == np.sign(r.kesif_d) for v in yil.values()) and len(yil) >= 1
             return bool(ayni and etki and ci and au and yl and r.q_bh <= ESIKLER["ic_q"])
         S["b1_gecti"] = S.apply(gecti, axis=1)
-    H = S.groupby("hucre").agg(satir=("ufuk", "size"), a1=("sinif_a1", lambda s: hucre_karari(list(s))), b1_gecen=("b1_gecti", "sum") if "b1_gecti" in S else ("ufuk", "size")).reset_index()
+    agg = {"satir": ("ufuk", "size"), "a1": ("sinif_a1", lambda s: hucre_karari(list(s))), "a1_iii": ("sinif_iii", lambda s: hucre_karari(list(s))), "iii_farkli": ("iii_farkli", "sum")}
+    if "b1_gecti" in S:
+        agg["b1_gecen"] = ("b1_gecti", "sum")
+    H = S.groupby("hucre").agg(**agg).reset_index()
     if "b1_gecti" in S:
         H["b1_durum"] = np.where(H.b1_gecen > H.satir / 2, "DOĞRULAMA BEKLİYOR (A, ilk geçiş)", "İÇ'TE TUTMADI (A, ilk geçiş)")
-    Bl = bilesim(P, V, O, J, cikmap, donem)
+    Bl = bilesim(P, V, O, J, cikmap, donem) if not yalniz_a1 else pd.DataFrame()
     return {"S": S, "H": H, "B3": B3, "Bl": Bl, "evren_surum": VERI["evren_surum"], "olay_orani": {u: float(olay[u].sum() / max(1, (P.likit & (P[f"donem{h}"] == donem)).sum()))
                                                                                                     for u, h in (("Y60", 60), ("Y120", 120), ("Y250", 250))}, "sure_dk": round((time.time() - t0) / 60, 1)}
