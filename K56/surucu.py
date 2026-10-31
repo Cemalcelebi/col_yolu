@@ -574,7 +574,9 @@ def bagimsiz_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
         faz1_yaz(out, "K56-BAG BAĞIMSIZ DOĞRULAMA 2024-26 (asıl: K55 etiketleri)", kimlik, R, ek)
         os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_ASIL.md")); faz1_yaz(out, "K56-BAG BAĞIMSIZ DUYARLILIK (BAGIMSIZ_B pencere tanımı)", kimlik, Rb, ek)
         os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_DUYARLILIK_B.md"))
-        _json_yaz(os.path.join(out, "K56_KOSU_BAG.json"), {**kimlik, "sonuc_sha": sha, "sure_dk": R["sure_dk"], "b1_gecen": int(R["S"].b1_gecti.sum()), "b2": R["S"].sinif_a1.value_counts().to_dict(),
+        NK = k55_nihai_karar(R["S"], R["H"], R["B3"]); _json_yaz(os.path.join(out, "K56BAG_K55_NIHAI_KARAR.json"), NK)
+        open(os.path.join(out, "K56BAG_K55_NIHAI_KARAR.md"), "w", encoding="utf-8").write(f"# {NK['karar']}\n\n" + "\n".join(f"- {x}" for x in NK["notlar"]) + "\n")
+        _json_yaz(os.path.join(out, "K56_KOSU_BAG.json"), {**kimlik, "k55_nihai": NK["karar"], "sonuc_sha": sha, "sure_dk": R["sure_dk"], "b1_gecen": int(R["S"].b1_gecti.sum()), "b2": R["S"].sinif_a1.value_counts().to_dict(),
                                                            "b3": R["B3"].karar.value_counts().to_dict() if len(R["B3"]) else {}, "b_b2": Rb["S"].sinif_a1.value_counts().to_dict()})
         _son_yaz(A, "bagimsiz", kimlik, out); acilis_bitir("K55_125_B", kimlik, "TAMAMLANDI", A.cikti, notu="sonuç sha: " + ",".join(f"{k}:{v[:10]}" for k, v in sha.items()))
     except Exception as ex:
@@ -712,3 +714,28 @@ def _fark(a: Any, b: Any) -> float:
 
 def _cikmap(A: K56Ayar) -> Dict[str, int]:
     k = pd.read_csv(os.path.join(A.k55, "K55_EVREN.csv")); return {r.sembol: int(r.cik) for r in k.dropna(subset=["cik"]).itertuples()}
+
+
+def k55_nihai_karar(S: pd.DataFrame, H: pd.DataFrame, B3: pd.DataFrame) -> Dict[str, Any]:
+    """v1.3-H eşlemesi (sonuç görülmeden yazıldı; mekanik). Girdi: BAĞIMSIZ asıl koşusunun satır / hücre / B3 tabloları. DUYARLILIK-B, ayrışma, PBO / DSR ve
+    EVREN2 kararı değiştirmez. Dönüş: karar metni, notlar, sayılar."""
+    sat = S.sinif_a1.value_counts().to_dict() if len(S) else {}; huc = H.a1.value_counts().to_dict() if len(H) else {}
+    b1 = int(S.b1_gecti.sum()) if "b1_gecti" in S else 0; b3 = B3.karar.value_counts().to_dict() if len(B3) and "karar" in B3 else {}
+    notlar = ["KEŞİF ve İÇ'te seçimsiz kontrolle gerçek etki 0 / 125 (K56-F1A, K56-IC); K55 B KEŞİF 0 TUTAR, İÇ 0 / 64."]
+    olculemedi = (not len(S)) or S.sinif_a1.astype(str).str.startswith("TANIMSIZ").all()
+    if olculemedi:
+        karar = "K55 NİHAİ: İZ YOK (BAĞIMSIZ ölçülemedi; KEŞİF + İÇ'e göre)"
+    elif (H.a1 == "GERÇEK ETKİ KALIYOR").any():
+        karar = "K55 NİHAİ: İZ YOK korunur + TEK DÖNEM SAPMASI notu"
+        notlar.append(f"BAĞIMSIZ'da çoğunluğu GERÇEK ETKİ KALIYOR olan hücre: {H[H.a1 == 'GERÇEK ETKİ KALIYOR'].hucre.tolist()}; KEŞİF ve İÇ'te seçimsiz etki yok, tek dönem tekrar "
+                      "sayılmaz; yeni hipotez ancak ayrı ön kayıtla ve K55 dışı veride (Avrupa).")
+    else:
+        karar = "K55 NİHAİ: İZ YOK — ters yönlü farklar olay tanımının seçim eseri (KEŞİF, İÇ, BAĞIMSIZ)"
+    dag = {k: v for k, v in sat.items() if k in ("GERÇEK ETKİ KALIYOR", "KISMEN MEKANİK", "TERS KALINTI")}
+    if dag:
+        notlar.append(f"Dağınık satırlar (iz sayılmaz): {dag}.")
+    notlar.append(f"B1 (K55 A, ilk geçiş) BAĞIMSIZ'da geçen satır {b1} / {len(S)}: destek sayılmaz (seçim etkisi tekrarı; İÇ'te B1 119 / 125, B2 0).")
+    if b3.get("TUTAR", 0):
+        notlar.append(f"B3 TUTAR {b3['TUTAR']} varyant ({B3[B3.karar == 'TUTAR'].varyant.tolist()}): tek dönemde tuttu, İZ DEĞİL; yeni eşik aranmaz.")
+    notlar.append("Üst sınır: Avrupa olmadan en fazla ABD-ADAY (CLAUDE.md); DOĞRULANDI için K55 ön kaydına göre AVR şart. Karar yeni eşikle kurtarılmaz (Cemal madde 9).")
+    return {"karar": karar, "notlar": notlar, "satir_b2": sat, "hucre_b2": huc, "b1_gecen": b1, "b3": b3}

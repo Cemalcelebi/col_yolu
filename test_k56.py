@@ -438,6 +438,14 @@ def testler():
         hata.append("26) adi hisse adı kuralı")
     if E2.kimlik_ad("Chiasma Inc", {"name": "CHIASMA, INC", "formerNames": []})[0] != "UYUMLU" or E2.kimlik_ad("Totally Different LLC", {"name": "CHIASMA, INC", "formerNames": []})[0] != "UYUMSUZ":
         hata.append("26) kimlik kuralı")
+    # 27) v1.3-H K55 nihai karar eşlemesi (mekanik)
+    S27 = pd.DataFrame({"sinif_a1": ["MEKANİK (gerçek + sentetik)"] * 3 + ["TERS KALINTI"], "b1_gecti": [True, True, False, False]})
+    H27 = pd.DataFrame({"hucre": ["a", "b"], "a1": ["MEKANİK", "MEKANİK"]}); B27 = pd.DataFrame({"varyant": ["a|1"], "karar": ["TUTMAZ"]})
+    k1 = SU2.k55_nihai_karar(S27, H27, B27)["karar"]; k2 = SU2.k55_nihai_karar(S27, H27.assign(a1=["GERÇEK ETKİ KALIYOR", "MEKANİK"]), B27)["karar"]
+    k3 = SU2.k55_nihai_karar(S27.assign(sinif_a1="TANIMSIZ (HATA)"), H27, B27)["karar"]; k4 = SU2.k55_nihai_karar(S27, H27, B27.assign(karar="TUTAR"))
+    if not (k1.startswith("K55 NİHAİ: İZ YOK — ters") and "TEK DÖNEM SAPMASI" in k2 and "ölçülemedi" in k3 and k4["karar"].startswith("K55 NİHAİ: İZ YOK")
+            and any("İZ DEĞİL" in x for x in k4["notlar"])):
+        hata.append(f"27) K55 nihai karar eşlemesi: {k1} | {k2} | {k3}")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -449,4 +457,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 28/28 OK")
+    print("test_k56: 29/29 OK")
