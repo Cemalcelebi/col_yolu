@@ -1,0 +1,27 @@
+{
+ "karar": "K55 NİHAİ: İZ YOK (hücre çoğunluğu TERS KALINTI (ters yönlü küçük kalıntı); MEKANİK çoğunluk yok, GERÇEK ETKİ çoğunluğu da yok)",
+ "notlar": [
+  "KEŞİF ve İÇ'te seçimsiz kontrolle gerçek etki 0 / 125 (K56-F1A, K56-IC); K55 B KEŞİF 0 TUTAR, İÇ 0 / 64.",
+  "BAĞIMSIZ hücre sınıfları: {'TERS KALINTI': 12, 'MEKANİK': 10, 'KISMEN MEKANİK': 2, 'BELİRSİZ': 1}; TANIMSIZ / BELİRSİZ satırlar: {}.",
+  "Dağınık satırlar (iz sayılmaz): {'TERS KALINTI': 56, 'GERÇEK ETKİ KALIYOR': 4, 'KISMEN MEKANİK': 3}.",
+  "B1 (K55 A, ilk geçiş) BAĞIMSIZ'da geçen satır 64 / 125: destek sayılmaz (seçim etkisi tekrarı; İÇ'te B1 119 / 125, B2 0).",
+  "Üst sınır: Avrupa olmadan en fazla ABD-ADAY (CLAUDE.md); DOĞRULANDI için K55 ön kaydına göre AVR şart. Karar yeni eşikle kurtarılmaz (Cemal madde 9)."
+ ],
+ "satir_b2": {
+  "MEKANİK (gerçek + sentetik)": 57,
+  "TERS KALINTI": 56,
+  "MEKANİK (gerçek veri; sentetik DGP yeniden üretmiyor)": 5,
+  "GERÇEK ETKİ KALIYOR": 4,
+  "KISMEN MEKANİK": 3
+ },
+ "hucre_b2": {
+  "TERS KALINTI": 12,
+  "MEKANİK": 10,
+  "KISMEN MEKANİK": 2,
+  "BELİRSİZ": 1
+ },
+ "b1_gecen": 64,
+ "b3": {
+  "TUTMAZ": 64
+ }
+}
