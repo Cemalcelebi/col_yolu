@@ -640,7 +640,7 @@ def ayrisma_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     L += ["", "## Hücreler", ""] + _md(H, list(H.columns)) + ["", "## Satırlar", ""]
     L += _md(S2.sort_values(["donem", "hucre", "varyant", "ufuk"]), ["donem", "hucre", "varyant", "ufuk", "n_gecerli", "E1", "E2", "G", "G_ay_alt", "G_ay_ust", "G_sembol_yil_alt", "G_sent_ort", "sent_cogunluk", "karar"])
     open(os.path.join(out, "RAPOR.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
-    _json_yaz(os.path.join(out, "K56_KOSU_AYR.json"), {**kimlik, "karar": S2.groupby("donem").karar.value_counts().to_dict(), "sure_dk": round((time.time() - t0) / 60, 1)})
+    _json_yaz(os.path.join(out, "K56_KOSU_AYR.json"), {**kimlik, "karar": {d: g.karar.value_counts().to_dict() for d, g in S2.groupby("donem")}, "sure_dk": round((time.time() - t0) / 60, 1)})
     _son_yaz(A, "ayrisma", kimlik, out); return {"S": S2, "H": H, "SS": SS}
 
 
