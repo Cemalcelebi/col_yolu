@@ -397,6 +397,18 @@ def testler():
             pass
         finally:
             os.environ.pop("K56_BAGIMSIZ_YENIDEN", None)
+    with tempfile.TemporaryDirectory() as td:                            # sonuç dosyası oluşmuş çöküşten sonra gerekçe olsa da yeniden koşu yok
+        k1_ = {"kimlik": "K56-BAG-a", "commit": "abc"}; O.acilis_baslat("K55_125_B", k1_, td); os.makedirs(os.path.join(td, "bagimsiz", "K56-BAG-a"))
+        open(os.path.join(td, "bagimsiz", "K56-BAG-a", "K56BAG_SATIR.csv"), "w").write("x\n"); O.acilis_bitir("K55_125_B", k1_, "ÇÖKTÜ", td, notu="test")
+        os.environ["K56_BAGIMSIZ_YENIDEN"] = "gerekçe"
+        try:
+            O.acilis_baslat("K55_125_B", {"kimlik": "K56-BAG-b", "commit": "abc"}, td); hata.append("24) sonuç dosyası oluşmuş çöküşten sonra yeniden koşu")
+        except O.DonemKapali:
+            pass
+        finally:
+            os.environ.pop("K56_BAGIMSIZ_YENIDEN", None)
+        if os.path.exists(os.path.join(td, "K56_BAGIMSIZ.lock")):
+            hata.append("24) reddedilen açılış kilit dosyası bıraktı")
     try:
         F1.calistir(O.K56Ayar(), O.KaynakKaydi(), "BAGIMSIZ", None, None, sinir=1); hata.append("24) BAĞIMSIZ'da sinir kabul edildi")
     except ValueError:
@@ -429,6 +441,9 @@ def testler():
     if BE.cakisan_satir(Tq, "GWGHQ", "2015-01-02", "2022-04-25") != 0 or BE.devam_satiri(Tq, "GWGHQ", "2015-01-02", "2022-04-25") is None \
             or "OTC devamı" not in BE.indirme_oncesi_suzgec(Tq, "GWGHQ", "NASDAQ", "2015-01-02", "2022-04-25")[1]:
         hata.append("26) OTC devamı istisnası")
+    Tr = pd.DataFrame({"ticker": ["MPU", "MPU"], "exchange": ["NYSE", "NYSE MKT"], "startDate": pd.to_datetime(["2015-01-02", "2024-10-09"]), "endDate": pd.to_datetime(["2024-10-08", "2026-10-29"])})
+    if BE.indirme_oncesi_suzgec(Tr, "MPU", "NYSE", "2015-01-02", "2024-10-08")[0] != "DIŞI":
+        hata.append("26) OTC olmayan / bugün işlem gören devam satırı kabul edildi")
     if BE.cakisan_satir(Tp, "YOKSEMBOL", "2010-01-04", "2019-02-08") != 0 or BE.devam_satiri(Tp, "YOKSEMBOL", "2010-01-04", "2019-02-08") is not None:
         hata.append("26) boş Tiingo satırında paylaşılan sembol")
     if BE.cakisan_satir(Tp, "DNB", "2010-01-04", "2019-02-08") != 1 or BE.beklenen_gun("2010-01-01", "2016-01-29") >= 320:

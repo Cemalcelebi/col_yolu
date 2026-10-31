@@ -396,7 +396,7 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     T = BE.tiingo_listesi(A); A.ag = bool(os.environ.get("SEC_EPOSTA")); ist = Istemci(A) if A.ag else None
     if ist is not None:
         Istemci.sec_ua()
-    G = ADAY[ADAY.sembol.isin(set(gec.sembol))].drop(columns=["cik"]).merge(gec[["sembol", "cik"]], on="sembol", how="left")     # Ö2 CIK'i meta aşamasından
+    G = ADAY[ADAY.sembol.isin(set(gec.sembol))].drop(columns=["cik"]).merge(gec[["sembol", "cik", "baglama"]], on="sembol", how="left")     # Ö2 CIK'i ve bağlama yöntemi meta aşamasından
     sec_yol = os.path.join(A.onbellek, "evren_v2", "sec_ozet_v2.json")
     Y = E2.indirme_sonrasi(A, ist, G, kl, N25, T, sec_yol); A.ag = False
     yok = Y[Y.cik.notna() & ~Y.sec_var]
@@ -405,7 +405,8 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     Y.to_csv(os.path.join(out, "K56_EVREN2_YENI_SIRKET.csv"), index=False)
     from K55.ortak import cy
     sec = json.load(open(sec_yol, encoding="utf-8")); F = E2.fiyat_son_islem_denetimi(Y, M, kl, sec, pd.Timestamp(cy().CY["kriz"]))
-    R = E2.evren2_kur(A, Y, kl, ek_sha={"K56_EVREN2_META_DOGRULAMA": sha256_dosya(my)}); R["yeni"].to_csv(os.path.join(out, "K56_EVREN2_EKLEME.csv"), index=False)
+    fy = os.path.join(out, "K56_EVREN2_FIYAT_DENETIMI.csv"); F.to_csv(fy, index=False)
+    R = E2.evren2_kur(A, Y, kl, ek_sha={"K56_EVREN2_META_DOGRULAMA": sha256_dosya(my), "K56_EVREN2_FIYAT_DENETIMI": sha256_dosya(fy)}); R["yeni"].to_csv(os.path.join(out, "K56_EVREN2_EKLEME.csv"), index=False)
     DG = E2.dogrulama_tablosu(M, F, R["yeni"]); dy = os.path.join(out, "K56_EVREN2_DOGRULAMA.csv"); DG.to_csv(dy, index=False)
     VR = E2.panel_olay(R, isci=isci); EVk = pd.read_csv(os.path.join(A.k55, "K55_EVREN.csv"))
     Ok = pd.read_csv(os.path.join(A.k55, "K55_OLAYLAR.csv.gz")); OK = E2.olay_karsilastir(Ok, VR["O"], VR["EV"]); OK.to_csv(os.path.join(out, "K56_EVREN2_OLAY_SAYILARI.csv"), index=False)
@@ -433,7 +434,7 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
          f"- BAĞIMSIZ etkisi: {bag_not}.", "", "## Olay sayıları (dönem × ufuk)", ""] + _md(OK, list(OK.columns))
     L += ["", "## Aday doğrulama (denetim × sonuç)", ""] + _md(DG.groupby(["kaynak", "evrende"]).size().rename("n").reset_index(), ["kaynak", "evrende", "n"])
     L += ["", "Ön / son sınıf:", ""] + _md(pd.crosstab(F.sinif_on_k56.fillna("-"), F.sinif_son_k56.fillna("-")).reset_index(), list(pd.crosstab(F.sinif_on_k56.fillna("-"), F.sinif_son_k56.fillna("-")).reset_index().columns)) if len(F) else []
-    L += ["", "## Yeni şirketlerin tarihsel kapsamı", "", f"- KEŞİF günü olan şirket {int((KP.get('gun_kesif', pd.Series(dtype=float)) > 0).sum())}; İÇ {int((KP.get('gun_ic', pd.Series(dtype=float)) > 0).sum())}; BAĞIMSIZ {int((KP.get('gun_bagimsiz', pd.Series(dtype=float)) > 0).sum())}.", ""]
+    L += ["", "## Yeni şirketlerin tarihsel kapsamı", "", f"- KEŞİF günü olan şirket {int((KP.get('gun_kesif', pd.Series(dtype=float)) > 0).sum())}; İÇ {int((KP.get('gun_ic', pd.Series(dtype=float)) > 0).sum())}; 2024 sonrası verisi olan {int(KP.get('gun_2024_sonrasi_var', pd.Series(dtype=bool)).fillna(False).astype(bool).sum())} (BAĞIMSIZ dönemi kapı dışında sayılmaz).", ""]
     L += _md(KP.groupby(["kaynak", "sinif_k56"]).agg(n=("sembol", "size"), evrende=("evrende", "sum")).reset_index(), ["kaynak", "sinif_k56", "n", "evrende"])
     L += ["", "## Veri eksikleri", ""] + _md(R["yeni"].durum.value_counts().rename("n").reset_index(), ["durum", "n"])
     L += ["", "## Getiri duyarlılığı (A1'i etkilemez: olay ve nitelikli gün tam pencere ister)", ""] + _md(GD, list(GD.columns))
@@ -456,8 +457,9 @@ def evren2_on_denetim(A: K56Ayar, ADAY: pd.DataFrame, kl: str) -> None:
     D = pd.read_csv(d); D["tur"] = D.get("tur", pd.Series("fiyat", index=D.index)).fillna("fiyat")
     son = D[D.tur == "fiyat"].groupby("sembol").durum.last()
     eksik = sorted(set(ADAY.sembol) - set(son.index)); kota = sorted(son.index[son == "kota"])
-    if eksik or kota:
-        raise RuntimeError(f"indirme bitmemiş: denenmemiş {len(eksik)} {eksik[:8]}, kota durumunda {len(kota)}; önce python K56.py evren2_indir")
+    gecici = sorted(son.index[son.astype(str).str.match(r"hata|HTTP 5")])
+    if eksik or kota or gecici:
+        raise RuntimeError(f"indirme bitmemiş: denenmemiş {len(eksik)} {eksik[:8]}, kota {len(kota)}, geçici hata {len(gecici)} {gecici[:8]}; önce python K56.py evren2_indir")
     sy = os.path.join(A.onbellek, "evren_v2", "sec_ozet_v2.json")
     if not os.path.exists(sy):
         raise FileNotFoundError(f"SEC özeti yok: {sy} (önbellek yolu {A.onbellek})")
@@ -482,16 +484,19 @@ def _git(*arg, kontrol: bool = True, zaman: int = 120) -> str:
 
 def _git_kaydet(dosyalar: List[str], mesaj: str, push: bool = True) -> str:
     """Dosyaları zorla ekler, commit'ler ve dalı push eder (4 deneme, üstel bekleme). Push olmazsa RuntimeError (hesap başlamaz / kayıt eksik sayılır)."""
-    _git("add", "-f", *dosyalar); r = _git("diff", "--cached", "--quiet", kontrol=False)
-    _git("commit", "-q", "-m", mesaj + ATIF, kontrol=False)
+    import subprocess
+    from .ortak import KOK
+    _git("add", "-f", *dosyalar)
+    if subprocess.run(["git", "-C", KOK, "diff", "--cached", "--quiet"], capture_output=True, timeout=60).returncode != 0:      # değişiklik varsa commit zorunlu
+        _git("commit", "-q", "-m", mesaj + ATIF)
     c = _git("rev-parse", "HEAD")
     if push:
         dal = _git("rev-parse", "--abbrev-ref", "HEAD")
         for i in range(4):
-            if subprocess_ok(["git", "push", "-u", "origin", dal]):
+            if subprocess_ok(["git", "push", "-u", "origin", dal]) and _git("ls-remote", "origin", f"refs/heads/{dal}", kontrol=False).split("\t")[0] == c:
                 return c
             time.sleep(2 ** (i + 1))
-        raise RuntimeError("git push başarısız (4 deneme)")
+        raise RuntimeError("git push başarısız ya da uzak dal yeni commit'i göstermiyor (4 deneme)")
     return c
 
 
@@ -513,8 +518,9 @@ def kilit_uret_kos(A: K56Ayar) -> Dict[str, Any]:
     """v1.3-D: temiz ağaçta etiket + kilit (kod, ön kayıt, hipotez, eşikler, veri tanımı, kıyas tabanı, ortam). Açılış kaydında K55_125_B varsa reddeder."""
     from .ortak import BAGIMSIZ_KILIT, KILIT_ETIKET_ON, acilis_kaydi, git_kirli, kilit_icerigi, veri_tanimi_hesapla
     gunluk_log()
-    if (acilis_kaydi(A.cikti).calisma == "K55_125_B").any():
-        raise RuntimeError("BAĞIMSIZ açılış kaydı var: kilit yeniden üretilemez")
+    Kk = acilis_kaydi(A.cikti); Kk = Kk[Kk.calisma == "K55_125_B"]
+    if (Kk.durum.isin(["TAMAMLANDI", "BAŞLADI"])).any() or Kk["not"].astype(str).str.contains("SONUÇ DOSYASI OLUŞTU").any():
+        raise RuntimeError("BAĞIMSIZ açılmış ya da sonuç dosyası oluşmuş: kilit yeniden üretilemez")
     if git_kirli():
         raise RuntimeError(f"kod yolları kirli: {git_kirli()[:10]}; önce commit")
     sz = _son_oku(A, "sizinti"); szj = json.load(open(os.path.join(sz, "K56_KOSU_SIZ.json"), encoding="utf-8"))
@@ -523,6 +529,10 @@ def kilit_uret_kos(A: K56Ayar) -> Dict[str, Any]:
     if not str(szj.get("karar", "")).startswith("İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK") or kod_farki:
         raise RuntimeError(f"sızıntı sınaması bu commit'te PASS değil: {szj.get('karar')} ({szj.get('commit')})")
     p, o = _panel_yollari(A); vt = veri_tanimi_hesapla(p, o, evren=True, A=A); ic = kilit_icerigi(vt)
+    svt = szj.get("veri_tanimi", {})
+    bag = {k: (svt.get(k) == vt.get(k)) for k in ("panel_sha", "panel_icerik_sha", "olay_sha", "veri_sha", "ek_veri_sha", "evren_surum")}
+    if not all(bag.values()) or szj.get("git_kirli") or szj.get("referans") != os.path.basename(_son_oku(A, "ic_dogrulama")):
+        raise RuntimeError(f"sızıntı PASS bu veri / İÇ referansıyla alınmamış: {bag}, kirli {szj.get('git_kirli')}, referans {szj.get('referans')}")
     eksik = [k for k, v in vt.get("ek_veri_dosyalari", {}).items() if v == "YOK"] + [k for k, v in ic["esikler"].items() if isinstance(v, str) and v.startswith("okunamadı")]
     if eksik or not vt.get("panel_icerik_sha"):
         raise RuntimeError(f"kilit üretilemez: eksik / okunamayan girdi {eksik}")
@@ -531,10 +541,14 @@ def kilit_uret_kos(A: K56Ayar) -> Dict[str, Any]:
            "sizinti": {"kosu": szj.get("kimlik"), "karar": szj.get("karar"), "T2a": szj.get("T2a"), "T2b": szj.get("T2b")},
            "kosu_tanimi": {"K55_125_B": {"donem": "BAGIMSIZ", "b3": True, "yalniz_a1": False, "sinir": None, "duyarlilik": "BAGIMSIZ_B (pencere sonu <= 2026-08-31)"}},
            "not": "BAĞIMSIZ açılmadı; açılış: Cemal kararı (31 Eki) + K56_BAGIMSIZ_AC=1 + python K56.py bagimsiz (bir kez)"}
+    kil["kosu_tanimi"]["ayar"] = {"veri": os.path.realpath(A.veri), "k55": os.path.realpath(A.k55), "abd": os.path.realpath(A.abd), "cikti": os.path.realpath(A.cikti),
+                                  "panel": os.path.realpath(p), "olay": os.path.realpath(o)}
     y = os.path.join(A.cikti, BAGIMSIZ_KILIT); _json_yaz(y, kil)
-    for i in range(4):
+    for i in range(5):
         if subprocess_ok(["git", "push", "origin", etiket]):
             break
+        if i == 4:
+            raise RuntimeError(f"kilit etiketi push edilemedi: {etiket}")
         time.sleep(2 ** (i + 1))
     _git_kaydet([y], f"K56 v1.3 BAĞIMSIZ kilidi ({etiket}; açılmadı)")
     log.info("kilit üretildi: %s %s", etiket, c[:12]); return kil
@@ -548,37 +562,47 @@ def bagimsiz_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     gunluk_log()
     if os.environ.get("K56_BAGIMSIZ_AC") != "1":
         raise RuntimeError("K56_BAGIMSIZ_AC=1 yok (Cemal kararı)")
+    from .ortak import REPO_CIKTI
+    if os.path.realpath(A.cikti) != os.path.realpath(REPO_CIKTI):
+        raise RuntimeError(f"BAĞIMSIZ yalnız repo çıktı klasöründen açılır ({REPO_CIKTI}); A.cikti {A.cikti}")
     bagimsiz_kilit_dogrula(A.cikti); A.ag = False
-    kimlik = kosu_kimligi(A, "BAG"); out = _kosu_klasoru(A, "bagimsiz", kimlik); kk = KaynakKaydi(); p, o = _panel_yollari(A)
-    kil = json.load(open(os.path.join(A.cikti, "K56_BAGIMSIZ_KILIT.json"), encoding="utf-8"))
+    kil = json.load(open(os.path.join(A.cikti, "K56_BAGIMSIZ_KILIT.json"), encoding="utf-8")); ay = kil.get("kosu_tanimi", {}).get("ayar", {})
+    p, o = ay.get("panel", ""), ay.get("olay", "")                       # panel / olay yolu kilitten (ortam değişkeninden değil)
+    simdi = {"veri": os.path.realpath(A.veri), "k55": os.path.realpath(A.k55), "abd": os.path.realpath(A.abd), "cikti": os.path.realpath(A.cikti), "panel": os.path.realpath(p), "olay": os.path.realpath(o)}
+    if simdi != ay or os.path.realpath(_panel_yollari(A)[0]) != os.path.realpath(p):
+        raise RuntimeError(f"koşu ayarları / panel yolu kilitle aynı değil: {simdi} != {ay}")
     if _kiyas_tabani(A) != kil.get("kiyas_tabani"):
         raise RuntimeError("kıyas tabanı (F1A / IC SON koşuları) kilitten sonra değişmiş")
+    kimlik = kosu_kimligi(A, "BAG"); out = _kosu_klasoru(A, "bagimsiz", kimlik); kk = KaynakKaydi()
     acilis_baslat("K55_125_B", kimlik, A.cikti); kayit = os.path.join(A.cikti, BAGIMSIZ_ACILIS)
     try:
         _git_kaydet([kayit], f"K56 BAĞIMSIZ açılış kaydı: BAŞLADI ({kimlik['kimlik']})")
     except Exception as ex:
         acilis_bitir("K55_125_B", kimlik, "ÇÖKTÜ", A.cikti, notu=f"push yok, hesap başlamadı: {ex}"); raise
-    os.environ["K56_BAGIMSIZ_KIMLIK"] = kimlik["kimlik"]; dosyalar = []
+    os.environ["K56_BAGIMSIZ_KIMLIK"] = kimlik["kimlik"]; os.environ["K56_BAGIMSIZ_KLASOR"] = A.cikti; dosyalar = []; b_not = ""
     try:
         R = F1.calistir(A, kk, "BAGIMSIZ", p, o, isci=isci, b3=True, veri_dondur=True)
         for ad, X in (("K56BAG_SATIR.csv", R["S"]), ("K56BAG_HUCRE.csv", R["H"]), ("K56BAG_B3.csv", R["B3"]), ("K56BAG_BILESIM.csv", R["Bl"])):
             X.to_csv(os.path.join(out, ad), index=False); dosyalar.append(ad)
-        VERI = R.pop("VERI"); bagimsiz_b_etiketle(VERI)                     # duyarlılık: K55 ön kaydı v1.2-2 pencere tanımı (aynı açılış)
-        Rb = F1.calistir(A, kk, "BAGIMSIZ_B", None, None, isci=isci, b3=True, veri=VERI)
-        for ad, X in (("K56BAG_B_SATIR.csv", Rb["S"]), ("K56BAG_B_HUCRE.csv", Rb["H"]), ("K56BAG_B_B3.csv", Rb["B3"]), ("K56BAG_B_BILESIM.csv", Rb["Bl"])):
-            X.to_csv(os.path.join(out, ad), index=False); dosyalar.append(ad)
-        kk.tablo().to_csv(os.path.join(out, "K56BAG_KAYNAK_KAYDI.csv"), index=False)
-        sha = {f: sha256_dosya(os.path.join(out, f)) for f in dosyalar}
+        VERI = R.pop("VERI")
         ek = ["- Tek açılış (K55_125_B); testler v1.2-B / v1.3-D, ölçütler İÇ ile aynı; yeni eşik / değişken yok. Asıl: K55 kod etiketleri; duyarlılık: BAGIMSIZ_B "
-              "(K55 ön kaydı v1.2-2: pencere sonu <= 2026-08-31), ayrı tablolar (K56BAG_B_*).", f"- Sonuç dosyası sha'ları: {json.dumps({k: v[:12] for k, v in sha.items()})}."]
-        faz1_yaz(out, "K56-BAG BAĞIMSIZ DOĞRULAMA 2024-26 (asıl: K55 etiketleri)", kimlik, R, ek)
-        os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_ASIL.md")); faz1_yaz(out, "K56-BAG BAĞIMSIZ DUYARLILIK (BAGIMSIZ_B pencere tanımı)", kimlik, Rb, ek)
-        os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_DUYARLILIK_B.md"))
+              "(K55 ön kaydı v1.2-2: pencere sonu <= 2026-08-31), ayrı tablolar (K56BAG_B_*)."]
+        faz1_yaz(out, "K56-BAG BAĞIMSIZ DOĞRULAMA 2024-26 (asıl: K55 etiketleri)", kimlik, R, ek); os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_ASIL.md"))
         NK = k55_nihai_karar(R["S"], R["H"], R["B3"]); _json_yaz(os.path.join(out, "K56BAG_K55_NIHAI_KARAR.json"), NK)
         open(os.path.join(out, "K56BAG_K55_NIHAI_KARAR.md"), "w", encoding="utf-8").write(f"# {NK['karar']}\n\n" + "\n".join(f"- {x}" for x in NK["notlar"]) + "\n")
+        _git_kaydet([os.path.join(out, f) for f in os.listdir(out)], f"K56 BAĞIMSIZ asıl sonuçlar ve K55 nihai karar ({kimlik['kimlik']})")   # asıl sonuç, B'den önce kalıcı
+        try:                                                              # duyarlılık: K55 ön kaydı v1.2-2 pencere tanımı (aynı açılış; çökmesi asıl sonucu düşürmez)
+            bagimsiz_b_etiketle(VERI); Rb = F1.calistir(A, kk, "BAGIMSIZ_B", None, None, isci=isci, b3=True, veri=VERI)
+            for ad, X in (("K56BAG_B_SATIR.csv", Rb["S"]), ("K56BAG_B_HUCRE.csv", Rb["H"]), ("K56BAG_B_B3.csv", Rb["B3"]), ("K56BAG_B_BILESIM.csv", Rb["Bl"])):
+                X.to_csv(os.path.join(out, ad), index=False); dosyalar.append(ad)
+            faz1_yaz(out, "K56-BAG BAĞIMSIZ DUYARLILIK (BAGIMSIZ_B pencere tanımı)", kimlik, Rb, ek); os.rename(os.path.join(out, "RAPOR.md"), os.path.join(out, "RAPOR_DUYARLILIK_B.md"))
+        except Exception as exb:
+            Rb = {"S": pd.DataFrame(columns=["sinif_a1"]), "H": pd.DataFrame()}; b_not = f"DUYARLILIK-B çöktü: {type(exb).__name__}: {str(exb)[:150]}"; log.error(b_not)
+        kk.tablo().to_csv(os.path.join(out, "K56BAG_KAYNAK_KAYDI.csv"), index=False)
+        sha = {f: sha256_dosya(os.path.join(out, f)) for f in dosyalar}
         _json_yaz(os.path.join(out, "K56_KOSU_BAG.json"), {**kimlik, "k55_nihai": NK["karar"], "sonuc_sha": sha, "sure_dk": R["sure_dk"], "b1_gecen": int(R["S"].b1_gecti.sum()), "b2": R["S"].sinif_a1.value_counts().to_dict(),
                                                            "b3": R["B3"].karar.value_counts().to_dict() if len(R["B3"]) else {}, "b_b2": Rb["S"].sinif_a1.value_counts().to_dict()})
-        _son_yaz(A, "bagimsiz", kimlik, out); acilis_bitir("K55_125_B", kimlik, "TAMAMLANDI", A.cikti, notu="sonuç sha: " + ",".join(f"{k}:{v[:10]}" for k, v in sha.items()))
+        _son_yaz(A, "bagimsiz", kimlik, out); acilis_bitir("K55_125_B", kimlik, "TAMAMLANDI", A.cikti, notu="sonuç sha: " + ",".join(f"{k}:{v[:10]}" for k, v in sha.items()) + (f"; {b_not}" if b_not else ""))
     except Exception as ex:
         if dosyalar:
             acilis_bitir("K55_125_B", kimlik, "ÇÖKTÜ", A.cikti, notu=f"SONUÇ DOSYASI OLUŞTU ({len(dosyalar)}); yeniden koşu yok: {type(ex).__name__}: {str(ex)[:150]}")
@@ -586,7 +610,7 @@ def bagimsiz_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
             acilis_bitir("K55_125_B", kimlik, "ÇÖKTÜ", A.cikti, notu=f"sonuç dosyası yok: {type(ex).__name__}: {str(ex)[:150]}")
         _git_kaydet([kayit] + [os.path.join(out, f) for f in os.listdir(out)], f"K56 BAĞIMSIZ açılış kaydı: ÇÖKTÜ ({kimlik['kimlik']})"); raise
     finally:
-        os.environ.pop("K56_BAGIMSIZ_KIMLIK", None)
+        os.environ.pop("K56_BAGIMSIZ_KIMLIK", None); os.environ.pop("K56_BAGIMSIZ_KLASOR", None)
     _git_kaydet([kayit] + [os.path.join(out, f) for f in os.listdir(out)] + [os.path.join(A.cikti, "bagimsiz", "SON.json")], f"K56 BAĞIMSIZ sonuçları ve açılış kaydı: TAMAMLANDI ({kimlik['kimlik']})")
     return {"S": R["S"], "H": R["H"], "B3": R["B3"], "Sb": Rb["S"], "Hb": Rb["H"]}
 
@@ -686,13 +710,22 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
             if mod != "hepsi":
                 break
             VR = SZ.kesik_veri(A, "IC_DOGRULAMA", ev, isci); R2, y2, F2_, z2 = kos(f"T2{ev}", VR, y1); oz[f"T2{ev}"] = z2
-            dmax = max([abs(float(x)) for x in F2_[F2_.sutun.isin(["i_d", "ii_d", "iii_d"])].apply(lambda r: _fark(r.ref, r.yeni), axis=1)] or [0.0])
-            sinif = int(F2_.sutun.isin(["sinif_a1", "sinif_iii", "b1_gecti", "karar", "a1", "b1_durum"]).sum())
-            oz[f"T2{ev}"].update({"en_buyuk_d_farki": dmax, "sinif_degisimi": sinif, "ihmal_edilebilir": bool(sinif == 0 and dmax <= 0.05)})
+            dF = F2_[F2_.sutun.isin(["i_d", "ii_d", "iii_d"])].copy(); dF["f"] = [abs(_fark(a_, b_)) for a_, b_ in zip(dF.ref, dF.yeni)]
+            dmax = float(dF.f.max()) if len(dF) else 0.0; sinif = int(F2_.sutun.isin(["sinif_a1", "sinif_iii", "b1_gecti", "karar", "a1", "b1_durum", "(satır)"]).sum())
+            Sr = y1["S"].set_index(["hucre", "varyant", "ufuk"]); yari = {}
+            for c_ in ("i_d", "ii_d", "iii_d"):
+                for k_, v_ in ((Sr[f"{c_}_ust"] - Sr[f"{c_}_alt"]) / 2).items():
+                    yari[(c_, "|".join(map(str, k_)))] = v_
+            asan = int(sum(1 for r in dF.itertuples() if np.isfinite(r.f) and r.f > 0.25 * yari.get((r.sutun, r.anahtar), np.inf)))
+            oz[f"T2{ev}"].update({"en_buyuk_d_farki": dmax, "sinif_degisimi": sinif, "yari_genislik_25_asan": asan, "ihmal_edilebilir": bool(sinif == 0 and dmax <= 0.05 and asan == 0)})
             L += [f"- T2{ev} (kesik evren{' + kesim sonrası giren K34 dışarıda' if ev == 'b' else ''}) vs T1b: {oz[f'T2{ev}']}"]; del VR
     oz["sure_dk"] = round((time.time() - t0) / 60, 1)
-    oz["karar"] = ("İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK (T1 birebir)" if oz.get("T1b", {}).get("birebir", {}) and all(v for k_, v in oz["T1b"]["birebir"].items() if k_ in ("S", "H", "B3"))
-                   else "T1 FARKI VAR: İÇ geçersiz sayılır, BAĞIMSIZ açılmaz (açıklanana kadar)")
+    from .ortak import veri_tanimi_hesapla
+    oz["veri_tanimi"] = {k: v for k, v in veri_tanimi_hesapla(p, o, evren=True, A=A).items() if k not in ("veri_dosyalari", "ek_veri_dosyalari")}; oz["git_kirli"] = kimlik.get("git_kirli", [])
+    t1 = oz.get("T1b", {}).get("birebir", {}); t1a = oz.get("T1a_bilesim", {}).get("birebir", {}); t0_ = oz.get("T0", {})
+    gecti = (mod == "hepsi" and t0_.get("panel_esit") and t0_.get("olay_esit") and all(t1.get(k) for k in ("S", "H", "B3")) and t1a.get("Bl"))
+    oz["karar"] = ("İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK (T0 yeniden üretim + T1b S / H / B3 + T1a bileşim birebir)" if gecti
+                   else f"GEÇMEDİ: mod {mod}, T0 {t0_.get('panel_esit')} / {t0_.get('olay_esit')}, T1b {t1}, T1a {t1a} — İÇ geçersiz sayılır, BAĞIMSIZ açılmaz (açıklanana kadar)")
     L += ["", f"## Karar: {oz['karar']}", "", "Görünmeyen sınırlamalar (T1 / T2 ölçemez; beyan): hayatta kalma (evren 2026'da işlem görenler + K34), 2026 sürümü bölünme / temettü düzeltmesi, "
           "güncel sektör / CIK etiketleri; BAĞIMSIZ dönem K51-K54 programında test dönemi olarak kullanıldı."]
     open(os.path.join(out, "RAPOR.md"), "w", encoding="utf-8").write("\n".join(L) + "\n"); _json_yaz(os.path.join(out, "K56_KOSU_SIZ.json"), {**kimlik, **oz})
@@ -729,8 +762,11 @@ def k55_nihai_karar(S: pd.DataFrame, H: pd.DataFrame, B3: pd.DataFrame) -> Dict[
         karar = "K55 NİHAİ: İZ YOK korunur + TEK DÖNEM SAPMASI notu"
         notlar.append(f"BAĞIMSIZ'da çoğunluğu GERÇEK ETKİ KALIYOR olan hücre: {H[H.a1 == 'GERÇEK ETKİ KALIYOR'].hucre.tolist()}; KEŞİF ve İÇ'te seçimsiz etki yok, tek dönem tekrar "
                       "sayılmaz; yeni hipotez ancak ayrı ön kayıtla ve K55 dışı veride (Avrupa).")
-    else:
+    elif (H.a1 == "MEKANİK").sum() > len(H) / 2:
         karar = "K55 NİHAİ: İZ YOK — ters yönlü farklar olay tanımının seçim eseri (KEŞİF, İÇ, BAĞIMSIZ)"
+    else:
+        karar = "K55 NİHAİ: İZ YOK (BAĞIMSIZ kısmen ölçüldü / belirsiz: hücrelerin çoğu MEKANİK değil, GERÇEK ETKİ de değil)"
+        tb = {k: v for k, v in sat.items() if str(k).startswith(("TANIMSIZ", "BELİRSİZ"))}; notlar.append(f"BAĞIMSIZ hücre sınıfları: {huc}; TANIMSIZ / BELİRSİZ satırlar: {tb}.")
     dag = {k: v for k, v in sat.items() if k in ("GERÇEK ETKİ KALIYOR", "KISMEN MEKANİK", "TERS KALINTI")}
     if dag:
         notlar.append(f"Dağınık satırlar (iz sayılmaz): {dag}.")

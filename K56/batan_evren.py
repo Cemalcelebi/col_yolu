@@ -116,7 +116,9 @@ def indirme_oncesi_suzgec(T: pd.DataFrame, sembol: str, borsa: str, bas: Any, bi
     if cakisan_satir(T, sembol, bas, bitis):
         return "DIŞI", "paylaşılan sembol (adaydan sonra biten başka Tiingo satırı)"
     d = devam_satiri(T, sembol, bas, bitis)
-    if d is not None:                                                    # aynı şirketin OTC devamı: seri sonu devam satırının bitişi, işaret
+    if d is not None:                                                    # aynı şirketin OTC devamı: yalnız OTC satırı ve bugün işlem görmüyorsa; seri sonu devam satırının bitişi
+        if str(d.exchange).upper() not in ("PINK", "EXPM", "OTCMKTS", "OTCQX", "OTCQB", "OTCCE", "OTCGREY", "GREY", "OTC") or d.endDate >= pd.Timestamp("2026-08-01"):
+            return "DIŞI", f"devam satırı OTC değil ya da bugün işlem görüyor (Tiingo {d.exchange} {d.startDate.date()}..{d.endDate.date()})"
         bitis = d.endDate; k, n = "İŞARET", "; ".join(x for x in (n, f"OTC devamı (Tiingo {d.exchange} {d.startDate.date()}..{d.endDate.date()})") if x)
     if beklenen_gun(bas, bitis) < 320:
         return "DIŞI", "beklenen işlem günü < 320 (2015 başlangıçlı indirme)"
@@ -341,11 +343,22 @@ def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None
         if durum_yolu:
             pd.DataFrame(durum).to_csv(durum_yolu, index=False)
 
-    def istek(k: str, tur: str, url: str, params: Dict[str, str], yol: str, tamam) -> None:
+    def istek(k: str, tur: str, url: str, params: Dict[str, str], yol: str, tamam, deneme: int = 3) -> None:
         while len(zaman) >= saatlik and time.time() - zaman[-saatlik] < 3600:
             time.sleep(20)
         try:
-            x = s.get(url, params=params, timeout=60); zaman.append(time.time()); metin = x.text[:300]
+            x = None
+            for d_ in range(deneme):                                         # geçici ağ hatası / 5xx: koşu içinde en çok 3 deneme, üstel bekleme
+                try:
+                    x = s.get(url, params=params, timeout=60); zaman.append(time.time())
+                    if x.status_code < 500:
+                        break
+                except Exception:
+                    zaman.append(time.time())
+                    if d_ == deneme - 1:
+                        raise
+                time.sleep(5 * 2 ** d_)
+            metin = x.text[:300]
             if x.status_code == 200 and tamam(x.text):
                 open(yol, "w").write(x.text); dd = "indi" if (tur == "meta" or x.text.count("\n") > 1) else "bos"
             elif x.status_code == 429 or re.search(r"run over|limit|exceed", metin, re.I):

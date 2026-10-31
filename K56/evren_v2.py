@@ -61,7 +61,9 @@ def indirme_sonrasi(A: K56Ayar, ist: Any, ADAY: pd.DataFrame, klasor: str, N25: 
     sınıflandırma (K54 kuralı, T = indirilen serinin son günü)."""
     Y = ADAY.copy(); Y["bitis"] = pd.to_datetime(Y.bitis); dur = [BE.seri_denetimi(os.path.join(klasor, f"{s}.csv"), b) for s, b in zip(Y.sembol, Y.bitis)]
     Y["seri_durum"] = [d[0] for d in dur]; Y["seri_son"] = [d[1] for d in dur]; Y["seri_n"] = [d[2] for d in dur]
-    Y["tiingo_ad"] = [meta_adi(klasor, s) for s in Y.sembol]; Y["baglama"] = np.where(Y.cik.notna(), "K34 eşleme (Ö1)", "")
+    Y["tiingo_ad"] = [meta_adi(klasor, s) for s in Y.sembol]
+    onceki = Y["baglama"] if "baglama" in Y else pd.Series("", index=Y.index)          # meta aşamasının bağlama yöntemi korunur
+    Y["baglama"] = np.where(onceki.fillna("").astype(str) != "", onceki.fillna("").astype(str), np.where(Y.cik.notna(), "K34 eşleme (Ö1)", ""))
     for k in Y.index[Y.cik.isna()]:
         c, how = BE.cik_bagla(Y.at[k, "sembol"], Y.at[k, "tiingo_ad"], Y.at[k, "bitis"], N25); Y.at[k, "cik"] = c if c is not None else np.nan; Y.at[k, "baglama"] = how
     yeni = sorted(int(c) for c in Y.cik.dropna().unique())
@@ -149,7 +151,8 @@ def panel_olay(R: Dict[str, Any], isci: int = 3) -> Dict[str, Any]:
 
 def olay_karsilastir(O1: pd.DataFrame, O2: pd.DataFrame, EV2: pd.DataFrame) -> pd.DataFrame:
     """Olay sayıları dönem × ufuk: K55 (eski) / v2 (yeni) / v2'de yeni şirketlerden gelen."""
-    yeni = set(EV2.sembol[EV2.kaynak.str.startswith("K56_")])
+    yeni = set(EV2.sembol[EV2.kaynak.str.startswith("K56_")]); izin = ("KESIF", "IC_DOGRULAMA")            # BAĞIMSIZ / PURGE / EMBARGO sayılmaz (kapı dışı hesap yok)
+    O1 = O1[O1.donem.isin(izin)]; O2 = O2[O2.donem.isin(izin)]
     a = O1.groupby(["donem", "ufuk"]).size().rename("k55"); b = O2.groupby(["donem", "ufuk"]).size().rename("v2")
     c = O2[O2.sembol.isin(yeni)].groupby(["donem", "ufuk"]).size().rename("v2_yeni_sirket")
     k = O2[~O2.sembol.isin(yeni)].groupby(["donem", "ufuk"]).size().rename("v2_k55_sirket")      # likit eşiği / sıralar kesitsel: yeni seriler K55 şirketlerini de kaydırır
@@ -168,7 +171,7 @@ def kapsam_tablosu(Y: pd.DataFrame, R: Dict[str, Any], V: Dict[str, pd.DataFrame
         if d is not None:
             ix = d.index
             x.update({"ilk": ix[0].date(), "son": ix[-1].date(), "n_gun": len(ix), "gun_kesif": int(((ix >= "2016-01-01") & (ix <= "2021-12-31")).sum()),
-                      "gun_ic": int(((ix >= "2022-01-01") & (ix <= "2023-12-31")).sum()), "gun_bagimsiz": int((ix >= "2024-01-01").sum())})
+                      "gun_ic": int(((ix >= "2022-01-01") & (ix <= "2023-12-31")).sum()), "gun_2024_sonrasi_var": bool((ix >= "2024-01-01").any())})
         rows.append(x)
     return pd.DataFrame(rows)
 
@@ -182,7 +185,7 @@ def getiri_duyarlilik(P: pd.DataFrame, EV: pd.DataFrame, Y: pd.DataFrame) -> pd.
         c = f"bitis{h}"
         if c not in P:
             continue
-        Q = P[P.sembol.isin(yeni) & P.likit][["sembol", c]]; Q = Q.assign(sinif=Q.sembol.map(sn), tanimsiz=Q[c].isna())
+        Q = P[P.sembol.isin(yeni) & P.likit & (P.tarih <= pd.Timestamp("2023-12-31"))][["sembol", c]]; Q = Q.assign(sinif=Q.sembol.map(sn), tanimsiz=Q[c].isna())
         for k, g in Q.groupby("sinif"):
             rows.append({"ufuk_gun": h, "sinif_k56": k, "likit_satir": len(g), "pencere_tanimsiz": int(g.tanimsiz.sum()),
                          "duyarlilik": "−%100" if k == "İFLAS" else ("son kapanış" if k == "BİRLEŞME" else "TANIMSIZ kalır")})
@@ -270,6 +273,8 @@ def meta_dogrulama(A: K56Ayar, ist: Any, ADAY: pd.DataFrame, klasor: str, N25: p
                     dis.append(f"META VARLIK: {ad_} {a_[:10]} ≠ liste {str(b_)[:10]}")
             k, n = adi_hisse_ad(m.get("name"), m.get("description"))
             (dis if k == "DIŞI" else isr).append(n) if k else None
+        elif str(r.kaynak).startswith("Ö1"):
+            dis.append(f"META {d['meta_durum']}: kimlik doğrulanamadı (Cemal madde 6)")
         else:
             isr.append(f"meta {d['meta_durum']}")
         if pd.isna(r.cik):
@@ -335,8 +340,7 @@ def fiyat_son_islem_denetimi(Y: pd.DataFrame, M: pd.DataFrame, klasor: str, sec:
                       "temettu_n": int((pd.to_numeric(ham.get("divCash", pd.Series(0.0)), errors="coerce").fillna(0.0) > 0).sum()),
                       "adj_oran_son": float(ham.adjClose.iloc[-1] / ham.close.iloc[-1]) if len(ham) and ham.close.iloc[-1] else np.nan})
             ix = s_.index if s_ is not None else pd.DatetimeIndex([])
-            d.update({"gun_kesif": int(((ix >= "2016-01-01") & (ix <= "2021-12-31")).sum()), "gun_ic": int(((ix >= "2022-01-01") & (ix <= "2023-12-31")).sum()),
-                      "gun_bagimsiz": int((ix >= "2024-01-01").sum())})
+            d.update({"gun_kesif": int(((ix >= "2016-01-01") & (ix <= "2021-12-31")).sum()), "gun_ic": int(((ix >= "2022-01-01") & (ix <= "2023-12-31")).sum())})
             for k in ("veri_hatasi", "veri_yetersiz", "supheli_sicrama"):
                 if d.get(k):
                     isr.append(f"{k}: {d[k]}")
@@ -370,7 +374,7 @@ ISARET_ALT_KUME = ("SPAC", "OTC", "ADR", "kimlik YAKIN", "OTC KUYRUĞU", "5. har
 def dogrulama_tablosu(M: pd.DataFrame, F: pd.DataFrame, yeni: pd.DataFrame) -> pd.DataFrame:
     """Aday başına son doğrulama satırı: meta aşaması + fiyat aşaması + evren_insa sonucu; evren_disi_neden (ilk DIŞI), isaretler, duyarlılık alt kümesi."""
     from K55.evren import sembol_normalize
-    D = M.merge(F, on="sembol", how="left"); y = yeni.copy(); y["sembol"] = y.sembol.astype(str); m = dict(zip(y.sembol, y.durum)); dd = dict(zip(y.sembol, y.get("evren_disi_ayrinti", pd.Series(dtype=object))))
+    D = M.merge(F.drop(columns=[c for c in ("sinif_on_k54", "sinif_on_k56") if c in F]), on="sembol", how="left"); y = yeni.copy(); y["sembol"] = y.sembol.astype(str); m = dict(zip(y.sembol, y.durum)); dd = dict(zip(y.sembol, y.get("evren_disi_ayrinti", pd.Series(dtype=object))))
     D["evren_insa"] = D.sembol.map(lambda s: m.get(sembol_normalize(s), "")); D["evren_insa_ayrinti"] = D.sembol.map(lambda s: dd.get(sembol_normalize(s), ""))
     ev_icinde = set(y.sembol[y.get("evrende", pd.Series(False, index=y.index)).fillna(False).astype(bool)])
     D["evrende"] = D.sembol.map(lambda s: sembol_normalize(s) in ev_icinde)
@@ -381,7 +385,8 @@ def dogrulama_tablosu(M: pd.DataFrame, F: pd.DataFrame, yeni: pd.DataFrame) -> p
         if r.get("seri_durum") not in (None, "TAMAM") and isinstance(r.get("seri_durum"), str):
             return f"seri: {r['seri_durum']}"
         if not r["evrende"]:
-            return r.get("evren_insa_ayrinti") or r.get("evren_insa") or "evren dışı"
+            a_ = r.get("evren_insa_ayrinti"); b_ = r.get("evren_insa")
+            return a_ if isinstance(a_, str) and a_ else (b_ if isinstance(b_, str) and b_ else "evren dışı")
         return ""
     D["evren_disi_neden"] = D.apply(neden, axis=1)
     D["isaretler"] = (D.isaretler_on.fillna("") + "; " + D.isaretler_fiyat.fillna("")).str.strip("; ")

@@ -46,7 +46,7 @@ def kesilme_nedeni(sem: np.ndarray, ii: np.ndarray, son_ix: np.ndarray, likit: n
             out[j] = "seri sonu / boşluk"
         elif not likit[q]:
             out[j] = "likit değil"
-        elif nit[q] and not don_ok[q]:
+        elif not don_ok[q]:                                               # dönem dışı etiketli günün getirisi okunmaz (İÇ -> BAĞIMSIZ sızıntısı yok)
             out[j] = "dönem etiketi (pencere dönem dışı)"
         else:
             out[j] = "getiri eşik altı ya da pencere tanımsız"

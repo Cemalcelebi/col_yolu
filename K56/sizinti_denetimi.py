@@ -135,6 +135,8 @@ def karsilastir(ref: Dict[str, pd.DataFrame], yeni: Dict[str, pd.DataFrame], tol
             continue
         M = a.merge(b, on=kk_, how="outer", suffixes=("_ref", "_yeni"), indicator=True); n_fark = 0
         kol = sorted({c[:-4] for c in M.columns if c.endswith("_ref")} - atla)
+        for c in sorted((set(a.columns) ^ set(b.columns)) - atla - set(kk_)):          # tek tarafta olan sütun = fark
+            rows.append({"tablo": t, "anahtar": "(sütun)", "sutun": c, "ref": c in a.columns, "yeni": c in b.columns})
         for r in M.to_dict("records"):
             key = "|".join(str(r[c]) for c in kk_)
             if r["_merge"] != "both":
@@ -147,7 +149,7 @@ def karsilastir(ref: Dict[str, pd.DataFrame], yeni: Dict[str, pd.DataFrame], tol
                 elif str(va) == str(vb) or (pd.isna(va) if not isinstance(va, (list, dict)) else False) and (pd.isna(vb) if not isinstance(vb, (list, dict)) else False):
                     continue
                 rows.append({"tablo": t, "anahtar": key, "sutun": c, "ref": va, "yeni": vb}); n_fark += 1
-        ozet[t] = {"satir_ref": int(len(a)), "satir_yeni": int(len(b)), "fark_hucre": int(n_fark)}
+        ozet[t] = {"satir_ref": int(len(a)), "satir_yeni": int(len(b)), "fark_hucre": int(n_fark + len((set(a.columns) ^ set(b.columns)) - atla - set(kk_)))}
     F = pd.DataFrame(rows, columns=["tablo", "anahtar", "sutun", "ref", "yeni"])
     ozet["birebir"] = {t: v["fark_hucre"] == 0 for t, v in ozet.items() if isinstance(v, dict)}
     return F, ozet

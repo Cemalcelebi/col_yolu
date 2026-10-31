@@ -318,7 +318,8 @@ def donem_kapisi(donem: str, D: Optional[pd.DataFrame] = None, h: Optional[int] 
     if donem.startswith("BAGIMSIZ"):
         if os.environ.get("K56_BAGIMSIZ_AC") != "1":
             raise DonemKapali("BAĞIMSIZ dönem kapalı (Cemal kararı + K56_BAGIMSIZ_KILIT.json + K56_BAGIMSIZ_AC=1 gerekir)")
-        acik_kayit_dogrula(kilit_klasoru)                                # v1.3-D: açık BAŞLADI kaydı + eşleşen kimlik (bir kez kuralı)
+        kilit_klasoru = kilit_klasoru or os.environ.get("K56_BAGIMSIZ_KLASOR")     # bagimsiz_kos A.cikti'yi işçilere bu değişkenle geçirir
+        acik_kayit_dogrula(kilit_klasoru)                                # v1.3-D: açık BAŞLADI kaydı + eşleşen kimlik + süreç (bir kez kuralı)
         bagimsiz_kilit_dogrula(kilit_klasoru)
     if D is not None and len(D):
         son = pd.Timestamp(DONEM_T0_SON.get(donem, DONEM_SON[donem]))
@@ -390,6 +391,11 @@ def git_kilit_dogrula(k: Dict[str, Any]) -> None:
         fark = subprocess.run(["git", "-C", KOK, "diff", "--quiet", c, "HEAD", "--", *KOD_YOLLARI], capture_output=True, timeout=30).returncode != 0
     except Exception as ex:
         raise DonemKapali(f"kilit tutmuyor: git denetimi yapılamadı ({ex})")
+    yk = os.path.join(REPO_CIKTI, BAGIMSIZ_KILIT)
+    izli = subprocess.run(["git", "-C", KOK, "ls-files", "--error-unmatch", yk], capture_output=True, timeout=20).returncode == 0
+    kilit_farki = subprocess.run(["git", "-C", KOK, "diff", "--quiet", "HEAD", "--", yk], capture_output=True, timeout=20).returncode != 0
+    if not izli or kilit_farki:
+        raise DonemKapali(f"kilit tutmuyor: kilit dosyası commit'li değil ya da commit'ten sonra değişmiş ({yk})")
     if ec != c or not anc or fark or git_kirli():
         raise DonemKapali(f"kilit tutmuyor: etiket {et} -> {ec[:12]} (kilit {c[:12]}), ata {anc}, kod farkı {fark}, kirli {git_kirli()[:5]}")
 
@@ -397,9 +403,13 @@ def git_kilit_dogrula(k: Dict[str, Any]) -> None:
 def acik_kayit_dogrula(klasor: Optional[str] = None) -> None:
     """BAĞIMSIZ veri yalnız açık (BAŞLADI) bir açılış kaydı varken ve süreç o kaydın kimliğini taşıyorken okunur (K56_BAGIMSIZ_KIMLIK)."""
     kim = os.environ.get("K56_BAGIMSIZ_KIMLIK", "")
-    K = acilis_kaydi(klasor)
-    if not kim or not ((K.kimlik == kim) & (K.durum == "BAŞLADI") & (K.calisma == "K55_125_B")).any():
+    K = acilis_kaydi(klasor or os.environ.get("K56_BAGIMSIZ_KLASOR"))
+    m = (K.kimlik == kim) & (K.durum == "BAŞLADI") & (K.calisma == "K55_125_B")
+    if not kim or not m.any():
         raise DonemKapali("BAĞIMSIZ için açık açılış kaydı yok (yalnız bagimsiz_kos açar; bir kez)")
+    pid = str(K[m].get("pid", pd.Series([""])).iloc[0])
+    if pid and pid not in (str(os.getpid()), str(os.getppid())):
+        raise DonemKapali(f"BAĞIMSIZ açık kaydı başka bir sürece ait (pid {pid}); bu süreç {os.getpid()}")
 
 
 _VT_ONB: Dict[Tuple[str, str], Dict[str, Any]] = {}
@@ -447,17 +457,36 @@ def acilis_kaydi(klasor: Optional[str] = None) -> pd.DataFrame:
 def acilis_baslat(calisma: str, kimlik: Dict[str, Any], klasor: Optional[str] = None) -> None:
     """Bir BAĞIMSIZ çalışması (ör. K55_125_B) yalnız bir kez TAMAMLANABİLİR. Önceki deneme ÇÖKTÜ ise yeniden deneme yalnız K56_BAGIMSIZ_YENIDEN=<gerekçe>
     ile; TAMAMLANDI ya da BAŞLADI (bitmemiş) kayıt varken durur. Kayıt koşu başlamadan yazılır (sonuç görülüp yeniden koşma kaydı silinemez: repo geçmişi)."""
-    K = acilis_kaydi(klasor); onceki = K[K.calisma == calisma]
-    if (onceki.durum == "TAMAMLANDI").any():
-        raise DonemKapali(f"BAĞIMSIZ {calisma} zaten bir kez tamamlandı ({onceki[onceki.durum == 'TAMAMLANDI'].kimlik.iloc[0]}); yeniden koşulmaz")
-    if (onceki.durum == "BAŞLADI").any():
-        raise DonemKapali(f"BAĞIMSIZ {calisma} için bitmemiş (BAŞLADI) kayıt var; çökme ise kaydı ÇÖKTÜ olarak kapat (acilis_bitir) ve gerekçeyle yeniden dene")
-    gerekce = os.environ.get("K56_BAGIMSIZ_YENIDEN", "")
-    if (onceki.durum == "ÇÖKTÜ").any() and not gerekce:
-        raise DonemKapali(f"BAĞIMSIZ {calisma} önceki denemesi çöktü; yeniden deneme için K56_BAGIMSIZ_YENIDEN=<gerekçe> gerekir")
-    satir = {"calisma": calisma, "kimlik": kimlik["kimlik"], "commit": kimlik["commit"], "durum": "BAŞLADI", "baslangic": time.strftime("%Y-%m-%d %H:%M:%S"), "bitis": "",
-             "not": (f"yeniden deneme: {gerekce}" if gerekce else "")}
-    pd.concat([K, pd.DataFrame([satir])], ignore_index=True).to_csv(os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_ACILIS), index=False)
+    kl = klasor or REPO_CIKTI; kilitf = os.path.join(kl, "K56_BAGIMSIZ.lock")
+    try:
+        fd = os.open(kilitf, os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{os.getpid()} {kimlik['kimlik']}".encode()); os.close(fd)
+    except FileExistsError:
+        raise DonemKapali(f"BAĞIMSIZ açılış kilidi var ({kilitf}): başka bir açılış sürüyor ya da önceki açılış temizlenmedi")
+    try:
+        K = acilis_kaydi(klasor); onceki = K[K.calisma == calisma]
+        if (onceki.durum == "TAMAMLANDI").any():
+            raise DonemKapali(f"BAĞIMSIZ {calisma} zaten bir kez tamamlandı ({onceki[onceki.durum == 'TAMAMLANDI'].kimlik.iloc[0]}); yeniden koşulmaz")
+        if (onceki.durum == "BAŞLADI").any():
+            raise DonemKapali(f"BAĞIMSIZ {calisma} için bitmemiş (BAŞLADI) kayıt var; sonuç dosyası yoksa acilis_bitir ile ÇÖKTÜ olarak kapatılır")
+        coktu = onceki[onceki.durum == "ÇÖKTÜ"]
+        if coktu["not"].astype(str).str.contains("SONUÇ DOSYASI OLUŞTU").any() or any(_sonuc_dosyasi_var(kl, k_) for k_ in onceki.kimlik):
+            raise DonemKapali(f"BAĞIMSIZ {calisma}: önceki denemede sonuç dosyası oluştu; sonuç görülmüş sayılır, yeniden koşu yok (v1.3-D)")
+        gerekce = os.environ.get("K56_BAGIMSIZ_YENIDEN", "")
+        if len(coktu) and not gerekce:
+            raise DonemKapali(f"BAĞIMSIZ {calisma} önceki denemesi çöktü; yeniden deneme için K56_BAGIMSIZ_YENIDEN=<gerekçe> gerekir")
+        if len(coktu) >= 2:
+            raise DonemKapali(f"BAĞIMSIZ {calisma}: en çok bir yeniden deneme (v1.3-D); {len(coktu)} çöküş var")
+        import socket
+        satir = {"calisma": calisma, "kimlik": kimlik["kimlik"], "commit": kimlik["commit"], "durum": "BAŞLADI", "baslangic": time.strftime("%Y-%m-%d %H:%M:%S"), "bitis": "",
+                 "not": (f"yeniden deneme: {gerekce}" if gerekce else ""), "pid": str(os.getpid()), "makine": socket.gethostname()}
+        pd.concat([K, pd.DataFrame([satir])], ignore_index=True).to_csv(os.path.join(kl, BAGIMSIZ_ACILIS), index=False)
+    except Exception:
+        os.remove(kilitf); raise
+
+
+def _sonuc_dosyasi_var(kl: str, kimlik: str) -> bool:
+    d = os.path.join(kl, "bagimsiz", str(kimlik))
+    return os.path.isdir(d) and any(f.startswith("K56BAG_") for f in os.listdir(d))
 
 
 def acilis_bitir(calisma: str, kimlik: Dict[str, Any], durum: str, klasor: Optional[str] = None, notu: str = "") -> None:
@@ -468,3 +497,6 @@ def acilis_bitir(calisma: str, kimlik: Dict[str, Any], durum: str, klasor: Optio
         raise RuntimeError(f"açık BAĞIMSIZ kaydı yok: {calisma} {kimlik['kimlik']}")
     K.loc[m, "durum"] = durum; K.loc[m, "bitis"] = time.strftime("%Y-%m-%d %H:%M:%S"); K.loc[m, "not"] = (K.loc[m, "not"].fillna("").astype(str) + " " + notu).str.strip()
     K.to_csv(os.path.join(klasor or REPO_CIKTI, BAGIMSIZ_ACILIS), index=False)
+    kilitf = os.path.join(klasor or REPO_CIKTI, "K56_BAGIMSIZ.lock")
+    if os.path.exists(kilitf):
+        os.remove(kilitf)
