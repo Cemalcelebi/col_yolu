@@ -1,0 +1,5 @@
+yol,sha256,amac,aciklama
+arastirma_cikti/k55_dallanma/tam_evren/K55_EVREN.csv,aefd29afe9d8e12c4d227e9208ebdb9b4c2baeefddd23d1cbe0412b2cbd926cd,veri,K55 evreni (aday dışlama)
+/tmp/iv/k34/k34_eski_kod.csv,f85e83a5e27d433fdcf5a672b12f1b836ddcea82dbd17c1bc812cbc5fafec3d6,veri,K34 batan şirketlerin SEC kapak sayfası eski kodu
+/tmp/iv/k34/k34_orneklem.csv,555edd33632032ea02f15136aad67f82f8f06759c2e4079af96f858e4ec92467,veri,"K34 Tiingo örneklemi (450, zaten evrende)"
+/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri/k34_bildirim.pkl,2a599530a8e4f49158228173a23a03518bcd9ce3a19245f58b9e5803940ba67b,veri,K34 SEC bildirim özeti (olay günleri)

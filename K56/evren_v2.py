@@ -89,7 +89,8 @@ def evren2_kur(A: K56Ayar, Y: pd.DataFrame, klasor: str) -> Dict[str, Any]:
     V_ham = Vs["ABD"]; EV_ham = EV_ham[EV_ham.pazar == "ABD"].copy()
     kisa, eksik = KE._ham_kisa_ve_eksik(A55, {KE.sembol_normalize(s): 1 for s in V_ham}, fon_disi)
     kriz = pd.Timestamp(C.CY["kriz"]); ev, sd, es, rap = [], [], [], []
-    cik_var = set(pd.to_numeric(ES.cik, errors="coerce").dropna().astype(int)) if "cik" in ES else set(); cik_yeni: set = set()
+    es_v = ES[ES.sembol.map(KE.sembol_normalize).isin({KE.sembol_normalize(x) for x in V_ham})] if "cik" in ES else ES.iloc[:0]   # yalnız K55 yükleyicisinde serisi olanlar
+    cik_var = set(pd.to_numeric(es_v.cik, errors="coerce").dropna().astype(int)) if "cik" in es_v else set(); cik_yeni: set = set()
     for r in Y.itertuples():
         s = KE.sembol_normalize(r.sembol); kay = "K56_" + ("O1" if str(r.kaynak).startswith("Ö1") else "O2")
         if r.seri_durum != "TAMAM":

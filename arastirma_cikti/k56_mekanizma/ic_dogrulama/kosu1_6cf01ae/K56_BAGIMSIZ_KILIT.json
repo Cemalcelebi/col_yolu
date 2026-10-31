@@ -1,0 +1,128 @@
+{
+ "kod_sha": {
+  "K56/ONKAYIT_K56.md": "70c39238b6d7e37bb564d182991c9c016f28904b44d588871c245c483aae22f8",
+  "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
+  "K56/batan_evren.py": "382a3ef63888635d3858457e91774af707ba69c0c5a5268921f9e3e5105b2739",
+  "K56/etki_envanteri.py": "43a4d81774aabc718b617d1fe0d2adf279495aa08682deda6b5e3b1fb93f3abc",
+  "K56/evren_v2.py": "cf5891ee14ddc4dc0f833014412ab42c1efc9f1ded90a5c7ecc834fd90f645b7",
+  "K56/faz1_yerel.py": "15e5a5552ebee7484a161a5fb8def81b80f69a2b76ee76566c90a68fb80d84d6",
+  "K56/finansal_mekanizma.py": "68b0a23a81a45d31274cc09628f30c3402b3fe3540af137e441b85f9d8b2aa77",
+  "K56/iceriden_islemler.py": "b26c44886f44506acd8504ab60a2fe4bd2b7d29db1124510b662a17466ffd6fc",
+  "K56/islem_davranisi.py": "56ceae2ea63d9e12146feced6162246b8fc1bb9f83abcea159fcf80489c9973c",
+  "K56/karsit_ornekler.py": "6dea4ad8c1391f828be956337185db2934a1da11d81c4af397e788d1fe5ca75a",
+  "K56/kurumsal_olaylar.py": "d6966446d8059a4c2894a267a49a9b14c52920fea1aa6354db720a0eebdb8db5",
+  "K56/kurumsal_sahiplik.py": "53fa11ee947207c52c2f526b6c853ab0727430bb8870c0210e771bb664ab5f7c",
+  "K56/mekanizma.py": "29ec71f0693ccad01ab14cc841983f432091d691439027130219853869fcf184",
+  "K56/mekanizma_raporu.py": "d1012196238281a97b03027a24cef63a4d36b214b317fceec762b928ef0d1d78",
+  "K56/ortak.py": "773df99714a3eb71ee39a14bdaade7976e878f5d259c88251d2d09e0c17f8939",
+  "K56/surucu.py": "6bd91c4514750879fe11cef2c5d33075d2cce917331dd2119603048cb7da7bb6",
+  "K56.py": "5a0fb9934b32d31538122db908c1878428a171b5309b8da39b93925f77245247",
+  "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
+  "K55/istatistik.py": "036d40f35562f3ca355890dd592c8bd24cd2f6e228c5e30344c0f3f93868ad1a",
+  "K55/hucre.py": "b0ed81915aad408bbaf3b9bef5e861700ede071d1c63db37466c033d00cd9b59",
+  "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4"
+ },
+ "onkayit_sha": "70c39238b6d7e37bb564d182991c9c016f28904b44d588871c245c483aae22f8",
+ "hipotez_sha": "f1b4b5b5a4d632c596f60a5ef57279fc8f1bec5e5849cd8532010395ffc978aa",
+ "esik_sha": "0ae2029b07bea34a89d6754d33598a4dc0e8c9e37acf52d2fe38bb73f96f7848",
+ "esikler": {
+  "K56": {
+   "MEKANIK_ORAN": 0.5,
+   "KISMI_ORAN": 0.2,
+   "ANLAMSIZ_D": 0.05,
+   "SPEK_UYUM": 3
+  },
+  "K55": {
+   "DONEM": {
+    "KESIF": [
+     "2016-01-01",
+     "2021-12-31"
+    ],
+    "IC_DOGRULAMA": [
+     "2022-01-01",
+     "2023-12-31"
+    ],
+    "BAGIMSIZ": [
+     "2024-01-01",
+     "2026-06-05"
+    ]
+   },
+   "ILERI_BASLANGIC": "2026-09-01",
+   "OLAY": {
+    "Y60": [
+     60,
+     0.3
+    ],
+    "Y120": [
+     120,
+     0.5
+    ],
+    "Y250": [
+     250,
+     1.0
+    ]
+   },
+   "PENCERE": [
+    5,
+    10,
+    20,
+    40,
+    60
+   ],
+   "KRIZ": "2026-08-31",
+   "ALIVE_SINIR": "2026-08-01",
+   "MIN_GUN": 260,
+   "N_MIN": 30,
+   "BOOT": 2000,
+   "K_ES": 5,
+   "GUN_TOL": 10,
+   "DD_TOL": 0.1,
+   "PURGE_GUN": 250,
+   "EMBARGO_GUN": 10,
+   "EMBARGO_TAKVIM_GUN": 14,
+   "BLOK_GUN": 60,
+   "FDR_Q": 0.1,
+   "A_D_ESIK": 0.2,
+   "A_AUC_ESIK": 0.06,
+   "B_FARK_ESIK": 0.05,
+   "C_LIFT_ESIK": 1.3,
+   "CUSUM_H": 4.0
+  },
+  "K56_F1": {
+   "mekanik_r": 0.2,
+   "kismi_r": 0.5,
+   "a2_aciklar": 0.5,
+   "a2_kismi": 0.25,
+   "boot": 2000,
+   "g7_es": 5,
+   "vd_tol": 1,
+   "tohum": 56,
+   "oncesi": [
+    -20,
+    -1
+   ],
+   "sonrasi_haber": [
+    1,
+    10
+   ],
+   "ic_d": 0.2,
+   "ic_auc": 0.06,
+   "ic_q": 0.1,
+   "ic_yil_n": 10,
+   "m16_dis": [
+    "2020-02-15",
+    "2020-06-30"
+   ]
+  }
+ },
+ "veri_tanimi": {
+  "evren_surum": "0d00d2c976083737da1a60b71e9360ca543c2add2bb31c8db94136e5f4793524",
+  "panel_sha": "955e13dd7d6ddb0dcf3fd4686cad0335605d7a481a955443e4b024c175b227a2",
+  "olay_sha": "01decf291cf7bfb31e6391f2c6fd4a53c7683ef655a548dc4b34e9f0fb127440",
+  "donem": "K55 DONEM (değişmedi)",
+  "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)"
+ },
+ "uretim": "2026-10-31 06:40:35",
+ "commit": "6cf01ae",
+ "not": "BAĞIMSIZ açılmadı; açılış için Cemal kararı + K56_BAGIMSIZ_AC=1 + bu dosyanın birebir doğrulanması"
+}

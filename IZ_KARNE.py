@@ -950,6 +950,39 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "SEC askıya alma 1.349 (resmî kuşku kaydı; tarih şartlı 9 eşleşme, panelde 0). DENETİM: 4 bağımsız denetçi 45 bulgu; 42 düzeltildi, 3 kısmen "
                "(DGP kalibrasyonu, bölünme denetimi, oran yorumu -> Faz 1). Kasıt kanıtı yalnız kesinleşmiş karar. Ön kayıt v1.1 (sonuç sonrası, Faz 1 "
                "öncesi): seçimsiz kontrol protokolü, aday etiketi, hipotez kaydı donduruldu. test_k56 15/15. Çıktılar arastirma_cikti/k56_mekanizma/."),
+    _ik_k("Ç140", "2026-10-31", "K56-F1A FAZ 1 YEREL (KEŞİF 2016-21, keşif verisi yeniden kullanımı): K55'in KEŞİF'i sağlayan 125 (hücre, varyant, ufuk) "
+          "satırında seçimsiz kontrol (A1: (i) ilk geçiş, (ii) bütün nitelikli günler, (iii) olay dizisinden rastgele gün), kalan etki denetimi (A2: oynaklık, "
+          "COVID, beta, sektör), haber ve birleşme bileşimi (A3: SEC başvuruları, G1 olay / G7 eş, ÖNCESİ sızıntısız, SONRASI açıklayıcı), kalibre sentetik",
+          "K56.py faz1a + K56/faz1_yerel.py (K55 kodu aynen: degisken_hesapla, _z_gun_vd, d_boot_ay); ön kayıt ONKAYIT_K56 v1.2-A, v1.2-b",
+          "Cemal'in Faz 1 kararları (31 Eki): ilk üç analiz, yeni veri yok", "Mekanizma (iz kararı yok; K55 İZ YOK değişmedi)", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/faz1_yerel/ (SON.json)",
+          notu="(i) K55'i birebir üretiyor (d farkı < 1e-7). A1 satır: MEKANİK 116 (gerçek + sentetik 104, gerçek veri 12), KISMEN MEKANİK 2, TERS KALINTI 7, "
+               "GERÇEK ETKİ KALIYOR 0 / 125; d(i) medyanı -0,265 -> d(ii) -0,014 (oran medyanı 0,04). Hücre: MEKANİK 22, KISMEN 1 (D04-S04), TERS KALINTI 2 "
+               "(D10-S02, D10-S10; tek satır, |d(ii)| < 0,08). (iii) duyarlılık 123 / 125 'GERÇEK ETKİ KALIYOR' (ön kayıt: yalnız duyarlılık): olay başına "
+               "bir gün; açıklayıcı tanıda aynı dizilerin bütün günleri bir arada d -0,016 (ayrışma olay / gün ağırlığı; neden doğrulanmadı). A2: 9 satırın 2'sini "
+               "beta / COVID denetimi açıklıyor (D02-S08 Y120 ters kalıntı); öteki küçük kalıntılar açıklanmadı. A3: ÖNCESİ'nde fark küçük (Y60 8-K 2.02 +1,5 puan, "
+               "Y250 herhangi 8-K +5,1); SONRASI (açıklayıcı): yükselişten sonra hisse ihracı Y120 +6,6 / Y250 +10 puan, birleşme Y60 -2,1 puan: büyük "
+               "yükselişler birleşme / haberle açıklanmıyor. Kalibre sentetik (GJR, sıçrama): 119 / 116 satırda bilgisiz yapay veri farkı tam üretiyor (oran "
+               "medyanı 1,45 / 1,41); yapay olay oranı gerçeğin altında. İlk koşu (6cf01ae) denetimde dönem sızıntısı bulunduğu için geçersiz, saklandı."),
+    _ik_k("Ç141", "2026-10-31", "K56-IC İÇ DOĞRULAMA 2022-23: yalnız önceden belirlenmiş 125 satır / 64 varyant; B1 K55 A (ilk geçiş), B2 seçimsiz kontrol "
+          "(belirleyici), B3 K55 B (eşleşmiş ileri getiri), B4 bileşim + A2; BAĞIMSIZ 2024-26 kapalı (kod kapısı), kilit dosyası üretildi (açılmadı)",
+          "K56.py ic + K56/faz1_yerel.py, ortak.donem_kapisi, K56_BAGIMSIZ_KILIT.json; ön kayıt v1.2-B, v1.2-b",
+          "Cemal'in Faz 1 kararları (31 Eki): İÇ açılabilir, BAĞIMSIZ kapalı", "İÇ doğrulama (iz kararı yok)", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/ic_dogrulama/ (SON.json)",
+          notu="B1: 119 / 125 satır geçti -> 23 hücre 'DOĞRULAMA BEKLİYOR (A, ilk geçiş)', 2 hücre İÇ'TE TUTMADI (D01-S05, D01-S10). Ama B2 seçimsiz kontrol: "
+               "MEKANİK 112, KISMEN 10, TERS KALINTI 3, GERÇEK ETKİ KALIYOR 0 / 125 (d(i) medyanı -0,369 -> d(ii) -0,007); hücre MEKANİK 21, KISMEN 2 "
+               "(D01-S10, D02-S05), TERS 1 (D01-S05), BELİRSİZ 1 (D01-S08). Yani K55 A farkları 2022-23'te tekrarlıyor ama tekrar eden şey olay tanımının "
+               "seçim etkisi. B3: 64 / 64 TUTMAZ. B4: A2 13 satırın 1'ini açıklıyor; A3'te yalnız Y250 SC 13D / 13G (önceki 20 gün) +6 puan. Yeni eşik / "
+               "değişken türetilmedi. Kilit: kod (K56 + bütün K55 + COL_YOLU_ABD + FON_IZI), ön kayıt, hipotez, eşik, veri tanımı (açılışta yeniden hesap)."),
+    _ik_k("Ç142", "2026-10-31", "K56-EVREN2 BATAN ŞİRKETLERLE EVREN v2 (aday ve hazırlık): Ö1 K34 eşleme kuralı (212), Ö2 Tiingo listesinden KEŞİF döneminde "
+          "biten adi hisseler (278, tohum 56; havuz 1.626); SEC geçmişi ve ön sınıf; Tiingo indirici (1 Kasım'dan önce istek yok), evren v2 / etki sürücüsü",
+          "K56.py evren2_aday / evren2_indir / evren2_kur + K56/batan_evren.py, K56/evren_v2.py (K55 evren_insa / panel_kur / olaylar aynen); ön kayıt v1.2-C, v1.2-a, v1.2-b",
+          "Cemal'in Faz 1 kararları (31 Eki): Tiingo Kasım kotasıyla batanlar, yeni evren sürümü", "Veri / evren (iz kararı yok)", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/evren_v2/",
+          notu="Ö2 ilk tanımı (25-NSE sembolü) 3 aday verdi: EFTS sembolü SEC'in GÜNCEL tablosundan, batan şirkette yok (v1.2-a sapma, fiyat görülmeden). "
+               "Ö1 ön sınıf: BİRLEŞME 149, VERİ SAĞLAYICISI KAYBOLMASI 27, İFLAS 25, TASFİYE 10, SEMBOL DEĞİŞİKLİĞİ 1; 40 birim / varant / hak ve 4 sembol "
+               "çakışması indirilmeyecek (v1.2-b). Ö2'nin CIK'i indirme sonrası Tiingo adı + 25-NSE tarihiyle (4.825 başvuru). Getiri asıl kural: seri bitince "
+               "TANIMSIZ, son fiyat tasfiye ödemesi sayılmaz, delist getirisi uydurulmaz. İndirme ve evren v2 / etki 1-2 Kasım (AÇIK)."),
 ]
 
 
@@ -1505,8 +1538,22 @@ IK_GOREV: List[Dict[str, str]] = [
               "belirsiz. Önceki ortalama getiri testleri (Ç100-Ç107) yeniden yapılmadı. Büyük indirmeler (13F, MIDAS, FS 2016-20) ertelendi (koşullu)",
      "durum": "TAMAMLANDI, AÇIK: Faz 1 adım 1 (seçimsiz kontrol, yerel) Cemal onayı; İÇ / BAĞIMSIZ dönem açma kararı; Drive kopyası (Colab: python K56.py drive); "
               "Tiingo kotası (batanlar)"},
+    {"tarih": "2026-10-31", "istek": "K56 FAZ 1 KARARLARI: (1) seçimsiz kontrol, oynaklık / piyasa / tema denetimi, haber ve birleşme bileşimi (indirme yok, sızıntı "
+                                     "yok); (2) İÇ 2022-23 açılsın, BAĞIMSIZ kapalı, kilit hash; (3) Tiingo Kasım kotasıyla batanlar, yeni evren sürümü, sınıflar, "
+                                     "etki; (4) üç çalışma ayrı rapor / sürüm / kimlik, başarısız sonuç korunur",
+     "yapilan": "ön kayıt v1.2 (+ v1.2-a Ö2 düzeltmesi, v1.2-b denetim düzeltmeleri); K56/faz1_yerel.py (ortak motor), dönem kapısı + BAĞIMSIZ kilidi, "
+                "batan_evren + evren_v2; bağımsız kod denetçisi (1 kritik, 4 orta, 8 düşük; hepsi düzeltildi ya da kaydedildi; ilk koşu geçersiz, saklandı); "
+                "K56-F1A ve K56-IC koşuları (koşu klasörleri + SON.json); EVREN2 aday listesi (490); test_k56 24/24; IZ_KARNE Ç140-Ç142",
+     "sonuc": "KEŞİF: 125 satırın hiçbirinde seçimsiz etiketle gerçek etki kalmadı (116 MEKANİK; d medyanı -0,265 -> -0,014); kalibre sentetik de farkı "
+              "tam üretiyor. İÇ: K55 A farkları tekrarlıyor (B1 119 / 125) ama yine mekanik (B2: 0 GERÇEK ETKİ); K55 B 64 / 64 TUTMAZ. Haber / birleşme "
+              "büyük yükselişleri açıklamıyor; yükselişten sonra hisse ihracı artıyor (açıklayıcı). K55 ters farkları olay tanımının eseri",
+     "durum": "TAMAMLANDI, AÇIK: EVREN2 Tiingo indirmesi ve evren v2 etkisi (1-2 Kasım; bekçi + zamanlı kontrol); BAĞIMSIZ açma kararı (Cemal); Drive kopyası"},
 ]
 IK_ACIK: List[str] = [
+    "YOL (31 Eki): K56 Faz 1 (Ç140-Ç141): K55'in 125 KEŞİF satırında seçimsiz kontrolle gerçek etki 0 (KEŞİF 116, İÇ 112 MEKANİK); İÇ'te A farkı "
+    "tekrarlıyor ama mekanik, K55 B 64 / 64 TUTMAZ; haber / birleşme açıklamıyor. Sonuç: K55'te mekanizması aranacak gerçek etki kalmadı. AÇIK: EVREN2 "
+    "(Ç142) 1-2 Kasım Tiingo indirmesi + evren v2 etkisi; BAĞIMSIZ 2024-26 kilitli, açılması Cemal'in kararı (kalan gerçek etki olmadığından açmanın "
+    "beklenen katkısı düşük).",
     "YOL (30 Eki): K51 İZ DEĞİL, K52 / K53 desteklenmedi, K54 evren denetimi sonuçları değiştirmedi, K55 Faz 1 İZ YOK (Ç138). K56 Faz 0 (Ç139): "
     "265 bulguluk etki envanteri; K51-K54'te mekanizması aranacak sağlam etki yok; K55'in ters yönlü KEŞİF'leri olay tanımının eseri ADAYI (sentetik "
     "sınama Y60 21 / 25; denetçi kontrolünde seçimsiz etiketle ~%90 küçülüyor); 4 K55 hücresi neden belirsiz. KARAR (Cemal): (a) K56 Faz 1 adım 1-3 "

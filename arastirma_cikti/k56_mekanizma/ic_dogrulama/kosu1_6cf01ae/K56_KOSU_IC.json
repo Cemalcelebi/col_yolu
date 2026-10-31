@@ -1,0 +1,281 @@
+{
+ "kimlik": "K56-IC-20261031-061238-6cf01ae",
+ "surum": "K56 v0.1 (2026-10-30, Faz 0: etki envanteri, mekanizma hipotezleri, veri kaynakları, küçük örneklem erişim testi, seçim etkisi sentetik sınaması)",
+ "commit": "6cf01ae",
+ "git_kirli": [],
+ "onkayit_sha": "70c39238b6d7e37bb564d182991c9c016f28904b44d588871c245c483aae22f8",
+ "kod_sha": {
+  "K56/ONKAYIT_K56.md": "70c39238b6d7e37bb564d182991c9c016f28904b44d588871c245c483aae22f8",
+  "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a",
+  "K56/batan_evren.py": "382a3ef63888635d3858457e91774af707ba69c0c5a5268921f9e3e5105b2739",
+  "K56/etki_envanteri.py": "43a4d81774aabc718b617d1fe0d2adf279495aa08682deda6b5e3b1fb93f3abc",
+  "K56/evren_v2.py": "cf5891ee14ddc4dc0f833014412ab42c1efc9f1ded90a5c7ecc834fd90f645b7",
+  "K56/faz1_yerel.py": "15e5a5552ebee7484a161a5fb8def81b80f69a2b76ee76566c90a68fb80d84d6",
+  "K56/finansal_mekanizma.py": "68b0a23a81a45d31274cc09628f30c3402b3fe3540af137e441b85f9d8b2aa77",
+  "K56/iceriden_islemler.py": "b26c44886f44506acd8504ab60a2fe4bd2b7d29db1124510b662a17466ffd6fc",
+  "K56/islem_davranisi.py": "56ceae2ea63d9e12146feced6162246b8fc1bb9f83abcea159fcf80489c9973c",
+  "K56/karsit_ornekler.py": "6dea4ad8c1391f828be956337185db2934a1da11d81c4af397e788d1fe5ca75a",
+  "K56/kurumsal_olaylar.py": "d6966446d8059a4c2894a267a49a9b14c52920fea1aa6354db720a0eebdb8db5",
+  "K56/kurumsal_sahiplik.py": "53fa11ee947207c52c2f526b6c853ab0727430bb8870c0210e771bb664ab5f7c",
+  "K56/mekanizma.py": "29ec71f0693ccad01ab14cc841983f432091d691439027130219853869fcf184",
+  "K56/mekanizma_raporu.py": "d1012196238281a97b03027a24cef63a4d36b214b317fceec762b928ef0d1d78",
+  "K56/ortak.py": "773df99714a3eb71ee39a14bdaade7976e878f5d259c88251d2d09e0c17f8939",
+  "K56/surucu.py": "6bd91c4514750879fe11cef2c5d33075d2cce917331dd2119603048cb7da7bb6",
+  "K56.py": "5a0fb9934b32d31538122db908c1878428a171b5309b8da39b93925f77245247",
+  "K55/ortak.py": "31195193deeed373ec3b251b3cc9817059d67165621a4b0e4127d9604bc43910",
+  "K55/istatistik.py": "036d40f35562f3ca355890dd592c8bd24cd2f6e228c5e30344c0f3f93868ad1a",
+  "K55/hucre.py": "b0ed81915aad408bbaf3b9bef5e861700ede071d1c63db37466c033d00cd9b59",
+  "K55/olay_tanimlari.py": "b219679b4d88318eb57d10b5494b9b430d6c624bfabd42e6beabf16614a9a0c4"
+ },
+ "ayar": {
+  "cikti": "/home/user/col_yolu/arastirma_cikti/k56_mekanizma",
+  "abd": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd",
+  "k55": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren",
+  "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri",
+  "iv": "/tmp/iv",
+  "ag": false,
+  "ornek": 12,
+  "tohum": 56
+ },
+ "python": "3.13.16",
+ "numpy": "2.5.3",
+ "pandas": "3.0.5",
+ "sure_dk": 27.9,
+ "b1_gecen": 119,
+ "b2": {
+  "MEKANİK (gerçek + sentetik)": 103,
+  "KISMEN MEKANİK": 10,
+  "MEKANİK (gerçek veri; sentetik DGP yeniden üretmiyor)": 9,
+  "TERS KALINTI": 3
+ },
+ "b3": {
+  "TUTMAZ": 64
+ },
+ "hucre": [
+  {
+   "hucre": "D01-S02",
+   "satir": 11,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 11,
+   "b1_gecen": 11,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D01-S05",
+   "satir": 3,
+   "a1": "TERS KALINTI",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 3,
+   "b1_gecen": 0,
+   "b1_durum": "İÇ'TE TUTMADI (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D01-S07",
+   "satir": 2,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 2,
+   "b1_gecen": 2,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D01-S08",
+   "satir": 2,
+   "a1": "BELİRSİZ",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 2,
+   "b1_gecen": 2,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D01-S10",
+   "satir": 1,
+   "a1": "KISMEN MEKANİK",
+   "a1_iii": "MEKANİK",
+   "iii_farkli": 1,
+   "b1_gecen": 0,
+   "b1_durum": "İÇ'TE TUTMADI (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D02-S02",
+   "satir": 10,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 10,
+   "b1_gecen": 10,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D02-S05",
+   "satir": 3,
+   "a1": "KISMEN MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 3,
+   "b1_gecen": 2,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D02-S06",
+   "satir": 4,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 4,
+   "b1_gecen": 3,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D02-S08",
+   "satir": 12,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 12,
+   "b1_gecen": 12,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D03-S02",
+   "satir": 5,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 5,
+   "b1_gecen": 5,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D04-S04",
+   "satir": 1,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 1,
+   "b1_gecen": 1,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D04-S06",
+   "satir": 2,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 2,
+   "b1_gecen": 2,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D05-S01",
+   "satir": 7,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 7,
+   "b1_gecen": 7,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D05-S02",
+   "satir": 8,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 8,
+   "b1_gecen": 8,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D05-S03",
+   "satir": 3,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 3,
+   "b1_gecen": 3,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D05-S04",
+   "satir": 6,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 6,
+   "b1_gecen": 6,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D05-S08",
+   "satir": 7,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 7,
+   "b1_gecen": 7,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D06-S01",
+   "satir": 9,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 9,
+   "b1_gecen": 9,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D06-S03",
+   "satir": 12,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 12,
+   "b1_gecen": 12,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D06-S04",
+   "satir": 6,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 6,
+   "b1_gecen": 6,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D06-S05",
+   "satir": 1,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 1,
+   "b1_gecen": 1,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D06-S09",
+   "satir": 5,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 5,
+   "b1_gecen": 5,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D10-S02",
+   "satir": 1,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 1,
+   "b1_gecen": 1,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D10-S09",
+   "satir": 3,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 3,
+   "b1_gecen": 3,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  },
+  {
+   "hucre": "D10-S10",
+   "satir": 1,
+   "a1": "MEKANİK",
+   "a1_iii": "GERÇEK ETKİ KALIYOR",
+   "iii_farkli": 1,
+   "b1_gecen": 1,
+   "b1_durum": "DOĞRULAMA BEKLİYOR (A, ilk geçiş)"
+  }
+ ]
+}

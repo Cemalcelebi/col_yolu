@@ -1,0 +1,7 @@
+yol,sha256,amac,aciklama
+/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k55/tam3/panel/k55_panel_tam.pkl,955e13dd7d6ddb0dcf3fd4686cad0335605d7a481a955443e4b024c175b227a2,veri,K55 Faz 0 tam evren paneli
+arastirma_cikti/k55_dallanma/tam_evren/K55_OLAYLAR.csv.gz,01decf291cf7bfb31e6391f2c6fd4a53c7683ef655a548dc4b34e9f0fb127440,veri,K55 olay tablosu
+arastirma_cikti/k55_dallanma/tam_evren/K55_VARYANTLAR.csv,b92536fb9dbfe25d1ac546bd8d63dc5b35f3e293420864ea4ef680ac3fe3dcde,kiyas,"K55 KEŞİF ölçütünü geçen (varyant, ufuk) satırları"
+arastirma_cikti/k56_mekanizma/K56_SECIM_SENTETIK_KESIF.csv,802b51abecb032593b847af55ee259f0ae03b860c50a553913fc89fd16aa66d3,kiyas,Faz 0 sentetik oran (KEŞİF satırları)
+/tmp/k55/sec_ozet.json,6d25ce126bec9b9c782661a848199dcb16cac725f8d778a5c8ee9923743a96e7,veri,SEC başvuru özeti (islenmis-veri k55)
+arastirma_cikti/k55_dallanma/tam_evren/K55_EVREN.csv,aefd29afe9d8e12c4d227e9208ebdb9b4c2baeefddd23d1cbe0412b2cbd926cd,veri,sembol -> CIK
