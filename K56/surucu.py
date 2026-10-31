@@ -231,10 +231,14 @@ def faz1_ozet(R: Dict[str, Any]) -> List[str]:
              f"(d(i) medyanı {S.i_d.median():+.3f}, d(ii) medyanı {S.ii_d.median():+.3f}).")
     L.append(f"- (iii) duyarlılık (olay dizisinden rastgele gün): {S.sinif_iii.value_counts().to_dict()}; (ii) ile sınıfı farklı satır {int(S.iii_farkli.sum())}.")
     if "tani_dizi_d" in S:
-        L.append(f"- Açıklayıcı tanı (ön kayıt dışı, karar değiştirmez): olay dizisinin bütün günleri d medyanı {S.tani_dizi_d.median():+.3f}; olay dizisi DIŞINDAKİ "
-                 f"nitelikli günler d medyanı {S.tani_dis_d.median():+.3f} (işareti d(i)'ye ters satır {int((np.sign(S.tani_dis_d) == -np.sign(S.i_d)).sum())} / {len(S)}). "
-                 "(iii) yalnız ilk günün seçimini kaldırır; olayın başlattığı dizinin (yükseliş epizodunun ilk dizisi) seçimini kaldırmaz. Bir günün nitelikli "
-                 "olup olmayacağı sorusunun karşılığı (ii)'dir.")
+        L.append(f"- Açıklayıcı tanı (ön kayıt dışı, karar değiştirmez): olay dizilerinin BÜTÜN günleri bir arada d medyanı {S.tani_dizi_d.median():+.3f}; olay "
+                 f"dizisi dışındaki nitelikli günler d medyanı {S.tani_dis_d.median():+.3f}; (iii) d medyanı {S.iii_d.median():+.3f}. (iii) olay başına bir gün "
+                 "alır (olay ağırlıklı), dizi günleri ve (ii) gün ağırlıklıdır: aynı dizilerin günleri bir arada fark göstermiyor, olay başına bir gün "
+                 "gösteriyor. Olası neden ağırlık: uzun dizilerin günleri havuza çok girer ve dizi ilerledikçe (fiyat yükselirken) değişken ortalamaya yaklaşabilir "
+                 "(DOĞRULANMADI; ön kayıt dışı). Bir günün nitelikli "
+                 "olup olmayacağı (öngörü) sorusu gün ağırlıklıdır; ön kayıtta karar (ii)'ye göredir.")
+        if "tani_dizi_n" in S:
+            L.append(f"- Dizi günü / olay oranı medyanı {(S.tani_dizi_n / S.i_n_olay).median():.1f} (bir olayın başlattığı kesintisiz nitelikli dizinin ortalama uzunluğu).")
     a2 = [c for c in S.columns if c.startswith("a2_") and c.endswith("_kuculme")]
     if a2:
         K = S[S[a2].notna().any(axis=1)]
