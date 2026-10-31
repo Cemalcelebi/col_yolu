@@ -381,3 +381,13 @@ güvenlik içindir.
   G_sent_ort 1,1e-16) — 1e-12 toleransının gerekçesi budur. T2 ihmal hesabı (v1.3-a madde 3) değişmeden sizinti_denetimi.t2_ihmal'e taşındı (test 28).
 - Kod değiştiği için sızıntı, ayrışma ve PBO / DSR kilitten önce bu kodla yeniden koşulur.
 
+### v1.3-d (31 Ekim 2026; ilk kilit denemesi sonrası; BAĞIMSIZ açılmadan)
+- İlk kilit_uret (0573329; sızıntı PASS K56-SIZ-20261031-183257-bab4d5d sonrası) bütün denetimleri geçti, etiketi (K56-BAG-KILIT-20261031-202129) uzağa
+  push ederken durdu: bu bulut ortamının git vekili yalnız çalışma dalına push'a izin veriyor, etiket push'u HTTP 403 (uzakta hiç etiket yok). Kilit
+  commit'lenmedi; yerel etiket silindi; kilit dosyası eski sürümüne döndürüldü.
+- Değişiklik (ortam kısıtı; sonuç görülmeden, kural amacı aynı): v1.3-a madde 2'deki "etiket push edilemezse kilit yok" yerine uzak çapa çalışma dalıdır.
+  Kilit dosyası (kod commit'i commit_tam, yerel etiket, bütün sha'lar) commit'lenip dala push edilir ve ls-remote ile doğrulanır; açılışta (dönem kapısı)
+  etiketin yerelde commit_tam'ı gösterdiği, commit_tam'ın HEAD'in atası olduğu, kod farkı olmadığı ve kilit dosyasını son değiştiren commit'in uzak dalın
+  atası olduğu denetlenir (ortak.uzak_dal_capasi; ağ yoksa açılış yok). Etiket push'u denenir, olursa kilide yazılır (uzak_capa). Test 29.
+- Kod değiştiği için ayrışma, PBO / DSR ve sızıntı kilitten önce bu kodla yeniden koşulur (kilit şartı); ardından kilit_uret.
+

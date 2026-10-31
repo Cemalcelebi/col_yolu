@@ -562,15 +562,20 @@ def kilit_uret_kos(A: K56Ayar) -> Dict[str, Any]:
            "not": "BAĞIMSIZ açılmadı; açılış: Cemal kararı (31 Eki) + K56_BAGIMSIZ_AC=1 + python K56.py bagimsiz (bir kez)"}
     kil["kosu_tanimi"]["ayar"] = {"veri": os.path.realpath(A.veri), "k55": os.path.realpath(A.k55), "abd": os.path.realpath(A.abd), "cikti": os.path.realpath(A.cikti),
                                   "panel": os.path.realpath(p), "olay": os.path.realpath(o)}
-    y = os.path.join(A.cikti, BAGIMSIZ_KILIT); _json_yaz(y, kil)
-    for i in range(5):
+    uzak_etiket = False                                                   # v1.3-d: git vekili etiket push'unu 403 ile reddeder; uzak çapa dal (aşağıda doğrulanır)
+    for i in range(2):
         if subprocess_ok(["git", "push", "origin", etiket]):
-            break
-        if i == 4:
-            raise RuntimeError(f"kilit etiketi push edilemedi: {etiket}")
+            uzak_etiket = True; break
         time.sleep(2 ** (i + 1))
-    _git_kaydet([y], f"K56 v1.3 BAĞIMSIZ kilidi ({etiket}; açılmadı)")
-    log.info("kilit üretildi: %s %s", etiket, c[:12]); return kil
+    kil["uzak_capa"] = {"etiket_itildi": uzak_etiket, "dal": _git("rev-parse", "--abbrev-ref", "HEAD"),
+                        "yontem": "kilit commit'i çalışma dalına push edilir ve ls-remote ile doğrulanır; açılışta kilit commit'inin uzak dalın atası olduğu denetlenir"
+                                  + ("" if uzak_etiket else " (etiket yalnız yerelde: vekil etiket push'unu reddetti)")}
+    y = os.path.join(A.cikti, BAGIMSIZ_KILIT); _json_yaz(y, kil)
+    kc = _git_kaydet([y], f"K56 v1.3 BAĞIMSIZ kilidi ({etiket}; açılmadı)")              # dal push'u + ls-remote doğrulaması (olmazsa RuntimeError)
+    from .ortak import uzak_dal_capasi
+    if not uzak_dal_capasi(y):
+        raise RuntimeError(f"kilit commit'i ({kc[:12]}) uzak dalda doğrulanamadı")
+    log.info("kilit üretildi: %s kod %s, kilit commit %s, etiket uzakta %s", etiket, c[:12], kc[:12], uzak_etiket); return kil
 
 
 def bagimsiz_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:

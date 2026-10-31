@@ -486,6 +486,10 @@ def testler():
     _, zd = SZ.ayr_karsilastir(Ra, Ra.assign(karar=["AYRIŞMA VAR", "VERİ YETERSİZ"]), 1e-9); _, ze = SZ.ayr_karsilastir(Ra, Ra.assign(kimlik_fark=[1e-16, 1e-16]), 1e-9)
     if not (za["birebir"]["S"] and not zb["birebir"]["S"] and not zc["birebir"]["S"] and not zd["birebir"]["S"] and not ze["birebir"]["S"]):
         hata.append(f"28) ayr_karsilastir {za['birebir']} {zb['birebir']} {zc['birebir']} {zd['birebir']} {ze['birebir']}")
+    # 29) v1.3-d: kilidin uzak çapası dal (vekil etiket push'unu reddeder): commit'siz dosya çapasız; açılış denetimi çapayı ister; etiket push'u zorunlu değil
+    if O.uzak_dal_capasi(os.path.join(O.KOK, "yok_boyle_bir_dosya_k56.txt")) or "uzak_dal_capasi(yk)" not in inspect.getsource(O.git_kilit_dogrula) \
+            or "kilit etiketi push edilemedi" in inspect.getsource(SU2.kilit_uret_kos) or "uzak_dal_capasi(y)" not in inspect.getsource(SU2.kilit_uret_kos):
+        hata.append("29) kilit uzak çapası (dal) kuralı")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -497,4 +501,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 30/30 OK")
+    print("test_k56: 31/31 OK")

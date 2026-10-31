@@ -381,7 +381,8 @@ def bagimsiz_kilit_dogrula(klasor: Optional[str]) -> None:
 
 
 def git_kilit_dogrula(k: Dict[str, Any]) -> None:
-    """Etiket var, etiketin commit'i kilitteki tam commit, HEAD'in atası ve etiket..HEAD arasında kod / ön kayıt değişmemiş; kod yolları temiz."""
+    """Etiket (yerel) var, etiketin commit'i kilitteki tam commit, HEAD'in atası ve etiket..HEAD arasında kod / ön kayıt değişmemiş; kod yolları temiz;
+    kilit dosyası commit'li, değişmemiş ve commit'i uzak dalda (v1.3-d: uzak çapa etiket değil dal)."""
     et, c = k.get("etiket"), k.get("commit_tam")
     if not et or not c:
         raise DonemKapali("kilit tutmuyor: etiket / tam commit yok (kilit_uret ile üretilmeli)")
@@ -396,6 +397,30 @@ def git_kilit_dogrula(k: Dict[str, Any]) -> None:
     kilit_farki = subprocess.run(["git", "-C", KOK, "diff", "--quiet", "HEAD", "--", yk], capture_output=True, timeout=20).returncode != 0
     if not izli or kilit_farki:
         raise DonemKapali(f"kilit tutmuyor: kilit dosyası commit'li değil ya da commit'ten sonra değişmiş ({yk})")
+    if not uzak_dal_capasi(yk):
+        raise DonemKapali("kilit tutmuyor: kilit dosyasının commit'i uzak dalda yok (kilit push edilip doğrulanmadan açılış yok; v1.3-d)")
+
+
+_UZAK_ONB: Dict[str, bool] = {}
+
+
+def uzak_dal_capasi(yol: str) -> bool:
+    """v1.3-d uzak çapa (git vekili etiket push'unu reddeder; yalnız çalışma dalı itilebilir): dosyayı son değiştiren commit, uzak dalın
+    (refs/heads/<dal>, ls-remote) atası mı. Süreç içinde commit başına bir kez sorulur (işçiler ana süreçten önbelleği devralır); ağ yoksa False."""
+    try:
+        kc = subprocess.run(["git", "-C", KOK, "log", "-n", "1", "--format=%H", "--", yol], capture_output=True, text=True, timeout=20).stdout.strip()
+        if not kc:
+            return False
+        if kc in _UZAK_ONB:
+            return _UZAK_ONB[kc]
+        dal = subprocess.run(["git", "-C", KOK, "rev-parse", "--abbrev-ref", "HEAD"], capture_output=True, text=True, timeout=20).stdout.strip()
+        uz = subprocess.run(["git", "-C", KOK, "ls-remote", "origin", f"refs/heads/{dal}"], capture_output=True, text=True, timeout=60).stdout.split("\t")[0].strip()
+        ok = bool(uz) and subprocess.run(["git", "-C", KOK, "merge-base", "--is-ancestor", kc, uz], capture_output=True, timeout=20).returncode == 0
+    except Exception:
+        return False
+    if ok:
+        _UZAK_ONB[kc] = True
+    return ok
     if ec != c or not anc or fark or git_kirli():
         raise DonemKapali(f"kilit tutmuyor: etiket {et} -> {ec[:12]} (kilit {c[:12]}), ata {anc}, kod farkı {fark}, kirli {git_kirli()[:5]}")
 
