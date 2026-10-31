@@ -25,6 +25,7 @@ TIINGO_BASLAMA = dt.date(2026, 11, 1)          # Kasım kotası: bu günden önc
 TIINGO_SAATLIK = 45
 KOTA_UST = 490
 O2_DONEM = ("2016-01-01", "2021-12-31")
+O2_BAG = ("2015-11-01", "2022-02-28")                            # CIK bağlama için 25-NSE penceresi (bitiş ±45 gün)
 BORSALAR = ("NYSE", "NASDAQ", "NYSE MKT", "AMEX")
 EFTS = "https://efts.sec.gov/LATEST/search-index?forms=25-NSE&dateRange=custom&startdt={a}&enddt={b}&from={f}"
 SUBMISSIONS = "https://data.sec.gov/submissions/CIK{cik:010d}.json"
@@ -59,8 +60,9 @@ def aday_o1(A: K56Ayar, kk: KaynakKaydi, EV: pd.DataFrame, T: pd.DataFrame) -> p
     return E[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].drop_duplicates("cik").reset_index(drop=True)
 
 
-def efts_25nse(ist: Istemci, bas: str = O2_DONEM[0], son: str = O2_DONEM[1]) -> pd.DataFrame:
-    """SEC tam metin aramasında 25-NSE başvuruları (ay ay, sayfalı): cik, görünen ad, sembol (adda varsa), başvuru tarihi."""
+def efts_25nse(ist: Istemci, bas: str = O2_BAG[0], son: str = O2_BAG[1]) -> pd.DataFrame:
+    """SEC tam metin aramasında 25-NSE başvuruları (ay ay, sayfalı): ihraççı cik, görünen ad, sembol (SEC'in GÜNCEL sembolü; borsadan çıkanlarda
+    çoğunlukla boş), başvuru tarihi. Borsa başvurucuları (NYSE, NASDAQ ...) atılır."""
     rows = []
     for a in pd.date_range(bas, son, freq="MS"):
         b = a + pd.offsets.MonthEnd(0); f = 0
@@ -70,46 +72,77 @@ def efts_25nse(ist: Istemci, bas: str = O2_DONEM[0], son: str = O2_DONEM[1]) -> 
                 log.warning("EFTS %s HTTP %s", a.date(), d); break
             J = json.loads(v.decode()); H = J.get("hits", {}).get("hits", [])
             for h in H:
-                s = h.get("_source", {})
-                for i, ad in enumerate(s.get("display_names", [])):
-                    m = re.search(r"\(([A-Z0-9.\-]{1,6})\)\s*\(CIK (\d{10})\)", ad)
+                src = h.get("_source", {})
+                for ad in src.get("display_names", []):
+                    m = re.search(r"^(.*?)\s*(?:\(([A-Z0-9.,\- ]{1,40})\))?\s*\(CIK (\d{10})\)\s*$", ad.strip())
                     if m and "EXCHANGE" not in ad.upper() and "NASDAQ STOCK MARKET" not in ad.upper():
-                        rows.append({"cik": int(m.group(2)), "ad": ad.split("(")[0].strip(), "sembol": m.group(1).replace(".", "-"), "nse_tarih": s.get("file_date")})
+                        sem = (m.group(2) or "").split(",")[0].strip().replace(".", "-") or None
+                        rows.append({"cik": int(m.group(3)), "ad": m.group(1).strip(), "sembol": sem, "nse_tarih": src.get("file_date")})
             f += len(H)
             if not H or f >= int(J.get("hits", {}).get("total", {}).get("value", 0)) or f >= 1000:
                 break
-    X = pd.DataFrame(rows)
-    if len(X):
-        X["nse_tarih"] = pd.to_datetime(X.nse_tarih)
-    return X.drop_duplicates(["cik", "sembol", "nse_tarih"]).reset_index(drop=True) if len(X) else X
+    X = pd.DataFrame(rows, columns=["cik", "ad", "sembol", "nse_tarih"])
+    X["nse_tarih"] = pd.to_datetime(X.nse_tarih)
+    return X.drop_duplicates(["cik", "sembol", "nse_tarih"]).reset_index(drop=True)
 
 
-def o2_eslem(X: pd.DataFrame, T: pd.DataFrame, tolerans: int = 45) -> pd.DataFrame:
-    """25-NSE satırlarını sembolün BÜTÜN Tiingo satırlarıyla eşler (semboller yeniden kullanılır; tek satır seçmek yanlış eşler): Stock, borsa listesi,
-    |bitiş − 25-NSE| <= tolerans, seri >= 465 takvim günü; birden çok uyan satırda en yakın bitiş. Aynı sembolün eşleşen satırdan SONRA başlayan Tiingo
-    satırı varsa (sonraki kullanım) Tiingo kod sorgusu yeni şirketin serisini döndürebilir: satır havuzda kalır, sonraki_kullanim=True, seçilmez."""
-    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR)][["ticker", "startDate", "endDate", "exchange"]].rename(
-        columns={"ticker": "sembol", "startDate": "baslangic", "endDate": "bitis", "exchange": "borsa"})
-    M = X.merge(Ts, on="sembol", how="inner")
-    M = M[((M.bitis - M.nse_tarih).dt.days.abs() <= tolerans) & ((M.bitis - M.baslangic).dt.days >= 465)].copy()
-    M["_f"] = (M.bitis - M.nse_tarih).dt.days.abs(); M = M.sort_values(["cik", "sembol", "_f"]).drop_duplicates(["cik", "sembol"]).drop(columns="_f")
-    sonra = T[["ticker", "startDate"]].rename(columns={"ticker": "sembol"})
-    ilk_sonra = M[["sembol", "bitis"]].merge(sonra, on="sembol"); ilk_sonra = ilk_sonra[ilk_sonra.startDate > ilk_sonra.bitis]
-    tekrar = set(zip(ilk_sonra.sembol, ilk_sonra.bitis)); M["sonraki_kullanim"] = [(a, b) in tekrar for a, b in zip(M.sembol, M.bitis)]
-    return M.reset_index(drop=True)
+def o2_havuz(T: pd.DataFrame, haric: set, bas: str = O2_DONEM[0], son: str = O2_DONEM[1]) -> pd.DataFrame:
+    """ONKAYIT v1.2-a Ö2 havuzu: Tiingo Stock, borsa listesi, sembol 1-5 harf, bitiş [bas, son], seri >= 465 takvim günü, sembol bitişten sonra yeniden
+    kullanılmamış (sonraki_kullanim=True satırlar havuz tablosunda kalır, seçilmez), `haric` (K55 evreni + Ö1 sembolleri) dışı."""
+    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR) & T.ticker.str.fullmatch(r"[A-Z]{1,5}")].copy()
+    Ts = Ts[(Ts.endDate >= pd.Timestamp(bas)) & (Ts.endDate <= pd.Timestamp(son)) & ((Ts.endDate - Ts.startDate).dt.days >= 465)]
+    son_bas = T.groupby("ticker").startDate.max()
+    Ts["sonraki_kullanim"] = Ts.ticker.map(son_bas).gt(Ts.endDate).to_numpy()
+    Ts["haric"] = Ts.ticker.isin(haric)
+    Ts = Ts.rename(columns={"ticker": "sembol", "startDate": "baslangic", "endDate": "bitis", "exchange": "borsa"})
+    return Ts[["sembol", "baslangic", "bitis", "borsa", "sonraki_kullanim", "haric"]].sort_values(["sembol", "bitis"]).drop_duplicates("sembol", keep="last").reset_index(drop=True)
 
 
-def aday_o2(A: K56Ayar, ist: Istemci, EV: pd.DataFrame, T: pd.DataFrame, n: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """Ö2: 25-NSE (KEŞİF dönemi) + Tiingo: aynı sembolün bitişi 25-NSE ±45 gün, Stock, borsa listesi, seri >= 320 işlem günü (~465 takvim günü), K55 evreni
-    dışı; tohum 56 rastgele n. Dönüş: (seçilen, bütün uygun havuz)."""
-    X = efts_25nse(ist)
-    havuz = o2_eslem(X, T)
-    havuz = havuz[~havuz.sembol.isin(set(EV.sembol)) & ~havuz.cik.isin(EV.cik.dropna().astype(int))].drop_duplicates("cik").reset_index(drop=True)
-    rng = np.random.default_rng(56)
-    uygun = havuz[~havuz.sonraki_kullanim].reset_index(drop=True) if len(havuz) else havuz
-    sec = uygun.iloc[rng.permutation(len(uygun))[: max(0, n)]].copy() if len(uygun) else uygun.copy()
-    sec["kaynak"] = "Ö2 (KEŞİF 25-NSE)"
-    return sec[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa", "nse_tarih", "ad"]].reset_index(drop=True), havuz
+def aday_o2(A: K56Ayar, ist: Istemci, EV: pd.DataFrame, T: pd.DataFrame, n: int, haric_ek: Optional[set] = None) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """Ö2 (v1.2-a): Tiingo listesinden KEŞİF döneminde bitenler, tohum 56 ile rastgele n. CIK indirmeden sonra cik_bagla ile (25-NSE adı / tarihi).
+    Dönüş: (seçilen, havuz, 25-NSE tablosu)."""
+    N25 = efts_25nse(ist)
+    havuz = o2_havuz(T, set(EV.sembol.astype(str).str.upper()) | set(haric_ek or ()))
+    uygun = havuz[~havuz.sonraki_kullanim & ~havuz.haric].reset_index(drop=True)
+    rng = np.random.default_rng(56); sec = uygun.iloc[rng.permutation(len(uygun))[: max(0, n)]].copy()
+    sec["kaynak"] = "Ö2 (Tiingo KEŞİF bitişi)"; sec["cik"] = np.nan
+    return sec[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].reset_index(drop=True), havuz, N25
+
+
+AD_EK = r"\b(INC|INCORPORATED|CORP|CORPORATION|CO|COMPANY|LTD|LIMITED|PLC|HOLDINGS?|GROUP|LP|L P|LLC|NV|N V|SA|S A|AG|THE|DE|/DE/|/NEW/|NEW)\b"
+
+
+def ad_norm(ad: Any) -> str:
+    x = re.sub(r"[^A-Z0-9 ]", " ", str(ad or "").upper().replace("&", " AND "))
+    return re.sub(r"\s+", " ", re.sub(AD_EK, " ", x)).strip()
+
+
+def cik_bagla(sembol: str, ad: Optional[str], bitis: pd.Timestamp, N25: pd.DataFrame, gun: int = 45) -> Tuple[Optional[int], str]:
+    """v1.2-a sabit kural: 25-NSE tarihi bitiş ±gun içinde; (1) normalize ad birebir tek CIK, (2) EFTS sembolü = Tiingo sembolü tek CIK, yoksa bağlanamadı."""
+    if N25 is None or not len(N25):
+        return None, "BAĞLANAMADI (25-NSE yok)"
+    W = N25[(N25.nse_tarih - pd.Timestamp(bitis)).dt.days.abs() <= gun]
+    if ad:
+        c = W[W.ad.map(ad_norm) == ad_norm(ad)].cik.unique()
+        if len(c) == 1:
+            return int(c[0]), "ad + tarih"
+        if len(c) > 1:
+            return None, "BAĞLANAMADI (ad birden çok CIK)"
+    c = W[W.sembol == sembol].cik.unique()
+    if len(c) == 1:
+        return int(c[0]), "sembol + tarih"
+    return None, "BAĞLANAMADI"
+
+
+def seri_denetimi(yol: str, bitis: pd.Timestamp, is_gunu: int = 10) -> Tuple[str, Optional[pd.Timestamp], int]:
+    """v1.2-a: indirilen serinin son günü Tiingo bitişinden en çok is_gunu iş günü sapabilir; aksi hâlde TIINGO SERİSİ UYUŞMADI."""
+    if not os.path.exists(yol):
+        return "İNMEDİ", None, 0
+    d = pd.read_csv(yol, usecols=["date"])
+    if not len(d):
+        return "BOŞ", None, 0
+    son = pd.to_datetime(d.date.iloc[-1]).tz_localize(None).normalize(); fark = abs(len(pd.bdate_range(min(son, bitis), max(son, bitis))) - 1)
+    return ("TAMAM" if fark <= is_gunu else "TIINGO SERİSİ UYUŞMADI"), son, int(len(d))
 
 
 def sec_gecmis(ist: Istemci, ciks: List[int], hedef: str) -> Dict[str, Any]:
@@ -183,9 +216,11 @@ class KotaDoldu(RuntimeError):
     pass
 
 
-def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None, saatlik: int = TIINGO_SAATLIK, durum_yolu: Optional[str] = None) -> pd.DataFrame:
-    """Tiingo günlük fiyat (2015-01-01 ->), kod başına csv. 1 Kasım 2026'dan önce İSTEK YOK (ValueError). Var olan dosya atlanır; saatte en çok `saatlik`
-    istek; 429 ya da kota iletisinde KotaDoldu. Anahtar başlıkta, loglanmaz. Durum tablosu her istekten sonra yazılır (kaldığı yerden sürer)."""
+def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None, saatlik: int = TIINGO_SAATLIK, durum_yolu: Optional[str] = None,
+                 meta: Optional[set] = None) -> pd.DataFrame:
+    """Tiingo günlük fiyat (2015-01-01 ->), kod başına csv; `meta` içindeki kodlar için önce meta (ad; aynı sembol) meta/<kod>.json. 1 Kasım 2026'dan
+    önce İSTEK YOK (ValueError). Var olan dosya atlanır; saatte en çok `saatlik` istek; 429 ya da kota iletisinde KotaDoldu. Anahtar başlıkta,
+    loglanmaz. Durum tablosu her istekten sonra yazılır (kaldığı yerden sürer)."""
     bugun = bugun or dt.date.today()
     if bugun < TIINGO_BASLAMA:
         raise ValueError(f"Tiingo Kasım kotası {TIINGO_BASLAMA}'den önce kullanılmaz (bugün {bugun}); ONKAYIT_K56 v1.2-C")
@@ -193,25 +228,23 @@ def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None
     if not tok:
         raise RuntimeError("TIINGO_TOKEN yok (.env ya da Colab gizli anahtarı)")
     import requests
-    os.makedirs(klasor, exist_ok=True); s = requests.Session(); s.headers.update({"Content-Type": "application/json", "Authorization": f"Token {tok}"})
+    os.makedirs(os.path.join(klasor, "meta"), exist_ok=True); s = requests.Session(); s.headers.update({"Content-Type": "application/json", "Authorization": f"Token {tok}"})
     durum = pd.read_csv(durum_yolu).to_dict("records") if (durum_yolu and os.path.exists(durum_yolu)) else []; zaman: List[float] = []
-    bitti = {d["sembol"] for d in durum if d.get("durum") in ("indi", "bos")}
-    for k in kodlar:
-        yol = os.path.join(klasor, f"{k}.csv")
-        if os.path.exists(yol) or k in bitti:
-            continue
+    bitti = {(d["sembol"], d["tur"] if isinstance(d.get("tur"), str) else "fiyat") for d in durum if d.get("durum") in ("indi", "bos")}
+
+    def yaz():
+        if durum_yolu:
+            pd.DataFrame(durum).to_csv(durum_yolu, index=False)
+
+    def istek(k: str, tur: str, url: str, params: Dict[str, str], yol: str, tamam) -> None:
         while len(zaman) >= saatlik and time.time() - zaman[-saatlik] < 3600:
             time.sleep(20)
         try:
-            x = s.get(f"https://api.tiingo.com/tiingo/daily/{k}/prices", params={"startDate": "2015-01-01", "format": "csv",
-                      "columns": "date,open,high,low,close,volume,adjOpen,adjHigh,adjLow,adjClose,adjVolume"}, timeout=60)
-            zaman.append(time.time()); metin = x.text[:300]
-            if x.status_code == 200 and x.text.startswith("date"):
-                open(yol, "w").write(x.text); dd = "indi" if x.text.count("\n") > 1 else "bos"
+            x = s.get(url, params=params, timeout=60); zaman.append(time.time()); metin = x.text[:300]
+            if x.status_code == 200 and tamam(x.text):
+                open(yol, "w").write(x.text); dd = "indi" if (tur == "meta" or x.text.count("\n") > 1) else "bos"
             elif x.status_code == 429 or re.search(r"run over|limit|exceed", metin, re.I):
-                durum.append({"sembol": k, "durum": "kota", "http": x.status_code, "ileti": metin[:120], "zaman": dt.datetime.now().isoformat()})
-                if durum_yolu:
-                    pd.DataFrame(durum).to_csv(durum_yolu, index=False)
+                durum.append({"sembol": k, "tur": tur, "durum": "kota", "http": x.status_code, "ileti": metin[:120], "zaman": dt.datetime.now().isoformat()}); yaz()
                 raise KotaDoldu(f"Tiingo kota / hız sınırı: HTTP {x.status_code} {metin[:120]}")
             else:
                 dd = f"HTTP {x.status_code}"
@@ -219,8 +252,16 @@ def tiingo_indir(kodlar: List[str], klasor: str, bugun: Optional[dt.date] = None
             raise
         except Exception as ex:
             zaman.append(time.time()); dd = f"hata {type(ex).__name__}"
-        durum.append({"sembol": k, "durum": dd, "zaman": dt.datetime.now().isoformat()})
-        if durum_yolu:
-            pd.DataFrame(durum).to_csv(durum_yolu, index=False)
-        log.info("Tiingo %s: %s (%d/%d)", k, dd, len(durum), len(kodlar))
+        durum.append({"sembol": k, "tur": tur, "durum": dd, "zaman": dt.datetime.now().isoformat()}); yaz()
+        log.info("Tiingo %s %s: %s (%d istek)", tur, k, dd, len(durum))
+
+    for k in kodlar:
+        ym = os.path.join(klasor, "meta", f"{k}.json")
+        if meta and k in meta and not os.path.exists(ym) and (k, "meta") not in bitti:
+            istek(k, "meta", f"https://api.tiingo.com/tiingo/daily/{k}", {}, ym, lambda t: t.lstrip().startswith("{"))
+        yol = os.path.join(klasor, f"{k}.csv")
+        if os.path.exists(yol) or (k, "fiyat") in bitti:
+            continue
+        istek(k, "fiyat", f"https://api.tiingo.com/tiingo/daily/{k}/prices", {"startDate": "2015-01-01", "format": "csv",
+              "columns": "date,open,high,low,close,volume,adjOpen,adjHigh,adjLow,adjClose,adjVolume"}, yol, lambda t: t.startswith("date"))
     return pd.DataFrame(durum)

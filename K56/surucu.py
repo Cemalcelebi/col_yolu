@@ -182,18 +182,19 @@ def evren2_aday_kos(A: K56Ayar) -> Dict[str, Any]:
     from .ortak import Istemci
     gunluk_log(); A.ag = True; out = _alt_cikti(A, "evren_v2"); kimlik = kosu_kimligi(A, "EVREN2-ADAY"); kk = KaynakKaydi(); ist = Istemci(A); Istemci.sec_ua()
     EV = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_EVREN.csv"), "veri", "K55 evreni (aday dışlama)")); T = BE.tiingo_listesi(A)
-    O1 = BE.aday_o1(A, kk, EV, T); n2 = max(0, BE.KOTA_UST - len(O1)); O2, havuz = BE.aday_o2(A, ist, EV, T, n2)
+    O1 = BE.aday_o1(A, kk, EV, T); n2 = max(0, BE.KOTA_UST - len(O1)); O2, havuz, N25 = BE.aday_o2(A, ist, EV, T, n2, set(O1.sembol))
+    if O1.cik.duplicated().any() or O1.sembol.duplicated().any() or O2.sembol.isin(O1.sembol).any():
+        raise RuntimeError("Ö1 / Ö2 adaylarında yinelenen CIK ya da sembol")
     ADAY = pd.concat([O1, O2], ignore_index=True, sort=False)
-    if ADAY.cik.duplicated().any():
-        ADAY = ADAY.drop_duplicates("cik")
     onb = os.path.join(A.onbellek, "evren_v2"); os.makedirs(onb, exist_ok=True)
-    sec = BE.sec_gecmis(ist, sorted(ADAY.cik.astype(int).unique()), os.path.join(onb, "sec_ozet_v2.json"))
+    sec = BE.sec_gecmis(ist, sorted(O1.cik.astype(int).unique()), os.path.join(onb, "sec_ozet_v2.json"))
     ct = json.load(open("/tmp/k55/company_tickers.json", encoding="utf-8")); bugun = {v["ticker"].upper().replace(".", "-"): int(v["cik_str"]) for v in ct.values()}
-    S = BE.siniflandir(ADAY, sec, T, bugun)
+    S = BE.siniflandir(O1, sec, T, bugun)                              # Ö2'nin CIK'i indirmeden sonra (Tiingo meta adı + 25-NSE; v1.2-a)
     ADAY.to_csv(os.path.join(out, "K56_EVREN2_ADAY.csv"), index=False); havuz.to_csv(os.path.join(out, "K56_EVREN2_O2_HAVUZ.csv"), index=False)
+    N25.to_csv(os.path.join(out, "K56_EVREN2_25NSE.csv"), index=False)
     S.to_csv(os.path.join(out, "K56_EVREN2_SINIF_ON.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56_KAYNAK_KAYDI_EVREN2.csv"), index=False)
     G = pd.DataFrame(ist.gunluk); G["url"] = G.url.str.replace(r"[\w.+-]+@[\w-]+\.[\w.]+", "<e-posta>", regex=True); G.to_csv(os.path.join(out, "K56_EVREN2_ISTEK_GUNLUGU.csv"), index=False)
-    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2_ADAY.json"), {**kimlik, "o1": len(O1), "o2": len(O2), "o2_havuz": len(havuz), "aday": len(ADAY), "sec_var": int(S.sec_var.sum()),
+    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2_ADAY.json"), {**kimlik, "o1": len(O1), "o2": len(O2), "o2_havuz": len(havuz), "o2_uygun": int((~havuz.sonraki_kullanim & ~havuz.haric).sum()), "n25": len(N25), "aday": len(ADAY), "sec_var": int(S.sec_var.sum()),
                                                               "sinif_on": S.sinif_k56.value_counts().to_dict()})
     log.info("evren v2 adaylar: Ö1 %d, Ö2 %d (havuz %d); sınıf %s", len(O1), len(O2), len(havuz), S.sinif_k56.value_counts().to_dict())
     return {"ADAY": ADAY, "S": S, "havuz": havuz}

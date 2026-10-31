@@ -179,6 +179,22 @@ sürümü ve kimlik taşır; başarısız sonuçlar korunur, eski sonuçların �
 - Rapor: aday / indirilen / eksik sayıları, kaynak (Ö1 / Ö2), sınıf dağılımı, tarihsel kapsam, veri eksikleri. Etki (yeni evrende aynı kodla): olay
   sayıları dönem × ufuk; 125 KEŞİF satırının ilk geçiş ve seçimsiz d'si (KEŞİF ve İÇ; BAĞIMSIZ kapalı); eski / yeni farkı.
 
+### v1.2-a (31 Ekim 2026, fiyat isteği ve sonuç görülmeden): Ö2 aday tanımı düzeltmesi (sapma kaydı)
+- Bulgu (tanılama, fiyat yok): EFTS görünen adlarındaki sembol SEC'in GÜNCEL sembol tablosundan gelir; borsadan tamamen çıkan şirketin sembolü
+  çoğunlukla yoktur. 2016-21 25-NSE'lerinin 652 sembollü satırından Tiingo'da eşleşen 432'nin bitiş − 25-NSE farkı medyan 2.376 gün: çoğu halen
+  işlem gören şirketlerin başka menkul kıymetlerini (tahvil, imtiyazlı pay, borsa değişimi) çıkaran 25-NSE'ler. v1.2 Ö2 tanımı yalnız 3 aday verir.
+- Yeni Ö2 tanımı: Tiingo listesinden assetType Stock, borsa NYSE / NASDAQ / NYSE MKT / AMEX, sembol 1-5 harf (imtiyazlı / varant / birim dışı), bitiş
+  2016-01-01..2021-12-31, seri >= 465 takvim günü, aynı sembolün bitişten SONRA başlayan Tiingo satırı yok (sembol sonradan yeniden kullanılmamış;
+  aksi hâlde Tiingo kod sorgusu yeni şirketin serisini döndürür), K55 evreninde ve Ö1'de olmayan; tohum 56 ile rastgele, kota kalanı kadar.
+- CIK bağlama (indirmeden sonra, sabit kural): Tiingo meta adı (aynı sembol, kota sayısını artırmaz) normalize edilir (büyük harf, noktalama ve
+  INC / CORP / CO / LTD / PLC / HOLDINGS / GROUP / LP / LLC / THE gibi ekler atılır); 25-NSE başvurularında (2015-11..2022-02) tarihi Tiingo
+  bitişinin ±45 günü içinde ve normalize adı birebir aynı TEK CIK bağlanır; yoksa aynı pencerede EFTS sembolü Tiingo sembolüne eşit tek CIK; yoksa CIK
+  BAĞLANAMADI -> sınıf DOĞRULANAMAYAN (K54 sınıf 6), fiyatı yine evrene girer, raporda ayrı sayılır.
+- İndirme sonrası seri denetimi (Ö1 ve Ö2): indirilen serinin son günü Tiingo listesindeki bitişten 10 iş gününden çok sapıyorsa "TIINGO SERİSİ
+  UYUŞMADI" (sembol yeniden kullanımı ya da sağlayıcı hatası), evrene alınmaz, sayılır. Ö1'de 21 sembolün Tiingo'da birden çok satırı var (K34 kuralı
+  değiştirilmedi; denetim bunları yakalar).
+- Değişmeyenler: Ö1, kota (<= 490), saatlik 45 istek, Kasım başlangıcı, sınıflandırma kuralı, getiri kuralı (TANIMSIZ asıl), etki ölçümü.
+
 ### Genel
 - Üç çalışma ayrı kimlik (K56-F1A-…, K56-IC-…, K56-EVREN2-…), ayrı alt klasör (faz1_yerel/, ic_dogrulama/, evren_v2/), ayrı rapor. Faz 0 çıktıları
   değiştirilmez; başarısız sonuçlar silinmez.

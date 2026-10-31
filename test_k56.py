@@ -274,13 +274,21 @@ def testler():
         pass
     finally:
         os.environ.pop("K56_BAGIMSIZ_AC", None)
-    # 20) Ö2 eşleme: yeniden kullanılan sembolde bitişi 25-NSE'ye yakın satır seçilir; sonradan yeniden kullanılan sembol seçilmez
-    T = pd.DataFrame({"ticker": ["ABC", "ABC", "XYZ", "QQQ"], "exchange": ["NYSE", "NASDAQ", "NASDAQ", "NASDAQ"], "assetType": ["Stock"] * 4,
-                      "startDate": pd.to_datetime(["2012-01-03", "2019-05-01", "2014-01-02", "2010-01-04"]), "endDate": pd.to_datetime(["2018-03-01", "2026-10-29", "2019-07-10", "2017-02-01"])})
-    X = pd.DataFrame({"cik": [1, 2, 3], "sembol": ["ABC", "XYZ", "QQQ"], "nse_tarih": pd.to_datetime(["2018-02-20", "2019-07-01", "2018-06-01"]), "ad": ["a", "b", "c"]})
-    M2 = BE.o2_eslem(X, T)
-    if sorted(M2.cik) != [1, 2] or M2.set_index("cik").bitis[1] != pd.Timestamp("2018-03-01") or not M2.set_index("cik").sonraki_kullanim[1] or M2.set_index("cik").sonraki_kullanim[2]:
-        hata.append(f"20) Ö2 eşleme: {M2.to_dict('records')}")
+    # 20) Ö2 (v1.2-a): havuz kuralları, sonradan yeniden kullanılan sembol seçilmez; CIK bağlama ad / sembol + tarih; seri denetimi
+    T = pd.DataFrame({"ticker": ["ABC", "ABC", "XYZ", "QQQ", "PR-A", "OLD"], "exchange": ["NYSE", "NASDAQ", "NASDAQ", "NASDAQ", "NYSE", "PINK"], "assetType": ["Stock"] * 6,
+                      "startDate": pd.to_datetime(["2012-01-03", "2019-05-01", "2014-01-02", "2010-01-04", "2010-01-04", "2010-01-04"]),
+                      "endDate": pd.to_datetime(["2018-03-01", "2026-10-29", "2019-07-10", "2017-02-01", "2018-01-02", "2018-01-02"])})
+    Hv = BE.o2_havuz(T, {"QQQ"}).set_index("sembol")
+    if sorted(Hv.index) != ["ABC", "QQQ", "XYZ"] or not Hv.sonraki_kullanim["ABC"] or Hv.sonraki_kullanim["XYZ"] or not Hv.haric["QQQ"]:
+        hata.append(f"20) Ö2 havuz: {Hv.to_dict('index')}")
+    N25 = pd.DataFrame({"cik": [11, 22, 33], "ad": ["Xyz Holdings, Inc.", "Other Corp", "Zeta Co"], "sembol": [None, None, "ZZZ"], "nse_tarih": pd.to_datetime(["2019-06-28", "2019-06-28", "2017-01-20"])})
+    if BE.cik_bagla("XYZ", "XYZ HOLDINGS INC", pd.Timestamp("2019-07-10"), N25) != (11, "ad + tarih") or BE.cik_bagla("ZZZ", "Başka Ad", pd.Timestamp("2017-02-01"), N25) != (33, "sembol + tarih") \
+            or BE.cik_bagla("XYZ", "XYZ HOLDINGS INC", pd.Timestamp("2020-07-10"), N25)[0] is not None or BE.ad_norm("The Xyz Co., Inc.") != "XYZ":
+        hata.append("20) CIK bağlama / ad normalizasyonu")
+    with tempfile.TemporaryDirectory() as td:
+        y = os.path.join(td, "x.csv"); pd.DataFrame({"date": pd.bdate_range("2017-01-02", "2019-07-03").strftime("%Y-%m-%dT00:00:00.000Z")}).to_csv(y, index=False)
+        if BE.seri_denetimi(y, pd.Timestamp("2019-07-10"))[0] != "TAMAM" or BE.seri_denetimi(y, pd.Timestamp("2021-07-10"))[0] != "TIINGO SERİSİ UYUŞMADI" or BE.seri_denetimi(y + "z", pd.Timestamp("2019-07-10"))[0] != "İNMEDİ":
+            hata.append("20) seri denetimi")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
