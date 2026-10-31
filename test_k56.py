@@ -433,6 +433,12 @@ def testler():
     F25, z2 = SZ.karsilastir({"S": Sx}, {"S": Sy})
     if not z1["birebir"]["S"] or z2["birebir"]["S"] or len(F25) != 1:
         hata.append(f"25) sızıntı karşılaştırması {z1} {z2}")
+    if not (SZ._esit_seri(pd.Series(pd.to_datetime(["2020-01-01", None])).astype("datetime64[us]"), pd.Series(pd.to_datetime(["2020-01-01", None]))) and
+            SZ._esit_seri(pd.Series([1.0, np.nan]), pd.Series([1.0 + 1e-12, np.nan]), tol=1e-9) and not SZ._esit_seri(pd.Series([1.0]), pd.Series([1.0 + 1e-12]))):
+        hata.append("25) T0 eşitlik (tarih birimi, NaN / NaT, tolerans)")
+    from K56 import pbo_dsr as PBt
+    if not (0 <= PBt.dsr_etkin_T(np.random.default_rng(1).normal(0.01, 0.05, 90), 0.1, 3) <= 1):
+        hata.append("25) etkin T DSR")
     # 26) EVREN2 v1.3: ad normalizasyonu, sonek, paylaşılan sembol, adi hisse adı, kimlik
     if BE.ad_norm("Co-Diagnostics, Inc.") != "CO DIAGNOSTICS" or BE.ad_norm("JACKSONVILLE BANCORP INC /FL/") != "JACKSONVILLE BANCORP" or BE.ad_norm("The Xyz Co., Inc.") != "XYZ":
         hata.append("26) ad normalizasyonu")

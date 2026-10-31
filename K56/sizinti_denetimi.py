@@ -72,18 +72,24 @@ def t0_yeniden_uretim(A: K56Ayar, panel_yol: str, olay_yol: str, isci: int = 3) 
     ortak_kol = [c for c in Pk.columns if c in P.columns]; eksik = sorted(set(Pk.columns) ^ set(P.columns))
     p_esit = len(P) == len(Pk) and all(_esit_seri(P[c], Pk[c]) for c in ortak_kol)
     Ok2 = O.copy(); Ok2["tarih"] = pd.to_datetime(Ok2.tarih); Ok2["bitis"] = pd.to_datetime(Ok2.bitis)
-    o_esit = len(O) == len(Ok) and all(_esit_seri(Ok2[c].reset_index(drop=True), Ok[c].reset_index(drop=True)) for c in Ok.columns if c in Ok2.columns)
+    o_esit = len(O) == len(Ok) and all(_esit_seri(Ok2[c].reset_index(drop=True), Ok[c].reset_index(drop=True), tol=1e-9) for c in Ok.columns if c in Ok2.columns)
     out = {"evren_surum": E["surum"], "panel_satir": len(P), "panel_satir_kilitli": len(Pk), "panel_esit": bool(p_esit), "panel_sutun_farki": eksik,
            "olay": len(O), "olay_kilitli": len(Ok), "olay_esit": bool(o_esit)}
     log.info("T0: %s", out); return out
 
 
-def _esit_seri(a: pd.Series, b: pd.Series) -> bool:
+def _esit_seri(a: pd.Series, b: pd.Series, tol: float = 0.0) -> bool:
+    """NaN / NaT farkında eşitlik: tarih sütunları ns'ye çevrilip karşılaştırılır (birim ns / us farkı eşitsizlik değildir); sayısal sütunlar tol içinde
+    (panel pickle'ı için 0; CSV'den okunan olay tablosu için 1e-9: CSV ondalık hassasiyeti, v1.3-b); öteki sütunlar metin olarak."""
     a = a.reset_index(drop=True); b = b.reset_index(drop=True)
     if len(a) != len(b):
         return False
+    if pd.api.types.is_datetime64_any_dtype(a) or pd.api.types.is_datetime64_any_dtype(b):
+        x = pd.to_datetime(a).to_numpy("datetime64[ns]"); y = pd.to_datetime(b).to_numpy("datetime64[ns]")
+        return bool(((x == y) | (pd.isna(x) & pd.isna(y))).all())
     if pd.api.types.is_numeric_dtype(a) and pd.api.types.is_numeric_dtype(b):
-        x, y = a.to_numpy(float), b.to_numpy(float); return bool(np.array_equal(x, y, equal_nan=True))
+        x, y = a.to_numpy(float), b.to_numpy(float)
+        return bool(((np.abs(x - y) <= tol) | (x == y) | (np.isnan(x) & np.isnan(y))).all())
     return bool((a.astype(str).to_numpy() == b.astype(str).to_numpy()).all())
 
 

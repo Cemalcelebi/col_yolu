@@ -72,9 +72,21 @@ def calistir(P: pd.DataFrame, V: Dict[str, pd.DataFrame], K: pd.DataFrame, yon_k
         ds = C.cy_dsr(Mx[en].to_numpy(float), sr.to_numpy(float)) if en is not None else {"dsr": np.nan}
         if en is not None:                                                # bilgi: aylık seri örtüşen 60 günlük getirilerden; otokorelasyon ve etkin T (T / 3) ile DSR
             ser = Mx[en].dropna(); ds["ac1"] = float(ser.autocorr(1)) if len(ser) > 3 else np.nan; ds["ac2"] = float(ser.autocorr(2)) if len(ser) > 4 else np.nan
-            ser3 = ser.to_numpy(float)[::3]; d3 = C.cy_dsr(ser3, sr.to_numpy(float)) if len(ser3) >= 10 else {"dsr": np.nan}; ds["dsr_etkinT_bilgi"] = d3.get("dsr", np.nan)
+            ds["dsr_etkinT_bilgi"] = dsr_etkin_T(ser.to_numpy(float), ds.get("sr0", np.nan), oran=3)    # aynı SR ve SR0, T yerine T / 3 (örtüşen 60 günlük getiriler)
         karar = ("aşırı uyum riski düşük" if (pb.get("pbo", np.nan) < PBO["pbo_esik"] and ds.get("dsr", np.nan) >= PBO["dsr_esik"]) else "aşırı uyum riski yüksek") \
             if np.isfinite(pb.get("pbo", np.nan)) and np.isfinite(ds.get("dsr", np.nan)) else "VERİ YETERSİZ"
         sonuc.append({"yon": "A (keşfedilen)" if ad == "a" else "kayıt (K55 B)", "yapi": int(Mf.shape[1]), "ay": int(Mf.shape[0]), **{f"pbo_{k}": v for k, v in pb.items()},
                       "en_iyi_yapi": en, "en_iyi_sr_aylik": float(sr.max()) if len(sr.dropna()) else np.nan, **{f"dsr_{k}": v for k, v in ds.items()}, "karar": karar})
     return Y, pd.DataFrame(sonuc), mats
+
+
+def dsr_etkin_T(r: np.ndarray, sr0: float, oran: int = 3) -> float:
+    """cy_dsr ile aynı formül (Bailey-López de Prado), yalnız gözlem sayısı T yerine etkin T = T / oran (bilgi; karar vermez)."""
+    import math
+    from scipy.stats import kurtosis, norm, skew
+    r = r[np.isfinite(r)]; T = len(r) / oran
+    if T < 3 or not np.isfinite(sr0):
+        return np.nan
+    sr = r.mean() / (r.std(ddof=1) + 1e-12); sk = float(skew(r)); ku = float(kurtosis(r, fisher=False))
+    z = (sr - sr0) * math.sqrt(T - 1) / math.sqrt(max(1 - sk * sr + (ku - 1) / 4 * sr ** 2, 1e-12))
+    return float(norm.cdf(z))

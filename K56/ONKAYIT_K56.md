@@ -353,3 +353,11 @@ güvenlik içindir.
    PURGE / EMBARGO olay sayıları ve 2024 sonrası gün sayıları yer almaz (kapı dışı hesap yok). Fiyat denetimi tablosunun sha'sı evren sürümüne girer.
 8. Prova: BAĞIMSIZ koşusunun kod yolu (rapor, nihai karar, JSON, ikinci koşu) İÇ verisinde küçük ölçekte prova edilir (bagimsiz_prova; karar vermez).
 9. Drive kopyası (drive_kopyala) yalnız Colab'da Drive bağlıyken çalışır; bu kapta Drive bağlayıcısıyla (CLAUDE.md yöntemi) yapılır.
+
+### v1.3-b (31 Ekim 2026; T0 ilk denemesi sonrası; BAĞIMSIZ açılmadan)
+- T0 ilk denemesi (644efaf) "eşit değil" verdi; tanı: gerçek fark yok — olay tablosu CSV'den okunduğu için sayısal sütunlarda ≤ 4,5e-13 yuvarlama, paneldeki
+  bitiş sütunlarında NaT'ların metin karşılaştırması (tarih birimi ns / us). Eşitlik tanımı netleşti: tarih sütunları ns'ye çevrilip NaT farkında; panel
+  (pickle) sayısal sütunları TAM eşit; CSV'den okunan olay tablosu sayısal sütunları 1e-9 toleransla. T1 / T2 karşılaştırmaları (iki taraf da CSV yolundan)
+  tolerans 0 kalır.
+- PBO bilgi sütunu "dsr_etkinT_bilgi" ilk koşuda alt örneklemeyle (her üçüncü ay) hesaplanmıştı (yanlış yöntem; karar vermiyordu); artık cy_dsr formülüyle
+  aynı SR / SR0, T yerine T / 3. Kod değiştiği için ayrışma ve PBO / DSR kilit şartı gereği yeniden koşulur (sayılar değişmez, yalnız bilgi sütunu).
