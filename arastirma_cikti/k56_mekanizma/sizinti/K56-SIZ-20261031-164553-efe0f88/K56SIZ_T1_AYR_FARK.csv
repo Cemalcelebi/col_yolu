@@ -1,0 +1,5 @@
+tablo,anahtar,sutun,ref,yeni
+S,(sütun),G_sent_ort,True,False
+S,(sütun),karar,True,False
+S,(sütun),sent_cogunluk,True,False
+S,(sütun),sent_siniflar,True,False

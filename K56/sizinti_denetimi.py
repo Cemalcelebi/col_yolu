@@ -179,3 +179,22 @@ def ayr_karsilastir(ref: pd.DataFrame, yeni: pd.DataFrame, kimlik_tol: float) ->
             d = np.abs(x.to_numpy(float) - y.to_numpy(float)); en = max(en, float(np.nanmax(d)) if np.isfinite(d).any() else 0.0)
     z["en_buyuk_sayisal_fark"] = en; z["birebir"]["S"] = bool(z["birebir"].get("S") and ok.all())
     return F, z
+
+
+def t2_ihmal(F: pd.DataFrame, S_ref: pd.DataFrame) -> Dict[str, Any]:
+    """v1.3-a madde 3: T2 farkı ihmal edilebilir = sınıf değişmez VE en büyük d farkı <= 0,05 VE hiçbir satırda d farkı o satırın (T1b) aralık yarı
+    genişliğinin %25'ini aşmaz. F: karsilastir fark tablosu (T1b -> T2), S_ref: T1b satır tablosu (CSV yolundan)."""
+    def _f(a: Any, b: Any) -> float:
+        try:
+            return abs(float(b) - float(a))
+        except Exception:
+            return float("inf")
+    dF = F[F.sutun.isin(["i_d", "ii_d", "iii_d"])].copy(); dF["f"] = [_f(a_, b_) for a_, b_ in zip(dF.ref, dF.yeni)]
+    dmax = float(dF.f.max()) if len(dF) else 0.0; sinif = int(F.sutun.isin(["sinif_a1", "sinif_iii", "b1_gecti", "karar", "a1", "b1_durum", "(satır)"]).sum())
+    Sr = S_ref.set_index(["hucre", "varyant", "ufuk"]); yari: Dict[Tuple[str, str], float] = {}
+    for c_ in ("i_d", "ii_d", "iii_d"):
+        for k_, v_ in ((Sr[f"{c_}_ust"] - Sr[f"{c_}_alt"]) / 2).items():
+            yari[(c_, "|".join(map(str, k_)))] = v_
+    asan = int(sum(1 for r in dF.itertuples() if np.isfinite(r.f) and r.f > 0.25 * yari.get((r.sutun, r.anahtar), np.inf)))
+    return {"en_buyuk_d_farki": dmax, "sinif_degisimi": sinif, "yari_genislik_25_asan": asan, "ihmal_edilebilir": bool(sinif == 0 and dmax <= 0.05 and asan == 0)}
+

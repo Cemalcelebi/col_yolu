@@ -647,6 +647,21 @@ def bagimsiz_b_etiketle(VERI: Dict[str, Any]) -> None:
     ob = (O.tarih >= a) & (O.tarih <= t0s) & (pd.to_datetime(O.bitis) <= bs); O.loc[ob.to_numpy(), "donem"] = "BAGIMSIZ_B"
 
 
+def _ayr_satir_karar(S: pd.DataFrame, SS: pd.DataFrame) -> pd.DataFrame:
+    """v1.3-E P5 satır kararı: her yapay spekin sınıfı (gerçek G'ye göre), Faz 0 spek çoğunluğu, satır kararı. AYR koşusu ve sızıntı T1 ayrışma
+    karşılaştırması (kesik veri; yapay G'ler AYR koşusundan) aynı fonksiyonu kullanır (v1.3-c)."""
+    from . import ayrisma as AY, mekanizma as M
+    karar = []; faz0 = {(t, h) for t, h in M.SENTETIK_SPEK}
+    for r in S.itertuples():
+        g = SS[(SS.hucre == r.hucre) & (SS.varyant == r.varyant) & (SS.ufuk == r.ufuk)]
+        sinif = {f"{x.spek}:{x.tohum}": M.sentetik_sinif(x.G, x.G_ay_alt, x.G_ay_ust, r.G) for x in g.itertuples()}
+        sk = AY.spek_cogunluk([v for k, v in sinif.items() if (k.split(":")[0], int(k.split(":")[1])) in faz0])
+        karar.append({"hucre": r.hucre, "varyant": r.varyant, "ufuk": r.ufuk, "donem": r.donem, "sent_siniflar": json.dumps(sinif, ensure_ascii=False), "sent_cogunluk": sk,
+                      "G_sent_ort": float(g[g.spek.isin(["gauss", "garch_t"])].G.mean()) if len(g) else np.nan, "karar": AY.satir_karari(r._asdict(), sk)})
+    KR = pd.DataFrame(karar, columns=["hucre", "varyant", "ufuk", "donem", "sent_siniflar", "sent_cogunluk", "G_sent_ort", "karar"])
+    return S.merge(KR, on=["hucre", "varyant", "ufuk", "donem"], how="left")
+
+
 def ayrisma_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     """v1.3-E: ayrışma KEŞİF + İÇ (gerçek) ve dört Faz 0 + iki kalibre yapay spek; satır / hücre kararları; BAĞIMSIZ yok."""
     from . import ayrisma as AY, faz1_yerel as F1, mekanizma as M
@@ -658,15 +673,7 @@ def ayrisma_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     for tur, toh in tuple(M.SENTETIK_SPEK) + (("kalibre_gjr", 565), ("kalibre_sicrama", 566)):
         R = AY.sentetik_motor_verisi(tur, toh, M.SENTETIK_HISSE, M.SENTETIK_GUN); s_, d_ = AY.calistir(f"sent:{tur}:{toh}", R["P"], R["V"], R["O"], K, ("KESIF",), isci=isci)
         s_["spek"] = tur; s_["tohum"] = toh; d_["spek"] = tur; Ss.append(s_); Dzs.append(d_); del R
-    SS = pd.concat(Ss, ignore_index=True); karar = []
-    faz0 = {(t, h) for t, h in M.SENTETIK_SPEK}
-    for r in S.itertuples():
-        g = SS[(SS.hucre == r.hucre) & (SS.varyant == r.varyant) & (SS.ufuk == r.ufuk)]
-        sinif = {f"{x.spek}:{x.tohum}": M.sentetik_sinif(x.G, x.G_ay_alt, x.G_ay_ust, r.G) for x in g.itertuples()}
-        sk = AY.spek_cogunluk([v for k, v in sinif.items() if (k.split(":")[0], int(k.split(":")[1])) in faz0])
-        karar.append({"hucre": r.hucre, "varyant": r.varyant, "ufuk": r.ufuk, "donem": r.donem, "sent_siniflar": json.dumps(sinif, ensure_ascii=False), "sent_cogunluk": sk,
-                      "G_sent_ort": float(g[g.spek.isin(["gauss", "garch_t"])].G.mean()) if len(g) else np.nan, "karar": AY.satir_karari(r._asdict(), sk)})
-    KR = pd.DataFrame(karar); S2 = S.merge(KR, on=["hucre", "varyant", "ufuk", "donem"], how="left")
+    SS = pd.concat(Ss, ignore_index=True); S2 = _ayr_satir_karar(S, SS)
     H = S2.groupby(["donem", "hucre"]).agg(satir=("ufuk", "size"), karar=("karar", lambda s: AY.hucre_karari_ayr(list(s))),
                                            agirlik_oneki=("karar", lambda s: int(pd.Series(s).astype(str).str.startswith("AĞIRLIK ETKİSİ").sum()))).reset_index()
     if "hata" in SS and SS.hata.notna().any():
@@ -737,7 +744,9 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
         from K55.faz1 import DALLAR, hucreleri_kur
         from K55.hucreler import HUCRELER
         Kk = M_.kesif_satirlari(A, kk); Sa, _ = AY.calistir(AY.ETIKET_GERCEK, VR["P"], VR["V"], VR["O"], Kk, ("IC_DOGRULAMA",), isci=isci)   # v1.3-c: AYR koşusuyla aynı tohum etiketi
-        ra = pd.read_csv(os.path.join(_son_oku(A, "ayrisma"), "K56AYR_SATIR.csv")); ra = ra[ra.donem == "IC_DOGRULAMA"]
+        ak = _son_oku(A, "ayrisma"); ra = pd.read_csv(os.path.join(ak, "K56AYR_SATIR.csv")); ra = ra[ra.donem == "IC_DOGRULAMA"]
+        Sa = _ayr_satir_karar(Sa, pd.read_csv(os.path.join(ak, "K56AYR_SENTETIK.csv")))     # v1.3-c: satır kararı kesik veride (yapay G'ler AYR koşusundan, kesimden bağımsız)
+        Sa.to_csv(os.path.join(out, "K56SIZ_T1_AYR_S.csv"), index=False)
         Fy, zy = SZ.ayr_karsilastir(_csv_yuvarla(ra), _csv_yuvarla(Sa), AY.AYR["kimlik_tol"])          # v1.3-c: kimlik_fark özdeşlik olarak, sayısal TOL_AYR
         Fy.to_csv(os.path.join(out, "K56SIZ_T1_AYR_FARK.csv"), index=False); oz["T1_ayrisma"] = zy
         hucreleri_kur(DALLAR); Yp, Tp, _ = PB.calistir(VR["P"], VR["V"], Kk, {h: int(HUCRELER[h].get("yon", 1)) for h in Kk.hucre.unique()}, isci=isci)
@@ -751,14 +760,7 @@ def sizinti_kos(A: K56Ayar, isci: int = 3, mod: str = "hepsi") -> Dict[str, Any]
             if mod != "hepsi":
                 break
             VR = SZ.kesik_veri(A, "IC_DOGRULAMA", ev, isci); R2, y2, F2_, z2 = kos(f"T2{ev}", VR, y1); oz[f"T2{ev}"] = z2
-            dF = F2_[F2_.sutun.isin(["i_d", "ii_d", "iii_d"])].copy(); dF["f"] = [abs(_fark(a_, b_)) for a_, b_ in zip(dF.ref, dF.yeni)]
-            dmax = float(dF.f.max()) if len(dF) else 0.0; sinif = int(F2_.sutun.isin(["sinif_a1", "sinif_iii", "b1_gecti", "karar", "a1", "b1_durum", "(satır)"]).sum())
-            Sr = y1["S"].set_index(["hucre", "varyant", "ufuk"]); yari = {}
-            for c_ in ("i_d", "ii_d", "iii_d"):
-                for k_, v_ in ((Sr[f"{c_}_ust"] - Sr[f"{c_}_alt"]) / 2).items():
-                    yari[(c_, "|".join(map(str, k_)))] = v_
-            asan = int(sum(1 for r in dF.itertuples() if np.isfinite(r.f) and r.f > 0.25 * yari.get((r.sutun, r.anahtar), np.inf)))
-            oz[f"T2{ev}"].update({"en_buyuk_d_farki": dmax, "sinif_degisimi": sinif, "yari_genislik_25_asan": asan, "ihmal_edilebilir": bool(sinif == 0 and dmax <= 0.05 and asan == 0)})
+            oz[f"T2{ev}"].update(SZ.t2_ihmal(F2_, y1["S"]))
             L += [f"- T2{ev} (kesik evren{' + kesim sonrası giren K34 dışarıda' if ev == 'b' else ''}) vs T1b: {oz[f'T2{ev}']}"]; del VR
     oz["sure_dk"] = round((time.time() - t0) / 60, 1)
     from .ortak import veri_tanimi_hesapla
@@ -780,13 +782,6 @@ def _csv_yuvarla(X: pd.DataFrame) -> pd.DataFrame:
     """Referans CSV'den okunmuş gibi karşılaştırmak için yazıp okur (dtype / NaN biçimi aynı)."""
     import io
     b = io.StringIO(); X.to_csv(b, index=False); b.seek(0); return pd.read_csv(b)
-
-
-def _fark(a: Any, b: Any) -> float:
-    try:
-        return float(b) - float(a)
-    except Exception:
-        return float("inf")
 
 
 def _cikmap(A: K56Ayar) -> Dict[str, int]:

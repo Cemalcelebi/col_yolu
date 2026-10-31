@@ -471,8 +471,14 @@ def testler():
         hata.append(f"27) K55 nihai karar eşlemesi: {k1} | {k2} | {k3}")
     # 28) v1.3-c: T1 ayrışma karşılaştırması AYR koşusuyla aynı tohum etiketi; kimlik_fark özdeşlik olarak, sayısal TOL_AYR, sınıf birebir
     import inspect
-    if not all("AY.calistir(AY.ETIKET_GERCEK" in inspect.getsource(f_) for f_ in (SU2.ayrisma_kos, SU2.sizinti_kos)):
-        hata.append("28) ayrışma koşusu ile sızıntı T1 ayrışma karşılaştırması aynı tohum etiketini kullanmıyor")
+    if not all("AY.calistir(AY.ETIKET_GERCEK" in inspect.getsource(f_) and "_ayr_satir_karar(" in inspect.getsource(f_) for f_ in (SU2.ayrisma_kos, SU2.sizinti_kos)):
+        hata.append("28) ayrışma koşusu ile sızıntı T1 ayrışma karşılaştırması aynı tohum etiketini / satır kararı fonksiyonunu kullanmıyor")
+    S28 = pd.DataFrame({"hucre": "h", "varyant": "h|1", "ufuk": "Y60", "i_d": [-0.3], "i_d_alt": [-0.4], "i_d_ust": [-0.2], "ii_d": [0.0], "ii_d_alt": [-0.1], "ii_d_ust": [0.1],
+                        "iii_d": [-0.2], "iii_d_alt": [-0.3], "iii_d_ust": [-0.1], "sinif_a1": ["MEKANİK"]})
+    t_a = SZ.t2_ihmal(SZ.karsilastir({"S": S28}, {"S": S28})[0], S28); t_b = SZ.t2_ihmal(SZ.karsilastir({"S": S28}, {"S": S28.assign(ii_d=0.03)})[0], S28)
+    t_c = SZ.t2_ihmal(SZ.karsilastir({"S": S28}, {"S": S28.assign(sinif_a1="X")})[0], S28)
+    if not (t_a["ihmal_edilebilir"] and not t_b["ihmal_edilebilir"] and t_b["yari_genislik_25_asan"] == 1 and t_c["sinif_degisimi"] == 1):
+        hata.append(f"28) t2_ihmal {t_a} {t_b} {t_c}")
     Ra = pd.DataFrame({"hucre": ["a", "b"], "varyant": ["a|1", "b|1"], "ufuk": "Y60", "E1": [-0.3, np.nan], "karar": ["AYRIŞMA YOK", "VERİ YETERSİZ"], "kimlik_fark": [1.94e-16, np.nan],
                        "etiket": "gercek", "sure_sn": 1.0})
     _, za = SZ.ayr_karsilastir(Ra, Ra.assign(kimlik_fark=[2.2e-16, np.nan], E1=[-0.3 + 1e-14, np.nan], sure_sn=9.0), 1e-9)

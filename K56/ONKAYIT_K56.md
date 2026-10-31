@@ -373,5 +373,11 @@ güvenlik içindir.
   S / H / B3, T1a ve PBO / DSR karşılaştırmaları değişmez (tolerans 0).
 - T1b bileşim farkı (beklenen, v1.3-G) raporda açık yazılır: İÇ A3 bileşimi başvuru geçmişini (sec_var) tam SEC özetinden okur; kesik özetle Y60 2731 →
   2711 olay, bir satırın sınıfı değişir. A3 açıklayıcıdır, karar vermez; İÇ kararları (S / H / B3) bundan etkilenmez.
+- İkinci tam sızıntı denemesi (K56-SIZ-20261031-164553-efe0f88, geçersiz, NOT.md): T0, T1b S / H / B3, T1a birebir; ayrışma sayıları birebir, ama AYR
+  çıktısındaki yapay karar sütunları (karar, sent_siniflar, sent_cogunluk, G_sent_ort) karşılaştırma tarafında hesaplanmadığı için "tek tarafta sütun"
+  sayıldı (test hatası). Düzeltme: satır kararı tek fonksiyonda (surucu._ayr_satir_karar); sızıntı T1 bu fonksiyonla kesik verinin G'sinden ve AYR
+  koşusunun yapay G'lerinden (yapay veri kesimden bağımsız) kararı yeniden hesaplar, satır tablosunu kaydeder (K56SIZ_T1_AYR_S.csv) ve AYR satırlarıyla
+  bütün sütunlarda karşılaştırır. Son bit farkının kaynağı: CSV ondalık okuması (pandas varsayılan ayrıştırıcısı son bitte farklı okuyabilir; ör.
+  G_sent_ort 1,1e-16) — 1e-12 toleransının gerekçesi budur. T2 ihmal hesabı (v1.3-a madde 3) değişmeden sizinti_denetimi.t2_ihmal'e taşındı (test 28).
 - Kod değiştiği için sızıntı, ayrışma ve PBO / DSR kilitten önce bu kodla yeniden koşulur.
 
