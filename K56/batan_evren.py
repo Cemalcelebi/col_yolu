@@ -49,6 +49,7 @@ def aday_o1(A: K56Ayar, kk: KaynakKaydi, EV: pd.DataFrame, T: pd.DataFrame) -> p
     eski = pd.read_csv(kk.oku(os.path.join(A.iv, "k34", "k34_eski_kod.csv"), "veri", "K34 batan şirketlerin SEC kapak sayfası eski kodu"))
     orn = pd.read_csv(kk.oku(os.path.join(A.iv, "k34", "k34_orneklem.csv"), "veri", "K34 Tiingo örneklemi (450, zaten evrende)"))
     B = pd.read_pickle(kk.oku(os.path.join(A.veri, "k34_bildirim.pkl"), "veri", "K34 SEC bildirim özeti (olay günleri)"))
+    B = B.assign(cik=pd.to_numeric(B.cik, errors="coerce")).dropna(subset=["cik"]); B["cik"] = B.cik.astype(int)       # bildirim özetinde CIK metin; eski kod listesinde sayı
     olay = F.fi_k34_olaylar(B); eski = eski[eski.cik.isin(set(olay.cik))]          # K34 adayı olmayan (olayı olmayan) CIK eşlemeye girmez (K34'te de girmedi)
     E = F.fi_k34_tiingo_eslem(eski, T.assign(startDate=T.startDate.dt.strftime("%Y-%m-%d"), endDate=T.endDate.dt.strftime("%Y-%m-%d")), olay)
     E = E[E.tiingo.notna() & ~E.cik.isin(orn.cik) & ~E.cik.isin(EV.cik.dropna().astype(int))].copy()
