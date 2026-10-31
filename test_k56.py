@@ -204,11 +204,11 @@ def testler():
         hata.append("14) yinelenen kaynak kimliği")
     # 14b) Drive kopyası: sha doğrulamalı, yasak köke yazmaz
     with tempfile.TemporaryDirectory() as td:
-        os.makedirs(os.path.join(td, "k"), exist_ok=True); open(os.path.join(td, "k", "a.csv"), "w").write("x,y\n1,2\n")
+        os.makedirs(os.path.join(td, "k", "alt"), exist_ok=True); open(os.path.join(td, "k", "a.csv"), "w").write("x,y\n1,2\n"); open(os.path.join(td, "k", "alt", "b.csv"), "w").write("z\n3\n")
         os.environ["K56_CIKTI_EK"] = td
         from K56 import surucu as SU
         Mf = SU.drive_kopyala(os.path.join(td, "k"), os.path.join(td, "h"))
-        if len(Mf) != 1 or not os.path.exists(os.path.join(td, "h", "K56_DRIVE_MANIFEST.csv")):
+        if len(Mf) != 2 or not os.path.exists(os.path.join(td, "h", "alt", "b.csv")) or not os.path.exists(os.path.join(td, "h", "K56_DRIVE_MANIFEST.csv")):
             hata.append("14b) drive_kopyala")
         try:
             SU.drive_kopyala(os.path.join(td, "k"), os.path.join(O.KOK, "arastirma_cikti", "k55_dallanma", "x")); hata.append("14b) yasak köke kopyaladı")
@@ -262,7 +262,8 @@ def testler():
     # 18b) G7 eşleri: aynı gün, aynı likidite üçlüsü, |vd farkı| <= 1, sektör, ±h içinde olayı olan eş yok
     Pg = pd.DataFrame({"tarih": pd.to_datetime(["2018-05-01"] * 6), "sembol": list("ABCDEF"), "i": [100] * 6, "sektor": ["s1", "s1", "s1", "s2", "s1", "s1"],
                        "lt": np.array([1, 1, 1, 1, 2, 1], np.int8), "vd": np.array([5, 6, 4, 5, 5, 8], np.int8), "likit": True, "donem60": "KESIF"})
-    Og = pd.DataFrame({"sembol": ["A", "C"], "tarih": pd.to_datetime(["2018-05-01", "2018-03-01"]), "i": [100, 60], "ufuk": "Y60", "donem": "KESIF"})
+    Og = pd.DataFrame({"sembol": ["A", "C", "B"], "tarih": pd.to_datetime(["2018-05-01", "2018-03-01", "2018-03-01"]), "i": [100, 60, 60], "ufuk": "Y60", "donem": ["KESIF", "KESIF", "IC_DOGRULAMA"],
+                       "bitis": pd.to_datetime(["2018-07-30", "2018-05-25", "2022-05-25"])})    # B'nin olayı dönem sonrasında biter: eşlemeyi engellemez
     Gg = F1.g7_esleri(Pg, Og, "Y60", "KESIF", np.random.default_rng(1))
     if sorted(Gg.sembol) != ["B"]:
         hata.append(f"18b) G7 eşleri {sorted(Gg.sembol)} (beklenen ['B'])")
@@ -270,7 +271,7 @@ def testler():
     gun3 = pd.bdate_range("2017-01-02", periods=300); n3 = 35; sem3 = [f"E{k:02d}" for k in range(n3)] + [f"Q{k:02d}" for k in range(10)]
     P3 = pd.DataFrame({"tarih": gun3[100], "sembol": sem3, "i": 100, "sektor": "s1", "lt": np.int8(1), "vd": np.int8(5), "likit": True,
                        "donem60": "KESIF", "donem120": "KESIF", "donem250": "KESIF"})
-    O3 = pd.DataFrame({"sembol": sem3[:n3], "tarih": gun3[100], "i": 100, "ufuk": "Y60", "donem": "KESIF"})
+    O3 = pd.DataFrame({"sembol": sem3[:n3], "tarih": gun3[100], "i": 100, "ufuk": "Y60", "donem": "KESIF", "bitis": gun3[160]})
     V3 = {s_: pd.DataFrame({"Close": 1.0}, index=gun3) for s_ in sem3}; cm3 = {s_: k + 1 for k, s_ in enumerate(sem3)}
     J3 = {str(k + 1): {"date": [str(gun3[95].date()), str(gun3[103].date())], "form": ["8-K", "8-K"], "items": ["2.02", "8.01"]} for k in range(len(sem3))}
     B3_ = F1.bilesim(P3, V3, O3, J3, cm3, "KESIF")
@@ -330,6 +331,22 @@ def testler():
     OKt = E2.olay_karsilastir(Oa, Ob, pd.DataFrame({"sembol": ["X", "Y", "N1"], "kaynak": ["V_ABD", "V_ABD", "K56_O2"]}))
     if OKt[["k55", "v2", "v2_yeni_sirket", "fark"]].iloc[0].tolist() != [2, 3, 1, 1]:
         hata.append(f"21) olay karşılaştırması {OKt.to_dict('records')}")
+    # 22) indirme_sonrasi: inen ve inmeyen sembol karışıkken çökmez (NaT); inmeyen İNMEDİ, Ö1 CIK'i korunur; adi hisse süzgeci
+    if not (BE.adi_hisse_degil("RBAC-U") and BE.adi_hisse_degil("ZEV-WS") and BE.adi_hisse_degil("GRNAW") and not BE.adi_hisse_degil("GOOGL") and not BE.adi_hisse_degil("AAPL")):
+        hata.append("22) adi hisse süzgeci")
+    with tempfile.TemporaryDirectory() as td:
+        g = pd.bdate_range("2017-01-02", periods=400)
+        pd.DataFrame({"date": g.strftime("%Y-%m-%dT00:00:00.000Z"), "adjOpen": 5.0, "adjHigh": 5.5, "adjLow": 4.5, "adjClose": 5.0, "adjVolume": 2000}).to_csv(os.path.join(td, "AAA.csv"), index=False)
+        AD = pd.DataFrame({"cik": [1339469, np.nan], "sembol": ["AAA", "BBB"], "kaynak": ["Ö1 (K34 kalan)", "Ö2 (Tiingo KEŞİF bitişi)"], "baslangic": ["2017-01-02", "2015-01-02"],
+                           "bitis": [str(g[-1].date()), "2019-06-28"], "borsa": "NASDAQ"})
+        Tt = pd.DataFrame({"ticker": ["AAA", "BBB"], "exchange": "NASDAQ", "assetType": "Stock", "priceCurrency": "USD", "startDate": pd.to_datetime(["2017-01-02", "2015-01-02"]),
+                           "endDate": pd.to_datetime([g[-1], "2019-06-28"])})
+        try:
+            Yt = E2.indirme_sonrasi(O.K56Ayar(), None, AD, td, pd.DataFrame(columns=["cik", "ad", "sembol", "nse_tarih"]), Tt, os.path.join(td, "yok.json"))
+            if Yt.set_index("sembol").seri_durum.to_dict() != {"AAA": "TAMAM", "BBB": "İNMEDİ"} or Yt.set_index("sembol").cik["AAA"] != 1339469:
+                hata.append(f"22) indirme_sonrasi {Yt[['sembol', 'seri_durum', 'cik']].to_dict('records')}")
+        except Exception as ex:
+            hata.append(f"22) indirme_sonrasi çöktü: {type(ex).__name__}: {ex}")
     # 15) K51-K55 dosyaları değişmedi
     git1 = subprocess.run(["git", "status", "--porcelain", "--", *KORUNAN], capture_output=True, text=True).stdout
     if git1 != git0 or git1.strip():
@@ -341,4 +358,4 @@ if __name__ == "__main__":
     h = testler()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_k56: 23/23 OK")
+    print("test_k56: 24/24 OK")

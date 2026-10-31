@@ -66,7 +66,7 @@ def indirme_sonrasi(A: K56Ayar, ist: Any, ADAY: pd.DataFrame, klasor: str, N25: 
     yeni = sorted(int(c) for c in Y.cik.dropna().unique())
     sec = BE.sec_gecmis(ist, yeni, sec_yol) if ist is not None else (json.load(open(sec_yol, encoding="utf-8")) if os.path.exists(sec_yol) else {})
     ct = json.load(open("/tmp/k55/company_tickers.json", encoding="utf-8")); bugun = {v["ticker"].upper().replace(".", "-"): int(v["cik_str"]) for v in ct.values()}
-    son = {s: (t if t is not None else b) for s, t, b in zip(Y.sembol, Y.seri_son, Y.bitis)}
+    son = {s: (t if pd.notna(t) else b) for s, t, b in zip(Y.sembol, Y.seri_son, Y.bitis)}       # inmeyen seride None -> NaT; Tiingo bitişi kullanılır
     S = BE.siniflandir(Y.drop(columns=["seri_son"]), sec, T, bugun, son)
     S["seri_son"] = S.sembol.map(dict(zip(Y.sembol, Y.seri_son)))
     return S
@@ -89,12 +89,16 @@ def evren2_kur(A: K56Ayar, Y: pd.DataFrame, klasor: str) -> Dict[str, Any]:
     V_ham = Vs["ABD"]; EV_ham = EV_ham[EV_ham.pazar == "ABD"].copy()
     kisa, eksik = KE._ham_kisa_ve_eksik(A55, {KE.sembol_normalize(s): 1 for s in V_ham}, fon_disi)
     kriz = pd.Timestamp(C.CY["kriz"]); ev, sd, es, rap = [], [], [], []
+    cik_var = set(pd.to_numeric(ES.cik, errors="coerce").dropna().astype(int)) if "cik" in ES else set(); cik_yeni: set = set()
     for r in Y.itertuples():
         s = KE.sembol_normalize(r.sembol); kay = "K56_" + ("O1" if str(r.kaynak).startswith("Ö1") else "O2")
         if r.seri_durum != "TAMAM":
             rap.append({"sembol": s, "kaynak": kay, "durum": r.seri_durum}); continue
         if s in V_ham or s in fon_disi:
             rap.append({"sembol": s, "kaynak": kay, "durum": "K55 evreninde / fon (eklenmedi)"}); continue
+        c = int(r.cik) if pd.notna(r.cik) else None
+        if c is not None and (c in cik_var or c in cik_yeni):
+            rap.append({"sembol": s, "kaynak": kay, "durum": "CIK tekrarı (aynı şirket K55'te ya da başka yeni sembolde; eklenmedi)"}); continue
         try:
             d = yeni_seri_oku(os.path.join(klasor, f"{r.sembol}.csv"), kriz)
         except Exception as ex:
@@ -102,7 +106,7 @@ def evren2_kur(A: K56Ayar, Y: pd.DataFrame, klasor: str) -> Dict[str, Any]:
         if d is None or len(d) < KE.YUKLEYICI_MIN_GUN:
             rap.append({"sembol": s, "kaynak": kay, "durum": f"kısa seri ({0 if d is None else len(d)} < {KE.YUKLEYICI_MIN_GUN})"})
             kisa = pd.concat([kisa, pd.DataFrame([{"sembol": s, "kaynak": kay, "n_gun": 0 if d is None else len(d)}])], ignore_index=True); continue
-        V_ham[s] = d
+        V_ham[s] = d; cik_yeni |= {c} if c is not None else set()
         ev.append({"pazar": "ABD", "sembol": s, "kaynak": kay, "evren_bas": d.index[0], "batan": True, "agirlik": 1.0})
         sd.append({"sembol": s, "kaynak": kay, "cik": r.cik, "sinif": r.k54_sinif, "alt": r.k54_alt or "", "kural": r.k54_kural, "cikis_islemi": r.cikis_islemi,
                    "kesim_tarihi": r.kesim_tarihi or "", "erken_bitti": r.erken_bitti})
@@ -145,7 +149,8 @@ def olay_karsilastir(O1: pd.DataFrame, O2: pd.DataFrame, EV2: pd.DataFrame) -> p
     yeni = set(EV2.sembol[EV2.kaynak.str.startswith("K56_")])
     a = O1.groupby(["donem", "ufuk"]).size().rename("k55"); b = O2.groupby(["donem", "ufuk"]).size().rename("v2")
     c = O2[O2.sembol.isin(yeni)].groupby(["donem", "ufuk"]).size().rename("v2_yeni_sirket")
-    T = pd.concat([a, b, c], axis=1).fillna(0).astype(int).reset_index(); T["fark"] = T.v2 - T.k55
+    k = O2[~O2.sembol.isin(yeni)].groupby(["donem", "ufuk"]).size().rename("v2_k55_sirket")      # likit eşiği / sıralar kesitsel: yeni seriler K55 şirketlerini de kaydırır
+    T = pd.concat([a, b, c, k], axis=1).fillna(0).astype(int).reset_index(); T["fark"] = T.v2 - T.k55; T["fark_k55_sirket"] = T.v2_k55_sirket - T.k55
     return T
 
 

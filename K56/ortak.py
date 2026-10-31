@@ -32,7 +32,7 @@ REPO_CIKTI = os.path.join(KOK, "arastirma_cikti", "k56_mekanizma")
 IZINLI_KOKLER: Tuple[str, ...] = (os.path.join(DRIVE_OUTPUT, CIKTI_ALT), REPO_CIKTI)
 YASAK_KOKLER: Tuple[str, ...] = (os.path.join(KOK, "arastirma_cikti", "col_yolu_abd"), os.path.join(KOK, "arastirma_cikti", "k55_dallanma"),
                                  os.path.join(DRIVE_OUTPUT, "COL_YOLU_ABD"), os.path.join(DRIVE_OUTPUT, "K55"))
-KOD_YOLLARI: Tuple[str, ...] = ("K56", "K56.py")
+KOD_YOLLARI: Tuple[str, ...] = ("K56", "K56.py", "K55", "COL_YOLU_ABD.py", "FON_IZI.py")     # K56'nın çağırdığı K55 / COL_YOLU_ABD / FON_IZI kodu da kimliğe girer
 BUYUK_INDIRME_SINIR = 64 * 1024 * 1024        # Faz 0: tek dosya en çok 64 MB (büyük veri indirme yok)
 SEC_HIZ = 0.15                                # SEC adil erişim: saniyede en çok ~7 istek (sınır 10)
 
@@ -126,7 +126,8 @@ def kod_sha() -> Dict[str, str]:
     for f in sorted(os.listdir(kd)):
         if f.endswith(".py") or f.endswith(".md"):
             out[f"K56/{f}"] = sha256_dosya(os.path.join(kd, f))
-    for g in ("K56.py", "K55/ortak.py", "K55/istatistik.py", "K55/hucre.py", "K55/olay_tanimlari.py"):
+    k55 = os.path.join(KOK, "K55")
+    for g in ["K56.py", "COL_YOLU_ABD.py", "FON_IZI.py"] + [f"K55/{f}" for f in sorted(os.listdir(k55)) if f.endswith(".py")]:
         y = os.path.join(KOK, g)
         if os.path.exists(y):
             out[g] = sha256_dosya(y)
@@ -142,7 +143,7 @@ def kosu_kimligi(A: K56Ayar, faz: str) -> Dict[str, Any]:
         raise RuntimeError(f"commit'lenmemiş K56 kodu var: {kirli[:10]}; önce commit ya da K56_KIRLI_IZIN=1 (kimliğe KİRLİ yazılır)")
     c = git_commit()
     return {"kimlik": f"K56-{faz}-{time.strftime('%Y%m%d-%H%M%S')}-{c}" + ("-KIRLI" if kirli else ""), "surum": K56_SURUM, "commit": c, "git_kirli": kirli,
-            "onkayit_sha": ok, "kod_sha": kod_sha(), "ayar": {"cikti": A.cikti, "abd": A.abd, "k55": A.k55, "veri": A.veri, "iv": A.iv, "ag": A.ag, "ornek": A.ornek, "tohum": A.tohum},
+            "onkayit_sha": ok, "kod_sha": kod_sha(), "ayar": {"cikti": A.cikti, "abd": A.abd, "k55": A.k55, "veri": A.veri, "iv": A.iv, "ag": A.ag, "ornek": A.ornek, "tohum": A.tohum, "onbellek": A.onbellek},
             "python": sys.version.split()[0], "numpy": np.__version__, "pandas": pd.__version__}
 
 
@@ -345,3 +346,19 @@ def bagimsiz_kilit_dogrula(klasor: Optional[str]) -> None:
     for a in ("kod_sha", "onkayit_sha", "hipotez_sha", "esik_sha"):
         if k.get(a) != simdi.get(a):
             raise DonemKapali(f"kilit tutmuyor: {a} değişmiş; BAĞIMSIZ açılamaz")
+    vt = k.get("veri_tanimi", {}); yeni = veri_tanimi_hesapla(vt.get("panel_yol", ""), vt.get("olay_yol", ""), evren=True)   # açılış anında yeniden hesap
+    for a in ("panel_sha", "olay_sha", "evren_surum"):
+        if not vt.get(a) or vt.get(a) != yeni.get(a):
+            raise DonemKapali(f"kilit tutmuyor: veri tanımı {a} değişmiş ya da hesaplanamadı; BAĞIMSIZ açılamaz")
+
+
+def veri_tanimi_hesapla(panel_yol: str, olay_yol: str, evren: bool = True) -> Dict[str, str]:
+    """BAĞIMSIZ kilidinin veri tanımı: panel ve olay tablosu sha256 + K55 evren sürümü (evren=True: K55 evren_kur ağ kapalı, ~3 dk)."""
+    out = {"panel_yol": panel_yol, "olay_yol": olay_yol, "panel_sha": sha256_dosya(panel_yol) if os.path.exists(panel_yol) else "",
+           "olay_sha": sha256_dosya(olay_yol) if os.path.exists(olay_yol) else "", "donem": "K55 DONEM (değişmedi)", "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)"}
+    if evren:
+        from K55.evren import evren_kur
+        from K55.ortak import K55Ayar, veri_sha
+        A55 = K55Ayar(veri=K56Ayar().veri, cikti=os.path.dirname(os.path.dirname(panel_yol)) or "/tmp", k54=K56Ayar().abd, isci=1)
+        out["evren_surum"] = evren_kur(A55, veri_sha(A55), network=False)["surum"]
+    return out

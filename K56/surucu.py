@@ -159,14 +159,13 @@ def drive_kopyala(kaynak: Optional[str] = None, hedef: Optional[str] = None) -> 
     import shutil
     from .ortak import CIKTI_ALT, DRIVE_OUTPUT, REPO_CIKTI, sha256_dosya
     kaynak = kaynak or REPO_CIKTI; hedef = cikti_dogrula(hedef or os.path.join(DRIVE_OUTPUT, CIKTI_ALT)); os.makedirs(hedef, exist_ok=True); rows = []
-    for f in sorted(os.listdir(kaynak)):
-        a = os.path.join(kaynak, f)
-        if not os.path.isfile(a):
-            continue
-        b = os.path.join(hedef, f); shutil.copyfile(a, b); sa, sb = sha256_dosya(a), sha256_dosya(b)
-        if sa != sb:
-            raise RuntimeError(f"kopya bozuk: {f}")
-        rows.append({"dosya": f, "bayt": os.path.getsize(b), "sha256": sa})
+    for kok, _, dosyalar in sorted(os.walk(kaynak)):                     # alt klasörler (faz1_yerel/, ic_dogrulama/, evren_v2/ ve koşu klasörleri) dahil
+        for f in sorted(dosyalar):
+            a = os.path.join(kok, f); g = os.path.relpath(a, kaynak); b = os.path.join(hedef, g); os.makedirs(os.path.dirname(b), exist_ok=True)
+            shutil.copyfile(a, b); sa, sb = sha256_dosya(a), sha256_dosya(b)
+            if sa != sb:
+                raise RuntimeError(f"kopya bozuk: {g}")
+            rows.append({"dosya": g, "bayt": os.path.getsize(b), "sha256": sa})
     M = pd.DataFrame(rows); M.to_csv(os.path.join(hedef, "K56_DRIVE_MANIFEST.csv"), index=False); log.info("Drive'a %d dosya kopyalandı (sha eşit): %s", len(M), hedef)
     return M
 
@@ -176,13 +175,29 @@ def _alt_cikti(A: K56Ayar, alt: str) -> str:
     y = cikti_dogrula(os.path.join(A.cikti, alt)); os.makedirs(y, exist_ok=True); return y
 
 
+def _kosu_klasoru(A: K56Ayar, alt: str, kimlik: Dict[str, Any]) -> str:
+    """Her koşu kendi klasörüne (<alt>/<kimlik>/): yeni koşu eskisinin üzerine yazmaz (ön kayıt Genel)."""
+    y = os.path.join(_alt_cikti(A, alt), kimlik["kimlik"]); os.makedirs(y, exist_ok=True); return y
+
+
+def _son_yaz(A: K56Ayar, alt: str, kimlik: Dict[str, Any], klasor: str) -> None:
+    _json_yaz(os.path.join(_alt_cikti(A, alt), "SON.json"), {"kimlik": kimlik["kimlik"], "commit": kimlik["commit"], "klasor": os.path.basename(klasor)})
+
+
+def _son_oku(A: K56Ayar, alt: str) -> str:
+    y = os.path.join(A.cikti, alt, "SON.json")
+    if not os.path.exists(y):
+        raise FileNotFoundError(f"{alt}/SON.json yok: kıyaslanacak koşu bilinmiyor (önce o çalışmayı koş)")
+    return os.path.join(A.cikti, alt, json.load(open(y, encoding="utf-8"))["klasor"])
+
+
 def evren2_aday_kos(A: K56Ayar) -> Dict[str, Any]:
     """Aday listesi (Ö1 + Ö2), SEC başvuru geçmişi, ön sınıflandırma (Tiingo bitişine göre). Tiingo FİYAT isteği yok."""
     from . import batan_evren as BE
     from .ortak import Istemci
     gunluk_log(); A.ag = True; out = _alt_cikti(A, "evren_v2"); kimlik = kosu_kimligi(A, "EVREN2-ADAY"); kk = KaynakKaydi(); ist = Istemci(A); Istemci.sec_ua()
     EV = pd.read_csv(kk.oku(os.path.join(A.k55, "K55_EVREN.csv"), "veri", "K55 evreni (aday dışlama)")); T = BE.tiingo_listesi(A)
-    O1 = BE.aday_o1(A, kk, EV, T); n2 = max(0, BE.KOTA_UST - len(O1)); O2, havuz, N25 = BE.aday_o2(A, ist, EV, T, n2, set(O1.sembol))
+    O1, O1d = BE.aday_o1(A, kk, EV, T); n2 = max(0, BE.KOTA_UST - len(O1)); O2, havuz, N25 = BE.aday_o2(A, ist, EV, T, n2, set(O1.sembol) | set(O1d.sembol))
     if O1.cik.duplicated().any() or O1.sembol.duplicated().any() or O2.sembol.isin(O1.sembol).any():
         raise RuntimeError("Ö1 / Ö2 adaylarında yinelenen CIK ya da sembol")
     ADAY = pd.concat([O1, O2], ignore_index=True, sort=False)
@@ -191,10 +206,10 @@ def evren2_aday_kos(A: K56Ayar) -> Dict[str, Any]:
     ct = json.load(open("/tmp/k55/company_tickers.json", encoding="utf-8")); bugun = {v["ticker"].upper().replace(".", "-"): int(v["cik_str"]) for v in ct.values()}
     S = BE.siniflandir(O1, sec, T, bugun)                              # Ö2'nin CIK'i indirmeden sonra (Tiingo meta adı + 25-NSE; v1.2-a)
     ADAY.to_csv(os.path.join(out, "K56_EVREN2_ADAY.csv"), index=False); havuz.to_csv(os.path.join(out, "K56_EVREN2_O2_HAVUZ.csv"), index=False)
-    N25.to_csv(os.path.join(out, "K56_EVREN2_25NSE.csv"), index=False)
+    N25.to_csv(os.path.join(out, "K56_EVREN2_25NSE.csv"), index=False); O1d.to_csv(os.path.join(out, "K56_EVREN2_O1_DISLANAN.csv"), index=False)
     S.to_csv(os.path.join(out, "K56_EVREN2_SINIF_ON.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56_KAYNAK_KAYDI_EVREN2.csv"), index=False)
     G = pd.DataFrame(ist.gunluk); G["url"] = G.url.str.replace(r"[\w.+-]+@[\w-]+\.[\w.]+", "<e-posta>", regex=True); G.to_csv(os.path.join(out, "K56_EVREN2_ISTEK_GUNLUGU.csv"), index=False)
-    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2_ADAY.json"), {**kimlik, "o1": len(O1), "o2": len(O2), "o2_havuz": len(havuz), "o2_uygun": int((~havuz.sonraki_kullanim & ~havuz.haric).sum()), "n25": len(N25), "aday": len(ADAY), "sec_var": int(S.sec_var.sum()),
+    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2_ADAY.json"), {**kimlik, "o1": len(O1), "o1_dislanan": O1d.dislama.value_counts().to_dict(), "o2": len(O2), "o2_havuz": len(havuz), "o2_uygun": int((~havuz.sonraki_kullanim & ~havuz.haric).sum()), "n25": len(N25), "aday": len(ADAY), "sec_var": int(S.sec_var.sum()),
                                                               "sinif_on": S.sinif_k56.value_counts().to_dict()})
     log.info("evren v2 adaylar: Ö1 %d, Ö2 %d (havuz %d); sınıf %s", len(O1), len(O2), len(havuz), S.sinif_k56.value_counts().to_dict())
     return {"ADAY": ADAY, "S": S, "havuz": havuz}
@@ -263,7 +278,7 @@ def faz1a_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     """K56-F1A: A1 + A2 + A3 KEŞİF'te; ayrıca kalibre sentetik spekler (125 satır). İndirme yok."""
     from . import faz1_yerel as F1
     from . import mekanizma as M
-    gunluk_log(); A.ag = False; out = _alt_cikti(A, "faz1_yerel"); kimlik = kosu_kimligi(A, "F1A"); kk = KaynakKaydi(); p, o = _panel_yollari(A)
+    gunluk_log(); A.ag = False; kimlik = kosu_kimligi(A, "F1A"); out = _kosu_klasoru(A, "faz1_yerel", kimlik); kk = KaynakKaydi(); p, o = _panel_yollari(A)
     R = F1.calistir(A, kk, "KESIF", p, o, isci=isci, b3=False)
     K = M.kesif_satirlari(A, kk); Sk, _ = M.secim_sentetik(A, kk, spekler=(("kalibre_gjr", 565), ("kalibre_sicrama", 566)), varyantlar=K)
     Kc = []
@@ -281,25 +296,28 @@ def faz1a_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
           "- A3 SONRASI sütunları AÇIKLAYICIDIR (olaydan sonraki bilgi); hiçbir sinyalde kullanılmaz. ÖNCESİ yalnız t0−1'e kadar başvurular (sızıntı kapısı)."]
     faz1_yaz(out, "K56-F1A FAZ 1 YEREL ANALİZLER (KEŞİF 2016-21; keşif verisi yeniden kullanımı)", kimlik, R, ek)
     _json_yaz(os.path.join(out, "K56_KOSU_F1A.json"), {**kimlik, "sure_dk": R["sure_dk"], "a1": R["S"].sinif_a1.value_counts().to_dict(), "hucre": R["H"].a1.value_counts().to_dict(), "sentetik_olay_orani": oran})
+    _son_yaz(A, "faz1_yerel", kimlik, out)
     return R
 
 
 def ic_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     """K56-IC: İÇ 2022-23 (B1 ilk geçiş A, B2 seçimsiz, B3 K55 B, B4 bileşim + A2). BAĞIMSIZ kapalı; sonunda BAĞIMSIZ kilit dosyası üretilir (açmaz)."""
     from . import faz1_yerel as F1
-    from .ortak import BAGIMSIZ_KILIT, kilit_icerigi, sha256_dosya
-    gunluk_log(); A.ag = False; out = _alt_cikti(A, "ic_dogrulama"); kimlik = kosu_kimligi(A, "IC"); kk = KaynakKaydi(); p, o = _panel_yollari(A)
+    from .ortak import BAGIMSIZ_KILIT, kilit_icerigi, veri_tanimi_hesapla
+    gunluk_log(); A.ag = False; kimlik = kosu_kimligi(A, "IC"); out = _kosu_klasoru(A, "ic_dogrulama", kimlik); kk = KaynakKaydi(); p, o = _panel_yollari(A)
     R = F1.calistir(A, kk, "IC_DOGRULAMA", p, o, isci=isci, b3=True)
     R["S"].to_csv(os.path.join(out, "K56IC_SATIR.csv"), index=False); R["H"].to_csv(os.path.join(out, "K56IC_HUCRE.csv"), index=False)
     R["B3"].to_csv(os.path.join(out, "K56IC_B3.csv"), index=False); R["Bl"].to_csv(os.path.join(out, "K56IC_BILESIM.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56IC_KAYNAK_KAYDI.csv"), index=False)
     ek = ["- Yalnız önceden belirlenmiş 125 satır ve 64 varyant; İÇ sonucuna göre eşik / değişken türetilmez. BAĞIMSIZ (2024-26) kapalı (kod kapısı).",
           "- B1 = K55 A (ilk geçiş) ölçütleri; B2 = seçimsiz kontrol (gerçek etki için belirleyici); B3 = K55 B; B4 = bileşim + A2."]
     faz1_yaz(out, "K56-IC İÇ DOĞRULAMA 2022-23", kimlik, R, ek)
-    vt = {"evren_surum": R["evren_surum"], "panel_sha": sha256_dosya(p), "olay_sha": sha256_dosya(o), "donem": "K55 DONEM (değişmedi)", "kesif_satirlari": "K55_VARYANTLAR KEŞİF ölçütü (125)"}
-    kil = {**kilit_icerigi(vt), "uretim": time.strftime("%Y-%m-%d %H:%M:%S"), "commit": kimlik["commit"], "not": "BAĞIMSIZ açılmadı; açılış için Cemal kararı + K56_BAGIMSIZ_AC=1 + bu dosyanın birebir doğrulanması"}
-    _json_yaz(os.path.join(A.cikti, BAGIMSIZ_KILIT), kil)
+    vt = {**veri_tanimi_hesapla(p, o, evren=False), "evren_surum": R["evren_surum"]}
+    kil = {**kilit_icerigi(vt), "uretim": time.strftime("%Y-%m-%d %H:%M:%S"), "commit": kimlik["commit"], "kimlik": kimlik["kimlik"],
+           "not": "BAĞIMSIZ açılmadı; açılış için Cemal kararı + K56_BAGIMSIZ_AC=1 + bu dosyanın birebir doğrulanması (kod, ön kayıt, eşik, veri tanımı yeniden hesaplanır)"}
+    _json_yaz(os.path.join(out, BAGIMSIZ_KILIT), kil); _json_yaz(os.path.join(A.cikti, BAGIMSIZ_KILIT), kil)       # kökteki = geçerli kilit; koşu klasöründe kopyası
     _json_yaz(os.path.join(out, "K56_KOSU_IC.json"), {**kimlik, "sure_dk": R["sure_dk"], "b1_gecen": int(R["S"].b1_gecti.sum()), "b2": R["S"].sinif_a1.value_counts().to_dict(),
                                                       "b3": R["B3"].karar.value_counts().to_dict() if len(R["B3"]) else {}, "hucre": R["H"].to_dict("records")})
+    _son_yaz(A, "ic_dogrulama", kimlik, out)
     return R
 
 
@@ -328,13 +346,18 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     from . import batan_evren as BE, evren_v2 as E2, faz1_yerel as F1
     from .mekanizma_raporu import _md
     from .ortak import Istemci
-    gunluk_log(); out = _alt_cikti(A, "evren_v2"); kimlik = kosu_kimligi(A, "EVREN2"); kk = KaynakKaydi(); kl = _evren2_klasor(A); t0 = time.time()
-    ADAY = pd.read_csv(kk.oku(os.path.join(out, "K56_EVREN2_ADAY.csv"), "veri", "K56 evren v2 aday listesi (Ö1 + Ö2)"))
-    N25 = pd.read_csv(kk.oku(os.path.join(out, "K56_EVREN2_25NSE.csv"), "veri", "SEC EFTS 25-NSE (2015-11..2022-02)")); N25["nse_tarih"] = pd.to_datetime(N25.nse_tarih)
+    gunluk_log(); kok = _alt_cikti(A, "evren_v2"); kimlik = kosu_kimligi(A, "EVREN2"); out = _kosu_klasoru(A, "evren_v2", kimlik); kk = KaynakKaydi(); kl = _evren2_klasor(A); t0 = time.time()
+    ADAY = pd.read_csv(kk.oku(os.path.join(kok, "K56_EVREN2_ADAY.csv"), "veri", "K56 evren v2 aday listesi (Ö1 + Ö2)"))
+    evren2_on_denetim(A, ADAY, kl)                                          # eksik indirme / SEC özeti / önbellek yolu: sessiz boş evren yerine dur
+    eski_f1, eski_ic = _son_oku(A, "faz1_yerel"), _son_oku(A, "ic_dogrulama")
+    N25 = pd.read_csv(kk.oku(os.path.join(kok, "K56_EVREN2_25NSE.csv"), "veri", "SEC EFTS 25-NSE (2015-11..2022-02)")); N25["nse_tarih"] = pd.to_datetime(N25.nse_tarih)
     T = BE.tiingo_listesi(A); A.ag = bool(os.environ.get("SEC_EPOSTA")); ist = Istemci(A) if A.ag else None
     if ist is not None:
         Istemci.sec_ua()
     Y = E2.indirme_sonrasi(A, ist, ADAY, kl, N25, T, os.path.join(A.onbellek, "evren_v2", "sec_ozet_v2.json")); A.ag = False
+    yok = Y[Y.cik.notna() & ~Y.sec_var]
+    if len(yok):
+        raise RuntimeError(f"{len(yok)} adayın CIK'i var ama SEC geçmişi yok (SEC_EPOSTA verilmedi ya da indirme başarısız): {yok.sembol.tolist()[:10]}; sınıf 6'ya düşüp sessizce evren dışı kalırdı")
     Y.to_csv(os.path.join(out, "K56_EVREN2_YENI_SIRKET.csv"), index=False)
     R = E2.evren2_kur(A, Y, kl); R["yeni"].to_csv(os.path.join(out, "K56_EVREN2_EKLEME.csv"), index=False)
     VR = E2.panel_olay(R, isci=isci); EVk = pd.read_csv(os.path.join(A.k55, "K55_EVREN.csv"))
@@ -342,12 +365,13 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     KP = E2.kapsam_tablosu(Y, R, VR["V"]); KP.to_csv(os.path.join(out, "K56_EVREN2_KAPSAM.csv"), index=False)
     GD = E2.getiri_duyarlilik(VR["P"], VR["EV"], Y); GD.to_csv(os.path.join(out, "K56_EVREN2_GETIRI_DUYARLILIK.csv"), index=False)
     ET = []
-    for donem, eski_yol in (("KESIF", os.path.join(A.cikti, "faz1_yerel", "K56F1_A1_SATIR.csv")), ("IC_DOGRULAMA", os.path.join(A.cikti, "ic_dogrulama", "K56IC_SATIR.csv"))):
+    for donem, eski_yol in (("KESIF", os.path.join(eski_f1, "K56F1_A1_SATIR.csv")), ("IC_DOGRULAMA", os.path.join(eski_ic, "K56IC_SATIR.csv"))):
+        if not os.path.exists(eski_yol):
+            raise FileNotFoundError(f"kıyas dosyası yok: {eski_yol}")
         Rv = F1.calistir(A, kk, donem, None, None, isci=isci, veri=VR, yalniz_a1=True); S = Rv["S"]; S["evren"] = "v2"
-        if os.path.exists(eski_yol):
-            E = pd.read_csv(kk.oku(eski_yol, "kiyas", f"K56 {donem} satırları (K55 evreni)"))[["hucre", "varyant", "ufuk", "i_n_olay", "i_d", "ii_d", "sinif_a1"]]
-            S = S.merge(E.rename(columns={"i_n_olay": "eski_i_n_olay", "i_d": "eski_i_d", "ii_d": "eski_ii_d", "sinif_a1": "eski_sinif_a1"}), on=["hucre", "varyant", "ufuk"], how="left")
-            S["fark_i_d"] = S.i_d - S.eski_i_d; S["fark_ii_d"] = S.ii_d - S.eski_ii_d; S["sinif_degisti"] = S.sinif_a1 != S.eski_sinif_a1
+        E = pd.read_csv(kk.oku(eski_yol, "kiyas", f"K56 {donem} satırları (K55 evreni)"))[["hucre", "varyant", "ufuk", "i_n_olay", "i_d", "ii_d", "sinif_a1"]]
+        S = S.merge(E.rename(columns={"i_n_olay": "eski_i_n_olay", "i_d": "eski_i_d", "ii_d": "eski_ii_d", "sinif_a1": "eski_sinif_a1"}), on=["hucre", "varyant", "ufuk"], how="left")
+        S["fark_i_d"] = S.i_d - S.eski_i_d; S["fark_ii_d"] = S.ii_d - S.eski_ii_d; S["sinif_degisti"] = S.sinif_a1 != S.eski_sinif_a1
         ET.append(S)
     ET = pd.concat(ET, ignore_index=True); ET.to_csv(os.path.join(out, "K56_EVREN2_ETKI.csv"), index=False); kk.tablo().to_csv(os.path.join(out, "K56_EVREN2_KAYNAK_KAYDI.csv"), index=False)
     ozet = {"aday": len(ADAY), "kaynak": ADAY.kaynak.value_counts().to_dict(), "seri_durum": Y.seri_durum.value_counts().to_dict(), "baglama": Y.baglama.value_counts().to_dict(),
@@ -365,5 +389,26 @@ def evren2_kur_kos(A: K56Ayar, isci: int = 3) -> Dict[str, Any]:
     L += ["", "## Etki: 125 KEŞİF satırı (v2 − K55)", "", f"- sınıfı değişen satır: {ET.groupby('donem').sinif_degisti.sum().to_dict() if 'sinif_degisti' in ET else 'eski sonuç yok'}", ""]
     L += _md(ET.sort_values(["donem", "hucre", "varyant", "ufuk"]), ["donem", "hucre", "varyant", "ufuk", "eski_i_n_olay", "i_n_olay", "eski_i_d", "i_d", "eski_ii_d", "ii_d", "eski_sinif_a1", "sinif_a1"])
     open(os.path.join(out, "RAPOR.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
-    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2.json"), {**kimlik, **ozet})
+    _json_yaz(os.path.join(out, "K56_KOSU_EVREN2.json"), {**kimlik, **ozet, "kiyas": {"faz1_yerel": os.path.basename(eski_f1), "ic_dogrulama": os.path.basename(eski_ic)}})
+    _son_yaz(A, "evren_v2", kimlik, out)
     return {"Y": Y, "R": R, "OK": OK, "ET": ET, "ozet": ozet}
+
+
+def evren2_on_denetim(A: K56Ayar, ADAY: pd.DataFrame, kl: str) -> None:
+    """EVREN2 kurulmadan önce: (1) Tiingo durum tablosunda her aday fiyat için denenmiş ve son durumu kota değil; (2) SEC özeti var ve bütün Ö1 CIK'lerini
+    içeriyor; (3) önbellek yolu kayıtlı. Eksikte durur (sessizce eksik / boş evren kurulmaz)."""
+    d = os.path.join(kl, "K56_EVREN2_TIINGO_DURUM.csv")
+    if not os.path.exists(d):
+        raise FileNotFoundError(f"Tiingo durum tablosu yok: {d} (önbellek {A.onbellek}; K56_ONBELLEK doğru mu, indirme yapıldı mı?)")
+    D = pd.read_csv(d); D["tur"] = D.get("tur", pd.Series("fiyat", index=D.index)).fillna("fiyat")
+    son = D[D.tur == "fiyat"].groupby("sembol").durum.last()
+    eksik = sorted(set(ADAY.sembol) - set(son.index)); kota = sorted(son.index[son == "kota"])
+    if eksik or kota:
+        raise RuntimeError(f"indirme bitmemiş: denenmemiş {len(eksik)} {eksik[:8]}, kota durumunda {len(kota)}; önce python K56.py evren2_indir")
+    sy = os.path.join(A.onbellek, "evren_v2", "sec_ozet_v2.json")
+    if not os.path.exists(sy):
+        raise FileNotFoundError(f"SEC özeti yok: {sy} (önbellek yolu {A.onbellek})")
+    sec = json.load(open(sy, encoding="utf-8")); o1 = ADAY.cik.dropna().astype(int).astype(str)
+    if (~o1.isin(sec)).any():
+        raise RuntimeError(f"SEC özetinde {int((~o1.isin(sec)).sum())} Ö1 CIK'i yok: {o1[~o1.isin(sec)].tolist()[:8]}")
+    log.info("EVREN2 ön denetim tamam: %d aday, durum %s, önbellek %s", len(ADAY), son.value_counts().to_dict(), A.onbellek)

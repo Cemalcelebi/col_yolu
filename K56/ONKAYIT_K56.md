@@ -200,6 +200,23 @@ sürümü ve kimlik taşır; başarısız sonuçlar korunur, eski sonuçların �
   değiştirilmedi; denetim bunları yakalar).
 - Değişmeyenler: Ö1, kota (<= 490), saatlik 45 istek, Kasım başlangıcı, sınıflandırma kuralı, getiri kuralı (TANIMSIZ asıl), etki ölçümü.
 
+### v1.2-b (31 Ekim 2026): bağımsız kod denetimi sonrası düzeltmeler (sapma kaydı)
+KEŞİF / İÇ ilk koşusu (commit 6cf01ae, çıktılar faz1_yerel/kosu1_6cf01ae ve ic_dogrulama/kosu1_6cf01ae, silinmedi) görüldükten sonra yapıldı;
+düzeltmeler sonuç sınıfına göre değil, önceden yazılı kuralın uygulanmasına göredir. Eşik, değişken, satır değişmedi.
+1. Dönem sızıntısı: G7 eş elemesinde (±h içinde olayı olan eş) yalnız penceresi dönem sonunda ya da önce biten olaylar kullanılır; (iii) ve tanı
+   dizisi dönem içinde kesilir. İlk kodda İÇ eş elemesi penceresi 2024'e taşan olayları (Y250'de 397) kullanıyordu: BAĞIMSIZ fiyatına dolaylı bağlılık.
+2. SONRASI penceresi (gün(t0), gün(t0+k)]: t0'dan sonraki her başvuru (hafta sonu dahil), ayrıştırma dizileriyle aynı tanım. Birleşme / ihraç form
+   listelerinde /A değişiklikleri aynı tür sayılır. ÖNCESİ değişmedi (t0 hariç).
+3. BAĞIMSIZ kilidi: kod sha'sına bütün K55 modülleri, COL_YOLU_ABD.py, FON_IZI.py; veri tanımı (panel ve olay sha256, K55 evren sürümü) açılış anında
+   dosyalardan yeniden hesaplanır (ilk kodda saklanan değer geri veriliyordu). Kirli kod denetimi aynı kapsamda.
+4. Her koşu kendi klasörüne (<alt>/<kimlik>/) yazar, <alt>/SON.json geçerli koşuyu gösterir; EVREN2 kıyası SON.json'dan, yoksa durur.
+5. EVREN2 (fiyat görülmeden, indirme öncesi): adi hisse olmayan menkul kıymetler (SPAC birimi / varant / hak: Tiingo -U, -WS, -R ya da NASDAQ 5. harf
+   U / W / R) Ö1 ve Ö2'den, sembolü K55 evreninde başka şirkete ait Ö1 adayları indirilmez (K56_EVREN2_O1_DISLANAN.csv); boşalan kota Ö2'ye.
+   CIK tekrarı (K55'te ya da yeni semboller arasında) evrene eklenmez. Ön denetim: her aday denenmeden, kota durumunda, SEC özeti eksikken ya da
+   CIK'i olup SEC geçmişi olmayan adayda evren kurulmaz. Olay karşılaştırmasında K55 şirketlerinin olay değişimi ayrı sütun (likit eşiği ve
+   sıralar kesitsel olduğu için yeni seriler K55 şirketlerini de etkiler). Yeni şirketin evren başlangıcı seri başı (K34'teki ilk nakit bildirimi
+   şartı K34 sorusuna özgüydü; v2 genel evrendir).
+
 ### Genel
 - Üç çalışma ayrı kimlik (K56-F1A-…, K56-IC-…, K56-EVREN2-…), ayrı alt klasör (faz1_yerel/, ic_dogrulama/, evren_v2/), ayrı rapor. Faz 0 çıktıları
   değiştirilmez; başarısız sonuçlar silinmez.

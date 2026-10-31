@@ -57,7 +57,17 @@ def aday_o1(A: K56Ayar, kk: KaynakKaydi, EV: pd.DataFrame, T: pd.DataFrame) -> p
     Ti = T.drop_duplicates("ticker").set_index("ticker"); E["bitis"] = E.tiingo.map(Ti.endDate); E["baslangic"] = E.tiingo.map(Ti.startDate); E["borsa"] = E.tiingo.map(Ti.exchange)
     E = E[E.bitis < pd.Timestamp("2026-08-01")]                     # bugün işlem gören değil
     E["kaynak"] = "Ö1 (K34 kalan)"; E["sembol"] = E.tiingo
-    return E[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].drop_duplicates("cik").reset_index(drop=True)
+    E = E[["cik", "sembol", "kaynak", "baslangic", "bitis", "borsa"]].drop_duplicates("cik").reset_index(drop=True)
+    # v1.2-b (fiyat görülmeden): adi hisse olmayan menkul kıymet (SPAC birimi / varant / hak) ve sembolü K55 evreninde başka şirkete ait olanlar indirilmez
+    E["dislama"] = np.where(E.sembol.map(adi_hisse_degil), "adi hisse değil (birim / varant / hak)",
+                            np.where(E.sembol.isin(set(EV.sembol.astype(str).str.upper())), "sembol K55 evreninde (başka CIK; yeniden kullanım)", ""))
+    return E[E.dislama == ""].drop(columns="dislama").reset_index(drop=True), E[E.dislama != ""].reset_index(drop=True)
+
+
+def adi_hisse_degil(sembol: str) -> bool:
+    """Tiingo sembol biçimi: NYSE birim -U / -UN, varant -WS / -WT, hak -R / -RT; NASDAQ 5. harf U (birim), W (varant), R (hak)."""
+    s = str(sembol).upper()
+    return bool(re.search(r"-(U|UN|WS|WT|W|R|RT)$", s) or (len(s) == 5 and s.isalpha() and s[-1] in "UWR"))
 
 
 def efts_25nse(ist: Istemci, bas: str = O2_BAG[0], son: str = O2_BAG[1]) -> pd.DataFrame:
@@ -89,7 +99,7 @@ def efts_25nse(ist: Istemci, bas: str = O2_BAG[0], son: str = O2_BAG[1]) -> pd.D
 def o2_havuz(T: pd.DataFrame, haric: set, bas: str = O2_DONEM[0], son: str = O2_DONEM[1]) -> pd.DataFrame:
     """ONKAYIT v1.2-a Ö2 havuzu: Tiingo Stock, borsa listesi, sembol 1-5 harf, bitiş [bas, son], seri >= 465 takvim günü, sembol bitişten sonra yeniden
     kullanılmamış (sonraki_kullanim=True satırlar havuz tablosunda kalır, seçilmez), `haric` (K55 evreni + Ö1 sembolleri) dışı."""
-    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR) & T.ticker.str.fullmatch(r"[A-Z]{1,5}")].copy()
+    Ts = T[(T.assetType == "Stock") & T.exchange.isin(BORSALAR) & T.ticker.str.fullmatch(r"[A-Z]{1,5}") & ~T.ticker.map(adi_hisse_degil)].copy()
     Ts = Ts[(Ts.endDate >= pd.Timestamp(bas)) & (Ts.endDate <= pd.Timestamp(son)) & ((Ts.endDate - Ts.startDate).dt.days >= 465)]
     son_bas = T.groupby("ticker").startDate.max()
     Ts["sonraki_kullanim"] = Ts.ticker.map(son_bas).gt(Ts.endDate).to_numpy()
@@ -149,7 +159,7 @@ def sec_gecmis(ist: Istemci, ciks: List[int], hedef: str) -> Dict[str, Any]:
     """data.sec.gov submissions (+ eski dosyalar) -> sec_ozet biçimi (name, tickers, exchanges, sic, formerNames, form, date, items). Var olanı atlar."""
     out = json.load(open(hedef, encoding="utf-8")) if os.path.exists(hedef) else {}
     for n, c in enumerate(ciks, 1):
-        if str(c) in out:
+        if str(c) in out and "hata" not in out[str(c)]:                 # hatalı kayıt yeniden denenir
             continue
         try:
             d, v, _ = ist.al(SUBMISSIONS.format(cik=int(c)), ad=f"subm_{int(c)}.json", sinir=40_000_000)

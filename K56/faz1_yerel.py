@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from .ortak import K56Ayar, KaynakKaydi, donem_kapisi, log
+from .ortak import DONEM_SON, K56Ayar, KaynakKaydi, donem_kapisi, log
 
 ESIKLER: Dict[str, Any] = {"mekanik_r": 0.20, "kismi_r": 0.50, "a2_aciklar": 0.50, "a2_kismi": 0.25, "boot": 2000, "g7_es": 5, "vd_tol": 1, "tohum": 56,
                            "oncesi": (-20, -1), "sonrasi_haber": (1, 10), "ic_d": 0.20, "ic_auc": 0.06, "ic_q": 0.10, "ic_yil_n": 10, "m16_dis": ("2020-02-15", "2020-06-30")}
@@ -137,7 +137,7 @@ def karar_a1(di: float, dii: float, alt: float, ust: float, sent_oran: float) ->
 
 
 def hucre_karari(siniflar: List[str]) -> str:
-    s = pd.Series([("MEKANİK" if c.startswith("MEKANİK") else c) for c in siniflar]).value_counts()
+    s = pd.Series([("MEKANİK" if str(c).startswith("MEKANİK") else ("TANIMSIZ (HATA)" if not isinstance(c, str) else c)) for c in siniflar]).value_counts()
     if not len(s):
         return "TANIMSIZ"
     return s.index[0] if (len(s) == 1 or s.iloc[0] > s.iloc[1]) else "BELİRSİZ"
@@ -202,11 +202,11 @@ def oncesi_bayraklar(t: np.ndarray, f: np.ndarray, it: np.ndarray, gunler: pd.Da
 
 def sonrasi_bayraklar(t: np.ndarray, f: np.ndarray, it: np.ndarray, gunler: pd.DatetimeIndex, i0: int, h: int) -> Dict[str, int]:
     """SONRASI (AÇIKLAYICI; öngörü değil): haber [i0+1, i0+10], birleşme / ihraç [i0+1, i0+h] işlem günü."""
-    n = len(gunler)
-    def ara(a, b):
+    n = len(gunler); g0 = gunler[i0].to_datetime64().astype("datetime64[D]")
+    def ara(a, b):                                                       # (gün(i0), gün(i0+b)]: t0'dan sonraki her başvuru (hafta sonu dahil; ayrıştırma dizileriyle aynı)
         if i0 + a >= n:
             return np.zeros(len(t), bool)
-        x, y = gunler[i0 + a].to_datetime64().astype("datetime64[D]"), gunler[min(n - 1, i0 + b)].to_datetime64().astype("datetime64[D]"); return (t >= x) & (t <= y)
+        y = gunler[min(n - 1, i0 + b)].to_datetime64().astype("datetime64[D]"); return (t > g0) & (t <= y)
     mh = ara(*ESIKLER["sonrasi_haber"]); mu = ara(1, h)
     return {"sonra_202": int(any(str(x).startswith("8-K") and "2.02" in str(y) for x, y in zip(f[mh], it[mh]))),
             "sonra_haber": int(any(str(x).startswith("8-K") and any(k in str(y) for k in HABER_MADDE) for x, y in zip(f[mh], it[mh]))),
@@ -219,7 +219,8 @@ def g7_esleri(P: pd.DataFrame, O: pd.DataFrame, ufuk: str, donem: str, rng: np.r
     from K55.ortak import OLAY
     h = OLAY[ufuk][0]; Ou = O[(O.ufuk == ufuk) & (O.donem == donem)]
     Pd = P[P.likit & (P[f"donem{h}"] == donem)][["tarih", "sembol", "i", "sektor", "lt", "vd"]]
-    oi = O[O.ufuk == ufuk].groupby("sembol").i.apply(lambda s: np.sort(s.to_numpy())).to_dict()
+    Ob = O[(O.ufuk == ufuk) & (pd.to_datetime(O.bitis) <= pd.Timestamp(DONEM_SON[donem]))]        # yalnız penceresi dönem içinde biten olaylar (sonraki dönem fiyatı kullanılmaz)
+    oi = Ob.groupby("sembol").i.apply(lambda s: np.sort(s.to_numpy())).to_dict()
     gun = {t: g for t, g in Pd.groupby("tarih")}; rows = []
     for r in Ou.itertuples():
         g = gun.get(r.tarih)
@@ -286,7 +287,8 @@ def _isci(arg) -> Dict[str, Any]:
         donem_kapisi(donem, Dm, h)
         yil = Dm.tarih.dt.year.to_numpy(); ay = Dm.ay.to_numpy(); rng = np.random.default_rng(int(hashlib.sha256(f"{hucre}|{varyant}|{u}|{donem}".encode()).hexdigest()[:12], 16))
         z = _z_gun_vd(Dm, "_x"); ev_i = C["olay"][u][m]; nit = C["nit"][u]; ev_ii = nit[m]
-        ev_iii = rastgele_gun_maskesi(P, C["olay"][u], nit, f"{hucre}|{varyant}|{u}|56")[m]
+        nit_d = nit & (P[f"donem{h}"].to_numpy() == donem)                 # dizi dönem içinde kesilir (penceresi dönem dışına taşan gün diziyi uzatmaz)
+        ev_iii = rastgele_gun_maskesi(P, C["olay"][u], nit_d, f"{hucre}|{varyant}|{u}|56")[m]
         ri = a_olc(z, ev_i, ay, yil, ESIKLER["boot"], rng); rii = a_olc(z, ev_ii, ay, yil, ESIKLER["boot"], rng); riii = a_olc(z, ev_iii, ay, yil, ESIKLER["boot"], rng)
         so = C["sent"].get((hucre, varyant, u), np.nan)
         k1 = karar_a1(ri["d"], rii["d"], rii["d_alt"], rii["d_ust"], so); k3 = karar_a1(ri["d"], riii["d"], riii["d_alt"], riii["d_ust"], so)
@@ -302,7 +304,7 @@ def _isci(arg) -> Dict[str, Any]:
                "r_ii": rii["d"] / ri["d"] if (np.isfinite(ri["d"]) and ri["d"]) else np.nan, "sinif_a1": k1, "sinif_iii": k3, "iii_farkli": k1 != k3,
                "ayr_d": ra["d"], "ayr_d_alt": ra["d_alt"], "ayr_d_ust": ra["d_ust"], "ayr_cikan_nitelikli": int((ev_ii & ~ayr).sum())}
         if donem == "KESIF":                                              # ön kayıt dışı açıklayıcı tanı ((ii) / (iii) ayrışması); karar değiştirmez
-            dz = olay_dizisi_maskesi(P, C["olay"][u], nit)[m]; dis = ev_ii & ~dz
+            dz = olay_dizisi_maskesi(P, C["olay"][u], nit_d)[m]; dis = ev_ii & ~dz
             riv = a_olc(z, dz, ay, yil, ESIKLER["boot"], rng); rv = a_olc(np.where(dz, np.nan, z), dis, ay, yil, ESIKLER["boot"], rng)
             sat.update({"tani_dizi_n": riv["n_olay"], "tani_dizi_d": riv["d"], "tani_dizi_d_alt": riv["d_alt"], "tani_dizi_d_ust": riv["d_ust"],
                         "tani_dis_n": rv["n_olay"], "tani_dis_d": rv["d"], "tani_dis_d_alt": rv["d_alt"], "tani_dis_d_ust": rv["d_ust"]})
@@ -377,7 +379,9 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], 
     VERI = veri if veri is not None else k55_veri(A, kk, panel_yol, olay_yol); P, V, O, EV = VERI["P"], VERI["V"], VERI["O"], VERI["EV"]
     K = M.kesif_satirlari(A, kk)
     zk = os.path.join(A.cikti, "K56_SECIM_SENTETIK_KESIF.csv")
-    sent = {(r.hucre, r.varyant, r.ufuk): r.oran for r in pd.read_csv(kk.oku(zk, "kiyas", "Faz 0 sentetik oran (KEŞİF satırları)")).itertuples()} if os.path.exists(zk) else {}
+    if not os.path.exists(zk):
+        raise FileNotFoundError(f"Faz 0 sentetik oran dosyası yok: {zk} (karar tablosu için gerekli)")
+    sent = {(r.hucre, r.varyant, r.ufuk): r.oran for r in pd.read_csv(kk.oku(zk, "kiyas", "Faz 0 sentetik oran (KEŞİF satırları)")).itertuples()}
     X = a2_sutunlari(P, V, VERI["endeks"])
     for c in X.columns:
         P[c] = X[c].to_numpy()
@@ -394,6 +398,10 @@ def calistir(A: K56Ayar, kk: KaynakKaydi, donem: str, panel_yol: Optional[str], 
     else:
         son = [_isci(a) for a in isler]
     S = pd.DataFrame([r for s in son for r in s["satir"]]); B3 = pd.DataFrame([s["b3"] for s in son if s["b3"]]) if b3 else pd.DataFrame()
+    for c, v in (("sinif_a1", "TANIMSIZ (HATA)"), ("sinif_iii", "TANIMSIZ (HATA)"), ("iii_farkli", False)):  # değişken hatası olan satır koşuyu düşürmez
+        S[c] = S[c].fillna(v) if c in S else v
+    if "hata" in S and S.hata.notna().any():
+        log.error("%d satırda değişken hatası: %s", int(S.hata.notna().sum()), S[S.hata.notna()].hata.unique()[:3])
     # İÇ ölçütleri (B1): KEŞİF ile aynı işaret + |d| >= 0,20 + aralık 0'ı dışlar + AUC + iki yıl aynı işaret + BH q (125 satır)
     kd = K.set_index(["hucre", "varyant", "ufuk"]).d
     S["kesif_d"] = [kd.get((r.hucre, r.varyant, r.ufuk), np.nan) for r in S.itertuples()]
