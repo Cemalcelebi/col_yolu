@@ -983,6 +983,53 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "Ö1 ön sınıf: BİRLEŞME 149, VERİ SAĞLAYICISI KAYBOLMASI 27, İFLAS 25, TASFİYE 10, SEMBOL DEĞİŞİKLİĞİ 1; 40 birim / varant / hak ve 4 sembol "
                "çakışması indirilmeyecek (v1.2-b). Ö2'nin CIK'i indirme sonrası Tiingo adı + 25-NSE tarihiyle (4.825 başvuru). Getiri asıl kural: seri bitince "
                "TANIMSIZ, son fiyat tasfiye ödemesi sayılmaz, delist getirisi uydurulmaz. İndirme ve evren v2 / etki 1-2 Kasım (AÇIK)."),
+    _ik_k("Ç143", "2026-10-31", "K56-AYR (iii) RASTGELE GÜN / BÜTÜN GÜNLER AYRIŞMASI (KEŞİF + İÇ, yapay veri denetimiyle): 125 satırda olay ağırlıklı E1 ile "
+          "gün ağırlıklı E2 farkı (G = işaret × (E1 − E2) = −Cov(L, f) / ort L), olay düzeyi kümeler (ay, sembol|yıl, blok60 karar; olay, zincir bilgi), "
+          "konum bantları (1 / 2-5 / 6-20 / 21+), dört Faz 0 + iki kalibre yapay spek; BAĞIMSIZ'da koşulmaz",
+          "K56.py ayrisma + K56/ayrisma.py; ön kayıt ONKAYIT_K56 v1.3-E, v1.3-a, v1.3-c",
+          "Cemal'in BAĞIMSIZ kararı (31 Eki) madde 4", "Mekanizma (iz kararı yok)", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/ayrisma/ (SON.json)",
+          notu="KEŞİF: 107 / 125 satır mekanik (AĞIRLIK ETKİSİ + MEKANİK 99, MEKANİK 8), BELİRSİZ (yapay) 8, AYRIŞMA YOK 5, AĞIRLIK ETKİSİ (gerçek veriye "
+               "özgü) 3, AÇIKLANMADI 2; hücre MEKANİK 17 / 25. İÇ: 97 mekanik (54 + 43), AYRIŞMA YOK 21, BELİRSİZ 3, gerçeğe özgü 3, AÇIKLANMADI 1; hücre "
+               "MEKANİK 16 / 25. Medyanlar E1 / E2 / G: KEŞİF -0,278 / -0,020 / +0,280, İÇ -0,340 / -0,081 / +0,250. Konum bantları: dizinin ilk günü -0,30 "
+               "(KEŞİF) / -0,38 (İÇ), 2-5. gün -0,33 / -0,37, 6-20. gün -0,13, 21+ +0,12 / +0,15. Yapay (bilgisiz) veri aynı deseni üretiyor (G +0,30..+0,40). "
+               "Anlamı: (iii) tek rastgele gün olay başına eşit ağırlık verir, kısa dizilerin ilk günleri (en düşük z) ağır basar; (ii) bütün günler uzun "
+               "dizilerin sonraki (sıfıra dönen) günlerini sayar. Ayrışma büyük ölçüde olay tanımının ağırlık mekaniği, gerçek bilgi değil. İlk koşu (3b61627) "
+               "geçersiz, saklandı; son koşu a6cbe6a (önceki 255ae9d / bab4d5d koşularıyla birebir)."),
+    _ik_k("Ç144", "2026-10-31", "K56-PBO PBO / DEFLATED SHARPE (K55 ön kaydı §7; KEŞİF + İÇ, donem60): 64 KEŞİF yapısı, K55 B seçiminin eşleşmiş net "
+          "farkının aylık serisi; CSCV 16 blok, DSR N = 64; yön A (keşfedilen) ve kayıt (K55 B); BAĞIMSIZ'da koşulmaz",
+          "K56.py pbo + K56/pbo_dsr.py (COL_YOLU_ABD.cy_pbo / cy_dsr aynen); ön kayıt v1.3-F, v1.3-b",
+          "K55 ön kaydı §7 + Cemal'in BAĞIMSIZ kararı (31 Eki)", "Aşırı uyum denetimi (iz kararı yok)", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/pbo_dsr/ (SON.json)",
+          notu="A yönü: PBO 0,332, DSR 0,665 (en iyi yapı D01-S08|20, aylık SR 0,30; etkin T ile DSR 0,596, bilgi). Kayıt yönü: PBO 0,236, DSR 0,390 (en "
+               "iyi D06-S05|tek; etkin T 0,437). K51 H8 (PBO < 0,5 VE DSR >= 0,95) ikisinde de tutmuyor: 'aşırı uyum riski yüksek'. 87 ay. DSR alt "
+               "örneklem bilgi sütunu ilk koşuda yanlış yöntemle hesaplanmıştı (v1.3-b düzeltildi; karar vermiyordu)."),
+    _ik_k("Ç145", "2026-10-31", "K56-SIZ İÇ → BAĞIMSIZ DOLAYLI ERİŞİM SINAMASI: T0 K55 panel / olay tablosunun baştan yeniden üretimi; T1 aynı evren, fiyat / "
+          "endeks / SEC özeti 2023-12-31'de kesik, İÇ motoru (S / H / B3), bileşim, ayrışma İÇ ve PBO / DSR yeniden; T2a / T2b evren de kesik veriden "
+          "(T2b kesimden sonra giren K34 dışarıda); tolerans 0 (ayrışma 1e-12 + kimlik özdeşliği, v1.3-c)",
+          "K56.py sizinti + K56/sizinti_denetimi.py; ön kayıt v1.3-G, v1.3-a, v1.3-b, v1.3-c",
+          "Cemal'in BAĞIMSIZ kararı (31 Eki) madde 2: 'İç doğrulama sırasında bağımsız döneme dolaylı erişim olmadığı doğrulanacak'",
+          "Denetim (iz kararı yok)", "IZ C", 2, cikti="arastirma_cikti/k56_mekanizma/sizinti/ (SON.json)",
+          notu="KARAR: İÇ hesaplarında 2023-12-31 sonrası bilgiye dolaylı erişim YOK. T0 panel 4.909.423 satır ve 22.502 olay birebir. T1b S (125) / H (25) / "
+               "B3 (64) birebir; T1a bileşim birebir; T1 ayrışma (125 satır, karar dahil) ve PBO / DSR birebir. Beklenen fark (v1.3-G): İÇ A3 bileşimi başvuru "
+               "geçmişini tam SEC özetinden okuyor; kesik özetle Y60 2731 -> 2711 olay, bir satırın sınıfı değişiyor (Y120 8-K 2.02 önceki: fark yok -> G1 > G7; "
+               "açıklayıcı tablo, karar vermez). T2a (evren kesik veriden, 3.061 sembol) en büyük d farkı 0,0015, T2b 0,0104; sınıf değişimi 0, aralık "
+               "yarı genişliğinin %25'ini aşan 0: ihmal edilebilir. İlk iki tam deneme test hatasıyla geçersiz (tohum etiketi; yapay karar sütunları), "
+               "NOT.md ile saklandı; düzeltme v1.3-c. Görünmeyen sınırlamalar beyan: hayatta kalma, 2026 bölünme / temettü düzeltmesi, güncel sektör / CIK."),
+    _ik_k("Ç146", "2026-11-01", "K56-BAG BAĞIMSIZ DOĞRULAMA 2024-26 (TEK AÇILIŞ, K55_125_B) + K55 NİHAİ KARAR: yalnız ön kayıtlı 125 satır / 64 varyant; B1 K55 A "
+          "(ilk geçiş), B2 seçimsiz kontrol (belirleyici), B3 K55 B (eşleşmiş ileri getiri), A2 / A3; asıl K55 etiketleri, duyarlılık BAGIMSIZ_B (pencere "
+          "sonu <= 2026-08-31); yeni keşif / eşik / gösterge yok",
+          "K56.py bagimsiz + K56/faz1_yerel.py; kilit K56-BAG-KILIT-20261031-231806 (kod a6cbe6a, kilit commit 711a17b); ön kayıt v1.2-B, v1.3-D, v1.3-H, v1.3-d",
+          "Cemal'in BAĞIMSIZ kararı (31 Eki), madde 1-5 ve 9", "Doğrulama + K55 nihai karar", "IZ C", 2,
+          cikti="arastirma_cikti/k56_mekanizma/bagimsiz/K56-BAG-20261031-231920-f993f1f/ (açılış kaydı K56_BAGIMSIZ_ACILIS.csv: TAMAMLANDI)",
+          notu="K55 NİHAİ: İZ YOK (hücre çoğunluğu TERS KALINTI; MEKANİK çoğunluk yok, GERÇEK ETKİ çoğunluğu yok). B2 satır: MEKANİK 62, TERS KALINTI 56, "
+               "KISMEN 3, GERÇEK ETKİ KALIYOR 4 (hepsi D06-S03 Y120 / Y250; d(i) ~0, d(ii) +0,14..+0,21; hücre çoğunluğu değil, KEŞİF / İÇ'te yok, "
+               "duyarlılık-B'de 0: dağınık, iz sayılmaz). Hücre: TERS KALINTI 12, MEKANİK 10, KISMEN 2, BELİRSİZ 1. d(i) medyanı -0,175 -> d(ii) +0,008 "
+               "(TERS satırlarda d(ii) medyanı +0,041: K55 yönünün tersine küçük kalıntı). B1 64 / 125 (hücre 13 TEKRARLADI / 12 TUTMADI): K55 A farkı "
+               "kısmen tekrarlıyor ama seçim etkisiyle (B2). B3 64 / 64 TUTMAZ. (iii) 116 'GERÇEK ETKİ' etiketi seçimsiz kontrol değildir (yapay veride "
+               "d(iii) ≈ d(i)). Duyarlılık-B: GERÇEK 0 / 125, TERS 61, MEKANİK 62; hücre TERS 13, MEKANİK 10; B3 64 / 64 TUTMAZ. Üç dönemde (KEŞİF, İÇ, "
+               "BAĞIMSIZ) seçimsiz etiketle gerçek etki yok; karar yeni eşikle kurtarılmaz (madde 9). Ayrışma ve PBO / DSR ön kayıt gereği BAĞIMSIZ'da "
+               "koşulmadı (Ç143, Ç144). EVREN2 (Ç142) bu kararı değiştirmez (ayrı rapor, 1-2 Kasım)."),
 ]
 
 
@@ -1548,8 +1595,25 @@ IK_GOREV: List[Dict[str, str]] = [
               "tam üretiyor. İÇ: K55 A farkları tekrarlıyor (B1 119 / 125) ama yine mekanik (B2: 0 GERÇEK ETKİ); K55 B 64 / 64 TUTMAZ. Haber / birleşme "
               "büyük yükselişleri açıklamıyor; yükselişten sonra hisse ihracı artıyor (açıklayıcı). K55 ters farkları olay tanımının eseri",
      "durum": "TAMAMLANDI, AÇIK: EVREN2 Tiingo indirmesi ve evren v2 etkisi (1-2 Kasım; bekçi + zamanlı kontrol); BAĞIMSIZ açma kararı (Cemal); Drive kopyası"},
+    {"tarih": "2026-11-01", "istek": "K56 / K55 BAĞIMSIZ DÖNEM KARARI (9 madde): 2024-26 yalnız ön kayıtlı testlerle açılsın; önce kod sabitlensin, ön kayıt "
+                                     "yeniden üretilsin, hash'ler ve kilit, İÇ'te dolaylı erişim olmadığı doğrulansın; yeni keşif / eşik yok; (iii) / bütün günler "
+                                     "ayrışması kümelenme ve yapay veriyle incelensin; 125 satır + B bir kez, sonuç olduğu gibi; Tiingo 490 aday ve yeni evren ayrı "
+                                     "doğrulansın; K51-K55 değişmez; Drive ve nihai kayıt; K55 nihai karar, gerçek etki yoksa korunur",
+     "yapilan": "ön kayıt v1.3 (D BAĞIMSIZ protokolü, E ayrışma, F PBO / DSR, G sızıntı, H nihai karar eşlemesi, I EVREN2) + v1.3-a / b / c / d; K56/ayrisma.py, "
+                "pbo_dsr.py, sizinti_denetimi.py, bir-kez açılış kaydı, kilit (kod / ön kayıt / eşik / veri / evren / ortam sha'ları, kıyas tabanı, uzak dal "
+                "çapası); çok mercekli kod incelemesi; AYR, PBO, sızıntı (iki geçersiz deneme NOT.md ile saklandı), kilit, BAĞIMSIZ tek açılış; test_k56 31/31; "
+                "IZ_KARNE Ç143-Ç146; K56_NIHAI_RAPOR.md; Drive (raporlar + IZ_DEFTERI paketi)",
+     "sonuc": "K55 NİHAİ: İZ YOK. İÇ'te 2023 sonrası bilgiye dolaylı erişim yok (T0 / T1 birebir, T2 ihmal edilebilir). BAĞIMSIZ'da seçimsiz kontrolle "
+              "gerçek etki hücresi yok (TERS KALINTI 12, MEKANİK 10), K55 B 64 / 64 TUTMAZ. (iii) / bütün günler ayrışması olay tanımının ağırlık "
+              "mekaniği (yapay veri aynı deseni üretiyor). PBO / DSR aşırı uyum riski yüksek",
+     "durum": "TAMAMLANDI, AÇIK: EVREN2 (Tiingo 490 aday indirmesi 1 Kasım 06:00 UTC'den itibaren bekçiyle; evren v2 doğrulaması ve etki raporu 1-2 Kasım); "
+              "Drive'da IZ_DEFTERI paketinin Colab'da açılması"},
 ]
 IK_ACIK: List[str] = [
+    "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
+    "K55 B 64 / 64 TUTMAZ; KEŞİF ve İÇ ile birlikte üç dönemde de K55 farkları olay tanımının seçim / ağırlık mekaniği (Ç143 ayrışma, Ç144 PBO / DSR "
+    "aşırı uyum riski yüksek, Ç145 sızıntı yok). Yeni eşik aranmaz. AÇIK: EVREN2 (Ç142) 1-2 Kasım: Tiingo indirmesi, kimlik / adi hisse / fiyat kapsamı / "
+    "son işlem / delist sınıfı doğrulaması, evren v2 etkisi ayrı rapor (K51-K55 değişmez, BAĞIMSIZ yeniden açılmaz).",
     "YOL (31 Eki): K56 Faz 1 (Ç140-Ç141): K55'in 125 KEŞİF satırında seçimsiz kontrolle gerçek etki 0 (KEŞİF 116, İÇ 112 MEKANİK); İÇ'te A farkı "
     "tekrarlıyor ama mekanik, K55 B 64 / 64 TUTMAZ; haber / birleşme açıklamıyor. Sonuç: K55'te mekanizması aranacak gerçek etki kalmadı. AÇIK: EVREN2 "
     "(Ç142) 1-2 Kasım Tiingo indirmesi + evren v2 etkisi; BAĞIMSIZ 2024-26 kilitli, açılması Cemal'in kararı (kalan gerçek etki olmadığından açmanın "
