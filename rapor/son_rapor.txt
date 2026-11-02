@@ -1,27 +1,32 @@
-COL GUNLUK RAPOR — 2026-10-31 00:01 (TR)
+COL GUNLUK RAPOR — 2026-11-03 02:40 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
 Onbellek: sarildi (583 hisse)
-Veri: 583 hisse | son bar 2026-10-30
-Ozet: aday 12 | pozisyon 7 | kapanan 10 | sure 88 sn
+Veri: 584 hisse | son bar 2026-11-02
+Ozet: aday 8 | pozisyon 3 | kapanan 14 | sure 344 sn
+UYARI: bugunun bari yok (son bar 2026-11-02). Yahoo gecikmis olabilir.
 ============================================================
 
-== 2026-10-30  CDS 0.84 -> 1.5x
-aday 12 | poz 7 | kapanan 10
+== 2026-11-02  CDS 0.84 -> 1.5x
+aday 8 | poz 3 | kapanan 14
+
+SAT  (hisse  kar%  endeks%)
+  AKBNK  -19%  ?  taban
+  BIMAS  -17%  ?  taban
+  ISCTR  -19%  ?  taban
+  ZRGYO  -23%  ?  taban
 
 TUT  (hisse  kar%  durum  tabana%)
-  ENTRA    -1%  116g  taban -15%
-  GARAN    -7%  84g  taban -9%
-  YKBNK    -8%  84g  taban -7%
-  BIMAS   -13%  84g  taban -2%
-  ZRGYO   -14%  89g  taban -1%
-  ISCTR   -16%  84g  taban +1%
-  AKBNK   -16%  84g  taban +1%
+  ENTRA    -0%  115g  taban -15%
+  GARAN    -8%  83g  taban -8%
+  YKBNK   -10%  83g  taban -6%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 12]
-  HUNER    -7%   %4.4   nan  nan  -       -3  (serbest)
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 8]
+  HUNER    -8%   %4.4   nan  nan  -       -3  (serbest)
 
-KAPANAN 10: kazanan %10  ort -29.4% | acilis->acilis ort -31.8% (n=9)
+COL BOZULDU (taban kirildi, aday dustu): AKSGY, HALKB, ODINE, MOGAN, TMPOL
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-35.8
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-20
+KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -30.4% (n=10)
+
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-38.3
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-23, XSGRT %-30
   ruzgarli sektorde uzun colde hisse yok
