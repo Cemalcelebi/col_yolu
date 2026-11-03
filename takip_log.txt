@@ -64,3 +64,5 @@
 2026-11-02 23:46 INFO SAT ISCTR @11.65 -18.8% taban bar=37
 2026-11-02 23:46 INFO SAT ZRGYO @15.52 -22.6% taban bar=32
 2026-11-02 23:46 INFO gun 2026-11-02 aday 8 poz 3 kapanan 14 cds_pct 0.84
+2026-11-03 21:59 INFO COL BOZULDU aday GUNDG @64.30 taban 72.7
+2026-11-03 21:59 INFO gun 2026-11-03 aday 7 poz 3 kapanan 14 cds_pct 0.84

@@ -1,32 +1,25 @@
-COL GUNLUK RAPOR — 2026-11-03 02:40 (TR)
+COL GUNLUK RAPOR — 2026-11-04 00:58 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
-Onbellek: sarildi (583 hisse)
-Veri: 584 hisse | son bar 2026-11-02
-Ozet: aday 8 | pozisyon 3 | kapanan 14 | sure 344 sn
-UYARI: bugunun bari yok (son bar 2026-11-02). Yahoo gecikmis olabilir.
+Onbellek: sarildi (584 hisse)
+Veri: 584 hisse | son bar 2026-11-03
+Ozet: aday 7 | pozisyon 3 | kapanan 14 | sure 69 sn
+UYARI: bugunun bari yok (son bar 2026-11-03). Yahoo gecikmis olabilir.
 ============================================================
 
-== 2026-11-02  CDS 0.84 -> 1.5x
-aday 8 | poz 3 | kapanan 14
-
-SAT  (hisse  kar%  endeks%)
-  AKBNK  -19%  ?  taban
-  BIMAS  -17%  ?  taban
-  ISCTR  -19%  ?  taban
-  ZRGYO  -23%  ?  taban
+== 2026-11-03  CDS 0.84 -> 1.5x
+aday 7 | poz 3 | kapanan 14
 
 TUT  (hisse  kar%  durum  tabana%)
-  ENTRA    -0%  115g  taban -15%
-  GARAN    -8%  83g  taban -8%
-  YKBNK   -10%  83g  taban -6%
+  ENTRA    -0%  114g  taban -15%
+  GARAN    -5%  82g  taban -11%
+  YKBNK    -5%  82g  taban -10%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 8]
-  HUNER    -8%   %4.4   nan  nan  -       -3  (serbest)
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 7]
 
-COL BOZULDU (taban kirildi, aday dustu): AKSGY, HALKB, ODINE, MOGAN, TMPOL
+COL BOZULDU (taban kirildi, aday dustu): GUNDG
 
 KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -30.4% (n=10)
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-38.3
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-23, XSGRT %-30
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-38.7
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-20, XSGRT %-29, XULAS %-33, XFINK %-35
   ruzgarli sektorde uzun colde hisse yok
