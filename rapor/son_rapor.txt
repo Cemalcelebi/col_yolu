@@ -1,25 +1,25 @@
-COL GUNLUK RAPOR — 2026-11-04 00:58 (TR)
+COL GUNLUK RAPOR — 2026-11-05 01:09 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
 Onbellek: sarildi (584 hisse)
-Veri: 584 hisse | son bar 2026-11-03
-Ozet: aday 7 | pozisyon 3 | kapanan 14 | sure 69 sn
-UYARI: bugunun bari yok (son bar 2026-11-03). Yahoo gecikmis olabilir.
+Veri: 584 hisse | son bar 2026-11-04
+Ozet: aday 5 | pozisyon 3 | kapanan 14 | sure 74 sn
+UYARI: bugunun bari yok (son bar 2026-11-04). Yahoo gecikmis olabilir.
 ============================================================
 
-== 2026-11-03  CDS 0.84 -> 1.5x
-aday 7 | poz 3 | kapanan 14
+== 2026-11-04  CDS 0.84 -> 1.5x
+aday 5 | poz 3 | kapanan 14
 
 TUT  (hisse  kar%  durum  tabana%)
-  ENTRA    -0%  114g  taban -15%
-  GARAN    -5%  82g  taban -11%
-  YKBNK    -5%  82g  taban -10%
+  ENTRA    +0%  113g  taban -16%
+  GARAN    -5%  81g  taban -10%
+  YKBNK    -8%  81g  taban -8%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 7]
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 5]
 
-COL BOZULDU (taban kirildi, aday dustu): GUNDG
+COL BOZULDU (taban kirildi, aday dustu): HEDEF, LIDER
 
-KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -30.4% (n=10)
+KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -26.5% (n=14)
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-38.7
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-20, XSGRT %-29, XULAS %-33, XFINK %-35
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-37.5
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-19, XSGRT %-29, XULAS %-30, XFINK %-34
   ruzgarli sektorde uzun colde hisse yok

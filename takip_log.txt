@@ -66,3 +66,6 @@
 2026-11-02 23:46 INFO gun 2026-11-02 aday 8 poz 3 kapanan 14 cds_pct 0.84
 2026-11-03 21:59 INFO COL BOZULDU aday GUNDG @64.30 taban 72.7
 2026-11-03 21:59 INFO gun 2026-11-03 aday 7 poz 3 kapanan 14 cds_pct 0.84
+2026-11-04 22:10 INFO COL BOZULDU aday HEDEF @6.96 taban 7.52
+2026-11-04 22:10 INFO COL BOZULDU aday LIDER @6.23 taban 6.82
+2026-11-04 22:10 INFO gun 2026-11-04 aday 5 poz 3 kapanan 14 cds_pct 0.84
