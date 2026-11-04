@@ -390,7 +390,30 @@ Kolokasyon geliri GPU bulutunun %15–20'si, ama capex'i yarısı ve sözleşmel
 
 ## 11) Karar tablosu
 
-Satır başlıkları görev metnindeki 20 kriteri yansıtacak biçimde kuruldu (orijinal liste elde yok).
+| Kriter | Sonuç |
+|---|---|
+| En güçlü 10x adayı | **Yeterli kanıt yok; izleme listesinde DGXX.** Dört adayın hiçbiri "al" seviyesinde değil. DGXX tek exhibit'li take-or-pay sözleşmesi, kendi trafo merkezi ve borçsuz bilançosuyla en sağlamı; satırların kalanı DGXX için doldurulmuştur (QMLS karşılaştırması parantezde). |
+| Bugünkü piyasa değeri | $231,7M (3 Kas 2026, $2,27) [İ]. (QMLS $118,4M.) |
+| EV | ≈ $95–100M (piyasa değeri − ~$135M nakit [PR 13 Eki]); ≈ $89M (30 Haz nakit $128,1M + kripto $14,3M ile) [R]. (QMLS EV ≈ $182M Haziran / ≈ $280M TFC sonrası, hesap.) |
+| Resmi temel hisse sayısı | 101.396.689 SV + 3.333 PV (×200 = 666.600) = 102,06M SV eşdeğeri; DEF 14A, kayıt tarihi 27 Eki 2026 [R]. (QMLS 33.458.515, 20 Ağu 2026.) |
+| Açıklanmış seyreltici araçlar | Opsiyon 3.635.000 (WAEP C$4,90, zararda); RSU 4.761.978; warrant 1.080.475 ($2,98, zararda); şirketin tam seyreltilmiş rakamı 111.540.742 [R] DEF 14A. 21 Ara AGM'de RSU ve opsiyon havuzu 10.139.668'er + 2028'den %10/yıl evergreen. ATM: H1'de 27,95M hisse ($163,2M brüt), Tem'de 2,85M; Q3'te sıfır [PR]. Dönüştürülebilir yok. (QMLS: ATW $30M değişken fiyatlı tahvil + $60M green shoe, 4,77M plan havuzu, 2,05M RSU.) |
+| Tahmini gelecekteki seyrelme | Düşük 102M; orta 111,5M; yüksek ≈123M (plan genişlemesi); felaket 150–190M ($200M kredi kapanmaz, Faz 2 $2–3'ten öz kaynakla). Temel hisse 31 Ara 2024'ten beri +%207 [R XBRL]. (QMLS 39M / 46M / 75–80M.) |
+| Gerçek operasyonel kapasite | AI'ya hazır ≈1 MW (ARMS 200 podu, 15 May 2026'dan beri; ~0,6 MW GPU, SubQ $19,6M/24 ay). 40 MW Tier III hol 30 Haz'da "under construction, not ready for use" [R]. NY 141,7 MW madencilik/peaker (moratoryum Tem 2027); NC ham arazi. (QMLS 7 MW faturalanan + 1 MW, PR.) |
+| Bağlayıcı sözleşmeler | Cerebras MSA 4 May 2026: 8-K Item 1.01 + Ex.10.1 [R]; 10 yıl take-or-pay, $195/kW/ay, %3 artış; Faz 1 15 MW (≈$35M/yıl), Faz 2 25 MW finansman + Cerebras onayına bağlı; teslim tarihleri, gecikme kredileri, "outside date", ön ödeme redakte. SubQ 24 ay $19,6M [R 10-Q]. Pleasants WV 1,3 GW non-binding LOI. (QMLS: 10-Q'da $173M RPO, exhibit yok; $523M yalnız PR.) |
+| Gerçekleşmiş gelir | Q2 2026 $6,63M (AI/GPU $1,08M; enerji $1,96M; kolokasyon $3,43M; madencilik $0,16M); H1 $14,6M; TTM $31,4M; net zarar Q2 $(14,4)M [R]. Cerebras kirası henüz $0; RFS'te başlar. (QMLS Q2 $6,71M, TTM $17,0M.) |
+| Tahsil edilmiş nakit | $128,1M (30 Haz, 10-Q) [R]; ~$135M (13 Eki) [PR]. Cerebras'tan önemli ön ödeme yok (deposits payable $1,69M; unearned lease $2,51M SubQ'dan) [R]. PR capex ($95M → $153M) ile nakit ($155M → $135M) yürüyüşü uyuşmuyor; Q3'te kontrol. (QMLS nakit $20,0M + kısıtlı $19,9M; ertelenmiş gelir $30,5M.) |
+| Borç ve finansman riski | Borç sıfır, toplam yükümlülük $14,5M [R]. $200M proje kredisi: taahhüt mektubu, kredi veren isimsiz, Goldman sendikasyon, SPV + şirket garantisi, kapanış ~11 Oca 2027 (15 Ara RFS'ten sonra), 8-K yok [PR]. ATM kapasitesi fiilen tükenmiş; yeni raf gerekir. Risk: kredi kapanmazsa Faz 2 öz kaynakla (+65M hisse) veya teslim edilmez (TCV ≈ $0,4 Mlr'a iner). (QMLS: ATW %7 + %4 OID + %7 VWAP iskontosu, USD.AI ≈%10, TFC yüksek tek haneli, going concern.) |
+| Fiyatlanmamış öncü sinyal | Olumlu: $7,02M yapı ruhsatı (22 Haz, Dunn Building) [İ]; ADEM taslak hava izni 42 jeneratör (29 Eki) [İ]; belediye 12 ay vergi muafiyeti + $3,5M (21 Tem) [İ]; CEO 20.000 hisse @ $2,76 (14 Eki) [R]. Olumsuz: belediye evrakında "hizmet Nisan 2027"; NT moratoryum Tem 2027 + FERC $45k; ARMS podu 5–6 ay kaymıştı. "Enerjilendi" teyidi yok. Piyasa Cerebras'ı 5 May'da +%29 fiyatladı, sonra tamamen geri verdi; 13 Eki $200M PR'ı −2/−8. (QMLS: kolokasyon, iz yok; Focus Partners +104 bin hisse.) |
+| Son 30/60/90 günlük fiyat performansı | −40,9% / −39,5% / −39,5%; 180 gün −63%; 52 hafta zirvesinden −73%; duyuru öncesi $3,95'in %43 altı [İ Yahoo]. Sektör sepeti −31/−36/−39. (QMLS −45,8 / −40,0 / −41,4.) |
+| 10x için gerekli koşullar | Hisse başına 10x = $22,7 → orta seyrelmede (111,5M) piyasa değeri $2,53 Mlr. Cerebras 40 MW tam faturalanınca FAVÖK ~$84M → 18–20x ile EV $1,5–1,7 Mlr (hesap): tek başına yetmez. Gerekenler: (1) 15 Ara RFS ± 1 çeyrek, (2) $200M kapanış, (3) Faz 2 Cerebras onayı ve Mart 2027 teslimi, (4) NY veya NC'de ikinci sözleşmeli saha (2028+), (5) seyrelmenin 123M altında kalması, (6) sektör çarpanlarının korunması. (QMLS: $35,4 → $1,63 Mlr; ARR'nin tamamı gelire + seyrelme durması.) |
+| Bu koşulların gerçekleşme olasılığı | Öznel: (1) %55–65; (2) %60; (3) %45; (4) %15 (3 yılda); (5) %50; (6) %40–50. Birleşik 10x (3 yıl) %3–5. (QMLS %1–2.) |
+| En büyük başarısızlık riski | 15 Ara teslim kayması ile $200M'ın kapanmamasının aynı anda olması: Ex.10.1'deki redakte "Final Outside Delivery Date" sonrası Cerebras ücretsiz fesih + ön ödeme iadesi hakkına sahip; o tarih bilinmiyor. İkincil: Faz 2 için Cerebras onayı verilmemesi; yüksek seyrelmeli öz kaynak. (QMLS: seyrelme döngüsü + going concern.) |
+| 1 yıllık senaryo | RFS + kredi (%35) → $4–6; bir çeyrek kayma, kredi kapanır (%35) → $2,5–3,5; kredi başarısız / uzun kayma (%30) → $1–1,5. Beklenen ≈ $3,18 (+%40), kötü kuyruk −%45…−%55. 10x: hayır. (QMLS beklenen ≈ $3,53, ≈0%.) |
+| 2 yıllık senaryo | 40 MW faturalanıyor (≈$94M/yıl gelir) + Faz 2 tamam + ikinci kiracı imzalı ise 3–5x ($7–11); yalnız Faz 1 faturalanıyorsa 1–2x; kredi yok/Faz 2 yok ise 0,5–1x. |
+| 3 yıllık senaryo | 10x ($22,7) yalnız ikinci saha (NY moratoryum sonrası veya NC) enerjilenir ve seyrelme sınırlı kalırsa; olasılık %3–5. Modal sonuç 2–4x (sektör kohortunda büyük kazananların hisse başına gerçekleştirdiği aralık). |
+| Yatırım kararı | **Bugün alım yok.** İzleme: 13 Kas Q3 (nakit, kalan capex, Cerebras ön ödemesi, hisse sayısı), 15 Ara RFS, ~11 Oca kredi 8-K'sı. Giriş ancak bu üçünden en az ikisi teyitlenince; o zaman da hedef 10x değil 2–4x. Mevcut QMLS pozisyonu için varsayılan B (sat); A yalnız Q3 dört şartla; C yalnız DGXX tetikleyicileri sonrası (§10). |
+
+### Dört adayın karşılaştırması
 
 | # | Kriter | Sonuç |
 |---|---|---|
