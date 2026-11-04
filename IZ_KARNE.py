@@ -1608,6 +1608,14 @@ IK_GOREV: List[Dict[str, str]] = [
               "mekaniği (yapay veri aynı deseni üretiyor). PBO / DSR aşırı uyum riski yüksek",
      "durum": "TAMAMLANDI, AÇIK: EVREN2 (Tiingo 490 aday indirmesi 1 Kasım 06:00 UTC'den itibaren bekçiyle; evren v2 doğrulaması ve etki raporu 1-2 Kasım); "
               "Drive'da IZ_DEFTERI paketinin Colab'da açılması"},
+    {"tarih": "2026-11-04", "istek": "ABD mikro-cap AI altyapı (QMLS, DGXX, AIB, VIVO) bağımsız denetim: önceki rakamlar, 10x matematiği, öncü sinyal, evren dışı "
+                                     "adaylar, mevcut QMLS zararlı pozisyon (A tut / B sat / C geç)",
+     "yapilan": "7 kol araştırma (EDGAR 10-Q / 8-K / 20-F / DEF 14A, ilçe ve ISO kayıtları, akran değerleme, sektör taban oranları); notlar + rapor "
+                "arastirma_cikti/abd_10x/ (ABD mikro cap AI 10x denetimi.md + PDF)",
+     "sonuc": "Hiçbir aday yeterince güçlü değil; sıralama DGXX > AIB > QMLS > VIVO (DGXX yalnız izleme, 13 Kas Q3 / 15 Ara RFS). Düzeltmeler: QMLS IPO değil "
+              "doğrudan listeleme, 10-Q'da going-concern, $523M sözleşme yalnız PR; AIB sahası Spartanburg SC, Nebius exhibit yok; VIVO kodu VIVO, capex $411M, "
+              "kiracı yok; DGXX hisse 102,06M / FD 111,54M. QMLS pozisyonu: varsayılan B (sat); A yalnız Q3 10-Q dört şartı sağlarsa, lock-up 12-16 Oca 2027",
+     "durum": "TAMAMLANDI, AÇIK: karar Cemal'in; QMLS Q3 10-Q (16-25 Kas) ve DGXX Q3 (13 Kas) sonrası yeniden bakılır"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
