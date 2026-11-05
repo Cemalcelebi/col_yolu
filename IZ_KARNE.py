@@ -1616,6 +1616,14 @@ IK_GOREV: List[Dict[str, str]] = [
               "doğrudan listeleme, 10-Q'da going-concern, $523M sözleşme yalnız PR; AIB sahası Spartanburg SC, Nebius exhibit yok; VIVO kodu VIVO, capex $411M, "
               "kiracı yok; DGXX hisse 102,06M / FD 111,54M. QMLS pozisyonu: varsayılan B (sat); A yalnız Q3 10-Q dört şartı sağlarsa, lock-up 12-16 Oca 2027",
      "durum": "TAMAMLANDI, AÇIK: karar Cemal'in; QMLS Q3 10-Q (16-25 Kas) ve DGXX Q3 (13 Kas) sonrası yeniden bakılır"},
+    {"tarih": "2026-11-05", "istek": "Aynı yöntemle (gerçek varlık, bağlayıcı sözleşme, seyrelme, finansman, öncü iz, fiyatlanma, hisse başına 10x) BIST'te hangi hisse öne çıkar",
+     "yapilan": "4 kol araştırma (veri merkezi / teknoloji evreni, enerji altyapısı evreni, öncü sinyal + teşvik + fon krizi, taban oran + seyrelme + kriz; "
+                "K25 fon payı tablosu repodan) + rapor arastirma_cikti/bist_10x/ (BIST 10x adayları aynı yöntemle.md + PDF)",
+     "sonuc": "Yöntemi tam geçen BIST hissesi yok; 'al' yok, izle: YEOTK (5/10), GWIND (5/10), EUPWR (4/10), üçü de 2-3x normalleşme adayı, 10x değil. "
+              "BIST taban oranı 3 yılda 10x USD %1,85, kalıcılık %24; küçük/orta BIST'te çalışan veri merkezi kapasitesi yok (yalnız TCELL / TTKOM); "
+              "ABD talebi yalnız ASTOR'da backlog (referans). Elenen: KONTR (TMSF kayyım), ODINE / ANELE / MANAS / IEYHO (SPK), GEREL, NETAS, SMRTG, MAGEN, ESEN, "
+              "EMKEL, PAPIL. KAP fon payı (K25) krizi yakalayamadı: alt sınır",
+     "durum": "TAMAMLANDI, AÇIK: 3Ç26 bilançoları (Kasım) ve fon tasfiye süresi (Mart 2027) sonrası yeniden bakılır; teşvik listeleri ve KAP sayfaları erişilemedi"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
