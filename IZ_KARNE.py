@@ -1650,6 +1650,9 @@ IK_GOREV: List[Dict[str, str]] = [
                 "kalan QMLS yarısı için NT 10-Q / Nasdaq uyarısı durumunda beklemeden sat",
      "sonuc": "Risk: tek hisse yoğunlaşması 13 Kas ve 15 Ara ikili tetikleyici önünde; kötü senaryo -%45..-%55; aynı sektör olduğu için QMLS'ten DGXX'e geçiş riski azaltmaz, yoğunlaştırır",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "Sen risksiz doğruyu yazıyorsun; risk almadan önceden planlayıp kazanmak olmaz",
+     "yapilan": "Mesajla: itiraz kabul; risk alınır ama boyutla; DGXX için yazılı bahis planı (kaybı kabul edilen tutar, giriş / ekleme / çıkış kuralı, senaryo ağacı +%40 beklenti)",
+     "sonuc": "Risk değil boyut öldürür (PAPIL, QMLS, TERA); plan = çıkışı girişten önce yazmak", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
