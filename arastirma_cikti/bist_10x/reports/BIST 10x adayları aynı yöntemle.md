@@ -447,3 +447,31 @@ PD 4 Kas 2026 (Yahoo, USD/TRY 50,04) **[T]**; finansallar 2026/6 **[R*]**; Y-TTM
 
 ### Erişilemeyenler (bu raporda "bulunamadı")
 sanayi.gov.tr teşvik bültenleri; KAP arama ve çoğu bildirim sayfası (403); EKAP; e-ÇED; TÜİK dış ticaret (GTİP); TEFAS portföy dağılımları; EUPWR Eylül 2026 sunum PDF'i; Medyascope, Reuters (2 Eki), Fintables şirket sayfaları; SPK Kasım bültenleri.
+
+---
+
+## Ek (6 Kasım 2026): YEOTK 3Ç26 bilançosu ve tavan açılışı
+
+**Olay:** YEOTK 9 aylık (1 Ocak-30 Eylül 2026) konsolide, denetimsiz bilançosunu 5 Kasım 2026 akşamı KAP'a bildirdi (YK kararı 5 Kas, no 30) [R*]. Hisse 6 Kasım'da güne tavanla başladı (Cemal'in gözlemi). Aynı gün başka bir KAP sözleşme bildirimi bulunamadı.
+
+| Kalem | 9A25 | 9A26 | Değişim | Kaynak |
+|---|---|---|---|---|
+| Hasılat | 13.329 mn TL | 17.505 mn TL | +%31 | [R*] Rota Borsa / Bizim Menkul |
+| FAVÖK | 2.188 mn TL | 4.446 mn TL | +%103 | [R*] |
+| Esas faaliyet kârı | 2.149 mn TL | 3.823 mn TL | +%78 | [R*] |
+| Ana ortaklık net kârı | 934 mn TL | 1.534 mn TL | +%64 | [R*] |
+| Dönem kârı (azınlık dahil) | bulunamadı | ≈2.050 mn TL | | [İ] Borsatek |
+| Toplam yükümlülük / özkaynak | 27,5 / 5,1 mlr TL (2025 sonu) | 30,1 / 6,5 mlr TL (30 Eyl) | | [R*] |
+
+**Yalnız 3. çeyrek (hesap, 9A26 eksi 6A26) [T]:**
+- Hasılat ≈ 9.192 mn TL. Bu, ilk altı ayın toplamından (8.313 mn) büyük.
+- Ana ortaklık kârı ≈ 864 mn TL. İlk altı ayın toplamı 670 mn idi.
+- Son çeyrek yıllığa çevrilirse kâr ≈ 3,5 mlr TL, 4 Kas piyasa değeriyle (≈20,2 mlr TL) F/K ≈ 6. Bu bir hesaptır, tahmin değildir.
+
+**Yöntem açısından anlamı:**
+- Raporda YEOTK için yazılan üç tetikleyiciden ilki (3Ç26 bilançosu) olumlu geldi. Kâr ivmesi gerçek ve büyük.
+- Diğer ikisi hâlâ açık: Reap'in isimli ihracat sözleşmesi yok; fiili dolaşım (Yahoo %9,3, İş Yatırım %36,2) MKK'dan doğrulanmadı.
+- Açık soru: 3. çeyrekteki sıçramanın ne kadarı Azerenerji gibi tek seferlik EPC projelerinin hakediş tanımasından geliyor. Bu, faaliyet raporundaki proje ve segment dipnotundan okunmalı. Tek proje kaynaklıysa 4. çeyrekte tekrar etmeyebilir.
+- Borç yükü yüksek: yükümlülükler özkaynağın ≈4,6 katı (bir kısmı müşteri avansı olabilir; finansal borç kırılımı bulunamadı).
+- Tavan açılışı, sığ dolaşımlı hissede fiyatın bir günde bilançoyu fazlasıyla fiyatlayabileceği anlamına da gelir. Mayıs 2026 tavan serisinin ardından hisse tepeden %54 düşmüştü.
+- Puan 5/10'dan 6/10'a çıkar (kâr ivmesi kanıtlandı). Karar "al" değil, "izle, tetikleyici 1/3 geldi". 10x tezi değişmedi: 2-3x normalleşme adayı.

@@ -1630,6 +1630,11 @@ IK_GOREV: List[Dict[str, str]] = [
               "VBTS / BIST-100 çıkışı, endeks USD'de 2023 ortasından beri dip; ABD'de neocloud sektör satışı (borç ve capex korkusu, Musk 'konsolidasyon' yorumu, "
               "açığa satıcılar), QMLS'te tahvil dönüşü ve Ocak kilit bitişi arzı",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "YEOTK güne tavanla başladı",
+     "yapilan": "Neden arandı: 5 Kas akşamı KAP 3Ç26 bilançosu (başka KAP sözleşmesi yok); rakamlar ikincil aktarımla okundu; BIST raporuna ek bölüm",
+     "sonuc": "9A26 hasılat 17,5 mlr TL (+%31), FAVÖK 4,45 mlr (+%103), ana ortaklık kârı 1,53 mlr (+%64); yalnız 3Ç: hasılat ≈9,2 mlr, kâr ≈864 mn (6A toplamından fazla). "
+              "Tetikleyici 1/3 geldi, puan 5 -> 6/10; açık: kârın tek seferlik EPC hakedişi olup olmadığı, Reap ihracat sözleşmesi, fiili dolaşım; borç/özkaynak ≈4,6x",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
