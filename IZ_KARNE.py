@@ -1635,6 +1635,12 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "9A26 hasılat 17,5 mlr TL (+%31), FAVÖK 4,45 mlr (+%103), ana ortaklık kârı 1,53 mlr (+%64); yalnız 3Ç: hasılat ≈9,2 mlr, kâr ≈864 mn (6A toplamından fazla). "
               "Tetikleyici 1/3 geldi, puan 5 -> 6/10; açık: kârın tek seferlik EPC hakedişi olup olmadığı, Reap ihracat sözleşmesi, fiili dolaşım; borç/özkaynak ≈4,6x",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "600 BIST ve 2000+ ABD hissesinde alım yok; senin gözünle ne olacak, ne öneriyorsun",
+     "yapilan": "Görüş mesajla verildi; dayanak: K42 (bilinen etkiler görünüyor), K43 (23 sinyal alınabilir iz değil), K34 / küçüklük yıl yıl (ortanca negatif), "
+                "ABD ve BIST 10x raporlarının taban oranları",
+     "sonuc": "'Al yok' = 10x çıtasını kanıtla geçen hisse yok; yatırım yapma demek değil. Öneri: çekirdek geniş endeks (dolar bazlı) + küçük uydu payında "
+              "en fazla 2-3 seçilmiş isim, isim başına sınırlı boyut, tetikleyiciyle giriş; QMLS için önceki koşullu plan geçerli. Karar Cemal'in",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
