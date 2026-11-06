@@ -1673,6 +1673,11 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Ölçüldü (Yahoo, 20 Tem - 5 Kas 2026, 77 gün, 7'li neocloud sepeti): sepet > +%2 olan 24 günde QMLS ortalama +%4,4, medyan +%5,3, 4 günde eksi; > +%1 olan 29 günde 8'i eksi; sepete beta 0,59, korelasyon 0,4; QMLS günlük oynaklık %9,1",
      "sonuc": "İddia tutmuyor: QMLS sektörle aynı yönde ama 1:1 civarı hareket ediyor, 10 kat değil. 5 Kas: sektör -%10..-%17, QMLS -%19,5 (2,69 $), DGXX -%11 (1,90 $). Yeşil sektör gününde limit emirle satış mantıklı, beklenti +%5",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "Sektör toparlanınca QMLS en hızlı çıkar mı; düzelme ne zaman; Microsoft olayı ne",
+     "yapilan": "Microsoft (Bloomberg 5 Kas): neocloud projelerinde denetim sıkılaştı, riskli projelerden çekiliyor, yeni sözleşmeleri tartışıyor; Nscale Teksas genişlemesi ve İngiltere çapa kiracılığı bırakıldı; IREN 4 mlr $ ARR'nin Ocak'a kaydığını açıkladı (müşteri Microsoft). "
+                "Ölçüm (20 Tem - 5 Kas, sepet dipten +%15 üstü 4 dalga): QMLS 1 dalgada sepeti çok geçti (+46 vs +18), 1'de eşit, 2'de yarısı kadar; DGXX 4'ünde de geride; dönem toplamı sepet -%50, QMLS -%72, DGXX -%53",
+     "sonuc": "QMLS toparlanmada güvenilir şekilde en hızlı değil; düşüşte ise fazla düşüyor (ATW arzı). Düzelme tarihi bilinemez; işaretler: NBIS 11 Kas, DGXX 13 Kas, CRWV 16 Kas, Microsoft açıklaması",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
