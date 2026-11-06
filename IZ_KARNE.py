@@ -1641,6 +1641,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "'Al yok' = 10x çıtasını kanıtla geçen hisse yok; yatırım yapma demek değil. Öneri: çekirdek geniş endeks (dolar bazlı) + küçük uydu payında "
               "en fazla 2-3 seçilmiş isim, isim başına sınırlı boyut, tetikleyiciyle giriş; QMLS için önceki koşullu plan geçerli. Karar Cemal'in",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "Paraya ihtiyacım var; bugün YEOTK aldım, birkaç hafta sonra ekleyeceğim; dolarımın yarısından fazlası DGXX'te; QMLS dibe çöktü, nasıl kurtulurum",
+     "yapilan": "Mesajla görüş: ihtiyaç parası ayrılsın, DGXX boyutu 13 Kas / 15 Ara öncesi küçültülsün, QMLS tek emirle çıkış planı (hemen ya da yarı yarıya, son tarih 12 Oca 2027 kilit), YEOTK'ye ekleme yalnız tetikleyiciyle ve boyut tavanıyla",
+     "sonuc": "Asıl risk hisse seçimi değil boyut: ihtiyaç duyulan para mikro şirkette; QMLS'ten çıkış teknik olarak kolay (günlük hacim yeterli), zor olan zararı kabul etmek. Karar Cemal'in",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
