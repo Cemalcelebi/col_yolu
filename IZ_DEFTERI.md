@@ -111,6 +111,7 @@ TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 i�
 | 2026-11-06 | Sen risksiz doğruyu yazıyorsun; risk almadan önceden planlayıp kazanmak olmaz | Mesajla: itiraz kabul; risk alınır ama boyutla; DGXX için yazılı bahis planı (kaybı kabul edilen tutar, giriş / ekleme / çıkış kuralı, senaryo ağacı +%40 beklenti) | Risk değil boyut öldürür (PAPIL, QMLS, TERA); plan = çıkışı girişten önce yazmak | **TAMAMLANDI** |
 | 2026-11-06 | Küçük yüzdeyle girsem ne olacak; 100 dolar 1000 olsa ne; büyük kazanmam gerekir | Mesajla: 'büyük kazanmak' ihtiyaçtır, strateji değil; küçük sermayede tek seferde 10x ihtimali %1-3, sıfırlanma %30; sıralı 2-3x bahisler + birikim ekleme; hepsiyle giriş yalnız kaybı göze alınan parayla | Karar Cemal'in; ölçüm: DGXX senaryo ağacı tur başına geometrik beklenti +%20 ama %30 ihtimalle -%45 | **TAMAMLANDI** |
 | 2026-11-06 | Senaryo: ilk hissede 2x yaparsam sonraki hisselerde riski azaltırım | Mesajla: plan kabul edilebilir (tek büyük bahis, sonra koruma); zayıf nokta ilk bahsin başarısızlığında devamın olmaması; 2x kuralı (anaparayı çek), başarısızlık kuralı (yeni bahse geçme), DGXX'te 2x = iyi senaryo (%35, 6 ay) yazıldı | Karar Cemal'in | **TAMAMLANDI** |
+| 2026-11-06 | DGXX pozisyonu (175 adet, maliyet 2,01 $, portföyün %43'ü): 4,5 dolar kuralı ne | Kural Cemal'in maliyetine göre yeniden yazıldı: 2x = 4,02 $'da 88 adet sat (anapara geri), kalan 87 adet bedava; olay bazlı çıkış kuralları | Yazılı kural verildi; karar Cemal'in | **TAMAMLANDI** |
 
 **Açık kalanlar:**
 

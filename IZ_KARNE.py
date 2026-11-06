@@ -1659,6 +1659,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-06", "istek": "Senaryo: ilk hissede 2x yaparsam sonraki hisselerde riski azaltırım",
      "yapilan": "Mesajla: plan kabul edilebilir (tek büyük bahis, sonra koruma); zayıf nokta ilk bahsin başarısızlığında devamın olmaması; 2x kuralı (anaparayı çek), başarısızlık kuralı (yeni bahse geçme), DGXX'te 2x = iyi senaryo (%35, 6 ay) yazıldı",
      "sonuc": "Karar Cemal'in", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "DGXX pozisyonu (175 adet, maliyet 2,01 $, portföyün %43'ü): 4,5 dolar kuralı ne",
+     "yapilan": "Kural Cemal'in maliyetine göre yeniden yazıldı: 2x = 4,02 $'da 88 adet sat (anapara geri), kalan 87 adet bedava; olay bazlı çıkış kuralları",
+     "sonuc": "Yazılı kural verildi; karar Cemal'in", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
