@@ -1645,6 +1645,11 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Mesajla görüş: ihtiyaç parası ayrılsın, DGXX boyutu 13 Kas / 15 Ara öncesi küçültülsün, QMLS tek emirle çıkış planı (hemen ya da yarı yarıya, son tarih 12 Oca 2027 kilit), YEOTK'ye ekleme yalnız tetikleyiciyle ve boyut tavanıyla",
      "sonuc": "Asıl risk hisse seçimi değil boyut: ihtiyaç duyulan para mikro şirkette; QMLS'ten çıkış teknik olarak kolay (günlük hacim yeterli), zor olan zararı kabul etmek. Karar Cemal'in",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "QMLS'in yarısını bugün, kalanını bilançodan sonra satıyorum; aynı parayı DGXX'e koyacağım, risk ne",
+     "yapilan": "Mesajla görüş: QMLS parasını 13 Kas DGXX bilançosuna kadar dolar nakitte tut; sonuç dört kontrolü geçerse kademeli ekle; DGXX toplam tavanı; "
+                "kalan QMLS yarısı için NT 10-Q / Nasdaq uyarısı durumunda beklemeden sat",
+     "sonuc": "Risk: tek hisse yoğunlaşması 13 Kas ve 15 Ara ikili tetikleyici önünde; kötü senaryo -%45..-%55; aynı sektör olduğu için QMLS'ten DGXX'e geçiş riski azaltmaz, yoğunlaştırır",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
