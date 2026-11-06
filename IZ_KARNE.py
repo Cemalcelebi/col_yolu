@@ -1624,6 +1624,12 @@ IK_GOREV: List[Dict[str, str]] = [
               "ABD talebi yalnız ASTOR'da backlog (referans). Elenen: KONTR (TMSF kayyım), ODINE / ANELE / MANAS / IEYHO (SPK), GEREL, NETAS, SMRTG, MAGEN, ESEN, "
               "EMKEL, PAPIL. KAP fon payı (K25) krizi yakalayamadı: alt sınır",
      "durum": "TAMAMLANDI, AÇIK: 3Ç26 bilançoları (Kasım) ve fon tasfiye süresi (Mart 2027) sonrası yeniden bakılır; teşvik listeleri ve KAP sayfaları erişilemedi"},
+    {"tarih": "2026-11-06", "istek": "Raporu anlamadım, en iyi adaylar net değil; son haber yok ama fiyatlar neden bu kadar derin",
+     "yapilan": "Sade sıralama mesajla verildi (BIST: YEOTK, GWIND, EUPWR, GESAN; ABD: DGXX, DUOT, AIB); düşüş nedenleri araştırma notlarından + web (5-6 Kas)",
+     "sonuc": "Şirket haberi değil: BIST'te fon tasfiyesinin zorunlu satışı (131 fon, kalan sığ pozisyonlar Mart 2027'ye kadar satılacak), SPK %8/6/4/2 fon tavanı, "
+              "VBTS / BIST-100 çıkışı, endeks USD'de 2023 ortasından beri dip; ABD'de neocloud sektör satışı (borç ve capex korkusu, Musk 'konsolidasyon' yorumu, "
+              "açığa satıcılar), QMLS'te tahvil dönüşü ve Ocak kilit bitişi arzı",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
