@@ -1669,6 +1669,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Notlardan çıkış takvimi: ATW aylık itfa (%93 en düşük 8 gün VWAP, satış baskısı), açığa satış 1,23 M (3 gün kapatma; iyi haberde sıkışma ihtimali), 10-Q son tarih 16 Kas / NT ile 23 Kas, "
                 "kilit 16 Oca 2027 (ilk işlem 19 Oca); yarı bugün limit emirle, kalan yarı olay kurallarıyla, son tarih 8 Oca 2027; vergi mahsubu notu",
      "sonuc": "Çıkış planı verildi; karar Cemal'in", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "Sektör %1 yükselirse QMLS en az %10, %2 yükselirse %20 zıplar; satışı buna göre zamanlayayım",
+     "yapilan": "Ölçüldü (Yahoo, 20 Tem - 5 Kas 2026, 77 gün, 7'li neocloud sepeti): sepet > +%2 olan 24 günde QMLS ortalama +%4,4, medyan +%5,3, 4 günde eksi; > +%1 olan 29 günde 8'i eksi; sepete beta 0,59, korelasyon 0,4; QMLS günlük oynaklık %9,1",
+     "sonuc": "İddia tutmuyor: QMLS sektörle aynı yönde ama 1:1 civarı hareket ediyor, 10 kat değil. 5 Kas: sektör -%10..-%17, QMLS -%19,5 (2,69 $), DGXX -%11 (1,90 $). Yeşil sektör gününde limit emirle satış mantıklı, beklenti +%5",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
