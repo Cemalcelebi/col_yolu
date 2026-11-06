@@ -1653,6 +1653,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-06", "istek": "Sen risksiz doğruyu yazıyorsun; risk almadan önceden planlayıp kazanmak olmaz",
      "yapilan": "Mesajla: itiraz kabul; risk alınır ama boyutla; DGXX için yazılı bahis planı (kaybı kabul edilen tutar, giriş / ekleme / çıkış kuralı, senaryo ağacı +%40 beklenti)",
      "sonuc": "Risk değil boyut öldürür (PAPIL, QMLS, TERA); plan = çıkışı girişten önce yazmak", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "Küçük yüzdeyle girsem ne olacak; 100 dolar 1000 olsa ne; büyük kazanmam gerekir",
+     "yapilan": "Mesajla: 'büyük kazanmak' ihtiyaçtır, strateji değil; küçük sermayede tek seferde 10x ihtimali %1-3, sıfırlanma %30; sıralı 2-3x bahisler + birikim ekleme; hepsiyle giriş yalnız kaybı göze alınan parayla",
+     "sonuc": "Karar Cemal'in; ölçüm: DGXX senaryo ağacı tur başına geometrik beklenti +%20 ama %30 ihtimalle -%45", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
