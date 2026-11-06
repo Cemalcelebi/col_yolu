@@ -1665,6 +1665,10 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-06", "istek": "Bilanço iyi gelecek; önce korkutup aldırmıyorlar, iyi gelirse göstermelik yukarı taşınır, sonra yavaş dağıtılır, sonraki yükseliş belirsiz",
      "yapilan": "Mesajla: K28 (bilanço sonrası ABD 2024-26 iyi sürprizde 60 günde eşlerine göre -%1,4: 'yükselişi sat' deseni ölçümle uyumlu) dayanak; DGXX için bilanço sıçramasında kısmi satış kuralı (ilk gün +%25 ve üstünde 1/3 sat), 2x kuralı korunur",
      "sonuc": "Cemal'in gözlemi ABD son dönem ölçümüyle tutarlı; karar Cemal'in", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-06", "istek": "QMLS'i %44 zararla satacağım; en akıllı çıkış yolu ne",
+     "yapilan": "Notlardan çıkış takvimi: ATW aylık itfa (%93 en düşük 8 gün VWAP, satış baskısı), açığa satış 1,23 M (3 gün kapatma; iyi haberde sıkışma ihtimali), 10-Q son tarih 16 Kas / NT ile 23 Kas, "
+                "kilit 16 Oca 2027 (ilk işlem 19 Oca); yarı bugün limit emirle, kalan yarı olay kurallarıyla, son tarih 8 Oca 2027; vergi mahsubu notu",
+     "sonuc": "Çıkış planı verildi; karar Cemal'in", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
