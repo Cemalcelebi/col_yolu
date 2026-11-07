@@ -1689,6 +1689,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-07", "istek": "Benim QMLS'teki zararım ne kadar (tekrar soru)",
      "yapilan": "Tek rakamla sade cevap: toplam ≈ -658 $ ≈ -33 bin TL; yatırılan paraya göre oranı",
      "sonuc": "Toplam zarar ≈ 658 $; kalan 83 adet satılırsa (3,07 $) kesinleşir", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-07", "istek": "Zarar o kadar değil; QMLS'ten çıktım, DGXX'te 365 $, nakitte 445 $ var",
+     "yapilan": "Hesap yöntemi açıklandı (net giren = alışlar - satışlar; satıştan gelen para zaten düşüldü); ekranda eksik işlem olabileceği kabul edildi; bağımsız kontrol: toplam yatırılan para - (DGXX + QMLS + nakit ≈ 1.065 $)",
+     "sonuc": "Kesin rakam için Cemal'in hesaba toplam yatırdığı dolar tutarı gerekli; ya da işlem geçmişinin tamamı", "durum": "TAMAMLANDI, AÇIK: toplam yatırılan tutar"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
