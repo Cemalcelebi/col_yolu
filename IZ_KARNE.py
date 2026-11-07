@@ -1678,6 +1678,10 @@ IK_GOREV: List[Dict[str, str]] = [
                 "Ölçüm (20 Tem - 5 Kas, sepet dipten +%15 üstü 4 dalga): QMLS 1 dalgada sepeti çok geçti (+46 vs +18), 1'de eşit, 2'de yarısı kadar; DGXX 4'ünde de geride; dönem toplamı sepet -%50, QMLS -%72, DGXX -%53",
      "sonuc": "QMLS toparlanmada güvenilir şekilde en hızlı değil; düşüşte ise fazla düşüyor (ATW arzı). Düzelme tarihi bilinemez; işaretler: NBIS 11 Kas, DGXX 13 Kas, CRWV 16 Kas, Microsoft açıklaması",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-07", "istek": "QMLS işlem geçmişim (ekran görüntüsü): toplam ne kadar zarar ettim",
+     "yapilan": "Gerçekleşen emirler toplandı: 7 alış 2.359,27 $, 4 satış 1.446,09 $, iptal / süresi dolan emirler hariç; net giren 913,18 $",
+     "sonuc": "Kalan pozisyon ≈257 $ ise toplam sonuç ≈ -656 $ (≈ -33 bin TL, kur 50); kesin sonuç kalan adet ve fiyatla; Cemal'in daha önce söylediği 30-40 bin TL ile uyumlu",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
