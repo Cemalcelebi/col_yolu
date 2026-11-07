@@ -1698,6 +1698,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-07", "istek": "13 Kas'ı beklersek bilanço iyi gelirse %10-15 yüksekten alırız; şimdi mi girelim",
      "yapilan": "Basit karşılaştırma: şimdi almak, bilanço günü +%12..15 / -%20..30 senaryolarında ancak 'iyi gelir' ihtimali %57-71'in üstündeyse beklemekten iyi; K28 (ABD 2024-26 iyi bilanço sonrası 60 günde -%1,4) ve Cemal'in 'taşı sonra dağıt' tezi beklemeyi destekliyor; orta yol yarısı şimdi yarısı sonra",
      "sonuc": "Görüş: bekle ya da yarı yarıya; karar Cemal'in", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-07", "istek": "Nakdin yarısını pazartesi DGXX'e koyuyorum; limit emri kaça yazayım",
+     "yapilan": "DGXX 6 Kas kapanış 2,085 $ (gün aralığı 1,955-2,11; 10 günlük ortalama gün içi aralık %8,7). Öneri: 108 adet limit 2,05 $ (≈221 $), gün boyu geçerli, normal seans, 18:00 TR sonrası; 2,20 üstü açılışta kovalama yok. Yeni ortalama ≈2,025 $, 2x eşiği ≈4,05 $ (142 adet satınca anapara geri)",
+     "sonuc": "Emir planı verildi; DGXX hesabın ≈%55'i olur; karar Cemal'in", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
