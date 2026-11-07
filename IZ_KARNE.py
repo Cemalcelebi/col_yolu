@@ -1682,6 +1682,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Gerçekleşen emirler toplandı: 7 alış 2.359,27 $, 4 satış 1.446,09 $, iptal / süresi dolan emirler hariç; net giren 913,18 $",
      "sonuc": "Kalan pozisyon ≈257 $ ise toplam sonuç ≈ -656 $ (≈ -33 bin TL, kur 50); kesin sonuç kalan adet ve fiyatla; Cemal'in daha önce söylediği 30-40 bin TL ile uyumlu",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-07", "istek": "Elde kalan QMLS (83 adet, 254,81 $, ort. maliyet 4,58 $, uygulama -125,69 $): bu yılın toplam zararı ne kadar",
+     "yapilan": "Net giren 913,18 $ - kalan değer 254,81 $; uygulamanın 'toplam getiri'si yalnız kalan 83 adet içindir, önceki satışlardaki gerçekleşmiş zararı göstermez",
+     "sonuc": "Toplam ≈ -658 $ (≈ -33 bin TL, kur 50): gerçekleşmiş ≈ -533 $ + açık -126 $. 6 Kas +%14 (3,07 $) satış planındaki 'yeşil gün'",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
