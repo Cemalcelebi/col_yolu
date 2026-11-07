@@ -1695,6 +1695,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-07", "istek": "Hesap ekranı: yatırım 62.577 TL, toplam -36.833 TL (-%53,4); evet bütün zararım 33 bin",
      "yapilan": "Doğrulandı: hesap toplamı ≈ 99.400 TL yatırılmış, bugün 62.577 TL; QMLS ≈ -33 bin TL, kalan ≈ -4 bin TL öteki pozisyonlar ve kur; hesap: nakit 445 $, DGXX ≈ 370 $, QMLS 255 $, AAL 5 $",
      "sonuc": "QMLS hesabın zararının ≈ %90'ı; kalan sermayenin ≈ %58'i aynı sektörde iki mikro şirkette", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-07", "istek": "13 Kas'ı beklersek bilanço iyi gelirse %10-15 yüksekten alırız; şimdi mi girelim",
+     "yapilan": "Basit karşılaştırma: şimdi almak, bilanço günü +%12..15 / -%20..30 senaryolarında ancak 'iyi gelir' ihtimali %57-71'in üstündeyse beklemekten iyi; K28 (ABD 2024-26 iyi bilanço sonrası 60 günde -%1,4) ve Cemal'in 'taşı sonra dağıt' tezi beklemeyi destekliyor; orta yol yarısı şimdi yarısı sonra",
+     "sonuc": "Görüş: bekle ya da yarı yarıya; karar Cemal'in", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
