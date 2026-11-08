@@ -18,7 +18,7 @@ RÜZGÂR = sektör sepeti (medyan) − piyasa medyanı, son 20 / 60 işlem gün�
 
 TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 iş gününde tek olay. Ana ölçü yukarı izlerde 60 günde önce +%20 (−%10'dan önce), kaçınma izlerinde 60 günde önce −%20. Kat = olay oranı / EŞLİ TABAN (aynı ay × 60 gün momentum beşliği × likidite üçlüsü). İZ = BIST 2023, BIST 2024-26, ABD 2023, ABD 2024-26 dört hücrede kat ≥1,3, n ≥30, ters yön <1,3. ABD verisi olmayan (KAP) en fazla BIST-ADAY olur. Eski kararlar farklı cetvellerle verildi (ar60, piy, her 5. gün tabanı; 17-21/22-26; ABD'siz); karışıklığın kaynağı bu.
 
-**Tek cetvel özeti:** İZ DEĞİL 46 (puanlanan 46 / kayıtlı 146 çalışma)
+**Tek cetvel özeti:** İZ DEĞİL 46 (puanlanan 46 / kayıtlı 147 çalışma)
 
 **Kesinleşen durum (tek cetvel):** dört karar hücresinin hepsinde tutan İZ yok. Eski cetvelde 'GEÇERLİ' yazan maddeler eşli tabanla yeniden ölçüldü; fark çoğunlukla hissenin zaten düşmüş/yükselmiş, sakin/oynak olmasından geliyordu (eşli taban bunu eşitler).
 
@@ -123,6 +123,7 @@ TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 i�
 | 2026-11-07 | Hesap ekranı: yatırım 62.577 TL, toplam -36.833 TL (-%53,4); evet bütün zararım 33 bin | Doğrulandı: hesap toplamı ≈ 99.400 TL yatırılmış, bugün 62.577 TL; QMLS ≈ -33 bin TL, kalan ≈ -4 bin TL öteki pozisyonlar ve kur; hesap: nakit 445 $, DGXX ≈ 370 $, QMLS 255 $, AAL 5 $ | QMLS hesabın zararının ≈ %90'ı; kalan sermayenin ≈ %58'i aynı sektörde iki mikro şirkette | **TAMAMLANDI** |
 | 2026-11-07 | 13 Kas'ı beklersek bilanço iyi gelirse %10-15 yüksekten alırız; şimdi mi girelim | Basit karşılaştırma: şimdi almak, bilanço günü +%12..15 / -%20..30 senaryolarında ancak 'iyi gelir' ihtimali %57-71'in üstündeyse beklemekten iyi; K28 (ABD 2024-26 iyi bilanço sonrası 60 günde -%1,4) ve Cemal'in 'taşı sonra dağıt' tezi beklemeyi destekliyor; orta yol yarısı şimdi yarısı sonra | Görüş: bekle ya da yarı yarıya; karar Cemal'in | **TAMAMLANDI** |
 | 2026-11-07 | Nakdin yarısını pazartesi DGXX'e koyuyorum; limit emri kaça yazayım | DGXX 6 Kas kapanış 2,085 $ (gün aralığı 1,955-2,11; 10 günlük ortalama gün içi aralık %8,7). Öneri: 108 adet limit 2,05 $ (≈221 $), gün boyu geçerli, normal seans, 18:00 TR sonrası; 2,20 üstü açılışta kovalama yok. Yeni ortalama ≈2,025 $, 2x eşiği ≈4,05 $ (142 adet satınca anapara geri) | Emir planı verildi; DGXX hesabın ≈%55'i olur; karar Cemal'in | **TAMAMLANDI** |
+| 2026-11-08 | RITUAL/USDT +%99,88 gibi yükseliş nasıl tespit edilir, derin araştırma yap | 3 kol (Ritual vakası, literatür, 759 yeni tokenda kendi ölçüm: Binance aynası + OKX + Gate) + rapor arastirma_cikti/kripto_yukselis/; IZ_KARNE Ç147 | İZ DEĞİL: +%100 günü önceden ancak 1 gün önce ve %1'in altında olasılıkla seçilebiliyor; sonrası medyan 30 günde -%49; kovalamak kaybettiriyor. Ritual'da doğrulanmış katalizör yok | **TAMAMLANDI** |
 
 **Açık kalanlar:**
 
@@ -157,6 +158,7 @@ TEK CETVEL: olay = sinyal günü, giriş ertesi açılış, hisse başına 60 i�
 | Ç54 | 2026-10-22 | Tavan-taban olayı (≥4 tavan sonra ≥3 taban) | goz_esle/arastirma/tavan_taban_olay.py | Ölçüm (117 olay), karar yazılmadı | puanlanmadı | — | — | — |
 | Ç60 | 2026-10-23 | A14 blok hacimli taban günü | FON_IZI.py | ÇÜRÜDÜ (eşli 0,91-1,73) | **İZ DEĞİL** (↓ önce −%20, 2026-10-25) | 2,05 / 1,46 (n9) / 2,63 | 1,37 / 1,16 / 1,15 | IZ A14 |
 | Ç70 | 2026-10-24 | A11 oynaklık ölçekli (−3σ gün + hacim 3x + 20 günde −%20) | IZ_KARNE.py | Yeni deneme | **İZ DEĞİL** (↓ önce −%20, 2026-10-25) | 2,21 / 3,70 (n2) / 0,00 (n5) | 1,47 / 1,18 / 1,04 | IZ A11 |
+| Ç147 | 2026-11-08 | KRİPTO YENİ TOKEN +%100 GÜNÜ: önceden tespit ve sonrası (RITUAL/USDT vakası); 759 yeni token (2024-01 .. 2026-09 listelenen, Binance aynası data-api.binance.vision + OKX v5 + Gate v4; 454.984 token-gün, 7 Kas 2026'da kesik); liste sonrası getiriler, +%50 / +%100 gün sıklığı, olay sonrası getiriler, OHLCV öncü sinyaller (eğitim: liste < 2025-07-01, test: sonrası; eşikler eğitimde seçildi, yazıldı, sonra test) | arastirma_cikti/kripto_yukselis/kod/ (indir.py, panel.py, olc.py, esikler.json) | Yeni deneme (kripto, BIST / ABD dışı pazar) | puanlanmadı: İZ DEĞİL. Liste günü kapanışından medyan: 7 g -%14, 30 g -%30, 90 g -%53, 180 g -%68. +%100 günü (406 olay) ertesi açılıştan medyan: +1 g -%16, +7 g -%35, +30 g -%49 (taban: aynı tokenların herhangi günü 30 g -%11); 30 günde artıda %16. En iyi öncü 'önceki gün >= +%11,5': test lift 5,4 (eğitim 4,9) ama mutlak olasılık %0,12 -> %0,64; sinyal gününde alım test 7 g medyan -%9,7 vs taban -%2,9. Literatür: yeni tokenlarda 2025 kuşağının ~%85'i TGE fiyatının altında; pump-and-dump katılımcıları çoğunlukla kaybeder. RITUAL: TGE 26 Eki 2026, float %18, doğrulanmış katalizör yok; +%99,88 24 saatlik kayan değişim. Sınır: Binance ana API (451) ve Bybit (403) erişilemedi; OKX / Gate delist edilenler yok (hayatta kalma yanlılığı); komisyon / kayma ve güven aralığı yok. | — | — |  |
 
 ### Seviye 2 — çok günlük şekil / tespit
 

@@ -1030,6 +1030,18 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "d(iii) ≈ d(i)). Duyarlılık-B: GERÇEK 0 / 125, TERS 61, MEKANİK 62; hücre TERS 13, MEKANİK 10; B3 64 / 64 TUTMAZ. Üç dönemde (KEŞİF, İÇ, "
                "BAĞIMSIZ) seçimsiz etiketle gerçek etki yok; karar yeni eşikle kurtarılmaz (madde 9). Ayrışma ve PBO / DSR ön kayıt gereği BAĞIMSIZ'da "
                "koşulmadı (Ç143, Ç144). EVREN2 (Ç142) bu kararı değiştirmez (ayrı rapor, 1-2 Kasım)."),
+    _ik_k("Ç147", "2026-11-08", "KRİPTO YENİ TOKEN +%100 GÜNÜ: önceden tespit ve sonrası (RITUAL/USDT vakası); 759 yeni token (2024-01 .. 2026-09 listelenen, "
+          "Binance aynası data-api.binance.vision + OKX v5 + Gate v4; 454.984 token-gün, 7 Kas 2026'da kesik); liste sonrası getiriler, +%50 / +%100 gün "
+          "sıklığı, olay sonrası getiriler, OHLCV öncü sinyaller (eğitim: liste < 2025-07-01, test: sonrası; eşikler eğitimde seçildi, yazıldı, sonra test)",
+          "arastirma_cikti/kripto_yukselis/kod/ (indir.py, panel.py, olc.py, esikler.json)",
+          "Cemal (8 Kas 2026): 'Bu gibi yükseliş nasıl tespit edilir, derin araştırma yap'", "Yeni deneme (kripto, BIST / ABD dışı pazar)", "", 1,
+          cikti="arastirma_cikti/kripto_yukselis/reports/Kripto yeni token yükselişi tespiti.md (+ research_notes/, kod/sonuc_*.md)",
+          notu="İZ DEĞİL. Liste günü kapanışından medyan: 7 g -%14, 30 g -%30, 90 g -%53, 180 g -%68. +%100 günü (406 olay) ertesi açılıştan medyan: "
+               "+1 g -%16, +7 g -%35, +30 g -%49 (taban: aynı tokenların herhangi günü 30 g -%11); 30 günde artıda %16. En iyi öncü 'önceki gün >= +%11,5': "
+               "test lift 5,4 (eğitim 4,9) ama mutlak olasılık %0,12 -> %0,64; sinyal gününde alım test 7 g medyan -%9,7 vs taban -%2,9. Literatür: yeni "
+               "tokenlarda 2025 kuşağının ~%85'i TGE fiyatının altında; pump-and-dump katılımcıları çoğunlukla kaybeder. RITUAL: TGE 26 Eki 2026, float %18, "
+               "doğrulanmış katalizör yok; +%99,88 24 saatlik kayan değişim. Sınır: Binance ana API (451) ve Bybit (403) erişilemedi; OKX / Gate delist "
+               "edilenler yok (hayatta kalma yanlılığı); komisyon / kayma ve güven aralığı yok."),
 ]
 
 
@@ -1701,6 +1713,10 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-07", "istek": "Nakdin yarısını pazartesi DGXX'e koyuyorum; limit emri kaça yazayım",
      "yapilan": "DGXX 6 Kas kapanış 2,085 $ (gün aralığı 1,955-2,11; 10 günlük ortalama gün içi aralık %8,7). Öneri: 108 adet limit 2,05 $ (≈221 $), gün boyu geçerli, normal seans, 18:00 TR sonrası; 2,20 üstü açılışta kovalama yok. Yeni ortalama ≈2,025 $, 2x eşiği ≈4,05 $ (142 adet satınca anapara geri)",
      "sonuc": "Emir planı verildi; DGXX hesabın ≈%55'i olur; karar Cemal'in", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-08", "istek": "RITUAL/USDT +%99,88 gibi yükseliş nasıl tespit edilir, derin araştırma yap",
+     "yapilan": "3 kol (Ritual vakası, literatür, 759 yeni tokenda kendi ölçüm: Binance aynası + OKX + Gate) + rapor arastirma_cikti/kripto_yukselis/; IZ_KARNE Ç147",
+     "sonuc": "İZ DEĞİL: +%100 günü önceden ancak 1 gün önce ve %1'in altında olasılıkla seçilebiliyor; sonrası medyan 30 günde -%49; kovalamak kaybettiriyor. Ritual'da doğrulanmış katalizör yok",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
