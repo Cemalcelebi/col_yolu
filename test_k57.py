@@ -2,7 +2,8 @@
 
 1) çakışma kapısı  2) ön kayıt mührü ve zamanı  3) geleceğe bakma yok (temel / fon / pay bilgi tarihi <= açıklama günü; giriş tepkiden
 sonra; kayan eşik geleceği görmüyor)  4) olay sayıları > 0  5) çıktılar ve hucre.csv yapısı  6) süzgeç birimleri (F2, F4 bölünme,
-ABD frames 4. çeyrek türetme, bilgi tarihi)  7) karar mantığı  8) e-posta yok.
+ABD frames 4. çeyrek türetme, bilgi tarihi)  7) karar mantığı  8) e-posta yok  9) K57-B (ayrı mühür, çıktılar, B1 geniş
+evrende geleceğe bakma yok, e-posta yok; önce `python K57.py b_kos`).
 """
 from __future__ import annotations
 
@@ -181,6 +182,122 @@ def testler() -> list:
     for y in [os.path.join(KOK, "K57.py"), os.path.join(KOK, "test_k57.py")] + [os.path.join(C, K.K57_DOSYA[a]) for a in ("onkayit", "rapor", "meta")]:
         if re.search(r"[\w.+-]+@(gmail|hotmail|yahoo|outlook|icloud|yandex)\.", open(y, encoding="utf-8").read()):
             hata.append(f"8) e-posta var: {y}")
+    hata += testler_b()
+    return hata
+
+
+def testler_b() -> list:
+    """9) K57-B: ayrı mühür (var, tutuyor, K57 mührü değişmedi, çıktılardan ve Yahoo indirmesinden önce), çıktı yapısı ve tutar / karar
+    hesabı, B1 geniş evrende geleceğe bakma yok (bilgi tarihi, giriş sırası, likidite yalnız tepki gününe kadar, F7 kayan eşiği, kriz
+    kesiği), e-posta yok."""
+    hata = []
+    # mühür
+    try:
+        okb = K.k57b_onkayit_dogrula()
+    except K.K57Hata as ex:
+        return [f"9) K57-B ön kaydı: {ex}"]
+    ok = K.k57_onkayit_dogrula()
+    metin = open(okb["yol"], encoding="utf-8").read()
+    if f"K57 mührü (değişmeden): {ok['sha']}" not in metin:
+        hata.append("9) K57-B ön kaydı K57 mührünü taşımıyor / K57 mührü değişmiş")
+    if pd.Timestamp(okb["zaman_utc"]) <= pd.Timestamp(ok["zaman_utc"]):
+        hata.append("9) K57-B ön kaydı K57 ön kaydından önce")
+    with tempfile.TemporaryDirectory() as td:
+        import shutil
+        shutil.copy(os.path.join(C, K.K57_DOSYA["onkayit"]), td)
+        y = K.k57b_onkayit(td); ilk = open(y, encoding="utf-8").read(); K.k57b_onkayit(td)
+        if open(y, encoding="utf-8").read() != ilk:
+            hata.append("9) K57-B ön kaydı üzerine yazıldı")
+        open(y, "w", encoding="utf-8").write(ilk.replace(K.k57b_esik_sha(), "0" * 64))
+        try:
+            K.k57b_onkayit_dogrula(td); hata.append("9) K57-B bozuk mühür kabul edildi")
+        except K.K57Hata:
+            pass
+    yol = {a: os.path.join(C, K.K57B_DOSYA[a]) for a in K.K57B_DOSYA}
+    eksik = [K.K57B_DOSYA[a] for a, y in yol.items() if not os.path.exists(y)]
+    if eksik:
+        return hata + [f"9) K57-B çıktısı yok: {eksik} (önce `python K57.py b_kos`)"]
+    meta = json.load(open(yol["meta"], encoding="utf-8"))
+    bas = pd.Timestamp(meta["kos_baslangic"].replace(" UTC", "")); muhur = pd.Timestamp(okb["zaman_utc"])
+    if muhur > bas:
+        hata.append(f"9) K57-B ön kaydı koşudan sonra: {okb['zaman_utc']} > {meta['kos_baslangic']}")
+    ilk_ind = (meta.get("yahoo") or {}).get("ilk_indirme_utc")
+    if ilk_ind and pd.Timestamp(ilk_ind.replace(" UTC", "")) < muhur:
+        hata.append(f"9) Yahoo fiyatları K57-B ön kaydından önce indirilmiş: {ilk_ind}")
+    if meta["onkayit_b"]["sha"] != K.k57b_esik_sha() or meta["k57_muhur"] != K.k57_esik_sha():
+        hata.append("9) koşunun mühürleri bugünkü eşiklerle aynı değil")
+    for y in (yol["hucre"], yol["rapor"], yol["b1_olay"], yol["b1_evren"]):
+        if pd.Timestamp(os.path.getmtime(y), unit="s") < muhur:
+            hata.append(f"9) çıktı ön kayıttan eski: {os.path.basename(y)}")
+    if not meta.get("yeniden_uretim") or not all(r["esit"] for r in meta["yeniden_uretim"]):
+        hata.append("9) K57 ANA V1 yeniden üretimi tutmadı / yapılmadı")
+    # hücreler
+    Z = pd.read_csv(yol["hucre"]); O = K._k57_olcut()
+    bek = {("B1", "ABD"), ("B2", "ABD"), ("B2", "BIST"), ("B3", "ABD"), ("B3", "BIST")}
+    if set(zip(Z.deney, Z.pazar)) != bek or len(Z) != 3 + 5 + 5:
+        hata.append(f"9) hucre_b.csv deneme / pazar / satır yanlış: {sorted(set(zip(Z.deney, Z.pazar)))} {len(Z)}")
+    if set(Z[Z.deney == "B2"].ufuk) != {20} or set(Z[Z.deney != "B2"].ufuk) != {60}:
+        hata.append("9) ufuklar yanlış (B2 20, B1 / B3 60)")
+    for r in Z.itertuples():
+        b = bool(r.n >= O["n_esik"] and r.alt95 > 0 and r.sira > 0.5 and r.portfoy > r.portfoy_esli_p90) if r.n and r.n > 0 else False
+        if b != bool(r.tutar):
+            hata.append(f"9) tutar hesabı yanlış: {r.deney} {r.pazar} {r.donem}"); break
+    if set(Z[Z.rol == "KARAR"].apply(lambda r: (r.pazar, r.donem), axis=1)) != {("ABD", "2023"), ("ABD", "2024-26")}:
+        hata.append("9) karar hücreleri ABD 2023 + ABD 2024-26 değil")
+    for d, g in Z.groupby("deney"):
+        iki = all(bool(g[(g.pazar == "ABD") & (g.donem == x)].tutar.iloc[0]) for x in ("2023", "2024-26"))
+        if iki != g.karar.iloc[0].startswith("ABD-ADAY"):
+            hata.append(f"9) {d} kararı hücrelerle uyuşmuyor: {g.karar.iloc[0]}")
+    # B1 geniş evren: geleceğe bakma yok
+    X = pd.read_csv(yol["b1_olay"], parse_dates=["D", "d0", "tepki_son", "giris", "bilgi_son"])
+    for c in ("F7", "F1", "F2", "F3", "V1"):
+        X[c] = K._k57b_bayrak(X[c])
+    if not ((X.d0 < X.D) & (X.tepki_son >= X.D) & (X.giris > X.tepki_son)).all():
+        hata.append("9) B1: d0 < D <= tepki günü < giriş sırası bozuk")
+    if (X.bilgi_son.notna() & (X.bilgi_son > X.D)).any() or ((X.F1 | X.F2 | X.F3) & X.bilgi_son.isna()).any():
+        hata.append("9) B1: açıklama gününden sonra bilinen (ya da bilgi tarihi olmayan) temel değer kullanıldı")
+    if (X.likit20 < K.K57B_ESIK["likit_taban_usd"]).any() or X.likit20.isna().any():
+        hata.append("9) B1: likidite tabanı altında olay var")
+    kriz = pd.Timestamp(K.FI.FI_OLCUT["kriz"])
+    if (X.fark.notna() & (X.giris > kriz)).any():
+        hata.append("9) B1: kriz sonrası giriş ölçülmüş")
+    if not (X.V1 == (X.F7 & X.F1 & X.F2 & X.F3)).all() or X.V1.sum() == 0:
+        hata.append("9) B1: V1 = F7 + F1 + F2 + F3 değil / V1 olayı yok")
+    kes = X.tepki_son.quantile(0.5); Y = X[X.tepki_son <= kes]
+    E = K.K57_ESIK
+    if not np.allclose(K.k57_kayan_esik(Y.tepki_son, Y.ear, 1 - E["F7_dilim"], E["F7_pencere_gun"], E["F7_min_n"]), Y.f7_esik.to_numpy(float), equal_nan=True):
+        hata.append("9) B1: F7 eşiği geleceği görüyor ya da taban altı olaylarla hesaplanmış")
+    U = pd.read_csv(yol["b1_evren"], parse_dates=["son"])
+    if (U.son.notna() & (U.son > kriz)).any():
+        hata.append("9) B1: fiyat kriz gününden sonrasını içeriyor")
+    if not set(X.sembol) <= set(U[U.durum == "fiyat"].sembol):
+        hata.append("9) B1: evren dışı hisseden olay")
+    # likidite yalnız tepki gününe kadarki fiyatlardan (önbellek varsa; Colab'da yoksa atlanır)
+    if os.path.isdir(K.K57B_YOL["fiyat"]):
+        orn = X.sample(min(40, len(X)), random_state=57); kotu = 0
+        for r in orn.itertuples():
+            d, _ = K.k57b_yahoo_oku(K._k57b_dosya(r.sembol))
+            if d is None:
+                kotu += 1; continue
+            g = d[d.index <= r.tepki_son].tail(K.K57B_ESIK["likit_gun"])
+            if len(g) < K.K57B_ESIK["likit_gun"] or g.index[-1] != r.tepki_son or abs(float((g.Close * g.Volume).median()) / r.likit20 - 1) > 1e-9:
+                kotu += 1
+        if kotu:
+            hata.append(f"9) B1: likidite tepki gününe kadarki 20 günden hesaplanmamış ({kotu} / {len(orn)})")
+    # likidite fonksiyonu sentetik: tepki gününden sonraki hacim değeri değiştirmez
+    gun = pd.bdate_range("2024-01-01", periods=40)
+    d = pd.DataFrame({"Close": 10.0, "Volume": np.r_[np.full(30, 1e5), np.full(10, 1e9)]}, index=gun)
+    Xs = pd.DataFrame({"sembol": ["S"], "tepki_son": [gun[29]]})
+    if abs(K.k57b_likit({"S": d}, Xs)[0] - 1e6) > 1e-6:
+        hata.append("9) k57b_likit geleceği görüyor")
+    # e-posta yok
+    for y in [os.path.join(KOK, "K57.py"), os.path.join(KOK, "test_k57.py")] + [yol[a] for a in ("onkayit", "rapor", "meta", "hucre", "b1_evren")]:
+        if re.search(r"[\w.+-]+@[\w-]+\.(com|net|org|edu|gov|io|tr)\b", open(y, encoding="utf-8").read()):
+            hata.append(f"9) e-posta var: {os.path.basename(y)}")
+    rap = open(yol["rapor"], encoding="utf-8").read()
+    for parca in ("## KARAR:", "Ç149", "Düz dille", "## B1", "## B2", "## B3"):
+        if parca not in rap:
+            hata.append(f"9) K57B raporunda '{parca}' yok")
     return hata
 
 
@@ -188,4 +305,4 @@ if __name__ == "__main__":
     H = testler()
     if H:
         print("K57 TEST: HATA", len(H)); print("\n".join(H)); sys.exit(1)
-    print("K57 TEST: 8/8 bölüm GEÇTİ")
+    print("K57 TEST: 9/9 bölüm GEÇTİ (K57 + K57-B)")

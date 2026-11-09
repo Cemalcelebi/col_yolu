@@ -7,6 +7,9 @@ Komut:  python K57.py onkayit   ön kaydı yazar (ölçümden ÖNCE; eşiklerin 
         python K57.py indir     SEC XBRL frames (ABD temel verisi) indirir; SEC reddederse durur ve söyler
         python K57.py kos       olaylar + süzgeçler + FI_OLCUT ölçümü + önceden yazılı 3 devam + rapor
         python K57.py rapor     K57_RAPOR.md'yi çıktılardan yeniden yazar
+        python K57.py b_onkayit K57-B ön kaydı (V1 çevresinde 3 devam; ayrı mühür K57B_ON_KAYIT.md; K57 mührüne dokunmaz)
+        python K57.py b_kos     K57-B: B1 geniş ABD evreni (SEC frames + Yahoo fiyat), B2 20 gün ufuk, B3 F3'süz -> hucre_b.csv + rapor
+        python K57.py b_rapor   K57B_RAPOR.md'yi çıktılardan yeniden yazar
 Colab:  exec(open('K57.py').read()); k57_kos()
 Ölçüm kütüphanesi FON_IZI.py modül olarak içe alınır (fi_k28_olaylar, fi_olcut_panel / olay / hucre, _fi_olcut_karar_ortak,
 fi_k31_finansal, fi_k25_pay_tablo); kopyalanmaz. Çıktılar arastirma_cikti/k57_yeotk_profili/.
@@ -32,6 +35,7 @@ import ssl  # noqa: E402
 import subprocess  # noqa: E402
 import time  # noqa: E402
 import urllib.error  # noqa: E402
+import urllib.parse  # noqa: E402
 import urllib.request  # noqa: E402
 from typing import Any, Dict, List, Optional, Tuple  # noqa: E402
 
@@ -1039,6 +1043,577 @@ ABD ({'tam profil' if abd_temel else 'F1-F3 yok: F7 + F6 + F4'}):
     return yol
 
 
+# ================================================================ 8) K57-B: V1 ÇEVRESİNDE ÖNCEDEN YAZILI 3 DEVAM (Cemal, 9 Kas 2026; Ç149)
+# K57 İZ DEĞİL çıktı; eşiğe en yakın V1 = F7 + F1 + F2 + F3 (fiyat şartı yok). K57-B üç deneme: B1 V1 geniş ABD evreninde (SEC frames'te
+# temel verisi olan bütün şirketler + Yahoo günlük fiyat, 20 gün medyan işlem değeri >= 1 milyon $), B2 V1 20 gün ufuk, B3 V1 F3'süz.
+# Ayrı mühür (K57B_ON_KAYIT.md, K57B_SHA256); K57 mührü (K57_ON_KAYIT.md) değişmez ve koşu başında doğrulanır. Süzgeç tanımları K57'ninki.
+K57B_SURUM = "K57-B v1.0 (2026-11-09): V1 çevresinde önceden yazılı 3 devam (B1 geniş ABD evreni, B2 20 gün ufuk, B3 F3'süz)"
+K57B_ESIK: Dict[str, Any] = {
+    "deney": {"B1": {"ad": "geniş ABD evreni", "varyant": "V1", "suzgec": ["F7", "F1", "F2", "F3"], "ufuk": 60, "evren": "genis", "pazar": ["ABD"]},
+              "B2": {"ad": "20 gün ufuk", "varyant": "V1", "suzgec": ["F7", "F1", "F2", "F3"], "ufuk": 20, "evren": "ozgun", "pazar": ["BIST", "ABD"]},
+              "B3": {"ad": "F3'süz (F7+F1+F2)", "varyant": "V1-F3", "suzgec": ["F7", "F1", "F2"], "ufuk": 60, "evren": "ozgun", "pazar": ["BIST", "ABD"]}},
+    "likit_taban_usd": 1.0e6, "likit_gun": 20,
+    "evren": {"gelir": list(K57_ABD_GELIR), "kar": "NetIncomeLoss", "ozkaynak": "StockholdersEquity", "tur": ["EQUITY"], "min_gun": 150},
+    "yahoo": {"url": "https://query1.finance.yahoo.com/v8/finance/chart/{T}", "bas": "2020-01-01", "bit": "2026-09-01", "kes": "2026-08-31",
+              "bekle": 0.3, "is_parcacigi": 3, "deneme": 4, "geri_cekil": 5.0, "engel_ardisik": 25},
+    "karar_hucre": [["ABD", "2023"], ["ABD", "2024-26"]],
+    "sonraki": {"C1": "V1 + F4 (seyrelme yok) geniş ABD evreninde, 60 gün",
+                "C2": "V1 geniş ABD evreninde, likidite tabanı 5 milyon $",
+                "C3": "V1 geniş ABD evreninde, F7 yerine yalnız 'ear' üst %10 (ham şartı aynı)"},
+}
+K57B_YAHOO_UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
+K57B_YOL = {"fiyat": os.environ.get("K57B_FIYAT", "/tmp/k57b_fiyat")}
+K57B_DOSYA = {"onkayit": "K57B_ON_KAYIT.md", "hucre": "hucre_b.csv", "rapor": "K57B_RAPOR.md", "meta": "k57b_kos_meta.json",
+              "b1_olay": "olaylar_b1_abd.csv.gz", "b1_evren": "evren_b1.csv"}
+K57B_B1_KOLON = ["sembol", "cik", "D", "d0", "tepki_son", "giris", "kaynak", "ear", "ham", "f7_esik", "F7", "satis0", "satis_yoy", "F1", "F2",
+                 "ozkaynak", "yukumluluk", "F3", "bilgi_son", "ceyrek_sira", "likit20", "r60", "esli_r60", "sira", "fark", "V1"]
+
+
+def k57b_esik_sha() -> str:
+    """K57-B mührü: K57B_ESIK + FI_OLCUT + K57_ESIK (süzgeç tanımları) + K57_ATLA birlikte."""
+    s = json.dumps({"K57B_ESIK": K57B_ESIK, "FI_OLCUT": _k57_olcut(), "K57_ESIK": K57_ESIK, "K57_ATLA": K57_ATLA},
+                   sort_keys=True, default=str, ensure_ascii=False)
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def _k57b_yol(ad: str, cikti: Optional[str] = None) -> str:
+    return os.path.join(cikti or K57_YOL["cikti"], K57B_DOSYA[ad])
+
+
+def k57b_onkayit_metin(zaman: str) -> str:
+    B = K57B_ESIK; E = K57_ESIK; O = _k57_olcut(); Y = B["yahoo"]
+    return f"""# K57-B ÖN KAYIT — V1 çevresinde önceden yazılı 3 devam (YEOTK profili, 'sıkı dosya')
+
+Yazım zamanı: {zaman} (K57-B ölçümünden ÖNCE; K57-B sonucu görülmedi). Sürüm: {K57B_SURUM}
+K57B_SHA256: {k57b_esik_sha()}
+(K57B_ESIK + FI_OLCUT + K57_ESIK + K57_ATLA sha256'sı. `python K57.py b_kos` bu mühürle başlar; biri değişirse koşu durur.)
+K57 mührü (değişmeden): {k57_esik_sha()} (K57_ON_KAYIT.md; b_kos onu da doğrular).
+
+## 1. Neden
+K57 (Ç148, ön kayıt 2026-11-09 15:29 UTC) İZ DEĞİL verdi. Eşiğe en yakın hücre V1 = F7 (bilanço gününe güçlü tepki) + F1 (büyüme)
++ F2 (ivme) + F3 (bilanço), fiyat şartı (F6) YOK: ABD 2023 +%19,7 (n 7), ABD 2024-26 +%10,3 (n 31, aralık -%7,9..+%29,7, portföy %89,5),
+BIST 2024-26 +%6,3 (n 96, portföy %99). F6 eklenince eksiye döndü. K57'nin 7. bölümündeki 3 devam (D1-D3) koşuldu, iz yok.
+Bu üç deneme K57 sonucu görüldükten SONRA, kendi sonuçları görülmeden yazıldı (IZ_DEFTERI 9 Kas akşam satırı).
+
+## 2. Ortak kurgu (K57 ile aynı; değişmez)
+- Olay, tepki, giriş: K57 / K28 (fi_k28_olaylar). Giriş = tepki gününden sonraki ilk işlem günü açılışı. Fiyatlar {O['kriz']}'de kesik.
+- Süzgeçler K57_ESIK'teki tanımlarla: F7 'ear' D'ye kadar son {E['F7_pencere_gun']} günde tepki günü biten olayların üst %{E['F7_dilim'] * 100:.0f}'ı VE ham
+  >= +%{E['F7_ham'] * 100:.0f}; F1 ABD çeyrek satışı yıllık >= +%{E['F1_abd_yoy'] * 100:.0f} (BIST kayan üst %{E['F1_bist_dilim'] * 100:.0f}); F2 satış >= {E['F2_kat']} x önceki iki
+  çeyrek ortalaması VE kâr > 0 VE > önceki çeyrek; F3 ABD yükümlülük <= {E['F3_abd_borc_kat']} x özkaynak (BIST net borç / özkaynak < {E['F3_bist_borc_oz']}).
+  Temel değerlerin bilgi tarihi <= D (K57 kuralı).
+- Ölçüt FI_OLCUT (değiştirilmeden): eşli fark (aynı gün, aynı 60 gün momentum beşliği x 20 gün likidite üçlüsü), ay kümeli bootstrap
+  ({O['bootstrap']}) %95 aralık, hücre içi sıra, 10 yuvalı slot portföyü vs 200 eşli rastgele portföy.
+- Hücreler (giriş gününe göre): ABD 2021-22 BİLGİ, ABD 2023 KARAR, ABD 2024-26 KARAR; BIST 2022-23 ve 2024-26 BİLGİ.
+
+## 3. Üç deneme
+- B1 'geniş ABD evreni' (V1, 60 gün): evren = önbellekteki SEC frames'te gelir (Revenues / RevenueFromContractWithCustomerExcludingAssessedTax /
+  SalesRevenueNet) çeyreklik + NetIncomeLoss çeyreklik + StockholdersEquity anlık değeri olan VE company_tickers.json'da borsa kodu olan
+  bütün şirketler (aynı CIK'nin ilk kodu, K57 eşlemesi). Günlük fiyat Yahoo chart API'sinden ({Y['url']}, period1 {Y['bas']},
+  period2 {Y['bit']}, interval 1d; tarayıcı User-Agent; ssl cafile /root/.ccr/ca-bundle.crt; çağrılar arasında {Y['bekle']} sn bekleme,
+  {Y['is_parcacigi']} iş parçacığı, 429/403'te geri çekilme, {Y['deneme']} deneme; önbellek {K57B_YOL['fiyat']}/). Fiyat bölünme + temettü düzeltmeli
+  (adjclose / close oranı OHLC'ye uygulanır; V_ABD ile aynı biçim), {Y['kes']}'de kesilir. Yalnız Yahoo instrumentType EQUITY ve en az
+  {B['evren']['min_gun']} işlem günü olanlar. Olay günleri K57 ile aynı kaynak (Nasdaq takvimi 2022-12 sonrası; SEC 10-Q / 10-K başvuru günü
+  2021-01 .. 2022-11).
+  LİKİDİTE TABANI: tepki gününde biten {B['likit_gun']} işlem günlük (tepki günü dahil, en az {B['likit_gun']} gözlem) medyan işlem değeri
+  (Close x Volume, düzeltmeli fiyat) >= {B['likit_taban_usd']:,.0f} $. Taban altı olaylar olay kümesine HİÇ girmez; F7'nin kayan eşiği taban üstü olaylardan
+  hesaplanır. Eşler (FI_OLCUT eşleştirmesi) aynı geniş evrenin bütün hisselerinden (FI_OLCUT paneli değiştirilmeden; taban eşlere uygulanmaz).
+  Tepki için piyasa medyanı geniş evrenden (fi_k28_olaylar).
+  YAHOO ENGELİ: {Y['engel_ardisik']} ardışık hisse bütün denemelerden sonra inemezse indirme durur; B1 inen hisselerle koşulur ve kaç
+  hisse indiği raporda yazılır.
+- B2 '20 gün ufuk' (V1): FI_OLCUT ufku 20 işlem günü (r20 = 20. gün kapanışı / giriş açılışı - 1; eşli fark, aralık, sıra aynı; slot
+  portföyü 10 yuva, 20 gün tut). Özgün evrenler (V_ABD, V_BIST) ve K57'nin olayları (olaylar_abd.csv, olaylar_bist.csv; K57 mühürlü koşusu).
+- B3 'F3'süz' (F7 + F1 + F2, 60 gün): özgün evrenler ve K57 olayları.
+- Denetim: B2 / B3 K57 olay dosyalarından okunur; koşu önce K57 ANA V1 hücrelerini aynı dosyalardan yeniden üretir (n ve ortalama eşli
+  fark hucre.csv ile aynı olmalı), değilse durur.
+
+## 4. Karar (değişmez)
+Her deneme ayrı okunur: ABD 2023 ve ABD 2024-26 hücreleri FI_OLCUT dört şartıyla (n >= {O['n_esik']}; ortalama eşli fark > 0 ve aralık alt ucu > 0;
+sıra > 0,50; portföy > eşli rastgele %{O['port_yuzde'] * 100:.0f}). İkisi de tutarsa 'ABD-ADAY (AVRUPA VERİSİ YOK)' (Avrupa'da bilanço olay verisi
+yok, İZ denemez); BIST de iki hücrede tutuyorsa '+ BIST' bilgisi. Aksi 'İZ DEĞİL'. BIST yalnız bilgi. Sonuç görüldükten sonra eşik değişmez.
+Çoklu deneme: K57'de 5 varyant + 3 devam, burada 3 deneme daha; bir B denemesinden çıkan ABD-ADAY aday sayılır, örneklem dışı
+(canlı) izleme olmadan üretim kuralına girmez.
+
+## 5. Beklenti (önceden)
+B1: n büyür (V_ABD 1.411 hayatta kalan yerine ~4.000+ şirket); küçük şirketlerin gürültüsü ortalamayı oynatır, aralık daralır.
+B2: 20 günde bilanço sonrası sürüklenme (PEAD) daha görünür olabilir ama n aynı (ABD 2023 n 7 < 30: B2'de ABD 2023 tutamaz).
+B3: F3 kalkınca n biraz büyür; bilanço zayıf şirketler girer. Üçünün de iki ABD hücresinde birden tutma olasılığı düşük.
+
+## 6. K57-B de iz vermezse sıradaki 3 (önceden yazıldı; bu görevde KOŞULMAZ, ana oturum karar verir)
+- C1: {B['sonraki']['C1']}.
+- C2: {B['sonraki']['C2']}.
+- C3: {B['sonraki']['C3']}.
+"""
+
+
+def _k57b_onkayit_oku(yol: str) -> Tuple[Optional[str], str]:
+    with open(yol, encoding="utf-8") as f:
+        m = f.read()
+    s = re.search(r"^K57B_SHA256: ([0-9a-f]{64})$", m, re.M); z = re.search(r"^Yazım zamanı: (\d{4}-\d\d-\d\d \d\d:\d\d:\d\d) UTC", m, re.M)
+    return (s.group(1) if s else None), (z.group(1) if z else "")
+
+
+def k57b_onkayit(cikti: Optional[str] = None) -> str:
+    """K57-B ön kaydı. Önce K57 mührü doğrulanır (K57 eşikleri değişmemiş olmalı). Dosya varsa ÜZERİNE YAZMAZ."""
+    k57_onkayit_dogrula(cikti)
+    yol = _k57b_yol("onkayit", cikti); os.makedirs(os.path.dirname(yol), exist_ok=True)
+    if os.path.exists(yol):
+        mevcut, _ = _k57b_onkayit_oku(yol)
+        if mevcut != k57b_esik_sha():
+            raise K57Hata(f"K57-B ön kaydı zaten var ve mühür farklı ({mevcut} != {k57b_esik_sha()}): eşikler ön kayıttan sonra değişmiş")
+        k57log.info("K57-B ön kaydı zaten var (mühür aynı): %s", yol)
+        return yol
+    simdi = _dt.datetime.now(_dt.timezone.utc)
+    zaman = simdi.strftime("%Y-%m-%d %H:%M:%S UTC") + " (" + (simdi + _dt.timedelta(hours=3)).strftime("%Y-%m-%d %H:%M TR") + ")"
+    with open(yol, "w", encoding="utf-8") as f:
+        f.write(k57b_onkayit_metin(zaman))
+    k57log.info("K57-B ön kaydı yazıldı: %s (mühür %s)", yol, k57b_esik_sha()[:12])
+    return yol
+
+
+def k57b_onkayit_dogrula(cikti: Optional[str] = None) -> Dict[str, str]:
+    yol = _k57b_yol("onkayit", cikti)
+    if not os.path.exists(yol):
+        raise K57Hata(f"K57-B ön kaydı yok ({yol}): önce `python K57.py b_onkayit`")
+    sha, zaman = _k57b_onkayit_oku(yol)
+    if sha != k57b_esik_sha():
+        raise K57Hata(f"K57-B ön kayıt mührü tutmuyor ({sha} != {k57b_esik_sha()}): eşikler ön kayıttan sonra değişmiş, koşu durdu")
+    return {"yol": yol, "sha": sha, "zaman_utc": zaman}
+
+
+# ---------------------------------------------------------------- 8a) B1 evreni ve Yahoo fiyatları
+def k57b_evren(T: Dict[str, Any], cik2s: Dict[str, str]) -> pd.DataFrame:
+    """Geniş ABD evreni: frames'te gelir (çeyreklik) + NetIncomeLoss (çeyreklik) + StockholdersEquity (anlık) olan ve borsa kodu olan CIK'ler.
+    Üyelik yalnız temel verinin VARLIĞINA bakar (getiri / fiyat bakılmaz); olay anındaki değerler ayrıca bilgi tarihiyle süzülür."""
+    Ev = K57B_ESIK["evren"]
+    gel = {c for (c, e) in T["Q"] if e in Ev["gelir"]}
+    kar = {c for (c, e) in T["Q"] if e == Ev["kar"]}
+    oz = {c for (c, e) in T["I"] if e == Ev["ozkaynak"]}
+    U = pd.DataFrame([{"cik": c, "sembol": cik2s[c]} for c in sorted(gel & kar & oz, key=int) if c in cik2s])
+    U = U.drop_duplicates("sembol").reset_index(drop=True)
+    k57log.info("B1 evren adayı: %d CIK (gelir %d, kâr %d, özkaynak %d, kesişim %d)", len(U), len(gel), len(kar), len(oz), len(gel & kar & oz))
+    return U
+
+
+def _k57b_yahoo_url(T: str) -> str:
+    Y = K57B_ESIK["yahoo"]
+    p1 = int(pd.Timestamp(Y["bas"], tz="UTC").timestamp()); p2 = int(pd.Timestamp(Y["bit"], tz="UTC").timestamp())
+    return Y["url"].format(T=urllib.parse.quote(T, safe="")) + f"?period1={p1}&period2={p2}&interval=1d&events=div%2Csplits&includeAdjustedClose=true"
+
+
+def _k57b_dosya(T: str) -> str:
+    return os.path.join(K57B_YOL["fiyat"], re.sub(r"[^A-Za-z0-9._-]", "_", T) + ".json")
+
+
+def _k57b_yahoo_al(T: str, ctx: ssl.SSLContext, dur) -> Tuple[str, Optional[bytes]]:
+    """Tek hisse: ('tamam', ham) / ('yok', None) (404) / ('engel', None) (429/403 bütün denemelerde) / ('hata', None)."""
+    Y = K57B_ESIK["yahoo"]; son = "hata"
+    for deneme in range(Y["deneme"]):
+        if dur.is_set():
+            return "durdu", None
+        try:
+            req = urllib.request.Request(_k57b_yahoo_url(T), headers={"User-Agent": K57B_YAHOO_UA, "Accept": "application/json"})
+            with urllib.request.urlopen(req, context=ctx, timeout=40) as r:
+                ham = r.read()
+            json.loads(ham)
+            return "tamam", ham
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return "yok", None
+            son = "engel" if e.code in (401, 403, 429) else "hata"
+            time.sleep(Y["geri_cekil"] * 2 ** deneme if son == "engel" else 2 * (deneme + 1))
+        except (urllib.error.URLError, TimeoutError, ValueError, OSError) as e:
+            son = "hata"; k57log.debug("Yahoo %s: %s", T, str(e)[:100]); time.sleep(2 * (deneme + 1))
+    return son, None
+
+
+def k57b_yahoo_indir(semboller: List[str]) -> Dict[str, Any]:
+    """Yahoo chart API günlük fiyatları, önbellek K57B_YOL['fiyat'] (hisse başına ham JSON; 404 -> {'yok': 404} işareti; kaldığı yerden).
+    Ardışık engel / hata sayısı K57B_ESIK['yahoo']['engel_ardisik']'e ulaşırsa durur (B1 inenlerle sürer)."""
+    import threading
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    Y = K57B_ESIK["yahoo"]; klasor = K57B_YOL["fiyat"]; os.makedirs(klasor, exist_ok=True)
+    dyol = os.path.join(klasor, "_durum.json")
+    try:
+        eski = json.load(open(dyol, encoding="utf-8")) if os.path.exists(dyol) else {}
+    except (OSError, ValueError):
+        eski = {}
+    ctx = ssl.create_default_context(cafile=K57_YOL["ca"]) if os.path.exists(K57_YOL["ca"]) else ssl.create_default_context()
+    eksik = [s for s in dict.fromkeys(semboller) if not os.path.exists(_k57b_dosya(s))]
+    durum: Dict[str, Any] = {"istenen": len(set(semboller)), "onbellek": len(set(semboller)) - len(eksik), "indirilen": 0, "yok_404": 0,
+                             "engel": 0, "hata": 0, "durdu": 0, "durum": "tamam", "ilk_indirme_utc": eski.get("ilk_indirme_utc"),
+                             "inemeyen": []}
+    if eksik and not durum["ilk_indirme_utc"]:
+        durum["ilk_indirme_utc"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    dur = threading.Event(); ardisik = 0; kilit = threading.Lock()
+
+    def is_(T: str) -> Tuple[str, str]:
+        if dur.is_set():
+            return T, "durdu"
+        d, ham = _k57b_yahoo_al(T, ctx, dur)
+        if d == "tamam":
+            with open(_k57b_dosya(T) + ".yarim", "wb") as f:
+                f.write(ham)
+            os.replace(_k57b_dosya(T) + ".yarim", _k57b_dosya(T))
+        elif d == "yok":
+            with open(_k57b_dosya(T), "w") as f:
+                f.write('{"yok": 404}')
+        time.sleep(Y["bekle"])
+        return T, d
+    t0 = time.time()
+    with ThreadPoolExecutor(max_workers=Y["is_parcacigi"]) as ex:
+        isler = [ex.submit(is_, s) for s in eksik]
+        for k, fu in enumerate(as_completed(isler), 1):
+            try:
+                T, d = fu.result()
+            except Exception as e:   # tek hisse beklenmedik hata verirse ötekiler sürer
+                k57log.warning("Yahoo iş hatası: %s", e); T, d = "?", "hata"
+            with kilit:
+                durum[{"tamam": "indirilen", "yok": "yok_404"}.get(d, d)] += 1
+                if d in ("engel", "hata"):
+                    durum["inemeyen"].append(T); ardisik += 1
+                elif d in ("tamam", "yok"):
+                    ardisik = 0
+                if ardisik >= Y["engel_ardisik"] and not dur.is_set():
+                    dur.set(); durum["durum"] = f"Yahoo engelledi ({ardisik} ardışık hisse inemedi): indirme durdu"
+                    k57log.error("%s", durum["durum"])
+            if k % 250 == 0:
+                k57log.info("Yahoo: %d / %d (%.0f sn) %s", k, len(eksik), time.time() - t0,
+                            {a: durum[a] for a in ("indirilen", "yok_404", "engel", "hata")})
+    if durum["durum"] == "tamam" and (durum["engel"] or durum["hata"]):
+        durum["durum"] = "eksik"
+    durum["son_utc"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    with open(dyol, "w", encoding="utf-8") as f:
+        json.dump(durum, f, ensure_ascii=False, indent=1)
+    k57log.info("Yahoo indirme: %s", {a: v for a, v in durum.items() if a != "inemeyen"})
+    return durum
+
+
+def k57b_yahoo_oku(yol: str) -> Tuple[Optional[pd.DataFrame], str]:
+    """Önbellek JSON -> düzeltmeli OHLCV (adjclose / close oranı OHLC'ye; V_ABD biçimi), kes gününde kesik. (df | None, durum)."""
+    Y = K57B_ESIK["yahoo"]; Ev = K57B_ESIK["evren"]
+    try:
+        J = json.load(open(yol, encoding="utf-8"))
+    except (OSError, ValueError) as ex:
+        return None, f"okunamadı ({ex})"
+    if "yok" in J:
+        return None, "yok"
+    res = ((J.get("chart") or {}).get("result") or [None])[0]
+    if not res or not res.get("timestamp"):
+        return None, "veri yok"
+    meta = res.get("meta") or {}
+    if meta.get("instrumentType") not in Ev["tur"]:
+        return None, f"tür dışı ({meta.get('instrumentType')})"
+    tz = meta.get("exchangeTimezoneName") or "America/New_York"
+    idx = pd.to_datetime(res["timestamp"], unit="s", utc=True).tz_convert(tz).tz_localize(None).normalize()
+    q = (res.get("indicators") or {}).get("quote", [{}])[0]
+    d = pd.DataFrame({"Open": q.get("open"), "High": q.get("high"), "Low": q.get("low"), "Close": q.get("close"), "Volume": q.get("volume")},
+                     index=idx, dtype=float)
+    adj = ((res.get("indicators") or {}).get("adjclose") or [{}])[0].get("adjclose")
+    if adj is not None and len(adj) == len(d):
+        f = np.asarray(pd.Series(adj, dtype=float), float) / d.Close.to_numpy(float)
+        for c in ("Open", "High", "Low", "Close"):
+            d[c] = d[c].to_numpy(float) * f
+    d = d[~d.index.duplicated(keep="last")].dropna(subset=["Open", "High", "Low", "Close"]).sort_index()
+    d = d[(d.High >= d.Low) & (d.Close > 0) & (d.index <= pd.Timestamp(Y["kes"]))]
+    d["Volume"] = d.Volume.fillna(0.0)
+    d.index.name = "Date"
+    if len(d) < Ev["min_gun"]:
+        return None, f"kısa ({len(d)} gün)"
+    return d, "fiyat"
+
+
+def k57b_fiyat_genis(U: pd.DataFrame) -> Tuple[Dict[str, pd.DataFrame], pd.DataFrame]:
+    """Evren tablosu + önbellek -> fiyat sözlüğü; evren tablosuna durum, ilk / son tarih, gün sayısı yazılır."""
+    V: Dict[str, pd.DataFrame] = {}; sat = []
+    for r in U.itertuples():
+        y = _k57b_dosya(r.sembol)
+        if not os.path.exists(y):
+            sat.append({"durum": "inmedi", "ilk": pd.NaT, "son": pd.NaT, "gun": 0}); continue
+        d, dur = k57b_yahoo_oku(y)
+        if d is None:
+            sat.append({"durum": dur, "ilk": pd.NaT, "son": pd.NaT, "gun": 0}); continue
+        V[r.sembol] = d; sat.append({"durum": "fiyat", "ilk": d.index[0], "son": d.index[-1], "gun": len(d)})
+    U = pd.concat([U.reset_index(drop=True), pd.DataFrame(sat)], axis=1)
+    k57log.info("B1 fiyat: %d / %d hisse (%s)", len(V), len(U), U.durum.str.split(" ").str[0].value_counts().to_dict())
+    return V, U
+
+
+def k57b_likit(V: Dict[str, pd.DataFrame], X: pd.DataFrame) -> np.ndarray:
+    """Tepki gününde biten likit_gun işlem günlük medyan işlem değeri (Close x Volume); yalnız tepki günü ve öncesi (geleceğe bakmaz)."""
+    g = K57B_ESIK["likit_gun"]; out = np.full(len(X), np.nan)
+    pos = {s: i for i, s in enumerate(X.index)}
+    for s, grp in X.groupby("sembol"):
+        d = V.get(s)
+        if d is None:
+            continue
+        m = (d.Close * d.Volume).rolling(g, min_periods=g).median()
+        v = m.reindex(pd.DatetimeIndex(pd.to_datetime(grp.tepki_son))).to_numpy(float)
+        for i, x in zip(grp.index, v):
+            out[pos[i]] = x
+    return out
+
+
+# ---------------------------------------------------------------- 8b) ölçüm, karar
+def _k57b_bayrak(s: pd.Series) -> pd.Series:
+    """CSV'den okunan süzgeç sütunu -> bool ('True' / True / 1 -> True; NaN / 'False' -> False)."""
+    if s.dtype == bool:
+        return s
+    return s.astype(str).str.strip().str.lower().isin(["true", "1", "1.0"])
+
+
+def k57b_hucreler(X: pd.DataFrame, pazar: str, deney: str, O: Dict[str, Any], evren: str = "") -> List[Dict[str, Any]]:
+    """Bir deneme x pazar: K57 hücreleri, FI_OLCUT (fi_olcut_hucre), K57 tutar kuralı. X'te r60 sütunu = o ufkun getirisi."""
+    E = K57_ESIK; Bd = K57B_ESIK["deney"][deney]; out = []
+    m = k57_maske(X, Bd["suzgec"], [])
+    for ad, a, b in E["hucre"][pazar]:
+        g = pd.to_datetime(X.giris); S = X[m & (g >= a) & (g <= b)]
+        z = FI.fi_olcut_hucre(S, O) if len(S) else {"n": 0}
+        out.append({"deney": deney, "ad": Bd["ad"], "varyant": Bd["varyant"], "suzgec": "+".join(Bd["suzgec"]), "eksik": "",
+                    "evren": evren or Bd["evren"], "ufuk": O["ufuk"], "pazar": pazar, "donem": ad,
+                    "rol": "KARAR" if [pazar, ad] in K57B_ESIK["karar_hucre"] else "BİLGİ", "olay_n": int(len(S)), **z,
+                    "portfoy_yuzdelik": k57_portfoy_yuzdelik(S, O) if z.get("n", 0) else np.nan, "tutar": k57_tutar(z, O)})
+    return out
+
+
+def k57b_karar(Z: pd.DataFrame) -> Dict[str, Dict[str, str]]:
+    """Her deneme için: ABD 2023 + ABD 2024-26 karar (FON_IZI _fi_olcut_karar_ortak; karar pazarları ABD + AVR, Avrupa verisi yok); BIST bilgi."""
+    E = K57_ESIK; O = _k57_olcut(); out = {}
+    for d, g in Z.groupby("deney", sort=False):
+        t = {}
+        for r in g.itertuples():
+            if r.pazar == "ABD" and [r.pazar, r.donem] in K57B_ESIK["karar_hucre"]:
+                t[("ABD", r.donem)] = bool(r.tutar)
+            elif r.pazar == "BIST":
+                t[("BIST", E["bist_karar_eslem"][r.donem])] = bool(r.tutar)
+        k = FI._fi_olcut_karar_ortak(t, O).replace("(AVR verisi yok)", "(AVRUPA VERİSİ YOK)") if ("ABD", "2023") in t else "İZ DEĞİL (ABD ölçülmedi)"
+        bist = "ölçülmedi" if not any(p == "BIST" for p, _ in t) else ("TUTAR" if all(t.get(("BIST", x), False) for x in ("2023", "2024-26")) else "tutmaz")
+        out[d] = {"karar": k, "bist_iki_hucre": bist}
+    return out
+
+
+def _k57b_olay_oku(cikti: str, ad: str) -> pd.DataFrame:
+    """K57 mühürlü koşusunun olay dosyası; süzgeç sütunları bool'a çevrilir."""
+    X = pd.read_csv(_k57_yol(ad, cikti), parse_dates=["D", "d0", "tepki_son", "giris"], low_memory=False)
+    for c in ("F1", "F2", "F3", "F7", "V1"):
+        X[c] = _k57b_bayrak(X[c])
+    return X
+
+
+def k57b_kos(cikti: Optional[str] = None) -> Dict[str, Any]:
+    """K57-B: mühürler (K57 + K57-B) -> B2 / B3 (özgün evren, K57 olayları, yeniden üretim denetimi) -> B1 (geniş evren) -> çıktılar + rapor."""
+    cikti = cikti or K57_YOL["cikti"]; os.makedirs(cikti, exist_ok=True)
+    k57 = k57_onkayit_dogrula(cikti); ok = k57b_onkayit_dogrula(cikti)
+    bas = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    k57log.info("%s | K57-B ön kayıt %s (%s) | K57 mührü %s", K57B_SURUM, ok["zaman_utc"], ok["sha"][:12], k57["sha"][:12])
+    E = K57_ESIK; Bx = K57B_ESIK["deney"]; O60 = _k57_olcut(); O20 = dict(O60, ufuk=Bx["B2"]["ufuk"])
+    meta: Dict[str, Any] = {"surum": K57B_SURUM, "onkayit_b": ok, "k57_muhur": k57["sha"], "kos_baslangic": bas, "yeniden_uretim": [], "sayilar": {}}
+    Z: List[Dict[str, Any]] = []
+    # --- B2 / B3: özgün evrenler, K57 olayları
+    Zk57 = pd.read_csv(_k57_yol("hucre", cikti))
+    for pazar, ad in (("BIST", "bist"), ("ABD", "abd")):
+        X = _k57b_olay_oku(cikti, ad); V = k57_fiyat(pazar)
+        v1 = k57_maske(X, E["varyant"]["V1"], [])
+        if not (v1 == X.V1).all():
+            raise K57Hata(f"{pazar}: olay dosyasındaki V1 süzgeçlerden yeniden üretilemedi ({int((v1 != X.V1).sum())} fark)")
+        P = FI.fi_olcut_panel(V, O60); X60 = FI.fi_olcut_olay(P, X[["sembol", "giris"]]); del P
+        X6 = X.assign(r60=X60.r60.to_numpy(), esli_r60=X60.esli_r60.to_numpy(), sira=X60.sira.to_numpy(), fark=X60.fark.to_numpy(),
+                      _esler=list(X60["_esler"]))
+        # yeniden üretim denetimi: K57 ANA V1 (n, ortalama eşli fark) aynı çıkmalı
+        for a_, a, b in E["hucre"][pazar]:
+            g = pd.to_datetime(X6.giris); S = X6[v1 & (g >= a) & (g <= b)].dropna(subset=["fark"])
+            k = Zk57[(Zk57.deney == "ANA") & (Zk57.varyant == "V1") & (Zk57.pazar == pazar) & (Zk57.donem == a_)]
+            kn = int(k.n.iloc[0]) if len(k) and pd.notna(k.n.iloc[0]) else 0
+            kf = float(k.ort_fark.iloc[0]) if len(k) and kn else np.nan
+            esit = kn == len(S) and (kn == 0 or abs(float(S.fark.mean()) - kf) < 1e-9)
+            meta["yeniden_uretim"].append({"pazar": pazar, "donem": a_, "k57_n": kn, "b_n": int(len(S)), "esit": bool(esit)})
+            if not esit:
+                raise K57Hata(f"yeniden üretim tutmadı: K57 ANA V1 {pazar} {a_} n {kn} / {len(S)}, fark {kf} / {S.fark.mean()}")
+        Z += k57b_hucreler(X6, pazar, "B3", O60)
+        P = FI.fi_olcut_panel(V, O20); X20 = FI.fi_olcut_olay(P, X[["sembol", "giris"]]); del P
+        X2 = X.assign(r60=X20.r60.to_numpy(), esli_r60=X20.esli_r60.to_numpy(), sira=X20.sira.to_numpy(), fark=X20.fark.to_numpy(),
+                      _esler=list(X20["_esler"]))
+        Z += k57b_hucreler(X2, pazar, "B2", O20)
+        meta["sayilar"][pazar] = {"olay": int(len(X)), "V1": int(v1.sum()), "V1-F3": int(k57_maske(X, Bx["B3"]["suzgec"], []).sum())}
+        del V
+    # --- B1: geniş ABD evreni
+    T, neden = k57_abd_temel_tablo()
+    if T is None:
+        raise K57Hata(f"B1 için {neden}")
+    secfs = _k57_secfs_klasor(); cik2s = k57_cik_sembol(secfs); B = k57_secfs_basvuru(secfs); N = k57_nasdaq_liste()
+    U = k57b_evren(T, cik2s)
+    meta["yahoo"] = k57b_yahoo_indir(list(U.sembol))
+    meta["yahoo"]["inemeyen_n"] = len(meta["yahoo"].pop("inemeyen", []))
+    Vg, U = k57b_fiyat_genis(U)
+    Xg = k57_olay_abd(Vg, N, B, cik2s, secfs)
+    Xg["likit20"] = k57b_likit(Vg, Xg)
+    tum = len(Xg); Xg = Xg[Xg.likit20 >= K57B_ESIK["likit_taban_usd"]].copy()
+    Xg = k57_fiyat_olcu(Vg, Xg)          # F7 kayan eşiği yalnız taban üstü olaylardan
+    bilgi = _k57_abd_bilgi_tarihleri(T, N, B, cik2s)
+    Xg = k57_abd_temel_ekle(Xg, T, bilgi, cik2s, (E["F2_kat"],))
+    Xg["V1"] = k57_maske(Xg, E["varyant"]["V1"], [])
+    P = FI.fi_olcut_panel(Vg, O60); Xo = FI.fi_olcut_olay(P, Xg[["sembol", "giris"]]); del P
+    Xg = Xg.assign(r60=Xo.r60.to_numpy(), esli_r60=Xo.esli_r60.to_numpy(), sira=Xo.sira.to_numpy(), fark=Xo.fark.to_numpy(),
+                   _esler=list(Xo["_esler"]))
+    Z += k57b_hucreler(Xg, "ABD", "B1", O60, "genis")
+    hisse_olay = set(Xg.sembol)
+    meta["sayilar"]["ABD_genis"] = {"evren_aday": int(len(U)), "fiyatli": int(len(Vg)), "olay_tum": int(tum), "olay_taban_ustu": int(len(Xg)),
+                                    "hisse_taban_ustu_olay": int(len(hisse_olay)), "V1": int(Xg.V1.sum()), "olculen": int(Xg.fark.notna().sum()),
+                                    "V_ABD_ortak": int(len(hisse_olay & set(pickle.load(open(os.path.join(K57_YOL["veri"], "V_ABD.pkl"), "rb")))))}
+    Zt = pd.DataFrame(Z)
+    kr = k57b_karar(Zt)
+    Zt["karar"] = [kr[d]["karar"] for d in Zt.deney]; Zt["bist_iki_hucre"] = [kr[d]["bist_iki_hucre"] for d in Zt.deney]
+    Zt.to_csv(_k57b_yol("hucre", cikti), index=False)
+    Xg[[c for c in K57B_B1_KOLON if c in Xg]].sort_values("D").to_csv(_k57b_yol("b1_olay", cikti), index=False)
+    U.to_csv(_k57b_yol("b1_evren", cikti), index=False)
+    meta["kos_bitis"] = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    meta["karar"] = kr
+    with open(_k57b_yol("meta", cikti), "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=1, default=str)
+    rap = k57b_rapor(cikti)
+    return {"hucre": Zt, "karar": kr, "meta": meta, "rapor": rap, "B1": Xg}
+
+
+# ---------------------------------------------------------------- 8c) rapor
+def k57b_rapor(cikti: Optional[str] = None) -> str:
+    """K57B_RAPOR.md: düz dille özet, karar tablosu, deneme tabloları, B1 evreni, son V1 olayları, notlar, Ç149 önerisi."""
+    cikti = cikti or K57_YOL["cikti"]
+    for a in ("hucre", "meta", "b1_olay", "b1_evren"):
+        if not os.path.exists(_k57b_yol(a, cikti)):
+            raise K57Hata(f"rapor için {K57B_DOSYA[a]} yok: önce `python K57.py b_kos`")
+    Z = pd.read_csv(_k57b_yol("hucre", cikti)); meta = json.load(open(_k57b_yol("meta", cikti), encoding="utf-8"))
+    X1 = pd.read_csv(_k57b_yol("b1_olay", cikti), parse_dates=["D"]); U = pd.read_csv(_k57b_yol("b1_evren", cikti))
+    O = _k57_olcut(); kr = meta["karar"]; Bx = K57B_ESIK["deney"]; ya = meta.get("yahoo", {}); sg = meta["sayilar"].get("ABD_genis", {})
+
+    def h(d: str, p: str, donem: str) -> Optional[pd.Series]:
+        g = Z[(Z.deney == d) & (Z.pazar == p) & (Z.donem == donem)]
+        return g.iloc[0] if len(g) else None
+
+    def hk(d: str, p: str, donem: str) -> str:
+        r = h(d, p, donem)
+        if r is None:
+            return "—"
+        n = int(r.n) if pd.notna(r.n) else 0
+        if not n:
+            return "n 0"
+        return (f"n {n}, {_yz(r.ort_fark)} ({_yz(r.alt95)} .. {_yz(r.ust95)}), sıra {_sy(r.sira)}, portföy %{_sy(r.portfoy_yuzdelik * 100, 1)}"
+                f" → {'**TUTAR**' if r.tutar else 'tutmaz'}")
+
+    def neden(d: str, p: str, donem: str) -> str:
+        r = h(d, p, donem)
+        if r is None or not (pd.notna(r.n) and r.n):
+            return "olay yok"
+        e = []
+        if r.n < O["n_esik"]:
+            e.append(f"n {int(r.n)} < {O['n_esik']}")
+        if not r.alt95 > 0:
+            e.append("aralık alt ucu ≤ 0")
+        if not r.sira > 0.5:
+            e.append("sıra ≤ 0,50")
+        if not r.portfoy > r.portfoy_esli_p90:
+            e.append("portföy ≤ %90")
+        return ", ".join(e) if e else "dört şart tuttu"
+    genel = [d for d in Bx if kr.get(d, {}).get("karar", "İZ DEĞİL").startswith(("İZ", "ABD-ADAY")) and not kr[d]["karar"].startswith("İZ DEĞİL")]
+    genel_karar = ("ABD-ADAY (" + ", ".join(genel) + "; AVRUPA VERİSİ YOK)") if genel else "İZ DEĞİL"
+    # düz dille paragraf
+    p = []
+    for d in Bx:
+        a, b = h(d, "ABD", "2023"), h(d, "ABD", "2024-26")
+        p.append(f"{d} ({Bx[d]['ad']}): ABD 2023'te {int(a.n) if a is not None and pd.notna(a.n) else 0} olay, eşlerine göre {_yz(a.ort_fark) if a is not None else '—'}; "
+                 f"ABD 2024-26'da {int(b.n) if b is not None and pd.notna(b.n) else 0} olay, {_yz(b.ort_fark) if b is not None else '—'} → {kr[d]['karar']}")
+    ozet = ("YEOTK profiline en yakın çıkan basit kural (bilanço gününe güçlü tepki + satış büyümesi + çeyrek ivmesi + sağlam bilanço, "
+            "fiyat şartı yok) üç yoldan yeniden sınandı: daha geniş ABD evreni, daha kısa ufuk (20 gün), bilanço şartı olmadan. "
+            + " ".join(s + "." for s in p) + (" Hiçbirinde iki ABD hücresi birden dört şartı geçmedi; kural Amerika'da eşlerini sistematik olarak "
+                                              "geçmiyor. Bilanço gününe sert tepki veren büyüyen şirketlerin bir kısmı çok iyi gidiyor ama ortalamada ve "
+                                              "güvenle değil." if not genel else
+                                              " En az bir denemede iki ABD hücresi birden tuttu: bu bir ADAY, örneklem dışı (canlı) izleme gerekir."))
+    karar_t = "\n".join(f"| {d} | {Bx[d]['ad']} | {hk(d, 'ABD', '2023')} | {hk(d, 'ABD', '2024-26')} | "
+                        f"{'—' if 'BIST' not in Bx[d]['pazar'] else hk(d, 'BIST', '2024-26')} | **{kr[d]['karar']}** |" for d in Bx)
+    neden_t = "\n".join(f"- {d}: ABD 2023 — {neden(d, 'ABD', '2023')}; ABD 2024-26 — {neden(d, 'ABD', '2024-26')}." for d in Bx)
+    yakin = Z[(Z.n >= O["n_esik"])].sort_values("alt95", ascending=False).head(5)
+    yakin_t = "\n".join(f"- {r.deney} {r.pazar} {r.donem}: n {int(r.n)}, {_yz(r.ort_fark)} ({_yz(r.alt95)} .. {_yz(r.ust95)}), sıra {_sy(r.sira)}, "
+                        f"portföy yüzdeliği {_sy(r.portfoy_yuzdelik)}{' — TUTAR' if r.tutar else ''}" for r in yakin.itertuples()) or "- yok"
+    son = X1[X1.V1.astype(str).str.lower().isin(["true", "1"])].sort_values("D").tail(12)
+    son_t = "\n".join(f"| {r.sembol} | {pd.Timestamp(r.D).date()} | {_yz(r.ham)} | {_yz(r.satis_yoy, 0)} | {_sy(r.likit20 / 1e6, 1)} | {_yz(r.r60)} | {_yz(r.fark)} |"
+                      for r in son.itertuples())
+    durum_s = U.durum.astype(str).str.split(" ").str[0].value_counts().to_dict()
+    yu = meta.get("yeniden_uretim", [])
+    yu_s = "tuttu (" + ", ".join(f"{r['pazar']} {r['donem']} n {r['b_n']}" for r in yu) + ")" if yu and all(r["esit"] for r in yu) else "TUTMADI"
+
+    def ceyrek_s(d: str) -> str:
+        g = Z[Z.deney == d]
+        return "; ".join(f"{r.pazar} {r.donem}: n {int(r.n) if pd.notna(r.n) else 0}, {_yz(r.ort_fark)} ({_yz(r.alt95)} .. {_yz(r.ust95)}), "
+                         f"sıra {_sy(r.sira)}, portföy %{_sy(r.portfoy_yuzdelik * 100, 1)}, {'TUTAR' if r.tutar else 'tutmaz'}" for r in g.itertuples())
+    notu = (f"{genel_karar}. " + " ".join(f"{d} {Bx[d]['ad']} [{kr[d]['karar']}]: {ceyrek_s(d)}." for d in Bx)
+            + f" B1 evreni: {sg.get('evren_aday', '—')} aday, {sg.get('fiyatli', '—')} hisse fiyatlı (Yahoo; inen {ya.get('indirilen', 0) + ya.get('onbellek', 0)}, "
+              f"404 {ya.get('yok_404', 0)}, inemeyen {ya.get('inemeyen_n', 0)}), taban üstü olay {sg.get('olay_taban_ustu', '—')} ({sg.get('hisse_taban_ustu_olay', '—')} hisse), "
+              f"V1 {sg.get('V1', '—')}.")
+    c149 = (f'_ik_k("Ç149", "2026-11-09", "K57-B: YEOTK profili V1 (güçlü tepki + büyüme + ivme + sağlam bilanço, fiyat şartı yok) çevresinde önceden yazılı '
+            f'3 devam: B1 geniş ABD evreni (SEC frames + Yahoo fiyat, 20 gün medyan işlem değeri >= 1 milyon $), B2 20 gün ufuk, B3 F3\'süz", '
+            f'"K57.py, test_k57.py", "K57 eşiğe en yakın V1 geniş evrende / kısa ufukta / bilanço şartsız tutar mı?", '
+            f'"Devam (ön kayıt K57B_ON_KAYIT.md, sha {meta["onkayit_b"]["sha"][:12]}; ölçüt FI_OLCUT; karar ABD 2023 + 2024-26, Avrupa verisi yok)", "", 3, '
+            f'cikti="arastirma_cikti/k57_yeotk_profili/ (K57B_ON_KAYIT.md, K57B_RAPOR.md, hucre_b.csv, olaylar_b1_abd.csv.gz, evren_b1.csv, k57b_kos_meta.json)", '
+            f'notu="{notu}"),')
+    metin = f"""# K57-B — V1 çevresinde önceden yazılı 3 devam: RAPOR
+
+Ön kayıt: {meta['onkayit_b']['zaman_utc']} UTC (K57B sha {meta['onkayit_b']['sha'][:12]}; K57 mührü {meta['k57_muhur'][:12]} değişmedi); koşu {meta['kos_baslangic']} → {meta.get('kos_bitis', '')}. {K57B_SURUM}
+
+## KARAR: {genel_karar}
+
+Düz dille: {ozet}
+
+## Karar tablosu (iki ABD hücresi karar; BIST bilgi)
+| Deneme | Ne değişti | ABD 2023 | ABD 2024-26 | BIST 2024-26 (bilgi) | Karar |
+|---|---|---|---|---|---|
+{karar_t}
+
+Neden tutmadı:
+{neden_t}
+
+## B1 — geniş ABD evreni (V1, 60 gün)
+- Evren: SEC frames'te gelir + kâr + özkaynak verisi ve borsa kodu olan {sg.get('evren_aday', '—')} şirket; Yahoo'dan fiyatı alınan {sg.get('fiyatli', '—')}
+  (durum: {durum_s}). Yahoo: {ya.get('durum', '—')}; bu koşuda inen {ya.get('indirilen', 0)}, önbellekten {ya.get('onbellek', 0)}, 404 {ya.get('yok_404', 0)},
+  inemeyen {ya.get('inemeyen_n', 0)}; ilk indirme {ya.get('ilk_indirme_utc', '—')} (ön kayıttan sonra).
+- Olay: {sg.get('olay_tum', '—')} bilanço günü; 20 gün medyan işlem değeri >= 1 milyon $ olan {sg.get('olay_taban_ustu', '—')} ({sg.get('hisse_taban_ustu_olay', '—')} hisse;
+  {sg.get('V_ABD_ortak', '—')} tanesi V_ABD'de de var). V1 olayı {sg.get('V1', '—')}, ölçülen olay {sg.get('olculen', '—')}.
+{_k57_tablo(Z, 'B1')}
+## B2 — 20 gün ufuk (V1; özgün V_ABD / V_BIST, K57 olayları)
+{_k57_tablo(Z, 'B2')}
+## B3 — F3'süz (F7 + F1 + F2, 60 gün; özgün evrenler)
+{_k57_tablo(Z, 'B3')}
+## Eşiğe en yakın hücreler (n >= {O['n_esik']}, aralık alt ucuna göre)
+{yakin_t}
+
+## Akıl sağlığı: B1'in en son 12 V1 olayı (geniş evren)
+| Hisse | Açıklama | Tepki (ham) | Satış yıllık | 20g medyan işlem (milyon $) | r60 | Eşli fark |
+|---|---|---|---|---|---|---|
+{son_t}
+
+## Notlar ve sınırlar
+- B2 / B3 K57'nin mühürlü olay dosyalarından koşuldu; K57 ANA V1 hücreleri aynı dosyalardan yeniden üretildi: {yu_s}.
+- B1 evreni bugünkü company_tickers.json'dan (SEC): borsadan çıkmış / kodu değişmiş şirketler yok (hayatta kalma yanlılığı V_ABD'ye göre
+  küçük ama sıfır değil). Fiyatlar Yahoo düzeltmeli (temettü + bölünme), 31.08.2026'da kesik. Likidite tabanı yalnız olaylara, eşlere uygulanmadı (FI_OLCUT
+  paneli değişmeden; ön kayıt).
+- Frames değerleri son başvurudaki (düzeltilmiş) değerdir (K57 notu); bilgi tarihi kuralı K57 ile aynı.
+- Çoklu deneme: K57 (5 varyant + 3 devam) + K57-B (3); ABD-ADAY çıksa bile aday, canlı izleme olmadan üretime girmez.
+- SEC'e yeni istek yapılmadı (frames önbelleği); kişisel e-posta kullanılmadı.
+
+## Sıradaki 3 (ön kayıtta yazılı; bu görevde koşulmadı, karar ana oturumda)
+- C1: {K57B_ESIK['sonraki']['C1']}.
+- C2: {K57B_ESIK['sonraki']['C2']}.
+- C3: {K57B_ESIK['sonraki']['C3']}.
+
+## IZ_KARNE önerisi (Ç149; IZ_KARNE.py'ye ana oturum işler)
+```
+{c149}
+```
+"""
+    yol = _k57b_yol("rapor", cikti)
+    with open(yol, "w", encoding="utf-8") as f:
+        f.write(metin)
+    k57log.info("K57-B rapor: %s | KARAR: %s", yol, genel_karar)
+    return yol
+
+
 def _cakisma_kontrol_k57(_once=_CK_ONCE_K57, _dosya="K57.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka dosyanın) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -1060,7 +1635,7 @@ if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
     ap = argparse.ArgumentParser(description=K57_SURUM)
-    ap.add_argument("komut", choices=["onkayit", "indir", "kos", "rapor"])
+    ap.add_argument("komut", choices=["onkayit", "indir", "kos", "rapor", "b_onkayit", "b_kos", "b_rapor"])
     ap.add_argument("--cikti", default=None); ap.add_argument("--indirme", choices=["evet", "hayir"], default="evet")
     a = ap.parse_args()
     try:
@@ -1074,6 +1649,13 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         elif a.komut == "kos":
             R = k57_kos(a.cikti, indir=a.indirme == "evet")
             print("KARAR (V3):", R["karar"][("ANA", K57_ESIK["ana_varyant"])]["karar"]); print(R["rapor"])
+        elif a.komut == "b_onkayit":
+            print(k57b_onkayit(a.cikti))
+        elif a.komut == "b_kos":
+            R = k57b_kos(a.cikti)
+            print("K57-B KARAR:", {d: k["karar"] for d, k in R["karar"].items()}); print(R["rapor"])
+        elif a.komut == "b_rapor":
+            print(k57b_rapor(a.cikti))
         else:
             print(k57_rapor(a.cikti))
     except K57Hata as ex:
