@@ -1726,6 +1726,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "SON TALİMAT: kriptoyu boş ver; YEOTK gibi sıkı dosya hisseleri BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan ele al, her şeyi test et, gerekirse makine / web / ajan; bağlam kopmasın, deftere yaz; basit ve erişilebilir bilgi değerlidir",
      "yapilan": "CLAUDE.md'ye kalıcı bölüm + IK_ACIK YOL maddesi; K57 programı başlatıldı: (a) ön kayıtlı geçmiş test (K57.py), (b) BIST 3Ç26 canlı tarama, (c) ABD Q3 2026 canlı tarama (SEC XBRL frames)",
      "sonuc": "Sürüyor; sonuç bu satırın altındaki K57 satırlarında", "durum": "SÜRÜYOR"},
+    {"tarih": "2026-11-09", "istek": "Not: share.google bağlantısından haberleri takip edebilir misin (çalışanlar devam etsin)",
+     "yapilan": "Bağlantı DonanımHaber forum 'profil düzenle' sayfasına (giriş gerekli) yönleniyor; hesaba erişim yok. Herkese açık forum konuları bağlantıyla okunabilir; haber için KAP / SEC / web araması kullanılıyor",
+     "sonuc": "Not alındı; K57 kolları sürüyor", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas, CEMAL'İN SON TALİMATI): YEOTK profili ('sıkı dosya') hisselerini BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan test et; "
