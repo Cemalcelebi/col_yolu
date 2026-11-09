@@ -1744,6 +1744,9 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "E-posta yalnız SEC isteğinin User-Agent'ında ortam değişkeniyle kullanıldı (koda / repoya / günlüğe yazılmadı; günlükte maskeli). 178 frames dosyası indi; K57 aynı mühürle ABD tam veriyle yeniden koşuldu",
      "sonuc": "İZ DEĞİL (değişmedi): ABD tam profil çok seyrek (n 2-5) ve eksi; eşiğe en yakın V1 (fiyat şartsız) ABD 2024-26 +%10,3 n 31; F6 (tepeden düşmüş) eklenince bozuluyor. Sıradaki 3 deneme K57-B",
      "durum": "TAMAMLANDI, AÇIK: K57-B"},
+    {"tarih": "2026-11-09", "istek": "E-postayı yanlış yazmışım, doğrusunu biliyorsun",
+     "yapilan": "Not alındı: sonraki SEC isteklerinde Cemal'in hesabındaki doğru adres, yalnız User-Agent ortam değişkeninde kullanılır (koda / repoya yazılmaz). Bugünkü 178 dosya zaten indi ve önbellekte; yeniden indirme gerekmiyor",
+     "sonuc": "Veri ve sonuç etkilenmedi", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL; ABD tam veriyle (SEC, Cemal'in e-posta izni) yeniden koşuldu, sonuç aynı. "
