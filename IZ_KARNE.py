@@ -1041,7 +1041,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
                "test lift 5,4 (eğitim 4,9) ama mutlak olasılık %0,12 -> %0,64; sinyal gününde alım test 7 g medyan -%9,7 vs taban -%2,9. Literatür: yeni "
                "tokenlarda 2025 kuşağının ~%85'i TGE fiyatının altında; pump-and-dump katılımcıları çoğunlukla kaybeder. RITUAL: TGE 26 Eki 2026, float %18, "
                "doğrulanmış katalizör yok; +%99,88 24 saatlik kayan değişim. Sınır: Binance ana API (451) ve Bybit (403) erişilemedi; OKX / Gate delist "
-               "edilenler yok (hayatta kalma yanlılığı); komisyon / kayma ve güven aralığı yok."),
+               "edilenler yok (hayatta kalma yanlılığı); komisyon / kayma ve güven aralığı yok."),    _ik_k("Ç148", "2026-11-09", "YEOTK PROFİLİ ('SIKI DOSYA') ÖN KAYITLI GEÇMİŞ TESTİ: bilanço günü güçlü tepki (F7, kayan üst %20 + ham >= +%5) + satış büyümesi (F1) + çeyrek ivmesi ve kâr sıçraması (F2) + sağlam bilanço (F3) + seyrelme yok (F4, ABD) + fon payı < %2 (F5, BIST) + tepeden %30-70 aşağıda ve 60 gün pazarın altında (F6); V0-V4, önceden yazılı 3 devam (F2 1,2 kat, 120 gün, iki ivmeli çeyrek)", "K57.py, test_k57.py", "Cemal (9 Kas 2026, tek ve son talimat): YEOTK gibi sıkı dosyalar BIST'te ve ABD'de eşlerini geçiyor mu?", "Yeni deneme (ön kayıt K57_ON_KAYIT.md, sha 2a6cc6f6d1fd; ölçüt FI_OLCUT; karar ABD 2023 + 2024-26, Avrupa verisi yok)", "", 3, cikti="arastirma_cikti/k57_yeotk_profili/ (K57_ON_KAYIT.md, K57_RAPOR.md, hucre.csv, olaylar_bist.csv, olaylar_abd.csv)", notu="ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK). Olay: BIST 9046 (V3 22), ABD 29678 (V3 kısmi 893). BIST V3 (bilgi) 2022-23: n 1, +%23,8 (+%23,8 .. +%23,8), sıra 0,82, tutmaz; 2024-26: n 20, -%5,9 (-%14,1 .. +%1,3), sıra 0,47, tutmaz. ABD V3 (F1-F3 yok, fiyat + pay kısmı) 2021-22: n 174, +%2,1 (-%3,0 .. +%7,5), sıra 0,52, tutmaz; 2023: n 202, +%7,6 (+%0,5 .. +%10,8), sıra 0,58, tutmaz; 2024-26: n 464, -%2,7 (-%7,5 .. +%2,3), sıra 0,48, tutmaz. Tutan hücreler: yok. ABD TEMEL VERİSİ YOK: 182 / 182 frames dosyası yok (ör. ['Revenues/CY2020Q1', 'Revenues/CY2020Q2']); SEC durumu: reddedildi (403)."),
 ]
 
 
@@ -1725,7 +1725,8 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Pratik kural: düşük float, yeni listeleme, sığ tahta = perakende çıkış likiditesi; uzak dur ya da sıfırlanmayı kabul ettiğin tutarla", "durum": "TAMAMLANDI"},
     {"tarih": "2026-11-09", "istek": "SON TALİMAT: kriptoyu boş ver; YEOTK gibi sıkı dosya hisseleri BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan ele al, her şeyi test et, gerekirse makine / web / ajan; bağlam kopmasın, deftere yaz; basit ve erişilebilir bilgi değerlidir",
      "yapilan": "CLAUDE.md'ye kalıcı bölüm + IK_ACIK YOL maddesi; K57 programı başlatıldı: (a) ön kayıtlı geçmiş test (K57.py), (b) BIST 3Ç26 canlı tarama, (c) ABD Q3 2026 canlı tarama (SEC XBRL frames)",
-     "sonuc": "Sürüyor; sonuç bu satırın altındaki K57 satırlarında", "durum": "SÜRÜYOR"},
+     "sonuc": "K57 (Ç148): YEOTK profili geçmişte eşlerini geçmiyor; 66 hücreden hiçbiri tutmadı; ABD 2023 artı, 2024-26 eksi (K28 deseni); ABD F1-F3 SEC 403 nedeniyle ölçülemedi. Canlı: BIST 3Ç26 362 şirkette profile en yakın PNLSN ve FORTE; ABD Q3 2.128 şirkette tam profil yalnız CENX (fabrika hattı yeniden açılışı, isimli sözleşme yok); AEHR ölçüme tam girmedi",
+     "durum": "TAMAMLANDI, AÇIK: SEC kimlik kararı (Cemal), 17 Kas sonrası ABD taraması yinelenir"},
     {"tarih": "2026-11-09", "istek": "Not: share.google bağlantısından haberleri takip edebilir misin (çalışanlar devam etsin)",
      "yapilan": "Bağlantı DonanımHaber forum 'profil düzenle' sayfasına (giriş gerekli) yönleniyor; hesaba erişim yok. Herkese açık forum konuları bağlantıyla okunabilir; haber için KAP / SEC / web araması kullanılıyor",
      "sonuc": "Not alındı; K57 kolları sürüyor", "durum": "TAMAMLANDI"},
@@ -1734,6 +1735,9 @@ IK_GOREV: List[Dict[str, str]] = [
      "sonuc": "Karar Cemal'de: SEC e-posta izni ve otomatik kontrol", "durum": "TAMAMLANDI, AÇIK: Cemal'in yanıtı"},
 ]
 IK_ACIK: List[str] = [
+    "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL (BIST bilgi + ABD fiyat kısmı); ABD F1-F3 ölçülemedi (SEC 403, kimlik satırı "
+    "Cemal'in kararı: `K57_SEC_UA=... python K57.py indir` sonra `kos`, mühür aynı). Canlı izleme: BIST PNLSN, FORTE (3Ç26), ABD CENX, AEHR; 17 Kas sonrası "
+    "ABD Q3 taraması yinelenir (küçük şirket 10-Q son günü 16 Kas); DGXX 13 Kas, QMLS 16-23 Kas, DGXX teslim 15 Ara.",
     "YOL (9 Kas, CEMAL'İN SON TALİMATI): YEOTK profili ('sıkı dosya') hisselerini BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan test et; "
     "gerekirse makine / web / ajan; basit ve erişilebilir bilgi esas. K57 = profilin ön kayıtlı geçmiş testi (bilanço günü tepkisi + temel ivme + "
     "seyrelme yok + fon lekesi yok + tepeden düşmüş; FI_OLCUT, karar ABD 2023 + 2024-26, BIST bilgi) + canlı tarama (BIST 3Ç26, ABD Q3 2026). "
