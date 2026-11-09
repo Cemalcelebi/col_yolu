@@ -1733,6 +1733,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "Hangi web sayfası, forum, sosyal medya sana lazım; ne yazmam gerekiyor, açık ve net söyle",
      "yapilan": "Erişim haritası mesajla: açık (web arama, Yahoo fiyat, KAP aktarıcıları, SEC frames önceden inen), kapalı (SEC 403: e-postalı UA gerekiyor; KAP doğrudan çoğu zaman 403; X / Telegram / Instagram ve girişli forumlar). Cemal'den istenecekler: SEC için e-posta izni (açık cümleyle), isteğe bağlı ücretsiz veri anahtarı, forum konu bağlantıları, pozisyon ekranları, kritik tarihlerde otomatik kontrol onayı",
      "sonuc": "Karar Cemal'de: SEC e-posta izni ve otomatik kontrol", "durum": "TAMAMLANDI, AÇIK: Cemal'in yanıtı"},
+    {"tarih": "2026-11-09", "istek": "QMLS yükseliyor; satmakta acele mi ettik",
+     "yapilan": "Fiyat (Yahoo, 9 Kas 17:47 UTC): QMLS 3,32 $, 5 Kas dibinden +%23; satılan yarı ≈83 adet ≈3,10 $'dan (257,40 $); kaçan ≈18 $; aynı gün sektör toparlanması (CRWV +%5, NBIS +%8, DGXX +%9), şirket haberi yok",
+     "sonuc": "Acele değil: plan yarı yarıya pişmanlığı bölmek içindi; kalan 83 adet aynı yükselişi alıyor; olay kuralları sürüyor", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL (BIST bilgi + ABD fiyat kısmı); ABD F1-F3 ölçülemedi (SEC 403, kimlik satırı "
