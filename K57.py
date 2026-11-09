@@ -1535,7 +1535,8 @@ def k57b_rapor(cikti: Optional[str] = None) -> str:
     son = X1[X1.V1.astype(str).str.lower().isin(["true", "1"])].sort_values("D").tail(12)
     son_t = "\n".join(f"| {r.sembol} | {pd.Timestamp(r.D).date()} | {_yz(r.ham)} | {_yz(r.satis_yoy, 0)} | {_sy(r.likit20 / 1e6, 1)} | {_yz(r.r60)} | {_yz(r.fark)} |"
                       for r in son.itertuples())
-    durum_s = U.durum.astype(str).str.split(" ").str[0].value_counts().to_dict()
+    dsay = U.durum.astype(str).str.replace(r" \(.*\)$", "", regex=True).value_counts().to_dict()
+    durum_s = ", ".join(f"{k} {v}" for k, v in dsay.items())
     yu = meta.get("yeniden_uretim", [])
     yu_s = "tuttu (" + ", ".join(f"{r['pazar']} {r['donem']} n {r['b_n']}" for r in yu) + ")" if yu and all(r["esit"] for r in yu) else "TUTMADI"
 
@@ -1544,9 +1545,8 @@ def k57b_rapor(cikti: Optional[str] = None) -> str:
         return "; ".join(f"{r.pazar} {r.donem}: n {int(r.n) if pd.notna(r.n) else 0}, {_yz(r.ort_fark)} ({_yz(r.alt95)} .. {_yz(r.ust95)}), "
                          f"sıra {_sy(r.sira)}, portföy %{_sy(r.portfoy_yuzdelik * 100, 1)}, {'TUTAR' if r.tutar else 'tutmaz'}" for r in g.itertuples())
     notu = (f"{genel_karar}. " + " ".join(f"{d} {Bx[d]['ad']} [{kr[d]['karar']}]: {ceyrek_s(d)}." for d in Bx)
-            + f" B1 evreni: {sg.get('evren_aday', '—')} aday, {sg.get('fiyatli', '—')} hisse fiyatlı (Yahoo; inen {ya.get('indirilen', 0) + ya.get('onbellek', 0)}, "
-              f"404 {ya.get('yok_404', 0)}, inemeyen {ya.get('inemeyen_n', 0)}), taban üstü olay {sg.get('olay_taban_ustu', '—')} ({sg.get('hisse_taban_ustu_olay', '—')} hisse), "
-              f"V1 {sg.get('V1', '—')}.")
+            + f" B1 evreni: {sg.get('evren_aday', '—')} aday, {sg.get('fiyatli', '—')} hisse fiyatlı (Yahoo durumları: {durum_s}), "
+              f"taban üstü olay {sg.get('olay_taban_ustu', '—')} ({sg.get('hisse_taban_ustu_olay', '—')} hisse), V1 {sg.get('V1', '—')}.")
     c149 = (f'_ik_k("Ç149", "2026-11-09", "K57-B: YEOTK profili V1 (güçlü tepki + büyüme + ivme + sağlam bilanço, fiyat şartı yok) çevresinde önceden yazılı '
             f'3 devam: B1 geniş ABD evreni (SEC frames + Yahoo fiyat, 20 gün medyan işlem değeri >= 1 milyon $), B2 20 gün ufuk, B3 F3\'süz", '
             f'"K57.py, test_k57.py", "K57 eşiğe en yakın V1 geniş evrende / kısa ufukta / bilanço şartsız tutar mı?", '
@@ -1571,8 +1571,9 @@ Neden tutmadı:
 
 ## B1 — geniş ABD evreni (V1, 60 gün)
 - Evren: SEC frames'te gelir + kâr + özkaynak verisi ve borsa kodu olan {sg.get('evren_aday', '—')} şirket; Yahoo'dan fiyatı alınan {sg.get('fiyatli', '—')}
-  (durum: {durum_s}). Yahoo: {ya.get('durum', '—')}; bu koşuda inen {ya.get('indirilen', 0)}, önbellekten {ya.get('onbellek', 0)}, 404 {ya.get('yok_404', 0)},
-  inemeyen {ya.get('inemeyen_n', 0)}; ilk indirme {ya.get('ilk_indirme_utc', '—')} (ön kayıttan sonra).
+  (Yahoo durumları: {durum_s}; 'yok' = 404, 'inmedi' = denemelerden sonra inemedi, 'kısa' < 150 gün, 'tür dışı' = EQUITY değil).
+  Yahoo: {'ENGELLEDİ, B1 inen hisselerle koşuldu' if 'engelledi' in str(ya.get('durum', '')) else 'engellemedi (ardışık engel yok)'}; ilk indirme {ya.get('ilk_indirme_utc', '—')} (ön kayıttan sonra); b_kos bu koşuda önbellekten {ya.get('onbellek', 0)}
+  dosya okudu, inemeyen {ya.get('inemeyen_n', 0)} hisseyi yeniden denedi.
 - Olay: {sg.get('olay_tum', '—')} bilanço günü; 20 gün medyan işlem değeri >= 1 milyon $ olan {sg.get('olay_taban_ustu', '—')} ({sg.get('hisse_taban_ustu_olay', '—')} hisse;
   {sg.get('V_ABD_ortak', '—')} tanesi V_ABD'de de var). V1 olayı {sg.get('V1', '—')}, ölçülen olay {sg.get('olculen', '—')}.
 {_k57_tablo(Z, 'B1')}

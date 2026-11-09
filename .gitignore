@@ -243,3 +243,4 @@ kap_nobet_ayar.json
 # SESSIZ_ML: model dosyalari modeller.tar.gz olarak saklanir; buyuk olay dosyasi yeniden uretilebilir
 arastirma_cikti/sessiz_ml/modeller/
 arastirma_cikti/sessiz_ml/sm_olaylar.csv.gz
+arastirma_cikti/k57_yeotk_profili/*.csv.gz

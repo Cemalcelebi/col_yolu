@@ -1,0 +1,97 @@
+{
+ "surum": "K57-B v1.0 (2026-11-09): V1 çevresinde önceden yazılı 3 devam (B1 geniş ABD evreni, B2 20 gün ufuk, B3 F3'süz)",
+ "onkayit_b": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k57_yeotk_profili/K57B_ON_KAYIT.md",
+  "sha": "abc73b49f1df30c1d4fff698a154b08a9bef684e673d9dad7eaf801e77583457",
+  "zaman_utc": "2026-11-09 18:12:08"
+ },
+ "k57_muhur": "2a6cc6f6d1fd52e7dc9e7711f580c145a3c87f59369b12e40c4052fe1ce4b1f0",
+ "kos_baslangic": "2026-11-09 18:29:41 UTC",
+ "yeniden_uretim": [
+  {
+   "pazar": "BIST",
+   "donem": "2022-23",
+   "k57_n": 8,
+   "b_n": 8,
+   "esit": true
+  },
+  {
+   "pazar": "BIST",
+   "donem": "2024-26",
+   "k57_n": 96,
+   "b_n": 96,
+   "esit": true
+  },
+  {
+   "pazar": "ABD",
+   "donem": "2021-22",
+   "k57_n": 29,
+   "b_n": 29,
+   "esit": true
+  },
+  {
+   "pazar": "ABD",
+   "donem": "2023",
+   "k57_n": 7,
+   "b_n": 7,
+   "esit": true
+  },
+  {
+   "pazar": "ABD",
+   "donem": "2024-26",
+   "k57_n": 31,
+   "b_n": 31,
+   "esit": true
+  }
+ ],
+ "sayilar": {
+  "BIST": {
+   "olay": 9046,
+   "V1": 110,
+   "V1-F3": 113
+  },
+  "ABD": {
+   "olay": 29678,
+   "V1": 72,
+   "V1-F3": 111
+  },
+  "ABD_genis": {
+   "evren_aday": 4475,
+   "fiyatli": 4261,
+   "olay_tum": 71156,
+   "olay_taban_ustu": 50161,
+   "hisse_taban_ustu_olay": 3126,
+   "V1": 150,
+   "olculen": 47408,
+   "V_ABD_ortak": 1122
+  }
+ },
+ "yahoo": {
+  "istenen": 4475,
+  "onbellek": 4461,
+  "indirilen": 0,
+  "yok_404": 0,
+  "engel": 0,
+  "hata": 14,
+  "durdu": 0,
+  "durum": "eksik",
+  "ilk_indirme_utc": "2026-11-09 18:12:28 UTC",
+  "son_utc": "2026-11-09 18:32:17 UTC",
+  "inemeyen_n": 14
+ },
+ "kos_bitis": "2026-11-09 18:35:58 UTC",
+ "karar": {
+  "B3": {
+   "karar": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "B2": {
+   "karar": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "B1": {
+   "karar": "İZ DEĞİL",
+   "bist_iki_hucre": "ölçülmedi"
+  }
+ }
+}
