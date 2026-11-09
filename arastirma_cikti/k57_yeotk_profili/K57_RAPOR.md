@@ -1,40 +1,40 @@
 # K57 — YEOTK profili ('sıkı dosya') geçmiş testi: RAPOR
 
-Ön kayıt: 2026-11-09 15:29:00 UTC (sha 2a6cc6f6d1fd); koşu 2026-11-09 15:29:08 UTC → 2026-11-09 15:32:22 UTC. K57 v1.0 (2026-11-09): YEOTK profili ön kayıtlı geçmiş testi (BIST bilgi, ABD karar, Avrupa verisi yok)
+Ön kayıt: 2026-11-09 15:29:00 UTC (sha 2a6cc6f6d1fd); koşu 2026-11-09 17:59:29 UTC → 2026-11-09 18:03:10 UTC. K57 v1.0 (2026-11-09): YEOTK profili ön kayıtlı geçmiş testi (BIST bilgi, ABD karar, Avrupa verisi yok)
 
-## KARAR: ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK)
+## KARAR: İZ DEĞİL
 
 Düz dille:
 - BIST 2024-26: 20 olay, 60 günde eşlerine göre -%5,9 → eşlerinin altında kaldı (BIST bilgi; 2022-23'te yıllık büyüme için 2022 tabanı gerektiğinden olay çok az: BIST 2022-23: 1 olay, 60 günde eşlerine göre +%23,8 → ortalamada eşlerinin üstünde ama şartlar tutmadı).
-- ABD 2023: 202 olay, 60 günde eşlerine göre +%7,6 → ortalamada eşlerinin üstünde ama şartlar tutmadı; ABD 2024-26: 464 olay, 60 günde eşlerine göre -%2,7 → eşlerinin altında kaldı (ABD satış / kâr / bilanço süzgeçleri YOK: yalnız güçlü tepki + tepeden düşmüş fiyat + seyrelme yok).
+- ABD 2023: 2 olay, 60 günde eşlerine göre -%2,5 → eşlerinin altında kaldı; ABD 2024-26: 5 olay, 60 günde eşlerine göre -%17,3 → eşlerinin altında kaldı.
 - Bilanço gününe güçlü tepki tek başına (V0, K28 tabanı): ABD 2023: 1048 olay, 60 günde eşlerine göre +%3,0 → ortalamada eşlerinin üstünde ama şartlar tutmadı; ABD 2024-26: 2684 olay, 60 günde eşlerine göre -%1,5 → eşlerinin altında kaldı.
 - Ana sonuç = V3 (tam YEOTK profili), iki ABD karar hücresi (2023, 2024-26). Avrupa'da bilanço olay verisi yok → en fazla ABD-ADAY.
-- ABD tam profil ölçülemedi (SEC temel verisi indirilemedi); ABD fiyat + pay kısmı (F7 + F6 + F4): İZ DEĞİL. BIST tam profil (bilgi): iki hücrede tutmaz.
-- ABD temel verisi: ABD TEMEL VERİSİ YOK: 182 / 182 frames dosyası yok (ör. ['Revenues/CY2020Q1', 'Revenues/CY2020Q2']) (SEC frames indirme durumu: reddedildi (403)).
+- BIST tam profil (bilgi): iki hücrede tutmaz.
+- ABD temel verisi: ABD TEMEL VERİSİ VAR (SEC frames indirme durumu: tamam).
 - Olaylar: BIST 9046 (ölçülen 8293), ABD 29678 (ölçülen 28024).
-  Varyant olay sayıları BIST V0 1328, V1 110, V2 25, V3 22, V4 99; ABD V0 5506, V1 5506, V2 1432, V3 893, V4 5734.
+  Varyant olay sayıları BIST V0 1328, V1 110, V2 25, V3 22, V4 99; ABD V0 5506, V1 72, V2 19, V3 10, V4 61.
 
 ## Karar tablosu (deney × varyant)
 | Deney | Varyant | Karar | Kısmi karar (yalnız ölçülebilen süzgeçlerle) | Hücreler (eşli fark, n) |
 |---|---|---|---|---|
 | ANA | V0 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%3,6 (n 436); BIST 2024-26 +%1,4 (n 776); ABD 2021-22 -%0,2 (n 1465); ABD 2023 +%3,0 (n 1048); ABD 2024-26 -%1,5 (n 2684) |
-| ANA | V1 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%14,0 (n 8); BIST 2024-26 +%6,3 (n 96); ABD 2021-22 -%0,2 (n 1465); ABD 2023 +%3,0 (n 1048); ABD 2024-26 -%1,5 (n 2684) |
-| ANA | V2 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%23,8 (n 1); BIST 2024-26 -%6,6 (n 23); ABD 2021-22 +%0,1 (n 389); ABD 2023 +%5,3 (n 291); ABD 2024-26 -%3,6 (n 671) |
-| ANA | V3 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%23,8 (n 1); BIST 2024-26 -%5,9 (n 20); ABD 2021-22 +%2,1 (n 174); ABD 2023 +%7,6 (n 202); ABD 2024-26 -%2,7 (n 464) |
-| ANA | V4 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%11,0 (n 10); BIST 2024-26 +%4,1 (n 85); ABD 2021-22 -%0,4 (n 1690); ABD 2023 -%2,0 (n 1083); ABD 2024-26 -%0,6 (n 2639) |
-| D1 | V1 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 +%9,9 (n 18); BIST 2024-26 +%5,3 (n 127) |
-| D1 | V2 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 +%11,7 (n 5); BIST 2024-26 -%6,3 (n 31) |
-| D1 | V3 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 +%11,7 (n 5); BIST 2024-26 -%7,0 (n 27) |
-| D1 | V4 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 +%11,0 (n 16); BIST 2024-26 +%2,5 (n 107) |
-| D3 | V1 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 — (n 0); BIST 2024-26 +%19,9 (n 9) |
-| D3 | V2 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2) |
-| D3 | V3 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2) |
-| D3 | V4 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL (ABD ölçülmedi) | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2) |
+| ANA | V1 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%14,0 (n 8); BIST 2024-26 +%6,3 (n 96); ABD 2021-22 +%0,7 (n 29); ABD 2023 +%19,7 (n 7); ABD 2024-26 +%10,3 (n 31) |
+| ANA | V2 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%23,8 (n 1); BIST 2024-26 -%6,6 (n 23); ABD 2021-22 -%13,5 (n 7); ABD 2023 -%2,5 (n 2); ABD 2024-26 +%2,2 (n 9) |
+| ANA | V3 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%23,8 (n 1); BIST 2024-26 -%5,9 (n 20); ABD 2021-22 -%11,0 (n 2); ABD 2023 -%2,5 (n 2); ABD 2024-26 -%17,3 (n 5) |
+| ANA | V4 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%11,0 (n 10); BIST 2024-26 +%4,1 (n 85); ABD 2021-22 -%0,9 (n 30); ABD 2023 -%5,9 (n 7); ABD 2024-26 +%0,0 (n 23) |
+| D1 | V1 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%9,9 (n 18); BIST 2024-26 +%5,3 (n 127); ABD 2021-22 +%2,7 (n 64); ABD 2023 +%13,8 (n 14); ABD 2024-26 -%1,7 (n 66) |
+| D1 | V2 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%11,7 (n 5); BIST 2024-26 -%6,3 (n 31); ABD 2021-22 -%3,5 (n 18); ABD 2023 -%3,9 (n 6); ABD 2024-26 -%10,7 (n 18) |
+| D1 | V3 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%11,7 (n 5); BIST 2024-26 -%7,0 (n 27); ABD 2021-22 +%4,0 (n 10); ABD 2023 +%0,0 (n 4); ABD 2024-26 -%21,3 (n 13) |
+| D1 | V4 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%11,0 (n 16); BIST 2024-26 +%2,5 (n 107); ABD 2021-22 +%0,5 (n 52); ABD 2023 -%4,5 (n 14); ABD 2024-26 -%3,0 (n 44) |
+| D3 | V1 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 — (n 0); BIST 2024-26 +%19,9 (n 9); ABD 2021-22 +%25,5 (n 4); ABD 2023 — (n 0); ABD 2024-26 +%47,4 (n 3) |
+| D3 | V2 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2); ABD 2021-22 — (n 0); ABD 2023 — (n 0); ABD 2024-26 — (n 0) |
+| D3 | V3 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2); ABD 2021-22 — (n 0); ABD 2023 — (n 0); ABD 2024-26 — (n 0) |
+| D3 | V4 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 — (n 0); BIST 2024-26 +%15,3 (n 2); ABD 2021-22 +%11,2 (n 5); ABD 2023 — (n 0); ABD 2024-26 -%25,5 (n 1) |
 | D2 | V0 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 -%2,1 (n 436); BIST 2024-26 -%2,8 (n 657); ABD 2021-22 -%0,5 (n 1465); ABD 2023 +%1,9 (n 1048); ABD 2024-26 -%2,1 (n 2392) |
-| D2 | V1 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%0,3 (n 8); BIST 2024-26 +%11,2 (n 82); ABD 2021-22 -%0,5 (n 1465); ABD 2023 +%1,9 (n 1048); ABD 2024-26 -%2,1 (n 2392) |
-| D2 | V2 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 -%45,2 (n 1); BIST 2024-26 -%0,4 (n 21); ABD 2021-22 +%0,6 (n 389); ABD 2023 +%2,7 (n 291); ABD 2024-26 -%3,7 (n 597) |
-| D2 | V3 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 -%45,2 (n 1); BIST 2024-26 +%1,4 (n 18); ABD 2021-22 +%1,5 (n 174); ABD 2023 +%4,5 (n 202); ABD 2024-26 -%2,3 (n 408) |
-| D2 | V4 | ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK) | İZ DEĞİL | BIST 2022-23 +%18,0 (n 10); BIST 2024-26 +%25,2 (n 77); ABD 2021-22 -%1,3 (n 1690); ABD 2023 -%1,4 (n 1083); ABD 2024-26 -%1,4 (n 2311) |
+| D2 | V1 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%0,3 (n 8); BIST 2024-26 +%11,2 (n 82); ABD 2021-22 +%1,1 (n 29); ABD 2023 +%15,4 (n 7); ABD 2024-26 +%11,4 (n 25) |
+| D2 | V2 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 -%45,2 (n 1); BIST 2024-26 -%0,4 (n 21); ABD 2021-22 -%5,3 (n 7); ABD 2023 +%27,1 (n 2); ABD 2024-26 -%24,0 (n 7) |
+| D2 | V3 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 -%45,2 (n 1); BIST 2024-26 +%1,4 (n 18); ABD 2021-22 -%26,2 (n 2); ABD 2023 +%27,1 (n 2); ABD 2024-26 -%50,7 (n 3) |
+| D2 | V4 | İZ DEĞİL | İZ DEĞİL | BIST 2022-23 +%18,0 (n 10); BIST 2024-26 +%25,2 (n 77); ABD 2021-22 -%1,2 (n 30); ABD 2023 +%17,4 (n 7); ABD 2024-26 -%2,3 (n 19) |
 
 ## Ana ölçüm (60 gün, FI_OLCUT)
 | Varyant | Hücre | Rol | n | Eşli fark | %95 aralık | Sıra | Portföy yüzdeliği | Tutar |
@@ -52,18 +52,18 @@ Düz dille:
 | V0 | ABD 2021-22 | BİLGİ | 1465 | -%0,2 | -%2,6 .. +%2,2 | 0,49 | 0,18 | tutmaz |
 | V0 | ABD 2023 | KARAR | 1048 | +%3,0 | +%1,3 .. +%4,8 | 0,53 | 0,62 | tutmaz |
 | V0 | ABD 2024-26 | KARAR | 2684 | -%1,5 | -%3,7 .. +%0,5 | 0,49 | 0,44 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 1465 | -%0,2 | -%2,6 .. +%2,2 | 0,49 | 0,18 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2023 | KARAR | 1048 | +%3,0 | +%1,3 .. +%4,8 | 0,53 | 0,62 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 2684 | -%1,5 | -%3,7 .. +%0,5 | 0,49 | 0,44 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 389 | +%0,1 | -%5,0 .. +%4,4 | 0,48 | 0,39 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2023 | KARAR | 291 | +%5,3 | +%1,4 .. +%8,2 | 0,56 | 0,12 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 671 | -%3,6 | -%8,0 .. +%0,5 | 0,47 | 0,02 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2021-22 | BİLGİ | 174 | +%2,1 | -%3,0 .. +%7,5 | 0,52 | 0,42 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2023 | KARAR | 202 | +%7,6 | +%0,5 .. +%10,8 | 0,58 | 0,30 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2024-26 | KARAR | 464 | -%2,7 | -%7,5 .. +%2,3 | 0,48 | 0,07 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 1690 | -%0,4 | -%2,6 .. +%1,4 | 0,49 | 0,52 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2023 | KARAR | 1083 | -%2,0 | -%4,8 .. +%1,1 | 0,49 | 0,11 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 2639 | -%0,6 | -%3,3 .. +%3,0 | 0,49 | 0,01 | tutmaz |
+| V1 | ABD 2021-22 | BİLGİ | 29 | +%0,7 | -%5,2 .. +%6,6 | 0,51 | 0,51 | tutmaz |
+| V1 | ABD 2023 | KARAR | 7 | +%19,7 | -%5,2 .. +%75,4 | 0,62 | 0,95 | tutmaz |
+| V1 | ABD 2024-26 | KARAR | 31 | +%10,3 | -%7,9 .. +%29,7 | 0,62 | 0,90 | tutmaz |
+| V2 | ABD 2021-22 | BİLGİ | 7 | -%13,5 | -%23,3 .. +%0,3 | 0,32 | 0,05 | tutmaz |
+| V2 | ABD 2023 | KARAR | 2 | -%2,5 | -%2,5 .. -%2,5 | 0,55 | 0,53 | tutmaz |
+| V2 | ABD 2024-26 | KARAR | 9 | +%2,2 | -%31,4 .. +%33,5 | 0,57 | 0,66 | tutmaz |
+| V3 (yok: F5) | ABD 2021-22 | BİLGİ | 2 | -%11,0 | -%20,7 .. -%1,2 | 0,37 | 0,35 | tutmaz |
+| V3 (yok: F5) | ABD 2023 | KARAR | 2 | -%2,5 | -%2,5 .. -%2,5 | 0,55 | 0,53 | tutmaz |
+| V3 (yok: F5) | ABD 2024-26 | KARAR | 5 | -%17,3 | -%60,5 .. +%19,9 | 0,46 | 0,15 | tutmaz |
+| V4 | ABD 2021-22 | BİLGİ | 30 | -%0,9 | -%8,9 .. +%8,3 | 0,49 | 0,34 | tutmaz |
+| V4 | ABD 2023 | KARAR | 7 | -%5,9 | -%12,6 .. +%0,4 | 0,46 | 0,33 | tutmaz |
+| V4 | ABD 2024-26 | KARAR | 23 | +%0,0 | -%21,1 .. +%22,3 | 0,50 | 0,39 | tutmaz |
 
 ## Önceden yazılı 3 devam
 D1 — F2 1,2 kat:
@@ -77,6 +77,18 @@ D1 — F2 1,2 kat:
 | V3 (yok: F4) | BIST 2024-26 | BİLGİ | 27 | -%7,0 | -%14,5 .. -%0,8 | 0,46 | 0,16 | tutmaz |
 | V4 | BIST 2022-23 | BİLGİ | 16 | +%11,0 | -%5,0 .. +%22,0 | 0,61 | 0,88 | tutmaz |
 | V4 | BIST 2024-26 | BİLGİ | 107 | +%2,5 | -%6,9 .. +%18,9 | 0,48 | 0,32 | tutmaz |
+| V1 | ABD 2021-22 | BİLGİ | 64 | +%2,7 | -%1,1 .. +%7,2 | 0,54 | 0,94 | tutmaz |
+| V1 | ABD 2023 | KARAR | 14 | +%13,8 | +%1,5 .. +%29,0 | 0,59 | 0,94 | tutmaz |
+| V1 | ABD 2024-26 | KARAR | 66 | -%1,7 | -%11,7 .. +%8,6 | 0,52 | 0,34 | tutmaz |
+| V2 | ABD 2021-22 | BİLGİ | 18 | -%3,5 | -%11,5 .. +%4,9 | 0,50 | 0,15 | tutmaz |
+| V2 | ABD 2023 | KARAR | 6 | -%3,9 | -%15,1 .. +%7,3 | 0,51 | 0,43 | tutmaz |
+| V2 | ABD 2024-26 | KARAR | 18 | -%10,7 | -%29,3 .. +%7,2 | 0,40 | 0,07 | tutmaz |
+| V3 (yok: F5) | ABD 2021-22 | BİLGİ | 10 | +%4,0 | -%2,3 .. +%10,5 | 0,64 | 0,76 | tutmaz |
+| V3 (yok: F5) | ABD 2023 | KARAR | 4 | +%0,0 | -%4,5 .. +%13,5 | 0,56 | 0,55 | tutmaz |
+| V3 (yok: F5) | ABD 2024-26 | KARAR | 13 | -%21,3 | -%41,9 .. -%6,0 | 0,33 | 0,01 | tutmaz |
+| V4 | ABD 2021-22 | BİLGİ | 52 | +%0,5 | -%8,3 .. +%9,3 | 0,52 | 0,32 | tutmaz |
+| V4 | ABD 2023 | KARAR | 14 | -%4,5 | -%11,4 .. +%0,9 | 0,48 | 0,38 | tutmaz |
+| V4 | ABD 2024-26 | KARAR | 44 | -%3,0 | -%16,9 .. +%10,4 | 0,46 | 0,10 | tutmaz |
 
 D2 — 120 gün ufuk:
 | Varyant | Hücre | Rol | n | Eşli fark | %95 aralık | Sıra | Portföy yüzdeliği | Tutar |
@@ -94,18 +106,18 @@ D2 — 120 gün ufuk:
 | V0 | ABD 2021-22 | BİLGİ | 1465 | -%0,5 | -%3,9 .. +%2,6 | 0,48 | 0,14 | tutmaz |
 | V0 | ABD 2023 | KARAR | 1048 | +%1,9 | +%0,6 .. +%2,7 | 0,51 | 0,79 | tutmaz |
 | V0 | ABD 2024-26 | KARAR | 2392 | -%2,1 | -%5,2 .. +%0,5 | 0,50 | 0,50 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 1465 | -%0,5 | -%3,9 .. +%2,6 | 0,48 | 0,14 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2023 | KARAR | 1048 | +%1,9 | +%0,6 .. +%2,7 | 0,51 | 0,79 | tutmaz |
-| V1 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 2392 | -%2,1 | -%5,2 .. +%0,5 | 0,50 | 0,50 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 389 | +%0,6 | -%6,0 .. +%6,9 | 0,46 | 0,23 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2023 | KARAR | 291 | +%2,7 | -%0,0 .. +%7,2 | 0,51 | 0,83 | tutmaz |
-| V2 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 597 | -%3,7 | -%11,7 .. +%3,8 | 0,49 | 0,08 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2021-22 | BİLGİ | 174 | +%1,5 | -%3,6 .. +%5,1 | 0,49 | 0,46 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2023 | KARAR | 202 | +%4,5 | -%0,5 .. +%9,4 | 0,53 | 0,81 | tutmaz |
-| V3 (yok: F1+F2+F3+F5) | ABD 2024-26 | KARAR | 408 | -%2,3 | -%10,1 .. +%6,9 | 0,50 | 0,41 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2021-22 | BİLGİ | 1690 | -%1,3 | -%4,1 .. +%1,7 | 0,47 | 0,15 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2023 | KARAR | 1083 | -%1,4 | -%4,4 .. +%1,6 | 0,49 | 0,66 | tutmaz |
-| V4 (yok: F1+F2+F3) | ABD 2024-26 | KARAR | 2311 | -%1,4 | -%4,5 .. +%2,3 | 0,49 | 0,04 | tutmaz |
+| V1 | ABD 2021-22 | BİLGİ | 29 | +%1,1 | -%11,9 .. +%18,9 | 0,49 | 0,54 | tutmaz |
+| V1 | ABD 2023 | KARAR | 7 | +%15,4 | +%2,4 .. +%27,3 | 0,66 | 0,86 | tutmaz |
+| V1 | ABD 2024-26 | KARAR | 25 | +%11,4 | -%16,3 .. +%51,3 | 0,54 | 0,74 | tutmaz |
+| V2 | ABD 2021-22 | BİLGİ | 7 | -%5,3 | -%22,2 .. +%15,4 | 0,46 | 0,36 | tutmaz |
+| V2 | ABD 2023 | KARAR | 2 | +%27,1 | +%27,1 .. +%27,1 | 0,82 | 0,81 | tutmaz |
+| V2 | ABD 2024-26 | KARAR | 7 | -%24,0 | -%44,3 .. +%3,3 | 0,40 | 0,12 | tutmaz |
+| V3 (yok: F5) | ABD 2021-22 | BİLGİ | 2 | -%26,2 | -%41,6 .. -%10,8 | 0,23 | 0,23 | tutmaz |
+| V3 (yok: F5) | ABD 2023 | KARAR | 2 | +%27,1 | +%27,1 .. +%27,1 | 0,82 | 0,81 | tutmaz |
+| V3 (yok: F5) | ABD 2024-26 | KARAR | 3 | -%50,7 | -%56,9 .. -%38,3 | 0,25 | 0,02 | tutmaz |
+| V4 | ABD 2021-22 | BİLGİ | 30 | -%1,2 | -%9,5 .. +%7,5 | 0,49 | 0,07 | tutmaz |
+| V4 | ABD 2023 | KARAR | 7 | +%17,4 | -%16,4 .. +%31,0 | 0,75 | 0,81 | tutmaz |
+| V4 | ABD 2024-26 | KARAR | 19 | -%2,3 | -%33,0 .. +%32,0 | 0,49 | 0,66 | tutmaz |
 
 D3 — art arda iki ivmeli çeyrek:
 | Varyant | Hücre | Rol | n | Eşli fark | %95 aralık | Sıra | Portföy yüzdeliği | Tutar |
@@ -118,13 +130,25 @@ D3 — art arda iki ivmeli çeyrek:
 | V3 (yok: F4) | BIST 2024-26 | BİLGİ | 2 | +%15,3 | +%2,9 .. +%27,7 | 0,77 | 0,89 | tutmaz |
 | V4 | BIST 2022-23 | BİLGİ | 0 | — | — .. — | — | — | tutmaz |
 | V4 | BIST 2024-26 | BİLGİ | 2 | +%15,3 | +%2,9 .. +%27,7 | 0,77 | 0,89 | tutmaz |
+| V1 | ABD 2021-22 | BİLGİ | 4 | +%25,5 | +%20,0 .. +%32,2 | 0,78 | 0,96 | tutmaz |
+| V1 | ABD 2023 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V1 | ABD 2024-26 | KARAR | 3 | +%47,4 | +%14,2 .. +%67,3 | 0,91 | 1,00 | tutmaz |
+| V2 | ABD 2021-22 | BİLGİ | 0 | — | — .. — | — | — | tutmaz |
+| V2 | ABD 2023 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V2 | ABD 2024-26 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V3 (yok: F5) | ABD 2021-22 | BİLGİ | 0 | — | — .. — | — | — | tutmaz |
+| V3 (yok: F5) | ABD 2023 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V3 (yok: F5) | ABD 2024-26 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V4 | ABD 2021-22 | BİLGİ | 5 | +%11,2 | -%2,8 .. +%32,1 | 0,64 | 0,90 | tutmaz |
+| V4 | ABD 2023 | KARAR | 0 | — | — .. — | — | — | tutmaz |
+| V4 | ABD 2024-26 | KARAR | 1 | -%25,5 | -%25,5 .. -%25,5 | 0,30 | 0,24 | tutmaz |
 
 ## Eşiğe en yakın hücreler (n >= 30, aralık alt ucuna göre)
-- ANA V2 ABD 2023: n 291, eşli fark +%5,3, aralık +%1,4 .. +%8,2, sıra 0,56, portföy yüzdeliği 0,12
 - ANA V0 ABD 2023: n 1048, eşli fark +%3,0, aralık +%1,3 .. +%4,8, sıra 0,53, portföy yüzdeliği 0,62
 - D2 V0 ABD 2023: n 1048, eşli fark +%1,9, aralık +%0,6 .. +%2,7, sıra 0,51, portföy yüzdeliği 0,79
-- ANA V3 ABD 2023: n 202, eşli fark +%7,6, aralık +%0,5 .. +%10,8, sıra 0,58, portföy yüzdeliği 0,30
-- D2 V2 ABD 2023: n 291, eşli fark +%2,7, aralık -%0,0 .. +%7,2, sıra 0,51, portföy yüzdeliği 0,83
+- ANA V0 BIST 2022-23: n 436, eşli fark +%3,6, aralık -%0,5 .. +%9,8, sıra 0,51, portföy yüzdeliği 0,77
+- D1 V1 ABD 2021-22: n 64, eşli fark +%2,7, aralık -%1,1 .. +%7,2, sıra 0,54, portföy yüzdeliği 0,94
+- ANA V0 BIST 2024-26: n 776, eşli fark +%1,4, aralık -%1,2 .. +%3,7, sıra 0,51, portföy yüzdeliği 0,90
 
 ## Akıl sağlığı: en son 10 V3 olayı
 BIST (tam profil):
@@ -141,19 +165,19 @@ BIST (tam profil):
 | IHLGM | 2026-03-11 | +%6,8 | +%1164 | -%47 | -%14 / +%2 | +%0,0 | -%6,4 | -%30,0 |
 | BAGFS | 2026-08-18 | +%6,9 | +%14 | -%40 | -%19 / -%9 | +%0,0 | — | — |
 
-ABD (F1-F3 yok: F7 + F6 + F4):
+ABD (tam profil):
 | Hisse | Açıklama | Tepki (ham) | Satış yıllık | Tepeden | 60g / pazar medyanı | Fon payı / pay değişimi | r60 | Eşli fark |
 |---|---|---|---|---|---|---|---|---|
-| RUM | 2026-08-10 | +%8,4 | — | -%39 | -%19 / +%6 | +%0,0 | — | — |
-| SMCI | 2026-08-11 | +%19,5 | — | -%46 | -%2 / +%6 | +%0,8 | — | — |
-| CAVA | 2026-08-11 | +%12,8 | — | -%38 | -%15 / +%6 | +%0,7 | — | — |
-| UNCY | 2026-08-12 | +%8,0 | — | -%43 | -%42 / +%5 | +%97,4 | — | — |
-| HLIT | 2026-08-12 | +%14,2 | — | -%35 | -%14 / +%5 | -%5,4 | — | — |
-| LUNR | 2026-08-13 | +%12,2 | — | -%64 | -%50 / +%7 | -%8,5 | — | — |
-| SMTC | 2026-08-25 | +%16,5 | — | -%32 | -%27 / +%5 | +%7,5 | — | — |
-| SNPS | 2026-08-26 | +%13,7 | — | -%34 | -%14 / +%5 | +%3,3 | — | — |
-| WFRD | 2026-10-20 | +%10,9 | — | -%32 | -%13 / -%5 | +%0,0 | — | — |
-| EFX | 2026-10-20 | +%10,7 | — | -%33 | -%8 / -%5 | -%5,0 | — | — |
+| TRIP | 2022-08-04 | +%18,3 | +%77 | -%48 | -%12 / +%1 | +%1,7 | -%3,4 | -%1,2 |
+| PGEN | 2022-11-09 | +%11,2 | +%402 | -%64 | -%39 / -%11 | +%0,7 | +%3,4 | -%20,7 |
+| HNRG | 2023-03-16 | +%13,1 | +%132 | -%39 | -%24 / -%2 | +%7,1 | +%0,4 | -%20,3 |
+| ARCT | 2023-03-28 | +%27,3 | +%2667 | -%50 | -%2 / +%1 | +%0,5 | +%23,3 | +%15,3 |
+| FLYW | 2024-11-07 | +%16,9 | +%27 | -%43 | +%1 / +%10 | +%2,7 | -%4,4 | -%5,4 |
+| ABTC | 2025-11-14 | +%6,5 | +%453 | -%68 | -%18 / +%1 | -%100,0 | -%77,4 | -%95,8 |
+| QUBT | 2025-11-14 | +%14,7 | +%280 | -%63 | -%31 / +%1 | -%92,7 | -%25,0 | -%25,3 |
+| NUVB | 2026-05-04 | +%7,6 | +%2599 | -%54 | -%23 / +%1 | -%99,7 | +%27,9 | +%20,6 |
+| COMP | 2026-05-05 | +%30,9 | +%99 | -%49 | -%41 / +%3 | -%100,0 | +%25,8 | +%19,2 |
+| AEHR | 2026-07-14 | +%29,1 | +%34 | -%46 | -%7 / +%4 | +%4,0 | — | — |
 
 ## YEOTK'nın kendi geçmiş olayları (BIST)
 | Açıklama | Dönem | Tepki | Satış yıllık | F1 / F2 / F3 / F5 / F6 / F7 | Varyant | Eşli fark |
@@ -181,7 +205,7 @@ ABD (F1-F3 yok: F7 + F6 + F4):
 ## Notlar ve sınırlar
 - Olay kurgusu K28 (fi_k28_olaylar): tepki = açıklama öncesi son kapanış → açıklamadan sonraki ilk kapanış; giriş ertesi açılış.
 - F7 ve BIST F1 eşikleri yalnız o güne kadar bilinen olaylardan (son 92 gün) hesaplandı; K28'in çeyrek içi 'ust' etiketi olaylar dosyasında 'K28_ust'.
-- F4 bölünme kuralı (önceden yazılı): pay oranı bir tamsayıya ±%3 yakınsa bölünme sayıldı; ABD V3 olaylarından 54 tanesi pay artışı > %10 olduğu hâlde bu kuralla geçti (bir kısmı bölünme değil, payı ikiye katlayan ihraç olabilir: kural gevşek tarafta).
+- F4 bölünme kuralı (önceden yazılı): pay oranı bir tamsayıya ±%3 yakınsa bölünme sayıldı; ABD V3 olaylarından 0 tanesi pay artışı > %10 olduğu hâlde bu kuralla geçti (bir kısmı bölünme değil, payı ikiye katlayan ihraç olabilir: kural gevşek tarafta).
 - BIST'te F4 (seyrelme) ölçülmedi (bedelsiz / bedelli ayrımı yok); ABD'de F5 yok (fon krizi BIST'e özgü).
 - BIST temel verisi temel_duz.csv (İş Yatırım); bilgi tarihi o dönemin KAP yayını (yoksa yasal süre vekili). ABD F4 SEC özütleri (K31).
 - ABD evreni V_ABD (1.411 hisse, bugün işlem görenler: hayatta kalma yanlılığı); BIST evreni V_BIST.
@@ -189,5 +213,5 @@ ABD (F1-F3 yok: F7 + F6 + F4):
 
 ## IZ_KARNE önerisi (Ç148; IZ_KARNE.py'ye ana oturum işler)
 ```
-_ik_k("Ç148", "2026-11-09", "YEOTK PROFİLİ ('SIKI DOSYA') ÖN KAYITLI GEÇMİŞ TESTİ: bilanço günü güçlü tepki (F7, kayan üst %20 + ham >= +%5) + satış büyümesi (F1) + çeyrek ivmesi ve kâr sıçraması (F2) + sağlam bilanço (F3) + seyrelme yok (F4, ABD) + fon payı < %2 (F5, BIST) + tepeden %30-70 aşağıda ve 60 gün pazarın altında (F6); V0-V4, önceden yazılı 3 devam (F2 1,2 kat, 120 gün, iki ivmeli çeyrek)", "K57.py, test_k57.py", "Cemal (9 Kas 2026, tek ve son talimat): YEOTK gibi sıkı dosyalar BIST'te ve ABD'de eşlerini geçiyor mu?", "Yeni deneme (ön kayıt K57_ON_KAYIT.md, sha 2a6cc6f6d1fd; ölçüt FI_OLCUT; karar ABD 2023 + 2024-26, Avrupa verisi yok)", "", 3, cikti="arastirma_cikti/k57_yeotk_profili/ (K57_ON_KAYIT.md, K57_RAPOR.md, hucre.csv, olaylar_bist.csv, olaylar_abd.csv)", notu="ÖLÇÜLEMEDİ (ABD TEMEL VERİSİ YOK). Olay: BIST 9046 (V3 22), ABD 29678 (V3 kısmi 893). BIST V3 (bilgi) 2022-23: n 1, +%23,8 (+%23,8 .. +%23,8), sıra 0,82, tutmaz; 2024-26: n 20, -%5,9 (-%14,1 .. +%1,3), sıra 0,47, tutmaz. ABD V3 (F1-F3 yok, fiyat + pay kısmı) 2021-22: n 174, +%2,1 (-%3,0 .. +%7,5), sıra 0,52, tutmaz; 2023: n 202, +%7,6 (+%0,5 .. +%10,8), sıra 0,58, tutmaz; 2024-26: n 464, -%2,7 (-%7,5 .. +%2,3), sıra 0,48, tutmaz. Tutan hücreler: yok. ABD TEMEL VERİSİ YOK: 182 / 182 frames dosyası yok (ör. ['Revenues/CY2020Q1', 'Revenues/CY2020Q2']); SEC durumu: reddedildi (403)."),
+_ik_k("Ç148", "2026-11-09", "YEOTK PROFİLİ ('SIKI DOSYA') ÖN KAYITLI GEÇMİŞ TESTİ: bilanço günü güçlü tepki (F7, kayan üst %20 + ham >= +%5) + satış büyümesi (F1) + çeyrek ivmesi ve kâr sıçraması (F2) + sağlam bilanço (F3) + seyrelme yok (F4, ABD) + fon payı < %2 (F5, BIST) + tepeden %30-70 aşağıda ve 60 gün pazarın altında (F6); V0-V4, önceden yazılı 3 devam (F2 1,2 kat, 120 gün, iki ivmeli çeyrek)", "K57.py, test_k57.py", "Cemal (9 Kas 2026, tek ve son talimat): YEOTK gibi sıkı dosyalar BIST'te ve ABD'de eşlerini geçiyor mu?", "Yeni deneme (ön kayıt K57_ON_KAYIT.md, sha 2a6cc6f6d1fd; ölçüt FI_OLCUT; karar ABD 2023 + 2024-26, Avrupa verisi yok)", "", 3, cikti="arastirma_cikti/k57_yeotk_profili/ (K57_ON_KAYIT.md, K57_RAPOR.md, hucre.csv, olaylar_bist.csv, olaylar_abd.csv)", notu="İZ DEĞİL. Olay: BIST 9046 (V3 22), ABD 29678 (V3 kısmi 10). BIST V3 (bilgi) 2022-23: n 1, +%23,8 (+%23,8 .. +%23,8), sıra 0,82, tutmaz; 2024-26: n 20, -%5,9 (-%14,1 .. +%1,3), sıra 0,47, tutmaz. ABD V3 2021-22: n 2, -%11,0 (-%20,7 .. -%1,2), sıra 0,37, tutmaz; 2023: n 2, -%2,5 (-%2,5 .. -%2,5), sıra 0,55, tutmaz; 2024-26: n 5, -%17,3 (-%60,5 .. +%19,9), sıra 0,46, tutmaz. Tutan hücreler: yok. ABD TEMEL VERİSİ VAR; SEC durumu: tamam."),
 ```
