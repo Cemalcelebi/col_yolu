@@ -1729,6 +1729,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "Not: share.google bağlantısından haberleri takip edebilir misin (çalışanlar devam etsin)",
      "yapilan": "Bağlantı DonanımHaber forum 'profil düzenle' sayfasına (giriş gerekli) yönleniyor; hesaba erişim yok. Herkese açık forum konuları bağlantıyla okunabilir; haber için KAP / SEC / web araması kullanılıyor",
      "sonuc": "Not alındı; K57 kolları sürüyor", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "Hangi web sayfası, forum, sosyal medya sana lazım; ne yazmam gerekiyor, açık ve net söyle",
+     "yapilan": "Erişim haritası mesajla: açık (web arama, Yahoo fiyat, KAP aktarıcıları, SEC frames önceden inen), kapalı (SEC 403: e-postalı UA gerekiyor; KAP doğrudan çoğu zaman 403; X / Telegram / Instagram ve girişli forumlar). Cemal'den istenecekler: SEC için e-posta izni (açık cümleyle), isteğe bağlı ücretsiz veri anahtarı, forum konu bağlantıları, pozisyon ekranları, kritik tarihlerde otomatik kontrol onayı",
+     "sonuc": "Karar Cemal'de: SEC e-posta izni ve otomatik kontrol", "durum": "TAMAMLANDI, AÇIK: Cemal'in yanıtı"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas, CEMAL'İN SON TALİMATI): YEOTK profili ('sıkı dosya') hisselerini BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan test et; "
