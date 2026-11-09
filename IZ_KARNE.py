@@ -1720,6 +1720,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "Kilit açılan token yükselir mi dedin, yanlış mı anladım",
      "yapilan": "Düzeltme mesajı: tersi; Keyrock çalışmasına göre açılımların ~%90'ı fiyata baskı yapar, düşüş ~30 gün önce başlar, ekip açılımlarında ~-%25; Ritual için ilk büyük açılım ~Ekim 2027",
      "sonuc": "Kilit açılımı yükseliş değil düşüş işaretidir", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "Kilit öncesi yükseltip millete satıyorlar; millet niye girsin, enayi mi",
+     "yapilan": "Mesajla: içeriden satış / çıkış likiditesi mekanizması; ölçüm açılım öncesi pompa değil düşüş gösteriyor (Keyrock); düşük float + yüksek FDV yapısı; kimin kazandığı; perakendenin neden girdiği (piyango tercihi, görünen kazananlar); BIST fon krizi ve QMLS ATW ile aynı desen",
+     "sonuc": "Pratik kural: düşük float, yeni listeleme, sığ tahta = perakende çıkış likiditesi; uzak dur ya da sıfırlanmayı kabul ettiğin tutarla", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
