@@ -1736,6 +1736,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "QMLS yükseliyor; satmakta acele mi ettik",
      "yapilan": "Fiyat (Yahoo, 9 Kas 17:47 UTC): QMLS 3,32 $, 5 Kas dibinden +%23; satılan yarı ≈83 adet ≈3,10 $'dan (257,40 $); kaçan ≈18 $; aynı gün sektör toparlanması (CRWV +%5, NBIS +%8, DGXX +%9), şirket haberi yok",
      "sonuc": "Acele değil: plan yarı yarıya pişmanlığı bölmek içindi; kalan 83 adet aynı yükselişi alıyor; olay kuralları sürüyor", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "DGXX alım emrim (2,05 $) gelmedi, ne öneriyorsun (fiyat 2,26, gün +%8,6, gün içi en düşük 2,02)",
+     "yapilan": "Mesajla: fiyatı kovalamadan limiti 2,12 $'a çek, 104 adet, 12 Kas kapanışına kadar geçerli; dolmazsa yarı nakit bilançoyu (13 Kas) bekler; yeni ortalama ≈2,05 $, 2x ≈4,10 $",
+     "sonuc": "Karar Cemal'in", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL (BIST bilgi + ABD fiyat kısmı); ABD F1-F3 ölçülemedi (SEC 403, kimlik satırı "
