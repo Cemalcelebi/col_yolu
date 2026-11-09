@@ -1717,6 +1717,9 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "3 kol (Ritual vakası, literatür, 759 yeni tokenda kendi ölçüm: Binance aynası + OKX + Gate) + rapor arastirma_cikti/kripto_yukselis/; IZ_KARNE Ç147",
      "sonuc": "İZ DEĞİL: +%100 günü önceden ancak 1 gün önce ve %1'in altında olasılıkla seçilebiliyor; sonrası medyan 30 günde -%49; kovalamak kaybettiriyor. Ritual'da doğrulanmış katalizör yok",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "Kilit açılan token yükselir mi dedin, yanlış mı anladım",
+     "yapilan": "Düzeltme mesajı: tersi; Keyrock çalışmasına göre açılımların ~%90'ı fiyata baskı yapar, düşüş ~30 gün önce başlar, ekip açılımlarında ~-%25; Ritual için ilk büyük açılım ~Ekim 2027",
+     "sonuc": "Kilit açılımı yükseliş değil düşüş işaretidir", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
