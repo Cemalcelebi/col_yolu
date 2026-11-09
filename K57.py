@@ -930,7 +930,16 @@ def k57_rapor(cikti: Optional[str] = None) -> str:
     kar = Z.drop_duplicates(["deney", "varyant"]).set_index(["deney", "varyant"])
     ana = kar.loc[("ANA", E["ana_varyant"])]
     abd_temel = bool(meta.get("abd_temel"))
-    yakin = Z[(Z.n >= 30)].sort_values("alt95", ascending=False).head(5)
+    yakin = Z[(Z.n >= 30)].drop_duplicates(["pazar", "donem", "ufuk", "n", "ort_fark"]).sort_values("alt95", ascending=False).head(5)
+    bolunme_n = int((Xa.V3.astype(bool) & (Xa.pay_yil > E["F4_pay_yil"])).sum()) if "pay_yil" in Xa else 0
+
+    def duz(pazar: str, donem: str, d: str = "ANA", v: str = "V3") -> str:
+        g = Z[(Z.deney == d) & (Z.varyant == v) & (Z.pazar == pazar) & (Z.donem == donem)]
+        if not len(g) or not g.n.iloc[0] or pd.isna(g.n.iloc[0]):
+            return f"{pazar} {donem}: olay yok"
+        r = g.iloc[0]; yon = "eşlerini GEÇTİ (dört şart tuttu)" if r.tutar else ("ortalamada eşlerinin üstünde ama şartlar tutmadı" if r.ort_fark > 0
+                                                                                   else "eşlerinin altında kaldı")
+        return f"{pazar} {donem}: {int(r.n)} olay, 60 günde eşlerine göre {_yz(r.ort_fark)} → {yon}"
     tut = Z[Z.tutar.astype(bool)]
     sec = meta.get("sec", {})
     # V3 ABD karar hücreleri (kısmi) kısa özet
@@ -968,6 +977,11 @@ def k57_rapor(cikti: Optional[str] = None) -> str:
 Ön kayıt: {meta['onkayit']['zaman_utc']} UTC (sha {meta['onkayit']['sha'][:12]}); koşu {meta['kos_baslangic']} → {meta.get('kos_bitis', '')}. {K57_SURUM}
 
 ## KARAR: {ana_karar}
+
+Düz dille:
+- {duz('BIST', '2024-26')} (BIST bilgi; 2022-23'te yıllık büyüme için 2022 tabanı gerektiğinden olay çok az: {duz('BIST', '2022-23')}).
+- {duz('ABD', '2023')}; {duz('ABD', '2024-26')}{'' if abd_temel else ' (ABD satış / kâr / bilanço süzgeçleri YOK: yalnız güçlü tepki + tepeden düşmüş fiyat + seyrelme yok)'}.
+- Bilanço gününe güçlü tepki tek başına (V0, K28 tabanı): {duz('ABD', '2023', 'ANA', 'V0')}; {duz('ABD', '2024-26', 'ANA', 'V0')}.
 - Ana sonuç = V3 (tam YEOTK profili), iki ABD karar hücresi (2023, 2024-26). Avrupa'da bilanço olay verisi yok → en fazla ABD-ADAY.
 - {ozet_kisa}
 - ABD temel verisi: {meta.get('abd_temel_kaynak', '—')} (SEC frames indirme durumu: {sec.get('durum', 'denenmedi')}).
@@ -1007,6 +1021,7 @@ ABD ({'tam profil' if abd_temel else 'F1-F3 yok: F7 + F6 + F4'}):
 ## Notlar ve sınırlar
 - Olay kurgusu K28 (fi_k28_olaylar): tepki = açıklama öncesi son kapanış → açıklamadan sonraki ilk kapanış; giriş ertesi açılış.
 - F7 ve BIST F1 eşikleri yalnız o güne kadar bilinen olaylardan (son 92 gün) hesaplandı; K28'in çeyrek içi 'ust' etiketi olaylar dosyasında 'K28_ust'.
+- F4 bölünme kuralı (önceden yazılı): pay oranı bir tamsayıya ±%3 yakınsa bölünme sayıldı; ABD V3 olaylarından {bolunme_n} tanesi pay artışı > %10 olduğu hâlde bu kuralla geçti (bir kısmı bölünme değil, payı ikiye katlayan ihraç olabilir: kural gevşek tarafta).
 - BIST'te F4 (seyrelme) ölçülmedi (bedelsiz / bedelli ayrımı yok); ABD'de F5 yok (fon krizi BIST'e özgü).
 - BIST temel verisi temel_duz.csv (İş Yatırım); bilgi tarihi o dönemin KAP yayını (yoksa yasal süre vekili). ABD F4 SEC özütleri (K31).
 - ABD evreni V_ABD (1.411 hisse, bugün işlem görenler: hayatta kalma yanlılığı); BIST evreni V_BIST.
