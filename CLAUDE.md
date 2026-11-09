@@ -87,3 +87,11 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Desene veya tek göstergeye göre alım-satım yoktur. Tarayıcı yalnızca aday bulur.
 - Kapanmış konuları yeniden açma (`COL_OZET.md` listesine bak): giriş zamanlaması/onay/hacim, stop/erken kesme, sektör ısısı, KNN, VIX/DXY, 90'dan fazla şekil ölçüsü.
 - İz yok çıkarsa durma (Cemal, 24 Ekim 2026): ne denendiğini, eşiğe (1,3) en çok yaklaşan hücreleri ve sıradaki 3 denemeyi yaz, sonra o denemeleri Claude kendisi yapar. Cemal'e yalnız karar gereken yerde sorulur (üretim "yaz", kapalı konuya dokunan deneme, veri/ücret/izin). Sıradaki denemeler sonuç görülmeden, sabit eşikle önceden yazılır; eşik sonuca göre oynanmaz.
+
+## Cemal'in son talimatı (9 Kasım 2026, "tek ve son talimat")
+- Kripto kapandı (Ç147: İZ DEĞİL). Odak: YEOTK gibi "sıkı dosya" hisseleri bulmak, BIST'te ve özellikle ABD'de. Cemal'in tezi: YEOTK daha da çıkar, DGXX kazanır; gerisi gürültü.
+- "Sıkı dosya" = YEOTK profili (ölçülebilir hali K57'de): gerçek iş ve isimli sözleşme, son çeyrekte satış/kâr ivmesi, nakit seyrelme yok, fon krizi lekesi yok, fiyat tepeden düşmüş ve bilanço günü güçlü tepki.
+- Bulunan bütün ölçüler her açıdan ele alınır ("kuantum düşünce": aynı anda birçok hipotez, hepsi test edilir, hiçbiri test edilmeden seçilmez). Gerekirse makine öğrenmesi, web araştırması ve ajan görevlendirme kullanılır; sonuna kadar gidilir.
+- Gerçek ve değerli bilgi basit ve erişilebilir olandır: karmaşık ölçü, basit ölçüyü geçmiyorsa seçilmez; sonuçlar Cemal'e tek sayfada, düz dille yazılır.
+- Bağlam kopmasın: her adım IZ_KARNE (IK_KAYIT, IK_GOREV, IK_ACIK) üzerinden IZ_DEFTERI.md'ye işlenir; yeni oturum buradan sürer.
+- Mevcut pozisyon kuralları (6-7 Kas): DGXX 2x kuralı (maliyetin 2 katında anaparayı çek), bilanço günü kuralları, QMLS kalan yarı için olay kuralları; ayrıntı IK_GOREV'de.

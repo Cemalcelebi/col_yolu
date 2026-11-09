@@ -1723,8 +1723,15 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "Kilit öncesi yükseltip millete satıyorlar; millet niye girsin, enayi mi",
      "yapilan": "Mesajla: içeriden satış / çıkış likiditesi mekanizması; ölçüm açılım öncesi pompa değil düşüş gösteriyor (Keyrock); düşük float + yüksek FDV yapısı; kimin kazandığı; perakendenin neden girdiği (piyango tercihi, görünen kazananlar); BIST fon krizi ve QMLS ATW ile aynı desen",
      "sonuc": "Pratik kural: düşük float, yeni listeleme, sığ tahta = perakende çıkış likiditesi; uzak dur ya da sıfırlanmayı kabul ettiğin tutarla", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "SON TALİMAT: kriptoyu boş ver; YEOTK gibi sıkı dosya hisseleri BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan ele al, her şeyi test et, gerekirse makine / web / ajan; bağlam kopmasın, deftere yaz; basit ve erişilebilir bilgi değerlidir",
+     "yapilan": "CLAUDE.md'ye kalıcı bölüm + IK_ACIK YOL maddesi; K57 programı başlatıldı: (a) ön kayıtlı geçmiş test (K57.py), (b) BIST 3Ç26 canlı tarama, (c) ABD Q3 2026 canlı tarama (SEC XBRL frames)",
+     "sonuc": "Sürüyor; sonuç bu satırın altındaki K57 satırlarında", "durum": "SÜRÜYOR"},
 ]
 IK_ACIK: List[str] = [
+    "YOL (9 Kas, CEMAL'İN SON TALİMATI): YEOTK profili ('sıkı dosya') hisselerini BIST ve özellikle ABD'de bul; bütün ölçüleri her açıdan test et; "
+    "gerekirse makine / web / ajan; basit ve erişilebilir bilgi esas. K57 = profilin ön kayıtlı geçmiş testi (bilanço günü tepkisi + temel ivme + "
+    "seyrelme yok + fon lekesi yok + tepeden düşmüş; FI_OLCUT, karar ABD 2023 + 2024-26, BIST bilgi) + canlı tarama (BIST 3Ç26, ABD Q3 2026). "
+    "Pozisyon kuralları IK_GOREV 6-7 Kas satırlarında (DGXX 2x = 4,02 / 4,05 $, bilanço 13 Kas, teslim 15 Ara; QMLS kalan yarı olay kuralları).",
     "YOL (1 Kas): K55 NİHAİ: İZ YOK (Ç146). BAĞIMSIZ 2024-26 bir kez açıldı (kilit + sızıntı PASS sonrası): seçimsiz kontrolle gerçek etki hücresi yok, "
     "K55 B 64 / 64 TUTMAZ; KEŞİF ve İÇ ile birlikte üç dönemde de K55 farkları olay tanımının seçim / ağırlık mekaniği (Ç143 ayrışma, Ç144 PBO / DSR "
     "aşırı uyum riski yüksek, Ç145 sızıntı yok). Yeni eşik aranmaz. AÇIK: EVREN2 (Ç142) 1-2 Kasım: Tiingo indirmesi, kimlik / adi hisse / fiyat kapsamı / "
