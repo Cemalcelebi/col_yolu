@@ -1747,6 +1747,10 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-09", "istek": "E-postayı yanlış yazmışım, doğrusunu biliyorsun",
      "yapilan": "Not alındı: sonraki SEC isteklerinde Cemal'in hesabındaki doğru adres, yalnız User-Agent ortam değişkeninde kullanılır (koda / repoya yazılmaz). Bugünkü 178 dosya zaten indi ve önbellekte; yeniden indirme gerekmiyor",
      "sonuc": "Veri ve sonuç etkilenmedi", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-09", "istek": "QMLS Denver 1,2 MW beş yıllık colocation haberi; piyasa neden görmüyor",
+     "yapilan": "Haber (Midas, Benzinga aktarımı, 9 Kas 15:52 TR, piyasa açılışından önce): karşı taraf, tutar, finansman yok; devreye alma 2027 Ç1. Fiyat: açılış 3,24 (+%3,5), gün içi en yüksek 3,37, 3,22'de (+%3); hacim düşük; aynı gün sektör +%5-9",
+     "sonuc": "Colocation = QMLS büyük ihtimalle kiracı (gider ve yükümlülük); gelir için GPU alımı ve müşteri gerekir, bu da finansman / seyrelme demek; ölçek küçük (sözleşmeli 11,75 MW'ın ~%10'u); şirketin PR-yalnız sözleşme haberleri Ağu-Eki'de de fiyatı yükseltmedi. Kalan yarı için kurallar değişmez",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL; ABD tam veriyle (SEC, Cemal'in e-posta izni) yeniden koşuldu, sonuç aynı. "
