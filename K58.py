@@ -893,6 +893,74 @@ def k58_karar(cikti: Optional[str] = None) -> Dict[str, Any]:
     return out
 
 
+def _k58_guc_al(cikti: Optional[str], n: int, delta: float) -> float:
+    Ag = _k58_oku("a", cikti)
+    if Ag is None:
+        return np.nan
+    g = Ag[(Ag.n == n) & np.isclose(Ag.delta, delta)]
+    return float(g.guc.iloc[0]) if len(g) else np.nan
+
+
+def _k58_duz_dil(kr: Dict[str, Any], cikti: Optional[str]) -> str:
+    """Raporun başındaki düz dil paragrafı (sayılar çıktılardan)."""
+    c = []
+    if "D1" in kr:
+        g2 = " / ".join(f"%{_sy(_k58_guc_al(cikti, n, 0.02) * 100, 0)}" for n in K58_ESIK["A"]["n"])
+        g4 = " / ".join(f"%{_sy(_k58_guc_al(cikti, n, 0.04) * 100, 0)}" for n in K58_ESIK["A"]["n"])
+        c.append(f"Ölçüm aletimiz (FI_OLCUT olay cetveli), olaylara bilerek eklenen 60 günde +%2'lik gerçek bir üstünlüğü "
+                 f"{'/'.join(str(n) for n in K58_ESIK['A']['n'])} olayda sırasıyla {g2} olasılıkla görüyor (+%4 için {g4}); "
+                 f"üstünlük yokken yanlış alarm en çok %{_sy(kr['D1']['yp'] * 100, 1)}. Gerçek İZ dört hücre birden ister, olasılık "
+                 f"yaklaşık bu sayıların dördüncü kuvvetidir. "
+                 + ("Yani alet küçük ama gerçek etkileri büyük ölçüde KAÇIRIYOR: 'iz yok' sonuçlarının bir kısmı piyasadan değil aletten." if kr["D1"]["bulgu"]
+                    else "Alet küçük etkileri ön kayıttaki eşiğin üstünde bir olasılıkla görebiliyor."))
+    Bt = _k58_oku("b_cetvel", cikti)
+    if Bt is not None:
+        tut = [r.faktor for r in Bt.itertuples() if r.cetvel_tutar]
+        c.append(f"Bilinen faktörlerden (French, 2000-2026) portföy cetvelinden geçenler: {', '.join(tut) if tut else 'hiçbiri'}; "
+                 f"yani bu cetvel de yalnız güçlü etkileri görür.")
+    if "D2_ABD" in kr:
+        Cc = _k58_oku("c", cikti); m = Cc[(Cc.pazar == "ABD") & (Cc.sinyal == "C1_momentum_12_1")].iloc[0]
+        c.append(f"Önerilen portföy cetveli ABD'de 12-1 momentumu {'kabul etti' if m.tutar else 'kabul etmedi'} (maliyetli yıllık fazla {_yz(m.yillik_fazla)}, "
+                 f"NW t {_sy(m.nw_t)}); rastgele sinyallerin yanlış geçme oranı maliyetli %{_sy(kr['D2_ABD']['yp_net'] * 100, 1)}, maliyetsiz "
+                 f"%{_sy(kr['D2_ABD']['yp_brut'] * 100, 1)}. "
+                 + ("Bu yüzden cetvel 'kalibre aday standart'; benimsemek Cemal'in kararı." if kr.get("D2") else "Cetvel kalibre aday değil.")
+                 + (f" BIST'te momentum {'geçti' if kr.get('D2_BIST', {}).get('c1_tutar') else 'geçmedi'} (bilgi)." if "D2_BIST" in kr else ""))
+    Ca = _k58_oku("c4a", cikti)
+    if Ca is not None:
+        par = []
+        for r in Ca[Ca.donem == "tam"].itertuples():
+            par.append(f"{r.endeks}: filtre yıllık {_yz(r.filtre_yillik)} / al-tut {_yz(r.al_tut_yillik)}, en büyük düşüş {_yz(r.filtre_mdd)} / "
+                       f"{_yz(r.al_tut_mdd)} -> {r.karar}")
+        c.append("SMA200 trend filtresi (endeks): " + "; ".join(par) + ".")
+    if "C4b" in kr:
+        c.append("Hisse düzeyinde 'SMA200 üstü' ve 'SMA atılımı' portföyleri: " + "; ".join(f"{k} {'TUTAR' if v else 'tutmaz'}" for k, v in kr["C4b"].items()) + ".")
+    return " ".join(c) if c else "(henüz çıktı yok)"
+
+
+def _k58_c151(kr: Dict[str, Any], oc: Dict[str, Any], meta: Dict[str, Any], cikti: Optional[str]) -> str:
+    """IZ_KARNE Ç151 kaydı (dize değerlerinde yalnız tek tırnak, ters bölü yok)."""
+    def t(x: str) -> str:
+        return str(x).replace('"', "'").replace("\\", "/").replace("\n", " ")
+    sonuc = []
+    if "D1" in kr:
+        sonuc.append(f"A güç (δ +%2, n 30/100/300/1000/3000): " + "/".join(f"%{_sy(_k58_guc_al(cikti, n, 0.02) * 100, 0)}" for n in K58_ESIK["A"]["n"])
+                     + f", δ 0 yanlış pozitif en çok %{_sy(kr['D1']['yp'] * 100, 1)}; D1 " + ("BULGU: FI_OLCUT küçük etkiyi göremiyor" if kr["D1"]["bulgu"] else "bulgu yok"))
+    if "D2_ABD" in kr:
+        sonuc.append(f"C portföy cetveli: ABD C1 momentum {'TUTAR' if kr['D2_ABD']['c1_tutar'] else 'tutmaz'}, plasebo yanlış pozitif "
+                     f"%{_sy(kr['D2_ABD']['yp_net'] * 100, 1)} (brüt %{_sy(kr['D2_ABD']['yp_brut'] * 100, 1)}); D2 {'KALİBRE ADAY STANDART (benimseme Cemal kararı)' if kr.get('D2') else 'aday değil'}; "
+                     f"BIST C1 {'TUTAR' if kr.get('D2_BIST', {}).get('c1_tutar') else 'tutmaz'}")
+    if "C4a" in kr:
+        sonuc.append("C4a SMA200 endeks filtresi: " + ", ".join(f"{k} {v}" for k, v in kr["C4a"].items()))
+    if "C4b" in kr:
+        sonuc.append("C4b: " + ", ".join(f"{k} {'TUTAR' if v else 'tutmaz'}" for k, v in kr["C4b"].items()))
+    notu = t("; ".join(sonuc) + ". İz iddiası yok (ölçüm aleti sağlaması); seviye 0.")
+    return (f'_ik_k("Ç151", "2026-11-10", "{t("K58 CETVEL SAĞLAMASI: FI_OLCUT gücü (plasebo olay + bilinen δ), French faktörleri pozitif kontrol, portföy cetveli (aylık üst %10) kalibrasyonu, SMA200 trend filtresi (endeks ve hisse)")}", '
+            f'"K58.py, test_k58.py", "{t("İz bulamamamızın nedeni piyasa mı, ölçüm aletimiz mi?")}", '
+            f'"{t("Ön kayıt K58_ON_KAYIT.md (sha " + oc["sha"][:12] + ", git 657c2a1, ölçümden önce); FI_OLCUT değişmedi; portföy cetveli yalnız aday")}", "", 0, '
+            f'cikti="arastirma_cikti/k58_cetvel_sagla/ (K58_ON_KAYIT.md, K58_RAPOR.md, A_guc.csv, B_french.csv, C_portfoy.csv, C_plasebo.csv, C4a_endeks.csv)", '
+            f'notu="{notu}"),')
+
+
 def k58_rapor(cikti: Optional[str] = None) -> str:
     oc = k58_onkayit_dogrula(cikti); meta_yol = _k58_yol("meta", cikti)
     meta = json.load(open(meta_yol, encoding="utf-8")) if os.path.exists(meta_yol) else {}
@@ -977,6 +1045,10 @@ C4b eşli plasebo (bilgi):
 
 Veri notları: {'; '.join(notlar) if notlar else 'yok'}.
 """)
+    for dos, baslik in (("a", "## A. FI_OLCUT gücü"), ("b", "## B. Pozitif kontrol: French faktörleri"), ("c", "## C. Portföy cetveli"),
+                        ("c4a", "## C4a. Endeks trend filtresi")):
+        if not os.path.exists(_k58_yol(dos, cikti)):
+            parca.append(f"{baslik}: VERİ YOK (bölüm koşulmadı ya da veri inemedi; ötekiler sürdü)\n")
     ozet = []
     if "D1" in kr:
         ozet.append(f"- A (FI_OLCUT gücü): {'küçük etkiyi GÖREMİYOR (D1 bulgusu)' if kr['D1']['bulgu'] else ('D1 bulgu şartı sağlanmadı' if kr['D1']['tam'] else 'ölçüm eksik')}; "
@@ -991,6 +1063,9 @@ Veri notları: {'; '.join(notlar) if notlar else 'yok'}.
 
 Ön kayıt: {oc['zaman_utc']} UTC (mühür {oc['sha'][:12]}, dosya sha256 {oc['dosya_sha256'][:12]}); koşu {meta.get('kos_baslangic', '—')} → {meta.get('kos_bitis', '—')}. {K58_SURUM}
 
+## Düz dille
+{_k58_duz_dil(kr, cikti)}
+
 ## Özet (D kuralları, ön kayıttan)
 {chr(10).join(ozet) if ozet else '- (henüz çıktı yok)'}
 
@@ -1000,6 +1075,11 @@ Veri notları: {'; '.join(notlar) if notlar else 'yok'}.
 - V_ABD yalnız bugün yaşayan hisseler (hayatta kalma yanlılığı); French verisi bunun yanlılıksız kontrolüdür.
 - C4a nakit getirisi 0 (faiz yok; filtre aleyhine). XU100 fiyat endeksidir (temettüsüz), TL bazında.
 - Tutan C4 sonucu İZ değildir; CLAUDE.md test standardı (FI_OLCUT, ABD + AVR) değişmedikçe 'cetvel C altında tutar' diye okunur.
+
+## IZ_KARNE önerisi (Ç151; IZ_KARNE.py'ye ana oturum işler)
+```
+{_k58_c151(kr, oc, meta, cikti)}
+```
 """
     yol = _k58_yol("rapor", cikti)
     with open(yol, "w", encoding="utf-8") as f:
