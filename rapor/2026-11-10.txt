@@ -1,0 +1,26 @@
+COL GUNLUK RAPOR — 2026-11-10 03:25 (TR)
+Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
+Onbellek: sarildi (584 hisse)
+Veri: 584 hisse | son bar 2026-11-09
+Ozet: aday 6 | pozisyon 3 | kapanan 14 | sure 56 sn
+UYARI: bugunun bari yok (son bar 2026-11-09). Yahoo gecikmis olabilir.
+============================================================
+
+== 2026-11-09  CDS 0.84 -> 1.5x
+aday 6 | poz 3 | kapanan 14
+
+TUT  (hisse  kar%  durum  tabana%)
+  GARAN    +6%  78g  taban -20%
+  ENTRA    +5%  110g  taban -20%  stop=maliyet
+  YKBNK    -1%  78g  taban -14%
+
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 6]
+  ULUFA    -2%   %5.0   0.08  0.372  -       -4  
+  HUNER    -4%   %4.4   nan  nan  -       -1  (serbest)
+  ALBRK    -5%   %5.0   0.227  0.271  -      +17  (serbest)
+
+KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -26.5% (n=14)
+
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-32.8
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-14, XSGRT %-25, XULAS %-25
+  ruzgarli sektorde uzun colde hisse yok
