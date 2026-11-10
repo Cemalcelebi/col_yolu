@@ -1761,6 +1761,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "Ön kayıt 18:44 UTC (sha b81b5fb148be), koşu 18:45 yalnız önbellekle (yeni SEC / Yahoo isteği yok); test_k57 10/10",
      "sonuc": "Üçü de İZ DEĞİL (Ç150). K57 + K57-B + K57-C: 48 ABD karar hücresinin hiçbiri tutmadı; YEOTK profili hattı ön kayıtlı ölçütle kapandı. Basit sonuç: iyi bilanço + güçlü tepki ortalamada hafif artı ama güvenilir değil; 'dipten alma' şartı bozuyor",
      "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-10", "istek": "Sadece yapılan işlerin doğruluğunu sına, iş nasıl olmalı onu yaz; yapmayı alt modeller yapsın",
+     "yapilan": "CLAUDE.md'ye 'Çalışma düzeni' bölümü (ana model = iş tanımı + denetim; uygulama alt ajanlarda). K57 / B / C ve canlı taramalar 11 maddede denetlendi: arastirma_cikti/k57_yeotk_profili/DENETIM_10Kas.md",
+     "sonuc": "Kararlar (İZ DEĞİL) denetimden geçti: sızıntı 0, hücreler birebir yeniden üretildi, r60 ham fiyattan tuttu, e-posta repoda yok. Düzeltmeler: YEOTK 3Ç kârı ≈827 mn TL (864 değil), CENX'te S-3 kaydı var. Süreç zayıflığı: K57-C ön kaydı ölçümden önce commit edilmedi",
+     "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "YOL (9 Kas akşam): K57 (Ç148) bitti: YEOTK profili geçmiş testte İZ DEĞİL; ABD tam veriyle (SEC, Cemal'in e-posta izni) yeniden koşuldu, sonuç aynı. "

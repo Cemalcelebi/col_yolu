@@ -95,3 +95,9 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Gerçek ve değerli bilgi basit ve erişilebilir olandır: karmaşık ölçü, basit ölçüyü geçmiyorsa seçilmez; sonuçlar Cemal'e tek sayfada, düz dille yazılır.
 - Bağlam kopmasın: her adım IZ_KARNE (IK_KAYIT, IK_GOREV, IK_ACIK) üzerinden IZ_DEFTERI.md'ye işlenir; yeni oturum buradan sürer.
 - Mevcut pozisyon kuralları (6-7 Kas): DGXX 2x kuralı (maliyetin 2 katında anaparayı çek), bilanço günü kuralları, QMLS kalan yarı için olay kuralları; ayrıntı IK_GOREV'de.
+
+## Çalışma düzeni (Cemal, 10 Kasım 2026: "yapılan işlerin doğruluğunu sına, iş nasıl olmalı onu yaz, yapmayı alt modeller yapsın")
+- Ana model iki iş yapar: (1) İŞ TANIMI: her işin ne, nasıl, hangi veriyle, hangi eşikle, hangi testle yapılacağını alt ajana yazılı verir; (2) DENETİM: alt ajanın teslim ettiğini bağımsız sınar.
+- Kod yazma, veri indirme, ölçüm koşma, web taraması alt ajanlara (Agent) verilir. Ana model bunları kendisi yapmaz; yalnız denetim için kısa kontrol komutları çalıştırır.
+- Denetim en az şunları kapsar: ön kaydın ölçümden önce olduğu (git zamanı + mühür), geleceğe bakma olmadığı (her bilgi tarihi <= karar günü), raporlanan sayıların çıktı dosyalarından yeniden üretilmesi (en az iki hücre), kaynaklar arası çelişkiler, e-posta / anahtar sızıntısı, testlerin geçmesi. Denetimde bulunan hata alt ajana düzeltme işi olarak geri verilir.
+- Cemal'e giden son mesaj denetim sonucunu da söyler: neyi sınadım, ne tuttu, ne tutmadı.
