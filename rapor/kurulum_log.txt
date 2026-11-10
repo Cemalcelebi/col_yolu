@@ -9,19 +9,19 @@
   MUM       :  mum_testi(tr)       <- hacimli+tam govde doktrini
   RETEST    :  giris_kurallari_karsilastir()
   ATILIM BAR:  atilim_kalite_testi(tr)  <- gap bari = dev hacim bari
-[evren] TradingView'den tüm BIST: 626 hisse.
-[evren] turkey: 626 hisse
+[evren] TradingView'den tüm BIST: 625 hisse.
+[evren] turkey: 625 hisse
 [cache] mevcut: 584 hisse
-[cache] beklenen son bar: 2026-11-09  |  eksik: 42  bayat: 0
-[cache] 42 sembol inecek (toplam 626 yerine).
+[cache] beklenen son bar: 2026-11-10  |  eksik: 42  bayat: 0
+[cache] 42 sembol inecek (toplam 625 yerine).
 
   ...25/42  (guncellenen: 0)
   ...42/42  (guncellenen: 0)
 [cache] 584 hisse kaydedildi -> ./veri_1d_turkey.pkl
-[filtre] guncel: 584 / 584  (sinir: 2026-11-03)
+[filtre] guncel: 584 / 584  (sinir: 2026-11-04)
 
-[hazir] 584 hisse  |  18.1 sn
-  [yenile] 584 hisse guncellendi | hata 0 | son bar 2026-11-09 | 34s
+[hazir] 584 hisse  |  21.1 sn
+  [yenile] 584 hisse guncellendi | hata 0 | son bar 2026-11-10 | 47s
 VERİ KORU v1.0: 584 hisse | 0 hissede 0 bölünme/bedelsiz onarıldı (ham inen seri) | 3 açılış hatası/şüpheli dokunulmadı | pkl değişmedi | 0s
   kalan kapanış sıçraması (≤0.62 / ≥1.6): 1 → MERKO 2020-12-21 0.498
 [ok] COL SISTEMI v2  (2026-10-21 D13 / D12: col tespiti = DIP2 (yeni dipten kutu + savunma 15 bar + parabol + obek >= 2) | D11: verisi durmus hisse aday olmaz, > 5 is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > 5 is gunu | 2026-10-18 D9: uzun col 250 bar + sektor ruzgari >= %10, sepet > %0 (D9b) | 2026-10-17 D7: kucuk mum = aralik | D8: fon suzgeci ACIK, 9 hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)
@@ -55,9 +55,9 @@ VERİ KORU v1.0: 584 hisse | 0 hissede 0 bölünme/bedelsiz onarıldı (ham inen
 [OB23 yok] [Errno 2] No such file or directory: '/content/drive/MyDrive/col_tarayici/onbellek_2023.pkl'
 [OBUS yok] [Errno 2] No such file or directory: '/content/drive/MyDrive/col_tarayici/onbellek_ABD.pkl'
   onbellek: OB24 - | OB23 - | OBUS -
-XU100.IS: 2499 bar  2016-11-09 -> 2026-11-09
-  [endeks] seans acik: XU100 bugunun yarim bari atildi, son bar 2026-11-09
+XU100.IS: 2499 bar  2016-11-10 -> 2026-11-10
+  [endeks] seans acik: XU100 bugunun yarim bari atildi, son bar 2026-11-10
 
-HAZIR | VERI 584 | d 4927 | d23 549 | TR saat 03:25
+HAZIR | VERI 584 | d 4927 | d23 549 | TR saat 00:57
   A,P,Kp = gun()          <- gunluk
   denetim(OB24, OB23, OBUS, xu)   <- tum duzeltilmis metrikler (30 sn)
