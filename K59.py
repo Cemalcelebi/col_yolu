@@ -1390,7 +1390,9 @@ Denemelerin AYRINTILARI ise (aşağıda 'BOŞLUK n' diye işaretli; §7'de liste
 {Kr['deneme']} deneme daha ekler ({len(B['sinyal'])} sinyal x 2 tasarım). Bu yüzden K59-B'de tutan sonuç, K59'da tutmuş olsaydı taşıyacağı ağırlığı TAŞIMAZ;
 'ikinci tur adayı'dır ve K60'ta (uzun tarih) doğrulanmadan kullanılmaz.
 Faz 1'de gerçek veride yalnız şunlar yapıldı: (i) `python -I K59.py b_kapsam` (hisse / ay / sinyal başına hisse SAYISI; getiri yok),
-(ii) iki French zip'i indirildi ve yalnız bölüm başlıkları, sütun adları ile ilk / son ay etiketleri okundu (değer okunmadı, istatistik yok).
+(ii) iki French zip'i indirildi; bölüm başlıkları, sütun adları, ilk / son ay etiketleri okundu ve ayrıştırıcı gerçek dosyalarda yalnız BİÇİM
+için denendi (satır / sütun sayısı, eksik hücre sayısı, ayların ardışıklığı). Hiçbir getiri değeri basılmadı, harman kurulmadı, ortalama ya da
+başka istatistik hesaplanmadı.
 
 ## 1. K59'dan aynen alınanlar (değişmez)
 - Evrenler U1 ({ev['U1']['ad']}) ve U2 ({ev['U2']['ad']}); K59 §1'deki uygunluk kuralları, kriz
