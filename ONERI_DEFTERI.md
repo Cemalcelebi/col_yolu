@@ -18,6 +18,18 @@ Henüz yok. K59 (basit sinyaller + bileşik) ölçülüyor; sonuç gelmeden 'TAR
 ## İzleme listesi (öneri değil)
 BIST: PNLSN, FORTE, GWIND, EUPWR (3Ç26 taraması ve BIST raporu). ABD: CENX, AEHR, DUOT, AIB.
 
+## Risk süzgeci (K60 / K60-B, 11 Kasım 2026; bilgi düzeyi, İZ değil)
+Kaynak: 4.666 ABD hissesi, 2012-2026, üç dönem (Ç154, Ç155). Yalnız yaşayan şirketler: gerçek batma olasılıkları buradakinden BÜYÜKTÜR.
+- Taban (herhangi bir hisse, 12 ay): ikiye katlanma %4-7, yarıya inme %6-7.
+- Oynak havuz (oynaklığı en yüksek %20; DGXX / QMLS tipi): ikiye katlanma %9-16, yarıya inme %17-21, tipik (medyan) sonuç eksi.
+- Havuz içinde KIRMIZI BAYRAK (yarıya inme olasılığı havuza göre kaç kat; ikiye katlanma artmıyor): ters bölünme 2-2,4 kat (yarıya inme %37-47);
+  zarar eden 1,5; raf kaydı (S-3) 1,3-1,4; raftan satış (424B5) 1,4-1,6; nakit yakan 1,4-1,6; hisse ihraç eden 1,2-1,4; zirveden en uzak 1,4;
+  en küçük 1,3-1,7; en düşük fiyat 1,2-1,4.
+- Havuz içinde KORUMA (yarıya inme olasılığı kaç kat; ikiye katlanma aynı kalıyor): kârlı + seyreltmeyen + bilanço tepkisi iyi (COMP4 / DOSYA_Y üst
+  beşte bir) 0,6-0,8; kârlı (ROA üst) 0,7; likit 0,6-0,75.
+- Kullanım: her öneri ve her açık pozisyon için DOSYA kapısında bu bayraklar tek tek işaretlenir ve bayrak sayısı yazılır. Bayrak, alım yasağı
+  değildir; boyut tavanını düşürür. Karar Cemal'indir.
+
 ## Karne (ayda bir yenilenir; kod arastirma_cikti/oneri_karne/karne.py)
 
 | Tarih | Pencere | Sonuç | Okuma |
