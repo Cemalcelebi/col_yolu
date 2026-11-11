@@ -114,3 +114,8 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - BOYUT: tek isim, Cemal'in kaybetmeyi kabul ettiğini yazdığı tutarı aşmaz; zarardaki isme olaysız ekleme yok; aynı sektörde ikinci isim yoğunlaşma uyarısıyla verilir. Geçmiş kayıplar (PAPIL, QMLS, TERA) sinyalden değil boyuttan geldi.
 - ÖNERİ DEFTERİ: her öneri ve Cemal'in gerçek alımı ONERI_DEFTERI.md'ye yazılır (tarih, isim, kapılar, giriş, boyut, çıkış kuralları, sonuç). Sonuçlar ayda bir güncellenir; modülün gerçek karnesi budur ve gizlenmez (kaybedenler dahil).
 - Öneri işlerinde de çalışma düzeni geçerlidir: taramayı ve dosya araştırmasını alt ajanlar yapar, ana model iş tanımını yazar ve denetler.
+
+## Sonuç dili (Cemal, 11 Kasım 2026: "bu yapıldı şu yapıldı yok; sonuçta bu var şu var demen gerekir")
+- Cemal'e giden mesaj BULGU ile başlar ve bulgudan oluşur: "şu var (sayı), şu yok (sayı), şuna yakınız". Süreç anlatımı (ön kayıt, commit, mühür, hangi alt model ne yaptı) mesaja yazılmaz; defterde ve raporlarda durur. Denetim tek satırla geçer: "denetlendi, tuttu" ya da "şu tutmadı".
+- Her araştırma turunun hedef çıktısı bir OLASILIK TABLOSUDUR: hangi ölçülebilir özellik, bir hissenin 12 ayda +%100 yapma olasılığını taban orana göre kaç kat artırıyor, -%50 olasılığını kaç kat artırıyor; hangi dönemlerde tuttu. Ortalama getiri ikinci sırada raporlanır.
+- İz arama işini ana model yönetir: hangi ölçülerin, hangi veriyle, hangi sırayla ve hangi yanlış-keşif kontrolüyle sınanacağını ana model yazar; bilmediğini alt modellere web'de araştırtır; hiçbir aile 'denenmedi' diye kalmaz (SINYAL_ENVANTERI tamamı).
