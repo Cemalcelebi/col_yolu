@@ -1,7 +1,7 @@
 # K59 ÖN KAYIT — basit sinyaller, portföy cetveli v2 (aylık, geniş evren)
 
-Yazım zamanı: 2026-11-11 05:28:28 UTC (2026-11-11 08:28 TR) (ölçümden ÖNCE; gerçek veride hiçbir sinyal portföyü getirisi hesaplanmadı, sonuç görülmedi). Sürüm: K59 v1.0 (2026-11-11): basit sinyaller (S1-S9, COMP4, COMP9) x portföy cetveli v2 (K58 C + beta düzeltmeli alfa); ABD iki evren karar, BIST bilgi
-ESIK_SHA256: 6f4aca9fd2e26afe3caae6c0675d588cba017c9203ac17fddf2354234b169fa1
+Yazım zamanı: 2026-11-11 05:48:23 UTC (2026-11-11 08:48 TR) (ölçümden ÖNCE; gerçek veride hiçbir sinyal portföyü getirisi hesaplanmadı, sonuç görülmedi). Sürüm: K59 v1.1 (2026-11-11): basit sinyaller (S1-S9, COMP4, COMP9) + DOSYA ailesi (DOSYA_Y, DOSYA_D, DOSYA_YD) + UCUZLUK koşullu testi x portföy cetveli v2 (K58 C + beta düzeltmeli alfa); ABD iki evren karar, BIST bilgi
+ESIK_SHA256: 6fe8bb38566701f175883f803332524dbbab493561eef3e4c968bfa332c51eb0
 (K59_ESIK + içe alınan K57_ESIK / K57B_ESIK / K58 B / FI_K28 / FI_K31 tanımlarının sha256'sı. `python -I K59.py kos` bu mühürle, aşağıdaki
 veri sha256'larıyla ve bu dosya git'e işlenmiş, sonradan değişmemişse başlar; biri tutmazsa koşu durur.)
 
@@ -23,6 +23,10 @@ Bu ön kayıttan ÖNCE görülmüş ilgili sonuçlar (kör olmayan kısım): K58
 yok) net yıllık fazla +%8,5, NW t 2,10, K58 C 'TUTAR'. Bu yüzden S1 / U1 kör değildir (evren süzgeci ve alfa şartı yeni). Öteki sinyaller
 ve bileşikler bu evrenlerde portföy olarak hiç ölçülmedi; K57 / B / C bilanço tepkisini olay cetveliyle (FI_OLCUT) ölçtü, İZ DEĞİL çıktı.
 Faz 1'de gerçek veride yalnız `kapsam` komutu koşuldu (hisse / ay / sinyal başına hisse SAYISI); getiri, fazla, t hesaplanmadı.
+SÜRÜM NOTU: bu, ön kaydın İKİNCİ yazımıdır. İlk yazım (2026-11-11 05:28:28 UTC; mühür 6f4aca9fd2e26afe3caae6c0675d588cba017c9203ac17fddf2354234b169fa1; dosya sha256
+df5663675e7d02e38cedad652408596bfdb3401f602f3712bcb58675b7952e44; git d1a2dff) hiçbir ölçüm yapılmadan, ana oturumun ek işiyle (Cemal'in isteği: 'YEOTK ve DGXX'i
+seçtiren mantık geçmişte sınansın; eski cetvelle tutmadı denenler çöpe atılmasın') genişletildi: DOSYA ailesi (§2, §4.6) ve UCUZLUK koşullu
+testi (§5b) EKLENDİ. İlk yazımdaki hiçbir eşik, tanım, evren ya da karar kuralı değişmedi.
 
 ## 1. Evrenler (ABD = karar, BIST = bilgi)
 - U1: V_ABD (islenmis-veri; bugün yaşayan ~1.400 ABD hissesi). Oluşum ayları ay sonu >= 2016-01-01, fiyat 2026-08-31'de kesik (K58 C ile aynı kriz kesiği).
@@ -76,6 +80,20 @@ Sınır: frames değerleri şirketin EN SON bildirdiği değerdir (sonradan düz
 - COMP4 (KARAR; önceden yazıldı, seçim yok): S1, S4, S5, S6 sinyallerinin ay içi yüzdelik sıralarının ((sıra - 0,5) / n; uygun ve o sinyali
   olan hisseler arasında, eşitlikte ortalama sıra) ortalaması; hissenin dördün en az 3'ünde değeri olmalı. Üst %10.
 - COMP9 (BİLGİ): dokuz sinyalin sıra ortalaması; en az 5 sinyal. (BIST'te beş fiyat / hacim sinyali.)
+- EK BİLEŞENLER (yalnız DOSYA bileşiklerinin üyesidir; tek başına portföy olarak ÖLÇÜLMEZ, ek deneme sayılmaz):
+  X1 çeyrek geliri yıllık büyümesi (son çeyrek / bir yıl önceki aynı çeyrek - 1): gelir (S7 ile aynı etiket sırası; iki çeyreği de olan ilk etiket);
+  ikisi de > 0 ve ikisinin de bilgi tarihi <= t (K57 F1 'satis_yoy' tanımı). Yüksek iyi.
+  X2 düşük kaldıraç (toplam yükümlülük / özkaynak; düşük iyi): -(yükümlülük / özkaynak), en son bilinen çeyrek sonu; özkaynak > 0 şart; Liabilities
+  yoksa LiabilitiesAndStockholdersEquity - özkaynak (K57 F3 gibi); yükümlülük < 0 ise veri yok.
+  X3 252 gün zirvesinden uzaklık (S9'un tersi; düşmüş iyi): -S9, yani kapanış / 252 gün zirvesi DÜŞÜK olan iyi.
+- DOSYA AİLESİ (KENDİ BAŞINA TUTAR / TUTMAZ; ölçümden önce yazıldı, seçim yok; sıra ortalaması COMP4 ile aynı yöntem, üst %10):
+  DOSYA_Y (YEOTK tipi: ivmelenen, kârlı, seyrelmesiz büyüme): S7, X1, S5, S6, S4 (gelir ivmesi, gelir yıllık büyümesi, kârlılık, düşük ihraç, PEAD);
+  hissenin beşin en az 4'ünde değeri olmalı.
+  DOSYA_D (DGXX tipi (vekil): sağlam bilanço + büyüme + düşmüş fiyat): X2, X1, X3 (düşük kaldıraç, gelir yıllık büyümesi, zirveden
+  uzaklık); üçün 3'ü de olmalı. NOT: gerçek DGXX seçiminde belirleyici olan 'SEC'e ekli bağlayıcı sözleşme' yapısal veride YOK (8-K madde 1.01
+  verisi K60'ta); DOSYA_D yalnız ölçülebilir kısmın VEKİLİDİR. Tutmaması DGXX mantığını çürütmez, tutması da sözleşme şartını kanıtlamaz.
+  DOSYA_YD (DOSYA_Y + düşük kaldıraç): S7, X1, S5, S6, S4, X2; altının en az 5'i olmalı.
+  BIST: bu çalışmada BIST temel verisi yüklenmez; DOSYA bileşikleri BIST'te ÖLÇÜLMEZ (yalnız U1 ve U2). BIST ölçümü ayrı iş olur.
 KAPSAM (veriden ötürü, sonuçtan bağımsız): temel veri 2020'de başlar; pay sayısı özütleri 2021'de başlar, yıllık değişim bir yıl ister.
 Bir sinyalin ölçüm dönemi = o sinyali olan uygun hisse sayısının ilk kez >= 100 (BIST 30) olduğu aydan sona.
 Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayıları; getiri hesaplanmadı):
@@ -86,6 +104,9 @@ Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayıları; getiri hesaplanmad
       (1.916-2.477). S1 2021-01'den (67 ay), S4 / S5 / COMP4 2021-02'den (66 ay), S6 2022-02'den (54 ay), ötekiler 68 ay. S3: ilk 3 ay işlem
       değeri, sonraki 65 ay piyasa değeri. COMP4 2022-02'ye kadar üç üyeyle (S1, S4, S5) kurulur (S6 henüz yok).
   BIST: 581 hisse, 123 oluşum ayı, uygun evren ortalama 423 (357-581).
+  DOSYA ailesi (ikinci kapsam sayımı, yine yalnız hisse sayıları): X1 2021-04'ten (bir yıl önceki çeyrek 2020'de başlar), X2 U1'de 2020-06'dan,
+      U2'de 2020-12'den. DOSYA_Y / DOSYA_D / DOSYA_YD iki evrende de 2021-04-30'dan (64 ay); sinyali olan uygun hisse ortalaması U1'de
+      867 / 822 / 795, U2'de 1.710 / 1.669 / 1.614. BIST'te X1 / X2 ve DOSYA yok. UCUZLUK COMP4 ile aynı 66 ay. İlk sayımdaki sütunlar değişmedi.
 
 ## 3. Portföy ve cetvel v2
 - Portföy: sinyali olan uygun hisselerin en üst %10'u (sayı = max(1, yuvarla(0,10 x sinyali olan uygun hisse)); eşitlikte kod sırası),
@@ -111,11 +132,22 @@ Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayıları; getiri hesaplanmad
 3. İZ ilan EDİLEMEZ: CLAUDE.md standardı (FI_OLCUT, ABD + Avrupa) değişmedi ve Avrupa'da temel veri yok. Standart değişikliği Cemal'in kararı.
 4. Seçim yok: karar yalnız COMP4'e bakar. Tekil sinyaller ve COMP9 bilgi içindir; 'en iyi tutan sinyali seçip' yeni bileşik kurulmaz.
 5. BIST bilgi olarak raporlanır; karara girmez.
+6. DOSYA AİLESİ: DOSYA_Y, DOSYA_D, DOSYA_YD her evrende kendi başına cetvel v2 ile 'TUTAR (yineleme)' / 'TUTMAZ' etiketi alır ve ayrı aile
+   olarak raporlanır ('küçük' işareti aynı: net yıllık fazla < +4 puan). Çoklu deneme: dokuz tekil sinyale 3 ek deneme (toplam 12) sayılır;
+   DOSYA'da 'GÜÇLÜ' eşiği iki t de > 2.9 (12 deneme için Bonferroni; tekil sinyallerin 2.8 eşiği değişmedi). PORTFÖY-ADAY kararı
+   yine YALNIZ COMP4'e bağlıdır; DOSYA sonucu o kararı değiştirmez, DOSYA için 'aday' etiketi yoktur ve İZ ilan edilemez (madde 3).
 
 ## 5. Plasebo (cetvelin kendisinin sınaması)
 U2'de 200 rastgele sinyal (her ay uygun hisselere rastgele sıra; numpy default_rng(59000 + i)), aynı üst %10 portföyü ve cetvel v2.
 Yanlış pozitif oranı = TUTAN payı; hem maliyetli hem maliyetsiz (brüt) cetvelle hesaplanır, İKİSİ de <= %5 olmalı (maliyet yüksek devirli
 rastgele portföyü zaten cezalandırır; brüt oran sert olanıdır). Biri > %5 ise cetvel v2 GÜVENİLMEZ ilan edilir ve hiçbir sinyal için hüküm verilmez.
+
+## 5b. Koşullu test 'UCUZLUK' (BİLGİ; karar yok)
+K57'de 'tepeden düşmüş' şartı (F6) eklenince sonuç bozulmuştu (olay cetveli, küçük n); güçlü cetvelle yeniden bakılır. U1 ve U2'de her ay
+COMP4 sırasının üst %20'si (sayı = max(1, yuvarla(0,20 x COMP4'ü olan uygun hisse))) S9'a göre ikiye bölünür: 'düşmüş yarı' = S9'u en düşük
+yarı, 'zirveye yakın yarı' = en yüksek yarı (tek sayıda ortadaki hisse iki portföyün de dışında). İkisi de eşit ağırlıklı, aylık dengelenen,
+aynı maliyetli UZUN portföydür; ölçüm dönemi COMP4'ünkiyle aynı. Raporlanır: her birinin evrene göre net fazlası, NW t, alfa ve t(alfa); ve
+aylık net fark (düşmüş - zirveye yakın; uzun-kısa değil, iki uzun portföyün farkı) ile NW t'si (gecikme 6). Karar kuralı ve etiket YOK.
 
 ## 6. COMP4 tutmazsa önceden yazılı sıradaki üç deneme (Faz 2'de KOŞULMAZ; ana oturum karar verir)
 - (a) yalnız küçük-orta hisseler (her ay uygun evrenin boyut medyanının altı), aynı sinyaller ve cetvel.

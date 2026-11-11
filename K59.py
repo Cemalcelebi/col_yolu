@@ -117,7 +117,10 @@ K59_KAPSAM_NOTU = """Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayılar�
   U2: 4.261 hisse (1.151'inde 2020-26 arasında bölünme / ters bölünme var), 68 oluşum ayı (2020-12-31 .. 2026-07-31), uygun evren ortalama 2.146
       (1.916-2.477). S1 2021-01'den (67 ay), S4 / S5 / COMP4 2021-02'den (66 ay), S6 2022-02'den (54 ay), ötekiler 68 ay. S3: ilk 3 ay işlem
       değeri, sonraki 65 ay piyasa değeri. COMP4 2022-02'ye kadar üç üyeyle (S1, S4, S5) kurulur (S6 henüz yok).
-  BIST: 581 hisse, 123 oluşum ayı, uygun evren ortalama 423 (357-581)."""
+  BIST: 581 hisse, 123 oluşum ayı, uygun evren ortalama 423 (357-581).
+  DOSYA ailesi (ikinci kapsam sayımı, yine yalnız hisse sayıları): X1 2021-04'ten (bir yıl önceki çeyrek 2020'de başlar), X2 U1'de 2020-06'dan,
+      U2'de 2020-12'den. DOSYA_Y / DOSYA_D / DOSYA_YD iki evrende de 2021-04-30'dan (64 ay); sinyali olan uygun hisse ortalaması U1'de
+      867 / 822 / 795, U2'de 1.710 / 1.669 / 1.614. BIST'te X1 / X2 ve DOSYA yok. UCUZLUK COMP4 ile aynı 66 ay. İlk sayımdaki sütunlar değişmedi."""
 K59_DOSYA = {"onkayit": "K59_ON_KAYIT.md", "sonuc": "sinyal_sonuc.csv", "aylik": "aylik_getiri.csv", "plasebo": "plasebo.csv",
              "kapsam": "kapsam.csv", "ucuzluk": "ucuzluk.csv", "rapor": "K59_RAPOR.md", "meta": "k59_kos_meta.json"}
 _K59_EPOSTA = re.compile(r"[\w.+-]+@[\w-]+\.(com|net|org|edu|gov|io|tr)\b")
