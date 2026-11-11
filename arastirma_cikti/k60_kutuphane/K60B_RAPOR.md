@@ -1,9 +1,9 @@
 # K60-B — piyango havuzu içinde koşullu ayrım: RAPOR
 
-K60-B v1.0 (2026-11-11): piyango havuzu (oynaklığı en yüksek %20) içinde koşullu ayrım; K60 kütüphanesi, havuz içi ÜST / ALT %20, kat ve ASIM. Ön kayıt K60B_ON_KAYIT.md (sha256 b74f3e2d2656, git 5aac5de); koşu 2026-11-11 12:35:25 UTC → 2026-11-11 12:36:49 UTC (84 sn).
+K60-B v1.0 (2026-11-11): piyango havuzu (oynaklığı en yüksek %20) içinde koşullu ayrım; K60 kütüphanesi, havuz içi ÜST / ALT %20, kat ve ASIM. Ön kayıt K60B_ON_KAYIT.md (sha256 b74f3e2d2656, git 5aac5de); koşu 2026-11-11 12:41:22 UTC → 2026-11-11 12:42:43 UTC (81 sn).
 
 ## Bulgular (düz dille)
-- Etiket alan: 10 çift ('K60B-KOŞULLU FIRSAT' 2, 'K60B-KOŞULLU KORUMA' 8); YAKIN 4. KEŞİF adayı 36 (FIRSAT 5, KORUMA 31); ölçülen hipotez 161.
+- Etiket: 10, 9 ayrı çiftte ('K60B-KOŞULLU FIRSAT' 2, 'K60B-KOŞULLU KORUMA' 8); YAKIN 4. KEŞİF adayı 36 (FIRSAT 5, KORUMA 31); ölçülen hipotez 161.
 - Etiketler 'bilgi' düzeyindedir, İZ değildir (yalnız ABD, yalnız yaşayanlar; KASA K60'ta bir kez açılmıştı).
 
 ## Havuz ve taban oranlar (12 ay; aynı aylarda havuz / bütün uygun evren)

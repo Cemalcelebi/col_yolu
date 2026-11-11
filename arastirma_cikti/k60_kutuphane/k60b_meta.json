@@ -9,10 +9,10 @@
   }
  },
  "sentetik": false,
- "kos_baslangic": "2026-11-11 12:35:25 UTC",
+ "kos_baslangic": "2026-11-11 12:41:22 UTC",
  "isolated": true,
  "k60_kod_sha256": "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
- "k60b_kod_sha256": "d3b10d2683e6a4561b1de23456ed52d97750d5c2b62512341c88c5b8cadf9202",
+ "k60b_kod_sha256": "85b494303c825deb30b1d2d6a78f7356df5bdddfcd805de9971cd1c5272da142",
  "surumler": {
   "python": "3.13.18",
   "numpy": "2.5.3",
@@ -1193,6 +1193,6 @@
    "evren_medyan": 0.0505747002119
   }
  },
- "kos_bitis": "2026-11-11 12:36:49 UTC",
- "sure_sn": 84
+ "kos_bitis": "2026-11-11 12:42:43 UTC",
+ "sure_sn": 81
 }

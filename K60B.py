@@ -438,7 +438,8 @@ def k60b_rapor(cikti: Optional[str] = None, B: Optional[Dict[str, Any]] = None) 
     par = [f"# K60-B — piyango havuzu içinde koşullu ayrım: RAPOR\n\n{K60B_SURUM}. Ön kayıt K60B_ON_KAYIT.md (sha256 {m['onkayit']['dosya_sha256'][:12]}, git "
            f"{str(m['onkayit'].get('git', {}).get('commit', ''))[:7]}); koşu {m['kos_baslangic']} → {m['kos_bitis']} ({m.get('sure_sn')} sn).\n",
            "## Bulgular (düz dille)\n"
-           f"- Etiket alan: {sum(1 for x in et if x['etiket'] in (Et['firsat'], Et['koruma']))} çift ('{Et['firsat']}' {sum(1 for x in et if x['etiket'] == Et['firsat'])}, "
+           f"- Etiket: {sum(1 for x in et if x['etiket'] in (Et['firsat'], Et['koruma']))}, {len({(x['sinyal'], x['taraf']) for x in et if x['etiket'] in (Et['firsat'], Et['koruma'])})} ayrı çiftte "
+           f"('{Et['firsat']}' {sum(1 for x in et if x['etiket'] == Et['firsat'])}, "
            f"'{Et['koruma']}' {sum(1 for x in et if x['etiket'] == Et['koruma'])}); YAKIN {sum(1 for x in et if x['etiket'].startswith(Et['yakin']))}. KEŞİF adayı {len(m['aday'])} "
            f"(FIRSAT {sum(1 for x in m['aday'] if x['yol'] == 'FIRSAT')}, KORUMA {sum(1 for x in m['aday'] if x['yol'] == 'KORUMA')}); ölçülen hipotez {es['hipotez']}.\n"
            "- Etiketler 'bilgi' düzeyindedir, İZ değildir (yalnız ABD, yalnız yaşayanlar; KASA K60'ta bir kez açılmıştı).\n",
