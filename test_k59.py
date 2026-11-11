@@ -9,6 +9,8 @@ geçmiş)  7) COMP sıra mantığı ve '4'ün en az 3'ü' kuralı  8) portföy m
 (bilinen sentetik alfa; beta tuzağı: yüksek beta alfasız portföy v2'den geçmez)  10) plasebo tohumla birebir; kâhin sinyal tutar
 11) karar kuralları (PORTFÖY-ADAY, TUTAR AMA KÜÇÜK, TUTMAZ, GÜÇLÜ, plasebo > %5 -> hüküm yok)  12) French birleştirme ve Yahoo ham okuyucu
 13) uçtan uca sentetik koşu + rapor  14) e-posta / anahtar yok (kod, test, ön kayıt, çıktılar).
+Ek (v1.1): X1 / X2 / X3 bileşenleri ve DOSYA_Y / DOSYA_D / DOSYA_YD bileşikleri 4, 5, 7, 11, 13'te (geleceğe bakma, elle hesap, sıra mantığı
+ve 'en az k' kuralı, DOSYA 'GÜÇLÜ' eşiği, karara girmeme); UCUZLUK koşullu testi 8'de (üst %20'nin S9'a göre ikiye bölünmesi, fark serisi).
 """
 from __future__ import annotations
 
@@ -62,6 +64,11 @@ def sentetik_ham(n: int = 120, bas: str = "2015-06-01", bit: str = "2020-12-31",
                 if not (i == 8 and sira % 5 == 0):
                     T["Q"].setdefault((cik, "NetIncomeLoss"), {})[sira] = (son, float(rng.normal(0.08, 0.10) * g0))
                 T["I"].setdefault((cik, "StockholdersEquity"), {})[sira] = (son, -50.0 if i == 7 else oz)
+                yk = oz * float(rng.uniform(0.2, 3.0))
+                if i % 4 == 2:
+                    T["I"].setdefault((cik, "LiabilitiesAndStockholdersEquity"), {})[sira] = (son, yk + oz)   # yalnız toplam pasif
+                elif i != 12:
+                    T["I"].setdefault((cik, "Liabilities"), {})[sira] = (son, yk)
                 bil = son + pd.Timedelta(days=40 + i % 5); bilgi[(cik, sira)] = bil
                 p = PAY0 * (4.0 if (i == 6 and son >= BOL_ILERI) else 1.0) * (1.0 if i == 6 else 1.01 ** (sira - 2015 * 4) * (1 + 0.3 * (i % 4 == 1)))
                 pay.append({"sembol": s, "filed": bil, "pay": p, "pay_t": son, "sira": sira})
@@ -139,7 +146,8 @@ def testler() -> list:
         if K.k59_esik_sha() not in ilk or not re.search(r"^Yazım zamanı: \d{4}-\d\d-\d\d \d\d:\d\d:\d\d UTC", ilk, re.M):
             hata.append("2) ön kayıtta mühür / UTC zaman yok")
         for parca in ("## Veri", "## 1. Evrenler", "## 2. Sinyaller", "## 3. Portföy ve cetvel v2", "## 4. Karar kuralları", "## 5. Plasebo",
-                      "## 6. COMP4 tutmazsa", "HAYATTA KALMA", "PORTFÖY-ADAY", "TUTAR AMA KÜÇÜK", "GÜÇLÜ", "TUTAR (yineleme)", "İZ ilan EDİLEMEZ",
+                      "## 6. COMP4 tutmazsa", "## 5b. Koşullu test 'UCUZLUK'", "DOSYA_Y (", "DOSYA_D (", "DOSYA_YD (", "VEKİLİDİR", "SÜRÜM NOTU", "- X1 "[2:],
+                      "6. DOSYA AİLESİ", K.K59_ONCEKI["muhur"], "HAYATTA KALMA", "PORTFÖY-ADAY", "TUTAR AMA KÜÇÜK", "GÜÇLÜ", "TUTAR (yineleme)", "İZ ilan EDİLEMEZ",
                       "COMP4 (KARAR", "COMP9 (BİLGİ)", "BAĞIMSIZ DEĞİL", "python -I K59.py kos") + tuple(f"- S{i} " for i in range(1, 10)):
             if parca not in ilk:
                 hata.append(f"2) ön kayıtta '{parca}' yok")
@@ -197,16 +205,16 @@ def testler() -> list:
         except K.K59Hata:
             pass
     # 4) geleceğe bakma yok
-    P2 = K.k59_panel(D2); S2, ek2 = K.k59_sinyaller(D2, P2)
-    for b, tn in K.K59_ESIK["bilesik"].items():
-        S2[b] = K.k59_bilesik(S2, P2["U"], tn["uye"], tn["min"])
-    eksik = [a for a in K.K59_SIRA + ["COMP4", "COMP9"] if a not in S2 or np.isfinite(S2[a]).sum() < 500]
+    def hepsi(S_: dict, ek_: dict, U_: np.ndarray) -> dict:
+        """Sinyaller + ek bileşenler (X1-X3) + bütün bileşikler (K59 k59_evren_olc ile aynı havuz)."""
+        havuz = {**S_, **ek_["bilesen"]}
+        return {**havuz, **{b: K.k59_bilesik(havuz, U_, tn["uye"], tn["min"]) for b, tn in K.K59_ESIK["bilesik"].items()}}
+    P2 = K.k59_panel(D2); S2, ek2 = K.k59_sinyaller(D2, P2); S2 = hepsi(S2, ek2, P2["U"])
+    eksik = [a for a in K.K59_SIRA + ["X1", "X2", "X3"] + list(K.K59_ESIK["bilesik"]) if a not in S2 or np.isfinite(S2[a]).sum() < 500]
     if eksik:
         hata.append(f"4) sentetik demette sinyal üretilemedi: {eksik}")
     me = P2["ay_sonu"]; k0 = int(np.flatnonzero(P2["olusum"])[26]); t0 = me[k0]
-    Hb = boz(H, t0); Db = demet(Hb, "U2"); Pb = K.k59_panel(Db); Sb, ekb = K.k59_sinyaller(Db, Pb)
-    for b, tn in K.K59_ESIK["bilesik"].items():
-        Sb[b] = K.k59_bilesik(Sb, Pb["U"], tn["uye"], tn["min"])
+    Hb = boz(H, t0); Db = demet(Hb, "U2"); Pb = K.k59_panel(Db); Sb, ekb = K.k59_sinyaller(Db, Pb); Sb = hepsi(Sb, ekb, Pb["U"])
     if not np.array_equal(P2["U"][:k0 + 1], Pb["U"][:k0 + 1]) or not np.allclose(P2["fiyat_o"][:k0 + 1], Pb["fiyat_o"][:k0 + 1], equal_nan=True) \
             or not np.allclose(P2["tl_me"][:k0 + 1], Pb["tl_me"][:k0 + 1], equal_nan=True):
         hata.append("4) uygunluk (evren / o günkü fiyat / işlem değeri) ay sonu t'den sonrasını görüyor")
@@ -218,7 +226,7 @@ def testler() -> list:
         if np.allclose(S2[a][k0 + 6:], Sb[a][k0 + 6:], equal_nan=True):
             hata.append(f"4) {a}: bozma testi etkisiz (sonraki sinyaller de değişmedi)")
     mt = me.to_numpy("datetime64[ns]")[:, None]
-    for a, alan in (("S5", "bilgi_son"), ("S7", "bilgi_son"), ("S6", "pay_filed")):
+    for a, alan in (("S5", "bilgi_son"), ("S7", "bilgi_son"), ("X1", "bilgi_son"), ("X2", "bilgi_son"), ("S6", "pay_filed")):
         m = np.isfinite(S2[a]); b = ek2[alan]
         if np.isnat(b[m]).any() or (b > mt)[m].any():
             hata.append(f"4) {a}: kullanılan temel verinin 'filed' / bilgi tarihi ay sonundan sonra ya da yok")
@@ -249,6 +257,11 @@ def testler() -> list:
             oz = H["T"]["I"][(cik, "StockholdersEquity")][q0_][1]
             bek["S5"] = sum(kar[q][1] for q in range(q0_ - 3, q0_ + 1)) / oz if all(q in kar for q in range(q0_ - 3, q0_ + 1)) and oz > 0 else np.nan
             bek["S7"] = gel[q0_][1] / ((gel[q0_ - 1][1] + gel[q0_ - 2][1]) / 2)
+            bek["X1"] = gel[q0_][1] / gel[q0_ - 4][1] - 1
+            Ti = H["T"]["I"]; yk = Ti[(cik, "Liabilities")][q0_][1] if (cik, "Liabilities") in Ti else (
+                Ti[(cik, "LiabilitiesAndStockholdersEquity")][q0_][1] - oz if (cik, "LiabilitiesAndStockholdersEquity") in Ti else np.nan)
+            bek["X2"] = -yk / oz if oz > 0 else np.nan
+        bek["X3"] = -bek["S9"]
         for a, v in bek.items():
             if not np.isclose(S2[a][k0, j], v, equal_nan=True, rtol=1e-9):
                 hata.append(f"5) {a} {s}: {S2[a][k0, j]} != elle {v}")
@@ -258,6 +271,11 @@ def testler() -> list:
     p4 = K.k59_pead_sinyal(Xs, ["A", "B", "C", "D", "E"], gun_, mpk, 63)
     if not np.allclose(p4, [[0.11, np.nan, 0.44, np.nan, np.nan]], equal_nan=True):
         hata.append(f"5) S4 penceresi (son 63 işlem günü, en son olay, t'den sonraki olay yok) yanlış: {p4}")
+    j2_, j12_ = P2["sembol"].index("S002"), P2["sembol"].index("S012")
+    if not np.isfinite(S2["X2"][:, j2_]).any() or np.isfinite(S2["X2"][:, j12_]).any() or not np.isfinite(S2["X1"][:, j12_]).any():
+        hata.append("5) X2: yalnız toplam pasifi olan hissede yedek kural çalışmadı / yükümlülüğü olmayan hissede değer üretildi")
+    if np.isfinite(S2["X2"][:, P2["sembol"].index("S007")]).any() or np.nanmax(S2["X2"]) > 0:
+        hata.append("5) X2: özkaynak <= 0 iken hesaplandı / işaret yanlış (düşük kaldıraç yüksek olmalı)")
     j7_, j8_, j10_, j11_ = (P2["sembol"].index(x) for x in ("S007", "S008", "S010", "S011"))
     if np.isfinite(S2["S5"][:, j7_]).any() or not np.isfinite(S2["S7"][:, j7_]).any():
         hata.append("5) özkaynak <= 0 iken S5 hesaplandı / S7 de düştü")
@@ -319,6 +337,31 @@ def testler() -> list:
     c4s = S2["COMP4"]; say4 = sum(np.isfinite(S2[a]).astype(int) for a in ("S1", "S4", "S5", "S6"))
     if not np.array_equal(np.isfinite(c4s), say4 >= 3) or np.nanmin(c4s) <= 0 or np.nanmax(c4s) >= 1:
         hata.append("7) sentetik panelde COMP4 '>= 3 üye' kuralına uymuyor / aralık dışı")
+    Bk = K.K59_ESIK["bilesik"]
+    if [(Bk[b]["uye"], Bk[b]["min"], Bk[b]["rol"]) for b in ("DOSYA_Y", "DOSYA_D", "DOSYA_YD")] != [
+            (["S7", "X1", "S5", "S6", "S4"], 4, "DOSYA"), (["X2", "X1", "X3"], 3, "DOSYA"), (["S7", "X1", "S5", "S6", "S4", "X2"], 5, "DOSYA")] \
+            or K.K59_ESIK["karar"]["dosya"] != ["DOSYA_Y", "DOSYA_D", "DOSYA_YD"] or Bk["COMP4"]["uye"] != ["S1", "S4", "S5", "S6"] or Bk["COMP4"]["min"] != 3:
+        hata.append("7) DOSYA / COMP4 bileşik tanımları iş tanımındaki gibi değil")
+    U6 = np.ones((1, 6), bool)                                   # 6 hisse: A tam, B 4 üye, C 3 üye, D yalnız X'ler, E tam (kötü), F uygun değil
+    Sx = {"S7": np.array([[6.0, 5.0, 4.0, nan, 1.0, 9.0]]), "X1": np.array([[6.0, 5.0, 4.0, 3.0, 1.0, 9.0]]), "S5": np.array([[6.0, 5.0, 4.0, nan, 1.0, 9.0]]),
+          "S6": np.array([[6.0, 5.0, nan, nan, 1.0, 9.0]]), "S4": np.array([[6.0, nan, nan, nan, 1.0, 9.0]]), "X2": np.array([[-0.5, nan, -1.0, -2.0, -3.0, -0.1]]),
+          "X3": np.array([[-0.9, -0.8, -0.7, -0.5, -0.99, -0.1]])}
+    U6[0, 5] = False
+    dy = K.k59_bilesik(Sx, U6, Bk["DOSYA_Y"]["uye"], Bk["DOSYA_Y"]["min"]); dd = K.k59_bilesik(Sx, U6, Bk["DOSYA_D"]["uye"], Bk["DOSYA_D"]["min"])
+    dyd = K.k59_bilesik(Sx, U6, Bk["DOSYA_YD"]["uye"], Bk["DOSYA_YD"]["min"])
+    bek_y = [np.mean([3.5 / 4, 4.5 / 5, 3.5 / 4, 2.5 / 3, 1.5 / 2]), np.mean([2.5 / 4, 3.5 / 5, 2.5 / 4, 1.5 / 3]), nan, nan, np.mean([0.5 / 4, 0.5 / 5, 0.5 / 4, 0.5 / 3, 0.5 / 2]), nan]
+    bek_d = [np.mean([3.5 / 4, 4.5 / 5, 1.5 / 5]), nan, np.mean([2.5 / 4, 2.5 / 5, 3.5 / 5]), np.mean([1.5 / 4, 1.5 / 5, 4.5 / 5]), np.mean([0.5 / 4, 0.5 / 5, 0.5 / 5]), nan]
+    bek_yd = [np.mean([3.5 / 4, 4.5 / 5, 3.5 / 4, 2.5 / 3, 1.5 / 2, 3.5 / 4]), nan, nan, nan, np.mean([0.5 / 4, 0.5 / 5, 0.5 / 4, 0.5 / 3, 0.5 / 2, 0.5 / 4]), nan]
+    for ad, v, b in (("DOSYA_Y (5'in en az 4'ü)", dy, bek_y), ("DOSYA_D (3'ün 3'ü)", dd, bek_d), ("DOSYA_YD (6'nın en az 5'i)", dyd, bek_yd)):
+        if not np.allclose(v, [b], equal_nan=True):
+            hata.append(f"7) {ad} sıra ortalaması / 'en az k' kuralı yanlış: {v} != {b}")
+    for b in ("DOSYA_Y", "DOSYA_D", "DOSYA_YD"):
+        say = sum(np.isfinite(S2[a]).astype(int) for a in Bk[b]["uye"])
+        if not np.array_equal(np.isfinite(S2[b]), say >= Bk[b]["min"]) or not np.isfinite(S2[b]).any() or np.nanmin(S2[b]) <= 0 or np.nanmax(S2[b]) >= 1:
+            hata.append(f"7) sentetik panelde {b} '>= {Bk[b]['min']} üye' kuralına uymuyor / aralık dışı")
+    k1 = int(np.flatnonzero(P2["olusum"])[30]); g_ = np.isfinite(S2["DOSYA_D"][k1])
+    if np.corrcoef(S2["DOSYA_D"][k1, g_], S2["S9"][k1, g_])[0, 1] >= 0:
+        hata.append("7) DOSYA_D zirveden DÜŞMÜŞ hisseyi öne almıyor (X3 yönü ters)")
     # 8) portföy muhasebesi
     rng = np.random.default_rng(4); R = rng.normal(0.01, 0.05, (3, 20)); U = np.ones((3, 20), bool); U[:, 19] = False
     S = np.tile(np.arange(20.0), (3, 1)); S[:, 10:] = np.nan; S[0, 3:] = np.nan            # ilk ay yalnız 3 hissede sinyal (< 5): ölçüm 2. aydan
@@ -334,6 +377,21 @@ def testler() -> list:
     _, Ax = K.k59_sinyal_olc(Pm, ek_satir(Sx), None, K.K59_ESIK)
     if not np.allclose(Ax.devir, [1.0, 2.0, 2.0]) or not np.allclose(Ax.net, (1 - 0.001 * Ax.devir) * (1 + Ax.brut) - 1) or list(Ax.n_hisse) != [2, 2, 2]:
         hata.append(f"8) devir / maliyet (tek yön 10 bp x devir) yanlış: {Ax}")
+    Ru = rng.normal(0.01, 0.05, (14, 45)); Uu = np.ones((14, 45), bool); Pu = mini_panel(Ru, Uu)
+    Scu = ek_satir(np.tile(np.arange(45.0), (14, 1))); Sbu = ek_satir(np.tile(np.r_[np.zeros(36), [5.0, 1.0, 7.0, 3.0, 9.0, 2.0, 8.0, 4.0, 6.0]], (14, 1)))
+    sat_u, ayl_u = K.k59_ucuzluk(Pu, Scu, Sbu, None, {**K.K59_ESIK, "cetvel": {**K.K59_ESIK["cetvel"], "min_ay": 1}})
+    Au = {str(a.sinyal.iloc[0]): a for a in ayl_u}; dus_j, yak_j = [37, 41, 39, 43], [44, 42, 38, 40]      # üst %20 = 36..44 (9 hisse); ortadaki (36) dışarıda
+    if [r["portfoy"] for r in sat_u] != ["dusmus", "yakin", "fark (dusmus - yakin)"] or set(Au) != {"UCUZLUK_dusmus", "UCUZLUK_yakin"}:
+        hata.append(f"8) UCUZLUK satırları / aylık serileri eksik: {[r['portfoy'] for r in sat_u]}")
+    else:
+        d_ = Au["UCUZLUK_dusmus"].net.to_numpy() - Au["UCUZLUK_yakin"].net.to_numpy()
+        if not (np.allclose(Au["UCUZLUK_dusmus"].brut, Ru[:, dus_j].mean(axis=1)) and np.allclose(Au["UCUZLUK_yakin"].brut, Ru[:, yak_j].mean(axis=1))
+                and list(Au["UCUZLUK_dusmus"].n_hisse) == [4] * 14 and np.isclose(sat_u[2]["yillik_fazla"], 12 * d_.mean())
+                and np.isclose(sat_u[2]["nw_t"], K58.k58_nw_t(d_, 6)) and np.isclose(sat_u[0]["yillik_fazla"], 12 * (Au["UCUZLUK_dusmus"].net - Au["UCUZLUK_dusmus"].kiyas).mean())
+                and not {"tutar_v2", "etiket"} & set(sat_u[0])):
+            hata.append(f"8) UCUZLUK: üst %20'nin S9'a göre ikiye bölünmesi / fark serisi / 'karar yok' yanlış: {sat_u}")
+    if K.k59_ucuzluk(Pu, np.full((15, 45), np.nan), Sbu, None, K.K59_ESIK) != ([], []):
+        hata.append("8) UCUZLUK bileşik yokken satır üretti")
     if K.k59_sinyal_olc(Pm, np.full((4, 20), np.nan), None, K.K59_ESIK)[0].get("olculdu") is not False:
         hata.append("8) sinyali olmayan evren ölçüldü sayıldı")
     # 9) NW t ve alfa regresyonu
@@ -409,6 +467,15 @@ def testler() -> list:
     kr = K.k59_karar(Zk(d={("U1", "COMP4"): {"nw_t": 2.9, "t_alfa": 2.81}, ("U2", "COMP4"): {"nw_t": 3.5, "t_alfa": 2.8}, ("U1", "S1"): {"yillik_fazla": 0.02}}), Pl)
     if kr["etiket"][("U1", "COMP4")] != "GÜÇLÜ" or kr["etiket"][("U2", "COMP4")] != "TUTAR (yineleme)" or not kr["kucuk"][("U1", "S1")] or kr["kucuk"][("U2", "S1")]:
         hata.append(f"11) GÜÇLÜ (iki t de > 2,8) / küçük işareti yanlış: {kr}")
+    ds = [{"evren": e, "sinyal": d, "olculdu": True, "tutar_v2": d != "DOSYA_D", "nw_t": t_, "t_alfa": t_, "yillik_fazla": 0.03 if e == "U2" else 0.08}
+          for e in ("U1", "U2") for d, t_ in (("DOSYA_Y", 2.85), ("DOSYA_D", 3.5), ("DOSYA_YD", 2.95))]
+    Zd = pd.concat([Zk(d={("U2", "COMP4"): {"tutar_v2": False}}), pd.DataFrame(ds)], ignore_index=True); kr = K.k59_karar(Zd, Pl)
+    if kr["dosya"] != {"U1 DOSYA_Y": "TUTAR (yineleme)", "U2 DOSYA_Y": "TUTAR (yineleme), küçük", "U1 DOSYA_D": "TUTMAZ", "U2 DOSYA_D": "TUTMAZ",
+                       "U1 DOSYA_YD": "GÜÇLÜ", "U2 DOSYA_YD": "GÜÇLÜ, küçük"} or not kr["bilesik"].startswith("TUTMAZ"):
+        hata.append(f"11) DOSYA ailesi: kendi başına etiket / 'GÜÇLÜ' eşiği 2,9 / PORTFÖY-ADAY kararına girmeme yanlış: {kr.get('dosya')} {kr['bilesik']}")
+    if K.k59_karar(pd.concat([Zk(), pd.DataFrame(ds).assign(tutar_v2=False)], ignore_index=True), Pl)["bilesik"] != "PORTFÖY-ADAY" \
+            or K.k59_etiket({"sinyal": "S1", "olculdu": True, "tutar_v2": True, "nw_t": 2.85, "t_alfa": 2.85}) != "GÜÇLÜ":
+        hata.append("11) DOSYA tutmayınca COMP4 kararı değişti / tekil sinyal 'GÜÇLÜ' eşiği (2,8) değişti")
     for ad, kol, pay in (("brüt", "brut_tutar_v2", 11), ("net", "tutar_v2", 11)):
         Pk = Pl.copy(); Pk.loc[:pay - 1, kol] = True; kr = K.k59_karar(Zk(), Pk)
         if kr["cetvel"] != "GÜVENİLMEZ" or not kr["bilesik"].startswith("HÜKÜM YOK") or kr["etiket"]:
@@ -456,7 +523,7 @@ def testler() -> list:
             Ro = K.k59_kos(td, git_sart=False, demetler={"U1": D1, "U2": D2, "BIST": demet(H, "BIST")}, FF=FFs.set_axis(pd.period_range("2015-01", periods=150, freq="M")), E=Et)
             Z = pd.read_csv(K._k59_yol("sonuc", td)); Am = pd.read_csv(K._k59_yol("aylik", td)); Kp = pd.read_csv(K._k59_yol("kapsam", td))
             rt = open(Ro["rapor"], encoding="utf-8").read(); meta = json.load(open(K._k59_yol("meta", td), encoding="utf-8"))
-            bek = {(e, s) for e in ("U1", "U2") for s in K.K59_SIRA + ["COMP4", "COMP9"]} | {("BIST", s) for s in ("S1", "S2", "S3", "S8", "S9", "COMP9")}
+            bek = {(e, s) for e in ("U1", "U2") for s in K.K59_SIRA + list(K.K59_ESIK["bilesik"])} | {("BIST", s) for s in ("S1", "S2", "S3", "S8", "S9", "COMP9")}
             if set(zip(Z.evren, Z.sinyal)) != bek:
                 hata.append(f"13) sonuç satırları eksik / fazla: {set(zip(Z.evren, Z.sinyal)) ^ bek}")
             Plc = pd.read_csv(K._k59_yol("plasebo", td)); krc = K.k59_karar(Z, Plc, Et)
@@ -470,6 +537,13 @@ def testler() -> list:
             if not (np.isclose(r.yillik_fazla, 12 * (g.net - g.kiyas).mean()) and np.isclose(r.nw_t, c["nw_t"]) and np.isclose(r.t_alfa, c["t_alfa"]) and r.ay == len(g)
                     and bool(r.tutar_v2) == c["tutar_v2"] and np.isclose(r.ort_hisse, g.n_hisse.mean())):
                 hata.append("13) sonuç satırı aylık getiri dosyasından yeniden üretilemiyor")
+            Uz = pd.read_csv(K._k59_yol("ucuzluk", td)); gd_ = Am[(Am.evren == "U1") & (Am.sinyal == "UCUZLUK_dusmus")]; gy_ = Am[(Am.evren == "U1") & (Am.sinyal == "UCUZLUK_yakin")]
+            fr = Uz[(Uz.evren == "U1") & Uz.portfoy.str.startswith("fark")]
+            if len(Uz) != 6 or set(Uz.evren) != {"U1", "U2"} or not len(gd_) or len(gd_) != len(gy_) or not np.isclose(fr.yillik_fazla.iloc[0], 12 * (gd_.net.to_numpy() - gy_.net.to_numpy()).mean()) \
+                    or len(gd_) != int(Z[(Z.evren == "U1") & (Z.sinyal == "COMP4")].ay.iloc[0]) or set(Z.sinyal) & {"UCUZLUK_dusmus", "X1", "X2", "X3"}:
+                hata.append("13) UCUZLUK çıktısı eksik / fark aylık dosyadan yeniden üretilemiyor / dönemi COMP4 ile aynı değil / ek bileşen tek başına ölçüldü")
+            if Z[Z.sinyal.str.startswith("DOSYA")].rol.ne("DOSYA").any() or set(Ro["karar"].get("dosya", {})) != {f"{e} {d}" for e in ("U1", "U2") for d in K.K59_ESIK["karar"]["dosya"]}:
+                hata.append("13) DOSYA ailesi rolü / karar özeti yanlış")
             if Z[(Z.evren == "BIST")].rol.ne("BİLGİ").any() or Z[(Z.evren == "U1") & (Z.sinyal == "COMP4")].rol.iloc[0] != "KARAR" or Z[Z.sinyal == "COMP9"].rol.ne("BİLGİ").any():
                 hata.append("13) karar / bilgi rolleri yanlış")
             if Z[(Z.evren == "BIST")].ff_alfa_yillik.notna().any() if "ff_alfa_yillik" in Z else True:
@@ -478,9 +552,10 @@ def testler() -> list:
                 hata.append("13) ABD'de FF5 + UMD alfası yok")
             if not {"hisse_ay", "maks_hisse_ay_getiri", "getiri_ust_300_hisse_ay"} <= set(meta["evren"]["U2"]) or "Veri denetimi" not in rt:
                 hata.append("13) veri denetimi (en büyük tek hisse getirisi) meta / raporda yok")
-            if not {"n_evren", "n_S4", "n_COMP4", "S3_olcu"} <= set(Kp.columns) or set(Kp.evren) != {"U1", "U2", "BIST"}:
+            if not {"n_evren", "n_S4", "n_COMP4", "n_X1", "n_X2", "n_X3", "n_DOSYA_Y", "n_DOSYA_D", "n_DOSYA_YD", "S3_olcu"} <= set(Kp.columns) or set(Kp.evren) != {"U1", "U2", "BIST"}:
                 hata.append("13) kapsam tablosu eksik")
-            for parca in ("## Düz dille", "## Karar", "## U1", "## U2", "## BIST", "## Plasebo", "## Kapsam", "## Sınırlar", "sıradaki üç deneme", "IZ_KARNE önerisi"):
+            for parca in ("## Düz dille", "## Karar", "## U1", "## U2", "## BIST", "## Plasebo", "## Kapsam", "## Sınırlar", "sıradaki üç deneme", "IZ_KARNE önerisi",
+                          "## DOSYA ailesi", "## Koşullu test UCUZLUK", "DOSYA_YD", "fark (dusmus - yakin)"):
                 if parca not in rt:
                     hata.append(f"13) raporda '{parca}' yok")
             Ok = K.k59_evren_olc(D2, None, Et, yalniz_kapsam=True)

@@ -55,7 +55,8 @@ if not k59log.handlers:
     k59log.setLevel(logging.INFO)
     k59log.propagate = False
 
-K59_SURUM = "K59 v1.0 (2026-11-11): basit sinyaller (S1-S9, COMP4, COMP9) x portföy cetveli v2 (K58 C + beta düzeltmeli alfa); ABD iki evren karar, BIST bilgi"
+K59_SURUM = ("K59 v1.1 (2026-11-11): basit sinyaller (S1-S9, COMP4, COMP9) + DOSYA ailesi (DOSYA_Y, DOSYA_D, DOSYA_YD) + UCUZLUK koşullu testi x "
+             "portföy cetveli v2 (K58 C + beta düzeltmeli alfa); ABD iki evren karar, BIST bilgi")
 K59_YOL = {"cikti": os.path.join(KOK_K59, "arastirma_cikti", "k59_basit_sinyaller")}
 K59_SIRA = ["S1", "S2", "S3", "S4", "S5", "S6", "S7", "S8", "S9"]
 
@@ -85,17 +86,29 @@ K59_ESIK: Dict[str, Any] = {
         "S9": {"ad": "52 hafta zirvesine yakınlık", "gun": 252, "min_gun": 200},
     },
     "temel_max_gun": 200,
+    # ek bileşenler: yalnız DOSYA bileşiklerinin üyesidir, tek başına portföy olarak ÖLÇÜLMEZ (ek deneme sayılmasın diye)
+    "ek_bilesen": {"X1": {"ad": "çeyrek geliri yıllık büyümesi (son çeyrek / bir yıl önceki aynı çeyrek - 1)"},
+                   "X2": {"ad": "düşük kaldıraç (toplam yükümlülük / özkaynak; düşük iyi)"},
+                   "X3": {"ad": "252 gün zirvesinden uzaklık (S9'un tersi; düşmüş iyi)"}},
     "bilesik": {"COMP4": {"ad": "bileşik: momentum + PEAD + kârlılık + düşük ihraç", "uye": ["S1", "S4", "S5", "S6"], "min": 3, "rol": "KARAR"},
-                "COMP9": {"ad": "bileşik: dokuz sinyalin hepsi", "uye": K59_SIRA, "min": 5, "rol": "BİLGİ"}},
+                "COMP9": {"ad": "bileşik: dokuz sinyalin hepsi", "uye": K59_SIRA, "min": 5, "rol": "BİLGİ"},
+                "DOSYA_Y": {"ad": "YEOTK tipi: ivmelenen, kârlı, seyrelmesiz büyüme", "uye": ["S7", "X1", "S5", "S6", "S4"], "min": 4, "rol": "DOSYA"},
+                "DOSYA_D": {"ad": "DGXX tipi (vekil): sağlam bilanço + büyüme + düşmüş fiyat", "uye": ["X2", "X1", "X3"], "min": 3, "rol": "DOSYA"},
+                "DOSYA_YD": {"ad": "DOSYA_Y + düşük kaldıraç", "uye": ["S7", "X1", "S5", "S6", "S4", "X2"], "min": 5, "rol": "DOSYA"}},
     "portfoy": {"dilim": 0.10},
     "cetvel": {"nw_lag": 6, "t_esik": 2.0, "alt_donem_n": 3, "alt_donem_min": 2, "son_pay": 0.30, "min_ay": 36},
-    "karar": {"t_guclu": 2.8, "buyukluk_yillik": 0.04, "aday_evren": ["U1", "U2"], "bilesik": "COMP4"},
+    "karar": {"t_guclu": 2.8, "buyukluk_yillik": 0.04, "aday_evren": ["U1", "U2"], "bilesik": "COMP4",
+              "dosya": ["DOSYA_Y", "DOSYA_D", "DOSYA_YD"], "t_guclu_dosya": 2.9},
+    "ucuzluk": {"bilesik": "COMP4", "dilim": 0.20, "bol": "S9"},
     "plasebo": {"evren": "U2", "n": 200, "tohum": 59000, "yp_esik": 0.05},
     "french": {"faktor": ["MKT_RF", "SMB", "HML", "RMW", "CMA", "UMD"], "rf": "RF"},
     "sonraki": {"a": "yalnız küçük-orta hisseler (her ay uygun evrenin boyut medyanının altı), aynı sinyaller ve cetvel",
                 "b": "3 ay tutma, örtüşen portföyler (her ay üçte biri yenilenir), aynı sinyaller ve cetvel",
                 "c": "French veri kütüphanesinde 2000-2026 momentum + kârlılık bileşiğinin yinelemesi (hayatta kalma yanlılığı yok)"},
 }
+# Ön kaydın ilk yazımı (ölçümden önce genişletildi; metne girer, mühre girmez)
+K59_ONCEKI = {"zaman": "2026-11-11 05:28:28 UTC", "muhur": "6f4aca9fd2e26afe3caae6c0675d588cba017c9203ac17fddf2354234b169fa1",
+              "dosya_sha256": "df5663675e7d02e38cedad652408596bfdb3401f602f3712bcb58675b7952e44", "git": "d1a2dff"}
 # Faz 1 kapsam sayımı (`python -I K59.py kapsam`; yalnız hisse SAYILARI, getiri yok). Ön kayıt metnine girer; mühre girmez (eşik değil).
 K59_KAPSAM_NOTU = """Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayıları; getiri hesaplanmadı):
   U1: 1.411 hisse, 123 oluşum ayı (2016-05-31 .. 2026-07-31), uygun evren ortalama 1.084 (799-1.406). S1, S2, S3, S8, S9 2016'dan (122-123 ay);
@@ -106,7 +119,7 @@ K59_KAPSAM_NOTU = """Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayılar�
       değeri, sonraki 65 ay piyasa değeri. COMP4 2022-02'ye kadar üç üyeyle (S1, S4, S5) kurulur (S6 henüz yok).
   BIST: 581 hisse, 123 oluşum ayı, uygun evren ortalama 423 (357-581)."""
 K59_DOSYA = {"onkayit": "K59_ON_KAYIT.md", "sonuc": "sinyal_sonuc.csv", "aylik": "aylik_getiri.csv", "plasebo": "plasebo.csv",
-             "kapsam": "kapsam.csv", "rapor": "K59_RAPOR.md", "meta": "k59_kos_meta.json"}
+             "kapsam": "kapsam.csv", "ucuzluk": "ucuzluk.csv", "rapor": "K59_RAPOR.md", "meta": "k59_kos_meta.json"}
 _K59_EPOSTA = re.compile(r"[\w.+-]+@[\w-]+\.(com|net|org|edu|gov|io|tr)\b")
 
 
@@ -176,6 +189,7 @@ def k59_veri_sha() -> Dict[str, Tuple[str, int]]:
 def k59_onkayit_metin(zaman: str, veri_sha: Dict[str, Tuple[str, int]]) -> str:
     E = K59_ESIK; ev = E["evren"]; Sg = E["sinyal"]; C = E["cetvel"]; Kr = E["karar"]; Pl = E["plasebo"]; uy = E["uygunluk"]
     B4, B9 = E["bilesik"]["COMP4"], E["bilesik"]["COMP9"]; K57E = K57.K57_ESIK; Y = K57.K57B_ESIK["yahoo"]
+    Bl = E["bilesik"]; Xb = E["ek_bilesen"]; Uc = E["ucuzluk"]; On = K59_ONCEKI
     vs = "\n".join(f"- {k}: sha256 {v[0]} ({v[1]} dosya)" for k, v in veri_sha.items()) or "- (veri dosyası bulunamadı)"
     return f"""# K59 ÖN KAYIT — basit sinyaller, portföy cetveli v2 (aylık, geniş evren)
 
@@ -195,6 +209,10 @@ Bu ön kayıttan ÖNCE görülmüş ilgili sonuçlar (kör olmayan kısım): K58
 yok) net yıllık fazla +%8,5, NW t 2,10, K58 C 'TUTAR'. Bu yüzden S1 / U1 kör değildir (evren süzgeci ve alfa şartı yeni). Öteki sinyaller
 ve bileşikler bu evrenlerde portföy olarak hiç ölçülmedi; K57 / B / C bilanço tepkisini olay cetveliyle (FI_OLCUT) ölçtü, İZ DEĞİL çıktı.
 Faz 1'de gerçek veride yalnız `kapsam` komutu koşuldu (hisse / ay / sinyal başına hisse SAYISI); getiri, fazla, t hesaplanmadı.
+SÜRÜM NOTU: bu, ön kaydın İKİNCİ yazımıdır. İlk yazım ({On['zaman']}; mühür {On['muhur']}; dosya sha256
+{On['dosya_sha256']}; git {On['git']}) hiçbir ölçüm yapılmadan, ana oturumun ek işiyle (Cemal'in isteği: 'YEOTK ve DGXX'i
+seçtiren mantık geçmişte sınansın; eski cetvelle tutmadı denenler çöpe atılmasın') genişletildi: DOSYA ailesi (§2, §4.6) ve UCUZLUK koşullu
+testi (§5b) EKLENDİ. İlk yazımdaki hiçbir eşik, tanım, evren ya da karar kuralı değişmedi.
 
 ## 1. Evrenler (ABD = karar, BIST = bilgi)
 - U1: {ev['U1']['ad']}. Oluşum ayları ay sonu >= {ev['U1']['bas']}, fiyat {ev['U1']['kes']}'de kesik (K58 C ile aynı kriz kesiği).
@@ -248,6 +266,20 @@ Sınır: frames değerleri şirketin EN SON bildirdiği değerdir (sonradan düz
 - COMP4 (KARAR; önceden yazıldı, seçim yok): {', '.join(B4['uye'])} sinyallerinin ay içi yüzdelik sıralarının ((sıra - 0,5) / n; uygun ve o sinyali
   olan hisseler arasında, eşitlikte ortalama sıra) ortalaması; hissenin dördün en az {B4['min']}'ünde değeri olmalı. Üst %10.
 - COMP9 (BİLGİ): dokuz sinyalin sıra ortalaması; en az {B9['min']} sinyal. (BIST'te beş fiyat / hacim sinyali.)
+- EK BİLEŞENLER (yalnız DOSYA bileşiklerinin üyesidir; tek başına portföy olarak ÖLÇÜLMEZ, ek deneme sayılmaz):
+  X1 {Xb['X1']['ad']}: gelir (S7 ile aynı etiket sırası; iki çeyreği de olan ilk etiket);
+  ikisi de > 0 ve ikisinin de bilgi tarihi <= t (K57 F1 'satis_yoy' tanımı). Yüksek iyi.
+  X2 {Xb['X2']['ad']}: -(yükümlülük / özkaynak), en son bilinen çeyrek sonu; özkaynak > 0 şart; Liabilities
+  yoksa LiabilitiesAndStockholdersEquity - özkaynak (K57 F3 gibi); yükümlülük < 0 ise veri yok.
+  X3 {Xb['X3']['ad']}: -S9, yani kapanış / 252 gün zirvesi DÜŞÜK olan iyi.
+- DOSYA AİLESİ (KENDİ BAŞINA TUTAR / TUTMAZ; ölçümden önce yazıldı, seçim yok; sıra ortalaması COMP4 ile aynı yöntem, üst %10):
+  DOSYA_Y ({Bl['DOSYA_Y']['ad']}): {', '.join(Bl['DOSYA_Y']['uye'])} (gelir ivmesi, gelir yıllık büyümesi, kârlılık, düşük ihraç, PEAD);
+  hissenin beşin en az {Bl['DOSYA_Y']['min']}'ünde değeri olmalı.
+  DOSYA_D ({Bl['DOSYA_D']['ad']}): {', '.join(Bl['DOSYA_D']['uye'])} (düşük kaldıraç, gelir yıllık büyümesi, zirveden
+  uzaklık); üçün {Bl['DOSYA_D']['min']}'ü de olmalı. NOT: gerçek DGXX seçiminde belirleyici olan 'SEC'e ekli bağlayıcı sözleşme' yapısal veride YOK (8-K madde 1.01
+  verisi K60'ta); DOSYA_D yalnız ölçülebilir kısmın VEKİLİDİR. Tutmaması DGXX mantığını çürütmez, tutması da sözleşme şartını kanıtlamaz.
+  DOSYA_YD ({Bl['DOSYA_YD']['ad']}): {', '.join(Bl['DOSYA_YD']['uye'])}; altının en az {Bl['DOSYA_YD']['min']}'i olmalı.
+  BIST: bu çalışmada BIST temel verisi yüklenmez; DOSYA bileşikleri BIST'te ÖLÇÜLMEZ (yalnız U1 ve U2). BIST ölçümü ayrı iş olur.
 KAPSAM (veriden ötürü, sonuçtan bağımsız): temel veri 2020'de başlar; pay sayısı özütleri 2021'de başlar, yıllık değişim bir yıl ister.
 Bir sinyalin ölçüm dönemi = o sinyali olan uygun hisse sayısının ilk kez >= {ev['U1']['min_sinyal']} (BIST {ev['BIST']['min_sinyal']}) olduğu aydan sona.
 {K59_KAPSAM_NOTU}
@@ -276,11 +308,22 @@ Bir sinyalin ölçüm dönemi = o sinyali olan uygun hisse sayısının ilk kez 
 3. İZ ilan EDİLEMEZ: CLAUDE.md standardı (FI_OLCUT, ABD + Avrupa) değişmedi ve Avrupa'da temel veri yok. Standart değişikliği Cemal'in kararı.
 4. Seçim yok: karar yalnız COMP4'e bakar. Tekil sinyaller ve COMP9 bilgi içindir; 'en iyi tutan sinyali seçip' yeni bileşik kurulmaz.
 5. BIST bilgi olarak raporlanır; karara girmez.
+6. DOSYA AİLESİ: {', '.join(Kr['dosya'])} her evrende kendi başına cetvel v2 ile 'TUTAR (yineleme)' / 'TUTMAZ' etiketi alır ve ayrı aile
+   olarak raporlanır ('küçük' işareti aynı: net yıllık fazla < +{Kr['buyukluk_yillik'] * 100:.0f} puan). Çoklu deneme: dokuz tekil sinyale 3 ek deneme (toplam 12) sayılır;
+   DOSYA'da 'GÜÇLÜ' eşiği iki t de > {Kr['t_guclu_dosya']} (12 deneme için Bonferroni; tekil sinyallerin {Kr['t_guclu']} eşiği değişmedi). PORTFÖY-ADAY kararı
+   yine YALNIZ COMP4'e bağlıdır; DOSYA sonucu o kararı değiştirmez, DOSYA için 'aday' etiketi yoktur ve İZ ilan edilemez (madde 3).
 
 ## 5. Plasebo (cetvelin kendisinin sınaması)
 {Pl['evren']}'de {Pl['n']} rastgele sinyal (her ay uygun hisselere rastgele sıra; numpy default_rng({Pl['tohum']} + i)), aynı üst %10 portföyü ve cetvel v2.
 Yanlış pozitif oranı = TUTAN payı; hem maliyetli hem maliyetsiz (brüt) cetvelle hesaplanır, İKİSİ de <= %{Pl['yp_esik'] * 100:.0f} olmalı (maliyet yüksek devirli
 rastgele portföyü zaten cezalandırır; brüt oran sert olanıdır). Biri > %{Pl['yp_esik'] * 100:.0f} ise cetvel v2 GÜVENİLMEZ ilan edilir ve hiçbir sinyal için hüküm verilmez.
+
+## 5b. Koşullu test 'UCUZLUK' (BİLGİ; karar yok)
+K57'de 'tepeden düşmüş' şartı (F6) eklenince sonuç bozulmuştu (olay cetveli, küçük n); güçlü cetvelle yeniden bakılır. U1 ve U2'de her ay
+{Uc['bilesik']} sırasının üst %{Uc['dilim'] * 100:.0f}'si (sayı = max(1, yuvarla(0,20 x {Uc['bilesik']}'ü olan uygun hisse))) {Uc['bol']}'a göre ikiye bölünür: 'düşmüş yarı' = {Uc['bol']}'u en düşük
+yarı, 'zirveye yakın yarı' = en yüksek yarı (tek sayıda ortadaki hisse iki portföyün de dışında). İkisi de eşit ağırlıklı, aylık dengelenen,
+aynı maliyetli UZUN portföydür; ölçüm dönemi {Uc['bilesik']}'ünkiyle aynı. Raporlanır: her birinin evrene göre net fazlası, NW t, alfa ve t(alfa); ve
+aylık net fark (düşmüş - zirveye yakın; uzun-kısa değil, iki uzun portföyün farkı) ile NW t'si (gecikme {C['nw_lag']}). Karar kuralı ve etiket YOK.
 
 ## 6. COMP4 tutmazsa önceden yazılı sıradaki üç deneme (Faz 2'de KOŞULMAZ; ana oturum karar verir)
 - (a) {E['sonraki']['a']}.
@@ -541,10 +584,13 @@ def _k59_dt(x: Any) -> np.datetime64:
 
 def k59_temel_sinyal(T: Dict[str, Any], bilgi: Dict[Tuple[str, int], Any], s2c: Dict[str, str], S: List[str], me: pd.DatetimeIndex,
                      U: np.ndarray, E: Optional[Dict[str, Any]] = None) -> Dict[str, np.ndarray]:
-    """S5 (son 4 çeyrek net kâr / özkaynak) ve S7 (gelir son çeyrek / önceki iki çeyrek ortalaması). Bir çeyrek ancak bilgi tarihi (SEC
-    'filed') <= t ise kullanılır; en son bilinen çeyrek sonu t'den en çok temel_max_gun gün önce. 'bilgi_son' = kullanılan en geç bilgi tarihi."""
+    """S5 (son 4 çeyrek net kâr / özkaynak), S7 (gelir son çeyrek / önceki iki çeyrek ortalaması), X1 (gelir son çeyrek / bir yıl önceki aynı
+    çeyrek - 1; ikisi de > 0), X2 (-(yükümlülük / özkaynak); özkaynak > 0; yükümlülük yoksa toplam pasif - özkaynak, K57 F3 gibi). Bir çeyrek
+    ancak bilgi tarihi (SEC 'filed') <= t ise kullanılır; en son bilinen çeyrek sonu t'den en çok temel_max_gun gün önce.
+    'bilgi_son' = kullanılan en geç bilgi tarihi."""
     E = E or K59_ESIK; n, u = len(me), len(S); mt = me.to_numpy("datetime64[ns]")
-    S5 = np.full((n, u), np.nan); S7 = np.full((n, u), np.nan); bs = np.full((n, u), np.datetime64("NaT"), "datetime64[ns]")
+    S5 = np.full((n, u), np.nan); S7 = np.full((n, u), np.nan); X1 = np.full((n, u), np.nan); X2 = np.full((n, u), np.nan)
+    bs = np.full((n, u), np.datetime64("NaT"), "datetime64[ns]")
     maxg = np.timedelta64(int(E["temel_max_gun"]), "D"); nq = E["sinyal"]["S5"]["ceyrek"]; nat = np.datetime64("NaT")
     for j, s in enumerate(S):
         c = s2c.get(s); aylar = np.flatnonzero(U[:, j])
@@ -560,6 +606,7 @@ def k59_temel_sinyal(T: Dict[str, Any], bilgi: Dict[Tuple[str, int], Any], s2c: 
         qs = np.array(sorted(son)); sv = np.array([son[q] for q in qs]); bv = np.array([bil[q] for q in qs])
         kar = T["Q"].get((c, "NetIncomeLoss"), {}); oz = T["I"].get((c, "StockholdersEquity"), {})
         gel = [T["Q"].get((c, e), {}) for e in K57.K57_ABD_GELIR]
+        yuk = T["I"].get((c, "Liabilities"), {}); pasif = T["I"].get((c, "LiabilitiesAndStockholdersEquity"), {})
         for k in aylar:
             t = mt[k]
             with np.errstate(invalid="ignore"):
@@ -571,28 +618,44 @@ def k59_temel_sinyal(T: Dict[str, Any], bilgi: Dict[Tuple[str, int], Any], s2c: 
             def bilinen(q: int) -> bool:
                 b = bil.get(q, nat)
                 return (not np.isnat(b)) and b <= t
+
+            def isle(qq: List[int]) -> None:        # kullanılan çeyreklerin en geç bilgi tarihi
+                b = max(bil[q] for q in qq)
+                bs[k, j] = b if np.isnat(bs[k, j]) else max(bs[k, j], b)
+            ozv = float(oz[q0][1]) if q0 in oz else np.nan
             kq = [q0 - i for i in range(nq)]
-            if q0 in oz and all(q in kar and bilinen(q) for q in kq):
-                ozv = float(oz[q0][1]); top = float(sum(kar[q][1] for q in kq))
+            if all(q in kar and bilinen(q) for q in kq):
+                top = float(sum(kar[q][1] for q in kq))
                 if np.isfinite(ozv) and ozv > 0 and np.isfinite(top):
-                    S5[k, j] = top / ozv; bs[k, j] = max(bil[q] for q in kq)
+                    S5[k, j] = top / ozv; isle(kq)
             gq = [q0, q0 - 1, q0 - 2]
             for g in gel:
                 if all(q in g and bilinen(q) for q in gq):
                     r0, r1, r2 = (float(g[q][1]) for q in gq); ort = (r1 + r2) / 2
                     if np.isfinite(r0) and np.isfinite(ort) and ort > 0:
-                        S7[k, j] = r0 / ort
-                        b7 = max(bil[q] for q in gq); bs[k, j] = b7 if np.isnat(bs[k, j]) else max(bs[k, j], b7)
+                        S7[k, j] = r0 / ort; isle(gq)
                     break
-    return {"S5": S5, "S7": S7, "bilgi_son": bs}
+            yq = [q0, q0 - 4]
+            for g in gel:
+                if all(q in g and bilinen(q) for q in yq):
+                    a0, a4 = float(g[q0][1]), float(g[q0 - 4][1])
+                    if np.isfinite(a0) and np.isfinite(a4) and a0 > 0 and a4 > 0:
+                        X1[k, j] = a0 / a4 - 1; isle(yq)
+                    break
+            if np.isfinite(ozv) and ozv > 0:
+                yk = float(yuk[q0][1]) if q0 in yuk else (float(pasif[q0][1]) - ozv if q0 in pasif else np.nan)
+                if np.isfinite(yk) and yk >= 0:
+                    X2[k, j] = -yk / ozv; isle([q0])
+    return {"S5": S5, "S7": S7, "X1": X1, "X2": X2, "bilgi_son": bs}
 
 
 def k59_sinyaller(D: Dict[str, Any], P: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, np.ndarray], Dict[str, Any]]:
     """Evrenin istenen bütün sinyalleri (ay x hisse; 'yüksek = iyi'; uygun olmayan / verisi olmayan NaN). Yalnız t ve öncesi bilgi.
-    Döner: (sinyaller, ek) ; ek: S3_olcu (ay başına 'piyasa_degeri' / 'islem_degeri'), bilgi_son, pay_filed (denetim için)."""
+    Döner: (sinyaller, ek) ; ek: S3_olcu (ay başına 'piyasa_degeri' / 'islem_degeri'), bilgi_son, pay_filed (denetim için) ve
+    'bilesen' (X1, X2, X3: yalnız DOSYA bileşiklerinin üyeleri; tek başına portföy olarak ölçülmez)."""
     E = E or K59_ESIK; Sg = E["sinyal"]; ev = D["evren"]; iste = list(ev["sinyal"])
     U, me, S, Cm, C5, mp = P["U"], P["ay_sonu"], P["sembol"], P["Cm"], P["C5"], P["me_pos"]
-    n, u = U.shape; Sd: Dict[str, np.ndarray] = {}; ek: Dict[str, Any] = {"S3_olcu": [""] * n, "bilgi_son": None, "pay_filed": None}
+    n, u = U.shape; Sd: Dict[str, np.ndarray] = {}; ek: Dict[str, Any] = {"S3_olcu": [""] * n, "bilgi_son": None, "pay_filed": None, "bilesen": {}}
     cm = Cm.to_numpy(float)
     if "S1" in iste:
         Sd["S1"] = K58.k58_sinyal_momentum({"Cm": Cm, "U": U}, {"mom_kisa": Sg["S1"]["kisa"], "mom_uzun": Sg["S1"]["uzun"]})
@@ -623,17 +686,22 @@ def k59_sinyaller(D: Dict[str, Any], P: Dict[str, Any], E: Optional[Dict[str, An
         Sd["S3"] = s3
     if "S4" in iste:
         Sd["S4"] = k59_pead_sinyal(D["olay"], S, P["gun"], mp, Sg["S4"]["pencere_gun"]) if D.get("olay") is not None else np.full((n, u), np.nan)
-    if {"S5", "S7"} & set(iste):
-        if D.get("T") is not None:
-            Tm = k59_temel_sinyal(D["T"], D["bilgi"], D["s2c"], S, me, U, E); ek["bilgi_son"] = Tm["bilgi_son"]
-        else:
-            Tm = {"S5": np.full((n, u), np.nan), "S7": np.full((n, u), np.nan)}
-        for a in ("S5", "S7"):
-            if a in iste:
-                Sd[a] = Tm[a]
+    bil: Dict[str, np.ndarray] = {}
+    if D.get("T") is not None:
+        Tm = k59_temel_sinyal(D["T"], D["bilgi"], D["s2c"], S, me, U, E); ek["bilgi_son"] = Tm["bilgi_son"]
+        bil.update({"X1": Tm["X1"], "X2": Tm["X2"]})
+    else:
+        Tm = {"S5": np.full((n, u), np.nan), "S7": np.full((n, u), np.nan)}
+    for a in ("S5", "S7"):
+        if a in iste:
+            Sd[a] = Tm[a]
     if "S6" in iste:
         Sd["S6"] = -Pt["ihrac"] if Pt is not None else np.full((n, u), np.nan)
-    return {a: np.where(U & np.isfinite(Sd[a]), Sd[a], np.nan) for a in iste if a in Sd}, ek
+    if "S9" in Sd:
+        bil["X3"] = -Sd["S9"]
+    maske = lambda X_: np.where(U & np.isfinite(X_), X_, np.nan)  # noqa: E731
+    ek["bilesen"] = {a: maske(x) for a, x in bil.items() if a in E.get("ek_bilesen", {})}
+    return {a: maske(Sd[a]) for a in iste if a in Sd}, ek
 
 
 def k59_yuzde_sira(S: np.ndarray, U: np.ndarray) -> np.ndarray:
@@ -744,20 +812,58 @@ def k59_sinyal_olc(P: Dict[str, Any], S: np.ndarray, FF: Optional[pd.DataFrame] 
                    E: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], pd.DataFrame]:
     """Bir sinyalin üst %dilim portföyü (sinyali olan uygun hisseler arasında), kıyas = bütün uygun evren; ölçüm dönemi sinyali olan hisse
     sayısının ilk kez >= min_sinyal olduğu aydan sona. Döner: (sonuç satırı, aylık getiri tablosu)."""
-    E = E or K59_ESIK; ev = P["evren"]; U = P["U"]; me = P["ay_sonu"]
+    E = E or K59_ESIK; ev = P["evren"]; U = P["U"]
     Us = U & np.isfinite(S); say = Us.sum(axis=1); ol = np.array(P["olusum"], copy=True)
     yeter = np.flatnonzero(ol & (say >= ev["min_sinyal"]))
     if not len(yeter):
         return {"ay": 0, "olculdu": False, "tutar_v2": False, "brut_tutar_v2": False}, pd.DataFrame()
     ol[:yeter[0]] = False
-    sec = K58.k58_ust_dilim(np.where(Us, S, np.nan), Us, E["portfoy"]["dilim"])
+    return _k59_secim_olc(P, K58.k58_ust_dilim(np.where(Us, S, np.nan), Us, E["portfoy"]["dilim"]), ol, say, FF, E)
+
+
+def _k59_secim_olc(P: Dict[str, Any], sec: np.ndarray, ol: np.ndarray, say: np.ndarray, FF: Optional[pd.DataFrame],
+                   E: Dict[str, Any]) -> Tuple[Dict[str, Any], pd.DataFrame]:
+    """Verilen seçim (ay x hisse, bool) ve ölçüm aylarıyla eşit ağırlıklı portföy: K58 k58_portfoy + cetvel v2 + bilgi istatistikleri."""
+    ev = P["evren"]; U = P["U"]; me = P["ay_sonu"]
     Pf = K58.k58_portfoy(P["R"], sec, U, ol, ev["maliyet"])
-    k = np.flatnonzero(ol); ay = pd.PeriodIndex(me[k + 1], freq="M"); nh = sec[k].sum(axis=1)
+    k = np.flatnonzero(ol); ay = pd.PeriodIndex(me[k + 1], freq="M"); nh = (sec & U)[k].sum(axis=1)
     row = {**k59_olc(Pf, ay, FF if ev.get("french") else None, E), "ilk_ay": str(me[k[0]].date()), "son_ay": str(me[k[-1]].date()),
            "ort_hisse": float(nh.mean()), "bos_ay": int((nh == 0).sum()), "ort_sinyal_n": float(say[k].mean())}
     A = pd.DataFrame({"ay_sonu": [str(x.date()) for x in me[k]], "getiri_ayi": ay.astype(str), "brut": Pf["brut"], "net": Pf["net"],
                       "kiyas": Pf["kiyas"], "devir": Pf["devir"], "n_hisse": nh, "n_sinyal": say[k], "n_evren": U[k].sum(axis=1)})
     return row, A
+
+
+def k59_ucuzluk(P: Dict[str, Any], Sc: np.ndarray, Sb: np.ndarray, FF: Optional[pd.DataFrame] = None,
+                E: Optional[Dict[str, Any]] = None) -> Tuple[List[Dict[str, Any]], List[pd.DataFrame]]:
+    """KOŞULLU TEST 'UCUZLUK' (bilgi, karar yok): bileşiğin (Sc) üst %dilim'i her ay bölme sinyaline (Sb = S9) göre ikiye bölünür:
+    'dusmus' = Sb'si en düşük yarı, 'yakin' = en yüksek yarı (tek sayıda ortadaki hisse dışarıda; Sb'si olmayan dışarıda). İki uzun
+    portföyün cetvel istatistikleri ve aylık net farkı (dusmus - yakin; uzun-kısa değil) ile NW t. Ölçüm dönemi bileşiğinkiyle aynı."""
+    E = E or K59_ESIK; Uc = E["ucuzluk"]; ev = P["evren"]; U = P["U"]
+    Us = U & np.isfinite(Sc); say = Us.sum(axis=1); ol = np.array(P["olusum"], copy=True)
+    yeter = np.flatnonzero(ol & (say >= ev["min_sinyal"]))
+    if not len(yeter):
+        return [], []
+    ol[:yeter[0]] = False
+    ust = K58.k58_ust_dilim(np.where(Us, Sc, np.nan), Us, Uc["dilim"])
+    sec = {"dusmus": np.zeros_like(U), "yakin": np.zeros_like(U)}
+    for k in np.flatnonzero(ol):
+        j = np.flatnonzero(ust[k] & np.isfinite(Sb[k])); m = len(j) // 2
+        if m:
+            sira = j[np.argsort(Sb[k, j], kind="stable")]
+            sec["dusmus"][k, sira[:m]] = True; sec["yakin"][k, sira[-m:]] = True
+    kol = ("ay", "ilk_ay", "son_ay", "yillik_fazla", "nw_t", "alt1", "alt2", "alt3", "son30", "alfa_yillik", "t_alfa", "beta", "ff_alfa_yillik",
+           "ff_t_alfa", "sharpe", "mdd", "ort_devir", "ort_hisse", "brut_yillik_fazla", "brut_nw_t", "brut_t_alfa")
+    sat, ayl = [], {}
+    for ad, s_ in sec.items():
+        row, A = _k59_secim_olc(P, s_, ol, say, FF, E)
+        sat.append({"portfoy": ad, **{c: row.get(c) for c in kol}}); ayl[ad] = A.assign(sinyal="UCUZLUK_" + ad)
+    lag = E["cetvel"]["nw_lag"]; d = ayl["dusmus"].net.to_numpy(float) - ayl["yakin"].net.to_numpy(float)
+    db = ayl["dusmus"].brut.to_numpy(float) - ayl["yakin"].brut.to_numpy(float)
+    sat.append({"portfoy": "fark (dusmus - yakin)", "ay": len(d), "ilk_ay": sat[0]["ilk_ay"], "son_ay": sat[0]["son_ay"],
+                "yillik_fazla": float(12 * d.mean()), "nw_t": K58.k58_nw_t(d, lag), "brut_yillik_fazla": float(12 * db.mean()),
+                "brut_nw_t": K58.k58_nw_t(db, lag)})
+    return sat, list(ayl.values())
 
 
 def k59_plasebo(P: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
@@ -784,8 +890,8 @@ def k59_kapsam(P: Dict[str, Any], Sd: Dict[str, np.ndarray], ek: Dict[str, Any])
 
 # ---------------------------------------------------------------- 5) KARAR
 def k59_etiket(r: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
-    """Tekil sonuç etiketi: ÖLÇÜLEMEDİ / TUTMAZ / TUTAR (yineleme) / GÜÇLÜ (iki t de > t_guclu)."""
-    E = E or K59_ESIK; g = E["karar"]["t_guclu"]
+    """Tekil sonuç etiketi: ÖLÇÜLEMEDİ / TUTMAZ / TUTAR (yineleme) / GÜÇLÜ (iki t de > t_guclu; DOSYA ailesinde > t_guclu_dosya)."""
+    E = E or K59_ESIK; Kr = E["karar"]; g = Kr["t_guclu_dosya"] if r.get("sinyal") in Kr["dosya"] else Kr["t_guclu"]
 
     def evet(x: Any) -> bool:
         return bool(x) and not (isinstance(x, float) and np.isnan(x)) and str(x).strip().lower() not in ("false", "0", "nan", "")
@@ -818,6 +924,8 @@ def k59_karar(Z: pd.DataFrame, Pl: Optional[pd.DataFrame], E: Optional[Dict[str,
         out["bilesik"] = "TUTAR AMA KÜÇÜK" if kucuk else "PORTFÖY-ADAY"
     else:
         out["bilesik"] = "TUTMAZ (" + ", ".join(f"{e} {x}" for e, x in zip(Kr["aday_evren"], et)) + ")"
+    out["dosya"] = {f"{e} {d}": out["etiket"].get((e, d), "ÖLÇÜLEMEDİ") + (", küçük" if out["kucuk"].get((e, d)) else "")
+                    for d in Kr["dosya"] for e in Kr["aday_evren"]}
     return out
 
 
@@ -832,17 +940,18 @@ def k59_evren_olc(D: Dict[str, Any], FF: Optional[pd.DataFrame] = None, E: Optio
     """Bir evren: panel -> sinyaller + bileşikler -> (yalniz_kapsam değilse) her biri için portföy ve cetvel v2; plasebo evreniyse plasebo."""
     E = E or K59_ESIK; ad = D["ad"]; ev = D["evren"]
     P = k59_panel(D, E); Sd, ek = k59_sinyaller(D, P, E)
+    havuz = {**Sd, **ek["bilesen"]}
     for b, tn in E["bilesik"].items():
-        uye = [a for a in tn["uye"] if a in Sd]
+        uye = [a for a in tn["uye"] if a in havuz]
         if len(uye) >= tn["min"]:
-            Sd[b] = k59_bilesik(Sd, P["U"], uye, tn["min"])
+            Sd[b] = k59_bilesik(havuz, P["U"], uye, tn["min"])
     ay = P["ay_sonu"][P["olusum"]]
     ozet = {"hisse": len(P["sembol"]), "olusum_ayi": int(P["olusum"].sum()), "ilk_ay": str(ay.min().date()) if len(ay) else "",
             "son_ay": str(ay.max().date()) if len(ay) else "", "ort_evren": float(P["U"][P["olusum"]].sum(axis=1).mean()) if len(ay) else 0.0,
             "S3_olcu": pd.Series([x for x in ek["S3_olcu"] if x]).value_counts().to_dict()}
     k59log.info("%s: %d hisse, %d oluşum ayı (%s .. %s), uygun evren ort %.0f", ad, ozet["hisse"], ozet["olusum_ayi"], ozet["ilk_ay"],
                 ozet["son_ay"], ozet["ort_evren"])
-    out = {"ozet": ozet, "kapsam": k59_kapsam(P, Sd, ek), "sonuc": [], "aylik": [], "plasebo": None}
+    out = {"ozet": ozet, "kapsam": k59_kapsam(P, {**Sd, **ek["bilesen"]}, ek), "sonuc": [], "aylik": [], "plasebo": None, "ucuzluk": []}
     if yalniz_kapsam:
         return out
     Ru = P["R"][P["U"]]      # veri denetimi (kırpma yok; aykırı tek hisse getirisi raporda görünsün)
@@ -852,9 +961,13 @@ def k59_evren_olc(D: Dict[str, Any], FF: Optional[pd.DataFrame] = None, E: Optio
         row, A = k59_sinyal_olc(P, S, FF, E)
         tn = E["sinyal"].get(a) or E["bilesik"][a]
         out["sonuc"].append({"evren": ad, "sinyal": a, "ad": tn["ad"], "rol": "BİLGİ" if ev["rol"] == "BİLGİ" else tn.get("rol", "BİLGİ"),
-                             "uye_n": len([x for x in tn.get("uye", []) if x in Sd]) or 1, **row})
+                             "uye_n": len([x for x in tn.get("uye", []) if x in havuz]) or 1, **row})
         if len(A):
             out["aylik"].append(A.assign(evren=ad, sinyal=a))
+    Uc = E["ucuzluk"]
+    if Uc["bilesik"] in Sd and Uc["bol"] in Sd:
+        sat, ayl = k59_ucuzluk(P, Sd[Uc["bilesik"]], Sd[Uc["bol"]], FF if ev.get("french") else None, E)
+        out["ucuzluk"] = [{"evren": ad, **r} for r in sat]; out["aylik"] += [A.assign(evren=ad) for A in ayl]
     if ad == E["plasebo"]["evren"]:
         out["plasebo"] = k59_plasebo(P, E).assign(evren=ad)
         k59log.info("%s plasebo: yanlış pozitif net %.3f, brüt %.3f", ad, out["plasebo"].tutar_v2.mean(), out["plasebo"].brut_tutar_v2.mean())
@@ -880,7 +993,7 @@ def k59_kos(cikti: Optional[str] = None, git_sart: bool = True, demetler: Option
         except (K58.K58Hata, K59Hata, OSError, ValueError) as ex:
             meta["not"].append(f"French faktörleri okunamadı ({str(ex)[:200]}): FF5 + UMD alfası ve RF'li Sharpe YOK (bilgi satırları); karar etkilenmez")
             k59log.warning("%s", meta["not"][-1])
-    ortak = None; sonuc, aylik, kapsam = [], [], []; plasebo = None
+    ortak = None; sonuc, aylik, kapsam, ucuz = [], [], [], []; plasebo = None
     for ad in Ek["evren"]:
         t0 = time.time()
         if sentetik:
@@ -892,7 +1005,7 @@ def k59_kos(cikti: Optional[str] = None, git_sart: bool = True, demetler: Option
                 ortak = k59_abd_ortak()
             D = k59_demet(ad, ortak, oc["veri"])
         O = k59_evren_olc(D, FF, Ek); del D
-        sonuc += O["sonuc"]; aylik += O["aylik"]; kapsam.append(O["kapsam"])
+        sonuc += O["sonuc"]; aylik += O["aylik"]; kapsam.append(O["kapsam"]); ucuz += O["ucuzluk"]
         if O["plasebo"] is not None:
             plasebo = O["plasebo"]
         meta["evren"][ad] = {**O["ozet"], "sn": round(time.time() - t0)}; _k59_meta_yaz(meta, cikti)
@@ -902,6 +1015,7 @@ def k59_kos(cikti: Optional[str] = None, git_sart: bool = True, demetler: Option
     Z.to_csv(_k59_yol("sonuc", cikti), index=False)
     (pd.concat(aylik, ignore_index=True) if aylik else pd.DataFrame()).to_csv(_k59_yol("aylik", cikti), index=False)
     pd.concat(kapsam, ignore_index=True).to_csv(_k59_yol("kapsam", cikti), index=False)
+    pd.DataFrame(ucuz).to_csv(_k59_yol("ucuzluk", cikti), index=False)
     if plasebo is not None:
         plasebo.to_csv(_k59_yol("plasebo", cikti), index=False)
     meta["karar"] = {k: v for k, v in kr.items() if k not in ("etiket", "kucuk")}
@@ -948,7 +1062,7 @@ def _k59_satir(r: Any) -> str:
             f"{_k59_sy(_k59_g(r, 'ort_hisse'), 0)} | {_k59_yz(_k59_g(r, 'brut_yillik_fazla'))} | {_k59_sy(_k59_g(r, 'brut_nw_t'))} | {_k59_sy(_k59_g(r, 'brut_t_alfa'))} | {et} |")
 
 
-def _k59_duz_dil(Z: pd.DataFrame, kr: Dict[str, Any], E: Dict[str, Any]) -> str:
+def _k59_duz_dil(Z: pd.DataFrame, kr: Dict[str, Any], E: Dict[str, Any], Uz: Optional[pd.DataFrame] = None) -> str:
     Kr = E["karar"]; c = []
     if kr["cetvel"] == "PLASEBO ÖLÇÜLMEDİ":
         return "Plasebo ölçülmedi; cetvelin güvenilirliği sınanmadığı için hüküm verilmedi."
@@ -965,6 +1079,12 @@ def _k59_duz_dil(Z: pd.DataFrame, kr: Dict[str, Any], E: Dict[str, Any]) -> str:
     c.append(f"Karar: {kr['bilesik']}.")
     tut = [f"{r.evren} {r.sinyal}" for r in Z.itertuples() if r.sinyal in E["sinyal"] and r.etiket in ("TUTAR (yineleme)", "GÜÇLÜ") and r.evren in Kr["aday_evren"]]
     c.append("Tekil sinyallerden ABD'de tutanlar (bilgi; seçim yapılmaz): " + (", ".join(tut) if tut else "hiçbiri") + ".")
+    if kr.get("dosya"):
+        c.append("DOSYA ailesi (YEOTK / DGXX mantığı, kendi başına): " + "; ".join(f"{k} {v}" for k, v in kr["dosya"].items()) + ".")
+    if Uz is not None and len(Uz):
+        for r in Uz[Uz.portfoy.astype(str).str.startswith("fark")].itertuples():
+            c.append(f"UCUZLUK (bilgi) {r.evren}: bileşiğin üst %20'sinde düşmüş yarı, zirveye yakın yarıdan yılda {_k59_yz(r.yillik_fazla)} "
+                     f"{'fazla' if r.yillik_fazla >= 0 else 'eksik'} getirdi (NW t {_k59_sy(r.nw_t)}).")
     return " ".join(c)
 
 
@@ -979,11 +1099,12 @@ def _k59_karne(Z: pd.DataFrame, kr: Dict[str, Any], oc: Dict[str, Any], E: Dict[
             r = g.iloc[0]
             par.append(f"{e} COMP4 yıllık fazla {_k59_yz(r.get('yillik_fazla'))}, NW t {_k59_sy(r.get('nw_t'))}, t(alfa) {_k59_sy(r.get('t_alfa'))}, {r.etiket}")
     notu = t(f"Karar: {kr['bilesik']}; cetvel v2 {kr['cetvel']} (plasebo yanlış pozitif net %{_k59_sy(kr.get('yp_net', np.nan) * 100, 1)}, brüt "
-             f"%{_k59_sy(kr.get('yp_brut', np.nan) * 100, 1)}); " + "; ".join(par) + ". İZ ilan edilemez (standart değişikliği Cemal'in kararı); seviye 0.")
-    return (f'_ik_k("Ç15x", "2026-11-11", "{t("K59 BASİT SİNYALLER: dokuz sürekli sinyal + önceden yazılı COMP4 bileşiği, aylık üst %10 portföy, portföy cetveli v2 (K58 C + beta düzeltmeli alfa), ABD iki evren + BIST bilgi")}", '
+             f"%{_k59_sy(kr.get('yp_brut', np.nan) * 100, 1)}); " + "; ".join(par) + ". DOSYA ailesi: "
+             + ("; ".join(f"{k} {v}" for k, v in kr["dosya"].items()) if kr.get("dosya") else "hüküm yok") + ". İZ ilan edilemez (standart değişikliği Cemal'in kararı); seviye 0.")
+    return (f'_ik_k("Ç15x", "2026-11-11", "{t("K59 BASİT SİNYALLER: dokuz sürekli sinyal + önceden yazılı COMP4 bileşiği + DOSYA ailesi (YEOTK / DGXX mantığı) + UCUZLUK koşullu testi, aylık üst %10 portföy, portföy cetveli v2 (K58 C + beta düzeltmeli alfa), ABD iki evren + BIST bilgi")}", '
             f'"K59.py, test_k59.py", "{t("Basit, nedeni bilinen sürekli sinyaller ve sıra ortalaması bileşiği maliyetten sonra evreni geçiyor mu?")}", '
             f'"{t("Ön kayıt K59_ON_KAYIT.md (mühür " + str(oc["sha"])[:12] + ", ölçümden önce git kaydına işlendi); eşikler değişmedi")}", "", 0, '
-            f'cikti="arastirma_cikti/k59_basit_sinyaller/ (K59_ON_KAYIT.md, K59_RAPOR.md, sinyal_sonuc.csv, aylik_getiri.csv, plasebo.csv, kapsam.csv)", '
+            f'cikti="arastirma_cikti/k59_basit_sinyaller/ (K59_ON_KAYIT.md, K59_RAPOR.md, sinyal_sonuc.csv, aylik_getiri.csv, plasebo.csv, kapsam.csv, ucuzluk.csv)", '
             f'notu="{notu}"),')
 
 
@@ -991,7 +1112,7 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
     """K59_RAPOR.md: düz dil, karar, evren başına sinyal tablosu, plasebo, kapsam, sınırlar, sıradaki üç deneme, IZ_KARNE önerisi."""
     E = E or K59_ESIK; oc = k59_onkayit_dogrula(cikti); meta_yol = _k59_yol("meta", cikti)
     meta = json.load(open(meta_yol, encoding="utf-8")) if os.path.exists(meta_yol) else {}
-    Z = _k59_oku("sonuc", cikti); Pl = _k59_oku("plasebo", cikti); Kp = _k59_oku("kapsam", cikti)
+    Z = _k59_oku("sonuc", cikti); Pl = _k59_oku("plasebo", cikti); Kp = _k59_oku("kapsam", cikti); Uz = _k59_oku("ucuzluk", cikti)
     if Z is None:
         raise K59Hata("sinyal_sonuc.csv yok: önce `python -I K59.py kos`")
     kr = k59_karar(Z, Pl, E); C = E["cetvel"]; parca = []
@@ -1006,6 +1127,28 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
                      f"{m.get('son_ay', '—')}), ortalama uygun evren {_k59_sy(m.get('ort_evren', np.nan), 0)} hisse; maliyet tek yön {ev['maliyet'] * 1e4:.0f} bp; "
                      f"S3 ölçüsü (ay sayısı): {m.get('S3_olcu', '—')}. Veri denetimi (kırpma yok): en büyük tek hisse aylık getirisi "
                      f"{_k59_yz(m.get('maks_hisse_ay_getiri', np.nan), 0)}, +%300 üstü {m.get('getiri_ust_300_hisse_ay', '—')} / {m.get('hisse_ay', '—')} hisse-ay.\n\n{bas}\n" + "\n".join(_k59_satir(r) for r in g.itertuples()) + "\n")
+    gd = Z[Z.sinyal.isin(E["karar"]["dosya"])]
+    if len(gd):
+        sat = ["| Bileşik | Evren | Ay | İlk ay | Yıllık fazla (net) | NW t | Alfa (yıllık) | t(alfa) | FF5+UMD alfa | t | Hisse | Brüt fazla | Etiket |", "|---" * 13 + "|"]
+        for d in E["karar"]["dosya"]:
+            for r in gd[gd.sinyal == d].itertuples():
+                ilk = r.ilk_ay if isinstance(getattr(r, "ilk_ay", None), str) else "—"
+                sat.append(f"| {r.sinyal} ({r.ad}) | {r.evren} | {int(r.ay)} | {ilk} | {_k59_yz(_k59_g(r, 'yillik_fazla'))} | {_k59_sy(_k59_g(r, 'nw_t'))} | "
+                           f"{_k59_yz(_k59_g(r, 'alfa_yillik'))} | {_k59_sy(_k59_g(r, 't_alfa'))} | {_k59_yz(_k59_g(r, 'ff_alfa_yillik'))} | {_k59_sy(_k59_g(r, 'ff_t_alfa'))} | "
+                           f"{_k59_sy(_k59_g(r, 'ort_hisse'), 0)} | {_k59_yz(_k59_g(r, 'brut_yillik_fazla'))} | {r.etiket}{', küçük' if str(r.kucuk).lower() == 'true' else ''} |")
+        parca.append("## DOSYA ailesi (YEOTK / DGXX'i seçtiren mantık; ayrı aile, 3 ek deneme; PORTFÖY-ADAY kararına girmez)\n"
+                     f"Her bileşik kendi başına cetvel v2 ile etiketlenir; 'GÜÇLÜ' eşiği iki t de > {E['karar']['t_guclu_dosya']} (12 deneme). DOSYA_D yalnız ölçülebilir kısmın "
+                     "vekilidir: gerçek DGXX seçimindeki 'SEC'e ekli bağlayıcı sözleşme' yapısal veride yok (K60). BIST'te ölçülmedi (temel veri yüklenmedi).\n\n"
+                     + "\n".join(sat) + "\n")
+    if Uz is not None and len(Uz):
+        sat = ["| Evren | Portföy | Ay | Yıllık fazla / fark (net) | NW t | Alfa (yıllık) | t(alfa) | Hisse | Devir | Brüt | Brüt NW t |", "|---" * 11 + "|"]
+        for r in Uz.itertuples():
+            sat.append(f"| {r.evren} | {r.portfoy} | {int(r.ay)} | {_k59_yz(_k59_g(r, 'yillik_fazla'))} | {_k59_sy(_k59_g(r, 'nw_t'))} | {_k59_yz(_k59_g(r, 'alfa_yillik'))} | "
+                       f"{_k59_sy(_k59_g(r, 't_alfa'))} | {_k59_sy(_k59_g(r, 'ort_hisse'), 0)} | %{_k59_sy(_k59_g(r, 'ort_devir') * 100, 0)} | "
+                       f"{_k59_yz(_k59_g(r, 'brut_yillik_fazla'))} | {_k59_sy(_k59_g(r, 'brut_nw_t'))} |")
+        parca.append(f"## Koşullu test UCUZLUK (bilgi; karar yok)\n{E['ucuzluk']['bilesik']} üst %{E['ucuzluk']['dilim'] * 100:.0f}'si her ay {E['ucuzluk']['bol']}'a göre ikiye bölündü: "
+                     "'dusmus' = zirvesinden en uzak yarı, 'yakin' = zirveye en yakın yarı. İlk iki satır evrene göre fazla, 'fark' satırı iki uzun portföyün "
+                     "aylık net farkıdır (dusmus - yakin).\n\n" + "\n".join(sat) + "\n")
     if Pl is not None and len(Pl):
         parca.append(f"## Plasebo ({E['plasebo']['evren']}, {len(Pl)} rastgele sinyal)\nYanlış pozitif: maliyetli %{_k59_sy(kr.get('yp_net', np.nan) * 100, 1)}, "
                      f"maliyetsiz %{_k59_sy(kr.get('yp_brut', np.nan) * 100, 1)} (eşik %{E['plasebo']['yp_esik'] * 100:.0f}) -> cetvel v2 {kr['cetvel']}. "
@@ -1019,6 +1162,7 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
         parca.append("## Kapsam (sinyali olan uygun hisse sayısı)\n" + "\n".join(sat) + "\n")
     ozet = [f"- Cetvel v2: {kr['cetvel']}" + (f" (plasebo yanlış pozitif maliyetli %{_k59_sy(kr['yp_net'] * 100, 1)}, maliyetsiz %{_k59_sy(kr['yp_brut'] * 100, 1)})" if np.isfinite(kr.get("yp_net", np.nan)) else "") + ".",
             f"- {E['karar']['bilesik']} kararı: {kr['bilesik']}.",
+            "- DOSYA ailesi (kendi başına; karara girmez): " + ("; ".join(f"{k} {v}" for k, v in kr["dosya"].items()) if kr.get("dosya") else "hüküm yok") + ".",
             "- İZ ilan edilemez: CLAUDE.md standardı (FI_OLCUT, ABD + Avrupa) değişmedi, Avrupa'da temel veri yok; standart değişikliği Cemal'in kararı."]
     notlar = "\n".join(f"- {x}" for x in meta.get("not", [])) or "- yok"
     metin = f"""# K59 — basit sinyaller, portföy cetveli v2: RAPOR
@@ -1026,7 +1170,7 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
 Ön kayıt: {oc['zaman_utc']} UTC (mühür {oc['sha'][:12]}, dosya sha256 {oc['dosya_sha256'][:12]}, git {str((meta.get('onkayit') or {}).get('git', {}).get('commit', '—'))[:10]}); koşu {meta.get('kos_baslangic', '—')} → {meta.get('kos_bitis', '—')}. {K59_SURUM}
 
 ## Düz dille
-{_k59_duz_dil(Z, kr, E)}
+{_k59_duz_dil(Z, kr, E, Uz)}
 
 ## Karar (ön kayıt §4-§5)
 {chr(10).join(ozet)}
