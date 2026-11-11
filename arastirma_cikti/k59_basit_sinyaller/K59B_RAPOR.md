@@ -93,10 +93,20 @@ Harman = 0.5 x momentum üst onluğu + 0.5 x faaliyet kârlılığı üst beşli
 Önceden yazılı okuma (net seri): VW_MKT: bileşik uzun dönemde tutmuyor (1963-son: TUTAR, 2000-son: TUTMAZ); 2020 sonrası güçlü; EW_EW10: bileşik uzun dönemde tutmuyor (1963-son: TUTMAZ, 2000-son: TUTMAZ); 2020 sonrası zayıf.
 
 ## Plasebo (U2; tasarım başına rastgele sinyaller)
-| Tasarım | Plasebo sayısı | Yanlış pozitif (maliyetli) | Yanlış pozitif (maliyetsiz) | Brüt NW t ortalaması | Brüt NW t en büyük | Brüt t(alfa) en büyük |
+| Tasarım | Plasebo sayısı | Yanlış pozitif (maliyetli) | Yanlış pozitif (maliyetsiz) | Brüt yıllık fazla ortalaması | Brüt NW t ortalaması | Brüt NW t en büyük | Brüt t(alfa) en büyük |
+|---|---|---|---|---|---|---|---|
+| (a) | 200 | %0,0 | %1,0 | -%0,09 | -0,08 | 2,41 | 2,36 |
+| (b) | 200 | %1,5 | %13,5 | +%0,81 | 1,02 | 3,84 | 3,98 |
+
+Rastgele sinyalin brüt fazlasının ortalaması sıfıra yakın olmalıdır. Sıfırdan belirgin uzaksa o tasarımın portföy kuralı kıyasa göre YAPISAL bir fark taşıyor demektir (sinyalden bağımsız); (b)'de olası kaynaklar: kohort içi al-tut (kıyas her ay eşit ağırlığa döner) ve uygunluğunu yitiren ama bugün yaşayan hisselerin tutulması (hayatta kalma yanlılığı). Kaynak ayrıca ölçülmedi; ön kayıt gereği yanlış pozitif oranı eşiği aşan tasarımda hüküm verilmez.
+
+## Bağımsız sağlama (ayrı, basit kod; K59 / K59-B'nin panel, sinyal, bileşik, alt evren, portföy ve French fonksiyonları kullanılmadan)
+Yalnız veri yükleyicileri ortaktır. (a) için fiyat, uygunluk, piyasa değeri, alt evren, dört sinyal, alt evren içi sıra, üst %10, maliyet ve kıyas baştan hesaplandı; (c) için French zip'leri düz metin olarak okundu.
+
+| Ölçü | Ay (K59-B / bağımsız) | K59-B | Bağımsız kod | Fark | Aylık net seri en büyük mutlak fark | Not |
 |---|---|---|---|---|---|---|
-| (a) | 200 | %0,0 | %1,0 | -0,08 | 2,41 | 2,36 |
-| (b) | 200 | %1,5 | %13,5 | 1,02 | 3,84 | 3,98 |
+| (a) U2 COMP4 yıllık net fazla | 66 / 66 | +%6,992 | +%6,994 | +0.20 bp | 9.80e-17 | portföyün aylık net getirisi 66 ayda birebir aynı; fark yalnız kıyasta ve tek ayda (2021-02-26): bir hissenin (WORX) o günkü fiyatı tam 2,00 $; K59 kayan nokta yuvarlamasıyla 1,9999999999999996 bulup evren dışı bırakıyor, bağımsız kod 2,0 bulup alıyor (kıyas farkı o ay 0,011 puan) |
+| (c) VW_MKT 2000-son yıllık net fazla | 321 / 321 | +%1,014 | +%1,014 | +0.00 bp | 1.98e-16 | 200001 .. 202609; net = brüt - %0,10 / ay |
 
 ## Kapsam (hisse sayıları)
 | Tasarım | Evren | Sinyal | İlk ay (>= eşik) | Beklenen ölçüm ayı | Ortalama sinyalli hisse |

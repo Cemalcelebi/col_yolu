@@ -1273,7 +1273,7 @@ K59B_ESIK: Dict[str, Any] = {
 }
 K59B_DOSYA = {"onkayit": "K59B_ON_KAYIT.md", "sonuc": "k59b_sonuc.csv", "aylik": "k59b_aylik.csv", "plasebo": "k59b_plasebo.csv",
               "kapsam": "k59b_kapsam.csv", "french": "k59b_french.csv", "french_aylik": "k59b_french_aylik.csv", "rapor": "K59B_RAPOR.md",
-              "meta": "k59b_kos_meta.json"}
+              "meta": "k59b_kos_meta.json", "saglama": "k59b_bagimsiz_saglama.csv"}
 # K59 sonucu (ön kayıt metnine girer; mühre girmez): K59-B'nin kör OLMADIĞI kısım
 K59B_GORULEN = """K59 sonucu (K59_RAPOR.md; git e5312ca) bu ön kayıttan ÖNCE görüldü; K59-B bu dört sinyal için kör DEĞİLDİR:
   COMP4:   U1 net yıllık fazla -%1,6 (NW t -0,49; dört şartın dördü de tutmadı); U2 +%5,5 (NW t 2,30; alfa t 2,87; tutmayan tek şart
@@ -2051,11 +2051,22 @@ def k59b_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None, 
     else:
         parca.append("## Tasarım (c): French harmanı ÖLÇÜLMEDİ\n")
     if Pl is not None and len(Pl):
-        sat = ["| Tasarım | Plasebo sayısı | Yanlış pozitif (maliyetli) | Yanlış pozitif (maliyetsiz) | Brüt NW t ortalaması | Brüt NW t en büyük | Brüt t(alfa) en büyük |", "|---" * 7 + "|"]
+        sat = ["| Tasarım | Plasebo sayısı | Yanlış pozitif (maliyetli) | Yanlış pozitif (maliyetsiz) | Brüt yıllık fazla ortalaması | Brüt NW t ortalaması | Brüt NW t en büyük | Brüt t(alfa) en büyük |", "|---" * 8 + "|"]
         for t, g in Pl.groupby("tasarim", sort=False):
             sat.append(f"| ({t}) | {len(g)} | %{_k59_sy(g.tutar_v2.map(_k59b_dogru).mean() * 100, 1)} | %{_k59_sy(g.brut_tutar_v2.map(_k59b_dogru).mean() * 100, 1)} | "
-                       f"{_k59_sy(g.brut_nw_t.mean())} | {_k59_sy(g.brut_nw_t.max())} | {_k59_sy(g.brut_t_alfa.max())} |")
-        parca.append(f"## Plasebo ({B['plasebo']['evren']}; tasarım başına rastgele sinyaller)\n" + "\n".join(sat) + "\n")
+                       f"{_k59_yz(g.brut_yillik_fazla.mean(), 2)} | {_k59_sy(g.brut_nw_t.mean())} | {_k59_sy(g.brut_nw_t.max())} | {_k59_sy(g.brut_t_alfa.max())} |")
+        parca.append(f"## Plasebo ({B['plasebo']['evren']}; tasarım başına rastgele sinyaller)\n" + "\n".join(sat) + "\n\nRastgele sinyalin brüt fazlasının ortalaması sıfıra yakın "
+                     "olmalıdır. Sıfırdan belirgin uzaksa o tasarımın portföy kuralı kıyasa göre YAPISAL bir fark taşıyor demektir (sinyalden bağımsız); (b)'de "
+                     "olası kaynaklar: kohort içi al-tut (kıyas her ay eşit ağırlığa döner) ve uygunluğunu yitiren ama bugün yaşayan hisselerin tutulması "
+                     "(hayatta kalma yanlılığı). Kaynak ayrıca ölçülmedi; ön kayıt gereği yanlış pozitif oranı eşiği aşan tasarımda hüküm verilmez.\n")
+    Sg_ = _k59b_oku("saglama", cikti)
+    if Sg_ is not None and len(Sg_):
+        sat = ["| Ölçü | Ay (K59-B / bağımsız) | K59-B | Bağımsız kod | Fark | Aylık net seri en büyük mutlak fark | Not |", "|---" * 7 + "|"]
+        sat += [f"| {r.olcu} | {int(r.ay_k59b)} / {int(r.ay_bagimsiz)} | {_k59_yz(r.k59b, 3)} | {_k59_yz(r.bagimsiz, 3)} | {r.fark_bp:+.2f} bp | {_k59_g(r, 'aylik_maks_fark'):.2e} | {getattr(r, 'not_', '')} |"
+                for r in Sg_.rename(columns={"not": "not_"}).itertuples()]
+        parca.append("## Bağımsız sağlama (ayrı, basit kod; K59 / K59-B'nin panel, sinyal, bileşik, alt evren, portföy ve French fonksiyonları kullanılmadan)\n"
+                     "Yalnız veri yükleyicileri ortaktır. (a) için fiyat, uygunluk, piyasa değeri, alt evren, dört sinyal, alt evren içi sıra, üst %10, maliyet ve "
+                     "kıyas baştan hesaplandı; (c) için French zip'leri düz metin olarak okundu.\n\n" + "\n".join(sat) + "\n")
     if Kp is not None and len(Kp):
         Ko = k59b_kapsam_ozet(Kp, E, B)
         sat = ["| Tasarım | Evren | Sinyal | İlk ay (>= eşik) | Beklenen ölçüm ayı | Ortalama sinyalli hisse |", "|---" * 6 + "|"]
