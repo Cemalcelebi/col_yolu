@@ -1772,6 +1772,10 @@ IK_GOREV: List[Dict[str, str]] = [
      "durum": "TAMAMLANDI, AÇIK: Cemal'in standart kararı"},
 ]
 IK_ACIK: List[str] = [
+    "YOL HARİTASI (11 Kas): arastirma_cikti/yol_haritasi/YOL_HARITASI_11Kas.md. Sınıflama: şekil / parmak izi ve sıçrama kovalama YANLIŞ YOL (kapalı); "
+    "dar profil / olay süzgeçleri DOĞRU FİKİR YANLIŞ CETVEL (n < 1.000 'İZ DEĞİL'ler aslında ÖLÇÜLEMEDİ); K58 DOĞRU YOL. Sıra: Y1 K59 (portföy cetveli v2 + 9 basit "
+    "sinyal + 4'lü bileşik), Y2 batanlar dahil evren notu, Y3 tutarsa aylık aday listesi, Y4 tutmazsa 3 devam, Y5 Cemal kararları (standart, hedef +%4 / yıl, "
+    "Tiingo anahtarı, yazılı boyut kuralı).",
     "KARAR (10 Kas, Cemal): K58 (Ç151) cetvelin kendisini sınadı. FI_OLCUT olay cetveli küçük etkiyi göremiyor (δ +%2'de n <= 300 güç en çok %11; "
     "dört hücre birden ~%0,2): 150 çalışmada 'iz yok' sonucunun büyük kısmı ölçüm aracının kabalığından. PORTFÖY CETVELİ (aylık, üst %10, maliyetli, "
     "NW t > 2, 3 alt dönem + son %30) ABD'de momentumu kabul etti, 200 plaseboda 0 yanlış alarm: KALİBRE ADAY STANDART. Benimsemek Cemal'in kararı "
