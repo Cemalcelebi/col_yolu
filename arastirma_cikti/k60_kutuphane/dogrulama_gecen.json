@@ -1,0 +1,3676 @@
+{
+ "gecen": [
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ACCRUALS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ACCRUALS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "ACT_13D",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_DIS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_EAR",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_INV",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_LIQ",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_MOM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_PRF",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_RSK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_SEA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_SEA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_VAL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AMIHUD",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ASSET_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ASSET_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BE_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BE_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "BM",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CAPEX_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CAPEX_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CBOP_A",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CFP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CHS_FAIL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "COMP4",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "DOLVOL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "DOSYA_Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EARN_STREAK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_ANN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_FILE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_FILE",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_VOL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "E_424B5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "E_IPO_3Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "E_RSPLIT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "E_S3",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "F_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GAP_OVN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GAP_OVN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GP_A",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "HIGH52",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "IND_MOM_6",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ISKEW",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "IVOL_FF3",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "LEV_MKT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "LTREV_60_13",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MAX5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_12_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "MOM_12_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_6_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_6_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "MOM_FIP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NEF",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R1"
+   ],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yon_r1": 1
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NOA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NOA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NSI_1Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NSI_5Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "NT_LATE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "OP_BE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "O_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "PRICE_LVL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "RD_ME",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "RD_ME",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ROA_Q",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ROE_TTM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "RUNWAY",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SALES_ACCEL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SALES_ACCEL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_2_5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SIZE_ME",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SKEW_TOT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": true,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "SP",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SPREAD_CS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "STREV_1M",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "STREV_1M",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SUE_SRW",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TREND_MA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TREND_MA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TURN_12M",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_60D",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_SHOCK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_SHOCK",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "AILE_EAR",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_INV",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "COMP4",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "DOSYA_Y",
+   "taraf": "UST",
+   "yon_r1": 0
+  }
+ ],
+ "muhur": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+ "plasebo": {
+  "brut_t05": -2.510264125,
+  "lift_m50": 1.068914235,
+  "lift_p100": 1.121567536,
+  "t95": 2.058469163
+ },
+ "secili_sha256": "d3b69222e1617e45eefbc417aa8e32069bb06e0f40759a16a65851bbb5f73564",
+ "sonuc": [
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ACCRUALS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ACCRUALS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "ACT_13D",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_DIS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_EAR",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_INV",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_LIQ",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_MOM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_MOM",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_PRF",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_RSK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_SEA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_SEA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AILE_VAL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "AMIHUD",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ASSET_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ASSET_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BE_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BE_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "BM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "BM",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CAPEX_G",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CAPEX_G",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CBOP_A",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CFP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "CFP",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "CHS_FAIL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "COMP4",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "DOLVOL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "DOSYA_Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EARN_STREAK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_ANN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_FILE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_FILE",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_VOL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "EP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "EV_EBITDA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "EV_EBITDA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "E_424B5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "E_DIV_OMIT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "E_IPO_3Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "E_RSPLIT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "E_S3",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "F_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GAP_OVN",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GAP_OVN",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "GP_A",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "HIGH52",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "IND_MOM_6",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "IND_MOM_6",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ISKEW",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "IVOL_FF3",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "LEV_MKT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "LTREV_60_13",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MAX5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_12_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "MOM_12_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_6_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_6_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "MOM_FIP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NEF",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R1"
+   ],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yon_r1": 1
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "NOA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NOA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NSI_1Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "NSI_5Y",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "NT_LATE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "OP_BE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "O_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "PRICE_LVL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "RD_ME",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "RD_ME",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R1"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "REV_SURP",
+   "taraf": "UST",
+   "yon_r1": 1
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ROA_Q",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "ROE_TTM",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "RUNWAY",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SALES_ACCEL",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SALES_ACCEL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_1",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_1",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_2_5",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SIZE_ME",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SKEW_TOT",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SP",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": true,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "SP",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SPREAD_CS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "STREV_1M",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "STREV_1M",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "SUE_SRW",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TREND_MA",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TREND_MA",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "TURN_12M",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_60D",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_SHOCK",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": true,
+   "gecer": true,
+   "kesif_secili": true,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "sinyal": "VOL_SHOCK",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_DIS",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "sinyal": "AILE_EAR",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_INV",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_LIQ",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_PRF",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_RSK",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_SEC",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_SEC",
+   "taraf": "ALT",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": false,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "AILE_VAL",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "COMP4",
+   "taraf": "UST",
+   "yon_r1": 0
+  },
+  {
+   "alt_m50_ustu_1": false,
+   "gecer": true,
+   "kesif_secili": false,
+   "kesif_yol": [],
+   "r1": true,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "sinyal": "DOSYA_Y",
+   "taraf": "UST",
+   "yon_r1": 0
+  }
+ ]
+}
