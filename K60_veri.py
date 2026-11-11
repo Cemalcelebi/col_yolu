@@ -11,6 +11,7 @@ Komut:  python K60_veri.py plan           indirme planını yazar (arastirma_cik
                                           Değer koda, günlüğe, manifeste, durum dosyasına yazılmaz (günlükte maskelenir).
         python K60_veri.py indir_fiyat    geniş ABD evreninin (K57-B evreni + V_ABD) Yahoo günlük fiyatları 2010-01-01'den -> /tmp/k60_fiyat
                                           (K57-B ile aynı uç ve tarayıcı kimliği; temettü / bölünme olayları saklanır; kaldığı yerden sürer)
+        python K60_veri.py indir_fiyat --yenile kirpik   Yahoo'nun geçmişini eksik verdiği hisseleri yeniden ister (yalnız daha uzun yanıt yazılır)
         python K60_veri.py denetle        manifest sha256 doğrulaması + etiket x dönem şirket sayıları + fiyat kapsamı (K60_VERI_DENETIM.md)
         python K60_veri.py ozet           inenlerin özeti: yıllara göre fiyat paneli, uygun evren, bilinen yanlılıklar (K60_VERI_OZET.md)
 Colab:  exec(open('K60_veri.py').read()); k60v_plan()
@@ -106,7 +107,8 @@ K60V_ESIK: Dict[str, Any] = {
             "hiz_ust": 8.0, "hiz_pay_sn": 0.005, "is_parcacigi": 4, "deneme": 3, "zaman_asimi": 90, "geri_cekil": 5.0, "ret_kod": [403, 407]},
     "dizin": {"url": "https://www.sec.gov/Archives/edgar/full-index/{yil}/QTR{c}/master.gz", "ceyrek": ("2009Q1", "2026Q3"),
               "form": ["10-K", "10-Q", "10-K/A", "10-Q/A", "10-KT", "10-QT", "10-K405", "20-F", "40-F"]},
-    "yahoo": dict(K57.K57B_ESIK["yahoo"], bas="2010-01-01", bit="2026-11-12", kes="2026-08-31", zaman_asimi=40, ret_kod=[407]),
+    "yahoo": dict(K57.K57B_ESIK["yahoo"], bas="2010-01-01", bit="2026-11-12", kes="2026-08-31", zaman_asimi=40, ret_kod=[407],
+                  kirpik_gun=10),
     "uygunluk": {"fiyat_min": 2.0, "likit_min": 1.0e6, "likit_gun": 20, "likit_min_gun": 15, "gecmis_gun": 252, "ileri_tasima": 5,
                  "tur": ["EQUITY"], "takvim_pay": 0.20},
     "donem": {"KEŞİF": ("2016-01", "2021-12"), "DOĞRULAMA": ("2022-01", "2023-12"), "KASA": ("2024-01", "2026-08")},
@@ -601,11 +603,54 @@ def k60v_fiyat_indir(semboller: Optional[List[str]] = None, adet: Optional[int] 
                           P, None, uyu, _k60v_json_mu, b'{"yok": 404}')
 
 
+def _k60v_bar_say(ham: bytes) -> int:
+    """Ham Yahoo yanıtındaki gün (zaman damgası) sayısı; okunamıyorsa -1."""
+    try:
+        res = ((json.loads(ham).get("chart") or {}).get("result") or [None])[0]
+        return len((res or {}).get("timestamp") or [])
+    except (ValueError, AttributeError, TypeError):
+        return -1
+
+
+def k60v_fiyat_yenile(semboller: Optional[List[str]] = None, getir: Optional[Callable] = None, klasor: Optional[str] = None,
+                      uyu: Callable[[float], None] = time.sleep) -> Dict[str, Any]:
+    """Kırpık / boş gelen hisseleri yeniden ister (Yahoo geçmişi bazen geçici olarak eksik verir). Yeni yanıt eskisinden DAHA ÇOK gün
+    içeriyorsa dosya ve manifest kaydı değişir; değilse eski dosya aynen kalır (veri kaybı olmaz). semboller verilmezse kapsam taramasından
+    'kırpık' ve 'veri yok' olanlar alınır."""
+    Y = K60V_ESIK["yahoo"]; klasor = klasor or K60V_YOL["fiyat"]
+    if os.path.abspath(klasor) == os.path.abspath(K60V_YOL["eski_fiyat"]):
+        raise K60VHata(f"K60 fiyat önbelleği K59 girdisi olan {klasor} klasörüne yazılamaz")
+    if semboller is None:
+        Kp = k60v_fiyat_tara(klasor, uygunluk=False)["kapsam"]
+        semboller = Kp[Kp.kirpik | Kp.durum.str.startswith("veri yok")].sembol.tolist()
+    M = K60VManifest(klasor); dur = threading.Event(); out: Dict[str, Any] = {"denenen": 0, "iyilesen": [], "ayni": [], "inemeyen": []}
+    P = {"deneme": Y["deneme"], "zaman_asimi": Y["zaman_asimi"], "geri_cekil": Y["geri_cekil"], "ret_kod": Y["ret_kod"]}
+    for s in semboller:
+        ad = _k60v_fiyat_adi(s); y = os.path.join(klasor, ad); out["denenen"] += 1
+        eski_n = -1
+        if os.path.exists(y):
+            with open(y, "rb") as f:
+                eski_n = _k60v_bar_say(f.read())
+        d, ham = _k60v_tek({"ad": s, "url": _k60v_yahoo_url(s), "dosya": ad}, getir or _k60v_getir,
+                           {"User-Agent": K57.K57B_YAHOO_UA, "Accept": "application/json"}, P, None, dur, uyu, _k60v_json_mu)
+        if d != "tamam":
+            out["inemeyen"].append(s)
+        elif _k60v_bar_say(ham) > eski_n:
+            M.dosya_yaz(ad, ham, "tamam"); out["iyilesen"].append(s)
+        else:
+            out["ayni"].append(s)
+        uyu(float(Y["bekle"]))
+    out["manifest_sha256"] = M.kaydet()
+    k60vlog.info("fiyat yenileme: %d denendi, %d iyileşti, %d aynı, %d inemedi", out["denenen"], len(out["iyilesen"]), len(out["ayni"]), len(out["inemeyen"]))
+    return out
+
+
 # ---------------------------------------------------------------- 6) OKUYUCULAR
 def k60v_yahoo_oku(yol: str, kes: Optional[str] = None) -> Tuple[Optional[Dict[str, Any]], str]:
     """Önbellek JSON -> {'gun', 'kapanis' (bölünme düzeltmeli, temettüsüz), 'duzeltilmis' (temettü de düzeltilmiş), 'hacim', 'bolunme'
     ((tarih, oran) ya da None), 'temettu' (olay sayısı), 'tur', 'ilk_islem'}; (None, neden). Günler borsa saat dilimine göre; kes sonrası atılır.
-    Temizlik K57 k57b_yahoo_oku ile aynı (OHLC dolu, High >= Low, Close > 0); tür ve en az gün süzgeci BURADA uygulanmaz."""
+    Temizlik K57 k57b_yahoo_oku ile aynı (OHLC dolu, High >= Low, Close > 0); tür ve en az gün süzgeci BURADA uygulanmaz.
+    'kirpik' = Yahoo'nun verdiği ilk gün, hissenin ilk işlem gününden (ya da istek başlangıcından) kirpik_gun günden fazla sonra: geçmiş eksik."""
     try:
         with open(yol, encoding="utf-8") as f:
             J = json.load(f)
@@ -622,6 +667,9 @@ def k60v_yahoo_oku(yol: str, kes: Optional[str] = None) -> Tuple[Optional[Dict[s
 
     def gun(ts: Any) -> pd.DatetimeIndex:
         return pd.to_datetime(ts, unit="s", utc=True).tz_convert(tz).tz_localize(None).normalize()
+    ilk = meta.get("firstTradeDate"); ilk_islem = gun([int(ilk)])[0] if isinstance(ilk, (int, float)) else pd.NaT
+    beklenen = max(ilk_islem, pd.Timestamp(K60V_ESIK["yahoo"]["bas"])) if pd.notna(ilk_islem) else pd.Timestamp(K60V_ESIK["yahoo"]["bas"])
+    kirpik = bool((gun([res["timestamp"][0]])[0] - beklenen).days > int(K60V_ESIK["yahoo"]["kirpik_gun"]))
     q = ((res.get("indicators") or {}).get("quote") or [{}])[0]
     try:
         d = pd.DataFrame({"o": q.get("open"), "h": q.get("high"), "l": q.get("low"), "c": q.get("close"), "v": q.get("volume")},
@@ -635,7 +683,7 @@ def k60v_yahoo_oku(yol: str, kes: Optional[str] = None) -> Tuple[Optional[Dict[s
     if kes is not None:
         d = d[d.index <= pd.Timestamp(kes)]
     if not len(d):
-        return None, "veri yok"
+        return None, "veri yok (kırpık)" if kirpik else "veri yok"
     olay = res.get("events") or {}; bol = []
     for v in (olay.get("splits") or {}).values():
         try:
@@ -645,11 +693,9 @@ def k60v_yahoo_oku(yol: str, kes: Optional[str] = None) -> Tuple[Optional[Dict[s
         if pay > 0 and payda > 0 and pay != payda:
             bol.append((gun([t])[0].to_datetime64().astype("datetime64[ns]"), pay / payda))
     bol.sort(key=lambda x: x[0])
-    ilk = meta.get("firstTradeDate")
     return {"gun": d.index, "kapanis": d.c.to_numpy(float), "duzeltilmis": d.a.to_numpy(float), "hacim": d.v.fillna(0.0).to_numpy(float),
             "bolunme": (np.array([x[0] for x in bol], "datetime64[ns]"), np.array([x[1] for x in bol], float)) if bol else None,
-            "temettu": len(olay.get("dividends") or {}), "tur": meta.get("instrumentType"),
-            "ilk_islem": gun([int(ilk)])[0] if isinstance(ilk, (int, float)) else pd.NaT}, "fiyat"
+            "temettu": len(olay.get("dividends") or {}), "tur": meta.get("instrumentType"), "ilk_islem": ilk_islem, "kirpik": kirpik}, "fiyat"
 
 
 def k60v_bolunme_carpan(bol: Optional[Tuple[np.ndarray, np.ndarray]], t: np.ndarray) -> np.ndarray:
@@ -700,7 +746,7 @@ def k60v_fiyat_tara(klasor: Optional[str] = None, uygunluk: bool = True) -> Dict
         g = o["gun"]
         sat.append({"sembol": r.sembol, "kaynak": r.kaynak, "durum": "fiyat", "tur": o["tur"], "ilk": g[0].date(), "son": g[-1].date(),
                     "gun": len(g), "bolunme": 0 if o["bolunme"] is None else len(o["bolunme"][0]), "temettu": o["temettu"],
-                    "ilk_islem": o["ilk_islem"].date() if pd.notna(o["ilk_islem"]) else None})
+                    "ilk_islem": o["ilk_islem"].date() if pd.notna(o["ilk_islem"]) else None, "kirpik": o["kirpik"]})
         yy, ns = np.unique(g.year.to_numpy(), return_counts=True)
         for a, n in zip(yy.tolist(), ns.tolist()):
             yil_seri[a] = yil_seri.get(a, 0) + 1; yil_gun[a] = yil_gun.get(a, 0) + n; yil_tam[a] = yil_tam.get(a, 0) + (n >= 200)
@@ -709,7 +755,8 @@ def k60v_fiyat_tara(klasor: Optional[str] = None, uygunluk: bool = True) -> Dict
             for x in gd.tolist():
                 gun_say[x] = gun_say.get(x, 0) + 1
             saklanan.append((gd, k60v_gunluk_bayrak(o, Uy)))
-    K = pd.DataFrame(sat, columns=["sembol", "kaynak", "durum", "tur", "ilk", "son", "gun", "bolunme", "temettu", "ilk_islem"])
+    K = pd.DataFrame(sat, columns=["sembol", "kaynak", "durum", "tur", "ilk", "son", "gun", "bolunme", "temettu", "ilk_islem", "kirpik"])
+    K["kirpik"] = K.kirpik.fillna(False).astype(bool) | K.durum.eq("veri yok (kırpık)")
     out: Dict[str, Any] = {"kapsam": K, "klasor": klasor, "ay": None, "yil": None}
     Yl = pd.DataFrame({"yil": sorted(yil_seri)})
     Yl["seri"] = [yil_seri[a] for a in Yl.yil]; Yl["tam_yil_seri"] = [yil_tam[a] for a in Yl.yil]; Yl["hisse_gun"] = [yil_gun[a] for a in Yl.yil]
@@ -928,7 +975,7 @@ Dizin varsayılan olarak İNMEZ (iş tanımında yoktu); öneri: `--dizin evet` 
 | evren | {_bn(nsem)} sembol: K57-B geniş evren tablosu (`evren_b1.csv`) + V_ABD sembolleri; yalnız bugün kodu olanlar |
 | istek | sembol başına 1; {Y['is_parcacigi']} iş parçacığı, istekler arası {_on(Y['bekle'])} sn, {Y['deneme']} deneme; art arda {Y['engel_ardisik']} başarısızlıkta durur |
 | hedef klasör | `{K60V_YOL['fiyat']}` (yeni; `K60_FIYAT` ile değişir). `{K60V_YOL['eski_fiyat']}` (K59 girdisi) okunmaz, yazılmaz |
-| tahmini boyut / süre | ~{_on(nsem * 0.45 / 1000)} GB; ~{_on(nsem / 220, 0)}–{_on(nsem / 110, 0)} dk |
+| tahmini boyut / süre | ~{_on(nsem * 0.29 / 1000)} GB; ~{_on(nsem / 210, 0)}–{_on(nsem / 110, 0)} dk (11 Kasım koşusunda ölçülen: 1,36 GB, 23 dk) |
 | e-posta | gerekmez |
 
 Komut: `python K60_veri.py indir_fiyat`
@@ -995,7 +1042,8 @@ def k60v_denetle(cikti: Optional[str] = None, ek: bool = True) -> Dict[str, Any]
         fm = k60v_manifest_dogrula(K60V_YOL["fiyat"]) if os.path.exists(os.path.join(K60V_YOL["fiyat"], K60V_DOSYA["manifest"])) else None
         K = k60v_fiyat_tara(uygunluk=False)["kapsam"]; K.to_csv(_k60v_yol("fiyat_kapsam", cikti), index=False)
     fb = k60v_filed_bulgusu(Sy); kay = Sy.kaynak.value_counts().to_dict(); drm = Sy[Sy.kaynak == "k60"].durum.value_counts().to_dict()
-    fk = "(fiyat önbelleği yok)" if K is None else ", ".join(f"{a} {_bn(n)}" for a, n in K.durum.str.split(" ").str[0].value_counts().items())
+    fk = "(fiyat önbelleği yok)" if K is None else (", ".join(f"{a} {_bn(n)}" for a, n in K.durum.value_counts().items())
+                                                     + f"; kırpık seri {_bn(int(K.kirpik.sum()))}")
     metin = f"""# K60 veri denetimi
 
 Yazım zamanı: {_k60v_simdi()}. Üreten: `python K60_veri.py denetle`. Önbellekler değiştirilmedi; getiri hesaplanmadı.
@@ -1022,6 +1070,16 @@ Hisse durumu: {fk}. Ayrıntı: `{K60V_DOSYA['fiyat_kapsam']}`.
     return {"yol": yol, "sec_manifest": R["manifest"], "fiyat_manifest": fm, "sayim": Sy, "kapsam": K, "filed": fb}
 
 
+def _k60v_b1_kayip(K: pd.DataFrame) -> List[str]:
+    """K57-B evren tablosunda durumu 'fiyat' olup yeni önbellekte fiyat serisi olmayan semboller (Yahoo'nun sonradan geçmişini sildiği hisseler)."""
+    try:
+        B = pd.read_csv(K60V_YOL["evren_b1"], dtype=str)
+    except (OSError, ValueError):
+        return []
+    eski = set(B[B.durum == "fiyat"].sembol)
+    return sorted(set(K[K.durum != "fiyat"].sembol) & eski)
+
+
 def _k60v_ilk_dagilim(K: pd.DataFrame) -> str:
     F = K[K.durum == "fiyat"].copy()
     if not len(F):
@@ -1045,12 +1103,19 @@ def k60v_ozet(cikti: Optional[str] = None, ek: bool = True) -> str:
         if T["ay"] is not None:
             T["ay"].to_csv(_k60v_yol("evren_ay", cikti), index=False)
         fm = k60v_manifest_dogrula(K60V_YOL["fiyat"]) if os.path.exists(os.path.join(K60V_YOL["fiyat"], K60V_DOSYA["manifest"])) else None
-        F = K[K.durum == "fiyat"]; drm = K.durum.str.split(" ").str[0].value_counts().to_dict()
+        F = K[K.durum == "fiyat"]; drm = K.durum.value_counts().to_dict(); kr = K[K.kirpik]
         tur = F.tur.fillna("?").value_counts().to_dict()
         fiyat_ozet = (f"{_bn(len(K))} sembol istendi; fiyat serisi olan {_bn(len(F))} (tür: {', '.join(f'{a} {_bn(n)}' for a, n in tur.items())}); "
                       f"durumlar: {', '.join(f'{a} {_bn(n)}' for a, n in drm.items())}. Bölünmesi olan {_bn(int((F.bolunme > 0).sum()))}, "
                       f"temettü olayı olan {_bn(int((F.temettu > 0).sum()))} hisse. İndirme: {fd.get('ilk_indirme_utc', '—')} → {fd.get('son_utc', '—')}, "
-                      f"son durum '{fd.get('durum', '—')}', inemeyen {_bn(len(fd.get('inemeyen', []) or []))}.")
+                      f"son durum '{fd.get('durum', '—')}', inemeyen {_bn(len(fd.get('inemeyen', []) or []))}.\n"
+                      f"Durumların anlamı: 'fiyat' = {Y['kes']} ve öncesinde en az bir günü var; 'yok' = Yahoo bu kodu tanımıyor (404); 'veri yok' = "
+                      f"Yahoo kodu tanıyor ama {Y['kes']} ve öncesi için hiç gün vermiyor.\n"
+                      f"**Kırpık seri: {_bn(len(kr))} hisse** (Yahoo'nun verdiği ilk gün, hissenin ilk işlem gününden {Y['kirpik_gun']} günden fazla sonra; geçmiş Yahoo "
+                      f"tarafında eksik; bunlardan {_bn(int((kr.durum == 'fiyat').sum()))} hissenin kısa da olsa serisi var): {', '.join(kr.sembol.tolist()) or '—'}. "
+                      "Yeniden deneme: `python K60_veri.py indir_fiyat --yenile kirpik` (yalnız daha uzun gelen yanıt eskisinin yerine geçer).\n"
+                      f"K57-B evren tablosunda (K59 girdisi, 9 Kasım) fiyat serisi olup burada serisi olmayanlar: {', '.join(_k60v_b1_kayip(K)) or '—'} "
+                      "(bu hisselerin 2020+ serisi eski önbellekte durur; K60 paneli isterse oradan tamamlar).")
         if "uygun_ort" in Yl:
             ytab = ("| yıl | fiyat serisi olan | tam yıl (≥ 200 gün) | hisse-gün | uygun evren: ay sonu ort. | en az | en çok | yıl sonu uygun | yıl sonu: işlem gören | geçmişi yeten | fiyat ≥ 2 $ | likit ≥ 1 mn $ |\n"
                     "|---|---|---|---|---|---|---|---|---|---|---|---|\n"
@@ -1101,8 +1166,8 @@ o günkü fiyat (bölünmeler geri alınmış kapanış) ≥ {_on(Uy['fiyat_min'
 ### K60 dönemlerinde uygun evren
 {dtab}
 
-Not: {Uy['gecmis_gun']} gün geçmiş şartı yüzünden fiyatı 2010 başında başlayan hisseler ilk kez Ocak 2011'de uygun olur; 2010 satırındaki uygun evren bu yüzden sıfıra yakındır.
-12 aylık momentum gibi ölçüler KEŞİF başlangıcı (2016) için fazlasıyla geçmişe sahiptir.
+Not: {Uy['gecmis_gun']} gün geçmiş şartı yüzünden fiyatı 2010 başında başlayan hisseler ilk kez 2010'un son ay sonunda uygun olur; 2010'un ilk on bir ayında uygun
+evren 0'dır (2010 satırının ortalaması bu yüzden düşüktür). 12 aylık momentum gibi ölçüler KEŞİF başlangıcı (2016) için fazlasıyla geçmişe sahiptir.
 
 ## 2. Temel veri (SEC XBRL frames)
 {sec_ozet}
@@ -1128,7 +1193,8 @@ Etiket x dönem şirket sayıları: `python K60_veri.py denetle` → `{K60V_DOSY
 7. **CIK → borsa kodu eşlemesi bugünkü.** `company_tickers.json` bugünün kodunu verir; kod değiştirmiş şirketin eski fiyatı Yahoo'da yeni kod altında
    durur (sorun yok), ama yeniden kullanılmış kodlarda (K54: 9 örnek) fiyat ile temel veri farklı şirketlere ait olabilir.
 8. **Yahoo fiyatı.** `close` bölünme düzeltmeli, `adjclose` temettü de düzeltilmiş; düzeltme katsayıları indirme günündeki haliyledir. Tekil hatalı
-   günler (sıfır hacim, uç fiyat) temizlenmedi; K59'daki "en büyük tek hisse getirisi" denetimi K60'ta da gerekir.
+   günler (sıfır hacim, uç fiyat) temizlenmedi; K59'daki "en büyük tek hisse getirisi" denetimi K60'ta da gerekir. Yahoo bazı hisselerin geçmişini
+   geçici olarak eksik verir (yukarıdaki "kırpık seri" listesi; 11 Kasım'da ROKU gibi büyük hisseler de vardı); liste her indirmede yeniden bakılmalıdır.
 9. **Fon krizi kesimi.** Okuyucular fiyatı {Y['kes']}'de keser (KASA dönemi Ağustos 2026'da biter).
 """
     yol = _k60v_yaz(_k60v_yol("ozet", cikti), metin)
@@ -1162,6 +1228,7 @@ if __name__ == "__main__" and "get_ipython" not in globals():
     ap.add_argument("--dizin", choices=["evet", "hayir"], default="hayir", help="EDGAR başvuru dizinini de indir / plana kat")
     ap.add_argument("--hiz", type=float, default=None, help="SEC istek hızı (saniyede; üst sınır 8)")
     ap.add_argument("--adet", type=int, default=None, help="yalnız ilk N iş (deneme için)")
+    ap.add_argument("--yenile", choices=["kirpik"], default=None, help="indir_fiyat: kırpık / boş gelen hisseleri yeniden iste")
     a = ap.parse_args()
     try:
         if a.komut == "plan":
@@ -1172,6 +1239,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             d_ = k60v_sec_indir(hiz=a.hiz, ek=a.ek == "evet", dizin=a.dizin == "evet", adet=a.adet)
             print(json.dumps({k_: v_ for k_, v_ in d_.items() if k_ != "inemeyen"}, ensure_ascii=False, indent=1))
             sys.exit(0 if d_["durum"] == "tamam" else 3)
+        elif a.komut == "indir_fiyat" and a.yenile:
+            print(json.dumps(k60v_fiyat_yenile(), ensure_ascii=False, indent=1))
         elif a.komut == "indir_fiyat":
             d_ = k60v_fiyat_indir(adet=a.adet)
             print(json.dumps({k_: v_ for k_, v_ in d_.items() if k_ != "inemeyen"}, ensure_ascii=False, indent=1))

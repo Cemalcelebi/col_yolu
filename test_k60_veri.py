@@ -5,7 +5,8 @@
 (hata, 404 işareti, yarım dosya, kayıp manifest, bozuk dosya), 403'te durma, geçersiz yanıt  5) hız sınırı: saniyede en çok 8 istek (sahte saatle
 tam liste; gerçek saatle 4 iş parçacığı), üst sınır aşılamaz  6) manifest sha256 (dosya özeti, klasör özeti, kurcalanan / eksik / fazla dosya)
 7) e-posta / kimlik satırı sızıntısı yok (istek başlığına gider; günlük, durum, manifest, raporlarda yok; hata iletisi maskelenir)
-8) Yahoo indirme: uç ve kimlik K57-B ile aynı, 2010 başlangıcı, olaylar saklanır, kaldığı yerden, 404 işareti, engelde durma, K59 klasörüne yazmaz
+8) Yahoo indirme: uç ve kimlik K57-B ile aynı, 2010 başlangıcı, olaylar saklanır, kaldığı yerden, 404 işareti, engelde durma, K59 klasörüne yazmaz;
+kırpık seri bayrağı ve güvenli yenileme (yalnız daha uzun yanıt eskisinin yerine geçer)
 9) okuyucu + uygun evren: K59 okuyucusuyla aynı ham kapanış / bölünme çarpanı; fiyat, likidite, geçmiş, tür, bayat seri, ters bölünme;
 bağımsız panel hesabıyla aynı ay sayıları; GELECEĞE BAKMA YOK  10) SEC denetimi: şirket sayıları, 'filed' alanı, dizin sayımı
 11) plan / denetim / özet raporları (sentetik klasörlerde; yedek kural metni)  12) kodda ve çıktılarda e-posta / anahtar yok.
@@ -83,8 +84,8 @@ def cerceve(url: str, n: int = 3, filed: bool = False) -> bytes:
     return json.dumps({"taxonomy": tax, "tag": etiket, "ccp": donem, "uom": birim, "pts": len(veri), "data": veri}).encode()
 
 
-def yahoo_json(idx, kapanis, hacim, tur="EQUITY", bolunme=None, temettu=None, duz=None) -> bytes:
-    """Sentetik Yahoo chart yanıtı. bolunme: [(tarih, pay, payda)], temettu: [(tarih, tutar)]."""
+def yahoo_json(idx, kapanis, hacim, tur="EQUITY", bolunme=None, temettu=None, duz=None, ilk_islem=None) -> bytes:
+    """Sentetik Yahoo chart yanıtı. bolunme: [(tarih, pay, payda)], temettu: [(tarih, tutar)]; ilk_islem: meta.firstTradeDate (varsayılan ilk gün)."""
     def ts(d):
         return int((pd.Timestamp(d) + pd.Timedelta(hours=14, minutes=30)).tz_localize("UTC").timestamp())
     c = [float(x) for x in kapanis]; olay = {}
@@ -92,7 +93,7 @@ def yahoo_json(idx, kapanis, hacim, tur="EQUITY", bolunme=None, temettu=None, du
         olay["splits"] = {str(ts(d)): {"date": ts(d), "numerator": p, "denominator": q, "splitRatio": f"{p}:{q}"} for d, p, q in bolunme}
     if temettu:
         olay["dividends"] = {str(ts(d)): {"amount": a, "date": ts(d)} for d, a in temettu}
-    res = {"meta": {"currency": "USD", "symbol": "X", "instrumentType": tur, "exchangeTimezoneName": "America/New_York", "firstTradeDate": ts(idx[0])},
+    res = {"meta": {"currency": "USD", "symbol": "X", "instrumentType": tur, "exchangeTimezoneName": "America/New_York", "firstTradeDate": ts(ilk_islem if ilk_islem is not None else idx[0])},
            "timestamp": [ts(d) for d in idx],
            "indicators": {"quote": [{"open": c, "high": [x * 1.01 for x in c], "low": [x * 0.99 for x in c], "close": c, "volume": [float(v) for v in hacim]}],
                           "adjclose": [{"adjclose": [float(x) for x in (duz if duz is not None else c)]}]}}
@@ -448,6 +449,30 @@ def testler() -> list:
                     hata.append("8) evren listesi yinelemeli / eksik")
             except K.K60VHata:
                 pass
+
+            # 8b) kırpık seri ve güvenli yenileme
+            fk_ = os.path.join(td, "fiyat_kirpik"); os.makedirs(fk_); kisa = idx[-3:]; orta = idx[-300:]
+            kirpik_govde = {"KIRPA": yahoo_json(kisa, [10, 11, 12], [1e6] * 3, ilk_islem="2005-06-01"),
+                            "KIRPB": yahoo_json(kisa, [20, 21, 22], [1e6] * 3, ilk_islem="2005-06-01"),
+                            "KIRPC": yahoo_json(kisa, [30, 31, 32], [1e6] * 3, ilk_islem="2005-06-01"),
+                            "TAMAM": govde["IYI"]}
+            K.k60v_fiyat_indir(semboller=list(kirpik_govde), getir=SahteSec(lambda url: (200, kirpik_govde[re.search(r"/chart/([^?]+)\?", url).group(1)])),
+                               klasor=fk_, uyu=bos_uyu)
+            Kk = K.k60v_fiyat_tara(fk_, uygunluk=False)["kapsam"].set_index("sembol")
+            if list(Kk.kirpik) != [True, True, True, False] or K.k60v_yahoo_oku(os.path.join(fk_, "KIRPA.json"), "2012-06-30")[1] != "veri yok (kırpık)" \
+                    or K.k60v_yahoo_oku(os.path.join(fy, "YENI.json"))[0]["kirpik"]:
+                hata.append(f"8b) kırpık seri bayrağı yanlış: {list(Kk.kirpik)}")
+            uzun = yahoo_json(orta, np.linspace(10, 12, 300), [1e6] * 300, ilk_islem="2005-06-01")
+
+            def yeni(url):
+                s_ = re.search(r"/chart/([^?]+)\?", url).group(1)
+                return {"KIRPA": (200, uzun), "KIRPB": (200, yahoo_json(kisa[-2:], [21, 22], [1e6] * 2, ilk_islem="2005-06-01")), "KIRPC": (429, b"")}[s_]
+            yn = SahteSec(yeni); Ry = K.k60v_fiyat_yenile(getir=yn, klasor=fk_, uyu=bos_uyu)
+            if (Ry["iyilesen"], Ry["ayni"], Ry["inemeyen"], Ry["denenen"]) != (["KIRPA"], ["KIRPB"], ["KIRPC"], 3) or any("TAMAM" in u for u in yn.cagri):
+                hata.append(f"8b) yenileme sonucu yanlış: {Ry}")
+            if open(os.path.join(fk_, "KIRPA.json"), "rb").read() != uzun or open(os.path.join(fk_, "KIRPB.json"), "rb").read() != kirpik_govde["KIRPB"] \
+                    or open(os.path.join(fk_, "KIRPC.json"), "rb").read() != kirpik_govde["KIRPC"] or not K.k60v_manifest_dogrula(fk_)["saglam"]:
+                hata.append("8b) yenileme daha kısa yanıtı yazdı / uzun yanıtı yazmadı / manifest bozuldu")
 
             # 9) okuyucu + uygun evren
             import K59

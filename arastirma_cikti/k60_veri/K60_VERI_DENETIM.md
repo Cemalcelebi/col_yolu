@@ -1,10 +1,10 @@
 # K60 veri denetimi
 
-Yazım zamanı: 2026-11-11 10:44:20 UTC. Üreten: `python K60_veri.py denetle`. Önbellekler değiştirilmedi; getiri hesaplanmadı.
+Yazım zamanı: 2026-11-11 10:50:42 UTC. Üreten: `python K60_veri.py denetle`. Önbellekler değiştirilmedi; getiri hesaplanmadı.
 
 ## 1. Manifest (sha256)
 - SEC frames (yeni): manifest yok (indirme yapılmamış)
-- Yahoo fiyat (yeni): `/tmp/k60_fiyat`; 4.755 dosya (4.722 veri, 33 '404 yok' işareti), 1,36 GB; klasör özeti sha256 `df610ebf8cef28905c0c3f565aeef1e508ddb79c7b0f0c06bc7968c0c634425a`; diskle karşılaştırma: AYNI.
+- Yahoo fiyat (yeni): `/tmp/k60_fiyat`; 4.755 dosya (4.722 veri, 33 '404 yok' işareti), 1,36 GB; klasör özeti sha256 `a795410c999b166d8e8e12a20d638b2ad07ec63ec963b5334f0d6abe99470408`; diskle karşılaştırma: AYNI.
 Klasör özeti kuralı: ada göre sıralı 'dosya adı:sha256' satırlarının sha256'sı (K59 ön kaydındaki kuralla aynı; K60 ön kaydına bu değerler girer).
 
 ## 2. SEC çerçeveleri
@@ -29,4 +29,4 @@ Görülen veri alanları: accn, cik, end, entityName, loc, start, val. EDGAR diz
 | LiabilitiesAndStockholdersEquity | çeyrek sonu | 5.990 | 6.598 | 6.643 | 6.216 | 5.865 | 5.716 | 5.462 |
 
 ## 3. Yahoo fiyat kapsamı
-Hisse durumu: fiyat 4.678, veri 44, yok 33. Ayrıntı: `fiyat_kapsam.csv`.
+Hisse durumu: fiyat 4.678, yok 33, veri yok (kırpık) 22, veri yok 22; kırpık seri 29. Ayrıntı: `fiyat_kapsam.csv`.

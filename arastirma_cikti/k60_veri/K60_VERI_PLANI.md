@@ -1,6 +1,6 @@
 # K60 veri planı (yalnız veri hazırlığı; sinyal ölçümü yok)
 
-Yazım zamanı: 2026-11-11 06:27:39 UTC. K60_veri v1.0 (2026-11-11): K60 veri hazırlığı (SEC frames 2009-2026, Yahoo günlük fiyat 2010-2026); ölçüm yok. Üreten: `python K60_veri.py plan`. Ağ kullanılmadı.
+Yazım zamanı: 2026-11-11 10:52:39 UTC. K60_veri v1.0 (2026-11-11): K60 veri hazırlığı (SEC frames 2009-2026, Yahoo günlük fiyat 2010-2026); ölçüm yok. Üreten: `python K60_veri.py plan`. Ağ kullanılmadı.
 
 ## 1. Neden
 K59 temel veriye dayalı sinyalleri 66 ayda ölçebildi (frames önbelleği 2020Q1–2026Q2, geniş evren fiyatı 2020'den). 68 ayda rastgele sinyal
@@ -74,8 +74,8 @@ Bu klasörde şu an inmiş olan: 0; kalan: 1.710.
 |---|---|
 | istek sayısı | 1.710 (frames 1.710) |
 | hız sınırı | saniyede en çok 8 istek (SEC sınırı 10); bütün iş parçacıkları tek sayaçtan geçer, istekler arası en az 130 ms |
-| tahmini boyut | ~1.04 GB (eski önbellekten ölçüldü (174 dosya); anlık 0.78 MB, çeyreklik 0.45 MB, yıllık 0.62 MB / çerçeve). 2009–2011 çerçeveleri daha küçük olacağı için üst tahmindir |
-| tahmini süre | en az 3.7 dk (hız sınırının izin verdiği); beklenen 4–11 dk (aktarım hızına bağlı) |
+| tahmini boyut | ~1,04 GB (eski önbellekten ölçüldü (174 dosya); anlık 0,78 MB, çeyreklik 0,45 MB, yıllık 0,62 MB / çerçeve). 2009–2011 çerçeveleri daha küçük olacağı için üst tahmindir |
+| tahmini süre | en az 3,7 dk (hız sınırının izin verdiği); beklenen 4–11 dk (aktarım hızına bağlı) |
 | hedef klasör | `/tmp/k60_secframes` (yeni; `K60_SECFRAMES` ile değişir) |
 | kaldığı yerden | diskte geçerli dosyası olan çerçeve yeniden istenmez; yarım dosya (`.yarim`) silinir; her dosyanın sha256'sı `_manifest.json`'da |
 | 404 | o etiket o dönemde hiç bildirilmemiş (ör. `RevenueFromContractWithCustomerExcludingAssessedTax` 2017 öncesi): `{}` işareti yazılır, hata değildir |
@@ -90,7 +90,7 @@ Sonra: `python K60_veri.py denetle` (manifest sha256 + etiket x dönem şirket s
 ### İsteğe bağlı: EDGAR başvuru dizini (`indir_sec --dizin evet`)
 Frames yanıtında başvuru günü (`filed`) alanı YOKTUR (alanlar: accn, cik, entityName, loc, start, end, val) ve `accn` özgün başvuruyu değil o
 değeri EN SON bildiren başvuruyu gösterir. Bilgi tarihi için iki yol var: (a) yedek kural: çeyrek sonu + 90 gün; (b) EDGAR çeyreklik
-dizini (`https://www.sec.gov/Archives/edgar/full-index/{yil}/QTR{c}/master.gz`; 71 dosya, 2009Q1–2026Q3, dosya başına ~8 MB, toplam ~0.6 GB) her şirketin her 10-Q / 10-K
+dizini (`https://www.sec.gov/Archives/edgar/full-index/{yil}/QTR{c}/master.gz`; 71 dosya, 2009Q1–2026Q3, dosya başına ~8 MB, toplam ~0,6 GB) her şirketin her 10-Q / 10-K
 başvurusunun gününü verir; K57 `_k57_abd_bilgi_tarihleri` kuralı (çeyrek sonundan sonraki ilk 10-Q / 10-K) bununla 2009'a uzatılabilir.
 Dizin varsayılan olarak İNMEZ (iş tanımında yoktu); öneri: `--dizin evet` ile indirilmesi. Aynı kimlik satırı ve hız sınırı kullanılır.
 
@@ -100,9 +100,9 @@ Dizin varsayılan olarak İNMEZ (iş tanımında yoktu); öneri: `--dizin evet` 
 | uç | `https://query1.finance.yahoo.com/v8/finance/chart/{T}` (K57-B ile aynı; tarayıcı kimliği, `events=div,splits`, `includeAdjustedClose=true`) |
 | aralık | 2010-01-01 .. 2026-11-12 (okuyucular 2026-08-31'de keser; bölünme olayları indirme gününe kadar alınır ki o günkü fiyat doğru kurulsun) |
 | evren | 4.755 sembol: K57-B geniş evren tablosu (`evren_b1.csv`) + V_ABD sembolleri; yalnız bugün kodu olanlar |
-| istek | sembol başına 1; 3 iş parçacığı, istekler arası 0.3 sn, 4 deneme; art arda 25 başarısızlıkta durur |
+| istek | sembol başına 1; 3 iş parçacığı, istekler arası 0,3 sn, 4 deneme; art arda 25 başarısızlıkta durur |
 | hedef klasör | `/tmp/k60_fiyat` (yeni; `K60_FIYAT` ile değişir). `/tmp/k57b_fiyat` (K59 girdisi) okunmaz, yazılmaz |
-| tahmini boyut / süre | ~2.1 GB; ~22–43 dk |
+| tahmini boyut / süre | ~1,4 GB; ~23–43 dk (11 Kasım koşusunda ölçülen: 1,36 GB, 23 dk) |
 | e-posta | gerekmez |
 
 Komut: `python K60_veri.py indir_fiyat`
