@@ -35,3 +35,16 @@ K58: olay cetveli (FI_OLCUT, 60 gün, eşli, dört hücre) 60 günde +%2'lik ger
 - Y4 (K59 tutmazsa): önceden yazılı 3 devam: (a) yalnız küçük-orta hisseler, (b) 3 aylık tutma, (c) French verisinde 2000-2026 aynı bileşik (yanlılıksız).
 - Y5 (Cemal'in kararı): portföy cetveli v2 standart olsun mu; hedef büyüklük; Tiingo anahtarı; yazılı boyut kuralı.
 - BIRAKILANLAR: şekil / parmak izi, sıçrama kovalama, şart ekleyerek daraltma, 'büyük yükselişten geriye bakma'.
+
+## 5. Araştırma programı: "her şeyi test et" nasıl doğru yapılır (11 Kas, Cemal: "gerçek araştırmacı gibi neye bakılacağını sen tespit et, bütün metrikleri ve olayları test et, alt modellere yaptır")
+Sorun: çok şey test edilince şans eseri 'iz' çıkar (100 denemede 5'i t > 2 verir). Çözüm kuralları (K60 ön kaydına aynen girer):
+1. KÜTÜPHANE ÖNCEDEN: test edilecek bütün sinyal ve olaylar, tanımı, kaynağı ve beklenen yönüyle ölçümden önce listelenir (SINYAL_ENVANTERI.md). Listede olmayan sonradan eklenmez; eklenecekse yeni tur.
+2. ÜÇ DÖNEM: KEŞİF 2016-2021 (seçim burada), DOĞRULAMA 2022-2023 (yalnız keşifte seçilenler), KASA 2024 - Ağu 2026 (tek açılış, yalnız doğrulamadan geçenler).
+3. TEK CETVEL: portföy cetveli v2 (aylık, üst %10, maliyetli, beta düzeltmeli). Olay tipi sinyaller aylık sinyale çevrilir ('son N günde olay olanlar').
+4. ÇOKLU DENEME: keşifte yanlış keşif oranı (Benjamini-Hochberg, %10) ve t > 3; rastgele sinyal plasebosuyla sağlama.
+5. AİLE BAZINDA OKUMA: tek sinyal değil aile (momentum, değer, kârlılık, yatırım / ihraç, sürpriz, sahiplik, risk, mikro yapı, olay) birlikte değerlendirilir; aile bileşiği tek sinyalden önemlidir.
+6. EKONOMİK NEDEN: nedeni yazılamayan sinyal keşiften geçse de 'şüpheli' etiketi alır.
+7. UYGULANABİLİRLİK: Cemal'in ölçeği küçük: küçük-orta hisseler alınabilir (avantaj), ama alış-satış farkı ve likidite tabanı gerçekçi tutulur.
+8. BATANLAR: sonuçlar yaşayan evrende ölçülür ve 'en kötü durum bandı' ile birlikte verilir; Tiingo verisi gelirse yinelenir.
+
+Sıra: K59 (9 sinyal + bileşik, sürüyor) -> SINYAL_ENVANTERI (alt ajan, şimdi) -> K60 (kütüphane, üç dönem) -> öneri modülünün TARAMA kapısı.
