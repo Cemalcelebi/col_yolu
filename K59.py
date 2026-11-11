@@ -96,6 +96,15 @@ K59_ESIK: Dict[str, Any] = {
                 "b": "3 ay tutma, örtüşen portföyler (her ay üçte biri yenilenir), aynı sinyaller ve cetvel",
                 "c": "French veri kütüphanesinde 2000-2026 momentum + kârlılık bileşiğinin yinelemesi (hayatta kalma yanlılığı yok)"},
 }
+# Faz 1 kapsam sayımı (`python -I K59.py kapsam`; yalnız hisse SAYILARI, getiri yok). Ön kayıt metnine girer; mühre girmez (eşik değil).
+K59_KAPSAM_NOTU = """Faz 1 kapsam sayımı (11 Kas 2026, yalnız hisse sayıları; getiri hesaplanmadı):
+  U1: 1.411 hisse, 123 oluşum ayı (2016-05-31 .. 2026-07-31), uygun evren ortalama 1.084 (799-1.406). S1, S2, S3, S8, S9 2016'dan (122-123 ay);
+      S7 2020-12'den (68 ay), S4 / S5 / COMP4 2021-02'den (66 ay), S6 2022-02'den (54 ay). S3 her ay işlem değeri. COMP9 2021 öncesi beş fiyat
+      sinyalinin ortalamasıdır (bileşimi zamanla değişir; bilgi).
+  U2: 4.261 hisse (1.151'inde 2020-26 arasında bölünme / ters bölünme var), 68 oluşum ayı (2020-12-31 .. 2026-07-31), uygun evren ortalama 2.146
+      (1.916-2.477). S1 2021-01'den (67 ay), S4 / S5 / COMP4 2021-02'den (66 ay), S6 2022-02'den (54 ay), ötekiler 68 ay. S3: ilk 3 ay işlem
+      değeri, sonraki 65 ay piyasa değeri. COMP4 2022-02'ye kadar üç üyeyle (S1, S4, S5) kurulur (S6 henüz yok).
+  BIST: 581 hisse, 123 oluşum ayı, uygun evren ortalama 423 (357-581)."""
 K59_DOSYA = {"onkayit": "K59_ON_KAYIT.md", "sonuc": "sinyal_sonuc.csv", "aylik": "aylik_getiri.csv", "plasebo": "plasebo.csv",
              "kapsam": "kapsam.csv", "rapor": "K59_RAPOR.md", "meta": "k59_kos_meta.json"}
 _K59_EPOSTA = re.compile(r"[\w.+-]+@[\w-]+\.(com|net|org|edu|gov|io|tr)\b")
@@ -201,6 +210,8 @@ Faz 1'de gerçek veride yalnız `kapsam` komutu koşuldu (hisse / ay / sinyal ba
   'O günkü fiyat': U2'de Yahoo HAM kapanışı (bölünme düzeltmeli, temettüsüz) x t'den SONRAKİ bölünmelerin çarpımı = o gün işlem gören fiyat
   (sonradan ters bölünen kuruşluk hisse tabanı geçemez); işlem değeri de ham kapanışla. U1'de (V_ABD'de bölünme kaydı ve ham fiyat yok)
   düzeltilmiş kapanış kullanılır: sonradan ters bölünen hisse olduğundan pahalı, sonradan bölünen / temettü ödeyen ucuz görünür (yanlılık).
+  U2 sınırı: Yahoo kapanışı indirme gününe (9 Kas 2026) kadarki bölünmelere göre düzeltilmiştir, bölünme kaydı ise {Y['bit']}'de biter; bu
+  arada bölünen az sayıda hissede o günkü fiyat ve piyasa değeri bölünme oranı kadar sapar.
   Uygun hisse sayısı < {ev['U1']['min_evren']} (BIST {ev['BIST']['min_evren']}) olan ay atlanır.
 - HAYATTA KALMA YANLILIĞI: üç evren de yalnız BUGÜN işlem gören hisselerdir. Batan / borsadan çıkan hisseler yok; bu, kaybedenleri taşıyan
   sinyalleri (dönüş S2, küçüklük S3) olduğundan iyi, düşük oynaklık / kârlılık gibi 'kaliteli' sinyalleri olduğundan kötü gösterebilir.
@@ -237,9 +248,9 @@ Sınır: frames değerleri şirketin EN SON bildirdiği değerdir (sonradan düz
 - COMP4 (KARAR; önceden yazıldı, seçim yok): {', '.join(B4['uye'])} sinyallerinin ay içi yüzdelik sıralarının ((sıra - 0,5) / n; uygun ve o sinyali
   olan hisseler arasında, eşitlikte ortalama sıra) ortalaması; hissenin dördün en az {B4['min']}'ünde değeri olmalı. Üst %10.
 - COMP9 (BİLGİ): dokuz sinyalin sıra ortalaması; en az {B9['min']} sinyal. (BIST'te beş fiyat / hacim sinyali.)
-KAPSAM (veriden ötürü, sonuçtan bağımsız): temel veri 2020'de başlar; S5 / S7 ≈ 2021 başından, S4 2021'den, S6 ≈ 2022'den ölçülür
-(pay sayısı özütleri 2021'de başlar, yıllık değişim bir yıl ister). U1'de fiyat sinyalleri (S1, S2, S3, S8, S9) 2016-2026, S4-S7 ve
-COMP4 2021-2026'dır. Bir sinyalin ölçüm dönemi = o sinyali olan uygun hisse sayısının ilk kez >= {ev['U1']['min_sinyal']} (BIST {ev['BIST']['min_sinyal']}) olduğu aydan sona.
+KAPSAM (veriden ötürü, sonuçtan bağımsız): temel veri 2020'de başlar; pay sayısı özütleri 2021'de başlar, yıllık değişim bir yıl ister.
+Bir sinyalin ölçüm dönemi = o sinyali olan uygun hisse sayısının ilk kez >= {ev['U1']['min_sinyal']} (BIST {ev['BIST']['min_sinyal']}) olduğu aydan sona.
+{K59_KAPSAM_NOTU}
 
 ## 3. Portföy ve cetvel v2
 - Portföy: sinyali olan uygun hisselerin en üst %{E['portfoy']['dilim'] * 100:.0f}'u (sayı = max(1, yuvarla(0,10 x sinyali olan uygun hisse)); eşitlikte kod sırası),
@@ -834,6 +845,9 @@ def k59_evren_olc(D: Dict[str, Any], FF: Optional[pd.DataFrame] = None, E: Optio
     out = {"ozet": ozet, "kapsam": k59_kapsam(P, Sd, ek), "sonuc": [], "aylik": [], "plasebo": None}
     if yalniz_kapsam:
         return out
+    Ru = P["R"][P["U"]]      # veri denetimi (kırpma yok; aykırı tek hisse getirisi raporda görünsün)
+    ozet.update({"hisse_ay": int(Ru.size), "maks_hisse_ay_getiri": float(np.nanmax(Ru)) if Ru.size else np.nan,
+                 "getiri_ust_300_hisse_ay": int((Ru > 3.0).sum())})
     for a, S in Sd.items():
         row, A = k59_sinyal_olc(P, S, FF, E)
         tn = E["sinyal"].get(a) or E["bilesik"][a]
@@ -990,7 +1004,8 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
         m = (meta.get("evren") or {}).get(ad, {})
         parca.append(f"## {ad} — {ev['ad']} ({ev['rol']})\n{m.get('hisse', '—')} hisse, {m.get('olusum_ayi', '—')} oluşum ayı ({m.get('ilk_ay', '—')} .. "
                      f"{m.get('son_ay', '—')}), ortalama uygun evren {_k59_sy(m.get('ort_evren', np.nan), 0)} hisse; maliyet tek yön {ev['maliyet'] * 1e4:.0f} bp; "
-                     f"S3 ölçüsü (ay sayısı): {m.get('S3_olcu', '—')}.\n\n{bas}\n" + "\n".join(_k59_satir(r) for r in g.itertuples()) + "\n")
+                     f"S3 ölçüsü (ay sayısı): {m.get('S3_olcu', '—')}. Veri denetimi (kırpma yok): en büyük tek hisse aylık getirisi "
+                     f"{_k59_yz(m.get('maks_hisse_ay_getiri', np.nan), 0)}, +%300 üstü {m.get('getiri_ust_300_hisse_ay', '—')} / {m.get('hisse_ay', '—')} hisse-ay.\n\n{bas}\n" + "\n".join(_k59_satir(r) for r in g.itertuples()) + "\n")
     if Pl is not None and len(Pl):
         parca.append(f"## Plasebo ({E['plasebo']['evren']}, {len(Pl)} rastgele sinyal)\nYanlış pozitif: maliyetli %{_k59_sy(kr.get('yp_net', np.nan) * 100, 1)}, "
                      f"maliyetsiz %{_k59_sy(kr.get('yp_brut', np.nan) * 100, 1)} (eşik %{E['plasebo']['yp_esik'] * 100:.0f}) -> cetvel v2 {kr['cetvel']}. "
@@ -998,7 +1013,7 @@ def k59_rapor(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -
     if Kp is not None and len(Kp):
         sat = ["| Evren | Sinyal | İlk ay (>= eşik) | Ortalama hisse (o aydan sonra) |", "|---|---|---|---|"]
         for ad, g in Kp.groupby("evren", sort=False):
-            for kol in [c for c in g.columns if c.startswith("n_") and c != "n_evren"]:
+            for kol in [c for c in g.columns if c.startswith("n_") and c != "n_evren" and g[c].notna().any()]:
                 y = g[g[kol] >= E["evren"][ad]["min_sinyal"]]
                 sat.append(f"| {ad} | {kol[2:]} | {y.ay_sonu.iloc[0] if len(y) else '—'} | {_k59_sy(g[g.ay_sonu >= y.ay_sonu.iloc[0]][kol].mean(), 0) if len(y) else '—'} |")
         parca.append("## Kapsam (sinyali olan uygun hisse sayısı)\n" + "\n".join(sat) + "\n")

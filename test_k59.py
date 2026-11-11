@@ -96,7 +96,7 @@ def boz(H: dict, t0: pd.Timestamp, tohum: int = 9) -> dict:
     rng = np.random.default_rng(tohum); Vb = {}
     for s, d in H["V"].items():
         k = np.where(d.index > t0, rng.uniform(0.3, 3.0, len(d)), 1.0)
-        Vb[s] = d.assign(Open=d.Open * k, High=d.High * k * 1.2, Low=d.Low * k, Close=d.Close * k,
+        Vb[s] = d.assign(Open=d.Open * k, High=d.High * k * np.where(d.index > t0, 1.2, 1.0), Low=d.Low * k, Close=d.Close * k,
                          Volume=d.Volume * np.where(d.index > t0, rng.uniform(0.01, 5.0, len(d)), 1.0))
     Tb = {"Q": {}, "I": {}}
     for tab in ("Q", "I"):
@@ -252,6 +252,12 @@ def testler() -> list:
         for a, v in bek.items():
             if not np.isclose(S2[a][k0, j], v, equal_nan=True, rtol=1e-9):
                 hata.append(f"5) {a} {s}: {S2[a][k0, j]} != elle {v}")
+    gun_ = P2["gun"]; mpk = np.array([int(P2["me_pos"][k0])])
+    Xs = pd.DataFrame({"sembol": ["A", "B", "C", "C", "D"], "tepki_son": gun_[[mpk[0] - 62, mpk[0] - 63, mpk[0] - 40, mpk[0] - 5, mpk[0] + 1]],
+                       "ear": [0.11, 0.22, 0.33, 0.44, 0.55]})
+    p4 = K.k59_pead_sinyal(Xs, ["A", "B", "C", "D", "E"], gun_, mpk, 63)
+    if not np.allclose(p4, [[0.11, np.nan, 0.44, np.nan, np.nan]], equal_nan=True):
+        hata.append(f"5) S4 penceresi (son 63 işlem günü, en son olay, t'den sonraki olay yok) yanlış: {p4}")
     j7_, j8_, j10_, j11_ = (P2["sembol"].index(x) for x in ("S007", "S008", "S010", "S011"))
     if np.isfinite(S2["S5"][:, j7_]).any() or not np.isfinite(S2["S7"][:, j7_]).any():
         hata.append("5) özkaynak <= 0 iken S5 hesaplandı / S7 de düştü")
@@ -316,7 +322,8 @@ def testler() -> list:
     # 8) portföy muhasebesi
     rng = np.random.default_rng(4); R = rng.normal(0.01, 0.05, (3, 20)); U = np.ones((3, 20), bool); U[:, 19] = False
     S = np.tile(np.arange(20.0), (3, 1)); S[:, 10:] = np.nan; S[0, 3:] = np.nan            # ilk ay yalnız 3 hissede sinyal (< 5): ölçüm 2. aydan
-    Pm = mini_panel(R, U); row, A = K.k59_sinyal_olc(Pm, S, None, {**K.K59_ESIK, "cetvel": {**K.K59_ESIK["cetvel"], "min_ay": 1}})
+    ek_satir = lambda X_: np.vstack([X_, np.full((1, X_.shape[1]), np.nan)])  # noqa: E731
+    Pm = mini_panel(R, U); row, A = K.k59_sinyal_olc(Pm, ek_satir(S), None, {**K.K59_ESIK, "cetvel": {**K.K59_ESIK["cetvel"], "min_ay": 1}})
     kiyas = R[1:, :19].mean(axis=1)
     if len(A) != 2 or list(A.n_hisse) != [1, 1] or list(A.n_sinyal) != [10, 10] or list(A.n_evren) != [19, 19]:
         hata.append(f"8) ölçüm dönemi / üst %10 sayısı / evren sayısı yanlış: {A}")
@@ -324,10 +331,10 @@ def testler() -> list:
               and np.isclose(A.net.iloc[0], (1 - 0.001) * (1 + R[1, 9]) - 1) and np.isclose(A.net.iloc[1], R[2, 9]) and list(A.getiri_ayi) == ["2020-03", "2020-04"]):
         hata.append(f"8) portföy muhasebesi (en yüksek sinyal, maliyet, devir, kıyas = bütün uygun evren, getiri ayı) yanlış: {A}")
     Sx = np.tile(np.arange(20.0), (3, 1)); Sx[1] = Sx[1][::-1]; Sx[:, 19] = np.nan
-    _, Ax = K.k59_sinyal_olc(Pm, Sx, None, K.K59_ESIK)
+    _, Ax = K.k59_sinyal_olc(Pm, ek_satir(Sx), None, K.K59_ESIK)
     if not np.allclose(Ax.devir, [1.0, 2.0, 2.0]) or not np.allclose(Ax.net, (1 - 0.001 * Ax.devir) * (1 + Ax.brut) - 1) or list(Ax.n_hisse) != [2, 2, 2]:
         hata.append(f"8) devir / maliyet (tek yön 10 bp x devir) yanlış: {Ax}")
-    if K.k59_sinyal_olc(Pm, np.full((4, 20), np.nan)[:3], None, K.K59_ESIK)[0].get("olculdu") is not False:
+    if K.k59_sinyal_olc(Pm, np.full((4, 20), np.nan), None, K.K59_ESIK)[0].get("olculdu") is not False:
         hata.append("8) sinyali olmayan evren ölçüldü sayıldı")
     # 9) NW t ve alfa regresyonu
     rs = np.random.default_rng(11); x = rs.normal(0.01, 0.05, 240); e = rs.normal(0, 0.004, 240)
@@ -452,8 +459,12 @@ def testler() -> list:
             bek = {(e, s) for e in ("U1", "U2") for s in K.K59_SIRA + ["COMP4", "COMP9"]} | {("BIST", s) for s in ("S1", "S2", "S3", "S8", "S9", "COMP9")}
             if set(zip(Z.evren, Z.sinyal)) != bek:
                 hata.append(f"13) sonuç satırları eksik / fazla: {set(zip(Z.evren, Z.sinyal)) ^ bek}")
-            if not len(pd.read_csv(K._k59_yol("plasebo", td))) == 3 or not Ro["karar"]["bilesik"].startswith("HÜKÜM YOK") or not meta["sentetik"]:
-                hata.append("13) plasebo çıktısı / eksik plaseboda hüküm yok kuralı / sentetik işareti yanlış")
+            Plc = pd.read_csv(K._k59_yol("plasebo", td)); krc = K.k59_karar(Z, Plc, Et)
+            if len(Plc) != 3 or Ro["karar"]["cetvel"] not in ("GÜVENİLİR", "GÜVENİLMEZ") or krc["bilesik"] != Ro["karar"]["bilesik"] or not meta["sentetik"] \
+                    or meta["karar"]["bilesik"] != Ro["karar"]["bilesik"] or list(Z.etiket) != [krc["etiket"].get((e, s_), "HÜKÜM YOK") for e, s_ in zip(Z.evren, Z.sinyal)]:
+                hata.append("13) plasebo çıktısı / karar çıktılardan yeniden üretilemiyor / sentetik işareti yanlış")
+            if "HÜKÜM YOK" not in open(K.k59_rapor(td), encoding="utf-8").read():
+                hata.append("13) plasebo eksikken (3 < 200) rapor hüküm verdi")
             g = Am[(Am.evren == "U2") & (Am.sinyal == "COMP4")]; r = Z[(Z.evren == "U2") & (Z.sinyal == "COMP4")].iloc[0]
             c = K.k59_cetvel_v2(g.net.to_numpy(), g.kiyas.to_numpy(), Et["cetvel"])
             if not (np.isclose(r.yillik_fazla, 12 * (g.net - g.kiyas).mean()) and np.isclose(r.nw_t, c["nw_t"]) and np.isclose(r.t_alfa, c["t_alfa"]) and r.ay == len(g)
@@ -465,9 +476,11 @@ def testler() -> list:
                 hata.append("13) BIST'te French alfası hesaplandı / ABD'de hiç hesaplanmadı")
             if not Z[(Z.evren == "U2") & (Z.sinyal == "S1")].ff_alfa_yillik.notna().all():
                 hata.append("13) ABD'de FF5 + UMD alfası yok")
+            if not {"hisse_ay", "maks_hisse_ay_getiri", "getiri_ust_300_hisse_ay"} <= set(meta["evren"]["U2"]) or "Veri denetimi" not in rt:
+                hata.append("13) veri denetimi (en büyük tek hisse getirisi) meta / raporda yok")
             if not {"n_evren", "n_S4", "n_COMP4", "S3_olcu"} <= set(Kp.columns) or set(Kp.evren) != {"U1", "U2", "BIST"}:
                 hata.append("13) kapsam tablosu eksik")
-            for parca in ("## Düz dille", "## Karar", "## U1", "## U2", "## BIST", "## Plasebo", "## Kapsam", "## Sınırlar", "sıradaki üç deneme", "IZ_KARNE önerisi", "HÜKÜM YOK"):
+            for parca in ("## Düz dille", "## Karar", "## U1", "## U2", "## BIST", "## Plasebo", "## Kapsam", "## Sınırlar", "sıradaki üç deneme", "IZ_KARNE önerisi"):
                 if parca not in rt:
                     hata.append(f"13) raporda '{parca}' yok")
             Ok = K.k59_evren_olc(D2, None, Et, yalniz_kapsam=True)
