@@ -101,3 +101,16 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Kod yazma, veri indirme, ölçüm koşma, web taraması alt ajanlara (Agent) verilir. Ana model bunları kendisi yapmaz; yalnız denetim için kısa kontrol komutları çalıştırır.
 - Denetim en az şunları kapsar: ön kaydın ölçümden önce olduğu (git zamanı + mühür), geleceğe bakma olmadığı (her bilgi tarihi <= karar günü), raporlanan sayıların çıktı dosyalarından yeniden üretilmesi (en az iki hücre), kaynaklar arası çelişkiler, e-posta / anahtar sızıntısı, testlerin geçmesi. Denetimde bulunan hata alt ajana düzeltme işi olarak geri verilir.
 - Cemal'e giden son mesaj denetim sonucunu da söyler: neyi sınadım, ne tuttu, ne tutmadı.
+
+## Defter yetkisi (Cemal, 11 Kasım 2026: "MD defterini operasyonel olarak sadece sen değiştir ki bağlam korunsun")
+- IZ_DEFTERI.md, IZ_KARNE.py (IK_KAYIT, IK_GOREV, IK_ACIK, IK_SINYAL), CLAUDE.md, COL_OZET.md ve ONERI_DEFTERI.md dosyalarını YALNIZ ana model değiştirir. Alt ajanlar bu dosyalara dokunmaz; önerdikleri kayıt metnini kendi raporlarına yazar, ana model denetleyip işler.
+- Her alt ajan iş tanımında bu yasak açıkça yazılır. Ana model, alt ajan tesliminden sonra `git status` / `git diff --stat` ile bu dosyaların değişmediğini denetler; değişmişse geri alır ve kaydı kendisi yazar.
+- Defter her görev sonunda güncellenir (görev satırı, açık kalanlar, indeks). Yeni oturum yalnız defterden sürer.
+
+## Ana hedef ve gerçek para modülü (Cemal, 11 Kasım 2026: "artık test değil, gerçek parayla deniyoruz ve risk alıyoruz")
+- ANA HEDEF: (1) ölçülmüş bir iz bulmak, (2) bu ize ve birincil kaynak araştırmasına dayanan hisse önerileriyle gerçek kazanç sağlamak. Cemal ayda bir-iki öneriyle gerçek parayla alım yapıyor. Onun hedefi: zarar etmemek, %100'ün üstü, ilk hedef 10x.
+- DÜRÜSTLÜK KURALI: bu hedefler birlikte garanti edilemez. Ölçülmüş taban oranlar (3 yılda 10x: ABD mikro-cap ~%1, BIST USD ~%1,85; derin dolaşımda < %1) her öneride yazılır. Claude yatırım danışmanı değildir; alım-satım kararı Cemal'indir. Hiçbir öneri 'kesin', 'garanti', 'kaçırma' diliyle yazılmaz.
+- ÖNERİ MODÜLÜ (ayda en çok 2 isim): bir isim ancak şu üç kapıdan geçerse öneri olur: (a) TARAMA: ölçülmüş / kalibre bir sinyalin üst diliminde (K59 bileşiği tutarsa o; tutmazsa 'ölçülmüş sinyal yok' diye açıkça yazılır); (b) DOSYA: birincil kaynak denetimi (KAP / SEC: gerçek gelir, sözleşme, nakit, borç, seyrelme, going-concern, fon / tedbir lekesi); (c) RİSK: giriş koşulu, boyut tavanı, olay bazlı çıkış kuralları ve 2x'te anaparayı çekme kuralı önceden yazılı. Kapılardan biri eksikse isim 'izleme'dir, öneri değildir.
+- BOYUT: tek isim, Cemal'in kaybetmeyi kabul ettiğini yazdığı tutarı aşmaz; zarardaki isme olaysız ekleme yok; aynı sektörde ikinci isim yoğunlaşma uyarısıyla verilir. Geçmiş kayıplar (PAPIL, QMLS, TERA) sinyalden değil boyuttan geldi.
+- ÖNERİ DEFTERİ: her öneri ve Cemal'in gerçek alımı ONERI_DEFTERI.md'ye yazılır (tarih, isim, kapılar, giriş, boyut, çıkış kuralları, sonuç). Sonuçlar ayda bir güncellenir; modülün gerçek karnesi budur ve gizlenmez (kaybedenler dahil).
+- Öneri işlerinde de çalışma düzeni geçerlidir: taramayı ve dosya araştırmasını alt ajanlar yapar, ana model iş tanımını yazar ve denetler.
