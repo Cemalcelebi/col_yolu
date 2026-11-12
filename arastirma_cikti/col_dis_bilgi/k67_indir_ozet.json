@@ -1,0 +1,13 @@
+{
+ "durum_dosyasi": "/tmp/k67_yahoo/durum.csv",
+ "hisse": 1411,
+ "sinir_hatasi": 0,
+ "son_bekleme_sn": 1.2,
+ "sure_sn": 4566,
+ "surum": "K67 v1.0 (2026-11-12): bilanço sonrası analist revizyonları (Yahoo not günlüğü) x FI_OLCUT; S1 bilanço olayları, S2 çöl etkileşimi",
+ "yeni": {
+  "tamam": 2810,
+  "yok": 12
+ },
+ "zaman": "2026-11-12 05:37 UTC (indir bitişi; özet log satırından yazıldı)"
+}
