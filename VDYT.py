@@ -1631,7 +1631,7 @@ def _vdyt_hisse_is(s: str) -> Dict[str, Any]:
         out["havuz"]["_ortak"] = {"ym": ym, "yil": d.index.year.to_numpy(np.int32), "mom": np.nan_to_num(ctx["mom_t"], nan=-1).astype(np.int8),
                                   "liq": np.nan_to_num(ctx["liq_t"], nan=-1).astype(np.int8), "ti": ti, "gun": d.index}
         # K6: sıkışma DIŞI günler (ana tanım bölgesi açık değil, uygun), sözde yaş = gerçek karar yaşları; aynı genişleme kuralı, ref = sözde bölge
-        an = E["ana_tanim"]; Ta = out["bolge"][an]; acik_herhangi = np.zeros(n, bool)
+        an = E["ana_tanim"] if E["ana_tanim"] in out["bolge"] else ana[0]; Ta = out["bolge"][an]; acik_herhangi = np.zeros(n, bool)
         for r in Ta.itertuples():
             acik_herhangi[r.bas: r.bit + 1] = True
         rng = np.random.default_rng(_vdyt_tohum(s, "K6", E["coklu"]["tohum"]))
@@ -1887,6 +1887,8 @@ def vdyt_analiz(Z: Dict[str, Any], asama: str, E: Optional[Dict[str, Any]] = Non
     tb = pd.Timestamp(bas) if bas else None; Bb = int(E["basari"]["bootstrap"]); tohum = int(E["basari"]["tohum"]); gv = tuple(E["basari"]["guven"])
     ara = ara or os.path.join(VDYT_YOL["ara"], asama); os.makedirs(ara, exist_ok=True); out: Dict[str, Any] = {"pazar": pazar, "asama": asama}
     hip: List[Dict[str, Any]] = []
+    if not R:
+        raise VdytHata(f"{pazar}: bütün hisseler hatalı (hisse başına işlem); analiz yapılmadı (ilk hatalar: {list(Z.get('hata', {}).items())[:3]})")
     Rb = {k["ad"]: pd.concat([h["bolge"][k["ad"]] for h in R if k["ad"] in h["bolge"]], ignore_index=True) for k in K}
     for ad, T in Rb.items():
         T.assign(kombo=ad).to_csv(os.path.join(ara, f"bolge_{pazar}_{ad}.csv.gz"), index=False)
@@ -2862,6 +2864,9 @@ def vdyt_kos(asama: str = "wf", cikti: Optional[str] = None, isci: int = 2, git_
             del Z, A
         except VdytHata as ex:
             sonuc["pazar"][pz] = {"durum": f"EKSİK: {ex}"}; hata_rapor[pz] = {"durum": str(ex)}
+        except Exception as ex:   # bir pazarın beklenmeyen hatası öteki pazarların sonucunu silmez; kayda geçer
+            vdytlog.exception("%s: beklenmeyen hata", pz)
+            sonuc["pazar"][pz] = {"durum": f"HATA: {type(ex).__name__}: {str(ex)[:300]}"}; hata_rapor[pz] = {"durum": f"HATA: {type(ex).__name__}: {ex}"}
     wf = _vdyt_json_oku(wf_yol) if asama == "kasa" else sonuc
     sonuc["karar"] = vdyt_karar_tablosu(wf, sonuc if asama == "kasa" else None, E)
     if asama == "kasa":

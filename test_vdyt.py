@@ -371,6 +371,20 @@ def testler() -> list:
             Pk = pd.read_csv(os.path.join(V.VDYT_YOL["ara"], "kasa", "tahmin_m1_BIST_T1_y10.csv.gz"), parse_dates=["tarih"])
             if (Pk.tarih < pd.Timestamp("2024-01-01")).any():
                 hata.append("11) KASA aşamasında 2024 öncesi test satırı var")
+            # BIST_K62 yolu (yalnız kapanış: o = h = l = c, T2-T4, RV genişlemesi, T1 yok) uçtan uca
+            Fk = {"S": {k_: d_.assign(o=d_.c, h=d_.c, l=d_.c) for k_, d_ in Fs["S"].items()}, "meta": Fs["meta"], "kaynak": "sentetik K62"}
+            cik2 = os.path.join(td, "cikti_k62"); V.vdyt_onkayit(cik2, kapsam={}, veri_sha={})
+            S3 = V.vdyt_kos("wf", cik2, 1, git_sart=False, veri_sart=False, pazarlar=["BIST_K62"], girdi={"BIST_K62": (Fk, Evs)}, p1_tekrar=1, E=Es)
+            Pk2 = S3["pazar"]["BIST_K62"]; hk2 = V._vdyt_json_oku(V._vdyt_yol("meta", cik2))["hata"]["BIST_K62"]
+            if "durum" in Pk2 or hk2.get("hisse_hata") or not any(r.get("kombo") == "T2" and r.get("n", 0) > 0 for r in Pk2.get("motor1", [])):
+                hata.append(f"11) BIST_K62 uçtan uca koşu: {Pk2.get('durum')} {str(hk2.get('hisse_hata'))[:200]}")
+            # beklenmeyen hata o pazarı 'HATA' diye kaydeder, koşuyu düşürmez; bütün hisseler hatalıysa analiz açık VdytHata verir
+            cik3 = os.path.join(td, "cikti_hata"); V.vdyt_onkayit(cik3, kapsam={}, veri_sha={})
+            S4 = V.vdyt_kos("wf", cik3, 1, git_sart=False, veri_sart=False, pazarlar=["BIST_K62"], girdi={"BIST_K62": ({"S": None, "meta": {}}, Evs)}, E=Es)
+            if not str(S4["pazar"]["BIST_K62"].get("durum", "")).startswith("HATA") or not os.path.exists(V._vdyt_yol("vdyt_sonuc_wf.json", cik3)):
+                hata.append(f"11) beklenmeyen hata pazar kaydı: {S4['pazar']['BIST_K62']}")
+            durmali(lambda: V.vdyt_analiz({"pazar": "X", "R": [], "kombolar": V.vdyt_kombolar("BIST_K62", Es), "hata": {"A": "x"}}, "wf", Es),
+                    "11) bütün hisseler hatalıyken analiz durmadı", hata, "bütün hisseler hatalı")
             try:
                 import matplotlib  # noqa: F401
                 g_ = V.vdyt_grafik("wf", cik, ["BIST"], Es, F_ver={"BIST": Fs})

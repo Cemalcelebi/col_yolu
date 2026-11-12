@@ -2,7 +2,7 @@
 
 Yazım zamanı: 2026-11-12 06:25:36 UTC (2026-11-12 09:25 TR)
 ESIK_SHA256: b999ffc73273aa3b2fc54deac7aea96963ea38894ce8a3cdbe3c1159fdec8bd6
-KOD_SHA256: 9a11fad3a6c486a6ed72009da8c9b86e63f4cda60586b3ff1d503ac3d6bb8d38
+KOD_SHA256: 10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d
 Sürüm: VDYT v1.0 (2026-11-12): Faz 1 (envanter, ön kayıt, kod + sentetik test, kapsam sayımı); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra
 
 Bu dosya git'e işlenmeden, eşik mührü / kod sha256'sı / veri sha256'ları tutmadan `kos` ÇALIŞMAZ (VdytHata, çıkış 1). Sonuç görüldükten sonra tanım,
@@ -268,6 +268,12 @@ pazar ayrı); 10 grafik/ (PNG); 11 VDYT_HATA_VE_EKSIK.md + VDYT_EKSIKLER.md; 12 
 15. KOD_SHA256 kuralı: VDYT.py'nin her değişikliği (yorum dahil) `kos`u durdurur; ön kayıt sonrası düzeltme bu listeye tarihli SAPMA + yeni KOD_SHA256 ile işlenir.
 16. Veri sha256'ları bu konteynerdeki /tmp dosyalarına bağlıdır (k60_fiyat Yahoo'dan yeniden inerse sha değişir → ret). Faz 2 aynı veriyle koşmalı; veri
     yenilenirse SAPMA + yeni veri satırları + kapsam yeniden.
+17. SAPMA (12 Kasım 2026, 06:50 UTC): wf koşusu BIST_K62'de KeyError ('T1') ile çöktü (K62'de T1 kombinasyonu yok; K6 / P2 bölümü ana tanımı sabit
+    'T1' alıyordu); BIST ve ABD sonuçları JSON'a yazılmadan koşu durdu, ara tablolar OKUNMADI, sonuç görülmedi. Kod hatası düzeltmesi (ana oturum izni):
+    (a) _vdyt_hisse_is K6 / P2 ana tanımı: E['ana_tanim'] o pazarda yoksa pazarın ilk ANA kombinasyonu (K62'de T2; vdyt_analiz kuralıyla aynı);
+    (b) vdyt_kos: VdytHata dışı hatalar da pazar başına yakalanır ('HATA: ...'), öteki pazarlar korunur; vdyt_analiz bütün hisseler hatalıysa açık VdytHata;
+    (c) test_vdyt.py: o = h = l = c sentetik BIST_K62 uçtan uca koşusu + hata yakalama testleri. Tanım, eşik, model, karar kuralı ve ESIK_SHA256 DEĞİŞMEDİ.
+    Eski KOD_SHA256 9a11fad3a6c486a6ed72009da8c9b86e63f4cda60586b3ff1d503ac3d6bb8d38 → yeni 10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d. Koşu baştan yapılır.
 
 ## 18. Veri sha256 (ön kayıt anı; `kos` yeniden hesaplar, farklıysa ret)
 - G.pkl: sha256 cdde36f074df0a435274ffbb19ed4734b0291964db7e8093acd2a9e623c9fc3c (1 dosya)
