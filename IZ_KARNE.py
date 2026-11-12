@@ -1814,6 +1814,7 @@ IK_ACIK: List[str] = [
     "VDYT: genişleme tahmini basitten iyi ama mekanik ve sıkışmaya özgü değil; süre uzadıkça bitiş olasılığı azalıyor; bilanço günü sıkışmayı bitiriyor; savunma hattı yönle ilişkili "
     "ama bağımsız değil; portföy para etmiyor. VERİ YOK / ÜCRETLİ: emir defteri, BIST analist ve KAP özel durum, ödünç ücreti (IBorrowDesk 29 $/ay), EPS revizyonu (Alpha Vantage 49,99 $/ay), "
     "batan ABD şirket fiyatları (Tiingo): kararlar Cemal'de.",
+    "DRIVE (12 Kas): VDYT çıktıları Drive 'COLAB_VERILER/OUTPUT/VDYT' klasörüne yüklendi: VDYT_RAPOR.md ve VDYT_raporlar.zip (bütün md / json). Grafik arşivi (240 PNG, 4 zip x ~4 MB) bağlayıcının 4,2 MB istek sınırı yüzünden YÜKLENEMEDİ; repoda arastirma_cikti/vdyt/grafik/ (git dışı, yalnız bu konteynerde). Cemal'in kararı bekleniyor (Colab'dan üretmek ya da daha küçük parçalar).",
     "DURUM (11 Kas akşam): K60 (Ç154) + K60-B (Ç155) bitti: 77 sinyal + 12 bileşik, 2012-2026, üç dönem. İZ ADAYI YOK (piyasayı üç dönemde geçen portföy yok). "
     "OLASILIK TABLOSU VAR: taban +%100 olasılığı %4-7, -%50 olasılığı %6-7; oynak havuzda %9-16 ve %17-21, medyan eksi. Havuz İÇİNDE KORUMA: kârlı / seyreltmeyen / "
     "likit (COMP4, DOSYA_Y, ROA üst) yarıya inme olasılığını 0,6-0,8 kata indiriyor, ikiye katlanma aynı kalıyor. KIRMIZI BAYRAKLAR: ters bölünme (2-2,4 kat), zarar, raf kaydı / "
