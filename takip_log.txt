@@ -74,3 +74,4 @@
 2026-11-10 00:25 INFO gun 2026-11-09 aday 6 poz 3 kapanan 14 cds_pct 0.84
 2026-11-10 21:57 INFO gun 2026-11-10 aday 6 poz 3 kapanan 14 cds_pct 0.84
 2026-11-11 23:01 INFO gun 2026-11-11 aday 6 poz 3 kapanan 14 cds_pct 0.84
+2026-11-12 22:28 INFO gun 2026-11-12 aday 6 poz 3 kapanan 14 cds_pct 0.84
