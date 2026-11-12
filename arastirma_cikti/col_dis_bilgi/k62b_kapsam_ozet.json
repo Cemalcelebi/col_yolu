@@ -1,0 +1,135 @@
+{
+ "muhur": "2686fef68b917d6c85ac4529678d421b967c27a42768eabe5ce1c5b6e4d62541",
+ "pazar": {
+  "ABD": {
+   "aciklama": 68323,
+   "aciklama_EAR": 47243,
+   "aciklama_SUETF": 50907,
+   "aciklama_ilk": "2009-03-18",
+   "aciklama_kirli": 0,
+   "aciklama_son": "2026-09-14",
+   "be_satir": 15364,
+   "ceyrek_hisse": 68620,
+   "demette": 1406,
+   "evren_kapsam": {
+    "EAR_C": 0.644258286,
+    "SUETF_C": 0.6777848362
+   },
+   "gercek_gun": 68323,
+   "hisse": 1411,
+   "ilk_gun": "2015-06-01",
+   "k24_sapma": 0,
+   "portfoy_gun": 3813,
+   "son_gun": "2026-08-31",
+   "takvim_disi": 1212,
+   "takvim_gun": 2830,
+   "yedek_gun": 297
+  },
+  "BIST": {
+   "aciklama": 29700,
+   "aciklama_EAR": 25926,
+   "aciklama_SUETF": 23424,
+   "aciklama_ilk": "2009-06-01",
+   "aciklama_kirli": 3918,
+   "aciklama_son": "2026-08-31",
+   "evren_kapsam": {
+    "EAR_C": 0.7825450847,
+    "SUETF_C": 0.6746318988
+   },
+   "hisse": 581,
+   "ilk_gun": "2015-06-01",
+   "k24_sapma": 0,
+   "k62_hisse": 715,
+   "son_gun": "2026-08-31",
+   "takvim_gun": 2863,
+   "v_k62_ortak": 580
+  }
+ },
+ "sira_secim": {
+  "hucre": [
+   {
+    "degisken": "SUETF_C",
+    "donem": "2017-2021",
+    "n_alt": 399,
+    "n_ust": 272,
+    "oran": 0.6817042607,
+    "pazar": "BIST",
+    "toplanma": false
+   },
+   {
+    "degisken": "EAR_C",
+    "donem": "2017-2021",
+    "n_alt": 386,
+    "n_ust": 270,
+    "oran": 0.6994818653,
+    "pazar": "BIST",
+    "toplanma": false
+   },
+   {
+    "degisken": "SUETF_C",
+    "donem": "2022-2026",
+    "n_alt": 313,
+    "n_ust": 207,
+    "oran": 0.661341853,
+    "pazar": "BIST",
+    "toplanma": false
+   },
+   {
+    "degisken": "EAR_C",
+    "donem": "2022-2026",
+    "n_alt": 504,
+    "n_ust": 357,
+    "oran": 0.7083333333,
+    "pazar": "BIST",
+    "toplanma": false
+   },
+   {
+    "degisken": "SUETF_C",
+    "donem": "2017-2021",
+    "n_alt": 834,
+    "n_ust": 573,
+    "oran": 0.6870503597,
+    "pazar": "ABD",
+    "toplanma": false
+   },
+   {
+    "degisken": "EAR_C",
+    "donem": "2017-2021",
+    "n_alt": 752,
+    "n_ust": 471,
+    "oran": 0.6263297872,
+    "pazar": "ABD",
+    "toplanma": false
+   },
+   {
+    "degisken": "SUETF_C",
+    "donem": "2022-2026",
+    "n_alt": 1058,
+    "n_ust": 858,
+    "oran": 0.8109640832,
+    "pazar": "ABD",
+    "toplanma": false
+   },
+   {
+    "degisken": "EAR_C",
+    "donem": "2022-2026",
+    "n_alt": 1218,
+    "n_ust": 592,
+    "oran": 0.4860426929,
+    "pazar": "ABD",
+    "toplanma": true
+   }
+  ],
+  "kural": {
+   "hucre": "ANA tanım x iki pazar x iki bağımsız dönem, EVREN sırası; değişken başına",
+   "n_min": 30,
+   "oran_min": 0.5
+  },
+  "secim": {
+   "EAR_C": "IC",
+   "SUETF_C": "EVREN"
+  }
+ },
+ "surum": "K62-B v1.0 (2026-11-12): bilanço sürprizi (K62 SUETF / EAR, çöl günü bilinen son açıklama) çöl sinyaline ek bilgi; K64 tasarımı aynen, BIST + ABD",
+ "zaman": "2026-11-12 04:41:45 UTC"
+}
