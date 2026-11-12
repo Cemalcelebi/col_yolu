@@ -1,0 +1,19 @@
+{
+ "acilis": "2026-11-12 07:22:20 UTC",
+ "kod_sha256": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+ "onkayit": {
+  "dosya_sha256": "6a6aaf665a047157b14af9e6111b33e95d20f3ae863fcebf5ead29ce031b84dc",
+  "esik": "b999ffc73273aa3b2fc54deac7aea96963ea38894ce8a3cdbe3c1159fdec8bd6",
+  "git_kod": {
+   "commit": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
+   "commit_zamani": "2026-11-12T07:02:14+00:00"
+  },
+  "git_onkayit": {
+   "commit": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
+   "commit_zamani": "2026-11-12T07:02:14+00:00"
+  },
+  "kod": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+  "yol": "/home/user/col_yolu/arastirma_cikti/vdyt/VDYT_ON_KAYIT.md",
+  "zaman": "2026-11-12 06:25:36 UTC (2026-11-12 09:25 TR)"
+ }
+}

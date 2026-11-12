@@ -400,10 +400,10 @@
   }
  },
  "esik_sha256": "b999ffc73273aa3b2fc54deac7aea96963ea38894ce8a3cdbe3c1159fdec8bd6",
- "git_head": "1e8973c9222772f1ae0805a2d183dfd030bd9384",
+ "git_head": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
  "kesik": "2026-08-31",
- "kod_sha256": "f6f54fd39a26bbd39d47ca83cf97f06814c207eea9f0deeda1f9b654c634950a",
- "komut": "kapsam",
+ "kod_sha256": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+ "komut": "kos kasa",
  "numpy": "2.5.3",
  "pandas": "3.0.5",
  "pazar_bas": {
@@ -471,5 +471,5 @@
    1
   ]
  },
- "zaman": "2026-11-12 06:23:57 UTC"
+ "zaman": "2026-11-12 07:37:51 UTC"
 }
