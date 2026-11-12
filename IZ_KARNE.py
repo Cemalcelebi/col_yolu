@@ -1799,6 +1799,9 @@ IK_GOREV: List[Dict[str, str]] = [
      "yapilan": "K60-B (Ç155): ön kayıt git 5aac5de, tek koşu (KEŞİF seçimi mekanik, sonra DOĞRULAMA ve KASA). Denetim: 5 hücre bağımsız tuttu, testler geçti, defter dosyalarına alt ajan dokunmadı. ONERI_DEFTERI'ne risk süzgeci eklendi",
      "sonuc": "Oynak havuzda taban: ikiye katlanma %9-16, yarıya inme %17-21. Koruma var (kârlı + seyreltmeyen: yarıya inme 0,6-0,8 kat). Kırmızı bayraklar var (ters bölünme 2-2,4 kat; zarar, raf, nakit yakma, ihraç 1,3-1,6 kat). Kazanma olasılığını güvenilir artıran tek aday havuz içi yüksek beta (1,3-1,45 kat; boğa etkisi olabilir)",
      "durum": "TAMAMLANDI, AÇIK: K60-C, K61, Tiingo kararı"},
+    {"tarih": "2026-11-12", "istek": "VDYT: volatilite sıkışması, bitiş tetikleyicileri ve yön araştırması (ayrı motor; Çöl Yolu ve IZ_KARNE ölçütleri değişmez); analist revizyonu bittikten sonra",
+     "yapilan": "Faz 1 alt ajanda: veri envanteri, eksik veri raporu, test sırası ve şemalar, ön kayıt (bütün sıkışma tanımı alternatifleri, eşikler, pencereler, walk-forward, temel model ve başarı ölçütü ölçümden önce), kod + sentetik test. Hacim ve şekil ölçüleri kapalı konulara değiyor: Cemal açıkça istedi, yalnız VDYT içinde ölçülür",
+     "sonuc": "SÜRÜYOR", "durum": "AÇIK: VDYT Faz 1 -> denetim -> Faz 2"},
 ]
 IK_ACIK: List[str] = [
     "DURUM (11 Kas akşam): K60 (Ç154) + K60-B (Ç155) bitti: 77 sinyal + 12 bileşik, 2012-2026, üç dönem. İZ ADAYI YOK (piyasayı üç dönemde geçen portföy yok). "
