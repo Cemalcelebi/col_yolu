@@ -1,0 +1,131 @@
+{
+ "muhur": "1d820a4e26388b043d6b1f8539813ee2027110e7a4c947cbe56173de8af27c0a",
+ "pazar": {
+  "ABD": {
+   "bilgi_gecikme_takvim_gun": {
+    "max": 21,
+    "medyan": 18.0,
+    "min": 16
+   },
+   "demette": 1406,
+   "evren_kapsam_2018": {
+    "DTC": 0.9221810716,
+    "SI_DEG": 0.8899553284,
+    "SI_DEG1": 0.9172875489,
+    "SI_PAY": 0.8338133035
+   },
+   "finra": {
+    "adv_sifir_pay": 2.013076948e-05,
+    "bolunme_bayrak_satir": 203,
+    "cakisan_kod": [],
+    "dosya": 209,
+    "dtc_taban_pay": 0.0378216897,
+    "eslesen_satir": 248376,
+    "eslesen_sembol": 1411,
+    "ilk": "2017-12-29",
+    "isim_ok_sembol": 1411,
+    "isim_uyusmaz_satir": 5179,
+    "otc_satir": 1237,
+    "revizyon_satir": 4737,
+    "satir": 3949157,
+    "son": "2026-08-31",
+    "yinelenen": 0
+   },
+   "hisse": 1411,
+   "ilk_gun": "2015-06-01",
+   "k24_sapma": 0,
+   "kimlik": {
+    "isim_ok_kimlik_red": 868,
+    "isim_uyusmaz_kimlik_ok": 3969,
+    "kimlik_ok_satir": 246298,
+    "kimlik_ok_sembol": 1411,
+    "kimlik_red_satir": 2078,
+    "log10_oran_yuzdelik": [
+     -0.09038621143,
+     -0.05034133698,
+     -0.0001496792991,
+     0.0002061703936,
+     0.01308816253
+    ]
+   },
+   "kullanilan_rapor": 207,
+   "son_gun": "2026-08-31",
+   "takvim_gun": 2830
+  }
+ },
+ "sira_secim": {
+  "hucre": [
+   {
+    "degisken": "SI_PAY",
+    "donem": "2018-2021",
+    "n_alt": 463,
+    "n_ust": 859,
+    "oran": 0.5389988359,
+    "toplanma": false
+   },
+   {
+    "degisken": "DTC",
+    "donem": "2018-2021",
+    "n_alt": 737,
+    "n_ust": 673,
+    "oran": 0.9131614654,
+    "toplanma": false
+   },
+   {
+    "degisken": "SI_DEG",
+    "donem": "2018-2021",
+    "n_alt": 587,
+    "n_ust": 770,
+    "oran": 0.7623376623,
+    "toplanma": false
+   },
+   {
+    "degisken": "SI_DEG1",
+    "donem": "2018-2021",
+    "n_alt": 667,
+    "n_ust": 785,
+    "oran": 0.8496815287,
+    "toplanma": false
+   },
+   {
+    "degisken": "SI_PAY",
+    "donem": "2022-2026",
+    "n_alt": 620,
+    "n_ust": 1451,
+    "oran": 0.4272915231,
+    "toplanma": true
+   },
+   {
+    "degisken": "DTC",
+    "donem": "2022-2026",
+    "n_alt": 1263,
+    "n_ust": 1085,
+    "oran": 0.8590657165,
+    "toplanma": false
+   },
+   {
+    "degisken": "SI_DEG",
+    "donem": "2022-2026",
+    "n_alt": 974,
+    "n_ust": 1307,
+    "oran": 0.7452180566,
+    "toplanma": false
+   },
+   {
+    "degisken": "SI_DEG1",
+    "donem": "2022-2026",
+    "n_alt": 1020,
+    "n_ust": 1269,
+    "oran": 0.8037825059,
+    "toplanma": false
+   }
+  ],
+  "kural": {
+   "n_min": 30,
+   "oran_min": 0.5
+  },
+  "secim": "IC"
+ },
+ "surum": "K66 v1.0 (2026-11-12): ABD açığa satış talebi (FINRA açık pozisyon) çöl sinyaline ek bilgi; K64 tasarımı aynen, 4 değişken x 2 yön",
+ "zaman": "2026-11-12 04:37:18 UTC"
+}
