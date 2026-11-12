@@ -1,0 +1,428 @@
+{
+ "V_ABD": {
+  "H_eq_L": 30821,
+  "OHLC_tutarsiz": 0,
+  "alanlar": [
+   "Open",
+   "High",
+   "Low",
+   "Close",
+   "Volume"
+  ],
+  "hacim_sifir": 20960,
+  "hisse": 1411,
+  "ilk_2015_07_once": 919,
+  "ilk_medyan": "2015-06-01",
+  "ilk_min": "2015-06-01",
+  "satir": 3435100,
+  "son_2026_06_once": 0,
+  "son_max": "2026-10-22",
+  "son_min": "2026-10-16"
+ },
+ "V_BIST": {
+  "H_eq_L": 49371,
+  "OHLC_tutarsiz": 29,
+  "alanlar": [
+   "Open",
+   "High",
+   "Low",
+   "Close",
+   "Volume"
+  ],
+  "hacim_sifir": 26149,
+  "hisse": 581,
+  "ilk_2015_07_once": 357,
+  "ilk_medyan": "2015-06-01",
+  "ilk_min": "2015-06-01",
+  "satir": 1272889,
+  "son_2026_06_once": 0,
+  "son_max": "2026-10-22",
+  "son_min": "2026-10-22"
+ },
+ "edgar": {
+  "cik_ticker": 8024,
+  "dosya": 71,
+  "grup_sayim": {
+   "ABD_13D": 82105,
+   "ABD_8K": 893511,
+   "ABD_BILANCO_EDGAR": 295294,
+   "ABD_BIRLESME": 61484,
+   "ABD_GECIKME": 16586,
+   "ABD_SERMAYE": 6197588,
+   "ABD_VEKALET": 69314
+  },
+  "ilk": "2009-01-02 00:00:00",
+  "ilk_ceyrek": "2009Q1",
+  "kodla_eslenen": 7615882,
+  "kodlu_sirket": 9242,
+  "satir": 18681292,
+  "secili_form": 3771867,
+  "son": "2026-09-30 00:00:00",
+  "son_ceyrek": "2026Q3"
+ },
+ "endeks": {
+  "SPY": [
+   "1993-01-29",
+   "2026-08-31",
+   8454
+  ],
+  "XU100.IS": [
+   "1997-07-01",
+   "2026-08-31",
+   7509
+  ]
+ },
+ "finra": {
+  "dosya": 209,
+  "ilk": "20171229",
+  "son": "20260831"
+ },
+ "fon_G": {
+  "alanlar": [
+   "indeks",
+   "kod",
+   "nominal",
+   "deger",
+   "fon",
+   "sirket",
+   "ay",
+   "bilinme",
+   "agirlik"
+  ],
+  "fon": 549,
+  "hisse": 551,
+  "ilk": "2023-01-02 19:04:37",
+  "rapor": 13111,
+  "satir": 263521,
+  "son": "2026-10-12 15:06:37"
+ },
+ "k34_yahoo": {
+  "hata": "AttributeError: 'DataFrame' object has no attribute 'High'"
+ },
+ "k60_fiyat": {
+  "alanlar": [
+   "o",
+   "h",
+   "l",
+   "c (bölünme düzeltmeli)",
+   "v",
+   "adjclose",
+   "temettü / bölünme olayları"
+  ],
+  "bolunmeli": 1775,
+  "durum": {
+   "fiyat": 4706,
+   "veri yok": 16,
+   "yok": 33
+  },
+  "fiyatli": 4678,
+  "ilk_2010_once": 1906,
+  "ilk_2015_once": 2577,
+  "ilk_min": "2010-01-04",
+  "json": 4755,
+  "son_2026_06_once": 38,
+  "son_max": "2026-08-31",
+  "temettulu": 1789,
+  "tur": {
+   "EQUITY": 4696,
+   "ETF": 2,
+   "MUTUALFUND": 8
+  }
+ },
+ "k62_fiyat": {
+  "alanlar": [
+   "tarih",
+   "kapanis",
+   "ham",
+   "pd",
+   "pd_usd",
+   "hacim_tl",
+   "hacim_usd",
+   "endeks",
+   "sermaye"
+  ],
+  "cikis_yillari": {
+   "2009": 2,
+   "2011": 1,
+   "2012": 3,
+   "2013": 6,
+   "2014": 9,
+   "2015": 15,
+   "2016": 12,
+   "2017": 7,
+   "2018": 10,
+   "2019": 6,
+   "2020": 17,
+   "2021": 1,
+   "2022": 1,
+   "2026": 2
+  },
+  "dolu": 715,
+  "dosya": 972,
+  "ilk_2010_once": 319,
+  "ilk_min": "2008-01-02",
+  "kotasyondan_cikmis_son_2026_06_once": 92,
+  "son_max": "2026-08-31"
+ },
+ "k62_kap": {
+  "ilk": "2009-06-01 08:13:16",
+  "kayit": 161908,
+  "konu": {
+   "Entegre Rapor": 114,
+   "Faaliyet Raporu (Konsolide Olmayan)": 11428,
+   "Faaliyet Raporu (Konsolide)": 13144,
+   "Faaliyet Raporu Sorumluluk Beyanı": 1237,
+   "Finansal Rapor": 106852,
+   "Finansal Rapor Bildirimi": 130,
+   "Sorumluluk Beyanı (Konsolide Olmayan)": 14260,
+   "Sorumluluk Beyanı (Konsolide)": 14356,
+   "TSRS Uyumlu Sürdürülebilirlik Raporu": 387
+  },
+  "son": "2026-08-31 21:51:38"
+ },
+ "kap_iceriden": {
+  "alanlar_islem": [
+   "indeks",
+   "tarih",
+   "alim",
+   "satim",
+   "bas",
+   "son",
+   "oran_bas",
+   "oran_son",
+   "gorev",
+   "kaynak"
+  ],
+  "ayristirilamayan_bos": 676,
+  "ayristirilan_bildirim": 6637,
+  "bildirim_liste": 8609,
+  "haric_sonrasi": 7313,
+  "hisse": 649,
+  "ilk": "2022-07-01 09:13:13",
+  "islem_satiri": 6955,
+  "kaynak_bildirim_ilk": {
+   "pdf": 5712,
+   "tablo": 925
+  },
+  "son": "2026-10-26 18:28:49"
+ },
+ "kapfon_dal": {
+  "acma": "python FON_IZI.py k9ac kapfon (yerelde AÇILMADI)",
+  "dosyalar": [
+   "BENIOKU.md",
+   "kapfon/ekler.csv.gz",
+   "kapfon/k9_islem.csv.gz",
+   "kapfon/k9_kontrol.csv.gz",
+   "kapfon/k9_pozisyon.csv.gz",
+   "kapfon/liste.csv.gz",
+   "kapfon/liste_haftalar.txt",
+   "kapfon/manifest.json",
+   "kapfon/metin.tar.xz.000",
+   "kapfon/metin.tar.xz.001",
+   "kapfon/metin.tar.xz.002",
+   "kapfon/metin.tar.xz.003"
+  ],
+  "manifest_ozet": "{\n \"surum\": \"FON_IZI v1.5 (2026-10-24, yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)\",\n \"ayristirici\": \"v1.5\",\n \"olusturma\": \"2026-10-24 05:05:18.177196\",\n \"metin_sayisi\": 25007,\n \"rapor\": 23102,\n \"muaf\": 1424,\n \"dosyalar\": {\n  \"ekler.csv.gz\": {\n   \"boy\": 209299,\n   \"sha256\": \"a78f2c9b027d36eef80f9aeae063ad6dad4c94c118e5eb71400655c69b9c254a\"\n  },\n  \"k9_islem.csv.gz\": {\n   \"boy\": 50414401,\n   \"sha256\": \"ad60457ce637619b5e760155d714469f9b819ec692c13c90e6506a88f9d162db\"\n  },\n  \"k9_kontrol.csv.gz\": {\n"
+ },
+ "makro": {
+  "EKSIK": {
+   "CPI_BLS": "bls.gov 403 (erişim engeli)",
+   "ISTIHDAM_BLS": "bls.gov 403",
+   "TUIK_ENFLASYON": "data.tuik.gov.tr yayın takvimi alınmadı",
+   "sayfa": [
+    "PPK2009",
+    "PPK2010",
+    "PPK2011",
+    "PPK2012",
+    "PPK2013",
+    "PPK2014"
+   ]
+  },
+  "FOMC": 154,
+  "FOMC_planli": 151,
+  "PPK": 126,
+  "ilk_FOMC": "2009-01-28",
+  "ilk_PPK": "2015-01-20"
+ },
+ "onceki_tablolar": {
+  "col_goz": [
+   "COL_GOZ_rapor.md",
+   "COL_ISARET_yerlesim.json",
+   "col_goz_kapali_eslesme.json"
+  ],
+  "k55_dallanma": [
+   "K55_ADAYLAR.md",
+   "K55_COKLU_TEST.csv",
+   "K55_EVREN.csv",
+   "K55_EVREN_DISI.csv",
+   "K55_EVREN_DISI_KISA.csv",
+   "K55_FAZ0_RAPOR.md",
+   "K55_FAZ1_RAPOR.md",
+   "K55_HUCRE_ISKELE.csv",
+   "K55_HUCRE_SONUC.csv",
+   "K55_K54_TUTARLILIK.csv",
+   "K55_KESIM.csv",
+   "K55_KOSU.json",
+   "K55_KOSU_FAZ1.json",
+   "K55_OLAYLAR.csv.gz",
+   "K55_ORNEKLEM.csv",
+   "K55_PLAN.md",
+   "K55_SIZINTI_TESTI.md",
+   "K55_VARYANTLAR.csv",
+   "K55_VERI_KALITESI.csv",
+   "K55_VERI_KAPSAMI.md",
+   "tam_evren"
+  ],
+  "k60_veri": [
+   "K60_SEC_ISTEK_LISTESI.csv",
+   "K60_VERI_DENETIM.md",
+   "K60_VERI_OZET.md",
+   "K60_VERI_PLANI.md",
+   "evren_ay.csv",
+   "fiyat_kapsam.csv",
+   "sec_sayim.csv"
+  ],
+  "mum_sukun": [
+   "MUM_SUKUN_rapor.md",
+   "MUM_SUKUN_zemin_rapor.md",
+   "mum_sukun_olaylar.csv.gz",
+   "mum_sukun_ozet.csv",
+   "zemin_ayrilma_boy.csv",
+   "zemin_ayrilma_boy_hacim.csv",
+   "zemin_kisa_ozet.csv",
+   "zemin_olaylar.csv.gz",
+   "zemin_ozet.csv"
+  ],
+  "sessiz_ml": [
+   "SESSIZ_ML_ogretmen.md",
+   "SESSIZ_ML_rapor.md",
+   "modeller.tar.gz",
+   "ogr_islemler.csv",
+   "ogr_kanit.csv",
+   "ogr_kesim_tespit.csv",
+   "ogr_olaylar.csv.gz",
+   "ogr_onem.csv",
+   "ogr_profil.csv",
+   "ogr_tuttu_mu.csv",
+   "sm_alis_tahmin_k20.csv.gz",
+   "sm_basari.csv",
+   "sm_cikis.csv",
+   "sm_degerlendirme.csv",
+   "sm_egitim_kaniti.csv",
+   "sm_fon_2026.csv",
+   "sm_islemler_model_cikis.csv.gz",
+   "sm_islemler_uretim.csv.gz",
+   "sm_onem_k20.csv",
+   "sm_onem_satis.csv",
+   "sm_onem_x2.csv",
+   "sm_portfoy.csv",
+   "sm_satis_degerlendirme.csv",
+   "sm_sizinti.csv"
+  ]
+ },
+ "pead_abd": {
+  "alanlar": [
+   "tarih",
+   "sembol",
+   "surpriz",
+   "saat",
+   "ceyrek"
+  ],
+  "ilk": "2022-12-01 00:00:00",
+  "kod": 4865,
+  "saat": {
+   "time-after-hours": 370,
+   "time-not-supplied": 64750,
+   "time-pre-market": 324
+  },
+  "satir": 65474,
+  "son": "2026-10-27 00:00:00"
+ },
+ "pead_bist": {
+  "alanlar": [
+   "yayin",
+   "kod",
+   "yil",
+   "donem",
+   "unvan",
+   "indeks"
+  ],
+  "ilk": "2022-07-01 18:50:36",
+  "kod": 979,
+  "satir": 14739,
+  "son": "2026-10-27 11:18:50"
+ },
+ "pead_bist_2016_22": {
+  "alanlar": [
+   "yayin",
+   "kod",
+   "yil",
+   "donem",
+   "unvan",
+   "indeks"
+  ],
+  "ilk": "2016-07-22 17:12:49",
+  "kod": 851,
+  "satir": 16983,
+  "son": "2022-12-16 21:55:52"
+ },
+ "sektor": {
+  "ABD_SIC_eslenen": 4005,
+  "ABD_grup": 55,
+  "BIST_grup": 12,
+  "BIST_sektor_BIST": 583,
+  "sektor_ABD_csv": 1416
+ },
+ "surucu": {
+  "ALI=F": [
+   "2015-01-02",
+   "2026-10-27",
+   2935
+  ],
+  "CDS": [
+   "2022-01-03",
+   "2026-10-19",
+   1229
+  ],
+  "CL=F": [
+   "2015-01-02",
+   "2026-10-28",
+   2973
+  ],
+  "GC=F": [
+   "2015-01-02",
+   "2026-10-28",
+   2973
+  ],
+  "HG=F": [
+   "2015-01-02",
+   "2026-10-28",
+   2973
+  ],
+  "HRC=F": [
+   "2015-01-02",
+   "2026-10-27",
+   2960
+  ],
+  "SI=F": [
+   "2015-01-02",
+   "2026-10-28",
+   2972
+  ],
+  "USDTRY=X": [
+   "2015-01-01",
+   "2026-10-28",
+   3077
+  ],
+  "ZW=F": [
+   "2015-01-02",
+   "2026-10-28",
+   2972
+  ],
+  "^TNX": [
+   "2015-01-02",
+   "2026-10-27",
+   2971
+  ]
+ }
+}

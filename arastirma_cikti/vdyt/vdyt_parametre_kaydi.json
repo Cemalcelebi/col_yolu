@@ -1,0 +1,475 @@
+{
+ "esik": {
+  "ana_tanim": "T1",
+  "ana_ufuk": 10,
+  "bar": {
+   "bosluk_takvim_gun": 15,
+   "hacim_sifir_at": true,
+   "hl_duzelt": true
+  },
+  "basari": {
+   "bootstrap": 2000,
+   "guven": [
+    2.5,
+    97.5
+   ],
+   "kume": "hisse",
+   "kural": "BASİTTEN İYİ <=> (WF test yılları toplamında VE KASA'da) Brier skill > 0 VE hisse kümeli bootstrap %95 alt sınırı > 0; BIST ve ABD AYRI; yön motorunda ayrıca dengeli doğruluk farkı ve log loss skill aynı şartla",
+   "tohum": 20261112
+  },
+  "bolge": {
+   "min_gun": 10,
+   "ref_max": 60,
+   "ref_min": 8,
+   "sonme_gun": 5
+  },
+  "coklu": {
+   "bh_q": 0.1,
+   "plasebo_bolge_tekrar": 5,
+   "plasebo_olay_tekrar": 100,
+   "tohum": 20261113
+  },
+  "donem_kapsam": [
+   [
+    "2010-2015",
+    "2010-01-01",
+    "2015-12-31"
+   ],
+   [
+    "2016-2018",
+    "2016-01-01",
+    "2018-12-31"
+   ],
+   [
+    "2019-2023 (WF test)",
+    "2019-01-01",
+    "2023-12-31"
+   ],
+   [
+    "2024-2026 (KASA)",
+    "2024-01-01",
+    "2026-08-31"
+   ]
+  ],
+  "duyarlilik": {
+   "esik_alt": true,
+   "k_alt_tanim": "T1",
+   "rv_tanim": "T1"
+  },
+  "genisleme": {
+   "ana_k": 2.0,
+   "ana_tur": "TR",
+   "k": [
+    2.0,
+    1.5,
+    2.5
+   ],
+   "rv_pencere": 5,
+   "tarif": {
+    "RV": "std(log getiri[t-4..t]) >= k x std(bölgenin t-5'e kadarki son 60 günlük log getirisi)",
+    "TR": "ort(TRn[t-2..t]) >= k x medyan(TRn, bölgenin t-3'e kadarki son 60 günü); TRn = gerçek aralık / önceki kapanış"
+   },
+   "tr_pencere": 3,
+   "turler": [
+    "TR",
+    "RV"
+   ]
+  },
+  "getiri_ufuk": [
+   5,
+   10,
+   20,
+   60
+  ],
+  "grafik": {
+   "dpi": 150,
+   "grup_n": 5,
+   "gruplar": [
+    "BASARILI",
+    "BASARISIZ",
+    "HABERLI",
+    "HABERSIZ",
+    "HATLI",
+    "HATSIZ"
+   ],
+   "on_bar": 40,
+   "son_bar": 30,
+   "tohum": 20261114
+  },
+  "hisse_gecmis": {
+   "buzme": 5,
+   "min_bolge": 3
+  },
+  "karar_pazari": [
+   "BIST",
+   "ABD"
+  ],
+  "karar_yas": [
+   10,
+   20,
+   40,
+   60,
+   90,
+   120
+  ],
+  "kesik": "2026-08-31",
+  "mfe_ufuk": 20,
+  "model": {
+   "min_egitim": 200,
+   "ridge": 1.0,
+   "tol": 1e-08,
+   "tur": 25,
+   "winsor": [
+    0.01,
+    0.99
+   ]
+  },
+  "olay": {
+   "bist_seans_bitis": "18:00",
+   "emtia_gecmis": 250,
+   "emtia_soku_z": 3.0,
+   "esleme": {
+    "aday_n": 40,
+    "kontrol_n": 5,
+    "tohum": 20261112,
+    "yas_tol": 2
+   },
+   "haberli": [
+    -5,
+    1
+   ],
+   "habersiz": [
+    -10,
+    1
+   ],
+   "makro_haberli": [
+    -1,
+    0
+   ],
+   "on_artis_esik": 1.5,
+   "on_artis_gun": 5,
+   "pencere_e1": [
+    [
+     -20,
+     -11
+    ],
+    [
+     -10,
+     -6
+    ],
+    [
+     -5,
+     -1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     11,
+     20
+    ]
+   ],
+   "pencere_e2": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     11,
+     20
+    ]
+   ],
+   "rakip": "sektörün çeyrekteki ilk bilanço günü (raporlayan hariç)"
+  },
+  "olcu": {
+   "atr_n": 14,
+   "bant_n": 20,
+   "bb_k": 2.0,
+   "bb_n": 20,
+   "egim_n": 10,
+   "gecmis_min": 200,
+   "gecmis_n": 250,
+   "hacim_kisa": 20,
+   "hacim_uzun": 250,
+   "mum_n": 10,
+   "ret": [
+    20,
+    60
+   ],
+   "rv_kisa": 5,
+   "rv_n": 20,
+   "sma": [
+    20,
+    50,
+    200
+   ]
+  },
+  "pazar": {
+   "ABD": {
+    "bas": "2010-01-01",
+    "kaynak": "k60_fiyat (Yahoo günlük OHLCV 2010+, 4.678 hisse; yaşayan)",
+    "maliyet": 0.001,
+    "uygunluk": {
+     "fiyat_min": 2.0,
+     "gecmis_gun": 252,
+     "likit_gun": 20,
+     "likit_min": 1000000.0,
+     "tur": [
+      "EQUITY"
+     ]
+    }
+   },
+   "BIST": {
+    "bas": "2015-06-01",
+    "kaynak": "V_BIST (islenmis-veri; OHLCV, bölünme düzeltmeli; yaşayan 581)",
+    "maliyet": 0.003,
+    "uygunluk": {
+     "gecmis_gun": 252,
+     "likit_gun": 20,
+     "likit_pct": 0.2
+    }
+   },
+   "BIST_K62": {
+    "bas": "2008-01-01",
+    "kaynak": "K62 İş Yatırım günlük kapanış 2008+ (kotasyondan çıkanlar dahil; açılış / yüksek / düşük YOK)",
+    "rol": "yanlılık kontrolü: yalnız kapanış tanımları (T2, T3, T4) ve RV genişlemesi; karar pazarı değil"
+   }
+  },
+  "portfoy": {
+   "esik_pct": 0.9,
+   "rol": "yalnız bilgi",
+   "tut": 20,
+   "yuva": 10
+  },
+  "rejim": {
+   "sektor_min": 5,
+   "tertil": [
+    0.3333333333333333,
+    0.6666666666666666
+   ]
+  },
+  "savunma": {
+   "alt_dilim": 0.3333333333333333,
+   "ana_taban": "govde",
+   "blok": 5,
+   "blok_max": 12,
+   "min_aralik": 5,
+   "min_temas": 3,
+   "tabanlar": [
+    "govde",
+    "fitil",
+    "kapanis"
+   ],
+   "tolerans_tr": 0.5
+  },
+  "tanim": {
+   "T1": {
+    "ad": "ATR oranı",
+    "esik": [
+     0.7,
+     0.6,
+     0.8
+    ],
+    "olcu": "natr_oran",
+    "tarif": "NATR14(t) / medyan(NATR14[t-250..t-1]) <= eşik; NATR14 = 14 günlük ortalama gerçek aralık / kapanış",
+    "veri": "OHLC"
+   },
+   "T2": {
+    "ad": "Gerçekleşen volatilite yüzdeliği",
+    "esik": [
+     0.2,
+     0.1,
+     0.3
+    ],
+    "olcu": "rv_yuzde",
+    "tarif": "RV20(t) (20 günlük log getiri std) hissenin kendi [t-250..t-1] RV20 değerleri içinde yüzdelik <= eşik",
+    "veri": "kapanış"
+   },
+   "T3": {
+    "ad": "Bollinger genişliği yüzdeliği",
+    "esik": [
+     0.2,
+     0.1,
+     0.3
+    ],
+    "olcu": "bbw_yuzde",
+    "tarif": "BBW20 = 4 x std(C,20) / SMA20; kendi [t-250..t-1] BBW20 değerleri içinde yüzdelik <= eşik",
+    "veri": "kapanış"
+   },
+   "T4": {
+    "ad": "Dar bant (kapanış)",
+    "esik": [
+     3.5,
+     2.5,
+     4.5
+    ],
+    "olcu": "bant",
+    "tarif": "(max C - min C) / ort C (son 20 kapanış) / sigma_ref <= eşik; sigma_ref = medyan(RV20[t-250..t-1]) (günlük sigma birimi)",
+    "veri": "kapanış"
+   },
+   "T5": {
+    "ad": "Bileşik",
+    "en_az": 3,
+    "tarif": "T1-T4'ün ANA eşiklerinden en az 3'ü aynı gün sağlanır",
+    "veri": "OHLC"
+   }
+  },
+  "temel": {
+   "G_T0": [
+    "ay"
+   ],
+   "G_T1": [
+    "yas_kova",
+    "ay"
+   ],
+   "Y_B0": 0.5,
+   "Y_B1": "pazar_60g_yon",
+   "kucuk_hucre": 20
+  },
+  "ufuk": [
+   5,
+   10,
+   20
+  ],
+  "wf": {
+   "etiket_tam": true,
+   "kasa": [
+    "2024-01-01",
+    "2026-08-31"
+   ],
+   "kasa_yillar": [
+    2024,
+    2025,
+    2026
+   ],
+   "kesif_yillar": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "kural": "her test yılı Y için eğitim = karar günü + ufuk (işlem günü) < 1 Ocak Y olan bütün satırlar (genişleyen pencere, yıllık yeniden eğitim)"
+  },
+  "yas_kova": [
+   [
+    10,
+    19
+   ],
+   [
+    20,
+    39
+   ],
+   [
+    40,
+    59
+   ],
+   [
+    60,
+    89
+   ],
+   [
+    90,
+    119
+   ],
+   [
+    120,
+    100000
+   ]
+  ],
+  "yon": {
+   "Y1_ufuk": 20,
+   "Y2_ufuk": 10
+  }
+ },
+ "esik_sha256": "b999ffc73273aa3b2fc54deac7aea96963ea38894ce8a3cdbe3c1159fdec8bd6",
+ "git_head": "1e8973c9222772f1ae0805a2d183dfd030bd9384",
+ "kesik": "2026-08-31",
+ "kod_sha256": "f6f54fd39a26bbd39d47ca83cf97f06814c207eea9f0deeda1f9b654c634950a",
+ "komut": "kapsam",
+ "numpy": "2.5.3",
+ "pandas": "3.0.5",
+ "pazar_bas": {
+  "ABD": "2010-01-01",
+  "BIST": "2015-06-01",
+  "BIST_K62": "2008-01-01"
+ },
+ "python": "3.13.18",
+ "surum": "VDYT v1.0 (2026-11-12): Faz 1 (envanter, ön kayıt, kod + sentetik test, kapsam sayımı); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra",
+ "veri_sha256": {
+  "G.pkl": [
+   "cdde36f074df0a435274ffbb19ed4734b0291964db7e8093acd2a9e623c9fc3c",
+   1
+  ],
+  "V_BIST.pkl": [
+   "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+   1
+  ],
+  "company_tickers.json": [
+   "6f9cc4500a98fb4c048328d7df392ed48c092613ec0c3e93cd6c7a3502886074",
+   1
+  ],
+  "edgar_master": [
+   "57d5329d3603d361e7d81831878dcbe05777a7771d0f845b76a77e21fa2edc77",
+   71
+  ],
+  "k35_sic.csv": [
+   "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+   1
+  ],
+  "k58_yahoo": [
+   "7059054137b9a6a6e98d16e5dbef012f718df33197c790a417e7ab0c577a4e03",
+   2
+  ],
+  "k60_fiyat": [
+   "21435ad5b907eeb2dc4e8985e31c602900b2a010b7242c89331210e550dac374",
+   4757
+  ],
+  "k62_fiyat": [
+   "bf3c29260b2b6d10794fb9338bb74253b291ef6c877c4d53d14f8a7f876bf636",
+   972
+  ],
+  "k62_kap": [
+   "82cdbb0845835b464b8ed721d6f52afa22e9c682ec848478fc85c5fba7945ab1",
+   451
+  ],
+  "kap_iceriden": [
+   "14cc588b8499891aeeb249ec20d2e9fa6ec2a787a6b2383b6a24e7cd5c7781a0",
+   3
+  ],
+  "liste_abd.csv.gz": [
+   "87539954817d5d551623eeed04fa410844646539093a4e841a7755a2cfc674cb",
+   1
+  ],
+  "sektor_BIST.csv": [
+   "0f933f73a6042c95d42275e0b9e1289221cc4f3b4b6d1df81987fcab14fd16d4",
+   1
+  ],
+  "surucu.pkl": [
+   "c74304c1f921d7f087023559480bc217004e47ddb53684148c992d5d1b2a35bd",
+   1
+  ],
+  "vdyt_makro_takvim.json": [
+   "27a1f678211bedbc083ab5abd9f59b8cbdd7dba99cd41609bee53387828b3900",
+   1
+  ]
+ },
+ "zaman": "2026-11-12 06:23:57 UTC"
+}

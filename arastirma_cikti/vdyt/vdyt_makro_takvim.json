@@ -1,0 +1,1145 @@
+{
+ "EKSIK": {
+  "CPI_BLS": "bls.gov 403 (erişim engeli)",
+  "ISTIHDAM_BLS": "bls.gov 403",
+  "TUIK_ENFLASYON": "data.tuik.gov.tr yayın takvimi alınmadı",
+  "sayfa": [
+   "PPK2009",
+   "PPK2010",
+   "PPK2011",
+   "PPK2012",
+   "PPK2013",
+   "PPK2014"
+  ]
+ },
+ "FOMC": [
+  {
+   "planli": true,
+   "tarih": "2009-01-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-03-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-04-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-06-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-08-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-09-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-11-04"
+  },
+  {
+   "planli": true,
+   "tarih": "2009-12-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-01-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-03-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-04-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-06-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-08-10"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-09-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-11-03"
+  },
+  {
+   "planli": true,
+   "tarih": "2010-12-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-01-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-03-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-04-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-06-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-08-09"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-09-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-11-02"
+  },
+  {
+   "planli": true,
+   "tarih": "2011-12-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-01-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-03-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-04-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-06-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-07-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-09-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-10-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2012-12-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-01-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-03-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-05-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-06-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-07-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-09-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-10-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2013-12-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-01-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-03-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-04-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-06-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-07-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-09-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-10-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2014-12-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-01-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-03-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-04-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-06-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-07-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-09-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-10-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-12-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-01-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-03-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-04-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-06-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-07-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-09-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-11-02"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-12-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-02-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-03-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-05-03"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-06-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-07-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-09-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-11-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-12-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-01-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-03-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-05-02"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-06-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-08-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-09-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-11-08"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-12-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-01-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-03-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-05-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-06-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-07-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-09-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-10-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-12-11"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-01-29"
+  },
+  {
+   "planli": false,
+   "tarih": "2020-03-02"
+  },
+  {
+   "planli": false,
+   "tarih": "2020-03-15"
+  },
+  {
+   "planli": false,
+   "tarih": "2020-03-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-04-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-06-10"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-07-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-09-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-11-05"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-12-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-01-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-03-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-04-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-06-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-07-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-09-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-11-03"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-12-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-01-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-03-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-05-04"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-06-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-07-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-09-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-11-02"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-12-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-02-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-03-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-05-03"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-06-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-07-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-09-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-11-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-12-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-01-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-03-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-05-01"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-06-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-07-31"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-09-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-11-07"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-12-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-01-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-03-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-05-07"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-06-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-07-30"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-09-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-10-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-12-10"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-01-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-03-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-04-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-06-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-07-29"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-09-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-10-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-12-09"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-01-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-03-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-04-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-06-09"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-07-28"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-09-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-10-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2027-12-08"
+  }
+ ],
+ "PPK": [
+  {
+   "planli": true,
+   "tarih": "2015-01-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-02-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-03-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-04-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-05-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-06-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-07-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-08-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-09-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-10-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-11-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2015-12-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-01-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-02-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-03-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-04-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-05-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-06-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-07-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-08-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-09-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-10-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-11-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2016-12-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-01-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-03-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-04-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-06-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-07-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-09-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-10-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2017-12-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-01-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-03-07"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-04-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-05-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-06-07"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-07-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-09-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-10-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2018-12-13"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-01-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-03-06"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-04-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-06-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-07-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-09-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-10-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2019-12-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-01-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-02-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-03-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-04-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-05-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-06-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-07-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-08-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-09-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-10-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-11-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2020-12-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-01-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-02-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-03-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-04-15"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-05-06"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-06-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-07-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-08-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-09-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-10-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-11-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2021-12-16"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-01-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-02-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-03-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-04-14"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-05-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-06-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-07-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-08-18"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-09-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-10-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-11-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2022-12-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-01-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-02-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-03-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-04-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-05-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-06-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-07-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-08-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-09-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-10-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-11-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2023-12-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-01-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-02-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-03-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-04-25"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-05-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-06-27"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-07-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-08-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-09-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-10-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-11-21"
+  },
+  {
+   "planli": true,
+   "tarih": "2024-12-26"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-01-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-03-06"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-03-20"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-04-17"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-06-19"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-07-24"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-09-11"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-10-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2025-12-11"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-01-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-03-12"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-04-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-06-11"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-07-23"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-09-10"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-10-22"
+  },
+  {
+   "planli": true,
+   "tarih": "2026-12-10"
+  }
+ ],
+ "kaynak": {
+  "FOMC": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm + fomchistorical<yıl>.htm",
+  "PPK": "https://www.tcmb.gov.tr/.../Para+Politikasi/PPK/<yıl>"
+ },
+ "surum": "VDYT v1.0 (2026-11-12): Faz 1 (envanter, ön kayıt, kod + sentetik test, kapsam sayımı); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra",
+ "uretim": "2026-11-12 06:10:01 UTC"
+}
