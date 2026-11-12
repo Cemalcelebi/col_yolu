@@ -1,0 +1,740 @@
+{
+ "esik": {
+  "ana_tanim": "G5",
+  "ana_ufuk": 10,
+  "atr_ref": {
+   "min": 200,
+   "n": 250
+  },
+  "basari": {
+   "bootstrap": 2000,
+   "guven": [
+    2.5,
+    97.5
+   ],
+   "kume": "hisse",
+   "tohum": 20261112
+  },
+  "basari1_ufuk": 20,
+  "bhu": {
+   "bant_n": 20,
+   "ref_min": 40,
+   "ref_n": 60,
+   "tekil": 20
+  },
+  "bolge": {
+   "sonme_gun": 5
+  },
+  "buyuk": {
+   "govde_taban": 0.1,
+   "k_b": 2.5,
+   "m": 3.0,
+   "onay_gun": 10,
+   "ref_max": 60,
+   "ref_min": 8,
+   "tr_taban": 0.001
+  },
+  "coklu": {
+   "bh_q": 0.1,
+   "plasebo_esik_pct": 95.0,
+   "plasebo_olay_tekrar": 50,
+   "plasebo_ust": 3000,
+   "tohum": 20261113
+  },
+  "donem_kapsam": [
+   [
+    "2010-2015",
+    "2010-01-01",
+    "2015-12-31"
+   ],
+   [
+    "2016-2018",
+    "2016-01-01",
+    "2018-12-31"
+   ],
+   [
+    "2019-2023 (WF test)",
+    "2019-01-01",
+    "2023-12-31"
+   ],
+   [
+    "2024-2026 (KASA)",
+    "2024-01-01",
+    "2026-08-31"
+   ]
+  ],
+  "gecerli": {
+   "gun": 3,
+   "k_sessiz": 2.0,
+   "ref_max": 60
+  },
+  "getiri_ufuk": [
+   5,
+   10,
+   20
+  ],
+  "grafik": {
+   "boyut": [
+    14,
+    8
+   ],
+   "dpi": 150,
+   "grup_n": 5,
+   "gruplar": [
+    "BASARILI",
+    "BASARISIZ",
+    "KACIRILAN",
+    "YON_DOGRU",
+    "YON_YANLIS",
+    "HABERSIZ"
+   ],
+   "on_bar": 60,
+   "paket_mb": 3.0,
+   "son_bar": 30,
+   "tohum": 20261116
+  },
+  "haber": {
+   "haberli": [
+    -5,
+    1
+   ],
+   "habersiz": [
+    -10,
+    1
+   ],
+   "makro": [
+    -1,
+    0
+   ]
+  },
+  "hisse_gecmis": {
+   "min_bolge": 3
+  },
+  "karar_pazari": [
+   "BIST",
+   "ABD"
+  ],
+  "karar_yas": [
+   10,
+   15,
+   20,
+   30,
+   45,
+   60,
+   90
+  ],
+  "kesik": "2026-08-31",
+  "kontrol": {
+   "disari_kat": {
+    "AILE": 2,
+    "ALT": 2,
+    "ANA": 5,
+    "K62": 2
+   },
+   "hafif_bas": "2019-01-01",
+   "ilk_bar": 260,
+   "rastgele_kat": 2,
+   "tohum": 20261115
+  },
+  "kontrol_pazari": [
+   "BIST_K62"
+  ],
+  "maliyet": {
+   "ABD": 0.001,
+   "BIST": 0.003,
+   "BIST_K62": 0.003
+  },
+  "mfe_ufuk": 20,
+  "model": {
+   "min_egitim": 200,
+   "ridge": 1.0,
+   "tol": 1e-08,
+   "tur": 25,
+   "winsor": [
+    0.01,
+    0.99
+   ]
+  },
+  "olay": {
+   "bist_seans_bitis": "18:00",
+   "emtia_gecmis": 250,
+   "emtia_soku_z": 3.0,
+   "esleme": {
+    "aday_n": 40,
+    "kontrol_n": 5,
+    "tohum": 20261112,
+    "yas_tol": 2
+   },
+   "haberli": [
+    -5,
+    1
+   ],
+   "habersiz": [
+    -10,
+    1
+   ],
+   "makro_haberli": [
+    -1,
+    0
+   ],
+   "on_artis_esik": 1.5,
+   "on_artis_gun": 5,
+   "pencere_e1": [
+    [
+     -20,
+     -11
+    ],
+    [
+     -10,
+     -6
+    ],
+    [
+     -5,
+     -1
+    ],
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     11,
+     20
+    ]
+   ],
+   "pencere_e2": [
+    [
+     0,
+     0
+    ],
+    [
+     1,
+     5
+    ],
+    [
+     6,
+     10
+    ],
+    [
+     11,
+     20
+    ]
+   ],
+   "rakip": "sektörün çeyrekteki ilk bilanço günü (raporlayan hariç)"
+  },
+  "onkosul": {
+   "P1": -0.3,
+   "P2": 0.3,
+   "alt_kumeler": [
+    "P0",
+    "P1",
+    "P2"
+   ],
+   "ana": "P1",
+   "pencere": 120
+  },
+  "savunma": {
+   "alt_dilim": 0.3333333333333333,
+   "ana_taban": "govde",
+   "blok": 5,
+   "blok_max": 12,
+   "min_aralik": 5,
+   "min_temas": 3,
+   "tabanlar": [
+    "govde",
+    "fitil",
+    "kapanis"
+   ],
+   "tolerans_tr": 0.5
+  },
+  "sessiz": {
+   "G1": {
+    "aralik_atr": [
+     0.6,
+     0.5,
+     0.7
+    ],
+    "doji": 0.1,
+    "govde_atr": 0.3,
+    "maks_aralik_atr": 1.5
+   },
+   "G2": {
+    "bant_oran": [
+     0.5,
+     0.4,
+     0.6
+    ],
+    "gecmis_min": 200,
+    "gecmis_n": 250
+   },
+   "G3": {
+    "dip_egim_alt": 0.0,
+    "tepe_egim_ust": 0.0
+   },
+   "G4": {
+    "ana_taban": "govde",
+    "kirilma_yok": true,
+    "pencere": 20,
+    "tabanlar": [
+     "govde",
+     "fitil",
+     "kapanis"
+    ]
+   },
+   "G5": "G1 VE G2 VE (G3 YA DA G4)",
+   "L": 10,
+   "olusuyor_en_az": 2
+  },
+  "sinif": {
+   "asagi": 0.4,
+   "basladi_gun": 3,
+   "eski_veri_gun": 10,
+   "guven_genisleme": {
+    "ece_max": 0.03,
+    "skill_min": 0.05
+   },
+   "guven_yon": {
+    "ba_min": 0.05,
+    "ece_max": 0.05
+   },
+   "q_yuksek": 0.8,
+   "siniflar": [
+    "Sıkışma yok",
+    "Sıkışma oluşuyor",
+    "Sıkışma devam ediyor",
+    "Genişlemeye yaklaşan sıkışma",
+    "Yukarı kırılma adayı",
+    "Aşağı kırılma adayı",
+    "Yön belirsiz",
+    "Genişleme başladı"
+   ],
+   "yukari": 0.6
+  },
+  "surum_etiket": "v2_20261112",
+  "tanim": {
+   "G1": {
+    "durum": "G1",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G1_e0.5": {
+    "durum": "G1_e1",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G1_e0.7": {
+    "durum": "G1_e2",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G2": {
+    "durum": "G2",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G3": {
+    "durum": "G3",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G4": {
+    "durum": "G4",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G5": {
+    "devam": "G12",
+    "durum": "G5",
+    "min_kosu": 1,
+    "rol": "ANA"
+   },
+   "G5_g0.4": {
+    "devam": "G12_b1",
+    "durum": "G5_b1",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G5_g0.6": {
+    "devam": "G12_b2",
+    "durum": "G5_b2",
+    "min_kosu": 1,
+    "rol": "ALT"
+   },
+   "G5f": {
+    "devam": "G12",
+    "durum": "G5f",
+    "min_kosu": 1,
+    "rol": "AILE"
+   },
+   "G5k": {
+    "devam": "G12",
+    "durum": "G5k",
+    "min_kosu": 1,
+    "rol": "AILE"
+   },
+   "T1": {
+    "durum": "V1:T1",
+    "min_kosu": 10,
+    "rol": "ALT"
+   },
+   "T2": {
+    "durum": "V1:T2",
+    "min_kosu": 10,
+    "rol": "ALT"
+   },
+   "T3": {
+    "durum": "V1:T3",
+    "min_kosu": 10,
+    "rol": "ALT"
+   },
+   "T4": {
+    "durum": "V1:T4",
+    "min_kosu": 10,
+    "rol": "ALT"
+   },
+   "T5": {
+    "durum": "V1:T5",
+    "min_kosu": 10,
+    "rol": "ALT"
+   }
+  },
+  "tanim_k62": {
+   "G2K": {
+    "durum": "G2",
+    "min_kosu": 1,
+    "rol": "K62"
+   }
+  },
+  "temel": {
+   "G_T0": [
+    "ay"
+   ],
+   "G_T1": [
+    "yas_kova",
+    "ay"
+   ],
+   "Y_B0": 0.5,
+   "Y_B1": [
+    "pazar_yon"
+   ],
+   "kucuk_hucre": 20
+  },
+  "ufuk": [
+   5,
+   10,
+   20
+  ],
+  "wf": {
+   "kasa": [
+    "2024-01-01",
+    "2026-08-31"
+   ],
+   "kasa_yillar": [
+    2024,
+    2025,
+    2026
+   ],
+   "kesif_yillar": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+   ],
+   "kural": "her test yılı Y için eğitim = etiketi Y başından ÖNCE tamamlanmış satırlar (t + h + 9. bar < 1 Ocak Y); genişleyen pencere, yıllık yeniden eğitim",
+   "wf_son": "2023-12-31"
+  },
+  "yas_kova": [
+   [
+    10,
+    14
+   ],
+   [
+    15,
+    19
+   ],
+   [
+    20,
+    29
+   ],
+   [
+    30,
+    44
+   ],
+   [
+    45,
+    59
+   ],
+   [
+    60,
+    89
+   ],
+   [
+    90,
+    100000
+   ]
+  ]
+ },
+ "esik_sha256": "3051e5b8ddd99c7c42e36f106bdaede734e8dac5ed6588029c5d50bc2274f5a8",
+ "etiket": "v2_20261112",
+ "git_head": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+ "kesik": "2026-08-31",
+ "kod_sha256": "e33b2fd1c611e32930e8e8af29b9a4a9e86607a1df303e0fae8d9e94d0a30741",
+ "komut": "kos kasa",
+ "model": {
+  "ablasyon": true,
+  "genisleme": {
+   "A_ORTAK": [
+    "SURE"
+   ],
+   "B_HISSE": [
+    "SURE",
+    "HISSE"
+   ],
+   "C_REJIM": [
+    "SURE",
+    "REJIM"
+   ],
+   "D_ADAPTIF": [
+    "SURE",
+    "HISSE",
+    "REJIM"
+   ],
+   "M_TAM": [
+    "SURE",
+    "HISSE",
+    "REJIM",
+    "ONCEKI",
+    "MUM",
+    "BANT",
+    "VOL",
+    "HACIM",
+    "HAT",
+    "KONUM",
+    "EMA",
+    "FIYAT",
+    "OLAY",
+    "PAZAR"
+   ]
+  },
+  "tek_grup": true,
+  "yon": {
+   "B2_KONUM": [
+    "KONUM"
+   ],
+   "M_KONUMSUZ": [
+    "SURE",
+    "HISSE",
+    "REJIM",
+    "ONCEKI",
+    "MUM",
+    "BANT",
+    "VOL",
+    "HACIM",
+    "HAT",
+    "EMA",
+    "FIYAT",
+    "OLAY",
+    "PAZAR"
+   ],
+   "M_TAM": [
+    "SURE",
+    "HISSE",
+    "REJIM",
+    "ONCEKI",
+    "MUM",
+    "BANT",
+    "VOL",
+    "HACIM",
+    "HAT",
+    "KONUM",
+    "EMA",
+    "FIYAT",
+    "OLAY",
+    "PAZAR"
+   ]
+  }
+ },
+ "numpy": "2.5.3",
+ "onkayit_commit": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+ "ozellik": {
+  "BANT": [
+   "b_kapanis_bant",
+   "b_govde_bant",
+   "b_bolge_bant_atr",
+   "b_egim_tepe",
+   "b_egim_dip"
+  ],
+  "EMA": [
+   "e_ema20",
+   "e_ema50",
+   "e_ema200",
+   "e_sma50",
+   "e_sma200",
+   "e_sma50_egim",
+   "e_ema20_50"
+  ],
+  "FIYAT": [
+   "f_ret20",
+   "f_ret60",
+   "f_likidite"
+  ],
+  "HACIM": [
+   "h_hacim_oran",
+   "h_hacim_son5",
+   "h_yukselen_hacim",
+   "h_bolge_hacim"
+  ],
+  "HAT": [
+   "sv_hat_var",
+   "sv_temas",
+   "sv_korunma",
+   "sv_kirilma",
+   "sv_fitil_ihlal",
+   "sv_son_test",
+   "sv_hacim_test",
+   "sv_yukselen_dip",
+   "sv_alcalan_tepe",
+   "sv_kapanis_ustu",
+   "svf_hat_var",
+   "svf_kirilma",
+   "svk_hat_var",
+   "svk_kirilma"
+  ],
+  "HISSE": [
+   "hs_oran",
+   "hs_yetersiz",
+   "hs_bh_pay"
+  ],
+  "KONUM": [
+   "k_bolge_konum",
+   "k_ust_mesafe_atr",
+   "k_alt_mesafe_atr",
+   "sv_mesafe"
+  ],
+  "MUM": [
+   "m_aralik_atr",
+   "m_govde_atr",
+   "m_govde_aralik",
+   "m_fitil_ust_atr",
+   "m_fitil_alt_atr",
+   "m_doji_pay",
+   "m_maks_aralik"
+  ],
+  "OLAY": [
+   "o_bilanco_gun",
+   "o_bilanco_yok",
+   "o_bilanco_son",
+   "o_bilanco_bolgede",
+   "o_makro_10",
+   "o_olay_son5",
+   "o_olay_son20",
+   "o_olay_tepki"
+  ],
+  "ONCEKI": [
+   "on_dusus120",
+   "on_yukselis120",
+   "on_p1",
+   "on_p2"
+  ],
+  "PAZAR": [
+   "p_pazar_ret60",
+   "p_pazar_ret20",
+   "p_sektor_ret20"
+  ],
+  "REJIM": [
+   "rj_pazar",
+   "rj_sektor"
+  ],
+  "SURE": [
+   "yas_log",
+   "yk_15",
+   "yk_20",
+   "yk_30",
+   "yk_45",
+   "yk_60",
+   "yk_90"
+  ],
+  "VOL": [
+   "v_natr_oran",
+   "v_rv_yuzde",
+   "v_bbw_yuzde",
+   "v_rv5_rv20",
+   "v_tr_son3"
+  ]
+ },
+ "pandas": "3.0.5",
+ "python": "3.13.18",
+ "surum": "VDYT2 v2.0 (v2_20261112): Faz 1 (ön kayıt, kod + sentetik test, yalnız sayım); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra",
+ "vdyt_kod_sha256": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+ "veri_sha256": {
+  "G.pkl": [
+   "cdde36f074df0a435274ffbb19ed4734b0291964db7e8093acd2a9e623c9fc3c",
+   1
+  ],
+  "V_BIST.pkl": [
+   "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+   1
+  ],
+  "company_tickers.json": [
+   "6f9cc4500a98fb4c048328d7df392ed48c092613ec0c3e93cd6c7a3502886074",
+   1
+  ],
+  "edgar_master": [
+   "57d5329d3603d361e7d81831878dcbe05777a7771d0f845b76a77e21fa2edc77",
+   71
+  ],
+  "k35_sic.csv": [
+   "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+   1
+  ],
+  "k58_yahoo": [
+   "7059054137b9a6a6e98d16e5dbef012f718df33197c790a417e7ab0c577a4e03",
+   2
+  ],
+  "k60_fiyat": [
+   "21435ad5b907eeb2dc4e8985e31c602900b2a010b7242c89331210e550dac374",
+   4757
+  ],
+  "k62_fiyat": [
+   "bf3c29260b2b6d10794fb9338bb74253b291ef6c877c4d53d14f8a7f876bf636",
+   972
+  ],
+  "k62_kap": [
+   "82cdbb0845835b464b8ed721d6f52afa22e9c682ec848478fc85c5fba7945ab1",
+   451
+  ],
+  "k67_takvim": [
+   "ff93cf8c278e4fd928e6ff7113a9a66e06d1a516b5175a0bb70f0b84f9a9aefa",
+   1410
+  ],
+  "kap_iceriden": [
+   "14cc588b8499891aeeb249ec20d2e9fa6ec2a787a6b2383b6a24e7cd5c7781a0",
+   3
+  ],
+  "liste_abd.csv.gz": [
+   "87539954817d5d551623eeed04fa410844646539093a4e841a7755a2cfc674cb",
+   1
+  ],
+  "sektor_BIST.csv": [
+   "0f933f73a6042c95d42275e0b9e1289221cc4f3b4b6d1df81987fcab14fd16d4",
+   1
+  ],
+  "surucu.pkl": [
+   "c74304c1f921d7f087023559480bc217004e47ddb53684148c992d5d1b2a35bd",
+   1
+  ],
+  "vdyt_makro_takvim.json": [
+   "27a1f678211bedbc083ab5abd9f59b8cbdd7dba99cd41609bee53387828b3900",
+   1
+  ]
+ },
+ "zaman": "2026-11-12 10:46:27 UTC"
+}
