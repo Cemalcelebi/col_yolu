@@ -14,6 +14,10 @@
 9-13) BofA KÂRI + YOL (bk_*): temizlik nedenleri ve A tekilleştirme; A getirisi / eş (tipik fiyat) / kriz grubu ve FIFO elle; tetik (haber anı),
    G1 / G2, K1..K6 (geleceğe bakma: tetikten sonra yayımlanan liste sayılmaz), olay / dönem, C1 / C2, yol ölçümü elle; karar kuralı ve kâr
    mühür kapısı; uçtan uca sentetik koşu (7 satır x 4 yol, BH, ikincil, kriz, rapor; sayılar csv'den yeniden üretilir, tohumla birebir)
+14-18) DİPTE BofA (dp_*): kurulum D1 / D2 / D3 elle (merdiven seri), 60 bar ayrı olay, giriş ertesi bar, kırık (BIST %25 / ABD 3 kat) ve 200 bar
+   kuralı, geleceğe bakma yok; r120 / r250 / P(+%100) / P(-%50) ve eş ortalaması elle, kırıklı pencere ve 31.08.2026 kesiği, taban; dört şart,
+   (1) İZ etiketi (ABD + AVR; BIST bilgi), (2) BIST-ADAY / örneklem yetersiz; tetik karar günü (G1 kapanışta önceki bar), 60 gün tek olay,
+   BofA'lı / BofA'sız; dip mühür kapısı; uçtan uca sentetik 3 pazar (rapor, csv'den yeniden üretim, tohumla birebir)
 """
 from __future__ import annotations
 
@@ -661,9 +665,239 @@ def t13_kar_uctan_uca() -> None:
         B.BI_YOL.update(eski); shutil.rmtree(kl, ignore_errors=True)
 
 
+# ---------------------------------------------------------------- 14-18) DİPTE BofA (dp_*)
+def dip_c(n: int = 520, kirik_bar: int = None, kat: float = 1.05, dip: float = 15.0) -> np.ndarray:
+    """260 bar 100, 60 barda 100 -> dip, sonra 15 barda bir yeni dip (x0,99) ve 14 bar dip x kat (merdiven)."""
+    c = np.r_[np.full(260, 100.0), np.linspace(100.0, dip, 60)]
+    m = []
+    for k in range(n - 320):
+        L = dip * 0.99 ** (k // 15 + 1)
+        m.append(L if k % 15 == 0 else L * kat)
+    c = np.r_[c, np.array(m)]
+    if kirik_bar is not None:
+        c[kirik_bar:] *= 1.30
+    return c
+
+
+def t14_dip_kurulum() -> None:
+    c = dip_c()
+    Z = B.dp_kurulum_seri(c, "BIST")
+    kur = np.flatnonzero(Z["kurulum"])
+    kontrol(kur[0] == 330 and not Z["kurulum"][329], f"ilk kurulum günü 330 (dip 320, 10 bar sonra): {kur[:5]}")
+    kontrol(all(((t - 320) % 15) >= 10 for t in kur), "son 10 barda yeni dip varken kurulum yok (D2)")
+    kontrol(abs(Z["dusus"][330] - (c[330] / 100.0 - 1)) < 1e-12 and Z["d1"][330], "D1 = C / 250 bar tepe - 1")
+    kontrol(abs(Z["dip"][330] - c[320]) < 1e-12, "dip = min C[t-59 .. t-10]")
+    d = pd.DataFrame({"Open": c, "High": c, "Low": c, "Close": c, "Volume": 1e6}, index=pd.bdate_range("2023-01-02", periods=len(c)))
+    X, Dur = B.dp_kurulum_tum({"D0": d}, "BIST")
+    kontrol([d.index.get_loc(t) for t in X.kurulum_gunu] == [330, 390, 450, 510], f"olaylar 60 bar arayla: {[d.index.get_loc(t) for t in X.kurulum_gunu]}")
+    kontrol(all(d.index.get_loc(g) == d.index.get_loc(k) + 1 for g, k in zip(X.giris, X.kurulum_gunu)), "giriş = kurulum gününden sonraki bar")
+    kontrol(X.dip_tarih.iloc[0] == d.index[320] and X.tepe_tarih.iloc[0] == d.index[80], f"dip / tepe tarihi: {X.iloc[0][['dip_tarih', 'tepe_tarih']].to_dict()}")
+    kontrol(abs(X.dipten.iloc[0] - 1.05) < 1e-9, "dipten kat")
+    c2 = c.copy(); c2[400:] *= 3.0
+    kontrol((B.dp_kurulum_seri(c2, "BIST")["kurulum"][:400] == Z["kurulum"][:400]).all(), "geleceğe bakma yok: 400 sonrası fiyat 400 öncesi kurulumu değiştirmez")
+    ck = dip_c(kirik_bar=150)
+    zb = np.flatnonzero(B.dp_kurulum_seri(ck, "BIST")["kurulum"]); za = np.flatnonzero(B.dp_kurulum_seri(ck, "ABD")["kurulum"])
+    kontrol(zb[0] == 360, f"BIST: +%30 kırık (bar 150) sonrası 200 bar dolmadan kurulum yok -> ilk 360: {zb[:3]}")
+    kontrol(za[0] == 330, f"ABD: +%30 kırık değil (üst +%200) -> ilk 330: {za[:3]}")
+    kontrol(not B.dp_kurulum_seri(dip_c(kat=1.6), "BIST")["kurulum"].any(), "D3: dipten 1,6 kat -> kurulum yok")
+    kontrol(not B.dp_kurulum_seri(dip_c(dip=35.0), "BIST")["kurulum"].any(), "D1: -%65 -> kurulum yok")
+    zk = np.flatnonzero(B.dp_kurulum_seri(c[150:], "BIST")["kurulum"])
+    kontrol(zk[0] == 210, f"en az 200 bar tepe geçmişi: {zk[:3]}")
+    kontrol(B.dp_kirik(np.array([10, 13, 9.7, 9.7]), "BIST").tolist() == [False, True, True, False], "BIST kırık |r| > %25")
+    kontrol(B.dp_kirik(np.array([10, 13, 3.0, 9.5]), "ABD").tolist() == [False, False, True, True], "ABD kırık r < -0,6667 ya da > +2")
+    kontrol(B.dp_hucre_adi("2022-12-30") == "2016-22" and B.dp_hucre_adi("2023-06-01") == "2023" and B.dp_hucre_adi("2026-08-31") == "2024-26"
+            and B.dp_hucre_adi("2026-09-01") is None and B.dp_hucre_adi("2015-12-31") is None, "hücre adları (2024-26 kesikte biter)")
+
+
+def dip_V(seed: int = 3, n_rast: int = 40, kriz: tuple = (("D00", 0),), bas: str = "2023-01-02", n: int = 1000) -> dict:
+    """n_rast rastgele yürüyüş + çöken hisseler (ad, kaydırma bar) -> {sembol: OHLCV}."""
+    rng = np.random.default_rng(seed); T = pd.bdate_range(bas, periods=n); V = {}
+    for i in range(n_rast):
+        c = 20 * np.exp(np.cumsum(rng.normal(0, 0.02, n))); o = c * (1 + rng.normal(0, 0.003, n))
+        V[f"S{i:02d}"] = pd.DataFrame({"Open": o, "High": np.maximum(o, c) * 1.01, "Low": np.minimum(o, c) * 0.99, "Close": c,
+                                       "Volume": rng.integers(1e5, 1e7, n).astype(float)}, index=T)
+    for ad, k in kriz:
+        c0 = dip_c(n=n - k) * (1 + rng.normal(0, 0.0005, n - k)); c = np.r_[np.full(k, 100.0), c0][:n]
+        c[k + 320:] *= 1 + np.r_[0, np.cumsum(rng.normal(0.002, 0.0002, n - k - 321))][:n - k - 320] * 0   # merdiven korunur
+        o = c * 1.001
+        V[ad] = pd.DataFrame({"Open": o, "High": np.maximum(o, c) * 1.02, "Low": np.minimum(o, c) * 0.98, "Close": c,
+                              "Volume": rng.integers(1e5, 1e7, n).astype(float)}, index=T)
+    return V
+
+
+def t15_dip_olcu() -> None:
+    import FON_IZI as FI
+    V = dip_V()
+    V["S01"].loc[V["S01"].index[400]:, ["Open", "High", "Low", "Close"]] *= 4.0     # ABD kırığı (+%300) bar 400
+    P = FI.fi_olcut_panel(V); U = B.dp_ufuk_panel(V, P, "ABD")
+    X, _ = B.dp_kurulum_tum(V, "ABD")
+    X0 = X[X.sembol == "D00"].reset_index(drop=True)
+    kontrol(len(X0) >= 3, f"D00 olayları: {len(X0)}")
+    Y = B.dp_olc(P, U, X0)
+    ti = {t: i for i, t in enumerate(P["tarih"])}; d = ti[pd.Timestamp(Y.giris[0])]; j = P["kol"]["D00"]
+    v = V["D00"]; o = v.Open.iloc[d]
+    kontrol(abs(Y.r120[0] - (v.Close.iloc[d + 119] / o - 1)) < 1e-12 and abs(Y.r250[0] - (v.Close.iloc[d + 249] / o - 1)) < 1e-12, "r120 / r250 elle")
+    kontrol(Y.up[0] == float(v.High.iloc[d:d + 250].max() >= 2 * o) and Y.dn[0] == float(v.Low.iloc[d:d + 250].min() <= 0.5 * o), "P(+%100) / P(-%50) elle")
+    kontrol(abs(Y.r60[0] - (v.Close.iloc[d + 59] / o - 1)) < 1e-12, "r60 = FI_OLCUT (fi_olcut_olay)")
+    m = (P["H"][d] == P["H"][d, j]) & P["ok"][d]; m[j] = False
+    e = [V[P["sembol"][k]].Close.iloc[d + 119] / V[P["sembol"][k]].Open.iloc[d] - 1 for k in np.flatnonzero(m)
+         if not (P["sembol"][k] == "S01" and d < 400 <= d + 119)]
+    kontrol(abs(Y.e_r120[0] - np.mean(e)) < 1e-12, "eş r120 ortalaması elle (aynı gün aynı hücre; kırıklı pencere hariç)")
+    k1 = P["kol"]["S01"]
+    kontrol(np.isnan(U["R120"][399 - 50, k1]) and np.isfinite(U["R120"][399 - 130, k1]) and np.isnan(U["UP"][399 - 50, k1]),
+            "kırık pencerede (d, d+h-1] ölçülmez; öncesi ölçülür")
+    ks = P["tarih"].searchsorted(pd.Timestamp("2026-08-31"), side="right")
+    kontrol(np.isnan(U["R250"][ks - 249:, :]).all() and np.isfinite(U["R250"][ks - 250, :]).any() and np.isnan(U["UP"][ks - 249:, :]).all(),
+            "31.08.2026 kesiği: pencere aşan ölçülmez")
+    tb = B.dp_taban(P, U, "2023-01-01", "2026-08-31")
+    a = P["ok"] & np.isfinite(U["UP"])
+    kontrol(abs(tb["up"] - U["UP"][a].mean()) < 1e-12 and tb["n_up"] == int(a.sum()), "taban = bütün ok hisse-günleri")
+    H = B.dp_hucre(Y, "2023-01-01", "2026-08-31", tb)
+    W = Y.dropna(subset=["fark"])
+    kontrol(H["n"] == len(W) and abs(H["ort_fark"] - W.fark.mean()) < 1e-12, "hücre FI eşli fark")
+    if H["up"].get("n"):
+        q = Y.dropna(subset=["up", "e_up"])
+        kontrol(abs(H["up"]["kat_es"] - q.up.mean() / q.e_up.mean()) < 1e-12 if q.e_up.mean() > 0 else H["up"]["kat_es"] is None, "kat (eş)")
+    o = {"n": 40, "ort_fark": 0.05, "alt95": 0.01, "sira": 0.6, "portfoy": 1.0, "portfoy_esli_p90": 0.5}
+    kontrol(B.dp_tutar(o)[0] and not B.dp_tutar({**o, "sira": 0.5})[0] and not B.dp_tutar({**o, "n": 29})[0], "dört şart")
+    C = {pz: {h: dict(o) for h in ("2023", "2024-26")} for pz in ("ABD", "AVR", "BIST")}
+    kontrol(B.dp_karar1(C) == "İZ + BIST", f"dört karar hücresi + BIST -> İZ + BIST: {B.dp_karar1(C)}")
+    C["BIST"]["2023"]["alt95"] = -0.01
+    kontrol(B.dp_karar1(C) == "İZ", "BIST tutmasa da İZ (BIST bilgi)")
+    C["AVR"]["2024-26"]["sira"] = 0.4
+    kontrol(B.dp_karar1(C) == "İZ DEĞİL", "Avrupa hücresi tutmazsa İZ DEĞİL")
+    kontrol(B.dp_karar2({"n": 12}, {})["karar"] == "ÖRNEKLEM YETERSİZ (n = 12)", "n < 30 -> örneklem yetersiz")
+    kontrol(B.dp_karar2(o, {"2023": {"ort_fark": 0.1}, "2024-26": {"ort_fark": 0.02}})["karar"] == "BIST-ADAY (BofA dipte)", "(2) BIST-ADAY")
+    kontrol(B.dp_karar2(o, {"2023": {"ort_fark": -0.1}, "2024-26": {"ort_fark": 0.02}})["karar"] == "yol yok", "(2) alt hücre < 0 -> yol yok")
+    fb = B.dp_fark_boot(np.array([0.1, 0.2, 0.3, 0.1]), np.array(["a", "a", "b", "c"]), np.array([0.0, 0.1, -0.1]), np.array(["a", "b", "b"]))
+    kontrol(abs(fb["fark"] - (0.175 - 0.0)) < 1e-12 and fb["alt95"] <= fb["fark"] <= fb["ust95"], "iki grup fark bootstrap")
+
+
+def dip_satir(hid, yayin, tur, yon, sira, hisse, net=5e6, birim="TL"):
+    return kar_satir(hid, yayin, tur, yon, sira, hisse, net, birim=birim)
+
+
+def t16_dip_bofa() -> None:
+    V = dip_V()
+    A = B.bi_panel(V); takvim = B.bi_takvim(V, 10)
+    Ev, Dur = B.dp_kurulum_tum(V, "BIST")
+    T_ = V["D00"].index; D = lambda k: T_[k]  # noqa: E731
+    kur = Dur["D00"].kurulum
+    kontrol(bool(kur.iloc[330]) and not bool(kur.iloc[329]) and bool(kur.iloc[345]) and bool(kur.iloc[346]), "sentetik kurulum günleri")
+    sat = [dip_satir("a1", D(330) + pd.Timedelta(hours=13), "gun_ici", "alim", 2, "D00"),
+           dip_satir("a2", D(345) + pd.Timedelta(hours=19), "gun_sonu", "alim", 5, "D00"),
+           dip_satir("a3", D(346) + pd.Timedelta(hours=19), "gun_sonu", "alim", 6, "D00"),
+           dip_satir("a4", D(347) + pd.Timedelta(hours=13), "gun_ici", "alim", 1, "D00"),
+           dip_satir("a5", D(345) + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S05"),
+           dip_satir("s1", D(352) + pd.Timedelta(hours=19), "gun_sonu", "satim", 4, "D00", -5e6)]
+    Ld = pd.DataFrame(sat)
+    T, S5, X = B.dp_bofa_tetik(Ld, A, takvim, Dur)
+    kontrol((T.neden == "").all(), f"satırlar geçerli: {T[T.neden != ''][['haber_id', 'neden']]}")
+    x = X.set_index("haber_id")
+    kontrol("a3" not in x.index, "sıra 6 tetik değil")
+    kontrol(x.loc["a1", "g1_tip"] == "kapanis" and x.loc["a1", "karar_gunu"] == D(329) and x.loc["a1", "kurulum"] == False,  # noqa: E712
+            f"gün içi 13:00 -> kapanış girişi; karar günü önceki bar (329), kurulum yok (geleceğe bakma yok): {x.loc['a1', ['karar_gunu', 'kurulum']].to_dict()}")
+    kontrol(x.loc["a2", "g1"] == D(346) and x.loc["a2", "karar_gunu"] == D(345) and x.loc["a2", "kurulum"] == True, "gün sonu -> ertesi açılış; karar 345")
+    kontrol(x.loc["a4", "kurulum"] == True and x.loc["a5", "kurulum"] == False, "a4 kurulum, a5 (rastgele hisse) değil")  # noqa: E712
+    kontrol(x.loc["a1", "kurulum_genis"] == False and x.loc["a4", "kurulum_genis"] == True, "geniş okuma")  # noqa: E712
+    Xk = X[X.kurulum.map(B._dp_dogru)]
+    O = B.dp_bofa_olay(Xk, takvim)
+    kontrol(len(O) == 1 and O.giris.iloc[0] == D(346) and O.liste_sira.iloc[0] == 5 and O.sembol.iloc[0] == "D00", f"60 gün tek olay (G2): {O[['hisse', 'giris']]}")
+    V2 = {k: v.copy() for k, v in V.items()}; V2["D00"].loc[D(331):, ["Open", "High", "Low", "Close"]] *= 0.5
+    _, Dur2 = B.dp_kurulum_tum(V2, "BIST")
+    kontrol(bool(Dur2["D00"].kurulum.iloc[330]) == bool(kur.iloc[330]) and not bool(Dur2["D00"].kurulum.iloc[329]), "geleceğe bakma yok (karar günü sonrası fiyat)")
+    Ev2 = Ev.assign(bofa=B.dp_bofasiz(Ev, X, takvim).values)
+    e0 = Ev2[Ev2.sembol == "D00"].reset_index(drop=True)
+    kontrol(e0.bofa.iloc[0] == "bofali" and (e0.bofa.iloc[2:] == "bofasiz").all(), f"BofA'lı / BofA'sız ±20 gün: {e0[['kurulum_gunu', 'bofa']].to_dict('records')[:4]}")
+    Eo = Ev.assign(giris=pd.Timestamp("2022-01-03"))
+    kontrol(B.dp_bofasiz(Eo.head(1), X, takvim).iloc[0] is None, "arşiv dönemi dışı -> None")
+    Iz = B.dp_izle(V, {}, Dur, X, A, takvim)
+    kontrol(len(Iz) == int(sum(bool(d.kurulum.iloc[-1]) for d in Dur.values())), "izleme = son barda kurulum sağlayanlar")
+
+
+def t17_dip_kapi() -> None:
+    kl = tempfile.mkdtemp()
+    try:
+        subprocess.run(["git", "init", "-q", kl], check=True)
+        subprocess.run(["git", "-C", kl, "config", "user.email", "t@t"], check=True); subprocess.run(["git", "-C", kl, "config", "user.name", "t"], check=True)
+        durmali(lambda: B.dp_kapi(kl), "dip ön kaydı yokken RET", "ön kaydı yok")
+        y = B._dp_yol("onkayit", kl)
+        sh = {"ESIK_SHA256": B.dp_esik_sha(), "KOD_SHA256": B.bi_kod_sha(), "LISTE_SHA256": "a" * 64, "HABER_SHA256": "b" * 64, "BIST_SHA256": "c" * 64,
+              "ABD_SHA256": "d" * 64, "AVR_SHA256": "e" * 64}
+        B._bi_yaz(y, B.dp_onkayit_metin("t", {}, sh, {}))
+        durmali(lambda: B.dp_kapi(kl), "git'te değilken RET", "işlenmemiş")
+        subprocess.run(["git", "-C", kl, "add", "."], check=True); subprocess.run(["git", "-C", kl, "commit", "-qm", "x"], check=True)
+        K = B.dp_kapi(kl, veri_sha={"LISTE_SHA256": "a" * 64, "ABD_SHA256": "d" * 64, "AVR_SHA256": None})
+        kontrol(K["kod_ayni"] and len(K["onkayit_git"]["commit"]) == 40, "commit sonrası dip kapısı geçmeli")
+        durmali(lambda: B.dp_kapi(kl, veri_sha={"ABD_SHA256": "f" * 64}), "ABD verisi değişince RET", "ABD_SHA256")
+        durmali(lambda: B.dp_kapi(kl, veri_sha={"BIST_SHA256": "f" * 64}), "BIST verisi değişince RET", "BIST_SHA256")
+        E2 = copy.deepcopy(B.DP_ESIK); E2["kurulum"]["dusus"] = -0.75
+        durmali(lambda: B.dp_kapi(kl, E=E2), "DP eşiği değişince RET", "eşik")
+        kontrol(len({B.dp_esik_sha(), B.bk_esik_sha(), B.bi_esik_sha()}) == 3, "üç mühür ayrı")
+        with open(y, encoding="utf-8") as f:
+            t = f.read()
+        B._bi_yaz(y, re.sub(r"KOD_SHA256: [0-9a-f]{64}", "KOD_SHA256: " + "0" * 64, t))
+        subprocess.run(["git", "-C", kl, "commit", "-qam", "y"], check=True)
+        durmali(lambda: B.dp_kapi(kl), "kod farkı sapmasız RET", "sapma")
+        kontrol(B.dp_kapi(kl, sapma="g").get("sapma") == "g", "sapma gerekçesi kayda geçmeli")
+        with open(y, "a", encoding="utf-8") as f:
+            f.write("ek\n")
+        durmali(lambda: B.dp_kapi(kl, sapma="x"), "commit sonrası değişen dip ön kaydı RET", "farklı")
+        durmali(lambda: B.dp_onkayit(kl), "var olan dip ön kaydının üzerine yazılmaz", "zaten var")
+    finally:
+        shutil.rmtree(kl, ignore_errors=True)
+
+
+def t18_dip_uctan_uca() -> None:
+    """Sentetik 3 pazar + BofA arşivi -> dp_kos (git kapısız) -> hücreler, olasılık, BofA'lı / BofA'sız, izleme, rapor; sayılar csv'den, tohumla birebir."""
+    kr = tuple((f"D{i:02d}", k) for i, k in enumerate((0, 60, 150, 260, 380, 470)))
+    Vd = {"BIST": dip_V(5, kriz=kr, bas="2021-01-04", n=1500), "ABD": dip_V(6, kriz=kr, bas="2021-01-04", n=1500),
+          "AVR": dip_V(7, kriz=kr, bas="2021-01-04", n=1500)}
+    Vb = Vd["BIST"]; T_ = Vb["S00"].index; rng = np.random.default_rng(4); sat = []
+    gunler = [t for t in T_ if pd.Timestamp("2023-04-17") <= t <= pd.Timestamp("2026-11-10")][::3]
+    for k, g in enumerate(gunler):
+        hid = f"h{k}"; y = g + pd.Timedelta(hours=19)
+        for yon in ("alim", "satim"):
+            sec = list(rng.choice([f"S{i:02d}" for i in range(40)], 3, replace=False)) + [f"D{rng.integers(0, 6):02d}", f"D{rng.integers(0, 6):02d}"]
+            for s_, h in enumerate(dict.fromkeys(sec), 1):
+                sat.append(dip_satir(hid, y, "gun_sonu", yon, s_, h, 5e6 if yon == "alim" else -5e6))
+    Ld = pd.DataFrame(sat)
+    kl = tempfile.mkdtemp(); eski = dict(B.BI_YOL)
+    try:
+        B.BI_YOL["is"] = kl
+        H = B.dp_hazirla(Vd, Ld)
+        sy = B.dp_sayim(H)
+        kontrol(sy["kurulum"]["ABD"]["olay"] > 0 and sy["bofa"]["tetik_kurulumlu"] > 0, f"sayım: {sy}")
+        sh = {"ESIK_SHA256": B.dp_esik_sha(), "KOD_SHA256": B.bi_kod_sha(), **{k: None for k in B.DP_SHA_ANAHTAR[2:]}}
+        B._bi_yaz(B._dp_yol("onkayit", kl), B.dp_onkayit_metin("t", sy, sh, {}))
+        S = B.dp_kos(kl, git=False, Vd=Vd, F={}, car={}, Ld=Ld)
+        r = open(B._dp_yol("rapor", kl), encoding="utf-8").read()
+        kontrol(all(x in r for x in ("Özet (düz dil)", "(1) KURULUM TEK BAŞINA", "OLASILIK TABLOSU", "(2) KURULUM + BofA", "(3) KRİZ SONRASI", "Sınırlar")),
+                "dip rapor bölümleri")
+        Kc = pd.read_csv(os.path.join(kl, B.DP_DOSYA["kurulum"]))
+        for pz, h, a, b in (("ABD", "2023", "2023-01-01", "2023-12-31"), ("AVR", "2024-26", "2024-01-01", "2026-08-31")):
+            z = Kc[(Kc.pazar == pz) & (pd.to_datetime(Kc.giris) >= a) & (pd.to_datetime(Kc.giris) <= b)]
+            o = S["bir"]["hucre"][pz][h]; w = z.dropna(subset=["fark"])
+            kontrol(len(w) == o.get("n", 0) and (not len(w) or abs(w.fark.mean() - o["ort_fark"]) < 1e-12), f"{pz} {h} eşli fark csv'den")
+            q = z.dropna(subset=["up", "e_up"])
+            kontrol(not len(q) or abs(q.up.mean() - o["up"]["p"]) < 1e-12, f"{pz} {h} P(+%100) csv'den")
+        kontrol(S["bir"]["karar"] in ("İZ", "İZ + BIST", "İZ DEĞİL") or "ADAY" in S["bir"]["karar"], "(1) etiketi")
+        kontrol(str(S["iki"]["karar"]["karar"]).startswith(("ÖRNEKLEM YETERSİZ", "BIST-ADAY", "yol yok")), "(2) etiketi")
+        b2 = os.path.join(kl, B.DP_DOSYA["bofa"])
+        if os.path.exists(b2):
+            z2 = pd.read_csv(b2).dropna(subset=["fark"])
+            z2 = z2[(pd.to_datetime(z2.giris) >= "2023-04-17") & (pd.to_datetime(z2.giris) <= "2026-08-31")]
+            kontrol(len(z2) == S["iki"]["havuz"].get("n", 0), "(2) havuz n csv'den")
+        S2 = B.dp_kos(kl, git=False, Vd=Vd, F={}, car={}, Ld=Ld)
+        kontrol(S2["bir"]["hucre"]["ABD"]["2023"].get("alt95") == S["bir"]["hucre"]["ABD"]["2023"].get("alt95"), "tohumla birebir tekrar")
+    finally:
+        B.BI_YOL.update(eski); shutil.rmtree(kl, ignore_errors=True)
+
+
 if __name__ == "__main__":
     for fn in (t1_ayristirici, t2_giris, t3_donem, t4_olcum, t5_gunluk, t6_kapi, t7_izle_kapi, t8_uctan_uca, t9_kar_temizlik, t10_kar_a_fifo,
-               t11_kar_tetik_olay, t12_kar_karar_kapi, t13_kar_uctan_uca):
+               t11_kar_tetik_olay, t12_kar_karar_kapi, t13_kar_uctan_uca, t14_dip_kurulum, t15_dip_olcu, t16_dip_bofa, t17_dip_kapi,
+               t18_dip_uctan_uca):
         try:
             fn()
         except Exception as ex:  # bir test bölümü çökerse ötekiler sürer
@@ -671,4 +905,4 @@ if __name__ == "__main__":
             HATA.append(f"{fn.__name__} çöktü: {type(ex).__name__}: {ex}\n{traceback.format_exc()[-1500:]}")
     if HATA:
         print("BAŞARISIZ:\n- " + "\n- ".join(HATA)); sys.exit(1)
-    print("test_bofa_izi: tüm testler geçti (13 bölüm)")
+    print("test_bofa_izi: tüm testler geçti (18 bölüm)")
