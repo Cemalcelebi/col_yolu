@@ -22,6 +22,9 @@ Komut:  python TAVAN_SERISI.py indir            Yahoo fiyatları -> /tmp/tavan/y
         python TAVAN_SERISI.py onkayit          İŞ 2 ön kaydı (eşik mührü, kod / veri sha256; varsa üzerine yazmaz)
         python TAVAN_SERISI.py kos [--sapma G]  ön kayıt git'te ve mühür tutuyorsa ölçüm -> tavan_sonuc.json + TAVAN_RAPOR.md
         python TAVAN_SERISI.py rapor            raporu sonuç JSON'undan yeniden yazar
+        python TAVAN_SERISI.py hacim onkayit    HACİM (Cemal'in itirazı: devasa hacim barı H1, dipte hacim H2, taban fiyat H3) ön kaydı
+        python TAVAN_SERISI.py hacim kos [--sapma G]  mühür kapısı -> hacim_sonuc.json + HACIM_RAPOR.md + /tmp/tavan/grafik/*.png
+        python TAVAN_SERISI.py hacim rapor      hacim raporunu sonuç JSON'undan yeniden yazar
 Colab:  exec(open('TAVAN_SERISI.py').read())  (K60_veri.py, K57.py, FON_IZI.py aynı klasörde)
 SINIR:  IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md'ye dokunmaz. Ağ yalnız `indir` / `canli --yenile`. Tiingo yok,
         e-posta / anahtar yok.
@@ -1047,6 +1050,725 @@ def ts_rapor(kl: Optional[str] = None) -> str:
     return _ts_yaz(_ts_yol("rapor", kl), ts_rapor_md(S))
 
 
+# ---------------------------------------------------------------- 8) HACİM ALT KOMUTU (Cemal'in itirazı, 13.11.2026; ön kayıt HACIM_ON_KAYIT.md)
+# H1 devasa hacim barı (çökmüş + hacim >= k x 20 gün medyanı + tavan), H2 dipte tavansız hacim (birikim), H3 taban fiyat ('1 liradan nereye düşer').
+# Okuma (ts_fiyatlar / ts_yahoo_oku), tavan (ts_tavan: marj rejimi + fiyat adımı), derinlik, takvim paneli (ts_panel), kova (ts_kova / ts_esik_gevsek),
+# bootstrap (ts_boot), dönem (ts_donem), git / mühür okuma (ts_git_durum / ts_onkayit_oku) YENİDEN KULLANILIR; yukarıdaki kod değişmedi.
+TH_ETIKET = "tavan_hacim_20261113"
+TH_SURUM = ("TAVAN_SERISI hacim v1.0 (tavan_hacim_20261113): çökmüş BIST hissesinde devasa hacim barı (H1), dipte tavansız hacim (H2), "
+            "taban fiyat (H3); ön kayıtlı")
+TH_DOSYA: Dict[str, str] = {"onkayit": "HACIM_ON_KAYIT.md", "sonuc": "hacim_sonuc.json", "rapor": "HACIM_RAPOR.md", "olay": "hacim_olaylar.csv.gz",
+                            "bilgi": "hacim_olaylar_bilgi.csv.gz", "h3": "hacim_h3.csv.gz", "grafik": "grafik"}
+TH_IZLE: List[str] = ["TEHOL", "PEKGY", "IEYHO", "DSTKF", "OZATD", "TRHOL"]
+
+# ---------------------------------------------------------------- ÖN KAYITLI EŞİKLER (mühür: th_esik_sha; sonuç görüldükten sonra değişmez)
+TH_ESIK: Dict[str, Any] = {
+    "surum_etiket": TH_ETIKET,
+    "veri": "TAVAN_SERISI ile aynı Yahoo günlük önbellek (/tmp/tavan/yahoo, ts_fiyatlar); tavan = ts_tavan (TS_ESIK['tavan']: BIST marjı 12.03.2020'ye "
+            "kadar ±%20, 13.03.2020'den ±%10; 1-2 TL'de fiyat adımı; |günlük| > %25 veri kırığı); derinlik = ts_tavan (kendi son 250 barının en yüksek "
+            "kapanışı, kırıktan sonra yeniden dolar); takvim = ts_panel (en az 10 hisse); hacim = Yahoo adet (bölünme düzeltmeli)",
+    "donem": ["2016-01-01", "2026-08-31"], "kriz": "2026-08-31", "bilgi_bas": "2026-09-01",
+    "cokmus": {"esik": -0.80, "duyarlilik": [-0.70, -0.60],
+               "tanim": "derinlik = olay gününden ÖNCEKİ kendi barının kapanışı / o barın son 250 barlık en yüksek kapanışı - 1 (ts_tavan 'derinlik' bir "
+                        "bar geri); ÇÖKMÜŞ <=> derinlik <= eşik; tanımsızsa olay değil, kontrol değil"},
+    "hacim": {"pencere": 20, "kat": 10.0, "duyarlilik": [5.0, 20.0, 50.0], "kontrol_ust": 3.0,
+              "tanim": "hacim oranı = t günü hacmi / t'den önceki 20 kendi barının hacim medyanı; önceki 20 bar yoksa ya da medyan <= 0 ise tanımsız"},
+    "hip": {"H1": {"getiri": "tavan", "tanim": "ÇÖKMÜŞ + hacim oranı >= kat + t günü tavan (ts_tavan; 13.03.2020'den >= +%9,5, öncesi >= +%19)"},
+            "H1b": {"getiri": [0.05, 0.25], "tanim": "ÇÖKMÜŞ + hacim oranı >= kat + t günü kapanış getirisi >= +%5 (ve <= %25: kırık değil)"},
+            "H2": {"getiri": [-0.05, 0.05], "tanim": "ÇÖKMÜŞ + hacim oranı >= kat + t günü kapanış getirisi -%5 .. +%5 (dipte birikim, tavansız)"}},
+    "tekil": {"gun": 20, "tanim": "aynı hisse ve aynı hücre (hipotez x derinlik eşiği x hacim katı) için bir olaydan sonraki 20 kendi barı içinde yeni olay "
+                                  "sayılmaz (kronolojik, açgözlü); iki giriş türü aynı olayları kullanır"},
+    "giris": {"a": "ANA: t'den sonraki ilk kendi barı e'nin açılışı O_e; O yok / hacim 0 -> 'giriş yok' (sayılır); e tam kilitli tavansa 'dolum belirsiz' "
+                   "işareti (sonuç yine O_e'den)",
+              "b": "t kapanışı C_t; t kilitli tavan (ts_tavan 'kilitli': O = H = C) ise 'alınamaz' (sayılır, ölçülmez)"},
+    "olcu": {"ufuk": [5, 20, 60], "dok": [["up61_20", 20, 0.61], ["up100_60", 60, 1.0], ["dn50_60", 60, -0.5]],
+             "yaris": {"ufuk": 60, "yukari": 0.5, "asagi": -0.25},
+             "tanim": "giriş a satırı e: pencere e .. e+h-1, r_h = C(e+h-1) / O_e - 1; giriş b satırı t: pencere t+1 .. t+h, r_h = C(t+h) / C_t - 1 (iki "
+                      "girişte aynı son gün; takvim satırı, durdurmada son kapanış ileri taşınır). Dokunma: pencerede max H >= giriş x (1 + eşik) ya da "
+                      "min L <= giriş x (1 + eşik). +%61 = Cemal'in '5 tavan' (1,1^5 = 1,61). Yarış: 60 bar içinde ilk H >= 1,5 giriş mi ilk L <= 0,75 "
+                      "giriş mi; aynı gün ikisi 'aynı gün', hiçbiri 'yok'. Pencere kesiği (31.08.2026) aşan ölçü yok; pencerede veri kırığı "
+                      "(|günlük| > %25) varsa o ölçü yok (sayısı yazılır). En kötü %10: r60'ın 10. yüzdeliği ve en kötü %10 olayın ortalaması"},
+    "kontrol": {"kova_ana": [-0.80, -0.85, -0.90],
+                "tanim": "her ÇÖKMÜŞ olay için: aynı t gününde aynı derinlik kovasında (ana -0,80: (-0,85, -0,80], (-0,90, -0,85], <= -0,90; -0,70 / "
+                         "-0,60'ta eşikten -1'e üç eşit dilim, ts_esik_gevsek), t günü hacim oranı tanımlı ve < 3 olan, giriş satırında işlem gören "
+                         "(a: O var ve hacim > 0; b: C_t var) bütün öteki hisseler; aynı giriş türüyle aynı ölçüler; kontrol değeri = kontrol hisselerinin "
+                         "ortalaması (oranlarda ortalama oran)",
+                "fark": "olay başına fark = olay r60 - kontrol ortalama r60; kontrolü olmayan olay farkta dışarıda (sayılır)"},
+    "bootstrap": {"B": 2000, "tohum": 20261113, "kume": "hisse (olaylar hisseleriyle birlikte çekilir)", "guven": [2.5, 97.5]},
+    "donem_kirilim": {"2016-19": ["2016-01-01", "2019-12-31"], "2020-22": ["2020-01-01", "2022-12-31"], "2023-26.08": ["2023-01-01", "2026-08-31"],
+                      "tanim": "dönem = olay günü t (H3'te ay başı günü)"},
+    "karar": {"n_min": 30, "p61_kat": 1.5, "p50_kat": 1.2, "donem_min": 2, "donem_n_min": 10, "ana": "H1|-0.80|10|a", "ikincil": "H2|-0.80|10|a",
+              "metin": "H1 ANA (ÇÖKMÜŞ -%80, hacim >= 10x, tavan, giriş a) 'İZ ADAYI (BIST)' <=> n (60 gün farkı ölçülen olay) >= 30 VE medyan 60 gün "
+                       "fark > 0 VE hisse kümeli bootstrap %95 alt uç > 0 VE P(+%61, 20g) olay >= 1,5 x kontrol (kontrol 0 ise olay > 0 yeter) VE "
+                       "P(-%50, 60g) olay <= 1,2 x kontrol (kontrol 0 ise olay da 0 olmalı) VE üç dönemin (2016-19 / 2020-22 / 2023-26.08; n >= 10 "
+                       "olanlar) en az ikisinde dönem medyan farkı > 0. Değilse 'KANIT YOK' ve tutmayan şartlar yazılır (n < 30: 'örneklem yetersiz', "
+                       "yine KANIT YOK). H2 ANA (hacim >= 10x, -%5..+%5, giriş a) aynı cümleyle İKİNCİL. Öteki hücreler (derinlik -%70 / -%60, kat "
+                       "5 / 20 / 50, H1b, giriş b) BİLGİ: kural sonucu yazılır, kararı değiştirmez; kaç hücrenin geçtiği çoklu deneme olarak yazılır. "
+                       "H3 için yalnız sayı, karar yok."},
+    "h3": {"ay": "her hisse-ay: ayın ilk kendi işlem günü t (2016-01 .. kesik); ÇÖKMÜŞ <=> C_t / kendi son 250 barının en yüksek kapanışı - 1 <= -0,80 "
+                 "(ts_tavan 'derinlik', aynı gün)",
+           "kova": [[0.0, 1.0], [1.0, 2.0], [2.0, 5.0], [5.0, None]],
+           "fiyat": "ekran fiyatı = Yahoo kapanış x sonraki bölünmeler çarpanı (o gün tahtada görünen fiyat)",
+           "giris": "C_t; pencere t+1 .. t+h", "ufuk": [60, 120, 250],
+           "olcu": "P(-%50'ye dokunma) 60 / 120 / 250 gün; en düşük nokta = min L[t+1 .. t+250] / C_t - 1 (medyan, %10, %25); BİLGİ: P(+%100, 250g), "
+                   "r250 medyan; karşılaştırma: aynı şart 2 TL ve üstü çökmüşler; ayrıca ÇÖKMEMİŞ 2 TL altı (BİLGİ); dönem kırılımı; hisse kümeli %95 "
+                   "aralık (oranlar). Karar yok."},
+    "grafik": {"tohum": 20261113, "adet": 3, "iyi": "H1 ANA, giriş a, r60 > 0", "kotu": "H1 ANA, giriş a, r60 <= 0", "once": 120, "sonra": 60,
+               "tanim": "iyi ve kötü gruplarından (sembol, tarih) sırasıyla dizilip tohumlu rastgele 3'er olay; PNG /tmp/tavan/grafik (repoya girmez)"},
+    "bilgi": "Eylül 2026 - son bar olayları (H1 / H2 ana tanım, giriş a; kontrol yok) ayrı tablo, karara girmez; sonuç penceresi tamamlanmamış ölçü 'açık'; "
+             "son bar gün içiyse işaretlenir; bugüne kadar: son kapanış / giriş, girişten sonra en yüksek ve en düşük. İzlenen hisseler (TEHOL, PEKGY, "
+             "IEYHO, DSTKF, OZATD, TRHOL): son 10 barın getirisi, hacim oranı, derinliği, H1 / H2 koşul işaretleri",
+    "yanlilik": "evren bugün işlem gören hisseler (batan / kotasyondan çıkan yok: hayatta kalma yanlılığı sonucu YUKARI çeker, özellikle H3'te "
+                "-%50 olasılığını AŞAĞI); işlem maliyeti yok; kilitli tavanda giriş a'nın dolumu belirsiz; olaylar takvimde örtüşebilir (aynı gün "
+                "birden çok hisse), aralık hisse kümeli",
+}
+
+
+def th_esik_sha(E: Optional[Dict[str, Any]] = None) -> str:
+    """Hacim ön kayıt mührü: TH_ESIK + yeniden kullanılan TS tanımları (tavan, kova, fiyat adımı)."""
+    s = json.dumps({"TH": E or TH_ESIK, "ADIM": TS_ADIM, "TAVAN": TS_ESIK["tavan"], "KOVA": TS_ESIK["kontrol"]["kova"], "COKMUS_TS": TS_ESIK["olay"]["cokmus"]},
+                   sort_keys=True, default=str, ensure_ascii=False)
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def _th_yol(ad: str, kl: Optional[str] = None) -> str:
+    return os.path.join(kl or TS_YOL["cikti"], TH_DOSYA.get(ad, ad))
+
+
+def th_kova_listesi(e: float) -> List[float]:
+    """Derinlik eşiğine göre kontrol kovaları: -0,80'de TS sabit kovaları, öteki eşiklerde ts_esik_gevsek."""
+    return list(TS_ESIK["kontrol"]["kova"]) if abs(e - TS_ESIK["kontrol"]["kova"][0]) < 1e-12 else ts_esik_gevsek(e)["kontrol"]["kova"]
+
+
+def th_hacim_oran(v: np.ndarray, n: int = 20) -> np.ndarray:
+    """Kendi barlarında hacim oranı: v_t / medyan(v_{t-n} .. v_{t-1}); n bar yoksa ya da medyan <= 0 ise NaN."""
+    v = np.asarray(v, float)
+    med = pd.Series(v).shift(1).rolling(int(n), min_periods=int(n)).median().to_numpy(float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        out = v / med
+    out[~(med > 0)] = np.nan
+    return out
+
+
+def th_hisse_ek(d: pd.DataFrame, X: pd.DataFrame, E: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+    """Kendi barlarında: hacim oranı (HO), önceki barın derinliği (DO), ekran kapanışı, ts_tavan sütunları."""
+    E = E or TH_ESIK
+    return pd.DataFrame({"HO": th_hacim_oran(d.v.to_numpy(float), E["hacim"]["pencere"]), "DO": X.derinlik.shift(1).to_numpy(float),
+                         "der": X.derinlik.to_numpy(float), "r": X.r.to_numpy(float), "tavan": X.tavan.to_numpy(bool),
+                         "kilitli": X.kilitli.to_numpy(bool), "tam_kilitli": X.tam_kilitli.to_numpy(bool), "kirik": X.kirik.to_numpy(bool),
+                         "ekran": (d.c * d["carpan"]).to_numpy(float), "carpan": d["carpan"].to_numpy(float)}, index=d.index)
+
+
+def th_panel(S: Dict[str, pd.DataFrame], kes: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """ts_panel + hacim ekleri: HO / DO / KR panelleri ve hisse başına ek tablo (P['Y'])."""
+    E = E or TH_ESIK; P = ts_panel(S, kes=kes, E=TS_ESIK); tak = P["takvim"]; Y: Dict[str, pd.DataFrame] = {}
+    for s in P["sym"]:
+        Y[s] = th_hisse_ek(P["S"][s], P["X"][s], E)
+    P["Y"] = Y
+    P["HO"] = pd.DataFrame({s: Y[s].HO for s in P["sym"]}).reindex(tak)
+    P["DO"] = pd.DataFrame({s: Y[s].DO for s in P["sym"]}).reindex(tak)
+    P["KR"] = pd.DataFrame({s: Y[s].kirik.astype(float) for s in P["sym"]}).reindex(tak).fillna(0.0)
+    return P
+
+
+def _th_ileri(A: np.ndarray, h: int, f: str, kay: int) -> np.ndarray:
+    """out[i] = f(A[i+kay .. i+kay+h-1]) (NaN atlanır; f = max / min / sum); pencere takvim sonunu aşarsa NaN."""
+    n = A.shape[0]; R = pd.DataFrame(A[::-1]).rolling(int(h), min_periods=1)
+    R = (R.max() if f == "max" else (R.min() if f == "min" else R.sum())).to_numpy(float)[::-1]
+    out = np.full(A.shape, np.nan); m = n - kay - h + 1
+    if m > 0:
+        out[:m] = R[kay:kay + m]
+    return out
+
+
+def th_olcu_panelleri(P: Dict[str, Any], mod: str, ufuk: List[int], dok: List[List[Any]], yaris: Optional[Dict[str, Any]] = None,
+                      dip: Optional[List[int]] = None) -> Dict[str, np.ndarray]:
+    """Her (satır, hisse) girişi için sonuç panelleri. mod 'a': giriş O[i] (hacim > 0), pencere i .. i+h-1; mod 'b': giriş C[i], pencere i+1 .. i+h.
+    r{h}, dokunma (ad 'up..' max H >= B(1+e), 'dn..' min L <= B(1+e)), dip{h} = min L / B - 1, yarış (y_up / y_dn / y_ayni / y_yok), kir{h} işareti.
+    Pencere eksikse ya da içinde veri kırığı varsa NaN."""
+    kay = 0 if mod == "a" else 1
+    O = P["O"].to_numpy(float); C = P["C"].to_numpy(float); V = P["V"].to_numpy(float); Cf = P["Cf"].to_numpy(float)
+    H = P["H"].to_numpy(float); L = P["L"].to_numpy(float); KR = P["KR"].to_numpy(float); n = O.shape[0]
+    with np.errstate(invalid="ignore"):
+        B = np.where(np.isfinite(O) & (V > 0), O, np.nan) if mod == "a" else np.where(np.isfinite(C), C, np.nan)
+    out: Dict[str, np.ndarray] = {"B": B}
+    hs = sorted(set(list(ufuk) + [int(x[1]) for x in dok] + list(dip or []) + ([int(yaris["ufuk"])] if yaris else [])))
+    kir = {h: _th_ileri(KR, h, "sum", kay) > 0 for h in hs}
+    for h in hs:
+        out[f"kir{h}"] = kir[h].astype(float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        for h in ufuk:
+            R = np.full(O.shape, np.nan); m = n - kay - h + 1
+            if m > 0:
+                R[:m] = Cf[kay + h - 1:kay + h - 1 + m] / B[:m] - 1.0
+            R[kir[h]] = np.nan; out[f"r{h}"] = R
+        for ad, h, e in dok:
+            up = str(ad).startswith("up"); A = _th_ileri(H if up else L, int(h), "max" if up else "min", kay)
+            Z = ((A >= B * (1 + e)) if up else (A <= B * (1 + e))).astype(float)
+            Z[~np.isfinite(A) | ~np.isfinite(B) | kir[int(h)]] = np.nan; out[ad] = Z
+        for h in dip or []:
+            A = _th_ileri(L, int(h), "min", kay); Z = A / B - 1.0; Z[kir[int(h)]] = np.nan; out[f"dip{h}"] = Z
+        if yaris:
+            h = int(yaris["ufuk"]); m = n - kay - h + 1
+            iu = np.full(O.shape, np.inf); idn = np.full(O.shape, np.inf)
+            for k in range(h - 1, -1, -1):        # geriye doğru: en küçük k kalır
+                if m <= 0:
+                    break
+                Hk = H[kay + k:kay + k + m]; Lk = L[kay + k:kay + k + m]
+                iu[:m][Hk >= B[:m] * (1 + yaris["yukari"])] = k
+                idn[:m][Lk <= B[:m] * (1 + yaris["asagi"])] = k
+            gec = np.zeros(O.shape, bool)
+            if m > 0:
+                gec[:m] = True
+            gec &= np.isfinite(B) & ~kir[h]
+            for ad, z in (("y_up", iu < idn), ("y_dn", idn < iu), ("y_ayni", (iu == idn) & np.isfinite(iu)), ("y_yok", ~np.isfinite(iu) & ~np.isfinite(idn))):
+                Z = z.astype(float); Z[~gec] = np.nan; out[ad] = Z
+    return out
+
+
+def th_olcu_listesi(E: Optional[Dict[str, Any]] = None) -> List[str]:
+    E = E or TH_ESIK
+    return [f"r{h}" for h in E["olcu"]["ufuk"]] + [x[0] for x in E["olcu"]["dok"]] + ["y_up", "y_dn", "y_ayni", "y_yok"]
+
+
+def th_olaylar(P: Dict[str, Any], hip: str, esik: float, kat: float, mod: str, bas: str, bit: Optional[str], M: Optional[Dict[str, np.ndarray]] = None,
+               kontrol: bool = True, E: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
+    """Bir hücrenin olayları (hipotez, derinlik eşiği, hacim katı, giriş türü). M = th_olcu_panelleri(P, mod, ...) verilirse ölçüler ve kontrol."""
+    E = E or TH_ESIK; tak = P["takvim"]; ix = {t: i for i, t in enumerate(tak)}; sym = P["sym"]; sj = {s: j for j, s in enumerate(sym)}
+    b0 = pd.Timestamp(bas); b1 = pd.Timestamp(bit) if bit else tak[-1]; g = E["hip"][hip]["getiri"]; tek = int(E["tekil"]["gun"])
+    kv = th_kova_listesi(esik); olcu = th_olcu_listesi(E); kust = float(E["hacim"]["kontrol_ust"])
+    DOp = P["DO"].to_numpy(float); HOp = P["HO"].to_numpy(float); O = P["O"].to_numpy(float); V = P["V"].to_numpy(float); C = P["C"].to_numpy(float)
+    sat = []
+    for s in sym:
+        Y = P["Y"][s]; j = sj[s]; di = Y.index
+        with np.errstate(invalid="ignore"):
+            m = (Y.DO.to_numpy() <= esik) & (Y.HO.to_numpy() >= kat) & (di >= b0) & (di <= b1)
+            r = Y.r.to_numpy()
+            m &= Y.tavan.to_numpy() if g == "tavan" else ((r >= g[0]) & (r <= g[1]) & ~Y.kirik.to_numpy())
+        son = -10 ** 9
+        for i in np.flatnonzero(m):
+            if i - son <= tek:
+                continue
+            son = i; t = di[i]
+            rec = {"sembol": s, "t": t, "hip": hip, "esik": esik, "kat": kat, "mod": mod, "derinlik": float(Y.DO.iloc[i]),
+                   "kova": ts_kova(float(Y.DO.iloc[i]), {"kontrol": {"kova": kv}}), "hacim_oran": float(Y.HO.iloc[i]), "r_t": float(r[i]),
+                   "tavan_t": bool(Y.tavan.iloc[i]), "kilitli_t": bool(Y.kilitli.iloc[i]), "ekran_t": float(Y.ekran.iloc[i]), "donem": ts_donem(t, {"donem": E["donem_kirilim"]})}
+            rt = ix.get(t)
+            if rt is None:
+                rec["durum"] = "takvim dışı"; sat.append(rec); continue
+            if mod == "a":
+                if i + 1 >= len(di):
+                    rec["durum"] = "giris yok (veri sonu)"; sat.append(rec); continue
+                e = di[i + 1]; row = ix.get(e); rec["e"] = e
+                if row is None or not np.isfinite(O[row, j]) or not V[row, j] > 0:
+                    rec["durum"] = "giris yok (islem yok)"; sat.append(rec); continue
+                rec["giris"] = float(O[row, j]); rec["dolum_belirsiz"] = bool(Y.tam_kilitli.iloc[i + 1])
+                rec["giris_ekran"] = rec["giris"] * float(Y.carpan.iloc[i + 1])
+            else:
+                if bool(Y.kilitli.iloc[i]):
+                    rec["durum"] = "alinamaz (kilitli)"; sat.append(rec); continue
+                row = rt; rec["e"] = t; rec["giris"] = float(C[row, j]); rec["dolum_belirsiz"] = False; rec["giris_ekran"] = float(Y.ekran.iloc[i])
+            rec["durum"] = "tamam"; rec["row"] = int(row)
+            if M is not None:
+                for mm in olcu:
+                    rec[mm] = float(M[mm][row, j])
+                rec["kir60"] = bool(M["kir60"][row, j] > 0) if np.isfinite(M["kir60"][row, j]) else np.nan
+                if kontrol:
+                    with np.errstate(invalid="ignore"):
+                        d = DOp[rt]; kp = np.full(len(sym), -1)
+                        kp[d <= kv[0]] = 0; kp[d <= kv[1]] = 1; kp[d <= kv[2]] = 2
+                        km = (kp == rec["kova"]) & np.isfinite(HOp[rt]) & (HOp[rt] < kust)
+                        km &= (np.isfinite(O[row]) & (V[row] > 0)) if mod == "a" else np.isfinite(C[rt])
+                    km[j] = False; rec["n_kontrol"] = int(km.sum())
+                    for mm in olcu:
+                        v = M[mm][row, km]; v = v[np.isfinite(v)]
+                        rec[f"k_{mm}"] = float(v.mean()) if len(v) else np.nan
+            sat.append(rec)
+    return pd.DataFrame(sat)
+
+
+def _th_oran(x: Any) -> Tuple[float, int]:
+    x = pd.to_numeric(pd.Series(x), errors="coerce").dropna()
+    return (float(x.mean()) if len(x) else np.nan), int(len(x))
+
+
+def _th_kat(o: float, k: float) -> float:
+    if not (np.isfinite(o) and np.isfinite(k)):
+        return np.nan
+    if k > 0:
+        return o / k
+    return np.inf if o > 0 else np.nan
+
+
+def th_ozet(Ev: pd.DataFrame, kontrol: bool = True, E: Optional[Dict[str, Any]] = None, boot: bool = True) -> Dict[str, Any]:
+    """Bir hücrenin bütün ölçüleri (olasılık tablosu satırı)."""
+    E = E or TH_ESIK
+    if not len(Ev):
+        return {"n_olay": 0, "n": 0, "n_fark": 0}
+    A = Ev[Ev.durum == "tamam"]; W = A[A.r60.notna()] if "r60" in A else A.iloc[:0]
+    o: Dict[str, Any] = {"n_olay": int(len(Ev)), "n_giris": int(len(A)), "n_alinamaz": int((Ev.durum == "alinamaz (kilitli)").sum()),
+                         "n_giris_yok": int(Ev.durum.str.startswith("giris yok").sum()), "n": int(len(W)), "n_hisse": int(W.sembol.nunique()),
+                         "n_kirikli": int(pd.to_numeric(A.get("kir60"), errors="coerce").fillna(0).astype(bool).sum()) if "kir60" in A else 0,
+                         "dolum_belirsiz_pay": float(W.dolum_belirsiz.mean()) if len(W) else np.nan}
+    for h in E["olcu"]["ufuk"]:
+        o[f"r{h}"] = _q(A[f"r{h}"]) if f"r{h}" in A else _q(pd.Series(dtype=float))
+    x = pd.to_numeric(W.r60, errors="coerce").dropna().sort_values() if len(W) else pd.Series(dtype=float)
+    o["r60_p10"] = float(x.quantile(0.10)) if len(x) else np.nan
+    o["r60_kotu10_ort"] = float(x.iloc[:max(1, int(np.ceil(0.10 * len(x))))].mean()) if len(x) else np.nan
+    for m in [d[0] for d in E["olcu"]["dok"]] + ["y_up", "y_dn", "y_ayni", "y_yok"]:
+        o[m], o[f"n_{m}"] = _th_oran(A[m]) if m in A else (np.nan, 0)
+    if kontrol and "k_r60" in W:
+        F = W[W.k_r60.notna()]; fark = (F.r60 - F.k_r60).to_numpy(float); gg = F.sembol.to_numpy()
+        o["n_fark"] = int(len(F)); o["kontrolsuz"] = int(len(W) - len(F)); o["n_kontrol_medyan"] = float(F.n_kontrol.median()) if len(F) else np.nan
+        o["fark_med"] = float(np.median(fark)) if len(fark) else np.nan; o["fark_ort"] = float(np.mean(fark)) if len(fark) else np.nan
+        o["fark_med_ci"] = ts_boot(fark, gg, np.median, E) if boot else [np.nan, np.nan]
+        o["fark_ort_ci"] = ts_boot(fark, gg, np.mean, E) if boot else [np.nan, np.nan]
+        o["k_r60_med"] = float(F.k_r60.median()) if len(F) else np.nan; o["k_r60_ort"] = float(F.k_r60.mean()) if len(F) else np.nan
+        for m in [d[0] for d in E["olcu"]["dok"]] + ["y_up", "y_dn"]:
+            Fm = A[A[f"k_{m}"].notna() & A[m].notna()]
+            o[f"o_{m}"] = float(Fm[m].mean()) if len(Fm) else np.nan; o[f"k_{m}"] = float(Fm[f"k_{m}"].mean()) if len(Fm) else np.nan
+            o[f"n_e_{m}"] = int(len(Fm)); o[f"kat_{m}"] = _th_kat(o[f"o_{m}"], o[f"k_{m}"])
+        o["donem"] = {}
+        for dn in [x for x in E["donem_kirilim"] if x != "tanim"]:
+            Fd = F[F.donem == dn]; fd = (Fd.r60 - Fd.k_r60).to_numpy(float); Ad = A[A.donem == dn]
+            o["donem"][dn] = {"n": int(len(Fd)), "fark_med": float(np.median(fd)) if len(fd) else np.nan,
+                              "r60_med": float(Fd.r60.median()) if len(Fd) else np.nan,
+                              "up61_20": _th_oran(Ad.up61_20)[0], "k_up61_20": _th_oran(Ad.k_up61_20)[0],
+                              "dn50_60": _th_oran(Ad.dn50_60)[0], "k_dn50_60": _th_oran(Ad.k_dn50_60)[0]}
+    else:
+        o["n_fark"] = 0
+    return o
+
+
+def th_karar(o: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Önceden yazılı karar cümlesi (TH_ESIK['karar']); tutmayan şartlar listelenir."""
+    Kr = (E or TH_ESIK)["karar"]; n = int(o.get("n_fark", 0) or 0)
+    if n < Kr["n_min"]:
+        return {"karar": "KANIT YOK (örneklem yetersiz)", "sartlar": {"n>=30": False}, "tutmayan": [f"n = {n} < {Kr['n_min']}"]}
+    yon = [d["fark_med"] > 0 for d in o["donem"].values() if d["n"] >= Kr["donem_n_min"] and np.isfinite(d["fark_med"])]
+    o61, k61 = o.get("o_up61_20", np.nan), o.get("k_up61_20", np.nan); o50, k50 = o.get("o_dn50_60", np.nan), o.get("k_dn50_60", np.nan)
+    p61 = bool(np.isfinite(o61) and np.isfinite(k61) and ((o61 >= Kr["p61_kat"] * k61) if k61 > 0 else o61 > 0))
+    p50 = bool(np.isfinite(o50) and np.isfinite(k50) and ((o50 <= Kr["p50_kat"] * k50) if k50 > 0 else o50 == 0))
+    ci = o.get("fark_med_ci") or [np.nan, np.nan]
+    s = {"n>=30": True, "medyan_fark>0": bool(o["fark_med"] > 0), "alt_uc>0": bool(ci[0] is not None and np.isfinite(ci[0]) and ci[0] > 0),
+         "P61>=1,5xkontrol": p61, "P50<=1,2xkontrol": p50, "donem>=2": bool(sum(yon) >= Kr["donem_min"])}
+    return {"karar": "İZ ADAYI (BIST)" if all(s.values()) else "KANIT YOK", "sartlar": s, "tutmayan": [k for k, v in s.items() if not v],
+            "donem_pozitif": int(sum(yon)), "donem_olculen": len(yon)}
+
+
+def th_hucreler(E: Optional[Dict[str, Any]] = None) -> List[Tuple[str, float, float, str]]:
+    """Ölçülecek bütün hücreler (ana önce): H1 / H1b / H2 x derinlik x kat x giriş."""
+    E = E or TH_ESIK; es = [E["cokmus"]["esik"]] + list(E["cokmus"]["duyarlilik"]); ks = [E["hacim"]["kat"]] + list(E["hacim"]["duyarlilik"])
+    return [(h, e, k, m) for h in ("H1", "H2", "H1b") for e in es for k in ks for m in ("a", "b")]
+
+
+def th_anahtar(h: str, e: float, k: float, m: str) -> str:
+    return f"{h}|{e:.2f}|{k:g}|{m}"
+
+
+def th_h3(P: Dict[str, Any], M3: Dict[str, np.ndarray], E: Optional[Dict[str, Any]] = None, bas: Optional[str] = None,
+          bit: Optional[str] = None) -> pd.DataFrame:
+    """H3: hisse-ay satırları (ayın ilk kendi işlem günü; derinlik aynı gün; ekran fiyatı) + giriş C_t'den ölçüler."""
+    E = E or TH_ESIK; ix = {t: i for i, t in enumerate(P["takvim"])}; b0 = pd.Timestamp(bas or E["donem"][0]); b1 = pd.Timestamp(bit or E["donem"][1])
+    ad = [k for k in M3 if k.startswith(("r", "dn", "up", "dip"))]; sat = []
+    for j, s in enumerate(P["sym"]):
+        Y = P["Y"][s]; Y = Y[(Y.index >= b0) & (Y.index <= b1)]
+        if not len(Y):
+            continue
+        ilk = Y[~Y.index.to_period("M").duplicated()]
+        for t, y in ilk.iterrows():
+            if not np.isfinite(y.der):
+                continue
+            row = ix.get(t)
+            if row is None:
+                continue
+            rec = {"sembol": s, "t": t, "ekran": float(y.ekran), "derinlik": float(y.der), "cokmus": bool(y.der <= E["cokmus"]["esik"]),
+                   "donem": ts_donem(t, {"donem": E["donem_kirilim"]})}
+            for k in ad:
+                rec[k] = float(M3[k][row, j])
+            sat.append(rec)
+    D = pd.DataFrame(sat)
+    if len(D):
+        D["kova"] = [th_h3_kova(p, E) for p in D.ekran]
+    return D
+
+
+def th_h3_kova(p: float, E: Optional[Dict[str, Any]] = None) -> str:
+    for a, b in (E or TH_ESIK)["h3"]["kova"]:
+        if p >= a and (b is None or p < b):
+            return f"{_f(a, 0)}+ TL" if b is None else f"{_f(a, 0)}-{_f(b, 0)} TL"
+    return "—"
+
+
+def th_h3_ozet(D: pd.DataFrame, E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """H3 özet: fiyat kovalarına göre (çökmüş), < 1 TL / < 2 TL / >= 2 TL toplamları, çökmemiş < 2 TL (BİLGİ), dönem kırılımı."""
+    E = E or TH_ESIK; out: Dict[str, Any] = {"kova": {}, "toplam": {}, "donem": {}}
+
+    def oz(X: pd.DataFrame) -> Dict[str, Any]:
+        r: Dict[str, Any] = {"n": int(len(X)), "n_hisse": int(X.sembol.nunique()) if len(X) else 0}
+        for h in E["h3"]["ufuk"]:
+            x = X[f"dn50_{h}"].dropna() if len(X) else pd.Series(dtype=float); r[f"dn50_{h}"] = float(x.mean()) if len(x) else np.nan
+            r[f"n_dn50_{h}"] = int(len(x))
+        x = X.dropna(subset=["dn50_120"]) if len(X) else X
+        r["dn50_120_ci"] = ts_boot(x.dn50_120.to_numpy(float), x.sembol.to_numpy(), np.mean, E) if len(x) > 1 else [np.nan, np.nan]
+        dp = X.dip250.dropna() if len(X) else pd.Series(dtype=float)
+        r["dip250"] = {"n": int(len(dp)), "med": float(dp.median()) if len(dp) else np.nan, "p10": float(dp.quantile(0.1)) if len(dp) else np.nan,
+                       "p25": float(dp.quantile(0.25)) if len(dp) else np.nan, "p75": float(dp.quantile(0.75)) if len(dp) else np.nan}
+        u = X.up100_250.dropna() if len(X) else pd.Series(dtype=float); r["up100_250"] = float(u.mean()) if len(u) else np.nan
+        q = X.r250.dropna() if len(X) else pd.Series(dtype=float); r["r250_med"] = float(q.median()) if len(q) else np.nan
+        return r
+    if not len(D):
+        return out
+    Cc = D[D.cokmus]
+    for kv in [th_h3_kova(a, E) for a, _ in E["h3"]["kova"]]:
+        out["kova"][kv] = oz(Cc[Cc.kova == kv])
+    out["toplam"] = {"çökmüş < 1 TL": oz(Cc[Cc.ekran < 1]), "çökmüş < 2 TL": oz(Cc[Cc.ekran < 2]), "çökmüş >= 2 TL": oz(Cc[Cc.ekran >= 2]),
+                     "çökmemiş < 2 TL (BİLGİ)": oz(D[~D.cokmus & (D.ekran < 2)]), "bütün hisse-aylar (BİLGİ)": oz(D)}
+    for dn in [x for x in E["donem_kirilim"] if x != "tanim"]:
+        a = Cc[(Cc.donem == dn) & (Cc.ekran < 2)].dn50_120.dropna(); b = Cc[(Cc.donem == dn) & (Cc.ekran >= 2)].dn50_120.dropna()
+        out["donem"][dn] = {"lt2_n": int(len(a)), "lt2_dn50_120": float(a.mean()) if len(a) else np.nan,
+                            "ge2_n": int(len(b)), "ge2_dn50_120": float(b.mean()) if len(b) else np.nan}
+    return out
+
+
+def th_izlenen(P: Dict[str, Any], E: Optional[Dict[str, Any]] = None, son_n: int = 10, gun_ici: bool = False) -> Dict[str, Any]:
+    """İzlenen hisselerin son barları: tarih, ekran, getiri, tavan / kilitli, hacim oranı, önceki derinlik, H1 / H2 koşulları (tekil kuralı yok)."""
+    E = E or TH_ESIK; out: Dict[str, Any] = {}; e0 = E["cokmus"]["esik"]; k0 = E["hacim"]["kat"]; g2 = E["hip"]["H2"]["getiri"]
+    son = max(P["Y"][s].index[-1] for s in P["sym"])
+    for s in TH_IZLE:
+        Y = P["Y"].get(s)
+        if Y is None:
+            out[s] = "veri yok"; continue
+        sat = []
+        for t, y in Y.iloc[-son_n:].iterrows():
+            c = bool(np.isfinite(y.DO) and y.DO <= e0 and np.isfinite(y.HO) and y.HO >= k0)
+            sat.append({"t": t, "ekran": y.ekran, "r": y.r, "tavan": bool(y.tavan), "kilitli": bool(y.kilitli), "hacim_oran": y.HO, "derinlik": y.DO,
+                        "H1": bool(c and y.tavan), "H2": bool(c and g2[0] <= y.r <= g2[1]), "gun_ici": bool(gun_ici and t == son)})
+        out[s] = sat
+    return out
+
+
+def th_bilgi(S: Dict[str, pd.DataFrame], E: Optional[Dict[str, Any]] = None) -> Tuple[Dict[str, Any], pd.DataFrame]:
+    """Fon krizi sonrası (Eylül 2026 - son bar) H1 / H2 ana tanım olayları (giriş a, kontrol yok) + izlenen hisseler. Karara girmez."""
+    E = E or TH_ESIK; son = max(d.index[-1] for d in S.values()); gi = ts_gun_ici(son)
+    P = th_panel(S, kes=None, E=E); o = E["olcu"]
+    M = th_olcu_panelleri(P, "a", o["ufuk"], o["dok"], o["yaris"])
+    H = P["H"].to_numpy(float); L = P["L"].to_numpy(float); Cf = P["Cf"].to_numpy(float); sj = {s: j for j, s in enumerate(P["sym"])}
+    parca = []
+    for hip in ("H1", "H2"):
+        Ev = th_olaylar(P, hip, E["cokmus"]["esik"], E["hacim"]["kat"], "a", E["bilgi_bas"], None, M, False, E)
+        if not len(Ev):
+            continue
+        for c in ("son_getiri", "en_yuksek", "en_dusuk", "gun"):
+            Ev[c] = np.nan
+        for i, r in Ev[Ev.durum == "tamam"].iterrows():
+            j = sj[r.sembol]; rw = int(r.row)
+            Ev.loc[i, "son_getiri"] = Cf[-1, j] / r.giris - 1; Ev.loc[i, "en_yuksek"] = np.nanmax(H[rw:, j]) / r.giris - 1
+            Ev.loc[i, "en_dusuk"] = np.nanmin(L[rw:, j]) / r.giris - 1; Ev.loc[i, "gun"] = len(P["takvim"]) - rw
+        Ev["t_gun_ici"] = [bool(gi and t == son) for t in Ev.t]
+        parca.append(Ev)
+    B = pd.concat(parca, ignore_index=True) if parca else pd.DataFrame()
+    return {"son_bar": str(son.date()), "gun_ici": bool(gi), "izlenen": th_izlenen(P, E, gun_ici=gi)}, B
+
+
+def th_grafik(Ev: pd.DataFrame, S: Dict[str, pd.DataFrame], E: Optional[Dict[str, Any]] = None, klasor: Optional[str] = None) -> List[str]:
+    """H1 ana (giriş a) olaylarından iyi (r60 > 0) ve kötü (r60 <= 0) gruplardan tohumlu rastgele 3'er grafik (PNG, repoya girmez)."""
+    E = E or TH_ESIK; G = E["grafik"]; klasor = klasor or os.path.join(TS_YOL["is"], TH_DOSYA["grafik"])
+    try:
+        import matplotlib
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+    except ImportError as ex:
+        tslog.warning("matplotlib yok (%s); grafik çizilmedi", ex); return []
+    os.makedirs(klasor, exist_ok=True)
+    W = Ev[(Ev.durum == "tamam") & Ev.r60.notna()].sort_values(["sembol", "t"]).reset_index(drop=True)
+    rng = np.random.default_rng(int(G["tohum"])); yollar = []
+    for grup, Wg in (("iyi", W[W.r60 > 0]), ("kotu", W[W.r60 <= 0])):
+        if not len(Wg):
+            continue
+        sec = sorted(rng.choice(len(Wg), size=min(int(G["adet"]), len(Wg)), replace=False))
+        for n_, k in enumerate(sec, 1):
+            r = Wg.iloc[k]; d = S[r.sembol]; i = d.index.get_loc(r.t); a = max(0, i - int(G["once"])); b = min(len(d), i + int(G["sonra"]) + 2)
+            x = d.iloc[a:b]; car = x["carpan"]; xs = np.arange(len(x)); it = i - a
+            try:
+                fig, (ax, av) = plt.subplots(2, 1, figsize=(10, 6.2), sharex=True, gridspec_kw={"height_ratios": [3, 1]})
+                ax.vlines(xs, x.l * car, x.h * car, color="#9aa3ad", lw=1.0)
+                ax.plot(xs, x.c * car, color="#1f4e79", lw=1.6, label="kapanış (ekran fiyatı)")
+                ax.axvline(it, color="#c0392b", lw=1.2, ls="--", label="olay günü (hacim barı)")
+                gx = r.giris_ekran
+                for yv, ls, lab in ((gx, "-", "giriş (ertesi gün açılış)"), (gx * 1.61, ":", "+%61 (5 tavan)"), (gx * 0.5, ":", "-%50")):
+                    ax.axhline(yv, color="#555555", lw=0.9, ls=ls, label=lab)
+                if it + 60 < len(x):
+                    ax.axvline(it + 60, color="#888888", lw=0.8, ls="-.", label="60. gün")
+                ax.set_ylabel("TL"); ax.grid(alpha=0.25); ax.legend(loc="upper right", fontsize=8, frameon=False)
+                ax.set_title(f"{r.sembol}  {pd.Timestamp(r.t).date()}  hacim {r.hacim_oran:.0f}x  derinlik {100 * r.derinlik:.0f}%  "
+                             f"60 gün {100 * r.r60:+.0f}%  ({'iyi giden' if grup == 'iyi' else 'kötü giden'})", fontsize=11)
+                av.bar(xs, x.v, color=np.where(xs == it, "#c0392b", "#7f8c8d"), width=0.8)
+                av.set_ylabel("hacim (adet)"); av.grid(alpha=0.25)
+                tick = list(range(0, len(x), 20)); av.set_xticks(tick); av.set_xticklabels([str(x.index[t].date()) for t in tick], rotation=30, fontsize=8)
+                fig.tight_layout()
+                y = os.path.join(klasor, f"H1_{grup}_{n_}_{r.sembol}_{pd.Timestamp(r.t).date()}.png"); fig.savefig(y, dpi=110); plt.close(fig)
+                yollar.append(y)
+            except (ValueError, KeyError, IndexError, TypeError) as ex:
+                tslog.warning("grafik çizilemedi %s (%s)", r.sembol, ex)
+    return yollar
+
+
+def th_sayim(P: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """Ön kayıt için yalnız tanım sayımı (sonuç yok): hücre başına olay sayısı (giriş durumu dahil), H3 hisse-ay sayıları."""
+    E = E or TH_ESIK; out: Dict[str, Any] = {"hisse": len(P["sym"]), "takvim": [str(P["takvim"][0].date()), str(P["takvim"][-1].date())], "hucre": {}}
+    for h, e, k, m in th_hucreler(E):
+        Ev = th_olaylar(P, h, e, k, m, E["donem"][0], E["donem"][1], None, False, E)
+        out["hucre"][th_anahtar(h, e, k, m)] = {"olay": int(len(Ev)), "giris": int((Ev.durum == "tamam").sum()) if len(Ev) else 0,
+                                                "hisse": int(Ev.sembol.nunique()) if len(Ev) else 0}
+    return out
+
+
+def th_onkayit_metin(zaman: str, sayim: Dict[str, Any], K: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
+    E = E or TH_ESIK; a = sayim["hucre"]; an = E["karar"]["ana"]; ik = E["karar"]["ikincil"]
+    return "\n".join([
+        "# TAVAN SERİSİ / HACİM ÖN KAYDI (ölçümden önce)", "",
+        f"{TH_SURUM}. Yazılma {zaman}. Bu dosya git'e işlenmeden `python TAVAN_SERISI.py hacim kos` çalışmaz (mühür kapısı).", "",
+        "## Soru (Cemal, 13 Kasım 2026)", "",
+        "'Hepsi kumar değil. TEHOL'de devasa hacimli bir alım barı var; 1 liradaki hisseyi böyle hacim zıplatır; 1 liradan daha nereye düşer; 5 tavan = %61.' "
+        "H1: çökmüş hissede devasa hacimli tavan barından sonra katılmak, aynı gün aynı derinlikte hacimsiz çökmüşlerden iyi mi? H2: dipte tavansız "
+        "devasa hacim (birikim) aynı soruda. H3: 1 / 2 TL altındaki çökmüş hisse sonraki 60 / 120 / 250 günde yine de -%50'ye düşüyor mu?", "",
+        "## Tanımlar ve eşikler (TH_ESIK, değişmez)", "",
+        "```json", json.dumps(E, ensure_ascii=False, indent=1, sort_keys=True, default=str), "```", "",
+        "Yeniden kullanılan TAVAN_SERISI tanımları (mühre dahil): tavan " + json.dumps(TS_ESIK["tavan"]["rejim"]) + ", kontrol kovaları "
+        + json.dumps(TS_ESIK["kontrol"]["kova"]) + ", fiyat adımları " + json.dumps(TS_ADIM) + ".", "",
+        "## Karar cümlesi (önceden yazılı)", "", E["karar"]["metin"], "",
+        "Ölçülecekler (her hücre): n (hisse), P(20 günde +%61'e dokunma), P(60 günde +%100), P(60 günde -%50), önce +%50 mi önce -%25 mi (60 gün), 5 / 20 / "
+        "60 gün getiri medyan ve ortalama, en kötü %10, kontrol ve fark (hisse kümeli bootstrap %95), dönem kırılımı 2016-19 / 2020-22 / 2023-26.08. "
+        "Fon krizi sonrası olaylar ayrı BİLGİ tablosu. Grafik: H1 ana tanımdan iyi / kötü gruplarından tohumlu 3'er örnek.", "",
+        "## Veri ve tanım sayımı (sonuç içermez)", "",
+        f"- Fiyat: {K['okunan']} hisse okundu, {len(K['eksik'])} eksik; son tarih {K['son_tarih']}; manifest sha256 {K['manifest_sha256']}.",
+        f"- Test paneli (kesik {E['kriz']}): {sayim['hisse']} hisse, takvim {sayim['takvim'][0]} - {sayim['takvim'][1]}.",
+        f"- ANA hücre {an}: {a[an]['olay']} olay ({a[an]['hisse']} hisse), girişi olan {a[an]['giris']}. İKİNCİL {ik}: {a[ik]['olay']} olay "
+        f"({a[ik]['hisse']} hisse), girişi olan {a[ik]['giris']}.",
+        "- Bütün hücreler (olay / girişi olan / hisse): " + "; ".join(f"{k}: {v['olay']} / {v['giris']} / {v['hisse']}" for k, v in a.items()) + ".", "",
+        "## Ön kayıttan önce görülenler (sonuç değil)", "",
+        "- TAVAN_RAPOR.md (aynı gün, ön kayıtlı): çökmüş hissede 1. tavandan sonra katılmak kontrolden iyi değil (k=1 KUMAR), k >= 2 örneklem az. Hacim "
+        "koşulu o ölçümde yoktu.",
+        "- İzlenen altı hissenin (TEHOL, PEKGY, IEYHO, DSTKF, OZATD, TRHOL) son 10 barının getiri / hacim oranı / derinliği (tanım denetimi; ör. TEHOL "
+        "05.11.2026 hacim oranı ~4.300x, 09.11.2026 tavan + ~580x). Kilitli taban dizisinden çıkışta 20 gün medyan hacmi çok küçük olduğundan oranlar "
+        "yüzlerce / binlerce kat çıkabiliyor: tanım bu hâliyle ölçülür, eşik değişmez.",
+        "- Yahoo hacminin bölünme düzeltmeli olduğu (bölünme günlerinde 20 gün medyan hacim oranı ~1; ör. AEFES 10:1 2025-06-26: 0,91) denetlendi.",
+        "- Olay sayıları (yukarıda). Getiri, dokunma oranı, kontrol farkı görülmedi.", "",
+        "## Bilinen yanlılıklar", "", E["yanlilik"], "",
+        f"ESIK_SHA256: {th_esik_sha(E)}",
+        f"KOD_SHA256: {ts_kod_sha()}",
+        f"VERI_MANIFEST_SHA256: {K['manifest_sha256']}", ""])
+
+
+def th_onkayit(kl: Optional[str] = None) -> str:
+    y = _th_yol("onkayit", kl)
+    if os.path.exists(y):
+        raise TsHata(f"hacim ön kaydı zaten var, üzerine yazılmaz: {y}")
+    S, K = ts_fiyatlar(); P = th_panel(S, kes=TH_ESIK["kriz"])
+    return _ts_yaz(y, th_onkayit_metin(_ts_simdi(), th_sayim(P), K))
+
+
+def th_kapi(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = None, E: Optional[Dict[str, Any]] = None,
+            manifest: Optional[str] = None) -> Dict[str, Any]:
+    """Hacim ön kayıt mühür kapısı: ön kayıt var + git'e işlenmiş ve değişmemiş + eşik mührü + veri manifesti + kod sha256 (ya da sapma gerekçesi)."""
+    E = E or TH_ESIK; y = _th_yol("onkayit", kl)
+    if not os.path.exists(y):
+        raise TsHata("hacim ön kaydı yok: önce `python TAVAN_SERISI.py hacim onkayit` ve commit")
+    O = ts_onkayit_oku(y); out: Dict[str, Any] = {"onkayit": y}
+    if git:
+        out["onkayit_git"] = ts_git_durum(y)
+    if O["ESIK_SHA256"] != th_esik_sha(E):
+        raise TsHata("hacim eşik mührü tutmuyor (TH_ESIK ön kayıttan sonra değişmiş)")
+    if manifest is not None and O["VERI_MANIFEST_SHA256"] != manifest:
+        raise TsHata("veri manifesti hacim ön kaydındakiyle aynı değil (fiyat önbelleği değişmiş)")
+    ks = ts_kod_sha(); out["kod_sha256"] = ks; out["kod_ayni"] = ks == O["KOD_SHA256"]
+    if not out["kod_ayni"]:
+        if not sapma:
+            raise TsHata("TAVAN_SERISI.py hacim ön kaydından sonra değişmiş: yalnız `--sapma GEREKCE` ile koşar (gerekçe sonuca yazılır)")
+        out["sapma"] = sapma
+    out["esik_sha256"] = O["ESIK_SHA256"]
+    return out
+
+
+def th_kos(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = None, E: Optional[Dict[str, Any]] = None,
+           S: Optional[Dict[str, pd.DataFrame]] = None, K: Optional[Dict[str, Any]] = None, grafik: bool = True) -> Dict[str, Any]:
+    """Hacim ölçümü uçtan uca: kapı -> H1 / H1b / H2 hücreleri -> H3 -> kriz sonrası BİLGİ -> grafik -> JSON + rapor."""
+    E = E or TH_ESIK
+    if S is None:
+        S, K = ts_fiyatlar()
+    Kp = th_kapi(kl, git, sapma, E, manifest=(K or {}).get("manifest_sha256"))
+    t0 = _ts_simdi(); tslog.info("hacim kapısı geçti (mühür %s)", Kp["esik_sha256"][:12])
+    P = th_panel(S, kes=E["kriz"], E=E); o = E["olcu"]
+    M = {m: th_olcu_panelleri(P, m, o["ufuk"], o["dok"], o["yaris"]) for m in ("a", "b")}
+    sonuc: Dict[str, Any] = {"surum": TH_SURUM, "baslangic": t0, "kapi": Kp, "kapsam": {k: v for k, v in (K or {}).items() if k != "eksik"},
+                             "hucre": {}, "karar": {}}
+    parca = []
+    for h, e, k, m in th_hucreler(E):
+        an = th_anahtar(h, e, k, m)
+        Ev = th_olaylar(P, h, e, k, m, E["donem"][0], E["donem"][1], M[m], True, E)
+        oz = th_ozet(Ev, True, E); oz["kural"] = th_karar(oz, E); sonuc["hucre"][an] = oz
+        if len(Ev):
+            parca.append(Ev.assign(hucre=an))
+        tslog.info("%s: olay %d, n %d, fark n %d -> %s", an, oz.get("n_olay", 0), oz.get("n", 0), oz.get("n_fark", 0), oz["kural"]["karar"])
+    Kr = E["karar"]
+    sonuc["karar"] = {"H1_ana": {"hucre": Kr["ana"], **sonuc["hucre"][Kr["ana"]]["kural"]},
+                      "H2_ikincil": {"hucre": Kr["ikincil"], **sonuc["hucre"][Kr["ikincil"]]["kural"]},
+                      "gecen_hucre": sorted(a for a, v in sonuc["hucre"].items() if v["kural"]["karar"].startswith("İZ")),
+                      "olculen_hucre": int(sum(1 for v in sonuc["hucre"].values() if v.get("n_fark", 0) >= Kr["n_min"])), "hucre_sayisi": len(sonuc["hucre"])}
+    EvT = pd.concat(parca, ignore_index=True) if parca else pd.DataFrame()
+    # H3
+    M3 = th_olcu_panelleri(P, "b", E["h3"]["ufuk"], [[f"dn50_{h}", h, -0.5] for h in E["h3"]["ufuk"]] + [["up100_250", 250, 1.0]], None, [250])
+    D3 = th_h3(P, M3, E); sonuc["h3"] = th_h3_ozet(D3, E)
+    tslog.info("H3: %d hisse-ay (%d çökmüş)", len(D3), int(D3.cokmus.sum()) if len(D3) else 0)
+    # BİLGİ: kriz sonrası
+    bi, B = th_bilgi(S, E); sonuc["bilgi"] = bi
+    sonuc["bilgi"]["olay"] = [{k: r.get(k) for k in ("hip", "sembol", "t", "t_gun_ici", "derinlik", "hacim_oran", "r_t", "kilitli_t", "ekran_t", "durum",
+                                                      "e", "giris_ekran", "dolum_belirsiz", "r5", "r20", "r60", "up61_20", "dn50_60", "son_getiri",
+                                                      "en_yuksek", "en_dusuk", "gun")} for r in B.to_dict("records")] if len(B) else []
+    # grafik
+    ana = EvT[EvT.hucre == Kr["ana"]] if len(EvT) else EvT
+    sonuc["grafik"] = th_grafik(ana, S, E) if grafik and len(ana) else []
+    sonuc["bitis"] = _ts_simdi()
+    os.makedirs(TS_YOL["is"], exist_ok=True)
+    if len(EvT):
+        EvT.to_csv(os.path.join(TS_YOL["is"], TH_DOSYA["olay"]), index=False)
+    if len(B):
+        B.to_csv(os.path.join(TS_YOL["is"], TH_DOSYA["bilgi"]), index=False)
+    if len(D3):
+        D3.to_csv(os.path.join(TS_YOL["is"], TH_DOSYA["h3"]), index=False)
+    _ts_json(_th_yol("sonuc", kl), sonuc); _ts_yaz(_th_yol("rapor", kl), th_rapor_md(_ts_kayit(sonuc), E))
+    return sonuc
+
+
+def _th_ok(o: Any, k: str) -> str:
+    """'olay / kontrol' oran hücresi."""
+    return f"{_y(_g(o, 'o_' + k))} / {_y(_g(o, 'k_' + k))}"
+
+
+def th_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
+    """Tek sayfa düz Türkçe rapor (sonuç JSON'undan)."""
+    E = E or TH_ESIK; Hc = S.get("hucre", {}); Kr = S.get("karar", {}); kap = S.get("kapi", {}); an = E["karar"]["ana"]; ik = E["karar"]["ikincil"]
+    A = Hc.get(an, {}); I = Hc.get(ik, {}); ka = Kr.get("H1_ana", {}); ki = Kr.get("H2_ikincil", {})
+
+    def kural(o: Dict[str, Any]) -> str:
+        k = o.get("kural", {})
+        return k.get("karar", "—") + (f" (tutmayan: {', '.join(k.get('tutmayan', []))})" if k.get("tutmayan") else "")
+
+    def satir(ad: str, o: Dict[str, Any]) -> str:
+        if not o or not o.get("n_olay"):
+            return f"| {ad} | 0 | — | — | — | — | — | — | — | — | olay yok |"
+        return (f"| {ad} | {o['n']} ({o['n_hisse']}) | {_th_ok(o, 'up61_20')} | {_th_ok(o, 'up100_60')} | {_th_ok(o, 'dn50_60')} | "
+                f"{_y(o.get('y_up'))} / {_y(o.get('y_dn'))} | {_y(_g(o, 'r60', 'med'))} ({_y(_g(o, 'r60', 'ort'))}) | {_y(o.get('r60_p10'))} | "
+                f"{_y(o.get('k_r60_med'))} | {_y(o.get('fark_med'), 1)} {_ar(o.get('fark_med_ci'))} | {kural(o)} |")
+    bas = ("| tanım | n (hisse) | +%61 / 20g olay / kontrol | +%100 / 60g olay / kontrol | -%50 / 60g olay / kontrol | önce +%50 / önce -%25 | "
+           "60g medyan (ort.) | en kötü %10 (60g) | kontrol 60g medyan | medyan fark [%95] | kural |")
+    ayr = "|---|---|---|---|---|---|---|---|---|---|---|"
+    L = ["# Çökmüş hissede devasa hacim barı: Cemal'in hipotezleri (BIST 2016 - Ağu 2026)", "",
+         f"Ön kayıt {str(_g(kap, 'onkayit_git', 'commit') or '—')[:7]} ({_g(kap, 'onkayit_git', 'commit_zamani') or '—'}), mühür "
+         f"{str(kap.get('esik_sha256', '—'))[:12]}" + (f"; SAPMA: {kap.get('sapma')}" if kap.get("sapma") else "") + ".", "",
+         "## Sonuç", "",
+         f"**H1 (çökmüş -%80 + hacim >= 10x + tavan, ertesi gün açılış): {ka.get('karar', '—')}**"
+         + (f" (tutmayan şart: {', '.join(ka.get('tutmayan', []))})" if ka.get("tutmayan") else "") + ". "
+         f"H2 (dipte tavansız hacim, ikincil): {ki.get('karar', '—')}" + (f" (tutmayan: {', '.join(ki.get('tutmayan', []))})" if ki.get("tutmayan") else "")
+         + f". BİLGİ hücrelerinden kuralı geçen: {', '.join(Kr.get('gecen_hucre', [])) or 'yok'} ({Kr.get('hucre_sayisi', 0)} hücre ölçüldü; "
+         f"n >= 30 olan {Kr.get('olculen_hucre', 0)}).", "",
+         "Düz dille:"]
+    if A.get("n"):
+        L += [f"- Çökmüş hissede hacmi 20 günlük medyanın 10 katı olan tavan günü ({A['n']} olay, {A['n_hisse']} hisse), ertesi gün açılıştan alan: 20 günde "
+              f"+%61'e (Cemal'in 5 tavanı) ulaşan {_y(A.get('o_up61_20'))}, aynı gün hacimsiz çökmüşlerde {_y(A.get('k_up61_20'))}; 60 günde +%100 "
+              f"{_y(A.get('o_up100_60'))} (kontrol {_y(A.get('k_up100_60'))}); 60 günde -%50 {_y(A.get('o_dn50_60'))} (kontrol {_y(A.get('k_dn50_60'))}); "
+              f"60 gün medyan getiri {_y(_g(A, 'r60', 'med'))}, kontrol {_y(A.get('k_r60_med'))}; medyan fark {_y(A.get('fark_med'), 1)} "
+              f"{_ar(A.get('fark_med_ci'))}. Önce +%50 mi önce -%25 mi: {_y(A.get('y_up'))} / {_y(A.get('y_dn'))}."]
+    if I.get("n"):
+        L += [f"- Dipte tavansız hacim (H2, {I['n']} olay): 60 gün medyan {_y(_g(I, 'r60', 'med'))}, kontrol {_y(I.get('k_r60_med'))}; medyan fark "
+              f"{_y(I.get('fark_med'), 1)} {_ar(I.get('fark_med_ci'))}; -%50 {_y(I.get('o_dn50_60'))} (kontrol {_y(I.get('k_dn50_60'))})."]
+    h3 = S.get("h3", {}).get("toplam", {})
+    if h3:
+        a1, a2, a3 = h3.get("çökmüş < 1 TL", {}), h3.get("çökmüş < 2 TL", {}), h3.get("çökmüş >= 2 TL", {})
+        L += [f"- '1 liradan nereye düşer' (H3): çökmüş ve 1 TL altı hisse-ayların {_y(a1.get('dn50_120'))}'i sonraki 120 günde yine -%50'ye düştü "
+              f"(250 günde {_y(a1.get('dn50_250'))}); 2 TL altı {_y(a2.get('dn50_120'))} / {_y(a2.get('dn50_250'))}; 2 TL ve üstü çökmüşler "
+              f"{_y(a3.get('dn50_120'))} / {_y(a3.get('dn50_250'))}. 250 günde en düşük noktanın medyanı: 1 TL altı {_y(_g(a1, 'dip250', 'med'))}, "
+              f"2 TL üstü {_y(_g(a3, 'dip250', 'med'))}."]
+    L += ["", "## H1: devasa hacimli tavan barı (ÇÖKMÜŞ -%80, giriş ertesi gün açılış)", "", bas, ayr]
+    for h, nm in (("H1", "tavan"), ("H1b", "+%5 ve üstü")):
+        for k in [E["hacim"]["kat"]] + list(E["hacim"]["duyarlilik"]):
+            ad = th_anahtar(h, E["cokmus"]["esik"], k, "a")
+            L.append(satir(f"{h} {nm}, hacim >= {_f(k, 0)}x" + (" **ANA**" if ad == an else ""), Hc.get(ad, {})))
+    L += ["", "'olay / kontrol': kontrol = aynı gün, aynı derinlik kovasında çökmüş, o gün hacmi 20 gün medyanının 3 katından az hisseler (oranlar "
+          "kontrolü olan olaylarda eşleşik). Fark = olay 60g getirisi - kontrol ortalaması; aralık hisse kümeli bootstrap.", "",
+          "## H1 ANA ve H2 dönemler (60g medyan fark; +%61 olay / kontrol; -%50 olay / kontrol)", "",
+          "| hücre | 2016-19 | 2020-22 | 2023-26.08 | yön tutan dönem |", "|---|---|---|---|---|"]
+    for ad, kk in ((an, ka), (ik, ki)):
+        o = Hc.get(ad, {}); hc = []
+        for dn in ("2016-19", "2020-22", "2023-26.08"):
+            d = _g(o, "donem", dn) or {}
+            hc.append(f"n {d.get('n', 0)}: {_y(d.get('fark_med'), 1)}; {_y(d.get('up61_20'))} / {_y(d.get('k_up61_20'))}; "
+                      f"{_y(d.get('dn50_60'))} / {_y(d.get('k_dn50_60'))}")
+        L.append(f"| {ad} | " + " | ".join(hc) + f" | {kk.get('donem_pozitif', '—')} / {kk.get('donem_olculen', '—')} |")
+    L += ["", "## H2: dipte tavansız devasa hacim (getiri -%5..+%5; ÇÖKMÜŞ -%80, giriş ertesi gün açılış)", "", bas, ayr]
+    for k in [E["hacim"]["kat"]] + list(E["hacim"]["duyarlilik"]):
+        ad = th_anahtar("H2", E["cokmus"]["esik"], k, "a")
+        L.append(satir(f"H2 hacim >= {_f(k, 0)}x" + (" **İKİNCİL**" if ad == ik else ""), Hc.get(ad, {})))
+    L += ["", "## H3: taban fiyat ('1 liradan nereye düşer'); çökmüş hisse-ay, giriş ay başı kapanış", "",
+          "| fiyat kovası | hisse-ay (hisse) | 60g'de -%50 | 120g'de -%50 [%95] | 250g'de -%50 | 250g en düşük nokta: medyan [%10, %25] | 250g'de +%100 | 250g medyan getiri |",
+          "|---|---|---|---|---|---|---|---|"]
+    for nm, o in list(S.get("h3", {}).get("kova", {}).items()) + list(h3.items()):
+        L.append(f"| {nm} | {o.get('n', 0)} ({o.get('n_hisse', 0)}) | {_y(o.get('dn50_60'))} | {_y(o.get('dn50_120'))} {_ar(o.get('dn50_120_ci'))} | "
+                 f"{_y(o.get('dn50_250'))} | {_y(_g(o, 'dip250', 'med'))} [{_y(_g(o, 'dip250', 'p10'))}, {_y(_g(o, 'dip250', 'p25'))}] | "
+                 f"{_y(o.get('up100_250'))} | {_y(o.get('r250_med'))} |")
+    L += ["", "H3 dönemler (çökmüş, 120g'de -%50; 2 TL altı / 2 TL ve üstü): " + "; ".join(
+        f"{dn}: {_y(d.get('lt2_dn50_120'))} (n {d.get('lt2_n')}) / {_y(d.get('ge2_dn50_120'))} (n {d.get('ge2_n')})" for dn, d in S.get("h3", {}).get("donem", {}).items())
+        + ". Karar yok (ön kayıt).", ""]
+    B = S.get("bilgi", {})
+    L += [f"## BİLGİ: fon krizi sonrası (Eylül 2026 - {B.get('son_bar', '—')}{', son bar GÜN İÇİ' if B.get('gun_ici') else ''}) H1 / H2 ana tanım olayları "
+          "(karara girmez)", "",
+          "| hip | sembol | olay günü | hacim oranı | derinlik | o gün | giriş (ekran) | 5g | 20g | 60g | +%61 / 20g | bugüne: son / en yüksek / en düşük (gün) |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+
+    def ac(x: Any) -> str:
+        return "açık" if x is None or (isinstance(x, float) and not np.isfinite(x)) else _y(x)
+    for r in sorted(B.get("olay", []), key=lambda r: (str(r.get("t")), r.get("sembol"))):
+        gir = (f"{_f(r.get('giris_ekran'))}" + (" (dolum belirsiz)" if r.get("dolum_belirsiz") else "")) if r.get("durum") == "tamam" else "henüz yok"
+        L.append(f"| {r.get('hip')} | {r.get('sembol')} | {r.get('t')}{' (gün içi)' if r.get('t_gun_ici') else ''} | {_f(r.get('hacim_oran'), 0)}x | "
+                 f"{_y(r.get('derinlik'))} | {_y(r.get('r_t'), 1)}{' kilitli' if r.get('kilitli_t') else ''} | {gir} | {ac(r.get('r5'))} | {ac(r.get('r20'))} | "
+                 f"{ac(r.get('r60'))} | {ac(r.get('up61_20'))} | " + (f"{_y(r.get('son_getiri'))} / {_y(r.get('en_yuksek'))} / {_y(r.get('en_dusuk'))} "
+                                                                      f"({_f(r.get('gun'), 0)})" if r.get("durum") == "tamam" else "—") + " |")
+    if not B.get("olay"):
+        L.append("| (yok) |  |  |  |  |  |  |  |  |  |  |  |")
+    L += ["", "İzlenen hisseler, son barlar (tarih: ekran fiyatı, günlük getiri, hacim / 20g medyan; T = tavan, K = kilitli; H1 / H2 = ana tanım koşulu o gün "
+          "tutuyor, 20 gün tekil kuralı uygulanmadan):", ""]
+    for s, sat in B.get("izlenen", {}).items():
+        if isinstance(sat, str):
+            L.append(f"- {s}: {sat}"); continue
+        L.append(f"- {s} (derinlik {_y(sat[-1].get('derinlik'))}): " + "; ".join(
+            f"{str(x['t'])[5:]}{' gün içi' if x.get('gun_ici') else ''}: {_f(x['ekran'])}, {_y(x['r'], 1)}, {_f(x['hacim_oran'], 0)}x"
+            + (" T" if x["tavan"] else "") + ("K" if x["kilitli"] else "") + (" H1" if x["H1"] else "") + (" H2" if x["H2"] else "") for x in sat))
+    if S.get("grafik"):
+        L += ["", "Grafikler (repoda değil): " + ", ".join(S["grafik"]) + "."]
+    L += ["", "## Ek: bütün hücreler (BİLGİ; kural sonucu kararı değiştirmez)", "",
+          "| hücre (hip, derinlik, kat, giriş) | olay / girişi olan / alınamaz | n (hisse) | +%61 / 20g o / k | -%50 / 60g o / k | 60g medyan | medyan fark [%95] | kural |",
+          "|---|---|---|---|---|---|---|---|"]
+    for ad, o in Hc.items():
+        L.append(f"| {ad} | {o.get('n_olay', 0)} / {o.get('n_giris', 0)} / {o.get('n_alinamaz', 0)} | {o.get('n', 0)} ({o.get('n_hisse', 0)}) | "
+                 f"{_th_ok(o, 'up61_20')} | {_th_ok(o, 'dn50_60')} | {_y(_g(o, 'r60', 'med'))} | {_y(o.get('fark_med'), 1)} {_ar(o.get('fark_med_ci'))} | "
+                 f"{_g(o, 'kural', 'karar') or '—'} |")
+    L += ["", "## Tanım ve sınırlar", "",
+          "- ÇÖKMÜŞ: olaydan önceki gün kapanışı kendi son 250 barının en yüksek kapanışından en az %80 aşağıda (duyarlılık %70, %60). Hacim oranı: o "
+          "günün hacmi / önceki 20 günün medyan hacmi. Tavan: TAVAN_SERISI tanımı (13.03.2020'den >= +%9,5, öncesi >= +%19; 1-2 TL'de fiyat adımı). "
+          "Aynı hissede 20 gün içinde tek olay.",
+          "- Giriş a: ertesi gün açılış (ana). Giriş b: olay günü kapanışı, olay günü kilitli tavansa alınamaz. Pencerede veri kırığı (|günlük| > %25) "
+          "olan ölçü dışarıda.",
+          f"- Yanlılık: {E['yanlilik']}.",
+          f"- Karar cümlesi (önceden yazılı): {E['karar']['metin']}"]
+    return "\n".join(L) + "\n"
+
+
+def th_rapor(kl: Optional[str] = None) -> str:
+    S = _ts_json_oku(_th_yol("sonuc", kl))
+    return _ts_yaz(_th_yol("rapor", kl), th_rapor_md(S))
+
+
 def _cakisma_kontrol_ts(_once=_CK_ONCE_TS, _dosya="TAVAN_SERISI.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka dosyanın) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -1067,7 +1789,8 @@ _cakisma_kontrol_ts()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=TS_SURUM)
-    ap.add_argument("komut", choices=["indir", "canli", "onkayit", "kos", "rapor"])
+    ap.add_argument("komut", choices=["indir", "canli", "onkayit", "kos", "rapor", "hacim"])
+    ap.add_argument("alt", nargs="?", default="kos", choices=["onkayit", "kos", "rapor"], help="hacim: onkayit / kos / rapor")
     ap.add_argument("--cikti", default=None)
     ap.add_argument("--yenile", action="store_true", help="canli: son günleri ayrı klasöre yeniden indir")
     ap.add_argument("--sapma", default=None, help="kos: ön kayıttan sonra kod değiştiyse gerekçe (sonuca yazılır)")
@@ -1082,6 +1805,13 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         elif a_.komut == "kos":
             s_ = ts_kos(a_.cikti, sapma=a_.sapma)
             print(json.dumps({k: v["karar"] for k, v in s_["karar"].items()}, ensure_ascii=False)); print(_ts_yol("rapor", a_.cikti))
+        elif a_.komut == "hacim":
+            if a_.alt == "onkayit":
+                y_ = th_onkayit(a_.cikti); print(y_, "mühür", th_esik_sha(), "kod", ts_kod_sha(), "dosya", ts_sha_dosya(y_))
+            elif a_.alt == "kos":
+                s_ = th_kos(a_.cikti, sapma=a_.sapma); print(json.dumps(_ts_kayit(s_["karar"]), ensure_ascii=False)); print(_th_yol("rapor", a_.cikti))
+            else:
+                print(th_rapor(a_.cikti))
         else:
             print(ts_rapor(a_.cikti))
     except (TsHata, K60V.K60VHata, FileNotFoundError) as ex:

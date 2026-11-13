@@ -10,6 +10,9 @@
 6) mühür kapısı: ön kayıt yok -> RET; git'te değil -> RET; commit sonrası geçer; eşik değişince RET; manifest farkı RET; kod farkı sapmasız RET
 7) canlı tablo: kriz düşüşü, dipten kat, ardışık tavan (gün içi / kesin), veri kırığı evrene girmez; rapor metinleri yazılır
 8) çakışma kapısı; kodda e-posta yok; yasak defter dosyalarına yazan kod yok
+9-14) HACİM alt komutu: hacim oranı (önceki 20 bar medyanı, medyan 0 / eksik bar -> tanımsız); H1 olayı + 20 gün tekil kuralı + kilitli giriş b
+   'alınamaz' + giriş a / b ölçüleri elle + kontrol (aynı kova, hacim < 3x) elle + yarış; H2; H3 hisse-ay (ay başı, ekran fiyatı kovası, -%50 elle);
+   karar kategorileri (kontrol 0 durumları); hacim mühür kapısı; uçtan uca sentetik koşu + rapor + grafik
 """
 from __future__ import annotations
 
@@ -247,8 +250,150 @@ def t8_kapilar() -> None:
         kontrol("EZDİ" in str(ex), f"8: çakışma kapısı yanlış neden {ex}")
 
 
+def t9_hacim_oran() -> None:
+    v = np.r_[np.full(20, 100.0), 1000.0, 0.0, 50.0]
+    r = T.th_hacim_oran(v, 20)
+    kontrol(np.isnan(r[:20]).all(), "9: 20 önceki bar yokken oran tanımsız olmalı")
+    kontrol(abs(r[20] - 10.0) < 1e-12 and abs(r[21]) < 1e-12 and abs(r[22] - 0.5) < 1e-12, f"9: hacim oranı elle tutmuyor {r[20:]}")
+    v2 = np.r_[np.zeros(15), np.full(5, 10.0), 100.0]
+    kontrol(np.isnan(T.th_hacim_oran(v2, 20)[20]), "9: medyan 0 iken oran tanımsız olmalı")
+
+
+def hacim_panel_kur(n: int = 600):
+    """A: çökmüş (-%88, kova 1), 300 ve 301 kilitli tavan + 20x hacim (301 tekil kuralıyla düşer), sonra yükseliş; B: kova 1, normal hacim (A'nın
+    kontrolü); C: kova 1 ama 300'de 5x hacim (kontrol DIŞI); F: kova 2 (-%92), 300'de kilitsiz tavan + 20x; Ee: kova 2, normal (F'nin kontrolü);
+    G: kova 1 (-%89,9), 300'de +%1 ve 20x (H2; 20x olduğu için kimsenin kontrolü değil); Q: kova 2, 0,80 TL'ye çökmüş, 330'dan sonra günde -%9 ile
+    0,30'a iner (H3; F'nin ikinci kontrolü); Z0-Z5 dolgu."""
+    idx = pd.bdate_range("2021-01-04", periods=n)
+    base = lambda son: np.r_[np.full(50, 100.0), 100 * (son / 100) ** (np.arange(1, 251) / 250), np.full(n - 300, son)]  # noqa: E731
+    A = base(12.0); A[300] = 13.2; A[301] = 14.52; A[302:] = 14.52 * (1 + np.arange(1, n - 301) / 40)
+    vA = np.full(n, 1e6); vA[300] = vA[301] = 2e7
+    B = base(12.5); B[301:] = 12.5 * np.linspace(1.0, 0.8, n - 301)
+    C = base(11.8); vC = np.full(n, 1e6); vC[300] = 5e6
+    F = base(8.0); F[300:] = 8.8; oF = F.copy(); oF[300] = 8.0; vF = np.full(n, 1e6); vF[300] = 2e7
+    Ee = base(5.0); G = base(10.0); G[300:] = 10.1; vG = np.full(n, 1e6); vG[300] = 2e7
+    Q = base(0.8); Q[330:] = np.maximum(0.8 * 0.91 ** np.arange(1, n - 329), 0.30)   # -%9 / gün (kırık değil) 0,30'a
+    S = {"A": df(A, idx, v=vA), "B": df(B, idx), "C": df(C, idx, v=vC), "F": df(F, idx, o=oF, v=vF), "Ee": df(Ee, idx), "G": df(G, idx, v=vG),
+         "Q": df(Q, idx)}
+    for i in range(6):
+        S[f"Z{i}"] = df(np.full(n, 30.0 + i), idx)
+    return S, idx
+
+
+def t10_hacim_olaylar() -> None:
+    S, idx = hacim_panel_kur(); kes = str(idx[-1].date()); E = T.TH_ESIK; o = E["olcu"]
+    P = T.th_panel(S, kes=kes)
+    Ma = T.th_olcu_panelleri(P, "a", o["ufuk"], o["dok"], o["yaris"]); Mb = T.th_olcu_panelleri(P, "b", o["ufuk"], o["dok"], o["yaris"])
+    Ea = T.th_olaylar(P, "H1", -0.80, 10.0, "a", "2016-01-01", kes, Ma, True)
+    kontrol(sorted(Ea.sembol.tolist()) == ["A", "F"], f"10: H1 olayları A ve F olmalı {Ea.sembol.tolist()}")
+    a = Ea[Ea.sembol == "A"].iloc[0]; cA = S["A"].c.to_numpy()
+    kontrol(a.t == idx[300] and abs(a.hacim_oran - 20.0) < 1e-9 and int(a.kova) == 1, f"10: A olay günü / oran / kova {a.t} {a.hacim_oran} {a.kova}")
+    kontrol(abs(a.giris - cA[301]) < 1e-12 and bool(a.dolum_belirsiz), "10: A giriş a = 301 açılışı, tam kilitli -> dolum belirsiz")
+    kontrol(abs(a.r60 - (cA[360] / cA[301] - 1)) < 1e-9 and abs(a.r5 - (cA[305] / cA[301] - 1)) < 1e-9, "10: A r60 / r5 elle tutmuyor")
+    kontrol(a.up61_20 == float(cA[301:321].max() >= 1.61 * cA[301]) and a.up100_60 == float(cA[301:361].max() >= 2 * cA[301]) and a.dn50_60 == 0.0
+            and a.y_up == 1.0 and a.y_dn == 0.0 and a.y_yok == 0.0, "10: A dokunma / yarış yanlış")
+    cB = S["B"].c.to_numpy()
+    kontrol(int(a.n_kontrol) == 1 and abs(a.k_r60 - (cB[360] / cB[301] - 1)) < 1e-9, f"10: A kontrolü yalnız B olmalı ({a.n_kontrol}, {a.k_r60})")
+    f = Ea[Ea.sembol == "F"].iloc[0]
+    cQ = S["Q"].c.to_numpy()
+    kontrol(int(f.kova) == 2 and int(f.n_kontrol) == 2 and abs(f.k_r60 - (0.0 + cQ[360] / cQ[301] - 1) / 2) < 1e-12 and abs(f.k_dn50_60 - 0.5) < 1e-12,
+            f"10: F kontrolü Ee ve Q olmalı ({f.n_kontrol}, {f.k_r60})")
+    Eb = T.th_olaylar(P, "H1", -0.80, 10.0, "b", "2016-01-01", kes, Mb, True).set_index("sembol")
+    kontrol(Eb.loc["A", "durum"] == "alinamaz (kilitli)", f"10: kilitli tavanda giriş b alınamaz olmalı {Eb.loc['A', 'durum']}")
+    kontrol(Eb.loc["F", "durum"] == "tamam" and abs(Eb.loc["F", "giris"] - 8.8) < 1e-12 and abs(Eb.loc["F", "r60"]) < 1e-12, "10: F giriş b = t kapanışı")
+    E2 = T.th_olaylar(P, "H2", -0.80, 10.0, "a", "2016-01-01", kes, Ma, True)
+    kontrol(E2.sembol.tolist() == ["G"], f"10: H2 olayı yalnız G olmalı {E2.sembol.tolist()}")
+    kontrol(len(T.th_olaylar(P, "H1", -0.80, 50.0, "a", "2016-01-01", kes, None, False)) == 0, "10: 50x eşiğinde olay olmamalı")
+    kontrol(len(T.th_olaylar(P, "H1b", -0.80, 10.0, "a", "2016-01-01", kes, None, False)) == 2, "10: H1b (+%5) A ve F'yi içermeli")
+    # ölçü paneli giriş a, TAVAN_SERISI ts_ufuk_panelleri ile aynı (r60, +%100, -%50)
+    U = T.ts_ufuk_panelleri(P)
+    for ad in ("r60", "up100_60", "dn50_60"):
+        x, y = Ma[ad], U[ad]; ok = np.isfinite(x) & np.isfinite(y)
+        kontrol(ok.sum() > 1000 and np.allclose(x[ok], y[ok]), f"10: {ad} ts_ufuk_panelleri ile aynı olmalı")
+    # pencere içinde kırık -> ölçü yok
+    S2 = dict(S); c2 = S["A"].c.to_numpy().copy(); c2[340:] = c2[340:] * 0.5; S2["A"] = df(c2, idx, v=S["A"].v.to_numpy())
+    P2 = T.th_panel(S2, kes=kes); M2 = T.th_olcu_panelleri(P2, "a", o["ufuk"], o["dok"], o["yaris"])
+    a2 = T.th_olaylar(P2, "H1", -0.80, 10.0, "a", "2016-01-01", kes, M2, True).set_index("sembol").loc["A"]
+    kontrol(np.isnan(a2.r60) and np.isfinite(a2.r20) and bool(a2.kir60), "10: 60 gün penceresinde kırık -> r60 yok, r20 var")
+
+
+def t11_h3() -> None:
+    S, idx = hacim_panel_kur(); kes = str(idx[-1].date())
+    P = T.th_panel(S, kes=kes)
+    M3 = T.th_olcu_panelleri(P, "b", [60, 120], [["dn50_60", 60, -0.5], ["dn50_120", 120, -0.5]], None, [120])
+    D = T.th_h3(P, M3, bas="2016-01-01", bit=kes)
+    q = D[D.sembol == "Q"].set_index("t")
+    kontrol(len(q) > 5 and (q.index.to_period("M").value_counts() == 1).all(), "11: Q hisse-ayları ayda bir olmalı")
+    kontrol(all(pd.Timestamp(t) == S["Q"].index[S["Q"].index.to_period("M") == pd.Timestamp(t).to_period("M")][0] for t in q.index), "11: ayın ilk işlem günü")
+    cQ = S["Q"].c.to_numpy()
+    t0 = [t for t in q.index if q.loc[t, "ekran"] < 1 and idx.get_loc(t) + 120 < len(idx) and idx.get_loc(t) < 330][0]; i0 = idx.get_loc(t0)
+    beklenen = float(cQ[i0 + 1:i0 + 121].min() <= 0.5 * cQ[i0])
+    kontrol(beklenen == 1.0 and q.loc[t0, "dn50_120"] == beklenen and q.loc[t0, "kova"] == "0-1 TL" and bool(q.loc[t0, "cokmus"]),
+            f"11: Q {t0} H3 ölçüsü yanlış")
+    kontrol(abs(q.loc[t0, "dip120"] - (cQ[i0 + 1:i0 + 121].min() / cQ[i0] - 1)) < 1e-9, "11: en düşük nokta elle tutmuyor")
+    t1 = [t for t in q.index if idx.get_loc(t) > 345 and idx.get_loc(t) + 120 < len(idx)][0]
+    kontrol(q.loc[t1, "dn50_120"] == 0.0, "11: dipte yatay Q sonra -%50'ye dokunmamalı")
+    kontrol(T.th_h3_kova(0.5) == "0-1 TL" and T.th_h3_kova(1.5) == "1-2 TL" and T.th_h3_kova(2.0) == "2-5 TL" and T.th_h3_kova(7.0) == "5+ TL", "11: fiyat kovası")
+    z = D[D.sembol == "Z0"]
+    kontrol(len(z) and not z.cokmus.any(), "11: düz hisse çökmüş sayılmamalı")
+
+
+def t12_hacim_karar() -> None:
+    dn = {"2016-19": {"n": 12, "fark_med": 0.1}, "2020-22": {"n": 12, "fark_med": 0.1}, "2023-26.08": {"n": 12, "fark_med": -0.1}}
+    o = {"n_fark": 50, "fark_med": 0.1, "fark_med_ci": [0.01, 0.2], "o_up61_20": 0.3, "k_up61_20": 0.1, "o_dn50_60": 0.05, "k_dn50_60": 0.05, "donem": dn}
+    kontrol(T.th_karar(o)["karar"] == "İZ ADAYI (BIST)", f"12: iyi örnek İZ ADAYI olmalı {T.th_karar(o)}")
+    kontrol(T.th_karar({**o, "k_up61_20": 0.0})["karar"] == "İZ ADAYI (BIST)", "12: kontrol +%61 = 0 ve olay > 0 geçmeli")
+    k = T.th_karar({**o, "k_dn50_60": 0.0})
+    kontrol(k["karar"] == "KANIT YOK" and k["tutmayan"] == ["P50<=1,2xkontrol"], f"12: kontrol -%50 = 0 ve olay > 0 tutmamalı {k}")
+    k = T.th_karar({**o, "o_up61_20": 0.14})
+    kontrol(k["tutmayan"] == ["P61>=1,5xkontrol"], f"12: +%61 1,4 kat tutmamalı {k}")
+    k = T.th_karar({**o, "fark_med_ci": [-0.01, 0.2], "donem": {**dn, "2020-22": {"n": 12, "fark_med": -0.1}}})
+    kontrol(k["tutmayan"] == ["alt_uc>0", "donem>=2"], f"12: alt uç ve dönem tutmamalı {k}")
+    kontrol(T.th_karar({**o, "n_fark": 29})["karar"] == "KANIT YOK (örneklem yetersiz)", "12: n < 30")
+    kontrol(len(T.th_hucreler()) == 72 and T.th_hucreler()[0] == ("H1", -0.80, 10.0, "a") and T.th_anahtar("H1", -0.8, 10.0, "a") == T.TH_ESIK["karar"]["ana"],
+            "12: hücre listesi / ana anahtar")
+    kontrol(T.th_kova_listesi(-0.80) == [-0.80, -0.85, -0.90] and abs(T.th_kova_listesi(-0.60)[1] - (-0.60 - 0.40 / 3)) < 1e-12, "12: kova listesi")
+
+
+def t13_hacim_kapi() -> None:
+    tmp = tempfile.mkdtemp(prefix="th_kapi_")
+    try:
+        durmali(lambda: T.th_kapi(tmp, git=False), "13: hacim ön kaydı yokken kapı açılmamalı", "ön kaydı yok")
+        y = os.path.join(tmp, T.TH_DOSYA["onkayit"]); man = "c" * 64
+        with open(y, "w", encoding="utf-8") as f:
+            f.write(f"x\nESIK_SHA256: {T.th_esik_sha()}\nKOD_SHA256: {T.ts_kod_sha()}\nVERI_MANIFEST_SHA256: {man}\n")
+        durmali(lambda: T.th_kapi(tmp, git=True), "13: git'e işlenmemiş hacim ön kaydıyla kapı açılmamalı", "git")
+        kontrol(T.th_kapi(tmp, git=False, manifest=man)["kod_ayni"], "13: aynı mühürle kapı geçmeli")
+        E2 = copy.deepcopy(T.TH_ESIK); E2["hacim"]["kat"] = 9.0
+        durmali(lambda: T.th_kapi(tmp, git=False, E=E2), "13: hacim eşiği değişince kapı açılmamalı", "mühr")
+        kontrol(T.th_esik_sha() != T.ts_esik_sha(), "13: hacim mührü TAVAN mührüyle aynı olmamalı")
+        durmali(lambda: T.th_kapi(tmp, git=False, manifest="d" * 64), "13: manifest farkında kapı açılmamalı", "manifest")
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def t14_hacim_uctan_uca() -> None:
+    S, idx = hacim_panel_kur(); tmp = tempfile.mkdtemp(prefix="th_kos_"); eski = dict(T.TS_YOL)
+    try:
+        T.TS_YOL["is"] = tmp
+        with open(os.path.join(tmp, T.TH_DOSYA["onkayit"]), "w", encoding="utf-8") as f:
+            f.write(f"x\nESIK_SHA256: {T.th_esik_sha()}\nKOD_SHA256: {T.ts_kod_sha()}\nVERI_MANIFEST_SHA256: None\n")
+        s = T.th_kos(tmp, git=False, S=S, K={"okunan": len(S), "manifest_sha256": None}, grafik=False)
+        kontrol(s["karar"]["H1_ana"]["karar"].startswith("KANIT YOK") and s["hucre"][T.TH_ESIK["karar"]["ana"]]["n_olay"] == 2, "14: uçtan uca ana hücre")
+        md = open(os.path.join(tmp, T.TH_DOSYA["rapor"]), encoding="utf-8").read()
+        kontrol(all(x in md for x in ("## Sonuç", "## H1", "## H2", "## H3", "BİLGİ: fon krizi", "TEHOL")), "14: rapor bölümleri")
+        kontrol(os.path.exists(os.path.join(tmp, T.TH_DOSYA["olay"])) and os.path.exists(os.path.join(tmp, T.TH_DOSYA["sonuc"])), "14: çıktı dosyaları")
+        kontrol(T.th_rapor(tmp).endswith(T.TH_DOSYA["rapor"]), "14: rapor JSON'dan yeniden yazılmalı")
+        Ev = pd.read_csv(os.path.join(tmp, T.TH_DOSYA["olay"]), parse_dates=["t", "e"])
+        y = T.th_grafik(Ev[Ev.hucre == T.TH_ESIK["karar"]["ana"]], S, klasor=os.path.join(tmp, "g"))
+        kontrol(len(y) >= 1 and all(os.path.getsize(p) > 1000 for p in y), f"14: grafik çizilmedi {y}")
+    finally:
+        T.TS_YOL.update(eski); shutil.rmtree(tmp, ignore_errors=True)
+
+
 if __name__ == "__main__":
-    for t in (t1_tavan_sayimi, t2_seri_ve_derinlik, t3_kilit_ve_giris, t4_olaylar, t4b_kontrol_k1, t5_ozet_karar, t6_kapi, t7_canli_ve_rapor, t8_kapilar):
+    for t in (t1_tavan_sayimi, t2_seri_ve_derinlik, t3_kilit_ve_giris, t4_olaylar, t4b_kontrol_k1, t5_ozet_karar, t6_kapi, t7_canli_ve_rapor, t8_kapilar,
+              t9_hacim_oran, t10_hacim_olaylar, t11_h3, t12_hacim_karar, t13_hacim_kapi, t14_hacim_uctan_uca):
         try:
             t()
         except Exception as ex:  # noqa: BLE001  (test çerçevesi: beklenmeyen hata da hata sayılır)
