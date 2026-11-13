@@ -1642,8 +1642,8 @@ def th_kos(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = No
 
 
 def _th_ok(o: Any, k: str) -> str:
-    """'olay / kontrol' oran hücresi."""
-    return f"{_y(_g(o, 'o_' + k))} / {_y(_g(o, 'k_' + k))}"
+    """Oran hücresi: bütün olaylarda oran (kontrolü olan olaylarda eşleşik olay / kontrol)."""
+    return f"{_y(_g(o, k))} ({_y(_g(o, 'o_' + k))} / {_y(_g(o, 'k_' + k))})"
 
 
 def th_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
@@ -1661,7 +1661,8 @@ def th_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
         return (f"| {ad} | {o['n']} ({o['n_hisse']}) | {_th_ok(o, 'up61_20')} | {_th_ok(o, 'up100_60')} | {_th_ok(o, 'dn50_60')} | "
                 f"{_y(o.get('y_up'))} / {_y(o.get('y_dn'))} | {_y(_g(o, 'r60', 'med'))} ({_y(_g(o, 'r60', 'ort'))}) | {_y(o.get('r60_p10'))} | "
                 f"{_y(o.get('k_r60_med'))} | {_y(o.get('fark_med'), 1)} {_ar(o.get('fark_med_ci'))} | {kural(o)} |")
-    bas = ("| tanım | n (hisse) | +%61 / 20g olay / kontrol | +%100 / 60g olay / kontrol | -%50 / 60g olay / kontrol | önce +%50 / önce -%25 | "
+    bas = ("| tanım | n (hisse) | +%61 / 20g: olay (eşleşik olay / kontrol) | +%100 / 60g: olay (eş. olay / kontrol) | -%50 / 60g: olay (eş. olay / "
+           "kontrol) | önce +%50 / önce -%25 | "
            "60g medyan (ort.) | en kötü %10 (60g) | kontrol 60g medyan | medyan fark [%95] | kural |")
     ayr = "|---|---|---|---|---|---|---|---|---|---|---|"
     L = ["# Çökmüş hissede devasa hacim barı: Cemal'in hipotezleri (BIST 2016 - Ağu 2026)", "",
@@ -1672,14 +1673,25 @@ def th_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
          + (f" (tutmayan şart: {', '.join(ka.get('tutmayan', []))})" if ka.get("tutmayan") else "") + ". "
          f"H2 (dipte tavansız hacim, ikincil): {ki.get('karar', '—')}" + (f" (tutmayan: {', '.join(ki.get('tutmayan', []))})" if ki.get("tutmayan") else "")
          + f". BİLGİ hücrelerinden kuralı geçen: {', '.join(Kr.get('gecen_hucre', [])) or 'yok'} ({Kr.get('hucre_sayisi', 0)} hücre ölçüldü; "
-         f"n >= 30 olan {Kr.get('olculen_hucre', 0)}).", "",
-         "Düz dille:"]
+         f"n >= 30 olan {Kr.get('olculen_hucre', 0)}, bunlardan medyan farkın %95 aralığı tamamen 0'ın altında olan "
+         f"{sum(1 for v in Hc.values() if v.get('n_fark', 0) >= E['karar']['n_min'] and (v.get('fark_med_ci') or [None, None])[1] is not None and v['fark_med_ci'][1] < 0)}, "
+         f"tamamen 0'ın üstünde olan "
+         f"{sum(1 for v in Hc.values() if v.get('n_fark', 0) >= E['karar']['n_min'] and (v.get('fark_med_ci') or [None, None])[0] is not None and v['fark_med_ci'][0] > 0)}).",
+         "", "Düz dille:"]
     if A.get("n"):
-        L += [f"- Çökmüş hissede hacmi 20 günlük medyanın 10 katı olan tavan günü ({A['n']} olay, {A['n_hisse']} hisse), ertesi gün açılıştan alan: 20 günde "
-              f"+%61'e (Cemal'in 5 tavanı) ulaşan {_y(A.get('o_up61_20'))}, aynı gün hacimsiz çökmüşlerde {_y(A.get('k_up61_20'))}; 60 günde +%100 "
-              f"{_y(A.get('o_up100_60'))} (kontrol {_y(A.get('k_up100_60'))}); 60 günde -%50 {_y(A.get('o_dn50_60'))} (kontrol {_y(A.get('k_dn50_60'))}); "
-              f"60 gün medyan getiri {_y(_g(A, 'r60', 'med'))}, kontrol {_y(A.get('k_r60_med'))}; medyan fark {_y(A.get('fark_med'), 1)} "
-              f"{_ar(A.get('fark_med_ci'))}. Önce +%50 mi önce -%25 mi: {_y(A.get('y_up'))} / {_y(A.get('y_dn'))}."]
+        L += [f"- Çökmüş hissede hacmi 20 günlük medyanın 10 katı olan tavan günü ({A['n']} olay, {A['n_hisse']} hisse; aynı gün kontrolü olan "
+              f"{A.get('n_fark', 0)}), ertesi gün açılıştan alan: 20 günde +%61'e (Cemal'in 5 tavanı) ulaşan {_y(A.get('up61_20'))}; 60 günde +%100 "
+              f"{_y(A.get('up100_60'))}; 60 günde -%50 {_y(A.get('dn50_60'))}; 60 gün medyan getiri {_y(_g(A, 'r60', 'med'))}; önce +%50 mi önce -%25 mi: "
+              f"{_y(A.get('y_up'))} / {_y(A.get('y_dn'))}. Kontrolü olan olaylarda medyan fark {_y(A.get('fark_med'), 1)} {_ar(A.get('fark_med_ci'))}: "
+              "örneklem karar için çok küçük."]
+    gen = sorted([(v.get("n_fark", 0), a) for a, v in Hc.items() if a.startswith("H1|") and a.endswith("|a")], reverse=True)
+    if gen and gen[0][0]:
+        g_ = Hc[gen[0][1]]; h_, e_, k_, _m = gen[0][1].split("|")
+        L += [f"- En geniş H1 hücresi (BİLGİ: derinlik {_y(float(e_))}, hacim >= {k_}x, tavan; {g_['n']} olay, {g_['n_hisse']} hisse): 20 günde +%61 "
+              f"{_y(g_.get('o_up61_20'))}, kontrol {_y(g_.get('k_up61_20'))} (kat {_f(g_.get('kat_up61_20'))}); 60 günde -%50 {_y(g_.get('o_dn50_60'))}, "
+              f"kontrol {_y(g_.get('k_dn50_60'))}; 60 gün medyan {_y(_g(g_, 'r60', 'med'))}, kontrol {_y(g_.get('k_r60_med'))}; medyan fark "
+              f"{_y(g_.get('fark_med'), 1)} {_ar(g_.get('fark_med_ci'))}. Yani hacimli tavan büyük sıçrama biletini artırıyor ama tipik sonucu "
+              "hacimsiz eşlerinden kötü."]
     if I.get("n"):
         L += [f"- Dipte tavansız hacim (H2, {I['n']} olay): 60 gün medyan {_y(_g(I, 'r60', 'med'))}, kontrol {_y(I.get('k_r60_med'))}; medyan fark "
               f"{_y(I.get('fark_med'), 1)} {_ar(I.get('fark_med_ci'))}; -%50 {_y(I.get('o_dn50_60'))} (kontrol {_y(I.get('k_dn50_60'))})."]
@@ -1747,7 +1759,8 @@ def th_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
     if S.get("grafik"):
         L += ["", "Grafikler (repoda değil): " + ", ".join(S["grafik"]) + "."]
     L += ["", "## Ek: bütün hücreler (BİLGİ; kural sonucu kararı değiştirmez)", "",
-          "| hücre (hip, derinlik, kat, giriş) | olay / girişi olan / alınamaz | n (hisse) | +%61 / 20g o / k | -%50 / 60g o / k | 60g medyan | medyan fark [%95] | kural |",
+          "| hücre (hip, derinlik, kat, giriş) | olay / girişi olan / alınamaz | n (hisse) | +%61 / 20g: olay (eş. olay / kontrol) | -%50 / 60g: olay (eş. olay / "
+          "kontrol) | 60g medyan | medyan fark [%95] | kural |",
           "|---|---|---|---|---|---|---|---|"]
     for ad, o in Hc.items():
         L.append(f"| {ad} | {o.get('n_olay', 0)} / {o.get('n_giris', 0)} / {o.get('n_alinamaz', 0)} | {o.get('n', 0)} ({o.get('n_hisse', 0)}) | "
