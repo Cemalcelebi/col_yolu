@@ -17,6 +17,7 @@ Henüz yok. K59 (basit sinyaller + bileşik) ölçülüyor; sonuç gelmeden 'TAR
 
 ## İzleme listesi (öneri değil)
 BIST: PNLSN, FORTE, GWIND, EUPWR (3Ç26 taraması ve BIST raporu). ABD: CENX, AEHR, DUOT, AIB.
+BIST fon krizi dönüşü (13 Kas 2026; ölçülmüş sinyal YOK, tarama kapısı kapalı; yalnız dosya sırası): SEGMN, TKNKA, GIPTA, SVGYO, KARCL. Uzak: TEHOL, PEKGY (TMSF kayyım), ODINE, ANELE, MANAS, IEYHO, GUNDG, DSTKF, OZATD, TRHOL, SKYLP (SPK suç duyurusu / tutuklama / kayyım). Tarihler: 13 Kas kredili esneklik biter; 30 Kas MSCI küçük endeks çıkarması (TEHOL, PEKGY, IEYHO, LYDHO, ALKLC, ODINE); 9 Ara TEHOL / PEKGY 3Ç; Mart 2027 fon tasfiye sonu. Ayrıntı arastirma_cikti/tavan_serisi/.
 
 ## Risk süzgeci (K60 / K60-B, 11 Kasım 2026; bilgi düzeyi, İZ değil)
 Kaynak: 4.666 ABD hissesi, 2012-2026, üç dönem (Ç154, Ç155). Yalnız yaşayan şirketler: gerçek batma olasılıkları buradakinden BÜYÜKTÜR.
