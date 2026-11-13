@@ -17,6 +17,8 @@ olmalı, değilse durur). Tiingo'ya, SEC'e istek YOK; ağ yok; e-posta / anahtar
 Komut:  python KOR_TEST.py ohlc                 İŞ 1 raporu (VDYT2B_OHLC_DOGRULAMA.md + json) ve örnek grafikler
         python KOR_TEST.py set                  kör set: seçim + 40 grafik + anahtar + manifest + cevap şablonu (ön kayıt varsa üzerine yazmaz)
         python KOR_TEST.py onkayit              KOR_TEST_ON_KAYIT.md (eşik mührü, kod / tablo / aday / anahtar / manifest sha256; varsa üzerine yazmaz)
+        python KOR_TEST.py ciz11 [--kopya KL]   v1.1 (SAPMA 1) gösterim: aynı 40 nokta, 250 bar, log ortak ölçek, %10 cetveli -> grafik_v11 + manifest_v11
+        python KOR_TEST.py sapma11              ön kayda SAPMA 1 eki (v1.1 mühür / kod / manifest_v11 sha256; bir kez; sonuç varsa reddeder)
         python KOR_TEST.py olc --cevap DOSYA    Cemal'in cevapları -> ölçüm (ön kayıt + KOR_TEST.py git'e işlenmemişse, mühür / anahtar sha256 tutmazsa REDDEDER)
         python KOR_TEST.py rapor                KOR_TEST_RAPOR.md'yi sonuç JSON'undan yeniden yazar
 Colab:  exec(open('KOR_TEST.py').read()) (VDYT.py, VDYT2.py, VDYT2B.py aynı klasörde)
@@ -59,7 +61,8 @@ if not korlog.handlers:
     korlog.propagate = False
 
 KOR_ETIKET = "kor_vdyt2_20261112"
-KOR_SURUM = "KOR_TEST v1.0 (kor_vdyt2_20261112): İş 1 Tiingo OHLC doğrulaması + İş 2 insan gözü kör testi (ön kayıt; ölçüm Cemal'in işaretlerinden sonra)"
+KOR_SURUM = ("KOR_TEST v1.1 (kor_vdyt2_20261112): İş 1 Tiingo OHLC doğrulaması + İş 2 insan gözü kör testi (ön kayıt; ölçüm Cemal'in işaretlerinden sonra); "
+             "v1.1 = SAPMA 1 gösterim düzeltmesi (250 bar, log ortak ölçek, %10 cetveli; set / anahtar / sorular / karar aynı)")
 
 KOR_YOL: Dict[str, str] = {
     "cikti": os.environ.get("KOR_CIKTI", os.path.join(KOK_KOR, "arastirma_cikti", "vdyt", "v2_20261112")),
@@ -74,6 +77,7 @@ KOR_DOSYA: Dict[str, str] = {
     "onkayit": "KOR_TEST_ON_KAYIT.md", "sonuc": "kor_test_sonuc.json", "rapor": "KOR_TEST_RAPOR.md", "anahtar_repo": "kor_test_anahtar.json",
     "ohlc_md": "VDYT2B_OHLC_DOGRULAMA.md", "ohlc_json": "vdyt2b_ohlc_dogrulama.json",
     "anahtar": "anahtar.json", "manifest": "manifest.json", "aday": "aday_listesi.json", "sablon": "cevap_sablon.json", "grafik": "grafik",
+    "grafik_v11": "grafik_v11", "manifest_v11": "manifest_v11.json",
 }
 _KOR_EPOSTA = re.compile(r"[\w.+-]+@[\w-]+\.(com|net|org|edu|gov|io|tr)\b")
 
@@ -97,9 +101,20 @@ KOR_ESIK: Dict[str, Any] = {
                   "kontrol_yas": 10,         # BATAN_KONTROL geçerlilik (V2.v2_gecerli) sözde yaşı
                   "tekrar_izni": True},      # 7 seri: farklı hisse yetmezse aynı hisseden >= 120 bar uzak ikinci gün (önce farklı hisse)
     },
-    "grafik": {"bar": 120, "piksel": [1200, 800], "dpi": 110, "hedef_kb": 150, "normal": "fiyat / karar günü kapanışı x 100",
-               "x_tik": [-120, -100, -80, -60, -40, -20, 0], "hacim_pay": 0.25, "yukari": "#26a69a", "asagi": "#ef5350", "govde_en": 0.7,
-               "font": 12, "metin": "yalnız eksen sayıları (x: gün sırası, y: normalize fiyat); hacim ekseni sayısız; başlık / etiket / çizgi / ızgara YOK"},
+    # v1.1 (SAPMA 1, 12 Kasım 2026; Cemal işaretlemeden önce): gösterim düzeltmesi. Set seçimi (120 barlık kopuk denetimi, tekrar aralığı) v1.0 değerleriyle
+    # (grafik_v10['bar']) aynen kalır; yalnız çizim değişir.
+    "grafik": {"surum": "v1.1", "bar": 250, "bar_min": 120, "kopuk": "V1.vdyt_kopuk (> 15 takvim günü boşluk) ya da veri başı -> karar gününde biten kesintisiz "
+               "en uzun pencere (en az bar_min)", "normal": "fiyat / karar günü kapanışı x 100", "y": "log (ln fiyat; doğrusal eksende log veri)",
+               "olcek_px_ln110": 55, "fiyat_min_px": 350, "fiyat_max_px": 1600, "pay": 0.04, "hacim_px": 180, "genislik": 1200, "dpi": 100,
+               "kenar_px": {"sol": 64, "sag": 64, "ust": 14, "alt": 30, "ara": 8, "cetvel_en": 50},
+               "y_mantis": [1, 1.1, 1.25, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8, 9], "y_tik_min_px": 26, "x_tik": [-200, -150, -100, -50, 0],
+               "cetvel": {"oran": 0.10, "metin": "%10", "alt_pay": 0.05, "renk": "#333333"}, "izgara": "#e6e6e6", "izgara_lw": 0.6,
+               "yukari": "#26a69a", "asagi": "#ef5350", "govde_en": 0.7, "fitil_lw": 0.9, "govde_min_px": 1.0, "hacim_alfa": 0.7, "font": 11,
+               "metin": "yalnız eksen sayıları (x: gün sırası, y: normalize fiyat, log tikleri) ve sağ kenarda '%10' cetveli; hacim ekseni sayısız; başlık / "
+                        "hisse adı / tarih YOK; açık gri yatay ızgara"},
+    "grafik_v10": {"bar": 120, "piksel": [1200, 800], "dpi": 110, "hedef_kb": 150, "normal": "fiyat / karar günü kapanışı x 100",
+                   "x_tik": [-120, -100, -80, -60, -40, -20, 0], "hacim_pay": 0.25, "yukari": "#26a69a", "asagi": "#ef5350", "govde_en": 0.7,
+                   "font": 12, "metin": "yalnız eksen sayıları (x: gün sırası, y: normalize fiyat); hacim ekseni sayısız; başlık / etiket / çizgi / ızgara YOK"},
     "soru": {
         "bolge": "Grafiğin sağ ucunda (son 10-30 mumda) küçük mumlu, dar bantlı sessiz bir bölge görüyor musun?",
         "bolge_cevap": ["EVET", "HAYIR", "EMİN DEĞİLİM"],
@@ -191,6 +206,21 @@ def kor_esik_sha(E: Optional[Dict[str, Any]] = None) -> str:
 
 def kor_kod_sha(yol: Optional[str] = None) -> str:
     return kor_sha_dosya(yol or os.path.join(KOK_KOR, "KOR_TEST.py"))
+
+
+def kor_grafik_v10(E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """v1.0 grafik eşikleri (set seçimi ve mühürlü v1.0 çizimi): v1.1'de 'grafik_v10' altında; v1.0 sözlüğünde 'grafik'."""
+    E = E or KOR_ESIK
+    return E["grafik_v10"] if "grafik_v10" in E else E["grafik"]
+
+
+def kor_esik_v10(E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """v1.1 eşik sözlüğünden v1.0 sözlüğü (grafik = grafik_v10; grafik_v10 anahtarı yok). sha256'sı v1.0 ön kaydındaki ESIK_SHA256'ya eşit olmalı: yalnız
+    grafik değişti."""
+    E2 = copy.deepcopy(E or KOR_ESIK)
+    if "grafik_v10" in E2:
+        E2["grafik"] = E2.pop("grafik_v10")
+    return E2
 
 
 def kor_bagimli_kod(E: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
@@ -374,8 +404,8 @@ def _kor_yahoo_k34(kod: str) -> Optional[pd.DataFrame]:
 
 def kor_ohlc_grafik(kod: str, kayit: Dict[str, Any], f25: str, yol: str, E: Optional[Dict[str, Any]] = None) -> str:
     """İŞ 1 örnek grafiği (ana oturumun Cemal'e özel göstermesi için; repoya girmez): Form 25 öncesi son 120 bar, bölünme düzeltmeli Tiingo OHLC (temizlenmemiş;
-    donuk barlar görünür), hacim paneli; başlıkta kod ve tarih aralığı; fiyat ekseni gerçek ($)."""
-    E = E or KOR_ESIK; G = E["grafik"]
+    donuk barlar görünür), hacim paneli; başlıkta kod ve tarih aralığı; fiyat ekseni gerçek ($). v1.0 çizimi (grafik_v10)."""
+    E = E or KOR_ESIK; G = kor_grafik_v10(E)
     import matplotlib.pyplot as plt
     X = V2B.v2b_tiingo_df(kayit)
     if X is None:
@@ -737,8 +767,8 @@ def kor_pencere(d: pd.DataFrame, t: int, bar: int = 120) -> pd.DataFrame:
 
 def kor_ciz_fig(W: pd.DataFrame, E: Optional[Dict[str, Any]] = None) -> Any:
     """Mum (gövde + fitil) ve hacim paneli. x = gün sırası (-(n-1) .. 0; karar günü 0, sağ uçta). Başlık / eksen adı / lejant / çizgi / ızgara YOK; hacim
-    ekseninde sayı YOK. Döner matplotlib Figure (kaydetmez)."""
-    E = E or KOR_ESIK; G = E["grafik"]
+    ekseninde sayı YOK. Döner matplotlib Figure (kaydetmez). v1.0 çizimi (KOR_ESIK grafik_v10; mühürlü v1.0 PNG'leri birebir yeniden üretir)."""
+    E = E or KOR_ESIK; G = kor_grafik_v10(E)
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -777,19 +807,26 @@ def kor_metinler(fig: Any) -> List[str]:
 
 
 _KOR_SAYI = re.compile(r"^-?\d+(\.\d+)?$")
+_KOR_IZINLI = frozenset({"%10"})   # v1.1: sayı dışında grafikte izinli tek metin (sağ kenar cetveli)
 
 
-def kor_grafik_yaz(W: pd.DataFrame, yol: str, E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Kör grafik PNG'si (deterministik: yazılım üst verisi yok). Şekilde sayı dışı metin varsa durur. Döner (yol, sha256, bayt, piksel)."""
+def kor_metin_yabanci(metinler: List[str]) -> List[str]:
+    """Sayı ya da izinli metin ('%10') olmayan görünür metinler."""
+    return [m for m in metinler if not _KOR_SAYI.match(m.strip()) and m.strip() not in _KOR_IZINLI]
+
+
+def kor_grafik_yaz(W: pd.DataFrame, yol: str, E: Optional[Dict[str, Any]] = None, ciz: Optional[Callable[..., Any]] = None) -> Dict[str, Any]:
+    """Kör grafik PNG'si (deterministik: yazılım üst verisi yok). Şekilde sayı / '%10' dışı metin varsa durur. ciz: şekil kurucu (None -> v1.0 kor_ciz_fig;
+    v1.1 için kor_ciz_fig11). PNG şeklin kendi dpi'siyle yazılır. Döner (yol, sha256, bayt, piksel)."""
     E = E or KOR_ESIK
     import matplotlib.pyplot as plt
-    fig = kor_ciz_fig(W, E)
+    fig = (ciz or kor_ciz_fig)(W, E)
     try:
-        yabanci = [m for m in kor_metinler(fig) if not _KOR_SAYI.match(m.strip())]
+        yabanci = kor_metin_yabanci(kor_metinler(fig))
         if yabanci:
             raise KorHata(f"grafikte sayı dışı metin var: {yabanci[:5]}")
         os.makedirs(os.path.dirname(os.path.abspath(yol)), exist_ok=True)
-        fig.savefig(yol, dpi=int(E["grafik"]["dpi"]), metadata={"Software": None})
+        fig.savefig(yol, dpi=fig.dpi, metadata={"Software": None})
     finally:
         plt.close(fig)
     from PIL import Image
@@ -816,7 +853,7 @@ def kor_set(cikti: Optional[str] = None, set_kl: Optional[str] = None, E: Option
     if os.path.exists(_kor_yol("onkayit", cikti)):
         raise KorHata("ön kayıt zaten var: kör set mühürlü, yeniden üretilmez")
     bag = kor_bagimli_kod(E) if kod_denetim else {}
-    tohum = int(E["tohum"]); E2 = V2.VDYT2_ESIK; bar = int(E["grafik"]["bar"])
+    tohum = int(E["tohum"]); E2 = V2.VDYT2_ESIK; bar = int(kor_grafik_v10(E)["bar"])   # seçim kuralı v1.0 (120 bar) değişmez
     pilot = _kor_json_oku(os.path.join(cikti or KOR_YOL["cikti"], "vdyt2b_pilot.json")) if F_ver is None else None
     F = F_ver or {}
     Z: Dict[str, pd.DataFrame] = {}
@@ -915,6 +952,201 @@ def kor_set(cikti: Optional[str] = None, set_kl: Optional[str] = None, E: Option
     return out
 
 
+# ---------------------------------------------------------------- 3b) v1.1 GÖSTERİM (SAPMA 1): 250 bar, log ortak ölçek, %10 cetveli (set / anahtar aynı)
+def kor_pencere11(d: pd.DataFrame, t: int, E: Optional[Dict[str, Any]] = None) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    """v1.1 penceresi: karar günü t'de (dahil) biten son `bar` (250) bar; pencerede > 15 takvim günü boşluk (V1.vdyt_kopuk) ya da veri başı varsa t'de biten
+    kesintisiz en uzun pencere (en az bar_min = 120; değilse durur). t'den SONRAKİ hiçbir bar dönmez. Fiyat t kapanışına göre x 100. Döner (W, bilgi)."""
+    E = E or KOR_ESIK; G = E["grafik"]; bar = int(G["bar"]); en_az = int(G["bar_min"])
+    if t < 0 or t > len(d) - 1:
+        raise KorHata(f"v1.1 pencere kurulamadı (t={t}, n={len(d)})")
+    b0 = max(0, t - bar + 1)
+    kop = V1.vdyt_kopuk(d.index[b0: t + 1])
+    k = np.flatnonzero(kop[1:])
+    if len(k):
+        b0 = b0 + 1 + int(k[-1])
+    n = t - b0 + 1
+    if n < en_az:
+        raise KorHata(f"v1.1 pencere {n} bar < {en_az} (kesintisiz)")
+    W = d.iloc[b0: t + 1][["o", "h", "l", "c", "v"]].astype(float).copy()
+    kk = float(W.c.iloc[-1])
+    if not np.isfinite(kk) or kk <= 0:
+        raise KorHata("karar günü kapanışı geçersiz")
+    W[["o", "h", "l", "c"]] = W[["o", "h", "l", "c"]] / kk * 100.0
+    if not (W[["o", "h", "l", "c"]].to_numpy(float) > 0).all():
+        raise KorHata("v1.1 pencerede pozitif olmayan fiyat (log çizilemez)")
+    return W, {"bar": int(n), "kisa": bool(n < bar), "neden": None if n >= bar else ("kopuk" if len(k) else "veri_basi")}
+
+
+def kor_y_tik11(alt: float, ust: float, olcek: float, E: Optional[Dict[str, Any]] = None) -> List[float]:
+    """Log tikleri (normalize fiyat): {m x 10^k} adayları, görünür aralıkta; 100'den yukarı ve aşağı açgözlü inceltme (ardışık tikler arası >= y_tik_min_px
+    piksel). Döner fiyat değerleri (artan)."""
+    E = E or KOR_ESIK; G = E["grafik"]; mn = float(G["y_tik_min_px"]) / olcek
+    lo, hi = math.exp(alt), math.exp(ust); aday = []
+    for us in range(int(math.floor(math.log10(lo))) - 1, int(math.ceil(math.log10(hi))) + 1):
+        for m in G["y_mantis"]:
+            v = round(float(m) * 10.0 ** us, 10)
+            if lo <= v <= hi:
+                aday.append(v)
+    aday = sorted(set(aday))
+    if not aday:
+        return []
+    merkez = 100.0 if lo <= 100.0 <= hi else min(aday, key=lambda v: abs(math.log(v / 100.0)))
+    sec = [merkez]
+    for v in [a for a in aday if a > merkez]:
+        if math.log(v) - math.log(sec[-1]) >= mn:
+            sec.append(v)
+    asagi = [merkez]
+    for v in [a for a in reversed(aday) if a < merkez]:
+        if math.log(asagi[-1]) - math.log(v) >= mn:
+            asagi.append(v)
+    return sorted(set(sec + asagi))
+
+
+def kor_geometri11(W: pd.DataFrame, E: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    """v1.1 yerleşimi (piksel): ortak ölçek olcek = olcek_px_ln110 / ln(1,10) piksel / ln birimi; fiyat paneli = log aralık x (1 + 2 pay) x olcek, en az
+    fiyat_min_px (ölçek aynı, aralık ortadan genişler), fiyat_max_px'i aşarsa ölçek küçülür (kucuk = True). Döner y sınırları, olcek, panel ve şekil boyları."""
+    E = E or KOR_ESIK; G = E["grafik"]; Kp = G["kenar_px"]
+    yl = np.log(W.l.to_numpy(float)); yh = np.log(W.h.to_numpy(float))
+    alt, ust = float(np.nanmin(yl)), float(np.nanmax(yh)); R = max(ust - alt, 0.0)
+    olcek0 = float(G["olcek_px_ln110"]) / math.log(1.10); olcek = olcek0; kucuk = False
+    span = R * (1.0 + 2.0 * float(G["pay"]))
+    P = span * olcek
+    if P < float(G["fiyat_min_px"]):
+        P = float(G["fiyat_min_px"]); span = P / olcek
+    elif P > float(G["fiyat_max_px"]):
+        P = float(G["fiyat_max_px"]); olcek = P / span; kucuk = True
+    P = float(int(round(P))); span = P / olcek; orta = (alt + ust) / 2.0
+    H = int(Kp["ust"]) + int(P) + int(Kp["ara"]) + int(G["hacim_px"]) + int(Kp["alt"])
+    return {"ylim": [orta - span / 2.0, orta + span / 2.0], "olcek": olcek, "olcek_ref": olcek0, "kucuk": kucuk, "fiyat_px": int(P),
+            "genislik": int(G["genislik"]), "yukseklik": int(H), "log_aralik": R}
+
+
+def kor_ciz_fig11(W: pd.DataFrame, E: Optional[Dict[str, Any]] = None) -> Any:
+    """v1.1 kör grafik: log fiyat (ln, doğrusal eksen; tikler fiyat değeri), bütün grafiklerde aynı piksel / log-getiri ölçeği (kor_geometri11), mum gövde + fitil
+    aynı renk, sağda gerçek ln(1,10) boyunda '%10' cetveli, açık gri yatay ızgara, sayısız hacim paneli (180 px). Başlık / ad / tarih YOK. Döner Figure."""
+    E = E or KOR_ESIK; G = E["grafik"]; Kp = G["kenar_px"]
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.collections import LineCollection, PolyCollection
+    Y = kor_geometri11(W, E); dpi = int(G["dpi"]); Wp, Hp = Y["genislik"], Y["yukseklik"]; olcek = Y["olcek"]
+    with matplotlib.rc_context({"axes.unicode_minus": False, "font.size": int(G["font"]), "axes.grid": False}):
+        fig = plt.figure(figsize=(Wp / dpi, Hp / dpi), dpi=dpi)
+        sol, sag, ustk, altk, ara = (int(Kp[k]) for k in ("sol", "sag", "ust", "alt", "ara"))
+        en = Wp - sol - sag; hv = int(G["hacim_px"]); P = Y["fiyat_px"]
+        ax = fig.add_axes([sol / Wp, (altk + hv + ara) / Hp, en / Wp, P / Hp])
+        axv = fig.add_axes([sol / Wp, altk / Hp, en / Wp, hv / Hp], sharex=ax)
+        axc = fig.add_axes([(sol + en + 4) / Wp, (altk + hv + ara) / Hp, int(Kp["cetvel_en"]) / Wp, P / Hp])
+        n = len(W); x = np.arange(n) - (n - 1)
+        o, h, l, c, v = (W[k].to_numpy(float) for k in ("o", "h", "l", "c", "v"))
+        lo, lh, ll, lc = np.log(o), np.log(h), np.log(l), np.log(c)
+        yuk = c >= o; renk = np.where(yuk, G["yukari"], G["asagi"]); w = float(G["govde_en"]) / 2.0
+        en_az = float(G["govde_min_px"]) / olcek
+        a_ = np.minimum(lo, lc); u_ = np.maximum(np.maximum(lo, lc), a_ + en_az)
+        ax.add_collection(LineCollection([[(xi, li), (xi, hi)] for xi, li, hi in zip(x, ll, lh)], colors=list(renk), linewidths=float(G["fitil_lw"])))
+        ax.add_collection(PolyCollection([[(xi - w, a), (xi + w, a), (xi + w, b), (xi - w, b)] for xi, a, b in zip(x, a_, u_)],
+                                         facecolors=list(renk), edgecolors=list(renk), linewidths=0.4))
+        ax.set_ylim(*Y["ylim"]); ax.set_xlim(-n + 0.3, 0.9)
+        yt = kor_y_tik11(Y["ylim"][0], Y["ylim"][1], olcek, E)
+        ax.set_yticks([math.log(t) for t in yt], labels=[f"{t:g}" for t in yt])
+        ax.grid(axis="y", color=G["izgara"], linewidth=float(G["izgara_lw"])); ax.set_axisbelow(True)
+        ax.tick_params(axis="x", labelbottom=False)
+        vv = np.nan_to_num(v)
+        axv.bar(x, vv, width=float(G["govde_en"]), color=list(renk), alpha=float(G["hacim_alfa"]), linewidth=0)
+        axv.set_ylim(0, float(vv.max()) * 1.05 if len(vv) and vv.max() > 0 else 1.0)
+        xt = [int(t) for t in G["x_tik"] if t >= -(n - 1)]
+        axv.set_xticks(xt, labels=[str(t) for t in xt]); axv.set_yticks([])
+        # %10 cetveli: gerçek ln(1,10) boyu (küçültülmüş ölçekte de veri biriminde -> doğru piksel)
+        Cv = G["cetvel"]; y0 = Y["ylim"][0] + float(Cv["alt_pay"]) * (Y["ylim"][1] - Y["ylim"][0]); y1 = y0 + math.log(1.0 + float(Cv["oran"]))
+        axc.set_xlim(0, 1); axc.set_ylim(*Y["ylim"]); axc.axis("off")
+        axc.add_collection(LineCollection([[(0.18, y0), (0.18, y1)], [(0.06, y0), (0.30, y0)], [(0.06, y1), (0.30, y1)]], colors=Cv["renk"], linewidths=1.6))
+        axc.text(0.36, (y0 + y1) / 2.0, str(Cv["metin"]), ha="left", va="center", fontsize=int(G["font"]) - 1, color=Cv["renk"])
+    return fig
+
+
+def _kor_seri11(pazar: str, s: str, F: Dict[str, Dict[str, Any]], tiingo_d: Dict[str, pd.DataFrame]) -> pd.DataFrame:
+    if pazar.startswith("ABD (Tiingo"):
+        if s not in tiingo_d:
+            raise KorHata("batan seri Tiingo önbelleğinde yok")
+        return tiingo_d[s]
+    if pazar not in F or s not in F[pazar]["S"]:
+        raise KorHata(f"{pazar} fiyatında seri yok")
+    return F[pazar]["S"][s]
+
+
+def kor_ciz11(set_kl: Optional[str] = None, E: Optional[Dict[str, Any]] = None, F_ver: Optional[Dict[str, Dict[str, Any]]] = None,
+              tiingo_kl: Optional[str] = None, kopya_kl: Optional[str] = None, v10_denetim: bool = True) -> Dict[str, Any]:
+    """`ciz11` (v1.1, SAPMA 1): mühürlü anahtardaki AYNI 40 karar noktası (numara -> pazar, sembol, t) yeniden çizilir; set yeniden çekilmez. Denetimler: anahtar
+    sha256 önce / sonra aynı; karar günü ve v1.0 pencere tarihleri seriyle aynı; (v10_denetim) v1.0 PNG'si yeniden çizilip anahtardaki grafik_sha256 ile aynı.
+    Çıktı set/grafik_v11/grafik_NN.png + manifest_v11.json (numara, dosya, sha256, bayt, piksel; GRUP YOK); kopya_kl verilirse PNG'ler oraya da yazılır.
+    Ekrana / log'a numara bazında hiçbir şey yazılmaz (yalnız toplamlar)."""
+    E = E or KOR_ESIK; set_kl = set_kl or KOR_YOL["set"]; ak = _kor_set_yol("anahtar", set_kl)
+    if not os.path.exists(ak):
+        raise KorHata("anahtar yok: önce `set`")
+    sha_once = kor_sha_dosya(ak); A = _kor_json_oku(ak)["numara"]
+    nolar = sorted(int(k) for k in A)
+    if nolar != list(range(1, len(nolar) + 1)):
+        raise KorHata("anahtar numaraları 1..n değil")
+    F = dict(F_ver or {}); pazarlar = sorted({A[str(i)]["pazar"] for i in nolar})
+    for p in ("BIST", "ABD"):
+        if p in pazarlar and p not in F:
+            korlog.info("%s fiyatları yükleniyor (V2.v2_fiyat; ağ yok)", p); F[p] = V2.v2_fiyat(p)
+    tiingo_d: Dict[str, pd.DataFrame] = {}
+    for i in nolar:
+        a = A[str(i)]
+        if a["pazar"].startswith("ABD (Tiingo") and a["sembol"] not in tiingo_d:
+            d_, _rc = kor_tiingo_temiz(kor_tiingo_kayit(a["sembol"], tiingo_kl))
+            if d_ is not None:
+                tiingo_d[a["sembol"]] = d_
+    gkl = _kor_set_yol("grafik_v11", set_kl); bar10 = int(kor_grafik_v10(E)["bar"])
+    if os.path.isdir(gkl):
+        shutil.rmtree(gkl)
+    import tempfile
+    tkl = tempfile.mkdtemp(prefix="kor_v10_")
+    manifest: List[Dict[str, Any]] = []; kisa = 0; kucuk = 0; v10_tuttu = 0; bars: List[int] = []
+    try:
+        for i in nolar:
+            a = A[str(i)]; t = int(a["t"])
+            try:
+                d = _kor_seri11(a["pazar"], a["sembol"], F, tiingo_d)
+            except KorHata as ex:
+                raise KorHata(f"grafik {i:02d}: {ex}") from None
+            if t > len(d) - 1 or str(d.index[t].date()) != str(a["tarih"]) or str(d.index[t - bar10 + 1].date()) != str(a["pencere"][0]):
+                raise KorHata(f"grafik {i:02d}: karar günü / v1.0 pencere tarihi seriyle tutmuyor (set değişmiş olabilir)")
+            if v10_denetim:
+                g0 = kor_grafik_yaz(kor_pencere(d, t, bar10), os.path.join(tkl, f"v10_{i:02d}.png"), E)
+                if g0["sha256"] != a.get("grafik_sha256"):
+                    raise KorHata(f"grafik {i:02d}: v1.0 yeniden çizimi anahtardaki grafik_sha256 ile tutmuyor (seri ya da çizim ortamı farklı)")
+                v10_tuttu += 1
+            W, b = kor_pencere11(d, t, E); Y = kor_geometri11(W, E)
+            g = kor_grafik_yaz(W, os.path.join(gkl, f"grafik_{i:02d}.png"), E, ciz=kor_ciz_fig11)
+            if list(g["piksel"]) != [Y["genislik"], Y["yukseklik"]]:
+                raise KorHata(f"grafik {i:02d}: PNG boyutu {g['piksel']} yerleşimle tutmuyor")
+            kisa += int(b["kisa"]); kucuk += int(Y["kucuk"]); bars.append(b["bar"])
+            manifest.append({"numara": i, **g})
+    finally:
+        shutil.rmtree(tkl, ignore_errors=True)
+    if kor_sha_dosya(ak) != sha_once:
+        raise KorHata("anahtar.json çizim sırasında değişti")
+    G = E["grafik"]
+    ozet = {"kisa_pencere": kisa, "olcek_kucuk": kucuk, "bar_min": min(bars) if bars else None, "bar_maks": max(bars) if bars else None,
+            "piksel_genislik": sorted({m["piksel"][0] for m in manifest}), "piksel_yukseklik": [min(m["piksel"][1] for m in manifest),
+                                                                                                 max(m["piksel"][1] for m in manifest)] if manifest else [],
+            "bayt": [min(m["bayt"] for m in manifest), max(m["bayt"] for m in manifest)] if manifest else [], "v10_yeniden_cizim_tuttu": v10_tuttu}
+    mk = _kor_json(_kor_set_yol("manifest_v11", set_kl), {"surum": KOR_SURUM, "grafik_surum": G["surum"], "grafik_sayisi": len(manifest), "grafik": manifest,
+                                                         "soru": E["soru"], "ozet": ozet, "anahtar_sha256": sha_once, "esik_sha256": kor_esik_sha(E)})
+    if kopya_kl:
+        os.makedirs(kopya_kl, exist_ok=True)
+        for m in manifest:
+            shutil.copyfile(os.path.join(gkl, m["dosya"]), os.path.join(kopya_kl, m["dosya"]))
+            if kor_sha_dosya(os.path.join(kopya_kl, m["dosya"])) != m["sha256"]:
+                raise KorHata("kopya PNG manifestle tutmuyor")
+    out = {"zaman": _kor_simdi(), "grafik_sayisi": len(manifest), "manifest_v11": mk, "manifest_v11_sha256": kor_sha_dosya(mk), "anahtar_sha256": sha_once,
+           "esik_sha256": kor_esik_sha(E), "kod_sha256": kor_kod_sha(), "klasor": gkl, "kopya": kopya_kl, **ozet}
+    korlog.info("v1.1 çizim: %d grafik; 250'den kısa %d; ölçek küçültülen %d; manifest_v11 sha256 %s", len(manifest), kisa, kucuk, out["manifest_v11_sha256"])
+    return out
+
+
 # ---------------------------------------------------------------- 4) ÖN KAYIT
 def kor_onkayit_metin(zaman: str, Z: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
     E = E or KOR_ESIK; S = E["set"]; O = E["olcum"]; B = O["basari"]; Zy = O["zayif"]
@@ -959,7 +1191,7 @@ def kor_onkayit_metin(zaman: str, Z: Dict[str, Any], E: Optional[Dict[str, Any]]
     L.append("- VDYT2 tablo sha256 (kasa klasörü; dosya / açılmış içerik; wf klasöründeki aynı adlı tablonun açılmış içeriği aynı mı):\n")
     for k, v in sorted(Z.get("tablo_sha256", {}).items()):
         L.append(f"  - {k}: dosya {v} / içerik {ic_kasa[k]} (wf içerik aynı: {_kor_f(wf_ayni.get(k))})\n")
-    G = E["grafik"]
+    G = kor_grafik_v10(E)
     L.append(f"\n## 2. Grafik\n- Karar gününe kadar son {G['bar']} işlem günü; karar günü SAĞ UÇTA (x = 0); karar gününden sonraki hiçbir bar yok. Mum gövdesi + fitil "
              f"(yukarı {G['yukari']}, aşağı {G['asagi']}), altta hacim paneli (payı {G['hacim_pay']}). Fiyat {G['normal']} (fiyat düzeyi hisseyi / pazarı ele vermez). "
              f"{G['metin']}. {G['piksel'][0]}x{G['piksel'][1]} piksel, {G['dpi']} dpi, PNG üst verisinde yazılım bilgisi yok.\n"
@@ -1024,7 +1256,92 @@ def kor_onkayit_oku(yol: str) -> Dict[str, str]:
         if not r:
             raise KorHata(f"ön kayıtta '{k}' satırı yok")
         out[k] = r.group(1).strip()
+    for k in ("ESIK_SHA256_V11", "KOD_SHA256_V11", "MANIFEST_V11_SHA256"):   # SAPMA 1 (v1.1) eki varsa geçerli mühür v1.1'dir; v1.0 değerleri _V10'da
+        r = re.search(rf"^{k}: (.+)$", m, re.M)
+        if r:
+            out[k] = r.group(1).strip()
+    v11 = [k for k in ("ESIK_SHA256_V11", "KOD_SHA256_V11", "MANIFEST_V11_SHA256") if k in out]
+    if v11 and len(v11) != 3:
+        raise KorHata(f"ön kayıtta SAPMA 1 satırları eksik: {v11}")
+    if v11:
+        out["ESIK_SHA256_V10"], out["KOD_SHA256_V10"] = out["ESIK_SHA256"], out["KOD_SHA256"]
+        out["ESIK_SHA256"], out["KOD_SHA256"] = out["ESIK_SHA256_V11"], out["KOD_SHA256_V11"]
     return out
+
+
+def kor_sapma11_metin(zaman: str, O: Dict[str, str], Z: Dict[str, Any], E: Optional[Dict[str, Any]] = None, set_kl: Optional[str] = None) -> str:
+    """Ön kayıt eki: SAPMA 1 (v1.1 gösterim düzeltmesi). O: v1.0 ön kayıt satırları; Z: manifest_v11 içeriği (yalnız toplamlar; grup yok)."""
+    E = E or KOR_ESIK; G = E["grafik"]; G0 = kor_grafik_v10(E); oz = Z["ozet"]; B = E["olcum"]["basari"]; Zy = E["olcum"]["zayif"]
+    mk = _kor_set_yol("manifest_v11", set_kl); skl = set_kl or KOR_YOL["set"]
+    L = ["\n\n## SAPMA 1 (v1.1, 12 Kasım 2026): gösterim düzeltmesi\n\n",
+         f"Yazım zamanı V11: {zaman}\nESIK_SHA256_V11: {kor_esik_sha(E)}\nKOD_SHA256_V11: {kor_kod_sha()}\n"
+         f"MANIFEST_V11_SHA256: {kor_sha_dosya(mk) if os.path.exists(mk) else '-'}\nSürüm V11: {KOR_SURUM}\n\n",
+         "- Zaman: Cemal işaretlemeden ÖNCE yapıldı (0 işaret: cevap dosyası alınmadı, sonuç dosyası yok; `sapma11` sonuç dosyası varsa yazmayı reddeder).\n",
+         "- Neden (Cemal'in geri bildirimi, 12 Kasım 2026): 'her bölgede aynı benzeri çizim var, mum fitil boyu neredeyse aynı; evet / hayır demem mümkün değil'. "
+         f"v1.0 çizimi her grafiğin y eksenini kendi {G0['bar']} barlık min-max aralığına doğrusal olarak geriyordu (otomatik ölçek): günlük %1 oynayan hisse "
+         f"ile %8 oynayan hisse aynı görünüyordu; {G0['bar']} bar da çöl tanımındaki 'düşüş sonrası aylarca sıkışma' bağlamını göstermiyordu. Veri gerçek; "
+         "sorun gösterimdi.\n",
+         f"- Ne değişti (yalnız çizim; KOR_ESIK['grafik'] v1.1, eski değerler KOR_ESIK['grafik_v10']): (1) pencere karar gününe kadar son {G['bar']} işlem günü "
+         f"(karar günü sağ uçta, x = 0; > 15 takvim günü boşluk ya da veri başı varsa karar gününde biten kesintisiz en uzun pencere, en az {G['bar_min']}); "
+         f"(2) y ekseni LOGARİTMİK, fiyat / karar günü kapanışı x 100; bütün grafiklerde aynı ölçek: ln(1,10) = {G['olcek_px_ln110']} piksel; fiyat paneli "
+         f"yüksekliği = log aralık x (1 + 2 x {G['pay']}) x ölçek, en az {G['fiyat_min_px']} piksel; {G['fiyat_max_px']} pikseli aşan grafikte ölçek küçültülür; "
+         f"(3) her grafiğin sağ kenarında gerçek ln(1,10) boyunda '%10' cetveli (küçültülen grafikte de gerçek boy) ve log tikleri (ör. 50, 60, ..., 100, 110, "
+         f"125, 150, 200), açık gri yatay ızgara; (4) mum gövde + fitil aynı renk (yukarı {G['yukari']}, aşağı {G['asagi']}), gövde eni {G['govde_en']}; "
+         f"(5) genişlik {G['genislik']} piksel sabit, hacim paneli {G['hacim_px']} piksel sabit, sayısız; {G['dpi']} dpi; PNG üst verisinde yazılım bilgisi yok. "
+         "Grafikte izinli metin: sayılar ve '%10' (kor_grafik_yaz metin kapısı). Başlık, hisse adı, tarih YOK.\n",
+         f"- v1.1 grafikleri: {Z['grafik_sayisi']} PNG, {os.path.join(skl, KOR_DOSYA['grafik_v11'])}/ (repoya girmez); manifest (numara, dosya, sha256; GRUP "
+         f"BİLGİSİ YOK) {mk}. {G['bar']} bardan kısa pencere: {oz['kisa_pencere']} grafik; ölçeği küçültülen: {oz['olcek_kucuk']} grafik; "
+         f"pencere {oz['bar_min']}-{oz['bar_maks']} bar; boyut {oz['piksel_genislik'][0]} x {oz['piksel_yukseklik'][0]}-{oz['piksel_yukseklik'][1]} piksel, "
+         f"{_kor_f(oz['bayt'][0])}-{_kor_f(oz['bayt'][1])} bayt. Aynı 40 nokta denetimi: her numarada karar günü ve v1.0 pencere tarihleri seriyle aynı; v1.0 "
+         f"PNG'si yeniden çizildi ve anahtardaki grafik_sha256 ile aynı çıktı ({oz['v10_yeniden_cizim_tuttu']} / {Z['grafik_sayisi']}). Komut: "
+         "`python KOR_TEST.py ciz11` (deterministik; iki koşu aynı sha256).\n",
+         f"- DEĞİŞMEYENLER: 40 karar noktası (aynı hisse, aynı karar günü, aynı grafik numarası; set yeniden çekilmedi), gruplar, cevap anahtarı (ANAHTAR_SHA256 "
+         f"{O['ANAHTAR_SHA256']}), sorular (Soru 1: '{E['soru']['bolge']}'), karar kuralı (BAŞARILI <=> p_G5 >= {_kor_f(B['g5_evet_min'], 2)} VE p_K <= "
+         f"{_kor_f(B['kontrol_evet_max'], 2)} VE kappa >= {_kor_f(B['kappa_min'], 2)} VE Fisher iki yönlü p < {_kor_f(B['fisher_p_max'], 2)}; ZAYIF İŞARET <=> "
+         f"p_G5 >= {_kor_f(Zy['g5_evet_min'], 2)} VE fark > {_kor_f(Zy['fark_min'], 1)}; aksi İŞARET YOK; VERİ YETERSİZ İŞARET YOK sayılır), Aralık Tiingo kotası "
+         "kuralı (" + E["karar_kullanimi"] + "), set seçim kuralı (120 barlık kopuk denetimi KOR_ESIK['grafik_v10']['bar'] ile).\n",
+         f"- Mühür: v1.0 ESIK_SHA256 ({O['ESIK_SHA256']}) = KOR_ESIK'te 'grafik' yerine 'grafik_v10' konarak kurulan sözlüğün sha256'sı; `olc` bunu, v1.1 "
+         "mührünü (ESIK_SHA256_V11), v1.1 kod sha256'sını (KOD_SHA256_V11), anahtarın v1.0 mührüyle üretildiğini ve manifest_v11 / grafik_v11 sha256'larını "
+         f"denetler; tutmazsa REDDEDER. v1.0 grafikleri ({os.path.join(skl, KOR_DOSYA['grafik'])}/, manifest.json, MANIFEST_SHA256) silinmedi, yine denetlenir.\n",
+         "- Cemal'e gösterilecek set: v1.1 grafikleri (aynı numaralar). Cevap dosyası biçimi ve şablon değişmedi.\n",
+         "\n### EK SAPMA 1. v1.1 grafik eşikleri (KOR_ESIK['grafik'])\n\n```json\n" + json.dumps(G, ensure_ascii=False, indent=1, sort_keys=True, default=str) +
+         "\n```\n"]
+    return "".join(L)
+
+
+def kor_sapma11(cikti: Optional[str] = None, set_kl: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -> str:
+    """`sapma11`: ön kayda SAPMA 1 ekini yazar (bir kez). Önce: sonuç dosyası yok (0 işaret); v1.0 mührü kor_esik_v10 ile, anahtar ve v1.0 manifest sha256'sı ön
+    kayıtla aynı; manifest_v11 aynı anahtar ve v1.1 mührüyle üretilmiş, grafik_v11 PNG'leri manifestle aynı. Döner ön kayıt yolu."""
+    E = E or KOR_ESIK; y = _kor_yol("onkayit", cikti)
+    O = kor_onkayit_oku(y)
+    with open(y, encoding="utf-8") as f:
+        m = f.read()
+    if "## SAPMA 1 " in m or "ESIK_SHA256_V11" in O:
+        raise KorHata("SAPMA 1 zaten yazılmış (üzerine yazılmaz)")
+    if os.path.exists(_kor_yol("sonuc", cikti)):
+        raise KorHata("ölçüm sonucu var: Cemal işaretledikten sonra gösterim değiştirilemez")
+    if kor_esik_sha(kor_esik_v10(E)) != O["ESIK_SHA256"]:
+        raise KorHata("v1.0 eşik mührü kor_esik_v10 ile yeniden kurulamadı (grafik dışında eşik değişmiş)")
+    ak = _kor_set_yol("anahtar", set_kl); mk = _kor_set_yol("manifest", set_kl); mk11 = _kor_set_yol("manifest_v11", set_kl)
+    if kor_sha_dosya(ak) != O["ANAHTAR_SHA256"] or kor_sha_dosya(mk) != O["MANIFEST_SHA256"]:
+        raise KorHata("anahtar / v1.0 manifest sha256'sı ön kayıtla tutmuyor")
+    if not os.path.exists(mk11):
+        raise KorHata("manifest_v11 yok: önce `python KOR_TEST.py ciz11`")
+    Z = _kor_json_oku(mk11)
+    if Z.get("anahtar_sha256") != O["ANAHTAR_SHA256"] or Z.get("esik_sha256") != kor_esik_sha(E):
+        raise KorHata("manifest_v11 başka anahtar / eşikle üretilmiş")
+    gkl = _kor_set_yol("grafik_v11", set_kl)
+    bozuk = [g["numara"] for g in Z["grafik"] if not os.path.exists(os.path.join(gkl, g["dosya"])) or kor_sha_dosya(os.path.join(gkl, g["dosya"])) != g["sha256"]]
+    if bozuk or len(Z["grafik"]) != len(_kor_json_oku(ak)["numara"]):
+        raise KorHata(f"grafik_v11 manifestle tutmuyor ya da eksik: {bozuk[:10]}")
+    ek = kor_sapma11_metin(_kor_simdi(), O, Z, E, set_kl)
+    if _KOR_EPOSTA.search(ek):
+        raise KorHata("ek metinde e-posta biçimli parça var")
+    if kor_sha_dosya(mk11) not in ek:
+        raise KorHata("ek metindeki manifest_v11 sha256'sı tutmuyor")
+    with open(y, "a", encoding="utf-8") as f:
+        f.write(ek)
+    return y
 
 
 def kor_kapi(cikti: Optional[str] = None, set_kl: Optional[str] = None, E: Optional[Dict[str, Any]] = None, git: bool = True, kod_git: bool = True,
@@ -1052,6 +1369,21 @@ def kor_kapi(cikti: Optional[str] = None, set_kl: Optional[str] = None, E: Optio
         if bozuk:
             raise KorHata(f"grafikler manifestle tutmuyor: {bozuk[:10]}")
     out["anahtar"] = _kor_json_oku(ak); out["manifest"] = M
+    if "ESIK_SHA256_V10" in O:   # SAPMA 1 (v1.1): yalnız grafik değişti; anahtar v1.0 mührüyle; v1.1 manifest / grafikler ön kayıtla aynı
+        if kor_esik_sha(kor_esik_v10(E)) != O["ESIK_SHA256_V10"]:
+            raise KorHata("eşik mührü ön kayıtla tutmuyor (v1.0 mührü kor_esik_v10 ile yeniden kurulamadı: grafik dışında eşik değişmiş)")
+        if out["anahtar"].get("esik_sha256") != O["ESIK_SHA256_V10"]:
+            raise KorHata("cevap anahtarı v1.0 eşik mührüyle üretilmemiş")
+        mk11 = _kor_set_yol("manifest_v11", set_kl)
+        if not os.path.exists(mk11) or kor_sha_dosya(mk11) != O["MANIFEST_V11_SHA256"]:
+            raise KorHata("manifest_v11 yok ya da sha256'sı ön kayıtla (SAPMA 1) tutmuyor")
+        M11 = _kor_json_oku(mk11); gkl11 = _kor_set_yol("grafik_v11", set_kl)
+        if grafik and os.path.isdir(gkl11):
+            bozuk = [m["numara"] for m in M11["grafik"] if not os.path.exists(os.path.join(gkl11, m["dosya"]))
+                     or kor_sha_dosya(os.path.join(gkl11, m["dosya"])) != m["sha256"]]
+            if bozuk:
+                raise KorHata(f"v1.1 grafikleri manifest_v11 ile tutmuyor: {bozuk[:10]}")
+        out["v11"] = {"manifest_v11_sha256": O["MANIFEST_V11_SHA256"], "grafik_sayisi": len(M11["grafik"])}
     return out
 
 
@@ -1305,9 +1637,10 @@ _cakisma_kontrol_kor()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=KOR_SURUM)
-    ap.add_argument("komut", choices=["ohlc", "set", "onkayit", "olc", "rapor"])
+    ap.add_argument("komut", choices=["ohlc", "set", "onkayit", "ciz11", "sapma11", "olc", "rapor"])
     ap.add_argument("--cevap", default=None, help="olc: Cemal'in cevap dosyası")
     ap.add_argument("--cikti", default=None)
+    ap.add_argument("--kopya", default=None, help="ciz11: v1.1 PNG'lerinin ayrıca kopyalanacağı klasör")
     a_ = ap.parse_args()
     try:
         if a_.komut == "ohlc":
@@ -1316,6 +1649,13 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             z_ = kor_set(a_.cikti)
             print(json.dumps({k: z_[k] for k in ("hedef", "bulunan", "eksik", "aday_sayisi", "anahtar_sha256", "manifest_sha256", "grafik_bayt_maks")},
                              ensure_ascii=False, default=str, indent=1))
+        elif a_.komut == "ciz11":
+            c_ = kor_ciz11(kopya_kl=a_.kopya)
+            print(json.dumps({k: c_[k] for k in ("grafik_sayisi", "kisa_pencere", "olcek_kucuk", "bar_min", "bar_maks", "piksel_genislik", "piksel_yukseklik",
+                                                 "bayt", "v10_yeniden_cizim_tuttu", "manifest_v11_sha256", "anahtar_sha256", "esik_sha256", "kod_sha256")},
+                             ensure_ascii=False, default=str, indent=1))
+        elif a_.komut == "sapma11":
+            y_ = kor_sapma11(a_.cikti); print(y_, "v1.1 mühür", kor_esik_sha(), "kod", kor_kod_sha())
         elif a_.komut == "onkayit":
             y_ = kor_onkayit(a_.cikti); print(y_, "mühür", kor_esik_sha(), "kod", kor_kod_sha(), "dosya sha256", kor_sha_dosya(y_))
         elif a_.komut == "olc":

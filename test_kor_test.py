@@ -9,7 +9,11 @@ eksik / geçersiz cevap reddi  9) uçtan uca sentetik set: VDYT2 fonksiyonlarıy
 manifest (grup bilgisi yok), iki koşu birebir aynı (anahtar / manifest / PNG sha256)  10) anahtar mühür ve ret kapısı: ön kayıt git'te değil / sonradan
 değişmiş / eşik / kod / anahtar / manifest / grafik sha256 tutmuyor -> RET; git'e işlenince geçer; ön kayıt ve set üzerine yazılmaz; gerçek depoda
 KOR_TEST.py işlenmemişse `olc` reddeder  11) olc uçtan uca (git kapısı kapalı): sonuç JSON, rapor, anahtarın kopyalanması  12) çakışma kapısı
-13) VDYT2.py / VDYT.py değişmedi; kodda e-posta / anahtar yok; VDYT*.py değiştirilmiyor.
+13) VDYT2.py / VDYT.py değişmedi; kodda e-posta / anahtar yok; VDYT*.py değiştirilmiyor  14) v1.1 (SAPMA 1): 250 bar pencere (kopuk / veri başı -> kesintisiz
+en uzun, < 120 dur, gelecek yok); log ortak ölçek (%4 / %1 oynaklıkta mum piksel oranı ~ 3,94; piksel / ln birimi her grafikte aynı); %10 cetveli gerçek
+ln(1,10) boyunda (küçültülen grafikte de); 350 / 1600 piksel sınırları; metin kapısı (sayı + '%10'); deterministik PNG; v1.0 sözlüğüyle kurulan set aynı;
+ciz11 iki koşu aynı, anahtar değişmez, manifest_v11'de grup yok, karar günü tutmazsa durur; sapma11 (sonuç varsa / iki kez / manifest yoksa reddeder) ve
+kapı (v1.0 mührü yeniden kurulur, v1.1 grafik / manifest bozulunca RET); gerçek anahtar sha256 73da87f12549 değişmedi.
 """
 from __future__ import annotations
 
@@ -33,6 +37,7 @@ import KOR_TEST as K  # noqa: E402
 import test_vdyt2 as T2  # noqa: E402  (sentetik pazar üretici; yalnız okunur)
 
 E0 = K.KOR_ESIK
+ANAHTAR_SHA = "73da87f12549b013e89b7dd24f11fdbc51c474ea1559410ad528e5ea049b6319"   # mühürlü kör set anahtarı (v1.0 ön kayıt; v1.1'de DEĞİŞMEZ)
 
 
 def durmali(fn, mesaj: str, hata: list, icerik: str = "") -> None:
@@ -141,9 +146,9 @@ def testler() -> list:
         bilgi = {k for k in im.info if k not in ("dpi",)}
         if bilgi:
             hata.append(f"2) PNG üst verisinde metin var: {bilgi}")
-        if list(im.size) != list(E0["grafik"]["piksel"]):
-            hata.append(f"2) PNG boyutu {im.size} != {E0['grafik']['piksel']}")
-    if os.path.getsize(p1) > E0["grafik"]["hedef_kb"] * 1024:
+        if list(im.size) != list(E0["grafik_v10"]["piksel"]):
+            hata.append(f"2) PNG boyutu {im.size} != {E0['grafik_v10']['piksel']}")
+    if os.path.getsize(p1) > E0["grafik_v10"]["hedef_kb"] * 1024:
         hata.append("2) PNG 150 KB'tan büyük")
     if K.kor_grafik_yaz(W, os.path.join(td0, "c.png"))["sha256"] != g1["sha256"]:
         hata.append("2) aynı girdi farklı PNG (deterministik değil)")
@@ -429,6 +434,190 @@ def testler() -> list:
         hata.append("13) kodda e-posta / anahtar / ağ isteği izi var")
     if re.search(r"open\([^)]*VDYT2?B?\.py[^)]*['\"]w", kaynak):
         hata.append("13) KOR_TEST VDYT*.py'ye yazıyor")
+    # ---------------------------------------------------------------- 14) v1.1 gösterim (SAPMA 1): pencere, log ortak ölçek, %10 cetveli, metin, mühür
+    G1 = E0["grafik"]; olc0 = G1["olcek_px_ln110"] / np.log(1.10)
+    on_gercek = os.path.join(KOK, "arastirma_cikti", "vdyt", "v2_20261112", "KOR_TEST_ON_KAYIT.md")
+    if os.path.exists(on_gercek):
+        Og = K.kor_onkayit_oku(on_gercek)
+        if K.kor_esik_sha(K.kor_esik_v10(E0)) != Og.get("ESIK_SHA256_V10", Og["ESIK_SHA256"]):
+            hata.append("14) v1.0 eşik mührü kor_esik_v10 ile yeniden kurulamadı (grafik dışında eşik değişmiş)")
+        if Og["ANAHTAR_SHA256"] != ANAHTAR_SHA:
+            hata.append("14) ön kayıttaki anahtar sha256 değişmiş")
+    if set(E0) - {"grafik_v10"} != set(K.kor_esik_v10(E0)) or "grafik_v10" in K.kor_esik_v10(E0) or K.kor_esik_v10(E0)["grafik"] != E0["grafik_v10"]:
+        hata.append("14) kor_esik_v10 yanlış kuruluyor")
+    if K.kor_grafik_v10(E0)["bar"] != 120 or G1["bar"] != 250:
+        hata.append("14) v1.0 seçim penceresi 120 / v1.1 çizim penceresi 250 değil")
+    gercek_ak = os.path.join(K.KOR_YOL["set"], "anahtar.json")
+    if os.path.exists(gercek_ak) and K.kor_sha_dosya(gercek_ak) != ANAHTAR_SHA:
+        hata.append("14) gerçek anahtar.json sha256'sı değişmiş (73da87f12549 olmalı)")
+    # pencere11
+    d14 = T2.rastgele_bar(600, tohum=21)
+    d14.index = pd.bdate_range("2015-01-02", periods=len(d14))
+    W14, b14 = K.kor_pencere11(d14, 400)
+    if len(W14) != 250 or W14.index[-1] != d14.index[400] or W14.index[0] != d14.index[151] or b14["kisa"] or abs(float(W14.c.iloc[-1]) - 100) > 1e-9:
+        hata.append("14) pencere11 250 bar / karar günü sağda değil")
+    d14b = d14.copy(); d14b.iloc[401:, :] = d14b.iloc[401:, :] * 5.0
+    if not K.kor_pencere11(d14b, 400)[0].equals(W14):
+        hata.append("14) pencere11 geleceğe bakıyor")
+    ix = d14.index.to_list(); ix = ix[:251] + [g + pd.Timedelta(days=30) for g in ix[251:]]
+    d14k = d14.copy(); d14k.index = pd.DatetimeIndex(ix)
+    Wk, bk = K.kor_pencere11(d14k, 400)
+    if len(Wk) != 150 or not bk["kisa"] or bk["neden"] != "kopuk" or Wk.index[0] != d14k.index[251]:
+        hata.append(f"14) kopuklu pencere kesintisiz en uzun değil: {len(Wk)} {bk}")
+    Wb, bb = K.kor_pencere11(d14, 180)
+    if len(Wb) != 181 or bb["neden"] != "veri_basi":
+        hata.append("14) veri başında pencere yanlış")
+    durmali(lambda: K.kor_pencere11(d14, 100), "14) 120 bardan kısa pencere kabul edildi", hata, "<")
+    durmali(lambda: K.kor_pencere11(d14k, 300), "14) kopuktan sonra 120 bardan kısa pencere kabul edildi", hata, "<")
+
+    def duz(oran: float, tohum: int) -> pd.DataFrame:
+        r = np.random.default_rng(tohum); n = 300; c = 100 * np.exp(np.cumsum(r.normal(0, 0.002, n)))
+        return pd.DataFrame({"o": c, "h": c * np.exp(oran / 2), "l": c * np.exp(-oran / 2), "c": c, "v": r.uniform(1e5, 2e5, n)},
+                            index=pd.bdate_range("2020-01-02", periods=n))
+
+    def fitil_px(fig) -> np.ndarray:
+        ax = fig.axes[0]; lc = ax.collections[0]; out = []
+        for p in lc.get_paths():
+            v = ax.transData.transform(p.vertices); out.append(abs(v[1, 1] - v[0, 1]))
+        return np.asarray(out)
+
+    def px_ln(fig, i=0) -> float:
+        ax = fig.axes[i]; return float(ax.transData.transform((0, 1.0))[1] - ax.transData.transform((0, 0.0))[1])
+
+    def cetvel_px(fig) -> float:
+        axc = fig.axes[2]; v = axc.transData.transform(axc.collections[0].get_paths()[0].vertices); return float(abs(v[1, 1] - v[0, 1]))
+    Wa, _ = K.kor_pencere11(duz(np.log(1.01), 1), 299); Wd, _ = K.kor_pencere11(duz(np.log(1.04), 2), 299)
+    fa, fd = K.kor_ciz_fig11(Wa), K.kor_ciz_fig11(Wd)
+    ha, hd = fitil_px(fa), fitil_px(fd); oran = float(np.median(hd) / np.median(ha)); bek = np.log(1.04) / np.log(1.01)
+    if abs(oran / bek - 1) > 0.05:
+        hata.append(f"14) ortak ölçek: %4 / %1 mum piksel oranı {oran:.2f} (beklenen {bek:.2f})")
+    if abs(np.median(ha) - np.log(1.01) * olc0) > 0.5:
+        hata.append(f"14) %1 mumun piksel boyu {np.median(ha):.2f} != {np.log(1.01) * olc0:.2f}")
+    for f_ in (fa, fd):
+        if abs(px_ln(f_) - olc0) > 1e-6 * olc0 or abs(px_ln(f_, 2) - olc0) > 1e-6 * olc0:
+            hata.append("14) piksel / ln birimi ortak ölçekte değil"); break
+        if abs(cetvel_px(f_) - G1["olcek_px_ln110"]) > 0.5:
+            hata.append(f"14) %10 cetveli {cetvel_px(f_):.2f} piksel (beklenen {G1['olcek_px_ln110']})"); break
+        if abs(f_.axes[0].get_window_extent().height - max(G1["fiyat_min_px"], 0)) > 0.5 and f_ is fa:
+            hata.append("14) dar aralıklı grafikte fiyat paneli en az 350 piksel değil")
+        if abs(f_.axes[1].get_window_extent().height - G1["hacim_px"]) > 0.5 or f_.axes[1].get_yticklabels() and any(t.get_text() for t in f_.axes[1].get_yticklabels()):
+            hata.append("14) hacim paneli 180 piksel değil ya da sayılı"); break
+        if round(f_.get_figwidth() * f_.dpi) != G1["genislik"]:
+            hata.append("14) genişlik sabit değil"); break
+        mt14 = K.kor_metinler(f_)
+        if K.kor_metin_yabanci(mt14) or "%10" not in mt14 or not any(m == "100" for m in mt14):
+            hata.append(f"14) v1.1 metinleri: {mt14}"); break
+        if f_.axes[0].get_title() or f_.axes[0].get_ylabel() or f_.axes[1].get_xlabel() or f_.axes[0].get_legend() is not None:
+            hata.append("14) v1.1'de başlık / eksen adı / lejant var"); break
+        for col in f_.axes[0].collections:
+            if any(len(p.vertices) and float(np.max(p.vertices[:, 0])) > 0.5 for p in col.get_paths()):
+                hata.append("14) v1.1'de x > 0 çizim var"); break
+    # büyük aralık: fiyat paneli 1600'ü aşar -> ölçek küçülür, cetvel yine gerçek ln(1,10) boyunda, oran korunur
+    dbig = duz(np.log(1.04), 3); dbig[["o", "h", "l", "c"]] = dbig[["o", "h", "l", "c"]].mul(np.exp(np.linspace(np.log(40), 0, len(dbig))), axis=0)
+    Wg, _ = K.kor_pencere11(dbig, 299); Yg = K.kor_geometri11(Wg); fg = K.kor_ciz_fig11(Wg)
+    if not Yg["kucuk"] or Yg["fiyat_px"] != G1["fiyat_max_px"] or abs(fg.axes[0].get_window_extent().height - G1["fiyat_max_px"]) > 0.5:
+        hata.append("14) 1600 pikseli aşan grafikte ölçek küçültülmedi")
+    if abs(cetvel_px(fg) - np.log(1.10) * Yg["olcek"]) > 0.5 or abs(px_ln(fg) - Yg["olcek"]) > 1e-6 * Yg["olcek"]:
+        hata.append("14) küçültülen grafikte %10 cetveli gerçek boyda değil")
+    if abs(np.median(fitil_px(fg)) - np.log(1.04) * Yg["olcek"]) > 0.5:
+        hata.append("14) küçültülen grafikte mum boyu ölçekle tutmuyor")
+    for f_ in (fa, fd, fg):
+        plt.close(f_)
+    if K.kor_metin_yabanci(["100", "-50", "%10", "12.5"]) or K.kor_metin_yabanci(["%20"]) != ["%20"] or K.kor_metin_yabanci(["ABC"]) != ["ABC"]:
+        hata.append("14) metin kapısı izinli listesi yanlış")
+    p14 = os.path.join(td0, "v11a.png")
+    g14 = K.kor_grafik_yaz(W14, p14, ciz=K.kor_ciz_fig11)
+    if K.kor_grafik_yaz(W14, os.path.join(td0, "v11b.png"), ciz=K.kor_ciz_fig11)["sha256"] != g14["sha256"]:
+        hata.append("14) v1.1 PNG deterministik değil")
+    Y14 = K.kor_geometri11(W14)
+    with Image.open(p14) as im:
+        if list(im.size) != [Y14["genislik"], Y14["yukseklik"]] or {k for k in im.info if k != "dpi"}:
+            hata.append(f"14) v1.1 PNG boyutu / üst verisi yanlış: {im.size} {im.info}")
+
+    def basliklı11(W_, E_=None):
+        f = K.kor_ciz_fig11(W_, E_); f.axes[0].set_title("ABC 2020"); return f
+    durmali(lambda: K.kor_grafik_yaz(W14, os.path.join(td0, "v11c.png"), ciz=basliklı11), "14) v1.1 başlıklı grafik yazıldı", hata, "sayı dışı")
+    if os.path.exists(os.path.join(td0, "v11c.png")):
+        hata.append("14) v1.1 metin kapısı dosyayı yine de yazdı")
+    # uçtan uca: v1.0 mührüyle kurulan set -> ön kayıt -> ciz11 (iki koşu) -> sapma11 -> kapı
+    E10 = K.kor_esik_v10(E0); sk3 = os.path.join(td, "set_v10"); ck3 = os.path.join(td, "cikti_v10"); os.makedirs(ck3, exist_ok=True)
+    z3 = K.kor_set(cikti=ck3, set_kl=sk3, E=E10, tablo_kl=os.path.join(td, "tablo"), tiingo_kl=os.path.join(td, "tiingo"), F_ver=copy.copy(F), kod_denetim=False)
+    if json.load(open(z3["anahtar"], encoding="utf-8"))["numara"] != json.load(open(z1["anahtar"], encoding="utf-8"))["numara"] or \
+            z3["aday_sha256"] != z1["aday_sha256"]:
+        hata.append("14) v1.0 sözlüğüyle kurulan set v1.1 sözlüğüyle kurulandan farklı (seçim / v1.0 çizimi değişmiş)")
+    y3 = K.kor_onkayit(cikti=ck3, set_kl=sk3, E=E10)
+    ak3 = os.path.join(sk3, "anahtar.json"); sha_ak3 = K.kor_sha_dosya(ak3)
+    durmali(lambda: K.kor_sapma11(cikti=ck3, set_kl=sk3), "14) manifest_v11 yokken SAPMA yazıldı", hata, "ciz11")
+    kop = os.path.join(td, "kopya")
+    c1 = K.kor_ciz11(set_kl=sk3, F_ver=copy.copy(F), tiingo_kl=os.path.join(td, "tiingo"), kopya_kl=kop)
+    v11_1 = {m: K.kor_sha_dosya(os.path.join(sk3, "grafik_v11", m)) for m in sorted(os.listdir(os.path.join(sk3, "grafik_v11")))}
+    c2 = K.kor_ciz11(set_kl=sk3, F_ver=copy.copy(F), tiingo_kl=os.path.join(td, "tiingo"))
+    v11_2 = {m: K.kor_sha_dosya(os.path.join(sk3, "grafik_v11", m)) for m in sorted(os.listdir(os.path.join(sk3, "grafik_v11")))}
+    if c1["manifest_v11_sha256"] != c2["manifest_v11_sha256"] or v11_1 != v11_2 or len(v11_1) != 40:
+        hata.append("14) ciz11 iki koşuda farklı (deterministik değil) ya da 40 PNG değil")
+    if c1["v10_yeniden_cizim_tuttu"] != 40:
+        hata.append("14) v1.0 yeniden çizim anahtarla tutmadı")
+    if K.kor_sha_dosya(ak3) != sha_ak3 or c1["anahtar_sha256"] != sha_ak3:
+        hata.append("14) ciz11 anahtarı değiştirdi")
+    if any(K.kor_sha_dosya(os.path.join(kop, m)) != s for m, s in v11_1.items()):
+        hata.append("14) kopya klasörü PNG'leri farklı")
+    M11 = json.load(open(os.path.join(sk3, "manifest_v11.json"), encoding="utf-8"))
+    if re.search(r"G5|KONTROL|BATAN|BIST|ABD|sembol|tarih|grup|pazar", json.dumps(M11["grafik"], ensure_ascii=False)) or \
+            any(set(m) != {"numara", "dosya", "sha256", "bayt", "piksel"} for m in M11["grafik"]) or \
+            re.search(r"G5|KONTROL|BATAN|grup", json.dumps(M11["ozet"], ensure_ascii=False)):
+        hata.append("14) manifest_v11'de grup / pazar / sembol / tarih bilgisi var")
+    A3 = json.load(open(ak3, encoding="utf-8"))["numara"]; M3 = json.load(open(os.path.join(sk3, "manifest.json"), encoding="utf-8"))
+    if any(A3[str(m["numara"])]["grafik_sha256"] != m["sha256"] for m in M3["grafik"]):
+        hata.append("14) v1.0 grafikleri ciz11'den sonra değişti")
+    # yanlış eşleşme: anahtardaki bir karar günü kayarsa ciz11 durur
+    A3b = json.load(open(ak3, encoding="utf-8")); A3b["numara"]["1"]["tarih"] = "1999-01-01"; sk3b = os.path.join(td, "set_v10_bozuk"); os.makedirs(sk3b)
+    with open(os.path.join(sk3b, "anahtar.json"), "w", encoding="utf-8") as f:
+        json.dump(A3b, f)
+    durmali(lambda: K.kor_ciz11(set_kl=sk3b, F_ver=copy.copy(F), tiingo_kl=os.path.join(td, "tiingo")), "14) karar günü tutmayan anahtarla çizildi", hata,
+            "tutmuyor")
+    sonuc3 = K._kor_yol("sonuc", ck3)
+    with open(sonuc3, "w", encoding="utf-8") as f:
+        f.write("{}")
+    durmali(lambda: K.kor_sapma11(cikti=ck3, set_kl=sk3), "14) ölçüm sonucu varken SAPMA yazıldı", hata, "sonuc")
+    os.remove(sonuc3)
+    durmali(lambda: K.kor_sapma11(cikti=ck3, set_kl=sk3, E=E2), "14) başka eşikle SAPMA yazıldı", hata, "")
+    K.kor_sapma11(cikti=ck3, set_kl=sk3)
+    durmali(lambda: K.kor_sapma11(cikti=ck3, set_kl=sk3), "14) SAPMA iki kez yazıldı", hata, "zaten")
+    O3 = K.kor_onkayit_oku(y3)
+    if O3["ESIK_SHA256"] != K.kor_esik_sha() or O3["ESIK_SHA256_V10"] != K.kor_esik_sha(E10) or O3["MANIFEST_V11_SHA256"] != c1["manifest_v11_sha256"] \
+            or O3["KOD_SHA256"] != K.kor_kod_sha() or O3["ANAHTAR_SHA256"] != sha_ak3:
+        hata.append("14) SAPMA 1 satırları yanlış okunuyor")
+    m3 = open(y3, encoding="utf-8").read()
+    if "SAPMA 1 (v1.1" not in m3 or "%10" not in m3 or re.search(r"\b(BBBYQ|WEWKQ)\b", m3.split("## SAPMA 1")[1]):
+        hata.append("14) SAPMA 1 metni eksik ya da sembol içeriyor")
+    try:
+        K.kor_kapi(ck3, sk3, git=False)
+    except K.KorHata as ex:
+        hata.append(f"14) SAPMA 1'li ön kayıt kapıdan geçmedi: {ex}")
+    durmali(lambda: K.kor_kapi(ck3, sk3, E10, git=False), "14) v1.1 ön kaydı v1.0 eşikleriyle açıldı", hata, "eşik mührü")
+    pg3 = os.path.join(sk3, "grafik_v11", "grafik_05.png"); pb3 = open(pg3, "rb").read()
+    with open(pg3, "ab") as f:
+        f.write(b"x")
+    durmali(lambda: K.kor_kapi(ck3, sk3, git=False), "14) v1.1 grafiği değişince ölçüm açıldı", hata, "v1.1 grafikleri")
+    with open(pg3, "wb") as f:
+        f.write(pb3)
+    mk3 = os.path.join(sk3, "manifest_v11.json"); mb3 = open(mk3, encoding="utf-8").read()
+    with open(mk3, "w", encoding="utf-8") as f:
+        f.write(mb3 + " ")
+    durmali(lambda: K.kor_kapi(ck3, sk3, git=False), "14) manifest_v11 değişince ölçüm açıldı", hata, "manifest_v11")
+    with open(mk3, "w", encoding="utf-8") as f:
+        f.write(mb3)
+    cv3 = {k_: {"bolge": "EVET" if a["grup"].endswith("G5") else "HAYIR", "destek": ""} for k_, a in A3.items()}
+    R3 = K.kor_olc(yaz("cevap3.json", json.dumps(cv3)), cikti=ck3, set_kl=sk3, git=False)
+    if R3["karar"] != "BAŞARILI" or "v11" not in R3["kapi"]:
+        hata.append("14) v1.1 kapısıyla olc uçtan uca çalışmadı")
+    # gerçek depo: SAPMA 1 yazıldıysa gerçek kapı (git hariç) geçmeli
+    if os.path.exists(on_gercek) and "ESIK_SHA256_V11" in K.kor_onkayit_oku(on_gercek) and os.path.exists(gercek_ak) \
+            and os.path.exists(os.path.join(K.KOR_YOL["set"], "manifest_v11.json")):
+        try:
+            K.kor_kapi(git=False)
+        except K.KorHata as ex:
+            hata.append(f"14) gerçek ön kayıt (SAPMA 1) kapıdan geçmedi: {ex}")
     shutil.rmtree(td0, ignore_errors=True)
     return hata
 

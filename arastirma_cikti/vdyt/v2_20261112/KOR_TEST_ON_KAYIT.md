@@ -191,3 +191,87 @@ Bu dosya ve KOR_TEST.py git'e işlenmeden, eşik mührü / kod / anahtar / manif
  }
 }
 ```
+
+
+## SAPMA 1 (v1.1, 12 Kasım 2026): gösterim düzeltmesi
+
+Yazım zamanı V11: 2026-11-13 00:03:18 UTC
+ESIK_SHA256_V11: a9d5b913f6e7b6b98cb996e5b262d85e6094f86b63ee2321920c5c10de5f4d20
+KOD_SHA256_V11: 33a8cfc93411ac147f3e1f7f65f9a03d9fb1422d4ad3e63a3d71474c795dee3f
+MANIFEST_V11_SHA256: e9bb2e825f38a407d5b0cec64062168d25bbc0f1a7b47cddde215806b38d0e97
+Sürüm V11: KOR_TEST v1.1 (kor_vdyt2_20261112): İş 1 Tiingo OHLC doğrulaması + İş 2 insan gözü kör testi (ön kayıt; ölçüm Cemal'in işaretlerinden sonra); v1.1 = SAPMA 1 gösterim düzeltmesi (250 bar, log ortak ölçek, %10 cetveli; set / anahtar / sorular / karar aynı)
+
+- Zaman: Cemal işaretlemeden ÖNCE yapıldı (0 işaret: cevap dosyası alınmadı, sonuç dosyası yok; `sapma11` sonuç dosyası varsa yazmayı reddeder).
+- Neden (Cemal'in geri bildirimi, 12 Kasım 2026): 'her bölgede aynı benzeri çizim var, mum fitil boyu neredeyse aynı; evet / hayır demem mümkün değil'. v1.0 çizimi her grafiğin y eksenini kendi 120 barlık min-max aralığına doğrusal olarak geriyordu (otomatik ölçek): günlük %1 oynayan hisse ile %8 oynayan hisse aynı görünüyordu; 120 bar da çöl tanımındaki 'düşüş sonrası aylarca sıkışma' bağlamını göstermiyordu. Veri gerçek; sorun gösterimdi.
+- Ne değişti (yalnız çizim; KOR_ESIK['grafik'] v1.1, eski değerler KOR_ESIK['grafik_v10']): (1) pencere karar gününe kadar son 250 işlem günü (karar günü sağ uçta, x = 0; > 15 takvim günü boşluk ya da veri başı varsa karar gününde biten kesintisiz en uzun pencere, en az 120); (2) y ekseni LOGARİTMİK, fiyat / karar günü kapanışı x 100; bütün grafiklerde aynı ölçek: ln(1,10) = 55 piksel; fiyat paneli yüksekliği = log aralık x (1 + 2 x 0.04) x ölçek, en az 350 piksel; 1600 pikseli aşan grafikte ölçek küçültülür; (3) her grafiğin sağ kenarında gerçek ln(1,10) boyunda '%10' cetveli (küçültülen grafikte de gerçek boy) ve log tikleri (ör. 50, 60, ..., 100, 110, 125, 150, 200), açık gri yatay ızgara; (4) mum gövde + fitil aynı renk (yukarı #26a69a, aşağı #ef5350), gövde eni 0.7; (5) genişlik 1200 piksel sabit, hacim paneli 180 piksel sabit, sayısız; 100 dpi; PNG üst verisinde yazılım bilgisi yok. Grafikte izinli metin: sayılar ve '%10' (kor_grafik_yaz metin kapısı). Başlık, hisse adı, tarih YOK.
+- v1.1 grafikleri: 40 PNG, /tmp/kor_test_vdyt2/grafik_v11/ (repoya girmez); manifest (numara, dosya, sha256; GRUP BİLGİSİ YOK) /tmp/kor_test_vdyt2/manifest_v11.json. 250 bardan kısa pencere: 0 grafik; ölçeği küçültülen: 0 grafik; pencere 250-250 bar; boyut 1200 x 582-1434 piksel, 24.815-45.955 bayt. Aynı 40 nokta denetimi: her numarada karar günü ve v1.0 pencere tarihleri seriyle aynı; v1.0 PNG'si yeniden çizildi ve anahtardaki grafik_sha256 ile aynı çıktı (40 / 40). Komut: `python KOR_TEST.py ciz11` (deterministik; iki koşu aynı sha256).
+- DEĞİŞMEYENLER: 40 karar noktası (aynı hisse, aynı karar günü, aynı grafik numarası; set yeniden çekilmedi), gruplar, cevap anahtarı (ANAHTAR_SHA256 73da87f12549b013e89b7dd24f11fdbc51c474ea1559410ad528e5ea049b6319), sorular (Soru 1: 'Grafiğin sağ ucunda (son 10-30 mumda) küçük mumlu, dar bantlı sessiz bir bölge görüyor musun?'), karar kuralı (BAŞARILI <=> p_G5 >= 0,70 VE p_K <= 0,35 VE kappa >= 0,40 VE Fisher iki yönlü p < 0,05; ZAYIF İŞARET <=> p_G5 >= 0,60 VE fark > 0,0; aksi İŞARET YOK; VERİ YETERSİZ İŞARET YOK sayılır), Aralık Tiingo kotası kuralı (BAŞARILI ya da ZAYIF İŞARET -> Aralık Tiingo kotası YALNIZ VDYT2-B testi B için kullanılır; İŞARET YOK (VERİ YETERSİZ dahil) -> B'ye kota harcanmaz, dedektör önce düzeltilir (yeni ön kayıtla).), set seçim kuralı (120 barlık kopuk denetimi KOR_ESIK['grafik_v10']['bar'] ile).
+- Mühür: v1.0 ESIK_SHA256 (6a99e21a9095bdef121e3710774d748b9907d5997a70f9d1a4962fa495e3162b) = KOR_ESIK'te 'grafik' yerine 'grafik_v10' konarak kurulan sözlüğün sha256'sı; `olc` bunu, v1.1 mührünü (ESIK_SHA256_V11), v1.1 kod sha256'sını (KOD_SHA256_V11), anahtarın v1.0 mührüyle üretildiğini ve manifest_v11 / grafik_v11 sha256'larını denetler; tutmazsa REDDEDER. v1.0 grafikleri (/tmp/kor_test_vdyt2/grafik/, manifest.json, MANIFEST_SHA256) silinmedi, yine denetlenir.
+- Cemal'e gösterilecek set: v1.1 grafikleri (aynı numaralar). Cevap dosyası biçimi ve şablon değişmedi.
+
+### EK SAPMA 1. v1.1 grafik eşikleri (KOR_ESIK['grafik'])
+
+```json
+{
+ "asagi": "#ef5350",
+ "bar": 250,
+ "bar_min": 120,
+ "cetvel": {
+  "alt_pay": 0.05,
+  "metin": "%10",
+  "oran": 0.1,
+  "renk": "#333333"
+ },
+ "dpi": 100,
+ "fitil_lw": 0.9,
+ "fiyat_max_px": 1600,
+ "fiyat_min_px": 350,
+ "font": 11,
+ "genislik": 1200,
+ "govde_en": 0.7,
+ "govde_min_px": 1.0,
+ "hacim_alfa": 0.7,
+ "hacim_px": 180,
+ "izgara": "#e6e6e6",
+ "izgara_lw": 0.6,
+ "kenar_px": {
+  "alt": 30,
+  "ara": 8,
+  "cetvel_en": 50,
+  "sag": 64,
+  "sol": 64,
+  "ust": 14
+ },
+ "kopuk": "V1.vdyt_kopuk (> 15 takvim günü boşluk) ya da veri başı -> karar gününde biten kesintisiz en uzun pencere (en az bar_min)",
+ "metin": "yalnız eksen sayıları (x: gün sırası, y: normalize fiyat, log tikleri) ve sağ kenarda '%10' cetveli; hacim ekseni sayısız; başlık / hisse adı / tarih YOK; açık gri yatay ızgara",
+ "normal": "fiyat / karar günü kapanışı x 100",
+ "olcek_px_ln110": 55,
+ "pay": 0.04,
+ "surum": "v1.1",
+ "x_tik": [
+  -200,
+  -150,
+  -100,
+  -50,
+  0
+ ],
+ "y": "log (ln fiyat; doğrusal eksende log veri)",
+ "y_mantis": [
+  1,
+  1.1,
+  1.25,
+  1.5,
+  2,
+  2.5,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9
+ ],
+ "y_tik_min_px": 26,
+ "yukari": "#26a69a"
+}
+```
