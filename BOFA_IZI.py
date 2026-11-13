@@ -2422,6 +2422,10 @@ def bk_ozet_satirlari(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> 
                f"{_p(a5.get('medyan'))}, 20 gün sonra medyan {_p(a20.get('medyan'))} (kâr oranı {_o(a20.get('kar_orani'))}, ortalama {_p(a20.get('ort'))}), "
                f"60 gün sonra medyan {_p(a60.get('medyan'))} (kâr oranı {_o(a60.get('kar_orani'))}, n {a60.get('n', 0)}). Aynı gün benzer hisselere göre "
                f"20 gün eşli fark ortalaması {_p(a20.get('esli_fark_ort'))}, 60 gün {_p(a60.get('esli_fark_ort'))}.")
+    k20 = (Kr.get("20") or {}).get("kriz_sonrasi (BİLGİ)") or {}
+    if k20.get("n"):
+        sat.append(f"- Kriz sonrası (veri günü >= 01.09.2026, BİLGİ): BofA alımları 20 gün sonra kendi maliyetinden medyan {_p(k20.get('medyan'))}, kâr oranı "
+                   f"{_o(k20.get('kar_orani'))}, P(<= -%30) {_o(k20.get('p_alt30'))} (n {k20.get('n')}); benzer hisselere göre eşli fark {_p(k20.get('esli_fark_ort'))}.")
     en = []
     for k in ("20", "60"):
         for ad, o in (Kr.get(k) or {}).items():
@@ -2435,17 +2439,22 @@ def bk_ozet_satirlari(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> 
                    "Kırılımlar çoklu karşılaştırmadır, BİLGİ.")
     sat.append(f"- FIFO (yayımlanan lot listeleri, alım -> sonraki satış): {ft.get('n', 0)} eşleşme, lot ağırlıklı gerçekleşen getiri "
                f"{_p(ft.get('ret_lot_agirlik'))}, medyan {_p(ft.get('ret_medyan'))}, kârlı eşleşme {_o(ft.get('kar_orani'))}, tutma medyan "
-               f"{_k(ft.get('gun_medyan'))} gün. Kapsam düşük: alınan lotun {_o(ff.get('kapsam'))}'i yayımlanmış bir satışla eşlenebildi.")
+               f"{_k(ft.get('gun_medyan'))} gün; kesik içi {(ff.get('kesik_ici') or {}).get('n', 0)} eşleşme, kriz sonrası {(ff.get('kriz_sonrasi') or {}).get('n', 0)} "
+               f"(BİLGİ). Kapsam düşük: alınan lotun {_o(ff.get('kapsam'))}'i yayımlanmış bir satışla eşlenebildi (denetim notu: bölüm 9).")
     t = B.get("TUM") or {}; to = (t.get("yol") or {}).get(ana) or {}
     sat.append(f"- Haber sonrası giriş (Cemal'in yolu, G1 + C1, TÜMÜ): n {to.get('n', 0)}, eşli fark {_p(to.get('ort_fark'))} "
                f"[{_p(to.get('alt95'))}, {_p(to.get('ust95'))}], sıra {_k(to.get('sira'))}; geç kalma (giriş / BofA maliyeti - 1) medyan "
                f"{_p(to.get('gec_medyan'))} (n {to.get('gec_n', 0)}).")
-    iyi = [(ad, (B.get(ad) or {}).get("yol", {}).get(ana) or {}) for ad in BK_SATIR]
-    iyi = [z for z in iyi if (z[1].get("n") or 0) >= E["karar"]["n_min"]]
+    tum_ = [(ad, (B.get(ad) or {}).get("yol", {}).get(ana) or {}) for ad in BK_SATIR]
+    iyi = [z for z in tum_ if (z[1].get("n") or 0) >= E["karar"]["n_min"]]
     if iyi:
         b_ = max(iyi, key=lambda z: z[1]["ort_fark"])
-        sat.append(f"- 6 koşul içinde (n >= 30) en yüksek eşli fark: {b_[0]} ({E['B']['kosul'].get(b_[0], 'TÜMÜ')}) {_p(b_[1].get('ort_fark'))} "
+        sat.append(f"- 7 satır içinde (n >= 30) en yüksek eşli fark: {b_[0]} ({E['B']['kosul'].get(b_[0], 'TÜMÜ')}) {_p(b_[1].get('ort_fark'))} "
                    f"[{_p(b_[1].get('alt95'))}, {_p(b_[1].get('ust95'))}], n {b_[1].get('n')}; karar: {(B.get(b_[0]) or {}).get('karar', {}).get('karar')}.")
+    kuc = [z for z in tum_ if 0 < (z[1].get("n") or 0) < E["karar"]["n_min"]]
+    if kuc:
+        sat.append("- n < 30 (örneklem yetersiz, karar dışı): " + "; ".join(
+            f"{a} {_p(o.get('ort_fark'))} [{_p(o.get('alt95'))}, {_p(o.get('ust95'))}] n {o.get('n')}" for a, o in kuc) + ".")
     sat.append(f"- KARAR: {S.get('B_ozet_karar', '—')}. Karar en fazla BIST-ADAY olabilir (AKD verisi yalnız BIST'te; ABD / Avrupa hücresi yok).")
     kz = S.get("kriz") or {}
     sat.append(f"- Kriz sonrası (01.09.2026'dan, BİLGİ): {kz.get('n', 0)} BofA dönemi, {kz.get('acik', 0)} hâlâ açık (tablo bölüm 6).")
@@ -2558,10 +2567,19 @@ def bk_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
             f"{tz.get('duzyazi_kapsam', '—')} (geçerli {tz.get('duzyazi_gecerli', '—')}). Geçerli maliyetli: {json.dumps(tz.get('gecerli_maliyetli', {}), ensure_ascii=False)}; "
             f"payı yazılı {tz.get('gecerli_payli', '—')}. B tetik sayımı: {json.dumps(_bi_kayit((sy.get('B') or {}).get('bayrak', {})), ensure_ascii=False)}.", "",
             "## 8. Sınırlar", "", E["yanlilik"], "",
+            "Kapsam dışı BofA satırları (haberdeki 2. ve sonraki listeler, aylık): "
+            f"{json.dumps(_bi_kayit(tz.get('kapsam_disi_BofA', {})), ensure_ascii=False)}.", "",
             "AKD verisi yalnız BIST'te: CLAUDE.md karar hücreleri (ABD 2023 / 2024-26, Avrupa 2023 / 2024-26) bu soruda yoktur; en iyi sonuç 'BIST-ADAY' olur, "
             "İZ değildir. Kırılımlar ve varyantlar çoklu karşılaştırmadır.", "",
             f"Mühür {S.get('esik_sha', '')[:12]}; kapı {json.dumps(_bi_kayit((S.get('kapi') or {}).get('onkayit_git', {})), ensure_ascii=False)}"
-            + (f"; SAPMA: {S['kapi']['sapma']}" if (S.get("kapi") or {}).get("sapma") else "") + f". Son veri {S.get('son_gun', '—')}.", ""]
+            + (f"; SAPMA: {S['kapi']['sapma']}" if (S.get("kapi") or {}).get("sapma") else "") + f". Son veri {S.get('son_gun', '—')}.", "",
+            "## 9. Denetim notu (ölçümden sonra; gösterim, SAPMA değil; karar değişmez)", "",
+            "- 01.09.2026 11:40 hisse.net 'Bank of America Ağustos'ta bu BIST hisselerine milyarlar yatırdı' haberi AYLIK özettir; ayrıştırıcı gün içi "
+            "liste ve 'lot' birimli okudu (tutarlar TL; maliyet Ağustos ortalaması). Etkisi: A'da 7 kriz sonrası satır, B'de 2 kriz sonrası tetik "
+            "(TRALT, ASTOR; kesik dışı, karara girmez) ve FIFO'nun lot toplamları (alınan / eşleşmeyen lot ve kapsam şişkin). Bu haber hariç FIFO "
+            "(denetim yeniden hesabı): 84 eşleşme, lot ağırlıklı -%3,2, medyan -%2,2, kârlı %37, kapsam %40; yine yalnız kriz sonrası. 17.06.2025 "
+            "YatırımX 'TERA bastırıyor' gibi bazı lot etiketli satırlar da TL tutarı olabilir; lot ağırlıkları bu yüzden kaba.",
+            "- DUNYH (12.11.2026) giriş fiyatı bayat Yahoo fiyatı (giriş günü hacim 0, Ç171'de işaretlendi); -%85 gerçek değildir.", ""]
     return "\n".join(sat)
 
 
