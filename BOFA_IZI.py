@@ -3461,8 +3461,8 @@ def dp_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
         b = bool(r.get("bofa_20g"))
         sat.append(f"| {r.get('sembol')} | {_p(r.get('dusus'), 0)} | {_k(r.get('tepe_ekran'))} ({r.get('tepe_tarih')}) | {_k(r.get('dip_ekran'))} "
                    f"({r.get('dip_tarih')}) | {_k(r.get('son_ekran'))} | {_k(r.get('dipten_kat'))} | {_p(r.get('r20'))} | "
-                   f"{('EVET (' + str(r.get('bofa_tetik_gunu')) + ' gün)') if b else '—'} | {r.get('bofa_son_yayin') if b else '—'} | "
-                   f"{(str(r.get('bofa_tur')) + ' / ' + str(r.get('bofa_sira'))) if b else '—'} | {_k(r.get('bofa_maliyet')) if b else '—'} | "
+                   f"{('EVET (' + _dp_n(r.get('bofa_tetik_gunu')) + ' gün)') if b else '—'} | {r.get('bofa_son_yayin') if b else '—'} | "
+                   f"{(str(r.get('bofa_tur')) + ' / ' + _dp_n(r.get('bofa_sira'))) if b else '—'} | {_k(r.get('bofa_maliyet')) if b else '—'} | "
                    f"{_k(r.get('bofa_pay')) if b else '—'} | {_k(r.get('g1_fiyat')) if b else '—'} | {_p(r.get('bugune_g1')) if b else '—'} | "
                    f"{_p(r.get('bugune_maliyet')) if b else '—'} |")
     kz = U3.get("kriz_tetik") or []
