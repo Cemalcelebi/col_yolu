@@ -1,5 +1,27 @@
 # Dipte BofA: kurulum + tetik — sonuç (13 Kasım 2026)
 
+## Düzeltme sonrası (ana model denetimi 13.11.2026)
+
+Bu rapor, BofA liste verisi yeniden ayrıştırıldıktan sonra AYNI ön kayıt, aynı eşikler ve aynı tanımlarla yeniden koşuldu. Sapma gerekçesi: AYRIŞTIRMA DÜZELTMESİ (ana model denetimi 13.11): çok kurumlu haberlerde kurum etiketi, kurum adı hisse satırları, aylık özet haberleri; eşikler değişmedi. Düzeltilenler: çok kurumlu haberlerde her tablonun kurumu tablodan önceki başlık / cümleden okunur (belirsiz -> BİLİNMİYOR, ölçüme girmez); hisse sütunundaki kurum adı satırları ('HSBC: -433 mn') düşer; aylık / dönemsel özet haberleri tur='aylik' / 'donemsel' (kapsam dışı); sayfada biriken günlük güncellemeler ('GÜNCELLEME 30 EYLÜL') kendi tarihini taşır (Eylül listesi Haziran tarihli sayılmaz); numaralı tek satırlık tablolar tek liste; haber sitelerinin ilgili haber kuşağı gövde dışı (kenar kuşağından 'SSAAT 56 TL' gibi satırlar BofA listesi sayılmaz). Liste mührü 7020587fbc90 -> 28014e1a3be8.
+
+**KARAR: DEĞİŞMEDİ** — eski: kurulum İZ DEĞİL / BofA tetikli ÖRNEKLEM YETERSİZ (n = 0); yeni: kurulum İZ DEĞİL / BofA tetikli ÖRNEKLEM YETERSİZ (n = 0). Eski rapor ve JSON: /home/user/col_yolu/arastirma_cikti/bofa_izi/eski_v1.
+
+| satır | ESKİ | YENİ |
+|---|---|---|
+| BofA tetikli kurulum (FI 60 gün) | n 2, eşli fark -30,9% [-45,1%, -16,7%], sıra 0.18, portföy -0.04 / %90 0.09 | n 2, eşli fark -30,9% [-45,1%, -16,7%], sıra 0.18, portföy -0.04 / %90 0.09 |
+| BofA'sız kurulum | n 30, eşli fark +4,5% [-7,5%, +15,7%], sıra 0.53, portföy 0.39 / %90 0.48 | n 30, eşli fark +4,5% [-7,5%, +15,7%], sıra 0.53, portföy 0.39 / %90 0.48 |
+| ABD 2023 kurulum | n 81, eşli fark +24,8% [+8,9%, +43,0%], sıra 0.55, portföy 2.85 / %90 0.91 | n 81, eşli fark +24,8% [+8,9%, +43,0%], sıra 0.55, portföy 2.85 / %90 0.91 |
+| ABD 2024-26 kurulum | n 146, eşli fark +20,6% [+0,4%, +46,2%], sıra 0.48, portföy 2.25 / %90 4.17 | n 146, eşli fark +20,6% [+0,4%, +46,2%], sıra 0.48, portföy 2.25 / %90 4.17 |
+| BIST 2024-26 kurulum | n 28, eşli fark +3,7% [-9,1%, +17,5%], sıra 0.52, portföy 0.11 / %90 0.28 | n 28, eşli fark +3,7% [-9,1%, +17,5%], sıra 0.52, portföy 0.11 / %90 0.28 |
+| BofA tetik sayısı | 5519 | 5679 |
+| tetikli kurulum olayı (60 gün) | 1 | 1 |
+| tetikli kurulum kriz sonrası | 1 | 1 |
+| dönem (n / toplam) | {'kesik_disi_ya_da_acik': 1, 'kriz_sonrasi_giris': 1, 'n': 0, 'toplam': 1} | {'kesik_disi_ya_da_acik': 1, 'kriz_sonrasi_giris': 1, 'n': 0, 'toplam': 1} |
+| izleme listesi n | 10 | 10 |
+| izlemede BofA 20 günde | 1 | 1 |
+| kriz sonrası BofA tetiği (tek tek) | HDFGS 2026-10-21 sıra 1 | HDFGS 2026-10-21 sıra 1 |
+| izleme listesi | SKBNK, KLRHO, PRZMA, BORLS, OTTO, A1CAP, IZFAS, BURVA, USAK, IHLAS | SKBNK, KLRHO, PRZMA, BORLS, OTTO, A1CAP, IZFAS, BURVA, USAK, IHLAS |
+
 Soru: Cemal 13.11.2026: 'Her BofA alımında al demiyorum. Dipte %80-90 düşüş var, artık daha fazla düşmeyecek bir görüntü, çok ucuzlamış bir noktada BofA alımı ile girsek.' KURULUM = derin düşüş + dip tutuyor (yeni dip yok) + dipten henüz kaçmamış; TETİK = BofA alımı. (1) Kurulum tek başına (BofA'sız) iz mi (BIST / ABD / Avrupa)? (2) BofA alımı kurulumun üstüne bir şey ekliyor mu (BIST)? (3) Bugün kurulumdaki BIST hisseleri ve son 20 günde BofA alımı görünenler (İZLEME, öneri değil).
 
 ## Özet (düz dil)
@@ -59,16 +81,16 @@ Soru: Cemal 13.11.2026: 'Her BofA alımında al demiyorum. Dipte %80-90 düşü�
 
 **KARAR: ÖRNEKLEM YETERSİZ (n = 0)** — tutmayan: n = 0 < 30
 
-Sayım: {"kurulum_olay_arsiv_donemi": {"bofali": 2, "bofasiz": 36}, "olay60": 1, "olay60_genis": 5, "olay60_hucre": {"2023": 0, "2024-26": 0}, "olay60_kriz_sonrasi": 1, "tetik": 5519, "tetik_genis": 8, "tetik_kurulum_bilinen": 5519, "tetik_kurulumlu": 1, "tetik_kurulumlu_hisse": 1}
+Sayım: {"kurulum_olay_arsiv_donemi": {"bofali": 3, "bofasiz": 35}, "olay60": 1, "olay60_genis": 7, "olay60_hucre": {"2023": 0, "2024-26": 0}, "olay60_kriz_sonrasi": 1, "tetik": 5679, "tetik_genis": 12, "tetik_kurulum_bilinen": 5679, "tetik_kurulumlu": 1, "tetik_kurulumlu_hisse": 1}
 
 | satır | olay | n (r60) | ort r60 | eşli fark | %95 aralık | sıra | portföy / p90 | n250 | P(+%100) (kat eş) | P(-%50) (kat eş) | r250 eşli fark |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | BofA tetikli kurulum (havuz) | 0 | 0 | — | — | [—, —] | — | — / — | 0 | — (—) | — (—) | — |
 |   alt hücre BIST 2023 | 0 | 0 | — | — | [—, —] | — | — / — | 0 | — (—) | — (—) | — |
 |   alt hücre BIST 2024-26 | 0 | 0 | — | — | [—, —] | — | — / — | 0 | — (—) | — (—) | — |
-| BofA'SIZ kurulum olayları (aynı dönem) | 36 | 30 | +11,7% | +4,5% | [-7,5%, +15,7%] | 0,53 | +38,5% / +48,5% | 14 | %57 (2,04) | %14 (3,26) | +98,5% |
-| BofA'LI kurulum olayları (±20 gün, BİLGİ) | 2 | 2 | -21,0% | -30,9% | [-45,1%, -16,7%] | 0,18 | -4,2% / +9,3% | 0 | — (—) | — (—) | — |
-| Geniş okuma (son 20 barda kurulum; BİLGİ) | 2 | 1 | -41,7% | -53,3% | [-53,3%, -53,3%] | 0,06 | -4,2% / +8,2% | 0 | — (—) | — (—) | — |
+| BofA'SIZ kurulum olayları (aynı dönem) | 35 | 30 | +11,7% | +4,5% | [-7,5%, +15,7%] | 0,53 | +38,5% / +48,5% | 14 | %57 (2,04) | %14 (3,26) | +98,5% |
+| BofA'LI kurulum olayları (±20 gün, BİLGİ) | 3 | 2 | -21,0% | -30,9% | [-45,1%, -16,7%] | 0,18 | -4,2% / +9,3% | 0 | — (—) | — (—) | — |
+| Geniş okuma (son 20 barda kurulum; BİLGİ) | 3 | 2 | -20,1% | -38,1% | [-38,1%, -38,1%] | 0,30 | -4,0% / +17,0% | 0 | — (—) | — (—) | — |
 
 BofA tetikli - BofA'sız ortalama eşli r60 farkı: — [—, —] (n — / —; bağımsız ay kümeli bootstrap).
 
@@ -115,6 +137,6 @@ Fiyat evreni bugün işlem gören hisseler (BIST Yahoo önbelleği, V_ABD, V_AVR
 
 ## Ön kayıt ve kapı
 
-- Ön kayıt: BOFA_DIP_ON_KAYIT.md; git {"commit": "22750ff19fd5853412e9944598009d6422792e15", "commit_zamani": "2026-11-13T17:17:37+00:00"}; eşik mührü cac944c2b07c; kod aynı: True
-- Koşu 2026-11-13 17:17:50 UTC – 2026-11-13 17:18:36 UTC; BOFA_IZI DİP v1.0 (bofa_dip_20261113): KURULUM (250 gün tepeden <= -%80, son 10 günde yeni dip yok, dipten <= 1,5 kat) tek başına (BIST / ABD / Avrupa, FI_OLCUT 60 gün + 120 / 250 gün + olasılık tablosu) + BofA alım ilk 5 tetiği (BIST) + kriz sonrası izleme (ön kayıtlı)
+- Ön kayıt: BOFA_DIP_ON_KAYIT.md; git {"commit": "22750ff19fd5853412e9944598009d6422792e15", "commit_zamani": "2026-11-13T17:17:37+00:00"}; eşik mührü cac944c2b07c; kod aynı: False; SAPMA: AYRIŞTIRMA DÜZELTMESİ (ana model denetimi 13.11): çok kurumlu haberlerde kurum etiketi, kurum adı hisse satırları, aylık özet haberleri; eşikler değişmedi
+- Koşu 2026-11-13 18:20:44 UTC – 2026-11-13 18:21:30 UTC; BOFA_IZI DİP v1.0 (bofa_dip_20261113): KURULUM (250 gün tepeden <= -%80, son 10 günde yeni dip yok, dipten <= 1,5 kat) tek başına (BIST / ABD / Avrupa, FI_OLCUT 60 gün + 120 / 250 gün + olasılık tablosu) + BofA alım ilk 5 tetiği (BIST) + kriz sonrası izleme (ön kayıtlı)
 - Satır verisi: /tmp/bofa/dip_*.csv.gz (repoya girmez)
