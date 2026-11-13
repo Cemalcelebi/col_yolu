@@ -11,6 +11,9 @@
 6) mühür kapısı: ön kayıt yok / git'te değil / eşik / liste / kod farkı -> RET; commit sonrası geçer
 7) izleme tek turu sahte getir ile (ağ yok); çakışma kapısı; kodda e-posta yok; yasak defter dosyalarına yazan kod yok
 8) uçtan uca sentetik koşu: ana / varyant / kurum / toplu / BH m / kriz tablosu / rapor; ortalama eşli fark csv'den yeniden üretilir
+9-13) BofA KÂRI + YOL (bk_*): temizlik nedenleri ve A tekilleştirme; A getirisi / eş (tipik fiyat) / kriz grubu ve FIFO elle; tetik (haber anı),
+   G1 / G2, K1..K6 (geleceğe bakma: tetikten sonra yayımlanan liste sayılmaz), olay / dönem, C1 / C2, yol ölçümü elle; karar kuralı ve kâr
+   mühür kapısı; uçtan uca sentetik koşu (7 satır x 4 yol, BH, ikincil, kriz, rapor; sayılar csv'den yeniden üretilir, tohumla birebir)
 """
 from __future__ import annotations
 
@@ -390,8 +393,277 @@ def t8_uctan_uca() -> None:
         B.BI_YOL.update(eski); shutil.rmtree(kl, ignore_errors=True)
 
 
+# ---------------------------------------------------------------- BofA KÂRI (A) + HABER SONRASI YOL (B) — bk_* (13 Kasım 2026)
+def kar_panel(seed: int = 11, n_hisse: int = 100, eksik: tuple = ("S01",)) -> tuple:
+    """Sentetik fiyat (n_hisse x iş günleri 2025-01-02 .. 2026-11-13); S01'in V_GUN barı yok. Döner (V, A, takvim, V_GUN)."""
+    rng = np.random.default_rng(seed); T = pd.bdate_range("2025-01-02", "2026-11-13"); n = len(T)
+    V = {}
+    for i in range(n_hisse):
+        c = 10 * np.exp(np.cumsum(rng.normal(0, 0.02, n))); o = c * (1 + rng.normal(0, 0.003, n))
+        V[f"S{i:02d}"] = pd.DataFrame({"Open": o, "High": np.maximum(o, c) * 1.01, "Low": np.minimum(o, c) * 0.99, "Close": c,
+                                       "Volume": rng.integers(1e5, 1e7, n).astype(float)}, index=T)
+    vg = T[300]
+    for s in eksik:
+        V[s] = V[s].drop(index=vg)
+    A = B.bi_panel(V); takvim = B.bi_takvim(V, 10)
+    return V, A, takvim, vg
+
+
+def kar_satir(hid, yayin, tur, yon, sira, hisse, net, maliyet=np.nan, pay=np.nan, birim="lot", kurum="BofA", bicim="tablo"):
+    return {"site": "hissenet", "haber_id": hid, "url": "u", "yayin": pd.Timestamp(yayin), "tur": tur, "veri_saati": None, "kurum": kurum, "yon": yon,
+            "blok": 1, "sira": sira, "birim": birim, "bicim": bicim, "hisse": hisse, "net": net, "pay": pay, "maliyet": maliyet, "gecerli": True}
+
+
+def t9_kar_temizlik() -> None:
+    V, A, takvim, v = kar_panel()
+    j0 = A["kol"]["S00"]; i = list(A["tarih"]).index(v); c0 = A["Cf"][i, j0]; h0 = A["Hh"][i, j0]; l0 = A["Ll"][i, j0]
+    y = v + pd.Timedelta(hours=19)
+    sat = [kar_satir("a1", y, "gun_sonu", "alim", 1, "S00", 2e6, c0),
+           kar_satir("a2", y, "gun_sonu", "alim", 2, "S02", 2e6, A["Hh"][i, A["kol"]["S02"]] * 1.05),
+           kar_satir("a3", y, "gun_sonu", "alim", 3, "S03", 500, A["Cf"][i, A["kol"]["S03"]]),
+           kar_satir("a4", y, "gun_sonu", "alim", 4, "S04", 5000, 10.0 if A["Cf"][i, A["kol"]["S04"]] < 15 else 1.0),
+           kar_satir("a5", y, "gun_sonu", "alim", 5, "S05", 5e5, birim="TL"),
+           kar_satir("a6", y, "gun_sonu", "alim", 6, "YOKK", 5e6, birim="TL"),
+           kar_satir("a7", y, "gun_sonu", "alim", 7, "S06", np.nan),
+           kar_satir("a8", y, "gun_sonu", "alim", 8, "S01", 5e6, birim="TL"),
+           kar_satir("a9", y, "gun_sonu", "alim", 1, "S07", 5e6, birim="TL", kurum="HSBC"),
+           kar_satir("a10", y, "gun_sonu", "satim", 1, "S08", 3e6, birim="TL", bicim="duzyazi")]
+    # haftalık: maliyet gün aralığı dışında, hafta aralığında
+    jw = A["kol"]["S09"]; lo5, hi5 = np.nanmin(A["Ll"][i - 4:i + 1, jw]), np.nanmax(A["Hh"][i - 4:i + 1, jw])
+    mw = hi5 * 1.02 if hi5 * 1.02 > A["Hh"][i, jw] * 1.03 else lo5 * 0.98
+    sat.append(kar_satir("w1", v + pd.Timedelta(hours=20), "haftalik", "alim", 1, "S09", 2e6, mw))
+    Ld = pd.DataFrame(sat)
+    T = B.bk_temizle(Ld, A, takvim)
+    nd = dict(zip(T.haber_id, T.neden))
+    kontrol(nd == {"a1": "", "a2": "maliyet_bant_disi", "a3": "esik_alti", "a4": "esik_alti", "a5": "esik_alti", "a6": "fiyat_paneli_yok",
+                   "a7": "net_yok", "a8": "veri_gunu_bar_yok", "a10": "", "w1": ""}, f"temizlik nedenleri: {nd}")
+    kontrol(all(pd.Timestamp(x) == v for x in T.veri_gunu), "veri günü (haftalık da bi_veri_gunu)")
+    say = B.bk_temiz_sayim(T)
+    kontrol(say["gecerli"] == 3 and say["dusen"]["esik_alti"] == 3 and say["duzyazi_gecerli"] == 1, f"temizlik sayımı: {say}")
+    kontrol(abs(c0 - A["Cf"][i, j0]) < 1e-12 and l0 * 0.97 <= c0 <= h0 * 1.03, "geçerli satır bantta")
+    # A tekilleştirme: gün sonu (en erken) > gün içi (en geç); haftalık ayrı
+    X = pd.DataFrame([kar_satir("g1", v + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S02", 2e6, 1.0),
+                      kar_satir("g2", v + pd.Timedelta(hours=15), "gun_ici", "alim", 1, "S02", 2e6, 1.0),
+                      kar_satir("g3", v + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S02", 2e6, 1.0),
+                      kar_satir("g4", v + pd.Timedelta(days=1, hours=8), "gun_sonu", "alim", 1, "S02", 2e6, 1.0),
+                      kar_satir("g5", v + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S03", 2e6, 1.0),
+                      kar_satir("g6", v + pd.Timedelta(hours=16), "gun_ici", "alim", 1, "S03", 2e6, 1.0),
+                      kar_satir("g7", v + pd.Timedelta(hours=16), "gun_ici", "satim", 1, "S03", 2e6, 1.0),
+                      kar_satir("g8", v + pd.Timedelta(days=1, hours=12), "haftalik", "alim", 1, "S03", 2e6, 1.0)])
+    X["veri_gunu"] = v
+    Z = B.bk_a_tekil(X)
+    kontrol(sorted(Z.haber_id) == ["g3", "g6", "g7", "g8"], f"A tekil: {sorted(Z.haber_id)}")
+
+
+def t10_kar_a_fifo() -> None:
+    V, A, takvim, v = kar_panel()
+    i = list(A["tarih"]).index(v); j = A["kol"]["S00"]; mal = A["Cf"][i, j] * 0.99
+    X = pd.DataFrame([kar_satir("a", v + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S00", 2e6, mal, 25.0)]).assign(veri_gunu=v)
+    Y = B.bk_a_olc(A, takvim, X)
+    p = list(takvim).index(v); x = list(A["tarih"]).index(takvim[p + 20])
+    kontrol(abs(Y.r20.iloc[0] - (A["Cf"][x, j] / mal - 1)) < 1e-12, "A r20 = Kapanış(veri günü + 20) / maliyet - 1")
+    c = B._bk_esler(A, i, j); tp = (A["Hh"][i, c] + A["Ll"][i, c] + A["Cf"][i, c]) / 3; e = A["Cf"][x, c] / tp - 1; e = e[np.isfinite(e)]
+    kontrol(len(e) >= 3 and abs(Y.e20.iloc[0] - e.mean()) < 1e-12 and abs(Y.f20.iloc[0] - (Y.r20.iloc[0] - e.mean())) < 1e-12, "A eş: tipik fiyattan")
+    kontrol(abs(Y.eu20.iloc[0] - (e >= 0.3).mean()) < 1e-12 and Y.grup20.iloc[0] == "ana", f"A eş oranı / grup: {Y.grup20.iloc[0]}")
+    kontrol(j not in c and all(A["H"][i, c] == A["H"][i, j]), "eşler aynı hücre, hisse kendisi hariç")
+    # kriz sonrası satır: pencere yoksa 'kriz_sonrasi_pencere_yok', varsa 'kriz_sonrasi'
+    v2 = takvim[list(takvim).index(pd.Timestamp("2026-09-01")) + 0]; i2 = list(A["tarih"]).index(v2)
+    X2 = pd.DataFrame([kar_satir("b", v2 + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S00", 2e6, A["Cf"][i2, j])]).assign(veri_gunu=v2)
+    Y2 = B.bk_a_olc(A, takvim, X2)
+    kontrol(Y2.grup5.iloc[0] == "kriz_sonrasi" and Y2.grup60.iloc[0] == "kriz_sonrasi_pencere_yok" and pd.isna(Y2.r60.iloc[0]),
+            f"kriz sonrası grup: {Y2.grup5.iloc[0]}, {Y2.grup60.iloc[0]}")
+    v3 = takvim[list(takvim).index(pd.Timestamp("2026-08-24"))]; i3 = list(A["tarih"]).index(v3)
+    X3 = pd.DataFrame([kar_satir("c", v3 + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S00", 2e6, A["Cf"][i3, j])]).assign(veri_gunu=v3)
+    Y3 = B.bk_a_olc(A, takvim, X3)
+    kontrol(Y3.grup5.iloc[0] == "ana" and Y3.grup20.iloc[0] == "kesik_asan", f"kesik aşan: {Y3.grup5.iloc[0]}, {Y3.grup20.iloc[0]}")
+    o = B.bk_a_ozet(pd.concat([Y, Y3]), 5)
+    kontrol(o["n"] == 2 and abs(o["medyan"] - np.median([Y.r5.iloc[0], Y3.r5.iloc[0]])) < 1e-12, "A özet")
+    # FIFO elle
+    d = takvim[300:306]
+    R = pd.DataFrame([kar_satir("f1", d[0] + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "AAA", 1000, 1.0),
+                      kar_satir("f2", d[1] + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "AAA", 500, 2.0),
+                      kar_satir("f3", d[3] + pd.Timedelta(hours=19), "gun_sonu", "satim", 1, "AAA", -1200, 3.0),
+                      kar_satir("f4", d[5] + pd.Timedelta(hours=19), "gun_sonu", "satim", 1, "AAA", 500, 1.0)])
+    R["veri_gunu"] = [d[0], d[1], d[3], d[5]]
+    M, F = B.bk_fifo(R, A, takvim)
+    kontrol(len(M) == 3 and np.allclose(M.ret.values, [2.0, 0.5, -0.5]) and np.allclose(M.lot.values, [1000, 200, 300]), f"FIFO eşleşmeler: {M}")
+    kontrol(np.allclose(M.gun.values, [3, 2, 4]), f"FIFO tutma günü: {M.gun.values}")
+    kontrol(abs(F["tum"]["ret_lot_agirlik"] - 0.95) < 1e-12 and abs(F["kapsam"] - 1500 / 1500) < 1e-12 and abs(F["eslesmeyen_satis_lot"] - 200) < 1e-9,
+            f"FIFO özet: {F['tum']}, kapsam {F['kapsam']}, eşleşmeyen {F['eslesmeyen_satis_lot']}")
+
+
+def t11_kar_tetik_olay() -> None:
+    V, A, takvim, v = kar_panel(eksik=())
+    tk = list(takvim); p = tk.index(v); D = lambda k: takvim[p + k]  # noqa: E731
+    ti = {t: i for i, t in enumerate(A["tarih"])}
+
+    def cf(h, k):
+        return A["Cf"][ti[D(k)], A["kol"][h]]
+    sat = [kar_satir("t1", D(0) + pd.Timedelta(hours=13), "gun_ici", "alim", 1, "S03", 2e6, cf("S03", 0) * 0.98, 25.0),
+           kar_satir("t1b", D(0) + pd.Timedelta(hours=19), "gun_sonu", "alim", 2, "S03", 3e6, cf("S03", 0), 30.0),
+           kar_satir("s0", D(0) + pd.Timedelta(hours=10, minutes=30), "gun_ici", "satim", 2, "S03", -2e6, cf("S03", 0), 5.0),
+           kar_satir("t2", D(2) + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S03", 2e6, cf("S03", 2), 10.0),
+           kar_satir("s1", D(3) + pd.Timedelta(hours=19), "gun_sonu", "satim", 4, "S03", -2e6, cf("S03", 3), 5.0),
+           kar_satir("t3", D(5) + pd.Timedelta(hours=19), "gun_sonu", "alim", 3, "S03", 2e6, cf("S03", 5) * 0.985, 10.0),
+           kar_satir("t4", D(0) + pd.Timedelta(hours=17, minutes=45), "gun_ici", "alim", 1, "S04", 2e6),
+           kar_satir("k3a", D(-2) + pd.Timedelta(hours=19), "gun_sonu", "alim", 2, "S05", 5e6, birim="TL"),
+           kar_satir("k3b", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S05", 5e6, birim="TL"),
+           kar_satir("k3c", D(-1) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S06", 5e6, birim="TL"),
+           kar_satir("k3d", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 2, "S06", 5e6, birim="TL"),
+           kar_satir("k3e", D(-6) + pd.Timedelta(hours=19), "gun_sonu", "alim", 1, "S10", 5e6, birim="TL"),
+           kar_satir("k3f", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S10", 5e6, birim="TL"),
+           kar_satir("k4s", D(-3) + pd.Timedelta(hours=19), "gun_sonu", "satim", 5, "S07", -5e6, birim="TL"),
+           kar_satir("k4a", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S07", 5e6, birim="TL"),
+           kar_satir("k4t", D(-30) + pd.Timedelta(hours=19), "gun_sonu", "satim", 1, "S08", -5e6, birim="TL"),
+           kar_satir("k4b", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S08", 5e6, birim="TL"),
+           kar_satir("k4c", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S09", 5e6, birim="TL"),
+           kar_satir("k4g", D(0) + pd.Timedelta(hours=15), "gun_ici", "satim", 1, "S09", -5e6, birim="TL"),
+           kar_satir("k4h", D(-2) + pd.Timedelta(hours=19), "gun_sonu", "satim", 6, "S11", -5e6, birim="TL"),
+           kar_satir("k4i", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 1, "S11", 5e6, birim="TL"),
+           kar_satir("x4", D(0) + pd.Timedelta(hours=12), "gun_ici", "alim", 4, "S12", 5e6, birim="TL"),
+           kar_satir("hf", D(0) + pd.Timedelta(days=1, hours=12), "haftalik", "alim", 1, "S13", 5e6, birim="TL")]
+    Ld = pd.DataFrame(sat)
+    T = B.bk_temizle(Ld, A, takvim)
+    kontrol((T.neden == "").all(), f"tetik testi satırları geçerli olmalı: {T[T.neden != ''][['haber_id', 'neden']]}")
+    S5 = B.bk_satis5(Ld, takvim)
+    X = B.bk_tetikler(T, S5, A, takvim)
+    x = X.set_index("haber_id")
+    kontrol("t1b" not in x.index and "x4" not in x.index and "hf" not in x.index, f"tetik: aynı gün ikinci haber / sıra 4 / haftalık tetik değil: {list(x.index)}")
+    kontrol(x.loc["t1", "g1"] == D(0) and x.loc["t1", "g1_tip"] == "kapanis" and x.loc["t1", "g2"] == D(1), "G1: gün içi 13:00 -> aynı gün kapanış; G2 ertesi açılış")
+    kontrol(x.loc["t4", "g1"] == D(1) and x.loc["t4", "g1_tip"] == "acilis", "G1: 17:45 gün içi -> ertesi açılış")
+    kontrol(x.loc["t2", "g1"] == D(3) and x.loc["t2", "g1_tip"] == "acilis", "G1: gün sonu -> ertesi açılış")
+    kontrol(x.loc["t1", "K1"] is True or x.loc["t1", "K1"] == True, "K1 pay 25 >= 20")  # noqa: E712
+    kontrol(x.loc["t2", "K1"] == False and pd.isna(x.loc["t4", "K1"]), "K1: pay 10 hayır; pay yok bilinmiyor")  # noqa: E712
+    kontrol(x.loc["t1", "K2"] == True and abs(x.loc["t1", "g1_fiyat"] - cf("S03", 0)) < 1e-12, "K2: kapanış / maliyet 1/0,98 - 1 <= %5")  # noqa: E712
+    kontrol(all((X.K2[i_] == (X.g1_fiyat[i_] / X.maliyet[i_] - 1 <= 0.05)) if np.isfinite(X.maliyet[i_]) else pd.isna(X.K2[i_]) for i_ in X.index),
+            "K2 = G1 giriş fiyatı / maliyet - 1 <= %5; maliyet yoksa bilinmiyor")
+    kontrol(x.loc["k3b", "K3"] == True and x.loc["k3a", "K3"] == False, "K3: iki farklı gün; ilk gün tek")  # noqa: E712
+    kontrol(x.loc["k3c", "K3"] == False and x.loc["k3d", "K3"] == True, "K3: sonraki günün haberi geçmişe sayılmaz (geleceğe bakma yok)")  # noqa: E712
+    kontrol(x.loc["k3f", "K3"] == False, "K3: 6 gün önceki liste pencere dışı")  # noqa: E712
+    kontrol(x.loc["k4a", "K4"] == True and x.loc["k4b", "K4"] == False and x.loc["k4c", "K4"] == False and x.loc["k4i", "K4"] == False,
+            "K4: 3 gün önce satış ilk 5 evet; 30 gün önce hayır; tetikten SONRA yayımlanan satış hayır; satış 6. sıra hayır")
+    kontrol(x.loc["t1", "K4"] == True, "K4: aynı gün tetikten önce yayımlanan satış (10:30) sayılır")  # noqa: E712
+    kontrol(x.loc["t1", "K6"] == True and x.loc["k3b", "K6"] == False, "K6 birim")  # noqa: E712
+    j = A["kol"]["S03"]; d1 = ti[D(0)]
+    kontrol((x.loc["t1", "K5"] == (A["dd"][d1 - 1, j] <= -0.6)) if np.isfinite(A["dd"][d1 - 1, j]) else pd.isna(x.loc["t1", "K5"]), "K5 = dd[giriş - 1]")
+    # olaylar (TÜMÜ): S03 t1 açar (kapanış girişi 18:10; 10:30 satışı önce, sayılmaz), t2 açıkken yeni dönem açmaz, s1 (4. sıra) kapatır, t3 yeni açar
+    ev = B.bk_olaylar(X, S5, takvim)
+    e3 = ev[ev.hisse == "S03"].reset_index(drop=True)
+    kontrol(len(e3) == 2 and e3.haber_id.tolist() == ["t1", "t3"], f"S03 dönemleri: {e3[['haber_id', 'g1', 'c1', 'c1_neden']]}")
+    kontrol(e3.c1.iloc[0] == D(4) and e3.c1_neden.iloc[0] == "satis" and e3.c1_haber.iloc[0] == "s1", f"C1 çıkış: {e3.iloc[0][['c1', 'c1_neden', 'c1_haber']].to_dict()}")
+    kontrol(e3.c2.iloc[0] == D(20) and e3.c2_g2.iloc[0] == D(1 + 19), "C2: kapanış girişinde +20, açılış girişinde +19")
+    kontrol(e3.c1_neden.iloc[1] in ("satis_gorulmedi_250", "acik_veri_sonu"), "satış yoksa 250 gün / açık")
+    # ölçüm elle: G1C1 (kapanış -> açılış), G1C2 (kapanış -> kapanış), G2C1 (açılış -> açılış)
+    Y = B.bk_yol_olc(A, e3.head(1), "G1C1"); r = Y.iloc[0]; d, xx = ti[D(0)], ti[D(4)]
+    o = A["Cf"][d, j]; ret = A["Op"][xx, j] / o - 1
+    kontrol(abs(r.ret - ret) < 1e-12 and r.gun == 4 and r.giris_tip == "kapanis" and r.cikis_tip == "acilis", f"G1C1 getiri: {r.ret} vs {ret}")
+    kontrol(abs(r["max"] - (np.nanmax(A["Hh"][d + 1:xx, j]) / o - 1)) < 1e-12, "kapanış girişinde en yüksek giriş ertesinden çıkış öncesine")
+    c = B._bk_esler(A, d, j); es = A["Op"][xx, c] / A["Cf"][d, c] - 1; es = es[np.isfinite(es)]
+    kontrol(abs(r.esli - es.mean()) < 1e-12 and abs(r.fark - (ret - es.mean())) < 1e-12 and abs(r.b_ret50 - (es >= 0.5).mean()) < 1e-12, "G1C1 eş")
+    kontrol(r.liste_sira == 1 and 0 <= r.sira <= 1, "liste sırası ayrı sütun; sıra hücre içi")
+    Y2 = B.bk_yol_olc(A, e3.head(1), "G1C2").iloc[0]
+    kontrol(abs(Y2.ret - (A["Cf"][ti[D(20)], j] / o - 1)) < 1e-12 and Y2.neden == "sabit_20", "G1C2 getiri")
+    Y3 = B.bk_yol_olc(A, e3.head(1), "G2C1").iloc[0]
+    kontrol(abs(Y3.ret - (A["Op"][xx, j] / A["Op"][ti[D(1)], j] - 1)) < 1e-12, "G2C1 getiri")
+    # koşul alt kümeleri ve tamamlayıcı (None ikisine de girmez)
+    k1 = B.bk_kosul_tetik(X, "K1"); k1t = B.bk_kosul_tetik(X, "K1", tamam=True)
+    kontrol(set(k1.haber_id) == {"t1"} and "t4" not in set(k1t.haber_id) and "t2" in set(k1t.haber_id), "K1 alt kümesi / tamamlayıcı")
+    S = B.bk_b_sayim(X, S5, takvim)
+    kontrol(S["tetik"] == len(X) and S["bayrak"]["K1"]["bilinmiyor"] == int(X.K1.isna().sum()) and S["olay"]["TUM"]["toplam"] == len(ev), "B sayımı")
+
+
+def t12_kar_karar_kapi() -> None:
+    o = {"n": 40, "ort_fark": 0.05, "alt95": 0.01, "sira": 0.6, "portfoy": 1.0, "portfoy_esli_p90": 0.5,
+         "yari_A": {"n": 20, "ort_fark": 0.04}, "yari_B": {"n": 20, "ort_fark": 0.06}}
+    kontrol(B.bk_karar(o, True)["karar"] == "YOL ADAYI (BIST)", "bütün şartlar -> YOL ADAYI (BIST)")
+    kontrol(B.bk_karar(o, False)["karar"] == "yol yok", "BH reddetmezse yol yok")
+    for k, v in (("sira", 0.5), ("alt95", -0.01), ("portfoy", 0.4), ("ort_fark", -0.01), ("n", 29)):
+        o2 = dict(o); o2[k] = v
+        kontrol(B.bk_karar(o2, True)["karar"] == "yol yok", f"{k} = {v} -> yol yok")
+    o2 = dict(o); o2["yari_A"] = {"n": 20, "ort_fark": -0.01}
+    kontrol(B.bk_karar(o2, True)["karar"] == "yol yok", "alt dönem A < 0 -> yol yok")
+    kontrol(B.BK_ESIK["karar"]["bh_m"] == len(B.BK_SATIR) == 7, "BH m = 7 satır")
+    kl = tempfile.mkdtemp()
+    try:
+        subprocess.run(["git", "init", "-q", kl], check=True)
+        subprocess.run(["git", "-C", kl, "config", "user.email", "t@t"], check=True); subprocess.run(["git", "-C", kl, "config", "user.name", "t"], check=True)
+        durmali(lambda: B.bk_kapi(kl), "kâr ön kaydı yokken RET", "ön kaydı yok")
+        y = B._bk_yol("onkayit", kl)
+        B._bi_yaz(y, B.bk_onkayit_metin("t", {}, {"liste_sha256": "a" * 64, "haber_sha256": "b" * 64}, {}))
+        durmali(lambda: B.bk_kapi(kl), "git'te değilken RET", "işlenmemiş")
+        subprocess.run(["git", "-C", kl, "add", "."], check=True); subprocess.run(["git", "-C", kl, "commit", "-qm", "x"], check=True)
+        K = B.bk_kapi(kl, liste_sha="a" * 64, haber_sha="b" * 64)
+        kontrol(K["kod_ayni"] and len(K["onkayit_git"]["commit"]) == 40, "commit sonrası kâr kapısı geçmeli")
+        durmali(lambda: B.bk_kapi(kl, liste_sha="c" * 64), "liste farkı RET", "liste")
+        E2 = copy.deepcopy(B.BK_ESIK); E2["B"]["K1_pay"] = 15.0
+        durmali(lambda: B.bk_kapi(kl, E=E2), "BK eşiği değişince RET", "eşik")
+        kontrol(B.bk_esik_sha() != B.bi_esik_sha(), "iki mühür ayrı")
+        with open(y, encoding="utf-8") as f:
+            t = f.read()
+        B._bi_yaz(y, re.sub(r"KOD_SHA256: [0-9a-f]{64}", "KOD_SHA256: " + "0" * 64, t))
+        subprocess.run(["git", "-C", kl, "commit", "-qam", "y"], check=True)
+        durmali(lambda: B.bk_kapi(kl), "kod farkı sapmasız RET", "sapma")
+        kontrol(B.bk_kapi(kl, sapma="g").get("sapma") == "g", "sapma gerekçesi kayda geçmeli")
+        with open(y, "a", encoding="utf-8") as f:
+            f.write("ek\n")
+        durmali(lambda: B.bk_kapi(kl, sapma="x"), "commit sonrası değişen kâr ön kaydı RET", "farklı")
+        durmali(lambda: B.bk_onkayit(kl), "var olan ön kaydın üzerine yazılmaz", "zaten var")
+    finally:
+        shutil.rmtree(kl, ignore_errors=True)
+
+
+def t13_kar_uctan_uca() -> None:
+    """Sentetik fiyat + maliyetli / paylı liste arşivi -> bk_kos (git kapısız) -> A, FIFO, B 7 satır x 4 yol, BH, ikincil, kriz, rapor; sayılar csv'den."""
+    V, A, takvim, _ = kar_panel(seed=21, eksik=())
+    rng = np.random.default_rng(8); ti = {t: i for i, t in enumerate(A["tarih"])}
+    sat, H = [], []
+    gunler = [t for t in takvim if pd.Timestamp("2025-06-02") <= t <= pd.Timestamp("2026-11-12")][::2]
+    for k, g in enumerate(gunler):
+        for tur, saat in (("gun_ici", 13), ("gun_sonu", 19)):
+            if tur == "gun_ici" and k % 3:
+                continue
+            hid = f"h{k}{tur}"; y = g + pd.Timedelta(hours=saat); birim = "lot" if k % 2 else "TL"
+            H.append({"haber_id": hid, "site": "hissenet", "yayin": y, "tur": tur, "veri_saati": None, "baslik": "x"})
+            for yon in ("alim", "satim"):
+                for s_, a in enumerate(rng.choice(100, 5, replace=False), 1):
+                    h = f"S{a:02d}"; c = A["Cf"][ti[g], A["kol"][h]]
+                    sat.append(kar_satir(hid, y, tur, yon, s_, h, (2e7 if birim == "TL" else 1e6) * (1 if yon == "alim" else -1),
+                                         c * rng.uniform(0.985, 1.0) if birim == "lot" else np.nan, float(rng.uniform(5, 40)), birim))
+    Ld = pd.DataFrame(sat); Hd = pd.DataFrame(H)
+    kl = tempfile.mkdtemp(); eski = dict(B.BI_YOL)
+    try:
+        B.BI_YOL["is"] = kl
+        Hx = B.bk_hazirla(Ld, A, takvim)
+        B._bi_yaz(B._bk_yol("onkayit", kl), B.bk_onkayit_metin("t", B.bk_sayim(Hx, takvim), {}, {}))
+        S = B.bk_kos(kl, git=False, V=V, F={}, Ld=Ld, Hd=Hd)
+        kontrol(set(S["B"]) == set(B.BK_SATIR) and all(set(S["B"][a]["yol"]) == {"G1C1", "G1C2", "G2C1", "G2C2"} for a in B.BK_SATIR), "B satır x yol")
+        kontrol(all(S["B"][a]["karar"]["karar"] in ("YOL ADAYI (BIST)", "yol yok") for a in B.BK_SATIR), "B kararları")
+        kontrol(S["B"]["TUM"]["yol"]["G1C1"].get("n", 0) >= 30, f"TÜMÜ n: {S['B']['TUM']['yol']['G1C1'].get('n')}")
+        kontrol(S["A"]["kirilim"]["20"]["tum"]["n"] > 30 and S["A"]["fifo"]["tum"]["n"] > 0, "A ve FIFO ölçüldü")
+        kontrol(all(k in S["ikincil"]["TUM"] for k in ("fi", "karar")), "ikincil 60 gün")
+        kontrol(all(pd.Timestamp(r["giris"]) >= pd.Timestamp("2026-09-01") for r in S["kriz"]["donemler"]) and S["kriz"]["n"] > 0, "kriz tablosu")
+        r = open(B._bk_yol("rapor", kl), encoding="utf-8").read()
+        kontrol(all(x in r for x in ("Özet (düz dil)", "KARAR TABLOSU", "OLASILIK TABLOSU", "FIFO", "Kriz sonrası", "Temizlik sayımı")), "rapor bölümleri")
+        Bc = pd.read_csv(os.path.join(kl, B.BK_DOSYA["b"]))
+        z = Bc[(Bc.satir == "TUM") & (Bc.yol == "G1C1") & (pd.to_datetime(Bc.cikis) <= pd.Timestamp("2026-08-31")) & (Bc.neden != "acik_veri_sonu")
+               & Bc.olcuk.astype(bool)].dropna(subset=["fark"])
+        kontrol(len(z) == S["B"]["TUM"]["yol"]["G1C1"]["n"] and abs(z.fark.mean() - S["B"]["TUM"]["yol"]["G1C1"]["ort_fark"]) < 1e-12,
+                "B TÜMÜ ortalama eşli fark csv'den yeniden üretilir")
+        Ac = pd.read_csv(os.path.join(kl, B.BK_DOSYA["a"]))
+        za = Ac[(Ac.yon == "alim") & (Ac.grup20 == "ana")].r20.dropna()
+        kontrol(len(za) == S["A"]["kirilim"]["20"]["tum"]["n"] and abs(za.median() - S["A"]["kirilim"]["20"]["tum"]["medyan"]) < 1e-12, "A medyan csv'den")
+        o_k = S["B"]["K6"]["yol"]["G1C1"]; zk = Bc[(Bc.satir == "K6") & (Bc.yol == "G1C1")]
+        kontrol(o_k.get("n", 0) == 0 or set(zk.birim) == {"lot"}, "K6 olayları yalnız lot listesinden")
+        S2 = B.bk_kos(kl, git=False, V=V, F={}, Ld=Ld, Hd=Hd)
+        kontrol(S2["B"]["TUM"]["yol"]["G1C1"]["ort_fark"] == S["B"]["TUM"]["yol"]["G1C1"]["ort_fark"] and
+                S2["B"]["TUM"]["yol"]["G1C1"]["alt95"] == S["B"]["TUM"]["yol"]["G1C1"]["alt95"], "tohumla birebir tekrar")
+    finally:
+        B.BI_YOL.update(eski); shutil.rmtree(kl, ignore_errors=True)
+
+
 if __name__ == "__main__":
-    for fn in (t1_ayristirici, t2_giris, t3_donem, t4_olcum, t5_gunluk, t6_kapi, t7_izle_kapi, t8_uctan_uca):
+    for fn in (t1_ayristirici, t2_giris, t3_donem, t4_olcum, t5_gunluk, t6_kapi, t7_izle_kapi, t8_uctan_uca, t9_kar_temizlik, t10_kar_a_fifo,
+               t11_kar_tetik_olay, t12_kar_karar_kapi, t13_kar_uctan_uca):
         try:
             fn()
         except Exception as ex:  # bir test bölümü çökerse ötekiler sürer
@@ -399,4 +671,4 @@ if __name__ == "__main__":
             HATA.append(f"{fn.__name__} çöktü: {type(ex).__name__}: {ex}\n{traceback.format_exc()[-1500:]}")
     if HATA:
         print("BAŞARISIZ:\n- " + "\n- ".join(HATA)); sys.exit(1)
-    print("test_bofa_izi: tüm testler geçti (8 bölüm)")
+    print("test_bofa_izi: tüm testler geçti (13 bölüm)")
