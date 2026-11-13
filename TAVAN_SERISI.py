@@ -682,9 +682,10 @@ def ts_olaylar(P: Dict[str, Any], U: Dict[str, np.ndarray], bas: str, bit: Optio
 
 
 def ts_donem(t: pd.Timestamp, E: Optional[Dict[str, Any]] = None) -> str:
-    for ad, (a, b) in (E or TS_ESIK)["donem"].items():
+    for ad, ab in (E or TS_ESIK)["donem"].items():
         if ad == "tanim":
             continue
+        a, b = ab
         if pd.Timestamp(a) <= t <= pd.Timestamp(b):
             return ad
     return "dışı"
@@ -939,13 +940,33 @@ def ts_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
     E = E or TS_ESIK; ks = [str(k) for k in E["olay"]["k"]]; C = S.get("cokmus", {}); Kr = S.get("karar", {})
     kap = S.get("kapi", {})
     gecen = [k for k in ks if _g(Kr, k, "karar") == "KONTROLDEN İYİ"]
+    kumar = [k for k in ks if str(_g(Kr, k, "karar") or "").startswith("KUMAR")]
+    yetersiz = [k for k in ks if _g(Kr, k, "karar") == "örneklem yetersiz"]
+    dz = []
+    for e, dd in S.get("duyarlilik", {}).items():
+        ol = [(k, o) for k, o in dd.items() if o.get("n_fark", 0) >= E["karar"]["n_min"]]
+        neg = [k for k, o in ol if o.get("fark_med_ci") and o["fark_med_ci"][1] is not None and o["fark_med_ci"][1] < 0]
+        dz.append(f"eşik {_y(float(e))}: n >= 30 olan k = {', '.join(k for k, _ in ol) or 'yok'}; bunlardan medyan farkın %95 aralığı tamamen 0'ın altında "
+                  f"olan: {', '.join(neg) or 'yok'}")
     L = ["# Çökmüş hissede art arda tavan: k. tavandan sonra katılmak (BIST 2016 - Ağu 2026)", "",
          f"Ön kayıt {kap.get('onkayit_git', {}).get('commit', '—')[:7]} ({kap.get('onkayit_git', {}).get('commit_zamani', '—')}), mühür "
          f"{str(kap.get('esik_sha256', '—'))[:12]}" + (f"; SAPMA: {kap.get('sapma')}" if kap.get("sapma") else "") + ".", "",
          "## Sonuç", "",
-         ("**Hiçbir k'da 'kontrolden iyi' değil: k. tavandan sonra katılmak kumar; beklenen değer, aynı gün aynı derinlikte çökmüş ama tavan yapmayan "
-          "hisseden iyi değil.**" if not gecen else
-          f"**'Kontrolden iyi' çıkan k: {', '.join(gecen)}** (8 k sınandı; tek k'nın geçmesi çoklu deneme şansı olabilir)."), "",
+         ("**Hiçbir k'da 'kontrolden iyi' değil.**" if not gecen else
+          f"**'Kontrolden iyi' çıkan k: {', '.join(gecen)}** (8 k sınandı; tek k'nın geçmesi çoklu deneme şansı olabilir).")
+         + (f" KUMAR (beklenen değer kontrolden iyi değil): k = {', '.join(kumar)}." if kumar else "")
+         + (f" Örneklem yetersiz (n < 30, karar yok): k = {', '.join(yetersiz)}." if yetersiz else ""), "",
+         "Duyarlılık (BİLGİ, karara girmez): " + ("; ".join(dz) if dz else "yok") + ".", "",
+         "Düz dille:"] + [f"- Çökmüş hissede {k}. tavandan sonraki gün açılıştan katılan ({C[k]['n']} olay, {C[k]['n_hisse']} hisse): ertesi gün de tavan "
+                          f"{_y(C[k]['p_ertesi_tavan'])}; 60 günde medyan {_y(C[k]['r60']['med'])}; +%100'e ulaşan {_y(C[k]['up100_60'])}, -%50'ye düşen "
+                          f"{_y(C[k]['dn50_60'])} (120 günde {_y(C[k]['dn50_120'])}); tavan yapmayan eş çökmüşlere göre medyan fark {_y(C[k].get('fark_med'), 1)}."
+                          for k in ks[:3] if C.get(k)] + \
+        ([f"- Çökmemiş hissede aynı durum (BİLGİ): 1. tavandan sonra 60 günde medyan {_y(S['cokmemis']['1']['r60']['med'])}, +%100 "
+          f"{_y(S['cokmemis']['1']['up100_60'])}, -%50 {_y(S['cokmemis']['1']['dn50_60'])}."] if S.get("cokmemis", {}).get("1") else []) + \
+        ([f"- Fon krizi sonrası (Eylül - Kasım 2026, BİLGİ): çökmüş hissede 1. tavandan sonra ertesi gün de tavan "
+          f"{_y(_g(S, 'bilgi', 'k', '1', 'p_ertesi_tavan'))}, 3. tavandan sonra {_y(_g(S, 'bilgi', 'k', '3', 'p_ertesi_tavan'))} (geçmişte "
+          f"{_y(_g(C, '1', 'p_ertesi_tavan'))} / {_y(_g(C, '3', 'p_ertesi_tavan'))}): seriler bu dönemde daha uzun; sonucu henüz bilinmiyor."]
+         if _g(S, "bilgi", "k", "1") else []) + ["",
          "## Olasılık tablosu (ÇÖKMÜŞ hisse, giriş k. tavandan sonraki gün açılış)", "",
          "| k | n (hisse) | ertesi gün de tavan | 60g medyan getiri | 60g'de +%100'e dokunma | 60g'de -%50'ye dokunma | 120g'de -%50 | kontrol 60g -%50 | "
          "medyan fark (60g) | %95 aralık | karar |",
@@ -956,6 +977,8 @@ def ts_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
             L.append(f"| {k} | 0 | — | — | — | — | — | — | — | — | olay yok |"); continue
         L.append(f"| {k} | {o['n']} ({o['n_hisse']}) | {_y(o['p_ertesi_tavan'])} | {_y(o['r60']['med'])} | {_y(o['up100_60'])} | {_y(o['dn50_60'])} | "
                  f"{_y(o['dn50_120'])} | {_y(o.get('k_dn50_60'))} | {_y(o.get('fark_med'), 1)} | {_ar(o.get('fark_med_ci'))} | {_g(Kr, k, 'karar') or '—'} |")
+    L += ["", "Kontrol kapsamı: " + "; ".join(f"k={k}: farkı ölçülen {C[k].get('n_fark', 0)}, kontrolsüz {C[k].get('kontrolsuz', 0)}, olay başına kontrol "
+                                               f"hissesi medyanı {_f(C[k].get('n_kontrol_medyan'), 0)}" for k in ks if C.get(k)) + "."]
     L += ["", "Fark = olayın 60 gün getirisi - aynı gün, aynı derinlik kovasında çökmüş ama seri boyunca tavan yapmamış hisselerin ortalaması; aralık hisse "
           "kümeli bootstrap. 'Ertesi gün de tavan' bütün olaylardan; getiriler 60 gün penceresi 31.08.2026'dan önce biten olaylardan.", "",
           "## Getiri dağılımı ve seri uzunluğu", "",
@@ -978,7 +1001,8 @@ def ts_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
         for dn in ("2016-19", "2020-22", "2023-26.08"):
             d = o.get("donem", {}).get(dn, {})
             hc.append(f"n {d.get('n', 0)}: {_y(d.get('fark_med'), 1)}; {_y(d.get('dn50_60'))} / {_y(d.get('k_dn50_60'))}")
-        L.append(f"| {k} | " + " | ".join(hc) + f" | {_g(Kr, k, 'donem_pozitif')} / {_g(Kr, k, 'donem_olculen')} |")
+        dp, dol = _g(Kr, k, "donem_pozitif"), _g(Kr, k, "donem_olculen")
+        L.append(f"| {k} | " + " | ".join(hc) + (f" | {dp} / {dol} |" if dp is not None else " | — (n < 30) |"))
     L += ["", "## Yalnız dolum belirsiz olmayan girişler (giriş günü tam kilitli tavan değil)", "",
           "| k | n | 60g medyan | +%100 | -%50 | medyan fark [%95] | karar |", "|---|---|---|---|---|---|---|"]
     for k in ks:

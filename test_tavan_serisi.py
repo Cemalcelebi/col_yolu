@@ -170,6 +170,8 @@ def t5_ozet_karar() -> None:
     E6 = T.ts_esik_gevsek(-0.60)
     kontrol(E6["kontrol"]["kova"] == [-0.60, -0.60 + (-0.40) / 3, -0.60 + 2 * (-0.40) / 3] and T.TS_ESIK["olay"]["cokmus"]["esik"] == -0.80
             and T.ts_kova(-0.65, E6) == 0 and T.ts_kova(-0.90, E6) == 2, "5: duyarlılık kopyası / kovası yanlış (ana eşik değişmemeli)")
+    kontrol(T.ts_donem(pd.Timestamp("2026-10-01")) == "dışı" and T.ts_donem(pd.Timestamp("2017-05-01")) == "2016-19"
+            and T.ts_donem(pd.Timestamp("2026-08-31")) == "2023-26.08", "5: dönem ataması (kriz sonrası 'dışı')")
     kontrol(T.ts_kova(-0.82) == 0 and T.ts_kova(-0.87) == 1 and T.ts_kova(-0.95) == 2 and T.ts_kova(-0.5) == -1 and T.ts_kova(np.nan) == -1, "5: kova")
 
 
