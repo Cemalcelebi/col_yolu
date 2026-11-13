@@ -106,6 +106,38 @@ BI_KURUM: List[Tuple[str, str]] = [("BofA", r"bofa|bank of america"), ("Merrill"
                                    ("MS", r"morgan stanley"), ("Citi", r"\bciti"), ("Deutsche", r"deutsche"), ("HSBC", r"\bhsbc"),
                                    ("Goldman", r"goldman"), ("UBS", r"\bubs\b"), ("Barclays", r"barclays"), ("CS", r"credit suisse")]
 BI_KURUM_ANA = "BofA"
+# Yerli aracı kurumlar (13.11.2026 ayrıştırma düzeltmesi): çok kurumlu haberde her tablonun kurumu tablodan ÖNCE gelen en yakın başlık / cümleden
+# okunur. 'tam' biçim (aracı kurum adı açık) ön taramada çok kurumluluğu belirler; 'kisa' biçim yalnız çok kurumlu haberde başlık / cümle bağlamında
+# geçerlidir (TERA, INFO, GEDIK aynı zamanda hisse kodu: hisse sütunundaysa hissedir). Etiketler BI_KURUM'da yok -> hiçbir ölçüye girmez.
+BI_KURUM_YERLI: List[Tuple[str, str, str]] = [
+    ("Tera", r"tera yatirim(?! teknoloji| menkul)", r"\btera\b(?! yatirim (?:teknoloji|menkul))"), ("IsYatirim", r"\bis yatirim", r"\bis yatirim"),
+    ("YapiKredi", r"yapi kredi yatirim|yapi kredi'?(?:de|nin|den|ye)\b|yapi kredi(?=\s*(?:,|ve\b|\.\.\.))", r"yapi kredi"),
+    ("INFO", r"\binfo yatirim", r"\binfo\b"), ("AkYatirim", r"\bak yatirim", r"\bak yatirim"),
+    ("Garanti", r"garanti (?:bbva )?yatirim", r"garanti (?:bbva )?yatirim"), ("Ziraat", r"ziraat yatirim", r"\bziraat(?! gyo)"),
+    ("Halk", r"halk yatirim", r"halk yatirim"), ("Vakif", r"vakif yatirim", r"vakif yatirim"), ("Deniz", r"deniz yatirim", r"deniz yatirim"),
+    ("QNB", r"\bqnb\b", r"\bqnb\b"), ("Gedik", r"gedik yatirim", r"\bgedik\b"), ("Oyak", r"oyak yatirim", r"oyak yatirim"),
+    ("TEB", r"teb yatirim", r"\bteb\b"), ("ICBC", r"\bicbc", r"\bicbc"), ("Marbas", r"marbas", r"marbas"), ("Alnus", r"alnus", r"alnus"),
+    ("Global", r"global menkul", r"global menkul"), ("Tacirler", r"tacirler", r"tacirler"), ("Unlu", r"unlu (?:menkul|yatirim|& ?co)", r"unlu (?:menkul|yatirim|& ?co)"),
+    ("Seker", r"seker yatirim", r"seker yatirim"), ("Trive", r"\btrive\b", r"\btrive\b"), ("Phillip", r"phillip", r"phillip"),
+    ("Meksa", r"meksa", r"meksa"), ("Osmanli", r"osmanli (?:yatirim|menkul)", r"osmanli (?:yatirim|menkul)"),
+    ("Integral", r"integral (?:yatirim|menkul)", r"integral (?:yatirim|menkul)"), ("Piapiri", r"piapiri", r"piapiri"), ("Midas", r"\bmidas\b", r"\bmidas\b"),
+    ("Burgan", r"burgan", r"burgan"), ("Ahlatci", r"ahlatci", r"ahlatci"), ("A1", r"\ba1 capital", r"\ba1 capital"), ("Bulls", r"bulls yatirim", r"bulls yatirim"),
+    ("Dinamik", r"dinamik menkul", r"dinamik menkul"), ("Strateji", r"strateji menkul", r"strateji menkul"), ("YF", r"yatirim finansman", r"yatirim finansman"),
+    ("Ata", r"ata yatirim", r"ata yatirim"), ("Ikon", r"ikon menkul", r"ikon menkul"), ("Wood", r"wood ?& ?co", r"wood ?& ?co"),
+    ("SocGen", r"societe generale|\bsocgen", r"societe generale|\bsocgen"), ("BNP", r"bnp paribas", r"bnp paribas"), ("Nomura", r"nomura", r"nomura"),
+    ("Jefferies", r"jefferies", r"jefferies"), ("Macquarie", r"macquarie", r"macquarie"), ("Pictet", r"pictet", r"pictet")]
+BI_KURUM_BILINMIYOR = "BİLİNMİYOR"
+# Hisse sütununda görülürse satır düşer: kurum adı / kısaltması, 'Diğer', 'Toplam' (hiçbiri BIST kodu değil)
+BI_KOD_KURUM = frozenset({"HSBC", "BOFA", "BOA", "BAML", "CITI", "JPM", "UBS", "QNB", "TEB", "ICBC", "DIGER", "TOPLAM", "TOPLM", "NET", "BIST",
+                          "XU100", "USD", "EUR", "TL"})
+# Hem BIST kodu hem kurum kısaltması: yalnız 'KOD: ±x TL alım / satış' biçimli kurum-karşılaştırma satırında kurum sayılır
+BI_KOD_KURUM_BELKI = frozenset({"TERA", "INFO", "GEDIK", "OYYAT", "ISMEN", "GLBMD", "TCRMD", "A1CAP", "OSMEN", "SKYMD", "ALNUS"})
+_BI_AYLAR = ("ocak", "subat", "mart", "nisan", "mayis", "haziran", "temmuz", "agustos", "eylul", "ekim", "kasim", "aralik")
+_BI_AY = "(?:" + "|".join(_BI_AYLAR) + ")"
+# Sayfada biriken günlük güncellemeler ('GÜNCELLEME 30 EYLÜL- GÜN SONU', 'Güncelleme: 14 Nisan 2026 Salı – Saat: 15.00'): her bölüm kendi
+# tarihini taşır; yoksa bütün bölümler haberin ilk yayın tarihini alır (geleceğe bakma: Eylül listesi Haziran tarihli olurdu)
+_BI_DAMGA = re.compile(r"guncelleme\s*:?\s*(\d{1,2})\s+" + _BI_AY.replace("(?:", "(") + r"(?:\s+(\d{4}))?(?:\s+[a-z]+)?\s*[-–—:]*\s*"
+                       r"(?:(gun sonu)|(?:saat|tsi)\s*:?\s*(\d{1,2})[.:](\d{2}))?")
 
 # ---------------------------------------------------------------- ÖN KAYITLI EŞİKLER (sha256 mührü ön kayıtta; sonuç görüldükten sonra değişmez)
 BI_ESIK: Dict[str, Any] = {
@@ -305,6 +337,30 @@ def bi_kurum(n: str) -> Optional[str]:
     return None
 
 
+def bi_kurumlar(n: str, kisa: bool = False, konum: bool = False) -> List[Any]:
+    """Normalize metindeki bütün kurum etiketleri (yabancı kodlar + yerli aracı kurumlar), geçiş sırasıyla. kisa=True: yerli kısa biçimler de
+    ('tera', 'info', 'yapi kredi'); yalnız çok kurumlu haberde kullanılır."""
+    bul = []
+    for ad, rx in BI_KURUM:
+        m = re.search(rx, n)
+        if m:
+            bul.append((m.start(), ad))
+    for ad, tam, ks in BI_KURUM_YERLI:
+        m = re.search(ks if kisa else tam, n)
+        if m:
+            bul.append((m.start(), ad))
+    return sorted(bul) if konum else [ad for _, ad in sorted(bul)]
+
+
+def bi_kurum_satiri_mi(kod: str, satir: str, kurum_baglami: bool) -> bool:
+    """Hisse sütunundaki 'kod' aslında kurum mu? Kesin kurum kısaltmaları (HSBC, BOFA, QNB...) her zaman; TERA / INFO / GEDIK gibi çift anlamlılar
+    yalnız kurum karşılaştırma bağlamında (önceki satır yalnız hisse kodu 'BIMAS' ya da 'Diğer satıcı kurumlar:' gibi 'kurum' + ':' satırı) ve kod
+    parantezsiz yazılmışsa ('Tera Yatırım Menkul Değerler (TERA): 89 TL net alım' hissedir)."""
+    if kod in BI_KOD_KURUM:
+        return True
+    return kod in BI_KOD_KURUM_BELKI and kurum_baglami and ("(" + kod + ")") not in satir
+
+
 def bi_yon(n: str) -> Optional[str]:
     """Normalize metinden yön: alım / satım; ikisi birden ya da hiçbiri -> None. '(net alım)' / '(net satış)' önceliklidir."""
     na, ns = bool(re.search(r"net alim", n)), bool(re.search(r"net sati[sm]", n))
@@ -439,11 +495,9 @@ def bi_govde(h: str, site: str) -> str:
     i = h.find(isaret) if isaret else -1
     if i < 0:
         i = max(h.find("<article"), 0)
-    j = h.find("Yasal Uyar", i + 50)
-    if j > 0:
-        return h[i:j]
-    son = len(h)
-    for bit in ("related-posts", "yarpp", "sharedaddy", "post-tags", "comment-respond", "ng-other-news-container-title"):
+    son = len(h)   # 13.11.2026: en erken bitiş işareti ('Yasal Uyarı' altbilgide olunca YatırımX ilgili haber kuşağı gövdeye giriyordu: 'SSAAT 56 TL')
+    for bit in ("Yasal Uyar", "related-posts", "yarpp", "sharedaddy", "post-tags", "comment-respond", "ng-other-news-container-title",
+                "post-tags-container", "post-horizontalnews-cont", "kanews-entry-tags"):
         j = h.find(bit, i + 50)
         if 0 < j < son:
             son = j
@@ -479,9 +533,31 @@ def bi_veri_saati(n: str) -> Optional[str]:
     return None
 
 
+def bi_donem_turu(nb: str, bs: str, n0: str) -> Optional[str]:
+    """Aylık / dönemsel özet haberi (13.11.2026 düzeltmesi): başlıkta gün sayısı olmadan ay adı + ek ('ağustosta', 'mayıs ayında', 'haziran listesi',
+    'ekim 2026 hamlesi'), 'aylık', 'ayı karnesi'; dönemsel: 'geçen ay', 'son 1 ayda', 'yılbaşından bu yana', 'çeyrek', '2025 yılında'. Tarihler
+    ('21 Ağustos', '2–6 mart haftası', '29 Mayıs 2025'te', '24-28 Ağustos') önce silinir; 'bir ayda yüzde 17 değer kaybetti' gibi fiyat cümleleri
+    sayılmaz. Hiçbiri yoksa None (günlük / haftalık kurallar sürer)."""
+    t = re.sub(r"\b\d{1,2}\s*(?:[-–—]\s*\d{1,2}\s*)?" + _BI_AY + r"(?:\s+20\d\d)?(?:'?\w{1,3})?\b", " ", nb)
+    t = re.sub(r"\b\d{1,2}[./]\d{1,2}[./]20\d\d\b", " ", t)
+    if re.search(r"\b" + _BI_AY + r"(?:'?(?:ta|te|da|de)\b|\s+ay(?:inda|i boyunca|i karnesi|i bilancosu|inin tamaminda|i genelinde)\b"
+                 r"|\s+(?:listesi|favorileri|bilancosu|karnesi|ozeti|raporu|tablosu|tercihleri|sectikleri|secimleri|hamlesi|performansi)\b"
+                 r"|\s+20\d\d\b(?!\s*(?:'?(?:te|ta|de|da)\b|tarih)))", t) or re.search(r"\baylik\b|ayi karnesi|aylik karne", bs) \
+            or re.search(r"\bay boyunca|\bay genelinde|ayin tamaminda|aylik bazda", n0[:300]):
+        return "aylik"
+    if re.search(r"gecen ay\b|son (?:bir|1|iki|2|uc|3|alti|6) ay(?:da|lik|in)?\b|yil ?basindan (?:bu yana|beri|itibaren)|\bceyre[kg]|"
+                 r"\b20\d\d (?:yilinda|boyunca|genelinde)|yilin (?:ilk|son) (?:yarisi|ceyre|\d+ ayi)", t) \
+            or re.search(r"son \d{1,3} (?:is )?gun(?:luk|un|de|lerde|deki)\s+(?:kurum|net|toplam|alim|satis|islem|dagilim)", bs + " " + n0[:400]):
+        return "donemsel"
+    return None
+
+
 def bi_tur(baslik: str, spot: str, ilk: str, yayin: Optional[pd.Timestamp], veri_saati: Optional[str]) -> str:
     """Liste türü: haftalik / aylik / gun_ici / gun_sonu (BI_ESIK['liste']['tur'])."""
     bs = bi_norm(baslik + " " + spot); n0 = bi_norm(ilk)[:700]
+    d = bi_donem_turu(bi_norm(baslik), bs, n0)
+    if d:
+        return d
     if "haftal" in bs or "gecen hafta" in bs or "hafta boyunca" in bs or re.search(r"hafta (basindan|boyunca)|haftalik", n0[:300]):
         return "haftalik"
     if re.search(r"\baylik\b|ayi karnesi|aylik karne", bs):
@@ -509,7 +585,7 @@ def bi_duzyazi(sat: str, gecerli: Optional[set], hedef: List[Tuple[str, float, s
     var = {k for k, _, _ in hedef}
     for m in re.finditer(r"(\()?\b(" + _BI_KOD + r")\b(\))?", sat):
         kod = m.group(2)
-        if kod in var or (not m.group(1) and (gecerli is None or kod not in gecerli)):   # parantez içi kod her zaman (sıra korunur)
+        if kod in var or kod in BI_KOD_KURUM or (not m.group(1) and (gecerli is None or kod not in gecerli)):   # parantez içi kod her zaman (sıra korunur)
             continue
         pen = sat[max(0, m.start() - 70): m.end() + 90]; orta = m.start() - max(0, m.start() - 70)
         adaylar = [(abs(x.start() - orta), x) for x in _BI_DUZ_SAYI.finditer(pen)]
@@ -541,7 +617,7 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
     bicim_ = "tablo"
 
     def yeni_blok(kurum: str, yon: Optional[str], birim: str) -> Dict[str, Any]:
-        b = {"kurum": kurum, "yon": yon, "birim": birim, "satir": [], "bicim": bicim_}; bloklar.append(b); return b
+        b = {"kurum": kurum, "yon": yon, "birim": birim, "satir": [], "bicim": bicim_, "damga": damga, "bas": ""}; bloklar.append(b); return b
 
     def ekle(b: Dict[str, Any], kod: str, net: float, pay: float, mal: float) -> None:
         b["satir"].append({"hisse": kod, "net": net, "pay": pay, "maliyet": mal})
@@ -558,6 +634,19 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
             parcalar.append(("ayrac", ""))
         i = m.end()
     parcalar.append(("metin", g[i:]))
+    # 13.11.2026 düzeltmesi: ÇOK KURUMLU haber (başlık + adres + ara başlıklarda >= 2 kurum; yerli aracı kurumlar tam adıyla) -> her tablonun kurumu
+    # tablodan önce gelen en yakın başlık / cümleden okunur; iki kurumlu başlık / belirsiz -> BİLİNMİYOR (hiçbir ölçüye girmez). Yerli kısa biçimler
+    # ('tera', 'info', 'yapi kredi') yalnız tam adıyla bir yerli kurum geçen çok kurumlu haberde bağlam sayılır.
+    nb = bi_norm(M["baslik"]); yerli_ad = {ad for ad, _, _ in BI_KURUM_YERLI}
+    _guard = re.compile(r"\(" + _BI_KOD + r"\)|\d[\d.]{5,}")
+    basliklar = [_bi_metin(ic) for tp, ic in parcalar if tp == "baslik" or (tp == "metin" and re.fullmatch(r"\s*<strong>[^<]{5,120}</strong>\s*", ic or ""))]
+    kume = set(bi_kurumlar(nb + " " + slug)) | {k for t in basliklar if t and not _guard.search(t) for k in bi_kurumlar(bi_norm(t))}
+    kume |= set(bi_kurumlar(tum)) & yerli_ad   # metinde tam adıyla geçen yerli aracı kurum ('Ziraat Yatırım'ın son 14 günlük dağılımı')
+    cok_kurumlu = len(kume) >= 2; kisa = cok_kurumlu and bool(kume & yerli_ad)
+    if cok_kurumlu:
+        kb = bi_kurumlar(nb, kisa=kisa)
+        baglam["kurum"] = kb[0] if len(set(kb)) == 1 else BI_KURUM_BILINMIYOR
+    damga: Optional[Dict[str, Any]] = None; n_damga = 0; kurum_baglami = False
     for tip, icerik in parcalar:
         if tip == "ayrac":
             continue
@@ -568,7 +657,26 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
             mk = re.search(r"\((" + _BI_KOD + r")\)\s*$", t)
             if mk and len(t) < 160:
                 bekleyen = mk.group(1); continue
-            k = bi_kurum(n); y = bi_yon(n)
+            kurum_baglami = bool(re.fullmatch(_BI_KOD, t.strip()))   # '<strong>BIMAS</strong>' altında kurum karşılaştırması
+            dm = _BI_DAMGA.search(n) if n.startswith("guncelleme") else None
+            if dm:   # sayfada biriken günlük güncelleme: bu başlıktan sonraki bloklar kendi tarihini taşır
+                sa, dk = (int(dm.group(5)), int(dm.group(6))) if dm.group(5) else (18, 30)
+                yil = int(dm.group(3)) if dm.group(3) else (M["yayin"].year if M["yayin"] is not None else None)
+                try:
+                    ts = pd.Timestamp(yil, _BI_AYLAR.index(dm.group(2)) + 1, int(dm.group(1)), sa, dk) if yil else None
+                except ValueError:
+                    ts = None
+                if ts is not None:
+                    damga = {"yayin": ts, "tur": "gun_ici" if (dm.group(5) and f"{sa:02d}:{dk:02d}" < "18:00") else "gun_sonu",
+                             "veri_saati": f"{sa:02d}:{dk:02d}" if dm.group(5) else None, "haber_ek": ts.strftime("#%Y%m%d-%H%M")}
+                    n_damga += 1; cur = None; bekleyen = None
+                    continue
+            if cok_kurumlu and not _guard.search(t):
+                ks = bi_kurumlar(n, kisa=kisa)
+                k = ks[0] if len(set(ks)) == 1 else (BI_KURUM_BILINMIYOR if ks else None)
+            else:
+                k = bi_kurum(n)
+            y = bi_yon(n)
             if k:
                 baglam["kurum"] = k
             if y:
@@ -613,7 +721,7 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
                 if len(r) <= max(hc, nc):
                     continue
                 mk = re.findall(r"\((" + _BI_KOD + r")\)", r[hc]) or re.findall(r"\b(" + _BI_KOD + r")\b", r[hc])
-                if not mk or bi_norm(r[hc]).startswith("diger"):
+                if not mk or bi_norm(r[hc]).startswith("diger") or mk[-1] in BI_KOD_KURUM:
                     continue
                 satirlar.append((mk[-1], bi_sayi(r[nc]), bi_sayi(r[pc]) if pc is not None and pc < len(r) else np.nan,
                                  bi_sayi(r[mc]) if mc is not None and mc < len(r) else np.nan))
@@ -621,10 +729,14 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
                 continue
             isaret = [np.sign(s[1]) for s in satirlar if np.isfinite(s[1])]
             y = y_bas or ("satim" if isaret and all(x < 0 for x in isaret) else baglam["yon"] or "alim")
-            cur = yeni_blok(baglam["kurum"], y, birim)
-            for s in satirlar:
+            if not (cur is not None and cur["bicim"] == "tablo" and cur["bas"] == hb and len(satirlar) == 1 and cur["kurum"] == baglam["kurum"]
+                    and cur["yon"] == y and cur["birim"] == birim and cur["damga"] is damga):
+                cur = yeni_blok(baglam["kurum"], y, birim); cur["bas"] = hb
+            for s in satirlar:   # aynı başlıklı tek satırlık ardışık tablolar ('1', '2', ... numaralı; Rota Borsa) tek liste olarak sürer
                 ekle(cur, *s)
-            cur = None; bekleyen = None
+            if len(satirlar) != 1:
+                cur = None
+            bekleyen = None
             continue
         # metin: satır satır (paragraf başındaki kalın yazı yön bağlamı verir: '• En Çok Satılan Hisse SASA Oldu:')
         ld = re.match(r"\s*<strong>(.*?)</strong>", icerik or "", re.S)
@@ -637,6 +749,12 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
             m = _BI_SATIR1.match(sat)
             if not m:
                 n = bi_norm(sat)
+                if re.fullmatch(_BI_KOD, sat.strip()) or (len(sat) < 80 and "kurum" in n and n.rstrip().endswith(":")):
+                    kurum_baglami = True   # 'BIMAS' / 'Diğer satıcı kurumlar:' -> izleyen 'KOD: ±x' satırları kurum, hisse değil
+                if cok_kurumlu and len(sat) < 250 and not re.search(r"\(" + _BI_KOD + r"\)", sat):
+                    ks = bi_kurumlar(n, kisa=kisa, konum=True)   # 'INFO Yatırım günü ... net satışla tamamlarken ...' -> INFO
+                    if ks and len({a for _, a in ks}) == 1 and ks[0][0] <= 45 and ks[0][1] != baglam["kurum"]:
+                        baglam["kurum"] = ks[0][1]; cur = None
                 if len(sat) < 200 and not re.search(r"\d[\d.]{4,}", sat):
                     y = bi_yon(n)
                     if y and y != baglam["yon"]:
@@ -645,8 +763,8 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
                     bi_duzyazi(sat, gecerli, duz.setdefault((baglam["kurum"], baglam["yon"]), []))
                 continue
             kod = m.group("t"); v = bi_sayi(m.group("v") + " " + (m.group("b") or ""))
-            if kod in ("BIST", "TL", "USD", "EUR", "XU100") or not np.isfinite(v):
-                continue
+            if kod in ("BIST", "TL", "USD", "EUR", "XU100") or not np.isfinite(v) or bi_kurum_satiri_mi(kod, sat, kurum_baglami):
+                continue   # kurum karşılaştırma satırı ('HSBC: -433,4 milyon TL satış') hisse değil
             birim = "TL" if (m.group("b") and "TL" in m.group("b")) else "lot"
             r = m.group("r") or ""
             mm = (re.search(r"(\d[\d.]*,\d+)\s*TL\s*(?:ortalama\s*)?maliyet", r, re.I)
@@ -669,16 +787,18 @@ def bi_ayristir(h: str, url: str, site: str, gecerli: Optional[set] = None, vars
         bicim_ = "duzyazi"; b = yeni_blok(ku, yo, max(("lot", "TL"), key=lambda u: sum(1 for e in x if e[2] == u)))
         for kod, v, _u in x:
             ekle(b, kod, v, np.nan, np.nan)
-    rows: List[Dict[str, Any]] = []; say: Dict[Tuple[str, str], int] = {}
+    rows: List[Dict[str, Any]] = []; say: Dict[Tuple[str, str, str], int] = {}
     for b in bloklar:
         if not b["satir"]:
             continue
-        k = (b["kurum"], b["yon"]); say[k] = say.get(k, 0) + 1
+        d = b["damga"] or {}; k = (b["kurum"], b["yon"], d.get("haber_ek", "")); say[k] = say.get(k, 0) + 1
+        ek = {"yayin": d["yayin"], "tur": d["tur"], "veri_saati": d["veri_saati"], "haber_ek": d["haber_ek"]} if d else {}
         for j, s in enumerate(b["satir"], 1):
             rows.append({"kurum": b["kurum"], "yon": b["yon"], "blok": say[k], "sira": j, "birim": b["birim"], "bicim": b["bicim"], "hisse": s["hisse"],
                          "net": s["net"], "pay": s["pay"], "maliyet": s["maliyet"],
-                         "gecerli": (s["hisse"] in gecerli) if gecerli is not None else None})
-    M["n_satir"] = len(rows); M["kurum_tablosu"] = tablo_kurum
+                         "gecerli": (s["hisse"] in gecerli) if gecerli is not None else None, **ek})
+    M["n_satir"] = len(rows); M["kurum_tablosu"] = tablo_kurum; M["cok_kurumlu"] = cok_kurumlu; M["guncelleme"] = n_damga
+    M["bilinmeyen_satir"] = sum(1 for r in rows if r["kurum"] == BI_KURUM_BILINMIYOR)
     return M, rows
 
 
@@ -719,8 +839,8 @@ def bi_topla(siteler: Tuple[str, ...] = ("hissenet", "yatirimx", "rotaborsa"), s
                 bilog.warning("ayrıştırılamadı %s: %s", r.url, ex); M, rows = {"site": site, "url": r.url, "hata": str(ex)}, []
             hid = bi_haber_id(r.url); M["haber_id"] = hid; M["lastmod"] = r.lastmod
             H.append(M)
-            for x in rows:
-                L.append({"site": site, "haber_id": hid, "url": r.url, "yayin": M.get("yayin"), "tur": M.get("tur"),
+            for x in rows:   # damgalı (güncelleme) satırda haber_id eki, yayın / tür / veri saati satırdan gelir
+                L.append({"site": site, "haber_id": hid + x.pop("haber_ek", ""), "url": r.url, "yayin": M.get("yayin"), "tur": M.get("tur"),
                           "veri_saati": M.get("veri_saati"), **x})
             if k % 50 == 0:
                 bilog.info("%s: %d / %d haber", site, k, len(D))
@@ -732,6 +852,21 @@ def bi_topla(siteler: Tuple[str, ...] = ("hissenet", "yatirimx", "rotaborsa"), s
     kapsam["liste_sha256"] = bi_sha_dosya(_bi_is("liste")); kapsam["haber_sha256"] = bi_sha_dosya(_bi_is("haber"))
     _bi_json(_bi_is("kapsam"), kapsam)
     return kapsam
+
+
+def bi_getir_cevrimdisi(url: str, yol: str, bekle: Optional[float] = None, tazele: bool = False) -> Optional[str]:
+    """Yalnız önbellek: dosya varsa içeriği, yoksa None; hiçbir koşulda ağa çıkmaz (tazele yok sayılır)."""
+    if os.path.exists(yol) and os.path.getsize(yol) > 0:
+        with open(yol, encoding="utf-8", errors="replace") as f:
+            return f.read()
+    return None
+
+
+def bi_yeniden_ayristir(siteler: Tuple[str, ...] = ("hissenet", "yatirimx", "rotaborsa"), sinir: Optional[int] = None) -> Dict[str, Any]:
+    """Ham HTML önbelleğinden yeniden ayrıştırma (indirme yok; site haritaları da önbellekten). bofa_liste / bofa_haber / kapsam yeniden yazılır."""
+    k = bi_topla(siteler, sinir, getir=bi_getir_cevrimdisi); k["cevrimdisi"] = True
+    _bi_json(_bi_is("kapsam"), k)
+    return k
 
 
 def bi_kapsam_ozet(Hd: pd.DataFrame, Ld: pd.DataFrame) -> Dict[str, Any]:
@@ -1304,14 +1439,17 @@ def bi_kapi(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = N
         out["onkayit_git"] = bi_git_durum(y)
     if O["ESIK_SHA256"] != bi_esik_sha(E):
         raise BiHata("eşik mührü tutmuyor (BI_ESIK ön kayıttan sonra değişmiş)")
-    if liste_sha is not None and O["LISTE_SHA256"] != liste_sha:
-        raise BiHata("liste verisi ön kayıttakiyle aynı değil (bofa_liste.csv değişmiş)")
-    if haber_sha is not None and O["HABER_SHA256"] != haber_sha:
-        raise BiHata("haber tablosu ön kayıttakiyle aynı değil (bofa_haber.csv değişmiş)")
+    for ad, sha, dosya in (("LISTE_SHA256", liste_sha, "bofa_liste.csv"), ("HABER_SHA256", haber_sha, "bofa_haber.csv")):
+        if sha is not None and O[ad] != sha:   # 13.11.2026: yeniden ayrıştırılmış veri yalnız --sapma ile; eski / yeni mühür sonuca yazılır
+            if not sapma:
+                raise BiHata(f"liste verisi ön kayıttakiyle aynı değil ({dosya} değişmiş): yalnız `--sapma GEREKCE` ile koşar")
+            out.setdefault("veri_sapma", {})[ad] = {"onkayit": O[ad], "simdi": sha}
     ks = bi_kod_sha(); out["kod_sha256"] = ks; out["kod_ayni"] = ks == O["KOD_SHA256"]
     if not out["kod_ayni"]:
         if not sapma:
             raise BiHata("BOFA_IZI.py ön kayıttan sonra değişmiş: yalnız `--sapma GEREKCE` ile koşar (gerekçe sonuca yazılır)")
+        out["sapma"] = sapma
+    if sapma and out.get("veri_sapma"):
         out["sapma"] = sapma
     out["esik_sha256"] = O["ESIK_SHA256"]
     return out
@@ -1598,7 +1736,7 @@ def bi_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
             "(BIST): FI_OLCUT'un ABD / Avrupa karar hücreleri bu veride yoktur. Ana dışındaki satırlar çoklu denemedir.", "",
             f"Mühür {S.get('esik_sha', '')[:12]}; kapı {json.dumps(S.get('kapi', {}).get('onkayit_git', {}), ensure_ascii=False)}"
             + (f"; SAPMA: {S['kapi']['sapma']}" if S.get("kapi", {}).get("sapma") else "") + ".", ""]
-    return "\n".join(sat)
+    return "\n".join(sat[:2] + _bi_duzeltme_md(S) + sat[2:])
 
 
 def bi_ozet_satirlari(S: Dict[str, Any]) -> List[str]:
@@ -1626,6 +1764,111 @@ def bi_ozet_satirlari(S: Dict[str, Any]) -> List[str]:
             f"- En erken: gün içi BofA listesi medyan {(tu.get('gun_ici') or {}).get('medyan', '—')}'te (veri saati ~12:30-13:00), gün sonu listesi medyan "
             f"{(tu.get('gun_sonu') or {}).get('medyan', '—')}'da yayımlanıyor; ücretsiz kaynakla en erken işlem gün içi haberle aynı gün kapanışta ya da "
             "ertesi açılışta mümkün."]
+
+
+# ---------------------------------------------------------------- 12b) AYRIŞTIRMA DÜZELTMESİ SONRASI ESKİ -> YENİ KARŞILAŞTIRMA (13.11.2026)
+def _dz(d: Any, *yol: str) -> Any:
+    for k in yol:
+        d = d.get(k) if isinstance(d, dict) else None
+    return d
+
+
+def _dz_olcu(d: Any) -> str:
+    """n / ortalama eşli fark [%95] / sıra / portföy vs rastgele %90 özeti (sözlük yoksa '—')."""
+    if not isinstance(d, dict):
+        return "—"
+    if "fi" in d and isinstance(d["fi"], dict):
+        d = d["fi"]
+    n = d.get("n"); f = d.get("ort_fark", d.get("esli_fark_ort")); a, u = d.get("alt95"), d.get("ust95")
+    out = f"n {n if n is not None else '—'}"
+    if f is not None:
+        out += f", eşli fark {_p(f)}" + (f" [{_p(a)}, {_p(u)}]" if a is not None and u is not None else "")
+    if d.get("sira") is not None:
+        out += f", sıra {d['sira']:.2f}"
+    if d.get("portfoy") is not None and d.get("portfoy_esli_p90") is not None:
+        out += f", portföy {d['portfoy']:.2f} / %90 {d['portfoy_esli_p90']:.2f}"
+    if d.get("medyan") is not None and d.get("kar_orani") is not None:
+        out += f", medyan {_p(d['medyan'])}, kâr oranı {_p(d['kar_orani'])}"
+    if d.get("ret_medyan") is not None:
+        out += f", medyan {_p(d['ret_medyan'])}, kâr oranı {_p(d.get('kar_orani'))}"
+    kr = d.get("karar")
+    if isinstance(kr, dict) and kr.get("karar"):
+        out += f", karar: {kr['karar']}"
+    return out
+
+
+def _dz_satirlar(ad: str, Se: Dict[str, Any], Sy: Dict[str, Any]) -> Tuple[List[Tuple[str, str, str]], str, str]:
+    """Rapor başına karşılaştırma satırları (etiket, ESKİ, YENİ) ve (eski karar, yeni karar)."""
+    if ad == "sonuc":   # Ç171
+        R = [("ANA (tutma dönemi)", "donem", "ana"), ("yalnız lot sıralı", "donem", "lot"), ("yalnız TL sıralı", "donem", "tl"), ("düz yazı hariç", "donem", "yapisal"),
+             ("HSBC", "kurum", "HSBC"), ("TOPLU", "kurum", "TOPLU"), ("Deutsche", "kurum", "Deutsche"), ("ikincil 60 gün alım ilk 3", "olay60", "alim_ilk3"),
+             ("60 gün alım ilk 1", "olay60", "alim_ilk1"), ("60 gün satış ilk 3 (ters)", "olay60", "satim_ilk3")]
+        sat = [(e, _dz_olcu(_dz(Se, *y)), _dz_olcu(_dz(Sy, *y))) for e, *y in R]
+        for e, y in (("liste haberi", ("sayim", "liste_haber")), ("dönem toplamı", ("sayim", "donem", "toplam")), ("ana A yarısı eşli fark", ("donem", "ana", "yari_A", "ort_fark")),
+                     ("ana B yarısı eşli fark", ("donem", "ana", "yari_B", "ort_fark")), ("BH ile reddedilen kod", ("bh_m",))):
+            a, b = _dz(Se, *y), _dz(Sy, *y); sat.append((e, _p(a) if isinstance(a, float) else str(a), _p(b) if isinstance(b, float) else str(b)))
+        ke = f"ana {_dz(Se, 'karar', 'karar')} / ikincil {_dz(Se, 'karar60', 'karar')}"; ky = f"ana {_dz(Sy, 'karar', 'karar')} / ikincil {_dz(Sy, 'karar60', 'karar')}"
+        return sat, ke, ky
+    if ad == "kar":   # Ç172
+        R = [("B TÜMÜ G1+C1", "B", "TUM", "yol", "G1C1"), ("B K2 G1+C1", "B", "K2", "yol", "G1C1"), ("B K6 G1+C1", "B", "K6", "yol", "G1C1"),
+             ("B K1 G1+C1", "B", "K1", "yol", "G1C1"), ("A 20 gün (BofA maliyetinden)", "A", "kirilim", "20", "tum"), ("A 60 gün", "A", "kirilim", "60", "tum"),
+             ("A kriz sonrası 20 gün (BİLGİ)", "A", "kirilim", "20", "kriz_sonrasi (BİLGİ)"), ("FIFO (tüm)", "A", "fifo", "tum")]
+        sat = [(e, _dz_olcu(_dz(Se, *y)), _dz_olcu(_dz(Sy, *y))) for e, *y in R]
+        for e, y in (("FIFO eşleşen lot", ("A", "fifo", "eslesen_lot")), ("temizlik geçerli satır", ("sayim", "temizlik", "gecerli")), ("kriz açık dönem", ("kriz", "acik"))):
+            sat.append((e, str(_dz(Se, *y)), str(_dz(Sy, *y))))
+        return sat, str(_dz(Se, "B_ozet_karar")), str(_dz(Sy, "B_ozet_karar"))
+    R = [("BofA tetikli kurulum (FI 60 gün)", "iki", "bofali"), ("BofA'sız kurulum", "iki", "bofasiz"), ("ABD 2023 kurulum", "bir", "hucre", "ABD", "2023"),
+         ("ABD 2024-26 kurulum", "bir", "hucre", "ABD", "2024-26"), ("BIST 2024-26 kurulum", "bir", "hucre", "BIST", "2024-26")]
+    sat = [(e, _dz_olcu(_dz(Se, *y)), _dz_olcu(_dz(Sy, *y))) for e, *y in R]
+    for e, y in (("BofA tetik sayısı", ("sayim", "bofa", "tetik")), ("tetikli kurulum olayı (60 gün)", ("sayim", "bofa", "olay60")), ("tetikli kurulum kriz sonrası", ("sayim", "bofa", "olay60_kriz_sonrasi")),
+                 ("dönem (n / toplam)", ("iki", "donem")), ("izleme listesi n", ("uc", "izle_n")), ("izlemede BofA 20 günde", ("uc", "izle_bofa_n"))):
+        sat.append((e, str(_dz(Se, *y)), str(_dz(Sy, *y))))
+    kt = lambda S_: ", ".join(f"{x.get('hisse')} {str(x.get('yayin', ''))[:10]} sıra {x.get('sira')}" for x in (_dz(S_, "uc", "kriz_tetik") or [])) or "—"  # noqa: E731
+    sat.append(("kriz sonrası BofA tetiği (tek tek)", kt(Se), kt(Sy)))
+    iz = lambda S_: ", ".join(x.get("sembol", "") for x in (_dz(S_, "uc", "izle") or [])) or "—"  # noqa: E731
+    sat.append(("izleme listesi", iz(Se), iz(Sy)))
+    ke = f"kurulum {_dz(Se, 'bir', 'karar')} / BofA tetikli {_dz(Se, 'iki', 'karar', 'karar')}"; ky = f"kurulum {_dz(Sy, 'bir', 'karar')} / BofA tetikli {_dz(Sy, 'iki', 'karar', 'karar')}"
+    return sat, ke, ky
+
+
+def _bi_duzeltme_md(S: Dict[str, Any]) -> List[str]:
+    d = S.get("duzeltme")
+    if not d:
+        return []
+    sat = ["## Düzeltme sonrası (ana model denetimi 13.11.2026)", "",
+           f"{d.get('not', '')}", "",
+           f"**KARAR: {'DEĞİŞMEDİ' if not d.get('karar_degisti') else 'DEĞİŞTİ'}** — eski: {d.get('karar_eski')}; yeni: {d.get('karar_yeni')}. "
+           f"Eski rapor ve JSON: {d.get('eski_klasor', 'eski_v1/')}.", "",
+           "| satır | ESKİ | YENİ |", "|---|---|---|"]
+    sat += [f"| {e} | {a} | {b} |" for e, a, b in d.get("satirlar", [])]
+    return sat + [""]
+
+
+def bi_duzeltme(kl: Optional[str] = None, eski: Optional[str] = None, sapma: Optional[str] = None) -> Dict[str, Any]:
+    """Yeniden ayrıştırma sonrası: üç sonuç JSON'una eski (eski_v1/) -> yeni karşılaştırması ve 'düzeltme sonrası' notu yazılır, raporlar yenilenir."""
+    kl = kl or BI_YOL["cikti"]; eski = eski or os.path.join(kl, "eski_v1"); out: Dict[str, Any] = {}
+    for ad, dosya, rapor in (("sonuc", BI_DOSYA["sonuc"], bi_rapor), ("kar", BK_DOSYA["sonuc"], bk_rapor), ("dip", DP_DOSYA["sonuc"], dp_rapor)):
+        ye, yy = os.path.join(eski, dosya), os.path.join(kl, dosya)
+        try:
+            with open(ye, encoding="utf-8") as f:
+                Se = json.load(f)
+            with open(yy, encoding="utf-8") as f:
+                Sy = json.load(f)
+        except (OSError, ValueError) as ex:
+            raise BiHata(f"düzeltme karşılaştırması için sonuç okunamadı ({dosya}): {ex}") from ex
+        sat, ke, ky = _dz_satirlar(ad, Se, Sy); vs = (Sy.get("kapi") or {}).get("veri_sapma") or {}
+        Sy["duzeltme"] = {"zaman": _bi_simdi(), "eski_klasor": eski, "karar_eski": ke, "karar_yeni": ky, "karar_degisti": ke != ky, "satirlar": sat,
+                          "veri_sapma": vs,
+                          "not": ("Bu rapor, BofA liste verisi yeniden ayrıştırıldıktan sonra AYNI ön kayıt, aynı eşikler ve aynı tanımlarla yeniden koşuldu. "
+                                  + (f"Sapma gerekçesi: {sapma or (Sy.get('kapi') or {}).get('sapma', '')}. " if (sapma or (Sy.get('kapi') or {}).get('sapma')) else "")
+                                  + "Düzeltilenler: çok kurumlu haberlerde her tablonun kurumu tablodan önceki başlık / cümleden okunur (belirsiz -> BİLİNMİYOR, "
+                                  "ölçüme girmez); hisse sütunundaki kurum adı satırları ('HSBC: -433 mn') düşer; aylık / dönemsel özet haberleri tur='aylik' / "
+                                  "'donemsel' (kapsam dışı); sayfada biriken günlük güncellemeler ('GÜNCELLEME 30 EYLÜL') kendi tarihini taşır (Eylül listesi "
+                                  "Haziran tarihli sayılmaz); numaralı tek satırlık tablolar tek liste; haber sitelerinin ilgili haber kuşağı gövde dışı "
+                                  "(kenar kuşağından 'SSAAT 56 TL' gibi satırlar BofA listesi sayılmaz). "
+                                  + (f"Liste mührü {str(vs.get('LISTE_SHA256', {}).get('onkayit', ''))[:12]} -> {str(vs.get('LISTE_SHA256', {}).get('simdi', ''))[:12]}." if vs else ""))}
+        _bi_json(yy, Sy); rapor(kl); out[ad] = {"karar_eski": ke, "karar_yeni": ky, "degisti": ke != ky}
+    return out
 
 
 def bi_rapor(kl: Optional[str] = None) -> str:
@@ -2294,14 +2537,17 @@ def bk_kapi(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = N
         out["onkayit_git"] = bi_git_durum(y)
     if O["ESIK_SHA256"] != bk_esik_sha(E):
         raise BiHata("eşik mührü tutmuyor (BK_ESIK ön kayıttan sonra değişmiş)")
-    if liste_sha is not None and O["LISTE_SHA256"] != liste_sha:
-        raise BiHata("liste verisi ön kayıttakiyle aynı değil (bofa_liste.csv değişmiş)")
-    if haber_sha is not None and O["HABER_SHA256"] != haber_sha:
-        raise BiHata("haber tablosu ön kayıttakiyle aynı değil (bofa_haber.csv değişmiş)")
+    for ad, sha, dosya in (("LISTE_SHA256", liste_sha, "bofa_liste.csv"), ("HABER_SHA256", haber_sha, "bofa_haber.csv")):
+        if sha is not None and O[ad] != sha:   # 13.11.2026: yeniden ayrıştırılmış veri yalnız --sapma ile; eski / yeni mühür sonuca yazılır
+            if not sapma:
+                raise BiHata(f"liste verisi ön kayıttakiyle aynı değil ({dosya} değişmiş): yalnız `--sapma GEREKCE` ile koşar")
+            out.setdefault("veri_sapma", {})[ad] = {"onkayit": O[ad], "simdi": sha}
     ks = bi_kod_sha(); out["kod_sha256"] = ks; out["kod_ayni"] = ks == O["KOD_SHA256"]
     if not out["kod_ayni"]:
         if not sapma:
             raise BiHata("BOFA_IZI.py BofA kâr ön kaydından sonra değişmiş: yalnız `--sapma GEREKCE` ile koşar (gerekçe sonuca yazılır)")
+        out["sapma"] = sapma
+    if sapma and out.get("veri_sapma"):
         out["sapma"] = sapma
     out["esik_sha256"] = O["ESIK_SHA256"]
     return out
@@ -2585,7 +2831,7 @@ def bk_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
             "(denetim yeniden hesabı): 84 eşleşme, lot ağırlıklı -%3,2, medyan -%2,2, kârlı %37, kapsam %40; yine yalnız kriz sonrası. 17.06.2025 "
             "YatırımX 'TERA bastırıyor' gibi bazı lot etiketli satırlar da TL tutarı olabilir; lot ağırlıkları bu yüzden kaba.",
             "- DUNYH (12.11.2026) giriş fiyatı bayat Yahoo fiyatı (giriş günü hacim 0, Ç171'de işaretlendi); -%85 gerçek değildir.", ""]
-    return "\n".join(sat)
+    return "\n".join(sat[:2] + _bi_duzeltme_md(S) + sat[2:])
 
 
 def bk_rapor(kl: Optional[str] = None) -> str:
@@ -3232,11 +3478,15 @@ def dp_kapi(kl: Optional[str] = None, git: bool = True, sapma: Optional[str] = N
         raise BiHata("eşik mührü tutmuyor (DP_ESIK ön kayıttan sonra değişmiş)")
     for k, v in (veri_sha or {}).items():
         if v is not None and O.get(k) != v:
+            if k in ("LISTE_SHA256", "HABER_SHA256") and sapma:   # 13.11.2026: yeniden ayrıştırılmış liste yalnız --sapma ile; fiyat mührü değişmez
+                out.setdefault("veri_sapma", {})[k] = {"onkayit": O.get(k), "simdi": v}; continue
             raise BiHata(f"veri ön kayıttakiyle aynı değil ({k} değişmiş)")
     ks = bi_kod_sha(); out["kod_sha256"] = ks; out["kod_ayni"] = ks == O["KOD_SHA256"]
     if not out["kod_ayni"]:
         if not sapma:
             raise BiHata("BOFA_IZI.py dip ön kaydından sonra değişmiş: yalnız `--sapma GEREKCE` ile koşar (gerekçe sonuca yazılır)")
+        out["sapma"] = sapma
+    if sapma and out.get("veri_sapma"):
         out["sapma"] = sapma
     out["esik_sha256"] = O["ESIK_SHA256"]
     return out
@@ -3478,7 +3728,7 @@ def dp_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
             f"{str(S.get('esik_sha', ''))[:12]}; kod aynı: {Kp.get('kod_ayni')}" + (f"; SAPMA: {Kp.get('sapma')}" if Kp.get("sapma") else ""),
             f"- Koşu {S.get('baslangic', '—')} – {S.get('bitis', '—')}; {DP_SURUM}",
             f"- Satır verisi: {BI_YOL['is']}/dip_*.csv.gz (repoya girmez)", ""]
-    return "\n".join(sat)
+    return "\n".join(sat[:2] + _bi_duzeltme_md(S) + sat[2:])
 
 
 def dp_rapor(kl: Optional[str] = None) -> str:
@@ -3511,8 +3761,8 @@ _cakisma_kontrol_bi()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=BI_SURUM)
-    ap.add_argument("komut", choices=["topla", "onkayit", "kos", "rapor", "izle", "karonkayit", "karkos", "karrapor", "diponkayit", "dipkos",
-                                         "diprapor"])
+    ap.add_argument("komut", choices=["topla", "ayristir", "onkayit", "kos", "rapor", "izle", "karonkayit", "karkos", "karrapor", "diponkayit",
+                                         "dipkos", "diprapor", "duzeltme"])
     ap.add_argument("--site", default="hissenet,yatirimx,rotaborsa")
     ap.add_argument("--sinir", type=int, default=None)
     ap.add_argument("--cikti", default=None)
@@ -3525,6 +3775,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s")); bilog.addHandler(_fh)
         if a_.komut == "topla":
             print(json.dumps(_bi_kayit(bi_topla(tuple(a_.site.split(",")), a_.sinir)), ensure_ascii=False))
+        elif a_.komut == "ayristir":
+            print(json.dumps(_bi_kayit(bi_yeniden_ayristir(tuple(a_.site.split(",")), a_.sinir)), ensure_ascii=False))
         elif a_.komut == "onkayit":
             y_ = bi_onkayit(a_.cikti); print(y_, "mühür", bi_esik_sha(), "kod", bi_kod_sha(), "dosya", bi_sha_dosya(y_))
         elif a_.komut == "kos":
@@ -3550,6 +3802,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             print(_dp_yol("rapor", a_.cikti))
         elif a_.komut == "diprapor":
             print(dp_rapor(a_.cikti))
+        elif a_.komut == "duzeltme":
+            print(json.dumps(_bi_kayit(bi_duzeltme(a_.cikti, sapma=a_.sapma)), ensure_ascii=False))
         else:
             print(bi_rapor(a_.cikti))
     except (BiHata, FileNotFoundError) as ex:

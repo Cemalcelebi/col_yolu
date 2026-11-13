@@ -6,6 +6,10 @@
 2) giriş günü (seans içi haber -> ertesi açılış, sabah 09:55 öncesi -> aynı gün, hafta sonu -> pazartesi) ve veri günü
 3) tutma dönemi: açık dönemde alım haberi yeni dönem açmaz, satış ilk 5 kapatır (ilk 6 kapatmaz), girişten önceki satış haberi sayılmaz,
    250 gün tavanı, açık dönem, kapanıştan sonra yeni dönem; varyant (iki ardışık satış haberinde ilk 3)
+1b) AYRIŞTIRMA DÜZELTMESİ (13.11.2026): çok kurumlu haber (İş Yatırım / Tera Yatırım / BofA tabloları başlık altında; iki kurumlu başlık ->
+   BİLİNMİYOR; kurum karşılaştırma satırı 'HSBC: -433,4 milyon TL satış' hisse değil; '(TERA)' parantezli kod hisse), aylık / dönemsel özet
+   haberi tur='aylik' / 'donemsel' ve ölçüm kapsamı dışı, sayfada biriken günlük güncellemeler kendi tarihini taşır (geleceğe bakma yok),
+   numaralı tek satırlık tablolar tek liste, YatırımX ilgili haber kuşağı gövde dışı, yeniden ayrıştırılmış liste kapıdan yalnız --sapma ile
 4) dönem ölçümü elle: getiri, en yüksek / en düşük, eşli ortalama (aynı hücre, aynı giriş / çıkış), sıra, geç kalma; slot portföy; BH
 5) günlük liste seçimi (gün sonu > en geç gün içi), ardışık olay, 60 gün tekilleştirme
 6) mühür kapısı: ön kayıt yok / git'te değil / eşik / liste / kod farkı -> RET; commit sonrası geçer
@@ -150,6 +154,127 @@ def t1_ayristirici() -> None:
     kontrol(B.bi_veri_saati(B.bi_norm("endeks 11.535 puan, %0,45")) is None, "puan sayısı saat sanılmamalı")
     kontrol(B.bi_aday_url("https://www.hisse.net/haber/bofa-alim-listesi-1") and not B.bi_aday_url("https://www.hisse.net/haber/bofa-altin-raporu-5")
             and B.bi_aday_url("https://www.hisse.net/haber/hsbc-bugun-hangi-hisseleri-aliyor-3"), "URL süzgeci")
+
+
+COK_KURUM = SAYFA.format(tarih="2026-09-09T19:37:56+03:00", baslik="BofA, İş ve Tera hangi hisseleri aldı ve sattı? İşte günün işlemleri",
+                         spot="Üç kurumun listesi", govde="""
+<p>Üç kurumun işlem listesinde özellikle EKGYO, SASA ve BTCIM öne çıktı.</p>
+<h2>İŞ YATIRIM SATIŞ TARAFINDA</h2><p>İş Yatırım’ın gün içi işlemlerinde net hacim eksi gerçekleşti.</p>
+<h2>EN ÇOK ALIM YAPILAN HİSSELER</h2>
+<table><tr><th>Hisse</th><th>Net lot</th><th>Pay</th><th>Maliyet</th></tr><tr><td>ENTRA</td><td>51.368.821</td><td>%15,81</td><td>4,40</td></tr>
+<tr><td>GSRAY</td><td>16.928.730</td><td>%5,21</td><td>1,04</td></tr></table>
+<h2>SATIŞ YAPILAN HİSSELER</h2>
+<table><tr><th>Hisse</th><th>Net Lot</th><th>Pay</th><th>Maliyet</th></tr><tr><td>TSPOR</td><td>-24.423.911</td><td>%5,54</td><td>1,026</td></tr></table>
+<h2>TERA YATIRIM’DA BTCIM ÖNE ÇIKTI</h2><p>Tera Yatırım ise net alım tarafında yer aldı.</p>
+<h2>ALIM YAPILAN HİSSELER</h2>
+<table><tr><th>Hisse</th><th>Net lot</th><th>Pay</th><th>Maliyet</th></tr><tr><td>BTCIM</td><td>35.373.036</td><td>%16,90</td><td>3,921</td></tr></table>
+<h2>BOFA'DAN EKGYO ALIMI</h2><p>Bank of America’nın en fazla net alım yaptığı hisse EKGYO oldu.</p>
+<h2>EN ÇOK ALIM YAPILAN HİSSELER</h2>
+<table><tr><th>Hisse</th><th>Net lot</th><th>Pay</th><th>Maliyet</th></tr><tr><td>EKGYO</td><td>29.346.943</td><td>%9,33</td><td>22,354</td></tr>
+<tr><td>Tera Yatırım Menkul Değerler (TERA)</td><td>16.959.904</td><td>%5,39</td><td>10,787</td></tr><tr><td>HSBC</td><td>1.000.000</td><td>%1</td><td>1</td></tr></table>
+<h2>EN ÇOK SATIŞ YAPILAN HİSSELER</h2>
+<table><tr><th>Hisse</th><th>Net Lot</th><th>Pay</th><th>Maliyet</th></tr><tr><td>SASA</td><td>-119.399.202</td><td>%36,66</td><td>2,866</td></tr></table>
+<h2>İŞ YATIRIM VE TERA AYNI HİSSEDE</h2>
+<table><tr><th>Hisse</th><th>Net lot</th></tr><tr><td>PEKGY</td><td>5.000.000</td></tr></table>
+<h2>AYNI HİSSELERDE KURUM AYRIŞMASI</h2><p>Bazı hisselerde kurumlar farklı yönde işlem yaptı.</p>
+<p><strong>BIMAS</strong><br>En dikkat çeken ayrışma BIMAS hissesinde yaşandı.</p>
+<p><strong>Bank of America:</strong> +718,4 milyon TL alım<br><strong>HSBC:</strong> -433,4 milyon TL satış<br><strong>INFO: </strong>-115 milyon TL satış</p>""")
+
+AYLIK = SAYFA.format(tarih="2026-09-01T11:40:00+03:00", baslik="Bank of America ağustosta bu BİST hisselerine milyarlar yatırdı!", spot="Ağustos özeti", govde="""
+<h2>BOFA'NIN EN ÇOK ALDIĞI HİSSELER</h2><table><tr><th>Hisse</th><th>Net lot</th></tr><tr><td>TRALT</td><td>3.889.419.169</td></tr></table>""")
+
+GUNCELLEME = SAYFA.format(tarih="2026-06-02T19:41:48+03:00", baslik="Bank of America'nın (BofA) bugün aldığı ve sattığı hisseler!", spot="", govde="""
+<h2>GÜNCELLEME 30 EYLÜL- GÜN SONU</h2><p>Gün sonu listesi.</p>
+<h2>EN ÇOK ALIM YAPILAN HİSSELER</h2><table><tr><th>Hisse</th><th>Net Lot</th></tr><tr><td>SASA</td><td>75.053.692</td></tr><tr><td>TURSG</td><td>21.053.769</td></tr></table>
+<h2>GÜNCELLEME 30 EYLÜL 2026-SAAT 12.35</h2><p>Gün içi listesi.</p>
+<h2>BOFA'NIN EN ÇOK ALDIĞI HİSSELER</h2><table><tr><th>Hisse</th><th>Net Lot</th></tr><tr><td>TRALT</td><td>141.901.386</td></tr></table>
+<h2>Güncelleme: 1 Haziran 2026 Salı – Saat: 15.00</h2>
+<h2>BOFA'NIN EN ÇOK ALDIĞI HİSSELER</h2><table><tr><th>Hisse</th><th>Net Lot</th></tr><tr><td>MARTI</td><td>29.500.000</td></tr></table>""")
+
+ROTA_NUMARALI = """<html><script>{"datePublished":"2024-12-16T19:03:07+03:00"}</script><h1>Bank of America’nın (BofA) bugün en çok aldığı hisseler</h1>
+<div class="entry-content"><h2>BofA’nın bugün en çok aldığı hisseler</h2>
+<h3>1</h3><figure><table><tr><th>Hisse Adı</th><th>Net Alım (TL)</th></tr><tr><td>Türkiye Garanti Bankası A.Ş. (GARAN)</td><td>123.579.184</td></tr></table></figure>
+<h3>2</h3><figure><table><tr><th>Hisse Adı</th><th>Net Alım (TL)</th></tr><tr><td>Turkcell (TCELL)</td><td>78.554.734</td></tr></table></figure>
+<h3>3</h3><figure><table><tr><th>Hisse Adı</th><th>Net Alım (TL)</th></tr><tr><td>Gübre Fabrikaları (GUBRF)</td><td>68.094.273</td></tr></table></figure>
+<aside class="kanews-entry-tags">#BofA</aside><p>İş Yatırım üzerinden en fazla alım satım yapılan hisseler (11.11.2026)</p></div></html>"""
+
+YX_KUSAK = """<html><script>{"datePublished":"2025-03-26T15:48:15+03:00"}</script><h1>BofA'nın en fazla aldığı hisseler (26 Mart)</h1>
+<div id="x" property="articleBody"><p>BofA'nın en çok alım yaptığı hisseler: 120,5 milyon TL ile Ereğli Demir Çelik (EREGL) ve 80,2 milyon TL ile Koç Holding (KCHOL).</p>
+<div class="position-relative detail-sort-item"><a class="post-horizontalnews-cont" href="y">Saat &amp; Saat (SSAAT) yatırımcısında saatler geri işliyor! 56 TL'lik hisse 22,46 TL'ye düştü</a></div>
+<p>Yasal Uyarı: ...</p></div></html>"""
+
+
+def t1b_duzeltme() -> None:
+    G = {"ENTRA", "GSRAY", "TSPOR", "BTCIM", "EKGYO", "TERA", "SASA", "PEKGY", "BIMAS", "INFO", "TRALT", "TURSG", "MARTI", "GARAN", "TCELL", "GUBRF",
+         "EREGL", "KCHOL", "SSAAT"}
+    M, R = B.bi_ayristir(COK_KURUM, "https://www.hisse.net/haber/bofa-is-ve-tera-hangi-hisseleri-aldi-ve-satti-94283", "hissenet", G); D = pd.DataFrame(R)
+    kontrol(bool(M["cok_kurumlu"]), "üç kurumlu haber çok kurumlu sayılmalı")
+    isy = D[D.kurum == "IsYatirim"]; ter = D[D.kurum == "Tera"]; bof = D[D.kurum == "BofA"]; bil = D[D.kurum == B.BI_KURUM_BILINMIYOR]
+    kontrol(isy[isy.yon == "alim"].hisse.tolist() == ["ENTRA", "GSRAY"] and isy[isy.yon == "satim"].hisse.tolist() == ["TSPOR"],
+            f"İş Yatırım tabloları İş Yatırım'a: {isy.to_dict('records')}")
+    kontrol(ter.hisse.tolist() == ["BTCIM"] and ter.yon.iloc[0] == "alim", f"Tera tablosu Tera'ya: {ter.to_dict('records')}")
+    kontrol(bof[bof.yon == "alim"].hisse.tolist() == ["EKGYO", "TERA"] and (bof[bof.yon == "alim"].blok == 1).all(),
+            f"BofA alım blok 1 = EKGYO, TERA ('(TERA)' hisse; 'HSBC' satırı düşer): {bof.to_dict('records')}")
+    kontrol(bof[bof.yon == "satim"].hisse.tolist() == ["SASA"], "BofA satış listesi")
+    kontrol(bil.hisse.tolist() == ["PEKGY"], f"iki kurumlu başlık altındaki tablo BİLİNMİYOR olmalı: {bil.to_dict('records')}")
+    kontrol("HSBC" not in D.hisse.tolist() and "INFO" not in D.hisse.tolist() and "BIMAS" not in D.hisse.tolist(),
+            f"kurum karşılaştırma satırları hisse sayılmamalı: {D.hisse.tolist()}")
+    kontrol(M["bilinmeyen_satir"] == 1, "bilinmeyen satır sayısı")
+    kontrol(B.bi_kurum_satiri_mi("HSBC", "HSBC: -433 TL", False) and B.bi_kurum_satiri_mi("TERA", "TERA: -115 TL satış", True)
+            and not B.bi_kurum_satiri_mi("TERA", "Tera Yatırım (TERA): 89 TL net alım", True) and not B.bi_kurum_satiri_mi("TERA", "TERA: 130 TL net alım", False),
+            "kurum satırı kuralı: kesin kısaltma her zaman; TERA yalnız kurum bağlamında ve parantezsiz")
+    # aylık / dönemsel
+    M, R = B.bi_ayristir(AYLIK, "https://www.hisse.net/haber/bank-of-america-agustosta-bu-bist-hisselerine-milyarlar-yatirdi-91693", "hissenet", G)
+    kontrol(M["tur"] == "aylik" and len(R) == 1, f"aylık özet: {M['tur']}")
+    for b, bek in (("21 Ağustos BofA alım yapan hisseler: Bank of America hangi hisseleri aldı", "gun_ici"),
+                   ("Bank of America'nın 29 Mayıs 2025'te İşlem Yaptığı Hisseler", "gun_ici"), ("BofA mayısta 7,4 milyar lot sattı!", "aylik"),
+                   ("Bank of America'nın Ekim 2026 hamlesi: BofA en çok hangi hisseleri aldı", "aylik"), ("BofA son 1 ayda 9 milyon lot sattı", "donemsel"),
+                   ("Deutsche Bank hangi hisseleri topladı? İşte Haziran listesi", "aylik"), ("BofA’nın sattığı dev hisse bir ayda yüzde 17 değer kaybetti", "gun_ici"),
+                   ("Bank of America (BofA) bu hisselerde yüklü alım yaptı (24-28 Ağustos)", "gun_ici")):
+        t = B.bi_tur(b, "", "", pd.Timestamp("2026-09-01 11:40"), None); kontrol(t == bek, f"tür '{b}': {t} != {bek}")
+    T = pd.DatetimeIndex(pd.bdate_range("2026-08-20", "2026-10-30"))
+    Ld = pd.DataFrame([{"haber_id": "h1", "yayin": "2026-09-01 11:40", "tur": "aylik", "kurum": "BofA", "yon": "alim", "blok": 1, "sira": 1, "birim": "lot",
+                        "bicim": "tablo", "hisse": "TRALT", "net": 1.0, "pay": np.nan, "maliyet": np.nan, "gecerli": True},
+                       {"haber_id": "h2", "yayin": "2026-09-02 11:40", "tur": "donemsel", "kurum": "BofA", "yon": "alim", "blok": 1, "sira": 1, "birim": "lot",
+                        "bicim": "tablo", "hisse": "SASA", "net": 1.0, "pay": np.nan, "maliyet": np.nan, "gecerli": True},
+                       {"haber_id": "h3", "yayin": "2026-09-02 19:40", "tur": "gun_sonu", "kurum": B.BI_KURUM_BILINMIYOR, "yon": "alim", "blok": 1, "sira": 1,
+                        "birim": "lot", "bicim": "tablo", "hisse": "SASA", "net": 1.0, "pay": np.nan, "maliyet": np.nan, "gecerli": True},
+                       {"haber_id": "h4", "yayin": "2026-09-02 19:40", "tur": "gun_sonu", "kurum": "Tera", "yon": "alim", "blok": 1, "sira": 1,
+                        "birim": "lot", "bicim": "tablo", "hisse": "SASA", "net": 1.0, "pay": np.nan, "maliyet": np.nan, "gecerli": True}])
+    kontrol(len(B.bi_liste_hazirla(Ld, T)) == 0 and len(B.bi_liste_hazirla(Ld, T, kurum=None)) == 0,
+            "aylık / dönemsel tür, BİLİNMİYOR ve yerli kurum satırları hiçbir ölçüye (ana, toplu) girmemeli")
+    # sayfada biriken güncellemeler
+    M, R = B.bi_ayristir(GUNCELLEME, "https://www.hisse.net/haber/bank-of-america-nin-bofa-bugun-aldigi-ve-sattigi-hisseler-73849", "hissenet", G)
+    D = pd.DataFrame(R); kontrol(M["guncelleme"] == 3, f"3 güncelleme damgası: {M['guncelleme']}")
+    g1 = D[D.hisse == "SASA"].iloc[0]; g2 = D[D.hisse == "TRALT"].iloc[0]; g3 = D[D.hisse == "MARTI"].iloc[0]
+    kontrol(str(g1.yayin) == "2026-09-30 18:30:00" and g1.tur == "gun_sonu" and g1.haber_ek == "#20260930-1830" and g1.blok == 1,
+            f"gün sonu güncellemesi kendi tarihini taşımalı: {g1.to_dict()}")
+    kontrol(str(g2.yayin) == "2026-09-30 12:35:00" and g2.tur == "gun_ici" and g2.veri_saati == "12:35" and g2.blok == 1,
+            f"gün içi güncellemesi: {g2.to_dict()}")
+    kontrol(str(g3.yayin) == "2026-06-01 15:00:00" and g3.blok == 1 and D.blok.max() == 1, "her güncelleme bölümü kendi blok 1'i")
+    kontrol(all(pd.Timestamp(r.yayin) <= pd.Timestamp("2026-09-30 18:30") for r in D.itertuples()) and D.hisse.tolist() == ["SASA", "TURSG", "TRALT", "MARTI"],
+            "güncelleme satırları")
+    # numaralı tek satırlık tablolar tek liste + Rota Borsa etiket kuşağı gövde dışı
+    M, R = B.bi_ayristir(ROTA_NUMARALI, "https://rotaborsa.com/bank-of-americanin-bugun-en-cok-aldigi-hisseler-70/", "rotaborsa", G); D = pd.DataFrame(R)
+    kontrol(D.hisse.tolist() == ["GARAN", "TCELL", "GUBRF"] and D.sira.tolist() == [1, 2, 3] and (D.blok == 1).all() and (D.kurum == "BofA").all(),
+            f"numaralı tek satırlık tablolar tek blok: {D.to_dict('records')}")
+    kontrol(not M["cok_kurumlu"], "etiket kuşağındaki 'İş Yatırım' çok kurumlu saydırmamalı")
+    # YatırımX ilgili haber kuşağı
+    M, R = B.bi_ayristir(YX_KUSAK, "https://www.yatirimx.com.tr/piyasa/bofanin-en-fazla-aldigi-hisseler-26-mart_7072", "yatirimx", G); D = pd.DataFrame(R)
+    kontrol(D.hisse.tolist() == ["EREGL", "KCHOL"], f"ilgili haber kuşağı ('SSAAT 56 TL') gövde dışı: {D.hisse.tolist()}")
+    # kapı: yeniden ayrıştırılmış liste yalnız --sapma ile (eski / yeni mühür kayda geçer)
+    kl = tempfile.mkdtemp()
+    try:
+        B._bi_yaz(B._bi_yol("onkayit", kl), B.bi_onkayit_metin("t", {}, {"liste_sha256": "a" * 64, "haber_sha256": "b" * 64}, {}))
+        durmali(lambda: B.bi_kapi(kl, git=False, liste_sha="c" * 64, haber_sha="b" * 64), "liste farkı sapmasız RET", "sapma")
+        K = B.bi_kapi(kl, git=False, sapma="düzeltme", liste_sha="c" * 64, haber_sha="d" * 64)
+        kontrol(K.get("sapma") == "düzeltme" and K["veri_sapma"]["LISTE_SHA256"] == {"onkayit": "a" * 64, "simdi": "c" * 64}
+                and K["veri_sapma"]["HABER_SHA256"]["simdi"] == "d" * 64, f"veri sapması kayda geçmeli: {K}")
+        B._bi_yaz(os.path.join(kl, B.BK_DOSYA["onkayit"]), B.bk_onkayit_metin("t", {}, {"liste_sha256": "a" * 64, "haber_sha256": "b" * 64}, {}))
+        durmali(lambda: B.bk_kapi(kl, git=False, liste_sha="c" * 64), "kâr kapısı liste farkı sapmasız RET", "sapma")
+        kontrol(B.bk_kapi(kl, git=False, sapma="d", liste_sha="c" * 64).get("veri_sapma", {}).get("LISTE_SHA256", {}).get("simdi") == "c" * 64, "kâr kapısı veri sapması")
+    finally:
+        shutil.rmtree(kl, ignore_errors=True)
 
 
 def takvim() -> pd.DatetimeIndex:
@@ -895,7 +1020,7 @@ def t18_dip_uctan_uca() -> None:
 
 
 if __name__ == "__main__":
-    for fn in (t1_ayristirici, t2_giris, t3_donem, t4_olcum, t5_gunluk, t6_kapi, t7_izle_kapi, t8_uctan_uca, t9_kar_temizlik, t10_kar_a_fifo,
+    for fn in (t1_ayristirici, t1b_duzeltme, t2_giris, t3_donem, t4_olcum, t5_gunluk, t6_kapi, t7_izle_kapi, t8_uctan_uca, t9_kar_temizlik, t10_kar_a_fifo,
                t11_kar_tetik_olay, t12_kar_karar_kapi, t13_kar_uctan_uca, t14_dip_kurulum, t15_dip_olcu, t16_dip_bofa, t17_dip_kapi,
                t18_dip_uctan_uca):
         try:
@@ -905,4 +1030,4 @@ if __name__ == "__main__":
             HATA.append(f"{fn.__name__} çöktü: {type(ex).__name__}: {ex}\n{traceback.format_exc()[-1500:]}")
     if HATA:
         print("BAŞARISIZ:\n- " + "\n- ".join(HATA)); sys.exit(1)
-    print("test_bofa_izi: tüm testler geçti (18 bölüm)")
+    print("test_bofa_izi: tüm testler geçti (19 bölüm)")
