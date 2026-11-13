@@ -806,8 +806,14 @@ def goz_rapor_md(S: Dict[str, Any], E: Optional[Dict[str, Any]] = None) -> str:
          f"(%{_f(100 * A['COL']['yakalama'], 0)}); aynı hisselerin rastgele pencerelerinde %{_f(100 * A['RASTGELE']['yakalama'], 0)}, "
          f"Cemal'in 'olumsuz' bölgelerinde %{_f(100 * A['OLUMSUZ']['yakalama'], 0)}.",
          f"- **Test B:** " + (f"göz ölçüsü adayı: {', '.join(B['aday'])}." if B["aday"] else "hiçbir basit ölçü aday eşiğini (LOSO AUC >= 0,80 ve olumsuza karşı >= 0,70) geçmedi."),
-         f"- **Test C:** {C['karar']}.", "",
-         "## Test A — G5 bölgenin en az yarısında yanıyor mu", "",
+         f"- **Test C:** {C['karar']}.", ""]
+    ust = sorted([t for t in B["tablo"] if t["loso_auc"] is not None and np.isfinite(t["loso_auc"])], key=lambda t: -t["loso_auc"])[:3]
+    L += ["Düz dille: G5, Cemal'in çöl bölgelerindeki günlerin ortalama %" + _f(100 * A["COL"]["g5_pay_ort"], 0) + "'inde yanıyor (rastgele pencerelerde %"
+          + _f(100 * A["RASTGELE"]["g5_pay_ort"], 0) + ", olumsuzlarda %" + _f(100 * A["OLUMSUZ"]["g5_pay_ort"], 0) + "). En iyi basit ölçüler ("
+          + ", ".join(f"{_GOZ_AD.get(t['olcu'], t['olcu'])} {_f(t['loso_auc'])}" for t in ust)
+          + ") çölü aynı hissenin rastgele penceresinden kısmen ayırıyor, ama Cemal'in 'olumsuz' dediği bölgelerden ayıramıyor (olumsuza karşı AUC "
+          + ", ".join(_f(t["auc_col_olumsuz_yonlu"]) for t in ust) + ").", "",
+          "## Test A — G5 bölgenin en az yarısında yanıyor mu", "",
          "| grup | bölge | hisse | yakalama (>= %50 gün) | %95 aralık (hisse kümeli) | en az 1 gün | G5 gün payı ort. | tanımsız bölge |", "|---|---|---|---|---|---|---|---|"]
     for g, ad in (("COL", "Cemal ÇÖL"), ("OLUMSUZ", "Cemal OLUMSUZ"), ("RASTGELE", "RASTGELE (aynı hisse, aynı uzunluk)"),
                   ("C_DEGIL", "C seti DEĞİL (bilgi)"), ("C_OBEK", "C seti ÖBEK (bilgi)")):
