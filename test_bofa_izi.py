@@ -306,7 +306,7 @@ def t6_kapi() -> None:
             f.write("ek\n")
         durmali(lambda: B.bi_kapi(kl, sapma="x"), "commit sonrası değişen ön kayıt RET", "farklı")
         durmali(lambda: B._bi_yaz(os.path.join(kl, "IZ_DEFTERI.md"), "x"), "defter dosyasına yazılmamalı", "defter")
-        durmali(lambda: B._bi_yaz(os.path.join(kl, "a.md"), "iletisim: kisi@ornek.com"), "e-posta yazılmamalı", "e-posta")
+        durmali(lambda: B._bi_yaz(os.path.join(kl, "a.md"), "iletisim: kisi" + "@" + "ornek.com"), "e-posta yazılmamalı", "e-posta")
     finally:
         B.BI_YOL.update(eski); shutil.rmtree(kl, ignore_errors=True)
 
