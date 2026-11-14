@@ -1867,8 +1867,12 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-14", "istek": "Cemal: 'bir yıldır ilerleyemedik; yanlış hesapların kaydını almıyoruz; geçmişe dair bütün hataların kaydını MD defterine yaz'",
      "yapilan": "IK_HATA yapısı + indekste 'Hata defteri' bölümü + test (tam alan, tür, tarih sırası); alt ajan salt okunur tarama (IK_KAYIT Ç01-Ç173, IZ_DEFTERI, COL_OZET, ONERI_DEFTERI, CLAUDE.md, arastirma_cikti raporları, git log): 144 kaynaklı satır + Ç kaydı olmayan dersler; ana model denetimi: H001-H008 COL_OZET §6, H055 / H079 / H097 kaynaklarıyla, H120-H137 bu oturumla karşılaştırıldı, tuttu; CLAUDE.md 'Hata defteri' kuralı",
      "sonuc": "158 hata kayıtlı. En sık: veri, ölçüt (kontrol grubu yanlış kurulmuş 22 kez), süreç, hesap. Düşen iddiaların hepsi iyimserden gerçeğe düştü, tersi yok (sistematik iyimserlik). ~110 satırda karar değişmedi, ~20 iddia geri alındı, 6 madde açık", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-14", "istek": "Cemal: 'iz ararken hatalar önceden okunup göz önünde tutulsun, kod yazmaya öyle başlansın; bütün modeller için; daha iyi öneri var mı'",
+     "yapilan": "Ana model: IK_KONTROL 14 maddelik ön uçuş listesi (hata defteri örüntülerinden), ik_kontrol_metni (onkayit / istanimi / defter), ik_kontrol_kapisi (ön kayıttaki tablo eksik / HAYIR ise ölçüm durur), `python IZ_KARNE.py kontrol`, indekste bölüm, test (dolu geçer, eksik durur), CLAUDE.md kuralı",
+     "sonuc": "Öneri: okumak yerine mekanik kapı. Her ön kayıtta doldurulmuş kontrol listesi zorunlu; her alt ajan iş tanımı listeyle başlar; raporda KONTROL + HATA başlıkları zorunlu. Mevcut modüllere kapı bir sonraki değişiklikte eklenecek", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
+    "KONTROL KAPISI (14 Kas): mevcut ölçüm modüllerine (FON_IZI kos, BOFA_IZI kos / karkos / dipkos, GENIS_KESIT, TAVAN_SERISI kos / hacim, KOR_TEST, GOZ_G5) ik_kontrol_kapisi çağrısı ve ön kayıtlarına KONTROL LİSTESİ eklenecek (alt ajan işi; bir sonraki değişiklikte, ön kayıt sırası bozulmadan).",
     "HATA DEFTERİ (14 Kas): doğrulanacak 4 madde: Ç84 denetim PDF'indeki ~15 küçük hata satır satır girilmedi (IZ_KARNE_ders7_denetim.pdf); H024 dar_hafta_olc ve H045 üretim 11 hatası düzeltildi mi (takip.py okunacak); 20-24 Ekim FON_IZI commit'leri git log'da yok, o dönem yalnız defter notlarından; H136 / H137 kaynağı sohbet (13 Kas).",
     "DİPTE BofA (Ç173, 13 Kas): kriz öncesi olay yok, ölçülemez; kriz sonrası HDFGS (21.10) ve SKBNK (05.11) BİLGİ olarak izlenir, karara girmez. Kurulum listesi (10 hisse) izleme; öneri değil.",
     "BofA / YABANCI AKD (Ç171-Ç172, 13 Kas): İZ DEĞİL, YOL YOK; K1 / K2 (pay >= %20, maliyete yakın giriş) n < 30: maliyetli liste arşivi büyüyünce aynı ön kayıtla yeniden koşulabilir (Haziran 2027 sonrası, kriz kuralıyla).",
@@ -2133,6 +2137,74 @@ IK_HATA: List[Dict[str, str]] = [
     _ik_h('2026-11-13', 'H136: bu oturum (ana model denetimi); repoda kayıt yok', "'2.11 PEKGY listede 1.' bilgisi yanlıştı: PEKGY o listede 4. sıradaydı [ayrıştırma / iletişim]", 'ayrıştırma', 'ana model denetimi', '—', 'mesajda düzeltildi', 'Sıra bilgisi ham tablodan okunur', 'iş tanımı (14 Kas); repoda satır yok'),
     _ik_h('2026-11-13', 'H137: bu oturum (ana model); repoda kayıt yok', "Ana model hızlı FIFO kontrolünde blok filtresi uygulamadı: KTLEV 09.09 33,8 satırı Tera'nın (blok 2+) satırıydı, BofA sanıldı [hesap (denetimde)]", 'hesap', 'ana model kendi kontrolü', 'denetim sonucu düzeltildi', 'blok_2_ve_sonrasi kapsam dışı (93 satır)', 'Denetim kontrolü de ayrıştırıcının filtresini uygular', 'iş tanımı (14 Kas); arastirma_cikti/bofa_izi/BOFA_KAR_RAPOR.md:208'),
 ]
+
+
+# ---------------------------------------------------------------- 1b) ÖN UÇUŞ KONTROL LİSTESİ (hata defterinden türetildi)
+# Cemal, 14 Kas 2026: "iz ararken bu hatalar önceden okunup göz önünde tutulsun, kod yazmaya öyle başlansın; bütün modeller için".
+# Her madde IK_HATA'daki tekrarlayan bir örüntüden çıkar. Okumak yetmez: ön kayıt dosyasında her maddeye yazılı yanıt zorunludur
+# (ik_kontrol_kapisi), yanıt yoksa ya da HAYIR ise ölçüm (kos) başlamaz.
+IK_KONTROL: List[Dict[str, str]] = [
+    {"kod": "K1", "ad": "kontrol grubu", "soru": "Eşler aynı giriş günü, aynı momentum x likidite hücresi, aynı giriş / çıkış geometrisi mi; taban rastgele olay sağlamasıyla (200 eş portföy) mi? Mekanik üstünlük (sinyal tanımının kendiliğinden ürettiği fark) dışlandı mı?", "hata": "22 kez (H005, H006, H026-H032, H055, H064, H100...)"},
+    {"kod": "K2", "ad": "geleceğe bakma", "soru": "Her girdi alanının bilgi tarihi <= karar günü ve bu KODDA mekanik denetleniyor mu? Satır tarihi mi (sayfa / haber tarihi değil)? Etiket, evren listesi, sektör karar günündeki haliyle mi?", "hata": "12 kez (H003, H016, H034, H051, H130...)"},
+    {"kod": "K3", "ad": "geçerli bar", "soru": "H>L ve V>0 olmayan bar sinyal ya da ölçü üretmiyor mu; hacim 0 gün fiyatı bayat sayılıyor mu; seans açıkken yarım bar atılıyor mu?", "hata": "2 kez aynı hata (H004, H037), H134, H141"},
+    {"kod": "K4", "ad": "tekilleştirme", "soru": "Aynı hissede olay 60 günde bir mi; n bağımsız olay sayısı mı; aynı işlem bir kez mi sayılıyor; ortalama yanında medyan var mı?", "hata": "H006 (n 4-5 kat şişkin), H014"},
+    {"kod": "K5", "ad": "giriş fiyatı", "soru": "Giriş = sinyalden (yayın saatinden) sonraki ilk işlem fiyatı mı (ertesi açılış), sinyal günü kapanışı değil mi?", "hata": "H005, 60 gün ufuk itirazı"},
+    {"kod": "K6", "ad": "veri birimi", "soru": "Fiyat tek kipte mi (ekran fiyatı ya da düzeltilmiş, karışık değil); birim (lot / TL, peni / sterlin, 100x), bölünme marjı (12.03.2020 öncesi +-%20), bedelsiz denetlendi mi; yeni pazar birim denetiminden geçti mi?", "hata": "veri 34 satır (H007, H017, H060...)"},
+    {"kod": "K7", "ad": "hayatta kalma", "soru": "Evren bugünün listesi mi? Batanlar / kottan çıkanlar yoksa raporda yazılı ve sonuç 'yukarı yanlı' okunuyor mu?", "hata": "8 kez (H008, H057, H142...)"},
+    {"kod": "K8", "ad": "örneklem ve dönem", "soru": "n < 30 'örneklem yetersiz' ve olaylar tek tek listeli mi; iki alt dönem aynı yönde mi; çoklu karşılaştırma BH ile mi; küçük örneklemden 'bulgu' denmiyor mu?", "hata": "H010, Ç169 n 11, K1 / K2 n < 30"},
+    {"kod": "K9", "ad": "ön kayıt", "soru": "Tanım + eşik sözlüğü + kod sha ön kayıtta; ön kayıt commit zamanı < koşu zamanı; sonuçtan sonra yalnız gösterim değişti, aksi SAPMA; eşik sonuca göre oynanmadı mı?", "hata": "H079, H097 (ön kayıt geç commit)"},
+    {"kod": "K10", "ad": "ayrıştırma", "soru": "Ham kaynaktan rastgele >= 3 satır elle doğrulandı mı; haber türü (günlük / aylık / dönemsel), kurum etiketi (çok kurumlu haber), kenar kuşağı çöpü, güncelleme damgası, kurum adı hisse satırı dört ayrı denetim maddesi olarak kontrol edildi mi?", "hata": "5 kez tek günde (H128-H132, H136)"},
+    {"kod": "K11", "ad": "yeniden üretim", "soru": "Raporlanan >= 2 hücre satır dosyasından bağımsız kodla yeniden üretildi mi; metindeki sıra / tarih / sayı ham kayıtla aynı mı?", "hata": "H136 (PEKGY 1. / 4.), H137 (blok filtresi)"},
+    {"kod": "K12", "ad": "ifade", "soru": "Fiyat değişimi ile gerçekleşen kâr / zarar ayrı mı; aracı kurum akışı ile kurum pozisyonu ayrı mı; 'anlamlı / ters / iz / emare' sözü yalnız bu liste geçince mi; sayı ile yorum ayrı cümlede mi?", "hata": "yanlış yorum 16 satır (H133, H135...)"},
+    {"kod": "K13", "ad": "süreç", "soru": "Çakışma kapısı korundu mu; kod değiştiyse 'çalışma zamanını yeniden başlat' yazıldı mı; e-posta / anahtar sızıntı taraması yapıldı mı; kota / ücret / yeni dal Cemal onayıyla mı; yasak defter dosyalarına dokunulmadı mı?", "hata": "süreç 21 satır (H019, H021, H143...)"},
+    {"kod": "K14", "ad": "boyut (gerçek para)", "soru": "Öneri işinde boyut tavanı, zarardaki isme ekleme yasağı, olay bazlı çıkış ve 2x kuralı alımdan önce yazılı mı; taban oranlar (10x ~%1) yazılı mı?", "hata": "karar-boyut 6 satır (H012, H013)"},
+]
+IK_KONTROL_YANIT = ("EVET", "UYGULANMAZ")   # HAYIR ya da boş = kapı kapalı
+
+
+def ik_kontrol_metni(hedef: str = "onkayit") -> str:
+    """Kontrol listesi metni. hedef='onkayit': ön kayıt dosyasına yapıştırılacak doldurulacak tablo;
+    'istanimi': alt ajan iş tanımına girecek kısa liste; 'defter': indeks için."""
+    if hedef == "onkayit":
+        sat = ["## KONTROL LİSTESİ (IZ_KARNE.IK_KONTROL; her satır EVET / UYGULANMAZ + kanıt; HAYIR ya da boş = kos çalışmaz)", "",
+               "| Kod | Madde | Yanıt | Kanıt (dosya / fonksiyon / sayı) |", "|---|---|---|---|"]
+        sat += [f"| {k['kod']} | {k['ad']} | | |" for k in IK_KONTROL]
+        return "\n".join(sat)
+    if hedef == "istanimi":
+        sat = ["ÖN UÇUŞ KONTROLÜ (zorunlu; hata defterinden): kod yazmaya başlamadan önce oku, ön kayıt dosyasına KONTROL LİSTESİ tablosunu "
+               "(`python IZ_KARNE.py kontrol`) doldurarak koy, raporunda 'HATA' başlığıyla bulduğun her hatayı ayrı listele."]
+        sat += [f"- {k['kod']} {k['ad']}: {k['soru']} [geçmiş: {k['hata']}]" for k in IK_KONTROL]
+        return "\n".join(sat)
+    sat = ["| Kod | Madde | Soru | Geçmişte kaç kez |", "|---|---|---|---|"]
+    sat += [f"| {k['kod']} | {k['ad']} | {k['soru']} | {k['hata']} |" for k in IK_KONTROL]
+    return "\n".join(sat)
+
+
+def ik_kontrol_kapisi(onkayit_yolu: str, dur: bool = True) -> Dict[str, Any]:
+    """Ön kayıt dosyasındaki KONTROL LİSTESİ tablosunu okur. Her IK_KONTROL kodu için yanıt EVET ya da UYGULANMAZ ve
+    en az 8 karakter kanıt olmalı. Eksik / HAYIR varsa dur=True ile RuntimeError (ölçüm başlamaz)."""
+    if not os.path.exists(onkayit_yolu):
+        raise RuntimeError(f"kontrol kapısı: ön kayıt yok: {onkayit_yolu}")
+    metin = open(onkayit_yolu, encoding="utf-8").read()
+    yanit: Dict[str, Dict[str, str]] = {}
+    for m in re.finditer(r"^\|\s*(K\d{1,2})\s*\|[^|]*\|\s*([^|]*?)\s*\|\s*([^|]*?)\s*\|\s*$", metin, flags=re.M):
+        yanit[m.group(1)] = {"yanit": m.group(2).strip().upper(), "kanit": m.group(3).strip()}
+    eksik, hayir, kanitsiz = [], [], []
+    for k in IK_KONTROL:
+        y = yanit.get(k["kod"])
+        if y is None or not y["yanit"]:
+            eksik.append(k["kod"])
+        elif y["yanit"] not in IK_KONTROL_YANIT:
+            hayir.append(f"{k['kod']}={y['yanit']}")
+        elif len(y["kanit"]) < 8:
+            kanitsiz.append(k["kod"])
+    sonuc = {"gecti": not (eksik or hayir or kanitsiz), "eksik": eksik, "hayir": hayir, "kanitsiz": kanitsiz,
+             "n": len(IK_KONTROL), "yanit": yanit}
+    if dur and not sonuc["gecti"]:
+        raise RuntimeError("kontrol kapısı KAPALI: " + "; ".join(
+            x for x in (f"eksik {eksik}" if eksik else "", f"HAYIR / geçersiz {hayir}" if hayir else "",
+                        f"kanıtsız {kanitsiz}" if kanitsiz else "") if x) + f" ({onkayit_yolu})")
+    return sonuc
 
 
 # ---------------------------------------------------------------- 2) VERİ ve TABAN
@@ -2759,6 +2831,9 @@ def ik_indeks_metni(ay: IKAyar) -> str:
     satir += ["### Hata defteri (bütün yanlış hesaplar, düzeltmeler, sapmalar; Cemal 14 Kas 2026)", "",
               "Kaynak: IK_HATA. Her bulunan hata buraya bir satır olarak girer (yeni oturumda da). Kural: hata bulunur -> IK_HATA satırı "
               "-> ilgili Ç kaydına DÜZELTME notu -> karara etkisi açıkça yazılır. Hiçbir hata silinmez; düzeltilen hatanın satırı kalır.", ""]
+    satir += ["**Ön uçuş kontrol listesi (IK_KONTROL; her ölçümün ön kaydında doldurulur, `ik_kontrol_kapisi` denetler, "
+              "eksikse `kos` çalışmaz; alt ajan iş tanımına `python IZ_KARNE.py kontrol istanimi` çıktısı girer):**", "",
+              ik_kontrol_metni("defter"), ""]
     if IK_HATA:
         sayim = {}
         for h in IK_HATA:
@@ -3093,6 +3168,8 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s", datefmt="%H:%M:%S")
     if len(sys.argv) > 1 and sys.argv[1] == "indeks":
         ik_indeks(IKAyar()); print("indeks yazıldı"); sys.exit(0)
+    if len(sys.argv) > 1 and sys.argv[1] == "kontrol":
+        print(ik_kontrol_metni(sys.argv[2] if len(sys.argv) > 2 else "onkayit")); sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "ders":
         print(ik_ders(IKAyar())); sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "denetimders":
@@ -3101,4 +3178,4 @@ if __name__ == "__main__":
         sv = [int(x) for x in sys.argv[2].split(",")]
         kod = sys.argv[3].split(",") if len(sys.argv) > 3 else None
         print(ik_seviye(IKAyar(), sv, kod)[["kod", "sinyal", "yon", "karar", "neden"]].to_string(index=False)); sys.exit(0)
-    print("kullanım: python IZ_KARNE.py indeks | ders | denetimders | seviye 1[,2,3] [Ç16,Ç17]")
+    print("kullanım: python IZ_KARNE.py indeks | kontrol [onkayit|istanimi|defter] | ders | denetimders | seviye 1[,2,3] [Ç16,Ç17]")

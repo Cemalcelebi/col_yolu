@@ -42,6 +42,28 @@ def sina():
         if h["tarih"] < son:
             hata.append(f"1b) H{n} tarih sırası bozuk ({h['tarih']} < {son})")
         son = max(son, h["tarih"])
+    # 1c) kontrol listesi ve kapısı (14 Kas 2026)
+    kk = [k["kod"] for k in I.IK_KONTROL]
+    if len(kk) != len(set(kk)) or any(not k.get("soru") for k in I.IK_KONTROL):
+        hata.append("1c) IK_KONTROL kodu tekrarlı ya da sorusuz")
+    import tempfile
+    with tempfile.TemporaryDirectory() as kl:
+        tam = os.path.join(kl, "tam.md"); eks = os.path.join(kl, "eksik.md")
+        sat = I.ik_kontrol_metni("onkayit").splitlines()
+        dolu = [re.sub(r"\| \| \|$", "| EVET | test kanıtı: deneme satırı |", x) if x.startswith("| K") else x for x in sat]
+        open(tam, "w", encoding="utf-8").write("# ön kayıt\n\n" + "\n".join(dolu) + "\n")
+        bos = list(dolu); bos[-1] = bos[-1].replace("EVET", "HAYIR")
+        open(eks, "w", encoding="utf-8").write("# ön kayıt\n\n" + "\n".join(bos[:-2]) + "\n" + bos[-1] + "\n")
+        try:
+            r = I.ik_kontrol_kapisi(tam)
+            if not r["gecti"]:
+                hata.append(f"1c) dolu kontrol listesi geçmedi: {r}")
+        except RuntimeError as e:
+            hata.append(f"1c) dolu kontrol listesi durdu: {e}")
+        try:
+            I.ik_kontrol_kapisi(eks); hata.append("1c) eksik / HAYIR kontrol listesi geçti")
+        except RuntimeError:
+            pass
     # 2) defter kapsamı
     metin = open(ay.defter, encoding="utf-8").read()
     maddeler = set(re.findall(r"^\| (A\d+|B\d+(?:'')?) \|", metin, flags=re.M))
