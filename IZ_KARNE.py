@@ -1870,6 +1870,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-14", "istek": "Cemal: 'iz ararken hatalar önceden okunup göz önünde tutulsun, kod yazmaya öyle başlansın; bütün modeller için; daha iyi öneri var mı'",
      "yapilan": "Ana model: IK_KONTROL 14 maddelik ön uçuş listesi (hata defteri örüntülerinden), ik_kontrol_metni (onkayit / istanimi / defter), ik_kontrol_kapisi (ön kayıttaki tablo eksik / HAYIR ise ölçüm durur), `python IZ_KARNE.py kontrol`, indekste bölüm, test (dolu geçer, eksik durur), CLAUDE.md kuralı",
      "sonuc": "Öneri: okumak yerine mekanik kapı. Her ön kayıtta doldurulmuş kontrol listesi zorunlu; her alt ajan iş tanımı listeyle başlar; raporda KONTROL + HATA başlıkları zorunlu. Mevcut modüllere kapı bir sonraki değişiklikte eklenecek", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-14", "istek": "Cemal: 'yanlış kabul ettiğimiz kurallar sonradan doğru çıkabiliyor; nasıl emin olacağız? yolu varsa önerinden devam'",
+     "yapilan": "Ana model: IK_ILERI ileri test defteri (iddia, karar etiketi İZ DEĞİL / ÖLÇÜLEMEDİ / EMARE, n-güç, sabit eşik, veri kesiği, sonraki test tarihi-koşulu, sonuç), indekste bölüm, 7 açık iddia girildi; CLAUDE.md 'Emin olma yolu' + hedefli bağımsız denetim kuralı",
+     "sonuc": "Emin olmanın yolu ileri test: sabit eşikle sonraki dönemde yeniden ölç, üç art arda aynı yön = kesin. Bağımsız denetim ajanı yalnız iddia taşıyan (emare / aday / iz) ya da üretimi değiştiren işlerde; büyük n ile 'iz değil' çıkanlarda ana model denetimi yeter", "durum": "TAMAMLANDI"},
 ]
 IK_ACIK: List[str] = [
     "KONTROL KAPISI (14 Kas): mevcut ölçüm modüllerine (FON_IZI kos, BOFA_IZI kos / karkos / dipkos, GENIS_KESIT, TAVAN_SERISI kos / hacim, KOR_TEST, GOZ_G5) ik_kontrol_kapisi çağrısı ve ön kayıtlarına KONTROL LİSTESİ eklenecek (alt ajan işi; bir sonraki değişiklikte, ön kayıt sırası bozulmadan).",
@@ -2160,6 +2163,27 @@ IK_KONTROL: List[Dict[str, str]] = [
     {"kod": "K14", "ad": "boyut (gerçek para)", "soru": "Öneri işinde boyut tavanı, zarardaki isme ekleme yasağı, olay bazlı çıkış ve 2x kuralı alımdan önce yazılı mı; taban oranlar (10x ~%1) yazılı mı?", "hata": "karar-boyut 6 satır (H012, H013)"},
 ]
 IK_KONTROL_YANIT = ("EVET", "UYGULANMAZ")   # HAYIR ya da boş = kapı kapalı
+
+
+# ---------------------------------------------------------------- 1c) İLERİ TEST DEFTERİ (Cemal, 14 Kas 2026: "yanlış dediğimiz kural sonra doğru çıkabilir; nasıl emin olacağız?")
+# Emin olmanın tek yolu ileri testtir: iddia sabit eşikle ve veri kesiğiyle kaydedilir, henüz var olmayan veride (sonraki dönem) aynı
+# komutla yeniden ölçülür. Karar üç etiket alır: İZ DEĞİL (güç yeterli, tutmadı) / ÖLÇÜLEMEDİ (n ya da güç yetersiz; yeniden açılır) /
+# İZ. Her 'iz değil' ya da 'emare / aday' iddiası buraya bir satır olur; sonraki test tarihi ve koşulu önceden yazılır; sonuç geldiğinde
+# satır silinmez, 'sonuc' alanına yazılır (tutuyor / tutmuyor / yine ölçülemedi). Üç art arda ileri testte aynı yön = kesin.
+def _ik_i(kod, iddia, karar, guc, esik, kesik, sonraki, sonuc=""):
+    return {"kod": kod, "iddia": iddia, "karar": karar, "guc": guc, "esik": esik, "kesik": kesik, "sonraki": sonraki, "sonuc": sonuc}
+
+
+IK_ILERI_KARAR = ("İZ DEĞİL", "ÖLÇÜLEMEDİ", "İZ", "EMARE", "ADAY", "BİLGİ")
+IK_ILERI: List[Dict[str, str]] = [
+    _ik_i("Ç100-Ç151 (K58)", "FI_OLCUT 60 gün cetveli n < 1.000 çalışmalarda küçük etkiyi (+%2) göremiyor; eski 'İZ DEĞİL' kararlarının çoğu aslında ölçülemedi", "ÖLÇÜLEMEDİ", "güç simülasyonu: δ +%2, n <= 300 -> güç en çok %11", "FI_OLCUT dört şart (sabit)", "veri 31.08.2026", "portföy cetveli v2 (plasebo 0/200) ile n >= 1.000 olacak şekilde aile bazında yeniden koşu; 2027 ilk çeyrek, kriz penceresi kapanınca", ""),
+    _ik_i("Ç168-Ç169", "Çökmüş hissede art arda tavana katılmak eşlerden kötü; hacimli tavan piyango profili (büyük sıçrama 2,5 kat, tipik -%15)", "İZ DEĞİL", "n 201 geniş hücre; H1 ana n 11 ölçülemedi", "TAVAN_SERISI eşikleri (tavan >= %9,5; hacim >= 10x 20g medyan)", "olaylar 2016-26, kriz öncesi", "kriz sonrası 26 hisse (Eyl-Kas 2026) 60 / 120 gün sonucu Mart 2027'de aynı komutla (`python TAVAN_SERISI.py kos`); ertesi gün tavan %56-82 vs geçmiş %35-40 farkı o zaman sınanır", ""),
+    _ik_i("Ç170", "Çöküş sonrası KAP geri alım bildirimi dönüşü önceden gösteriyor (17 vs 47 hisse, x1,52 vs x1,26)", "EMARE", "tek olay, 64 hisse, q 0,003", "GENIS_KESIT Spearman + permütasyon, BH q 0,10", "31.10.2026 kesit, 13.11 sonuç", "2018 (Ağu-Eyl) ve 2020 (Mar) BIST çöküşlerinde aynı tanım + ABD 2020 / 2022; ön kayıtla; tutarsa 2027'de yeni çöküşte ileri test", ""),
+    _ik_i("Ç171-Ç172", "BofA (ve HSBC) AKD alım listesini takip etmek eşlerden farksız; BofA kodu müşteri akışı", "İZ DEĞİL", "n 1.789 / 618 (güç yeterli)", "tutma dönemi eşli fark, FI_OLCUT dört şart", "17.04.2023-31.08.2026", "Haziran 2027: 01.09.2026-28.02.2027 listeleriyle aynı komut (`python BOFA_IZI.py kos --sapma`); K1 pay >= %20 ve K2 maliyete yakın giriş o zaman n >= 30 olursa karar alır", ""),
+    _ik_i("Ç173", "Dipte (-%80, dip tutuyor, dipten <= 1,5x) BofA alımıyla girmek", "ÖLÇÜLEMEDİ", "kriz öncesi olay 0; kriz sonrası 1 (HDFGS)", "KURULUM D1-D3 + BofA alım ilk 5, G1 giriş", "BofA arşivi 2023-26", "Mart 2027: HDFGS, SKBNK ve kriz sonrası yeni kurulum olayları 60 / 120 gün; n >= 30 olmazsa yine ÖLÇÜLEMEDİ yazılır, 'yol yok' denmez", ""),
+    _ik_i("Ç173", "-%80 dip kurulumu tek başına: ABD 2023 tuttu (+%24,8), 2024-26 sıra tutmadı; piyango profili (P+%100 ve P-%50 ikisi de ~2 kat)", "İZ DEĞİL", "ABD n 81 / 146; Avrupa n 3 / 8 ölçülemedi", "FI_OLCUT dört şart + 250 gün olasılık", "veri 31.08.2026", "2027 ikinci yarı: 2026-09..2027-06 ABD kurulumları; batanlar eklenerek (Tiingo kararı Cemal'de) hayatta kalma düzeltmesi", ""),
+    _ik_i("Ç166-Ç167", "Sessiz bölge / çöl şekli algoritması Cemal'in gözüyle uyuşmuyor (kör test işaret yok; G5 1/29)", "ÖLÇÜLEMEDİ", "kör test yanıtı yok; etiket 29", "KOR_TEST v1.1 ortak log ölçek", "—", "Cemal 40 grafiği işaretlerse `python KOR_TEST.py olc --cevap`; işaretlemezse hat kapalı kalır (Cemal kararı)", ""),
+]
 
 
 def ik_kontrol_metni(hedef: str = "onkayit") -> str:
@@ -2834,6 +2858,13 @@ def ik_indeks_metni(ay: IKAyar) -> str:
     satir += ["**Ön uçuş kontrol listesi (IK_KONTROL; her ölçümün ön kaydında doldurulur, `ik_kontrol_kapisi` denetler, "
               "eksikse `kos` çalışmaz; alt ajan iş tanımına `python IZ_KARNE.py kontrol istanimi` çıktısı girer):**", "",
               ik_kontrol_metni("defter"), ""]
+    satir += ["### İleri test defteri (yanlış dediğimiz sonra doğru çıkabilir; Cemal 14 Kas 2026)", "",
+              "Kaynak: IK_ILERI. Emin olmanın yolu: iddia sabit eşik ve veri kesiğiyle kaydedilir, sonraki dönemin verisinde aynı komutla yeniden "
+              "ölçülür; sonuç satıra yazılır, satır silinmez. Etiket: İZ DEĞİL = güç yeterli ve tutmadı; ÖLÇÜLEMEDİ = n ya da güç yetersiz "
+              "(yeniden açılır); üç art arda ileri testte aynı yön = kesin.", "",
+              "| Kayıt | İddia | Karar (şimdi) | n / güç | Sabit eşik | Veri kesiği | Sonraki test (tarih / koşul) | Sonuç |", "|---|---|---|---|---|---|---|---|"]
+    satir += [f"| {i['kod']} | {i['iddia']} | **{i['karar']}** | {i['guc']} | {i['esik']} | {i['kesik']} | {i['sonraki']} | {i['sonuc'] or '—'} |" for i in IK_ILERI]
+    satir.append("")
     if IK_HATA:
         sayim = {}
         for h in IK_HATA:

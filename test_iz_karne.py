@@ -64,6 +64,12 @@ def sina():
             I.ik_kontrol_kapisi(eks); hata.append("1c) eksik / HAYIR kontrol listesi geçti")
         except RuntimeError:
             pass
+    # 1d) ileri test defteri: alanlar dolu, karar etiketi listeden
+    for n, i in enumerate(I.IK_ILERI, 1):
+        if any(not str(i.get(k, "")).strip() for k in ("kod", "iddia", "karar", "guc", "esik", "kesik", "sonraki")):
+            hata.append(f"1d) İleri {n} eksik alan")
+        if i["karar"] not in I.IK_ILERI_KARAR:
+            hata.append(f"1d) İleri {n} karar etiketi tanımsız: {i['karar']}")
     # 2) defter kapsamı
     metin = open(ay.defter, encoding="utf-8").read()
     maddeler = set(re.findall(r"^\| (A\d+|B\d+(?:'')?) \|", metin, flags=re.M))
