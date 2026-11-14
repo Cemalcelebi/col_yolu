@@ -32,6 +32,16 @@ def sina():
     for r in I.IK_KAYIT:
         if r["sinyal"] and (r["sinyal"] not in I.IK_SINYAL or r["yon"] not in ("yukari", "asagi", "koruma")):
             hata.append(f"1) {r['kod']} sinyal/yön tanımsız")
+    # 1b) hata defteri (Cemal, 14 Kas 2026): her satır tam, tür listeden, tarih artan
+    son = ""
+    for n, h in enumerate(I.IK_HATA, 1):
+        if any(not str(h.get(k, "")).strip() for k in ("tarih", "kayit", "hata", "tur", "bulan", "etki", "duzeltme", "ders", "kaynak")):
+            hata.append(f"1b) H{n} eksik alan")
+        if h["tur"] not in I.IK_HATA_TUR:
+            hata.append(f"1b) H{n} tür tanımsız: {h['tur']}")
+        if h["tarih"] < son:
+            hata.append(f"1b) H{n} tarih sırası bozuk ({h['tarih']} < {son})")
+        son = max(son, h["tarih"])
     # 2) defter kapsamı
     metin = open(ay.defter, encoding="utf-8").read()
     maddeler = set(re.findall(r"^\| (A\d+|B\d+(?:'')?) \|", metin, flags=re.M))
