@@ -261,7 +261,7 @@ IK_KAYIT: List[Dict[str, Any]] = [
     _ik_k("Ç74", "2026-10-24", "TEHOL tipi taban + düzgün dip → aşağı risk düşük mü", "IZ_KARNE.py",
           "Düzgün dipli taban sonrası önce −%20 daha seyrek mi?", "Yeni deneme", "IZ C", 2, "k13_duz_dip", "koruma"),
     _ik_k("Ç75", "2026-10-24", "Düzgün dip tek başına (çöküş sonrası taban, şekil şartı gevşek)", "FON_IZI.py (FI_K16_GEVSEK)",
-          "Düzgün dip, TEHOL'ün öteki ölçüleri olmadan da fark yaratır mı?", "Yeni deneme", "IZ C", 2, "duz_dip_gevsek", "yukari DÜZELTME (14 Kas, Ç179): fi_k13 tarayıcısı 'n < 400' toplam uzunluk şartı geleceğe bakıyordu; ortak cetvelle A (yalnız dip) ABD ÖLÇÜLEMEDİ / TUTMADI, olasılık PİYANGO."),
+          "Düzgün dip, TEHOL'ün öteki ölçüleri olmadan da fark yaratır mı?", "Yeni deneme", "IZ C", 2, "duz_dip_gevsek", "yukari", notu="DÜZELTME (14 Kas, Ç179): fi_k13 tarayıcısı 'n < 400' toplam uzunluk şartı geleceğe bakıyordu; ortak cetvelle A (yalnız dip) ABD ÖLÇÜLEMEDİ / TUTMADI, olasılık PİYANGO."),
     _ik_k("Ç76", "2026-10-24", "Ç73 olayları, Cemal'in ölçüsü: 250 günde dip kırılmadan 2 kat (eşli kutu)", "FON_IZI.py (k16)",
           "Düzgün dipli TEHOL tipi tabandan sonra büyük yükseliş daha sık mı?", "Yeni deneme", "IZ C", 2,
           cikti="arastirma_cikti/fon_izi/k16_k13b_ozet.csv",
