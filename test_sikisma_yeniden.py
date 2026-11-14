@@ -6,6 +6,8 @@
 elle hesap, kısa kırılım 20 gün çıkış elle hesap  7) bölünme şüphesi (2:1 bölünme yakalanır, geri dönen sıçrama yakalanmaz)
 8) mühür + ön kayıt doğrulama (mühür farkı / kod farkı / git'e işlenmemiş -> SYHata)  9) kontrol kapısı ön kayıt tablosunu geçer, boş tablo durur
 10) uçtan uca sentetik kos (git kapısı kapalı) + rapor  11) e-posta / anahtar yok.
+12) DUYARLILIK: p=10 = Ç174 S1; ATR250 / ATR60 / ATR_sik / ilk 20-5 gün en büyük mum elle; k x REF sayımı; p=20 / 40 pencere tespiti; kesme testi;
+    BH; uçtan uca sentetik (Ç174 tutarlılık, satır CSV'sinden KAT, ham panelden eş ortalaması, grafik anahtarı 40 / 20, aynı gün eş, PNG / PDF determinizm).
 """
 from __future__ import annotations
 
@@ -263,6 +265,108 @@ def testler():
             import traceback
             hata.append(f"10) uçtan uca koşu hata: {ex}\n{traceback.format_exc()}")
 
+        # 12d) DUYARLILIK uçtan uca (sentetik): ön kayıt, kontrol kapısı, Ç174 tutarlılık, satır CSV'sinden yeniden üretim, grafik anahtarı, determinizm
+        try:
+            dyol = S.sy_duy_onkayit_yaz(cikti, veri)
+            m = open(dyol, encoding="utf-8").read()
+            for c in ("MÜHÜR (SY_DUY sha256)", "## Olay SAYIMI", "## KONTROL LİSTESİ"):
+                if c not in m:
+                    hata.append(f"12d) duyarlılık ön kaydında '{c}' yok")
+            if re.search(r"KAT|p_olay", m.split("## Olay SAYIMI")[1].split("## Sınırlar")[0]):
+                hata.append("12d) duyarlılık ön kayıt sayımında sonuç sütunu var")
+            IK.ik_kontrol_kapisi(dyol)
+            png = os.path.join(tmp, "png"); dsat = os.path.join(tmp, "dsatir")
+            R = S.sy_duy_kos(cikti, veri, git=False, satir=dsat, c174=os.path.join(cikti, "sikisma_sonuc.json"), png_kl=png)
+            T = pd.DataFrame(R["sonuc"]["kat"])
+            if len(T) != 5 * 3 * 2 * 4 * 2 * 3 * 4:
+                hata.append(f"12d) KAT tablosu satır sayısı {len(T)} (2880 olmalı)")
+            if len(R["sonuc"]["c174_tutarlilik"]) < 9 or max(x["fark"] for x in R["sonuc"]["c174_tutarlilik"]) > 1e-9:
+                hata.append("12d) Ç174 tutarlılık denetimi eksik / tutmadı")
+            X = pd.read_csv(os.path.join(dsat, "duy_olay_ABD_p20_es2.csv.gz"), parse_dates=["tarih"])
+            Y = X[X.donem == "2016-22"]; c = "b_ATR60_2.5_20"
+            kat = Y[c].sum() / Y["es_" + c].sum()
+            a = T[(T.pazar == "ABD") & (T.p == 20) & (T.es == "es2") & (T.donem == "2016-22") & (T.ref == "ATR60") & (T.k == 2.5) & (T.ufuk == "20")]
+            if not (len(a) == 1 and len(Y) == a.n.iat[0] and abs(a.kat.iat[0] - kat) < 1e-9):
+                hata.append("12d) satır CSV'sinden duyarlılık KAT'ı yeniden üretilemedi")
+            # eş ortalaması elle (ham panel): bir olay
+            Pn = pd.read_pickle(os.path.join(dsat, "duy_panel_ABD_p10.pkl"))
+            r0 = pd.read_csv(os.path.join(dsat, "duy_olay_ABD_p10_es1.csv.gz"), parse_dates=["tarih"]).iloc[0]
+            es_ = Pn[(Pn.tarih == r0.tarih) & (Pn.hucA == r0.hucA) & ~Pn.s10]
+            el = float((es_.mx20 >= 2.0 * es_.atr).mean())
+            if not (len(es_) == r0.es_n and abs(el - r0["es_b_ATR250_2_20"]) < 1e-12):
+                hata.append("12d) eş ortalaması ham panelden elle tutmadı")
+            A_ = json.load(open(os.path.join(cikti, "ornek_anahtar.json"), encoding="utf-8"))
+            g = A_["grafik"]
+            if not (len(g) == 40 and sorted(x["numara"] for x in g) == list(range(1, 41)) and sum(x["tip"] == "olay" for x in g) == 20):
+                hata.append("12d) grafik anahtarı 40 / 20 olay / 1-40 numara değil")
+            ol = sorted((x["tarih"]) for x in g if x["tip"] == "olay"); es2 = sorted((x["tarih"]) for x in g if x["tip"] == "eş")
+            if ol != es2 or any(x["tarih"] < "2023-01-01" for x in g):
+                hata.append("12d) eşler olaylarla aynı günlerden değil ya da 2023 öncesi grafik var")
+            for ad_, h_ in A_["dosya"]["png_sha256"].items():
+                if S._sy_sha_dosya(os.path.join(png, ad_)) != h_:
+                    hata.append(f"12d) {ad_} sha anahtarla tutmuyor")
+            V_ = S.sy_veri_yukle("ABD", E, veri)
+            g2 = S.sy_duy_grafikler(V_, g, os.path.join(tmp, "tekrar.pdf"), os.path.join(tmp, "png2"))
+            if g2["png_sha256"] != A_["dosya"]["png_sha256"] or g2["pdf_sha256"] != A_["dosya"]["pdf_sha256"]:
+                hata.append("12d) grafikler deterministik değil (ikinci çizim farklı)")
+            if "DÜZ DİL ÖZET" not in R["rapor"] or "Göz ne görür" not in R["rapor"]:
+                hata.append("12d) duyarlılık raporu eksik")
+        except Exception as ex:
+            import traceback
+            hata.append(f"12d) duyarlılık uçtan uca hata: {ex}\n{traceback.format_exc()}")
+
+    # 12) DUYARLILIK birim testleri
+    D = S.SY_DUY
+    d = S.sy_veri_hazirla(_seri(n=460, tohum=5, sikis=(300, 330), buyuk=335, buyuk_kat=2.2), E)
+    G0 = S.sy_gecmis(d, "ABD", E); G = S.sy_duy_gecmis(d, "ABD"); R = S.sy_duy_sonuc(d)
+    if not ((G.s10.to_numpy() == G0.s1c.to_numpy()).all() and (G.e10.to_numpy() == G0.ev1.to_numpy()).all()):
+        hata.append("12a) p=10 sıkışma / olay Ç174 S1 ile aynı değil")
+    t = 329
+    H_, L_, C_ = (d[c].to_numpy(float) for c in ("High", "Low", "Close")); Cp = np.r_[np.nan, C_[:-1]]
+    trc = (np.fmax(H_, Cp) - np.fmin(L_, Cp)) / Cp
+    atr = trc[t - 249:t + 1].mean(); a60 = trc[t - 70:t - 10].mean(); msik = trc[t - 9:t + 1].mean(); mx = trc[t + 1:t + 21].max()
+    if not (abs(G.atr.iat[t] - atr) < 1e-12 and abs(G.a60_10.iat[t] - a60) < 1e-12 and abs(G.m10.iat[t] - msik) < 1e-12 and abs(R.mx20.iat[t] - mx) < 1e-12
+            and abs(R.mx5.iat[t] - trc[t + 1:t + 6].max()) < 1e-12):
+        hata.append("12a) ATR250 / ATR60 (t-70..t-11) / ATR_sik / mx20 / mx5 elle hesapla tutmadı")
+    if not (mx >= 2 * atr and mx < 2.5 * atr):
+        hata.append(f"12a) sentetik büyük gün beklenen aralıkta değil ({mx / atr:.2f} x ATR250)")
+    if not (R.mx5.iat[t] < 1.5 * atr):
+        hata.append("12a) ilk 5 gün penceresi 6. günü saydı")
+    # k x REF sayımı (sy_duy_olc'un kullandığı ifade): 2 x ATR250 doğru, 2,5 x yanlış
+    if not ((R.mx20.iat[t] >= 2.0 * G.atr.iat[t]) and not (R.mx20.iat[t] >= 2.5 * G.atr.iat[t])):
+        hata.append("12a) k x REF sayımı yanlış")
+    # 12b) pencere 20 / 40 tespiti: 60 günlük dar bölge
+    d = S.sy_veri_hazirla(_seri(n=520, tohum=7, sikis=(330, 390)), E)
+    G = S.sy_duy_gecmis(d, "ABD")
+    # sentetik: 330-389 dar bölge (60 gün). p gün ortalaması tek gün dağılımının %20'siyle kıyaslandığı için koşul dar bölgenin içinde, p dolmadan da doğru olabilir.
+    for p_, tam in ((20, 349), (40, 369), (60, 389)):
+        if not (G[f"s{p_}"].iloc[tam:390].all() and not G[f"s{p_}"].iloc[280:330].any()):
+            hata.append(f"12b) p={p_} tespiti yanlış (dar bölge tam pencerede doğru, öncesinde yanlış olmalı)")
+    e20 = np.where(G.e20.to_numpy())[0]
+    if not (len(e20) and 330 <= e20[0] <= 349 and all(np.diff(e20) >= 20)):
+        hata.append(f"12b) p=20 olay günü / 20 bar ara yanlış: {e20[:4]}")
+    if G.s20.iloc[:270].any() or G.s60.iloc[:310].any():
+        hata.append("12b) 250 + p bar geçmiş olmadan sıkışma doğru")
+    # 12c) geleceğe bakma (duyarlılık geçmiş özellikleri)
+    for t in (340, 371, 389, 450):
+        a1 = G.iloc[t].astype(float).to_numpy(); a2 = S.sy_duy_gecmis(d.iloc[:t + 1], "ABD").iloc[-1].astype(float).to_numpy()
+        d3 = d.copy(); d3.iloc[t + 1:] = d3.iloc[t + 1:] * np.random.default_rng(t).uniform(0.5, 2, (len(d3) - t - 1, 1))
+        a3 = S.sy_duy_gecmis(d3, "ABD").iloc[t].astype(float).to_numpy()
+        if not (np.allclose(a1, a2, equal_nan=True) and np.allclose(a1, a3, equal_nan=True)):
+            hata.append(f"12c) geleceğe bakma: duyarlılık t={t}")
+    # BH ve bootstrap
+    Tb = pd.DataFrame({"ref": ["ATR250"] * 4 + ["ATR_sik"], "donem": ["2023"] * 5, "p_boot": [0.001, 0.02, 0.5, 0.9, 0.0005]})
+    bh = S.sy_duy_bh(Tb)
+    if not (bh.iloc[:4].tolist() == [True, True, False, False] and pd.isna(bh.iat[4])):
+        hata.append(f"12) BH yanlış: {bh.tolist()}")
+    bt = S._sy_duy_boot(np.array([[1, 0], [0, 0], [1, 1.0]]), np.array([[.5, .5], [.5, .5], [.5, .5]]), np.array(["a", "a", "b"]), D, 0)
+    if not (abs(bt["kat"][0] - 2 / 1.5) < 1e-12 and abs(bt["kat"][1] - 1 / 1.5) < 1e-12 and (bt["alt"] <= bt["kat"]).all()):
+        hata.append("12) duyarlılık bootstrap KAT yanlış")
+    if S.sy_duy_sha() == S.sy_esik_sha():
+        hata.append("12) duyarlılık mührü Ç174 mührüyle aynı")
+    if D["c174_muhur"] != S.sy_esik_sha():
+        hata.append("12) SY_DUY c174_muhur Ç174 SY_ESIK mührüyle aynı değil")
+
     # 11) e-posta / anahtar yok
     for ad in ("SIKISMA_YENIDEN.py", "test_sikisma_yeniden.py"):
         s_ = open(os.path.join(KOK, ad), encoding="utf-8").read()
@@ -275,4 +379,4 @@ if __name__ == "__main__":
     Hh = testler()
     if Hh:
         print("SIKISMA TEST: HATA", len(Hh)); print("\n".join(Hh)); sys.exit(1)
-    print("SIKISMA TEST: 11/11 bölüm GEÇTİ")
+    print("SIKISMA TEST: 12/12 bölüm GEÇTİ (12: duyarlılık)")
