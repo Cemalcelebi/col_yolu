@@ -1,7 +1,8 @@
 """INTEM_ILERI testleri (yalnız SENTETİK veri; gerçek veride getiri ölçmez). Çalıştırma: python test_intem_ileri.py
 
 1) çakışma kapısı  2) eşleşme: sabit cetvelle ii_esle = FON_IZI fi_k44_eslesme (aynı havuzda, SAPMA-1 sonrası) birebir
-3) GELECEĞE BAKMA: seri t'de kesilince aynı pencere ölçüleri ve aynı eşleşme; SAPMA-1 gerekçesi (kesik seride erken pencere yok)
+3) GELECEĞE BAKMA: seri t'de kesilince aynı pencere ölçüleri ve aynı eşleşme; önek değişmezliği (FON_IZI v1.40: fi_k23_parmak(d.iloc[:T])
+   = tam serinin T-1 ve öncesi satırları, ileri sonuç yon60 / yon20 hariç); SAPMA-1 süzgeci (i >= L + 199) artık satır düşürmez (düşen 0)
 4) ii_k45 (tam=None) = FON_IZI fon_izi_k45 satırı birebir  5) tam pencere süzgeci (SAPMA-4) son barları atar, rastgeleye de uygulanır
 6) cetvel çağrısı: OC.oc_olc uçtan uca + rapor  7) kapı: doğru ön kayıt geçer; sha farkı / satır eksik / kontrol eksik durur
 8) eski kayıt alıntıları IZ_KARNE metninde  9) olay sha sıradan bağımsız; ileri test cümlesi eşlemesi  10) e-posta / anahtar yok.
@@ -78,7 +79,10 @@ def testler():
         hata.append(f"2 eşleşme FON_IZI ile aynı değil: yeni {len(yeni)}, ref {len(ref_s1)}, ortak {len(yeni & ref_s1)}")
     if len(yeni) < 20:
         hata.append(f"2 sentetik eşleşme az ({len(yeni)})")
-    bilgi.update({"eslesme": len(yeni), "sapma1_erken": erken})
+    dusen = sum(int((F.fi_k23_parmak(d, L)["i"] < L + 199).sum()) for d in V.values())   # v1.40: SAPMA-1 süzgecinin düşüreceği satır kalmadı
+    if dusen or erken:
+        hata.append(f"2 SAPMA-1 süzgeci FON_IZI çıktısından satır düşürüyor: pencere {dusen}, eşleşme {erken} (beklenen 0)")
+    bilgi.update({"eslesme": len(yeni), "sapma1_erken": erken, "sapma1_dusen": dusen})
 
     # 3) geleceğe bakma: kesik seride aynı ölçüler ve aynı eşleşme; SAPMA-1 gerekçesi
     bozuk = 0; say = 0
@@ -90,11 +94,20 @@ def testler():
             bozuk += 1
     if bozuk or not say:
         hata.append(f"3 geleceğe bakma: {bozuk} / {say} sinyal kesik seride farklı")
-    s0 = "S00"; P0 = F.fi_k23_parmak(V[s0], L); t_erken = P0.index[P0["i"] == L + 100][0]
-    if len(F.fi_k23_parmak(V[s0].loc[:t_erken], L)):
-        hata.append("3 SAPMA-1 gerekçesi: kesik seride erken pencere ölçülüyor (beklenmedi)")
-    if (II.ii_pencereler(V[s0], L).tarih == t_erken).any():
-        hata.append("3 ii_pencereler SAPMA-1 penceresini almış")
+    # önek değişmezliği (FON_IZI v1.40): kesik seri sonucu = tam serinin aynı satırları (ileri sonuç sütunları yon60 / yon20 hariç)
+    s0 = "S00"; d0 = V[s0]; P0 = F.fi_k23_parmak(d0, L); ileri = ["yon60", "yon20"]; onek_bozuk = 0; onek_satir = 0
+    if (P0["i"] < L + 199).any():
+        hata.append("3 tam seride t < L + 199 penceresi var (v1.40 sonrası beklenmedi)")
+    for T in (L + 100, L + 199, L + 200, L + 260, 450, len(d0) - 1):
+        Pk = F.fi_k23_parmak(d0.iloc[:T], L); Pt = P0[P0.index <= d0.index[T - 1]]
+        ok = len(Pk) == len(Pt) and (Pk.index == Pt.index).all() and Pk.drop(columns=ileri).equals(Pt.drop(columns=ileri))
+        onek_bozuk += int(not ok); onek_satir += len(Pk)
+        Xk = II.ii_pencereler(d0.iloc[:T], L); Xt = II.ii_pencereler(d0, L); Xt = Xt[pd.to_datetime(Xt.tarih) <= d0.index[T - 1]]
+        if len(Xk) != len(Xt) or (len(Xk) and not (pd.DatetimeIndex(Xk.tarih) == pd.DatetimeIndex(Xt.tarih)).all()):
+            onek_bozuk += 1
+    if onek_bozuk or not onek_satir:
+        hata.append(f"3 önek değişmezliği: {onek_bozuk} kesikte tam seriyle farklı (satır {onek_satir})")
+    bilgi["onek_satir"] = onek_satir
 
     # 4) ii_k45 (tam=None) = fon_izi_k45 birebir
     Ek = pd.DataFrame(sorted(yeni)[:35], columns=["sembol", "gun"])

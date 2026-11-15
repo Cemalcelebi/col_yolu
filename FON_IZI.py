@@ -78,7 +78,7 @@ import pandas as pd
 
 _CK_ONCE_FI = {k: id(v) for k, v in globals().items()}
 
-FI_SURUM = "FON_IZI v1.39 (2026-10-28, K50 makine sinyaliyle gerçekçi portföy (+8/-8, günde 2); K49 kabuk dışı derleme (iki yön, pazar pazar, bütün, şans denetimi); K48 geniş parmak izi makinesi (~120 ölçeksiz özellik); K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
+FI_SURUM = "FON_IZI v1.40 (2026-11-15, geleceğe bakma düzeltmesi: tarayıcı seri uzunluğu şartı karar günü konumuna alındı (fi_k4 / k4b / k6 / k13 / k14 / k17 / k23_parmak / k24); t < N-1 günü sinyal sayılmaz (tekrar / aynı dip durumuna da girmez); fi_k23_parmak gecmis parametresi, bölge hedefleri gecmis=L) FON_IZI v1.39 (2026-10-28, K50 makine sinyaliyle gerçekçi portföy (+8/-8, günde 2); K49 kabuk dışı derleme (iki yön, pazar pazar, bütün, şans denetimi); K48 geniş parmak izi makinesi (~120 ölçeksiz özellik); K47 ECOGR haftalık + BBIO iki dip; K46 dönüş noktasını makineye öğretme; K45 kısa ufuk kutu çıkışı; K44 INTEM parmak izi; K43 alınabilir iz karnesi; K42 bilinen etkiler kıyası; denetim düzeltmeleri: r60 çıkış ffill, K39 küçükler, K40 saat barı, AVR Kur; K41 klasikler + rüzgâr sürekliliği + ABD çöl süzgeci + K40 kalıntı; K40 saat farkı; K39 ABD öncü Avrupa takip; karar pazarları ABD + AVR, K38 en yakın adaylar 3 pazarda + K38-B şekiller (çöl, ikili dip, ters OBO, uyumsuzluk); K37 büyükler önce küçükler sonra; K36 rüzgârın sebebi; K35 rüzgâr batanları ayırır mı + K35-C patlayanların arkasında rüzgâr; K34 batanlar dahil nakit tükenmesi testi; K33 sıçrayan hisse profili + K33-B nakit tükenmesi grubunda iyi çıkanların izi; K32 sade portföy ölçümü; K31 analist izleri (içeriden satış, seyrelme, nakit tükenmesi, açığa satış); K30 ABD içeriden alım (SEC Form 4); K29 risk süzgeci + portföy; K28 bilanço sürprizi (PEAD) BIST + ABD; K27 içeriden alım + yeni ölçüt (eşli fark, güven aralığı, portföy); işlenmiş veri paketi (islenmis-veri dalı); K26 ortak parmak izi (MANAS x2, BINBN, KZBGY); kör set v4 sonucu + ders 10c; v4 kutu + alış mumu + geri zum; v3 net mum grafiği; K25 çöl = büyük alıcının izi mi; K24 iki evre kuralı; K23 bölge parmak izi + benzer bölgeler; K22 çöl tavanında bekleyen alış emri; K21 sağ ayak mum mum vs aynı gün bütün hisseler + en sıkı çöl; K19 sistem rastgeleden iyi mi; K18 Cemal'in vakaları: ortak iz; denetim v1.6: fi_duzelt yukari/piyasa gunu, K13 pencere, esli kutu gecmis bilgi, K10 o an bilinen; yukselis izi + hacim esligi + gosterge/uyumsuzluk/Fibonacci/blok hacim/KAP; denetim duzeltmeleri; KAP fon raporlari: defter + fon girisi testi)"
 filog = logging.getLogger("col.fon_izi")
 if not filog.handlers:
     _fi_h = logging.StreamHandler(sys.stderr)
@@ -423,9 +423,7 @@ def fi_k4_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: FIAyar) -> pd.DataF
     rows: List[Dict[str, Any]] = []; t0 = time.time()
     for no, (s, d) in enumerate(V.items(), 1):
         try:
-            if len(d) < 400:
-                continue
-            Z = fi_pencere(d, A); ok = ((Z.g >= A.g_alt) & (Z.g < A.g_ust) & Z.mk.notna()).to_numpy()
+            Z = fi_pencere(d, A); ok = ((Z.g >= A.g_alt) & (Z.g < A.g_ust) & Z.mk.notna()).to_numpy() & (np.arange(len(d)) >= 400 - 1)   # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
             iz = {k: v.to_numpy() for k, v in fi_izler(Z).items()}
             son = -10 ** 9
             for i in np.flatnonzero(ok):
@@ -463,10 +461,10 @@ def fi_k4b_hacim_olaylar(V: Dict[str, pd.DataFrame], pazar: str, A: FIAyar) -> p
     rows: List[Dict[str, Any]] = []; t0 = time.time()
     for no, (s, d) in enumerate(V.items(), 1):
         try:
-            if len(d) < 400:
-                continue
             o = fi_hacim_olc(d, A); z = o.Z0.to_numpy(); son = -10 ** 9; n = len(d); c = d.Close.to_numpy()
             for i in np.flatnonzero(z):
+                if i < 400 - 1:                                                   # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
+                    continue
                 if i - son < A.hacim_tekrar or i + A.ufuk >= n:
                     continue
                 son = i
@@ -822,13 +820,11 @@ def fi_k6_evren(V: Dict[str, pd.DataFrame], pazar: str, kap: Optional[Dict[str, 
 
     for no, (s, d) in enumerate(V.items(), 1):
         try:
-            if len(d) < 400:
-                continue
             G = fi_gostergeler(d, A); S = fi_gosterge_sinyal(G, A)
             if kap is not None:
                 S.update(fi_kap_sinyal(d.index, kap.get(s)))
             Y = _fi_sonuclar(d)
-            gecerli = (d.index >= bas)
+            gecerli = (d.index >= bas) & (np.arange(len(d)) >= 400 - 1)          # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
             dn = np.where(d.index < sinir, "2016-21", "2022-26")
             taban = np.flatnonzero(gecerli & (np.arange(len(d)) % A.ornek_adim == 0) & G.rsi.notna().to_numpy())
             ekle("_TABAN", taban, Y, dn)
@@ -2525,14 +2521,14 @@ def fi_k13_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K13_ESIK) -> 
     for s, d in V.items():
         try:
             n = len(d)
-            if n < 400:
+            if n < b1 - b0 + 1:                                                  # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas); teknik: pencere kurulamaz
                 continue
             l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
             Lw = np.lib.stride_tricks.sliding_window_view(l, b1 - b0 + 1)          # pencere [t-b1, t-b0]
             jrel = Lw.argmin(axis=1); jmin = Lw.min(axis=1)
             sonmin = pd.Series(l).rolling(b0).min().to_numpy()                    # [t-b0+1, t] (denetim 24 Eki: t-b0+1 bari atlaniyordu)
             gorulen = set(); son_olay = -10 ** 9
-            for t in range(max(b1, 320), n):
+            for t in range(max(b1, 320, 400 - 1), n):                            # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
                 k = t - b1
                 if k >= len(jrel):
                     break
@@ -2842,13 +2838,11 @@ def fi_k14_esli(V: Dict[str, pd.DataFrame], O: pd.DataFrame, E: Dict[str, Any] =
     for s, d in V.items():
         try:
             n = len(d)
-            if n < 400:
-                continue
             l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
             sonmin = pd.Series(l).rolling(b0 - 1).min().to_numpy()
             yakin = d.index.get_indexer(pd.DatetimeIndex(O.bilgi[O.sembol == s])) if len(O) else np.array([], int)
             son_olay = -10 ** 9
-            for t in range(max(b1, 320), n):
+            for t in range(max(b1, 320, 400 - 1), n):                            # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas) (K13 ile aynı kural, K1)
                 j = t - b0 + 1
                 if not (l[j] <= l[max(0, j - 60):j].min() and sonmin[t] >= l[j]):          # gercek dip, sonra yeni dip yok
                     continue
@@ -3326,14 +3320,14 @@ def fi_k17_tara(V: Dict[str, pd.DataFrame], E: Dict[str, Any] = FI_K17_ESIK) -> 
     for s, d in V.items():
         try:
             n = len(d)
-            if n < 400:
+            if n < b1 - b0 + 1:                                                  # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas); teknik: pencere kurulamaz
                 continue
             l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
             Lw = np.lib.stride_tricks.sliding_window_view(l, b1 - b0 + 1)          # pencere [t-b1, t-b0]
             jrel = Lw.argmin(axis=1)
             sonmin = pd.Series(l).rolling(b0).min().to_numpy()                    # [t-b0+1, t]
             gorulen = set(); son_olay = -10 ** 9
-            for t in range(max(b1, 320), n):
+            for t in range(max(b1, 320, 400 - 1), n):                            # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
                 k = t - b1
                 if k >= len(jrel):
                     break
@@ -4617,14 +4611,16 @@ FI_K23 = {"bolge": {"1": ("MANAS", "2025-06-13", "2025-07-13"), "2": ("MANAS", "
                    "seri", "once_alt", "delen", "bbw")}
 
 
-def fi_k23_parmak(d: pd.DataFrame, L: int) -> pd.DataFrame:
-    """Her bitiş günü t için [t-L+1, t] penceresinin parmak izi (yalnız t ve öncesi) ve t kapanışından sonraki sonuçlar (yon60, yon20)."""
+def fi_k23_parmak(d: pd.DataFrame, L: int, gecmis: Optional[int] = None) -> pd.DataFrame:
+    """Her bitiş günü t için [t-L+1, t] penceresinin parmak izi (yalnız t ve öncesi) ve t kapanışından sonraki sonuçlar (yon60, yon20).
+    15 Kas: yalnız bitiş konumu t >= gecmis - 1 olan pencereler döner (gecmis yoksa L + 200: t dahil en az L + 200 bar geçmiş);
+    serinin toplam uzunluğuna bakılmaz. Hedef bölge ölçümü (Cemal'in işaretlediği tek pencere) gecmis=L ile çağrılır."""
     import warnings
     from numpy.lib.stride_tricks import sliding_window_view as swv
     warnings.filterwarnings("ignore", message="All-NaN slice encountered")   # kilitli (H = L) günlerden oluşan pencere: ölçü NaN, atlanır
     o = d.Open.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float); c = d.Close.to_numpy(float)
     v = (d.Close * d.Volume).to_numpy(float); n = len(c); E = FI_K23
-    if n < L + 200:
+    if n < L:                                                                 # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas); teknik: pencere kurulamaz
         return pd.DataFrame()
     pc = np.r_[np.nan, c[:-1]]
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -4672,6 +4668,7 @@ def fi_k23_parmak(d: pd.DataFrame, L: int) -> pd.DataFrame:
             out[j] = 1.0 if a < b else (-1.0 if b <= a and b < 10 ** 9 else 0.0)
         return out
     F["yon60"] = yon(E["ufuk"], E["esik"]); F["yon20"] = yon(E["kisa_ufuk"], E["kisa_esik"])
+    F = F[F["i"] >= (L + 200 if gecmis is None else gecmis) - 1]              # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
     return F.replace([np.inf, -np.inf], np.nan)
 
 
@@ -4701,7 +4698,7 @@ def fon_izi_k23(A: Optional[FIAyar] = None, V_hazir: Optional[Dict[str, Dict[str
     for ad, (s, b, e_) in E["bolge"].items():
         d = Vb[s]; L = int(((d.index >= b) & (d.index <= e_)).sum())
         son_g = d.index[d.index <= pd.Timestamp(e_)][-1]                       # bölge sonu tatile düşerse önceki işlem günü
-        F = fi_k23_parmak(d, L); H[ad] = F.loc[son_g].copy(); H[ad]["L"] = L; H[ad]["sembol"] = s; H[ad]["son"] = son_g
+        F = fi_k23_parmak(d, L, gecmis=L); H[ad] = F.loc[son_g].copy(); H[ad]["L"] = L; H[ad]["sembol"] = s; H[ad]["son"] = son_g
     Z: List[Dict[str, Any]] = []; ES: List[pd.DataFrame] = []
     for pazar in ("BIST", "ABD"):
         try:
@@ -4774,7 +4771,7 @@ def _fi_k23_yon(c: np.ndarray, h: np.ndarray, l: np.ndarray, t: int, u: int, s: 
 def fi_k24_tara(d: pd.DataFrame, E: Dict[str, Any] = FI_K24) -> pd.DataFrame:
     """Bir hissede iki evre günleri: kural (sinyal) ve eşli (aynı düşüş + SMA20 üstü 5. gün, kuralın geri kalanı tutmayan)."""
     c = d.Close.to_numpy(float); h = d.High.to_numpy(float); l = d.Low.to_numpy(float); n = len(c); E3 = FI_K23
-    if n < 200:
+    if n < 21:                                                                # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas); teknik: SMA20 kurulamaz
         return pd.DataFrame()
     cs = pd.Series(c); sma = cs.rolling(20).mean().to_numpy(); bw = (4 * cs.rolling(20).std() / cs.rolling(20).mean()).to_numpy()
     tepe = pd.Series(h).rolling(120, min_periods=20).max().to_numpy()      # 20: genç halka arz da ölçülür
@@ -4783,7 +4780,7 @@ def fi_k24_tara(d: pd.DataFrame, E: Dict[str, Any] = FI_K24) -> pd.DataFrame:
         seri[t] = seri[t - 1] + 1 if c[t] > sma[t] else 0
     sat, son = [], {True: -10 ** 9, False: -10 ** 9}
     w = E["bbw_pencere"]; k = E["seri"]
-    for t in np.flatnonzero(seri == k):
+    for t in np.flatnonzero((seri == k) & (np.arange(n) >= 200 - 1)):        # 15 Kas: toplam uzunluk değil karar günü konumu (geleceğe bakma, H satırı 14 Kas)
         a = t - k + 1; b0 = a - E["once"]
         if b0 < 20 or not np.isfinite(tepe[t - w]):
             continue
@@ -5467,7 +5464,7 @@ def fi_k26_ortak(V: Dict[str, pd.DataFrame], Pb: pd.DataFrame, K: Dict[str, Any]
     sat = {}
     for ad, (s, a, b) in K["ornek"].items():
         d = V[s]; i0 = int(d.index.searchsorted(pd.Timestamp(a))); i1 = int(d.index.searchsorted(pd.Timestamp(b), side="right")) - 1
-        L = i1 - i0 + 1; F = fi_k23_parmak(d, L)
+        L = i1 - i0 + 1; F = fi_k23_parmak(d, L, gecmis=L)
         sat[ad] = F.loc[d.index[i1], list(FI_K23["olcu"])].astype(float).rename(ad); sat[ad]["L"] = L
     O = pd.DataFrame(sat).T; Y = fi_k26_yuzdelik(Pb, O)
     aralik = Y.max() - Y.min(); ortak = [k for k in FI_K23["olcu"] if aralik[k] <= K["ortak_aralik"]]

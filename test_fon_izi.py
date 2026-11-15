@@ -27,6 +27,7 @@
 # 21) K13 Ders 3 olcu/tarama (sentetik taban)
 # 22) K14 esli kutu, yukselis, kirilim, ruzgar
 # 23) K13b dip tabani (duzgun dip vs igne)
+# 63) 15 Kas önek değişmezliği: 8 tarayıcı (K4, K4b, K6, K13, K14, K17, K23 parmak, K24) seri T'de kesilince T öncesi satırlar aynı.
 # 20) v1.5 artirimli ayristirma + paket: ikinci calistirmada eski rapor yeniden ayristirilmaz, yeni rapor eklenir; ayristirici
 #     surumu farkli rapor yeniden ayristirilir; paket -> ac sonrasi tablolar ve metinler ayni; bozuk parca sha256 ile yakalanir.
 import sys, numpy as np, pandas as pd
@@ -786,6 +787,80 @@ def sina():
     ok62 &= len(R62["islem"]) == 2
     if not ok62:
         hata.append(f"62) K50 hs8 çıkışı / günlük sınır yanlış: {e1} {e2} {e3} {len(R62['islem'])}")
+    # 63) 15 Kas önek değişmezliği (geleceğe bakma, H satırı 14 Kas): tarayıcıların T ve öncesi satırları seri T'de kesilse de aynı
+    # (sonuç sütunları hariç; K4 / K4b'de sonucu önekte dolan satırlar). Desenler N - 1 konumunun hem önünde hem arkasında olay verir.
+    def seri63():
+        r = np.random.default_rng(63); p = [100 * np.exp(np.cumsum(r.normal(0.0005, 0.012, 150)))]   # 0-149 sakin
+        ek = lambda x: p.append(p[-1][-1] * x)
+        ek(np.linspace(1, 0.5, 31)[1:])                          # 150-179 çöküş -%50 (K24 olayı t < 199)
+        ek(np.exp(np.cumsum(r.normal(0.004, 0.01, 60))))         # 180-239 toparlanma
+        ek(np.exp(np.cumsum(np.full(50, 0.009))))                # 240-289 istikrarlı yükseliş (K4 / K4b olayı t < 399)
+        ek(np.linspace(1, 0.4, 31)[1:])                          # 290-319 çöküş -%60
+        ek(1 + np.linspace(0, 0.08, 70))                         # 320-389 küçük mumlu taban (K13 olayı t ~ 349 < 399)
+        ek(np.linspace(1, 0.4, 31)[1:])                          # 390-419 çöküş
+        ek(1 + np.linspace(0, 0.08, 70))                         # 420-489 taban (K13 olayı t ~ 449)
+        ek(np.exp(np.cumsum(np.full(50, 0.009))))                # 490-539 yükseliş (K4 / K4b olayı t > 399)
+        ek(np.exp(np.cumsum(r.normal(0.0, 0.015, 120))))         # 540-659
+        c = np.concatenate(p); n = len(c)
+        rg = np.full(n, 0.04); rg[320:390] = rg[420:490] = 0.012; rg[240:290] = rg[490:540] = 0.008
+        v = np.where(rg < 0.01, np.where(np.diff(c, prepend=c[0]) > 0, 6e5, 2e5), 1e6)
+        return pd.DataFrame({"Open": c * (1 - rg / 8), "High": c * (1 + rg / 2), "Low": c * (1 - rg / 2), "Close": c, "Volume": v},
+                            index=pd.bdate_range("2016-01-04", periods=n))
+    def seri63b():                                               # K17: iki kez çöküş -> ∩ -> ∪ (test 24 deseni); olaylar t ~ 339 ve ~ 445
+        x1 = np.linspace(0, 1, 25); x2 = np.linspace(0, 1, 30)
+        ark = 11 + 2.0 * np.sin(np.pi * x1) + x1; kase = 12 + 1.6 * ((2 * x2 - 1) ** 2 - 1)
+        c = np.r_[np.full(270, 20.0), np.linspace(20, 10, 21)[1:], [10.0], ark, kase, np.full(30, 12.0),
+                  np.linspace(12, 6, 21)[1:], [6.0], ark * 0.6, kase * 0.6, np.full(150, 7.2)]
+        return pd.DataFrame({"Open": c, "High": c * 1.01, "Low": c * 0.995, "Close": c, "Volume": 1e6},
+                            index=pd.bdate_range("2016-01-04", periods=len(c)))
+    def ayni63(a, b):
+        if len(a) == 0 and len(b) == 0:
+            return True
+        if len(a) != len(b) or list(a.columns) != list(b.columns):
+            return False
+        for k in a.columns:
+            x, y = a[k].to_numpy(), b[k].to_numpy()
+            if x.dtype.kind in "fc" or y.dtype.kind in "fc":
+                if not np.allclose(x.astype(float), y.astype(float), rtol=1e-9, atol=1e-12, equal_nan=True):
+                    return False
+            elif not (x == y).all():
+                return False
+        return True
+    d63, d63b = seri63(), seri63b(); A63 = F.FIAyar(ufuk=60); ten = (390, 420, 470)
+    def onek63(ad, fn, d, Tler, tk, haric, ufuk=0):
+        tam = fn(d); dolu = 0
+        for T in Tler:
+            sinir = d.index[T - 1 - ufuk]; k = fn(d.iloc[:T])
+            a = tam[pd.to_datetime(tam[tk]) <= sinir] if len(tam) else tam
+            b = k[pd.to_datetime(k[tk]) <= sinir] if len(k) else k
+            a = a.drop(columns=[c for c in haric if c in a.columns]).reset_index(drop=True)
+            b = b.drop(columns=[c for c in haric if c in b.columns]).reset_index(drop=True)
+            dolu += len(a)
+            if not ayni63(a, b):
+                return f"{ad} T={T}: tam seri {len(a)} satır, önek {len(b)} satır"
+        return None if dolu else f"{ad}: karşılaştırılacak satır yok (test boş)"
+    s63 = [onek63("fi_k13_tara", lambda x: F.fi_k13_tara({"X": x}), d63, ten, "bilgi", ()),
+           onek63("fi_k14_esli", lambda x: F.fi_k14_esli({"X": x}, F.fi_k13_tara({"X": x})), d63, ten, "bilgi", ()),
+           onek63("fi_k17_tara", lambda x: F.fi_k17_tara({"X": x}), d63b, ten, "bilgi", ()),
+           onek63("fi_k24_tara", F.fi_k24_tara, d63, (195, 220) + ten, "tarih", ("yon60", "yon20", "r120")),
+           onek63("fi_k23_parmak", lambda x: F.fi_k23_parmak(x, 15).rename_axis("tarih").reset_index(), d63, (205,) + ten, "tarih", ("yon60", "yon20")),
+           onek63("fi_k4_olaylar", lambda x: F.fi_k4_olaylar({"X": x}, "B", A63), d63, ten + (640,), "tarih", ("x2_once", "maks", "r_son"), 60),
+           onek63("fi_k4b_hacim_olaylar", lambda x: F.fi_k4b_hacim_olaylar({"X": x}, "B", A63), d63, ten + (640,), "tarih",
+                  ("x2_once", "k20_once", "r60", "r_son"), 60)]
+    dolu6 = 0
+    for T in ten:                                                # fi_k6_evren toplam sayar: sinyal başına n, dönem sınırı kesik gününde
+        A6 = F.FIAyar(donem_siniri=str(d63.index[T].date()))
+        a6 = F.fi_k6_evren({"X": d63}, "B", None, A6); b6 = F.fi_k6_evren({"X": d63.iloc[:T]}, "B", None, A6)
+        na = dict(zip(a6.sinyal[a6.donem == "2016-21"], a6.n[a6.donem == "2016-21"])) if len(a6) else {}
+        nb = dict(zip(b6.sinyal[b6.donem == "2016-21"], b6.n[b6.donem == "2016-21"])) if len(b6) else {}
+        if na != nb:
+            s63.append(f"fi_k6_evren T={T}: tam seri {sum(na.values()):.0f} sinyal günü, önek {sum(nb.values()):.0f}"); break
+        dolu6 += len(na)
+    if not dolu6 and not any(x and x.startswith("fi_k6") for x in s63):
+        s63.append("fi_k6_evren: karşılaştırılacak satır yok (test boş)")
+    s63 = [x for x in s63 if x]
+    if s63:
+        hata.append("63) önek değişmezliği (geleceğe bakma) bozuk: " + "; ".join(s63))
     return hata
 
 
@@ -793,4 +868,4 @@ if __name__ == "__main__":
     h = sina()
     if h:
         print("HATA:"); [print(" -", x) for x in h]; sys.exit(1)
-    print("test_fon_izi: 62/62 OK")
+    print("test_fon_izi: 63/63 OK")

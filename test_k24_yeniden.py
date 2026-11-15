@@ -1,7 +1,8 @@
 """K24_YENIDEN testleri (yalnız SENTETİK veri; gerçek veride getiri ölçmez). Çalıştırma: python test_k24_yeniden.py
 
 1) çakışma kapısı  2) sinyal tespiti: ky_tara = FON_IZI.fi_k24_tara kural satırları (SAPMA-1 sonrası) birebir
-3) GELECEĞE BAKMA: seri t'de kesilince aynı tespit (aynı dusus / L1); SAPMA-1 gerekçesi: t < 199 sinyali tam seride var, kesik seride yok
+3) GELECEĞE BAKMA: seri t'de kesilince aynı tespit (aynı dusus / L1); önek değişmezliği (FON_IZI v1.40: fi_k24_tara(d.iloc[:T]) = tam
+   serinin T-1 ve öncesi satırları, ileri sonuç yon60 / yon20 / r120 hariç); SAPMA-1 süzgeci (t_i >= 199) artık satır düşürmez (düşen 0)
 4) L1 (1. evre süresi) bağımsız kaba kuvvet hesabıyla aynı  5) tercil / derinlik kovaları  6) cetvel çağrısı: OC.oc_olc uçtan uca + rapor
 7) kapı: doğru ön kayıt geçer, sha farkı / satır eksik durur  8) eski kayıt alıntıları IZ_KARNE metninde  9) olay sha sıradan bağımsız
 10) e-posta / anahtar yok.
@@ -87,8 +88,8 @@ def testler():
             hata.append(f"2 {s}: dusus eşiği aşılmış satır")
     if tum < 30:
         hata.append(f"2 sentetik sinyal az ({tum})")
-    if s1 == 0 or ornek_s1 is None:
-        hata.append("2 SAPMA-1 örneği yok (t < 199 sinyali beklenirdi)")
+    if s1 or ornek_s1 is not None:   # FON_IZI v1.40: tarayıcı t < 199 satırı üretmez; SAPMA-1 süzgecinin düşüreceği satır 0 olmalı
+        hata.append(f"2 SAPMA-1 süzgeci FON_IZI çıktısından {s1} satır düşürüyor (beklenen 0; örnek {ornek_s1})")
 
     # 3) geleceğe bakma
     bozuk = 0
@@ -105,14 +106,19 @@ def testler():
                 bozuk += 1
     if bozuk:
         hata.append(f"3 geleceğe bakma: {bozuk} sinyal kesik seride farklı")
-    s, t = ornek_s1
-    tam = F.fi_k24_tara(V[s]); kesik = F.fi_k24_tara(V[s].loc[:t])
-    if not ((tam.tarih == t) & tam.kural).any():
-        hata.append("3 SAPMA-1 örneği tam seride yok")
-    if len(kesik) and ((kesik.tarih == t) & kesik.kural).any():
-        hata.append("3 SAPMA-1 örneği kesik seride de var (gerekçe çürük)")
-    if (KY.ky_tara(V[s]).tarih == t).any():
-        hata.append("3 ky_tara SAPMA-1 sinyalini almış")
+    # önek değişmezliği (FON_IZI v1.40): kesik seri sonucu = tam serinin aynı satırları (ileri sonuç sütunları hariç)
+    ileri = ["yon60", "yon20", "r120"]; onek_bozuk = 0; onek_satir = 0
+    for s, d in list(V.items())[:10]:
+        tam = F.fi_k24_tara(d)
+        if len(tam) and (d.index.get_indexer(pd.DatetimeIndex(tam.tarih)) < 199).any():
+            hata.append(f"3 {s}: tam seride t < 199 satırı var (v1.40 sonrası beklenmedi)")
+        for T in (150, 199, 200, 201, 350, 600, len(d) - 1):
+            kesik = F.fi_k24_tara(d.iloc[:T]); bek = tam[pd.DatetimeIndex(tam.tarih) <= d.index[T - 1]] if len(tam) else tam
+            a = kesik.drop(columns=ileri).reset_index(drop=True) if len(kesik) else pd.DataFrame()
+            b = bek.drop(columns=ileri).reset_index(drop=True) if len(bek) else pd.DataFrame()
+            onek_bozuk += int(not a.equals(b)); onek_satir += len(a)
+    if onek_bozuk or not onek_satir:
+        hata.append(f"3 önek değişmezliği: {onek_bozuk} kesikte tam seriyle farklı (satır {onek_satir})")
 
     # 4) L1 kaba kuvvet
     farkli = 0; say = 0
@@ -198,7 +204,7 @@ def testler():
         m = open(os.path.join(KOK, ad), encoding="utf-8").read()
         if re.search(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+\.(com|org|net|io|tr)\b", m) or re.search(r"(api[_-]?key|token|sifre)\s*=\s*['\"][^'\"]{6,}", m, re.I):
             hata.append(f"10 {ad}: e-posta / anahtar deseni")
-    return hata, {"sentetik_sinyal": tum, "sapma1": s1, "L1_kontrol": say}
+    return hata, {"sentetik_sinyal": tum, "sapma1_dusen": s1, "onek_satir": onek_satir, "L1_kontrol": say}
 
 
 def json_kayit(T: pd.DataFrame):
