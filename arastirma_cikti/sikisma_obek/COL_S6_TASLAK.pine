@@ -1,0 +1,500 @@
+// =====================================================================================================
+// COL S6 TASLAK — Öbek Sıkışması bölge kutusu  —  Pine Script v5
+// TASLAK: ÖLÇÜM DEĞİL, GÖZ TESTİ. Bu gösterge ölçülmüş bir tanım değildir; S5 (ölçülen, COL_S5_OBEK.pine) üzerine
+// Cemal'in 15 Kasım 2026 isteğiyle kurulmuş bir taslaktır. Eşikler input'tur; Cemal grafikte oynayıp doğru / yanlış
+// kutuları işaretleyecek. Kazanç etiketi geleceğe bakar (kırılımdan sonraki 20 bar): yalnız göz testi içindir.
+//
+// Temel koşul (S5 yapısı, p = 15 geçerli bar, t = bugünkü bar):
+//   (a) pencerede (H-L)/C mumlarından en büyük 1 tanesi çıkarılır, kalan 14'ün medyanı <= k_m x ATR250%
+//   (b) pencere kapanışlarından en yüksek YA DA en düşük 1 gün (bandı en çok daraltan) çıkarılır; max/min - 1 <= bant
+//   (c) ln(kapanış) ~ gün EKK eğimi x 15, [eğim alt, eğim üst] içinde
+//   (c2) S6: net = C_t / C_t-14 - 1 >= net alt (S5 ön ayarında yok)
+//   (d) açılışı önceki kapanışın altında olan gün payı <= %50
+//   (e) BBW = 4 x std20(C, nüfus) / SMA20(C); önceki 250 BBW'den bugünküne eşit / küçük olanların payı <= bb
+//   sınıf DİP: konum120 <= 0,25 VE C / max120 - 1 <= -%10
+//   sınıf YOL ÜSTÜ: C > SMA50 VE SMA50 > 20 bar önceki SMA50 VE konum120 >= 0,60 VE taban korunuyor
+//   koşul günü = (a)(b)(c)(c2)(d)(e) VE (DİP ya da YOL ÜSTÜ); ilk 290 geçerli bar boyunca koşul yok.
+// Ön ayar:            S6 taslak (varsayılan)            S5 (ölçüm)
+//   eğim x15          [-%1, +%10]                        [-%2, +%10]
+//   net (c2)          >= -%1                             yok
+//   bb yüzdelik       <= 0,10                            <= 0,20
+//   k_m               0,75                               0,75
+//   bant              BIST %8 / ABD-Avrupa %6            BIST %8 / ABD-Avrupa %6
+//   en az N mum       5                                  1 (S5'te bölge ilk gün başlar)
+//   'S5 (ölçüm)' seçilince S6 input'ları yok sayılır, S5 ön kayıt değerleri kullanılır (kırılım payı, kutu tipi ve
+//   görünüm input'ları her iki ön ayarda geçerlidir).
+//
+// Bölge kuralları (S6):
+//   1) Koşul N ARDIŞIK geçerli gün sürerse N. gün ONAY günüdür; bölge BAŞLANGIÇ = onay - (N-1) geçerli bar.
+//   2) Onay gününde kutu çizilir: başlangıç mumundan onay mumuna; üst / alt = bölge günlerinin kapanışlarından
+//      1 uç gün (bandı en çok daraltan) çıkarılmış bant (input ile 'en yüksek / en düşük kapanış' da seçilebilir).
+//      Bölge sürdükçe (koşul doğru) kutu sağa uzar, üst / alt güncellenir.
+//   3) Bölge açıkken bir kapanış kutu üstünün +kırılım payı (%1) üstünde ya da altının -%1 altında ise: KIRILIM
+//      mumu. Kutu o mumda biter; yukarı kırılımda yeşil ok (mumun altında), aşağıda kırmızı ok (üstünde).
+//      Kırılım koşul kontrolünden önce bakılır (kırılım mumu koşul günü olsa da bölge biter).
+//   4) Kırılım olmadan koşul düşerse kutu son koşul gününde biter, gri olur ve 'sönme' etiketi konur (kazanç yok).
+//   5) Bölge bitince (kırılım / sönme) sayaç sıfırlanır; yeni bölge için yine N ardışık koşul günü gerekir
+//      (kırılım mumu sayılmaz).
+//   6) Başlangıç mumunun altına ve bitiş mumunun üstüne küçük tarih etiketi (gg.aa.yy) konur; onay günü küçük
+//      daire ile işaretlenir.
+//   7) Kazanç etiketi (isteğe bağlı): giriş = kırılım mumundan sonraki ilk geçerli bar açılışı; '20g' = 20. barın
+//      kapanışı / giriş - 1; 'en iyi / en kötü' = bu 20 barda en yüksek / en düşük fiyatın girişe göre %'si.
+//      Hepsi kırılım YÖNÜNDE işaretlidir (aşağı kırılımda düşüş + yazılır). 20 bar dolmadıysa '(k/20)' yazar.
+//
+// Geçerli bar: H > L, hacim > 0, O > 0, C > 0. Geçersiz bar hesaba girmez, pencereler geçerli bar sayar.
+// Pine'da OLMAYANLAR (Python doğrulamasında / ölçümde var): likidite süzgeci, bölünme / bedelli şüphesi süzgeci,
+// 31.08.2026 fon krizi kesiği. Doğrulama V_BIST (temettü-düzeltmeli) fiyatıyla yapıldı; TradingView'de temettü
+// düzeltmesi kapalıysa kutu üst / alt değerleri birkaç kuruş farklı olabilir.
+// Bu gösterge bir ADAY gösterir; alım-satım sinyali değildir.
+// =====================================================================================================
+//@version=5
+indicator("COL S6 TASLAK (göz testi)", overlay=true, max_boxes_count=500, max_labels_count=500)
+
+// ---------------------------------------------------------------- girdiler
+G0 = "Ön ayar"
+onAyar     = input.string("S6 taslak", "Ön ayar", options=["S6 taslak", "S5 (ölçüm)"], group=G0, tooltip="S5 (ölçüm) seçilince S6 eşikleri yok sayılır; S5 ön kayıt değerleri kullanılır.")
+
+G1 = "S6 taslak eşikleri (TASLAK: ölçüm değil, göz testi)"
+pazar      = input.string("BIST", "Pazar (bant eşiği)", options=["BIST", "ABD / Avrupa"], group=G1)
+bantBIST   = input.float(0.08, "Bant eşiği BIST (b)", step=0.01, group=G1)
+bantDiger  = input.float(0.06, "Bant eşiği ABD / Avrupa (b)", step=0.01, group=G1)
+kM6        = input.float(0.75, "Küçük mum katsayısı k_m (a)", step=0.05, group=G1)
+egimAlt6   = input.float(-0.01, "Eğim x15 alt (c)", step=0.005, group=G1)
+egimUst6   = input.float(0.10, "Eğim x15 üst (c)", step=0.01, group=G1)
+netAcik6   = input.bool(true, "Net şartı aç (c2)", group=G1)
+netAlt6    = input.float(-0.01, "Net (son / ilk kapanış - 1) en az (c2)", step=0.005, group=G1)
+bbEsik6    = input.float(0.10, "BB yüzdelik eşiği (e)", step=0.05, group=G1)
+nMum6      = input.int(5, "En az N ardışık mum (onay günü = N.)", minval=1, maxval=60, group=G1)
+
+G2 = "Bölge kutusu"
+kirPay     = input.float(0.01, "Kırılım payı (kutu üstü / altı ötesi)", step=0.005, group=G2)
+kutuTipi   = input.string("1 uç gün hariç bant", "Kutu üst / alt", options=["1 uç gün hariç bant", "en yüksek / en düşük kapanış"], group=G2)
+gosterKaz  = input.bool(true, "Kazanç etiketi göster (geleceğe bakar; göz testi)", group=G2)
+ufuk       = input.int(20, "Kazanç ufku (bar)", minval=1, maxval=120, group=G2)
+gosterTar  = input.bool(true, "Başlangıç / bitiş tarih etiketleri", group=G2)
+
+G3 = "Sabitler (S5 ile aynı)"
+p          = input.int(15, "Pencere p (geçerli bar)", minval=6, group=G3)
+atrGun     = input.int(250, "ATR% günü (a)", group=G3)
+asagiPay   = input.float(0.50, "Aşağı açılış payı en çok (d)", step=0.05, group=G3)
+bbGun      = input.int(20, "BB günü (e)", group=G3)
+bbK        = input.float(2.0, "BB sigma (e)", group=G3)
+bbDagilim  = input.int(250, "BB genişlik dağılımı günü (e)", group=G3)
+konumGun   = input.int(120, "Konum günü (sınıf)", group=G3)
+dipKonum   = input.float(0.25, "DİP konum en çok", step=0.05, group=G3)
+dipDusus   = input.float(-0.10, "DİP tepeden düşüş en az", step=0.01, group=G3)
+yolKonum   = input.float(0.60, "YOL ÜSTÜ konum en az", step=0.05, group=G3)
+smaGun     = input.int(50, "YOL ÜSTÜ SMA günü", group=G3)
+smaEgimGun = input.int(20, "YOL ÜSTÜ SMA eğim günü", group=G3)
+tabanIlk   = input.int(5, "Taban: pencerenin ilk kaç günü", group=G3)
+tabanPay   = input.float(0.99, "Taban payı", step=0.01, group=G3)
+gecmisMin  = input.int(290, "En az geçmiş (geçerli bar)", group=G3)
+
+G4 = "Görünüm"
+gosterBB   = input.bool(true, "BB(20, 2σ) bantlarını çiz", group=G4)
+gosterEMA  = input.bool(true, "EMA 20 / EMA 50 çiz", group=G4)
+gosterBoya = input.bool(true, "Koşul günlerini hafif boya", group=G4)
+gosterTab  = input.bool(true, "Bilgi tablosu", group=G4)
+renkDip    = input.color(color.new(color.blue, 80), "DİP kutusu", group=G4)
+renkYol    = input.color(color.new(color.orange, 80), "YOL ÜSTÜ kutusu", group=G4)
+renkSon    = input.color(color.new(color.gray, 80), "Sönme kutusu", group=G4)
+
+// ---------------------------------------------------------------- etkin eşikler (ön ayar)
+isS5    = onAyar == "S5 (ölçüm)"
+kM      = isS5 ? 0.75 : kM6
+egimAlt = isS5 ? -0.02 : egimAlt6
+egimUst = isS5 ? 0.10 : egimUst6
+netAcik = isS5 ? false : netAcik6
+netAlt  = netAlt6
+bbEsik  = isS5 ? 0.20 : bbEsik6
+nMum    = isS5 ? 1 : nMum6
+bant    = isS5 ? (pazar == "BIST" ? 0.08 : 0.06) : (pazar == "BIST" ? bantBIST : bantDiger)
+ziplaCikar = 1
+
+// ---------------------------------------------------------------- görsel çizgiler (hesaba girmez)
+bbOrta = ta.sma(close, 20)
+bbSap  = ta.stdev(close, 20)
+plot(gosterBB ? bbOrta + 2.0 * bbSap : na, "BB üst", color=color.new(color.gray, 40), linewidth=1)
+plot(gosterBB ? bbOrta : na, "BB orta", color=color.new(color.gray, 65), linewidth=1)
+plot(gosterBB ? bbOrta - 2.0 * bbSap : na, "BB alt", color=color.new(color.gray, 40), linewidth=1)
+plot(gosterEMA ? ta.ema(close, 20) : na, "EMA 20", color=color.new(color.teal, 20), linewidth=1)
+plot(gosterEMA ? ta.ema(close, 50) : na, "EMA 50", color=color.new(color.purple, 20), linewidth=1)
+
+// ---------------------------------------------------------------- geçerli bar dizileri (yalnız geçerli barlar; en yeni sonda)
+hacimOk = na(volume) ? true : volume > 0
+gecerli = high > low and hacimOk and close > 0 and open > 0 and not na(close)
+
+TUT = 300
+var float[] aO   = array.new_float(0)
+var float[] aH   = array.new_float(0)
+var float[] aL   = array.new_float(0)
+var float[] aC   = array.new_float(0)
+var float[] aTRP = array.new_float(0)
+var float[] aASG = array.new_float(0)
+var float[] aBBW = array.new_float(0)
+var float[] aSMA = array.new_float(0)
+var int[]   aBI  = array.new_int(0)         // geçerli barın bar_index'i
+var int[]   aT   = array.new_int(0)         // geçerli barın zamanı
+var int  nGec    = 0
+
+ekle(float[] a, float v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+geri(float[] a, int k) =>
+    int sz = array.size(a)
+    k < sz ? array.get(a, sz - 1 - k) : na
+
+geriI(int[] a, int k) =>
+    int sz = array.size(a)
+    k < sz ? array.get(a, sz - 1 - k) : na
+
+sonOrt(float[] a, int m) =>
+    int sz = array.size(a)
+    float s = 0.0
+    bool ok = sz >= m
+    if ok
+        for j = sz - m to sz - 1
+            float v = array.get(a, j)
+            if na(v)
+                ok := false
+            else
+                s += v
+    ok ? s / m : na
+
+// bölge kapanışlarından kutu üst / alt: 1 uç gün hariç (bandı en çok daraltan) ya da düz max / min
+kutuBant(float[] z, bool ucsuz) =>
+    float[] w = array.copy(z)
+    array.sort(w, order.ascending)
+    int m = array.size(w)
+    float u = na
+    float a = na
+    if m > 0
+        u := array.get(w, m - 1)
+        a := array.get(w, 0)
+        if ucsuz and m >= 3
+            if array.get(w, m - 2) / array.get(w, 0) <= array.get(w, m - 1) / array.get(w, 1)
+                u := array.get(w, m - 2)
+            else
+                a := array.get(w, 1)
+    [u, a]
+
+tarih(int t) => na(t) ? "-" : str.format_time(t, "dd.MM.yy", syminfo.timezone)
+yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
+yzi(float v) => na(v) ? "-" : (v >= 0 ? "+" : "") + str.tostring(v * 100, "#.0") + "%"
+ev(bool b) => b ? "EVET" : "hayır"
+
+// ---------------------------------------------------------------- bölge durumu
+var bool    akt    = false
+var int     kosu   = 0
+var box     bx     = na
+var float[] zC     = array.new_float(0)
+var float   zUst   = na
+var float   zAlt   = na
+var int     zSonBI = na
+var int     zSonT  = na
+var int     zGun   = 0
+var string  zSinif = ""
+// bekleyen kazanç etiketleri (kırılımdan sonra ufuk bar boyunca güncellenir)
+var int[]   pK   = array.new_int(0)        // kırılım mumunun geçerli bar sırası
+var int[]   pYon = array.new_int(0)
+var float[] pGir = array.new_float(0)
+var float[] pHi  = array.new_float(0)
+var float[] pLo  = array.new_float(0)
+var label[] pLb  = array.new_label(0)
+
+kos  = false
+s5d  = false
+s5y  = false
+onay = false
+kirUp = false
+kirDn = false
+float mmed  = na
+float atrP  = na
+float obek  = na
+float egim  = na
+float net   = na
+float asagi = na
+float bbp   = na
+float konum = na
+float dd    = na
+bool ca  = false
+bool cb  = false
+bool cc  = false
+bool cn  = false
+bool cd  = false
+bool ce  = false
+bool dip = false
+bool yol = false
+
+if gecerli
+    float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
+    float tr    = na(cOnce) ? high - low : math.max(high, cOnce) - math.min(low, cOnce)
+    ekle(aO, open)
+    ekle(aH, high)
+    ekle(aL, low)
+    ekle(aC, close)
+    ekle(aTRP, na(cOnce) ? na : tr / cOnce)
+    ekle(aASG, na(cOnce) ? na : (open < cOnce ? 1.0 : 0.0))
+    ekleI(aBI, bar_index)
+    ekleI(aT, time)
+    float bbw = na
+    if array.size(aC) >= bbGun
+        float m = sonOrt(aC, bbGun)
+        float ss = 0.0
+        for j = array.size(aC) - bbGun to array.size(aC) - 1
+            ss += math.pow(array.get(aC, j) - m, 2)
+        bbw := 2.0 * bbK * math.sqrt(ss / bbGun) / m
+    ekle(aBBW, bbw)
+    ekle(aSMA, array.size(aC) >= smaGun ? sonOrt(aC, smaGun) : na)
+    nGec += 1
+    int i = nGec - 1
+
+    // ---- bekleyen kazanç etiketlerini güncelle (bu bar kırılımdan sonraki k. geçerli bar)
+    if array.size(pK) > 0
+        for q = array.size(pK) - 1 to 0
+            int kk = i - array.get(pK, q)
+            if kk >= 1
+                if kk == 1
+                    array.set(pGir, q, open)
+                    array.set(pHi, q, high)
+                    array.set(pLo, q, low)
+                else
+                    array.set(pHi, q, math.max(array.get(pHi, q), high))
+                    array.set(pLo, q, math.min(array.get(pLo, q), low))
+                float g  = array.get(pGir, q)
+                int   yn = array.get(pYon, q)
+                float rt = yn * (close / g - 1.0)
+                float iy = yn > 0 ? array.get(pHi, q) / g - 1.0 : -(array.get(pLo, q) / g - 1.0)
+                float kt = yn > 0 ? array.get(pLo, q) / g - 1.0 : -(array.get(pHi, q) / g - 1.0)
+                string ek = kk < ufuk ? " (" + str.tostring(kk) + "/" + str.tostring(ufuk) + ")" : ""
+                label.set_text(array.get(pLb, q), str.tostring(ufuk) + "g " + yzi(rt) + ek + "\nen iyi " + yzi(iy) + " / en kötü " + yzi(kt))
+                if kk >= ufuk
+                    array.remove(pK, q)
+                    array.remove(pYon, q)
+                    array.remove(pGir, q)
+                    array.remove(pHi, q)
+                    array.remove(pLo, q)
+                    array.remove(pLb, q)
+
+    // ---- koşul (S5 yapısı + S6 net şartı)
+    if i >= gecmisMin and array.size(aC) >= math.max(p + 1, konumGun) and array.size(aBBW) >= bbDagilim + 1
+        int sz = array.size(aC)
+        float c = close
+        atrP := sonOrt(aTRP, atrGun)
+        float[] mum = array.new_float(0)
+        for j = sz - p to sz - 1
+            array.push(mum, (array.get(aH, j) - array.get(aL, j)) / array.get(aC, j))
+        array.sort(mum, order.ascending)
+        for k = 1 to ziplaCikar
+            array.pop(mum)
+        int mm = array.size(mum)
+        int h = int(mm / 2)
+        mmed := mm % 2 == 1 ? array.get(mum, h) : (array.get(mum, h - 1) + array.get(mum, h)) / 2.0
+        ca := not na(atrP) and mmed <= kM * atrP
+        float[] wc = array.new_float(0)
+        for j = sz - p to sz - 1
+            array.push(wc, array.get(aC, j))
+        array.sort(wc, order.ascending)
+        obek := math.min(array.get(wc, p - 2) / array.get(wc, 0), array.get(wc, p - 1) / array.get(wc, 1)) - 1.0
+        cb := obek <= bant
+        float xm = (p - 1) / 2.0
+        float ym = 0.0
+        for j = 0 to p - 1
+            ym += math.log(array.get(aC, sz - p + j))
+        ym := ym / p
+        float sxy = 0.0
+        float sxx = 0.0
+        for j = 0 to p - 1
+            sxy += (j - xm) * (math.log(array.get(aC, sz - p + j)) - ym)
+            sxx += (j - xm) * (j - xm)
+        egim := sxy / sxx * p
+        cc := egim >= egimAlt and egim <= egimUst
+        net := c / array.get(aC, sz - p) - 1.0
+        cn := not netAcik or net >= netAlt
+        asagi := sonOrt(aASG, p)
+        cd := not na(asagi) and asagi <= asagiPay
+        int nb = array.size(aBBW)
+        float bNow = array.get(aBBW, nb - 1)
+        int say = 0
+        bool tam = not na(bNow)
+        for j = nb - 1 - bbDagilim to nb - 2
+            float v = array.get(aBBW, j)
+            if na(v)
+                tam := false
+            else if v <= bNow
+                say += 1
+        bbp := tam ? say * 1.0 / bbDagilim : na
+        ce := not na(bbp) and bbp <= bbEsik
+        float mx = c
+        float mn = c
+        for j = sz - konumGun to sz - 1
+            mx := math.max(mx, array.get(aC, j))
+            mn := math.min(mn, array.get(aC, j))
+        konum := mx > mn ? (c - mn) / (mx - mn) : na
+        dd := c / mx - 1.0
+        float ilk5 = array.get(aC, sz - p)
+        for j = sz - p to sz - p + tabanIlk - 1
+            ilk5 := math.min(ilk5, array.get(aC, j))
+        bool taban = array.get(wc, 0) >= ilk5 * tabanPay
+        float sma = geri(aSMA, 0)
+        float smaOnce = geri(aSMA, smaEgimGun)
+        dip := not na(konum) and konum <= dipKonum and dd <= dipDusus
+        yol := not na(konum) and not na(sma) and not na(smaOnce) and c > sma and sma > smaOnce and konum >= yolKonum and taban
+        bool cek = ca and cb and cc and cn and cd and ce
+        s5d := cek and dip
+        s5y := cek and yol
+        kos := s5d or s5y
+
+    // ---- bölge: kırılım / uzatma / sönme, sonra yeni bölge sayacı
+    bool bitti = false
+    bool ucsuz = kutuTipi == "1 uç gün hariç bant"
+    if akt
+        bool yuk = close > zUst * (1.0 + kirPay)
+        bool asg = close < zAlt * (1.0 - kirPay)
+        if yuk or asg
+            box.set_right(bx, bar_index)
+            kirUp := yuk
+            kirDn := asg
+            if gosterTar
+                label.new(bar_index, high, tarih(time), xloc=xloc.bar_index, yloc=yloc.abovebar, style=label.style_none, textcolor=yuk ? color.green : color.red, size=size.tiny)
+            if gosterKaz
+                label lb = label.new(bar_index, zUst, str.tostring(ufuk) + "g ... (0/" + str.tostring(ufuk) + ")", xloc=xloc.bar_index, style=label.style_label_lower_left, color=color.new(color.white, 15), textcolor=yuk ? color.green : color.red, size=size.tiny)
+                array.push(pK, i)
+                array.push(pYon, yuk ? 1 : -1)
+                array.push(pGir, na)
+                array.push(pHi, na)
+                array.push(pLo, na)
+                array.push(pLb, lb)
+            akt := false
+            kosu := 0
+            bitti := true
+        else if kos
+            array.push(zC, close)
+            [u, a] = kutuBant(zC, ucsuz)
+            zUst := u
+            zAlt := a
+            zSonBI := bar_index
+            zSonT := time
+            zGun += 1
+            box.set_right(bx, bar_index)
+            box.set_top(bx, zUst)
+            box.set_bottom(bx, zAlt)
+        else
+            box.set_right(bx, zSonBI)
+            box.set_bgcolor(bx, renkSon)
+            box.set_border_color(bx, color.new(color.gray, 30))
+            label.new(zSonBI, zUst, "sönme" + (gosterTar ? " " + tarih(zSonT) : ""), xloc=xloc.bar_index, style=label.style_label_lower_left, color=color.new(color.gray, 20), textcolor=color.white, size=size.tiny)
+            akt := false
+            kosu := 0
+    if not akt and not bitti
+        kosu := kos ? kosu + 1 : 0
+        if kosu >= nMum and array.size(aC) >= nMum
+            array.clear(zC)
+            for j = array.size(aC) - nMum to array.size(aC) - 1
+                array.push(zC, array.get(aC, j))
+            [u, a] = kutuBant(zC, ucsuz)
+            zUst := u
+            zAlt := a
+            int basBI = geriI(aBI, nMum - 1)
+            int basT  = geriI(aT, nMum - 1)
+            zSonBI := bar_index
+            zSonT := time
+            zGun := nMum
+            zSinif := s5d ? "DİP" : "YOL ÜSTÜ"
+            color rk = s5d ? renkDip : renkYol
+            bx := box.new(basBI, zUst, bar_index, zAlt, xloc=xloc.bar_index, border_color=color.new(rk, 20), bgcolor=rk)
+            if gosterTar
+                label.new(basBI, low, tarih(basT), xloc=xloc.bar_index, yloc=yloc.belowbar, style=label.style_none, textcolor=s5d ? color.blue : color.orange, size=size.tiny)
+            akt := true
+            onay := true
+
+// ---------------------------------------------------------------- çizim
+bgcolor(gosterBoya and s5d ? color.new(color.blue, 92) : gosterBoya and s5y ? color.new(color.orange, 92) : na, title="Koşul günü")
+plotshape(onay, "Onay günü", shape.circle, location.belowbar, color.new(color.purple, 0), size=size.tiny)
+plotshape(kirUp, "Kırılım yukarı", shape.arrowup, location.belowbar, color.new(color.green, 0), size=size.small)
+plotshape(kirDn, "Kırılım aşağı", shape.arrowdown, location.abovebar, color.new(color.red, 0), size=size.small)
+
+var table tb = table.new(position.top_right, 3, 13, bgcolor=color.new(color.white, 10), border_width=1)
+if gosterTab and barstate.islast
+    table.cell(tb, 0, 0, "S6 TASLAK (son bar) — " + onAyar, text_size=size.small)
+    table.cell(tb, 1, 0, "değer", text_size=size.small)
+    table.cell(tb, 2, 0, "şart", text_size=size.small)
+    table.cell(tb, 0, 1, "küçük mum eşiği = " + str.tostring(kM) + " x ATR250%", text_size=size.small)
+    table.cell(tb, 1, 1, yz(na(atrP) ? na : kM * atrP) + "  (ATR250% " + yz(atrP) + ")", text_size=size.small)
+    table.cell(tb, 2, 1, "", text_size=size.small)
+    table.cell(tb, 0, 2, "(a) medyan mum (en büyük 1 hariç)", text_size=size.small)
+    table.cell(tb, 1, 2, yz(mmed), text_size=size.small)
+    table.cell(tb, 2, 2, ev(ca), text_size=size.small)
+    table.cell(tb, 0, 3, "(b) öbek bandı (1 uç gün hariç) <= " + yz(bant), text_size=size.small)
+    table.cell(tb, 1, 3, yz(obek), text_size=size.small)
+    table.cell(tb, 2, 3, ev(cb), text_size=size.small)
+    table.cell(tb, 0, 4, "(c) eğim x" + str.tostring(p) + " [" + yz(egimAlt) + ", " + yz(egimUst) + "]", text_size=size.small)
+    table.cell(tb, 1, 4, yz(egim), text_size=size.small)
+    table.cell(tb, 2, 4, ev(cc), text_size=size.small)
+    table.cell(tb, 0, 5, "(c2) net son / ilk - 1 " + (netAcik ? ">= " + yz(netAlt) : "(kapalı)"), text_size=size.small)
+    table.cell(tb, 1, 5, yz(net), text_size=size.small)
+    table.cell(tb, 2, 5, ev(cn), text_size=size.small)
+    table.cell(tb, 0, 6, "(d) aşağı açılış payı <= " + yz(asagiPay), text_size=size.small)
+    table.cell(tb, 1, 6, yz(asagi), text_size=size.small)
+    table.cell(tb, 2, 6, ev(cd), text_size=size.small)
+    table.cell(tb, 0, 7, "(e) BB genişlik yüzdeliği <= " + yz(bbEsik), text_size=size.small)
+    table.cell(tb, 1, 7, yz(bbp), text_size=size.small)
+    table.cell(tb, 2, 7, ev(ce), text_size=size.small)
+    table.cell(tb, 0, 8, "konum120 / tepeden", text_size=size.small)
+    table.cell(tb, 1, 8, yz(konum) + " / " + yz(dd), text_size=size.small)
+    table.cell(tb, 2, 8, dip ? "DİP" : yol ? "YOL ÜSTÜ" : "sınıf yok", text_size=size.small)
+    table.cell(tb, 0, 9, "koşul bugün", text_size=size.small)
+    table.cell(tb, 1, 9, s5d ? "AÇIK (DİP)" : s5y ? "AÇIK (YOL ÜSTÜ)" : "kapalı", text_size=size.small)
+    table.cell(tb, 2, 9, gecerli ? "" : "geçersiz bar", text_size=size.small)
+    table.cell(tb, 0, 10, "bölge gün sayısı / sınıf", text_size=size.small)
+    table.cell(tb, 1, 10, akt ? str.tostring(zGun) + " gün" : "bölge yok (koşu " + str.tostring(kosu) + "/" + str.tostring(nMum) + ")", text_size=size.small)
+    table.cell(tb, 2, 10, akt ? zSinif : "-", text_size=size.small)
+    table.cell(tb, 0, 11, "kutu üst / alt", text_size=size.small)
+    table.cell(tb, 1, 11, akt ? str.tostring(zUst, format.mintick) + " / " + str.tostring(zAlt, format.mintick) : "-", text_size=size.small)
+    table.cell(tb, 2, 11, "", text_size=size.small)
+    table.cell(tb, 0, 12, "geçerli bar sayısı", text_size=size.small)
+    table.cell(tb, 1, 12, str.tostring(nGec), text_size=size.small)
+    table.cell(tb, 2, 12, nGec > gecmisMin ? "" : "en az " + str.tostring(gecmisMin + 1) + " gerekli", text_size=size.small)
+
+// =====================================================================================================
+// BEKLENEN KUTULAR (doğrulama; Python: SIKISMA_OBEK.so_s5 + S6 eğim / bb / net ayarları + yukarıdaki bölge
+// kuralları, V_BIST fiyatı, BIST, varsayılan input'lar). Tarih gg.aa.yy. 'kutu' = alt-üst kapanış (1 uç gün hariç).
+//
+// ÖN AYAR 'S6 taslak' (varsayılan): DÖRT ÖRNEKTE DE KUTU YOK.
+//   FENER 09-12.2025 : kutu yok. Koşul yalnız 03.11-06.11 (4 gün < N=5). 31.10'da (e) BB yüzdeliği 0,156 > 0,10;
+//                      07.11'de (c2) net -%1,3 < -%1. (Eşik oynanmadı.)
+//   CCOLA 09-11.2025 : kutu yok. Koşul 07-08.10 (2 gün), 09-14.10 (c2) net -%1,7..-%3,0 ile kapalı, 15-17.10 (3 gün),
+//                      20.10 sınıf yok; 02-06.10 (c) eğim -%1,7..-%2,8 < -%1. Hiçbir koşu 5 güne varmıyor.
+//   ENJSA 07-09.2025 : kutu yok. Koşul yalnız 07.08, 13.08, 14.08 (08-12.08 net / sınıf; 15.08 (d)).
+//   ENJSA 05-08.2026 : kutu yok (beklenen). 10.07.2026: (e) BB yüzdeliği 0,144 > 0,10, (c) eğim -%1,9 < -%1,
+//                      (c2) net -%3,8. Hiç koşul günü yok.
+//
+// BİLGİ (Cemal input'la oynarsa ne görür; varsayılan DEĞİŞMEDİ):
+//   Net şartı kapalı      : FENER 03.11.25-07.11.25 onay 07.11, kırılım YUKARI 11.11.25 (DİP, 6 gün, 3,68-3,73, 20g -%11,6)
+//                           CCOLA 07.10.25-13.10.25 onay 13.10, kırılım AŞAĞI 14.10.25 (DİP, 5 gün, 46,82-47,18, 20g kırılım yönünde -%20,6: fiyat yükseldi)
+//   N = 3                 : FENER 03.11.25 onay 05.11, kırılım AŞAĞI 07.11.25 (4 gün, 3,68-3,71)
+//                           CCOLA 15.10.25 onay 17.10, kırılım YUKARI 20.10.25 (3 gün, 47,40-47,48, 20g +%9,5)
+//   Net kapalı + N = 3    : yukarıdaki FENER ve CCOLA 15.10; CCOLA 07.10.25 onay 09.10, AŞAĞI 14.10.25;
+//                           ENJSA 12.08.25 onay 14.08, SÖNME 14.08.25 (YOL ÜSTÜ, 3 gün)
+//   BB eşiği 0,20         : FENER 31.10.25 onay 06.11, kırılım AŞAĞI 07.11.25 (5 gün, 3,68-3,71)
+//   Eğim alt -%2          : dört örnekte yine kutu yok
+//
+// ÖN AYAR 'S5 (ölçüm)' (N = 1; boyalı günler COL_S5_OBEK.pine ile aynı, kutular S5 günü dizilerinden):
+//   FENER 01.09.25 (YOL, 1 gün) AŞAĞI 02.09.25 | 31.10.25 (DİP) YUKARI 03.11.25 | 04.11.25-06.11.25 AŞAĞI 07.11.25 |
+//         10.11.25 YUKARI 11.11.25
+//   CCOLA 02.09.25 SÖNME 02.09.25 | 24.09.25 AŞAĞI 25.09.25 | 26.09.25-30.09.25 YUKARI 01.10.25 | 02.10.25 AŞAĞI 03.10.25 |
+//         07.10.25-13.10.25 AŞAĞI 14.10.25 | 15.10.25 YUKARI 16.10.25 | 17.10.25 YUKARI 20.10.25
+//   ENJSA 06.08.25 (YOL) AŞAĞI 07.08.25 | 12.08.25 YUKARI 13.08.25 | 14.08.25 YUKARI 15.08.25
+//   ENJSA 10.07.26 (DİP) AŞAĞI 13.07.26 | 14.07.26 YUKARI 16.07.26
+//   (S5'te N = 1 olduğundan tek günlük kutular ±%1 ile hemen kırılır; S5 ön ayarı yalnız kıyas içindir.)
+//
+// Grafikte farklı bir gün görürsen önce: günlük grafik mi, sembol BIST:... mi, pazar 'BIST' mi, input'lar varsayılan
+// mı, temettü düzeltmesi (TradingView 'ADJ') açık mı. Bayram günleri bar olarak yoksa tabloda da yoktur.
+// =====================================================================================================
