@@ -1,0 +1,369 @@
+{
+ "surum": "TERS_PARMAK v1.1 (2026-11-15): büyük mum (B1) ve 20 günlük büyük hareket (BH2) öncesi bölge parmak izi — keşif (2016-22) / ön kayıt / ileriye doğru doğrulama",
+ "tanim": "doğrulama setinden (s >= 2023-01-01; ABD + AVR) P1 profil günlerinden rastgele 20 + her birinin günü ve katmanından (σ250 ondalığı x likidite üçlüsü) rastgele bir profilsiz uygun hisse (20 kontrol); 120 bar önce + s + 20 bar sonra; KOR_TEST v1.1 çizimi (ortak log ölçek, %10 cetveli, hisse adı / tarih yok); s'nin sağına kesikli dikey çizgi; sıra karıştırılır; anahtar ayrı json.",
+ "pdf_sha256": "ddc92805a50925dde0dc66d422b44082c2238e978339bb919dcce49a614153eb",
+ "pdf_mb": 2.87,
+ "not": "f20 = profil gününden sonraki 20 barda büyük mum oldu mu (1/0); Cemal işaretlemeden önce açılmaz",
+ "ogeler": [
+  {
+   "no": 1,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "OGE",
+   "tarih": "2023-12-04",
+   "f20": 0.0,
+   "sha256": "8adf3c62c7cf47b135a3071ba62729839b1950660d08dcb744cce40bb43a323c"
+  },
+  {
+   "no": 2,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "CYPH",
+   "tarih": "2024-12-05",
+   "f20": 0.0,
+   "sha256": "62d16dc814eb75613e949a6a1e5e0e294470cb550199a3ce90a10ee8d38687a7"
+  },
+  {
+   "no": 3,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "CERT",
+   "tarih": "2023-10-26",
+   "f20": 0.0,
+   "sha256": "eaa23053e477a264810d901ed669026b62dd0f3d3ecaadabda12ae004adb7814"
+  },
+  {
+   "no": 4,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "HRB",
+   "tarih": "2024-02-05",
+   "f20": 1.0,
+   "sha256": "b125a3b29c7bc5fc6e3dd6dccb14986956642a04be872bfd219b17b5929ea3b6"
+  },
+  {
+   "no": 5,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "VRSN",
+   "tarih": "2026-03-24",
+   "f20": 0.0,
+   "sha256": "3efecc44b80871469725cea495a26a8632ed42f37a1a781fda5a008766768dc4"
+  },
+  {
+   "no": 6,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "AKR",
+   "tarih": "2023-04-14",
+   "f20": 0.0,
+   "sha256": "a51a45abfbabc04f84c22080204ad0c925982f149e79876b68b341b99a23869b"
+  },
+  {
+   "no": 7,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "CCAP",
+   "tarih": "2023-11-09",
+   "f20": 0.0,
+   "sha256": "c2d78d8a4558e9bf161e81b310502b803c40677d92ccc6a7b8253a71a80aa87a"
+  },
+  {
+   "no": 8,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "BXSL",
+   "tarih": "2023-12-04",
+   "f20": 0.0,
+   "sha256": "17591fcfac2f81cef09dcc75788e38060a0b71daa948cca6848f6ed9f8abf58e"
+  },
+  {
+   "no": 9,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "APG",
+   "tarih": "2026-03-24",
+   "f20": 0.0,
+   "sha256": "8410d3f28159cd92e153726d8ed13e9e5f1e0ba963671461a1f567daa9972594"
+  },
+  {
+   "no": 10,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "BKH",
+   "tarih": "2024-07-11",
+   "f20": 0.0,
+   "sha256": "bae4d9db0319da931ad021d47e58a313a539968f865c744a632c7e69888312ee"
+  },
+  {
+   "no": 11,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "FUN",
+   "tarih": "2024-02-05",
+   "f20": 0.0,
+   "sha256": "4d5f9aa2d748ef43a3bd8755e27429cba312b4d56e89c830d83aa36db3868541"
+  },
+  {
+   "no": 12,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "NXT",
+   "tarih": "2024-02-14",
+   "f20": 0.0,
+   "sha256": "945b2df4cf065e6568ed4b4f10296bdd8c49419b4451a39f0d40039ace7df593"
+  },
+  {
+   "no": 13,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "RCKY",
+   "tarih": "2026-05-05",
+   "f20": 0.0,
+   "sha256": "4503b221e0aa0b13bf128a69deab04122414d92d6db63718002613d313cde85c"
+  },
+  {
+   "no": 14,
+   "grup": "KONTROL",
+   "pazar": "AVR",
+   "sembol": "AGS.BR",
+   "tarih": "2025-03-24",
+   "f20": 1.0,
+   "sha256": "f6faed138ec116187983fb371db55ab1090b560c3d2fc13da08c5e70526ac3cc"
+  },
+  {
+   "no": 15,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "FLUT",
+   "tarih": "2024-10-30",
+   "f20": 0.0,
+   "sha256": "cc9271f44a4da96e1378882d61162728c5eb49f839c85fcd9434ec5fa3c52ec0"
+  },
+  {
+   "no": 16,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "AMWL",
+   "tarih": "2024-03-08",
+   "f20": 0.0,
+   "sha256": "e720fbbf4991bfedea4f460169d5e7b05d39609fceb987d0cd8c6dc644a0af3f"
+  },
+  {
+   "no": 17,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "PFLT",
+   "tarih": "2023-11-09",
+   "f20": 0.0,
+   "sha256": "61fd9603ed04b956e65efcfff79e4fe52495e0d770e0a0b0f06c3527c1e0e306"
+  },
+  {
+   "no": 18,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "ZWS",
+   "tarih": "2024-07-11",
+   "f20": 0.0,
+   "sha256": "3bb812d8fe29794e3710e598f9df3cfa74ea1cf2bb2f32b890323a561b666f2b"
+  },
+  {
+   "no": 19,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "FFBC",
+   "tarih": "2024-12-17",
+   "f20": 1.0,
+   "sha256": "ae7ee14be1181d20b22e5027f2366798ed934247fb30b82a37bbbcd70488a1e7"
+  },
+  {
+   "no": 20,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "CDXS",
+   "tarih": "2024-12-05",
+   "f20": 1.0,
+   "sha256": "c8616ac422f71ca687b917250e40a31c6da332b9407b138e83c39a8957ab3c3e"
+  },
+  {
+   "no": 21,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "ATI",
+   "tarih": "2024-10-30",
+   "f20": 0.0,
+   "sha256": "dfad57e8b884262bdc86474dbdf1bc6a6b9583679aa1ac26876c8c4070085059"
+  },
+  {
+   "no": 22,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "NVAX",
+   "tarih": "2026-06-25",
+   "f20": 0.0,
+   "sha256": "242b7c884d4bf898af201b0dd742c7a5b5ea6185a73482ca4ee63fb0f823a696"
+  },
+  {
+   "no": 23,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "MATW",
+   "tarih": "2023-04-14",
+   "f20": 1.0,
+   "sha256": "ceac67beb17f806d912d748e38af3cb264b18eda5e3d8d49f7fdbfd60b815fd2"
+  },
+  {
+   "no": 24,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "FET",
+   "tarih": "2026-05-05",
+   "f20": 0.0,
+   "sha256": "785b776387c4dac2b5578e1c3639c2a070a0069bb1fbf4f76192dbaefb24c6f2"
+  },
+  {
+   "no": 25,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "TDUP",
+   "tarih": "2024-03-14",
+   "f20": 0.0,
+   "sha256": "3bc2039c2939e99b582e264438a2aa1229a9cd07f3b54c924afb3de9d7e17ab2"
+  },
+  {
+   "no": 26,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "MBI",
+   "tarih": "2024-03-14",
+   "f20": 0.0,
+   "sha256": "cb0025fb2e656dcb44ca1b9a21c2e2367842a8e19571da61818452ee139a0486"
+  },
+  {
+   "no": 27,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "MTG",
+   "tarih": "2025-11-17",
+   "f20": 0.0,
+   "sha256": "c3bb5b0395c0335eaf82eeb462fffa36b9f913e30473d2b5c3648a79bd6a91ff"
+  },
+  {
+   "no": 28,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "IDYA",
+   "tarih": "2023-10-26",
+   "f20": 0.0,
+   "sha256": "d8142cb68d6e829f969c9b7ecba17326d45127ffe09d884a001a800fc598e69c"
+  },
+  {
+   "no": 29,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "BXMT",
+   "tarih": "2025-11-17",
+   "f20": 0.0,
+   "sha256": "2909c720e29338e743c98c52c2830cf0208c2ca7e98a013b4ddda0c7a0f529e6"
+  },
+  {
+   "no": 30,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "BYRN",
+   "tarih": "2024-03-08",
+   "f20": 1.0,
+   "sha256": "331d545bb4eb2b2d70ba10769be37363d86e1fde9a29cf5870e12402f357c989"
+  },
+  {
+   "no": 31,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "BNY",
+   "tarih": "2024-08-06",
+   "f20": 0.0,
+   "sha256": "45ff226c2310189400a4c1e84f22c87ff58e33a4752e1257ff71c7d3a063075e"
+  },
+  {
+   "no": 32,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "NRIX",
+   "tarih": "2026-06-25",
+   "f20": 0.0,
+   "sha256": "f3d29378a483653e2a6db5829137dc246c91432d661cfe59c5caa28038803951"
+  },
+  {
+   "no": 33,
+   "grup": "P1",
+   "pazar": "AVR",
+   "sembol": "SPSN.SW",
+   "tarih": "2025-03-24",
+   "f20": 1.0,
+   "sha256": "9840e7160cc722150e5e3a01a5b1886f442cf44db2e189017dbd0d8b22d5ea8c"
+  },
+  {
+   "no": 34,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "SBRA",
+   "tarih": "2024-03-14",
+   "f20": 0.0,
+   "sha256": "625ab5f05bb094d3e97974591ffdaa37ef278f2a69ad00b3416f33f9051185ce"
+  },
+  {
+   "no": 35,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "ALB",
+   "tarih": "2024-02-14",
+   "f20": 1.0,
+   "sha256": "fd153b8bc4007bc4658b65880e47231009e02eb1cab1e021fb45a4d0110e236e"
+  },
+  {
+   "no": 36,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "VVV",
+   "tarih": "2024-03-14",
+   "f20": 0.0,
+   "sha256": "0aac6a255d184bbda3392e1bd55a1ece8ca68b81db3111f242c8e9bf0c3dbc1c"
+  },
+  {
+   "no": 37,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "GIS",
+   "tarih": "2024-08-06",
+   "f20": 0.0,
+   "sha256": "fb586a29dd1af51394e5d0cdbfdff74020aa417c71efa62ca13a738e8da6031f"
+  },
+  {
+   "no": 38,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "NTRA",
+   "tarih": "2024-02-26",
+   "f20": 1.0,
+   "sha256": "5b9c89a8ac90cdfbab608726f2840e25b6ee8fe2892afb32a371b88801337cfd"
+  },
+  {
+   "no": 39,
+   "grup": "P1",
+   "pazar": "ABD",
+   "sembol": "BYD",
+   "tarih": "2024-12-17",
+   "f20": 0.0,
+   "sha256": "6f3580b1ddcb8a59235760726a12f2f9cb5365e14272c8affbf017fcfc72d104"
+  },
+  {
+   "no": 40,
+   "grup": "KONTROL",
+   "pazar": "ABD",
+   "sembol": "NCLH",
+   "tarih": "2024-02-26",
+   "f20": 1.0,
+   "sha256": "dd7befd3140be5ca3483fbe5bd19140f2f342c92f8adbee14685f89f6cd59519"
+  }
+ ]
+}
