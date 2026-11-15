@@ -1,5 +1,19 @@
 // =====================================================================================================
-// COL S5 Obek Sikismasi  -  Pine Script v5  (v1.2, 15 Kasim 2026)
+// COL S5 Obek Sikismasi  -  Pine Script v5  (v1.3, 15 Kasim 2026)
+//
+// v1.3 (15 Kasim 2026; Cemal'in itirazi, v1.2 uzerinde): "secilmis bolgede ilk ve son mumun kapanislarini birlestiren
+// dogrunun egimi bazi bolgelerde cok; bunlar sakin bolge degil." Olcum (BIST, 7.438 S5 karar gunu): pencere net
+// degisimi |son kapanis / ilk kapanis - 1| medyan %2,1, %75'lik %3,7, %90'lik %5,6; |net| > %5 olan %13 (DIP %9,
+// YOL USTU %20). Mevcut (c) sarti regresyon egimi x15 icin [-%2, +%10] oldugundan +%10'a kadar yukselen pencereye
+// izin veriyor. Yeni GORUNUM girdisi 'Net degisim suzgeci' (netEnCok, oran; varsayilan 0 = kapali, v1.2 birebir):
+//   - net = pencerenin (karar gunundeki son p = 15 gecerli bar) son kapanisi / ilk kapanisi - 1.
+//   - netEnCok > 0 iken |net| > netEnCok olan S5 gunlerinde kutu ACILMAZ ve UZAMAZ (acik kutu o gun kapanir);
+//     ucgen yerine kucuk gri 'x' ("net") basilir; boylece suzgecin eledigi bolgeler grafikte gorunur.
+//   - Tabloya 'pencere net degisimi (son/ilk)' (gecti / elendi / suzgec kapali) ve 'son bolge net degisimi'
+//     (kutunun ilk ve son gecerli kapanisi) satirlari eklendi.
+// UYARI: suzgec YALNIZ GOSTERIMDIR. S5 olcum tanimi, esikler, (c) sarti, karar gunu (olay) ve 'son S5' sayaci
+// DEGISMEDI: elenen gun olcumde hala S5'tir ve 20 barlik ara sayacini baslatir. Net degisim siniri olcume ancak
+// S6 on kaydinda, Cemal'in isaretledigi bolgelerle kalibre edilerek girer.
 //
 // v1.2 (15 Kasim 2026; Cemal, ENJSA ekran goruntusu, v1.1 uzerinde): kutu 15 mumla sabit cizildigi icin sinirlari
 // rastgele gorunuyordu: kutunun hemen ONCESINDEKI bir kucuk mum ve hemen SONRASINDAKI iki kucuk mum kutunun fiyat
@@ -43,6 +57,7 @@
 //     sonraki ardisik barlar (en cok 60); DIP = mavi, YOL USTU = turuncu (renk kutunun acildigi gundeki sinif).
 //     Istege bagli (varsayilan kapali): S5 gunu zemin boyasi
 //   - Karar gunu (bolgenin ilk S5 gunu; onceki 19 gecerli barda S5 yok) altinda kucuk ucgen
+//   - v1.3 (istege bagli, varsayilan kapali): net degisim suzgecinin eledigi S5 gunu altinda gri 'x' ("net")
 //   - Sag ustte bilgi tablosu: son barin olculeri, 250 gunluk ATR% ile 'kucuk mum' esigi
 //   - Bolge bitince (kosul dusunce) isaret yok
 //
@@ -113,6 +128,7 @@ gosterZemin = input.bool(false, "S5 gunlerini zemin boya (eski v1.0 gorunumu)", 
 genislet   = input.bool(true, "Kutuyu banda gore genislet (v1.2)", group=G2)
 bantTol    = input.float(0.0, "Bant toleransi (%)", minval=0.0, step=0.005, tooltip="Oran: 0.01 = %1. Kutunun ust sinirina x (1 + pay), alt sinirina x (1 - pay).", group=G2)
 uzunEnCok  = input.int(60, "Bolge en cok (bar)", minval=5, group=G2)
+netEnCok   = input.float(0.0, "Net degisim suzgeci |son/ilk-1| en cok (oran; 0 = kapali)", minval=0.0, step=0.01, tooltip="v1.3, yalniz gosterim. Oran: 0.05 = %5. Pencerenin son / ilk kapanisi - 1 mutlak degeri bunu asan S5 gununde kutu acilmaz / uzamaz, gri x basilir.", group=G2)
 
 bant = pazar == "BIST" ? bantBIST : bantDiger
 
@@ -203,6 +219,8 @@ bool cd  = false
 bool ce  = false
 bool dip = false
 bool yol = false
+float net   = na                            // v1.3: pencere son kapanis / ilk kapanis - 1
+bool  netEl = false                         // v1.3: bugun S5 ve net suzgeci eledi (yalniz cizim)
 
 // bolge kutusu (v1.1; v1.2 bant genisletmesi)
 var box[] kutular  = array.new_box(0)       // cizilen kutular (en cok 500; eskiler silinir)
@@ -217,6 +235,9 @@ var float kutuAlt  = na                     // v1.2: bant alti (kutunun alt kena
 var int   kutuGec  = na                     // kutudaki gecerli bar sayisi
 var int   kutuIlkI = na                     // kutunun ilk gecerli bar sirasi
 var bool  kutuDip  = false                  // kutunun sinifi (karar gunundeki): true = DIP, false = YOL USTU
+var float kutuCIlk = na                     // v1.3: kutunun ilk gecerli barinin kapanisi
+var float kutuCSon = na                     // v1.3: kutunun son barinin kapanisi
+var bool  yeniGerek = false                 // v1.3 (v1.1 modu): karar gunu elendi, sonraki S5 gunu yeni kutu acar
 
 if gecerli
     float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
@@ -315,6 +336,12 @@ if gecerli
         s5y := cek and yol
         s5  := s5d or s5y
         olay := s5 and (i - sonS5 >= ara)
+        // v1.3 pencere net degisimi suzgeci (yalniz cizim; s5 ve olay yukarida, degismez)
+        net := array.get(aC, sz - 1) / array.get(aC, sz - p) - 1.0
+        netEl := s5 and netEnCok > 0 and math.abs(net) > netEnCok
+        bool s5k = s5 and not netEl          // kutu icin S5 (suzgec kapaliyken s5 ile ayni)
+        if olay and netEl
+            yeniGerek := true
         // ------------------------------------------------ bolge kutusu (yalniz cizim; S5 ve olay yukarida, degismez)
         // pencere (son p gecerli bar) en yuksek High / en dusuk Low (yalniz S5 gununde gerekir)
         float pUst = na
@@ -327,10 +354,10 @@ if gecerli
                 pAlt := math.min(pAlt, array.get(aL, j))
         if not genislet
             // v1.1 davranisi (degismedi): yeni bolge ya da ayni bolgede (son S5 gununden < ara) ayni kutu uzar
-            if s5
+            if s5k
                 int ilkBar = geriI(aIdx, p - 1)
                 int ilkZ   = geriI(aZmn, p - 1)
-                if olay or na(kutu)
+                if olay or na(kutu) or yeniGerek
                     // yeni bolge: pencerenin ilk gecerli barindan bugune yeni kutu
                     color dolgu = s5d ? renkDip : renkYol
                     color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
@@ -343,6 +370,8 @@ if gecerli
                     kutuBasZ := ilkZ
                     kutuIlkI := i - p + 1
                     kutuDip  := s5d
+                    kutuCIlk := geri(aC, p - 1)
+                    yeniGerek := false
                 else
                     // ayni bolge (son S5 gununden < ara gecerli bar): ayni kutu saga ve dikeyde genisler
                     box.set_right(kutu, bar_index)
@@ -351,9 +380,13 @@ if gecerli
                 kutuSag  := bar_index
                 kutuSonZ := time
                 kutuGec  := i - kutuIlkI + 1
+                kutuCSon := close
         else
             // v1.2 (1) ILERIYE: acik kutu bugun bandin icindeyse ya da bugun S5 tutuyorsa saga uzar; degilse kapanir.
             // Karar gunu (olay) gelirse eski kutu bugunu almadan kapanir, asagida yeni kutu acilir.
+            // v1.3: suzgecin eledigi S5 gunu kutuyu uzatmaz; acik kutu bugunu almadan kapanir (suzgec kapaliyken netEl hep false)
+            if kutuAcik and netEl
+                kutuAcik := false
             if kutuAcik and not olay
                 bool icerde = high <= kutuUst * (1.0 + bantTol) and low >= kutuAlt * (1.0 - bantTol)
                 int uzunYeni = i - kutuIlkI + 1
@@ -367,10 +400,11 @@ if gecerli
                     kutuSag  := bar_index
                     kutuSonZ := time
                     kutuGec  := uzunYeni
+                    kutuCSon := close
                 else
                     kutuAcik := false
             // v1.2 (2) YENI KUTU: karar gunu ya da kapanmis kutudan sonra gelen S5 gunu
-            if s5 and (olay or not kutuAcik)
+            if s5k and (olay or not kutuAcik)
                 // GERIYE: pencerenin ilk gecerli barindan geriye, bant icindeki ardisik gecerli barlar (bant sabit)
                 int sinir = na(kutuSag) ? -1 : kutuSag     // onceki kutunun sag kenari: geriye genisleme onu gecmez
                 float bU = pUst * (1.0 + bantTol)
@@ -403,18 +437,22 @@ if gecerli
                 kutuSag  := bar_index
                 kutuSonZ := time
                 kutuGec  := ilkK + 1
+                kutuCIlk := geri(aC, ilkK)
+                kutuCSon := close
+                yeniGerek := false
         if s5
             sonS5 := i
 
 // ---------------------------------------------------------------- cizim
 bgcolor(gosterZemin and s5d ? renkDip : gosterZemin and s5y ? renkYol : na, title="S5 gunu zemini (istege bagli)")
-plotshape(olay and s5d, "Karar gunu (DIP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
-plotshape(olay and s5y, "Karar gunu (YOL USTU)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
+plotshape(olay and s5d and not netEl, "Karar gunu (DIP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
+plotshape(olay and s5y and not netEl, "Karar gunu (YOL USTU)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
+plotshape(netEl, "Net suzgeci eledi (v1.3)", shape.xcross, location.belowbar, color.new(color.gray, 0), size=size.tiny, text="net")
 
 yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
 ev(bool b) => b ? "EVET" : "hayir"
 
-var table tb = table.new(position.top_right, 3, 12, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 3, 14, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
     table.cell(tb, 1, 0, "deger", text_size=size.small)
@@ -458,6 +496,14 @@ if gosterTab and barstate.islast
     table.cell(tb, 0, 11, "bant ust / alt (tolerans " + yz(bantTol) + ")", text_size=size.small)
     table.cell(tb, 1, 11, na(kU) ? "-" : str.tostring(kU, format.mintick) + " / " + str.tostring(kA, format.mintick), text_size=size.small)
     table.cell(tb, 2, 11, kDurum, text_size=size.small)
+    string netDurum = netEnCok <= 0 ? "suzgec kapali" : na(net) ? "-" : math.abs(net) > netEnCok ? "elendi (> " + yz(netEnCok) + ")" : "gecti"
+    table.cell(tb, 0, 12, "pencere net degisimi (son/ilk)", text_size=size.small)
+    table.cell(tb, 1, 12, yz(net), text_size=size.small)
+    table.cell(tb, 2, 12, netDurum, text_size=size.small)
+    float kNet = na(kutuCIlk) or na(kutuCSon) or not varKutu ? na : kutuCSon / kutuCIlk - 1.0
+    table.cell(tb, 0, 13, "son bolge net degisimi (kutu son/ilk)", text_size=size.small)
+    table.cell(tb, 1, 13, yz(kNet), text_size=size.small)
+    table.cell(tb, 2, 13, "kutunun ilk / son gecerli kapanisi", text_size=size.small)
 
 // =====================================================================================================
 // BEKLENEN BOYALI GUNLER (dogrulama tablosu; Cemal grafikte karsilastirir)

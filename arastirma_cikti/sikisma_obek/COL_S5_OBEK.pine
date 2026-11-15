@@ -1,5 +1,19 @@
 // =====================================================================================================
-// COL S5 Öbek Sıkışması  —  Pine Script v5  (v1.2, 15 Kasım 2026)
+// COL S5 Öbek Sıkışması  —  Pine Script v5  (v1.3, 15 Kasım 2026)
+//
+// v1.3 (15 Kasım 2026; Cemal'in itirazı, v1.2 üzerinde): "seçilmiş bölgede ilk ve son mumun kapanışlarını birleştiren
+// doğrunun eğimi bazı bölgelerde çok; bunlar sakin bölge değil." Ölçüm (BIST, 7.438 S5 karar günü): pencere net
+// değişimi |son kapanış / ilk kapanış - 1| medyan %2,1, %75'lik %3,7, %90'lık %5,6; |net| > %5 olan %13 (DİP %9,
+// YOL ÜSTÜ %20). Mevcut (c) şartı regresyon eğimi x15 için [-%2, +%10] olduğundan +%10'a kadar yükselen pencereye
+// izin veriyor. Yeni GÖRÜNÜM girdisi 'Net değişim süzgeci' (netEnCok, oran; varsayılan 0 = kapalı, v1.2 birebir):
+//   - net = pencerenin (karar günündeki son p = 15 geçerli bar) son kapanışı / ilk kapanışı - 1.
+//   - netEnCok > 0 iken |net| > netEnCok olan S5 günlerinde kutu AÇILMAZ ve UZAMAZ (açık kutu o gün kapanır);
+//     üçgen yerine küçük gri 'x' ("net") basılır; böylece süzgecin elediği bölgeler grafikte görünür.
+//   - Tabloya 'pencere net değişimi (son/ilk)' (geçti / elendi / süzgeç kapalı) ve 'son bölge net değişimi'
+//     (kutunun ilk ve son geçerli kapanışı) satırları eklendi.
+// UYARI: süzgeç YALNIZ GÖSTERİMDİR. S5 ölçüm tanımı, eşikler, (c) şartı, karar günü (olay) ve 'son S5' sayacı
+// DEĞİŞMEDİ: elenen gün ölçümde hâlâ S5'tir ve 20 barlık ara sayacını başlatır. Net değişim sınırı ölçüme ancak
+// S6 ön kaydında, Cemal'in işaretlediği bölgelerle kalibre edilerek girer.
 //
 // v1.2 (15 Kasım 2026; Cemal, ENJSA ekran görüntüsü, v1.1 üzerinde): kutu 15 mumla sabit çizildiği için sınırları
 // rastgele görünüyordu: kutunun hemen ÖNCESİNDEKİ bir küçük mum ve hemen SONRASINDAKİ iki küçük mum kutunun fiyat
@@ -43,6 +57,7 @@
 //     sonraki ardışık barlar (en çok 60); DİP = mavi, YOL ÜSTÜ = turuncu (renk kutunun açıldığı gündeki sınıf).
 //     İsteğe bağlı (varsayılan kapalı): S5 günü zemin boyası
 //   - Karar günü (bölgenin ilk S5 günü; önceki 19 geçerli barda S5 yok) altında küçük üçgen
+//   - v1.3 (isteğe bağlı, varsayılan kapalı): net değişim süzgecinin elediği S5 günü altında gri 'x' ("net")
 //   - Sağ üstte bilgi tablosu: son barın ölçüleri, 250 günlük ATR% ile 'küçük mum' eşiği
 //   - Bölge bitince (koşul düşünce) işaret yok
 //
@@ -113,6 +128,7 @@ gosterZemin = input.bool(false, "S5 günlerini zemin boya (eski v1.0 görünüm�
 genislet   = input.bool(true, "Kutuyu banda göre genişlet (v1.2)", group=G2)
 bantTol    = input.float(0.0, "Bant toleransı (%)", minval=0.0, step=0.005, tooltip="Oran: 0.01 = %1. Kutunun üst sınırına x (1 + pay), alt sınırına x (1 - pay).", group=G2)
 uzunEnCok  = input.int(60, "Bölge en çok (bar)", minval=5, group=G2)
+netEnCok   = input.float(0.0, "Net değişim süzgeci |son/ilk-1| en çok (oran; 0 = kapalı)", minval=0.0, step=0.01, tooltip="v1.3, yalnız gösterim. Oran: 0.05 = %5. Pencerenin son / ilk kapanışı - 1 mutlak değeri bunu aşan S5 gününde kutu açılmaz / uzamaz, gri x basılır.", group=G2)
 
 bant = pazar == "BIST" ? bantBIST : bantDiger
 
@@ -203,6 +219,8 @@ bool cd  = false
 bool ce  = false
 bool dip = false
 bool yol = false
+float net   = na                            // v1.3: pencere son kapanış / ilk kapanış - 1
+bool  netEl = false                         // v1.3: bugün S5 ve net süzgeci eledi (yalnız çizim)
 
 // bölge kutusu (v1.1; v1.2 bant genişletmesi)
 var box[] kutular  = array.new_box(0)       // çizilen kutular (en çok 500; eskiler silinir)
@@ -217,6 +235,9 @@ var float kutuAlt  = na                     // v1.2: bant altı (kutunun alt ken
 var int   kutuGec  = na                     // kutudaki geçerli bar sayısı
 var int   kutuIlkI = na                     // kutunun ilk geçerli bar sırası
 var bool  kutuDip  = false                  // kutunun sınıfı (karar günündeki): true = DİP, false = YOL ÜSTÜ
+var float kutuCIlk = na                     // v1.3: kutunun ilk geçerli barının kapanışı
+var float kutuCSon = na                     // v1.3: kutunun son barının kapanışı
+var bool  yeniGerek = false                 // v1.3 (v1.1 modu): karar günü elendi, sonraki S5 günü yeni kutu açar
 
 if gecerli
     float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
@@ -315,6 +336,12 @@ if gecerli
         s5y := cek and yol
         s5  := s5d or s5y
         olay := s5 and (i - sonS5 >= ara)
+        // v1.3 pencere net değişimi süzgeci (yalnız çizim; s5 ve olay yukarıda, değişmez)
+        net := array.get(aC, sz - 1) / array.get(aC, sz - p) - 1.0
+        netEl := s5 and netEnCok > 0 and math.abs(net) > netEnCok
+        bool s5k = s5 and not netEl          // kutu için S5 (süzgeç kapalıyken s5 ile aynı)
+        if olay and netEl
+            yeniGerek := true
         // ------------------------------------------------ bölge kutusu (yalnız çizim; S5 ve olay yukarıda, değişmez)
         // pencere (son p geçerli bar) en yüksek High / en düşük Low (yalnız S5 gününde gerekir)
         float pUst = na
@@ -327,10 +354,10 @@ if gecerli
                 pAlt := math.min(pAlt, array.get(aL, j))
         if not genislet
             // v1.1 davranışı (değişmedi): yeni bölge ya da aynı bölgede (son S5 gününden < ara) aynı kutu uzar
-            if s5
+            if s5k
                 int ilkBar = geriI(aIdx, p - 1)
                 int ilkZ   = geriI(aZmn, p - 1)
-                if olay or na(kutu)
+                if olay or na(kutu) or yeniGerek
                     // yeni bölge: pencerenin ilk geçerli barından bugüne yeni kutu
                     color dolgu = s5d ? renkDip : renkYol
                     color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
@@ -343,6 +370,8 @@ if gecerli
                     kutuBasZ := ilkZ
                     kutuIlkI := i - p + 1
                     kutuDip  := s5d
+                    kutuCIlk := geri(aC, p - 1)
+                    yeniGerek := false
                 else
                     // aynı bölge (son S5 gününden < ara geçerli bar): aynı kutu sağa ve dikeyde genişler
                     box.set_right(kutu, bar_index)
@@ -351,9 +380,13 @@ if gecerli
                 kutuSag  := bar_index
                 kutuSonZ := time
                 kutuGec  := i - kutuIlkI + 1
+                kutuCSon := close
         else
             // v1.2 (1) İLERİYE: açık kutu bugün bandın içindeyse ya da bugün S5 tutuyorsa sağa uzar; değilse kapanır.
             // Karar günü (olay) gelirse eski kutu bugünü almadan kapanır, aşağıda yeni kutu açılır.
+            // v1.3: süzgecin elediği S5 günü kutuyu uzatmaz; açık kutu bugünü almadan kapanır (süzgeç kapalıyken netEl hep false)
+            if kutuAcik and netEl
+                kutuAcik := false
             if kutuAcik and not olay
                 bool icerde = high <= kutuUst * (1.0 + bantTol) and low >= kutuAlt * (1.0 - bantTol)
                 int uzunYeni = i - kutuIlkI + 1
@@ -367,10 +400,11 @@ if gecerli
                     kutuSag  := bar_index
                     kutuSonZ := time
                     kutuGec  := uzunYeni
+                    kutuCSon := close
                 else
                     kutuAcik := false
             // v1.2 (2) YENİ KUTU: karar günü ya da kapanmış kutudan sonra gelen S5 günü
-            if s5 and (olay or not kutuAcik)
+            if s5k and (olay or not kutuAcik)
                 // GERİYE: pencerenin ilk geçerli barından geriye, bant içindeki ardışık geçerli barlar (bant sabit)
                 int sinir = na(kutuSag) ? -1 : kutuSag     // önceki kutunun sağ kenarı: geriye genişleme onu geçmez
                 float bU = pUst * (1.0 + bantTol)
@@ -403,18 +437,22 @@ if gecerli
                 kutuSag  := bar_index
                 kutuSonZ := time
                 kutuGec  := ilkK + 1
+                kutuCIlk := geri(aC, ilkK)
+                kutuCSon := close
+                yeniGerek := false
         if s5
             sonS5 := i
 
 // ---------------------------------------------------------------- çizim
 bgcolor(gosterZemin and s5d ? renkDip : gosterZemin and s5y ? renkYol : na, title="S5 günü zemini (isteğe bağlı)")
-plotshape(olay and s5d, "Karar günü (DİP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
-plotshape(olay and s5y, "Karar günü (YOL ÜSTÜ)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
+plotshape(olay and s5d and not netEl, "Karar günü (DİP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
+plotshape(olay and s5y and not netEl, "Karar günü (YOL ÜSTÜ)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
+plotshape(netEl, "Net süzgeci eledi (v1.3)", shape.xcross, location.belowbar, color.new(color.gray, 0), size=size.tiny, text="net")
 
 yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
 ev(bool b) => b ? "EVET" : "hayır"
 
-var table tb = table.new(position.top_right, 3, 12, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 3, 14, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
     table.cell(tb, 1, 0, "değer", text_size=size.small)
@@ -458,6 +496,14 @@ if gosterTab and barstate.islast
     table.cell(tb, 0, 11, "bant üst / alt (tolerans " + yz(bantTol) + ")", text_size=size.small)
     table.cell(tb, 1, 11, na(kU) ? "-" : str.tostring(kU, format.mintick) + " / " + str.tostring(kA, format.mintick), text_size=size.small)
     table.cell(tb, 2, 11, kDurum, text_size=size.small)
+    string netDurum = netEnCok <= 0 ? "süzgeç kapalı" : na(net) ? "-" : math.abs(net) > netEnCok ? "elendi (> " + yz(netEnCok) + ")" : "geçti"
+    table.cell(tb, 0, 12, "pencere net değişimi (son/ilk)", text_size=size.small)
+    table.cell(tb, 1, 12, yz(net), text_size=size.small)
+    table.cell(tb, 2, 12, netDurum, text_size=size.small)
+    float kNet = na(kutuCIlk) or na(kutuCSon) or not varKutu ? na : kutuCSon / kutuCIlk - 1.0
+    table.cell(tb, 0, 13, "son bölge net değişimi (kutu son/ilk)", text_size=size.small)
+    table.cell(tb, 1, 13, yz(kNet), text_size=size.small)
+    table.cell(tb, 2, 13, "kutunun ilk / son geçerli kapanışı", text_size=size.small)
 
 // =====================================================================================================
 // BEKLENEN BOYALI GÜNLER (doğrulama tablosu; Cemal grafikte karşılaştırır)

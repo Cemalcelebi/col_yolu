@@ -21,3 +21,16 @@
 - Bilinen görsel durum: kapanan kutudan kısa süre sonra açılan yeni kutunun 15 barlık penceresi önceki kutuyla üst üste binebilir (pencere her zaman tam çizilir; yalnız geriye genişleme önceki kutuyu geçmez).
 - COL_S5_OBEK_ascii.pine yeniden üretildi: ASCII dışı karakter 0, yorum / dize dışındaki kod birebir aynı (501 satır).
 - Derleyici yok: v1.2 TradingView'de ilk yapıştırmada denetlenmeli.
+
+## v1.3 (15 Kasım 2026)
+
+- Sorun (Cemal'in itirazı): "seçilmiş bölgede ilk ve son mumun kapanışlarını birleştiren doğrunun eğimi bazı bölgelerde çok; bunlar sakin bölge değil."
+- Ölçüm (BIST, 7.438 S5 karar günü): pencere net değişimi |son kapanış / ilk kapanış - 1| medyan %2,1, %75'lik %3,7, %90'lık %5,6; |net| > %5 olan %13 (DİP %9, YOL ÜSTÜ %20). (c) şartı regresyon eğimi x15 için [-%2, +%10] olduğundan +%10'a kadar yükselen pencereye izin veriyor.
+- Yeni girdi (Görünüm): `netEnCok` ('Net değişim süzgeci |son/ilk-1| en çok (oran; 0 = kapalı)', varsayılan 0). 0 iken davranış v1.2 ile birebir aynı.
+- `net = aC[son] / aC[son - p + 1] - 1` (karar günündeki 15 geçerli barlık pencerenin ilk ve son geçerli kapanışı), her ölçülen günde hesaplanır. `netEl = s5 and netEnCok > 0 and |net| > netEnCok` (global bool seri); kutu kodu `s5` yerine `s5k = s5 and not netEl` kullanır.
+- netEl günü: kutu AÇILMAZ, UZAMAZ; v1.2 modunda açık kutu o günü almadan kapanır (sonraki geçen S5 günü üçgensiz yeni kutu açar). v1.1 modunda karar günü elenirse (`yeniGerek`) aynı bölgedeki sonraki geçen S5 günü eski kutuyu uzatmaz, yeni kutu açar. Üçgen yerine gri 'x' ("net", plotshape shape.xcross, size.tiny) basılır.
+- Değişmeyen: S5 ölçüm tanımı, eşikler, (c) şartı, karar günü (olay) ve `sonS5` sayacı. Elenen gün ölçümde hâlâ S5'tir ve 20 barlık ara sayacını başlatır (elenen karar gününden sonraki 19 bar içinde üçgen çıkmaz).
+- Tablo (14 satır): 'pencere net değişimi (son/ilk)' = net % ve süzgeç durumu (geçti / elendi (> x%) / süzgeç kapalı); 'son bölge net değişimi (kutu son/ilk)' = kutunun ilk geçerli kapanışı (`kutuCIlk`) ile son barının kapanışı (`kutuCSon`).
+- Süzgeç yalnız gösterimdir. Net değişim sınırı ölçüme ancak S6 ön kaydında, Cemal'in işaretlediği bölgelerle kalibre edilerek girer.
+- COL_S5_OBEK_ascii.pine yeniden üretildi: ASCII dışı karakter 0, yorum / dize dışındaki kod birebir aynı (548 satır).
+- Derleyici yok: v1.3 TradingView'de ilk yapıştırmada denetlenmeli.
