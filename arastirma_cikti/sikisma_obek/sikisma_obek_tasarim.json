@@ -1,0 +1,2633 @@
+{
+ "zaman_utc": "2026-11-15 09:10:01 UTC",
+ "kaynak": [
+  "ekran",
+  "V_BIST"
+ ],
+ "en_cok_tutan": 14,
+ "toplam": 14,
+ "tam_tutan_nokta": 16,
+ "aday_nokta": 16,
+ "nokta_sayisi": 72,
+ "secilen": {
+  "p": 15,
+  "k_m": 0.75,
+  "bant": {
+   "BIST": 0.08,
+   "ABD": 0.06,
+   "AVR": 0.06
+  },
+  "bb": 0.2,
+  "uzunluk": "p"
+ },
+ "secilen_sonuc": {
+  "FENER-E|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-31",
+    "2025-11-03",
+    "2025-11-04",
+    "2025-11-05",
+    "2025-11-06",
+    "2025-11-07"
+   ],
+   "ilk_s5": "2025-10-31",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-31",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.030745072860950365,
+    "atr5": 0.04999172928508774,
+    "obek": 0.037525344669613325,
+    "egim": 0.02227627707522233,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.156,
+    "konum": 0.012021192554531981,
+    "dd120": -0.826768975565515
+   }
+  },
+  "CCOLA-E|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-02",
+    "2025-10-07",
+    "2025-10-08",
+    "2025-10-09",
+    "2025-10-10",
+    "2025-10-13",
+    "2025-10-14",
+    "2025-10-15",
+    "2025-10-16",
+    "2025-10-17"
+   ],
+   "ilk_s5": "2025-10-02",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-02",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.020721578394669475,
+    "atr5": 0.03329220482957823,
+    "obek": 0.05421948953280964,
+    "egim": -0.01736936131253835,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.08,
+    "konum": 0.1953486952670785,
+    "dd120": -0.15377780490451387
+   }
+  },
+  "ENJSA-T|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-12",
+    "2025-08-13",
+    "2025-08-14"
+   ],
+   "ilk_s5": "2025-08-06",
+   "sinif_ilk": "YOL",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-08-06",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.021714101709839985,
+    "atr5": 0.033335811043615424,
+    "obek": 0.04208880567450923,
+    "egim": 0.006314698934505584,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.172,
+    "konum": 0.929999814351447,
+    "dd120": -0.01566000005916901
+   }
+  },
+  "FENER-A|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "cek": false,
+    "dip": true,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-12-05",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.03566303163124537,
+    "atr5": 0.05065653724003504,
+    "obek": 0.19056969766464094,
+    "egim": -0.2092170296017536,
+    "asagi": 0.26666666666666666,
+    "bbp": 0.528,
+    "konum": 0.015645052169578403,
+    "dd120": -0.7903624378648599
+   }
+  },
+  "CCOLA-T|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-07-29",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.02419083021600832,
+    "atr5": 0.03958559181966661,
+    "obek": 0.05473558939029277,
+    "egim": 0.013160589334606756,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.048,
+    "konum": 0.2819670829168174,
+    "dd120": -0.1518197923813026
+   }
+  },
+  "ENJSA-O|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-02-14",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.022829786238124664,
+    "atr5": 0.032894180955665604,
+    "obek": 0.03666667938232426,
+    "egim": -0.006155783419975961,
+    "asagi": 0.2,
+    "bbp": 0.024,
+    "konum": 0.8193833028493608,
+    "dd120": -0.03198126811014179
+   }
+  },
+  "ENJSA-A|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": false,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2026-01-09",
+   "en_iyi_gun_kosul": {
+    "ca": false,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.025345191440158163,
+    "atr5": 0.03369718008542663,
+    "obek": 0.06467941396295895,
+    "egim": 0.07089746574081511,
+    "asagi": 0.0,
+    "bbp": 0.196,
+    "konum": 1.0,
+    "dd120": 0.0
+   }
+  },
+  "FENER-E|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-31",
+    "2025-11-03",
+    "2025-11-04",
+    "2025-11-05",
+    "2025-11-06",
+    "2025-11-07"
+   ],
+   "ilk_s5": "2025-10-31",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-31",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.030745072860950365,
+    "atr5": 0.04460321829134511,
+    "obek": 0.0375253446696131,
+    "egim": 0.022276277075222357,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.156,
+    "konum": 0.11729623698746657,
+    "dd120": -0.3041096176745893
+   }
+  },
+  "CCOLA-E|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-02",
+    "2025-10-07",
+    "2025-10-08",
+    "2025-10-09",
+    "2025-10-10",
+    "2025-10-13",
+    "2025-10-14",
+    "2025-10-15",
+    "2025-10-16",
+    "2025-10-17"
+   ],
+   "ilk_s5": "2025-10-02",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-02",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.020721578394669475,
+    "atr5": 0.033292204829578224,
+    "obek": 0.05421948953280964,
+    "egim": -0.01736936131253835,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.08,
+    "konum": 0.1953486952670785,
+    "dd120": -0.15377780490451387
+   }
+  },
+  "ENJSA-T|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-12",
+    "2025-08-13",
+    "2025-08-14"
+   ],
+   "ilk_s5": "2025-08-06",
+   "sinif_ilk": "YOL",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-08-06",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.021714101709839985,
+    "atr5": 0.03333581104361542,
+    "obek": 0.04208880567450923,
+    "egim": 0.006314698934505584,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.172,
+    "konum": 0.929999814351447,
+    "dd120": -0.01566000005916901
+   }
+  },
+  "FENER-A|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "cek": false,
+    "dip": true,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-12-10",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.03324581859027302,
+    "atr5": 0.04532326716309965,
+    "obek": 0.20850196782198638,
+    "egim": -0.2333540257525759,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.752,
+    "konum": 0.06163029369752185,
+    "dd120": -0.3232876810756401
+   }
+  },
+  "CCOLA-T|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-07-29",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.02419083021600832,
+    "atr5": 0.03605836264439819,
+    "obek": 0.05473558939029277,
+    "egim": 0.013160589334606756,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.048,
+    "konum": 0.2819670829168174,
+    "dd120": -0.1518197923813026
+   }
+  },
+  "ENJSA-O|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-02-14",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.022829786238124664,
+    "atr5": 0.03289418095566561,
+    "obek": 0.03666667938232426,
+    "egim": -0.006155783419975961,
+    "asagi": 0.2,
+    "bbp": 0.024,
+    "konum": 0.8193833028493608,
+    "dd120": -0.03198126811014179
+   }
+  },
+  "ENJSA-A|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": false,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2026-01-09",
+   "en_iyi_gun_kosul": {
+    "ca": false,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.025345191440158163,
+    "atr5": 0.03369718008542664,
+    "obek": 0.06467941396295895,
+    "egim": 0.07089746574081511,
+    "asagi": 0.0,
+    "bbp": 0.196,
+    "konum": 1.0,
+    "dd120": 0.0
+   }
+  }
+ },
+ "noktalar": [
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 0,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": []
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 15,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 5,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "ENJSA-T|ekran",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.65,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 8,
+   "toplam": 14,
+   "fark": 5,
+   "kacan": [
+    "FENER-E|ekran",
+    "CCOLA-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "CCOLA-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 1,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.75,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 2,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 0,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "p",
+   "tutan": 14,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": []
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.15,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 5,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 3,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.2,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "p",
+   "tutan": 12,
+   "toplam": 14,
+   "fark": 4,
+   "kacan": [
+    "ENJSA-A|ekran",
+    "ENJSA-A|V_BIST"
+   ]
+  },
+  {
+   "p": 20,
+   "k_m": 0.85,
+   "bant_i": 1,
+   "bant": {
+    "BIST": 0.1,
+    "ABD": 0.08,
+    "AVR": 0.08
+   },
+   "bb": 0.25,
+   "uzunluk": "10",
+   "tutan": 10,
+   "toplam": 14,
+   "fark": 5,
+   "kacan": [
+    "FENER-E|ekran",
+    "ENJSA-T|ekran",
+    "FENER-E|V_BIST",
+    "ENJSA-T|V_BIST"
+   ]
+  }
+ ],
+ "orta_sonuc": {
+  "FENER-E|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-31",
+    "2025-11-03",
+    "2025-11-04",
+    "2025-11-05",
+    "2025-11-06",
+    "2025-11-07"
+   ],
+   "ilk_s5": "2025-10-31",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-31",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.030745072860950365,
+    "atr5": 0.04999172928508774,
+    "obek": 0.037525344669613325,
+    "egim": 0.02227627707522233,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.156,
+    "konum": 0.012021192554531981,
+    "dd120": -0.826768975565515
+   }
+  },
+  "CCOLA-E|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-02",
+    "2025-10-07",
+    "2025-10-08",
+    "2025-10-09",
+    "2025-10-10",
+    "2025-10-13",
+    "2025-10-14",
+    "2025-10-15",
+    "2025-10-16",
+    "2025-10-17"
+   ],
+   "ilk_s5": "2025-10-02",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-02",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.020721578394669475,
+    "atr5": 0.03329220482957823,
+    "obek": 0.05421948953280964,
+    "egim": -0.01736936131253835,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.08,
+    "konum": 0.1953486952670785,
+    "dd120": -0.15377780490451387
+   }
+  },
+  "ENJSA-T|ekran": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-12",
+    "2025-08-13",
+    "2025-08-14"
+   ],
+   "ilk_s5": "2025-08-06",
+   "sinif_ilk": "YOL",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-08-06",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.021714101709839985,
+    "atr5": 0.033335811043615424,
+    "obek": 0.04208880567450923,
+    "egim": 0.006314698934505584,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.172,
+    "konum": 0.929999814351447,
+    "dd120": -0.01566000005916901
+   }
+  },
+  "FENER-A|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "cek": false,
+    "dip": true,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-12-05",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.03566303163124537,
+    "atr5": 0.05065653724003504,
+    "obek": 0.19056969766464094,
+    "egim": -0.2092170296017536,
+    "asagi": 0.26666666666666666,
+    "bbp": 0.528,
+    "konum": 0.015645052169578403,
+    "dd120": -0.7903624378648599
+   }
+  },
+  "CCOLA-T|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-07-29",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.02419083021600832,
+    "atr5": 0.03958559181966661,
+    "obek": 0.05473558939029277,
+    "egim": 0.013160589334606756,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.048,
+    "konum": 0.2819670829168174,
+    "dd120": -0.1518197923813026
+   }
+  },
+  "ENJSA-O|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-02-14",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.022829786238124664,
+    "atr5": 0.032894180955665604,
+    "obek": 0.03666667938232426,
+    "egim": -0.006155783419975961,
+    "asagi": 0.2,
+    "bbp": 0.024,
+    "konum": 0.8193833028493608,
+    "dd120": -0.03198126811014179
+   }
+  },
+  "ENJSA-A|ekran": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": false,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2026-01-09",
+   "en_iyi_gun_kosul": {
+    "ca": false,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.025345191440158163,
+    "atr5": 0.03369718008542663,
+    "obek": 0.06467941396295895,
+    "egim": 0.07089746574081511,
+    "asagi": 0.0,
+    "bbp": 0.196,
+    "konum": 1.0,
+    "dd120": 0.0
+   }
+  },
+  "FENER-E|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-31",
+    "2025-11-03",
+    "2025-11-04",
+    "2025-11-05",
+    "2025-11-06",
+    "2025-11-07"
+   ],
+   "ilk_s5": "2025-10-31",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-31",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.030745072860950365,
+    "atr5": 0.04460321829134511,
+    "obek": 0.0375253446696131,
+    "egim": 0.022276277075222357,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.156,
+    "konum": 0.11729623698746657,
+    "dd120": -0.3041096176745893
+   }
+  },
+  "CCOLA-E|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-10-02",
+    "2025-10-07",
+    "2025-10-08",
+    "2025-10-09",
+    "2025-10-10",
+    "2025-10-13",
+    "2025-10-14",
+    "2025-10-15",
+    "2025-10-16",
+    "2025-10-17"
+   ],
+   "ilk_s5": "2025-10-02",
+   "sinif_ilk": "DIP",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": true,
+    "yol": false,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-10-02",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.020721578394669475,
+    "atr5": 0.033292204829578224,
+    "obek": 0.05421948953280964,
+    "egim": -0.01736936131253835,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.08,
+    "konum": 0.1953486952670785,
+    "dd120": -0.15377780490451387
+   }
+  },
+  "ENJSA-T|V_BIST": {
+   "tutar": true,
+   "s5_gun": [
+    "2025-08-06",
+    "2025-08-07",
+    "2025-08-12",
+    "2025-08-13",
+    "2025-08-14"
+   ],
+   "ilk_s5": "2025-08-06",
+   "sinif_ilk": "YOL",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": true
+   },
+   "en_iyi_gun": "2025-08-06",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.021714101709839985,
+    "atr5": 0.03333581104361542,
+    "obek": 0.04208880567450923,
+    "egim": 0.006314698934505584,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.172,
+    "konum": 0.929999814351447,
+    "dd120": -0.01566000005916901
+   }
+  },
+  "FENER-A|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "cek": false,
+    "dip": true,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-12-10",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": false,
+    "cc": false,
+    "cd": true,
+    "ce": false,
+    "cf": true,
+    "dip": true,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.03324581859027302,
+    "atr5": 0.04532326716309965,
+    "obek": 0.20850196782198638,
+    "egim": -0.2333540257525759,
+    "asagi": 0.3333333333333333,
+    "bbp": 0.752,
+    "konum": 0.06163029369752185,
+    "dd120": -0.3232876810756401
+   }
+  },
+  "CCOLA-T|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": false,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-07-29",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.02419083021600832,
+    "atr5": 0.03605836264439819,
+    "obek": 0.05473558939029277,
+    "egim": 0.013160589334606756,
+    "asagi": 0.13333333333333333,
+    "bbp": 0.048,
+    "konum": 0.2819670829168174,
+    "dd120": -0.1518197923813026
+   }
+  },
+  "ENJSA-O|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": true,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2025-02-14",
+   "en_iyi_gun_kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": false
+   },
+   "olcu": {
+    "mmed": 0.022829786238124664,
+    "atr5": 0.03289418095566561,
+    "obek": 0.03666667938232426,
+    "egim": -0.006155783419975961,
+    "asagi": 0.2,
+    "bbp": 0.024,
+    "konum": 0.8193833028493608,
+    "dd120": -0.03198126811014179
+   }
+  },
+  "ENJSA-A|V_BIST": {
+   "tutar": true,
+   "s5_gun": [],
+   "ilk_s5": "-",
+   "sinif_ilk": "-",
+   "kosul": {
+    "ca": true,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "cek": false,
+    "dip": false,
+    "yol": true,
+    "s5c": false
+   },
+   "en_iyi_gun": "2026-01-09",
+   "en_iyi_gun_kosul": {
+    "ca": false,
+    "cb": true,
+    "cc": true,
+    "cd": true,
+    "ce": true,
+    "cf": true,
+    "dip": false,
+    "yol": true
+   },
+   "olcu": {
+    "mmed": 0.025345191440158163,
+    "atr5": 0.03369718008542664,
+    "obek": 0.06467941396295895,
+    "egim": 0.07089746574081511,
+    "asagi": 0.0,
+    "bbp": 0.196,
+    "konum": 1.0,
+    "dd120": 0.0
+   }
+  }
+ }
+}

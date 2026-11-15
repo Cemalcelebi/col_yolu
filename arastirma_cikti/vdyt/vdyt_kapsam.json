@@ -1,0 +1,2699 @@
+{
+ "pazar": {
+  "ABD": {
+   "bolge": {
+    "T1": {
+     "bolge_hepsi": 39120,
+     "bolge_uygun": 15974,
+     "donem": {
+      "2010-2015": 3679,
+      "2016-2018": 3045,
+      "2019-2023 (WF test)": 7614,
+      "2024-2026 (KASA)": 1636
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 2817,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 10,
+      ">=20": 7468,
+      ">=40": 1097,
+      ">=60": 238,
+      ">=90": 57,
+      "max": 187,
+      "ort": 22.229122323776135,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 25.0,
+      "q90": 35.0
+     },
+     "tanim": "T1"
+    },
+    "T1_RV": {
+     "bolge_hepsi": 37558,
+     "bolge_uygun": 16379,
+     "donem": {
+      "2010-2015": 3769,
+      "2016-2018": 3117,
+      "2019-2023 (WF test)": 7827,
+      "2024-2026 (KASA)": 1666
+     },
+     "esik": 0.7,
+     "genisleme": "RV",
+     "hisse": 2821,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 5,
+      ">=20": 6668,
+      ">=40": 921,
+      ">=60": 203,
+      ">=90": 45,
+      "max": 135,
+      "ort": 21.39361377373466,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 24.0,
+      "q90": 33.0
+     },
+     "tanim": "T1"
+    },
+    "T1_e0.6": {
+     "bolge_hepsi": 14874,
+     "bolge_uygun": 3150,
+     "donem": {
+      "2010-2015": 706,
+      "2016-2018": 711,
+      "2019-2023 (WF test)": 1414,
+      "2024-2026 (KASA)": 319
+     },
+     "esik": 0.6,
+     "genisleme": "TR",
+     "hisse": 1707,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 5,
+      ">=20": 1120,
+      ">=40": 135,
+      ">=60": 46,
+      ">=90": 15,
+      "max": 152,
+      "ort": 20.18952380952381,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 17.0,
+      "q75": 22.0,
+      "q90": 30.0
+     },
+     "tanim": "T1"
+    },
+    "T1_e0.8": {
+     "bolge_hepsi": 81417,
+     "bolge_uygun": 43305,
+     "donem": {
+      "2010-2015": 10300,
+      "2016-2018": 7910,
+      "2019-2023 (WF test)": 19075,
+      "2024-2026 (KASA)": 6020
+     },
+     "esik": 0.8,
+     "genisleme": "TR",
+     "hisse": 3066,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 77,
+      ">=20": 24629,
+      ">=40": 6014,
+      ">=60": 1556,
+      ">=90": 334,
+      "max": 192,
+      "ort": 25.859739060154716,
+      "q10": 13.0,
+      "q25": 16.0,
+      "q50": 21.0,
+      "q75": 30.0,
+      "q90": 45.0
+     },
+     "tanim": "T1"
+    },
+    "T1_k1.5": {
+     "bolge_hepsi": 44041,
+     "bolge_uygun": 17660,
+     "donem": {
+      "2010-2015": 4069,
+      "2016-2018": 3340,
+      "2019-2023 (WF test)": 8419,
+      "2024-2026 (KASA)": 1832
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 2828,
+     "k": 1.5,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 4300,
+      ">=40": 390,
+      ">=60": 60,
+      ">=90": 5,
+      "max": 109,
+      "ort": 17.121744054360136,
+      "q10": 11.0,
+      "q25": 12.0,
+      "q50": 15.0,
+      "q75": 19.0,
+      "q90": 26.0
+     },
+     "tanim": "T1"
+    },
+    "T1_k2.5": {
+     "bolge_hepsi": 37252,
+     "bolge_uygun": 15670,
+     "donem": {
+      "2010-2015": 3612,
+      "2016-2018": 2967,
+      "2019-2023 (WF test)": 7491,
+      "2024-2026 (KASA)": 1600
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 2816,
+     "k": 2.5,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 23,
+      ">=20": 8583,
+      ">=40": 1347,
+      ">=60": 306,
+      ">=90": 87,
+      "max": 188,
+      "ort": 24.01665603063178,
+      "q10": 15.0,
+      "q25": 17.0,
+      "q50": 20.0,
+      "q75": 27.0,
+      "q90": 38.0
+     },
+     "tanim": "T1"
+    },
+    "T2": {
+     "bolge_hepsi": 86159,
+     "bolge_uygun": 54161,
+     "donem": {
+      "2010-2015": 13202,
+      "2016-2018": 9975,
+      "2019-2023 (WF test)": 20439,
+      "2024-2026 (KASA)": 10545
+     },
+     "esik": 0.2,
+     "genisleme": "TR",
+     "hisse": 3088,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 68,
+      ">=20": 34741,
+      ">=40": 8880,
+      ">=60": 2153,
+      ">=90": 354,
+      "max": 185,
+      "ort": 27.384575617141486,
+      "q10": 14.0,
+      "q25": 17.0,
+      "q50": 23.0,
+      "q75": 33.0,
+      "q90": 46.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.1": {
+     "bolge_hepsi": 50136,
+     "bolge_uygun": 31548,
+     "donem": {
+      "2010-2015": 7696,
+      "2016-2018": 5769,
+      "2019-2023 (WF test)": 12572,
+      "2024-2026 (KASA)": 5511
+     },
+     "esik": 0.1,
+     "genisleme": "TR",
+     "hisse": 2944,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 17994,
+      ">=40": 2431,
+      ">=60": 309,
+      ">=90": 20,
+      "max": 116,
+      "ort": 23.569735006973502,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 21.0,
+      "q75": 28.0,
+      "q90": 37.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.3": {
+     "bolge_hepsi": 115210,
+     "bolge_uygun": 71734,
+     "donem": {
+      "2010-2015": 17352,
+      "2016-2018": 13027,
+      "2019-2023 (WF test)": 26311,
+      "2024-2026 (KASA)": 15044
+     },
+     "esik": 0.3,
+     "genisleme": "TR",
+     "hisse": 3174,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 366,
+      ">=20": 48900,
+      ">=40": 16535,
+      ">=60": 5299,
+      ">=90": 1414,
+      "max": 291,
+      "ort": 30.79025287869072,
+      "q10": 14.0,
+      "q25": 18.0,
+      "q50": 25.0,
+      "q75": 38.0,
+      "q90": 53.0
+     },
+     "tanim": "T2"
+    },
+    "T3": {
+     "bolge_hepsi": 93296,
+     "bolge_uygun": 59920,
+     "donem": {
+      "2010-2015": 14734,
+      "2016-2018": 10227,
+      "2019-2023 (WF test)": 22345,
+      "2024-2026 (KASA)": 12614
+     },
+     "esik": 0.2,
+     "genisleme": "TR",
+     "hisse": 3076,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 1,
+      ">=20": 30782,
+      ">=40": 3679,
+      ">=60": 446,
+      ">=90": 21,
+      "max": 125,
+      "ort": 22.469475967957276,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 20.0,
+      "q75": 26.0,
+      "q90": 35.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.1": {
+     "bolge_hepsi": 48653,
+     "bolge_uygun": 30388,
+     "donem": {
+      "2010-2015": 7533,
+      "2016-2018": 5230,
+      "2019-2023 (WF test)": 11656,
+      "2024-2026 (KASA)": 5969
+     },
+     "esik": 0.1,
+     "genisleme": "TR",
+     "hisse": 2926,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 12954,
+      ">=40": 613,
+      ">=60": 26,
+      ">=90": 1,
+      "max": 96,
+      "ort": 20.205278399368172,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 18.0,
+      "q75": 23.0,
+      "q90": 29.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.3": {
+     "bolge_hepsi": 132461,
+     "bolge_uygun": 85641,
+     "donem": {
+      "2010-2015": 20803,
+      "2016-2018": 14641,
+      "2019-2023 (WF test)": 31524,
+      "2024-2026 (KASA)": 18673
+     },
+     "esik": 0.3,
+     "genisleme": "TR",
+     "hisse": 3181,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 23,
+      ">=20": 49087,
+      ">=40": 9080,
+      ">=60": 1675,
+      ">=90": 171,
+      "max": 167,
+      "ort": 24.616877430202823,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 21.0,
+      "q75": 29.0,
+      "q90": 40.0
+     },
+     "tanim": "T3"
+    },
+    "T4": {
+     "bolge_hepsi": 79893,
+     "bolge_uygun": 38882,
+     "donem": {
+      "2010-2015": 9356,
+      "2016-2018": 7084,
+      "2019-2023 (WF test)": 15027,
+      "2024-2026 (KASA)": 7415
+     },
+     "esik": 3.5,
+     "genisleme": "TR",
+     "hisse": 3041,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 7,
+      ">=20": 19102,
+      ">=40": 2218,
+      ">=60": 331,
+      ">=90": 42,
+      "max": 140,
+      "ort": 22.115760506146803,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 19.0,
+      "q75": 25.0,
+      "q90": 34.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e2.5": {
+     "bolge_hepsi": 24161,
+     "bolge_uygun": 6960,
+     "donem": {
+      "2010-2015": 1666,
+      "2016-2018": 1484,
+      "2019-2023 (WF test)": 2752,
+      "2024-2026 (KASA)": 1058
+     },
+     "esik": 2.5,
+     "genisleme": "TR",
+     "hisse": 2387,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 2,
+      ">=20": 2529,
+      ">=40": 117,
+      ">=60": 28,
+      ">=90": 11,
+      "max": 131,
+      "ort": 19.529454022988507,
+      "q10": 13.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 22.0,
+      "q90": 27.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e4.5": {
+     "bolge_hepsi": 145011,
+     "bolge_uygun": 82329,
+     "donem": {
+      "2010-2015": 19628,
+      "2016-2018": 14433,
+      "2019-2023 (WF test)": 30551,
+      "2024-2026 (KASA)": 17717
+     },
+     "esik": 4.5,
+     "genisleme": "TR",
+     "hisse": 3217,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 92,
+      ">=20": 49496,
+      ">=40": 11218,
+      ">=60": 2671,
+      ">=90": 467,
+      "max": 195,
+      "ort": 26.10262483450546,
+      "q10": 14.0,
+      "q25": 17.0,
+      "q50": 22.0,
+      "q75": 31.0,
+      "q90": 44.0
+     },
+     "tanim": "T4"
+    },
+    "T5": {
+     "bolge_hepsi": 45806,
+     "bolge_uygun": 23794,
+     "donem": {
+      "2010-2015": 5740,
+      "2016-2018": 4440,
+      "2019-2023 (WF test)": 9803,
+      "2024-2026 (KASA)": 3811
+     },
+     "esik": "T1-T4 ana, en az 3",
+     "genisleme": "TR",
+     "hisse": 2913,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 1,
+      ">=20": 11172,
+      ">=40": 1109,
+      ">=60": 164,
+      ">=90": 18,
+      "max": 125,
+      "ort": 21.567874254013617,
+      "q10": 13.0,
+      "q25": 16.0,
+      "q50": 19.0,
+      "q75": 25.0,
+      "q90": 33.0
+     },
+     "tanim": "T5"
+    }
+   },
+   "endeks_kaynak": "endeks",
+   "hisse": 4678,
+   "hisse_hata": 0,
+   "karar": {
+    "T1": {
+     "donem": {
+      "2010-2015": 5356,
+      "2016-2018": 4495,
+      "2019-2023 (WF test)": 11598,
+      "2024-2026 (KASA)": 2519
+     },
+     "hisse_gecmisi_yeterli_pay": 0.644609479305741,
+     "toplam": 23968,
+     "yas": {
+      "10": 15970,
+      "20": 6698,
+      "40": 1015,
+      "60": 221,
+      "90": 54,
+      "120": 10
+     }
+    },
+    "T2": {
+     "donem": {
+      "2010-2015": 23748,
+      "2016-2018": 17344,
+      "2019-2023 (WF test)": 38355,
+      "2024-2026 (KASA)": 17994
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8729590213565132,
+     "toplam": 97441,
+     "yas": {
+      "10": 54142,
+      "20": 32575,
+      "40": 8305,
+      "60": 2018,
+      "90": 338,
+      "120": 63
+     }
+    },
+    "T3": {
+     "donem": {
+      "2010-2015": 22454,
+      "2016-2018": 15544,
+      "2019-2023 (WF test)": 34432,
+      "2024-2026 (KASA)": 18832
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8852753610484101,
+     "toplam": 91262,
+     "yas": {
+      "10": 59901,
+      "20": 27608,
+      "40": 3330,
+      "60": 402,
+      "90": 20,
+      "120": 1
+     }
+    },
+    "T4": {
+     "donem": {
+      "2010-2015": 13900,
+      "2016-2018": 10723,
+      "2019-2023 (WF test)": 22789,
+      "2024-2026 (KASA)": 10797
+     },
+     "hisse_gecmisi_yeterli_pay": 0.84521293957979,
+     "toplam": 58209,
+     "yas": {
+      "10": 38874,
+      "20": 16961,
+      "40": 2021,
+      "60": 307,
+      "90": 39,
+      "120": 7
+     }
+    },
+    "T5": {
+     "donem": {
+      "2010-2015": 8317,
+      "2016-2018": 6505,
+      "2019-2023 (WF test)": 14649,
+      "2024-2026 (KASA)": 5412
+     },
+     "hisse_gecmisi_yeterli_pay": 0.7314451165324083,
+     "toplam": 34883,
+     "yas": {
+      "10": 23788,
+      "20": 9915,
+      "40": 1010,
+      "60": 151,
+      "90": 18,
+      "120": 1
+     }
+    }
+   },
+   "olay_eslesme": {
+    "T1": {
+     "ABD_13D": {
+      "e2_uygun_olay": 448,
+      "olay_hizali": 32762,
+      "olayi_olan_bolge": 599
+     },
+     "ABD_8K": {
+      "e2_uygun_olay": 5783,
+      "olay_hizali": 355903,
+      "olayi_olan_bolge": 6164
+     },
+     "ABD_BILANCO": {
+      "e2_uygun_olay": 3501,
+      "olay_hizali": 173971,
+      "olayi_olan_bolge": 4192
+     },
+     "ABD_BIRLESME": {
+      "e2_uygun_olay": 448,
+      "olay_hizali": 17894,
+      "olayi_olan_bolge": 253
+     },
+     "ABD_GECIKME": {
+      "e2_uygun_olay": 38,
+      "olay_hizali": 10119,
+      "olayi_olan_bolge": 51
+     },
+     "ABD_RAKIP": {
+      "e2_uygun_olay": 2236,
+      "olay_hizali": 130011,
+      "olayi_olan_bolge": 4134
+     },
+     "ABD_SERMAYE": {
+      "e2_uygun_olay": 855,
+      "olay_hizali": 58504,
+      "olayi_olan_bolge": 892
+     },
+     "ABD_TEMETTU": {
+      "e2_uygun_olay": 1483,
+      "olay_hizali": 79644,
+      "olayi_olan_bolge": 2493
+     },
+     "ABD_VEKALET": {
+      "e2_uygun_olay": 702,
+      "olay_hizali": 42361,
+      "olayi_olan_bolge": 1332
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 13262,
+      "olay_hizali": 1082378,
+      "olayi_olan_bolge": 10392
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 7530,
+      "olay_hizali": 405635,
+      "olayi_olan_bolge": 10806
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 7640,
+      "olay_hizali": 423391,
+      "olayi_olan_bolge": 10470
+     }
+    },
+    "T2": {
+     "ABD_13D": {
+      "e2_uygun_olay": 1721,
+      "olay_hizali": 32762,
+      "olayi_olan_bolge": 2127
+     },
+     "ABD_8K": {
+      "e2_uygun_olay": 27979,
+      "olay_hizali": 355903,
+      "olayi_olan_bolge": 24923
+     },
+     "ABD_BILANCO": {
+      "e2_uygun_olay": 15815,
+      "olay_hizali": 173971,
+      "olayi_olan_bolge": 19540
+     },
+     "ABD_BIRLESME": {
+      "e2_uygun_olay": 1469,
+      "olay_hizali": 17894,
+      "olayi_olan_bolge": 791
+     },
+     "ABD_GECIKME": {
+      "e2_uygun_olay": 94,
+      "olay_hizali": 10119,
+      "olayi_olan_bolge": 126
+     },
+     "ABD_RAKIP": {
+      "e2_uygun_olay": 12085,
+      "olay_hizali": 130011,
+      "olayi_olan_bolge": 18228
+     },
+     "ABD_SERMAYE": {
+      "e2_uygun_olay": 3594,
+      "olay_hizali": 58504,
+      "olayi_olan_bolge": 3374
+     },
+     "ABD_TEMETTU": {
+      "e2_uygun_olay": 7516,
+      "olay_hizali": 79644,
+      "olayi_olan_bolge": 11409
+     },
+     "ABD_VEKALET": {
+      "e2_uygun_olay": 3452,
+      "olay_hizali": 42361,
+      "olayi_olan_bolge": 5659
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 67611,
+      "olay_hizali": 1082378,
+      "olayi_olan_bolge": 36221
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 31717,
+      "olay_hizali": 405635,
+      "olayi_olan_bolge": 41133
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 32489,
+      "olay_hizali": 423391,
+      "olayi_olan_bolge": 36812
+     }
+    },
+    "T3": {
+     "ABD_13D": {
+      "e2_uygun_olay": 1412,
+      "olay_hizali": 32762,
+      "olayi_olan_bolge": 2042
+     },
+     "ABD_8K": {
+      "e2_uygun_olay": 22361,
+      "olay_hizali": 355903,
+      "olayi_olan_bolge": 25098
+     },
+     "ABD_BILANCO": {
+      "e2_uygun_olay": 11820,
+      "olay_hizali": 173971,
+      "olayi_olan_bolge": 17859
+     },
+     "ABD_BIRLESME": {
+      "e2_uygun_olay": 1132,
+      "olay_hizali": 17894,
+      "olayi_olan_bolge": 774
+     },
+     "ABD_GECIKME": {
+      "e2_uygun_olay": 75,
+      "olay_hizali": 10119,
+      "olayi_olan_bolge": 123
+     },
+     "ABD_RAKIP": {
+      "e2_uygun_olay": 9279,
+      "olay_hizali": 130011,
+      "olayi_olan_bolge": 16344
+     },
+     "ABD_SERMAYE": {
+      "e2_uygun_olay": 2742,
+      "olay_hizali": 58504,
+      "olayi_olan_bolge": 3198
+     },
+     "ABD_TEMETTU": {
+      "e2_uygun_olay": 6035,
+      "olay_hizali": 79644,
+      "olayi_olan_bolge": 11066
+     },
+     "ABD_VEKALET": {
+      "e2_uygun_olay": 3037,
+      "olay_hizali": 42361,
+      "olayi_olan_bolge": 5345
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 55502,
+      "olay_hizali": 1082378,
+      "olayi_olan_bolge": 38114
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 25010,
+      "olay_hizali": 405635,
+      "olayi_olan_bolge": 40506
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 26449,
+      "olay_hizali": 423391,
+      "olayi_olan_bolge": 38861
+     }
+    },
+    "T4": {
+     "ABD_13D": {
+      "e2_uygun_olay": 913,
+      "olay_hizali": 32762,
+      "olayi_olan_bolge": 1295
+     },
+     "ABD_8K": {
+      "e2_uygun_olay": 14140,
+      "olay_hizali": 355903,
+      "olayi_olan_bolge": 16042
+     },
+     "ABD_BILANCO": {
+      "e2_uygun_olay": 7511,
+      "olay_hizali": 173971,
+      "olayi_olan_bolge": 11010
+     },
+     "ABD_BIRLESME": {
+      "e2_uygun_olay": 822,
+      "olay_hizali": 17894,
+      "olayi_olan_bolge": 552
+     },
+     "ABD_GECIKME": {
+      "e2_uygun_olay": 56,
+      "olay_hizali": 10119,
+      "olayi_olan_bolge": 95
+     },
+     "ABD_RAKIP": {
+      "e2_uygun_olay": 6036,
+      "olay_hizali": 130011,
+      "olayi_olan_bolge": 10430
+     },
+     "ABD_SERMAYE": {
+      "e2_uygun_olay": 1706,
+      "olay_hizali": 58504,
+      "olayi_olan_bolge": 1975
+     },
+     "ABD_TEMETTU": {
+      "e2_uygun_olay": 3752,
+      "olay_hizali": 79644,
+      "olayi_olan_bolge": 6884
+     },
+     "ABD_VEKALET": {
+      "e2_uygun_olay": 1857,
+      "olay_hizali": 42361,
+      "olayi_olan_bolge": 3376
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 35301,
+      "olay_hizali": 1082378,
+      "olayi_olan_bolge": 24874
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 15525,
+      "olay_hizali": 405635,
+      "olayi_olan_bolge": 26059
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 16834,
+      "olay_hizali": 423391,
+      "olayi_olan_bolge": 25450
+     }
+    },
+    "T5": {
+     "ABD_13D": {
+      "e2_uygun_olay": 545,
+      "olay_hizali": 32762,
+      "olayi_olan_bolge": 783
+     },
+     "ABD_8K": {
+      "e2_uygun_olay": 8369,
+      "olay_hizali": 355903,
+      "olayi_olan_bolge": 9480
+     },
+     "ABD_BILANCO": {
+      "e2_uygun_olay": 4505,
+      "olay_hizali": 173971,
+      "olayi_olan_bolge": 6260
+     },
+     "ABD_BIRLESME": {
+      "e2_uygun_olay": 559,
+      "olay_hizali": 17894,
+      "olayi_olan_bolge": 364
+     },
+     "ABD_GECIKME": {
+      "e2_uygun_olay": 42,
+      "olay_hizali": 10119,
+      "olayi_olan_bolge": 65
+     },
+     "ABD_RAKIP": {
+      "e2_uygun_olay": 3509,
+      "olay_hizali": 130011,
+      "olayi_olan_bolge": 6346
+     },
+     "ABD_SERMAYE": {
+      "e2_uygun_olay": 1041,
+      "olay_hizali": 58504,
+      "olayi_olan_bolge": 1211
+     },
+     "ABD_TEMETTU": {
+      "e2_uygun_olay": 2045,
+      "olay_hizali": 79644,
+      "olayi_olan_bolge": 3909
+     },
+     "ABD_VEKALET": {
+      "e2_uygun_olay": 1063,
+      "olay_hizali": 42361,
+      "olayi_olan_bolge": 2033
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 19468,
+      "olay_hizali": 1082378,
+      "olayi_olan_bolge": 14958
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 9481,
+      "olay_hizali": 405635,
+      "olayi_olan_bolge": 15834
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 10065,
+      "olay_hizali": 423391,
+      "olayi_olan_bolge": 15378
+     }
+    }
+   },
+   "olay_notu": {
+    "ABD_8K_bilanco_yakini_cikan": 154119,
+    "ABD_RAKIP": {
+     "olay": 200899,
+     "sektor_ceyrek": 3897
+    },
+    "EDGAR": {
+     "cik_ticker": 8024,
+     "dosya": 71,
+     "ilk": "2009-01-02 00:00:00",
+     "kodla_eslenen": 1685678,
+     "satir": 18681292,
+     "secili_form": 2707177,
+     "son": "2026-09-30 00:00:00"
+    },
+    "FOMC": 151,
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "NASDAQ": {
+     "ilk": "2022-12-01 00:00:00",
+     "saat": {
+      "time-after-hours": 370,
+      "time-not-supplied": 64731,
+      "time-pre-market": 324
+     },
+     "satir": 65425,
+     "son": "2026-10-27 00:00:00"
+    },
+    "PPK": 126
+   },
+   "olay_turu": {
+    "ABD_13D": {
+     "hisse": 3169,
+     "ilk": "2009-01-02",
+     "olay": 35139,
+     "son": "2026-09-30"
+    },
+    "ABD_8K": {
+     "hisse": 4086,
+     "ilk": "2009-01-02",
+     "olay": 390427,
+     "son": "2026-09-30"
+    },
+    "ABD_BILANCO": {
+     "hisse": 4308,
+     "ilk": "2009-01-02",
+     "olay": 189826,
+     "son": "2026-10-28"
+    },
+    "ABD_BIRLESME": {
+     "hisse": 1553,
+     "ilk": "2009-01-05",
+     "olay": 20186,
+     "son": "2026-09-30"
+    },
+    "ABD_GECIKME": {
+     "hisse": 1731,
+     "ilk": "2009-01-09",
+     "olay": 12268,
+     "son": "2026-09-29"
+    },
+    "ABD_RAKIP": {
+     "hisse": 2845,
+     "ilk": "2009-01-02",
+     "olay": 200899,
+     "son": "2026-10-28"
+    },
+    "ABD_SERMAYE": {
+     "hisse": 4201,
+     "ilk": "2009-01-02",
+     "olay": 65485,
+     "son": "2026-09-30"
+    },
+    "ABD_TEMETTU": {
+     "hisse": 3011,
+     "ilk": "2009-12-31",
+     "olay": 80930,
+     "son": "2026-11-10"
+    },
+    "ABD_VEKALET": {
+     "hisse": 3640,
+     "ilk": "2009-01-02",
+     "olay": 43421,
+     "son": "2026-09-30"
+    },
+    "MAKRO_EMTIA": {
+     "hisse": 1,
+     "ilk": "2015-10-28",
+     "olay": 390,
+     "son": "2026-10-22"
+    },
+    "MAKRO_FOMC": {
+     "hisse": 1,
+     "ilk": "2009-01-28",
+     "olay": 151,
+     "son": "2027-12-08"
+    },
+    "MAKRO_PPK": {
+     "hisse": 1,
+     "ilk": "2015-01-20",
+     "olay": 126,
+     "son": "2026-12-10"
+    }
+   },
+   "sektorlu_hisse": 2846,
+   "sure_sn": 393.9,
+   "takvim": [
+    "2010-01-04",
+    "2026-08-31"
+   ],
+   "uygun_hisse_gun_yil": {
+    "2010": 1189,
+    "2011": 306226,
+    "2012": 304216,
+    "2013": 328200,
+    "2014": 357826,
+    "2015": 377422,
+    "2016": 391323,
+    "2017": 414716,
+    "2018": 436845,
+    "2019": 454263,
+    "2020": 490727,
+    "2021": 565480,
+    "2022": 567164,
+    "2023": 569482,
+    "2024": 599794,
+    "2025": 634881,
+    "2026": 446043
+   },
+   "uygun_hisse_yil_sonu": {
+    "2010": 1189,
+    "2011": 1204,
+    "2012": 1233,
+    "2013": 1379,
+    "2014": 1457,
+    "2015": 1521,
+    "2016": 1627,
+    "2017": 1723,
+    "2018": 1756,
+    "2019": 1874,
+    "2020": 2094,
+    "2021": 2297,
+    "2022": 2254,
+    "2023": 2352,
+    "2024": 2509,
+    "2025": 2634,
+    "2026": 2718
+   }
+  },
+  "BIST": {
+   "bolge": {
+    "T1": {
+     "bolge_hepsi": 5353,
+     "bolge_uygun": 3425,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 659,
+      "2019-2023 (WF test)": 1519,
+      "2024-2026 (KASA)": 1247
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 516,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 2,
+      ">=20": 1424,
+      ">=40": 255,
+      ">=60": 68,
+      ">=90": 9,
+      "max": 153,
+      "ort": 21.443211678832117,
+      "q10": 11.0,
+      "q25": 14.0,
+      "q50": 18.0,
+      "q75": 25.0,
+      "q90": 35.0
+     },
+     "tanim": "T1"
+    },
+    "T1_RV": {
+     "bolge_hepsi": 5180,
+     "bolge_uygun": 3429,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 645,
+      "2019-2023 (WF test)": 1526,
+      "2024-2026 (KASA)": 1258
+     },
+     "esik": 0.7,
+     "genisleme": "RV",
+     "hisse": 516,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 3,
+      ">=20": 1474,
+      ">=40": 252,
+      ">=60": 80,
+      ">=90": 14,
+      "max": 130,
+      "ort": 22.293088363954507,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 25.0,
+      "q90": 36.0
+     },
+     "tanim": "T1"
+    },
+    "T1_e0.6": {
+     "bolge_hepsi": 2233,
+     "bolge_uygun": 1236,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 245,
+      "2019-2023 (WF test)": 628,
+      "2024-2026 (KASA)": 363
+     },
+     "esik": 0.6,
+     "genisleme": "TR",
+     "hisse": 404,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 437,
+      ">=40": 53,
+      ">=60": 13,
+      ">=90": 1,
+      "max": 94,
+      "ort": 19.617313915857604,
+      "q10": 11.0,
+      "q25": 13.0,
+      "q50": 17.0,
+      "q75": 22.0,
+      "q90": 31.0
+     },
+     "tanim": "T1"
+    },
+    "T1_e0.8": {
+     "bolge_hepsi": 9702,
+     "bolge_uygun": 6657,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1304,
+      "2019-2023 (WF test)": 2911,
+      "2024-2026 (KASA)": 2442
+     },
+     "esik": 0.8,
+     "genisleme": "TR",
+     "hisse": 543,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 8,
+      ">=20": 3180,
+      ">=40": 693,
+      ">=60": 223,
+      ">=90": 45,
+      "max": 172,
+      "ort": 23.55730809674027,
+      "q10": 11.0,
+      "q25": 14.0,
+      "q50": 19.0,
+      "q75": 28.0,
+      "q90": 40.0
+     },
+     "tanim": "T1"
+    },
+    "T1_k1.5": {
+     "bolge_hepsi": 6229,
+     "bolge_uygun": 4009,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 748,
+      "2019-2023 (WF test)": 1834,
+      "2024-2026 (KASA)": 1427
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 516,
+     "k": 1.5,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 795,
+      ">=40": 51,
+      ">=60": 10,
+      ">=90": 1,
+      "max": 110,
+      "ort": 15.982788725367922,
+      "q10": 11.0,
+      "q25": 11.0,
+      "q50": 14.0,
+      "q75": 18.0,
+      "q90": 24.0
+     },
+     "tanim": "T1"
+    },
+    "T1_k2.5": {
+     "bolge_hepsi": 5024,
+     "bolge_uygun": 3232,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 621,
+      "2019-2023 (WF test)": 1419,
+      "2024-2026 (KASA)": 1192
+     },
+     "esik": 0.7,
+     "genisleme": "TR",
+     "hisse": 516,
+     "k": 2.5,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 6,
+      ">=20": 1747,
+      ">=40": 374,
+      ">=60": 108,
+      ">=90": 18,
+      "max": 154,
+      "ort": 24.675742574257427,
+      "q10": 13.0,
+      "q25": 16.0,
+      "q50": 20.0,
+      "q75": 29.0,
+      "q90": 41.0
+     },
+     "tanim": "T1"
+    },
+    "T2": {
+     "bolge_hepsi": 8926,
+     "bolge_uygun": 6511,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1338,
+      "2019-2023 (WF test)": 2646,
+      "2024-2026 (KASA)": 2527
+     },
+     "esik": 0.2,
+     "genisleme": "TR",
+     "hisse": 550,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 5,
+      ">=20": 3523,
+      ">=40": 772,
+      ">=60": 219,
+      ">=90": 33,
+      "max": 141,
+      "ort": 24.74320380893872,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 21.0,
+      "q75": 30.0,
+      "q90": 42.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.1": {
+     "bolge_hepsi": 5174,
+     "bolge_uygun": 3778,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 754,
+      "2019-2023 (WF test)": 1449,
+      "2024-2026 (KASA)": 1575
+     },
+     "esik": 0.1,
+     "genisleme": "TR",
+     "hisse": 533,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 1858,
+      ">=40": 211,
+      ">=60": 30,
+      ">=90": 2,
+      "max": 99,
+      "ort": 21.79036527263102,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 26.0,
+      "q90": 34.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.3": {
+     "bolge_hepsi": 12091,
+     "bolge_uygun": 8884,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1926,
+      "2019-2023 (WF test)": 3718,
+      "2024-2026 (KASA)": 3240
+     },
+     "esik": 0.3,
+     "genisleme": "TR",
+     "hisse": 559,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 28,
+      ">=20": 4998,
+      ">=40": 1416,
+      ">=60": 538,
+      ">=90": 121,
+      "max": 158,
+      "ort": 26.932575416479065,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 21.0,
+      "q75": 32.0,
+      "q90": 48.0
+     },
+     "tanim": "T2"
+    },
+    "T3": {
+     "bolge_hepsi": 9560,
+     "bolge_uygun": 7061,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1396,
+      "2019-2023 (WF test)": 3011,
+      "2024-2026 (KASA)": 2654
+     },
+     "esik": 0.2,
+     "genisleme": "TR",
+     "hisse": 551,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 0,
+      ">=20": 3257,
+      ">=40": 378,
+      ">=60": 55,
+      ">=90": 2,
+      "max": 97,
+      "ort": 21.513524996459424,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 25.0,
+      "q90": 34.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.1": {
+     "bolge_hepsi": 4986,
+     "bolge_uygun": 3641,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 726,
+      "2019-2023 (WF test)": 1495,
+      "2024-2026 (KASA)": 1420
+     },
+     "esik": 0.1,
+     "genisleme": "TR",
+     "hisse": 534,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 1416,
+      ">=40": 86,
+      ">=60": 6,
+      ">=90": 0,
+      "max": 74,
+      "ort": 19.584180170282888,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 23.0,
+      "q90": 29.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.3": {
+     "bolge_hepsi": 13598,
+     "bolge_uygun": 10154,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 2094,
+      "2019-2023 (WF test)": 4428,
+      "2024-2026 (KASA)": 3632
+     },
+     "esik": 0.3,
+     "genisleme": "TR",
+     "hisse": 556,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 5155,
+      ">=40": 874,
+      ">=60": 181,
+      ">=90": 16,
+      "max": 116,
+      "ort": 23.162891471341343,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 20.0,
+      "q75": 28.0,
+      "q90": 38.0
+     },
+     "tanim": "T3"
+    },
+    "T4": {
+     "bolge_hepsi": 7895,
+     "bolge_uygun": 5168,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1343,
+      "2019-2023 (WF test)": 2139,
+      "2024-2026 (KASA)": 1686
+     },
+     "esik": 3.5,
+     "genisleme": "TR",
+     "hisse": 540,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 1,
+      ">=20": 2342,
+      ">=40": 269,
+      ">=60": 56,
+      ">=90": 3,
+      "max": 130,
+      "ort": 21.29798761609907,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 25.0,
+      "q90": 33.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e2.5": {
+     "bolge_hepsi": 2535,
+     "bolge_uygun": 1492,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 469,
+      "2019-2023 (WF test)": 657,
+      "2024-2026 (KASA)": 366
+     },
+     "esik": 2.5,
+     "genisleme": "TR",
+     "hisse": 430,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 543,
+      ">=40": 45,
+      ">=60": 6,
+      ">=90": 0,
+      "max": 79,
+      "ort": 19.43230563002681,
+      "q10": 12.0,
+      "q25": 14.0,
+      "q50": 17.0,
+      "q75": 22.0,
+      "q90": 29.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e4.5": {
+     "bolge_hepsi": 13987,
+     "bolge_uygun": 9730,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 2282,
+      "2019-2023 (WF test)": 4069,
+      "2024-2026 (KASA)": 3379
+     },
+     "esik": 4.5,
+     "genisleme": "TR",
+     "hisse": 557,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 5,
+      ">=20": 5226,
+      ">=40": 1051,
+      ">=60": 275,
+      ">=90": 42,
+      "max": 138,
+      "ort": 24.38540596094553,
+      "q10": 12.0,
+      "q25": 16.0,
+      "q50": 20.0,
+      "q75": 29.0,
+      "q90": 41.0
+     },
+     "tanim": "T4"
+    },
+    "T5": {
+     "bolge_hepsi": 5350,
+     "bolge_uygun": 3646,
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 818,
+      "2019-2023 (WF test)": 1556,
+      "2024-2026 (KASA)": 1272
+     },
+     "esik": "T1-T4 ana, en az 3",
+     "genisleme": "TR",
+     "hisse": 523,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 0,
+      ">=20": 1600,
+      ">=40": 179,
+      ">=60": 35,
+      ">=90": 2,
+      "max": 94,
+      "ort": 20.926494788809656,
+      "q10": 12.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 24.0,
+      "q90": 32.0
+     },
+     "tanim": "T5"
+    }
+   },
+   "endeks_kaynak": "endeks",
+   "hisse": 581,
+   "hisse_hata": 0,
+   "karar": {
+    "T1": {
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 908,
+      "2019-2023 (WF test)": 2270,
+      "2024-2026 (KASA)": 1822
+     },
+     "hisse_gecmisi_yeterli_pay": 0.667,
+     "toplam": 5000,
+     "yas": {
+      "10": 3422,
+      "20": 1270,
+      "40": 235,
+      "60": 62,
+      "90": 9,
+      "120": 2
+     }
+    },
+    "T2": {
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1997,
+      "2019-2023 (WF test)": 4369,
+      "2024-2026 (KASA)": 4363
+     },
+     "hisse_gecmisi_yeterli_pay": 0.7993289216143163,
+     "toplam": 10729,
+     "yas": {
+      "10": 6504,
+      "20": 3265,
+      "40": 716,
+      "60": 209,
+      "90": 30,
+      "120": 5
+     }
+    },
+    "T3": {
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1969,
+      "2019-2023 (WF test)": 4380,
+      "2024-2026 (KASA)": 4030
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8073995567973793,
+     "toplam": 10379,
+     "yas": {
+      "10": 7058,
+      "20": 2930,
+      "40": 337,
+      "60": 52,
+      "90": 2
+     }
+    },
+    "T4": {
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1921,
+      "2019-2023 (WF test)": 3204,
+      "2024-2026 (KASA)": 2429
+     },
+     "hisse_gecmisi_yeterli_pay": 0.7701879798782102,
+     "toplam": 7554,
+     "yas": {
+      "10": 5165,
+      "20": 2088,
+      "40": 246,
+      "60": 52,
+      "90": 2,
+      "120": 1
+     }
+    },
+    "T5": {
+     "donem": {
+      "2010-2015": 0,
+      "2016-2018": 1137,
+      "2019-2023 (WF test)": 2276,
+      "2024-2026 (KASA)": 1863
+     },
+     "hisse_gecmisi_yeterli_pay": 0.6675511751326763,
+     "toplam": 5276,
+     "yas": {
+      "10": 3646,
+      "20": 1432,
+      "40": 163,
+      "60": 34,
+      "90": 1
+     }
+    }
+   },
+   "olay_eslesme": {
+    "T1": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 632,
+      "olay_hizali": 19679,
+      "olayi_olan_bolge": 974
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 528,
+      "olay_hizali": 18107,
+      "olayi_olan_bolge": 499
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 64,
+      "olay_hizali": 2670,
+      "olayi_olan_bolge": 43
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 23,
+      "olay_hizali": 1812,
+      "olayi_olan_bolge": 33
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 702,
+      "olay_hizali": 19716,
+      "olayi_olan_bolge": 1242
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 27,
+      "olay_hizali": 1256,
+      "olayi_olan_bolge": 38
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 50,
+      "olay_hizali": 3665,
+      "olayi_olan_bolge": 84
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 3654,
+      "olay_hizali": 136829,
+      "olayi_olan_bolge": 2788
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 1294,
+      "olay_hizali": 39394,
+      "olayi_olan_bolge": 2174
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 1594,
+      "olay_hizali": 51960,
+      "olayi_olan_bolge": 2496
+     }
+    },
+    "T2": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 1558,
+      "olay_hizali": 19679,
+      "olayi_olan_bolge": 2261
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 2173,
+      "olay_hizali": 18107,
+      "olayi_olan_bolge": 1347
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 189,
+      "olay_hizali": 2670,
+      "olayi_olan_bolge": 129
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 98,
+      "olay_hizali": 1812,
+      "olayi_olan_bolge": 104
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 1684,
+      "olay_hizali": 19716,
+      "olayi_olan_bolge": 2629
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 60,
+      "olay_hizali": 1256,
+      "olayi_olan_bolge": 98
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 166,
+      "olay_hizali": 3665,
+      "olayi_olan_bolge": 238
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 9223,
+      "olay_hizali": 136829,
+      "olayi_olan_bolge": 5558
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 3129,
+      "olay_hizali": 39394,
+      "olayi_olan_bolge": 4580
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 4052,
+      "olay_hizali": 51960,
+      "olayi_olan_bolge": 5046
+     }
+    },
+    "T3": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 1328,
+      "olay_hizali": 19679,
+      "olayi_olan_bolge": 2289
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 1868,
+      "olay_hizali": 18107,
+      "olayi_olan_bolge": 1439
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 152,
+      "olay_hizali": 2670,
+      "olayi_olan_bolge": 135
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 71,
+      "olay_hizali": 1812,
+      "olayi_olan_bolge": 106
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 1309,
+      "olay_hizali": 19716,
+      "olayi_olan_bolge": 2400
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 63,
+      "olay_hizali": 1256,
+      "olayi_olan_bolge": 99
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 161,
+      "olay_hizali": 3665,
+      "olayi_olan_bolge": 250
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 8342,
+      "olay_hizali": 136829,
+      "olayi_olan_bolge": 5849
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 2780,
+      "olay_hizali": 39394,
+      "olayi_olan_bolge": 4635
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 3356,
+      "olay_hizali": 51960,
+      "olayi_olan_bolge": 5350
+     }
+    },
+    "T4": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 910,
+      "olay_hizali": 19679,
+      "olayi_olan_bolge": 1591
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 827,
+      "olay_hizali": 18107,
+      "olayi_olan_bolge": 761
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 76,
+      "olay_hizali": 2670,
+      "olayi_olan_bolge": 71
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 43,
+      "olay_hizali": 1812,
+      "olayi_olan_bolge": 67
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 966,
+      "olay_hizali": 19716,
+      "olayi_olan_bolge": 1739
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 49,
+      "olay_hizali": 1256,
+      "olayi_olan_bolge": 76
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 123,
+      "olay_hizali": 3665,
+      "olayi_olan_bolge": 185
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 5930,
+      "olay_hizali": 136829,
+      "olayi_olan_bolge": 4240
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 1939,
+      "olay_hizali": 39394,
+      "olayi_olan_bolge": 3353
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 2423,
+      "olay_hizali": 51960,
+      "olayi_olan_bolge": 3889
+     }
+    },
+    "T5": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 646,
+      "olay_hizali": 19679,
+      "olayi_olan_bolge": 1063
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 622,
+      "olay_hizali": 18107,
+      "olayi_olan_bolge": 543
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 53,
+      "olay_hizali": 2670,
+      "olayi_olan_bolge": 48
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 19,
+      "olay_hizali": 1812,
+      "olayi_olan_bolge": 34
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 687,
+      "olay_hizali": 19716,
+      "olayi_olan_bolge": 1259
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 26,
+      "olay_hizali": 1256,
+      "olayi_olan_bolge": 39
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 70,
+      "olay_hizali": 3665,
+      "olayi_olan_bolge": 112
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 4017,
+      "olay_hizali": 136829,
+      "olayi_olan_bolge": 2980
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 1337,
+      "olay_hizali": 39394,
+      "olayi_olan_bolge": 2376
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 1640,
+      "olay_hizali": 51960,
+      "olayi_olan_bolge": 2720
+     }
+    }
+   },
+   "olay_notu": {
+    "BIST_BILANCO": {
+     "ham_kayit": 122055,
+     "ilk": "2009-06-01 08:13:16",
+     "ilk_rapor": 45058,
+     "son": "2026-08-31 21:51:07"
+    },
+    "BIST_FON_GIRIS": {
+     "giris": 34152,
+     "rapor": 13111
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "bildirim": 4060
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "bildirim": 2535
+    },
+    "BIST_RAKIP": {
+     "olay": 39568,
+     "sektor_ceyrek": 796
+    },
+    "BIST_SERMAYE": {
+     "ilk": "2008-01-04 00:00:00",
+     "olay": 1651,
+     "son": "2026-08-26 00:00:00"
+    },
+    "BIST_TEMETTU": {
+     "ilk": "2008-01-03 00:00:00",
+     "olay": 11499,
+     "son": "2026-08-31 00:00:00"
+    },
+    "FOMC": 151,
+    "ICERIDEN_LISTE": {
+     "ayristirilan_bildirim": 6637,
+     "haric_sonrasi": 7313,
+     "liste": 8609
+    },
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "PPK": 126
+   },
+   "olay_turu": {
+    "BIST_BILANCO": {
+     "hisse": 580,
+     "ilk": "2009-06-01",
+     "olay": 26945,
+     "son": "2026-09-01"
+    },
+    "BIST_FON_GIRIS": {
+     "hisse": 549,
+     "ilk": "2023-02-02",
+     "olay": 34152,
+     "son": "2026-10-12"
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "hisse": 340,
+     "ilk": "2022-07-01",
+     "olay": 3605,
+     "son": "2026-10-27"
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "hisse": 378,
+     "ilk": "2022-07-01",
+     "olay": 2333,
+     "son": "2026-10-26"
+    },
+    "BIST_RAKIP": {
+     "hisse": 581,
+     "ilk": "2009-06-01",
+     "olay": 39430,
+     "son": "2026-08-06"
+    },
+    "BIST_SERMAYE": {
+     "hisse": 478,
+     "ilk": "2008-01-04",
+     "olay": 1494,
+     "son": "2026-08-26"
+    },
+    "BIST_TEMETTU": {
+     "hisse": 443,
+     "ilk": "2008-01-03",
+     "olay": 10311,
+     "son": "2026-08-31"
+    },
+    "MAKRO_EMTIA": {
+     "hisse": 1,
+     "ilk": "2015-10-29",
+     "olay": 390,
+     "son": "2026-10-23"
+    },
+    "MAKRO_FOMC": {
+     "hisse": 1,
+     "ilk": "2009-01-29",
+     "olay": 151,
+     "son": "2027-12-09"
+    },
+    "MAKRO_PPK": {
+     "hisse": 1,
+     "ilk": "2015-01-20",
+     "olay": 126,
+     "son": "2026-12-10"
+    }
+   },
+   "sektorlu_hisse": 581,
+   "sure_sn": 41.0,
+   "takvim": [
+    "2015-06-01",
+    "2026-08-31"
+   ],
+   "uygun_hisse_gun_yil": {
+    "2015": 0,
+    "2016": 41911,
+    "2017": 71343,
+    "2018": 71123,
+    "2019": 72880,
+    "2020": 74597,
+    "2021": 74221,
+    "2022": 79908,
+    "2023": 89427,
+    "2024": 95706,
+    "2025": 107823,
+    "2026": 75609
+   },
+   "uygun_hisse_yil_sonu": {
+    "2015": 0,
+    "2016": 284,
+    "2017": 281,
+    "2018": 283,
+    "2019": 296,
+    "2020": 298,
+    "2021": 298,
+    "2022": 344,
+    "2023": 373,
+    "2024": 394,
+    "2025": 451,
+    "2026": 464
+   }
+  },
+  "BIST_K62": {
+   "bolge": {
+    "T2": {
+     "bolge_hepsi": 14766,
+     "bolge_uygun": 11196,
+     "donem": {
+      "2010-2015": 3369,
+      "2016-2018": 1763,
+      "2019-2023 (WF test)": 2732,
+      "2024-2026 (KASA)": 2633
+     },
+     "esik": 0.2,
+     "genisleme": "RV",
+     "hisse": 640,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 13,
+      ">=20": 5861,
+      ">=40": 1543,
+      ">=60": 480,
+      ">=90": 85,
+      "max": 203,
+      "ort": 25.588067166845303,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 20.0,
+      "q75": 30.0,
+      "q90": 45.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.1": {
+     "bolge_hepsi": 8741,
+     "bolge_uygun": 6591,
+     "donem": {
+      "2010-2015": 2039,
+      "2016-2018": 1004,
+      "2019-2023 (WF test)": 1511,
+      "2024-2026 (KASA)": 1610
+     },
+     "esik": 0.1,
+     "genisleme": "RV",
+     "hisse": 628,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 3055,
+      ">=40": 482,
+      ">=60": 85,
+      ">=90": 4,
+      "max": 106,
+      "ort": 22.36246396601426,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 26.0,
+      "q90": 36.0
+     },
+     "tanim": "T2"
+    },
+    "T2_e0.3": {
+     "bolge_hepsi": 19724,
+     "bolge_uygun": 14987,
+     "donem": {
+      "2010-2015": 4535,
+      "2016-2018": 2411,
+      "2019-2023 (WF test)": 3825,
+      "2024-2026 (KASA)": 3303
+     },
+     "esik": 0.3,
+     "genisleme": "RV",
+     "hisse": 645,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 65,
+      ">=20": 8355,
+      ">=40": 2679,
+      ">=60": 1085,
+      ">=90": 286,
+      "max": 203,
+      "ort": 28.13945419363448,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 21.0,
+      "q75": 33.0,
+      "q90": 52.0
+     },
+     "tanim": "T2"
+    },
+    "T3": {
+     "bolge_hepsi": 15897,
+     "bolge_uygun": 12069,
+     "donem": {
+      "2010-2015": 3688,
+      "2016-2018": 1836,
+      "2019-2023 (WF test)": 3060,
+      "2024-2026 (KASA)": 2756
+     },
+     "esik": 0.2,
+     "genisleme": "RV",
+     "hisse": 638,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 2,
+      ">=20": 5628,
+      ">=40": 802,
+      ">=60": 162,
+      ">=90": 15,
+      "max": 124,
+      "ort": 22.406827409064544,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 26.0,
+      "q90": 35.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.1": {
+     "bolge_hepsi": 8521,
+     "bolge_uygun": 6351,
+     "donem": {
+      "2010-2015": 2018,
+      "2016-2018": 949,
+      "2019-2023 (WF test)": 1537,
+      "2024-2026 (KASA)": 1473
+     },
+     "esik": 0.1,
+     "genisleme": "RV",
+     "hisse": 625,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 0,
+      ">=20": 2553,
+      ">=40": 198,
+      ">=60": 26,
+      ">=90": 1,
+      "max": 91,
+      "ort": 20.464178869469375,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 23.0,
+      "q90": 30.0
+     },
+     "tanim": "T3"
+    },
+    "T3_e0.3": {
+     "bolge_hepsi": 22313,
+     "bolge_uygun": 17144,
+     "donem": {
+      "2010-2015": 5189,
+      "2016-2018": 2710,
+      "2019-2023 (WF test)": 4501,
+      "2024-2026 (KASA)": 3789
+     },
+     "esik": 0.3,
+     "genisleme": "RV",
+     "hisse": 644,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 8,
+      ">=20": 8760,
+      ">=40": 1775,
+      ">=60": 453,
+      ">=90": 54,
+      "max": 166,
+      "ort": 24.237575828278114,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 20.0,
+      "q75": 28.0,
+      "q90": 40.0
+     },
+     "tanim": "T3"
+    },
+    "T4": {
+     "bolge_hepsi": 14247,
+     "bolge_uygun": 9959,
+     "donem": {
+      "2010-2015": 3548,
+      "2016-2018": 1752,
+      "2019-2023 (WF test)": 2269,
+      "2024-2026 (KASA)": 1728
+     },
+     "esik": 3.5,
+     "genisleme": "RV",
+     "hisse": 627,
+     "k": 2.0,
+     "rol": "ana",
+     "sure": {
+      ">=120": 7,
+      ">=20": 4757,
+      ">=40": 822,
+      ">=60": 222,
+      ">=90": 46,
+      "max": 142,
+      "ort": 23.13796565920273,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 19.0,
+      "q75": 26.0,
+      "q90": 37.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e2.5": {
+     "bolge_hepsi": 5319,
+     "bolge_uygun": 3415,
+     "donem": {
+      "2010-2015": 1425,
+      "2016-2018": 635,
+      "2019-2023 (WF test)": 695,
+      "2024-2026 (KASA)": 377
+     },
+     "esik": 2.5,
+     "genisleme": "RV",
+     "hisse": 530,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 2,
+      ">=20": 1373,
+      ">=40": 193,
+      ">=60": 40,
+      ">=90": 5,
+      "max": 130,
+      "ort": 21.292825768667644,
+      "q10": 14.0,
+      "q25": 15.0,
+      "q50": 18.0,
+      "q75": 24.0,
+      "q90": 33.0
+     },
+     "tanim": "T4"
+    },
+    "T4_e4.5": {
+     "bolge_hepsi": 23490,
+     "bolge_uygun": 17262,
+     "donem": {
+      "2010-2015": 5618,
+      "2016-2018": 2905,
+      "2019-2023 (WF test)": 4229,
+      "2024-2026 (KASA)": 3522
+     },
+     "esik": 4.5,
+     "genisleme": "RV",
+     "hisse": 650,
+     "k": 2.0,
+     "rol": "duyarlilik",
+     "sure": {
+      ">=120": 39,
+      ">=20": 9391,
+      ">=40": 2317,
+      ">=60": 745,
+      ">=90": 164,
+      "max": 198,
+      "ort": 26.00196964430541,
+      "q10": 14.0,
+      "q25": 16.0,
+      "q50": 21.0,
+      "q75": 30.0,
+      "q90": 45.0
+     },
+     "tanim": "T4"
+    }
+   },
+   "endeks_kaynak": "endeks",
+   "hisse": 715,
+   "hisse_hata": 0,
+   "karar": {
+    "T2": {
+     "donem": {
+      "2010-2015": 5815,
+      "2016-2018": 2779,
+      "2019-2023 (WF test)": 4505,
+      "2024-2026 (KASA)": 4431
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8585999570538974,
+     "toplam": 18628,
+     "yas": {
+      "10": 11189,
+      "20": 5447,
+      "40": 1441,
+      "60": 464,
+      "90": 74,
+      "120": 13
+     }
+    },
+    "T3": {
+     "donem": {
+      "2010-2015": 5652,
+      "2016-2018": 2672,
+      "2019-2023 (WF test)": 4502,
+      "2024-2026 (KASA)": 4121
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8654775795965994,
+     "toplam": 17997,
+     "yas": {
+      "10": 12067,
+      "20": 5043,
+      "40": 723,
+      "60": 147,
+      "90": 15,
+      "120": 2
+     }
+    },
+    "T4": {
+     "donem": {
+      "2010-2015": 5628,
+      "2016-2018": 2663,
+      "2019-2023 (WF test)": 3476,
+      "2024-2026 (KASA)": 2478
+     },
+     "hisse_gecmisi_yeterli_pay": 0.8536553439361215,
+     "toplam": 15279,
+     "yas": {
+      "10": 9956,
+      "20": 4291,
+      "40": 773,
+      "60": 210,
+      "90": 42,
+      "120": 7
+     }
+    }
+   },
+   "olay_eslesme": {
+    "T2": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 2907,
+      "olay_hizali": 29324,
+      "olayi_olan_bolge": 4149
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 2227,
+      "olay_hizali": 18209,
+      "olayi_olan_bolge": 1429
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 229,
+      "olay_hizali": 2783,
+      "olayi_olan_bolge": 131
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 112,
+      "olay_hizali": 1852,
+      "olayi_olan_bolge": 111
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 2764,
+      "olay_hizali": 26477,
+      "olayi_olan_bolge": 4307
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 117,
+      "olay_hizali": 1651,
+      "olayi_olan_bolge": 191
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 963,
+      "olay_hizali": 11497,
+      "olayi_olan_bolge": 606
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 10567,
+      "olay_hizali": 144122,
+      "olayi_olan_bolge": 6291
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 5616,
+      "olay_hizali": 60430,
+      "olayi_olan_bolge": 7814
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 4787,
+      "olay_hizali": 56772,
+      "olayi_olan_bolge": 6020
+     }
+    },
+    "T3": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 2530,
+      "olay_hizali": 29324,
+      "olayi_olan_bolge": 4133
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 1870,
+      "olay_hizali": 18209,
+      "olayi_olan_bolge": 1512
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 175,
+      "olay_hizali": 2783,
+      "olayi_olan_bolge": 142
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 80,
+      "olay_hizali": 1852,
+      "olayi_olan_bolge": 112
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 2249,
+      "olay_hizali": 26477,
+      "olayi_olan_bolge": 3934
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 118,
+      "olay_hizali": 1651,
+      "olayi_olan_bolge": 191
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 834,
+      "olay_hizali": 11497,
+      "olayi_olan_bolge": 563
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 9474,
+      "olay_hizali": 144122,
+      "olayi_olan_bolge": 6548
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 4979,
+      "olay_hizali": 60430,
+      "olayi_olan_bolge": 8079
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 4072,
+      "olay_hizali": 56772,
+      "olayi_olan_bolge": 6416
+     }
+    },
+    "T4": {
+     "BIST_BILANCO": {
+      "e2_uygun_olay": 2101,
+      "olay_hizali": 29324,
+      "olayi_olan_bolge": 3436
+     },
+     "BIST_FON_GIRIS": {
+      "e2_uygun_olay": 847,
+      "olay_hizali": 18209,
+      "olayi_olan_bolge": 795
+     },
+     "BIST_ICERIDEN_ALIM": {
+      "e2_uygun_olay": 110,
+      "olay_hizali": 2783,
+      "olayi_olan_bolge": 82
+     },
+     "BIST_ICERIDEN_SATIM": {
+      "e2_uygun_olay": 50,
+      "olay_hizali": 1852,
+      "olayi_olan_bolge": 73
+     },
+     "BIST_RAKIP": {
+      "e2_uygun_olay": 1894,
+      "olay_hizali": 26477,
+      "olayi_olan_bolge": 3267
+     },
+     "BIST_SERMAYE": {
+      "e2_uygun_olay": 100,
+      "olay_hizali": 1651,
+      "olayi_olan_bolge": 150
+     },
+     "BIST_TEMETTU": {
+      "e2_uygun_olay": 864,
+      "olay_hizali": 11497,
+      "olayi_olan_bolge": 474
+     },
+     "MAKRO_EMTIA": {
+      "e2_uygun_olay": 7220,
+      "olay_hizali": 144122,
+      "olayi_olan_bolge": 4925
+     },
+     "MAKRO_FOMC": {
+      "e2_uygun_olay": 4205,
+      "olay_hizali": 60430,
+      "olayi_olan_bolge": 6679
+     },
+     "MAKRO_PPK": {
+      "e2_uygun_olay": 3284,
+      "olay_hizali": 56772,
+      "olayi_olan_bolge": 4978
+     }
+    }
+   },
+   "olay_notu": {
+    "BIST_BILANCO": {
+     "ham_kayit": 122055,
+     "ilk": "2009-06-01 08:13:16",
+     "ilk_rapor": 45058,
+     "son": "2026-08-31 21:51:07"
+    },
+    "BIST_FON_GIRIS": {
+     "giris": 34152,
+     "rapor": 13111
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "bildirim": 4060
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "bildirim": 2535
+    },
+    "BIST_RAKIP": {
+     "olay": 39568,
+     "sektor_ceyrek": 796
+    },
+    "BIST_SERMAYE": {
+     "ilk": "2008-01-04 00:00:00",
+     "olay": 1651,
+     "son": "2026-08-26 00:00:00"
+    },
+    "BIST_TEMETTU": {
+     "ilk": "2008-01-03 00:00:00",
+     "olay": 11499,
+     "son": "2026-08-31 00:00:00"
+    },
+    "FOMC": 151,
+    "ICERIDEN_LISTE": {
+     "ayristirilan_bildirim": 6637,
+     "haric_sonrasi": 7313,
+     "liste": 8609
+    },
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "PPK": 126
+   },
+   "olay_turu": {
+    "BIST_BILANCO": {
+     "hisse": 715,
+     "ilk": "2009-06-01",
+     "olay": 30133,
+     "son": "2026-09-01"
+    },
+    "BIST_FON_GIRIS": {
+     "hisse": 548,
+     "ilk": "2023-02-02",
+     "olay": 34141,
+     "son": "2026-10-12"
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "hisse": 357,
+     "ilk": "2022-07-01",
+     "olay": 3745,
+     "son": "2026-10-27"
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "hisse": 386,
+     "ilk": "2022-07-01",
+     "olay": 2404,
+     "son": "2026-10-26"
+    },
+    "BIST_RAKIP": {
+     "hisse": 582,
+     "ilk": "2009-06-01",
+     "olay": 39499,
+     "son": "2026-08-06"
+    },
+    "BIST_SERMAYE": {
+     "hisse": 541,
+     "ilk": "2008-01-04",
+     "olay": 1651,
+     "son": "2026-08-26"
+    },
+    "BIST_TEMETTU": {
+     "hisse": 538,
+     "ilk": "2008-01-03",
+     "olay": 11499,
+     "son": "2026-08-31"
+    },
+    "MAKRO_EMTIA": {
+     "hisse": 1,
+     "ilk": "2015-10-29",
+     "olay": 390,
+     "son": "2026-10-23"
+    },
+    "MAKRO_FOMC": {
+     "hisse": 1,
+     "ilk": "2009-01-29",
+     "olay": 151,
+     "son": "2027-12-09"
+    },
+    "MAKRO_PPK": {
+     "hisse": 1,
+     "ilk": "2015-01-20",
+     "olay": 126,
+     "son": "2026-12-10"
+    }
+   },
+   "sektorlu_hisse": 582,
+   "sure_sn": 51.7,
+   "takvim": [
+    "2008-01-02",
+    "2026-08-31"
+   ],
+   "uygun_hisse_gun_yil": {
+    "2008": 0,
+    "2009": 61541,
+    "2010": 62023,
+    "2011": 64254,
+    "2012": 70898,
+    "2013": 75994,
+    "2014": 79082,
+    "2015": 81248,
+    "2016": 80481,
+    "2017": 80127,
+    "2018": 78324,
+    "2019": 78302,
+    "2020": 78284,
+    "2021": 75784,
+    "2022": 81176,
+    "2023": 89959,
+    "2024": 99279,
+    "2025": 110526,
+    "2026": 75735
+   },
+   "uygun_hisse_yil_sonu": {
+    "2008": 0,
+    "2009": 248,
+    "2010": 246,
+    "2011": 263,
+    "2012": 294,
+    "2013": 314,
+    "2014": 321,
+    "2015": 326,
+    "2016": 321,
+    "2017": 314,
+    "2018": 310,
+    "2019": 315,
+    "2020": 307,
+    "2021": 304,
+    "2022": 347,
+    "2023": 373,
+    "2024": 424,
+    "2025": 454,
+    "2026": 461
+   }
+  }
+ },
+ "surum": "VDYT v1.0 (2026-11-12): Faz 1 (envanter, ön kayıt, kod + sentetik test, kapsam sayımı); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra",
+ "zaman": "2026-11-12 06:15:37 UTC"
+}

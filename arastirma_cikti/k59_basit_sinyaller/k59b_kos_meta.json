@@ -1,0 +1,139 @@
+{
+ "surum": "K59-B v1.0 (2026-11-11): K59 §6'daki önceden yazılı üç deneme: (a) yalnız küçük-orta hisseler, (b) 3 ay tutma + örtüşen üç kohort, (c) French kütüphanesinde momentum + kârlılık harmanı; sinyaller ve cetvel v2 K59 ile aynı",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k59_basit_sinyaller/K59B_ON_KAYIT.md",
+  "sha": "54591b5ffdcdd27b73d7ba145652f7ce36c8a330a04178a6415636f273588522",
+  "k59_sha": "6fe8bb38566701f175883f803332524dbbab493561eef3e4c968bfa332c51eb0",
+  "zaman_utc": "2026-11-11 10:44:08",
+  "dosya_sha256": "36b540f0a40111a95bd47d117ffb1a00a6db9633d2dfd069257be7484ac7fd33",
+  "veri": {
+   "V_ABD.pkl": [
+    "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+    1
+   ],
+   "V_BIST.pkl": [
+    "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+    1
+   ],
+   "F-F_Research_Data_5_Factors_2x3_CSV.zip": [
+    "17d7a575e71d6764a70ddec3f8d887756c0eebf3a60f64d6ba95d2adde3fed26",
+    1
+   ],
+   "F-F_Momentum_Factor_CSV.zip": [
+    "27ed60e5b2caa9ea334a261cddfa864a9926f6bf45e9677c95dfd835c5abb315",
+    1
+   ],
+   "secframes": [
+    "aca462674de19f06ec4f9e98767d6a5bb2735fb61598bbcc4591271b738dd0c7",
+    206
+   ],
+   "secfs": [
+    "d44ce77eeb4780b5edb9277728323f6360e88110ec86dcc4349e6ec00c07ec69",
+    24
+   ],
+   "k57b_fiyat": [
+    "a7fb07ef3926327be1a10c6285c6692436b201fca34b8d86c6ee6ad8fd8c50a9",
+    4461
+   ],
+   "liste_abd.csv.gz": [
+    "87539954817d5d551623eeed04fa410844646539093a4e841a7755a2cfc674cb",
+    1
+   ],
+   "10_Portfolios_Prior_12_2_CSV.zip": [
+    "688467caa28578a8dca70698537c4f03c406b246350b6f3e9c396e15e1e7964f",
+    1
+   ],
+   "Portfolios_Formed_on_OP_CSV.zip": [
+    "2bdf5bdbe9e8231d37b8607de6361fc51213487e763e1bc855f7cd3c055183cf",
+    1
+   ]
+  },
+  "k59": {
+   "yol": "/home/user/col_yolu/arastirma_cikti/k59_basit_sinyaller/K59_ON_KAYIT.md",
+   "dosya_sha256": "11560c74c315c676daffea4763861cdbb16001092abd863d2714a9130b4659e9",
+   "zaman_utc": "2026-11-11 05:48:23",
+   "git": {
+    "commit": "9e04f3e95366b570864b3109e13f66936f885e15",
+    "commit_zamani": "2026-11-11T05:50:41+00:00"
+   }
+  },
+  "git": {
+   "commit": "5b3475a0b546fed99938f5ee75bfd078f1e8e83b",
+   "commit_zamani": "2026-11-11T10:46:37+00:00"
+  }
+ },
+ "isolated": true,
+ "sentetik": false,
+ "kos_baslangic": "2026-11-11 10:47:02 UTC",
+ "evren": {
+  "U1": {
+   "hisse": 1411,
+   "olusum_ayi": 123,
+   "ilk_ay": "2016-05-31",
+   "son_ay": "2026-07-31",
+   "ort_evren": 1084.3333333333333,
+   "alt_olusum_ayi": 123,
+   "ort_alt_evren": 541.910569105691,
+   "olusum_ardisik": true,
+   "S3_olcu": {
+    "islem_degeri": 123
+   },
+   "sn": 107
+  },
+  "U2": {
+   "hisse": 4261,
+   "olusum_ayi": 68,
+   "ilk_ay": "2020-12-31",
+   "son_ay": "2026-07-31",
+   "ort_evren": 2146.5,
+   "alt_olusum_ayi": 68,
+   "ort_alt_evren": 958.4264705882352,
+   "olusum_ardisik": true,
+   "S3_olcu": {
+    "piyasa_degeri": 65,
+    "islem_degeri": 3
+   },
+   "sn": 175
+  }
+ },
+ "not": [],
+ "french": {
+  "ilk_ay": "1963-07",
+  "son_ay": "2026-09"
+ },
+ "c": {
+  "ilk_ay": "1963-07",
+  "son_ay": "2026-09",
+  "ay": 759,
+  "okuma": {
+   "VW_MKT": "bileşik uzun dönemde tutmuyor (1963-son: TUTAR, 2000-son: TUTMAZ); 2020 sonrası güçlü",
+   "EW_EW10": "bileşik uzun dönemde tutmuyor (1963-son: TUTMAZ, 2000-son: TUTMAZ); 2020 sonrası zayıf"
+  }
+ },
+ "karar": {
+  "karar": "TUTMAZ",
+  "cetvel": {
+   "a": "GÜVENİLİR",
+   "b": "GÜVENİLMEZ"
+  },
+  "yp_net": {
+   "a": 0.0,
+   "b": 0.015
+  },
+  "yp_brut": {
+   "a": 0.01,
+   "b": 0.135
+  },
+  "sinyal": {
+   "(a) COMP4": "TUTMAZ (U1 TUTMAZ, U2 TUTAR (yineleme))",
+   "(a) DOSYA_Y": "TUTMAZ (U1 TUTMAZ, U2 TUTMAZ)",
+   "(a) S5": "TUTMAZ (U1 TUTMAZ, U2 TUTMAZ)",
+   "(a) S1": "TUTMAZ (U1 TUTAR (yineleme), U2 TUTMAZ)",
+   "(b) COMP4": "HÜKÜM YOK (cetvel bu tasarımda güvenilmez: plasebo yanlış pozitif oranı eşiğin üstünde)",
+   "(b) DOSYA_Y": "HÜKÜM YOK (cetvel bu tasarımda güvenilmez: plasebo yanlış pozitif oranı eşiğin üstünde)",
+   "(b) S5": "HÜKÜM YOK (cetvel bu tasarımda güvenilmez: plasebo yanlış pozitif oranı eşiğin üstünde)",
+   "(b) S1": "HÜKÜM YOK (cetvel bu tasarımda güvenilmez: plasebo yanlış pozitif oranı eşiğin üstünde)"
+  }
+ },
+ "kos_bitis": "2026-11-11 10:51:45 UTC"
+}

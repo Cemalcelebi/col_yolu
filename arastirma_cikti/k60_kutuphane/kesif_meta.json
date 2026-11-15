@@ -1,0 +1,94 @@
+{
+ "surum": "K60 v1.0 (2026-11-11): sinyal kütüphanesi x iki cetvel (R1 portföy cetveli v2, R2 olasılık tablosu), KEŞİF / DOĞRULAMA / KASA, Benjamini-Hochberg + plasebo; geniş ABD evreni (yalnız yaşayanlar)",
+ "donem": "kesif",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k60_kutuphane/K60_ON_KAYIT.md",
+  "sha": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+  "zaman_utc": "2026-11-11 12:09:42",
+  "dosya_sha256": "eba12e1d060217f2c1fd4ffe5715382d29d343cd29004af5c69617b10b2218c0",
+  "veri": {
+   "k60_fiyat": [
+    "a795410c999b166d8e8e12a20d638b2ad07ec63ec963b5334f0d6abe99470408",
+    4755
+   ],
+   "k60_secframes": [
+    "995fb342cbfe782b70adf17439ed537f4d574856460056e4bf477b9c47f0dd8b",
+    1781
+   ],
+   "eski_secframes": [
+    "aca462674de19f06ec4f9e98767d6a5bb2735fb61598bbcc4591271b738dd0c7",
+    206
+   ],
+   "company_tickers.json": [
+    "6f9cc4500a98fb4c048328d7df392ed48c092613ec0c3e93cd6c7a3502886074",
+    1
+   ],
+   "k35_sic.csv": [
+    "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+    1
+   ],
+   "F-F_Research_Data_Factors_daily_CSV.zip": [
+    "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+    1
+   ],
+   "F-F_Research_Data_5_Factors_2x3_CSV.zip": [
+    "17d7a575e71d6764a70ddec3f8d887756c0eebf3a60f64d6ba95d2adde3fed26",
+    1
+   ],
+   "F-F_Momentum_Factor_CSV.zip": [
+    "27ed60e5b2caa9ea334a261cddfa864a9926f6bf45e9677c95dfd835c5abb315",
+    1
+   ]
+  },
+  "git": {
+   "commit": "f740ed43cc1108f6c2bf3634e6ccf0e5b2d63996",
+   "commit_zamani": "2026-11-11T12:13:34+00:00"
+  }
+ },
+ "isolated": true,
+ "sentetik": false,
+ "kos_baslangic": "2026-11-11 12:14:07 UTC",
+ "not": [],
+ "kod_sha256": "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "veri_denetimi": {
+  "olusum_ayi_r1": 120,
+  "olusum_ayi_r2": 120,
+  "ort_evren": 1642.375,
+  "hisse_ay": 197085,
+  "maks_aylik_getiri": 16.250530645848084,
+  "aylik_ust_300": 10,
+  "hisse_ay_12": 197085,
+  "maks_12ay_getiri": 83.6354185584157,
+  "getiri12_ust_1000": 52
+ },
+ "hisse": 4666,
+ "secili_sha256": "d3b69222e1617e45eefbc417aa8e32069bb06e0f40759a16a65851bbb5f73564",
+ "esik": {
+  "m_r1": 88,
+  "m_r2": 165,
+  "t_arti": 3.3153870777542758,
+  "t_eksi_brut": 2.6855875535255396,
+  "lift_p100": 1.0777542816701682,
+  "lift_m50": 1.0711928143498992,
+  "yp_net": 0.0,
+  "yp_brut": 0.015,
+  "yp_r2": 0.045,
+  "yp_r2k": 0.04,
+  "r1_acik": true,
+  "r2_aralik_dar": false,
+  "r2k_aralik_dar": false,
+  "plasebo_maks_brut_t": 3.3153870777542758,
+  "plasebo_maks_net_t": 0.8703336833048777,
+  "plasebo_min_brut_t": -2.6855875535255396,
+  "plasebo_maks_lift_p100": 1.0777542816701682,
+  "plasebo_maks_lift_m50": 1.0711928143498992
+ },
+ "secili_n": 114,
+ "kos_bitis": "2026-11-11 12:15:09 UTC",
+ "sure_sn": 61
+}

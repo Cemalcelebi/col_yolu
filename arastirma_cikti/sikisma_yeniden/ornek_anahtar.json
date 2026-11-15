@@ -1,0 +1,295 @@
+{
+ "surum": "SIKISMA_YENIDEN duyarlilik v1.0 (2026-11-14)",
+ "muhur": "ac472e8b1e91b904f61f6a2efa35321255461bfa980ad996fbd86d7eefe9c5bf",
+ "tohum": 27,
+ "kume": "Ç174 S1 olayları (p=10, eş1 ile en az 3 eş)",
+ "grafik": [
+  {
+   "tip": "olay",
+   "sembol": "CWK",
+   "tarih": "2026-01-02",
+   "numara": 1
+  },
+  {
+   "tip": "olay",
+   "sembol": "EXLS",
+   "tarih": "2025-12-30",
+   "numara": 2
+  },
+  {
+   "tip": "olay",
+   "sembol": "DOCU",
+   "tarih": "2023-03-28",
+   "numara": 3
+  },
+  {
+   "tip": "eş",
+   "sembol": "CVBF",
+   "tarih": "2025-12-30",
+   "numara": 4
+  },
+  {
+   "tip": "olay",
+   "sembol": "ARQT",
+   "tarih": "2025-12-08",
+   "numara": 5
+  },
+  {
+   "tip": "olay",
+   "sembol": "RMD",
+   "tarih": "2023-01-03",
+   "numara": 6
+  },
+  {
+   "tip": "eş",
+   "sembol": "ROKU",
+   "tarih": "2023-03-28",
+   "numara": 7
+  },
+  {
+   "tip": "olay",
+   "sembol": "SWK",
+   "tarih": "2023-08-24",
+   "numara": 8
+  },
+  {
+   "tip": "eş",
+   "sembol": "IFF",
+   "tarih": "2023-01-03",
+   "numara": 9
+  },
+  {
+   "tip": "olay",
+   "sembol": "UDR",
+   "tarih": "2026-01-02",
+   "numara": 10
+  },
+  {
+   "tip": "eş",
+   "sembol": "RIG",
+   "tarih": "2025-12-08",
+   "numara": 11
+  },
+  {
+   "tip": "eş",
+   "sembol": "TNDM",
+   "tarih": "2023-06-29",
+   "numara": 12
+  },
+  {
+   "tip": "eş",
+   "sembol": "COMP",
+   "tarih": "2023-06-30",
+   "numara": 13
+  },
+  {
+   "tip": "eş",
+   "sembol": "YOU",
+   "tarih": "2026-01-02",
+   "numara": 14
+  },
+  {
+   "tip": "eş",
+   "sembol": "RRX",
+   "tarih": "2023-01-05",
+   "numara": 15
+  },
+  {
+   "tip": "olay",
+   "sembol": "JCI",
+   "tarih": "2024-08-28",
+   "numara": 16
+  },
+  {
+   "tip": "olay",
+   "sembol": "RLJ",
+   "tarih": "2023-04-19",
+   "numara": 17
+  },
+  {
+   "tip": "olay",
+   "sembol": "DDOG",
+   "tarih": "2024-05-22",
+   "numara": 18
+  },
+  {
+   "tip": "olay",
+   "sembol": "OXY",
+   "tarih": "2023-06-20",
+   "numara": 19
+  },
+  {
+   "tip": "eş",
+   "sembol": "VIAV",
+   "tarih": "2023-04-19",
+   "numara": 20
+  },
+  {
+   "tip": "eş",
+   "sembol": "CAT",
+   "tarih": "2024-08-28",
+   "numara": 21
+  },
+  {
+   "tip": "eş",
+   "sembol": "ARDX",
+   "tarih": "2024-10-30",
+   "numara": 22
+  },
+  {
+   "tip": "olay",
+   "sembol": "BROS",
+   "tarih": "2023-06-29",
+   "numara": 23
+  },
+  {
+   "tip": "eş",
+   "sembol": "FNF",
+   "tarih": "2024-01-02",
+   "numara": 24
+  },
+  {
+   "tip": "eş",
+   "sembol": "TRU",
+   "tarih": "2025-12-29",
+   "numara": 25
+  },
+  {
+   "tip": "olay",
+   "sembol": "GPK",
+   "tarih": "2024-01-02",
+   "numara": 26
+  },
+  {
+   "tip": "olay",
+   "sembol": "BEAM",
+   "tarih": "2023-06-30",
+   "numara": 27
+  },
+  {
+   "tip": "olay",
+   "sembol": "CALY",
+   "tarih": "2023-07-03",
+   "numara": 28
+  },
+  {
+   "tip": "olay",
+   "sembol": "KSS",
+   "tarih": "2023-04-24",
+   "numara": 29
+  },
+  {
+   "tip": "olay",
+   "sembol": "LQDA",
+   "tarih": "2024-10-30",
+   "numara": 30
+  },
+  {
+   "tip": "olay",
+   "sembol": "AFL",
+   "tarih": "2023-04-20",
+   "numara": 31
+  },
+  {
+   "tip": "eş",
+   "sembol": "ADSK",
+   "tarih": "2023-06-20",
+   "numara": 32
+  },
+  {
+   "tip": "eş",
+   "sembol": "VICI",
+   "tarih": "2023-04-20",
+   "numara": 33
+  },
+  {
+   "tip": "eş",
+   "sembol": "STX",
+   "tarih": "2023-08-24",
+   "numara": 34
+  },
+  {
+   "tip": "olay",
+   "sembol": "HOG",
+   "tarih": "2025-12-29",
+   "numara": 35
+  },
+  {
+   "tip": "eş",
+   "sembol": "ALGM",
+   "tarih": "2023-07-03",
+   "numara": 36
+  },
+  {
+   "tip": "olay",
+   "sembol": "USFD",
+   "tarih": "2023-01-05",
+   "numara": 37
+  },
+  {
+   "tip": "eş",
+   "sembol": "CNI",
+   "tarih": "2026-01-02",
+   "numara": 38
+  },
+  {
+   "tip": "eş",
+   "sembol": "EXPE",
+   "tarih": "2024-05-22",
+   "numara": 39
+  },
+  {
+   "tip": "eş",
+   "sembol": "ZIM",
+   "tarih": "2023-04-24",
+   "numara": 40
+  }
+ ],
+ "dosya": {
+  "pdf": "SIKISMA_ORNEK_40.pdf",
+  "pdf_sha256": "942d3bbaf46192f491cb21eea8586246498be6a86fd39898fb0e2d152a79a454",
+  "pdf_bayt": 551486,
+  "png_sha256": {
+   "grafik_01.png": "a13544897f9e860eb12758809de2ca99b08dbb5fd62a5aac1039edd29368fe17",
+   "grafik_02.png": "372f7bade233079f6eca8adbf95cd49d87fc22f84c79d20ad6b7f3474985f1b5",
+   "grafik_03.png": "3c58f5c34126d396a095885114d619de315d9b6e789b07e68e9f4dd5a15a91b0",
+   "grafik_04.png": "c87e39e3c8a0d250db532625cbbbb101ddf2c39cbc9427b367075cd65fdb7062",
+   "grafik_05.png": "80c10685d5ad6cabbb481c9c41150b77f28284707333326ad784264d29687e37",
+   "grafik_06.png": "cc15f4d99804e824ad4ac8a75f121a44098a28e1cfe4d9c41451f790b963b55e",
+   "grafik_07.png": "4a7d7f2508b1f0a56609d8a8f3622f271f69903c04965eaae4976ef7fb94c9b2",
+   "grafik_08.png": "684c512065f39b7356327fe2a9c76ded07d7df71636716c25f5d7ca7c037d1d4",
+   "grafik_09.png": "911b00d1324d369d19412e29d60a2b6fb0612daa353eb9437fbb8bf284fd5d76",
+   "grafik_10.png": "ba27d566aabf603180ceeb68497f0b2e7f7077b4b25af9eb0844a0f4c684fb0e",
+   "grafik_11.png": "4ac9af1bda437ed4c45089bfc8d5c242faca75c01894fdde989185adfd571fd8",
+   "grafik_12.png": "7a89bddb9f2d54526c01b2dacb16e8e4b594e3e35a69bbeadb1716bfa5d4005d",
+   "grafik_13.png": "e4e7415e90d5bc92b32838241bd7b75f5d8674c26616cd54ed0d8fa8f8c14156",
+   "grafik_14.png": "e1d5d65a80c9748d71f6cd86a59dcb6be27411c2ac3ad8f1370ebbc2dc965b1c",
+   "grafik_15.png": "9285529da04a508531e5ddd991e1cef4204da9abd9472d4a1aee898187ab8849",
+   "grafik_16.png": "254e2992dfcec949e4e2114c091aff02d53fa55d3b9deef00f9503e213170b10",
+   "grafik_17.png": "1a793aaba72292771a63dc1d0ce37e7017ffec93054fbcac299561371007c3bf",
+   "grafik_18.png": "52952ac90439f1dd33e5d8048498cd66f4caa791b81f55311a958c0e3322910f",
+   "grafik_19.png": "9e2c79bb1fddb85bd3559a3f51355a1da618a76d12f4a333042500714d33a95f",
+   "grafik_20.png": "00d8e545be84deabad3697991e9c62c38151859597267f633de77e10b07d2497",
+   "grafik_21.png": "dd9367015d8e29e1f073dcf2f8c2bbe2adec51079998019679da3c4caec7543f",
+   "grafik_22.png": "4ea18b650ca61d2a5f1127d4c6503551ffdeb2201de204f736821f3ce613a33c",
+   "grafik_23.png": "378ef4cfec20299cb71e5da2e93acf4be7b38b26e97bea220b705cfbaed47ca7",
+   "grafik_24.png": "45c7f1ae19a3da5ae72ec47c97bc26ea96733dda1c9da040db19aa1434c804e3",
+   "grafik_25.png": "5c9f4b696002c1eedd8f3eb5a5fc38e23e5a323ba30561913e01416302c836aa",
+   "grafik_26.png": "9ed0d6290cce0e4795378a4164de20994f5c32409550a401a2ebc93a25ec852b",
+   "grafik_27.png": "ffd210f9b2ff8592edba0c6d1999aaf69071494fcd0e97c547f3136f242b9a07",
+   "grafik_28.png": "147a1975ddb3ab17427db1305ff3a887d23cf5b75f6f129af75827ca33b4afb8",
+   "grafik_29.png": "c71c0012a7d9e1c450a1115fe3154f15857b205416f22b940946e930f2d96714",
+   "grafik_30.png": "e26c4c467c81b70bc8d4215cbb47960f11192a2fbae36c30383112e20b71fa44",
+   "grafik_31.png": "4e809ef1cf0271675af3cf623b044b1b7e4176f9326027bb8614c136ba22a6a2",
+   "grafik_32.png": "88c53c0060dd610a5d66e5d870c5b6fd63dbc4bd5620e4fffdb67b9620f027ac",
+   "grafik_33.png": "d08ec786e814ce911fa78db6f6ec8421f9943beb36fbc2735d4949702f1dcbc4",
+   "grafik_34.png": "f68b0037937b630856f855d2d19ff90cbc5f2c80cf76c45ad00002903bccb189",
+   "grafik_35.png": "f0ce6e1082b13a8f02d0b529a1c3c20ea30050ea56f5f068f696ee83d474d080",
+   "grafik_36.png": "f7de11ec4285b3bca39f6332bf690c77c95c101bdb2c73d3cf952b32d1a21f61",
+   "grafik_37.png": "16d1bca2b0ab562196d3f2aaa56fdce44d9b7443e983560b39c56c186fb1493a",
+   "grafik_38.png": "0cf87826b3f4d89974135c4a0cfb9962e4ba9fef86a44f6007ec7aa21a865d5b",
+   "grafik_39.png": "889bcd0503c10888323c0de3c40993742040ee3bf05f8f4c848c362949d63f9c",
+   "grafik_40.png": "c3d3425feffe850bffc1565673a62176c2f384f165d101d0eaf2e1b0d5c4285a"
+  }
+ }
+}

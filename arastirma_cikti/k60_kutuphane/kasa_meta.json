@@ -1,0 +1,2638 @@
+{
+ "surum": "K60 v1.0 (2026-11-11): sinyal kütüphanesi x iki cetvel (R1 portföy cetveli v2, R2 olasılık tablosu), KEŞİF / DOĞRULAMA / KASA, Benjamini-Hochberg + plasebo; geniş ABD evreni (yalnız yaşayanlar)",
+ "donem": "kasa",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k60_kutuphane/K60_ON_KAYIT.md",
+  "sha": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+  "zaman_utc": "2026-11-11 12:09:42",
+  "dosya_sha256": "eba12e1d060217f2c1fd4ffe5715382d29d343cd29004af5c69617b10b2218c0",
+  "veri": {
+   "k60_fiyat": [
+    "a795410c999b166d8e8e12a20d638b2ad07ec63ec963b5334f0d6abe99470408",
+    4755
+   ],
+   "k60_secframes": [
+    "995fb342cbfe782b70adf17439ed537f4d574856460056e4bf477b9c47f0dd8b",
+    1781
+   ],
+   "eski_secframes": [
+    "aca462674de19f06ec4f9e98767d6a5bb2735fb61598bbcc4591271b738dd0c7",
+    206
+   ],
+   "company_tickers.json": [
+    "6f9cc4500a98fb4c048328d7df392ed48c092613ec0c3e93cd6c7a3502886074",
+    1
+   ],
+   "k35_sic.csv": [
+    "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+    1
+   ],
+   "F-F_Research_Data_Factors_daily_CSV.zip": [
+    "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+    1
+   ],
+   "F-F_Research_Data_5_Factors_2x3_CSV.zip": [
+    "17d7a575e71d6764a70ddec3f8d887756c0eebf3a60f64d6ba95d2adde3fed26",
+    1
+   ],
+   "F-F_Momentum_Factor_CSV.zip": [
+    "27ed60e5b2caa9ea334a261cddfa864a9926f6bf45e9677c95dfd835c5abb315",
+    1
+   ]
+  },
+  "git": {
+   "commit": "f740ed43cc1108f6c2bf3634e6ccf0e5b2d63996",
+   "commit_zamani": "2026-11-11T12:13:34+00:00"
+  }
+ },
+ "isolated": true,
+ "sentetik": false,
+ "kos_baslangic": "2026-11-11 12:19:40 UTC",
+ "not": [],
+ "kod_sha256": "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "veri_denetimi": {
+  "olusum_ayi_r1": 31,
+  "olusum_ayi_r2": 20,
+  "ort_evren": 2516.0,
+  "hisse_ay": 77996,
+  "maks_aylik_getiri": 4.815347792753929,
+  "aylik_ust_300": 5,
+  "hisse_ay_12": 48635,
+  "maks_12ay_getiri": 18.441558526808468,
+  "getiri12_ust_1000": 18
+ },
+ "hisse": 4666,
+ "secili_sha256": "d3b69222e1617e45eefbc417aa8e32069bb06e0f40759a16a65851bbb5f73564",
+ "plasebo_dilim": {
+  "t95": 1.8679780648761368,
+  "brut_t05": -2.276792757058298,
+  "lift_p100": 1.0851493848476461,
+  "lift_m50": 1.0788778931396437
+ },
+ "sonuc": [
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ACT_13D",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_DIS",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_LIQ",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_MOM",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_PRF",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_RSK",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_VAL",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AM",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AMIHUD",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "BM",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "CBOP_A",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "CFP",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "CHS_FAIL",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "DOLVOL",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": true,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EARN_STREAK",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "EP",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "E_424B5",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "E_IPO_3Y",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "E_RSPLIT",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "E_S3",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "F_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "HIGH52",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": true
+  },
+  {
+   "sinyal": "IND_MOM_6",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "ISKEW",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "IVOL_FF3",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "LEV_MKT",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "LTREV_60_13",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MAX5",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_FIP",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": true
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": true
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yon_r1": 1,
+   "kesif_yol": [
+    "R1"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NSI_1Y",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NSI_5Y",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "NT_LATE",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "OP_BE",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "O_SCORE",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "PRICE_LVL",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ROA_Q",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "ROE_TTM",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "RUNWAY",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SIZE_ME",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SKEW_TOT",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SPREAD_CS",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "SUE_SRW",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "TURN_12M",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "VOL_60D",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "ALT",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [
+    "R2",
+    "R2K"
+   ],
+   "kesif_secili": true,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": true,
+   "alt_m50_ustu_1": true,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [],
+   "kesif_secili": false,
+   "r1": false,
+   "r1_ters": false,
+   "r2": true,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": true
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [],
+   "kesif_secili": false,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [],
+   "kesif_secili": false,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "UST",
+   "yon_r1": 0,
+   "kesif_yol": [],
+   "kesif_secili": false,
+   "r1": false,
+   "r1_ters": false,
+   "r2": false,
+   "r2k": false,
+   "alt_m50_ustu_1": false,
+   "gecer": false
+  }
+ ],
+ "giren_n": 109,
+ "gecen_n": 97,
+ "etiket": [
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "ACT_13D",
+   "taraf": "UST",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_DIS",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_LIQ",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_MOM",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_MOM",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "AILE_PRF",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_RSK",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AILE_VAL",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AM",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "AMIHUD",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "BM",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "BM",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "CBOP_A",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "CFP",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "CFP",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "CHS_FAIL",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "DOLVOL",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "EARN_STREAK",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EP",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "E_424B5",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "E_DIV_OMIT",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "E_IPO_3Y",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "E_RSPLIT",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "E_S3",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "F_SCORE",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "HIGH52",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "IND_MOM_6",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "IND_MOM_6",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "ISKEW",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "IVOL_FF3",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "LEV_MKT",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "LTREV_60_13",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MAX5",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_FIP",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "NSI_1Y",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "NSI_5Y",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "NT_LATE",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "OP_BE",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "O_SCORE",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "PRICE_LVL",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "UST",
+   "etiket": []
+  },
+  {
+   "sinyal": "ROA_Q",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "ROE_TTM",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "RUNWAY",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SIZE_ME",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SKEW_TOT",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ"
+   ]
+  },
+  {
+   "sinyal": "SPREAD_CS",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "SUE_SRW",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "etiket": []
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "TURN_12M",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "VOL_60D",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "ALT",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "UST",
+   "etiket": [
+    "K60-OLASILIK İZİ",
+    "K60-KAÇINMA İZİ"
+   ]
+  }
+ ],
+ "kos_bitis": "2026-11-11 12:20:31 UTC",
+ "sure_sn": 50
+}

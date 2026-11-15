@@ -1,0 +1,150 @@
+{
+ "surum": "K57 v1.0 (2026-11-09): YEOTK profili ön kayıtlı geçmiş testi (BIST bilgi, ABD karar, Avrupa verisi yok)",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k57_yeotk_profili/K57_ON_KAYIT.md",
+  "sha": "2a6cc6f6d1fd52e7dc9e7711f580c145a3c87f59369b12e40c4052fe1ce4b1f0",
+  "zaman_utc": "2026-11-09 15:29:00"
+ },
+ "kos_baslangic": "2026-11-09 17:59:29 UTC",
+ "sec": {
+  "indirilen": 0,
+  "onbellek": 206,
+  "yok_404": 0,
+  "hata": [],
+  "durum": "tamam",
+  "ua": "col-yolu-arastirma/1.0 (+https://github.com/cemalcelebi/col_yolu)"
+ },
+ "veri": {
+  "V_BIST": 581,
+  "V_ABD": 1411,
+  "kap_rapor": 14726,
+  "nasdaq_satir": 65443,
+  "secfs_basvuru": 145024,
+  "temel_duz": 10116,
+  "fon_pay_ay": 17991
+ },
+ "abd_temel_kaynak": "ABD TEMEL VERİSİ VAR",
+ "abd_temel_kapsam": 0.702786981095303,
+ "atla": {
+  "BIST": [
+   "F4"
+  ],
+  "ABD": [
+   "F5"
+  ]
+ },
+ "abd_temel": true,
+ "kos_bitis": "2026-11-09 18:03:10 UTC",
+ "karar": {
+  "ANA V0": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "ANA V1": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "ANA V2": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "ANA V3": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "ANA V4": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D1 V1": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D1 V2": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D1 V3": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D1 V4": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D3 V1": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D3 V2": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D3 V3": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D3 V4": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D2 V0": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D2 V1": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D2 V2": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D2 V3": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  },
+  "D2 V4": {
+   "karar": "İZ DEĞİL",
+   "kismi": "İZ DEĞİL",
+   "bist_iki_hucre": "tutmaz"
+  }
+ },
+ "sayilar": {
+  "BIST": {
+   "olay": 9046,
+   "V0": 1328,
+   "V1": 110,
+   "V2": 25,
+   "V3": 22,
+   "V4": 99,
+   "olculen": 8293
+  },
+  "ABD": {
+   "olay": 29678,
+   "V0": 5506,
+   "V1": 72,
+   "V2": 19,
+   "V3": 10,
+   "V4": 61,
+   "olculen": 28024
+  }
+ }
+}

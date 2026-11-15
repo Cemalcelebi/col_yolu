@@ -1,0 +1,41 @@
+{
+ "surum": "K58 v1.0 (2026-11-10): cetvel sağlaması (FI_OLCUT gücü, French pozitif kontrol, portföy cetveli kalibrasyonu, C4 trend filtresi)",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k58_cetvel_sagla/K58_ON_KAYIT.md",
+  "sha": "5aec67198fe98771d8b8f20db6dbbfea5fe6a047ff8101948a050a311e83e347",
+  "zaman_utc": "2026-11-10 19:19:52",
+  "dosya_sha256": "234c3444b5bce31031c8769ad501ded1c33f3ce8e21ced733b6b8e59b14875b1",
+  "veri": {
+   "V_ABD.pkl": "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+   "V_BIST.pkl": "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51"
+  }
+ },
+ "isolated": true,
+ "kos_baslangic": "2026-11-10 19:22:05 UTC",
+ "bolum": {
+  "B": {
+   "bitis": "2026-11-10 19:22:06 UTC",
+   "sn": 1,
+   "zip_sha256": {
+    "F-F_Research_Data_5_Factors_2x3_CSV.zip": "17d7a575e71d6764a70ddec3f8d887756c0eebf3a60f64d6ba95d2adde3fed26",
+    "F-F_Momentum_Factor_CSV.zip": "27ed60e5b2caa9ea334a261cddfa864a9926f6bf45e9677c95dfd835c5abb315"
+   },
+   "ilk_ay": "1963-07",
+   "son_ay": "2026-09"
+  },
+  "C": {
+   "bitis": "2026-11-10 19:22:31 UTC",
+   "sn": 14,
+   "yahoo_sha256": {
+    "SPY": "fcdd3723aa044aad36078d8d7526101c75137c6f56ea1ac969c59d2212cf0187",
+    "XU100.IS": "91d98fc8365197e4a6d806fb3d3176e1ea59601ef8be21afab145dbb0cf771b7"
+   }
+  },
+  "A": {
+   "bitis": "2026-11-10 19:46:07 UTC",
+   "sn": 1410,
+   "satir": 6000
+  }
+ },
+ "kos_bitis": "2026-11-10 19:46:07 UTC"
+}

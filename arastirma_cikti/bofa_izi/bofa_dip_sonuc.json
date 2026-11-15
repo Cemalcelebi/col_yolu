@@ -1,0 +1,1290 @@
+{
+ "baslangic": "2026-11-13 18:20:44 UTC",
+ "bir": {
+  "hucre": {
+   "ABD": {
+    "2016-22": {
+     "alt95": -0.1332280690420068,
+     "dn": {
+      "es": 0.27442140678609794,
+      "kat_es": 1.6783709341672368,
+      "kat_taban": 2.903926424685048,
+      "n": 482,
+      "p": 0.4605809128630705,
+      "taban": 0.15860626114624232
+     },
+     "hisse": 226,
+     "kazanan": 0.4330708661417323,
+     "medyan_fark": -0.051285202769566045,
+     "medyan_r60": 0.010969853529336548,
+     "n": 508,
+     "n_kirik60": 7,
+     "n_olay": 508,
+     "ort_esli": 0.16246911269274134,
+     "ort_fark": -0.02731674958000215,
+     "ort_r60": 0.13515236311273918,
+     "portfoy": 0.06197095646400541,
+     "portfoy_esli_p10": 0.015527425591954169,
+     "portfoy_esli_p50": 1.0454783041278106,
+     "portfoy_esli_p90": 6.897398946683659,
+     "sira": 0.48199505237497964,
+     "tutar": false,
+     "tutmayan": [
+      "ortalama eşli fark <= 0",
+      "bootstrap %95 alt uç <= 0",
+      "sıra <= 0,50",
+      "portföy rastgele %90'ı geçmedi"
+     ],
+     "u120": {
+      "alt95": -0.04815022526291628,
+      "esli": 0.1544060259676464,
+      "fark": 0.09880635595942903,
+      "medyan": -0.04146337605600536,
+      "n": 495,
+      "ort": 0.2532123819270754,
+      "ust95": 0.290267690642011
+     },
+     "u250": {
+      "alt95": 0.11948296455025152,
+      "esli": 0.4672835646059326,
+      "fark": 0.5580401727516232,
+      "medyan": 0.0371362076136903,
+      "n": 482,
+      "ort": 1.0253237373575557,
+      "ust95": 1.1164355432364628
+     },
+     "up": {
+      "es": 0.29643831864048503,
+      "kat_es": 1.5747120054990076,
+      "kat_taban": 4.108074383133646,
+      "n": 482,
+      "p": 0.46680497925311204,
+      "taban": 0.11363109226299657
+     },
+     "ust95": 0.06094655714036092
+    },
+    "2023": {
+     "alt95": 0.08891764402879059,
+     "dn": {
+      "es": 0.22783721732784942,
+      "kat_es": 2.000095541352734,
+      "kat_taban": 4.159310287340581,
+      "n": 79,
+      "p": 0.45569620253164556,
+      "taban": 0.10956052110817942
+     },
+     "hisse": 57,
+     "kazanan": 0.49382716049382713,
+     "medyan_fark": -0.0040112078771856186,
+     "medyan_r60": 0.11881188118811892,
+     "n": 81,
+     "n_kirik60": 1,
+     "n_olay": 81,
+     "ort_esli": 0.11369769478294164,
+     "ort_fark": 0.24772397215874611,
+     "ort_r60": 0.36142166694168776,
+     "portfoy": 2.847517753452603,
+     "portfoy_esli_p10": 0.02536516328684963,
+     "portfoy_esli_p50": 0.3579395394391143,
+     "portfoy_esli_p90": 0.9099689963872486,
+     "sira": 0.5512231403251081,
+     "tutar": true,
+     "tutmayan": [],
+     "u120": {
+      "alt95": 0.07260368467111403,
+      "esli": 0.18687017168427303,
+      "fark": 0.3343693785282953,
+      "medyan": 0.17692313572783935,
+      "n": 79,
+      "ort": 0.5212395502125683,
+      "ust95": 0.5840617255508287
+     },
+     "u250": {
+      "alt95": 0.14048069478424152,
+      "esli": 0.4441788954948932,
+      "fark": 0.6645072534228796,
+      "medyan": 0.4135337853904808,
+      "n": 79,
+      "ort": 1.1086861489177728,
+      "ust95": 1.1029872109596082
+     },
+     "up": {
+      "es": 0.30875320304060977,
+      "kat_es": 2.0088962914350112,
+      "kat_taban": 4.329545327404703,
+      "n": 79,
+      "p": 0.620253164556962,
+      "taban": 0.14326057764794572
+     },
+     "ust95": 0.42952394052726506
+    },
+    "2024-26": {
+     "alt95": 0.003595348565498564,
+     "dn": {
+      "es": 0.20968445311222184,
+      "kat_es": 1.7096668862038802,
+      "kat_taban": 2.526903169190584,
+      "n": 106,
+      "p": 0.3584905660377358,
+      "taban": 0.14186953042310968
+     },
+     "hisse": 76,
+     "kazanan": 0.3835616438356164,
+     "medyan_fark": -0.16382506086609083,
+     "medyan_r60": 0.03312561690038662,
+     "n": 146,
+     "n_kirik60": 1,
+     "n_olay": 165,
+     "ort_esli": 0.16524898403471835,
+     "ort_fark": 0.20579732698695927,
+     "ort_r60": 0.37104631102167757,
+     "portfoy": 2.2527005573412984,
+     "portfoy_esli_p10": 0.2522027108316316,
+     "portfoy_esli_p50": 1.1954552721045926,
+     "portfoy_esli_p90": 4.168938963306052,
+     "sira": 0.4755507895894319,
+     "tutar": false,
+     "tutmayan": [
+      "sıra <= 0,50",
+      "portföy rastgele %90'ı geçmedi"
+     ],
+     "u120": {
+      "alt95": 0.06887138973450646,
+      "esli": 0.3742795140404083,
+      "fark": 0.30808392511355276,
+      "medyan": 0.21156374576446746,
+      "n": 129,
+      "ort": 0.6823634391539611,
+      "ust95": 0.5922012366215342
+     },
+     "u250": {
+      "alt95": 0.2032134124473374,
+      "esli": 1.0228945359912418,
+      "fark": 0.7228026680941346,
+      "medyan": 0.8215241666627277,
+      "n": 106,
+      "ort": 1.745697204085376,
+      "ust95": 1.2819848718252118
+     },
+     "up": {
+      "es": 0.3955812879087108,
+      "kat_es": 1.8840199009613297,
+      "kat_taban": 4.023061858087939,
+      "n": 106,
+      "p": 0.7452830188679245,
+      "taban": 0.18525268692292468
+     },
+     "ust95": 0.4624335919887433
+    }
+   },
+   "AVR": {
+    "2016-22": {
+     "alt95": -0.06778596399168281,
+     "dn": {
+      "es": 0.12037447540485925,
+      "kat_es": 3.115278373913994,
+      "kat_taban": 5.4635529198746235,
+      "n": 32,
+      "p": 0.375,
+      "taban": 0.06863665557916943
+     },
+     "hisse": 16,
+     "kazanan": 0.625,
+     "medyan_fark": 0.07854487749317271,
+     "medyan_r60": 0.1019798439519578,
+     "n": 32,
+     "n_kirik60": 0,
+     "n_olay": 32,
+     "ort_esli": 0.10410728538434233,
+     "ort_fark": 0.08849246662714685,
+     "ort_r60": 0.19259975201148916,
+     "portfoy": 0.9739430156009892,
+     "portfoy_esli_p10": 0.195538291460041,
+     "portfoy_esli_p50": 0.3861499603339601,
+     "portfoy_esli_p90": 0.6307340339886718,
+     "sira": 0.5629313000153118,
+     "tutar": false,
+     "tutmayan": [
+      "bootstrap %95 alt uç <= 0"
+     ],
+     "u120": {
+      "alt95": -0.1426041738474813,
+      "esli": 0.15485686470964594,
+      "fark": 0.037867682886317866,
+      "medyan": 0.13954067954375005,
+      "n": 32,
+      "ort": 0.19272454759596383,
+      "ust95": 0.214570627289242
+     },
+     "u250": {
+      "alt95": -0.23542997567914967,
+      "esli": 0.30751465081018825,
+      "fark": 0.03475447244338326,
+      "medyan": 0.2752302411322256,
+      "n": 32,
+      "ort": 0.3422691232535715,
+      "ust95": 0.3865335153327674
+     },
+     "up": {
+      "es": 0.15191151172484751,
+      "kat_es": 2.8799660738840505,
+      "kat_taban": 15.055040699345934,
+      "n": 32,
+      "p": 0.4375,
+      "taban": 0.029060034359057373
+     },
+     "ust95": 0.25391315198783343
+    },
+    "2023": {
+     "alt95": -0.8718131813289561,
+     "dn": {
+      "es": 0.027777777777777776,
+      "kat_es": 0.0,
+      "kat_taban": 0.0,
+      "n": 1,
+      "p": 0.0,
+      "taban": 0.041039898748884786
+     },
+     "hisse": 2,
+     "kazanan": 0.3333333333333333,
+     "medyan_fark": -0.41434574002601615,
+     "medyan_r60": -0.42724366090946,
+     "n": 3,
+     "n_kirik60": 1,
+     "n_olay": 3,
+     "ort_esli": 0.0204728666040663,
+     "ort_fark": -0.3802496932752994,
+     "ort_r60": -0.35977682667123306,
+     "portfoy": -0.10793304800136994,
+     "portfoy_esli_p10": -0.02119268669008483,
+     "portfoy_esli_p50": 0.004689873977023917,
+     "portfoy_esli_p90": 0.04431157228107869,
+     "sira": 0.3148148148148148,
+     "tutar": false,
+     "tutmayan": [
+      "n = 3 < 30 (örneklem yetersiz)"
+     ],
+     "u120": {
+      "alt95": null,
+      "esli": -0.024840464590319467,
+      "fark": 0.3252402452942477,
+      "medyan": 0.30039978070392825,
+      "n": 1,
+      "ort": 0.30039978070392825,
+      "ust95": null
+     },
+     "u250": {
+      "alt95": null,
+      "esli": 0.045186066941953235,
+      "fark": 1.1092969702367481,
+      "medyan": 1.1544830371787014,
+      "n": 1,
+      "ort": 1.1544830371787014,
+      "ust95": null
+     },
+     "up": {
+      "es": 0.0,
+      "kat_es": null,
+      "kat_taban": 52.63596650891883,
+      "n": 1,
+      "p": 1.0,
+      "taban": 0.018998416222309824
+     },
+     "ust95": 0.1454098415290741
+    },
+    "2024-26": {
+     "alt95": -0.22719034153007556,
+     "dn": {
+      "es": 0.09006368028107158,
+      "kat_es": 4.441301962696575,
+      "kat_taban": 10.349832355406537,
+      "n": 5,
+      "p": 0.4,
+      "taban": 0.038647968997396205
+     },
+     "hisse": 4,
+     "kazanan": 0.125,
+     "medyan_fark": -0.12388688375753726,
+     "medyan_r60": -0.123935329984107,
+     "n": 8,
+     "n_kirik60": 0,
+     "n_olay": 8,
+     "ort_esli": 0.014320614737950847,
+     "ort_fark": -0.07954291034795705,
+     "ort_r60": -0.0652222956100062,
+     "portfoy": -0.052177836488005,
+     "portfoy_esli_p10": -0.06902911167839519,
+     "portfoy_esli_p50": 0.008613394435890709,
+     "portfoy_esli_p90": 0.07138695744340816,
+     "sira": 0.3026773467376349,
+     "tutar": false,
+     "tutmayan": [
+      "n = 8 < 30 (örneklem yetersiz)"
+     ],
+     "u120": {
+      "alt95": -0.3737604281156288,
+      "esli": 0.040578704382315436,
+      "fark": 0.17314293488931126,
+      "medyan": -0.18187169810791215,
+      "n": 7,
+      "ort": 0.21372163927162674,
+      "ust95": 1.076284286464274
+     },
+     "u250": {
+      "alt95": -0.3610475581308567,
+      "esli": 0.10350970810877183,
+      "fark": 0.9429681088249771,
+      "medyan": 0.4246269176149202,
+      "n": 5,
+      "ort": 1.046477816933749,
+      "ust95": 2.965438692973659
+     },
+     "up": {
+      "es": 0.06135997657736788,
+      "kat_es": 6.51890731241799,
+      "kat_taban": 10.035436350706085,
+      "n": 5,
+      "p": 0.4,
+      "taban": 0.03985875511749485
+     },
+     "ust95": 0.11048871379596607
+    }
+   },
+   "BIST": {
+    "2016-22": {
+     "alt95": -0.1665943766115455,
+     "dn": {
+      "es": 0.048213771503104366,
+      "kat_es": 1.9566945231703174,
+      "kat_taban": 1.572819481634547,
+      "n": 53,
+      "p": 0.09433962264150944,
+      "taban": 0.059981214464273624
+     },
+     "hisse": 24,
+     "kazanan": 0.32142857142857145,
+     "medyan_fark": -0.11553827538501993,
+     "medyan_r60": -0.02393106099308795,
+     "n": 56,
+     "n_kirik60": 0,
+     "n_olay": 56,
+     "ort_esli": 0.11531040410471302,
+     "ort_fark": -0.060378934030442595,
+     "ort_r60": 0.054931470074270405,
+     "portfoy": 0.17199076351207587,
+     "portfoy_esli_p10": 0.19352796499439573,
+     "portfoy_esli_p50": 0.5621725696671661,
+     "portfoy_esli_p90": 1.0798387453946072,
+     "sira": 0.4281174640939836,
+     "tutar": false,
+     "tutmayan": [
+      "ortalama eşli fark <= 0",
+      "bootstrap %95 alt uç <= 0",
+      "sıra <= 0,50",
+      "portföy rastgele %90'ı geçmedi"
+     ],
+     "u120": {
+      "alt95": -0.23612999464145576,
+      "esli": 0.2086137395872986,
+      "fark": -0.1258275691117289,
+      "medyan": 0.0,
+      "n": 55,
+      "ort": 0.08278617047556967,
+      "ust95": -0.009820922585929258
+     },
+     "u250": {
+      "alt95": -0.5859696196057511,
+      "esli": 0.723817686022836,
+      "fark": -0.2788654596169267,
+      "medyan": 0.22222228109100883,
+      "n": 53,
+      "ort": 0.44495222640590937,
+      "ust95": 0.10298060356731241
+     },
+     "up": {
+      "es": 0.38130660530695887,
+      "kat_es": 0.9401635351927468,
+      "kat_taban": 0.8549794703021282,
+      "n": 53,
+      "p": 0.3584905660377358,
+      "taban": 0.4192972796306493
+     },
+     "ust95": 0.038901555384527234
+    },
+    "2023": {
+     "alt95": -0.44612658905322555,
+     "dn": {
+      "es": 0.02190827190827191,
+      "kat_es": 0.0,
+      "kat_taban": 0.0,
+      "n": 4,
+      "p": 0.0,
+      "taban": 0.04295059968128827
+     },
+     "hisse": 4,
+     "kazanan": 0.5,
+     "medyan_fark": -0.11201678093086892,
+     "medyan_r60": 0.3840842157293176,
+     "n": 4,
+     "n_kirik60": 0,
+     "n_olay": 4,
+     "ort_esli": 0.3971782856399201,
+     "ort_fark": -0.07576334784352923,
+     "ort_r60": 0.32141493779639085,
+     "portfoy": 0.12856597511855639,
+     "portfoy_esli_p10": 0.06646174479407749,
+     "portfoy_esli_p50": 0.14263566526436322,
+     "portfoy_esli_p90": 0.233248802489528,
+     "sira": 0.40105176947282206,
+     "tutar": false,
+     "tutmayan": [
+      "n = 4 < 30 (örneklem yetersiz)"
+     ],
+     "u120": {
+      "alt95": -0.6277667048000022,
+      "esli": 0.3902942935258647,
+      "fark": -0.1091029269062529,
+      "medyan": 0.29408087232217006,
+      "n": 4,
+      "ort": 0.2811913666196118,
+      "ust95": 0.09102997267363167
+     },
+     "u250": {
+      "alt95": -0.6907916052144417,
+      "esli": 0.44722565885785137,
+      "fark": -0.23399813527637553,
+      "medyan": 0.23364611774456834,
+      "n": 4,
+      "ort": 0.21322752358147584,
+      "ust95": 0.1399757202834203
+     },
+     "up": {
+      "es": 0.46345208845208846,
+      "kat_es": 1.6182902584493042,
+      "kat_taban": 1.4070539549667205,
+      "n": 4,
+      "p": 0.75,
+      "taban": 0.5330286001845174
+     },
+     "ust95": 0.0655228796286716
+    },
+    "2024-26": {
+     "alt95": -0.09055283629075397,
+     "dn": {
+      "es": 0.05249614285712887,
+      "kat_es": 3.8098037134711205,
+      "kat_taban": 3.5061644938033156,
+      "n": 10,
+      "p": 0.2,
+      "taban": 0.057042389298469505
+     },
+     "hisse": 17,
+     "kazanan": 0.4642857142857143,
+     "medyan_fark": -0.03522185888752607,
+     "medyan_r60": -0.016427608453221276,
+     "n": 28,
+     "n_kirik60": 0,
+     "n_olay": 34,
+     "ort_esli": 0.027206486685239447,
+     "ort_fark": 0.036985397226744286,
+     "ort_r60": 0.06419188391198373,
+     "portfoy": 0.10625010363738019,
+     "portfoy_esli_p10": -0.13311684692923959,
+     "portfoy_esli_p50": 0.05121797982051968,
+     "portfoy_esli_p90": 0.28291337676256884,
+     "sira": 0.5194081440792763,
+     "tutar": false,
+     "tutmayan": [
+      "n = 28 < 30 (örneklem yetersiz)"
+     ],
+     "u120": {
+      "alt95": -0.1878967549303002,
+      "esli": 0.09067283851402255,
+      "fark": -0.03158267730067301,
+      "medyan": -0.06920289024022025,
+      "n": 20,
+      "ort": 0.059090161213349555,
+      "ust95": 0.11704078351114923
+     },
+     "u250": {
+      "alt95": -0.26973313167096735,
+      "esli": 0.27420837810192633,
+      "fark": 1.472406269629218,
+      "medyan": 0.14349276350696272,
+      "n": 10,
+      "ort": 1.7466146477311444,
+      "ust95": 3.284791369142617
+     },
+     "up": {
+      "es": 0.20669662920896514,
+      "kat_es": 2.4190041313857735,
+      "kat_taban": 1.9975974323704722,
+      "n": 10,
+      "p": 0.5,
+      "taban": 0.25030068215830115
+     },
+     "ust95": 0.17485994434936988
+    }
+   }
+  },
+  "karar": "İZ DEĞİL"
+ },
+ "bitis": "2026-11-13 18:21:30 UTC",
+ "duzeltme": {
+  "eski_klasor": "/home/user/col_yolu/arastirma_cikti/bofa_izi/eski_v1",
+  "karar_degisti": false,
+  "karar_eski": "kurulum İZ DEĞİL / BofA tetikli ÖRNEKLEM YETERSİZ (n = 0)",
+  "karar_yeni": "kurulum İZ DEĞİL / BofA tetikli ÖRNEKLEM YETERSİZ (n = 0)",
+  "not": "Bu rapor, BofA liste verisi yeniden ayrıştırıldıktan sonra AYNI ön kayıt, aynı eşikler ve aynı tanımlarla yeniden koşuldu. Sapma gerekçesi: AYRIŞTIRMA DÜZELTMESİ (ana model denetimi 13.11): çok kurumlu haberlerde kurum etiketi, kurum adı hisse satırları, aylık özet haberleri; eşikler değişmedi. Düzeltilenler: çok kurumlu haberlerde her tablonun kurumu tablodan önceki başlık / cümleden okunur (belirsiz -> BİLİNMİYOR, ölçüme girmez); hisse sütunundaki kurum adı satırları ('HSBC: -433 mn') düşer; aylık / dönemsel özet haberleri tur='aylik' / 'donemsel' (kapsam dışı); sayfada biriken günlük güncellemeler ('GÜNCELLEME 30 EYLÜL') kendi tarihini taşır (Eylül listesi Haziran tarihli sayılmaz); numaralı tek satırlık tablolar tek liste; haber sitelerinin ilgili haber kuşağı gövde dışı (kenar kuşağından 'SSAAT 56 TL' gibi satırlar BofA listesi sayılmaz). Liste mührü 7020587fbc90 -> 28014e1a3be8.",
+  "satirlar": [
+   [
+    "BofA tetikli kurulum (FI 60 gün)",
+    "n 2, eşli fark -30,9% [-45,1%, -16,7%], sıra 0.18, portföy -0.04 / %90 0.09",
+    "n 2, eşli fark -30,9% [-45,1%, -16,7%], sıra 0.18, portföy -0.04 / %90 0.09"
+   ],
+   [
+    "BofA'sız kurulum",
+    "n 30, eşli fark +4,5% [-7,5%, +15,7%], sıra 0.53, portföy 0.39 / %90 0.48",
+    "n 30, eşli fark +4,5% [-7,5%, +15,7%], sıra 0.53, portföy 0.39 / %90 0.48"
+   ],
+   [
+    "ABD 2023 kurulum",
+    "n 81, eşli fark +24,8% [+8,9%, +43,0%], sıra 0.55, portföy 2.85 / %90 0.91",
+    "n 81, eşli fark +24,8% [+8,9%, +43,0%], sıra 0.55, portföy 2.85 / %90 0.91"
+   ],
+   [
+    "ABD 2024-26 kurulum",
+    "n 146, eşli fark +20,6% [+0,4%, +46,2%], sıra 0.48, portföy 2.25 / %90 4.17",
+    "n 146, eşli fark +20,6% [+0,4%, +46,2%], sıra 0.48, portföy 2.25 / %90 4.17"
+   ],
+   [
+    "BIST 2024-26 kurulum",
+    "n 28, eşli fark +3,7% [-9,1%, +17,5%], sıra 0.52, portföy 0.11 / %90 0.28",
+    "n 28, eşli fark +3,7% [-9,1%, +17,5%], sıra 0.52, portföy 0.11 / %90 0.28"
+   ],
+   [
+    "BofA tetik sayısı",
+    "5519",
+    "5679"
+   ],
+   [
+    "tetikli kurulum olayı (60 gün)",
+    "1",
+    "1"
+   ],
+   [
+    "tetikli kurulum kriz sonrası",
+    "1",
+    "1"
+   ],
+   [
+    "dönem (n / toplam)",
+    "{'kesik_disi_ya_da_acik': 1, 'kriz_sonrasi_giris': 1, 'n': 0, 'toplam': 1}",
+    "{'kesik_disi_ya_da_acik': 1, 'kriz_sonrasi_giris': 1, 'n': 0, 'toplam': 1}"
+   ],
+   [
+    "izleme listesi n",
+    "10",
+    "10"
+   ],
+   [
+    "izlemede BofA 20 günde",
+    "1",
+    "1"
+   ],
+   [
+    "kriz sonrası BofA tetiği (tek tek)",
+    "HDFGS 2026-10-21 sıra 1",
+    "HDFGS 2026-10-21 sıra 1"
+   ],
+   [
+    "izleme listesi",
+    "SKBNK, KLRHO, PRZMA, BORLS, OTTO, A1CAP, IZFAS, BURVA, USAK, IHLAS",
+    "SKBNK, KLRHO, PRZMA, BORLS, OTTO, A1CAP, IZFAS, BURVA, USAK, IHLAS"
+   ]
+  ],
+  "veri_sapma": {
+   "HABER_SHA256": {
+    "onkayit": "d9d3278417e1f157b26fe961f0b287d5d3b21f3475cd0b02a237f6cfc82e35d3",
+    "simdi": "c8f698fc3b1ce55b8308f026c037441befbfc1c200752e7abdeabd1987446a6b"
+   },
+   "LISTE_SHA256": {
+    "onkayit": "7020587fbc90cf88875211103fd2a3173789ec57954a8d6609d99bad195a1abd",
+    "simdi": "28014e1a3be88c0412f44fb9d1557067f697eab41b95aded3b29c9b74e0023f1"
+   }
+  },
+  "zaman": "2026-11-13 18:21:30 UTC"
+ },
+ "esik_sha": "cac944c2b07c71bdb98549ed30b66918d0ac17c64a9908c3be3e8d37b2f5afbb",
+ "fiyat": {
+  "ABD": {
+   "atlanan": 0,
+   "dosya": "/tmp/veri/V_ABD.pkl",
+   "evren_disi_cikan": [],
+   "hisse": 1411,
+   "ilk": "2015-06-01",
+   "sha256": "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+   "son": "2026-10-22"
+  },
+  "AVR": {
+   "atlanan": 0,
+   "dosya": "/tmp/veri/V_AVR.pkl",
+   "evren_disi_cikan": [],
+   "hisse": 581,
+   "ilk": "2015-01-01",
+   "sha256": "0b53f4aa20beca3f05f8c904919a2e104f76a18d41dce40342f6dd2bd30e98f2",
+   "son": "2026-10-27"
+  },
+  "BIST": {
+   "bas": "2015-01-01",
+   "hisse": 629,
+   "manifest_sha256": "5182947ec875fd59d89f61c25a24258bbdad4f376c15287fb5ffb4b50c9e2e56",
+   "okunan": 630,
+   "son_tarih": "2026-11-13"
+  }
+ },
+ "iki": {
+  "alt": {
+   "2023": {
+    "dn": {
+     "n": 0,
+     "taban": 0.04295059968128827
+    },
+    "hisse": 0,
+    "n": 0,
+    "n_kirik60": 0,
+    "n_olay": 0,
+    "tutar": false,
+    "tutmayan": [
+     "n = 0 < 30 (örneklem yetersiz)"
+    ],
+    "u120": {
+     "n": 0
+    },
+    "u250": {
+     "n": 0
+    },
+    "up": {
+     "n": 0,
+     "taban": 0.5330286001845174
+    }
+   },
+   "2024-26": {
+    "dn": {
+     "n": 0,
+     "taban": 0.057042389298469505
+    },
+    "hisse": 0,
+    "n": 0,
+    "n_kirik60": 0,
+    "n_olay": 0,
+    "tutar": false,
+    "tutmayan": [
+     "n = 0 < 30 (örneklem yetersiz)"
+    ],
+    "u120": {
+     "n": 0
+    },
+    "u250": {
+     "n": 0
+    },
+    "up": {
+     "n": 0,
+     "taban": 0.25030068215830115
+    }
+   }
+  },
+  "bofali": {
+   "alt95": -0.4505244203236525,
+   "dn": {
+    "n": 0,
+    "taban": 0.050889035232136975
+   },
+   "hisse": 3,
+   "kazanan": 0.0,
+   "medyan_fark": -0.30893577021733065,
+   "medyan_r60": -0.21002521331801616,
+   "n": 2,
+   "n_kirik60": 0,
+   "n_olay": 3,
+   "ort_esli": 0.09891055689931452,
+   "ort_fark": -0.30893577021733065,
+   "ort_r60": -0.21002521331801616,
+   "portfoy": -0.042005042663603165,
+   "portfoy_esli_p10": -0.043615208870845246,
+   "portfoy_esli_p50": 0.0005368831497418736,
+   "portfoy_esli_p90": 0.09260375909989829,
+   "sira": 0.17758620689655175,
+   "tutar": false,
+   "tutmayan": [
+    "n = 2 < 30 (örneklem yetersiz)"
+   ],
+   "u120": {
+    "n": 0
+   },
+   "u250": {
+    "n": 0
+   },
+   "up": {
+    "n": 0,
+    "taban": 0.32178136318735595
+   },
+   "ust95": -0.16734712011100888
+  },
+  "bofasiz": {
+   "alt95": -0.07493899114288317,
+   "dn": {
+    "es": 0.043756751157455455,
+    "kat_es": 3.2648023237164456,
+    "kat_taban": 2.807228358829782,
+    "n": 14,
+    "p": 0.14285714285714285,
+    "taban": 0.050889035232136975
+   },
+   "hisse": 18,
+   "kazanan": 0.5,
+   "medyan_fark": -0.008743438996958633,
+   "medyan_r60": 0.0016611279891927122,
+   "n": 30,
+   "n_kirik60": 0,
+   "n_olay": 35,
+   "ort_esli": 0.07175578853159187,
+   "ort_fark": 0.04501364238031281,
+   "ort_r60": 0.11676943091190467,
+   "portfoy": 0.38522211476304213,
+   "portfoy_esli_p10": -0.045266403768330646,
+   "portfoy_esli_p50": 0.18418925374229123,
+   "portfoy_esli_p90": 0.4846739663414974,
+   "sira": 0.526415423277264,
+   "tutar": false,
+   "tutmayan": [
+    "bootstrap %95 alt uç <= 0",
+    "portföy rastgele %90'ı geçmedi"
+   ],
+   "u120": {
+    "alt95": -0.19245077687501647,
+    "esli": 0.1406097476826629,
+    "fark": -0.04450271890160299,
+    "medyan": -0.0030625827427172014,
+    "n": 24,
+    "ort": 0.09610702878105994,
+    "ust95": 0.08807612750962633
+   },
+   "u250": {
+    "alt95": -0.29779619420359343,
+    "esli": 0.32364188688933354,
+    "fark": 0.9848621539419055,
+    "medyan": 0.16822992652248137,
+    "n": 14,
+    "ort": 1.3085040408312387,
+    "ust95": 2.5292166528046582
+   },
+   "up": {
+    "es": 0.2800553318498576,
+    "kat_es": 2.0404131128448713,
+    "kat_taban": 1.7758286737565323,
+    "n": 14,
+    "p": 0.5714285714285714,
+    "taban": 0.32178136318735595
+   },
+   "ust95": 0.15734930056647248
+  },
+  "donem": {
+   "kesik_disi_ya_da_acik": 1,
+   "kriz_sonrasi_giris": 1,
+   "n": 0,
+   "toplam": 1
+  },
+  "donemler": [
+   {
+    "cikis": "2026-11-09",
+    "esli": 0.06590759514430976,
+    "fark": 0.11001826639388514,
+    "giris": "2026-10-22",
+    "giris_tip": "acilis",
+    "gun": 11,
+    "hisse": "HDFGS",
+    "liste_sira": 1,
+    "max": 0.15740736141617107,
+    "min": -0.18518522197817433,
+    "neden": "satis",
+    "ret": 0.1759258615381949,
+    "yayin": "2026-10-21 19:37:14"
+   }
+  ],
+  "genis": {
+   "alt95": -0.381484859906925,
+   "dn": {
+    "n": 0,
+    "taban": 0.050889035232136975
+   },
+   "hisse": 3,
+   "kazanan": 0.0,
+   "medyan_fark": -0.381484859906925,
+   "medyan_r60": -0.20090415243999094,
+   "n": 2,
+   "n_kirik60": 0,
+   "n_olay": 3,
+   "ort_esli": 0.18058070746693408,
+   "ort_fark": -0.381484859906925,
+   "ort_r60": -0.20090415243999094,
+   "portfoy": -0.040180830487998254,
+   "portfoy_esli_p10": -0.04818504632085071,
+   "portfoy_esli_p50": 0.015226273113544853,
+   "portfoy_esli_p90": 0.16991257431000165,
+   "sira": 0.3005507474429583,
+   "tutar": false,
+   "tutmayan": [
+    "n = 2 < 30 (örneklem yetersiz)"
+   ],
+   "u120": {
+    "n": 0
+   },
+   "u250": {
+    "n": 0
+   },
+   "up": {
+    "n": 0,
+    "taban": 0.32178136318735595
+   },
+   "ust95": -0.381484859906925
+  },
+  "havuz": {
+   "dn": {
+    "n": 0,
+    "taban": 0.050889035232136975
+   },
+   "hisse": 0,
+   "n": 0,
+   "n_kirik60": 0,
+   "n_olay": 0,
+   "tutar": false,
+   "tutmayan": [
+    "n = 0 < 30 (örneklem yetersiz)"
+   ],
+   "u120": {
+    "n": 0
+   },
+   "u250": {
+    "n": 0
+   },
+   "up": {
+    "n": 0,
+    "taban": 0.32178136318735595
+   }
+  },
+  "karar": {
+   "karar": "ÖRNEKLEM YETERSİZ (n = 0)",
+   "tutmayan": [
+    "n = 0 < 30"
+   ]
+  },
+  "kiyas_fark": {
+   "fark": null
+  },
+  "olaylar": [
+   {
+    "birim": "lot",
+    "dn": null,
+    "esli_r60": null,
+    "f120": null,
+    "f250": null,
+    "fark": null,
+    "g1": "2026-10-22",
+    "g1_tip": "acilis",
+    "giris": "2026-10-22",
+    "hisse": "HDFGS",
+    "k_dipten": 1.2941176388090458,
+    "k_dusus": -0.8175787751959599,
+    "karar_gunu": "2026-10-21",
+    "kirik60": 1.0,
+    "liste_sira": 1,
+    "maliyet": 1.112,
+    "net": 9726880.0,
+    "pay": 8.72,
+    "r120": null,
+    "r250": null,
+    "r60": null,
+    "sira": null,
+    "tur": "gun_sonu",
+    "up": null,
+    "yayin": "2026-10-21 19:37:14"
+   }
+  ],
+  "taban": {
+   "dn": 0.050889035232136975,
+   "n_dn": 303700,
+   "n_r120": 386377,
+   "n_r250": 303700,
+   "n_up": 303700,
+   "r120": 0.25504365233383014,
+   "r250": 0.5627199672637166,
+   "up": 0.32178136318735595
+  }
+ },
+ "kapi": {
+  "esik_sha256": "cac944c2b07c71bdb98549ed30b66918d0ac17c64a9908c3be3e8d37b2f5afbb",
+  "kod_ayni": false,
+  "kod_sha256": "fdbf98dfcfcf63d67ce8ac5e3e598084d30fcd0376ac63a27f31e39aaafc87b6",
+  "onkayit": "/home/user/col_yolu/arastirma_cikti/bofa_izi/BOFA_DIP_ON_KAYIT.md",
+  "onkayit_git": {
+   "commit": "22750ff19fd5853412e9944598009d6422792e15",
+   "commit_zamani": "2026-11-13T17:17:37+00:00"
+  },
+  "sapma": "AYRIŞTIRMA DÜZELTMESİ (ana model denetimi 13.11): çok kurumlu haberlerde kurum etiketi, kurum adı hisse satırları, aylık özet haberleri; eşikler değişmedi",
+  "veri_sapma": {
+   "HABER_SHA256": {
+    "onkayit": "d9d3278417e1f157b26fe961f0b287d5d3b21f3475cd0b02a237f6cfc82e35d3",
+    "simdi": "c8f698fc3b1ce55b8308f026c037441befbfc1c200752e7abdeabd1987446a6b"
+   },
+   "LISTE_SHA256": {
+    "onkayit": "7020587fbc90cf88875211103fd2a3173789ec57954a8d6609d99bad195a1abd",
+    "simdi": "28014e1a3be88c0412f44fb9d1557067f697eab41b95aded3b29c9b74e0023f1"
+   }
+  }
+ },
+ "sayim": {
+  "bofa": {
+   "kurulum_olay_arsiv_donemi": {
+    "bofali": 3,
+    "bofasiz": 35
+   },
+   "olay60": 1,
+   "olay60_genis": 7,
+   "olay60_hucre": {
+    "2023": 0,
+    "2024-26": 0
+   },
+   "olay60_kriz_sonrasi": 1,
+   "tetik": 5679,
+   "tetik_genis": 12,
+   "tetik_kurulum_bilinen": 5679,
+   "tetik_kurulumlu": 1,
+   "tetik_kurulumlu_hisse": 1
+  },
+  "kurulum": {
+   "ABD": {
+    "hisse": 287,
+    "hucre": {
+     "2016-22": 508,
+     "2023": 81,
+     "2024-26": 165
+    },
+    "hucre_disi_once": 0,
+    "kriz_sonrasi_giris": 9,
+    "kurulumdaki_hisse_bugun": 3,
+    "olay": 763
+   },
+   "AVR": {
+    "hisse": 19,
+    "hucre": {
+     "2016-22": 32,
+     "2023": 3,
+     "2024-26": 8
+    },
+    "hucre_disi_once": 0,
+    "kriz_sonrasi_giris": 0,
+    "kurulumdaki_hisse_bugun": 0,
+    "olay": 43
+   },
+   "BIST": {
+    "hisse": 61,
+    "hucre": {
+     "2016-22": 56,
+     "2023": 4,
+     "2024-26": 34
+    },
+    "hucre_disi_once": 3,
+    "kriz_sonrasi_giris": 24,
+    "kurulumdaki_hisse_bugun": 10,
+    "olay": 121
+   }
+  }
+ },
+ "son_gun": "2026-11-13",
+ "surum": "BOFA_IZI DİP v1.0 (bofa_dip_20261113): KURULUM (250 gün tepeden <= -%80, son 10 günde yeni dip yok, dipten <= 1,5 kat) tek başına (BIST / ABD / Avrupa, FI_OLCUT 60 gün + 120 / 250 gün + olasılık tablosu) + BofA alım ilk 5 tetiği (BIST) + kriz sonrası izleme (ön kayıtlı)",
+ "uc": {
+  "izle": [
+   {
+    "bofa_20g": true,
+    "bofa_birim": "lot",
+    "bofa_maliyet": null,
+    "bofa_net": 4180000.0,
+    "bofa_pay": null,
+    "bofa_sira": 2.0,
+    "bofa_son_yayin": "2026-11-05 12:46",
+    "bofa_tetik_gunu": 2.0,
+    "bofa_tur": "gun_ici",
+    "bugune_g1": 0.049315020174130364,
+    "bugune_maliyet": null,
+    "dip_ekran": 2.880000114440918,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.3298610317762283,
+    "dusus": -0.804890469309807,
+    "g1": "2026-11-05",
+    "g1_fiyat": 3.6500000953674316,
+    "g1_tip": "kapanis",
+    "r20": -0.24901960875977924,
+    "sembol": "SKBNK",
+    "son_ekran": 3.8299999237060547,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 19.6299991607666,
+    "tepe_tarih": "2026-07-17"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 8.680000305175781,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.3513823882289346,
+    "dusus": -0.9679362208216855,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": 0.10037520733023086,
+    "sembol": "KLRHO",
+    "son_ekran": 11.729999542236328,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 658.5000183105469,
+    "tepe_tarih": "2026-02-04"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 6.380000114440918,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.3479624180576286,
+    "dusus": -0.9054945013025305,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.22030819676610158,
+    "sembol": "PRZMA",
+    "son_ekran": 8.600000381469727,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 91.0,
+    "tepe_tarih": "2026-08-31"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 1.5,
+    "dip_tarih": "2026-09-30",
+    "dipten_kat": 1.2599999904632568,
+    "dusus": -0.8540540530091223,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.12093027820452851,
+    "sembol": "BORLS",
+    "son_ekran": 1.8899999856948853,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 12.949999809265137,
+    "tepe_tarih": "2025-11-14"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 70.80000305175781,
+    "dip_tarih": "2026-10-23",
+    "dipten_kat": 1.2605931660024712,
+    "dusus": -0.8309659090909091,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.280241935483871,
+    "sembol": "OTTO",
+    "son_ekran": 89.25,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 528.0,
+    "tepe_tarih": "2026-01-06"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 2.5,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.268000030517578,
+    "dusus": -0.8243767196518629,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.20551376723881354,
+    "sembol": "A1CAP",
+    "son_ekran": 3.1700000762939453,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 18.049999237060547,
+    "tepe_tarih": "2026-02-17"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 10.529999732971191,
+    "dip_tarih": "2026-10-06",
+    "dipten_kat": 1.207977263968997,
+    "dusus": -0.8243093922797484,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.3789062230789563,
+    "sembol": "IZFAS",
+    "son_ekran": 12.720000267028809,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 72.4000015258789,
+    "tepe_tarih": "2026-04-20"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 187.0,
+    "dip_tarih": "2026-10-28",
+    "dipten_kat": 1.2770053639131433,
+    "dusus": -0.8155984532418858,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.40707634251580926,
+    "sembol": "BURVA",
+    "son_ekran": 238.8000030517578,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 1295.0,
+    "tepe_tarih": "2026-04-30"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 0.36000001430511475,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.0833332505491078,
+    "dusus": -0.8098360730063303,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.04878051439826525,
+    "sembol": "USAK",
+    "son_ekran": 0.38999998569488525,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 2.0508620738983154,
+    "tepe_tarih": "2026-01-29"
+   },
+   {
+    "bofa_20g": false,
+    "bofa_birim": null,
+    "bofa_maliyet": null,
+    "bofa_net": null,
+    "bofa_pay": null,
+    "bofa_sira": null,
+    "bofa_son_yayin": null,
+    "bofa_tetik_gunu": null,
+    "bofa_tur": null,
+    "bugune_g1": null,
+    "bugune_maliyet": null,
+    "dip_ekran": 0.6700000166893005,
+    "dip_tarih": "2026-10-30",
+    "dipten_kat": 1.1343283157195683,
+    "dusus": -0.8,
+    "g1": null,
+    "g1_fiyat": null,
+    "g1_tip": null,
+    "r20": -0.09523807834335418,
+    "sembol": "IHLAS",
+    "son_ekran": 0.7599999904632568,
+    "son_tarih": "2026-11-13",
+    "tepe_ekran": 3.799999952316284,
+    "tepe_tarih": "2025-11-21"
+   }
+  ],
+  "izle_bofa_n": 1,
+  "izle_n": 10,
+  "kriz_tetik": [
+   {
+    "birim": "lot",
+    "bugune": 0.18518511159920692,
+    "dipten": 1.2941176388090458,
+    "dusus": -0.8175787751959599,
+    "g1": "2026-10-22",
+    "g1_fiyat": 1.0800000429153442,
+    "g1_tip": "acilis",
+    "hisse": "HDFGS",
+    "karar_gunu": "2026-10-21",
+    "maliyet": 1.112,
+    "pay": 8.72,
+    "sira": 1,
+    "tur": "gun_sonu",
+    "yayin": "2026-10-21 19:37"
+   }
+  ]
+ }
+}

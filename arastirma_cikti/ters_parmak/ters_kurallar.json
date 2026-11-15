@@ -1,0 +1,256 @@
+{
+ "surum": "TERS_PARMAK v1.1 (2026-11-15): büyük mum (B1) ve 20 günlük büyük hareket (BH2) öncesi bölge parmak izi — keşif (2016-22) / ön kayıt / ileriye doğru doğrulama",
+ "esik_sha": "bd30046c5d65b2d1d065dfb9e12db9ad3e63973183f7fab87157739f3e1dce5c",
+ "kod_sha": "aa97f67f6883f68e649691b8dc8e124402294d759bfe2984c112cea82254586c",
+ "kesif_zaman_utc": "2026-11-15T05:32:17Z",
+ "kod_git": {
+  "commit": "29ebd9e24d486eacd0741b1b51e280889e8910fd",
+  "commit_zamani": "2026-11-15T05:32:12+00:00"
+ },
+ "kurallar": [
+  {
+   "ad": "son_mum>=q70 & konum_250>=q70 & kucuk_dizi_40<=q30",
+   "kosul": [
+    {
+     "olcu": "son_mum",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 1.2194194793701172
+    },
+    {
+     "olcu": "konum_250",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 0.8062045812606811
+    },
+    {
+     "olcu": "kucuk_dizi_40",
+     "yon": "<=",
+     "yuzdelik": 0.3,
+     "esik": 1.0
+    }
+   ],
+   "olcu_set": [
+    "son_mum",
+    "konum_250",
+    "kucuk_dizi_40"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.1619456602527046,
+     "yanlis_cc": 0.07959369064332315,
+     "LR": 2.0346544926333263
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.11429079274795592,
+     "yanlis_cc": 0.06693921080696764,
+     "LR": 1.7073818374933618
+    }
+   },
+   "skor": 1.7073818374933618,
+   "kod": "P1",
+   "etiket": "B1"
+  },
+  {
+   "ad": "son_mum>=q70 & dusus_120>=q70",
+   "kosul": [
+    {
+     "olcu": "son_mum",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 1.2194194793701172
+    },
+    {
+     "olcu": "dusus_120",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": -0.2710338175296784
+    }
+   ],
+   "olcu_set": [
+    "son_mum",
+    "dusus_120"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.15492608803369395,
+     "yanlis_cc": 0.08332645139978528,
+     "LR": 1.8592666005946483
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.110024884464984,
+     "yanlis_cc": 0.06836118023462495,
+     "LR": 1.609464378575143
+    }
+   },
+   "skor": 1.609464378575143,
+   "kod": "P2",
+   "etiket": "B1"
+  },
+  {
+   "ad": "son_mum>=q70 & egim_40>=q70",
+   "kosul": [
+    {
+     "olcu": "son_mum",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 1.2194194793701172
+    },
+    {
+     "olcu": "egim_40",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 0.09793169647455215
+    }
+   ],
+   "olcu_set": [
+    "son_mum",
+    "egim_40"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.17714096952679825,
+     "yanlis_cc": 0.09455776695020233,
+     "LR": 1.873362445414847
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.12762175613224316,
+     "yanlis_cc": 0.08165659438322076,
+     "LR": 1.5629081410535481
+    }
+   },
+   "skor": 1.5629081410535481,
+   "kod": "P3",
+   "etiket": "B1"
+  },
+  {
+   "ad": "bant_5>=q70 & dusus_120<=q20 & konum_250<=q10",
+   "kosul": [
+    {
+     "olcu": "bant_5",
+     "yon": ">=",
+     "yuzdelik": 0.7,
+     "esik": 1.4036540389060974
+    },
+    {
+     "olcu": "dusus_120",
+     "yon": "<=",
+     "yuzdelik": 0.2,
+     "esik": -1.345697283744812
+    },
+    {
+     "olcu": "konum_250",
+     "yon": "<=",
+     "yuzdelik": 0.1,
+     "esik": 0.07779407128691673
+    }
+   ],
+   "olcu_set": [
+    "bant_5",
+    "dusus_120",
+    "konum_250"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.10007600709399544,
+     "yanlis_cc": 0.042207112970711294,
+     "LR": 2.3710697095875997
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.10124688279301745,
+     "yanlis_cc": 0.04068241469816273,
+     "LR": 2.488713699621913
+    }
+   },
+   "skor": 2.3710697095875997,
+   "kod": "H1",
+   "etiket": "BH2"
+  },
+  {
+   "ad": "konum_250<=q20 & dar_bant_gun<=q20 & bant_20>=q80",
+   "kosul": [
+    {
+     "olcu": "konum_250",
+     "yon": "<=",
+     "yuzdelik": 0.2,
+     "esik": 0.16815438866615295
+    },
+    {
+     "olcu": "dar_bant_gun",
+     "yon": "<=",
+     "yuzdelik": 0.2,
+     "esik": 3.0
+    },
+    {
+     "olcu": "bant_20",
+     "yon": ">=",
+     "yuzdelik": 0.8,
+     "esik": 2.118976593017578
+    }
+   ],
+   "olcu_set": [
+    "konum_250",
+    "dar_bant_gun",
+    "bant_20"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.10083607803394984,
+     "yanlis_cc": 0.04335774058577406,
+     "LR": 2.3256764921702304
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.10623441396508729,
+     "yanlis_cc": 0.04552796285079749,
+     "LR": 2.3333882588429153
+    }
+   },
+   "skor": 2.3256764921702304,
+   "kod": "H2",
+   "etiket": "BH2"
+  },
+  {
+   "ad": "bant_10>=q90 & dusus_120<=q20 & dar_bant_gun<=q10",
+   "kosul": [
+    {
+     "olcu": "bant_10",
+     "yon": ">=",
+     "yuzdelik": 0.9,
+     "esik": 2.8652442693710327
+    },
+    {
+     "olcu": "dusus_120",
+     "yon": "<=",
+     "yuzdelik": 0.2,
+     "esik": -1.345697283744812
+    },
+    {
+     "olcu": "dar_bant_gun",
+     "yon": "<=",
+     "yuzdelik": 0.1,
+     "esik": 2.0
+    }
+   ],
+   "olcu_set": [
+    "bant_10",
+    "dusus_120",
+    "dar_bant_gun"
+   ],
+   "cc": {
+    "ABD": {
+     "duyarlilik_cc": 0.10159614897390423,
+     "yanlis_cc": 0.04194560669456067,
+     "LR": 2.4220927286546745
+    },
+    "AVR": {
+     "duyarlilik_cc": 0.10972568578553615,
+     "yanlis_cc": 0.05249343832020997,
+     "LR": 2.0902743142144637
+    }
+   },
+   "skor": 2.0902743142144637,
+   "kod": "H3",
+   "etiket": "BH2"
+  }
+ ]
+}

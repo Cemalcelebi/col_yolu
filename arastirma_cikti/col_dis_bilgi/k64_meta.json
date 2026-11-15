@@ -1,0 +1,107 @@
+{
+ "surum": "K64 v1.0 (2026-11-11): çöl sinyaline ek bilgi; K64 52 hafta zirvesi ailesi + K65 şirket kalitesi ailesi; S1 çöl içi üçte bir, S2 çöl dışı evren",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/col_dis_bilgi/K64_K65_ON_KAYIT.md",
+  "sha": "a4c6da913a10fef1e8e237e0d169283eefd3a45a95cc06fe9361b378523540ca",
+  "zaman_utc": "2026-11-11 18:18:50",
+  "dosya_sha256": "0d2e34ab9f6d825636425c1a9897eab6b8fe4e0f18defd49a393f6fd3cd3a73e",
+  "veri": {
+   "V_BIST.pkl": [
+    "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+    1
+   ],
+   "V_ABD.pkl": [
+    "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+    1
+   ],
+   "liste_bist_2016_22.csv.gz": [
+    "fcb005778d673ea073830c826489a696dd27d2ccee258abfc23b92d7c890e3ca",
+    1
+   ],
+   "liste_bist.csv.gz": [
+    "aa063aceb770cbcc5e8e1c1a9de78756b118697ca27a9a7290ce7ba3a8f2a81c",
+    1
+   ],
+   "k64_bist_temel": [
+    "6e3ddb4c4c3843f21f198ffa32364aded3d06db0e8531648859f3b22fa4b9a10",
+    7553
+   ],
+   "K60_ON_KAYIT.md": [
+    "eba12e1d060217f2c1fd4ffe5715382d29d343cd29004af5c69617b10b2218c0",
+    1
+   ],
+   "FON_IZI.py": [
+    "ea0cc19f9b6514c50340df0e331c8d1a5e7961083918eefec45de6d7eb10ac7b",
+    1
+   ],
+   "K60.py": [
+    "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+    1
+   ],
+   "COL_v1.py": [
+    "13597d4209698a7edbeb4fb947c383ffa1c3c2d9eb715e33c5ef6902ce8987b8",
+    1
+   ]
+  },
+  "git": {
+   "commit": "315520816dd61f7c2e170a5089744662b18c47e7",
+   "commit_zamani": "2026-11-11T18:28:07+00:00"
+  }
+ },
+ "sentetik": false,
+ "kos_baslangic": "2026-11-11 18:28:35 UTC",
+ "isolated": true,
+ "k64_kod_sha256": "0255e8b2902228e20665a439e8df529cf4521bbee4ed24d248c1977e08577653",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "pazar": {
+  "BIST": {
+   "hisse": 581,
+   "isy": {
+    "dosya": 7553,
+    "eksik": 0,
+    "icerik_sha256": "6e3ddb4c4c3843f21f198ffa32364aded3d06db0e8531648859f3b22fa4b9a10"
+   },
+   "temel_hisse": 548,
+   "bos_hisse": 33,
+   "ceyrek": 21111,
+   "bilgi_kap_pay": 0.805598976837,
+   "kap_kayit": 29745,
+   "gun": 2863,
+   "K24": {
+    "ham": 3659,
+    "tekil": 3112,
+    "olculen": 2978
+   },
+   "D13": {
+    "ham": 2140,
+    "tekil": 1029,
+    "olculen": 1024
+   }
+  },
+  "ABD": {
+   "hisse": 1411,
+   "demette": 1406,
+   "temel_hisse": 1316,
+   "ceyrek": 68620,
+   "bilgi_dizin_pay": 0.995671815797,
+   "gun": 2830,
+   "K24": {
+    "ham": 7794,
+    "tekil": 6802,
+    "olculen": 6541
+   },
+   "D13": {
+    "ham": 6317,
+    "tekil": 3660,
+    "olculen": 3534
+   }
+  }
+ },
+ "k60_muhur": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+ "kos_bitis": "2026-11-11 18:47:05 UTC",
+ "sure_sn": 1113
+}

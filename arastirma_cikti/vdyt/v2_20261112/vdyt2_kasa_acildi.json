@@ -1,0 +1,31 @@
+{
+ "acilis": "2026-11-12 10:19:25 UTC",
+ "esik_sha256": "3051e5b8ddd99c7c42e36f106bdaede734e8dac5ed6588029c5d50bc2274f5a8",
+ "etiket": "v2_20261112",
+ "git_head": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+ "kod_sha256": "e33b2fd1c611e32930e8e8af29b9a4a9e86607a1df303e0fae8d9e94d0a30741",
+ "onkayit": {
+  "dosya_sha256": "73441445fb5d8543df809a2c14f1b31bba7be29e14423909dd8ca7e1d1a33aa3",
+  "esik": "3051e5b8ddd99c7c42e36f106bdaede734e8dac5ed6588029c5d50bc2274f5a8",
+  "git_kod": {
+   "commit": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+   "commit_zamani": "2026-11-12T09:51:05+00:00"
+  },
+  "git_kod_v1": {
+   "commit": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
+   "commit_zamani": "2026-11-12T07:02:14+00:00"
+  },
+  "git_onkayit": {
+   "commit": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+   "commit_zamani": "2026-11-12T09:51:05+00:00"
+  },
+  "kod": "e33b2fd1c611e32930e8e8af29b9a4a9e86607a1df303e0fae8d9e94d0a30741",
+  "kod_v1": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+  "yol": "/home/user/col_yolu/arastirma_cikti/vdyt/v2_20261112/VDYT2_ON_KAYIT.md",
+  "zaman": "2026-11-12 09:45:49 UTC (2026-11-12 12:45 TR)"
+ },
+ "onkayit_commit": "f13b96e6a914eb6a2d013ccec541c2eb6a7168a8",
+ "surum": "VDYT2 v2.0 (v2_20261112): Faz 1 (ön kayıt, kod + sentetik test, yalnız sayım); ölçüm Faz 2'de, ön kayıt git'e işlendikten sonra",
+ "vdyt_kod_sha256": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+ "zaman": "2026-11-12 10:19:27 UTC"
+}

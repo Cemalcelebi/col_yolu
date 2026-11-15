@@ -1,0 +1,116 @@
+{
+ "surum": "K62-B v1.0 (2026-11-12): bilanço sürprizi (K62 SUETF / EAR, çöl günü bilinen son açıklama) çöl sinyaline ek bilgi; K64 tasarımı aynen, BIST + ABD",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/col_dis_bilgi/K62B_ON_KAYIT.md",
+  "sha": "2686fef68b917d6c85ac4529678d421b967c27a42768eabe5ce1c5b6e4d62541",
+  "zaman_utc": "2026-11-12 04:42:12",
+  "dosya_sha256": "70c25f20f91252d71475597f6b61a15b463c632b6134cbf1b005300152897dc4",
+  "veri": {
+   "V_BIST.pkl": [
+    "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+    1
+   ],
+   "V_ABD.pkl": [
+    "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+    1
+   ],
+   "k62_veri": [
+    "d35b377408b45ccdf7a55229e44f6b411d34143d1dc67a19e5ae848ca1e3220c",
+    2138
+   ],
+   "K60_ON_KAYIT.md": [
+    "eba12e1d060217f2c1fd4ffe5715382d29d343cd29004af5c69617b10b2218c0",
+    1
+   ],
+   "K64_K65_ON_KAYIT.md": [
+    "0d2e34ab9f6d825636425c1a9897eab6b8fe4e0f18defd49a393f6fd3cd3a73e",
+    1
+   ],
+   "K62_ON_KAYIT.md": [
+    "084a91bd5d9dca5fa9f0cdf18cf6bf7e02e2d71643d7b92f1ecac36a73b4f680",
+    1
+   ],
+   "FON_IZI.py": [
+    "ea0cc19f9b6514c50340df0e331c8d1a5e7961083918eefec45de6d7eb10ac7b",
+    1
+   ],
+   "K60.py": [
+    "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+    1
+   ],
+   "K59.py": [
+    "a302656f957d9b99149873ebc0880798d694d03341da1559af79d460b491c655",
+    1
+   ],
+   "COL_v1.py": [
+    "13597d4209698a7edbeb4fb947c383ffa1c3c2d9eb715e33c5ef6902ce8987b8",
+    1
+   ],
+   "K64.py": [
+    "0255e8b2902228e20665a439e8df529cf4521bbee4ed24d248c1977e08577653",
+    1
+   ],
+   "K62.py": [
+    "e6d0573134f59018390e58d83a8ac1a71a83570913dabbdef4ae171f2e4e1063",
+    1
+   ]
+  },
+  "git": {
+   "commit": "fdb6be8b404198f35c85a02d86a0f523405381cd",
+   "commit_zamani": "2026-11-12T04:45:50+00:00"
+  }
+ },
+ "sentetik": false,
+ "kos_baslangic": "2026-11-12 04:46:06 UTC",
+ "isolated": true,
+ "k62b_kod_sha256": "ffe0bb168d40c2dcae1a53c560ab6a26979eef605cc6deba0d547b7696ea0208",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "pazar": {
+  "BIST": {
+   "hisse": 581,
+   "k62_hisse": 715,
+   "v_k62_ortak": 580,
+   "aciklama": 29700,
+   "gun": 2863,
+   "K24": {
+    "ham": 3659,
+    "tekil": 3112,
+    "olculen": 2978
+   },
+   "D13": {
+    "ham": 2140,
+    "tekil": 1029,
+    "olculen": 1024
+   }
+  },
+  "ABD": {
+   "hisse": 1411,
+   "demette": 1406,
+   "aciklama": 68323,
+   "ceyrek_hisse": 68620,
+   "gercek_gun": 68323,
+   "yedek_gun": 297,
+   "takvim_disi": 1212,
+   "portfoy_gun": 3813,
+   "be_satir": 15364,
+   "gun": 2830,
+   "K24": {
+    "ham": 7794,
+    "tekil": 6802,
+    "olculen": 6541
+   },
+   "D13": {
+    "ham": 6317,
+    "tekil": 3660,
+    "olculen": 3534
+   }
+  }
+ },
+ "k60_muhur": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+ "kos_bitis": "2026-11-12 04:50:35 UTC",
+ "sure_sn": 270
+}

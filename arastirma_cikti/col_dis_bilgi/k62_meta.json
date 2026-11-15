@@ -1,0 +1,45 @@
+{
+ "isolated": true,
+ "karar_c": {
+  "EAR Q1": "İZ DEĞİL",
+  "EAR Q3": "İZ DEĞİL",
+  "SUETF Q1": "İZ DEĞİL",
+  "SUETF Q3": "İZ DEĞİL"
+ },
+ "kod_sha256": "e6d0573134f59018390e58d83a8ac1a71a83570913dabbdef4ae171f2e4e1063",
+ "kos_baslangic": "2026-11-12 04:14:36 UTC",
+ "kos_bitis": "2026-11-12 04:15:13 UTC",
+ "not": [],
+ "olay": {
+  "hepsi": 29700,
+  "onsel": 12124,
+  "tam": 11781
+ },
+ "onkayit": {
+  "dosya_sha256": "084a91bd5d9dca5fa9f0cdf18cf6bf7e02e2d71643d7b92f1ecac36a73b4f680",
+  "git": {
+   "commit": "0ea9023ac593de24919c324f268dc07274c151f1",
+   "commit_zamani": "2026-11-12T04:14:19+00:00"
+  },
+  "sha": "7dbda78a5d6f6c33a54f22abaab3a956a3f9c233308617d3a74331c3f8f2b68d",
+  "v_bist_sha256": "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+  "veri_sha256": "d35b377408b45ccdf7a55229e44f6b411d34143d1dc67a19e5ae848ca1e3220c",
+  "yol": "/home/user/col_yolu/arastirma_cikti/col_dis_bilgi/K62_ON_KAYIT.md",
+  "zaman_utc": "2026-11-12 04:09:42 UTC"
+ },
+ "sentetik": false,
+ "sure_sn": 37,
+ "surum": "K62 v1.0 (2026-11-11): BIST PEAD birebir tekrar (Ahlatcıoğlu & Okay 2021): SUETF, SUEAF (veri yok), EAR; CAR[2,61]; dönemler; FI_OLCUT",
+ "surumler": {
+  "numpy": "2.5.3",
+  "pandas": "3.0.5",
+  "python": "3.13.18"
+ },
+ "veri": {
+  "fiyat_dosya": 972,
+  "kap_dosya": 451,
+  "mali_dosya": 715,
+  "sha256": "d35b377408b45ccdf7a55229e44f6b411d34143d1dc67a19e5ae848ca1e3220c",
+  "v_bist_sha256": "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51"
+ }
+}

@@ -1,0 +1,1198 @@
+{
+ "surum": "K60-B v1.0 (2026-11-11): piyango havuzu (oynaklığı en yüksek %20) içinde koşullu ayrım; K60 kütüphanesi, havuz içi ÜST / ALT %20, kat ve ASIM",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/k60_kutuphane/K60B_ON_KAYIT.md",
+  "dosya_sha256": "b74f3e2d26568b816d3e7094d0c5b906e9035c533c0947ae1f2debe22dec57bb",
+  "git": {
+   "commit": "5aac5de1af51fa8a2ae2b68a9b9db1ca0510b7fd",
+   "commit_zamani": "2026-11-11T12:25:59+00:00"
+  }
+ },
+ "sentetik": false,
+ "kos_baslangic": "2026-11-11 12:41:22 UTC",
+ "isolated": true,
+ "k60_kod_sha256": "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+ "k60b_kod_sha256": "85b494303c825deb30b1d2d6a78f7356df5bdddfcd805de9971cd1c5272da142",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "not": [],
+ "k60_muhur": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+ "veri": {
+  "k60_fiyat": [
+   "a795410c999b166d8e8e12a20d638b2ad07ec63ec963b5334f0d6abe99470408",
+   4755
+  ],
+  "k60_secframes": [
+   "995fb342cbfe782b70adf17439ed537f4d574856460056e4bf477b9c47f0dd8b",
+   1781
+  ],
+  "eski_secframes": [
+   "aca462674de19f06ec4f9e98767d6a5bb2735fb61598bbcc4591271b738dd0c7",
+   206
+  ],
+  "company_tickers.json": [
+   "6f9cc4500a98fb4c048328d7df392ed48c092613ec0c3e93cd6c7a3502886074",
+   1
+  ],
+  "k35_sic.csv": [
+   "1ac089db38678ef6d62b0e22562822f21d90fce6d96845dd4ea8d52e98ec52c9",
+   1
+  ],
+  "F-F_Research_Data_Factors_daily_CSV.zip": [
+   "96c23b88e651cbfff3740a53f8225e59ee39893371e96385a1d8125ec2cd9c89",
+   1
+  ],
+  "F-F_Research_Data_5_Factors_2x3_CSV.zip": [
+   "17d7a575e71d6764a70ddec3f8d887756c0eebf3a60f64d6ba95d2adde3fed26",
+   1
+  ],
+  "F-F_Momentum_Factor_CSV.zip": [
+   "27ed60e5b2caa9ea334a261cddfa864a9926f6bf45e9677c95dfd835c5abb315",
+   1
+  ]
+ },
+ "havuz_ay": 188,
+ "hisse": 4666,
+ "esik": {
+  "hipotez": 161,
+  "asim_maks": 1.1143210665,
+  "kat_m50_min": 0.944243157771,
+  "plasebo_asim_maks": 1.1143210665,
+  "plasebo_kat_m50_min": 0.944243157771
+ },
+ "aday": [
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yol": "FIRSAT"
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yol": "FIRSAT"
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yol": "FIRSAT"
+  },
+  {
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yol": "FIRSAT"
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yol": "FIRSAT"
+  },
+  {
+   "sinyal": "HIGH52",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "MOM_FIP",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "ROA_Q",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "CBOP_A",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NSI_1Y",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NSI_5Y",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "EARN_STREAK",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "SKEW_TOT",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "ISKEW",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "AMIHUD",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "DIV_MONTH",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "AILE_PRF",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "AILE_LIQ",
+   "taraf": "ALT",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "UST",
+   "yol": "KORUMA"
+  }
+ ],
+ "plasebo_dilim": {
+  "kesif": {
+   "asim95": 1.06102153197,
+   "kat_m50_05": 0.968841403396,
+   "plasebo_firsat_oran": 0.025,
+   "plasebo_koruma_oran": 0.03,
+   "aralik_dar": false
+  },
+  "dogrulama": {
+   "asim95": 1.15950085947,
+   "kat_m50_05": 0.940956797394,
+   "plasebo_firsat_oran": 0.095,
+   "plasebo_koruma_oran": 0.12,
+   "aralik_dar": true
+  },
+  "kasa": {
+   "asim95": 1.09773430551,
+   "kat_m50_05": 0.938952569296,
+   "plasebo_firsat_oran": 0.055,
+   "plasebo_koruma_oran": 0.105,
+   "aralik_dar": true
+  }
+ },
+ "gecis": {
+  "dogrulama": [
+   {
+    "sinyal": "D_ASSET_TURN",
+    "taraf": "UST",
+    "yol": "FIRSAT",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "REV_SURP",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "BETA_BAB",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "SEAS_2_5",
+    "taraf": "UST",
+    "yol": "FIRSAT",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "HIGH52",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "MOM_FIP",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "EV_EBITDA",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NET_PAYOUT_YLD",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "ROA_Q",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "D_ASSET_TURN",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "GP_A",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "CBOP_A",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "OPLEV",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "TAX_CHG",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "TAX_CHG",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "NSI_1Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "NSI_5Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "NEF",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "BUYBACK_YLD",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "EAR_ANN",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "REV_SURP",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "EARN_STREAK",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "EAR_VOL",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "SKEW_TOT",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "ISKEW",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "AMIHUD",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "DIV_MONTH",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "AILE_PRF",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "AILE_INV",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "AILE_EAR",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "AILE_LIQ",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "COMP4",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "DOSYA_Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "dogrulama",
+    "gecer": true,
+    "nokta": true
+   }
+  ],
+  "kasa": [
+   {
+    "sinyal": "D_ASSET_TURN",
+    "taraf": "UST",
+    "yol": "FIRSAT",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "REV_SURP",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "BETA_BAB",
+    "taraf": "ALT",
+    "yol": "FIRSAT",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "SEAS_2_5",
+    "taraf": "UST",
+    "yol": "FIRSAT",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "HIGH52",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "MOM_FIP",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "EV_EBITDA",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NET_PAYOUT_YLD",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "ROA_Q",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "D_ASSET_TURN",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "GP_A",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "CBOP_A",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "OPLEV",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "TAX_CHG",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "TAX_CHG",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NSI_1Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NSI_5Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NEF",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "NDF_BS",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "BUYBACK_YLD",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "EAR_ANN",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "REV_SURP",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "EARN_STREAK",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "EAR_VOL",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "SKEW_TOT",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "ISKEW",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "AMIHUD",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "DIV_MONTH",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "AILE_PRF",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "AILE_INV",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": false
+   },
+   {
+    "sinyal": "AILE_EAR",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": false,
+    "nokta": true
+   },
+   {
+    "sinyal": "AILE_LIQ",
+    "taraf": "ALT",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "COMP4",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   },
+   {
+    "sinyal": "DOSYA_Y",
+    "taraf": "UST",
+    "yol": "KORUMA",
+    "donem": "kasa",
+    "gecer": true,
+    "nokta": true
+   }
+  ]
+ },
+ "etiket": [
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yol": "FIRSAT",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yol": "FIRSAT",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU FIRSAT"
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yol": "FIRSAT",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yol": "FIRSAT",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU FIRSAT"
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yol": "FIRSAT",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "HIGH52",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "MOM_FIP",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "ROA_Q",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "CBOP_A",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": true,
+   "etiket": ""
+  },
+  {
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NSI_1Y",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NSI_5Y",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": true,
+   "etiket": "YAKIN (K60B-KOŞULLU KORUMA; DOĞRULAMA'da aralık / plasebo şartı kaçtı)"
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "EARN_STREAK",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": "YAKIN (K60B-KOŞULLU KORUMA; KASA'da aralık / plasebo şartı kaçtı)"
+  },
+  {
+   "sinyal": "SKEW_TOT",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": true,
+   "etiket": "YAKIN (K60B-KOŞULLU KORUMA; DOĞRULAMA'da aralık / plasebo şartı kaçtı)"
+  },
+  {
+   "sinyal": "ISKEW",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "AMIHUD",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "DIV_MONTH",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "AILE_PRF",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": true,
+   "etiket": ""
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": ""
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": false,
+   "etiket": "YAKIN (K60B-KOŞULLU KORUMA; KASA'da aralık / plasebo şartı kaçtı)"
+  },
+  {
+   "sinyal": "AILE_LIQ",
+   "taraf": "ALT",
+   "yol": "KORUMA",
+   "dogrulama": false,
+   "kasa": true,
+   "etiket": ""
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "UST",
+   "yol": "KORUMA",
+   "dogrulama": true,
+   "kasa": true,
+   "etiket": "K60B-KOŞULLU KORUMA"
+  }
+ ],
+ "havuz": {
+  "kesif": {
+   "donem": "kesif",
+   "ay_portfoy": 120,
+   "ay_12": 120,
+   "havuz_ort_hisse": 328.458333333,
+   "evren_ort_hisse": 1642.375,
+   "havuz_hisse_ay": 39415,
+   "evren_hisse_ay": 197085,
+   "havuz_p100": 0.101458835469,
+   "havuz_m50": 0.169453253837,
+   "havuz_ort": 0.170945030536,
+   "havuz_medyan": -0.00526299362887,
+   "evren_p100": 0.0412055712002,
+   "evren_m50": 0.0576147347591,
+   "evren_ort": 0.144644010052,
+   "evren_medyan": 0.0946475250695
+  },
+  "dogrulama": {
+   "donem": "dogrulama",
+   "ay_portfoy": 24,
+   "ay_12": 24,
+   "havuz_ort_hisse": 454.75,
+   "evren_ort_hisse": 2273.70833333,
+   "havuz_hisse_ay": 10914,
+   "evren_hisse_ay": 54569,
+   "havuz_p100": 0.0847535275793,
+   "havuz_m50": 0.214495143852,
+   "havuz_ort": 0.0443332018518,
+   "havuz_medyan": -0.134664597985,
+   "evren_p100": 0.0369257270612,
+   "evren_m50": 0.0697832102476,
+   "evren_ort": 0.0997759648558,
+   "evren_medyan": 0.0461215862527
+  },
+  "kasa": {
+   "donem": "kasa",
+   "ay_portfoy": 31,
+   "ay_12": 20,
+   "havuz_ort_hisse": 503.258064516,
+   "evren_ort_hisse": 2516.0,
+   "havuz_hisse_ay": 9728,
+   "evren_hisse_ay": 48635,
+   "havuz_p100": 0.158305921053,
+   "havuz_m50": 0.198293585526,
+   "havuz_ort": 0.271029182405,
+   "havuz_medyan": -0.0386807683,
+   "evren_p100": 0.0682430348514,
+   "evren_m50": 0.0726431582194,
+   "evren_ort": 0.161441052721,
+   "evren_medyan": 0.0505747002119
+  }
+ },
+ "kos_bitis": "2026-11-11 12:42:43 UTC",
+ "sure_sn": 81
+}

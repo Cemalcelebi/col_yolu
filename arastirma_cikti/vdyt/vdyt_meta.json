@@ -1,0 +1,183 @@
+{
+ "asama": "kasa",
+ "baslangic": "2026-11-12 07:22:20 UTC",
+ "bitis": "2026-11-12 07:37:51 UTC",
+ "hata": {
+  "ABD": {
+   "hisse_hata": {},
+   "olay_notu": {
+    "ABD_8K_bilanco_yakini_cikan": 154119,
+    "ABD_RAKIP": {
+     "olay": 200899,
+     "sektor_ceyrek": 3897
+    },
+    "EDGAR": {
+     "cik_ticker": 8024,
+     "dosya": 71,
+     "ilk": "2009-01-02 00:00:00",
+     "kodla_eslenen": 1685678,
+     "satir": 18681292,
+     "secili_form": 2707177,
+     "son": "2026-09-30 00:00:00"
+    },
+    "FOMC": 151,
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "NASDAQ": {
+     "ilk": "2022-12-01 00:00:00",
+     "saat": {
+      "time-after-hours": 370,
+      "time-not-supplied": 64731,
+      "time-pre-market": 324
+     },
+     "satir": 65425,
+     "son": "2026-10-27 00:00:00"
+    },
+    "PPK": 126
+   },
+   "sure_sn": 525.5
+  },
+  "BIST": {
+   "hisse_hata": {},
+   "olay_notu": {
+    "BIST_BILANCO": {
+     "ham_kayit": 122055,
+     "ilk": "2009-06-01 08:13:16",
+     "ilk_rapor": 45058,
+     "son": "2026-08-31 21:51:07"
+    },
+    "BIST_FON_GIRIS": {
+     "giris": 34152,
+     "rapor": 13111
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "bildirim": 4060
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "bildirim": 2535
+    },
+    "BIST_RAKIP": {
+     "olay": 39568,
+     "sektor_ceyrek": 796
+    },
+    "BIST_SERMAYE": {
+     "ilk": "2008-01-04 00:00:00",
+     "olay": 1651,
+     "son": "2026-08-26 00:00:00"
+    },
+    "BIST_TEMETTU": {
+     "ilk": "2008-01-03 00:00:00",
+     "olay": 11499,
+     "son": "2026-08-31 00:00:00"
+    },
+    "FOMC": 151,
+    "ICERIDEN_LISTE": {
+     "ayristirilan_bildirim": 6637,
+     "haric_sonrasi": 7313,
+     "liste": 8609
+    },
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "PPK": 126
+   },
+   "sure_sn": 66.5
+  },
+  "BIST_K62": {
+   "hisse_hata": {},
+   "olay_notu": {
+    "BIST_BILANCO": {
+     "ham_kayit": 122055,
+     "ilk": "2009-06-01 08:13:16",
+     "ilk_rapor": 45058,
+     "son": "2026-08-31 21:51:07"
+    },
+    "BIST_FON_GIRIS": {
+     "giris": 34152,
+     "rapor": 13111
+    },
+    "BIST_ICERIDEN_ALIM": {
+     "bildirim": 4060
+    },
+    "BIST_ICERIDEN_SATIM": {
+     "bildirim": 2535
+    },
+    "BIST_RAKIP": {
+     "olay": 39568,
+     "sektor_ceyrek": 796
+    },
+    "BIST_SERMAYE": {
+     "ilk": "2008-01-04 00:00:00",
+     "olay": 1651,
+     "son": "2026-08-26 00:00:00"
+    },
+    "BIST_TEMETTU": {
+     "ilk": "2008-01-03 00:00:00",
+     "olay": 11499,
+     "son": "2026-08-31 00:00:00"
+    },
+    "FOMC": 151,
+    "ICERIDEN_LISTE": {
+     "ayristirilan_bildirim": 6637,
+     "haric_sonrasi": 7313,
+     "liste": 8609
+    },
+    "MAKRO_EMTIA": {
+     "seri": [
+      "ALI=F",
+      "CL=F",
+      "GC=F",
+      "HG=F",
+      "HRC=F",
+      "SI=F",
+      "USDTRY=X",
+      "ZW=F",
+      "^TNX"
+     ],
+     "sok_gun": 390
+    },
+    "PPK": 126
+   },
+   "sure_sn": 82.8
+  }
+ },
+ "onkayit": {
+  "dosya_sha256": "6a6aaf665a047157b14af9e6111b33e95d20f3ae863fcebf5ead29ce031b84dc",
+  "esik": "b999ffc73273aa3b2fc54deac7aea96963ea38894ce8a3cdbe3c1159fdec8bd6",
+  "git_kod": {
+   "commit": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
+   "commit_zamani": "2026-11-12T07:02:14+00:00"
+  },
+  "git_onkayit": {
+   "commit": "06aa1b5608e62f145d8d5a35264e2bafe8b95ffe",
+   "commit_zamani": "2026-11-12T07:02:14+00:00"
+  },
+  "kod": "10ead8062c2c8ec25984a23b68b299cec4d8a7cfd144ad22e542e867d40c932d",
+  "yol": "/home/user/col_yolu/arastirma_cikti/vdyt/VDYT_ON_KAYIT.md",
+  "zaman": "2026-11-12 06:25:36 UTC (2026-11-12 09:25 TR)"
+ },
+ "sure_sn": 931.1
+}

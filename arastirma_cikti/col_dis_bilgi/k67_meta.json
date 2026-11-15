@@ -1,0 +1,57 @@
+{
+ "surum": "K67 v1.0 (2026-11-12): bilanço sonrası analist revizyonları (Yahoo not günlüğü) x FI_OLCUT; S1 bilanço olayları, S2 çöl etkileşimi",
+ "onkayit": {
+  "yol": "/home/user/col_yolu/arastirma_cikti/col_dis_bilgi/K67_ON_KAYIT.md",
+  "sha": "377b4fffeb71f5512fad8a89bab658b90bebf4943a483b5c6e712b60c1bcc9be",
+  "zaman_utc": "2026-11-12 06:00:50",
+  "dosya_sha256": "fd52e6537474d816039e5436edd6f2c991a8ca747a4fc20303e8e6708107d1f1",
+  "veri": {
+   "V_ABD.pkl": [
+    "82871d2c7c28ca939da3217a597864f11fcfa1fd1db7d85f7a8ccd609248d19e",
+    1
+   ],
+   "liste_abd.csv.gz": [
+    "87539954817d5d551623eeed04fa410844646539093a4e841a7755a2cfc674cb",
+    1
+   ],
+   "k67_yahoo": [
+    "57d127842818959d7e3c98aceb39fa8e52adf4313c3fe831a0be618f1b950464",
+    2810
+   ],
+   "FON_IZI.py": [
+    "ea0cc19f9b6514c50340df0e331c8d1a5e7961083918eefec45de6d7eb10ac7b",
+    1
+   ],
+   "K60.py": [
+    "d819f93082188688f5a3ed2a5d1bdb39735169125f292c62103b3e842ebd8e66",
+    1
+   ],
+   "K64.py": [
+    "0255e8b2902228e20665a439e8df529cf4521bbee4ed24d248c1977e08577653",
+    1
+   ]
+  },
+  "git": {
+   "commit": "14e63c0159bbebfd4c333edabdacf559b5611487",
+   "commit_zamani": "2026-11-12T06:05:13+00:00"
+  }
+ },
+ "sentetik": false,
+ "kos_baslangic": "2026-11-12 06:05:28 UTC",
+ "isolated": true,
+ "k67_kod_sha256": "e99ce6ba2dbf2702f619b99e5ca9586228e4f6deb708b03dc0aa9ac27379e557",
+ "surumler": {
+  "python": "3.13.18",
+  "numpy": "2.5.3",
+  "pandas": "3.0.5"
+ },
+ "olay": {
+  "bilanco_ham": 47309,
+  "bilanco_tekil": 37223,
+  "bilanco_olculen": 35698,
+  "col": 6802,
+  "col_olculen": 6541
+ },
+ "kos_bitis": "2026-11-12 06:15:21 UTC",
+ "sure_sn": 594
+}

@@ -1,0 +1,452 @@
+{
+ "muhur": "377b4fffeb71f5512fad8a89bab658b90bebf4943a483b5c6e712b60c1bcc9be",
+ "olay_yil": {
+  "2016": {
+   "NET": 231,
+   "ham": 1786,
+   "kapsama": 572,
+   "pencere": 1700,
+   "tekil": 1700
+  },
+  "2017": {
+   "NET": 375,
+   "ham": 3585,
+   "kapsama": 879,
+   "pencere": 2843,
+   "tekil": 2843
+  },
+  "2018": {
+   "NET": 808,
+   "ham": 3818,
+   "kapsama": 1455,
+   "pencere": 3006,
+   "tekil": 3006
+  },
+  "2019": {
+   "NET": 579,
+   "ham": 4016,
+   "kapsama": 1140,
+   "pencere": 3136,
+   "tekil": 3136
+  },
+  "2020": {
+   "NET": 1106,
+   "ham": 4224,
+   "kapsama": 1850,
+   "pencere": 3355,
+   "tekil": 3355
+  },
+  "2021": {
+   "NET": 1089,
+   "ham": 4702,
+   "kapsama": 1903,
+   "pencere": 3720,
+   "tekil": 3720
+  },
+  "2022": {
+   "NET": 1555,
+   "ham": 5105,
+   "kapsama": 2428,
+   "pencere": 4030,
+   "tekil": 4030
+  },
+  "2023": {
+   "NET": 2036,
+   "ham": 5229,
+   "kapsama": 2898,
+   "pencere": 4097,
+   "tekil": 4097
+  },
+  "2024": {
+   "NET": 2418,
+   "ham": 5354,
+   "kapsama": 3255,
+   "pencere": 4216,
+   "tekil": 4216
+  },
+  "2025": {
+   "NET": 2367,
+   "ham": 5479,
+   "kapsama": 3221,
+   "pencere": 4219,
+   "tekil": 4219
+  },
+  "2026": {
+   "NET": 1032,
+   "ham": 4011,
+   "kapsama": 1339,
+   "pencere": 1653,
+   "tekil": 2901
+  }
+ },
+ "surum": "K67 v1.0 (2026-11-12): bilanço sonrası analist revizyonları (Yahoo not günlüğü) x FI_OLCUT; S1 bilanço olayları, S2 çöl etkileşimi",
+ "veri": {
+  "cekim_ilk_utc": "2026-11-12 04:21:21",
+  "cekim_son_utc": "2026-11-12 05:37:25",
+  "durum": {
+   "not_tamam": 1400,
+   "not_yok": 11,
+   "takvim_tamam": 1410,
+   "takvim_yok": 1
+  },
+  "hisse_fiyat": 1411,
+  "nasdaq": {
+   "ayni_gun_pay": 0.9566,
+   "ilk": "2022-12-01",
+   "satir": 20443,
+   "son": "2026-08-28",
+   "surpriz_isaret_uyum": 0.8743,
+   "surpriz_karsilastirilan": 17608,
+   "yahoo_eslesen_pay": 0.9731,
+   "yahoo_nasdaqta_bulunan_pay": 0.9862,
+   "yahoo_satir_ortusme": 20170
+  },
+  "not": {
+   "hisse_kayitli": 1400,
+   "ilk": "2011-12-08 09:09:00",
+   "kayit": 262976,
+   "son": "2026-11-11 16:24:50",
+   "tarih_yalniz_pay": 0.0,
+   "yil": {
+    "2011": {
+     "down": 1,
+     "eski_hedef_dolu": 0.0,
+     "hedef_dolu": 0.6667,
+     "hisse": 3,
+     "init": 0,
+     "kayit": 3,
+     "up": 0
+    },
+    "2012": {
+     "down": 834,
+     "eski_hedef_dolu": 0.7387,
+     "hedef_dolu": 0.8844,
+     "hisse": 601,
+     "init": 750,
+     "kayit": 6693,
+     "up": 752
+    },
+    "2013": {
+     "down": 1654,
+     "eski_hedef_dolu": 0.5902,
+     "hedef_dolu": 0.7966,
+     "hisse": 649,
+     "init": 1374,
+     "kayit": 7701,
+     "up": 1350
+    },
+    "2014": {
+     "down": 1090,
+     "eski_hedef_dolu": 0.6657,
+     "hedef_dolu": 0.8508,
+     "hisse": 672,
+     "init": 1211,
+     "kayit": 7756,
+     "up": 1232
+    },
+    "2015": {
+     "down": 1308,
+     "eski_hedef_dolu": 0.5979,
+     "hedef_dolu": 0.785,
+     "hisse": 718,
+     "init": 1447,
+     "kayit": 7893,
+     "up": 1289
+    },
+    "2016": {
+     "down": 1728,
+     "eski_hedef_dolu": 0.4926,
+     "hedef_dolu": 0.6213,
+     "hisse": 748,
+     "init": 1509,
+     "kayit": 8421,
+     "up": 1285
+    },
+    "2017": {
+     "down": 1156,
+     "eski_hedef_dolu": 0.4723,
+     "hedef_dolu": 0.6332,
+     "hisse": 763,
+     "init": 1354,
+     "kayit": 6022,
+     "up": 1180
+    },
+    "2018": {
+     "down": 1149,
+     "eski_hedef_dolu": 0.6993,
+     "hedef_dolu": 0.7951,
+     "hisse": 825,
+     "init": 1526,
+     "kayit": 10271,
+     "up": 1443
+    },
+    "2019": {
+     "down": 1500,
+     "eski_hedef_dolu": 0.6421,
+     "hedef_dolu": 0.8263,
+     "hisse": 873,
+     "init": 1667,
+     "kayit": 9572,
+     "up": 1252
+    },
+    "2020": {
+     "down": 1689,
+     "eski_hedef_dolu": 0.7897,
+     "hedef_dolu": 0.9388,
+     "hisse": 972,
+     "init": 1571,
+     "kayit": 18455,
+     "up": 1892
+    },
+    "2021": {
+     "down": 1212,
+     "eski_hedef_dolu": 0.7434,
+     "hedef_dolu": 0.9493,
+     "hisse": 1099,
+     "init": 2248,
+     "kayit": 15887,
+     "up": 1577
+    },
+    "2022": {
+     "down": 1881,
+     "eski_hedef_dolu": 0.8286,
+     "hedef_dolu": 0.9622,
+     "hisse": 1177,
+     "init": 1865,
+     "kayit": 22819,
+     "up": 1325
+    },
+    "2023": {
+     "down": 1760,
+     "eski_hedef_dolu": 0.7331,
+     "hedef_dolu": 0.9736,
+     "hisse": 1236,
+     "init": 1970,
+     "kayit": 30333,
+     "up": 1597
+    },
+    "2024": {
+     "down": 1742,
+     "eski_hedef_dolu": 0.8711,
+     "hedef_dolu": 0.969,
+     "hisse": 1326,
+     "init": 2121,
+     "kayit": 36071,
+     "up": 1614
+    },
+    "2025": {
+     "down": 1553,
+     "eski_hedef_dolu": 0.9147,
+     "hedef_dolu": 0.9769,
+     "hisse": 1346,
+     "init": 2064,
+     "kayit": 37465,
+     "up": 1759
+    },
+    "2026": {
+     "down": 1591,
+     "eski_hedef_dolu": 0.9269,
+     "hedef_dolu": 0.9825,
+     "hisse": 1379,
+     "init": 1790,
+     "kayit": 37614,
+     "up": 1510
+    }
+   }
+  },
+  "takvim": {
+   "hisse": 1410,
+   "ilk": "1998-09-30",
+   "saat": {
+    "acilis_oncesi_gun_ici": 42405,
+    "kapanis_sonrasi": 44363,
+    "saat_yok": 196
+   },
+   "satir": 86964,
+   "son": "2027-03-30",
+   "yil": {
+    "1998": {
+     "eps_tahmin_dolu": 1.0,
+     "hisse": 1,
+     "satir": 2,
+     "surpriz_dolu": 1.0
+    },
+    "1999": {
+     "eps_tahmin_dolu": 1.0,
+     "hisse": 13,
+     "satir": 30,
+     "surpriz_dolu": 0.8667
+    },
+    "2000": {
+     "eps_tahmin_dolu": 0.9368,
+     "hisse": 35,
+     "satir": 95,
+     "surpriz_dolu": 0.9158
+    },
+    "2001": {
+     "eps_tahmin_dolu": 0.9853,
+     "hisse": 64,
+     "satir": 136,
+     "surpriz_dolu": 0.9412
+    },
+    "2002": {
+     "eps_tahmin_dolu": 0.9742,
+     "hisse": 501,
+     "satir": 1475,
+     "surpriz_dolu": 0.9505
+    },
+    "2003": {
+     "eps_tahmin_dolu": 0.9761,
+     "hisse": 498,
+     "satir": 1922,
+     "surpriz_dolu": 0.9568
+    },
+    "2004": {
+     "eps_tahmin_dolu": 0.98,
+     "hisse": 536,
+     "satir": 2048,
+     "surpriz_dolu": 0.9673
+    },
+    "2005": {
+     "eps_tahmin_dolu": 0.9855,
+     "hisse": 569,
+     "satir": 2204,
+     "surpriz_dolu": 0.9646
+    },
+    "2006": {
+     "eps_tahmin_dolu": 0.9864,
+     "hisse": 592,
+     "satir": 2285,
+     "surpriz_dolu": 0.9759
+    },
+    "2007": {
+     "eps_tahmin_dolu": 0.9913,
+     "hisse": 619,
+     "satir": 2401,
+     "surpriz_dolu": 0.9804
+    },
+    "2008": {
+     "eps_tahmin_dolu": 0.9887,
+     "hisse": 627,
+     "satir": 2468,
+     "surpriz_dolu": 0.9761
+    },
+    "2009": {
+     "eps_tahmin_dolu": 0.9852,
+     "hisse": 635,
+     "satir": 2492,
+     "surpriz_dolu": 0.9815
+    },
+    "2010": {
+     "eps_tahmin_dolu": 0.9915,
+     "hisse": 669,
+     "satir": 2600,
+     "surpriz_dolu": 0.9846
+    },
+    "2011": {
+     "eps_tahmin_dolu": 0.992,
+     "hisse": 700,
+     "satir": 2736,
+     "surpriz_dolu": 0.9868
+    },
+    "2012": {
+     "eps_tahmin_dolu": 0.9927,
+     "hisse": 734,
+     "satir": 2863,
+     "surpriz_dolu": 0.9881
+    },
+    "2013": {
+     "eps_tahmin_dolu": 0.9899,
+     "hisse": 766,
+     "satir": 2977,
+     "surpriz_dolu": 0.9845
+    },
+    "2014": {
+     "eps_tahmin_dolu": 0.9886,
+     "hisse": 814,
+     "satir": 3154,
+     "surpriz_dolu": 0.9848
+    },
+    "2015": {
+     "eps_tahmin_dolu": 0.9898,
+     "hisse": 858,
+     "satir": 3334,
+     "surpriz_dolu": 0.9868
+    },
+    "2016": {
+     "eps_tahmin_dolu": 0.9896,
+     "hisse": 886,
+     "satir": 3470,
+     "surpriz_dolu": 0.9873
+    },
+    "2017": {
+     "eps_tahmin_dolu": 0.9922,
+     "hisse": 924,
+     "satir": 3602,
+     "surpriz_dolu": 0.9872
+    },
+    "2018": {
+     "eps_tahmin_dolu": 0.9927,
+     "hisse": 985,
+     "satir": 3830,
+     "surpriz_dolu": 0.9856
+    },
+    "2019": {
+     "eps_tahmin_dolu": 0.9916,
+     "hisse": 1033,
+     "satir": 4028,
+     "surpriz_dolu": 0.9831
+    },
+    "2020": {
+     "eps_tahmin_dolu": 0.991,
+     "hisse": 1098,
+     "satir": 4239,
+     "surpriz_dolu": 0.9887
+    },
+    "2021": {
+     "eps_tahmin_dolu": 0.993,
+     "hisse": 1243,
+     "satir": 4713,
+     "surpriz_dolu": 0.9924
+    },
+    "2022": {
+     "eps_tahmin_dolu": 0.9918,
+     "hisse": 1300,
+     "satir": 5105,
+     "surpriz_dolu": 0.9926
+    },
+    "2023": {
+     "eps_tahmin_dolu": 0.995,
+     "hisse": 1322,
+     "satir": 5228,
+     "surpriz_dolu": 0.9906
+    },
+    "2024": {
+     "eps_tahmin_dolu": 0.9907,
+     "hisse": 1362,
+     "satir": 5355,
+     "surpriz_dolu": 0.9895
+    },
+    "2025": {
+     "eps_tahmin_dolu": 0.9907,
+     "hisse": 1378,
+     "satir": 5478,
+     "surpriz_dolu": 0.9878
+    },
+    "2026": {
+     "eps_tahmin_dolu": 0.9911,
+     "hisse": 1394,
+     "satir": 5498,
+     "surpriz_dolu": 0.9509
+    },
+    "2027": {
+     "eps_tahmin_dolu": 0.9841,
+     "hisse": 1196,
+     "satir": 1196,
+     "surpriz_dolu": 0.0
+    }
+   }
+  }
+ },
+ "zaman": "2026-11-12 06:00:40 UTC"
+}

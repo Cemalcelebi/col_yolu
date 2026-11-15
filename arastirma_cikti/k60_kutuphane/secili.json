@@ -1,0 +1,1070 @@
+{
+ "bilesik": [
+  "AILE_DIS",
+  "AILE_EAR",
+  "AILE_INV",
+  "AILE_LIQ",
+  "AILE_MOM",
+  "AILE_PRF",
+  "AILE_RSK",
+  "AILE_SEA",
+  "AILE_SEC",
+  "AILE_VAL",
+  "COMP4",
+  "DOSYA_Y"
+ ],
+ "esik": {
+  "lift_m50": 1.071192814,
+  "lift_p100": 1.077754282,
+  "m_r1": 88,
+  "m_r2": 165,
+  "plasebo_maks_brut_t": 3.315387078,
+  "plasebo_maks_lift_m50": 1.071192814,
+  "plasebo_maks_lift_p100": 1.077754282,
+  "plasebo_maks_net_t": 0.8703336833,
+  "plasebo_min_brut_t": -2.685587554,
+  "r1_acik": true,
+  "r2_aralik_dar": false,
+  "r2k_aralik_dar": false,
+  "t_arti": 3.315387078,
+  "t_eksi_brut": 2.685587554,
+  "yp_brut": 0.015,
+  "yp_net": 0.0,
+  "yp_r2": 0.045,
+  "yp_r2k": 0.04
+ },
+ "model": {
+  "girdi": [
+   "AILE_MOM",
+   "AILE_VAL",
+   "AILE_PRF",
+   "AILE_INV",
+   "AILE_EAR",
+   "AILE_RSK",
+   "AILE_LIQ",
+   "AILE_SEA",
+   "AILE_DIS",
+   "AILE_SEC"
+  ],
+  "katsayi": [
+   -1.612644681,
+   0.01824259078,
+   0.4641590916,
+   0.2704708956,
+   -0.3755066549,
+   -0.3811182355,
+   -3.426556351,
+   1.337604864,
+   -0.05373506835,
+   -1.717660637,
+   0.2012359342
+  ]
+ },
+ "muhur": "e1749249eeb8540fbeb8f2f5564fa5ff5d9f3dfb3c5d2dab681b65d515c80ba0",
+ "secili": [
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ACCRUALS",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ACT_13D",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_DIS",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_EAR",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_INV",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_LIQ",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_MOM",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_MOM",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_PRF",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_RSK",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_SEA",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AILE_VAL",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AM",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "AMIHUD",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ASSET_G",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BETA_BAB",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BE_G",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BM",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BM",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "BUYBACK_YLD",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CAPEX_G",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CBOP_A",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CFP",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CFP",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "CHS_FAIL",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "COMP4",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "DOLVOL",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "DOSYA_Y",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "D_ASSET_TURN",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EARN_STREAK",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_ANN",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_FILE",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EAR_VOL",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EP",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "EV_EBITDA",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "E_424B5",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "E_DIV_OMIT",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "E_IPO_3Y",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "E_RSPLIT",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "E_S3",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "F_SCORE",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "GAP_OVN",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "GP_A",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "HIGH52",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "IND_LEAD_BIG",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "IND_MOM_6",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "IND_MOM_6",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ISKEW",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "IVOL_FF3",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "LEV_MKT",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "LTREV_60_13",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MAX5",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_12_1",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_6_1",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_FIP",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "MOM_INT_12_7",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NDF_BS",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NEF",
+   "taraf": "UST",
+   "yol": [
+    "R1"
+   ],
+   "yon_r1": 1
+  },
+  {
+   "sinyal": "NET_PAYOUT_YLD",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NOA",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NSI_1Y",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NSI_5Y",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "NT_LATE",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "OPLEV",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "OP_BE",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "O_SCORE",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "PRICE_LVL",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "ALT",
+   "yol": [
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "RD_ME",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "REV_SURP",
+   "taraf": "UST",
+   "yol": [
+    "R1"
+   ],
+   "yon_r1": 1
+  },
+  {
+   "sinyal": "ROA_Q",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "ROE_TTM",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "RUNWAY",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SALES_ACCEL",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SEAS_1",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SEAS_2_5",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SIZE_ME",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SKEW_TOT",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SP",
+   "taraf": "UST",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SPREAD_CS",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "STREV_1M",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "SUE_SRW",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "TAX_CHG",
+   "taraf": "ALT",
+   "yol": [
+    "R2"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "TREND_MA",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "TURN_12M",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "VOL_60D",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "ALT",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  },
+  {
+   "sinyal": "VOL_SHOCK",
+   "taraf": "UST",
+   "yol": [
+    "R2",
+    "R2K"
+   ],
+   "yon_r1": 0
+  }
+ ]
+}
