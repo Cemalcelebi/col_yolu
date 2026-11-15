@@ -1,5 +1,17 @@
 // =====================================================================================================
-// COL S5 Öbek Sıkışması  —  Pine Script v5
+// COL S5 Öbek Sıkışması  —  Pine Script v5  (v1.1, 15 Kasım 2026)
+//
+// v1.1 (15 Kasım 2026; Cemal, ekran görüntüsü): bölge artık KUTU ile çizilir. v1.0 şartın tuttuğu GÜNÜ
+// boyuyordu; grafikte 1-4 mumluk 'bölgeler' ve yan yana iki ayrı bant görünüyordu. Cemal'in kuralı: bir bölge
+// EN AZ 8 mum (5 kabul edilebilir alt sınır, ideal >= 8), çoğu 60 muma kadar; tek mumluk bölge olmaz; bitişik
+// parçalar tek bölgedir. Bölge = karar gününden geriye p = 15 GEÇERLİ barlık pencere + şartın sürdüğü sonraki günler.
+// Değişen: karar gününde (olay) box.new ile pencerenin ilk geçerli barından bugüne kutu (üst = pencere en yüksek
+// High, alt = en düşük Low; DİP mavi / YOL ÜSTÜ turuncu). Aynı bölgede (son S5 gününden < 20 geçerli bar) S5 yeniden
+// tutarsa AYNI kutunun sağ kenarı ile üst / altı genişler. Eski günlük zemin boyası 'gosterZemin' ile isteğe
+// bağlı, varsayılan KAPALI. Tabloya 'son bölge / uzunluk (bar)' satırı eklendi.
+// Kutu en az p = 15 geçerli bar uzunluğundadır (tek mumluk bölge çıkmaz); kesik S5 günleri tek kutuda birleşir.
+// S5 ÖLÇÜM TANIMI (eşikler, p = 15, a..e, sınıflar, karar günü) DEĞİŞMEDİ; yalnız çizim değişti.
+//
 // Kaynak: arastirma_cikti/sikisma_obek/SIKISMA_OBEK_ON_KAYIT.md (SIKISMA_OBEK v1.0, MÜHÜR de384bbd...),
 //         uygulama SIKISMA_OBEK.py so_s5. Bu gösterge so_s5'in bar bar Pine çevirisidir.
 //
@@ -8,8 +20,9 @@
 //
 // Ne çizer:
 //   - BB(20, 2σ) bantları ve EMA 20 / EMA 50 (ince; yalnız görsel, S5 hesabına girmez)
-//   - S5 günü (a..e koşulları + sınıf) olan barlarda arka plan: DİP = mavi, YOL ÜSTÜ = turuncu
-//   - Bölgenin İLK günü (karar günü; önceki 19 geçerli barda S5 yok) altında küçük üçgen
+//   - S5 bölgesi KUTU: karar gününden geriye p geçerli barlık pencere + şartın sürdüğü günler; DİP = mavi,
+//     YOL ÜSTÜ = turuncu (renk karar günündeki sınıftır). İsteğe bağlı (varsayılan kapalı): S5 günü zemin boyası
+//   - Karar günü (bölgenin ilk S5 günü; önceki 19 geçerli barda S5 yok) altında küçük üçgen
 //   - Sağ üstte bilgi tablosu: son barın ölçüleri, 250 günlük ATR% ile 'küçük mum' eşiği
 //   - Bölge bitince (koşul düşünce) işaret yok
 //
@@ -41,7 +54,7 @@
 // ölçümde ayrıca sınanır (SIKISMA_OBEK_RAPOR.md).
 // =====================================================================================================
 //@version=5
-indicator("COL S5 Öbek Sıkışması", overlay=true, max_labels_count=500)
+indicator("COL S5 Öbek Sıkışması", overlay=true, max_labels_count=500, max_boxes_count=500)
 
 // ---------------------------------------------------------------- girdiler (ön kayıt değerleri; ölçümle aynı olması için değiştirme)
 G1 = "S5 tanımı (ön kayıt; ölçümle aynı olması için değiştirme)"
@@ -76,6 +89,7 @@ gosterEMA  = input.bool(true, "EMA 20 / EMA 50 çiz", group=G2)
 gosterTab  = input.bool(true, "Bilgi tablosu", group=G2)
 renkDip    = input.color(color.new(color.blue, 82), "DİP boyası", group=G2)
 renkYol    = input.color(color.new(color.orange, 82), "YOL ÜSTÜ boyası", group=G2)
+gosterZemin = input.bool(false, "S5 günlerini zemin boya (eski v1.0 görünümü)", group=G2)
 
 bant = pazar == "BIST" ? bantBIST : bantDiger
 
@@ -101,6 +115,8 @@ var float[] aTRP = array.new_float(0)       // TR / önceki geçerli kapanış
 var float[] aASG = array.new_float(0)       // 1 = açılış < önceki geçerli kapanış
 var float[] aBBW = array.new_float(0)       // 4 x std20 / SMA20 (nüfus std)
 var float[] aSMA = array.new_float(0)       // SMA50
+var int[]   aIdx = array.new_int(0)         // geçerli barın gerçek bar_index'i (kutunun sol kenarı için)
+var int[]   aZmn = array.new_int(0)         // geçerli barın zamanı (time; tablo tarihi için)
 var int  nGec    = 0                        // şimdiye kadarki geçerli bar sayısı
 var int  sonS5   = -100000                  // son S5 gününün geçerli bar sırası
 
@@ -109,10 +125,27 @@ ekle(float[] a, float v) =>
     if array.size(a) > TUT
         array.shift(a)
 
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
 // dizinin sondan k'ıncı elemanı (k = 0 en yeni)
 geri(float[] a, int k) =>
     int sz = array.size(a)
     k < sz ? array.get(a, sz - 1 - k) : na
+
+// int dizinin sondan k'ıncı elemanı (k = 0 en yeni)
+geriI(int[] a, int k) =>
+    int sz = array.size(a)
+    int sonuc = na
+    if k < sz
+        sonuc := array.get(a, sz - 1 - k)
+    sonuc
+
+// tarih metni (borsa saat dilimi): yyyy-aa-gg
+tarih(int t) =>
+    na(t) ? "-" : str.tostring(year(t)) + "-" + str.tostring(month(t), "00") + "-" + str.tostring(dayofmonth(t), "00")
 
 // son m elemanın ortalaması (hepsi tanımlı değilse na)
 sonOrt(float[] a, int m) =>
@@ -148,6 +181,17 @@ bool ce  = false
 bool dip = false
 bool yol = false
 
+// bölge kutusu (v1.1)
+var box[] kutular  = array.new_box(0)       // çizilen kutular (en çok 500; eskiler silinir)
+var box   kutu     = na                     // son (açık ya da biten) bölgenin kutusu
+var int   kutuSol  = na                     // kutunun sol kenarı (bar_index)
+var int   kutuSag  = na                     // kutunun sağ kenarı (bar_index)
+var int   kutuBasZ = na                     // pencerenin ilk geçerli barının zamanı
+var int   kutuSonZ = na                     // son S5 gününün zamanı
+var int   kutuGec  = na                     // kutudaki geçerli bar sayısı
+var int   kutuIlkI = na                     // kutunun ilk geçerli bar sırası
+var bool  kutuDip  = false                  // kutunun sınıfı (karar günündeki): true = DİP, false = YOL ÜSTÜ
+
 if gecerli
     float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
     float tr    = na(cOnce) ? high - low : math.max(high, cOnce) - math.min(low, cOnce)
@@ -167,6 +211,8 @@ if gecerli
         bbw := 2.0 * bbK * math.sqrt(ss / bbGun) / m
     ekle(aBBW, bbw)
     ekle(aSMA, array.size(aC) >= smaGun ? sonOrt(aC, smaGun) : na)
+    ekleI(aIdx, bar_index)
+    ekleI(aZmn, time)
     nGec += 1
     int i = nGec - 1                         // bu barın geçerli bar sırası (ölçümdeki indeks)
 
@@ -244,17 +290,46 @@ if gecerli
         s5  := s5d or s5y
         olay := s5 and (i - sonS5 >= ara)
         if s5
+            // pencere (son p geçerli bar) en yüksek High / en düşük Low ve ilk barının bar_index'i
+            float pUst = array.get(aH, sz - p)
+            float pAlt = array.get(aL, sz - p)
+            for j = sz - p to sz - 1
+                pUst := math.max(pUst, array.get(aH, j))
+                pAlt := math.min(pAlt, array.get(aL, j))
+            int ilkBar = geriI(aIdx, p - 1)
+            int ilkZ   = geriI(aZmn, p - 1)
+            if olay or na(kutu)
+                // yeni bölge: pencerenin ilk geçerli barından bugüne yeni kutu
+                color dolgu = s5d ? renkDip : renkYol
+                color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
+                box yeni = box.new(ilkBar, pUst, bar_index, pAlt, border_color=kenar, border_width=1, bgcolor=dolgu)
+                array.push(kutular, yeni)
+                if array.size(kutular) > 500
+                    box.delete(array.shift(kutular))
+                kutu     := yeni
+                kutuSol  := ilkBar
+                kutuBasZ := ilkZ
+                kutuIlkI := i - p + 1
+                kutuDip  := s5d
+            else
+                // aynı bölge (son S5 gününden < ara geçerli bar): aynı kutu sağa ve dikeyde genişler
+                box.set_right(kutu, bar_index)
+                box.set_top(kutu, math.max(box.get_top(kutu), pUst))
+                box.set_bottom(kutu, math.min(box.get_bottom(kutu), pAlt))
+            kutuSag  := bar_index
+            kutuSonZ := time
+            kutuGec  := i - kutuIlkI + 1
             sonS5 := i
 
 // ---------------------------------------------------------------- çizim
-bgcolor(s5d ? renkDip : s5y ? renkYol : na, title="S5 bölgesi")
+bgcolor(gosterZemin and s5d ? renkDip : gosterZemin and s5y ? renkYol : na, title="S5 günü zemini (isteğe bağlı)")
 plotshape(olay and s5d, "Karar günü (DİP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
 plotshape(olay and s5y, "Karar günü (YOL ÜSTÜ)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
 
 yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
 ev(bool b) => b ? "EVET" : "hayır"
 
-var table tb = table.new(position.top_right, 3, 10, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 3, 11, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
     table.cell(tb, 1, 0, "değer", text_size=size.small)
@@ -286,9 +361,17 @@ if gosterTab and barstate.islast
     table.cell(tb, 0, 9, "geçerli bar sayısı", text_size=size.small)
     table.cell(tb, 1, 9, str.tostring(nGec), text_size=size.small)
     table.cell(tb, 2, 9, nGec > gecmisMin ? "" : "en az " + str.tostring(gecmisMin + 1) + " gerekli", text_size=size.small)
+    bool varKutu = not na(kutuSol) and not na(kutuSag)
+    string kSinif = kutuDip ? "DİP" : "YOL ÜSTÜ"
+    string kUzun = varKutu ? str.tostring(kutuSag - kutuSol + 1) + " bar (" + str.tostring(kutuGec) + " geçerli), " + kSinif : "-"
+    table.cell(tb, 0, 10, "son bölge / bölge uzunluğu (bar)", text_size=size.small)
+    table.cell(tb, 1, 10, varKutu ? tarih(kutuBasZ) + " .. " + tarih(kutuSonZ) : "-", text_size=size.small)
+    table.cell(tb, 2, 10, kUzun, text_size=size.small)
 
 // =====================================================================================================
 // BEKLENEN BOYALI GÜNLER (doğrulama tablosu; Cemal grafikte karşılaştırır)
+// v1.1: bu günler artık kutunun içindedir; kutu bu günlerden p-1 bar önce başlar (karar gününden geriye 15 geçerli
+// bar). AÇIK günler zemin boyası olarak yalnız 'S5 günlerini zemin boya' açılınca görünür.
 // Üretim: SIKISMA_OBEK.py so_s5 (V_BIST.pkl sha256 bbd09faa..., ön kayıttaki veri) ve bu dosyanın mantığını
 // aynı sırayla bar bar yazan bağımsız Python döngüsü. İki hesap FENER, CCOLA, ENJSA'nın BÜTÜN geçmişinde
 // (2015-2026, 2.136-2.816 geçerli bar) S5 / DİP / YOL dizisinde 0 gün farkla aynı çıktı.

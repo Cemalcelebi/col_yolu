@@ -1,5 +1,17 @@
 // =====================================================================================================
-// COL S5 Obek Sikismasi  -  Pine Script v5
+// COL S5 Obek Sikismasi  -  Pine Script v5  (v1.1, 15 Kasim 2026)
+//
+// v1.1 (15 Kasim 2026; Cemal, ekran goruntusu): bolge artik KUTU ile cizilir. v1.0 sartin tuttugu GUNU
+// boyuyordu; grafikte 1-4 mumluk 'bolgeler' ve yan yana iki ayri bant gorunuyordu. Cemal'in kurali: bir bolge
+// EN AZ 8 mum (5 kabul edilebilir alt sinir, ideal >= 8), cogu 60 muma kadar; tek mumluk bolge olmaz; bitisik
+// parcalar tek bolgedir. Bolge = karar gununden geriye p = 15 GECERLI barlik pencere + sartin surdugu sonraki gunler.
+// Degisen: karar gununde (olay) box.new ile pencerenin ilk gecerli barindan bugune kutu (ust = pencere en yuksek
+// High, alt = en dusuk Low; DIP mavi / YOL USTU turuncu). Ayni bolgede (son S5 gununden < 20 gecerli bar) S5 yeniden
+// tutarsa AYNI kutunun sag kenari ile ust / alti genisler. Eski gunluk zemin boyasi 'gosterZemin' ile istege
+// bagli, varsayilan KAPALI. Tabloya 'son bolge / uzunluk (bar)' satiri eklendi.
+// Kutu en az p = 15 gecerli bar uzunlugundadir (tek mumluk bolge cikmaz); kesik S5 gunleri tek kutuda birlesir.
+// S5 OLCUM TANIMI (esikler, p = 15, a..e, siniflar, karar gunu) DEGISMEDI; yalniz cizim degisti.
+//
 // Kaynak: arastirma_cikti/sikisma_obek/SIKISMA_OBEK_ON_KAYIT.md (SIKISMA_OBEK v1.0, MUHUR de384bbd...),
 //         uygulama SIKISMA_OBEK.py so_s5. Bu gosterge so_s5'in bar bar Pine cevirisidir.
 //
@@ -8,8 +20,9 @@
 //
 // Ne cizer:
 //   - BB(20, 2s) bantlari ve EMA 20 / EMA 50 (ince; yalniz gorsel, S5 hesabina girmez)
-//   - S5 gunu (a..e kosullari + sinif) olan barlarda arka plan: DIP = mavi, YOL USTU = turuncu
-//   - Bolgenin ILK gunu (karar gunu; onceki 19 gecerli barda S5 yok) altinda kucuk ucgen
+//   - S5 bolgesi KUTU: karar gununden geriye p gecerli barlik pencere + sartin surdugu gunler; DIP = mavi,
+//     YOL USTU = turuncu (renk karar gunundeki siniftir). Istege bagli (varsayilan kapali): S5 gunu zemin boyasi
+//   - Karar gunu (bolgenin ilk S5 gunu; onceki 19 gecerli barda S5 yok) altinda kucuk ucgen
 //   - Sag ustte bilgi tablosu: son barin olculeri, 250 gunluk ATR% ile 'kucuk mum' esigi
 //   - Bolge bitince (kosul dusunce) isaret yok
 //
@@ -41,7 +54,7 @@
 // olcumde ayrica sinanir (SIKISMA_OBEK_RAPOR.md).
 // =====================================================================================================
 //@version=5
-indicator("COL S5 Obek Sikismasi", overlay=true, max_labels_count=500)
+indicator("COL S5 Obek Sikismasi", overlay=true, max_labels_count=500, max_boxes_count=500)
 
 // ---------------------------------------------------------------- girdiler (on kayit degerleri; olcumle ayni olmasi icin degistirme)
 G1 = "S5 tanimi (on kayit; olcumle ayni olmasi icin degistirme)"
@@ -76,6 +89,7 @@ gosterEMA  = input.bool(true, "EMA 20 / EMA 50 ciz", group=G2)
 gosterTab  = input.bool(true, "Bilgi tablosu", group=G2)
 renkDip    = input.color(color.new(color.blue, 82), "DIP boyasi", group=G2)
 renkYol    = input.color(color.new(color.orange, 82), "YOL USTU boyasi", group=G2)
+gosterZemin = input.bool(false, "S5 gunlerini zemin boya (eski v1.0 gorunumu)", group=G2)
 
 bant = pazar == "BIST" ? bantBIST : bantDiger
 
@@ -101,6 +115,8 @@ var float[] aTRP = array.new_float(0)       // TR / onceki gecerli kapanis
 var float[] aASG = array.new_float(0)       // 1 = acilis < onceki gecerli kapanis
 var float[] aBBW = array.new_float(0)       // 4 x std20 / SMA20 (nufus std)
 var float[] aSMA = array.new_float(0)       // SMA50
+var int[]   aIdx = array.new_int(0)         // gecerli barin gercek bar_index'i (kutunun sol kenari icin)
+var int[]   aZmn = array.new_int(0)         // gecerli barin zamani (time; tablo tarihi icin)
 var int  nGec    = 0                        // simdiye kadarki gecerli bar sayisi
 var int  sonS5   = -100000                  // son S5 gununun gecerli bar sirasi
 
@@ -109,10 +125,27 @@ ekle(float[] a, float v) =>
     if array.size(a) > TUT
         array.shift(a)
 
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
 // dizinin sondan k'inci elemani (k = 0 en yeni)
 geri(float[] a, int k) =>
     int sz = array.size(a)
     k < sz ? array.get(a, sz - 1 - k) : na
+
+// int dizinin sondan k'inci elemani (k = 0 en yeni)
+geriI(int[] a, int k) =>
+    int sz = array.size(a)
+    int sonuc = na
+    if k < sz
+        sonuc := array.get(a, sz - 1 - k)
+    sonuc
+
+// tarih metni (borsa saat dilimi): yyyy-aa-gg
+tarih(int t) =>
+    na(t) ? "-" : str.tostring(year(t)) + "-" + str.tostring(month(t), "00") + "-" + str.tostring(dayofmonth(t), "00")
 
 // son m elemanin ortalamasi (hepsi tanimli degilse na)
 sonOrt(float[] a, int m) =>
@@ -148,6 +181,17 @@ bool ce  = false
 bool dip = false
 bool yol = false
 
+// bolge kutusu (v1.1)
+var box[] kutular  = array.new_box(0)       // cizilen kutular (en cok 500; eskiler silinir)
+var box   kutu     = na                     // son (acik ya da biten) bolgenin kutusu
+var int   kutuSol  = na                     // kutunun sol kenari (bar_index)
+var int   kutuSag  = na                     // kutunun sag kenari (bar_index)
+var int   kutuBasZ = na                     // pencerenin ilk gecerli barinin zamani
+var int   kutuSonZ = na                     // son S5 gununun zamani
+var int   kutuGec  = na                     // kutudaki gecerli bar sayisi
+var int   kutuIlkI = na                     // kutunun ilk gecerli bar sirasi
+var bool  kutuDip  = false                  // kutunun sinifi (karar gunundeki): true = DIP, false = YOL USTU
+
 if gecerli
     float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
     float tr    = na(cOnce) ? high - low : math.max(high, cOnce) - math.min(low, cOnce)
@@ -167,6 +211,8 @@ if gecerli
         bbw := 2.0 * bbK * math.sqrt(ss / bbGun) / m
     ekle(aBBW, bbw)
     ekle(aSMA, array.size(aC) >= smaGun ? sonOrt(aC, smaGun) : na)
+    ekleI(aIdx, bar_index)
+    ekleI(aZmn, time)
     nGec += 1
     int i = nGec - 1                         // bu barin gecerli bar sirasi (olcumdeki indeks)
 
@@ -244,17 +290,46 @@ if gecerli
         s5  := s5d or s5y
         olay := s5 and (i - sonS5 >= ara)
         if s5
+            // pencere (son p gecerli bar) en yuksek High / en dusuk Low ve ilk barinin bar_index'i
+            float pUst = array.get(aH, sz - p)
+            float pAlt = array.get(aL, sz - p)
+            for j = sz - p to sz - 1
+                pUst := math.max(pUst, array.get(aH, j))
+                pAlt := math.min(pAlt, array.get(aL, j))
+            int ilkBar = geriI(aIdx, p - 1)
+            int ilkZ   = geriI(aZmn, p - 1)
+            if olay or na(kutu)
+                // yeni bolge: pencerenin ilk gecerli barindan bugune yeni kutu
+                color dolgu = s5d ? renkDip : renkYol
+                color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
+                box yeni = box.new(ilkBar, pUst, bar_index, pAlt, border_color=kenar, border_width=1, bgcolor=dolgu)
+                array.push(kutular, yeni)
+                if array.size(kutular) > 500
+                    box.delete(array.shift(kutular))
+                kutu     := yeni
+                kutuSol  := ilkBar
+                kutuBasZ := ilkZ
+                kutuIlkI := i - p + 1
+                kutuDip  := s5d
+            else
+                // ayni bolge (son S5 gununden < ara gecerli bar): ayni kutu saga ve dikeyde genisler
+                box.set_right(kutu, bar_index)
+                box.set_top(kutu, math.max(box.get_top(kutu), pUst))
+                box.set_bottom(kutu, math.min(box.get_bottom(kutu), pAlt))
+            kutuSag  := bar_index
+            kutuSonZ := time
+            kutuGec  := i - kutuIlkI + 1
             sonS5 := i
 
 // ---------------------------------------------------------------- cizim
-bgcolor(s5d ? renkDip : s5y ? renkYol : na, title="S5 bolgesi")
+bgcolor(gosterZemin and s5d ? renkDip : gosterZemin and s5y ? renkYol : na, title="S5 gunu zemini (istege bagli)")
 plotshape(olay and s5d, "Karar gunu (DIP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
 plotshape(olay and s5y, "Karar gunu (YOL USTU)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
 
 yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
 ev(bool b) => b ? "EVET" : "hayir"
 
-var table tb = table.new(position.top_right, 3, 10, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 3, 11, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
     table.cell(tb, 1, 0, "deger", text_size=size.small)
@@ -286,9 +361,17 @@ if gosterTab and barstate.islast
     table.cell(tb, 0, 9, "gecerli bar sayisi", text_size=size.small)
     table.cell(tb, 1, 9, str.tostring(nGec), text_size=size.small)
     table.cell(tb, 2, 9, nGec > gecmisMin ? "" : "en az " + str.tostring(gecmisMin + 1) + " gerekli", text_size=size.small)
+    bool varKutu = not na(kutuSol) and not na(kutuSag)
+    string kSinif = kutuDip ? "DIP" : "YOL USTU"
+    string kUzun = varKutu ? str.tostring(kutuSag - kutuSol + 1) + " bar (" + str.tostring(kutuGec) + " gecerli), " + kSinif : "-"
+    table.cell(tb, 0, 10, "son bolge / bolge uzunlugu (bar)", text_size=size.small)
+    table.cell(tb, 1, 10, varKutu ? tarih(kutuBasZ) + " .. " + tarih(kutuSonZ) : "-", text_size=size.small)
+    table.cell(tb, 2, 10, kUzun, text_size=size.small)
 
 // =====================================================================================================
 // BEKLENEN BOYALI GUNLER (dogrulama tablosu; Cemal grafikte karsilastirir)
+// v1.1: bu gunler artik kutunun icindedir; kutu bu gunlerden p-1 bar once baslar (karar gununden geriye 15 gecerli
+// bar). ACIK gunler zemin boyasi olarak yalniz 'S5 gunlerini zemin boya' acilinca gorunur.
 // Uretim: SIKISMA_OBEK.py so_s5 (V_BIST.pkl sha256 bbd09faa..., on kayittaki veri) ve bu dosyanin mantigini
 // ayni sirayla bar bar yazan bagimsiz Python dongusu. Iki hesap FENER, CCOLA, ENJSA'nin BUTUN gecmisinde
 // (2015-2026, 2.136-2.816 gecerli bar) S5 / DIP / YOL dizisinde 0 gun farkla ayni cikti.
