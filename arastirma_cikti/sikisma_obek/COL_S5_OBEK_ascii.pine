@@ -1,0 +1,324 @@
+// =====================================================================================================
+// COL S5 Obek Sikismasi  -  Pine Script v5
+// Kaynak: arastirma_cikti/sikisma_obek/SIKISMA_OBEK_ON_KAYIT.md (SIKISMA_OBEK v1.0, MUHUR de384bbd...),
+//         uygulama SIKISMA_OBEK.py so_s5. Bu gosterge so_s5'in bar bar Pine cevirisidir.
+//
+// OLCUMLE AYNI OLMASI ICIN ESIKLERI DEGISTIRME. Varsayilanlar on kayit degerleridir (donmus).
+// Degistirirsen grafikte gorunen artik olculen S5 degildir.
+//
+// Ne cizer:
+//   - BB(20, 2s) bantlari ve EMA 20 / EMA 50 (ince; yalniz gorsel, S5 hesabina girmez)
+//   - S5 gunu (a..e kosullari + sinif) olan barlarda arka plan: DIP = mavi, YOL USTU = turuncu
+//   - Bolgenin ILK gunu (karar gunu; onceki 19 gecerli barda S5 yok) altinda kucuk ucgen
+//   - Sag ustte bilgi tablosu: son barin olculeri, 250 gunluk ATR% ile 'kucuk mum' esigi
+//   - Bolge bitince (kosul dusunce) isaret yok
+//
+// Tanim (on kayit, p = 15 gecerli bar pencere, t = bugunku bar):
+//   (a) pencerede (H-L)/C mumlarindan en buyuk 1 tanesi cikarilir, kalan 14'un medyani <= 0,75 x ATR250%
+//       (ATR250% = son 250 gecerli barda TR / onceki kapanis ortalamasi)
+//   (b) pencere kapanislarindan en yuksek YA DA en dusuk 1 gun (bandi en cok daraltan) cikarilir; max/min - 1 <= bant
+//       (bant: BIST %8, ABD / Avrupa %6)
+//   (c) ln(kapanis) ~ gun en kucuk kareler egimi x 15, [-%2, +%10] icinde
+//   (d) pencerede acilisi onceki kapanisin altinda olan gun payi <= %50
+//   (e) BBW = 4 x std20(C, nufus) / SMA20(C); onceki 250 BBW degerinden bugunku BBW'ye esit ya da kucuk olanlarin payi <= 0,20
+//   (f) uzunluk 'p': ek sart yok
+//   DIP     : konum120 = (C - min120) / (max120 - min120) <= 0,25 VE C / max120 - 1 <= -%10
+//   YOL USTU: C > SMA50 VE SMA50 > 20 bar onceki SMA50 VE konum120 >= 0,60 VE
+//             pencere min kapanis >= pencerenin ilk 5 gunu min kapanis x 0,99 (taban korunuyor)
+//   S5 gunu = (a)..(e) VE (DIP ya da YOL USTU); karar gunu = S5 gunu ve onceki 19 gecerli barda S5 gunu yok
+//   Ilk 290 gecerli bar boyunca hicbir sey boyanmaz (olcumdeki 'en az 290 gecerli bar' sarti).
+//
+// Gecerli bar: H > L, hacim > 0, O > 0, C > 0 (olcumdeki SY.sy_veri_hazirla ile ayni). Gecersiz bar (kilitli /
+// hacimsiz gun) hesaba hic girmez, boyanmaz; pencereler 'gecerli bar' sayar, takvim gunu degil.
+//
+// Pine'da OLMAYANLAR (olcumde var; aciklama):
+//   - Likidite suzgeci (pazarin alt %20 islem degeri disarida) yok: grafikte sig hissede de boya cikabilir.
+//   - Bolunme / bedelli suphesi suzgeci ([t-260, t] icinde) yok: bolunme duzeltmesi TradingView verisine baglidir.
+//   - Fon krizi kesigi (31.08.2026 sonrasi olcume girmez) yok: grafikte sonrasi da boyanir, ama olculmemistir.
+//   - Olcum duzeltilmis fiyatla (V_BIST) yapildi; TradingView temettu duzeltmesi kapaliysa temettu gunu iceren
+//     pencerelerde oranlar cok az farkli olabilir. Tasarim sinamasinda ekran fiyati ve V_BIST ayni sonucu verdi.
+// Bu gosterge bir ADAY gosterir; alim-satim sinyali degildir. S5'in 'buyuk hareket habercisi' olup olmadigi
+// olcumde ayrica sinanir (SIKISMA_OBEK_RAPOR.md).
+// =====================================================================================================
+//@version=5
+indicator("COL S5 Obek Sikismasi", overlay=true, max_labels_count=500)
+
+// ---------------------------------------------------------------- girdiler (on kayit degerleri; olcumle ayni olmasi icin degistirme)
+G1 = "S5 tanimi (on kayit; olcumle ayni olmasi icin degistirme)"
+pazar      = input.string("BIST", "Pazar (bant esigi)", options=["BIST", "ABD / Avrupa"], group=G1)
+bantBIST   = input.float(0.08, "Bant esigi BIST (b)", step=0.01, group=G1)
+bantDiger  = input.float(0.06, "Bant esigi ABD / Avrupa (b)", step=0.01, group=G1)
+p          = input.int(15, "Pencere p (gecerli bar)", minval=6, group=G1)
+kM         = input.float(0.75, "Kucuk mum katsayisi k_m (a)", step=0.05, group=G1)
+atrGun     = input.int(250, "ATR% gunu (a)", group=G1)
+ziplaCikar = input.int(1, "Cikarilan en buyuk mum sayisi (a)", minval=0, group=G1)
+egimAlt    = input.float(-0.02, "Egim alt (c)", step=0.01, group=G1)
+egimUst    = input.float(0.10, "Egim ust (c)", step=0.01, group=G1)
+asagiPay   = input.float(0.50, "Asagi acilis payi en cok (d)", step=0.05, group=G1)
+bbGun      = input.int(20, "BB gunu (e)", group=G1)
+bbK        = input.float(2.0, "BB sigma (e)", group=G1)
+bbDagilim  = input.int(250, "BB genislik dagilimi gunu (e)", group=G1)
+bbEsik     = input.float(0.20, "BB yuzdelik esigi (e)", step=0.05, group=G1)
+konumGun   = input.int(120, "Konum gunu (sinif)", group=G1)
+dipKonum   = input.float(0.25, "DIP konum en cok", step=0.05, group=G1)
+dipDusus   = input.float(-0.10, "DIP tepeden dusus en az", step=0.01, group=G1)
+yolKonum   = input.float(0.60, "YOL USTU konum en az", step=0.05, group=G1)
+smaGun     = input.int(50, "YOL USTU SMA gunu", group=G1)
+smaEgimGun = input.int(20, "YOL USTU SMA egim gunu", group=G1)
+tabanIlk   = input.int(5, "Taban: pencerenin ilk kac gunu", group=G1)
+tabanPay   = input.float(0.99, "Taban payi", step=0.01, group=G1)
+ara        = input.int(20, "Yeni bolge icin en az ara (bar)", group=G1)
+gecmisMin  = input.int(290, "En az gecmis (gecerli bar)", group=G1)
+
+G2 = "Gorunum"
+gosterBB   = input.bool(true, "BB(20, 2s) bantlarini ciz", group=G2)
+gosterEMA  = input.bool(true, "EMA 20 / EMA 50 ciz", group=G2)
+gosterTab  = input.bool(true, "Bilgi tablosu", group=G2)
+renkDip    = input.color(color.new(color.blue, 82), "DIP boyasi", group=G2)
+renkYol    = input.color(color.new(color.orange, 82), "YOL USTU boyasi", group=G2)
+
+bant = pazar == "BIST" ? bantBIST : bantDiger
+
+// ---------------------------------------------------------------- gorsel cizgiler (hesaba girmez)
+bbOrta = ta.sma(close, 20)
+bbSap  = ta.stdev(close, 20)
+plot(gosterBB ? bbOrta + 2.0 * bbSap : na, "BB ust", color=color.new(color.gray, 40), linewidth=1)
+plot(gosterBB ? bbOrta : na, "BB orta", color=color.new(color.gray, 65), linewidth=1)
+plot(gosterBB ? bbOrta - 2.0 * bbSap : na, "BB alt", color=color.new(color.gray, 40), linewidth=1)
+plot(gosterEMA ? ta.ema(close, 20) : na, "EMA 20", color=color.new(color.teal, 20), linewidth=1)
+plot(gosterEMA ? ta.ema(close, 50) : na, "EMA 50", color=color.new(color.purple, 20), linewidth=1)
+
+// ---------------------------------------------------------------- gecerli bar dizileri (yalniz gecerli barlar; en yeni sonda)
+hacimOk = na(volume) ? true : volume > 0
+gecerli = high > low and hacimOk and close > 0 and open > 0 and not na(close)
+
+TUT = 300                                   // dizide tutulan en fazla gecerli bar (BBW gecmisi 250 + 1 icin yeter)
+var float[] aO   = array.new_float(0)
+var float[] aH   = array.new_float(0)
+var float[] aL   = array.new_float(0)
+var float[] aC   = array.new_float(0)
+var float[] aTRP = array.new_float(0)       // TR / onceki gecerli kapanis
+var float[] aASG = array.new_float(0)       // 1 = acilis < onceki gecerli kapanis
+var float[] aBBW = array.new_float(0)       // 4 x std20 / SMA20 (nufus std)
+var float[] aSMA = array.new_float(0)       // SMA50
+var int  nGec    = 0                        // simdiye kadarki gecerli bar sayisi
+var int  sonS5   = -100000                  // son S5 gununun gecerli bar sirasi
+
+ekle(float[] a, float v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+// dizinin sondan k'inci elemani (k = 0 en yeni)
+geri(float[] a, int k) =>
+    int sz = array.size(a)
+    k < sz ? array.get(a, sz - 1 - k) : na
+
+// son m elemanin ortalamasi (hepsi tanimli degilse na)
+sonOrt(float[] a, int m) =>
+    int sz = array.size(a)
+    float s = 0.0
+    bool ok = sz >= m
+    if ok
+        for j = sz - m to sz - 1
+            float v = array.get(a, j)
+            if na(v)
+                ok := false
+            else
+                s += v
+    ok ? s / m : na
+
+s5   = false
+s5d  = false
+s5y  = false
+olay = false
+float mmed  = na
+float atrP  = na
+float obek  = na
+float egim  = na
+float asagi = na
+float bbp   = na
+float konum = na
+float dd    = na
+bool ca  = false
+bool cb  = false
+bool cc  = false
+bool cd  = false
+bool ce  = false
+bool dip = false
+bool yol = false
+
+if gecerli
+    float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
+    float tr    = na(cOnce) ? high - low : math.max(high, cOnce) - math.min(low, cOnce)
+    ekle(aO, open)
+    ekle(aH, high)
+    ekle(aL, low)
+    ekle(aC, close)
+    ekle(aTRP, na(cOnce) ? na : tr / cOnce)
+    ekle(aASG, na(cOnce) ? na : (open < cOnce ? 1.0 : 0.0))
+    // BBW (bbGun gecerli bar; nufus std)
+    float bbw = na
+    if array.size(aC) >= bbGun
+        float m = sonOrt(aC, bbGun)
+        float ss = 0.0
+        for j = array.size(aC) - bbGun to array.size(aC) - 1
+            ss += math.pow(array.get(aC, j) - m, 2)
+        bbw := 2.0 * bbK * math.sqrt(ss / bbGun) / m
+    ekle(aBBW, bbw)
+    ekle(aSMA, array.size(aC) >= smaGun ? sonOrt(aC, smaGun) : na)
+    nGec += 1
+    int i = nGec - 1                         // bu barin gecerli bar sirasi (olcumdeki indeks)
+
+    if i >= gecmisMin and array.size(aC) >= math.max(p + 1, konumGun) and array.size(aBBW) >= bbDagilim + 1
+        int sz = array.size(aC)
+        float c = close
+        // (a) ziplama haric medyan mum
+        atrP := sonOrt(aTRP, atrGun)
+        float[] mum = array.new_float(0)
+        for j = sz - p to sz - 1
+            array.push(mum, (array.get(aH, j) - array.get(aL, j)) / array.get(aC, j))
+        array.sort(mum, order.ascending)
+        if ziplaCikar > 0                    // Pine'da 'for 1 to 0' geri sayar; korunur
+            for k = 1 to ziplaCikar
+                array.pop(mum)
+        int mm = array.size(mum)
+        int h = int(mm / 2)
+        mmed := mm % 2 == 1 ? array.get(mum, h) : (array.get(mum, h - 1) + array.get(mum, h)) / 2.0
+        ca := not na(atrP) and mmed <= kM * atrP
+        // (b) 1 uc gun haric kapanis bandi
+        float[] wc = array.new_float(0)
+        for j = sz - p to sz - 1
+            array.push(wc, array.get(aC, j))
+        array.sort(wc, order.ascending)
+        obek := math.min(array.get(wc, p - 2) / array.get(wc, 0), array.get(wc, p - 1) / array.get(wc, 1)) - 1.0
+        cb := obek <= bant
+        // (c) ln C en kucuk kareler egimi x p
+        float xm = (p - 1) / 2.0
+        float ym = 0.0
+        for j = 0 to p - 1
+            ym += math.log(array.get(aC, sz - p + j))
+        ym := ym / p
+        float sxy = 0.0
+        float sxx = 0.0
+        for j = 0 to p - 1
+            sxy += (j - xm) * (math.log(array.get(aC, sz - p + j)) - ym)
+            sxx += (j - xm) * (j - xm)
+        egim := sxy / sxx * p
+        cc := egim >= egimAlt and egim <= egimUst
+        // (d) asagi acilis payi
+        asagi := sonOrt(aASG, p)
+        cd := not na(asagi) and asagi <= asagiPay
+        // (e) BBW yuzdeligi: onceki bbDagilim degerden bugunkune <= olanlarin payi
+        int nb = array.size(aBBW)
+        float bNow = array.get(aBBW, nb - 1)
+        int say = 0
+        bool tam = not na(bNow)
+        for j = nb - 1 - bbDagilim to nb - 2
+            float v = array.get(aBBW, j)
+            if na(v)
+                tam := false
+            else if v <= bNow
+                say += 1
+        bbp := tam ? say * 1.0 / bbDagilim : na
+        ce := not na(bbp) and bbp <= bbEsik
+        // sinif
+        float mx = c
+        float mn = c
+        for j = sz - konumGun to sz - 1
+            mx := math.max(mx, array.get(aC, j))
+            mn := math.min(mn, array.get(aC, j))
+        konum := mx > mn ? (c - mn) / (mx - mn) : na
+        dd := c / mx - 1.0
+        float ilk5 = array.get(aC, sz - p)
+        for j = sz - p to sz - p + tabanIlk - 1
+            ilk5 := math.min(ilk5, array.get(aC, j))
+        bool taban = array.get(wc, 0) >= ilk5 * tabanPay
+        float sma = geri(aSMA, 0)
+        float smaOnce = geri(aSMA, smaEgimGun)
+        dip := not na(konum) and konum <= dipKonum and dd <= dipDusus
+        yol := not na(konum) and not na(sma) and not na(smaOnce) and c > sma and sma > smaOnce and konum >= yolKonum and taban
+        bool cek = ca and cb and cc and cd and ce
+        s5d := cek and dip
+        s5y := cek and yol
+        s5  := s5d or s5y
+        olay := s5 and (i - sonS5 >= ara)
+        if s5
+            sonS5 := i
+
+// ---------------------------------------------------------------- cizim
+bgcolor(s5d ? renkDip : s5y ? renkYol : na, title="S5 bolgesi")
+plotshape(olay and s5d, "Karar gunu (DIP)", shape.triangleup, location.belowbar, color.new(color.blue, 0), size=size.tiny, text="S5")
+plotshape(olay and s5y, "Karar gunu (YOL USTU)", shape.triangleup, location.belowbar, color.new(color.orange, 0), size=size.tiny, text="S5")
+
+yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
+ev(bool b) => b ? "EVET" : "hayir"
+
+var table tb = table.new(position.top_right, 3, 10, bgcolor=color.new(color.white, 10), border_width=1)
+if gosterTab and barstate.islast
+    table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
+    table.cell(tb, 1, 0, "deger", text_size=size.small)
+    table.cell(tb, 2, 0, "sart", text_size=size.small)
+    table.cell(tb, 0, 1, "kucuk mum esigi = " + str.tostring(kM) + " x ATR250%", text_size=size.small)
+    table.cell(tb, 1, 1, yz(na(atrP) ? na : kM * atrP) + "  (ATR250% " + yz(atrP) + ")", text_size=size.small)
+    table.cell(tb, 2, 1, "", text_size=size.small)
+    table.cell(tb, 0, 2, "(a) medyan mum (en buyuk 1 haric)", text_size=size.small)
+    table.cell(tb, 1, 2, yz(mmed), text_size=size.small)
+    table.cell(tb, 2, 2, ev(ca), text_size=size.small)
+    table.cell(tb, 0, 3, "(b) obek bandi (1 uc gun haric) <= " + yz(bant), text_size=size.small)
+    table.cell(tb, 1, 3, yz(obek), text_size=size.small)
+    table.cell(tb, 2, 3, ev(cb), text_size=size.small)
+    table.cell(tb, 0, 4, "(c) egim x15 [-2%, +10%]", text_size=size.small)
+    table.cell(tb, 1, 4, yz(egim), text_size=size.small)
+    table.cell(tb, 2, 4, ev(cc), text_size=size.small)
+    table.cell(tb, 0, 5, "(d) asagi acilis payi <= 50%", text_size=size.small)
+    table.cell(tb, 1, 5, yz(asagi), text_size=size.small)
+    table.cell(tb, 2, 5, ev(cd), text_size=size.small)
+    table.cell(tb, 0, 6, "(e) BB genislik yuzdeligi <= 20%", text_size=size.small)
+    table.cell(tb, 1, 6, yz(bbp), text_size=size.small)
+    table.cell(tb, 2, 6, ev(ce), text_size=size.small)
+    table.cell(tb, 0, 7, "konum120 / tepeden", text_size=size.small)
+    table.cell(tb, 1, 7, yz(konum) + " / " + yz(dd), text_size=size.small)
+    table.cell(tb, 2, 7, dip ? "DIP" : yol ? "YOL USTU" : "sinif yok", text_size=size.small)
+    table.cell(tb, 0, 8, "S5 bugun", text_size=size.small)
+    table.cell(tb, 1, 8, s5d ? "ACIK (DIP)" : s5y ? "ACIK (YOL USTU)" : "kapali", text_size=size.small)
+    table.cell(tb, 2, 8, gecerli ? "" : "gecersiz bar", text_size=size.small)
+    table.cell(tb, 0, 9, "gecerli bar sayisi", text_size=size.small)
+    table.cell(tb, 1, 9, str.tostring(nGec), text_size=size.small)
+    table.cell(tb, 2, 9, nGec > gecmisMin ? "" : "en az " + str.tostring(gecmisMin + 1) + " gerekli", text_size=size.small)
+
+// =====================================================================================================
+// BEKLENEN BOYALI GUNLER (dogrulama tablosu; Cemal grafikte karsilastirir)
+// Uretim: SIKISMA_OBEK.py so_s5 (V_BIST.pkl sha256 bbd09faa..., on kayittaki veri) ve bu dosyanin mantigini
+// ayni sirayla bar bar yazan bagimsiz Python dongusu. Iki hesap FENER, CCOLA, ENJSA'nin BUTUN gecmisinde
+// (2015-2026, 2.136-2.816 gecerli bar) S5 / DIP / YOL dizisinde 0 gun farkla ayni cikti.
+// Gosterim: ACIK-DIP = mavi boya, ACIK-YOL = turuncu boya, kapali = boya yok, [S5] = karar gunu ucgeni.
+//
+// FENER 2025-10-14 .. 2025-11-07  (beklenen: DIP sikismasi)
+//   10-14 .. 10-30  kapali  (10-24'ten itibaren a,b,d tamam; c 10-27'de, (e) BB yuzdeligi 0,42-0,61: henuz dar degil)
+//   10-31  ACIK-DIP [S5]   (karar gunu; BB yuzdeligi 0,16)
+//   11-03, 11-04, 11-05, 11-06, 11-07  ACIK-DIP   (bolge 11-10'a kadar surer)
+//   Not: ayni hissede 2025-09-01 YOL USTU karar gunu de var (turuncu, tek gun).
+//
+// CCOLA 2025-10-02 .. 2025-10-20  (beklenen: DIP sikismasi)
+//   10-02  ACIK-DIP
+//   10-03, 10-06  kapali  ((c) egim -%2,8 / -%2,2: alt sinirin altinda)
+//   10-07, 10-08, 10-09, 10-10, 10-13, 10-14, 10-15, 10-16, 10-17  ACIK-DIP
+//   10-20  kapali  (a..e tamam ama sinif yok: konum120 0,58 ve tepeden -%7, DIP icin <= 0,25 ve <= -%10 gerekir)
+//   Ucgen bu aralikta YOK: bolgenin karar gunu 2025-09-02 [S5] (DIP); 09-24 .. 10-01 de ACIK-DIP.
+//   09-02 ile 09-24 arasi 16 gecerli bar (< 20), bu yuzden ayni bolge sayilir.
+//
+// ENJSA 2025-07-28 .. 2025-08-15  (beklenen: YOL USTU sikismasi)
+//   07-28 .. 08-05  kapali  ((e) BB yuzdeligi 0,34-0,63; 07-28/29 (b) obek %9,5 > %8)
+//   08-06  ACIK-YOL [S5]   (karar gunu)
+//   08-07  ACIK-YOL
+//   08-08, 08-11  kapali  (taban sarti: pencere min kapanisi ilk 5 gunun min x 0,99 altina indi)
+//   08-12, 08-13, 08-14  ACIK-YOL  (ucgen yok: ayni bolge)
+//   08-15  kapali  ((d) asagi acilis payi %53 > %50)
+//
+// FENER 2025-12-03 .. 2025-12-16  (beklenen: SECMEMELI; dipte ama sikisma degil)
+//   12-03 .. 12-16  hepsi kapali  ((b) obek %12-%21 > %8, (c) egim -%13 / -%24, (e) BB yuzdeligi 0,63-0,79)
+//
+// Bayram / tatil gunleri grafikte bar olarak yoksa tabloda da yoktur (or. 2025-10-29).
+// Grafikte farkli bir gun gorursen once: gunluk grafik mi, sembol BIST:... mi, pazar 'BIST' mi, esikler varsayilan mi.
+// =====================================================================================================
