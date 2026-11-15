@@ -1981,7 +1981,7 @@ IK_ACIK: List[str] = [
     "(SEC evreni + Tiingo, ücretsiz hesap, anahtar .env TIINGO_TOKEN; ayda 500 sembol, Ekim kotasının 450'si kullanıldı). Batanlardan "
     "örneğe girmeyen 374 şirket istenirse Kasım kotasıyla eklenebilir. Bundan sonraki ABD küçük şirket testleri batanlar dahil "
     "yapılmalı.",
-    "DRIVE (26 Eki): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) K26 sürümünde (17:10); sonraki görev satırları "
+    "DRIVE (26 Eki; GÜNCELLENDİ 15 Kas): IZ_DEFTERI.md Drive kopyası (MyDrive/COLAB_VERILER/col_tarayici) ve COL_OZET.md (col_tarayici) 15 Kas 2026 commit 6b5f58e sürümüne yüklendi (geri indirilip bayt bayt eşit, eski kopyalar çöpe; ikisi de güncelin atasıydı, kaybolan satır yok). FON_IZI.py Drive'da yok, yalnız repoda. Eski not: Drive kopyası K26 sürümünde (17:10); sonraki görev satırları "
     "(ders PDF kuralı, iki sayfanın silinmesi, yeni oturum notu, veri paketi, K27 içeriden alım, K28 bilanço sürprizi, K29 risk süzgeci, K30 ABD içeriden alım, K31 analist izleri, K32 sade portföy, K33 sıçrayan hisse, K34 batanlar dahil, K35 rüzgâr ve batma, K36 rüzgârın sebebi, K37 büyükler önce, K38 üç pazar + kural değişikliği, K39 ABD öncü, K40 saat farkı, K41 klasikler + kontrol, K42 bilinen etkiler, K43 alınabilir iz, K44 INTEM parmak izi, K45 kısa ufuk, K46 makine, K47 iki bölge, K46-B) eksik. COL_OZET.md Drive kopyası 24 Eki (f1ce2fd) sürümünde. CLAUDE.md "
     "yöntemiyle (eskiyi doğrula, yükle, geri indir, bayt eşitse eskiyi çöpe) güncellenecek.",
     "ÜRETİM (denetim 24 Eki, 'yaz' bekliyor): takip.py çıkışları yalnız son güne bakıyor (atlanan günlerde çıkış kaçıyor); bedelsiz/bölünmede "
