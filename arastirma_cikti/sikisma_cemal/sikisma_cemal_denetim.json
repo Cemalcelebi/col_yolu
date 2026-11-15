@@ -1,0 +1,13 @@
+{
+ "satirlar": [
+  "KAT yeniden üretimi ABD 2023 B1 es1: bağımsız n 843 KAT 1.1009; rapor n 843 KAT 1.1009 -> AYNI",
+  "KAT yeniden üretimi AVR 2024-26 BH2 es2: bağımsız n 467 KAT 0.5148; rapor n 467 KAT 0.5148 -> AYNI",
+  "KAT yeniden üretimi ABD 2024-26 BH2 es1: bağımsız n 787 KAT 0.3888; rapor n 787 KAT 0.3888 -> AYNI",
+  "elle ABD VMRK 2017-03-24: S4 True (i True, ii True, iii True, run 10, net +1.64%, bant 2.74%, aşağı açılış 0.4); B1 False (dosya False), BH2 False (dosya False) -> TUTTU",
+  "elle ABD PENN 2021-06-14: S4 True (i True, ii True, iii True, run 12, net +0.60%, bant 5.74%, aşağı açılış 0.13); B1 False (dosya False), BH2 False (dosya False) -> TUTTU",
+  "elle FENER (Yahoo ham JSON) 2025-08-28: S4 True (i True, ii True, iii True, run 10, net -2.80%, bant 5.76%, aşağı açılış 0.33)",
+  "elle FENER (Yahoo ham JSON) 2025-11-07: S4 False (i True, ii True, iii True, run 3, net -1.29%, bant 4.16%, aşağı açılış 0.13)",
+  "elle FENER (Yahoo ham JSON) 2025-12-16: S4 False (i True, ii False, iii False, run 0, net -10.36%, bant 15.42%, aşağı açılış 0.33)",
+  "elle FENER Cemal bölgesi 14.10-07.11.2025: 18 bar, bant 7.3%, net +4.1%, mum / ATR250 0.60, BB yüzdelik 07.11 0.02; 03-16.12: net -6.1%, BB yüzdelik 16.12 0.70"
+ ]
+}
