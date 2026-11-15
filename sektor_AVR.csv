@@ -1,0 +1,582 @@
+sembol,sektor,ust,ulke,kaynak
+3IN.L,Financial Services,Financial Services,United Kingdom,FTSE250
+8TRA.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+AAL.L,Basic Resources,Basic Resources,United Kingdom,STOXX600
+AAS.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+ABBN.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+ABF.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,STOXX600
+ABI.BR,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Belgium,STOXX600
+ABN.AS,Banks,Banks,Netherlands,STOXX600
+AC.PA,Travel and Leisure,Travel and Leisure,France,STOXX600
+ACS.MC,Construction and Materials,Construction and Materials,Spain,STOXX600
+ACX.MC,Basic Resources,Basic Resources,Spain,STOXX600
+ADEN.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+ADM.L,Insurance,Insurance,United Kingdom,STOXX600
+ADS.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+ADYEN.AS,Industrial Goods and Services,Industrial Goods and Services,Netherlands,STOXX600
+AENA.MC,Travel and Leisure,Travel and Leisure,Spain,STOXX600
+AEP.L,Food Producers,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+AF.PA,Travel and Leisure,Travel and Leisure,France,STOXX600
+AFX.DE,Health Care,Health Care,Germany,STOXX600
+AGS.BR,Insurance,Insurance,Belgium,STOXX600
+AGT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+AIE.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+AIR.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+AIXA.DE,Technology,Technology,Germany,STOXX600
+AJB.L,Financial Services,Financial Services,United Kingdom,FTSE250
+AKE.PA,Chemicals,Chemicals,France,STOXX600
+AKZA.AS,Chemicals,Chemicals,Netherlands,STOXX600
+ALC.SW,Health Care,Health Care,Switzerland,STOXX600
+ALFA.L,Software and Computer Services,Technology,United Kingdom,FTSE250
+ALFA.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+ALO.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+ALV.DE,Insurance,Insurance,Germany,STOXX600
+AMBU-B.CO,Health Care,Health Care,Denmark,STOXX600
+AML.L,Automobiles and Parts,Automobiles and Parts,United Kingdom,STOXX600
+AMRQ.L,Industrial Metals and Mining,Basic Resources,United Kingdom,FTSE250
+ANA.MC,Construction and Materials,Construction and Materials,Spain,STOXX600
+ANE.MC,Utilities,Utilities,Spain,STOXX600
+ANTO.L,Basic Resources,Basic Resources,United Kingdom,STOXX600
+AO.L,Retail,Retail,United Kingdom,FTSE250
+APN.L,Food Producers,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+ASC.L,Retailers,Retail,United Kingdom,FTSE250
+ASHM.L,Financial Services,Financial Services,United Kingdom,FTSE250
+ASL.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+ASML.AS,Technology,Technology,Netherlands,STOXX600
+ASSA-B.ST,Construction and Materials,Construction and Materials,Sweden,STOXX600
+ATCO-A.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+ATG.L,Software and Computer Services,Technology,United Kingdom,FTSE250
+ATR.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+ATT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+ATYM.L,Industrial Metals and Mining,Basic Resources,United Kingdom,FTSE250
+AUTO.L,Media,Media,United Kingdom,STOXX600
+AV.L,Insurance,Insurance,United Kingdom,STOXX600
+AVON.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,FTSE250
+AZE.BR,Industrial Goods and Services,Industrial Goods and Services,Belgium,STOXX600
+AZN.L,Health Care,Health Care,United Kingdom,STOXX600
+BA.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+BAER.SW,Banks,Banks,Switzerland,STOXX600
+BAG.L,Beverages,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+BALD-B.ST,Real Estate,Real Estate,Sweden,STOXX600
+BARC.L,Banks,Banks,United Kingdom,STOXX600
+BARN.SW,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Switzerland,STOXX600
+BAS.DE,Chemicals,Chemicals,Germany,STOXX600
+BATS.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,STOXX600
+BAYN.DE,Health Care,Health Care,Germany,STOXX600
+BBVA.MC,Banks,Banks,Spain,STOXX600
+BBY.L,Construction and Materials,Construction and Materials,United Kingdom,STOXX600
+BCG.L,Consumer Digital Services,Technology,United Kingdom,FTSE250
+BEI.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+BGFD.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BHMG.L,Hedge Funds,Investment Trusts,United Kingdom,FTSE250
+BKG.L,Consumer Products and Services,Consumer Products and Services,United Kingdom,STOXX600
+BKT.MC,Banks,Banks,Spain,STOXX600
+BME.L,Retail,Retail,United Kingdom,STOXX600
+BMW.DE,Automobiles and Parts,Automobiles and Parts,Germany,STOXX600
+BMY.L,Media,Media,United Kingdom,FTSE250
+BNKR.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BNR.DE,Chemicals,Chemicals,Germany,STOXX600
+BNZL.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+BOL.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+BOL.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+BOSS.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+BOWL.L,Travel and leisure,Travel and Leisure,United Kingdom,FTSE250
+BOY.L,Industrial Engineering,Industrial Goods and Services,United Kingdom,FTSE250
+BP.L,Energy,Energy,United Kingdom,STOXX600
+BPCR.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BPOST.BR,Industrial Goods and Services,Industrial Goods and Services,Belgium,STOXX600
+BPT.L,Financial Services,Financial Services,United Kingdom,FTSE250
+BRBY.L,Consumer Products and Services,Consumer Products and Services,United Kingdom,STOXX600
+BREE.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+BRGE.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BRSC.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BRWM.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BTRW.L,Consumer Products and Services,Consumer Products and Services,United Kingdom,STOXX600
+BUT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+BVI.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+BWY.L,Home Construction,Consumer Products and Services,United Kingdom,FTSE250
+BYG.L,Real Estate,Real Estate,United Kingdom,STOXX600
+BYIT.L,Aerospace & Defence,Industrial Goods and Services,United Kingdom,FTSE250
+CABK.MC,Banks,Banks,Spain,STOXX600
+CAST.ST,Real Estate,Real Estate,Sweden,STOXX600
+CBG.L,Financial Services,Financial Services,United Kingdom,FTSE250
+CBK.DE,Banks,Banks,Germany,STOXX600
+CDR.WA,Consumer Products and Services,Consumer Products and Services,Poland,STOXX600
+CFR.SW,Consumer Products and Services,Consumer Products and Services,Switzerland,STOXX600
+CGT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+CHG.L,Aerospace & Defence,Industrial Goods and Services,United Kingdom,FTSE250
+CKN.L,Industrial Transportation,Industrial Goods and Services,United Kingdom,FTSE250
+CLDN.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+CLN.SW,Chemicals,Chemicals,Switzerland,STOXX600
+CMCX.L,Financial Services,Financial Services,United Kingdom,FTSE250
+CNA.L,Utilities,Utilities,United Kingdom,STOXX600
+COA.L,Consumer Staples,Consumer Products and Services,United Kingdom,FTSE250
+COLR.BR,"Personal Care, Drug and Grocery Stores","Personal Care, Drug and Grocery Stores",Belgium,STOXX600
+CON.DE,Automobiles and Parts,Automobiles and Parts,Germany,STOXX600
+CORD.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+COST.L,Engineering and Construction,Construction and Materials,United Kingdom,FTSE250
+CPG.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+CPR.MI,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Italy,STOXX600
+CRDA.L,Chemicals,Chemicals,United Kingdom,STOXX600
+CS.PA,Insurance,Insurance,France,STOXX600
+CSN.L,Life Insurance,Insurance,United Kingdom,FTSE250
+CTEC.L,Health Care,Health Care,United Kingdom,STOXX600
+CTG.L,Technology,Technology,United Kingdom,STOXX600
+CTY.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+CURY.L,Retailers,Retail,United Kingdom,FTSE250
+CVSG.L,Health Care,Health Care,United Kingdom,FTSE250
+CWK.L,Food Producers,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+CWR.L,Alternative Energy,Energy,United Kingdom,FTSE250
+DATA.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,FTSE250
+DB1.DE,Financial Services,Financial Services,Germany,STOXX600
+DEMANT.CO,Health Care,Health Care,Denmark,STOXX600
+DG.PA,Construction and Materials,Construction and Materials,France,STOXX600
+DGE.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,STOXX600
+DHER.DE,Retail,Retail,Germany,STOXX600
+DHL.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+DIE.BR,Automobiles and Parts,Automobiles and Parts,Belgium,STOXX600
+DLN.L,Real Estate,Real Estate,United Kingdom,STOXX600
+DNLM.L,Retailers,Retail,United Kingdom,FTSE250
+DOCM.SW,Health Care,Health Care,Switzerland,STOXX600
+DOCS.L,Retailers,Retail,United Kingdom,FTSE250
+DOM.L,Travel & Leisure,Travel and Leisure,United Kingdom,FTSE250
+DPLM.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+DRX.L,Electricity,Utilities,United Kingdom,FTSE250
+DSCV.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+DTE.DE,Telecommunications,Telecommunications,Germany,STOXX600
+DTG.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+EBS.VI,Banks,Banks,Austria,STOXX600
+EDEN.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+EDIN.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+EDP.LS,Utilities,Utilities,Portugal,STOXX600
+EDPR.LS,Utilities,Utilities,Portugal,STOXX600
+EDV.L,Basic Resources,Basic Resources,United Kingdom,STOXX600
+ELISA.HE,Telecommunications,Telecommunications,Finland,STOXX600
+ELM.L,Chemicals,Chemicals,United Kingdom,FTSE250
+ELUX-B.ST,Consumer Products and Services,Consumer Products and Services,Sweden,STOXX600
+EMG.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+EMSN.SW,Chemicals,Chemicals,Switzerland,STOXX600
+EN.PA,Construction and Materials,Construction and Materials,France,STOXX600
+ENEL.MI,Utilities,Utilities,Italy,STOXX600
+ENG.MC,Utilities,Utilities,Spain,STOXX600
+ENGI.PA,Utilities,Utilities,France,STOXX600
+ENI.MI,Energy,Energy,Italy,STOXX600
+ENOG.L,Oil & Gas Producers,Energy,United Kingdom,FTSE250
+ENQ.L,Oil & Gas Producers,Energy,United Kingdom,FTSE250
+ENT.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+EOAN.DE,Utilities,Utilities,Germany,STOXX600
+EPI-A.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+ERIC-B.ST,Telecommunications,Telecommunications,Sweden,STOXX600
+ESCT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+EVK.DE,Chemicals,Chemicals,Germany,STOXX600
+EVT.DE,Health Care,Health Care,Germany,STOXX600
+EWG.L,Financial Services,Financial Services,United Kingdom,FTSE250
+EWI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+EXO.AS,Financial Services,Financial Services,Netherlands,STOXX600
+EXPN.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+EZJ.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+FAN.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+FCH.L,Financial Services,Financial Services,United Kingdom,FTSE250
+FCSS.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+FEML.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+FEV.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+FGEN.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+FGP.L,Travel & Leisure,Travel and Leisure,United Kingdom,FTSE250
+FGT.L,Equity Investments,Investment Trusts,United Kingdom,FTSE250
+FLOW.AS,Financial Services,Financial Services,Netherlands,STOXX600
+FME.DE,Health Care,Health Care,Germany,STOXX600
+FNTN.DE,Telecommunications,Telecommunications,Germany,STOXX600
+FORTUM.HE,Utilities,Utilities,Finland,STOXX600
+FOUR.L,Media,Media,United Kingdom,FTSE250
+FR.PA,Automobiles and Parts,Automobiles and Parts,France,STOXX600
+FRA.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+FRAS.L,Retailers,Retail,United Kingdom,FTSE250
+FRVIA.PA,Automobiles and Parts,Automobiles and Parts,France,STOXX600
+FSG.L,Investment Banking and Brokerage Services,Financial Services,United Kingdom,FTSE250
+FSV.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+G1A.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+G24.DE,Technology,Technology,Germany,STOXX600
+GALE.SW,Health Care,Health Care,Switzerland,STOXX600
+GALP.LS,Energy,Energy,Portugal,STOXX600
+GAMA.L,Telecommunications,Telecommunications,United Kingdom,FTSE250
+GAW.L,Consumer Products and Services,Consumer Products and Services,United Kingdom,STOXX600
+GCP.L,General Financial,Financial Services,United Kingdom,FTSE250
+GDWN.L,General Industrials,Industrial Goods and Services,United Kingdom,FTSE250
+GEBN.SW,Construction and Materials,Construction and Materials,Switzerland,STOXX600
+GEN.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+GET.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+GF.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+GFC.PA,Real Estate,Real Estate,France,STOXX600
+GFRD.L,Construction,Construction and Materials,United Kingdom,FTSE250
+GFTU.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+GIVN.SW,Chemicals,Chemicals,Switzerland,STOXX600
+GLE.PA,Banks,Banks,France,STOXX600
+GLEN.L,Basic Resources,Basic Resources,United Kingdom,STOXX600
+GN.CO,Health Care,Health Care,Denmark,STOXX600
+GNC.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,FTSE250
+GNS.L,Pharmaceuticals & Biotechnology,Health Care,United Kingdom,FTSE250
+GPE.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+GRF.MC,Health Care,Health Care,Spain,STOXX600
+GRG.L,Food & Drug Retailers,"Personal Care, Drug and Grocery Stores",United Kingdom,FTSE250
+GRI.L,Real Estate Investment & Services,Real Estate,United Kingdom,FTSE250
+GROW.L,Financial Services,Financial Services,United Kingdom,FTSE250
+GSCT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+GSK.L,Health Care,Health Care,United Kingdom,STOXX600
+HANA.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HAS.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+HBR.L,Oil & Gas Producers,Energy,United Kingdom,FTSE250
+HEI.DE,Construction and Materials,Construction and Materials,Germany,STOXX600
+HEN3.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+HFD.L,Retailers,Retail,United Kingdom,FTSE250
+HFEL.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HFG.L,Food Producers,"Food, Beverage and Tobacco",United Kingdom,FTSE250
+HGT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HICL.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HIK.L,Health Care,Health Care,United Kingdom,STOXX600
+HILS.L,Industrial Engineering,Industrial Goods and Services,United Kingdom,FTSE250
+HLMA.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+HMSO.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+HOC.L,Basic Resources,Basic Resources,United Kingdom,FTSE250
+HOLN.SW,Construction and Materials,Construction and Materials,Switzerland,STOXX600
+HRI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HSBA.L,Banks,Banks,United Kingdom,STOXX600
+HSL.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+HSX.L,Insurance,Insurance,Bermuda,STOXX600
+HTG.L,"Oil, Gas and Coal",Energy,United Kingdom,FTSE250
+HTWS.L,Telecomms,Telecommunications,United Kingdom,FTSE250
+HUSQ-B.ST,Consumer Products and Services,Consumer Products and Services,Sweden,STOXX600
+HVPE.L,Equity Investments,Investment Trusts,United Kingdom,FTSE250
+HWDN.L,Retail,Retail,United Kingdom,STOXX600
+IAD.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+IAG.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+IBE.MC,Utilities,Utilities,Spain,STOXX600
+ICGT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+IFX.DE,Technology,Technology,Germany,STOXX600
+IHG.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+IHP.L,Financial Services,Financial Services,United Kingdom,FTSE250
+III.L,Financial Services,Financial Services,United Kingdom,STOXX600
+IMB.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,STOXX600
+IMI.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+INCH.L,Retail,Retail,United Kingdom,STOXX600
+INDT.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+INF.L,Media,Media,United Kingdom,STOXX600
+INGA.AS,Banks,Banks,Netherlands,STOXX600
+INPP.L,Financial Services,Financial Services,United Kingdom,FTSE250
+IPN.PA,Health Care,Health Care,France,STOXX600
+IPO.L,Financial Services,Financial Services,United Kingdom,FTSE250
+ISP.MI,Banks,Banks,Italy,STOXX600
+ITRK.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+ITV.L,Media,Media,United Kingdom,STOXX600
+ITX.MC,Retail,Retail,Spain,STOXX600
+IWG.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+JAM.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JCH.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JD.L,Retail,Retail,United Kingdom,STOXX600
+JDW.L,Travel & Leisure,Travel and Leisure,United Kingdom,FTSE250
+JEDT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JEGI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JEMI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JFJ.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JGGI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JMAT.L,Chemicals,Chemicals,United Kingdom,STOXX600
+JMGI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+JMT.LS,Retail,Retail,Portugal,STOXX600
+JSG.L,Industrial Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+JUP.L,Financial Services,Financial Services,United Kingdom,FTSE250
+KBC.BR,Banks,Banks,Belgium,STOXX600
+KER.PA,Consumer Products and Services,Consumer Products and Services,France,STOXX600
+KGF.L,Retail,Retail,United Kingdom,STOXX600
+KIE.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+KLR.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+KNEBV.HE,Industrial Goods and Services,Industrial Goods and Services,Finland,STOXX600
+KNIN.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+KNOS.L,Software & Computer Services,Technology,United Kingdom,FTSE250
+KPN.AS,Telecommunications,Telecommunications,Netherlands,STOXX600
+LAND.L,Real Estate,Real Estate,United Kingdom,STOXX600
+LDO.MI,Industrial Goods and Services,Industrial Goods and Services,Italy,STOXX600
+LEG.DE,Real Estate,Real Estate,Germany,STOXX600
+LGEN.L,Insurance,Insurance,United Kingdom,STOXX600
+LHA.DE,Travel and Leisure,Travel and Leisure,Germany,STOXX600
+LIGHT.AS,Construction and Materials,Construction and Materials,Netherlands,STOXX600
+LISN.SW,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Switzerland,STOXX600
+LLOY.L,Banks,Banks,United Kingdom,STOXX600
+LOGN.SW,Technology,Technology,Switzerland,STOXX600
+LONN.SW,Health Care,Health Care,Switzerland,STOXX600
+LPP.WA,Consumer Products and Services,Consumer Products and Services,Poland,STOXX600
+LRE.L,Nonlife Insurance,Insurance,United Kingdom,FTSE250
+LSEG.L,Financial Services,Financial Services,United Kingdom,STOXX600
+LSG.OL,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Norway,STOXX600
+LWDB.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+LXS.DE,Chemicals,Chemicals,Germany,STOXX600
+MAB.L,Travel & Leisure,Travel and Leisure,United Kingdom,FTSE250
+MAERSK-B.CO,Industrial Goods and Services,Industrial Goods and Services,Denmark,STOXX600
+MB.MI,Financial Services,Financial Services,Italy,STOXX600
+MBG.DE,Automobiles and Parts,Automobiles and Parts,Germany,STOXX600
+MC.PA,Consumer Products and Services,Consumer Products and Services,France,STOXX600
+MCG.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+MEGP.L,Leisure Goods,Consumer Products and Services,United Kingdom,FTSE250
+MEL.MC,Travel and Leisure,Travel and Leisure,Spain,STOXX600
+MELE.BR,Technology,Technology,Belgium,STOXX600
+METSO.HE,Industrial Goods and Services,Industrial Goods and Services,Finland,STOXX600
+MGAM.L,Electronic & Electrical Equipment,Industrial Goods and Services,United Kingdom,FTSE250
+MGNS.L,Construction & Materials,Construction and Materials,United Kingdom,FTSE250
+MKS.L,Retail,Retail,United Kingdom,STOXX600
+MNDI.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+MNG.L,Financial Services,Financial Services,United Kingdom,STOXX600
+MNKS.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+MNTN.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+MONC.MI,Consumer Products and Services,Consumer Products and Services,Italy,STOXX600
+MONY.L,Media,Media,United Kingdom,STOXX600
+MOON.L,Retailers,Retail,United Kingdom,FTSE250
+MRC.L,Collective Investments,Investment Trusts,United Kingdom,FTSE250
+MRCH.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+MRL.MC,Real Estate,Real Estate,Spain,STOXX600
+MT.PA,Basic Resources,Basic Resources,Luxembourg,STOXX600
+MTO.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+MTRO.L,Banks,Banks,United Kingdom,FTSE250
+MTX.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+MUT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+MUV2.DE,Insurance,Insurance,Germany,STOXX600
+MYI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+N91.L,Financial Services,Financial Services,United Kingdom,FTSE250
+NAIT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+NAS.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+NBPE.L,Collective Investments,Investment Trusts,United Kingdom,FTSE250
+NCC.L,Software and Computer Services,Technology,United Kingdom,FTSE250
+NDA-FI.HE,Banks,Banks,Finland,STOXX600
+NEM.DE,Technology,Technology,Germany,STOXX600
+NESN.SW,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Switzerland,STOXX600
+NEX.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+NEXI.MI,Industrial Goods and Services,Industrial Goods and Services,Italy,STOXX600
+NG.L,Utilities,Utilities,United Kingdom,STOXX600
+NHY.OL,Basic Resources,Basic Resources,Norway,STOXX600
+NIBE-B.ST,Construction and Materials,Construction and Materials,Sweden,STOXX600
+NN.AS,Insurance,Insurance,Netherlands,STOXX600
+NOKIA.HE,Technology,Technology,Finland,STOXX600
+NOVO-B.CO,Health Care,Health Care,Denmark,STOXX600
+NTGY.MC,Utilities,Utilities,Spain,STOXX600
+NWG.L,Banks,Banks,United Kingdom,STOXX600
+NXT.L,Retail,Retail,United Kingdom,STOXX600
+OCDO.L,Retail,Retail,United Kingdom,STOXX600
+OCI.AS,Chemicals,Chemicals,Netherlands,STOXX600
+OCI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+OERL.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+OMV.VI,Energy,Energy,Austria,STOXX600
+ONT.L,Health Care,Health Care,United Kingdom,FTSE250
+OR.PA,"Personal Care, Drug and Grocery Stores","Personal Care, Drug and Grocery Stores",France,STOXX600
+ORA.PA,Telecommunications,Telecommunications,France,STOXX600
+ORK.OL,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Norway,STOXX600
+ORSTED.CO,Utilities,Utilities,Denmark,STOXX600
+OSB.L,Banks,Banks,United Kingdom,FTSE250
+OXB.L,Pharmaceuticals and Biotechnology,Health Care,United Kingdom,FTSE250
+OXIG.L,Electronic & Electrical Equipment,Industrial Goods and Services,United Kingdom,FTSE250
+P911.DE,Automobiles and Parts,Automobiles and Parts,Germany,STOXX600
+PAF.L,Precious Metals and Mining,Basic Resources,United Kingdom,FTSE250
+PAG.L,Financial Services,Financial Services,United Kingdom,FTSE250
+PAGE.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+PAH3.DE,Automobiles and Parts,Automobiles and Parts,Germany,STOXX600
+PBB.DE,Banks,Banks,Germany,STOXX600
+PCGH.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+PETS.L,Retailers,Retail,United Kingdom,FTSE250
+PEY.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+PFD.L,Food & Drug Retailers,"Personal Care, Drug and Grocery Stores",United Kingdom,FTSE250
+PGHN.SW,Financial Services,Financial Services,Switzerland,STOXX600
+PHI.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+PHP.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+PIN.L,Equity Investments,Investment Trusts,United Kingdom,FTSE250
+PINT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+PIRC.MI,Automobiles and Parts,Automobiles and Parts,Italy,STOXX600
+PLUS.L,Financial Services,Financial Services,United Kingdom,FTSE250
+PNL.AS,Industrial Goods and Services,Industrial Goods and Services,Netherlands,STOXX600
+PNL.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+PNN.L,Utilities,Utilities,United Kingdom,STOXX600
+POLN.L,Financial Services,Financial Services,United Kingdom,FTSE250
+PPET.L,Financial Services,Financial Services,United Kingdom,FTSE250
+PPH.L,Travel and Leisure,Travel and Leisure,United Kingdom,FTSE250
+PROX.BR,Telecommunications,Telecommunications,Belgium,STOXX600
+PRU.L,Insurance,Insurance,United Kingdom,STOXX600
+PRY.MI,Industrial Goods and Services,Industrial Goods and Services,Italy,STOXX600
+PSN.L,Media,Media,United Kingdom,STOXX600
+PSON.L,Media,Media,United Kingdom,STOXX600
+PST.MI,Insurance,Insurance,Italy,STOXX600
+PTEC.L,Software & Computer Services,Technology,United Kingdom,FTSE250
+PUM.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+QLT.L,Financial Services,Financial Services,United Kingdom,STOXX600
+QQ.L,Aerospace & Defence,Industrial Goods and Services,United Kingdom,FTSE250
+RAT.L,Financial Services,Financial Services,United Kingdom,FTSE250
+RBI.VI,Banks,Banks,Austria,STOXX600
+RCO.PA,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",France,STOXX600
+RCP.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+REC.MI,Health Care,Health Care,Italy,STOXX600
+RED.MC,Utilities,Utilities,Spain,STOXX600
+REL.L,Media,Media,United Kingdom,STOXX600
+REP.MC,Energy,Energy,Spain,STOXX600
+RHIM.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+RHM.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+RICA.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+RIO.L,Basic Resources,Basic Resources,United Kingdom,STOXX600
+RKT.L,"Personal Care, Drug and Grocery Stores","Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+RMS.PA,Consumer Products and Services,Consumer Products and Services,France,STOXX600
+RMV.L,Real Estate,Real Estate,United Kingdom,STOXX600
+RNK.L,Travel and Leisure,Travel and Leisure,United Kingdom,FTSE250
+RNO.PA,Automobiles and Parts,Automobiles and Parts,France,STOXX600
+ROR.L,Industrial Engineering,Industrial Goods and Services,United Kingdom,FTSE250
+ROSE.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,FTSE250
+RPI.L,Technology,Technology,United Kingdom,FTSE250
+RR.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+RS1.L,Industrials,Industrial Goods and Services,United Kingdom,FTSE250
+RSW.L,Electronic & Electrical Equipment,Industrial Goods and Services,United Kingdom,FTSE250
+RTO.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+RTW.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+RWE.DE,Utilities,Utilities,Germany,STOXX600
+RXL.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+SAB.MC,Banks,Banks,Spain,STOXX600
+SAF.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+SAFE.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+SAGA.L,Travel and Leisure,Travel and Leisure,United Kingdom,FTSE250
+SAIN.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+SALM.OL,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",Norway,STOXX600
+SAMPO.HE,Insurance,Insurance,Finland,STOXX600
+SAN.MC,Health Care,Health Care,Spain,STOXX600
+SAN.PA,Health Care,Health Care,France,STOXX600
+SAND.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+SAP.DE,Technology,Technology,Germany,STOXX600
+SBRY.L,"Personal Care, Drug and Grocery Stores","Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+SCHP.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+SCMN.SW,Telecommunications,Telecommunications,Switzerland,STOXX600
+SCR.PA,Insurance,Insurance,France,STOXX600
+SCT.L,Technology,Technology,United Kingdom,STOXX600
+SDLF.L,Insurance,Insurance,United Kingdom,STOXX600
+SDP.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+SDZ.SW,Health Care,Health Care,Switzerland,STOXX600
+SECU-B.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+SEIT.L,Energy,Energy,United Kingdom,FTSE250
+SEQI.L,Financial Services,Financial Services,United Kingdom,FTSE250
+SGE.L,Technology,Technology,United Kingdom,STOXX600
+SGO.PA,Construction and Materials,Construction and Materials,France,STOXX600
+SGRO.L,Real Estate,Real Estate,United Kingdom,STOXX600
+SGSN.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+SHAW.L,Banking,Banks,United Kingdom,FTSE250
+SHB-B.ST,Banks,Banks,Sweden,STOXX600
+SHC.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+SHEL.L,Energy,Energy,United Kingdom,STOXX600
+SIE.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+SIKA.SW,Construction and Materials,Construction and Materials,Switzerland,STOXX600
+SIX2.DE,Consumer Products and Services,Consumer Products and Services,Germany,STOXX600
+SKA-B.ST,Construction and Materials,Construction and Materials,Sweden,STOXX600
+SKF-B.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+SLHN.SW,Insurance,Insurance,Switzerland,STOXX600
+SMIN.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+SMT.L,Financial Services,Financial Services,United Kingdom,STOXX600
+SMWH.L,Retailers,Retail,United Kingdom,FTSE250
+SN.L,Health Care,Health Care,United Kingdom,STOXX600
+SOI.L,Financial Services,Financial Services,United Kingdom,FTSE250
+SOLB.BR,Chemicals,Chemicals,Belgium,STOXX600
+SOON.SW,Health Care,Health Care,Switzerland,STOXX600
+SPI.L,Health Care Equipment & Services,Health Care,United Kingdom,FTSE250
+SPSN.SW,Real Estate,Real Estate,Switzerland,STOXX600
+SPX.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+SRE.L,Real Estate,Real Estate,United Kingdom,FTSE250
+SRG.MI,Energy,Energy,Italy,STOXX600
+SRP.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+SRT3.DE,Health Care,Health Care,Germany,STOXX600
+SSE.L,Utilities,Utilities,United Kingdom,STOXX600
+SSIT.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+SSPG.L,Retailers,Retail,United Kingdom,FTSE250
+STAN.L,Banks,Banks,United Kingdom,STOXX600
+STJ.L,Financial Services,Financial Services,United Kingdom,STOXX600
+STMN.SW,Health Care,Health Care,Switzerland,STOXX600
+SU.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+SUPR.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+SVS.L,Real Estate Investment & Services,Real Estate,United Kingdom,FTSE250
+SVT.L,Utilities,Utilities,United Kingdom,STOXX600
+SW.PA,Travel and Leisure,Travel and Leisure,France,STOXX600
+SWED-A.ST,Banks,Banks,Sweden,STOXX600
+SY1.DE,Chemicals,Chemicals,Germany,STOXX600
+SYNC.L,Pharmaceuticals & Biotechnology,Health Care,United Kingdom,FTSE250
+TATE.L,"Food, Beverage and Tobacco","Food, Beverage and Tobacco",United Kingdom,STOXX600
+TBCG.L,Banks,Banks,United Kingdom,FTSE250
+TCAP.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+TEF.MC,Telecommunications,Telecommunications,Spain,STOXX600
+TEL.OL,Telecommunications,Telecommunications,Norway,STOXX600
+TEL2-B.ST,Telecommunications,Telecommunications,Sweden,STOXX600
+TELIA.ST,Telecommunications,Telecommunications,Sweden,STOXX600
+TEM.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+TEMN.SW,Technology,Technology,Switzerland,STOXX600
+TEP.L,Telecomms,Telecommunications,United Kingdom,FTSE250
+TEP.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+TFIF.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+TGS.OL,Energy,Energy,Norway,STOXX600
+THG.L,Personal Products,"Personal Care, Drug and Grocery Stores",United Kingdom,FTSE250
+THRL.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+TIT.MI,Telecommunications,Telecommunications,Italy,STOXX600
+TKA.DE,Industrial Goods and Services,Industrial Goods and Services,Germany,STOXX600
+TLX.DE,Insurance,Insurance,Germany,STOXX600
+TMPL.L,Collective Investments,Investment Trusts,United Kingdom,FTSE250
+TMV.DE,Technology,Technology,Germany,STOXX600
+TOM.OL,Industrial Goods and Services,Industrial Goods and Services,Norway,STOXX600
+TPK.L,Retail,Retail,United Kingdom,STOXX600
+TREL-B.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+TRIG.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+TRN.L,Industrial Transportation,Industrial Goods and Services,United Kingdom,FTSE250
+TRN.MI,Utilities,Utilities,Italy,STOXX600
+TRST.L,Technology,Technology,United Kingdom,FTSE250
+TRY.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+TRYG.CO,Insurance,Insurance,Denmark,STOXX600
+TSCO.L,Retail,Retail,United Kingdom,STOXX600
+TTE.PA,Energy,Energy,France,STOXX600
+TW.L,Household goods & home construction,Consumer Products and Services,United Kingdom,FTSE250
+UBI.PA,Consumer Products and Services,Consumer Products and Services,France,STOXX600
+UBSG.SW,Banks,Banks,Switzerland,STOXX600
+UEM.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+UHR.SW,Consumer Products and Services,Consumer Products and Services,Switzerland,STOXX600
+UKW.L,"Gas, Water & Multiutilities",Utilities,United Kingdom,FTSE250
+ULVR.L,"Personal Care, Drug and Grocery Stores","Personal Care, Drug and Grocery Stores",United Kingdom,STOXX600
+UMG.AS,Media,Media,Netherlands,STOXX600
+UMI.BR,Chemicals,Chemicals,Belgium,STOXX600
+UPM.HE,Basic Resources,Basic Resources,Finland,STOXX600
+URW.PA,Real Estate,Real Estate,France,STOXX600
+USA.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+UTG.L,Real Estate,Real Estate,United Kingdom,STOXX600
+VACN.SW,Industrial Goods and Services,Industrial Goods and Services,Switzerland,STOXX600
+VALMT.HE,Industrial Goods and Services,Industrial Goods and Services,Finland,STOXX600
+VCT.L,Chemicals,Chemicals,United Kingdom,FTSE250
+VCT.PA,Construction and Materials,Construction and Materials,France,STOXX600
+VEIL.L,General Financial,Financial Services,United Kingdom,FTSE250
+VER.VI,Utilities,Utilities,Austria,STOXX600
+VIE.PA,Utilities,Utilities,France,STOXX600
+VIG.VI,Insurance,Insurance,Austria,STOXX600
+VITR.ST,Health Care,Health Care,Sweden,STOXX600
+VIV.PA,Media,Media,France,STOXX600
+VK.PA,Basic Resources,Basic Resources,France,STOXX600
+VLX.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,FTSE250
+VNA.DE,Real Estate,Real Estate,Germany,STOXX600
+VOD.L,Telecommunications,Telecommunications,United Kingdom,STOXX600
+VOE.VI,Basic Resources,Basic Resources,Austria,STOXX600
+VOF.L,General Financial,Financial Services,United Kingdom,FTSE250
+VOLV-B.ST,Industrial Goods and Services,Industrial Goods and Services,Sweden,STOXX600
+VPK.AS,Industrial Goods and Services,Industrial Goods and Services,Netherlands,STOXX600
+VPLAY-B.ST,Media,Media,Sweden,STOXX600
+VSVS.L,General Industrials,Industrial Goods and Services,United Kingdom,FTSE250
+VTY.L,Home Construction,Consumer Products and Services,United Kingdom,FTSE250
+WDP.BR,Real Estate,Real Estate,Belgium,STOXX600
+WEIR.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,STOXX600
+WIE.VI,Construction and Materials,Construction and Materials,Austria,STOXX600
+WIHL.ST,Real Estate,Real Estate,Sweden,STOXX600
+WISE.L,Financial Services,Financial Services,United Kingdom,STOXX600
+WIX.L,Retailers,Retail,United Kingdom,FTSE250
+WIZZ.L,Travel & Leisure,Travel and Leisure,United Kingdom,FTSE250
+WKL.AS,Media,Media,Netherlands,STOXX600
+WKP.L,Real Estate Investment Trusts,Real Estate,United Kingdom,FTSE250
+WLN.PA,Industrial Goods and Services,Industrial Goods and Services,France,STOXX600
+WOSG.L,Personal Goods,Consumer Products and Services,United Kingdom,FTSE250
+WPP.L,Media,Media,United Kingdom,STOXX600
+WTB.L,Travel and Leisure,Travel and Leisure,United Kingdom,STOXX600
+WWH.L,Investment Trusts,Investment Trusts,United Kingdom,FTSE250
+XPP.L,Industrial Goods and Services,Industrial Goods and Services,United Kingdom,FTSE250
+XPS.L,Financial Services,Financial Services,United Kingdom,FTSE250
+YAR.OL,Chemicals,Chemicals,Norway,STOXX600
+YNGA.L,Travel and Leisure,Travel and Leisure,United Kingdom,FTSE250
+ZAL.DE,Retail,Retail,Germany,STOXX600
+ZIG.L,Support Services,Industrial Goods and Services,United Kingdom,FTSE250
+ZURN.SW,Insurance,Insurance,Switzerland,STOXX600

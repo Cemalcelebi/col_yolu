@@ -225,6 +225,7 @@ __marimo__/
 *.csv
 !sektor_BIST.csv
 !sektor_ABD.csv
+!sektor_AVR.csv
 # GitHub Actions gunluk taramasinin girdileri ve takip durumu (Drive'dan kopya, 2026-10-19)
 !v1_final_BIST.csv
 !kirilim_sonrasi_w.csv
