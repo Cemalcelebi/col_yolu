@@ -1,5 +1,24 @@
 // =====================================================================================================
-// COL S5 Öbek Sıkışması  —  Pine Script v5  (v1.1, 15 Kasım 2026)
+// COL S5 Öbek Sıkışması  —  Pine Script v5  (v1.2, 15 Kasım 2026)
+//
+// v1.2 (15 Kasım 2026; Cemal, ENJSA ekran görüntüsü, v1.1 üzerinde): kutu 15 mumla sabit çizildiği için sınırları
+// rastgele görünüyordu: kutunun hemen ÖNCESİNDEKİ bir küçük mum ve hemen SONRASINDAKİ iki küçük mum kutunun fiyat
+// bandı içinde olduğu hâlde dışarıda kalmıştı. Cemal'in gözünde bölge = aynı bant içinde kalan ardışık küçük mumların
+// tamamı; sınırlar mumlardan gelir, sayıdan değil. Kural (yalnız ÇİZİM; 'genislet' açıkken, varsayılan açık):
+//   - Bant = karar günündeki 15 barlık pencerenin en yüksek High / en düşük Low'u (+/- 'Bant toleransı' payı, oran).
+//   - GERİYE: kutu açılırken pencerenin ilk geçerli barından geriye doğru, High <= üst x (1 + tol) ve Low >= alt x
+//     (1 - tol) olan ardışık geçerli barlar bölgeye katılır; ilk bant dışı barda, önceki kutunun sağ kenarında ya da
+//     toplam uzunluk 'Bölge en çok' (60 geçerli bar) olunca durur. Geriye genişletmede bant DEĞİŞMEZ.
+//   - İLERİYE: kutu açıkken sonraki her geçerli bar bandın içindeyse ya da o gün S5 tutuyorsa kutu sağa uzar (S5
+//     gününde üst / alt v1.1'deki gibi pencere High / Low'uyla genişleyebilir; bant da genişler). Bar bandın dışındaysa
+//     ve S5 değilse kutu KAPANIR (sağ kenar son içerideki bar); 60 geçerli bara ulaşınca da kapanır. Kapanmış kutu
+//     bir daha uzamaz.
+//   - Kapanmış kutudan sonra gelen S5 günü (son S5 gününden < 20 geçerli bar olsa bile) YENİ kutu açar; üçgen yine
+//     yalnız karar gününde (önceki 19 geçerli barda S5 yok). Bu kural v1.1'deki 'son S5 gününden < 20 bar ise aynı
+//     kutu' kuralının yerine geçer: fiyat banttan çıktıysa Cemal'in gözünde bölge bitmiştir.
+//   - 'Kutuyu banda göre genişlet (v1.2)' kapatılırsa v1.1 davranışı birebir döner.
+// UYARI: karar günü ve S5 ölçümü DEĞİŞMEDİ. Kutunun sağ kenarı sonradan belli olur (gösterim; geriye / ileriye
+// genişletme o gün bilinmeyen barları da içerir); işlem kararı yalnız üçgen (karar) günündedir.
 //
 // v1.1 (15 Kasım 2026; Cemal, ekran görüntüsü): bölge artık KUTU ile çizilir. v1.0 şartın tuttuğu GÜNÜ
 // boyuyordu; grafikte 1-4 mumluk 'bölgeler' ve yan yana iki ayrı bant görünüyordu. Cemal'in kuralı: bir bölge
@@ -20,8 +39,9 @@
 //
 // Ne çizer:
 //   - BB(20, 2σ) bantları ve EMA 20 / EMA 50 (ince; yalnız görsel, S5 hesabına girmez)
-//   - S5 bölgesi KUTU: karar gününden geriye p geçerli barlık pencere + şartın sürdüğü günler; DİP = mavi,
-//     YOL ÜSTÜ = turuncu (renk karar günündeki sınıftır). İsteğe bağlı (varsayılan kapalı): S5 günü zemin boyası
+//   - S5 bölgesi KUTU (v1.2): karar gününden geriye p geçerli barlık pencere + aynı bant içinde kalan önceki /
+//     sonraki ardışık barlar (en çok 60); DİP = mavi, YOL ÜSTÜ = turuncu (renk kutunun açıldığı gündeki sınıf).
+//     İsteğe bağlı (varsayılan kapalı): S5 günü zemin boyası
 //   - Karar günü (bölgenin ilk S5 günü; önceki 19 geçerli barda S5 yok) altında küçük üçgen
 //   - Sağ üstte bilgi tablosu: son barın ölçüleri, 250 günlük ATR% ile 'küçük mum' eşiği
 //   - Bölge bitince (koşul düşünce) işaret yok
@@ -90,6 +110,9 @@ gosterTab  = input.bool(true, "Bilgi tablosu", group=G2)
 renkDip    = input.color(color.new(color.blue, 82), "DİP boyası", group=G2)
 renkYol    = input.color(color.new(color.orange, 82), "YOL ÜSTÜ boyası", group=G2)
 gosterZemin = input.bool(false, "S5 günlerini zemin boya (eski v1.0 görünümü)", group=G2)
+genislet   = input.bool(true, "Kutuyu banda göre genişlet (v1.2)", group=G2)
+bantTol    = input.float(0.0, "Bant toleransı (%)", minval=0.0, step=0.005, tooltip="Oran: 0.01 = %1. Kutunun üst sınırına x (1 + pay), alt sınırına x (1 - pay).", group=G2)
+uzunEnCok  = input.int(60, "Bölge en çok (bar)", minval=5, group=G2)
 
 bant = pazar == "BIST" ? bantBIST : bantDiger
 
@@ -181,13 +204,16 @@ bool ce  = false
 bool dip = false
 bool yol = false
 
-// bölge kutusu (v1.1)
+// bölge kutusu (v1.1; v1.2 bant genişletmesi)
 var box[] kutular  = array.new_box(0)       // çizilen kutular (en çok 500; eskiler silinir)
 var box   kutu     = na                     // son (açık ya da biten) bölgenin kutusu
 var int   kutuSol  = na                     // kutunun sol kenarı (bar_index)
 var int   kutuSag  = na                     // kutunun sağ kenarı (bar_index)
-var int   kutuBasZ = na                     // pencerenin ilk geçerli barının zamanı
-var int   kutuSonZ = na                     // son S5 gününün zamanı
+var int   kutuBasZ = na                     // kutunun ilk geçerli barının zamanı
+var int   kutuSonZ = na                     // kutunun son barının zamanı (v1.1: son S5 günü)
+var bool  kutuAcik = false                  // v1.2: kutu açık mı (sağa uzayabilir mi)
+var float kutuUst  = na                     // v1.2: bant üstü (kutunun üst kenarı)
+var float kutuAlt  = na                     // v1.2: bant altı (kutunun alt kenarı)
 var int   kutuGec  = na                     // kutudaki geçerli bar sayısı
 var int   kutuIlkI = na                     // kutunun ilk geçerli bar sırası
 var bool  kutuDip  = false                  // kutunun sınıfı (karar günündeki): true = DİP, false = YOL ÜSTÜ
@@ -289,17 +315,77 @@ if gecerli
         s5y := cek and yol
         s5  := s5d or s5y
         olay := s5 and (i - sonS5 >= ara)
+        // ------------------------------------------------ bölge kutusu (yalnız çizim; S5 ve olay yukarıda, değişmez)
+        // pencere (son p geçerli bar) en yüksek High / en düşük Low (yalnız S5 gününde gerekir)
+        float pUst = na
+        float pAlt = na
         if s5
-            // pencere (son p geçerli bar) en yüksek High / en düşük Low ve ilk barının bar_index'i
-            float pUst = array.get(aH, sz - p)
-            float pAlt = array.get(aL, sz - p)
+            pUst := array.get(aH, sz - p)
+            pAlt := array.get(aL, sz - p)
             for j = sz - p to sz - 1
                 pUst := math.max(pUst, array.get(aH, j))
                 pAlt := math.min(pAlt, array.get(aL, j))
-            int ilkBar = geriI(aIdx, p - 1)
-            int ilkZ   = geriI(aZmn, p - 1)
-            if olay or na(kutu)
-                // yeni bölge: pencerenin ilk geçerli barından bugüne yeni kutu
+        if not genislet
+            // v1.1 davranışı (değişmedi): yeni bölge ya da aynı bölgede (son S5 gününden < ara) aynı kutu uzar
+            if s5
+                int ilkBar = geriI(aIdx, p - 1)
+                int ilkZ   = geriI(aZmn, p - 1)
+                if olay or na(kutu)
+                    // yeni bölge: pencerenin ilk geçerli barından bugüne yeni kutu
+                    color dolgu = s5d ? renkDip : renkYol
+                    color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
+                    box yeni = box.new(ilkBar, pUst, bar_index, pAlt, border_color=kenar, border_width=1, bgcolor=dolgu)
+                    array.push(kutular, yeni)
+                    if array.size(kutular) > 500
+                        box.delete(array.shift(kutular))
+                    kutu     := yeni
+                    kutuSol  := ilkBar
+                    kutuBasZ := ilkZ
+                    kutuIlkI := i - p + 1
+                    kutuDip  := s5d
+                else
+                    // aynı bölge (son S5 gününden < ara geçerli bar): aynı kutu sağa ve dikeyde genişler
+                    box.set_right(kutu, bar_index)
+                    box.set_top(kutu, math.max(box.get_top(kutu), pUst))
+                    box.set_bottom(kutu, math.min(box.get_bottom(kutu), pAlt))
+                kutuSag  := bar_index
+                kutuSonZ := time
+                kutuGec  := i - kutuIlkI + 1
+        else
+            // v1.2 (1) İLERİYE: açık kutu bugün bandın içindeyse ya da bugün S5 tutuyorsa sağa uzar; değilse kapanır.
+            // Karar günü (olay) gelirse eski kutu bugünü almadan kapanır, aşağıda yeni kutu açılır.
+            if kutuAcik and not olay
+                bool icerde = high <= kutuUst * (1.0 + bantTol) and low >= kutuAlt * (1.0 - bantTol)
+                int uzunYeni = i - kutuIlkI + 1
+                if (s5 or icerde) and uzunYeni <= uzunEnCok
+                    box.set_right(kutu, bar_index)
+                    if s5
+                        kutuUst := math.max(kutuUst, pUst)
+                        kutuAlt := math.min(kutuAlt, pAlt)
+                        box.set_top(kutu, kutuUst)
+                        box.set_bottom(kutu, kutuAlt)
+                    kutuSag  := bar_index
+                    kutuSonZ := time
+                    kutuGec  := uzunYeni
+                else
+                    kutuAcik := false
+            // v1.2 (2) YENİ KUTU: karar günü ya da kapanmış kutudan sonra gelen S5 günü
+            if s5 and (olay or not kutuAcik)
+                // GERİYE: pencerenin ilk geçerli barından geriye, bant içindeki ardışık geçerli barlar (bant sabit)
+                int sinir = na(kutuSag) ? -1 : kutuSag     // önceki kutunun sağ kenarı: geriye genişleme onu geçmez
+                float bU = pUst * (1.0 + bantTol)
+                float bA = pAlt * (1.0 - bantTol)
+                int ekstra = 0
+                if p < uzunEnCok and sz > p
+                    for k = p to sz - 1
+                        int ix = sz - 1 - k
+                        bool bandda = array.get(aH, ix) <= bU and array.get(aL, ix) >= bA and array.get(aIdx, ix) > sinir
+                        if not bandda or p + ekstra >= uzunEnCok
+                            break
+                        ekstra += 1
+                int ilkK   = p - 1 + ekstra             // kutunun ilk barı: sondan ilkK'ıncı geçerli bar
+                int ilkBar = geriI(aIdx, ilkK)
+                int ilkZ   = geriI(aZmn, ilkK)
                 color dolgu = s5d ? renkDip : renkYol
                 color kenar = s5d ? color.new(color.blue, 30) : color.new(color.orange, 30)
                 box yeni = box.new(ilkBar, pUst, bar_index, pAlt, border_color=kenar, border_width=1, bgcolor=dolgu)
@@ -307,18 +393,17 @@ if gecerli
                 if array.size(kutular) > 500
                     box.delete(array.shift(kutular))
                 kutu     := yeni
+                kutuAcik := true
+                kutuUst  := pUst
+                kutuAlt  := pAlt
                 kutuSol  := ilkBar
                 kutuBasZ := ilkZ
-                kutuIlkI := i - p + 1
+                kutuIlkI := i - ilkK
                 kutuDip  := s5d
-            else
-                // aynı bölge (son S5 gününden < ara geçerli bar): aynı kutu sağa ve dikeyde genişler
-                box.set_right(kutu, bar_index)
-                box.set_top(kutu, math.max(box.get_top(kutu), pUst))
-                box.set_bottom(kutu, math.min(box.get_bottom(kutu), pAlt))
-            kutuSag  := bar_index
-            kutuSonZ := time
-            kutuGec  := i - kutuIlkI + 1
+                kutuSag  := bar_index
+                kutuSonZ := time
+                kutuGec  := ilkK + 1
+        if s5
             sonS5 := i
 
 // ---------------------------------------------------------------- çizim
@@ -329,7 +414,7 @@ plotshape(olay and s5y, "Karar günü (YOL ÜSTÜ)", shape.triangleup, location.
 yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
 ev(bool b) => b ? "EVET" : "hayır"
 
-var table tb = table.new(position.top_right, 3, 11, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 3, 12, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     table.cell(tb, 0, 0, "S5 (son bar)", text_size=size.small)
     table.cell(tb, 1, 0, "değer", text_size=size.small)
@@ -367,11 +452,20 @@ if gosterTab and barstate.islast
     table.cell(tb, 0, 10, "son bölge / bölge uzunluğu (bar)", text_size=size.small)
     table.cell(tb, 1, 10, varKutu ? tarih(kutuBasZ) + " .. " + tarih(kutuSonZ) : "-", text_size=size.small)
     table.cell(tb, 2, 10, kUzun, text_size=size.small)
+    float kU = na(kutu) ? na : box.get_top(kutu)
+    float kA = na(kutu) ? na : box.get_bottom(kutu)
+    string kDurum = not varKutu ? "-" : not genislet ? "v1.1 modu (genişletme kapalı)" : kutuAcik ? "bölge AÇIK (uzayabilir)" : "bölge KAPANDI"
+    table.cell(tb, 0, 11, "bant üst / alt (tolerans " + yz(bantTol) + ")", text_size=size.small)
+    table.cell(tb, 1, 11, na(kU) ? "-" : str.tostring(kU, format.mintick) + " / " + str.tostring(kA, format.mintick), text_size=size.small)
+    table.cell(tb, 2, 11, kDurum, text_size=size.small)
 
 // =====================================================================================================
 // BEKLENEN BOYALI GÜNLER (doğrulama tablosu; Cemal grafikte karşılaştırır)
 // v1.1: bu günler artık kutunun içindedir; kutu bu günlerden p-1 bar önce başlar (karar gününden geriye 15 geçerli
 // bar). AÇIK günler zemin boyası olarak yalnız 'S5 günlerini zemin boya' açılınca görünür.
+// v1.2: kutu ayrıca bant içinde kalan önceki / sonraki ardışık barlarla genişler (sol kenar daha erken, sağ kenar daha
+// geç olabilir). Arada fiyat banttan çıktıysa sonraki S5 günü üçgensiz YENİ kutu açar (ör. aşağıda CCOLA 09-24 ve
+// ENJSA 08-12 ayrı kutu olabilir; v1.1'de aynı kutuydu). S5 / DİP / YOL günleri ve üçgenler v1.1 ile aynıdır.
 // Üretim: SIKISMA_OBEK.py so_s5 (V_BIST.pkl sha256 bbd09faa..., ön kayıttaki veri) ve bu dosyanın mantığını
 // aynı sırayla bar bar yazan bağımsız Python döngüsü. İki hesap FENER, CCOLA, ENJSA'nın BÜTÜN geçmişinde
 // (2015-2026, 2.136-2.816 geçerli bar) S5 / DİP / YOL dizisinde 0 gün farkla aynı çıktı.
