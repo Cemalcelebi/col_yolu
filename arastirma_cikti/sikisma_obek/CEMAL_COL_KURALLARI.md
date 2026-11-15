@@ -9,6 +9,7 @@ Kaynak: Cemal'in 15 Kasım'da gönderdiği 10 ekran görüntüsü (ENJSA x3, DES
 - K4 DÜŞÜŞ SONRASI VE DİP SAVUNULUR: kayan düşüş kanalı çöl değil ("çöl yok, BB yok, daralma yok": TUCLK 13 Ağu 2026, kod BB yüzdeliği 0,04 görse de). Daralma zamanla gözle görünür olmalı; dip koruması olmalı (PAPIL "dip koruması var").
 - K5 KÜÇÜK MUM: mumlar hissenin normalinden küçük; 0,75 x ATR250 bazen fazla sıkı (ENJSA May-Haz 2025: medyan mum ATR'nin %82'si, Cemal: çöl).
 - K6 AL MUMU: tabanın tavanını kıran büyük mum; giriş bu mumda ya da sonrasında, S5 karar gününde değil (KNFRT: en büyük gün 14 Eyl 2022 +%10; TUCLK: 22 Ağu 2025 +%10). Tavan kırılmadan alım yok (PAPIL: "tavan kırıldı mı? yok; alış mumu aslında buradaydı").
+- K6b TAVAN MUMU (Cemal, PAPIL düzeltmesi): büyük çölün tavanı, taban içindeki sivri tepe mumudur (PAPIL: 5-6 Kas 2025, 6 Kas tepesi 20,32 düzeltilmiş fiyat; büyük aralık, yüksek hacim, kapanış geri içeride). O tepeden yatay çizgi çekilir; bu yatayı KAPANIŞLA kıran mum al mumudur. Küçük taban (PAPIL 13 Kas - 9 Ara, bant %8,7) için kendi tepesi (21 Kas 16,72) ve kendi kırılımı (10 Ara büyük mum, kapanışla 11 Ara) geçerlidir; kodun 3 Ara karar günü küçük bölgenin içidir, al günü değil. UYARI (veri): PAPIL'de 20,32 yatayı kapanışla ilk kez 2 Mar 2026'da kırıldı ve o gün 2026'nın en yüksek kapanışıydı (20,48): büyük çöl kuralıyla alım tam tepeye denk gelirdi; 19,12 (5 Kas kapanışı) ile 27 Oca 2026, sonraki en yüksek kapanış 20,14 (+%3). Küçük tabanın kırılımı (11 Ara 17,01) 19 Ara'da 18,35'e (+%8) gitti, sonra söndü. Yani tavan kırılımı tek başına yetmez; S6'da al mumu kuralı bu örnekle birlikte (başarısız kırılım) sınanır.
 - K7 ÇÖL AYLARCA SÜREBİLİR: başlangıç doğru görülse bile giriş mumu aylar sonra gelebilir (YKSLN: çöl Mart-Nisan 2026'da başladı, giriş mumu Mayıs); düşüşten sonra ikinci çöl olabilir ama riskli (YKSLN Ağu 2026, sonra çöküş).
 - K8 STOP: taban kırılınca çıkış (YKSLN Temmuz stop; üretim T6 kuralıyla aynı).
 
@@ -20,7 +21,7 @@ Kaynak: Cemal'in 15 Kasım'da gönderdiği 10 ekran görüntüsü (ENJSA x3, DES
 | TUCLK | 2025-07-28 YOL (7-28 Tem) | net +4,5 öbek 4,9 bbp 0,20 | parçalar (X) yanlış; bölge = Haz-Ağu 2025 tabanının tamamı (yeşil daire); kırılım 22 Ağu +%10 | K1, K6 |
 | YKSLN | 2026-04-09 DİP (19 Mar-9 Nis) | net -2,8 öbek 4,2 bbp 0,09 | "çöl burada başlamış, güzel çöl" DOĞRU; giriş mumu Mayıs; stop Temmuz | K7, K8 |
 | YKSLN | 2026-08-26 DİP (6-26 Ağu) | net +1,8 öbek 3,6 bbp 0,12 dd120 -25 | "tekrar çöl vermiş ama girmek yürek ister" (sonra çöküş) | K7 |
-| PAPIL | 2025-12-03 DİP (13 Kas-3 Ara); ekranda üçgen ~6 Kas çizgisinde (fark: fiyat düzeltmesi / geçerli bar sayımı, kontrol edilecek) | net -1,2 öbek 2,9 bbp 0,13 dd120 -60 | Eki-Kas 2025 tabanı (siyah elips), "dip koruması var"; "tavan kırıldı mı? yok; alış mumu aslında buradaydı" | K4, K6 |
+| PAPIL | 2025-12-03 DİP (13 Kas-3 Ara); Cemal: '3 Ara olmaz; küçük bölge için 10 Ara (kırılım mumu) olur' | net -1,2 öbek 2,9 bbp 0,13 dd120 -60 | Eki-Kas 2025 tabanı (siyah elips), "dip koruması var"; "tavan kırıldı mı? yok; alış mumu aslında buradaydı" | K4, K6 |
 | PAPIL | 2026-01-13, 04-08, 05-18, 06-23 DİP | düşüş içinde (dd120 -20..-43) | işaret yok | — |
 | ENJSA | 2021-09-01, 2021-10-18 YOL | net +8,0 / +9,7 | X YANLIŞ | K3 |
 | ENJSA | 2021-11-16 YOL | net +0,3 | "tamamı" DOĞRU | K1, K3 |
