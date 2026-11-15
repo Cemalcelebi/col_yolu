@@ -1,0 +1,48 @@
+# COL S6 Taban — TradingView'e ekleme ve okuma (15 Kasım 2026)
+
+Dosya: `arastirma_cikti/sikisma_s6/COL_S6_TABAN.pine` (Türkçe yazılar). Türkçe karakterde sorun çıkarsa aynı kodun ASCII kopyası:
+`COL_S6_TABAN_ascii.pine` (yalnız yorum ve yazılardaki harfler değişik; kod birebir aynı, `python S6_TABAN.py ascii` doğrular).
+Python karşılığı `S6_TABAN.py`; tanım ve eşikler iki yerde aynıdır. Bu bir göz aracıdır: getiri ya da iz iddiası yoktur.
+
+## Ekleme
+1. TradingView'de günlük grafiği aç (sembol `BIST:...`). Grafiğin sağ altındaki **ADJ** (temettü / bölünme düzeltmesi) AÇIK olsun: Python düzeltilmiş fiyatla çalışır.
+2. Alttaki **Pine Düzenleyici**'yi aç, **Yeni → Boş gösterge**, içindekini sil, dosyanın tamamını yapıştır, **Kaydet**, **Grafiğe ekle**.
+3. Basic planda grafikte en çok 2 gösterge durur: S5 ile birlikte S6 sığar; başka bir gösterge açıksa birini kaldır.
+4. Derleyici bizde yok: hata çıkarsa ekrandaki satır numarası ve iletiyi aynen yaz (ASCII kopyada da aynı satır numaraları geçerlidir).
+
+## Ne çizer
+- **Kutu** = taban bölgesi. Sol kenar tabanın ilk mumu, sağ kenar son mumu; üst / alt = tabanın tavan / dip çizgileri. Renk açılış günündeki sınıf: **mavi DİP** (120 günlük aralığın alt çeyreği, tepeden en az %10 aşağı), **turuncu YOL** (fiyat yükselen SMA50 üstünde), **gri ORTA**. Kutunun sol üstünde uzunluk (bar).
+- **Yeşil yatay çizgi** = tavan: tabanın en yüksek High'ı (tavan mumu), kutunun sağ kenarına kadar.
+- **Yeşil üçgen "AL"** = önceki gün taban vardı ve bugün KAPANIŞ tavanın üstünde. Kutu o mumda kapanır, kenarı yeşil olur. AL'dan sonraki yeni kutu en az 8 mum dolunca çizilir; o arada (ya da art arda ikinci günde) gelen üçgen kutusuz olabilir.
+- **Kırmızı x "KIRILDI"** = önceki gün taban vardı ve bugün kapanış dibin %2 altında. Kutu kırmızı kenarla kapanır.
+- Taban bir gün kaybolursa kutu o gün durur; ertesi günlerde aynı taban dönerse aynı kutu uzar. Bölge ne AL ne KIRILDI ile bitmeden kaybolduysa kenar ince kalır ("söndü").
+- Kutu sağa doğru büyür; sol kenarı da taban geriye doğru büyüdükçe sola kayabilir (eski mumlar tabana katılınca). Kararı kutunun SAĞ kenarı verir; sol kenar sonradan belli olur.
+
+## Tablo (sağ üst, son mum için)
+n (taban uzunluğu), pencere başlangıcı, tavan / dip, (1) bant, (2) net değişim (son / ilk kapanış), (3) dip savunması (ikinci yarı dibi / ilk yarı dibi - 1), (4) medyan mum / ATR%, (5) daralma oranı (şart kapalıysa bilgi), sınıf (bugün / bölge açılışı), durum (AÇIK / AL / KIRILDI / söndü ve tarihi), son bölge (tarih aralığı, bar), son AL mumunun boyu ve hacmi (önceki 20 günün ortalamasının kaç katı), geçerli bar sayısı, ATR%.
+
+## Ayarlar (varsayılanlar = tasarım sınamasının seçtiği değerler; S6_TASARIM.md)
+| girdi | varsayılan | anlamı |
+|---|---|---|
+| nMin / nMax | 8 / 70 | en kısa taban ve en uzun pencere (geçerli mum) |
+| (1) Bant | 0,12 | en yüksek High / en düşük Low - 1 en çok %12 |
+| (2) Sakin | 0,03 | son kapanış / pencerenin ilk kapanışı - 1, mutlak en çok %3 |
+| (3) Dip toleransı | 0,05 | ikinci yarının dibi ilk yarının dibinin en çok %5 altında |
+| (4) Küçük mum kM | 0,90 | medyan mum boyu (fitil dahil, H-L / C) <= 0,90 x ATR% (250 gün) |
+| (5) Daralma | 0 (kapalı) | 0'dan büyükse: pencerenin ortalama mumu <= oran x önceki 60 günün ortalaması |
+| Kırılım toleransı | 0,02 | kapanış < dip x 0,98 ise KIRILDI |
+| ATR% günü / daralma günü / konum / SMA / SMA eğimi / hacim | 250 / 60 / 120 / 50 / 20 / 20 | Python ile aynı kalması için değiştirme |
+Renkler ve tablo "Görünüm" grubundadır. Eşikleri değiştirirsen grafik Python listesiyle (`python S6_TABAN.py liste SEMBOL BAS SON`) artık aynı olmaz.
+
+## Bilinen farklar (Python listesiyle karşılaştırırken)
+- **Likidite süzgeci yok**: Python'daki ölçüm işlerinde olan likidite alt %20 süzgeci göstergede yok (tasarım sayımında da yok).
+- **TradingView verisi**: Python V_BIST (Yahoo, düzeltilmiş). Barlar eksik / fazla ya da düzeltme farklı olabilir; o zaman bölge tarihleri bir iki gün kayar. Hacmi 0 olan ya da High = Low olan mum ikisinde de atlanır.
+- **Geçmiş uzunluğu**: gösterge ilk 250 geçerli mumu yalnız ATR için kullanır, tabanı 251. mumdan sonra arar. TradingView daha kısa geçmiş yüklerse ilk bölgeler farklı başlar; birkaç ay sonra aynı olur.
+- **Kriz kesiği yok**: Python verisi 31.08.2026'da kesilir (fon krizi); gösterge sonrasını da çizer.
+- **Eşitlik sınırı**: bir şart tam sınırdaysa (ör. bant tam %12,000) Python ile Pine'ın toplama sırası farkı en son ondalıkta ayrışabilir; pratikte görülmez.
+- Dosyanın sonunda 6 etiket için BEKLENEN kutular yazılıdır (V_BIST ile); grafikte farklı görürsen önce günlük grafik / ADJ / varsayılan girdileri denetle.
+
+## Okurken dikkat (tasarım sınamasından)
+- AL üçgeni, önceki günün taban penceresindeki en yüksek High'ın kapanışla aşıldığı gündür. Tasarım sınamasında PAPIL 11 Ara 2025 ve TUCLK 22 Ağu 2025 al mumları tuttu; TUCLK'ta bundan önce 6 Ağu'da erken bir üçgen daha var (fiyat tabana döndü, yeni kutu açıldı). KNFRT 14 Eyl 2022'de üçgen yok. Ayrıntı S6_TASARIM.md.
+- PAPIL büyük taban (Eki 2025 - Mar 2026) bant %12 ile tek bölge olmaz (bilgi etiketi); tavan kırılımı tek başına alım nedeni değildir (K6b uyarısı).
+- Kutular sık çıkar: tasarım sayımında BIST'te hisse başına yılda ~6,9 bölge, günlerin ~%28'inde açık bir kutu var. Kutu "aday"dır; Cemal'in gözü ve sektör rüzgârı olmadan çöl sayılmaz.

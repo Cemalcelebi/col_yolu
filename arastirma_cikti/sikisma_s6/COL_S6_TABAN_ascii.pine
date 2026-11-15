@@ -1,0 +1,423 @@
+// =====================================================================================================
+// COL S6 Taban  -  Pine Script v5  (v1.0, 15 Kasim 2026)
+//
+// Cemal'in col kurallarindan (CEMAL_COL_KURALLARI.md K1-K8, K6b) calisan TABAN gostergesi. Python referansi: S6_TABAN.py
+// (s6_taban; dongu karsiligi s6_pine_ayna, test_s6_taban.py ile vektorel tanima birebir sinandi). Esikler tasarim sinamasinin
+// sectigi degerlerdir (arastirma_cikti/sikisma_s6/S6_TASARIM.md). Bu bir GOZ ARACIDIR: getiri / iz iddiasi yoktur.
+//
+// TANIM (her gecerli bar t icin yalniz t ve oncesi; gecerli bar = high > low ve hacim > 0; i = gecerli bar sirasi, 0'dan)
+//   Olculur bar: i >= atrGun. Pencere W = son n gecerli bar.
+//   (1) BANT    en yuksek High / en dusuk Low - 1 <= bantMax
+//   (2) SAKIN   |bugunku kapanis / pencerenin ilk kapanisi - 1| <= netMax
+//   (3) DIP     h = n / 2 (asagi yuvarlanir); L1 = ilk h barin en dusuk Low'u, L2 = son n-h barin; L2 >= L1 x (1 - dipTol)
+//   (4) MUM     medyan((H-L)/C) <= kM x ATR%   (ATR% = son atrGun gecerli barin ort(TR / onceki gecerli kapanis))
+//   (5) DARALMA ort((H-L)/C) <= daralmaOran x pencereden onceki daralmaGun barin ortalamasi (daralmaOran = 0: sart yok)
+//   TABAN = sartlari saglayan EN BUYUK n (nMax'tan nMin'e ilk tutan). TAVAN = pencerenin en yuksek High'i (ilk o bar = tavan mumu),
+//   DIP = en dusuk Low.
+//   AL: onceki gecerli barda taban varsa ve kapanis > onceki barin TAVAN'i. KIRILDI: ayni kosulda kapanis < onceki DIP x (1 - kirTol).
+//   AL / KIRILDI acik bolgeyi o barda kapatir (kutu o bari icerir; kenar yesil / kirmizi); o bar hicbir bolgeye girmez, sonraki kutu
+//   o bardan sonra baslar ve kirpilmis kutu en az nMin bar olunca acilir. Onceki bar tabanli ama acik bolge yoksa (art arda AL
+//   ya da AL sonrasi kutu dolmadan) ucgen kutusuz basilir.
+//   Bolge: acik bolge taban surdukce surer (pencere baslangici oynasa da); taban bir gun kaybolur, sonra pencere kapanan bolgenin
+//   son barina degerek donerse ayni bolge surer; aksi halde yeni bolge. Kutu: sol = pencere baslangiclarinin en eskisi (onceki
+//   bolgenin son barini gecmez), sag = son bolge bari, ust / alt = pencere TAVAN / DIP'lerinin en yuksek / en dusugu.
+//   Sinif (acilis barinda; renk): DIP = 120 gecerli kapanis araliginin alt ceyregi ve tepeden >= %10 asagi; YOL = kapanis > SMA50 ve
+//   SMA50 20 bar oncesinden yuksek; ikisi de degilse ORTA.
+//
+// Sozdizimi disiplini: sarmali satir yok, tab yok, tipler acik, donguler hep yukari sayar (from <= to), cizimler yerel blokta,
+// plotshape global. Derleyici yok: ilk yapistirmada TradingView denetler; hata cikarsa satir numarasiyla bildir.
+// =====================================================================================================
+//@version=5
+indicator("COL S6 Taban", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
+
+G1 = "S6 tanimi (tasarim sinamasinin sectigi degerler; Python ile ayni kalmasi icin degistirme)"
+nMin        = input.int(8, "nMin: en kisa taban (gecerli bar)", minval=4, maxval=70, group=G1)
+nMax        = input.int(70, "nMax: en uzun pencere (gecerli bar)", minval=8, maxval=120, group=G1)
+bantMax     = input.float(0.12, "(1) Bant en cok (oran)", minval=0.01, step=0.01, group=G1)
+netMax      = input.float(0.03, "(2) Sakin: net degisim en cok (oran)", minval=0.005, step=0.005, group=G1)
+dipTol      = input.float(0.05, "(3) Dip savunulur: tolerans (oran)", minval=0.0, step=0.01, group=G1)
+kM          = input.float(0.90, "(4) Kucuk mum: medyan mum <= kM x ATR%", minval=0.1, step=0.05, group=G1)
+daralmaOran = input.float(0.0, "(5) Daralma orani (0 = sart yok)", minval=0.0, step=0.1, group=G1)
+kirTol      = input.float(0.02, "Taban kirilimi toleransi (oran)", minval=0.0, step=0.01, group=G1)
+atrGun      = input.int(250, "ATR% gunu (gecerli bar)", minval=100, maxval=300, group=G1)
+daralmaGun  = input.int(60, "Daralma: onceki bar sayisi", minval=10, maxval=120, group=G1)
+konumGun    = input.int(120, "Sinif: konum gunu", minval=20, maxval=250, group=G1)
+smaGun      = input.int(50, "Sinif: SMA gunu", minval=5, maxval=200, group=G1)
+smaEgimGun  = input.int(20, "Sinif: SMA egim gunu", minval=1, maxval=50, group=G1)
+dipKonum    = input.float(0.25, "Sinif DIP: konum en cok", step=0.05, group=G1)
+dipDusus    = input.float(-0.10, "Sinif DIP: tepeden dusus en az", step=0.01, group=G1)
+hacimGun    = input.int(20, "AL mumu hacim ortalamasi (onceki bar)", minval=5, maxval=60, group=G1)
+
+G2 = "Gorunum"
+renkDip     = input.color(color.new(color.blue, 82), "DIP kutusu", group=G2)
+renkYol     = input.color(color.new(color.orange, 82), "YOL kutusu", group=G2)
+renkOrta    = input.color(color.new(color.gray, 82), "ORTA kutusu", group=G2)
+renkTavan   = input.color(color.new(color.green, 20), "Tavan cizgisi", group=G2)
+gosterTab   = input.bool(true, "Bilgi tablosu", group=G2)
+
+TUT = 400
+
+if barstate.isfirst and (nMin > nMax or nMax + daralmaGun > atrGun or konumGun > atrGun + 1 or smaGun + smaEgimGun > atrGun + 1 or hacimGun + 1 > atrGun + 1)
+    runtime.error("S6: nMin <= nMax, nMax + daralmaGun <= atrGun ve konum / SMA / hacim gunu <= atrGun + 1 olmali")
+
+hacimOk = not na(volume) and volume > 0
+gecerli = high > low and hacimOk and close > 0 and open > 0 and not na(close)
+
+var float[] aH   = array.new_float(0)
+var float[] aL   = array.new_float(0)
+var float[] aC   = array.new_float(0)
+var float[] aV   = array.new_float(0)
+var float[] aM   = array.new_float(0)
+var float[] aTRP = array.new_float(0)
+var int[]   aIdx = array.new_int(0)
+var int[]   aZmn = array.new_int(0)
+var int     nGec = 0
+
+ekle(float[] a, float v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+sonOrt(float[] a, int m) =>
+    int sz0 = array.size(a)
+    float top0 = 0.0
+    bool ok0 = sz0 >= m
+    if ok0
+        for j0 = sz0 - m to sz0 - 1
+            float v0 = array.get(a, j0)
+            if na(v0)
+                ok0 := false
+            else
+                top0 += v0
+    ok0 ? top0 / m : na
+
+idxOf(int[] a, int seq, int iNow) =>
+    int sz1 = array.size(a)
+    int pos1 = sz1 - 1 - (iNow - seq)
+    pos1 >= 0 ? array.get(a, pos1) : array.get(a, 0)
+
+tarih(int t) =>
+    na(t) ? "-" : str.tostring(year(t)) + "-" + str.tostring(month(t), "00") + "-" + str.tostring(dayofmonth(t), "00")
+
+yz(float v) =>
+    na(v) ? "-" : str.tostring(v * 100, "#.0") + "%"
+
+sinifAd(int s) =>
+    s == 1 ? "DIP" : s == 2 ? "YOL" : "ORTA"
+
+// her bar sifirlanan seri degerler
+bool alS   = false
+bool kirS  = false
+int  tN    = 0
+float tTav = na
+float tDip = na
+int  tTavK = -1
+float atrP = na
+float vMed = na
+float vL1  = na
+float vL2  = na
+int  sinifNow = 0
+
+// durum makinesi (Python s6_durum ile ayni)
+var bool  acik   = false
+var int   rid    = -1
+var int   rBas   = -1
+var int   rSon   = -1
+var float rTop   = na
+var float rBot   = na
+var bool  dogal  = false
+var int   sinir  = -1
+var float oncTav = na
+var float oncDip = na
+var int   rSinif = 0
+var string sonDurum = "-"
+var int   sonOlayZ = na
+var float alBoy  = na
+var float alHac  = na
+var int   alZ    = na
+var int   kutuBasZ = na
+var int   kutuSonZ = na
+
+// cizim
+var box[]  kutular   = array.new_box(0)
+var line[] cizgiler  = array.new_line(0)
+var box    kutu      = na
+var line   tavCizgi  = na
+
+if gecerli
+    float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
+    float trv = na(cOnce) ? high - low : math.max(high, cOnce) - math.min(low, cOnce)
+    ekle(aH, high)
+    ekle(aL, low)
+    ekle(aC, close)
+    ekle(aV, volume)
+    ekle(aM, (high - low) / close)
+    ekle(aTRP, na(cOnce) ? na : trv / cOnce)
+    ekleI(aIdx, bar_index)
+    ekleI(aZmn, time)
+    nGec += 1
+    int i = nGec - 1
+
+    if i >= atrGun
+        int sz = array.size(aC)
+        atrP := sonOrt(aTRP, atrGun)
+        // sonek en yuksek High / en dusuk Low (k = 1..nMax son bar)
+        float[] sufH = array.new_float(nMax + 1, na)
+        float[] sufL = array.new_float(nMax + 1, na)
+        float mh = array.get(aH, sz - 1)
+        float ml = array.get(aL, sz - 1)
+        for k = 1 to nMax
+            mh := math.max(mh, array.get(aH, sz - k))
+            ml := math.min(ml, array.get(aL, sz - k))
+            array.set(sufH, k, mh)
+            array.set(sufL, k, ml)
+        // n = nMax .. nMin (yukari sayan dongu, nn = nMax - kk); ilk tutan n taban
+        for kk = 0 to nMax - nMin
+            int nn = nMax - kk
+            int hh = int(nn / 2)
+            bool c1 = array.get(sufH, nn) / array.get(sufL, nn) - 1.0 <= bantMax
+            bool c2 = c1 and math.abs(close / array.get(aC, sz - nn) - 1.0) <= netMax
+            bool c3 = false
+            float l1 = na
+            if c2
+                l1 := array.get(aL, sz - nn)
+                for j = sz - nn to sz - nn + hh - 1
+                    l1 := math.min(l1, array.get(aL, j))
+                c3 := array.get(sufL, nn - hh) >= l1 * (1.0 - dipTol)
+            bool c5 = false
+            if c3
+                if daralmaOran > 0
+                    float sw = 0.0
+                    for j = sz - nn to sz - 1
+                        sw += array.get(aM, j)
+                    float so = 0.0
+                    for j = sz - nn - daralmaGun to sz - nn - 1
+                        so += array.get(aM, j)
+                    c5 := sw / nn <= daralmaOran * (so / daralmaGun)
+                else
+                    c5 := true
+            bool c4 = false
+            float med = na
+            if c5
+                float[] wm = array.new_float(0)
+                for j = sz - nn to sz - 1
+                    array.push(wm, array.get(aM, j))
+                array.sort(wm, order.ascending)
+                int m2 = int(nn / 2)
+                med := nn % 2 == 1 ? array.get(wm, m2) : (array.get(wm, m2 - 1) + array.get(wm, m2)) / 2.0
+                c4 := med <= kM * atrP
+            if c4
+                tN := nn
+                vMed := med
+                vL1 := l1
+                vL2 := array.get(sufL, nn - hh)
+                break
+        if tN > 0
+            tTav := array.get(aH, sz - tN)
+            tDip := array.get(aL, sz - tN)
+            tTavK := sz - tN
+            for j = sz - tN to sz - 1
+                if array.get(aH, j) > tTav
+                    tTav := array.get(aH, j)
+                    tTavK := j
+                tDip := math.min(tDip, array.get(aL, j))
+        // sinif (gecerli kapanislarla)
+        float mx = close
+        float mn = close
+        for j = sz - konumGun to sz - 1
+            mx := math.max(mx, array.get(aC, j))
+            mn := math.min(mn, array.get(aC, j))
+        float konum = mx > mn ? (close - mn) / (mx - mn) : na
+        float dd = close / mx - 1.0
+        float smaT = 0.0
+        for j = sz - smaGun to sz - 1
+            smaT += array.get(aC, j)
+        smaT := smaT / smaGun
+        float smaO = 0.0
+        for j = sz - smaGun - smaEgimGun to sz - smaEgimGun - 1
+            smaO += array.get(aC, j)
+        smaO := smaO / smaGun
+        bool dipK = not na(konum) and konum <= dipKonum and dd <= dipDusus
+        bool yolK = close > smaT and smaT > smaO
+        sinifNow := dipK ? 1 : yolK ? 2 : 0
+
+        // ------------------------------------------------ durum makinesi
+        bool aNow = not na(oncTav) and close > oncTav
+        bool kNow = not na(oncDip) and not aNow and close < oncDip * (1.0 - kirTol)
+        if aNow or kNow
+            alS := aNow
+            kirS := kNow
+            sonDurum := aNow ? "AL" : "KIRILDI"
+            sonOlayZ := time
+            if aNow
+                float hOrt = 0.0
+                for j = sz - 1 - hacimGun to sz - 2
+                    hOrt += array.get(aV, j)
+                hOrt := hOrt / hacimGun
+                alBoy := (high - low) / close
+                alHac := hOrt > 0 ? volume / hOrt : na
+                alZ := time
+            if acik
+                rSon := i
+                acik := false
+                dogal := false
+                kutuSonZ := time
+                if not na(kutu)
+                    box.set_right(kutu, bar_index)
+                    box.set_border_color(kutu, aNow ? color.new(color.green, 0) : color.new(color.red, 0))
+                    box.set_border_width(kutu, 2)
+                if not na(tavCizgi)
+                    line.set_x2(tavCizgi, bar_index)
+        else if tN > 0
+            int b = i - tN + 1
+            bool yeni = false
+            bool kisa = false
+            if acik
+                sonDurum := "ACIK"
+            else if dogal and rid >= 0 and b <= rSon
+                acik := true
+                sonDurum := "ACIK"
+            else
+                int sinirY = rid >= 0 ? rSon : -1
+                if i - math.max(b, sinirY + 1) + 1 >= nMin
+                    sinir := sinirY
+                    rid += 1
+                    acik := true
+                    rBas := math.max(b, sinir + 1)
+                    rTop := tTav
+                    rBot := tDip
+                    rSinif := sinifNow
+                    sonDurum := "ACIK"
+                    yeni := true
+                else
+                    kisa := true
+            if not kisa
+                rBas := math.min(rBas, math.max(b, sinir + 1))
+                rTop := math.max(rTop, tTav)
+                rBot := math.min(rBot, tDip)
+                rSon := i
+                kutuBasZ := idxOf(aZmn, rBas, i)
+                kutuSonZ := time
+            int solBar = idxOf(aIdx, math.max(rBas, 0), i)
+            int tavBar = array.get(aIdx, tTavK)
+            string uzun = str.tostring(rSon - rBas + 1) + " bar"
+            if yeni
+                color dolgu = rSinif == 1 ? renkDip : rSinif == 2 ? renkYol : renkOrta
+                color kenar = rSinif == 1 ? color.new(color.blue, 30) : rSinif == 2 ? color.new(color.orange, 30) : color.new(color.gray, 30)
+                box yk = box.new(solBar, rTop, bar_index, rBot, border_color=kenar, border_width=1, bgcolor=dolgu, text=uzun, text_size=size.small, text_color=color.new(color.black, 30), text_halign=text.align_left, text_valign=text.align_top)
+                array.push(kutular, yk)
+                if array.size(kutular) > 480
+                    box.delete(array.shift(kutular))
+                kutu := yk
+                line yc = line.new(tavBar, tTav, bar_index, tTav, color=renkTavan, width=2)
+                array.push(cizgiler, yc)
+                if array.size(cizgiler) > 480
+                    line.delete(array.shift(cizgiler))
+                tavCizgi := yc
+            else if not kisa
+                box.set_left(kutu, solBar)
+                box.set_right(kutu, bar_index)
+                box.set_top(kutu, rTop)
+                box.set_bottom(kutu, rBot)
+                box.set_text(kutu, uzun)
+                line.set_xy1(tavCizgi, tavBar, tTav)
+                line.set_xy2(tavCizgi, bar_index, tTav)
+        else if acik
+            acik := false
+            dogal := true
+            sonDurum := "sondu"
+            sonOlayZ := time
+        oncTav := tN > 0 ? tTav : na
+        oncDip := tN > 0 ? tDip : na
+
+plotshape(alS, "AL (tavan kapanisla kirildi)", shape.triangleup, location.belowbar, color.new(color.green, 0), size=size.small, text="AL")
+plotshape(kirS, "KIRILDI (taban kapanisla kirildi)", shape.xcross, location.abovebar, color.new(color.red, 0), size=size.small, text="KIRILDI")
+
+var table tb = table.new(position.top_right, 2, 15, bgcolor=color.new(color.white, 10), border_width=1)
+if gosterTab and barstate.islast
+    bool varT = tN > 0
+    float tBant = na
+    float tNet = na
+    float tDar = na
+    float tMumAtr = na
+    float tDipSav = na
+    string tBasTar = "-"
+    if varT and array.size(aC) > tN + daralmaGun
+        int szT = array.size(aC)
+        tBant := tTav / tDip - 1.0
+        tNet := array.get(aC, szT - 1) / array.get(aC, szT - tN) - 1.0
+        tMumAtr := na(atrP) or atrP == 0 ? na : vMed / atrP
+        tDipSav := na(vL1) or vL1 == 0 ? na : vL2 / vL1 - 1.0
+        float swT = 0.0
+        for j = szT - tN to szT - 1
+            swT += array.get(aM, j)
+        float soT = 0.0
+        for j = szT - tN - daralmaGun to szT - tN - 1
+            soT += array.get(aM, j)
+        tDar := soT > 0 ? (swT / tN) / (soT / daralmaGun) : na
+        tBasTar := tarih(array.get(aZmn, szT - tN))
+    table.cell(tb, 0, 0, "S6 taban (son bar)", text_size=size.small)
+    table.cell(tb, 1, 0, "deger", text_size=size.small)
+    table.cell(tb, 0, 1, "n (taban uzunlugu, gecerli bar)", text_size=size.small)
+    table.cell(tb, 1, 1, varT ? str.tostring(tN) : "taban yok", text_size=size.small)
+    table.cell(tb, 0, 2, "pencere baslangici", text_size=size.small)
+    table.cell(tb, 1, 2, tBasTar, text_size=size.small)
+    table.cell(tb, 0, 3, "tavan / dip", text_size=size.small)
+    table.cell(tb, 1, 3, varT ? str.tostring(tTav, format.mintick) + " / " + str.tostring(tDip, format.mintick) : "-", text_size=size.small)
+    table.cell(tb, 0, 4, "(1) bant <= " + yz(bantMax), text_size=size.small)
+    table.cell(tb, 1, 4, yz(tBant), text_size=size.small)
+    table.cell(tb, 0, 5, "(2) net (son/ilk) |.| <= " + yz(netMax), text_size=size.small)
+    table.cell(tb, 1, 5, yz(tNet), text_size=size.small)
+    table.cell(tb, 0, 6, "(3) dip savunmasi L2/L1-1 >= -" + yz(dipTol), text_size=size.small)
+    table.cell(tb, 1, 6, yz(tDipSav), text_size=size.small)
+    table.cell(tb, 0, 7, "(4) medyan mum / ATR% <= " + str.tostring(kM, "#.00"), text_size=size.small)
+    table.cell(tb, 1, 7, na(tMumAtr) ? "-" : str.tostring(tMumAtr, "#.00"), text_size=size.small)
+    table.cell(tb, 0, 8, "(5) daralma orani" + (daralmaOran > 0 ? " <= " + str.tostring(daralmaOran, "#.0") : " (sart kapali)"), text_size=size.small)
+    table.cell(tb, 1, 8, na(tDar) ? "-" : str.tostring(tDar, "#.00"), text_size=size.small)
+    table.cell(tb, 0, 9, "sinif (bugun / bolge acilisi)", text_size=size.small)
+    table.cell(tb, 1, 9, sinifAd(sinifNow) + " / " + (rid >= 0 ? sinifAd(rSinif) : "-"), text_size=size.small)
+    table.cell(tb, 0, 10, "durum", text_size=size.small)
+    table.cell(tb, 1, 10, sonDurum + (acik or na(sonOlayZ) ? "" : " (" + tarih(sonOlayZ) + ")"), text_size=size.small)
+    table.cell(tb, 0, 11, "son bolge (kutu)", text_size=size.small)
+    table.cell(tb, 1, 11, rid >= 0 ? tarih(kutuBasZ) + " .. " + tarih(kutuSonZ) + " (" + str.tostring(rSon - rBas + 1) + " bar)" : "-", text_size=size.small)
+    table.cell(tb, 0, 12, "son AL mumu: boy / hacim x ort", text_size=size.small)
+    table.cell(tb, 1, 12, na(alZ) ? "-" : tarih(alZ) + ": " + yz(alBoy) + " / " + (na(alHac) ? "-" : str.tostring(alHac, "#.0") + "x"), text_size=size.small)
+    table.cell(tb, 0, 13, "gecerli bar sayisi", text_size=size.small)
+    table.cell(tb, 1, 13, str.tostring(nGec) + (nGec > atrGun ? "" : " (en az " + str.tostring(atrGun + 1) + " gerekli)"), text_size=size.small)
+    table.cell(tb, 0, 14, "ATR% (son " + str.tostring(atrGun) + ")", text_size=size.small)
+    table.cell(tb, 1, 14, yz(atrP), text_size=size.small)
+
+// =====================================================================================================
+// BEKLENEN CIKTI (V_BIST duzeltilmis fiyat, varsayilan girdiler; `python S6_TABAN.py pine`). TradingView'de gunluk grafik,
+// BIST:SEMBOL, ADJ (temettu / bolunme duzeltmesi) ACIK. Kutu tarihleri = kutunun ilk ve son mumu; AL / KIRILDI = isaret gunu.
+// Tarih farki cikarsa once: gunluk grafik mi, ADJ acik mi, girdiler varsayilan mi; TradingView'de bar eksik / fazla olabilir.
+//
+// D7 KNFRT (Cemal 2022-06-15 .. 2022-09-13, al mumu 2022-09-14)
+//   kutu 2022-07-25 .. 2022-08-08  11 bar, YOL, AL 2022-08-08 (tavan 5,284 / dip 4,955)
+//   kutu 2022-08-16 .. 2022-08-29  10 bar, YOL, AL 2022-08-29 (tavan 5,521 / dip 5,028)
+//   2022-09-14'te AL YOK (Haziran-Temmuz'da taban yok: mumlar ATR'ye gore buyuk; Temmuz sonu +%15 sicrama var)
+// D8 TUCLK (Cemal 2025-06-10 .. 2025-08-21, al mumu 2025-08-22)
+//   kutu 2025-04-22 .. 2025-06-11  32 bar, ORTA, sondu
+//   kutu 2025-06-18 .. 2025-08-06  35 bar, YOL, AL 2025-08-06 (tavan 5,708 / dip 5,122)
+//   kutu 2025-08-07 .. 2025-08-22  12 bar, YOL, AL 2025-08-22 (tavan 5,836 / dip 5,250; kutu AL barindan sonra baslar, 8 bar dolunca acilir)
+// D10 PAPIL kucuk taban (Cemal 2025-11-13 .. 2025-12-10, al 2025-12-11)
+//   kutu 2025-11-11 .. 2025-12-11  23 bar, DIP, AL 2025-12-11 (tavan 16,96 / dip 15,38)
+//   kutu 2025-12-23 .. 2026-01-14  16 bar, DIP, sondu
+// D5 ENJSA (Cemal 2025-05-08 .. 2025-06-27)
+//   kutu 2025-04-22 .. 2025-06-30  45 bar, DIP, AL 2025-06-30 (tavan 59,30 / dip 51,25)
+//   kutu 2025-07-02 .. 2025-07-17  11 bar, ORTA, AL 2025-07-17
+//   kutu 2025-07-18 .. 2025-08-13  19 bar, YOL, AL 2025-08-13
+// D6 DESA (Cemal 2021-10-27 .. 2021-12-23, uzun secenek 2022-02-02)
+//   kutu 2021-10-01 .. 2021-11-01  21 bar, DIP, sondu
+//   kutu 2021-11-04 .. 2021-12-06  23 bar, DIP, AL 2021-12-06 (tavan 1,046 / dip 0,908)
+//   kutu 2021-12-24 .. 2022-02-03  30 bar, DIP, AL 2022-02-03 (tavan 0,990 / dip 0,900)
+// Y3 TUCLK kayan dusus (Cemal: col yok, 2026-07-24 .. 2026-08-13)
+//   kutu 2026-06-04 .. 2026-07-28  38 bar, DIP, sondu
+//   kutu 2026-07-29 .. 2026-08-25  20 bar, DIP, AL 2026-08-25 (tavan 4,08 / dip 3,67)
+//   Not: V_BIST 31.08.2026'da kesilir (fon krizi); TradingView'de bu bolge farkli bitebilir.
+// =====================================================================================================
