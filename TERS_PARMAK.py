@@ -8,6 +8,9 @@ bölge profili (parmak izi) bulunur; sonra o parmak izinden büyük mum gelme ol
            ATR250 VE |getiri| >= 2 x σ250) öncesi 5 / 10 / 20 / 40 barın 30 ölçüsü vs aynı pazar, aynı takvim ayı, aynı σ250 ondalığı x
            likidite üçlüsünden rastgele kontrol günleri (büyük mum başına 5). Tek ölçü d / AUC / BH, yön ayrımı, L1 lojistik (5 kat), derinlik
            3 ağaç; aday kurallar P1-P3 bu dosyada ÖNCEDEN yazılmış arama yordamıyla (tp_kural_ara) seçilir; keşifte duyarlılık / kesinlik.
+           İKİ ETİKET (koordinatör eki 15 Kas, keşiften önce): B1 = tek günlük büyük mum (yukarıdaki); BH2 = s'den sonraki 20 günde kapanıştan
+           kapanışa en büyük |ln| >= max(%15, 3 x σ250 x √20) (BIST ±%10 sınırı tek günlük büyük mumu imkânsız kılar). Her etiket için ayrı
+           örneklem / analiz / kural arama (B1 -> P1-P3, BH2 -> H1-H3); doğrulamada her kural iki etikette ayrı KAT sütunu, karar kendi etiketinde.
   ADIM B — DOĞRULAMA (ABD 2023, ABD 2024-26, AVR 2023, AVR 2024-26 karar; BIST bilgi): ön kayıt (TERS_ON_KAYIT_B.md, kurallar sha'sı)
            commit'li ve değişmemiş olmadan çalışmaz. Profil günü t (yalnız t'ye kadar bilgi; 20 günde bir) -> 20 gün içinde büyük mum
            olasılığı vs aynı gün / σ250 ondalığı / likidite üçlüsündeki profilsiz eşler = KAT (ay kümeli bootstrap, OC.oc_kat), ilk 5 gün,
@@ -55,7 +58,7 @@ if not tplog.handlers:
     tplog.setLevel(logging.INFO)
     tplog.propagate = False
 
-TP_SURUM = "TERS_PARMAK v1.0 (2026-11-15): büyük mum öncesi bölge parmak izi — keşif (2016-22) / ön kayıt / ileriye doğru doğrulama"
+TP_SURUM = "TERS_PARMAK v1.1 (2026-11-15): büyük mum (B1) ve 20 günlük büyük hareket (BH2) öncesi bölge parmak izi — keşif (2016-22) / ön kayıt / ileriye doğru doğrulama"
 TP_YOL = {"cikti": os.path.join(KOK_TP, "arastirma_cikti", "ters_parmak"), "satir": os.environ.get("TP_SATIR", "/tmp/ters_parmak"),
           "kod": os.path.join(KOK_TP, "TERS_PARMAK.py"), "veri": os.environ.get("OC_VERI", "/tmp/veri"),
           "veri2": os.environ.get("OC_VERI2", "/tmp/veri2")}
@@ -65,12 +68,24 @@ TP_DOSYA = {"kesif_rapor": "TERS_KESIF_RAPOR.md", "kesif_json": "ters_kesif.json
 
 # ================================================================ MÜHÜRLÜ EŞİKLER (keşiften ÖNCE yazıldı; sonuç görülünce DEĞİŞMEZ)
 TP_ESIK: Dict[str, Any] = {
-    "surum": "1.0",
+    "surum": "1.1",
     "buyuk": {"n": 250, "tr_kat": 3.0, "sigma_kat": 2.0, "bosluk_takvim": 7, "tekil": 20,
               "tanim": "hissenin kendi geçerli barlarında gün t: gerçek aralık TR_t = max(H_t, C_t-1) - min(L_t, C_t-1) >= 3 x ATR250(t-1) VE "
                        "|C_t / C_t-1 - 1| >= 2 x σ250(t-1); ATR250(t-1) = t-250..t-1 TR ortalaması, σ250(t-1) = t-250..t-1 günlük ln getiri std "
                        "(ddof 1); t-1 ile t arası en çok 7 takvim günü (askı / boşluk sonrası sıçrama sayılmaz); yön = getiri işareti (yukarı / aşağı "
                        "ayrı etiket). Büyük mum günü HİÇBİR ölçüye girmez (önceki pencere t-1'de biter)."},
+    "bh2": {"ufuk": 20, "taban": 0.15, "sigma_kat": 3.0,
+            "tanim": "BH2 (iki etiketin ikincisi; koordinatör eki 15 Kas, keşiften ÖNCE): gün s kapanışından sonraki 20 işlem gününde (s+1..s+20) "
+                     "kapanıştan kapanışa en büyük |ln(C_s+k / C_s)| >= max(%15, 3 x σ250(s) x √20); yön = o en büyük hareketin işareti. "
+                     "Gerekçe: BIST ±%10 fiyat sınırı tek günlük büyük mumu (B1) imkânsız kılar; 'günlerce süren tavan / taban serisi' BH2 ile yakalanır. "
+                     "Keşif satırı s'dir (önceki pencere s'de biter, s dahil; hareket s+1'de başlar); aynı hissede 20 barda bir (ilk etiketli s). "
+                     "İlk 5 gün = aynı eşikle s+1..s+5."},
+    "etiket": {"B1": {"ornek": "nb1", "f": "f20", "f5": "f5", "y": "y20", "kod": "P",
+                      "ad": "B1 tek günlük büyük mum (s+1 = t; önceki pencere t-1'de biter)"},
+               "BH2": {"ornek": "hb", "f": "h20", "f5": "h5", "y": "hy20", "kod": "H",
+                       "ad": "BH2 20 günlük büyük hareket (s'den sonraki 20 günde |ln| >= max(%15, 3σ√20))"}},
+    "etiket_karar": "her etiketin kuralları (B1 -> P1-P3, BH2 -> H1-H3) KENDİ etiketinde karar; BH o etiketin 3 kuralı içinde. Çapraz ölçüm "
+                    "(P kuralları BH2'de, H kuralları B1'de) bilgi. ABD / AVR'de iki etiket; BIST bilgi hücresinde BH2 ana, B1 ek.",
     "pencere": [5, 10, 20, 40],
     "ohlc": "açılış ya da kapanış H-L dışında olan barlarda (AVR ~%0,2-0,4, ABD / BIST ~0) H = max(H, O, C), L = min(L, O, C)",
     "olcu": {"kucuk": 0.5, "dar_bant": 2.0, "test_tol": 0.25, "sessiz": 0.25, "hacim": [10, 50], "konum": 250, "dusus": 120},
@@ -359,6 +374,21 @@ def tp_hisse(d: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, kes: Optional[str] = 
     X["f5"] = np.where(np.isfinite(ab[:, :Dg["ilk"]]).all(axis=1), (ab[:, :Dg["ilk"]] == 1).any(axis=1).astype(float), np.nan)
     ilk = np.argmax(ab == 1, axis=1); var = (ab == 1).any(axis=1)
     X["y20"] = np.where(bil, np.where(var, Fw[np.arange(len(big)), ilk], 0.0), np.nan)
+    # BH2: s+1..s+20 kapanışlarının s kapanışına en büyük |ln| hareketi (kes'ten itibaren bilinmez)
+    H2 = E["bh2"]; u2 = int(H2["ufuk"])
+    lnC = np.log(C); Lf = _ileri(lnC, u2) - lnC[:, None]
+    if kes is not None:
+        bil_k = np.r_[(d.index < pd.Timestamp(kes)).astype(float), np.zeros(u2)]
+        Kf = _ileri(bil_k[:len(C)], u2); Lf[~(Kf == 1)] = np.nan
+    esk = np.fmax(H2["taban"], H2["sigma_kat"] * BB.S.to_numpy() * math.sqrt(u2))
+    for ad, k in (("h20", u2), ("h5", int(Dg["ilk"]))):
+        Lk = Lf[:, :k]; bl = np.isfinite(Lk).all(axis=1) & np.isfinite(esk)
+        mx = np.nanmax(np.abs(np.where(np.isfinite(Lk), Lk, 0.0)), axis=1)
+        X[ad] = np.where(bl, (mx >= esk).astype(float), np.nan)
+        if ad == "h20":
+            arg = np.argmax(np.abs(np.where(np.isfinite(Lk), Lk, 0.0)), axis=1)
+            X["hy20"] = np.where(bl, np.where(mx >= esk, np.sign(Lk[np.arange(len(C)), arg]), 0.0), np.nan)
+    X["hb"] = X["hy20"]
     X["i"] = np.arange(len(d))
     return X
 
@@ -422,9 +452,10 @@ def tp_tekil(sid: np.ndarray, i: np.ndarray, aralik: int) -> np.ndarray:
     return tut
 
 
-def tp_buyuk_satir(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK) -> np.ndarray:
-    """Uygun ve s+1'de büyük mum olan satırlar, aynı hissede 20 barda bir (s = t-1 sırası). Döner bool maske."""
-    m = T.uygun.to_numpy() & np.isfinite(T.nb1.to_numpy()) & (np.abs(T.nb1.to_numpy()) == 1)
+def tp_buyuk_satir(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, etiket: str = "B1") -> np.ndarray:
+    """Uygun ve etiketli satırlar (B1: s+1'de büyük mum, s = t-1; BH2: s'den sonraki 20 günde büyük hareket), aynı hissede 20 barda bir."""
+    v = T[E["etiket"][etiket]["ornek"]].to_numpy()
+    m = T.uygun.to_numpy() & np.isfinite(v) & (np.abs(v) == 1)
     out = np.zeros(len(T), bool); ix = np.flatnonzero(m)
     if len(ix):
         out[ix[tp_tekil(T.sid.to_numpy()[ix], T.i.to_numpy()[ix], E["buyuk"]["tekil"])]] = True
@@ -432,12 +463,14 @@ def tp_buyuk_satir(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK) -> np.ndarray:
 
 
 # ================================================================ 3) KEŞİF ÖRNEKLEMİ
-def tp_kesif_orneklem(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, bas: Optional[str] = None, son: Optional[str] = None) -> pd.DataFrame:
+def tp_kesif_orneklem(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, bas: Optional[str] = None, son: Optional[str] = None,
+                      etiket: str = "B1") -> pd.DataFrame:
     """Büyük mum satırları (s = t-1; tekil) + aynı pazar / ay / σ250 ondalığı x likidite üçlüsünden 5 kontrol (ertesi gün büyük mum yok)."""
     bas = bas or E["donem"]["kesif"][0]; son = son or E["donem"]["kesif"][1]
     dm = (T.tarih >= pd.Timestamp(bas)) & (T.tarih <= pd.Timestamp(son))
-    bm = tp_buyuk_satir(T, E) & dm.to_numpy()
-    km = T.uygun.to_numpy() & dm.to_numpy() & (T.nb1.to_numpy() == 0)
+    ok_ = E["etiket"][etiket]["ornek"]
+    bm = tp_buyuk_satir(T, E, etiket) & dm.to_numpy()
+    km = T.uygun.to_numpy() & dm.to_numpy() & (T[ok_].to_numpy() == 0)
     rng = np.random.default_rng(E["kontrol"]["tohum"])
     B = T.loc[bm, ["ay", "kat_ay"]]; Kd = T.loc[km, ["ay", "kat_ay"]]
     ihtiyac = B.groupby(["ay", "kat_ay"]).size() * E["kontrol"]["kat"]
@@ -451,7 +484,8 @@ def tp_kesif_orneklem(T: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, bas: Optiona
         sec.append(ix if len(ix) <= k else rng.choice(ix, int(k), replace=False))
     kix = np.sort(np.concatenate(sec)) if sec else np.array([], int)
     X = pd.concat([T.loc[bm].assign(grup="BUYUK"), T.loc[kix].assign(grup="KONTROL")], ignore_index=True)
-    X["yon"] = np.where(X.grup == "BUYUK", np.where(X.nb1 > 0, "YUKARI", "ASAGI"), "")
+    X["yon"] = np.where(X.grup == "BUYUK", np.where(X[ok_] > 0, "YUKARI", "ASAGI"), "")
+    X["etiket"] = etiket
     X["pazar"] = T.attrs.get("pazar", "?")
     X["sembol"] = [T.attrs["sembol"][s] for s in X.sid.to_numpy()]
     return X
@@ -575,7 +609,7 @@ def tp_kural_metin(kural: Dict[str, Any]) -> str:
     return " VE ".join(f"{k['olcu']} {k['yon']} {k['esik']:.4g} (kontrol %{int(round(100 * k['yuzdelik']))})" for k in kural["kosul"])
 
 
-def tp_kural_ara(X: pd.DataFrame, tek: pd.DataFrame, E: Dict[str, Any] = TP_ESIK) -> Dict[str, Any]:
+def tp_kural_ara(X: pd.DataFrame, tek: pd.DataFrame, E: Dict[str, Any] = TP_ESIK, onek: str = "P") -> Dict[str, Any]:
     """TP_ESIK['kural'] yordamı: aday ölçüler -> 1-3 koşullu kurallar -> iki pazarda duyarlılık_cc >= %10 -> skor min LR -> P1, P2, P3."""
     Kr = E["kural"]; Pz = E["kesif_pazar"]
     t = tek[tek.pazar.isin(Pz)].pivot(index="olcu", columns="pazar")
@@ -620,7 +654,7 @@ def tp_kural_ara(X: pd.DataFrame, tek: pd.DataFrame, E: Dict[str, Any] = TP_ESIK
         if all(len(set(a["olcu_set"]) & set(s["olcu_set"])) <= Kr["en_cok_ortak"] for s in secilen):
             secilen.append(a)
     for i, s in enumerate(secilen, 1):
-        s["kod"] = f"P{i}"
+        s["kod"] = f"{onek}{i}"
     return {"aday_olcu": [{"olcu": o, "min_abs_d": m, "isaret": sg} for o, m, sg in aday], "n_aday_kural": len(adaylar),
             "kurallar": secilen, "ilk20": [{k: a[k] for k in ("ad", "skor", "cc")} for a in adaylar[:20]]}
 
@@ -654,7 +688,7 @@ def tp_kat_p(olay: np.ndarray, oran: np.ndarray, ay: np.ndarray, E: Dict[str, An
 
 
 def tp_kural_olc(T: pd.DataFrame, kural: Dict[str, Any], donemler: List[List[str]], E: Dict[str, Any] = TP_ESIK,
-                 satir_don: bool = False) -> Dict[str, Any]:
+                 satir_don: bool = False, etiket: str = "B1") -> Dict[str, Any]:
     """Bir kuralın pazar panelinde dönem dönem ölçümü: profil günü (tekil 20), KAT (20 gün / ilk 5), eş oranı, duyarlılık, taban, yön."""
     Dg = E["dogrulama"]
     kur = tp_kural_uygula(T, kural)
@@ -666,7 +700,8 @@ def tp_kural_olc(T: pd.DataFrame, kural: Dict[str, Any], donemler: List[List[str
     es_m = T.uygun.to_numpy() & ~kur
     out: Dict[str, Any] = {}; sat_l = []
     kapsar = _tp_kapsar(T, pf, Dg["ufuk"])
-    bmask = tp_buyuk_satir(T, E)
+    Et = E["etiket"][etiket]
+    bmask = tp_buyuk_satir(T, E, etiket)
     for ad, bas, son in donemler:
         dm = ((T.tarih >= pd.Timestamp(bas)) & (T.tarih <= pd.Timestamp(son))).to_numpy()
         r: Dict[str, Any] = {"donem": ad, "profil_gunu_tekilsiz": int((pf & dm).sum()), "profil_gunu": int((tek & dm).sum()),
@@ -675,7 +710,7 @@ def tp_kural_olc(T: pd.DataFrame, kural: Dict[str, Any], donemler: List[List[str
         bb = bmask & dm
         r["buyuk_mum"] = int(bb.sum()); r["duyarlilik"] = float(kapsar[bb].mean()) if bb.any() else np.nan
         r["duyarlilik_t1"] = float(pf[bb].mean()) if bb.any() else np.nan
-        for kol, ek in (("f20", ""), ("f5", "_5")):
+        for kol, ek in ((Et["f"], ""), (Et["f5"], "_5")):
             v = T[kol].to_numpy()
             tb = T.uygun.to_numpy() & dm & np.isfinite(v)
             r[f"taban{ek}"] = float(v[tb].mean()) if tb.any() else np.nan
@@ -690,14 +725,14 @@ def tp_kural_olc(T: pd.DataFrame, kural: Dict[str, Any], donemler: List[List[str
             k = tp_kat_p(P_.v.to_numpy(float), P_.es.to_numpy(float), P_.ay.to_numpy())
             r[f"p_olay{ek}"] = k.get("p_olay"); r[f"p_es{ek}"] = k.get("p_ref"); r[f"kat{ek}"] = k.get("kat")
             r[f"alt{ek}"] = k.get("alt"); r[f"ust{ek}"] = k.get("ust"); r[f"p{ek}"] = k.get("p")
-            if kol == "f20":
+            if kol == Et["f"]:
                 r["olcum_disi"] = int((~g).sum())
                 if satir_don:
                     P_["pazar"] = T.attrs.get("pazar", "?"); P_["donem"] = ad
                     P_["sembol"] = [T.attrs["sembol"][s] for s in P_.sid.to_numpy()]
                     sat_l.append(P_)
         # yön: büyük mumla biten profil günlerinde ilk büyük mumun yukarı payı vs eş (aynı günler, profilsiz uygun, büyük mumla biten)
-        y = T.y20.to_numpy(); f = T.f20.to_numpy()
+        y = T[Et["y"]].to_numpy(); f = T[Et["f"]].to_numpy()
         py = tek & dm & (f == 1); ey = es_m & dm & (f == 1)
         gunler = np.unique(T.tarih.to_numpy()[py])
         ey &= np.isin(T.tarih.to_numpy(), gunler)
@@ -735,46 +770,55 @@ def tp_veri(pazar: str, veri: Optional[str] = None, veri2: Optional[str] = None)
 
 # ================================================================ 9) ADIM A — KEŞİF
 def tp_kesif(cikti: Optional[str] = None, veri: Optional[str] = None, git: bool = True) -> Dict[str, Any]:
-    """Keşif: yalnız 2016-22 satırları; panel 2023-01-01 'kes' ile kurulur (2023+ büyük mum etiketleri NaN). Kod git'e işlenmiş olmalı."""
+    """Keşif: yalnız 2016-22 satırları; panel 2023-01-01 'kes' ile kurulur (2023+ etiketleri NaN). Kod git'e işlenmiş olmalı.
+    İki etiket (B1, BH2) için ayrı örneklem, tek ölçü, çok değişkenli analiz ve kural arama (B1 -> P1-P3, BH2 -> H1-H3)."""
     t0 = time.time(); warnings.filterwarnings("ignore", category=RuntimeWarning)
     kz = _tp_simdi(); kod_git = OC._oc_git_islenmis(TP_YOL["kod"]) if git else {}
     satir = TP_YOL["satir"]; os.makedirs(satir, exist_ok=True)
-    kes = TP_ESIK["donem"]["kes"]; Xs, bilgi, TT = [], {}, {}
+    kes = TP_ESIK["donem"]["kes"]; kb, ks = TP_ESIK["donem"]["kesif"]; TT: Dict[str, pd.DataFrame] = {}
     for p in TP_ESIK["kesif_pazar"]:
-        Vd = tp_veri(p, veri)
-        T = tp_panel(Vd, kes=kes); del Vd; TT[p] = T
-        X = tp_kesif_orneklem(T)
-        bm = X.grup == "BUYUK"
-        bilgi[p] = {"satir": int(len(T)), "uygun_kesif": int((T.uygun & (T.tarih <= TP_ESIK["donem"]["kesif"][1]) & (T.tarih >= TP_ESIK["donem"]["kesif"][0])).sum()),
-                    "buyuk": int(bm.sum()), "yukari": int((X.yon == "YUKARI").sum()), "asagi": int((X.yon == "ASAGI").sum()),
-                    "kontrol": int((~bm).sum()), "buyuk_ham_kesif": int(((np.abs(T.nb1) == 1) & (T.tarih <= TP_ESIK["donem"]["kesif"][1])
-                                                                         & (T.tarih >= TP_ESIK["donem"]["kesif"][0])).sum()),
-                    "hisse": int(T.sid.nunique())}
-        Xs.append(X); tplog.info("keşif %s: %s (%.0f sn)", p, bilgi[p], time.time() - t0)
-    X = pd.concat(Xs, ignore_index=True)
-    X.to_csv(os.path.join(satir, "kesif_orneklem.csv.gz"), index=False)
-    tek = tp_tek_olcu(X); tek.to_csv(os.path.join(satir, "kesif_tek_olcu.csv"), index=False)
-    cok = tp_cok_degiskenli(X)
-    ara = tp_kural_ara(X, tek)
-    if not ara["kurallar"]:
-        tplog.warning("keşif: şartı geçen aday kural yok")
-    # keşifte tam ölçüm: duyarlılık / kesinlik (2016-22; aynı tp_kural_olc)
-    kesif_olc: Dict[str, Any] = {}
-    for p in TP_ESIK["kesif_pazar"]:
-        T = TT.pop(p)
+        Vd = tp_veri(p, veri); TT[p] = tp_panel(Vd, kes=kes); del Vd
+        tplog.info("keşif paneli %s: %d satır (%.0f sn)", p, len(TT[p]), time.time() - t0)
+    JE: Dict[str, Any] = {}; kurallar: List[Dict[str, Any]] = []
+    for et, Et in TP_ESIK["etiket"].items():
+        Xs, bilgi = [], {}
+        for p, T in TT.items():
+            X = tp_kesif_orneklem(T, etiket=et); bm = X.grup == "BUYUK"
+            dm = (T.tarih >= pd.Timestamp(kb)) & (T.tarih <= pd.Timestamp(ks)); v = T[Et["ornek"]]
+            bilgi[p] = {"satir": int(len(T)), "uygun_kesif": int((T.uygun & dm).sum()), "buyuk": int(bm.sum()),
+                        "yukari": int((X.yon == "YUKARI").sum()), "asagi": int((X.yon == "ASAGI").sum()), "kontrol": int((~bm).sum()),
+                        "buyuk_ham_kesif": int(((np.abs(v) == 1) & dm).sum()), "etiketli_pay_uygun": float((np.abs(v[T.uygun & dm]) == 1).mean()),
+                        "hisse": int(T.sid.nunique())}
+            Xs.append(X); tplog.info("keşif %s %s: %s", et, p, bilgi[p])
+        X = pd.concat(Xs, ignore_index=True)
+        X.to_csv(os.path.join(satir, f"kesif_orneklem_{et}.csv.gz"), index=False)
+        tek = tp_tek_olcu(X); tek.to_csv(os.path.join(satir, f"kesif_tek_olcu_{et}.csv"), index=False)
+        cok = tp_cok_degiskenli(X)
+        ara = tp_kural_ara(X, tek, onek=Et["kod"])
+        if not ara["kurallar"]:
+            tplog.warning("keşif %s: şartı geçen aday kural yok", et)
         for kr in ara["kurallar"]:
-            kesif_olc.setdefault(kr["kod"], {})[p] = tp_kural_olc(T, kr, [["2016-22"] + TP_ESIK["donem"]["kesif"]])["hucre"]["2016-22"]
+            kr["etiket"] = et
+        kurallar += ara["kurallar"]
+        JE[et] = {"bilgi": bilgi, "tek": json.loads(tek.to_json(orient="records")), "cok": cok,
+                  "arama": _tp_temiz({k: v for k, v in ara.items() if k != "kurallar"})}
+        del X
+    # keşifte tam ölçüm: her kural iki etikette (2016-22; doğrulamayla aynı tp_kural_olc)
+    kesif_olc: Dict[str, Any] = {}
+    for p in list(TT):
+        T = TT.pop(p)
+        for kr in kurallar:
+            for et in TP_ESIK["etiket"]:
+                kesif_olc.setdefault(kr["kod"], {}).setdefault(et, {})[p] = tp_kural_olc(T, kr, [["2016-22", kb, ks]], etiket=et)["hucre"]["2016-22"]
         del T
     kur_json = {"surum": TP_SURUM, "esik_sha": tp_sha(TP_ESIK), "kod_sha": _tp_sha_dosya(TP_YOL["kod"]), "kesif_zaman_utc": kz,
-                "kod_git": kod_git, "kurallar": [{k: v for k, v in kr.items() if k in ("kod", "ad", "kosul", "olcu_set", "cc", "skor")}
-                                                for kr in ara["kurallar"]]}
+                "kod_git": kod_git, "kurallar": [{k: v for k, v in kr.items() if k in ("kod", "etiket", "ad", "kosul", "olcu_set", "cc", "skor")}
+                                                for kr in kurallar]}
     _tp_json(_tp_yol("kural", cikti), _tp_temiz(kur_json))
-    J = {"surum": TP_SURUM, "zaman_utc": kz, "kod_git": kod_git, "bilgi": bilgi, "tek": json.loads(tek.to_json(orient="records")),
-         "cok": cok, "arama": _tp_temiz({k: v for k, v in ara.items() if k != "kurallar"}), "kurallar": _tp_temiz(kur_json["kurallar"]),
+    J = {"surum": TP_SURUM, "zaman_utc": kz, "kod_git": kod_git, "etiket": JE, "kurallar": _tp_temiz(kur_json["kurallar"]),
          "kesif_olc": kesif_olc, "sure_sn": round(time.time() - t0, 1)}
     _tp_json(_tp_yol("kesif_json", cikti), _tp_temiz(J))
-    md = tp_kesif_rapor(J)
-    _tp_yaz(_tp_yol("kesif_rapor", cikti), md)
+    _tp_yaz(_tp_yol("kesif_rapor", cikti), tp_kesif_rapor(J))
     return J
 
 
@@ -803,55 +847,61 @@ def _tp_q(x: Any) -> str:
 
 
 def tp_kesif_rapor(J: Dict[str, Any]) -> str:
-    tek = pd.DataFrame(J["tek"])
-    s = ["# TERS PARMAK İZİ — ADIM A KEŞİF RAPORU (ABD ve AVR 2016-22)", "",
+    s = ["# TERS PARMAK İZİ — ADIM A KEŞİF RAPORU (ABD ve AVR 2016-22; iki etiket B1 / BH2)", "",
          f"{TP_SURUM}. Keşif koşusu {J['zaman_utc']} (kod commit {str(J.get('kod_git', {}).get('commit', '-'))[:10]}). "
-         "Panel 2023-01-01 'kes' ile kuruldu: 2023 ve sonrasının büyük mum etiketleri bu adımda görülmedi.", "",
-         "## Örneklem", "", "| Pazar | hisse | uygun satır 2016-22 | büyük mum (ham, s+1) | büyük mum (uygun, 20 günde bir) | yukarı / aşağı | kontrol |",
-         "|---|---|---|---|---|---|---|"]
-    for p, b in J["bilgi"].items():
-        s.append(f"| {p} | {b['hisse']} | {b['uygun_kesif']} | {b['buyuk_ham_kesif']} | {b['buyuk']} | {b['yukari']} / {b['asagi']} | {b['kontrol']} |")
-    s += ["", "Büyük mum: gün gerçek aralığı >= 3 x ATR250 VE |getiri| >= 2 x σ250 (ATR / σ önceki 250 bardan). Önceki pencere büyük mum gününü "
-          "içermez (s = t-1'de biter). Kontrol: aynı pazar / takvim ayı / σ250 ondalığı x likidite üçlüsü, ertesi gün büyük mum olmayan günler (5 kat).", ""]
-    for pz in ["HAVUZ"] + list(J["bilgi"]):
-        x = tek[tek.pazar == pz].copy()
-        if not len(x):
-            continue
-        x["abs_d"] = x.d.abs(); x = x.sort_values("abs_d", ascending=False)
-        s += [f"## Tek ölçü: büyük mum öncesi vs kontrol — {pz} (|d| sırasıyla)", "",
-              "| # | ölçü | ort büyük / kontrol | d | AUC | q | yukarı d | aşağı d | yukarı vs aşağı d (AUC, q) |", "|---|---|---|---|---|---|---|---|---|"]
-        for k, r in enumerate(x.itertuples(), 1):
-            s.append(f"| {k} | {r.olcu} | {_sy(r.ort_buyuk, 3)} / {_sy(r.ort_kontrol, 3)} | {_sy(r.d, 3)} | {_sy(r.auc, 3)} | {_tp_q(r.q)} | "
-                     f"{_sy(r.yu_d, 3)} | {_sy(r.ya_d, 3)} | {_sy(r.yy_d, 3)} ({_sy(r.yy_auc, 3)}, {_tp_q(r.yy_q)}) |")
+         "Panel 2023-01-01 'kes' ile kuruldu: 2023 ve sonrasının etiketleri bu adımda görülmedi.", "",
+         f"- B1: {TP_ESIK['buyuk']['tanim']}", f"- BH2: {TP_ESIK['bh2']['tanim']}",
+         f"- Kontrol: {TP_ESIK['kontrol']['tanim']}", ""]
+    for et, JE in J["etiket"].items():
+        tek = pd.DataFrame(JE["tek"])
+        s += [f"# Etiket {et}: {TP_ESIK['etiket'][et]['ad']}", "", "## Örneklem", "",
+              "| Pazar | hisse | uygun satır 2016-22 | etiketli satır (ham) | uygun satırda etiket payı | olay (uygun, 20 günde bir) | yukarı / aşağı | kontrol |",
+              "|---|---|---|---|---|---|---|---|"]
+        for p, b in JE["bilgi"].items():
+            s.append(f"| {p} | {b['hisse']} | {b['uygun_kesif']} | {b['buyuk_ham_kesif']} | {_yz(b['etiketli_pay_uygun'], 2)} | {b['buyuk']} | "
+                     f"{b['yukari']} / {b['asagi']} | {b['kontrol']} |")
         s.append("")
-    s += ["## Çok değişkenli (L1 lojistik 5 katlı CV; derinlik 3 ağaç yalnız okunabilirlik)", ""]
-    for pz, c in J["cok"].items():
-        if not isinstance(c, dict):
-            continue
-        s += [f"### {pz}", "", f"n {c['n']} (büyük {c['n_buyuk']}); CV AUC **{_sy(c['cv_auc'], 3)}** (katlar {', '.join(_sy(a, 3) for a in c['cv_auc_kat'])}); "
-              f"etiket karıştırılınca {_sy(c['karisik_auc'], 3)}; ağaç (içeride) AUC {_sy(c['agac_auc_icerde'], 3)}.", "",
-              "Sıfır olmayan katsayılar (standart ölçek): " + ", ".join(f"{k} {_sy(v, 3)}" for k, v in list(c["katsayi"].items())[:15]), "",
-              "```", c["agac"].rstrip(), "```", ""]
-    a = J["arama"]
-    s += ["## Aday kural arama (önceden yazılı yordam, TP_ESIK 'kural')", "",
-          "Aday ölçüler (iki pazarda q < 0,10, aynı yön; min |d|): " + ", ".join(f"{r['olcu']} ({_sy(r['min_abs_d'], 3)}, {'+' if r['isaret'] > 0 else '-'})"
-                                                                            for r in a["aday_olcu"]),
-          f"; şartı geçen kural sayısı {a['n_aday_kural']}.", "",
-          "| Kod | kural | ABD duyarlılık_cc / yanlış / LR | AVR duyarlılık_cc / yanlış / LR | skor |", "|---|---|---|---|---|"]
-    for kr in J["kurallar"]:
-        cc = kr["cc"]
-        s.append(f"| {kr['kod']} | {tp_kural_metin(kr)} | " + " | ".join(
-            f"{_yz(cc[p]['duyarlilik_cc'])} / {_yz(cc[p]['yanlis_cc'])} / {_sy(cc[p]['LR'])}" for p in TP_ESIK["kesif_pazar"]) + f" | {_sy(kr['skor'])} |")
-    s += ["", "## Aday kuralların keşifte tam ölçümü (2016-22; her uygun gün; DOĞRULAMA ile aynı fonksiyon)", "",
-          "| Kod | Pazar | profil günü (tekil) | profil payı | DUYARLILIK (büyük mumların önceki 20 günde profil görme payı) | KESİNLİK P(20 günde büyük mum) | "
-          "eş | taban | KAT [%95] | ilk 5 gün KAT | yukarı payı (eş) |", "|---|---|---|---|---|---|---|---|---|---|---|"]
-    for kod, d in J["kesif_olc"].items():
-        for p, r in d.items():
-            s.append(f"| {kod} | {p} | {r['profil_gunu']} | {_yz(r['profil_pay'])} | {_yz(r['duyarlilik'])} | {_yz(r['p_olay'])} | {_yz(r['p_es'])} | "
-                     f"{_yz(r['taban'])} | {_sy(r['kat'])} [{_sy(r['alt'])}, {_sy(r['ust'])}] | {_sy(r['kat_5'])} | {_yz(r['yukari_pay'])} ({_yz(r['yukari_pay_es'])}) |")
-    s += ["", "Okuma: DUYARLILIK = büyük mumların yüzde kaçında önceki 20 günde bu profil görüldü; KESİNLİK = profil günlerinin yüzde kaçı 20 gün içinde büyük "
-          "mumla bitti; KAT = kesinlik / aynı gün, aynı oynaklık ve likidite kovasındaki profilsiz hisselerin oranı. Bu sayılar keşif verisinde (geriye bakarak "
-          "seçilmiş kurallar); karar ADIM B'de görülmemiş 2023 ve 2024-26 verisinde.", "",
+        for pz in ["HAVUZ"] + list(JE["bilgi"]):
+            x = tek[tek.pazar == pz].copy()
+            if not len(x):
+                continue
+            x["abs_d"] = x.d.abs(); x = x.sort_values("abs_d", ascending=False)
+            s += [f"## {et} tek ölçü: olay öncesi vs kontrol — {pz} (|d| sırasıyla)", "",
+                  "| # | ölçü | ort olay / kontrol | d | AUC | q | yukarı d | aşağı d | yukarı vs aşağı d (AUC, q) |", "|---|---|---|---|---|---|---|---|---|"]
+            for k, r in enumerate(x.itertuples(), 1):
+                s.append(f"| {k} | {r.olcu} | {_sy(r.ort_buyuk, 3)} / {_sy(r.ort_kontrol, 3)} | {_sy(r.d, 3)} | {_sy(r.auc, 3)} | {_tp_q(r.q)} | "
+                         f"{_sy(r.yu_d, 3)} | {_sy(r.ya_d, 3)} | {_sy(r.yy_d, 3)} ({_sy(r.yy_auc, 3)}, {_tp_q(r.yy_q)}) |")
+            s.append("")
+        s += [f"## {et} çok değişkenli (L1 lojistik 5 katlı CV; derinlik 3 ağaç yalnız okunabilirlik)", ""]
+        for pz, c in JE["cok"].items():
+            if not isinstance(c, dict):
+                continue
+            s += [f"### {pz}", "", f"n {c['n']} (olay {c['n_buyuk']}); CV AUC **{_sy(c['cv_auc'], 3)}** (katlar {', '.join(_sy(a, 3) for a in c['cv_auc_kat'])}); "
+                  f"etiket karıştırılınca {_sy(c['karisik_auc'], 3)}; ağaç (içeride) AUC {_sy(c['agac_auc_icerde'], 3)}.", "",
+                  "Sıfır olmayan katsayılar (standart ölçek): " + ", ".join(f"{k} {_sy(v, 3)}" for k, v in list(c["katsayi"].items())[:15]), "",
+                  "```", c["agac"].rstrip(), "```", ""]
+        a = JE["arama"]
+        s += [f"## {et} aday kural arama (önceden yazılı yordam, TP_ESIK 'kural')", "",
+              "Aday ölçüler (iki pazarda q < 0,10, aynı yön; min |d|): " + ", ".join(
+                  f"{r['olcu']} ({_sy(r['min_abs_d'], 3)}, {'+' if r['isaret'] > 0 else '-'})" for r in a["aday_olcu"]),
+              f"; şartı geçen kural sayısı {a['n_aday_kural']}.", "",
+              "| Kod | kural | ABD duyarlılık_cc / yanlış / LR | AVR duyarlılık_cc / yanlış / LR | skor |", "|---|---|---|---|---|"]
+        for kr in [k for k in J["kurallar"] if k["etiket"] == et]:
+            cc = kr["cc"]
+            s.append(f"| {kr['kod']} | {tp_kural_metin(kr)} | " + " | ".join(
+                f"{_yz(cc[p]['duyarlilik_cc'])} / {_yz(cc[p]['yanlis_cc'])} / {_sy(cc[p]['LR'])}" for p in TP_ESIK["kesif_pazar"]) + f" | {_sy(kr['skor'])} |")
+        s.append("")
+    s += ["# Aday kuralların keşifte tam ölçümü (2016-22; her uygun gün; DOĞRULAMA ile aynı fonksiyon; her kural iki etikette)", "",
+          "| Kod | ölçülen etiket | Pazar | profil günü (tekil) | profil payı | DUYARLILIK | KESİNLİK P(20 günde olay) | eş | taban | KAT [%95] | ilk 5 gün KAT | "
+          "yukarı payı (eş) |", "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for kod, dd in J["kesif_olc"].items():
+        for et, d in dd.items():
+            for p, r in d.items():
+                s.append(f"| {kod} | {et} | {p} | {r['profil_gunu']} | {_yz(r['profil_pay'])} | {_yz(r['duyarlilik'])} | {_yz(r['p_olay'])} | {_yz(r['p_es'])} | "
+                         f"{_yz(r['taban'])} | {_sy(r['kat'])} [{_sy(r['alt'])}, {_sy(r['ust'])}] | {_sy(r['kat_5'])} | {_yz(r['yukari_pay'])} ({_yz(r['yukari_pay_es'])}) |")
+    s += ["", "Okuma: DUYARLILIK = olayların (büyük mum / büyük hareket) yüzde kaçında önceki 20 günde bu profil görüldü; KESİNLİK = profil günlerinin "
+          "yüzde kaçı 20 gün içinde olayla bitti; KAT = kesinlik / aynı gün, aynı σ250 ondalığı ve likidite üçlüsündeki profilsiz hisselerin oranı. Bu sayılar "
+          "keşif verisinde (geriye bakarak seçilmiş kurallar); karar ADIM B'de görülmemiş 2023 ve 2024-26 verisinde.", "",
           "Hayatta kalma: evren bugün işlem gören hisseler (ABD + k34 nakdi biten); batanlar yok.", ""]
     return "\n".join(s)
 
@@ -889,13 +939,15 @@ def tp_onkayit_metni(K: Dict[str, Any], say: Dict[str, Any], vsha: Dict[str, str
          "250 günlük ATR / σ'sına göre; bölgeden bağımsız); profil büyük mumdan geriye bakarak keşif verisinde (2016-22) çıkarılır, burada dondurulur ve "
          "yalnız görülmemiş 2023 / 2024-26 verisinde ileriye doğru ölçülür (keşif / doğrulama kesin ayrı).", "",
          "## Dondurulan aday kurallar (ters_kurallar.json; keşif kontrol yüzdeliklerinden eşikler)", "",
-         "| Kod | kural | keşif ABD LR (duyarlılık_cc) | keşif AVR LR (duyarlılık_cc) |", "|---|---|---|---|"]
+         "| Kod | etiket | kural | keşif ABD LR (duyarlılık_cc) | keşif AVR LR (duyarlılık_cc) |", "|---|---|---|---|---|"]
     for kr in K["kurallar"]:
-        s.append(f"| {kr['kod']} | {tp_kural_metin(kr)} | {_sy(kr['cc']['ABD']['LR'])} ({_yz(kr['cc']['ABD']['duyarlilik_cc'])}) | "
+        s.append(f"| {kr['kod']} | {kr['etiket']} | {tp_kural_metin(kr)} | {_sy(kr['cc']['ABD']['LR'])} ({_yz(kr['cc']['ABD']['duyarlilik_cc'])}) | "
                  f"{_sy(kr['cc']['AVR']['LR'])} ({_yz(kr['cc']['AVR']['duyarlilik_cc'])}) |")
     s += ["", "```json", json.dumps(K["kurallar"], ensure_ascii=False, indent=1, default=_tp_kayit), "```", "",
           "## Ölçüm ve karar (önceden yazılı; eşik sonuca göre oynanmaz)", "",
-          f"- Büyük mum: {E['buyuk']['tanim']}", f"- Uygunluk: {E['uygun']['tanim']}", f"- Doğrulama: {Dg['tanim']}",
+          f"- B1 büyük mum: {E['buyuk']['tanim']}", f"- BH2 büyük hareket: {E['bh2']['tanim']}", f"- Etiket ve karar: {E['etiket_karar']}",
+          "- KAT ve duyarlılık her kural için İKİ etikette ayrı sütun (B1: olay = s+1..s+20'de büyük mum; BH2: olay = s+1..s+20'de büyük hareket); "
+          "karar kuralı (aşağıda) etiket başına aynen, BH o etiketin kendi 3 kuralı içinde.", f"- Uygunluk: {E['uygun']['tanim']}", f"- Doğrulama: {Dg['tanim']}",
           "- Karar hücreleri: ABD 2023, ABD 2024-26, AVR 2023, AVR 2024-26 (dönem = profil günü s tarihi; 2024-26 = 2024-01-01 .. 2026-08-31, sonuç "
           "penceresi 31.08.2026'yı aşan gün ölçülmez). BIST 2023 / 2024-26 bilgi (V_BIST 2023-06'dan; 250 bar şartıyla ilk uygun gün ~2024-06).",
           "- İkinci ölçü: ilk 5 gün KAT (bilgi). Üçüncü: yön (büyük mumla biten profil günlerinde ilk büyük mumun yukarı payı vs aynı günlerin profilsiz "
@@ -1109,35 +1161,48 @@ def tp_dogrula(cikti: Optional[str] = None, veri: Optional[str] = None, git: boo
     K = json.load(open(_tp_yol("kural", cikti), encoding="utf-8")); kur = K["kurallar"]
     satir = TP_YOL["satir"]; os.makedirs(satir, exist_ok=True)
     donem = [["2016-22"] + TP_ESIK["donem"]["kesif"]] + TP_ESIK["donem"]["karar"]
-    H: Dict[str, Dict[str, Any]] = {kr["kod"]: {} for kr in kur}; oc_parca: Dict[str, List[Dict[str, Any]]] = {kr["kod"]: [] for kr in kur}
+    etiketler = list(TP_ESIK["etiket"])
+    H: Dict[str, Dict[str, Dict[str, Any]]] = {kr["kod"]: {et: {} for et in etiketler} for kr in kur}
+    oc_parca: Dict[str, List[Dict[str, Any]]] = {kr["kod"]: [] for kr in kur}
     den, kor_aday, sat_l = {}, [], []
+    kor_kod = "P1" if any(k["kod"] == "P1" for k in kur) else (kur[0]["kod"] if kur else None)
     for p in TP_ESIK["karar_pazar"] + TP_ESIK["bilgi_pazar"]:
         Vd = tp_veri(p, veri); T = tp_panel(Vd, kes=None)
         den[p] = tp_gelecek_denetimi(Vd, T, kur, TP_ESIK["gelecek_denetimi_n"], TP_ESIK["tohum"])
         tplog.info("%s: panel %d satır; geleceğe bakma denetimi %d gün TUTTU", p, len(T), den[p])
-        bmask = tp_buyuk_satir(T)
-        B_ = T.loc[bmask, ["sid", "tarih", "nb1"]].copy(); B_["sembol"] = [T.attrs["sembol"][s] for s in B_.sid]; B_["pazar"] = p
-        B_.to_csv(os.path.join(satir, f"buyuk_{p}.csv.gz"), index=False)
+        for et in etiketler:
+            bmask = tp_buyuk_satir(T, etiket=et); ok_ = TP_ESIK["etiket"][et]["ornek"]
+            B_ = T.loc[bmask, ["sid", "tarih", ok_]].copy(); B_["sembol"] = [T.attrs["sembol"][s_] for s_ in B_.sid]; B_["pazar"] = p
+            B_.to_csv(os.path.join(satir, f"olay_{et}_{p}.csv.gz"), index=False)
         for kr in kur:
-            R = tp_kural_olc(T, kr, donem, satir_don=True)
-            for dn, r in R["hucre"].items():
-                H[kr["kod"]][f"{p} {dn}"] = r
-            S_ = R["satir"]; S_["kural"] = kr["kod"]; sat_l.append(S_)
-            olay = S_[["sembol", "tarih"]].copy(); olay["pazar"] = p
-            oc_parca[kr["kod"]].append(OC.oc_olc(olay.reset_index(drop=True), {p: Vd}))
-            if kr["kod"] == "P1" and p in TP_ESIK["karar_pazar"]:
-                kor_aday.append(tp_kor_aday(T, kr, R["profil_tekil_maske"]))
-            tplog.info("%s %s: %s (%.0f sn)", p, kr["kod"], {k: (v.get("n"), v.get("kat")) for k, v in R["hucre"].items()}, time.time() - t0)
+            for et in etiketler:
+                R = tp_kural_olc(T, kr, donem, satir_don=True, etiket=et)
+                for dn, r in R["hucre"].items():
+                    H[kr["kod"]][et][f"{p} {dn}"] = r
+                S_ = R["satir"]; S_["kural"] = kr["kod"]; S_["etiket"] = et; sat_l.append(S_)
+                if et == "B1":
+                    olay = S_[["sembol", "tarih"]].copy(); olay["pazar"] = p
+                    oc_parca[kr["kod"]].append(OC.oc_olc(olay.reset_index(drop=True), {p: Vd}))
+                    if kr["kod"] == kor_kod and p in TP_ESIK["karar_pazar"]:
+                        kor_aday.append(tp_kor_aday(T, kr, R["profil_tekil_maske"]))
+            tplog.info("%s %s: %s (%.0f sn)", p, kr["kod"], {et: {k: (v.get("n"), v.get("kat")) for k, v in H[kr["kod"]][et].items() if k.startswith(p)}
+                                                           for et in etiketler}, time.time() - t0)
         del T, Vd
         OC._OC_PANEL_ONBELLEK.clear()
     Sat = pd.concat(sat_l, ignore_index=True); Sat.to_csv(os.path.join(satir, "profil_gunleri.csv.gz"), index=False)
-    # karar: p_kural = dört karar hücresinin en büyük p'si; 3 kural BH
+    # karar: etiket başına, o etiketin kuralları; p_kural = dört karar hücresinin en büyük p'si; BH o etiketin kuralları içinde
     kh = [f"{p} {d[0]}" for p in TP_ESIK["karar_pazar"] for d in TP_ESIK["donem"]["karar"]]
-    pk = np.array([max([(H[kr["kod"]].get(k, {}).get("p") if H[kr["kod"]].get(k, {}).get("p") is not None else 1.0) for k in kh]) for kr in kur])
-    qk = tp_bh(pk)
-    karar, oc_s = {}, {}
-    for kr, p_, q_ in zip(kur, pk, qk):
-        karar[kr["kod"]] = {"p_kural": float(p_), "q_bh": float(q_), "etiket": tp_kural_etiket(H[kr["kod"]], q_)}
+    karar: Dict[str, Any] = {}
+    for et in etiketler:
+        ke = [kr for kr in kur if kr["etiket"] == et]
+        if not ke:
+            continue
+        pk = np.array([max([(H[kr["kod"]][et].get(k, {}).get("p") if H[kr["kod"]][et].get(k, {}).get("p") is not None else 1.0) for k in kh]) for kr in ke])
+        qk = tp_bh(pk)
+        for kr, p_, q_ in zip(ke, pk, qk):
+            karar[kr["kod"]] = {"etiket_olcu": et, "p_kural": float(p_), "q_bh": float(q_), "etiket": tp_kural_etiket(H[kr["kod"]][et], q_)}
+    oc_s = {}
+    for kr in kur:
         S = _tp_birlestir(oc_parca[kr["kod"]])
         S["olay"].to_csv(os.path.join(satir, f"oc_olay_{kr['kod']}.csv.gz"), index=False)
         oc_s[kr["kod"]] = {"hucre": json.loads(S["hucre"].to_json(orient="records", force_ascii=False)) if len(S["hucre"]) else [],
@@ -1146,6 +1211,7 @@ def tp_dogrula(cikti: Optional[str] = None, veri: Optional[str] = None, git: boo
     KA = pd.concat(kor_aday, ignore_index=True) if kor_aday else pd.DataFrame()
     try:
         kor = tp_kor_set(KA, veri, cikti)
+        kor["kural"] = kor_kod
     except Exception as ex:   # kör set ölçüm değildir; hatası sonucu durdurmaz, raporda yazılır
         tplog.error("kör set üretilemedi: %s", ex); kor = {"hata": str(ex)}
     J = {"surum": TP_SURUM, "onkayit": ok, "oc_kapi": {k: v for k, v in kapi.items() if k != "kontrol"}, "dogrula_zaman_utc": kz,
@@ -1163,35 +1229,38 @@ def tp_rapor(cikti: Optional[str] = None) -> str:
     s = ["# TERS PARMAK İZİ — ADIM B DOĞRULAMA RAPORU", "",
          f"{TP_SURUM}. Ön kayıt B commit {str(g.get('commit', '-'))[:10]} ({g.get('commit_zamani', '-')}); doğrulama koşusu {J['dogrula_zaman_utc']}; "
          f"süre {J.get('sure_sn')} sn. Geleceğe bakma denetimi: " + ", ".join(f"{p} {n} gün TUTTU" for p, n in J["gelecek_denetimi"].items()) + ".", "",
-         "## DÜZ DİL ÖZET", ""]
+         "## DÜZ DİL ÖZET (her kural KENDİ etiketinde karar)", ""]
     for kr in J["kurallar"]:
-        k = J["karar"][kr["kod"]]; H = J["hucre"][kr["kod"]]
+        k = J["karar"].get(kr["kod"], {}); et = kr["etiket"]; Hh = J["hucre"][kr["kod"]][et]
         par = []
         for c in kh:
-            r = H.get(c, {})
+            r = Hh.get(c, {})
             par.append(f"{c}: KAT {_sy(r.get('kat'))} [{_sy(r.get('alt'))}, {_sy(r.get('ust'))}], duyarlılık {_yz(r.get('duyarlilik'))}, n {r.get('n')}"
                        f"{' GEÇER' if r.get('gecer') else ''}")
-        s.append(f"- **{kr['kod']}** ({tp_kural_metin(kr)}): **{k['etiket']}** (p_kural {_tp_q(k['p_kural'])}, BH q {_tp_q(k['q_bh'])}). " + "; ".join(par) + ".")
-    s += ["", "Okuma: KAT = profil günlerinde 20 gün içinde büyük mum olasılığı / aynı gün, aynı σ250 ondalığı ve likidite üçlüsündeki profilsiz hisselerin "
-          "olasılığı (1 = fark yok). Duyarlılık = o dönemdeki büyük mumların yüzde kaçının önceki 20 gününde bu profil vardı. Hayatta kalma: evren bugün "
-          "işlem gören hisseler; batanlar yok.", "",
-          "## Doğrulama KAT tablosu (karar hücreleri + bilgi)", "",
-          "| Kural | Hücre | karar | profil günü n | P(20 gün büyük mum) profil / eş / taban | KAT [%95] | p | ilk 5 gün KAT [%95] | duyarlılık (s=t-1) | "
-          "yukarı payı profil / eş | GEÇER |", "|---|---|---|---|---|---|---|---|---|---|---|"]
-    for kr in J["kurallar"]:
-        H = J["hucre"][kr["kod"]]
-        for c in kh + bil:
-            r = H.get(c)
-            if r is None:
-                continue
-            s.append(f"| {kr['kod']} | {c} | {'K' if c in kh else 'b'} | {r.get('n')} | {_yz(r.get('p_olay'))} / {_yz(r.get('p_es'))} / {_yz(r.get('taban'))} | "
-                     f"{_sy(r.get('kat'))} [{_sy(r.get('alt'))}, {_sy(r.get('ust'))}] | {_tp_q(r.get('p'))} | {_sy(r.get('kat_5'))} [{_sy(r.get('alt_5'))}, "
-                     f"{_sy(r.get('ust_5'))}] | {_yz(r.get('duyarlilik'))} ({_yz(r.get('duyarlilik_t1'))}) | {_yz(r.get('yukari_pay'))} / "
-                     f"{_yz(r.get('yukari_pay_es'))} | {'EVET' if r.get('gecer') else 'hayır'} |")
-    s += ["", "## Kör grafik seti (Cemal'in gözü için)", ""]
+        s.append(f"- **{kr['kod']}** [{et}] ({tp_kural_metin(kr)}): **{k.get('etiket')}** (p_kural {_tp_q(k.get('p_kural'))}, BH q {_tp_q(k.get('q_bh'))}). "
+                 + "; ".join(par) + ".")
+    s += ["", "Okuma: KAT = profil günlerinde 20 gün içinde olay (B1 büyük mum / BH2 büyük hareket) olasılığı / aynı gün, aynı σ250 ondalığı ve likidite "
+          "üçlüsündeki profilsiz hisselerin olasılığı (1 = fark yok). Duyarlılık = o dönemdeki olayların yüzde kaçının önceki 20 gününde bu profil vardı. "
+          "Hayatta kalma: evren bugün işlem gören hisseler; batanlar yok.", ""]
+    for et in TP_ESIK["etiket"]:
+        s += [f"## Doğrulama KAT tablosu — etiket {et} ({TP_ESIK['etiket'][et]['ad']})", "",
+              "| Kural | Hücre | karar | profil günü n | P(20 gün olay) profil / eş / taban | KAT [%95] | p | ilk 5 gün KAT [%95] | duyarlılık (s=t-1 / s) | "
+              "yukarı payı profil / eş | GEÇER |", "|---|---|---|---|---|---|---|---|---|---|---|"]
+        for kr in J["kurallar"]:
+            Hh = J["hucre"][kr["kod"]][et]; kend = kr["etiket"] == et
+            for c in kh + bil:
+                r = Hh.get(c)
+                if r is None:
+                    continue
+                s.append(f"| {kr['kod']}{'' if kend else ' (çapraz)'} | {c} | {'K' if (c in kh and kend) else 'b'} | {r.get('n')} | {_yz(r.get('p_olay'))} / "
+                         f"{_yz(r.get('p_es'))} / {_yz(r.get('taban'))} | {_sy(r.get('kat'))} [{_sy(r.get('alt'))}, {_sy(r.get('ust'))}] | {_tp_q(r.get('p'))} | "
+                         f"{_sy(r.get('kat_5'))} [{_sy(r.get('alt_5'))}, {_sy(r.get('ust_5'))}] | {_yz(r.get('duyarlilik'))} ({_yz(r.get('duyarlilik_t1'))}) | "
+                         f"{_yz(r.get('yukari_pay'))} / {_yz(r.get('yukari_pay_es'))} | {'EVET' if r.get('gecer') else 'hayır'} |")
+        s.append("")
+    s += ["## Kör grafik seti (Cemal'in gözü için)", ""]
     kor = J.get("kor", {})
     if "pdf" in kor:
-        s.append(f"{kor['pdf']} ({kor['mb']} MB, {kor['n']} grafik: 20 P1 + 20 aynı gün / katman kontrolü, karışık sıra; anahtar "
+        s.append(f"{kor['pdf']} ({kor['mb']} MB, {kor['n']} grafik: 20 {kor.get('kural')} profil günü + 20 aynı gün / katman kontrolü, karışık sıra; anahtar "
                  f"{TP_DOSYA['anahtar']}, işaretlemeden önce açılmaz). Grafik: 120 bar önce + profil günü + 20 bar sonra, kesikli çizgi profil gününün sağı.")
     else:
         s.append(f"Üretilemedi: {kor}")

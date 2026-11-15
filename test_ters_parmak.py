@@ -115,6 +115,16 @@ def main():
     kontrol("kes yokken f20 / y20 ölçülür", Hn.f20.iat[490] == 1.0 and Hn.y20.iat[490] == -1 and Hn.y20.iat[390] == 1)
     kontrol("son 20 barda f20 NaN (gelecek yok)", np.isnan(Hn.f20.iat[-5]))
 
+    # 4b) BH2: art arda 5 gün +%6 (tek günlük büyük mum yok) -> s'de 20 günlük büyük hareket
+    db = hisse(600, 2, sok=[(450 + k, 0.06) for k in range(5)])
+    Hb = TP.tp_hisse(db)
+    esk = max(0.15, 3 * Hb.S.iat[440] * np.sqrt(20))
+    Cb = db.Close.to_numpy(); mx = np.max(np.abs(np.log(Cb[441:461] / Cb[440])))
+    kontrol("BH2 elle (s = 440)", Hb.h20.iat[440] == float(mx >= esk) and Hb.h20.iat[440] == 1 and Hb.hy20.iat[440] == 1, f"{mx:.3f} vs {esk:.3f}")
+    kontrol("BH2 ilk 5 gün: hareket 10 bar sonra başlıyorsa h5 = 0", Hb.h5.iat[440] == 0 and Hb.h5.iat[448] == 1)
+    kontrol("BH2 kes: pencere kesi aşarsa NaN", np.isnan(TP.tp_hisse(db, kes=str(db.index[455].date())).h20.iat[440]))
+    kontrol("BH2 geçmiş ölçüleri değiştirmez (kesme)", np.allclose(TP.tp_olculer(db).iloc[440].to_numpy(float), TP.tp_olculer(db.iloc[:441]).iloc[-1].to_numpy(float), equal_nan=True))
+
     # 5) panel + kontrol eşleme (45 hisse)
     rng = np.random.default_rng(5)
     V = {}
@@ -127,6 +137,8 @@ def main():
     lq = T[np.isfinite(T.Lq)]
     alt_pay = lq.groupby("tarih").lik_alt.mean().mean()
     kontrol("likidite alt %20 dışarı (gün kesiti)", 0.15 < alt_pay < 0.25, f"{alt_pay:.3f}")
+    Xh = TP.tp_kesif_orneklem(T, bas="2016-01-01", son="2018-05-01", etiket="BH2")
+    kontrol("BH2 örneklemi: kontroller hb == 0", (Xh[Xh.grup == "KONTROL"].hb == 0).all() and (Xh[Xh.grup == "BUYUK"].hb.abs() == 1).all() and len(Xh) > 0)
     Xo = TP.tp_kesif_orneklem(T, bas="2016-01-01", son="2018-05-01")
     b_, k_ = Xo[Xo.grup == "BUYUK"], Xo[Xo.grup == "KONTROL"]
     kontrol("keşif örneklemi: büyük ve kontrol var", len(b_) > 20 and len(k_) > 0, f"{len(b_)} / {len(k_)}")
@@ -171,6 +183,8 @@ def main():
     Tn = TP.tp_panel(Vd, kes=None, bas="2015-01-01")
     R = TP.tp_kural_olc(Tn, kr, [["x", "2016-06-01", "2018-06-30"]], satir_don=True)
     h = R["hucre"]["x"]
+    h2 = TP.tp_kural_olc(Tn, kr, [["x", "2016-06-01", "2018-06-30"]], etiket="BH2")["hucre"]["x"]
+    kontrol("tp_kural_olc BH2 etiketiyle", h2["profil_gunu"] == h["profil_gunu"] and h2["buyuk_mum"] != h["buyuk_mum"], f"{h2['buyuk_mum']} vs {h['buyuk_mum']}")
     kontrol("tp_kural_olc: profil günü, KAT, duyarlılık", h["profil_gunu"] > 0 and h["n"] >= 0 and "duyarlilik" in h and isinstance(h["gecer"], bool), f"n {h['n']} kat {h['kat']}")
     Hx = {"ABD 2023": {"gecer": True, "n": 50}, "ABD 2024-26": {"gecer": True, "n": 50}, "AVR 2023": {"gecer": True, "n": 50}, "AVR 2024-26": {"gecer": True, "n": 50}}
     kontrol("etiket: dört hücre + BH -> PARMAK İZİ VAR", TP.tp_kural_etiket(Hx, 0.01) == "PARMAK İZİ VAR")
