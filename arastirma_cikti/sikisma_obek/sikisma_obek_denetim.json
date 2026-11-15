@@ -1,0 +1,10 @@
+{
+ "satirlar": [
+  "KAT S5_DIP ABD 2023 B1 es1: bağımsız n 578, KAT 1.1442 [1.01, 1.34] (ayrı tohum) vs rapor n 578, KAT 1.1442 [1.02, 1.35]; eş ortalaması en büyük fark 9.7e-17 -> TUTTU",
+  "KAT S5 AVR 2024-26 B1 es2: bağımsız n 1417, KAT 1.0186 [0.91, 1.13] (ayrı tohum) vs rapor n 1417, KAT 1.0186 [0.91, 1.12]; eş ortalaması en büyük fark 8.3e-17 -> TUTTU",
+  "KAT S5_YOL ABD 2024-26 BH2 es1: bağımsız n 2251, KAT 0.9113 [0.54, 1.35] (ayrı tohum) vs rapor n 2251, KAT 0.9113 [0.54, 1.35]; eş ortalaması en büyük fark 8.7e-17 -> TUTTU",
+  "BÖLGE ABD VTR 2024-04-16 (DIP): elle S5 True (mum/ATR 0.75, öbek %4.5, eğim %-1.0, aşağı açılış 0.40, BB yüzdelik 0.040, konum120 0.12, tepeden %-17); önceki 19 günde S5 YOK; B1 elle True (k 12) vs satır (True, 12, 'DIP') -> TUTTU",
+  "BÖLGE AVR UMG.AS 2023-09-07 (YOL): elle S5 True (mum/ATR 0.47, öbek %2.3, eğim %-0.5, aşağı açılış 0.40, BB yüzdelik 0.004, konum120 0.85, tepeden %-3); önceki 19 günde S5 YOK; B1 elle False (k 0) vs satır (False, 0, 'YOL') -> TUTTU",
+  "BÖLGE BIST FENER 2026-02-23 (DIP): elle S5 True (mum/ATR 0.52, öbek %7.6, eğim %-0.8, aşağı açılış 0.13, BB yüzdelik 0.112, konum120 0.22, tepeden %-28); önceki 19 günde S5 YOK; B1 elle False (k 0) vs satır (False, 0, 'DIP') -> TUTTU"
+ ]
+}
