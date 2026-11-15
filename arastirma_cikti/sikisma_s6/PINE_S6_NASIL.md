@@ -46,3 +46,10 @@ Renkler ve tablo "Görünüm" grubundadır. Eşikleri değiştirirsen grafik Pyt
 - AL üçgeni, önceki günün taban penceresindeki en yüksek High'ın kapanışla aşıldığı gündür. Tasarım sınamasında PAPIL 11 Ara 2025 ve TUCLK 22 Ağu 2025 al mumları tuttu; TUCLK'ta bundan önce 6 Ağu'da erken bir üçgen daha var (fiyat tabana döndü, yeni kutu açıldı). KNFRT 14 Eyl 2022'de üçgen yok. Ayrıntı S6_TASARIM.md.
 - PAPIL büyük taban (Eki 2025 - Mar 2026) bant %12 ile tek bölge olmaz (bilgi etiketi); tavan kırılımı tek başına alım nedeni değildir (K6b uyarısı).
 - Kutular sık çıkar: tasarım sayımında BIST'te hisse başına yılda ~6,9 bölge, günlerin ~%28'inde açık bir kutu var. Kutu "aday"dır; Cemal'in gözü ve sektör rüzgârı olmadan çöl sayılmaz.
+
+## Bağımsız denetim notları (15 Kas 2026, ana model)
+- AL ve KIRILDI işaretleri son mum KAPANINCA kesinleşir; seans içinde açık mumda geçici görünüp kaybolabilir. Günlük kapanıştan sonra bak (üretimdeki 'yarım bar' dersi).
+- Yeşil yatay çizgi = AL eşiği (tavan mumunun High'ı); kutunun üst kenarı = bölgenin en yüksek noktası; ikisi farklı olabilir.
+- Bölge 400 geçerli barı aşarsa kutunun sol kenarı yanlış çizilebilir (BIST'te 2016-26'da en uzun bölge 206 bar; tetiklenmedi).
+- SIKLIK UYARISI: bu kural setiyle (bant %12, net %3, küçük mum 0,90 x ATR, en az 8 mum) BIST'te hisse-yıl başına ~7 bölge ve ~3 AL çıkar; barların %28'i açık bölgede. Çöl nadir değil. Daha az bölge için ayarlardan nMin'i 15'e, bantMax'ı 0,08'e çekebilirsin; her değişiklik gösterimdir, ölçüm değil.
+- Bölge sürekliliği: taban sürdükçe aynı bölge (ana model onayı; iş tanımındaki '±2 bar' kuralı üst üste binen kutular üretiyordu).
