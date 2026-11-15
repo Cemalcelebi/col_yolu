@@ -109,6 +109,12 @@
 #      (uzunluk >= MIN_UZ 20, yukseklik <= MAX_YUK 6 ATR) D13'te de gecerli. Geri alma tek satir: SEGMENT_MOD='dip'.
 #      Cikti col_dip ile ayni alanlar (+ dip_bar, inis, retest, yuv, obek, kucuk_kat). col_olc SEGMENT_MOD='dip2' ile kullanir.
 #      col_dip (D12) ve col_segment (D7) DEGISMEDI; carpan alanlari ortak yardimciya (_col_alanlar) alindi, sonuc birebir ayni.
+#  ================== 2026-11-15 D14: UZUN COL ETIKETI KALDIRILDI ==========================
+#  D14) 2026-11-15: D9 uzun col etiketi ve ruzgar_listesi'ndeki uzun col hisse listesi uretim ekranindan kaldirildi
+#      (Ç181a IZ DEGIL; Cemal 'uzun col etiketini kaldir'). bugun_liste artik 'uzun' sutunu uretmez (hicbir CSV/pkl
+#      semasi bu sutunu tasimiyordu); ruzgar_listesi() yalniz sektor ruzgari ozetini basar ('=== SEKTOR RUZGARI') ve
+#      ruzgarli sektor tablosunu (alt, sepet, ruz, uye) dondurur. uzun_col_olc ve UZUN_* sabitleri olcum referansi
+#      olarak kalir (D9_YENIDEN birebir karsilastirir); sektor_ruzgar, RUZ_* ve 'ruz'/'ruzgar' sutunlari (Ç181c EMARE) kalir.
 #  ============================================================================
 #
 #  CDS REJIMI: pct250 <0.3 ->0.5x | 0.3-0.6 ->1.0x | >=0.6 ->1.5x
@@ -727,8 +733,10 @@ def sektor_ruzgar(veri=None, tarih=None):
     return out
 
 def ruzgar_listesi(veri=None, n=40, yazdir=True):
-    """D9: ruzgarli sektorlerde (ruz >= RUZ_ESIK) UZUN COLDE olan hisseler — col_segment adayi olmasa da.
-    Fon suzgeci uygulanir (FON_ELE). Siralama: ruzgar buyukten kucuge, sonra bant dar olan ustte."""
+    """D9/D14: sektor ruzgari ozeti — sepeti RUZ_GERI gunde > RUZ_MUTLAK ve piyasadan >= RUZ_ESIK iyi olan sektorler,
+    uyeleri ve 'az dusen' sektorler. D14 (15 Kas 2026): uzun col hisse listesi kaldirildi (Ç181a IZ DEGIL); hisse
+    listesi olmadigi icin fon suzgeci burada uygulanmaz. Donus: ruzgarli sektor tablosu (alt, sepet, ruz, uye),
+    sepet buyukten kucuge. n kullanilmaz (eski cagrilar kirilmasin diye imzada kalir)."""
     veri = veri if veri is not None else VERI
     try: rz = sektor_ruzgar(veri)
     except Exception as e:
@@ -736,27 +744,16 @@ def ruzgar_listesi(veri=None, n=40, yazdir=True):
     if rz.empty: return pd.DataFrame()
     ruzgarli = rz[(rz.ruz >= RUZ_ESIK) & (rz.sepet > RUZ_MUTLAK)]            # D9b: sepet de yukseliyor olmali
     az_dusen = rz[(rz.ruz >= RUZ_ESIK) & ~(rz.sepet > RUZ_MUTLAK)]
-    R = []; fon_elenen = []
-    for s in ruzgarli.index:
-        df = veri.get(s)
-        if df is None: continue
-        u = uzun_col_olc(df)
-        if not u or not u['uzun']: continue
-        fe = fon_etiket(s)
-        if fe and FON_ELE: fon_elenen.append(s); continue
-        r = ruzgarli.loc[s]
-        R.append({'sembol': s, 'sektor': r.alt, 'ruz%': round(100 * r.ruz, 1), 'sepet%': round(100 * r.sepet, 1), 'uye': int(r.uye),
-                  'uzun': u['uzun'], 'bant%': u['bant'], 'konum': u['konum'], 'mum': u['mum'],
-                  'fiyat': round(float(df.Close.iloc[-1]), 2), 'fon': (f"{fe[1]:.0f}%" if fe else '')})
-    t = pd.DataFrame(R)
+    piy = float(rz.piy.iloc[0])
+    tum = rz[rz.alt != '']
+    def _sepet_ozet(alt):                                                      # sepet = tum uyelerin ortalamasi
+        uy = tum[tum.alt == alt].g.dropna()
+        return float(uy.mean()), uy.sort_values(ascending=False)
+    sekt = sorted(ruzgarli.alt.unique(), key=lambda a: -_sepet_ozet(a)[0])
+    t = pd.DataFrame([{'alt': a, 'sepet': _sepet_ozet(a)[0], 'ruz': _sepet_ozet(a)[0] - piy, 'uye': int(len(_sepet_ozet(a)[1]))} for a in sekt],
+                     columns=['alt', 'sepet', 'ruz', 'uye'])                   # D14: donus = ruzgarli sektor tablosu
     if yazdir:
-        piy = float(rz.piy.iloc[0])
-        tum = rz[rz.alt != '']
-        def _sepet_ozet(alt):                                                  # sepet = tum uyelerin ortalamasi
-            uy = tum[tum.alt == alt].g.dropna()
-            return float(uy.mean()), uy.sort_values(ascending=False)
-        sekt = sorted(ruzgarli.alt.unique(), key=lambda a: -_sepet_ozet(a)[0])
-        print(f"\n=== D9 RUZGAR LISTESI — sektor sepeti {RUZ_GERI}g > %{100*RUZ_MUTLAK:.0f} ve piyasadan >= %{100*RUZ_ESIK:.0f} iyi: {len(sekt)} sektor | piyasa medyani %{100*piy:+.1f}")
+        print(f"\n=== SEKTOR RUZGARI — sektor sepeti {RUZ_GERI}g > %{100*RUZ_MUTLAK:.0f} ve piyasadan >= %{100*RUZ_ESIK:.0f} iyi: {len(sekt)} sektor | piyasa medyani %{100*piy:+.1f}")
         for a in sekt:
             m, uy = _sepet_ozet(a)
             ust = (uy > 0).sum()
@@ -765,12 +762,6 @@ def ruzgar_listesi(veri=None, n=40, yazdir=True):
         azs = sorted(az_dusen.alt.unique(), key=lambda a: -_sepet_ozet(a)[0])
         if azs:
             print("  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): " + ", ".join(f"{a} %{100*_sepet_ozet(a)[0]:+.0f}" for a in azs))
-        if t.empty: print("  ruzgarli sektorde uzun colde hisse yok")
-        else:
-            t = t.sort_values(['ruz%', 'bant%'], ascending=[False, True]).head(n)
-            print(f"  uzun colde (dipte, {UZUN_W//2}-{UZUN_W} bar dar bant) {len(R)} hisse:")
-            print(t.to_string(index=False))
-        if fon_elenen: print("  FON ELENDI: " + ", ".join(fon_elenen))
     return t
 
 def _bant(df, tarih, pencere=10):
@@ -848,10 +839,9 @@ def bugun_liste(veri=None, n=40, hepsi=False):
         if fe and FON_ELE:
             FON_ELENEN.append((s, fe[0], fe[1])); continue
         if hepsi or o['GECER']:
-            u = uzun_col_olc(df) or {}                   # D9
             rz = float(RZ.ruz.get(s, np.nan)) if (not RZ.empty and s in RZ.index) else np.nan
             rv = bool(RZ.ruzgar.get(s, False)) if (not RZ.empty and s in RZ.index and 'ruzgar' in RZ.columns) else False   # D10a
-            R.append({'sembol':s,'fon':(f"{fe[1]:.0f}%" if fe else ''),'uzun':u.get('uzun',''),'ruz':(round(100*rz,0) if np.isfinite(rz) else np.nan),'ruzgar':('RUZGAR' if rv else ''),'bas':o['bas_tarih'],'bar':o['uzunluk'],'doji':o['doji'],'fitil':o['alt_fitil'],'dar':o['dar'],
+            R.append({'sembol':s,'fon':(f"{fe[1]:.0f}%" if fe else ''),'ruz':(round(100*rz,0) if np.isfinite(rz) else np.nan),'ruzgar':('RUZGAR' if rv else ''),'bas':o['bas_tarih'],'bar':o['uzunluk'],'doji':o['doji'],'fitil':o['alt_fitil'],'dar':o['dar'],
                       'gecerli':o['gecerli_oran'],'clv':o['clv'],'bant':round(o['bant_son'],2),'ortaust':round(o['ortaust'],2),
                       'yuk':o['yukseklik_atr'],'taban':o['taban'],'tavan':o['tavan'],'fiyat':round(float(df.Close.iloc[-1]),2),'GECER':o['GECER']})
     t=pd.DataFrame(R)
@@ -978,7 +968,7 @@ def endeks_yukle(sembol='XU100.IS', period='10y'):
     print(f"{sembol}: {len(xu)} bar  {xu.index[0].date()} -> {xu.index[-1].date()}")
     return xu
 
-print(f"[ok] COL SISTEMI v2  (2026-10-21 D13 / D12: col tespiti = {('DIP2 (yeni dipten kutu + savunma ' + str(D13_BAR) + ' bar + ' + D13_YUV + ' + obek >= ' + str(D13_OBEK) + ')') if SEGMENT_MOD=='dip2' else ('DIP COLU (bolge + dip + yeni dip yok + imza >= ' + str(IMZA_MIN) + '/4)' if SEGMENT_MOD=='dip' else 'ESKI col_segment (D7)')} | D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
+print(f"[ok] COL SISTEMI v2  (2026-11-15 D14: uzun col etiketi kaldirildi | 2026-10-21 D13 / D12: col tespiti = {('DIP2 (yeni dipten kutu + savunma ' + str(D13_BAR) + ' bar + ' + D13_YUV + ' + obek >= ' + str(D13_OBEK) + ')') if SEGMENT_MOD=='dip2' else ('DIP COLU (bolge + dip + yeni dip yok + imza >= ' + str(IMZA_MIN) + '/4)' if SEGMENT_MOD=='dip' else 'ESKI col_segment (D7)')} | D11: verisi durmus hisse aday olmaz, > {VERI_BAYAT} is gunu | D10: ruzgar etiketi D9b dahil + tarih hizasi, bayat > {RUZ_BAYAT} is gunu | 2026-10-18 D9: uzun col {UZUN_W} bar + sektor ruzgari >= %{100*RUZ_ESIK:.0f}, sepet > %{100*RUZ_MUTLAK:.0f} (D9b) | 2026-10-17 D7: kucuk mum = {MUM_OLCU} | D8: fon suzgeci {'ACIK' if FON_ELE else 'KAPALI'}, {len(fon_defteri())} hisse kayitli; 2026-09-18: gecerli bar, dar hafta, tek carpan)")
 print(f"  esikler: clv>={E_CLV} bant_son>={E_BS} ortaust>={E_OU} | segment>={MIN_UZ} bar, yuk<={MAX_YUK} ATR, yerel={YEREL} | AL_PAY={AL_PAY}")
 print(f"  CIKIS={CIKIS} HEDEF=%{HEDEF} | pozisyon %{POZISYON_TABAN} x CDS x BORC x DOJI x FITIL x DAR x KURAL (ust %{POZISYON_UST})")
 _r=cds_rejim()

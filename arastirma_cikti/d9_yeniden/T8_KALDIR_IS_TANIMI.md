@@ -36,70 +36,10 @@ Dayanak: Ç181a (14 Kas) D9 uzun çöl İZ DEĞİL (ABD n 2.399 / 4.556, AVR 1.1
 6. Bu dosyalar Colab'da exec ile yüklenir: raporda "çalışma zamanını yeniden başlat" hatırlatması; Drive kopyalarını (COL_v1.py, takip.py; col_tarayici kökü) ANA MODEL günceller, sen dokunma.
 
 ## 3. TESTLER
-- test_takip.py mevcut testler geçmeli (SONUC: HEPSI OK). Yeni test(ler) ekle: (a) gun() ya da ilgili yazdırma yolunun çıktısında 'uzun' sütun başlığı YOK, 'ruz%' VAR (test_takip'teki sentetik veri / yakalama düzeniyle; gun() tamamı çalıştırılamıyorsa BEKLE başlık dizesi için en küçük sınama); (b) ruzgar_listesi çıktısında 'uzun colde' geçmez, 'SEKTOR RUZGARI' geçer; (c) uzun_col_olc ve UZUN_* sabitleri hâlâ COL_v1'de ve değişmedi (test_d9_yeniden'i çalıştır: SONUC HEPSI OK).
-- == test_d9_yeniden ==
-  OK   D9_PARAM == COL_v1 sabitleri  ({'UZUN_W': 250, 'UZUN_BANT': 1.5, 'UZUN_MUM': 0.04, 'UZUN_KONUM': 0.5, 'RUZ_GERI': 60, 'RUZ_ESIK': 0.1, 'RUZ_MIN_UYE': 4, 'RUZ_MUTLAK': 0.0, 'RUZ_BAYAT': 5})
-  OK   COL_v1 bellek sabitleri de aynı
-  OK   param değişince durur
-  OK   d9_uzun_ref == COL_v1.uzun_col_olc  (fark 0)
-  OK   d9_uzun_seri == d9_uzun_ref (her 3. bar)  (fark 0)
-  OK   sentetik çöl D9 olarak tespit edildi  (D9 gün 655)
-  OK   çölsüz trendli hissede D9 yok
-  OK   d9_ruzgar_ref == COL_v1.sektor_ruzgar  (fark 0)
-  OK   d9_ruzgar_panel == d9_ruzgar_ref (her 7. gün, her hisse)  (fark 0)
-  OK   yükselen sektörde rüzgâr bulundu  (rüzgâr hisse-gün 529)
-  OK   geleceğe bakma: rüzgâr t'de kesilince aynı
-  OK   geleceğe bakma: D9 t'de kesilince aynı
-  OK   satır a = D9, b ⊂ a, c ∩ a = ∅
-  OK   sektörsüz pazar: b ve c boş
-  OK   tercil sınırları sıralı
-  OK   cetvel çağrısı: hücre tablosu + etiket
-  OK   cetvel tekilleştirmesi (aynı hissede 30 gün arayla ikinci olay düşer)  ({'girdi': 40, 'sembol_yok': 0, 'sinyal_bar_gecersiz': 0, 'giris_yok': 0, 'giris_gec': 0, 'likidite_alt20': 8, 'bolunme_gecmis': 0, 'evren_once': 0, 'gecmis_eksik': 0, 'havuz_az': 0, 'havuz_disi': 8, 'tekil': 15, 'r60_olculemedi': 0, 'es_az': 8})
-  OK   oc_rapor biçimi
-  OK   kapı: ön kayıt yok -> durur
-  OK   kapı: sha tutmuyor -> durur
-  OK   kapı: doğru sha ile açılır (git hariç)
-  OK   e-posta / anahtar yok  ([])
-
-22 geçti, 0 kaldı,   ✓ T1_butunluk
-  ✓ T2_takvim
-  ✓ T3_dolum
-11:00:48 INFO zincir: temettü indiriliyor: 2 kaldı (0 hazır)
-11:00:48 INFO zincir: temettü indiriliyor: 1 kaldı (2 hazır)
-  ✓ T4_temettu
-  ✓ T5_kesik
-  ✓ T6_nedensellik
-  ✓ T6b_nedensellik_col_olc
-  ✓ T7_pnl_ve_maliyet
-  ✓ T8_hayatta
-11:00:48 INFO zincir: evren 4 hisse, sinyal 4
-11:00:48 INFO zincir: temettü indiriliyor: 4 kaldı (0 hazır)
-ZİNCİR DENETİMİ v1.1
-1 BÜTÜNLÜK: imkânsız bar 0/1200 (%0.00); açılış aralık dışı 0, kapanış aralık dışı 0, H<L 0, fiyat≤0 0, çift tarih 0 → TEMİZ
-2 TAKVİM: piyasa açık 300 gün; 0 hissede toplam 0 eksik bar → TEMİZ
-3 DOLUM: n=4: ertesi açılış tavandan %0.0 (alınamaz), tabandan %0.0; boşluk medyan %+0.4 ort %+0.4 → tavan açılış payı küçük
-4 TEMETTÜ: 0/4 sinyalde temettü; verim hesaplanamadı
-5 KESİK PENCERE: tam pencere 4, kesik (40–119 bar) 0 (%0.0), atılan (<40) 0 → kesik pay küçük
-6 NEDENSELLİK: (b) liste uyumu [onarılmış veri (bedelsiz onarımı geçen hisselerde fark NORMAL)]: 0 sütun () örnek 4: uyum 4, uyumsuz 0 | → d'de karşılaştırılacak saklı sütun yok; liste uyumu ölçülemedi
-7 MALİYET: basit kopya P&L: %0.4 → n=0 bekl +nan kazanan %nan; %1.0 → n=0 bekl +nan kazanan %nan; %1.5 → n=0 bekl +nan kazanan %nan → maliyet artınca beklenti sıfıra iniyor: küçük hisse yayılımı sonucu belirliyor
-8 HAYATTA KALMA: evren 4; son barı 30+ gün eski 0; finansal listede olup evrende olmayan 0 () → çıkanlar veride yok: Çöl getirisi olduğundan İYİ ölçülüyor (yön belli, büyüklük bilinmiyor)
-11:00:48 INFO zincir: bitti 0s → zincir_denetimi_rapor.txt
-  ✓ T9_uctan_uca
-
-10/10 test geçti (veri gerektiriyorsa 'VERİ YOK, KOŞMADI' yaz) ve FON_IZI'den bağımsız olduğu için başka test gerekmez; yine de test_col_dip2.py
-test_d9_yeniden.py
-test_k64.py
-test_ruzgar_defteri.py
-test_takip.py
-test_tema_col.py
-test_tema_sepet.py
-test_vdyt.py
-test_vdyt2.py
-test_vdyt2b.py
-test_vdyt_grafik.py
-test_veri_koru.py
-test_yeniden_tara.py ile bulduklarını koştur ve sonuçları yaz.
-- Kodun yükleme yolu: BASLAT.py / gh_gunluk.py COL_v1.py'yi exec eder; sözdizimi için .
+(DÜZELTME 15 Kas, ana model: bu bölümün ilk sürümü kabuk heredoc'unda ters tırnaklar çalıştığı için test çıktılarıyla bozulmuştu; alt ajan amacı doğru anlayıp uyguladı. Aşağıdaki metin asıl istenendir; hata defterine girdi.)
+- test_takip.py mevcut testler geçmeli (SONUC: HEPSI OK). Yeni test(ler): (a) gun() çıktısında BEKLE başlığında 'uzun' YOK, 'ruz%' VAR; (b) ruzgar_listesi çıktısında 'uzun colde' geçmez, 'SEKTOR RUZGARI' geçer; (c) uzun_col_olc ve UZUN_* sabitleri hâlâ COL_v1'de ve değişmedi.
+- test_d9_yeniden.py geçmeli (SONUC HEPSI OK); COL_v1 / takip kullanan öteki test dosyaları (grep ile bulunur) koşturulur; veri gerektirenler 'VERİ YOK, KOŞMADI' diye yazılır.
+- Sözdizimi: COL_v1.py ve takip.py ast.parse ile temiz (BASLAT.py / gh_gunluk.py bu dosyaları exec eder).
 
 ## 4. RAPOR (arastirma_cikti/d9_yeniden/T8_KALDIR_RAPOR.md; zorunlu başlıklar)
 1. ÖZET  2. DEĞİŞEN SATIRLAR (eski -> yeni)  3. ŞEMA KARARI ('uzun' sütunu)  4. KONTROL LİSTESİ (K1-K14; yanıt + kanıt)  5. TEST (çıktı son satırları)  6. HATA (bulduğun her hata; yoksa 'bulunmadı')  7. ÖNERİLEN DEFTER METNİ (IK_GOREV satırı; ana model işler)  8. DOKUNULAN DOSYALAR (git status --short, git diff --stat)

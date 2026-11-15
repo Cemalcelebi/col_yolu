@@ -1,4 +1,4 @@
-"""test_takip.py — takip.py T10 (stop maliyete) + T11 (seans acikken yarim bar) mekanik sinama. Sentetik veri, gecici klasor; Drive'a dokunmaz.
+"""test_takip.py — takip.py T10 (stop maliyete) + T11 (seans acikken yarim bar) + T12 / COL_v1 D14 (uzun col etiketi kaldirildi, sektor ruzgari kaldi) mekanik sinama. Sentetik veri, gecici klasor; Drive'a dokunmaz.
 Calistirma: python3 test_takip.py  (repo kokunde; COL_v1.py ve takip.py ayni klasorde)"""
 import contextlib, io, os, sys, tempfile
 import numpy as np, pandas as pd
@@ -86,6 +86,58 @@ ok = len(K7) == 1 and K7.iloc[0].neden == 'maliyet'
 print('7 seans kapali tam bar:', 'OK' if ok else 'HATA', K7[['neden']].to_dict('records') if len(K7) else 'kapanan yok')
 if not ok: hata.append(7)
 ns['TAKIP_SIMDI'] = None
+# ---- T12 / D14 (15 Kas 2026): uzun col etiketi ekrandan kalkti, sektor ruzgari kaldi ----
+def seri_egim(son_artis):
+    """300 bar: 0..239 duz 100, son 60 barda kapanis dogrusal olarak %son_artis artar."""
+    ix = pd.bdate_range('2025-01-01', periods=300)
+    C = np.r_[np.full(240, 100.0), 100.0 * (1 + son_artis * np.arange(1, 61) / 60)]
+    return pd.DataFrame({'Open': C, 'High': C * 1.005, 'Low': C * 0.995, 'Close': C, 'Volume': 1e6}, index=ix)
+V8 = {**{f'Y{i}': seri_egim(0.30) for i in range(5)}, **{f'D{i}': seri_egim(0.0) for i in range(8)}}
+ns['_SEKTOR'] = {**{f'Y{i}': 'XYUKSELEN' for i in range(5)}, **{f'D{i}': 'XDUZ' for i in range(8)}}
+_uz_cagri = []
+_uz_asil = ns['uzun_col_olc']
+ns['uzun_col_olc'] = lambda *a, **k: (_uz_cagri.append(1), _uz_asil(*a, **k))[1]   # cagri sayaci
+c8 = float(V8['Y0'].Close.iloc[-1])
+pd.DataFrame([{'sembol': 'Y0', 'eklendi': str(V8['Y0'].index[-10].date()), 'tavan': c8 * 1.03, 'taban': c8 * 0.5, 'bas': str(V8['Y0'].index[200].date()),
+               'kural': 1, 'doji': 0.2, 'alt_fitil': 0.1, 'dar': 0.5, 'gecerli_oran': 1.0, 'atr_ref': 1.0}]).to_csv(f'{TMP}/takip_adaylar.csv', index=False)
+for _f in ('takip_pozisyonlar.csv', 'takip_kapanan.csv'):
+    if os.path.exists(f'{TMP}/{_f}'): os.remove(f'{TMP}/{_f}')
+_b = io.StringIO()
+with contextlib.redirect_stdout(_b):
+    ns['gun'](veri=V8, oneki='takip', sessiz=False, tarih=V8['Y0'].index[-1])
+cikti = _b.getvalue()
+bas = [l for l in cikti.splitlines() if l.startswith('BEKLE')]
+_sat = cikti.splitlines(); _i = next((i for i, l in enumerate(_sat) if l.startswith('BEKLE')), None)
+satir = [l for l in (_sat[_i + 1:_i + 3] if _i is not None else []) if l.strip().startswith('Y0 ')]
+# 8a) BEKLE basliginda 'uzun' yok, 'ruz%' var; Y0 satirinda ruz ve RUZGAR bayragi duruyor
+ok = len(bas) == 1 and ' uzun ' not in bas[0] and 'ruz%' in bas[0] and len(satir) == 1 and 'RUZGAR' in satir[0]
+print('8a BEKLE uzun yok/ruz :', 'OK' if ok else 'HATA', bas[0].strip() if bas else 'BEKLE yok', '|', satir[0].strip() if satir else 'Y0 satiri yok')
+if not ok: hata.append('8a')
+# 8b) gun() sonundaki ruzgar_listesi: 'SEKTOR RUZGARI' var, 'uzun colde' ve eski 'D9 RUZGAR LISTESI' yok, rüzgarli sektor basildi
+ok = 'SEKTOR RUZGARI' in cikti and 'uzun colde' not in cikti and 'D9 RUZGAR LISTESI' not in cikti and 'XYUKSELEN' in cikti
+print('8b ruzgar ozeti       :', 'OK' if ok else 'HATA', dict(sektor_ruzgari='SEKTOR RUZGARI' in cikti, uzun_colde='uzun colde' in cikti))
+if not ok: hata.append('8b')
+# 8c) ruzgar_listesi donusu = ruzgarli sektor tablosu; uzun_col_olc gun() / ruzgar_listesi / bugun_liste icinde cagrilmadi
+with contextlib.redirect_stdout(io.StringIO()):
+    t8 = ns['ruzgar_listesi'](V8)
+    _co_asil = ns['col_olc']                     # bugun_liste sema sinamasi: her hisse aday olsun diye sabit col_olc
+    ns['col_olc'] = lambda df, *a, **k: {'GECER': True, 'bas_tarih': df.index[200], 'uzunluk': 40, 'doji': 0.2, 'alt_fitil': 0.1, 'dar': 0.5,
+                                         'gecerli_oran': 1.0, 'clv': 0.1, 'bant_son': 0.5, 'ortaust': 0.5, 'yukseklik_atr': 3.0,
+                                         'taban': 95.0, 'tavan': 105.0}
+    try: bl = ns['bugun_liste'](V8, hepsi=True)
+    finally: ns['col_olc'] = _co_asil
+ok = (list(t8.columns) == ['alt', 'sepet', 'ruz', 'uye'] and list(t8.alt) == ['XYUKSELEN'] and int(t8.uye.iloc[0]) == 5
+      and abs(float(t8.sepet.iloc[0]) - 0.30) < 1e-6 and not _uz_cagri and len(bl) == 13 and 'uzun' not in bl.columns and {'ruz', 'ruzgar'} <= set(bl.columns)
+      and set(bl[bl.ruzgar == 'RUZGAR'].sembol) == {f'Y{i}' for i in range(5)})
+print('8c donus + cagri yok  :', 'OK' if ok else 'HATA', t8.to_dict('records'), dict(uzun_cagri=len(_uz_cagri), bugun_liste_sutun=list(getattr(bl, 'columns', []))[:5]))
+if not ok: hata.append('8c')
+# 8d) uzun_col_olc ve UZUN_* / RUZ_* sabitleri COL_v1'de duruyor (olcum referansi; birebir esitlik test_d9_yeniden'de)
+ns['uzun_col_olc'] = _uz_asil
+ok = callable(ns.get('uzun_col_olc')) and all(k in ns for k in ('UZUN_W', 'UZUN_BANT', 'UZUN_MUM', 'UZUN_KONUM', 'RUZ_GERI', 'RUZ_ESIK', 'RUZ_MIN_UYE', 'RUZ_MUTLAK', 'RUZ_BAYAT')) \
+    and (ns['UZUN_W'], ns['UZUN_BANT'], ns['UZUN_MUM'], ns['UZUN_KONUM']) == (250, 1.5, 0.04, 0.5)
+print('8d uzun_col_olc duruyor:', 'OK' if ok else 'HATA')
+if not ok: hata.append('8d')
+ns['_SEKTOR'] = None
 import shutil; shutil.rmtree(TMP, ignore_errors=True)
 print('SONUC:', 'HEPSI OK' if not hata else f'HATA {hata}')
 sys.exit(1 if hata else 0)

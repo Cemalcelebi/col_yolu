@@ -40,6 +40,9 @@
 #   T11) 2026-10-21 YARIM BAR (Cemal: 'gun() her saatte calissin, bugunun mumu bitmediyse dunku veriyle'): seans acikken
 #       (TR is gunu 09:00-19:00, CANLI degilse) gun() bugune ait barlari veriden atar, son tam barla (dun) karar verir. tarih verilmisse
 #       (replay) uygulanmaz. BASLAT B5 ayni isi VERI/XU100 yuklenirken yapar; bu kapi gun()'un kendi guvencesidir. TAKIP_SIMDI testi icin.
+#   T12) 2026-11-15 UZUN COL ETIKETI KALDIRILDI (COL_v1 D14; Ç181a IZ DEGIL; Cemal 'uzun col etiketini kaldir'): BEKLE tablosundan
+#       'uzun' sutunu kalkti, uzun_col_olc artik cagrilmaz (COL_v1'de olcum referansi olarak kalir). 'ruz%' ve 'RUZGAR' bayragi
+#       (sektor ruzgari, Ç181c EMARE) aynen kalir; ekran sonundaki ruzgar_listesi() artik yalniz sektor ruzgari ozetini basar.
 # =====================================================================
 import os, logging, numpy as np, pandas as pd
 _K='/content/drive/MyDrive/col_tarayici'
@@ -267,13 +270,11 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
     if 'sektor_ruzgar' in globals():
         try: RZ=sektor_ruzgar(veri)
         except Exception as e: tlog.warning(f'T8 ruzgar: {e}')
-    def _uz_rz(s, df):                                   # T8: ('12ay'|'6ay'|'', ruz%)
-        try: u=(uzun_col_olc(df) or {}).get('uzun','') if 'uzun_col_olc' in globals() else ''
-        except Exception: u=''
+    def _rz(s):                                          # T8/T12: (ruz%, ruzgar var mi); uzun col kaldirildi
         rz=float(RZ.ruz.get(s,np.nan)) if (not RZ.empty and s in RZ.index) else np.nan
         sp=float(RZ.sepet.get(s,np.nan)) if (not RZ.empty and s in RZ.index) else np.nan
         var=bool(np.isfinite(rz) and np.isfinite(sp) and rz>=globals().get('RUZ_ESIK',0.10) and sp>globals().get('RUZ_MUTLAK',0.0))
-        return u, rz, var
+        return rz, var
     if len(A):
         rows=[]
         for r in A.itertuples():
@@ -283,13 +284,13 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
             if uz<-8: continue
             bo,ozn=borc_bilgi(r.sembol,bugun)
             poz,_=carpanlar_hesapla(r._asdict(), cds_pct, bo, ozn, int(r.kural))
-            ucl,rz,var=_uz_rz(r.sembol,df)
-            rows.append((r.sembol,uz,poz,r.doji,r.alt_fitil,int(r.kural),ucl,rz,var))
+            rz,var=_rz(r.sembol)
+            rows.append((r.sembol,uz,poz,r.doji,r.alt_fitil,int(r.kural),rz,var))
         rows.sort(key=lambda z:-z[1])
-        print(f"\nBEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday {len(A)}]")
-        for s,uz,poz,dv,fv,kr,ucl,rz,var in rows:
+        print(f"\nBEKLE  (hisse  tavana%  girilecek%  doji  fitil  ruz%)   [tavana -8% icindekiler, toplam aday {len(A)}]")
+        for s,uz,poz,dv,fv,kr,rz,var in rows:
             rzs=f"{rz*100:+.0f}" if np.isfinite(rz) else "?"
-            print(f"  {s:6s} {uz:+4.0f}%   %{poz:.1f}   {dv}  {fv}  {ucl or '-':4s}  {rzs:>4s}{'  RUZGAR' if var else ''}  {'' if kr else '(serbest)'}")
+            print(f"  {s:6s} {uz:+4.0f}%   %{poz:.1f}   {dv}  {fv}  {rzs:>4s}{'  RUZGAR' if var else ''}  {'' if kr else '(serbest)'}")
     if dus: print("\nSURESI DOLDU (60 bar):", ", ".join(dus))
     if bozuk: print("\nCOL BOZULDU (taban kirildi, aday dustu):", ", ".join(bozuk))
     if durdu: print(f"\nVERI DURDU ({globals().get('VERI_BAYAT',5)}+ is gunu veri yok, aday dustu):", ", ".join(f"{s} (son bar {b_suz[s].date()})" for s in durdu))
@@ -298,7 +299,7 @@ def gun(veri=None, hedef=20, ma=20, ufuk=120, oneki='takip', sessiz=False, tarih
         print(f"\nKAPANAN {len(Kp)}: kazanan %{100*(v>0).mean():.0f}  ort {v.mean():+.1f}%"
               +(f" | acilis->acilis ort {va.mean():+.1f}% (n={len(va)})" if len(va) else "")
               +(f" | endeks ort {vx.mean():+.1f}%" if len(vx) else ""))
-    if oneki=='takip' and globals().get('RUZGAR_LISTE',False) and 'ruzgar_listesi' in globals():   # T8
+    if oneki=='takip' and globals().get('RUZGAR_LISTE',False) and 'ruzgar_listesi' in globals():   # T8/T12: sektor ruzgari ozeti
         try: ruzgar_listesi(veri)
         except Exception as e: tlog.warning(f'T8 ruzgar_listesi: {e}'); print('  [!] ruzgar listesi:',e)
     return A,P,Kp
@@ -327,4 +328,4 @@ def replay(bas, son=None, veri=None, oneki='replay', sifirla=True):
         v=Kp.getiri.astype(float); print(f"\n{len(Kp)} islem | kazanan %{100*(v>0).mean():.0f} | ort %{v.mean():+.1f} | bek %{bek(v):+.1f}")
     return A,P,Kp
 
-print(f"[ok] takip (2026-10-21 T11: seans acikken bugunun yarim bari atilir | T10: +%{MALIYET_ESIK:.0f} gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
+print(f"[ok] takip (2026-11-15 T12: uzun col etiketi kaldirildi | 2026-10-21 T11: seans acikken bugunun yarim bari atilir | T10: +%{MALIYET_ESIK:.0f} gorulunce stop maliyete | 2026-10-20 T9: verisi durmus aday duser | 2026-10-18 T8: D9 uzun col + ruzgar ekranda | 2026-10-17 T6: taban kirilinca cik, tol %{TABAN_TOL*100:.0f} | T7: fon suzgeci; 2026-09-18: sinyal gunu olculeri, acilis/endeks kaydi, log)")
