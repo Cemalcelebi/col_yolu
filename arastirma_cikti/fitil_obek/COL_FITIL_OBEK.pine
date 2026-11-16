@@ -1,0 +1,385 @@
+// =====================================================================================================
+// COL Fitil Öbeği  —  Pine Script v5  (v1.0, 16 Kasım 2026)
+//
+// Kaynak: FITIL_OBEK.py FO_ESIK (Ç187, mühürlü tanım; fo_bar / fo_pencere / fo_kural, k = 10) ve FITIL_KOR.py
+// FK_ESIK varyant 'duz' (Cemal 16 Kas EK TANIM: düz dip + dip bağlamı). Bu gösterge fo_hisse_sinyal'in bar bar
+// Pine çevirisidir: kodun bulduğu BÜTÜN fitil öbeği günlerini grafikte gösterir.
+//
+// ÖLÇÜMLE AYNI OLMASI İÇİN EŞİKLERİ DEĞİŞTİRME. Varsayılanlar FO_ESIK değerleridir (donmuş).
+// Değiştirirsen grafikte görünen artık ölçülen S+ / S- değildir.
+//
+// Tanım (her geçerli bar t için yalnız t ve öncesi; pencere = son k geçerli bar, t dahil):
+//   Geçerli bar: H > L, hacim > 0, O > 0, L > 0, C > 0 (geçersiz bar hesaba hiç girmez, boyanmaz; pencere
+//   geçerli bar sayar, takvim günü değil).
+//   R = H - L; alt = (min(O,C) - L) / R; üst = (H - max(O,C)) / R  (ikisi de [0, 1] aralığına kırpılır)
+//   A = ortalama alt, U = ortalama üst, ASIM = U - A
+//   ALTYOK = alt < 0,10 olan bar payı; USTYOK = üst < 0,10 olan bar payı
+//   S+ (YUKARI öbek: üst fitiller, altı fitilsiz)  = ASIM >= 0,20 VE ALTYOK >= 0,50
+//   S- (AŞAĞI öbek: alt fitiller, üstü fitilsiz)   = ASIM <= -0,20 VE USTYOK >= 0,50
+//   EK (Cemal 16 Kas):
+//   DÜZ DİP     = (pencere max L - pencere min L) / pencere medyan(R) <= 1,0
+//   DİP BAĞLAMI = konum120 = (C - min C) / (max C - min C), son 120 geçerli kapanış (t dahil) <= 0,25
+//   S+DÜZ       = S+ VE DÜZ DİP VE DİP BAĞLAMI
+//   Bilgi (şart değil): küçük mum oranı = pencere medyan(R / C) / ATR%250; ATR%250 = son 250 geçerli barın
+//   (en az 120) ortalama TR / C; TR = max(H, önceki geçerli C) - min(L, önceki geçerli C). <= 0,75 ise 'küçük'.
+//
+// Ne çizer:
+//   - S+ günü açık mavi zemin; S- günü açık kırmızı zemin; S+DÜZ günü koyu mavi zemin + mum altında küçük yeşil
+//     üçgen; S- günü mum üstünde küçük kırmızı üçgen.
+//   - Ardışık S+DÜZ günleri (geçerli bar sırasıyla art arda) tek bölge: pencerenin ilk barından (son k geçerli bar)
+//     bugüne soluk kutu (üst = pencere max H, alt = pencere min L; bölge sürdükçe genişler) ve dip çizgisi
+//     (bölgenin min L'si, yeşil kesik). En çok 500 kutu / 500 çizgi; eskiler silinir.
+//   - Sağ üstte tablo: son geçerli barın ASIM, ALTYOK, USTYOK, düz dip oranı, konum120, küçük mum oranı ve
+//     S+ / S- / S+DÜZ durumu.
+//
+// Pine'da OLMAYANLAR (ölçümde var; açıklama):
+//   - Likidite süzgeci ve cetvelin tekilleştirmesi (60 gün) yok: gösterge şartın tuttuğu HER günü boyar.
+//   - Fon krizi kesiği (31.08.2026 sonrası ölçüme girmez) yok: sonrası da boyanır, ama ölçülmedi.
+//   - Ölçüm düzeltilmiş fiyatla (V_BIST) yapıldı; fitil payları oran olduğundan fiyat düzeltmesi payları çok az
+//     değiştirir, ama konum120 bölünme / bedelli düzeltmesine bağlıdır (TradingView verisine bağlı).
+//   - FITIL_KOR'da DİP BAĞLAMI = 'S6 TABAN İÇİ YA DA konum120 <= 0,25'; Pine'da yalnız konum120 (S6 yok).
+//   - TradingView hacmi yoksa (na) bar geçerli sayılır (BIST'te hacim hep var).
+//   - Açık (bugünkü, kapanmamış) mumda işaret geçicidir: seans içinde çıkıp kaybolabilir; ölçüm kapanışla yapılır.
+// Bu gösterge bir ADAY gösterir; alım-satım sinyali değildir. Ç187 kararı: S+ ve S- ÖLÇÜLEMEDİ (hiçbir karar
+// hücresi tutmadı; arastirma_cikti/fitil_obek/RAPOR.md); S+DÜZ ölçümü FITIL_KOR'dadır.
+//
+// Sözdizimi: derleyici yok; COL_S5_OBEK.pine (v1.3) ve COL_S6_TABAN.pine (v1.1) derlenmiş kalıplarıyla yazıldı.
+// Hata çıkarsa satır numarasıyla bildir.
+// =====================================================================================================
+//@version=5
+indicator("COL Fitil Öbeği", overlay=true, max_boxes_count=500, max_lines_count=500, max_labels_count=500)
+
+// ---------------------------------------------------------------- girdiler (FO_ESIK değerleri; ölçümle aynı olması için değiştirme)
+G1 = "Fitil öbeği tanımı (FO_ESIK; değiştirme)"
+k           = input.int(10, "Pencere k (geçerli bar)", minval=3, maxval=60, group=G1)
+fitilYok    = input.float(0.10, "Fitil yok eşiği (bar payı)", minval=0.0, step=0.01, group=G1)
+asimEsik    = input.float(0.20, "ASIM eşiği (S+ >= eşik, S- <= -eşik)", minval=0.0, step=0.05, group=G1)
+fitilsizPay = input.float(0.50, "Fitilsiz bar payı en az (ALTYOK / USTYOK)", minval=0.0, step=0.05, group=G1)
+
+G2 = "S+DÜZ ek tanımı (Cemal 16 Kas)"
+duzDipEsik  = input.float(1.0, "Düz dip: (max L - min L) / medyan(H - L) en çok", minval=0.0, step=0.1, group=G2)
+konumGun    = input.int(120, "Dip bağlamı: konum günü (geçerli bar)", minval=20, maxval=250, group=G2)
+dipKonum    = input.float(0.25, "Dip bağlamı: konum en çok", minval=0.0, step=0.05, group=G2)
+
+G3 = "Bilgi (şart değil)"
+kM          = input.float(0.75, "Küçük mum k_m (medyan R/C <= k_m x ATR%)", minval=0.0, step=0.05, group=G3)
+atrGun      = input.int(250, "ATR% günü (geçerli bar)", minval=20, maxval=250, group=G3)
+atrMin      = input.int(120, "ATR% için en az geçerli bar", minval=1, maxval=250, group=G3)
+
+G4 = "Görünüm"
+gosterSP    = input.bool(true, "S+ günlerini boya (açık mavi)", group=G4)
+gosterSM    = input.bool(true, "S- günlerini boya (açık kırmızı) ve üçgen", group=G4)
+gosterKutu  = input.bool(true, "S+DÜZ bölgesine kutu ve dip çizgisi", group=G4)
+gosterTab   = input.bool(true, "Bilgi tablosu", group=G4)
+renkSP      = input.color(color.new(color.blue, 88), "S+ zemini", group=G4)
+renkSM      = input.color(color.new(color.red, 88), "S- zemini", group=G4)
+renkSPD     = input.color(color.new(color.blue, 62), "S+DÜZ zemini", group=G4)
+
+// ---------------------------------------------------------------- geçerli bar dizileri (yalnız geçerli barlar; en yeni sonda)
+hacimOk = na(volume) ? true : volume > 0
+gecerli = not na(close) and not na(open) and not na(high) and not na(low) and high > low and hacimOk and close > 0 and open > 0 and low > 0
+
+TUT = 260                                   // dizide tutulan en fazla geçerli bar (ATR% 250, konum 250, k 60 için yeter)
+var float[] aH   = array.new_float(0)
+var float[] aL   = array.new_float(0)
+var float[] aC   = array.new_float(0)
+var float[] aR   = array.new_float(0)       // R = H - L
+var float[] aRC  = array.new_float(0)       // R / C
+var float[] aTRC = array.new_float(0)       // TR / C
+var float[] aAlt = array.new_float(0)       // alt fitil payı (kırpılmış)
+var float[] aUst = array.new_float(0)       // üst fitil payı (kırpılmış)
+var int[]   aIdx = array.new_int(0)         // geçerli barın gerçek bar_index'i (kutunun sol kenarı için)
+var int[]   aZmn = array.new_int(0)         // geçerli barın zamanı (tablo tarihi için)
+var int  nGec    = 0                        // şimdiye kadarki geçerli bar sayısı
+
+ekle(float[] a, float v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+// int dizinin sondan m'inci elemanı (m = 0 en yeni)
+geriI(int[] a, int m) =>
+    int sz = array.size(a)
+    int sonuc = na
+    if m < sz
+        sonuc := array.get(a, sz - 1 - m)
+    sonuc
+
+// dizinin son m elemanının medyanı (çift sayıda iki ortanın ortalaması; pandas rolling median ile aynı)
+sonMedyan(float[] a, int m) =>
+    int sz = array.size(a)
+    float sonuc = na
+    if sz >= m
+        float[] srt = array.new_float(0)
+        for j = sz - m to sz - 1
+            array.push(srt, array.get(a, j))
+        array.sort(srt, order.ascending)
+        int h = int(m / 2)
+        sonuc := m % 2 == 1 ? array.get(srt, h) : (array.get(srt, h - 1) + array.get(srt, h)) / 2.0
+    sonuc
+
+// tarih metni (borsa saat dilimi): yyyy-aa-gg
+tarih(int t) =>
+    na(t) ? "-" : str.tostring(year(t)) + "-" + str.tostring(month(t), "00") + "-" + str.tostring(dayofmonth(t), "00")
+
+// her bar sıfırlanan durumlar (çizim için)
+bool sp  = false
+bool sm  = false
+bool spd = false
+
+// son geçerli barın ölçüleri (tablo için; geçersiz barda korunur)
+var float vA     = na
+var float vU     = na
+var float vAsim  = na
+var float vAy    = na
+var float vUy    = na
+var float vDuz   = na
+var float vKonum = na
+var float vKucuk = na
+var float vAtr   = na
+var bool  vSP    = false
+var bool  vSM    = false
+var bool  vSPD   = false
+var int   vZ     = na
+
+// S+DÜZ bölgesi (kutu + dip çizgisi)
+var box[]  kutular  = array.new_box(0)
+var line[] cizgiler = array.new_line(0)
+var box    kutu     = na
+var line   dipCiz   = na
+var int    sonSpdI  = -100000               // son S+DÜZ gününün geçerli bar sırası
+var int    kutuSol  = na                    // bölgenin sol kenarı (bar_index)
+var float  kutuUst  = na
+var float  kutuAlt  = na
+var int    kutuBasZ = na                    // bölgenin ilk barının zamanı
+var int    kutuSonZ = na                    // bölgenin son S+DÜZ gününün zamanı
+var int    kutuGun  = 0                     // bölgedeki S+DÜZ gün sayısı
+var int    nSPD     = 0                     // grafikteki S+DÜZ gün sayısı
+var int    nSP      = 0                     // grafikteki S+ gün sayısı
+var int    nSM      = 0                     // grafikteki S- gün sayısı
+
+if gecerli
+    float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
+    float r     = high - low
+    float tr    = na(cOnce) ? r : math.max(high, cOnce) - math.min(low, cOnce)
+    float altP  = math.max(0.0, math.min(1.0, (math.min(open, close) - low) / r))
+    float ustP  = math.max(0.0, math.min(1.0, (high - math.max(open, close)) / r))
+    ekle(aH, high)
+    ekle(aL, low)
+    ekle(aC, close)
+    ekle(aR, r)
+    ekle(aRC, r / close)
+    ekle(aTRC, tr / close)
+    ekle(aAlt, altP)
+    ekle(aUst, ustP)
+    ekleI(aIdx, bar_index)
+    ekleI(aZmn, time)
+    nGec += 1
+    int i  = nGec - 1                        // bu barın geçerli bar sırası
+    int sz = array.size(aC)
+
+    // ATR% (bilgi): son atrGun geçerli bar (en az atrMin) ortalama TR / C
+    int nA = math.min(sz, atrGun)
+    float atrP = na
+    if nA >= atrMin
+        float sT = 0.0
+        for j = sz - nA to sz - 1
+            sT += array.get(aTRC, j)
+        atrP := sT / nA
+
+    // konum120 (dip bağlamı)
+    float konum = na
+    if sz >= konumGun
+        float mx = close
+        float mn = close
+        for j = sz - konumGun to sz - 1
+            mx := math.max(mx, array.get(aC, j))
+            mn := math.min(mn, array.get(aC, j))
+        konum := mx > mn ? (close - mn) / (mx - mn) : na
+
+    vZ     := time
+    vAtr   := atrP
+    vKonum := konum
+    vA     := na
+    vU     := na
+    vAsim  := na
+    vAy    := na
+    vUy    := na
+    vDuz   := na
+    vKucuk := na
+    vSP    := false
+    vSM    := false
+    vSPD   := false
+
+    if sz >= k
+        float sA   = 0.0
+        float sU   = 0.0
+        int   nAy  = 0
+        int   nUy  = 0
+        float wH   = array.get(aH, sz - k)
+        float wL   = array.get(aL, sz - k)
+        float maxL = array.get(aL, sz - k)
+        for j = sz - k to sz - 1
+            float a1 = array.get(aAlt, j)
+            float u1 = array.get(aUst, j)
+            sA += a1
+            sU += u1
+            if a1 < fitilYok
+                nAy += 1
+            if u1 < fitilYok
+                nUy += 1
+            wH   := math.max(wH, array.get(aH, j))
+            wL   := math.min(wL, array.get(aL, j))
+            maxL := math.max(maxL, array.get(aL, j))
+        float A    = sA / k
+        float U    = sU / k
+        float asim = U - A
+        float ay   = nAy * 1.0 / k
+        float uy   = nUy * 1.0 / k
+        float medR  = sonMedyan(aR, k)
+        float medRC = sonMedyan(aRC, k)
+        float duz   = medR > 0 ? (maxL - wL) / medR : na
+        sp  := asim >= asimEsik and ay >= fitilsizPay
+        sm  := asim <= -asimEsik and uy >= fitilsizPay
+        bool duzDip = not na(duz) and duz <= duzDipEsik
+        bool dipB   = not na(konum) and konum <= dipKonum
+        spd := sp and duzDip and dipB
+        vA     := A
+        vU     := U
+        vAsim  := asim
+        vAy    := ay
+        vUy    := uy
+        vDuz   := duz
+        vKucuk := na(atrP) or atrP <= 0 ? na : medRC / atrP
+        vSP    := sp
+        vSM    := sm
+        vSPD   := spd
+        if sp
+            nSP += 1
+        if sm
+            nSM += 1
+
+        // ------------------------------------------------ S+DÜZ bölgesi: ardışık S+DÜZ günleri tek kutu
+        if spd
+            nSPD += 1
+            if sonSpdI == i - 1 and not na(kutuSol)
+                // aynı bölge: kutu sağa ve dikeyde genişler, dip çizgisi bölgenin min L'sine iner
+                kutuUst  := math.max(kutuUst, wH)
+                kutuAlt  := math.min(kutuAlt, wL)
+                kutuSonZ := time
+                kutuGun  += 1
+                if gosterKutu and not na(kutu)
+                    box.set_right(kutu, bar_index)
+                    box.set_top(kutu, kutuUst)
+                    box.set_bottom(kutu, kutuAlt)
+                    line.set_xy1(dipCiz, kutuSol, kutuAlt)
+                    line.set_xy2(dipCiz, bar_index, kutuAlt)
+            else
+                // yeni bölge: pencerenin ilk geçerli barından (son k geçerli bar) bugüne
+                int ilkBar = geriI(aIdx, k - 1)
+                kutuSol  := ilkBar
+                kutuUst  := wH
+                kutuAlt  := wL
+                kutuBasZ := geriI(aZmn, k - 1)
+                kutuSonZ := time
+                kutuGun  := 1
+                if gosterKutu
+                    box yeni = box.new(ilkBar, wH, bar_index, wL, border_color=color.new(color.blue, 45), border_width=1, bgcolor=color.new(color.blue, 93))
+                    array.push(kutular, yeni)
+                    if array.size(kutular) > 500
+                        box.delete(array.shift(kutular))
+                    kutu := yeni
+                    line yc = line.new(ilkBar, wL, bar_index, wL, color=color.new(color.green, 0), width=2, style=line.style_dashed)
+                    array.push(cizgiler, yc)
+                    if array.size(cizgiler) > 500
+                        line.delete(array.shift(cizgiler))
+                    dipCiz := yc
+            sonSpdI := i
+
+// ---------------------------------------------------------------- çizim
+bgcolor(spd ? renkSPD : sp and gosterSP ? renkSP : sm and gosterSM ? renkSM : na, title="Fitil öbeği zemini")
+plotshape(spd, "S+DÜZ günü", shape.triangleup, location.belowbar, color.new(color.green, 0), size=size.tiny)
+plotshape(sm and gosterSM, "S- günü", shape.triangledown, location.abovebar, color.new(color.red, 0), size=size.tiny)
+
+yz(float v) => na(v) ? "-" : str.tostring(v * 100, "0.0") + "%"
+sy(float v) => na(v) ? "-" : str.tostring(v, "0.00")
+ev(bool b) => b ? "EVET" : "hayır"
+
+var table tb = table.new(position.top_right, 3, 12, bgcolor=color.new(color.white, 10), border_width=1)
+if gosterTab and barstate.islast
+    string durum = vSPD ? "S+DÜZ" : vSP ? "S+ (YUKARI öbek)" : vSM ? "S- (AŞAĞI öbek)" : "yok"
+    table.cell(tb, 0, 0, "Fitil öbeği (son geçerli bar, k = " + str.tostring(k) + ")", text_size=size.small)
+    table.cell(tb, 1, 0, "değer", text_size=size.small)
+    table.cell(tb, 2, 0, "şart", text_size=size.small)
+    table.cell(tb, 0, 1, "tarih / geçerli bar sayısı", text_size=size.small)
+    table.cell(tb, 1, 1, tarih(vZ), text_size=size.small)
+    table.cell(tb, 2, 1, str.tostring(nGec) + (gecerli ? "" : " (bugün geçersiz bar)"), text_size=size.small)
+    table.cell(tb, 0, 2, "A ort. alt fitil / U ort. üst fitil", text_size=size.small)
+    table.cell(tb, 1, 2, sy(vA) + " / " + sy(vU), text_size=size.small)
+    table.cell(tb, 2, 2, "", text_size=size.small)
+    table.cell(tb, 0, 3, "ASIM = U - A", text_size=size.small)
+    table.cell(tb, 1, 3, sy(vAsim), text_size=size.small)
+    table.cell(tb, 2, 3, "S+ >= " + sy(asimEsik) + " / S- <= " + sy(-asimEsik), text_size=size.small)
+    table.cell(tb, 0, 4, "ALTYOK (alt fitil < " + sy(fitilYok) + " payı)", text_size=size.small)
+    table.cell(tb, 1, 4, sy(vAy), text_size=size.small)
+    table.cell(tb, 2, 4, "S+ için >= " + sy(fitilsizPay), text_size=size.small)
+    table.cell(tb, 0, 5, "USTYOK (üst fitil < " + sy(fitilYok) + " payı)", text_size=size.small)
+    table.cell(tb, 1, 5, sy(vUy), text_size=size.small)
+    table.cell(tb, 2, 5, "S- için >= " + sy(fitilsizPay), text_size=size.small)
+    table.cell(tb, 0, 6, "düz dip (max L - min L) / medyan R", text_size=size.small)
+    table.cell(tb, 1, 6, sy(vDuz), text_size=size.small)
+    table.cell(tb, 2, 6, "<= " + sy(duzDipEsik) + ": " + ev(not na(vDuz) and vDuz <= duzDipEsik), text_size=size.small)
+    table.cell(tb, 0, 7, "konum" + str.tostring(konumGun) + " (dip bağlamı)", text_size=size.small)
+    table.cell(tb, 1, 7, sy(vKonum), text_size=size.small)
+    table.cell(tb, 2, 7, "<= " + sy(dipKonum) + ": " + ev(not na(vKonum) and vKonum <= dipKonum), text_size=size.small)
+    table.cell(tb, 0, 8, "küçük mum: medyan R/C / ATR% (bilgi)", text_size=size.small)
+    table.cell(tb, 1, 8, sy(vKucuk) + "  (ATR% " + yz(vAtr) + ")", text_size=size.small)
+    table.cell(tb, 2, 8, "<= " + sy(kM) + ": " + ev(not na(vKucuk) and vKucuk <= kM), text_size=size.small)
+    table.cell(tb, 0, 9, "durum (S+ / S- / S+DÜZ)", text_size=size.small)
+    table.cell(tb, 1, 9, durum, text_size=size.small)
+    table.cell(tb, 2, 9, "S+ " + ev(vSP) + ", S- " + ev(vSM) + ", S+DÜZ " + ev(vSPD), text_size=size.small)
+    table.cell(tb, 0, 10, "grafikteki gün sayısı S+ / S- / S+DÜZ", text_size=size.small)
+    table.cell(tb, 1, 10, str.tostring(nSP) + " / " + str.tostring(nSM) + " / " + str.tostring(nSPD), text_size=size.small)
+    table.cell(tb, 2, 10, "", text_size=size.small)
+    table.cell(tb, 0, 11, "son S+DÜZ bölgesi (kutu)", text_size=size.small)
+    table.cell(tb, 1, 11, na(kutuSol) ? "-" : tarih(kutuBasZ) + " .. " + tarih(kutuSonZ), text_size=size.small)
+    table.cell(tb, 2, 11, na(kutuSol) ? "-" : str.tostring(kutuGun) + " S+DÜZ günü, dip " + str.tostring(kutuAlt, format.mintick), text_size=size.small)
+
+// =====================================================================================================
+// BEKLENEN ÇIKTI (doğrulama tablosu; Cemal grafikte karşılaştırır)
+// Üretim: FITIL_OBEK.py fo_hisse_sinyal (V_BIST.pkl, düzeltilmiş fiyat) ve bu dosyanın mantığını aynı sırayla bar bar
+// yazan bağımsız Python aynası. İki hesap TEHOL, BINBN, PAPIL, FENER, YKSLN'nin BÜTÜN geçmişinde (504-2.848 geçerli
+// bar) S+ ve S- günlerinde 0 gün farkla aynı; S+DÜZ ayna ile vektör hesabı (FITIL_KOR formülü, dip bağlamı yalnız
+// konum120) 0 gün farkla aynı. Gösterim: S+ = açık mavi, S- = açık kırmızı + üçgen, S+DÜZ = koyu mavi + yeşil üçgen,
+// '-' = boya yok. Sayılar: ASIM / düz dip oranı / konum120.
+//
+// TEHOL 2025-05 (Mayıs 2025, 20 geçerli gün; S+ 19, S- 0, S+DÜZ 0)
+//   05-02  -   (ASIM +0,28 ama ALTYOK < 0,50)
+//   05-05 .. 05-30 hepsi S+ : 05-05, 05-06, 05-07, 05-08, 05-09, 05-12, 05-13, 05-14, 05-15, 05-16, 05-20, 05-21,
+//                            05-22, 05-23, 05-26, 05-27, 05-28, 05-29, 05-30  (05-01 ve 05-19 tatil; bar yok)
+//   02.05 .. 28.05 aralığı: 18 geçerli gün, 17 S+.
+//   S+DÜZ yok: konum120 0,60-0,65 (> 0,25; dip bağlamı tutmaz). Düz dip 05-08 .. 05-29 arası <= 1,0 (0,18-0,94).
+//
+// BINBN 2024-12-23 .. 2025-01-22 (S+ 17 gün, S- 0, S+DÜZ 0)
+//   S+ : 2024-12-23, 12-24, 12-25, 12-26, 12-27, 12-30, 12-31, 2025-01-02, 01-03, 01-06, 01-07, 01-08, 01-09, 01-10,
+//        01-13, 01-21, 01-22
+//   -  : 01-14, 01-15, 01-16, 01-17, 01-20 (ASIM +0,24..+0,43 ama ALTYOK < 0,50); 12-20 (ASIM +0,19) ve 01-23 de '-'.
+//   S+DÜZ yok: hisse Ekim 2024'te başladı, 120 geçerli bar dolmadı (konum120 tanımsız, tabloda '-').
+//
+// PAPIL 2025-11-14 .. 2025-12-12 (S+ 13 gün, bunun 4'ü S+DÜZ; S- 0)
+//   S+    : 11-14, 11-17, 11-18, 11-19, 11-20, 11-21, 12-08, 12-11, 12-12
+//   S+DÜZ : 11-24, 11-25, 11-26 (ardışık: tek kutu, sol kenar 2025-11-11) ve 12-10 (tek gün: ayrı kutu, sol kenar 2025-11-27)
+//   -     : 11-27, 11-28, 12-01, 12-02, 12-03, 12-04, 12-05, 12-09 (ASIM 0,11-0,24; ALTYOK ya da ASIM tutmaz)
+//   11-24 / 11-25 / 11-26 düz dip 0,78 / 0,73 / 0,79, konum120 0,02-0,03; 12-10 düz dip 0,64, konum120 0,06.
+//
+// Bütün geçmişte (V_BIST, 31.08.2026 kesiği yok): TEHOL S+ 147 / S- 407 / S+DÜZ 0; BINBN 119 / 0 / 0;
+// PAPIL 166 / 17 / 6; FENER 167 / 16 / 0; YKSLN 92 / 17 / 2.
+// TradingView'deki geçmiş V_BIST'ten farklı başlıyorsa (ör. hisse daha eski) konum120 ve ATR% ilk aylarda farklı olabilir;
+// S+ / S- yalnız son k barı kullandığından aynı kalır. Grafikte farklı bir gün görürsen önce: günlük grafik mi, sembol
+// BIST:... mi, eşikler varsayılan mı.
+// =====================================================================================================
