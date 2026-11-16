@@ -70,3 +70,10 @@ Renkler ve tablo "Görünüm" grubundadır. Eşikleri değiştirirsen grafik Pyt
 - Bölge 400 geçerli barı aşarsa kutunun sol kenarı yanlış çizilebilir (BIST'te 2016-26'da en uzun bölge 206 bar; tetiklenmedi).
 - SIKLIK UYARISI (v1.0): bu kural setiyle (bant %12, net %3, küçük mum 0,90 x ATR, en az 8 mum) BIST'te hisse-yıl başına ~7 bölge ve ~3 AL çıkar; barların %28'i açık bölgede. v1.1 (BB 0,30 ile): ~4,2 bölge, ~1,9 AL, açık bar ~%18. Çöl nadir değil. Daha az bölge için ayarlardan nMin'i 15'e, bantMax'ı 0,08'e çekebilirsin; her değişiklik gösterimdir, ölçüm değil.
 - Bölge sürekliliği: taban sürdükçe aynı bölge (ana model onayı; iş tanımındaki '±2 bar' kuralı üst üste binen kutular üretiyordu).
+
+## v1.1 bağımsız denetim notları (16 Kas 2026, ana model)
+- Denetçi Pine v1.1'i satır satır Python'a çevirip 30 hissede 67.312 barda / 1.083 kutuda sıfır fark buldu (kutu, AL, KIRILDI, SÖNDÜ, onay günü, kesik kısım, etiketler); v1.0 kipi eski sürümle birebir; sözdizimi, geleceğe bakma, kaynak sınırı, ASCII kopya GEÇTİ. Derleyici burada yok: ilk yapıştırmada hata çıkarsa satır ve metni yaz.
+- Mor elmas (onay günü) ve 'sonme' etiketi de AL / KIRILDI gibi son mum KAPANINCA kesinleşir; seans içinde geçici görünüp kaybolabilir.
+- Onay günü = bölgenin kutu olarak açıldığı gün; önceki bölge yeni kırpıldıysa tabanın ilk görüldüğü günden birkaç gün (medyan 4) sonra gelebilir. Kesik kısım o günleri kapsar.
+- Bollinger eşiği 0,30: 0,15-0,20 TUCLK Ağu 2025 al mumunu bir gün önce söndürdüğü için elendi (BB şartı her gün sınanır; tasarım sınamasında seçildi, sonuca göre oynanmadı).
+- S6 ve S5'in BB yüzdeliği %0,1 barda 1-2/250 farklı (yuvarlama bağları); eşik sınırında etkisi var, başka yerde yok.
