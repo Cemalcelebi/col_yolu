@@ -1,0 +1,2723 @@
+{
+ "zaman_utc": "2026-11-16 19:24:32 UTC",
+ "on_yazim": {
+  "muhur": "5f9503527288378f3e625cd536d8c47ed252a1a5fb0af281165dbfddaee699c3",
+  "zaman": "2026-11-16 19:05:52 UTC"
+ },
+ "surum": "S7 v1.0 (2026-11-16): bölge içinden ölçülen sıkışma kutusu (Z1-Z6 + DİP / YOL ÜSTÜ; nedensel açılış, geriye uzatma, kırılım / sönme)",
+ "nokta_sayisi": 72,
+ "en_cok_tutan": 7,
+ "toplam": 8,
+ "tam_tutan_nokta": 0,
+ "aday_nokta": 8,
+ "secilen": {
+  "k_m": 0.75,
+  "bb": 0.15,
+  "Lmin": 8,
+  "bant": {
+   "BIST": 0.08,
+   "ABD": 0.06,
+   "AVR": 0.06
+  },
+  "egim": [
+   -0.03,
+   0.08
+  ]
+ },
+ "secilen_sonuc": {
+  "FENER-E": {
+   "tutar": true,
+   "bulundu": true,
+   "ortusme": 0.6666666666666666,
+   "sinif": "DIP",
+   "bas_fark": 6,
+   "bit_fark": 1,
+   "bolge": {
+    "bas": "2025-10-22",
+    "onay": "2025-11-03",
+    "bitis": "2025-11-10",
+    "tur": "YUKARI",
+    "sinif": "DIP",
+    "L": 13
+   },
+   "uzunluk": 18
+  },
+  "CCOLA-E": {
+   "tutar": false,
+   "bulundu": true,
+   "ortusme": 0.07692307692307693,
+   "sinif": "DIP",
+   "bas_fark": -18,
+   "bit_fark": -12,
+   "bolge": {
+    "bas": "2025-09-08",
+    "onay": "2025-10-02",
+    "bitis": "2025-10-02",
+    "tur": "sönme",
+    "sinif": "DIP",
+    "L": 19
+   },
+   "uzunluk": 13
+  },
+  "ENJSA-T": {
+   "tutar": true,
+   "bulundu": true,
+   "ortusme": 0.8,
+   "sinif": "YOL",
+   "bas_fark": -8,
+   "bit_fark": -3,
+   "bolge": {
+    "bas": "2025-07-16",
+    "onay": "2025-08-07",
+    "bitis": "2025-08-12",
+    "tur": "YUKARI",
+    "sinif": "YOL",
+    "L": 20
+   },
+   "uzunluk": 15
+  },
+  "FENER-A": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 10
+  },
+  "CCOLA-T": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 24
+  },
+  "ENJSA-O": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 20
+  },
+  "ENJSA-A": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 20
+  },
+  "ENJSA-V": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 9
+  }
+ },
+ "secilen_kacan": [
+  "CCOLA-E"
+ ],
+ "varsayilan_sonuc": {
+  "FENER-E": {
+   "tutar": false,
+   "bulundu": true,
+   "ortusme": 0.4444444444444444,
+   "sinif": "DIP",
+   "bas_fark": 5,
+   "bit_fark": -5,
+   "bolge": {
+    "bas": "2025-10-21",
+    "onay": "2025-10-31",
+    "bitis": "2025-10-31",
+    "tur": "YUKARI",
+    "sinif": "DIP",
+    "L": 8
+   },
+   "uzunluk": 18
+  },
+  "CCOLA-E": {
+   "tutar": false,
+   "bulundu": true,
+   "ortusme": 0.07692307692307693,
+   "sinif": "DIP",
+   "bas_fark": -18,
+   "bit_fark": -12,
+   "bolge": {
+    "bas": "2025-09-08",
+    "onay": "2025-10-02",
+    "bitis": "2025-10-02",
+    "tur": "sönme",
+    "sinif": "DIP",
+    "L": 19
+   },
+   "uzunluk": 13
+  },
+  "ENJSA-T": {
+   "tutar": true,
+   "bulundu": true,
+   "ortusme": 0.8,
+   "sinif": "YOL",
+   "bas_fark": -7,
+   "bit_fark": -3,
+   "bolge": {
+    "bas": "2025-07-17",
+    "onay": "2025-08-06",
+    "bitis": "2025-08-12",
+    "tur": "YUKARI",
+    "sinif": "YOL",
+    "L": 19
+   },
+   "uzunluk": 15
+  },
+  "FENER-A": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 10
+  },
+  "CCOLA-T": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 24
+  },
+  "ENJSA-O": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 20
+  },
+  "ENJSA-A": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 20
+  },
+  "ENJSA-V": {
+   "tutar": true,
+   "kesisen": [],
+   "uzunluk": 9
+  }
+ },
+ "varsayilan_tutan": 6,
+ "noktalar": [
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 5,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 1,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.65,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 5,
+   "kacan": [
+    "CCOLA-E",
+    "ENJSA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 7,
+   "fark": 1,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 7,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 7,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 7,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 7,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 7,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 7,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 7,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 0,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 1,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 1,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 1,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 1,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "FENER-E",
+    "CCOLA-E"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 2,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 6,
+   "fark": 3,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.75,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 6,
+   "fark": 4,
+   "kacan": [
+    "CCOLA-E",
+    "CCOLA-T"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 5,
+   "fark": 2,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 5,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 5,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 5,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 5,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 5,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 5,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.15,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 5,
+   "fark": 5,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 1,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 2,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 2,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 2,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.2,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 2,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 8,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 3,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.08,
+     "ABD": 0.06,
+     "AVR": 0.06
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.03,
+     0.08
+    ]
+   },
+   "tutan": 4,
+   "fark": 4,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  },
+  {
+   "prm": {
+    "k_m": 0.85,
+    "bb": 0.25,
+    "Lmin": 10,
+    "bant": {
+     "BIST": 0.1,
+     "ABD": 0.08,
+     "AVR": 0.08
+    },
+    "egim": [
+     -0.02,
+     0.06
+    ]
+   },
+   "tutan": 4,
+   "fark": 5,
+   "kacan": [
+    "FENER-A",
+    "CCOLA-T",
+    "ENJSA-A",
+    "ENJSA-V"
+   ]
+  }
+ ],
+ "kalibre": [
+  {
+   "sembol": "TEHOL",
+   "bas": "2024-10-07",
+   "son": "2024-12-12",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 48,
+   "bolge_sayisi": 2,
+   "kapsama": 0.4375,
+   "en_iyi_ortusme": 0.22916666666666666,
+   "siniflar": "DIP",
+   "bolgeler": "2024-10-31..2024-11-14 DIP YUKARI; 2024-11-22..2024-12-05 DIP YUKARI"
+  },
+  {
+   "sembol": "TEHOL",
+   "bas": "2026-02-03",
+   "son": "2026-04-03",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 43,
+   "bolge_sayisi": 2,
+   "kapsama": 0.6511627906976745,
+   "en_iyi_ortusme": 0.32558139534883723,
+   "siniflar": "DIP",
+   "bolgeler": "2026-01-23..2026-02-20 DIP YUKARI; 2026-03-16..2026-04-03 DIP YUKARI"
+  },
+  {
+   "sembol": "INVES",
+   "bas": "2025-05-08",
+   "son": "2025-06-20",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 29,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "BURVA",
+   "bas": "2025-06-26",
+   "son": "2025-07-21",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 17,
+   "bolge_sayisi": 2,
+   "kapsama": 0.8823529411764706,
+   "en_iyi_ortusme": 0.5294117647058824,
+   "siniflar": "DIP",
+   "bolgeler": "2025-06-27..2025-07-09 DIP YUKARI; 2025-07-11..2025-07-23 DIP YUKARI"
+  },
+  {
+   "sembol": "EYGYO",
+   "bas": "2025-05-28",
+   "son": "2025-07-10",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 30,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "BASCM",
+   "bas": "2025-03-02",
+   "son": "2025-07-01",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 76,
+   "bolge_sayisi": 1,
+   "kapsama": 0.09210526315789473,
+   "en_iyi_ortusme": 0.09210526315789473,
+   "siniflar": "DIP",
+   "bolgeler": "2025-06-23..2025-07-02 DIP YUKARI"
+  },
+  {
+   "sembol": "SEYKM",
+   "bas": "2025-04-15",
+   "son": "2025-07-16",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 61,
+   "bolge_sayisi": 2,
+   "kapsama": 0.5737704918032787,
+   "en_iyi_ortusme": 0.4426229508196721,
+   "siniflar": "DIP",
+   "bolgeler": "2025-04-11..2025-05-26 DIP AŞAĞI; 2025-05-28..2025-06-10 DIP YUKARI"
+  },
+  {
+   "sembol": "GEDZA",
+   "bas": "2024-10-15",
+   "son": "2024-12-02",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 34,
+   "bolge_sayisi": 2,
+   "kapsama": 0.8823529411764706,
+   "en_iyi_ortusme": 0.5882352941176471,
+   "siniflar": "DIP",
+   "bolgeler": "2024-10-17..2024-11-14 DIP YUKARI; 2024-11-18..2024-11-29 DIP sönme"
+  },
+  {
+   "sembol": "SUNTK",
+   "bas": "2024-08-27",
+   "son": "2024-11-11",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 53,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "HDFGS",
+   "bas": "2025-04-22",
+   "son": "2025-06-12",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 33,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "INFO",
+   "bas": "2025-03-26",
+   "son": "2025-05-20",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 35,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "KATMR",
+   "bas": "2025-04-16",
+   "son": "2025-07-16",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 60,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "OTTO",
+   "bas": "2024-07-02",
+   "son": "2024-09-12",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 43,
+   "bolge_sayisi": 1,
+   "kapsama": 0.5581395348837209,
+   "en_iyi_ortusme": 0.5581395348837209,
+   "siniflar": "DIP",
+   "bolgeler": "2024-07-31..2024-09-12 DIP YUKARI"
+  },
+  {
+   "sembol": "TUKAS",
+   "bas": "2024-10-02",
+   "son": "2024-12-02",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 43,
+   "bolge_sayisi": 3,
+   "kapsama": 0.8837209302325582,
+   "en_iyi_ortusme": 0.46511627906976744,
+   "siniflar": "DIP",
+   "bolgeler": "2024-10-03..2024-10-31 DIP YUKARI; 2024-11-06..2024-11-19 DIP AŞAĞI; 2024-11-21..2024-12-04 DIP YUKARI"
+  },
+  {
+   "sembol": "ORCAY",
+   "bas": "2024-10-05",
+   "son": "2024-11-18",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 30,
+   "bolge_sayisi": 2,
+   "kapsama": 0.9333333333333333,
+   "en_iyi_ortusme": 0.6666666666666666,
+   "siniflar": "DIP",
+   "bolgeler": "2024-10-07..2024-11-04 DIP AŞAĞI; 2024-11-06..2024-11-15 DIP YUKARI"
+  },
+  {
+   "sembol": "TATGD",
+   "bas": "2024-05-30",
+   "son": "2024-07-15",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 29,
+   "bolge_sayisi": 3,
+   "kapsama": 0.8620689655172413,
+   "en_iyi_ortusme": 0.3448275862068966,
+   "siniflar": "DIP",
+   "bolgeler": "2024-05-27..2024-06-06 DIP AŞAĞI; 2024-06-10..2024-06-26 DIP YUKARI; 2024-06-28..2024-07-10 DIP YUKARI"
+  },
+  {
+   "sembol": "TATGD",
+   "bas": "2024-08-05",
+   "son": "2024-11-04",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 64,
+   "bolge_sayisi": 1,
+   "kapsama": 0.21875,
+   "en_iyi_ortusme": 0.21875,
+   "siniflar": "DIP",
+   "bolgeler": "2024-08-21..2024-09-10 DIP AŞAĞI"
+  },
+  {
+   "sembol": "EUREN",
+   "bas": "2025-10-01",
+   "son": "2025-11-03",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 23,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "VRGYO",
+   "bas": "2025-08-14",
+   "son": "2025-09-22",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 28,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "VESTL",
+   "bas": "2024-11-05",
+   "son": "2024-12-02",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 20,
+   "bolge_sayisi": 1,
+   "kapsama": 0.45,
+   "en_iyi_ortusme": 0.45,
+   "siniflar": "DIP",
+   "bolgeler": "2024-11-05..2024-11-15 DIP YUKARI"
+  },
+  {
+   "sembol": "VESTL",
+   "bas": "2025-06-02",
+   "son": "2025-08-11",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 48,
+   "bolge_sayisi": 1,
+   "kapsama": 0.1875,
+   "en_iyi_ortusme": 0.1875,
+   "siniflar": "DIP",
+   "bolgeler": "2025-07-30..2025-08-20 DIP YUKARI"
+  },
+  {
+   "sembol": "ARZUM",
+   "bas": "2024-08-06",
+   "son": "2024-09-23",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 34,
+   "bolge_sayisi": 2,
+   "kapsama": 0.47058823529411764,
+   "en_iyi_ortusme": 0.23529411764705882,
+   "siniflar": "DIP",
+   "bolgeler": "2024-08-26..2024-09-05 DIP YUKARI; 2024-09-09..2024-09-18 DIP YUKARI"
+  },
+  {
+   "sembol": "EMNIS",
+   "bas": "2025-04-14",
+   "son": "2025-05-19",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 22,
+   "bolge_sayisi": 1,
+   "kapsama": 0.36363636363636365,
+   "en_iyi_ortusme": 0.36363636363636365,
+   "siniflar": "YOL",
+   "bolgeler": "2025-05-07..2025-05-28 YOL sönme"
+  },
+  {
+   "sembol": "SKTAS",
+   "bas": "2024-07-10",
+   "son": "2024-08-11",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 22,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "SMRTG",
+   "bas": "2024-11-21",
+   "son": "2024-12-29",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 27,
+   "bolge_sayisi": 2,
+   "kapsama": 0.9629629629629629,
+   "en_iyi_ortusme": 0.7407407407407407,
+   "siniflar": "DIP",
+   "bolgeler": "2024-11-13..2024-11-28 DIP sönme; 2024-12-02..2024-12-31 DIP YUKARI"
+  },
+  {
+   "sembol": "ODAS",
+   "bas": "2024-06-06",
+   "son": "2024-07-15",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 24,
+   "bolge_sayisi": 1,
+   "kapsama": 0.20833333333333334,
+   "en_iyi_ortusme": 0.20833333333333334,
+   "siniflar": "DIP",
+   "bolgeler": "2024-07-08..2024-07-30 DIP AŞAĞI"
+  },
+  {
+   "sembol": "BINBN",
+   "bas": "2026-02-25",
+   "son": "2026-04-15",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 35,
+   "bolge_sayisi": 1,
+   "kapsama": 0.4,
+   "en_iyi_ortusme": 0.4,
+   "siniflar": "DIP",
+   "bolgeler": "2026-03-27..2026-04-16 DIP YUKARI"
+  },
+  {
+   "sembol": "BINBN",
+   "bas": "2024-12-17",
+   "son": "2025-01-21",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 25,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "ESCAR",
+   "bas": "2025-09-19",
+   "son": "2025-12-11",
+   "etiket": "COL",
+   "durum": "ok",
+   "uzunluk": 59,
+   "bolge_sayisi": 2,
+   "kapsama": 0.5084745762711864,
+   "en_iyi_ortusme": 0.288135593220339,
+   "siniflar": "DIP",
+   "bolgeler": "2025-09-16..2025-10-13 DIP AŞAĞI; 2025-10-20..2025-11-06 DIP AŞAĞI"
+  },
+  {
+   "sembol": "PEKER",
+   "bas": "2025-02-27",
+   "son": "2025-06-10",
+   "etiket": "COL",
+   "durum": "veri yok"
+  },
+  {
+   "sembol": "PAPIL",
+   "bas": "2025-11-12",
+   "son": "2025-12-09",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 20,
+   "bolge_sayisi": 1,
+   "kapsama": 1.0,
+   "en_iyi_ortusme": 1.0,
+   "siniflar": "DIP",
+   "bolgeler": "2025-11-11..2025-12-10 DIP YUKARI"
+  },
+  {
+   "sembol": "GEDIK",
+   "bas": "2025-09-15",
+   "son": "2025-10-31",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 34,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "SEYKM",
+   "bas": "2026-03-08",
+   "son": "2026-04-27",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 34,
+   "bolge_sayisi": 1,
+   "kapsama": 0.2647058823529412,
+   "en_iyi_ortusme": 0.2647058823529412,
+   "siniflar": "DIP",
+   "bolgeler": "2026-04-06..2026-04-16 DIP YUKARI"
+  },
+  {
+   "sembol": "ALTNY",
+   "bas": "2025-10-23",
+   "son": "2026-01-08",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 54,
+   "bolge_sayisi": 2,
+   "kapsama": 0.5185185185185185,
+   "en_iyi_ortusme": 0.3333333333333333,
+   "siniflar": "DIP",
+   "bolgeler": "2025-11-07..2025-12-02 DIP sönme; 2025-12-04..2025-12-17 DIP YUKARI"
+  },
+  {
+   "sembol": "TUREX",
+   "bas": "2026-03-30",
+   "son": "2026-08-24",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 99,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "SDTTR",
+   "bas": "2024-03-28",
+   "son": "2024-05-07",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 23,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  },
+  {
+   "sembol": "GARFA",
+   "bas": "2026-07-31",
+   "son": "2026-09-14",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 22,
+   "bolge_sayisi": 1,
+   "kapsama": 1.0,
+   "en_iyi_ortusme": 1.0,
+   "siniflar": "DIP",
+   "bolgeler": "2026-07-24..2026-08-31 DIP AÇIK"
+  },
+  {
+   "sembol": "ERCB",
+   "bas": "2025-06-13",
+   "son": "2025-11-14",
+   "etiket": "OLUMSUZ",
+   "durum": "ok",
+   "uzunluk": 109,
+   "bolge_sayisi": 0,
+   "kapsama": 0.0,
+   "en_iyi_ortusme": 0.0,
+   "siniflar": "-",
+   "bolgeler": ""
+  }
+ ],
+ "beklenen": [
+  {
+   "ornek": "FENER-E",
+   "sembol": "FENER",
+   "ilk": "2025-10-14",
+   "son": "2025-11-07",
+   "secmeli": true,
+   "beklenen": "DIP",
+   "kutular": [
+    {
+     "bas": "2025-10-22",
+     "onay": "2025-11-03",
+     "bitis": "2025-11-10",
+     "kilit_tarih": "2025-11-11",
+     "tur": "YUKARI",
+     "sinif": "DIP",
+     "L": 13,
+     "ust": 3.7296906424454934,
+     "alt": 3.6171097648736197,
+     "R": 0.03541964619863501
+    }
+   ]
+  },
+  {
+   "ornek": "CCOLA-E",
+   "sembol": "CCOLA",
+   "ilk": "2025-10-02",
+   "son": "2025-10-20",
+   "secmeli": true,
+   "beklenen": "DIP",
+   "kutular": [
+    {
+     "bas": "2025-09-08",
+     "onay": "2025-10-02",
+     "bitis": "2025-10-02",
+     "kilit_tarih": "2025-10-03",
+     "tur": "sönme",
+     "sinif": "DIP",
+     "L": 19,
+     "ust": 48.220001220703125,
+     "alt": 45.7400016784668,
+     "R": 0.029985657064619246
+    }
+   ]
+  },
+  {
+   "ornek": "ENJSA-T",
+   "sembol": "ENJSA",
+   "ilk": "2025-07-28",
+   "son": "2025-08-15",
+   "secmeli": true,
+   "beklenen": "YOL",
+   "kutular": [
+    {
+     "bas": "2025-07-16",
+     "onay": "2025-08-07",
+     "bitis": "2025-08-12",
+     "kilit_tarih": "2025-08-13",
+     "tur": "YUKARI",
+     "sinif": "YOL",
+     "L": 20,
+     "ust": 67.05000305175781,
+     "alt": 64.1500015258789,
+     "R": 0.029671980609566512
+    }
+   ]
+  },
+  {
+   "ornek": "FENER-A",
+   "sembol": "FENER",
+   "ilk": "2025-12-03",
+   "son": "2025-12-16",
+   "secmeli": false,
+   "beklenen": "-",
+   "kutular": [
+    {
+     "bas": "2025-10-22",
+     "onay": "2025-11-03",
+     "bitis": "2025-11-10",
+     "kilit_tarih": "2025-11-11",
+     "tur": "YUKARI",
+     "sinif": "DIP",
+     "L": 13,
+     "ust": 3.7296906424454934,
+     "alt": 3.6171097648736197,
+     "R": 0.03541964619863501
+    }
+   ]
+  },
+  {
+   "ornek": "CCOLA-T",
+   "sembol": "CCOLA",
+   "ilk": "2025-07-29",
+   "son": "2025-08-29",
+   "secmeli": false,
+   "beklenen": "-",
+   "kutular": [
+    {
+     "bas": "2025-09-08",
+     "onay": "2025-10-02",
+     "bitis": "2025-10-02",
+     "kilit_tarih": "2025-10-03",
+     "tur": "sönme",
+     "sinif": "DIP",
+     "L": 19,
+     "ust": 48.220001220703125,
+     "alt": 45.7400016784668,
+     "R": 0.029985657064619246
+    }
+   ]
+  },
+  {
+   "ornek": "ENJSA-O",
+   "sembol": "ENJSA",
+   "ilk": "2025-01-20",
+   "son": "2025-02-14",
+   "secmeli": false,
+   "beklenen": "-",
+   "kutular": []
+  },
+  {
+   "ornek": "ENJSA-A",
+   "sembol": "ENJSA",
+   "ilk": "2025-12-30",
+   "son": "2026-01-27",
+   "secmeli": false,
+   "beklenen": "-",
+   "kutular": [
+    {
+     "bas": "2025-11-28",
+     "onay": "2025-12-09",
+     "bitis": "2025-12-09",
+     "kilit_tarih": "2025-12-10",
+     "tur": "sönme",
+     "sinif": "YOL",
+     "L": 8,
+     "ust": 84.94999694824219,
+     "alt": 81.69999694824219,
+     "R": 0.029521038403959848
+    }
+   ]
+  },
+  {
+   "ornek": "ENJSA-V",
+   "sembol": "ENJSA",
+   "ilk": "2026-07-06",
+   "son": "2026-07-17",
+   "secmeli": false,
+   "beklenen": "-",
+   "kutular": []
+  }
+ ],
+ "sayim": {
+  "zaman_utc": "2026-11-16 19:24:35 UTC",
+  "secilen": {
+   "k_m": 0.75,
+   "bb": 0.15,
+   "Lmin": 8,
+   "bant": {
+    "BIST": 0.08,
+    "ABD": 0.06,
+    "AVR": 0.06
+   },
+   "egim": [
+    -0.03,
+    0.08
+   ]
+  },
+  "pazar": {
+   "BIST": {
+    "hisse": 581,
+    "hata": 0,
+    "S5": {
+     "n": 20807,
+     "hisse_yil": 4102.162698412699,
+     "yuz_hy": 507.220252576796,
+     "L_q25": 1.0,
+     "L_med": 1.0,
+     "L_q75": 2.0,
+     "pay_1_4": 0.9462680828567309,
+     "pay_1": 0.6240688229922622,
+     "sinif": {
+      "DIP": 0.664680155716826,
+      "YOL": 0.3353198442831739
+     },
+     "tur": {
+      "YUKARI": 0.4478781179410775,
+      "AŞAĞI": 0.4200990051425001,
+      "sönme": 0.1299562647186043,
+      "AÇIK": 0.002066612197818042
+     }
+    },
+    "S5o": {
+     "n": 7443,
+     "hisse_yil": 4102.162698412699,
+     "yuz_hy": 181.44087758586497,
+     "L_q25": 2.0,
+     "L_med": 6.0,
+     "L_q75": 14.0,
+     "pay_1_4": 0.4429665457476824,
+     "pay_1": 0.18500604594921402,
+     "sinif": {
+      "DIP": 0.5916968964127368,
+      "YOL": 0.4083031035872632
+     },
+     "tur": {
+      "-": 1.0
+     }
+    },
+    "S6": {
+     "n": 1646,
+     "hisse_yil": 4102.162698412699,
+     "yuz_hy": 40.1251759379731,
+     "L_q25": 5.0,
+     "L_med": 5.0,
+     "L_q75": 7.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "DIP": 0.6950182260024301,
+      "YOL": 0.30498177399756987
+     },
+     "tur": {
+      "YUKARI": 0.43863912515188336,
+      "AŞAĞI": 0.3019441069258809,
+      "sönme": 0.25273390036452004,
+      "AÇIK": 0.006682867557715674
+     }
+    },
+    "S7": {
+     "n": 10597,
+     "hisse_yil": 4102.162698412699,
+     "yuz_hy": 258.327150312698,
+     "L_q25": 9.0,
+     "L_med": 12.0,
+     "L_q75": 17.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "DIP": 0.6927432292158158,
+      "YOL": 0.30725677078418423
+     },
+     "tur": {
+      "YUKARI": 0.49514013400018875,
+      "AŞAĞI": 0.3209398886477305,
+      "sönme": 0.18052278946871755,
+      "AÇIK": 0.003397187883363216
+     },
+     "onay_sonrasi_med": 1.0,
+     "onay_sonrasi_0_3": 0.7163348117391715,
+     "L_onay_med": 9.0
+    }
+   },
+   "ABD": {
+    "hisse": 1410,
+    "hata": 0,
+    "S5": {
+     "n": 34225,
+     "hisse_yil": 11674.051587301587,
+     "yuz_hy": 293.1715672494384,
+     "L_q25": 1.0,
+     "L_med": 1.0,
+     "L_q75": 2.0,
+     "pay_1_4": 0.9300219138056975,
+     "pay_1": 0.5879327976625274,
+     "sinif": {
+      "YOL": 0.7943316289262236,
+      "DIP": 0.20566837107377647
+     },
+     "tur": {
+      "YUKARI": 0.38346238130021915,
+      "AŞAĞI": 0.36236669101533964,
+      "sönme": 0.25344046749452154,
+      "AÇIK": 0.0007304601899196494
+     }
+    },
+    "S5o": {
+     "n": 15034,
+     "hisse_yil": 11674.051587301587,
+     "yuz_hy": 128.78133943106081,
+     "L_q25": 2.0,
+     "L_med": 4.0,
+     "L_q75": 12.0,
+     "pay_1_4": 0.5013968338432886,
+     "pay_1": 0.22116535852068644,
+     "sinif": {
+      "YOL": 0.7691898363708927,
+      "DIP": 0.23081016362910736
+     },
+     "tur": {
+      "-": 1.0
+     }
+    },
+    "S6": {
+     "n": 2860,
+     "hisse_yil": 11674.051587301587,
+     "yuz_hy": 24.498778154372353,
+     "L_q25": 5.0,
+     "L_med": 6.0,
+     "L_q75": 7.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "YOL": 0.8797202797202798,
+      "DIP": 0.12027972027972028
+     },
+     "tur": {
+      "sönme": 0.386013986013986,
+      "YUKARI": 0.34335664335664334,
+      "AŞAĞI": 0.26853146853146853,
+      "AÇIK": 0.002097902097902098
+     }
+    },
+    "S7": {
+     "n": 24466,
+     "hisse_yil": 11674.051587301587,
+     "yuz_hy": 209.57591130240348,
+     "L_q25": 9.0,
+     "L_med": 11.0,
+     "L_q75": 17.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "YOL": 0.7279489904357067,
+      "DIP": 0.2720510095642933
+     },
+     "tur": {
+      "YUKARI": 0.40435706695005313,
+      "sönme": 0.3123518351998692,
+      "AŞAĞI": 0.28079784190304913,
+      "AÇIK": 0.0024932559470285296
+     },
+     "onay_sonrasi_med": 1.0,
+     "onay_sonrasi_0_3": 0.7390255865282432,
+     "L_onay_med": 9.0
+    }
+   },
+   "AVR": {
+    "hisse": 579,
+    "hata": 0,
+    "S5": {
+     "n": 19748,
+     "hisse_yil": 5725.31746031746,
+     "yuz_hy": 344.92410485313076,
+     "L_q25": 1.0,
+     "L_med": 1.0,
+     "L_q75": 3.0,
+     "pay_1_4": 0.9125987441766255,
+     "pay_1": 0.5424853149686044,
+     "sinif": {
+      "YOL": 0.8133988251974884,
+      "DIP": 0.18660117480251165
+     },
+     "tur": {
+      "YUKARI": 0.35416244683005876,
+      "AŞAĞI": 0.3303119303220579,
+      "sönme": 0.3135001012760786,
+      "AÇIK": 0.0020255215718047396
+     }
+    },
+    "S5o": {
+     "n": 8564,
+     "hisse_yil": 5725.31746031746,
+     "yuz_hy": 149.5812251348092,
+     "L_q25": 2.0,
+     "L_med": 5.0,
+     "L_q75": 12.0,
+     "pay_1_4": 0.48003269500233536,
+     "pay_1": 0.21765530126109295,
+     "sinif": {
+      "YOL": 0.789584306398879,
+      "DIP": 0.21041569360112097
+     },
+     "tur": {
+      "-": 1.0
+     }
+    },
+    "S6": {
+     "n": 1738,
+     "hisse_yil": 5725.31746031746,
+     "yuz_hy": 30.356395292421574,
+     "L_q25": 5.0,
+     "L_med": 6.0,
+     "L_q75": 7.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "YOL": 0.8849252013808976,
+      "DIP": 0.11507479861910241
+     },
+     "tur": {
+      "sönme": 0.4194476409666283,
+      "YUKARI": 0.32508630609896433,
+      "AŞAĞI": 0.25143843498273877,
+      "AÇIK": 0.004027617951668585
+     }
+    },
+    "S7": {
+     "n": 12658,
+     "hisse_yil": 5725.31746031746,
+     "yuz_hy": 221.08817699164115,
+     "L_q25": 9.0,
+     "L_med": 12.0,
+     "L_q75": 20.0,
+     "pay_1_4": 0.0,
+     "pay_1": 0.0,
+     "sinif": {
+      "YOL": 0.7920682572286302,
+      "DIP": 0.2079317427713699
+     },
+     "tur": {
+      "sönme": 0.39018802338442093,
+      "YUKARI": 0.36775161952915153,
+      "AŞAĞI": 0.23708326749881498,
+      "AÇIK": 0.004977089587612577
+     },
+     "onay_sonrasi_med": 1.0,
+     "onay_sonrasi_0_3": 0.6970295465318376,
+     "L_onay_med": 9.0
+    }
+   }
+  },
+  "kod_dosyasi": "SIKISMA_S7.py",
+  "komut": "python SIKISMA_S7.py s7sayim",
+  "sure_sn": 115.2
+ },
+ "kod_dosyasi": "SIKISMA_S7.py",
+ "komut": "python SIKISMA_S7.py s7tasarim"
+}

@@ -1,0 +1,475 @@
+// =====================================================================================================
+// COL S7 BÖLGE KUTUSU — bölge İÇİNDEN ölçülen sıkışma kutusu  —  Pine Script v5
+// GÖZ ARACI: getiri / kazanç etiketi YOK (kör yargı için bilerek konmadı). Ölçülmüş bir iz değildir.
+// Python ikizi: SIKISMA_S7.py so_s7_bolgeler (aynı sıra, aynı geçerli bar, aynı medyan). Tasarım: S7_TASARIM.md.
+// S5 / S6 her günü SON 15 BARLIK kayan pencereyle yargılıyordu; pencere bölgeden önceki düşüşü içerdiği için bölge başını
+// kaçırıyor, kısa V diplerini kutu yapıyordu. S7'de şekil şartları YALNIZ aday bölgenin [s, e] barlarıyla ölçülür.
+//
+// R = hissenin NORMAL GÜNÜ = bölge başlangıcı s'den ÖNCEKİ 250 geçerli barın (H-L) / önceki kapanış MEDYANI.
+// Aday bölge [s, e], uzunluk L = e - s + 1; şartlar yalnız [s, e] barlarıyla (ve s öncesi R / BBW referansıyla):
+//   Z1 küçük mum : bölgedeki en büyük 1 mum (zıplama) hariç (H-L)/C medyanı <= k_m x R
+//   Z2 dev mum yok: zıplama hariç en büyük mum (2. büyük) < 2 x R VE en büyük mum < 3 x R
+//   Z3 bant      : bölge kapanışlarından bandı en çok daraltan 1 uç gün çıkarılır; max/min - 1 <= bant
+//   Z4 yataylık  : ln(kapanış) ~ gün EKK eğimi x L, [eğim alt, eğim üst] içinde
+//   Z5 dip savunması: son floor(2L/5) barın en düşük Low'u >= ilk barların en düşük Low'u x (1 - 0,5 x R)
+//   Z6 Bollinger : bölgedeki EN DAR BBW (20, 2σ, nüfus std, BBW = 4σ/SMA20; her bar kendi geçmişiyle);
+//                  s'den önceki 250 BBW içinde bu değere eşit / küçük olanların payı <= bb
+//   Sınıf DİP     : bölge medyan kapanışı [s-120, e] kapanış aralığının alt %30'unda VE max C[s-120..s-1] / medyan - 1 >= %10
+//   Sınıf YOL ÜSTÜ: medyan > SMA50(e) VE SMA50(e) > SMA50(e-20) VE konum >= 0,60 VE Z5. Sınıfsız bölge kutu olmaz.
+// Algoritma (nedensel):
+//   BOŞTA: her geçerli bar e'de [e-Lmin+1, e] sınanır. Geçerse bölge AÇILIR; başlangıç geriye uzatılır: s-1 .. e-Lmax+1
+//          arasında bütün şartları geçen EN ERKEN başlangıç seçilir (tamamı taranır). Onay (karar) günü = e.
+//   AÇIK : her yeni barda önce kırılım: kapanış > üst x 1,01 YUKARI, < alt x 0,99 AŞAĞI; bölge biter (kırılım mumu
+//          bölgeye girmez). Kırılım yoksa bar eklenir, Z1, Z2, Z6 yeniden sınanır; bozulursa bölge son geçerli günde
+//          'sönme' ile biter. Üst / alt = Z3'teki 1 uç gün hariç bant. Lmax aşılırsa bölge sürer, başlangıç sabit.
+//   Bölge bitince yeni bölge için bitiş barından (kırılım mumu / sönmeyi tetikleyen bar) SONRA en az Lmin bar gerekir.
+// Çizim: kutunun onaydan ÖNCEKİ kısmı (başlangıç .. onay) KESİK çizgili ve çok soluk (o gün bu kutu bilinmiyordu);
+//        onaydan sonrası dolu. Mor elmas = onay günü. Yeşil ok = yukarı kırılım, kırmızı ok = aşağı kırılım, gri + 'sönme'.
+// Geçerli bar: H > L, hacim > 0, O > 0, C > 0. Geçersiz bar hiç sayılmaz; pencereler geçerli bar sayar. İlk 290 geçerli
+// barda kutu yok. Python'da OLUP Pine'da OLMAYAN: 31.08.2026 fon krizi kesiği (Python o tarihte açık bölgeyi 'AÇIK'
+// bırakır). Python V_BIST düzeltilmiş fiyatla doğrulandı; TradingView fiyatı düzeltmesizse kuruş farkı olabilir.
+// Bu gösterge bir ADAY gösterir; alım-satım sinyali değildir.
+// =====================================================================================================
+//@version=5
+indicator("COL S7 Bölge Kutusu (göz aracı)", shorttitle="COL S7", overlay=true, max_boxes_count=500, max_labels_count=500)
+
+// ---------------------------------------------------------------- girdiler (varsayılanlar = S7_TASARIM.md seçilen nokta)
+G1 = "S7 eşikleri (tasarım sınamasında seçildi; S7_TASARIM.md)"
+pazar      = input.string("BIST", "Pazar (bant eşiği)", options=["BIST", "ABD / Avrupa"], group=G1)
+bantBIST   = input.float(0.08, "Z3 bant BIST", step=0.01, group=G1)
+bantDiger  = input.float(0.06, "Z3 bant ABD / Avrupa", step=0.01, group=G1)
+kM         = input.float(0.75, "Z1 küçük mum k_m (x R)", step=0.05, group=G1)
+bbEsik     = input.float(0.15, "Z6 BB yüzdelik eşiği", step=0.05, group=G1)
+egimAlt    = input.float(-0.03, "Z4 eğim x L alt", step=0.005, group=G1)
+egimUst    = input.float(0.08, "Z4 eğim x L üst", step=0.01, group=G1)
+Lmin       = input.int(8, "Lmin (en kısa bölge, geçerli bar)", minval=3, maxval=60, group=G1)
+Lmax       = input.int(80, "Lmax (geriye uzatma sınırı)", minval=10, maxval=200, group=G1)
+
+G2 = "Sabitler (Python ikiziyle aynı)"
+z2Zipla    = input.float(2.0, "Z2 zıplama hariç en büyük mum < x R", step=0.5, group=G2)
+z2Hepsi    = input.float(3.0, "Z2 en büyük mum < x R", step=0.5, group=G2)
+z5R        = input.float(0.5, "Z5 dip payı (x R)", step=0.1, group=G2)
+rGun       = input.int(250, "R için önceki geçerli bar", minval=10, maxval=500, group=G2)
+bbGun      = input.int(20, "BB günü", minval=2, maxval=100, group=G2)
+bbK        = input.float(2.0, "BB sigma", group=G2)
+bbDagilim  = input.int(250, "BB genişlik dağılımı (s öncesi bar)", minval=10, maxval=500, group=G2)
+sinifGun   = input.int(120, "Sınıf: s öncesi bar", minval=10, maxval=500, group=G2)
+dipKonum   = input.float(0.30, "DİP konum en çok", step=0.05, group=G2)
+dipTepe    = input.float(0.10, "DİP tepeden düşüş en az", step=0.01, group=G2)
+yolKonum   = input.float(0.60, "YOL ÜSTÜ konum en az", step=0.05, group=G2)
+smaGun     = input.int(50, "YOL ÜSTÜ SMA günü", minval=2, maxval=200, group=G2)
+smaEgimGun = input.int(20, "YOL ÜSTÜ SMA eğim günü", minval=1, maxval=100, group=G2)
+kirPay     = input.float(0.01, "Kırılım payı", step=0.005, group=G2)
+gecmisMin  = input.int(290, "Onay için en az geçmiş (geçerli bar)", minval=0, group=G2)
+
+G3 = "Görünüm"
+gosterBB   = input.bool(true, "BB(20, 2σ) bantlarını çiz", group=G3)
+gosterTar  = input.bool(true, "Başlangıç / bitiş tarih etiketleri", group=G3)
+gosterTab  = input.bool(true, "Bilgi tablosu", group=G3)
+renkDip    = input.color(color.blue, "DİP kutusu", group=G3)
+renkYol    = input.color(color.orange, "YOL ÜSTÜ kutusu", group=G3)
+renkSon    = input.color(color.gray, "Sönme kutusu", group=G3)
+
+bant = pazar == "BIST" ? bantBIST : bantDiger
+sMin = math.max(rGun + 1, math.max(bbGun - 1 + bbDagilim, sinifGun))
+TUT  = Lmax + math.max(rGun, math.max(bbDagilim, sinifGun)) + 20
+
+// ---------------------------------------------------------------- görsel çizgiler (hesaba girmez)
+bbOrta = ta.sma(close, 20)
+bbSap  = ta.stdev(close, 20)
+plot(gosterBB ? bbOrta + 2.0 * bbSap : na, "BB üst", color=color.new(color.gray, 40), linewidth=1)
+plot(gosterBB ? bbOrta : na, "BB orta", color=color.new(color.gray, 65), linewidth=1)
+plot(gosterBB ? bbOrta - 2.0 * bbSap : na, "BB alt", color=color.new(color.gray, 40), linewidth=1)
+
+// ---------------------------------------------------------------- geçerli bar dizileri (yalnız geçerli barlar; en yeni sonda)
+hacimOk = na(volume) ? true : volume > 0
+gecerli = not na(close) and not na(open) and not na(high) and not na(low) and high > low and hacimOk and close > 0 and open > 0
+
+var float[] aH   = array.new_float(0)
+var float[] aL   = array.new_float(0)
+var float[] aC   = array.new_float(0)
+var float[] aMUM = array.new_float(0)       // (H-L)/C
+var float[] aRP  = array.new_float(0)       // (H-L)/önceki geçerli C
+var float[] aBBW = array.new_float(0)
+var float[] aSMA = array.new_float(0)
+var int[]   aBI  = array.new_int(0)
+var int[]   aT   = array.new_int(0)
+var int     nGec = 0
+
+ekle(float[] a, float v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+ekleI(int[] a, int v) =>
+    array.push(a, v)
+    if array.size(a) > TUT
+        array.shift(a)
+
+// genel geçerli bar sırası j -> dizi konumu (dizilerin hepsi aynı boyda)
+ix(int j) => array.size(aC) - nGec + j
+
+sonOrt(float[] a, int m) =>
+    int sz = array.size(a)
+    float s = 0.0
+    bool ok = sz >= m
+    if ok
+        for j = sz - m to sz - 1
+            float v = array.get(a, j)
+            if na(v)
+                ok := false
+            else
+                s += v
+    ok ? s / m : na
+
+// [j0, j1] genel sıralı aralığın KOPYASI (slice tek başına kaynağı değiştirir; kopya şart)
+dilim(float[] a, int j0, int j1) => array.copy(array.slice(a, ix(j0), ix(j1) + 1))
+
+sirali(float[] w) =>
+    array.sort(w, order.ascending)
+    w
+
+// sıralı dizinin medyanı (çift boyda ortadaki ikisinin ortalaması; numpy.median ile aynı)
+medyanS(float[] w) =>
+    int m = array.size(w)
+    int h = int(math.floor(m / 2.0))
+    float md = na
+    if m > 0
+        if m % 2 == 1
+            md := array.get(w, h)
+        else
+            md := (array.get(w, h - 1) + array.get(w, h)) / 2.0
+    md
+
+// kapanışlardan 1 uç gün hariç bant (bandı en çok daraltan; eşitlikte en yüksek çıkarılır)
+kutuBant(float[] z) =>
+    float[] w = sirali(array.copy(z))
+    int m = array.size(w)
+    bool d = array.get(w, m - 2) / array.get(w, 0) <= array.get(w, m - 1) / array.get(w, 1)
+    [d ? array.get(w, m - 2) : array.get(w, m - 1), d ? array.get(w, 0) : array.get(w, 1)]
+
+// [s, e] bölgesinin bütün ölçüleri ve şartları. tam = false: Z3 ya da Z4 düşerse pahalı kısım (R, Z1, Z2, Z5, Z6, sınıf)
+// hesaplanmaz (sonuç değişmez: şartlar VE ile bağlı). Dönüş dizisi:
+//  0 tamam  1 Z1 medyan mum  2 Z1 sınır  3 Z2 2. büyük  4 Z2 en büyük  5 Z3 bant  6 Z4 eğim  7 Z5 son dip  8 Z5 ilk dip
+//  9 Z6 pay  10 sınıf (1 DİP, 2 YOL, 0 yok)  11 R  12 üst  13 alt  14 konum  15 tepeden  16 medyan  17-22 Z1..Z6 şartı
+//  23 DİP  24 YOL  25 en dar BBW
+sina(int s, int e, bool tam) =>
+    float[] o = array.new_float(26, na)
+    int L = e - s + 1
+    float[] w = sirali(dilim(aC, s, e))
+    bool dU = array.get(w, L - 2) / array.get(w, 0) <= array.get(w, L - 1) / array.get(w, 1)
+    float bU = dU ? array.get(w, L - 2) : array.get(w, L - 1)
+    float bA = dU ? array.get(w, 0) : array.get(w, 1)
+    float band = bU / bA - 1.0
+    float ym = 0.0
+    for j = s to e
+        ym += math.log(array.get(aC, ix(j)))
+    ym := ym / L
+    float xm = (L - 1) / 2.0
+    float sxy = 0.0
+    float sxx = 0.0
+    for j = 0 to L - 1
+        float dx = j - xm
+        sxy += dx * (math.log(array.get(aC, ix(s + j))) - ym)
+        sxx += dx * dx
+    float eg = sxy / sxx * L
+    bool c3 = band <= bant
+    bool c4 = eg >= egimAlt and eg <= egimUst
+    array.set(o, 0, 0.0)
+    array.set(o, 5, band)
+    array.set(o, 6, eg)
+    array.set(o, 12, bU)
+    array.set(o, 13, bA)
+    array.set(o, 19, c3 ? 1.0 : 0.0)
+    array.set(o, 20, c4 ? 1.0 : 0.0)
+    if tam or (c3 and c4)
+        float R = medyanS(sirali(dilim(aRP, s - rGun, s - 1)))
+        float[] mm = sirali(dilim(aMUM, s, e))
+        float mx = array.get(mm, L - 1)
+        float ik = array.get(mm, L - 2)
+        array.pop(mm)
+        float z1 = medyanS(mm)
+        bool c1 = z1 <= kM * R
+        bool c2 = ik < z2Zipla * R and mx < z2Hepsi * R
+        int nSon = int(math.floor(2 * L / 5.0))
+        float ilkDip = array.get(aL, ix(s))
+        for j = s to e - nSon
+            ilkDip := math.min(ilkDip, array.get(aL, ix(j)))
+        float sonDip = array.get(aL, ix(e))
+        for j = e - nSon + 1 to e
+            sonDip := math.min(sonDip, array.get(aL, ix(j)))
+        bool c5 = sonDip >= ilkDip * (1.0 - z5R * R)
+        float minB = array.get(aBBW, ix(s))
+        for j = s to e
+            minB := math.min(minB, array.get(aBBW, ix(j)))
+        int say = 0
+        bool tamB = not na(minB)
+        for j = s - bbDagilim to s - 1
+            float v = array.get(aBBW, ix(j))
+            if na(v)
+                tamB := false
+            else if v <= minB
+                say += 1
+        float pay = tamB ? say * 1.0 / bbDagilim : na
+        bool c6 = not na(pay) and pay <= bbEsik
+        float med = medyanS(w)
+        float lo = array.get(aC, ix(s - sinifGun))
+        float hi = lo
+        for j = s - sinifGun to e
+            lo := math.min(lo, array.get(aC, ix(j)))
+            hi := math.max(hi, array.get(aC, ix(j)))
+        float tp = array.get(aC, ix(s - sinifGun))
+        for j = s - sinifGun to s - 1
+            tp := math.max(tp, array.get(aC, ix(j)))
+        float konum = hi > lo ? (med - lo) / (hi - lo) : na
+        float tepe = tp / med - 1.0
+        float sma = array.get(aSMA, ix(e))
+        float smaO = array.get(aSMA, ix(e - smaEgimGun))
+        bool dipOk = not na(konum) and konum <= dipKonum and tepe >= dipTepe
+        bool yolOk = not na(konum) and not na(sma) and not na(smaO) and med > sma and sma > smaO and konum >= yolKonum and c5
+        bool ok = c1 and c2 and c3 and c4 and c5 and c6 and (dipOk or yolOk)
+        array.set(o, 0, ok ? 1.0 : 0.0)
+        array.set(o, 1, z1)
+        array.set(o, 2, kM * R)
+        array.set(o, 3, ik)
+        array.set(o, 4, mx)
+        array.set(o, 7, sonDip)
+        array.set(o, 8, ilkDip)
+        array.set(o, 9, pay)
+        array.set(o, 10, dipOk ? 1.0 : yolOk ? 2.0 : 0.0)
+        array.set(o, 11, R)
+        array.set(o, 14, konum)
+        array.set(o, 15, tepe)
+        array.set(o, 16, med)
+        array.set(o, 17, c1 ? 1.0 : 0.0)
+        array.set(o, 18, c2 ? 1.0 : 0.0)
+        array.set(o, 21, c5 ? 1.0 : 0.0)
+        array.set(o, 22, c6 ? 1.0 : 0.0)
+        array.set(o, 23, dipOk ? 1.0 : 0.0)
+        array.set(o, 24, yolOk ? 1.0 : 0.0)
+        array.set(o, 25, minB)
+    o
+
+tarih(int t) => na(t) ? "-" : str.format_time(t, "dd.MM.yy", syminfo.timezone)
+yz(float v) => na(v) ? "-" : str.tostring(v * 100, "#.00") + "%"
+yzi(float v) => na(v) ? "-" : (v >= 0 ? "+" : "") + str.tostring(v * 100, "#.0") + "%"
+ev(float b) => na(b) ? "-" : b == 1.0 ? "EVET" : "hayır"
+
+// ---------------------------------------------------------------- bölge durumu
+var bool    akt     = false
+var int     kilit   = -1
+var int     zS      = 0
+var float   zR      = na
+var int     zSinif  = 0
+var float   zUst    = na
+var float   zAlt    = na
+var float   zMinB   = na
+var float[] zC      = array.new_float(0)
+var float[] zMum    = array.new_float(0)
+var float[] zPre    = array.new_float(0)
+var int     zSonBI  = na
+var int     zSonT   = na
+var int     zOnayBI = na
+var box     bx1     = na
+var box     bx2     = na
+
+onay  = false
+kirUp = false
+kirDn = false
+
+if gecerli
+    float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
+    ekle(aH, high)
+    ekle(aL, low)
+    ekle(aC, close)
+    ekle(aMUM, (high - low) / close)
+    ekle(aRP, na(cOnce) ? na : (high - low) / cOnce)
+    float bbw = na
+    if array.size(aC) >= bbGun
+        float m = sonOrt(aC, bbGun)
+        float ss = 0.0
+        for j = array.size(aC) - bbGun to array.size(aC) - 1
+            ss += math.pow(array.get(aC, j) - m, 2)
+        bbw := 2.0 * bbK * math.sqrt(ss / bbGun) / m
+    ekle(aBBW, bbw)
+    ekle(aSMA, array.size(aC) >= smaGun ? sonOrt(aC, smaGun) : na)
+    ekleI(aBI, bar_index)
+    ekleI(aT, time)
+    nGec += 1
+    int i = nGec - 1
+    bool bitti = false
+
+    // ---- AÇIK: önce kırılım, sonra ekle + Z1 / Z2 / Z6 yeniden sınama
+    if akt
+        bool yuk = close > zUst * (1.0 + kirPay)
+        bool asg = close < zAlt * (1.0 - kirPay)
+        if yuk or asg
+            box.set_right(bx2, zSonBI)
+            kirUp := yuk
+            kirDn := asg
+            if gosterTar
+                label.new(zSonBI, zUst, tarih(zSonT), xloc=xloc.bar_index, style=label.style_label_lower_left, color=color.new(color.white, 100), textcolor=yuk ? color.green : color.red, size=size.tiny)
+            akt := false
+            kilit := i
+            bitti := true
+        else
+            array.push(zC, close)
+            array.push(zMum, (high - low) / close)
+            float mB = math.min(zMinB, bbw)
+            float[] mm = sirali(array.copy(zMum))
+            int k = array.size(mm)
+            float mx = array.get(mm, k - 1)
+            float ik = array.get(mm, k - 2)
+            array.pop(mm)
+            float z1 = medyanS(mm)
+            int say = 0
+            for j = 0 to array.size(zPre) - 1
+                if array.get(zPre, j) <= mB
+                    say += 1
+            float pay = say * 1.0 / bbDagilim
+            bool okA = z1 <= kM * zR and ik < z2Zipla * zR and mx < z2Hepsi * zR and not na(mB) and pay <= bbEsik
+            if okA
+                zMinB := mB
+                [u, a] = kutuBant(zC)
+                zUst := u
+                zAlt := a
+                zSonBI := bar_index
+                zSonT := time
+                box.set_right(bx2, bar_index)
+                box.set_top(bx1, zUst)
+                box.set_bottom(bx1, zAlt)
+                box.set_top(bx2, zUst)
+                box.set_bottom(bx2, zAlt)
+            else
+                box.set_right(bx2, zSonBI)
+                box.set_bgcolor(bx2, color.new(renkSon, 78))
+                box.set_border_color(bx2, color.new(renkSon, 20))
+                box.set_border_color(bx1, color.new(renkSon, 50))
+                label.new(zSonBI, zUst, "sönme" + (gosterTar ? " " + tarih(zSonT) : ""), xloc=xloc.bar_index, style=label.style_label_lower_left, color=color.new(color.gray, 20), textcolor=color.white, size=size.tiny)
+                akt := false
+                kilit := i
+                bitti := true
+
+    // ---- BOŞTA: [i-Lmin+1, i] sınanır; geçerse geriye uzatma (en erken geçen başlangıç), onay = i
+    if not akt and not bitti
+        int s0 = i - Lmin + 1
+        if i >= gecmisMin and s0 >= sMin and s0 > kilit
+            float[] r0 = sina(s0, i, false)
+            if array.get(r0, 0) == 1.0
+                int enIyi = s0
+                int sAlt = math.max(i - Lmax + 1, math.max(sMin, kilit + 1))
+                if s0 - 1 >= sAlt
+                    for s2 = s0 - 1 to sAlt
+                        float[] r2 = sina(s2, i, false)
+                        if array.get(r2, 0) == 1.0
+                            enIyi := s2
+                float[] rr = enIyi == s0 ? r0 : sina(enIyi, i, false)
+                zS := enIyi
+                zR := array.get(rr, 11)
+                zSinif := int(array.get(rr, 10))
+                zUst := array.get(rr, 12)
+                zAlt := array.get(rr, 13)
+                zMinB := array.get(rr, 25)
+                zC := dilim(aC, enIyi, i)
+                zMum := dilim(aMUM, enIyi, i)
+                zPre := dilim(aBBW, enIyi - bbDagilim, enIyi - 1)
+                zSonBI := bar_index
+                zSonT := time
+                zOnayBI := bar_index
+                int basBI = array.get(aBI, ix(enIyi))
+                int basT = array.get(aT, ix(enIyi))
+                color rk = zSinif == 1 ? renkDip : renkYol
+                bx1 := box.new(basBI, zUst, bar_index, zAlt, xloc=xloc.bar_index, border_color=color.new(rk, 45), border_width=1, border_style=line.style_dashed, bgcolor=color.new(rk, 94))
+                bx2 := box.new(bar_index, zUst, bar_index, zAlt, xloc=xloc.bar_index, border_color=color.new(rk, 0), border_width=1, border_style=line.style_solid, bgcolor=color.new(rk, 78))
+                if gosterTar
+                    label.new(basBI, zAlt, tarih(basT), xloc=xloc.bar_index, style=label.style_label_upper_left, color=color.new(color.white, 100), textcolor=zSinif == 1 ? color.blue : color.orange, size=size.tiny)
+                akt := true
+                onay := true
+
+// ---------------------------------------------------------------- işaretler (kazanç / getiri etiketi YOK)
+plotshape(onay, "Onay günü", shape.diamond, location.belowbar, color.new(color.purple, 0), size=size.small)
+plotshape(kirUp, "Kırılım yukarı", shape.arrowup, location.belowbar, color.new(color.green, 0), size=size.small)
+plotshape(kirDn, "Kırılım aşağı", shape.arrowdown, location.abovebar, color.new(color.red, 0), size=size.small)
+
+// ---------------------------------------------------------------- bilgi tablosu (son bar; açık bölge varsa [başlangıç, son bar], yoksa son Lmin bar)
+var table tb = table.new(position.top_right, 3, 14, bgcolor=color.new(color.white, 10), border_width=1)
+if gosterTab and barstate.islast
+    int iSon = nGec - 1
+    int sW = akt ? zS : iSon - Lmin + 1
+    bool hesap = nGec > 0 and sW >= sMin and iSon - sW + 1 >= 3 and ix(sW - math.max(rGun, math.max(bbDagilim, sinifGun))) >= 0
+    float[] rt = array.new_float(26, na)
+    string pen = "-"
+    if hesap
+        rt := sina(sW, iSon, true)
+        pen := tarih(array.get(aT, ix(sW))) + " .. " + tarih(array.get(aT, ix(iSon)))
+    float rR = array.get(rt, 11)
+    table.cell(tb, 0, 0, "S7 (son bar) " + (akt ? "AÇIK bölge" : "son " + str.tostring(Lmin) + " bar"), text_size=size.small)
+    table.cell(tb, 1, 0, "değer", text_size=size.small)
+    table.cell(tb, 2, 0, "şart", text_size=size.small)
+    table.cell(tb, 0, 1, "R normal gün (s öncesi " + str.tostring(rGun) + " bar medyan (H-L)/C önceki)", text_size=size.small)
+    table.cell(tb, 1, 1, yz(rR), text_size=size.small)
+    table.cell(tb, 2, 1, "", text_size=size.small)
+    table.cell(tb, 0, 2, "Z1 medyan mum (zıplama hariç) <= " + str.tostring(kM) + " x R", text_size=size.small)
+    table.cell(tb, 1, 2, yz(array.get(rt, 1)) + " / " + yz(array.get(rt, 2)), text_size=size.small)
+    table.cell(tb, 2, 2, ev(array.get(rt, 17)), text_size=size.small)
+    table.cell(tb, 0, 3, "Z2 2. büyük < " + str.tostring(z2Zipla) + "R, en büyük < " + str.tostring(z2Hepsi) + "R", text_size=size.small)
+    table.cell(tb, 1, 3, (na(rR) ? "-" : str.tostring(array.get(rt, 3) / rR, "#.00") + "R / " + str.tostring(array.get(rt, 4) / rR, "#.00") + "R"), text_size=size.small)
+    table.cell(tb, 2, 3, ev(array.get(rt, 18)), text_size=size.small)
+    table.cell(tb, 0, 4, "Z3 bant (1 uç gün hariç) <= " + yz(bant), text_size=size.small)
+    table.cell(tb, 1, 4, yz(array.get(rt, 5)), text_size=size.small)
+    table.cell(tb, 2, 4, ev(array.get(rt, 19)), text_size=size.small)
+    table.cell(tb, 0, 5, "Z4 eğim x L [" + yzi(egimAlt) + ", " + yzi(egimUst) + "]", text_size=size.small)
+    table.cell(tb, 1, 5, yzi(array.get(rt, 6)), text_size=size.small)
+    table.cell(tb, 2, 5, ev(array.get(rt, 20)), text_size=size.small)
+    table.cell(tb, 0, 6, "Z5 son dip / ilk dip - 1 (sınır -" + str.tostring(z5R) + "R)", text_size=size.small)
+    table.cell(tb, 1, 6, yzi(array.get(rt, 7) / array.get(rt, 8) - 1.0), text_size=size.small)
+    table.cell(tb, 2, 6, ev(array.get(rt, 21)), text_size=size.small)
+    table.cell(tb, 0, 7, "Z6 en dar BBW payı (s öncesi " + str.tostring(bbDagilim) + ") <= " + str.tostring(bbEsik), text_size=size.small)
+    table.cell(tb, 1, 7, na(array.get(rt, 9)) ? "-" : str.tostring(array.get(rt, 9), "#.000"), text_size=size.small)
+    table.cell(tb, 2, 7, ev(array.get(rt, 22)), text_size=size.small)
+    table.cell(tb, 0, 8, "konum / 120 bar tepeden", text_size=size.small)
+    table.cell(tb, 1, 8, (na(array.get(rt, 14)) ? "-" : str.tostring(array.get(rt, 14), "#.00")) + " / " + yzi(array.get(rt, 15)), text_size=size.small)
+    table.cell(tb, 2, 8, array.get(rt, 23) == 1.0 ? "DİP" : array.get(rt, 24) == 1.0 ? "YOL ÜSTÜ" : "sınıf yok", text_size=size.small)
+    table.cell(tb, 0, 9, "pencere", text_size=size.small)
+    table.cell(tb, 1, 9, pen, text_size=size.small)
+    table.cell(tb, 2, 9, array.get(rt, 0) == 1.0 ? "hepsi EVET" : "", text_size=size.small)
+    table.cell(tb, 0, 10, "açık bölge gün sayısı / sınıf", text_size=size.small)
+    table.cell(tb, 1, 10, akt ? str.tostring(iSon - zS + 1) + " gün" : "bölge yok", text_size=size.small)
+    table.cell(tb, 2, 10, akt ? (zSinif == 1 ? "DİP" : "YOL ÜSTÜ") : "-", text_size=size.small)
+    table.cell(tb, 0, 11, "kutu üst / alt", text_size=size.small)
+    table.cell(tb, 1, 11, akt ? str.tostring(zUst, format.mintick) + " / " + str.tostring(zAlt, format.mintick) : "-", text_size=size.small)
+    table.cell(tb, 2, 11, "", text_size=size.small)
+    table.cell(tb, 0, 12, "geçerli bar sayısı", text_size=size.small)
+    table.cell(tb, 1, 12, str.tostring(nGec), text_size=size.small)
+    table.cell(tb, 2, 12, nGec > gecmisMin ? "" : "en az " + str.tostring(gecmisMin + 1) + " gerekli", text_size=size.small)
+    table.cell(tb, 0, 13, "getiri / kazanç etiketi yok (kör yargı)", text_size=size.small)
+    table.cell(tb, 1, 13, "", text_size=size.small)
+    table.cell(tb, 2, 13, "", text_size=size.small)
+
+// =====================================================================================================
+// ==== BEKLENEN KUTULAR (so_s7_pine_blok üretir; elle düzenleme) ====
+// Python ikizi (SIKISMA_S7.so_s7_bolgeler), V_BIST fiyatı, BIST, input'lar varsayılan (k_m 0.75, bb 0.15, Lmin 8, Lmax 80, bant %8, eğim [-3%, +8%]).
+// Tarih gg.aa.yy. başlangıç = kutunun ilk mumu (geriye uzatılmış), onay = karar günü (elmas), bitiş = bölgenin son mumu (kırılım mumu hariç),
+// kırılım = bölgeyi bitiren mum (ok / sönme etiketi). üst / alt = son durumdaki kutu (1 uç gün hariç kapanış bandı). V_BIST temettü-düzeltmeli
+// olabilir; TradingView fiyatı düzeltmesizse üst / alt birkaç kuruş farklı çıkabilir (tarihler aynı olmalı). Her örnekte örnek aralığının
+// ±20 bar çevresindeki kutular yazılıdır (bağlam). SEÇMEMELİ örnekte ±5 bar tampona değen kutu OLMAMALI; ±20 içindeki komşu kutu kural
+// dışı değildir. Bayram / hacimsiz gün geçerli bar sayılmaz.
+//
+// FENER-E (SEÇMELİ DIP) 14.10.25-07.11.25: 1 kutu
+//     başlangıç 22.10.25  onay 03.11.25  bitiş 10.11.25  kırılım 11.11.25  YUKARI  DİP  13 bar  üst 3,73 / alt 3,62
+// CCOLA-E (SEÇMELİ DIP) 02.10.25-20.10.25: 1 kutu
+//     başlangıç 08.09.25  onay 02.10.25  bitiş 02.10.25  kırılım 03.10.25  sönme   DİP  19 bar  üst 48,22 / alt 45,74
+// ENJSA-T (SEÇMELİ YOL) 28.07.25-15.08.25: 1 kutu
+//     başlangıç 16.07.25  onay 07.08.25  bitiş 12.08.25  kırılım 13.08.25  YUKARI  YOL ÜSTÜ  20 bar  üst 67,05 / alt 64,15
+// FENER-A (SEÇMEMELİ) 03.12.25-16.12.25: 1 kutu
+//     başlangıç 22.10.25  onay 03.11.25  bitiş 10.11.25  kırılım 11.11.25  YUKARI  DİP  13 bar  üst 3,73 / alt 3,62
+// CCOLA-T (SEÇMEMELİ) 29.07.25-29.08.25: 1 kutu
+//     başlangıç 08.09.25  onay 02.10.25  bitiş 02.10.25  kırılım 03.10.25  sönme   DİP  19 bar  üst 48,22 / alt 45,74
+// ENJSA-O (SEÇMEMELİ) 20.01.25-14.02.25: KUTU YOK
+// ENJSA-A (SEÇMEMELİ) 30.12.25-27.01.26: 1 kutu
+//     başlangıç 28.11.25  onay 09.12.25  bitiş 09.12.25  kırılım 10.12.25  sönme   YOL ÜSTÜ  8 bar  üst 84,95 / alt 81,70
+// ENJSA-V (SEÇMEMELİ) 06.07.26-17.07.26: KUTU YOK
+// ==== BEKLENEN KUTULAR SONU ====
+// Grafikte farklı bir gün görürsen önce: günlük grafik mi, sembol BIST:... mi, pazar 'BIST' mi, input'lar varsayılan mı,
+// bayram / hacimsiz günler (geçerli bar sayılmaz). Kutu sınırları geçerli bar sayar, takvim günü değil.
+// =====================================================================================================
