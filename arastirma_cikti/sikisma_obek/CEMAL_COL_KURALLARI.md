@@ -54,3 +54,14 @@ Kodun bulduğu "parçalar" çoğunlukla gerçek tabanın içinde ama tabanın ke
 | TUCLK Ağu 2026 (YANLIŞ) | 15 | 0,10 | 0,53 | 0,31 | 0,17 | 0,27 |
 
 Sonuç: PAPIL bölgesinin parmak izi (alt fitil yok %47, üst fitil uzun, kapanış dipte 0,17, çoğu kırmızı) Cemal'in öteki DOĞRU bölgelerinde YOK (alt fitil yok payı %0-30, kapanış konumu 0,37-0,50); en çok benzeyen bölge TUCLK Ağu 2026 (YANLIŞ). Yani 'alt fitilsiz, üst fitilli öbek' etiket kümesinde çölün ortak izi değil; PAPIL'e özgü. Kural adayı olmadı; ileride etiket çoğalırsa yeniden bakılır.
+
+### Fitil öbeği etiketleri (Cemal, 16 Kas; 'kesin tanı, yüzlerce örnek var')
+| Bölge (Cemal) | n | alt fitilsiz payı | üst fitil medyan | kapanış konumu | yeşil | ASİM | Kod S+ günü | Sonrası |
+|---|---|---|---|---|---|---|---|---|
+| TEHOL 2024-12-01..2025-05-28 (tek yapı; parmak izi Mayıs'ta) — Mayıs 2025 | 18 | %78 | 0,66 | 0,03 | %17 | +0,52 | 17/18 | 60 günde 7,57 -> 14,79 (+%95) |
+| TEHOL Ara 2024 - Şub 2025 (aynı yapının yükseliş bacağı) | 64 | %36-45 | 0,02-0,26 | 0,70-0,98 | %64-77 | -0,10..+0,09 | 0 | 0,87 -> 9,83 |
+| BINBN 2024-12-17..2025-01-21 ('en net') | 25 | %52 | 0,59 | 0,11 | %20 | +0,42 | 17 (23 Ara'dan) | — |
+| PAPIL 2025-11-13..12-09 | 19 | %47 | 0,44 | 0,17 | %26 | +0,26 | 14 | 11 Ara kırılım, +%8 sonra söndü |
+| DGXX 2026-10-27..11-13 (ters: S- beklenen) | 14 | — | 0,18 | 0,56 | — | -0,10 | S- tutmadı (üst fitilsiz payı %30) | 2,50 -> 2,02 |
+
+Not: Cemal'in 'Şubat 2026' yazdığı TEHOL etiketi düzeltildi (2024 Aralık - 28 Mayıs 2025). Kod (Ç187 S+ tanımı) üç S+ örneğini de algılıyor: hata 'algılama' halkasında değil; bağlam (taban içi) ve ölçü (60 gün yerine kırılım / 20 gün) halkaları HALKA_IS_TANIMI.md ile sınanıyor.
