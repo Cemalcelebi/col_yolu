@@ -40463,5 +40463,3698 @@
    }
   ]
  },
- "secilen_varsayilan_ayni": true
+ "secilen_varsayilan_ayni": true,
+ "v11": {
+  "surum": "S6_TABAN v1.1 (2026-11-16): Cemal'in çöl kuralları -> taban bölgesi (bant, sakin, dip savunulur, küçük mum [referans pencere öncesi], daralma, Bollinger daralması) + al mumu / taban kırılımı / sönme; v1.0 kipi refOnce = False, bbSart = False",
+  "zaman": "2026-11-16 19:44",
+  "izgara_tanim": {
+   "refOnce": [
+    true,
+    false
+   ],
+   "bbEsik": [
+    0.15,
+    0.2,
+    0.3,
+    null
+   ],
+   "puan_disi": [
+    "D7 KNFRT 2022-06/09",
+    "A1 KNFRT al mumu 2022-09-14"
+   ],
+   "sade_sira": [
+    [
+     true,
+     0.2
+    ],
+    [
+     true,
+     0.3
+    ],
+    [
+     true,
+     0.15
+    ],
+    [
+     true,
+     null
+    ],
+    [
+     false,
+     0.2
+    ],
+    [
+     false,
+     0.3
+    ],
+    [
+     false,
+     0.15
+    ],
+    [
+     false,
+     null
+    ]
+   ],
+   "secim_kurali": "taban = v1.0 kipinin 14 puanlı etiketteki puanı. Aday sırası (sadelik; S7 fikirleri açık olan önce, BB eşiği SIKISMA_OBEK varsayılanı 0,20 önce, sonra gevşek 0,30, sonra sıkı 0,15): (ref açık, BB 0,20), (açık, 0,30), (açık, 0,15), (açık, BB kapalı), (ref kapalı, 0,20), (kapalı, 0,30), (kapalı, 0,15), (kapalı, kapalı = v1.0). Puanı tabanın ALTINA DÜŞMEYEN ilk aday seçilir (kötüleştiren yeni şart varsayılan KAPALI kalır); en yüksek puan aranmaz.",
+   "ccola": {
+    "sembol": "CCOLA",
+    "ilk": "2025-10-02",
+    "son": "2025-10-20"
+   }
+  },
+  "esik_sabit": {
+   "bantMax": 0.12,
+   "netMax": 0.03,
+   "kM": 0.9,
+   "dipTol": 0.05,
+   "daralmaOran": 0.0
+  },
+  "taban_puan14": 13,
+  "taban_puan16": 13,
+  "v10_kipi_birebir": true,
+  "izgara": [
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.15
+    },
+    "puan14": 12,
+    "puan16": 12,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 1,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-11-03",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-26",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-22",
+       "bitis": "2021-11-18",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.634150437291904,
+       "onay": "2021-11-15",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-18",
+       "onay_once_gun": 13
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.512,
+      "acik_son": false,
+      "birlesim": 0.585,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-02",
+       "gun": 21,
+       "sinif": "DIP",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.654,
+      "acik_son": false,
+      "birlesim": 0.846,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-19",
+       "bitis": "2025-08-06",
+       "gun": 34,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.139773704205753,
+       "onay": "2025-07-29",
+       "onay_once_gun": 27
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.816,
+      "acik_son": false,
+      "birlesim": 0.816,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-03-03",
+       "bitis": "2026-05-05",
+       "gun": 43,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.059999942779541,
+       "onay": "2026-03-19",
+       "onay_once_gun": 12
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-03",
+       "bitis": "2021-08-27",
+       "gun": 19,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.426461669708253,
+       "dip": 12.546839887697352,
+       "onay": "2021-08-23",
+       "onay_once_gun": 14
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-13",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.483,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-07",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-26",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 242,
+    "durum_etiket_hisse": {
+     "AL": 101,
+     "SONDU": 116,
+     "KIRILDI": 24,
+     "ACIK": 1
+    },
+    "ad": "ref açık · BB 0,15",
+    "ref": true,
+    "bb": 0.15
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.2
+    },
+    "puan14": 12,
+    "puan16": 12,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 1,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-31",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-24",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-22",
+       "bitis": "2021-11-18",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.634150437291904,
+       "onay": "2021-11-15",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-17",
+       "onay_once_gun": 12
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.654,
+      "acik_son": false,
+      "birlesim": 0.846,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-19",
+       "bitis": "2025-08-06",
+       "gun": 34,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.139773704205753,
+       "onay": "2025-07-28",
+       "onay_once_gun": 26
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.842,
+      "acik_son": false,
+      "birlesim": 0.842,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-03-03",
+       "bitis": "2026-05-06",
+       "gun": 44,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.059999942779541,
+       "onay": "2026-03-19",
+       "onay_once_gun": 12
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-03",
+       "bitis": "2021-08-27",
+       "gun": 19,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.426461669708253,
+       "dip": 12.546839887697352,
+       "onay": "2021-08-23",
+       "onay_once_gun": 14
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.494,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-06",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-24",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 277,
+    "durum_etiket_hisse": {
+     "AL": 113,
+     "SONDU": 130,
+     "KIRILDI": 33,
+     "ACIK": 1
+    },
+    "ad": "ref açık · BB 0,20",
+    "ref": true,
+    "bb": 0.2
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.3
+    },
+    "puan14": 13,
+    "puan16": 13,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 2,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-31",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-23",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-19",
+       "bitis": "2021-11-18",
+       "gun": 22,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.194339546286454,
+       "onay": "2021-11-12",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-16",
+       "onay_once_gun": 11
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.673,
+      "acik_son": true,
+      "birlesim": 0.885,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-18",
+       "bitis": "2025-08-06",
+       "gun": 35,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.122370561470604,
+       "onay": "2025-07-16",
+       "onay_once_gun": 19
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.895,
+      "acik_son": false,
+      "birlesim": 0.895,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-02-24",
+       "bitis": "2026-05-08",
+       "gun": 51,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2026-05-08",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.0199999809265137,
+       "onay": "2026-03-17",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-04-30",
+       "bitis": "2021-08-27",
+       "gun": 78,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.805188588567288,
+       "dip": 11.94820694078455,
+       "onay": "2021-05-31",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-08-22"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.618,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-06",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-23",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 345,
+    "durum_etiket_hisse": {
+     "AL": 155,
+     "SONDU": 146,
+     "KIRILDI": 43,
+     "ACIK": 1
+    },
+    "ad": "ref açık · BB 0,30",
+    "ref": true,
+    "bb": 0.3
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": false,
+     "bbEsik": 0.3
+    },
+    "puan14": 13,
+    "puan16": 13,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 2,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-17",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-07-02",
+       "bitis": "2025-10-20",
+       "gun": 78,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 54.099998474121094,
+       "dip": 45.13999938964844,
+       "onay": "2025-07-11",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-19",
+       "bitis": "2021-11-18",
+       "gun": 22,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.194339546286454,
+       "onay": "2021-11-02",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-12",
+       "bitis": "2025-02-26",
+       "gun": 76,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.79999923706055,
+       "onay": "2024-11-26",
+       "onay_once_gun": 10
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-22",
+       "bitis": "2025-06-30",
+       "gun": 45,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 59.29999923706055,
+       "dip": 51.25,
+       "onay": "2025-05-06",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.183,
+      "acik_son": false,
+      "birlesim": 0.35,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-07-25",
+       "bitis": "2022-08-08",
+       "gun": 11,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-08",
+       "kir_gun": "",
+       "tavan": 5.283619374242279,
+       "dip": 4.955293206427792,
+       "onay": "2022-08-03",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.673,
+      "acik_son": true,
+      "birlesim": 0.923,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-18",
+       "bitis": "2025-08-06",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.122370561470604,
+       "onay": "2025-07-01",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.895,
+      "acik_son": false,
+      "birlesim": 0.895,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-02-24",
+       "bitis": "2026-05-08",
+       "gun": 51,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-05-08",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.0199999809265137,
+       "onay": "2026-03-06",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-11-21",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-05-21",
+       "bitis": "2021-08-27",
+       "gun": 66,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.805188588567288,
+       "dip": 11.94820694078455,
+       "onay": "2021-06-01",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-08-22"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.618,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-11-21",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-18",
+       "bitis": "2025-08-13",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-07-29",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-07-02",
+       "bitis": "2025-10-20",
+       "gun": 78,
+       "onay": "2025-07-11",
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 54.099998474121094,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 571,
+    "durum_etiket_hisse": {
+     "AL": 289,
+     "SONDU": 197,
+     "KIRILDI": 84,
+     "ACIK": 1
+    },
+    "ad": "ref açık · BB kapalı",
+    "ref": true,
+    "bb": null
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.15
+    },
+    "puan14": 12,
+    "puan16": 12,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 1,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-11-03",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-26",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-22",
+       "bitis": "2021-11-18",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.634150437291904,
+       "onay": "2021-11-15",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-18",
+       "onay_once_gun": 13
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.512,
+      "acik_son": false,
+      "birlesim": 0.585,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-02",
+       "gun": 21,
+       "sinif": "DIP",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.654,
+      "acik_son": false,
+      "birlesim": 0.846,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-19",
+       "bitis": "2025-08-06",
+       "gun": 34,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.139773704205753,
+       "onay": "2025-07-29",
+       "onay_once_gun": 27
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.816,
+      "acik_son": false,
+      "birlesim": 0.816,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-03-03",
+       "bitis": "2026-05-05",
+       "gun": 43,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.059999942779541,
+       "onay": "2026-03-25",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-03",
+       "bitis": "2021-08-27",
+       "gun": 19,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.426461669708253,
+       "dip": 12.546839887697352,
+       "onay": "2021-08-23",
+       "onay_once_gun": 14
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-13",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.483,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-07",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-26",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 242,
+    "durum_etiket_hisse": {
+     "AL": 99,
+     "SONDU": 118,
+     "KIRILDI": 24,
+     "ACIK": 1
+    },
+    "ad": "ref kapalı · BB 0,15",
+    "ref": false,
+    "bb": 0.15
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.2
+    },
+    "puan14": 12,
+    "puan16": 12,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 1,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-31",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-24",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-22",
+       "bitis": "2021-11-18",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.634150437291904,
+       "onay": "2021-11-15",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-17",
+       "onay_once_gun": 12
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.654,
+      "acik_son": false,
+      "birlesim": 0.846,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-19",
+       "bitis": "2025-08-06",
+       "gun": 34,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.139773704205753,
+       "onay": "2025-07-28",
+       "onay_once_gun": 26
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.842,
+      "acik_son": false,
+      "birlesim": 0.842,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-03-03",
+       "bitis": "2026-05-06",
+       "gun": 44,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.059999942779541,
+       "onay": "2026-03-25",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-03",
+       "bitis": "2021-08-27",
+       "gun": 19,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.426461669708253,
+       "dip": 12.546839887697352,
+       "onay": "2021-08-23",
+       "onay_once_gun": 14
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.494,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-06",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-24",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 277,
+    "durum_etiket_hisse": {
+     "AL": 111,
+     "SONDU": 132,
+     "KIRILDI": 33,
+     "ACIK": 1
+    },
+    "ad": "ref kapalı · BB 0,20",
+    "ref": false,
+    "bb": 0.2
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.3
+    },
+    "puan14": 13,
+    "puan16": 13,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 2,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-31",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "onay": "2025-09-23",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-19",
+       "bitis": "2021-11-18",
+       "gun": 22,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.194339546286454,
+       "onay": "2021-11-12",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-29",
+       "bitis": "2025-02-26",
+       "gun": 63,
+       "sinif": "YOL",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 56.849998474121094,
+       "onay": "2024-12-16",
+       "onay_once_gun": 11
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-25",
+       "bitis": "2025-06-30",
+       "gun": 43,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 58.25,
+       "dip": 51.25,
+       "onay": "2025-05-22",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.167,
+      "acik_son": false,
+      "birlesim": 0.167,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-08-16",
+       "bitis": "2022-08-29",
+       "gun": 10,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-29",
+       "kir_gun": "",
+       "tavan": 5.52074405427021,
+       "dip": 5.028255092470939,
+       "onay": "2022-08-25",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.673,
+      "acik_son": true,
+      "birlesim": 0.885,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-18",
+       "bitis": "2025-08-06",
+       "gun": 35,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.122370561470604,
+       "onay": "2025-07-16",
+       "onay_once_gun": 19
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.895,
+      "acik_son": false,
+      "birlesim": 0.895,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-02-24",
+       "bitis": "2026-05-08",
+       "gun": 51,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2026-05-08",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.0199999809265137,
+       "onay": "2026-03-17",
+       "onay_once_gun": 15
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-04-30",
+       "bitis": "2021-08-27",
+       "gun": 78,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.805188588567288,
+       "dip": 11.94820694078455,
+       "onay": "2021-05-31",
+       "onay_once_gun": 18
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-08-22"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.618,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-12-03",
+       "onay_once_gun": 16
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-11",
+       "bitis": "2025-08-13",
+       "gun": 23,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-08-06",
+       "onay_once_gun": 17
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-09-02",
+       "bitis": "2025-10-20",
+       "gun": 35,
+       "onay": "2025-09-23",
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 49.779998779296875,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 347,
+    "durum_etiket_hisse": {
+     "AL": 153,
+     "SONDU": 150,
+     "KIRILDI": 43,
+     "ACIK": 1
+    },
+    "ad": "ref kapalı · BB 0,30",
+    "ref": false,
+    "bb": 0.3
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": false,
+     "bbEsik": 0.3
+    },
+    "puan14": 13,
+    "puan16": 13,
+    "dogru": 9,
+    "yanlis": 2,
+    "al": 2,
+    "etiket": [
+     {
+      "ad": "D1 FENER 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 18,
+      "bolge": {
+       "bas": "2025-10-07",
+       "bitis": "2025-11-11",
+       "gun": 25,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-11-11",
+       "kir_gun": "",
+       "tavan": 3.87858767517552,
+       "dip": 3.46458101272583,
+       "onay": "2025-10-17",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D2 CCOLA 2025-10",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 10,
+      "bolge": {
+       "bas": "2025-07-02",
+       "bitis": "2025-10-20",
+       "gun": 78,
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 54.099998474121094,
+       "dip": 45.13999938964844,
+       "onay": "2025-07-11",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D3 ENJSA 2021-11 (tamamı)",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-10-19",
+       "bitis": "2021-11-18",
+       "gun": 22,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-11-18",
+       "kir_gun": "",
+       "tavan": 14.672594275210159,
+       "dip": 13.194339546286454,
+       "onay": "2021-11-02",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "D4 ENJSA 2025-02",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 22,
+      "bolge": {
+       "bas": "2024-11-11",
+       "bitis": "2025-02-26",
+       "gun": 77,
+       "sinif": "ORTA",
+       "durum": "SONDU",
+       "al_gun": "",
+       "kir_gun": "",
+       "tavan": 66.5,
+       "dip": 55.04999923706055,
+       "onay": "2024-11-20",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D5 ENJSA 2025-05/06",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 34,
+      "bolge": {
+       "bas": "2025-04-22",
+       "bitis": "2025-06-30",
+       "gun": 45,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-06-30",
+       "kir_gun": "",
+       "tavan": 59.29999923706055,
+       "dip": 51.25,
+       "onay": "2025-05-06",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D6 DESA 2021-10/12",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.561,
+      "acik_son": false,
+      "birlesim": 0.634,
+      "cemal_bar": 41,
+      "bolge": {
+       "bas": "2021-11-04",
+       "bitis": "2021-12-06",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2021-12-06",
+       "kir_gun": "",
+       "tavan": 1.045825510508013,
+       "dip": 0.9079771205161138,
+       "onay": "2021-11-15",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D7 KNFRT 2022-06/09",
+      "tur": "DOGRU",
+      "tuttu": false,
+      "ortusme": 0.183,
+      "acik_son": false,
+      "birlesim": 0.35,
+      "cemal_bar": 60,
+      "bolge": {
+       "bas": "2022-07-25",
+       "bitis": "2022-08-08",
+       "gun": 11,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2022-08-08",
+       "kir_gun": "",
+       "tavan": 5.283619374242279,
+       "dip": 4.955293206427792,
+       "onay": "2022-08-03",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "D8 TUCLK 2025-06/08",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.673,
+      "acik_son": true,
+      "birlesim": 0.923,
+      "cemal_bar": 52,
+      "bolge": {
+       "bas": "2025-06-18",
+       "bitis": "2025-08-06",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-06",
+       "kir_gun": "",
+       "tavan": 5.708281714834632,
+       "dip": 5.122370561470604,
+       "onay": "2025-07-01",
+       "onay_once_gun": 9
+      }
+     },
+     {
+      "ad": "D9 YKSLN 2026-03/05",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 0.895,
+      "acik_son": false,
+      "birlesim": 0.895,
+      "cemal_bar": 38,
+      "bolge": {
+       "bas": "2026-02-24",
+       "bitis": "2026-05-08",
+       "gun": 51,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-05-08",
+       "kir_gun": "",
+       "tavan": 3.440000057220459,
+       "dip": 3.0199999809265137,
+       "onay": "2026-03-06",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "D10 PAPIL küçük taban",
+      "tur": "DOGRU",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 20,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-11-21",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "Y1 ENJSA 2021-08/09 (net +%8,0)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 0.867,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-05-21",
+       "bitis": "2021-08-27",
+       "gun": 66,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-08-27",
+       "kir_gun": "",
+       "tavan": 13.805188588567288,
+       "dip": 11.94820694078455,
+       "onay": "2021-06-01",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y2 ENJSA 2021-09/10 (net +%9,7)",
+      "tur": "YANLIS",
+      "tuttu": true,
+      "ortusme": 1.0,
+      "acik_son": false,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2021-08-31",
+       "bitis": "2021-10-18",
+       "gun": 35,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2021-10-18",
+       "kir_gun": "",
+       "tavan": 13.988442835210705,
+       "dip": 12.400235092260116,
+       "onay": "2021-09-09",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "Y3 TUCLK 2026-07/08 (kayan düşüş)",
+      "tur": "YANLIS",
+      "tuttu": false,
+      "ortusme": 0.8,
+      "acik_son": true,
+      "birlesim": 1.0,
+      "cemal_bar": 15,
+      "bolge": {
+       "bas": "2026-07-29",
+       "bitis": "2026-08-25",
+       "gun": 20,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2026-08-25",
+       "kir_gun": "",
+       "tavan": 4.079999923706055,
+       "dip": 3.6700000762939453,
+       "onay": "2026-08-07",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "A1 KNFRT al mumu 2022-09-14",
+      "tur": "AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": []
+     },
+     {
+      "ad": "A2 TUCLK al mumu 2025-08-22",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-08-22"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "A3 PAPIL al mumu 2025-12-11",
+      "tur": "AL",
+      "tuttu": true,
+      "al_gun": [
+       "2025-12-11"
+      ],
+      "fark_bar": [
+       0
+      ]
+     },
+     {
+      "ad": "B1 PAPIL büyük taban (bilgi)",
+      "tur": "BILGI_DOGRU",
+      "tuttu": false,
+      "ortusme": 0.258,
+      "acik_son": false,
+      "birlesim": 0.618,
+      "cemal_bar": 89,
+      "bolge": {
+       "bas": "2025-11-11",
+       "bitis": "2025-12-11",
+       "gun": 23,
+       "sinif": "DIP",
+       "durum": "AL",
+       "al_gun": "2025-12-11",
+       "kir_gun": "",
+       "tavan": 16.959999084472656,
+       "dip": 15.380000114440918,
+       "onay": "2025-11-21",
+       "onay_once_gun": 8
+      }
+     },
+     {
+      "ad": "B2 ENJSA 2025-07/09 bant %23 (bilgi)",
+      "tur": "BILGI_YANLIS",
+      "tuttu": true,
+      "ortusme": 0.371,
+      "acik_son": false,
+      "birlesim": 0.371,
+      "cemal_bar": 35,
+      "bolge": {
+       "bas": "2025-07-18",
+       "bitis": "2025-08-13",
+       "gun": 19,
+       "sinif": "YOL",
+       "durum": "AL",
+       "al_gun": "2025-08-13",
+       "kir_gun": "",
+       "tavan": 67.5,
+       "dip": 61.599998474121094,
+       "onay": "2025-07-29",
+       "onay_once_gun": 7
+      }
+     },
+     {
+      "ad": "B3 DESA taban bitişi (bilgi)",
+      "tur": "BILGI_AL",
+      "tuttu": false,
+      "al_gun": [],
+      "fark_bar": [],
+      "al_gun2": [
+       "2022-02-03"
+      ],
+      "civar": [
+       {
+        "gun": "2021-12-06",
+        "tur": "AL"
+       },
+       {
+        "gun": "2022-02-03",
+        "tur": "AL"
+       }
+      ]
+     }
+    ],
+    "ccola": {
+     "aralik": "2025-10-02 .. 2025-10-20",
+     "cemal_bar": 13,
+     "kutular": [
+      {
+       "bas": "2025-07-02",
+       "bitis": "2025-10-20",
+       "gun": 78,
+       "onay": "2025-07-11",
+       "sinif": "ORTA",
+       "durum": "AL",
+       "al_gun": "2025-10-20",
+       "kir_gun": "",
+       "tavan": 54.099998474121094,
+       "dip": 45.13999938964844,
+       "ortusme": 1.0
+      }
+     ],
+     "kutu_var": true
+    },
+    "bolge_etiket_hisse": 572,
+    "durum_etiket_hisse": {
+     "AL": 289,
+     "SONDU": 198,
+     "KIRILDI": 84,
+     "ACIK": 1
+    },
+    "ad": "ref kapalı · BB kapalı",
+    "ref": false,
+    "bb": null
+   }
+  ],
+  "secilen": {
+   "refOnce": true,
+   "bbSart": true,
+   "bbEsik": 0.3
+  },
+  "secilen_ad": "ref açık · BB 0,30",
+  "secilen_varsayilan_ayni": true,
+  "evren": [
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.15
+    },
+    "bolge_hisse_yil": 3.01,
+    "al_hisse_yil": 1.19,
+    "acik_bar_orani": 0.1167,
+    "uzunluk_medyan": 20.0,
+    "uzunluk_p90": 39.0,
+    "hisse_yil": 4735,
+    "bolge": 14263,
+    "al": 5653,
+    "durum": {
+     "KIRILDI": 1911,
+     "SONDU": 6587,
+     "AL": 5653,
+     "ACIK": 112
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.2
+    },
+    "bolge_hisse_yil": 3.48,
+    "al_hisse_yil": 1.46,
+    "acik_bar_orani": 0.141,
+    "uzunluk_medyan": 20.0,
+    "uzunluk_p90": 38.0,
+    "hisse_yil": 4735,
+    "bolge": 16474,
+    "al": 6918,
+    "durum": {
+     "KIRILDI": 2322,
+     "SONDU": 7111,
+     "AL": 6918,
+     "ACIK": 123
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": true,
+     "bbEsik": 0.3
+    },
+    "bolge_hisse_yil": 4.23,
+    "al_hisse_yil": 1.89,
+    "acik_bar_orani": 0.1793,
+    "uzunluk_medyan": 18.0,
+    "uzunluk_p90": 38.0,
+    "hisse_yil": 4735,
+    "bolge": 20019,
+    "al": 8941,
+    "durum": {
+     "KIRILDI": 3004,
+     "SONDU": 7930,
+     "ACIK": 144,
+     "AL": 8941
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": true,
+     "bbSart": false,
+     "bbEsik": 0.3
+    },
+    "bolge_hisse_yil": 6.9,
+    "al_hisse_yil": 3.3,
+    "acik_bar_orani": 0.3001,
+    "uzunluk_medyan": 14.0,
+    "uzunluk_p90": 33.0,
+    "hisse_yil": 4735,
+    "bolge": 32648,
+    "al": 15644,
+    "durum": {
+     "KIRILDI": 5249,
+     "AL": 15644,
+     "SONDU": 11552,
+     "ACIK": 203
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.15
+    },
+    "bolge_hisse_yil": 3.01,
+    "al_hisse_yil": 1.19,
+    "acik_bar_orani": 0.1167,
+    "uzunluk_medyan": 20.0,
+    "uzunluk_p90": 39.0,
+    "hisse_yil": 4735,
+    "bolge": 14267,
+    "al": 5657,
+    "durum": {
+     "KIRILDI": 1911,
+     "SONDU": 6586,
+     "AL": 5657,
+     "ACIK": 113
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.2
+    },
+    "bolge_hisse_yil": 3.48,
+    "al_hisse_yil": 1.46,
+    "acik_bar_orani": 0.1409,
+    "uzunluk_medyan": 20.0,
+    "uzunluk_p90": 38.0,
+    "hisse_yil": 4735,
+    "bolge": 16477,
+    "al": 6920,
+    "durum": {
+     "KIRILDI": 2322,
+     "SONDU": 7111,
+     "AL": 6920,
+     "ACIK": 124
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": true,
+     "bbEsik": 0.3
+    },
+    "bolge_hisse_yil": 4.23,
+    "al_hisse_yil": 1.89,
+    "acik_bar_orani": 0.1792,
+    "uzunluk_medyan": 18.0,
+    "uzunluk_p90": 38.0,
+    "hisse_yil": 4735,
+    "bolge": 20037,
+    "al": 8943,
+    "durum": {
+     "KIRILDI": 3007,
+     "SONDU": 7942,
+     "ACIK": 145,
+     "AL": 8943
+    }
+   },
+   {
+    "esik": {
+     "bantMax": 0.12,
+     "netMax": 0.03,
+     "kM": 0.9,
+     "dipTol": 0.05,
+     "daralmaOran": 0.0,
+     "refOnce": false,
+     "bbSart": false,
+     "bbEsik": 0.3
+    },
+    "bolge_hisse_yil": 6.9,
+    "al_hisse_yil": 3.3,
+    "acik_bar_orani": 0.2999,
+    "uzunluk_medyan": 14.0,
+    "uzunluk_p90": 33.0,
+    "hisse_yil": 4735,
+    "bolge": 32668,
+    "al": 15625,
+    "durum": {
+     "KIRILDI": 5246,
+     "AL": 15625,
+     "SONDU": 11592,
+     "ACIK": 205
+    }
+   }
+  ],
+  "evren_v10_rapor": {
+   "bolge_hisse_yil": 6.899,
+   "al_hisse_yil": 3.3
+  }
+ }
 }

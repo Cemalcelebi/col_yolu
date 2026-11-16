@@ -1,6 +1,7 @@
-"""S6_TABAN — Cemal'in çöl kurallarından TABAN (çöl bölgesi) algoritması: Python referans + tasarım sınaması, tek dosya (15 Kasım 2026).
+"""S6_TABAN — Cemal'in çöl kurallarından TABAN (çöl bölgesi) algoritması: Python referans + tasarım sınaması, tek dosya (v1.0 15 Kas, v1.1 16 Kas 2026).
 
-Kaynak: arastirma_cikti/sikisma_obek/CEMAL_COL_KURALLARI.md (K1-K8, K6b; 16 etiket) ve arastirma_cikti/sikisma_s6/S6_TABAN_IS_TANIMI.md.
+Kaynak: arastirma_cikti/sikisma_obek/CEMAL_COL_KURALLARI.md (K1-K8, K6b; 16 etiket), arastirma_cikti/sikisma_s6/S6_TABAN_IS_TANIMI.md (v1.0) ve
+S6_V11_IS_TANIMI.md (v1.1: S7 fikirleri; referans ATR pencere öncesi, Bollinger daralması, onay günü, sönme, tarih etiketleri).
 Bu bir TASARIM ve GÖZ ARACIDIR: getiri / iz ölçmez (ölçüm sonra, ayrı ön kayıtla). Pine karşılığı: arastirma_cikti/sikisma_s6/COL_S6_TABAN.pine.
 
 TANIM (her geçerli bar t için yalnız t ve öncesi; geçerli bar = H > L ve V > 0; i = t'nin geçerli bar sırası, 0'dan):
@@ -8,8 +9,12 @@ TANIM (her geçerli bar t için yalnız t ve öncesi; geçerli bar = H > L ve V 
   (1) BANT    max H(W) / min L(W) - 1 <= bantMax
   (2) SAKİN   |C_i / C_{i-n+1} - 1| <= netMax
   (3) DİP     h = n // 2; L1 = min L ilk h bar [i-n+1, i-n+h]; L2 = min L son n-h bar [i-n+h+1, i]; L2 >= L1 x (1 - dipTol)
-  (4) MUM     medyan((H-L)/C, W) <= kM x ATR%  (ATR% = ort(TR / önceki geçerli C) son atrGun geçerli bar [i-atrGun+1, i])
+  (4) MUM     medyan((H-L)/C, W) <= kM x ATR%. refOnce = False (v1.0): ATR% = ort(TR / önceki geçerli C) son atrGun geçerli bar [i-atrGun+1, i].
+              refOnce = True (v1.1): ATR% = ort(TR / önceki C) pencereden ÖNCEKİ cnt = min(refGun, i-n) geçerli bar [i-n-cnt+1, i-n];
+              cnt < refMin ise şart tutmaz (kümülatif toplam, her n için O(1)).
   (5) DARALMA ort((H-L)/C, W) <= daralmaOran x ort((H-L)/C, [i-n-daralmaGun+1, i-n]) ; daralmaOran = 0 -> şart yok (kapalı)
+  (6) BB      bbSart = True (v1.1): bbw = 2 x bbK x std(ddof 0) / SMA (bbGun geçerli kapanış); bbp(i) = önceki bbDagilim bbw'den bbw(i)'ye <= olanların
+              payı (SIKISMA_OBEK.so_s5 tanımı); bbp(i) <= bbEsik (pencerenin son gününde; n'den bağımsız).
   TABAN(t) = şartları sağlayan EN BÜYÜK n (nMax'tan nMin'e, ilk tutan). bas = i-n+1, TAVAN = max H(W) (tavan mumu = o High'ın İLK barı), DİP = min L(W).
   SINIF (bilgi): DİP = konum120 = (C - min C) / (max C - min C) (son 120 geçerli kapanış) <= 0,25 VE C / max C - 1 <= -%10;
                  YOL = C > SMA50 VE SMA50_i > SMA50_{i-20}; ikisi de değilse ORTA (öncelik DİP > YOL > ORTA).
@@ -23,9 +28,12 @@ TANIM (her geçerli bar t için yalnız t ve öncesi; geçerli bar = H > L ve V 
        aksi -> YENİ bölge (sınıf = açılış barının sınıfı); sinir = önceki bölgenin son barı (yoksa -1; AL / KIRILDI'dan sonra o bar);
                yeni bölge yalnız i - max(bas_i, sinir + 1) + 1 >= nMin ise açılır (kırpılmış kutu en az nMin bar), değilse bar bölgesiz (KISA)
        kutu: sol = min(max(bas, sinir + 1)) (kutular üst üste binmez), sağ = i, üst = max TAVAN, alt = min DİP (bölgenin barları boyunca)
-    Değilse acik ise bölge SÖNER (son bar i-1; durum SÖNDÜ).
+    Değilse acik ise bölge SÖNER (son bar i-1; durum SÖNDÜ; Pine: gri kenar + 'sonme' etiketi; pencere dönerse YENİDEN ile geri alınır).
+    v1.1 ONAY günü = bölgenin açıldığı bar (durum YENİ; n ilk kez şartları sağlayıp kutu >= nMin olduğu gün). Kutunun [sol, onay) kısmı geriye
+    uzatmadır (o gün bilinmiyordu; Pine'da kesik kenarlı soluk kutu). bolge_son_tur (her bar, as-of t): ACIK / AL / KIRILDI / SONDU.
     (surTol >= 0 yalnız Python BİLGİ kipi: iş tanımının harfi 'başlangıç en çok surTol bar ileri kayarsa aynı bölge, yoksa yeni bölge'; Pine'da yok.)
-Komut:  python S6_TABAN.py tasarim [--veri D]        etiket sınaması + 108 noktalı ızgara + ters sınama + evren sayımı -> S6_TASARIM.md, s6_tasarim.json
+Komut:  python S6_TABAN.py tasarim [--veri D]        v1.0 etiket sınaması + 108 noktalı ızgara + ters sınama + evren sayımı -> S6_TASARIM.md, s6_tasarim.json
+        python S6_TABAN.py tasarim11 [--veri D]      v1.1: refOnce x bbEsik (8 nokta) + v1.0 kipi birebirliği + CCOLA + evren -> json 'v11', md v1.1 bölümü
         python S6_TABAN.py liste SEMBOL BAS SON        bölge listesi (seçilen eşiklerle)
         python S6_TABAN.py pine                        Pine sabitleri ve 6 etiketin beklenen çıktısı (Pine üretmez)
         python S6_TABAN.py ascii                       COL_S6_TABAN_ascii.pine üretir ve doğrular (ASCII dışı 0, kod birebir)
@@ -79,7 +87,7 @@ S6_PRM: Dict[str, Any] = {
     "dipKonum": 0.25, "dipDusus": -0.10, "surTol": -1, "hacimGun": 20,
     # v1.1 (S7 fikirleri; iş tanımı S6_V11_IS_TANIMI.md). Varsayılanlar v1.1 tasarım sınamasının SEÇTİĞİ değerlerdir (S6_IZGARA_V11).
     "refOnce": True, "refGun": 250, "refMin": 120,
-    "bbSart": True, "bbEsik": 0.20, "bbGun": 20, "bbK": 2.0, "bbDagilim": 250,
+    "bbSart": True, "bbEsik": 0.30, "bbGun": 20, "bbK": 2.0, "bbDagilim": 250,
 }
 S6_V10_KIP = {"refOnce": False, "bbSart": False}       # v1.0 davranışı (eski sonuçlar birebir)
 S6_ESIK_ALAN = ("bantMax", "netMax", "kM", "dipTol", "daralmaOran")
@@ -954,7 +962,7 @@ def s6_tasarim(veri: Optional[str] = None, cikti: Optional[str] = None, evren: b
 
 
 # ---------------------------------------------------------------- 7b) v1.1 TASARIM SINAMASI (S7 fikirleri; S6_IZGARA_V11)
-S6_V11_ISARET = ("<!-- V1.1 OTOMATİK BAŞ (s6_tasarim_v11 yazar; elle düzenleme) -->", "<!-- V1.1 OTOMATİK SON -->")
+S6_V11_ISARET = ("<!-- V1.1 OTOMATİK BAŞ (s6_tasarim_v11 yazar; elle düzenleme YOK) -->", "<!-- V1.1 OTOMATİK SON -->")
 
 
 def _s6_v11_esik(e5: Dict[str, Any], ref: bool, bb: Optional[float]) -> Dict[str, Any]:
@@ -1111,9 +1119,10 @@ def s6_liste(sembol: str, bas: str, son: str, veri: Optional[str] = None) -> str
     V = s6_veri(veri, [sembol])
     T = s6_taban(V[sembol])
     R = [r for r in s6_bolgeler(T) if r["bitis"] >= bas and r["bas"] <= son]
-    s = [f"{sembol} S6 bölgeleri {bas} .. {son} ({_s6_esik_md(S6_PRM)})", "bas        bitis      gün  sınıf durum    AL / KIRILDI  tavan     dip"]
+    s = [f"{sembol} S6 bölgeleri {bas} .. {son} ({_s6_esik_md(S6_PRM)}; refOnce {S6_PRM['refOnce']}, BB {S6_PRM['bbEsik'] if S6_PRM['bbSart'] else 'kapalı'})",
+         "bas        bitis      gün  onay       sınıf durum    AL / KIRILDI  tavan     dip"]
     for r in R:
-        s.append(f"{r['bas']} {r['bitis']} {r['gun']:>4} {r['sinif']:<5} {r['durum']:<8} {(r['al_gun'] or r['kir_gun'] or '-'):<13} "
+        s.append(f"{r['bas']} {r['bitis']} {r['gun']:>4} {r['onay']} {r['sinif']:<5} {r['durum']:<8} {(r['al_gun'] or r['kir_gun'] or '-'):<13} "
                  f"{r['tavan']:<9.4g} {r['dip']:<9.4g}")
     if not R:
         s.append("(bölge yok)")
@@ -1133,7 +1142,7 @@ def s6_pine(veri: Optional[str] = None) -> str:
         R = [r for r in s6_bolgeler(T) if r["sag_i"] >= a - 5 and r["sol_i"] <= b + 25]
         s.append(f"{ad}: Cemal {et['ilk']} .. {et['son']}")
         for r in R:
-            s.append(f"   kutu {r['bas']} .. {r['bitis']} ({r['gun']} bar, {r['sinif']}, {r['durum']}"
+            s.append(f"   kutu {r['bas']} .. {r['bitis']} ({r['gun']} bar, onay {r['onay']}, {r['sinif']}, {r['durum']}"
                      + (f", AL {r['al_gun']}" if r["al_gun"] else "") + (f", KIRILDI {r['kir_gun']}" if r["kir_gun"] else "")
                      + f", tavan {r['tavan']:.4g}, dip {r['dip']:.4g})")
         if not R:

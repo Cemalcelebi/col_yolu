@@ -361,3 +361,166 @@ IK_HATA önerileri: madde 1, 2, 3, 4, 5 (yazıcı hataları; 2 SAPMA riski), 7 (
 - Yeni: `S6_TABAN.py`, `test_s6_taban.py`, `arastirma_cikti/sikisma_s6/S6_TASARIM.md`, `arastirma_cikti/sikisma_s6/s6_tasarim.json`, `arastirma_cikti/sikisma_s6/COL_S6_TABAN.pine`, `arastirma_cikti/sikisma_s6/COL_S6_TABAN_ascii.pine`, `arastirma_cikti/sikisma_s6/PINE_S6_NASIL.md`.
 - Değişmeyen (yasak listesi): IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md, COL_v1.py, takip.py, SIKISMA_OBEK.py, SIKISMA_YENIDEN.py, ORTAK_CETVEL.py, mevcut testler, COL_S5_OBEK*.pine. Commit yok.
 - Geçici: scratchpad (v0 json / md kopyası, koşu günlüğü); repoya girmez.
+
+<!-- V1.1 OTOMATİK BAŞ (s6_tasarim_v11 yazar; elle düzenleme YOK) -->
+
+## v1.1 TASARIM SINAMASI (otomatik; `python S6_TABAN.py tasarim11`)
+
+Sabit eşikler (v1.0 seçimi): bant 0,12 · net 0,03 · kM 0,90 · dipTol 0,05 · daralma kapalı. Puan 14 etiket üzerinden (KNFRT'nin D7 ve A1 etiketi puan dışı: 'tarih yanlış, Cemal'den beklenir'); parantezde 16 ölçekli puan.
+
+- v1.0 kipi (refOnce kapalı, BB kapalı) eski 16 etiket sonucunu birebir veriyor mu: **EVET**.
+- Taban çizgisi (v1.0 kipi): 13/14 (13/16).
+- Seçilen: **ref açık · BB 0,30** (13/14, 13/16).
+
+Seçim kuralı (koşudan önce kodda): taban = v1.0 kipinin 14 puanlı etiketteki puanı. Aday sırası (sadelik; S7 fikirleri açık olan önce, BB eşiği SIKISMA_OBEK varsayılanı 0,20 önce, sonra gevşek 0,30, sonra sıkı 0,15): (ref açık, BB 0,20), (açık, 0,30), (açık, 0,15), (açık, BB kapalı), (ref kapalı, 0,20), (kapalı, 0,30), (kapalı, 0,15), (kapalı, kapalı = v1.0). Puanı tabanın ALTINA DÜŞMEYEN ilk aday seçilir (kötüleştiren yeni şart varsayılan KAPALI kalır); en yüksek puan aranmaz.
+
+| nokta | puan /14 | /16 | DOĞRU /9 | YANLIŞ /3 | AL /2 | tutmayan puanlı etiketler | CCOLA 2-20 Eki 2025 kutu | etiket hisselerinde bölge | bitiş (AL / KIRILDI / SONDU / ACIK) |
+|---|---|---|---|---|---|---|---|---|---|
+| ref açık · BB 0,15 | 12 | 12 | 9 | 2 | 1 | Y3, A2 | VAR: 2025-09-02..2025-10-20 onay 2025-09-26 örtüşme 1,00 AL | 242 | 101 / 24 / 116 / 1 |
+| ref açık · BB 0,20 | 12 | 12 | 9 | 2 | 1 | Y3, A2 | VAR: 2025-09-02..2025-10-20 onay 2025-09-24 örtüşme 1,00 AL | 277 | 113 / 33 / 130 / 1 |
+| ref açık · BB 0,30 **seçilen** | 13 | 13 | 9 | 2 | 2 | Y3 | VAR: 2025-09-02..2025-10-20 onay 2025-09-23 örtüşme 1,00 AL | 345 | 155 / 43 / 146 / 1 |
+| ref açık · BB kapalı | 13 | 13 | 9 | 2 | 2 | Y3 | VAR: 2025-07-02..2025-10-20 onay 2025-07-11 örtüşme 1,00 AL | 571 | 289 / 84 / 197 / 1 |
+| ref kapalı · BB 0,15 | 12 | 12 | 9 | 2 | 1 | Y3, A2 | VAR: 2025-09-02..2025-10-20 onay 2025-09-26 örtüşme 1,00 AL | 242 | 99 / 24 / 118 / 1 |
+| ref kapalı · BB 0,20 | 12 | 12 | 9 | 2 | 1 | Y3, A2 | VAR: 2025-09-02..2025-10-20 onay 2025-09-24 örtüşme 1,00 AL | 277 | 111 / 33 / 132 / 1 |
+| ref kapalı · BB 0,30 | 13 | 13 | 9 | 2 | 2 | Y3 | VAR: 2025-09-02..2025-10-20 onay 2025-09-23 örtüşme 1,00 AL | 347 | 153 / 43 / 150 / 1 |
+| ref kapalı · BB kapalı (v1.0) | 13 | 13 | 9 | 2 | 2 | Y3 | VAR: 2025-07-02..2025-10-20 onay 2025-07-11 örtüşme 1,00 AL | 572 | 289 / 84 / 198 / 1 |
+
+### Etiket tablosu: SEÇİLEN v1.1 (ref açık · BB 0,30)
+
+| etiket | Cemal aralığı / günü | S6 bölgesi (en çok örten; onay günü) | örtüşme | AL günü | sonuç |
+|---|---|---|---|---|---|
+| D1 FENER 2025-10 | 2025-10-14 .. 2025-11-07 | 2025-10-07 .. 2025-11-11 (25 bar, DIP, AL; onay 2025-10-31, öncesi 17 bar kesik) | 1,00 (birleşim 1,00) | 2025-11-11 | ✓ |
+| D2 CCOLA 2025-10 | 2025-10-02 .. 2025-10-15 | 2025-09-02 .. 2025-10-20 (35 bar, DIP, AL; onay 2025-09-23, öncesi 15 bar kesik) | 1,00 (birleşim 1,00) | 2025-10-20 | ✓ |
+| D3 ENJSA 2021-11 (tamamı) | 2021-10-26 .. 2021-11-16 | 2021-10-19 .. 2021-11-18 (22 bar, YOL, AL; onay 2021-11-12, öncesi 17 bar kesik) | 1,00 (birleşim 1,00) | 2021-11-18 | ✓ |
+| D4 ENJSA 2025-02 | 2025-01-20 .. 2025-02-18 (yaklaşık) | 2024-11-29 .. 2025-02-26 (63 bar, YOL, SONDU; onay 2024-12-16, öncesi 11 bar kesik) | 1,00 (birleşim 1,00) | - | ✓ |
+| D5 ENJSA 2025-05/06 | 2025-05-08 .. 2025-06-27 | 2025-04-25 .. 2025-06-30 (43 bar, DIP, AL; onay 2025-05-22, öncesi 17 bar kesik) | 1,00 (birleşim 1,00) | 2025-06-30 | ✓ |
+| D6 DESA 2021-10/12 | 2021-10-27 .. 2021-12-23 | 2021-11-04 .. 2021-12-06 (23 bar, DIP, AL; onay 2021-11-15, öncesi 7 bar kesik) | 0,56 (birleşim 0,63) | 2021-12-06 | ✓ |
+| D7 KNFRT 2022-06/09 | 2022-06-15 .. 2022-09-13 (yaklaşık) | 2022-08-16 .. 2022-08-29 (10 bar, YOL, AL; onay 2022-08-25, öncesi 7 bar kesik) | 0,17 (birleşim 0,17) | 2022-08-29 | puan dışı (✗) |
+| D8 TUCLK 2025-06/08 | 2025-06-10 .. 2025-08-21 (yaklaşık) | 2025-06-18 .. 2025-08-06 (35 bar, ORTA, AL; onay 2025-07-16, öncesi 19 bar kesik) | 0,67 (birleşim 0,89) | 2025-08-06 | ✓ |
+| D9 YKSLN 2026-03/05 | 2026-03-19 .. 2026-05-15 (yaklaşık) | 2026-02-24 .. 2026-05-08 (51 bar, ORTA, AL; onay 2026-03-17, öncesi 15 bar kesik) | 0,90 (birleşim 0,90) | 2026-05-08 | ✓ |
+| D10 PAPIL küçük taban | 2025-11-13 .. 2025-12-10 | 2025-11-11 .. 2025-12-11 (23 bar, DIP, AL; onay 2025-12-03, öncesi 16 bar kesik) | 1,00 (birleşim 1,00) | 2025-12-11 | ✓ |
+| Y1 ENJSA 2021-08/09 (net +%8,0) | 2021-08-11 .. 2021-09-01 | 2021-04-30 .. 2021-08-27 (78 bar, YOL, AL; onay 2021-05-31, öncesi 18 bar kesik) | 0,87 (birleşim 1,00) | 2021-08-27; 2021-09-01 günü bölge kapalı | ✓ |
+| Y2 ENJSA 2021-09/10 (net +%9,7) | 2021-09-28 .. 2021-10-18 | 2021-08-31 .. 2021-10-18 (35 bar, YOL, AL; onay 2021-09-09, öncesi 7 bar kesik) | 1,00 (birleşim 1,00) | 2021-10-18; 2021-10-18 günü bölge kapalı | ✓ |
+| Y3 TUCLK 2026-07/08 (kayan düşüş) | 2026-07-24 .. 2026-08-13 | 2026-07-29 .. 2026-08-25 (20 bar, DIP, AL; onay 2026-08-07, öncesi 7 bar kesik) | 0,80 (birleşim 1,00) | 2026-08-25; 2026-08-13 günü bölge AÇIK | ✗ |
+| A1 KNFRT al mumu 2022-09-14 | 2022-09-14 ±3 | - | - | AL yok | puan dışı (✗) |
+| A2 TUCLK al mumu 2025-08-22 | 2025-08-22 ±3 | - | - | 2025-08-22 | ✓ |
+| A3 PAPIL al mumu 2025-12-11 | 2025-12-11 ±1 | - | - | 2025-12-11 | ✓ |
+| B1 PAPIL büyük taban (bilgi) | 2025-10-27 .. 2026-03-02 | 2025-11-11 .. 2025-12-11 (23 bar, DIP, AL; onay 2025-12-03, öncesi 16 bar kesik) | 0,26 (birleşim 0,62) | 2025-12-11 | bilgi ✗ |
+| B2 ENJSA 2025-07/09 bant %23 (bilgi) | 2025-07-28 .. 2025-09-12 | 2025-07-11 .. 2025-08-13 (23 bar, YOL, AL; onay 2025-08-06, öncesi 17 bar kesik) | 0,37 (birleşim 0,37) | 2025-08-13; 2025-09-12 günü bölge kapalı | bilgi ✓ |
+| B3 DESA taban bitişi (bilgi) | 2021-12-23 ±3 | - | - | AL yok, 2. tarih (2022-02-02) ±3: 2022-02-03; civar işaretler: 2021-12-06 AL, 2022-02-03 AL | bilgi ✗ |
+
+### Etiket tablosu: v1.0 kipi (ref kapalı · BB kapalı)
+
+| etiket | Cemal aralığı / günü | S6 bölgesi (en çok örten; onay günü) | örtüşme | AL günü | sonuç |
+|---|---|---|---|---|---|
+| D1 FENER 2025-10 | 2025-10-14 .. 2025-11-07 | 2025-10-07 .. 2025-11-11 (25 bar, DIP, AL; onay 2025-10-17, öncesi 8 bar kesik) | 1,00 (birleşim 1,00) | 2025-11-11 | ✓ |
+| D2 CCOLA 2025-10 | 2025-10-02 .. 2025-10-15 | 2025-07-02 .. 2025-10-20 (78 bar, ORTA, AL; onay 2025-07-11, öncesi 7 bar kesik) | 1,00 (birleşim 1,00) | 2025-10-20 | ✓ |
+| D3 ENJSA 2021-11 (tamamı) | 2021-10-26 .. 2021-11-16 | 2021-10-19 .. 2021-11-18 (22 bar, YOL, AL; onay 2021-11-02, öncesi 9 bar kesik) | 1,00 (birleşim 1,00) | 2021-11-18 | ✓ |
+| D4 ENJSA 2025-02 | 2025-01-20 .. 2025-02-18 (yaklaşık) | 2024-11-11 .. 2025-02-26 (77 bar, ORTA, SONDU; onay 2024-11-20, öncesi 7 bar kesik) | 1,00 (birleşim 1,00) | - | ✓ |
+| D5 ENJSA 2025-05/06 | 2025-05-08 .. 2025-06-27 | 2025-04-22 .. 2025-06-30 (45 bar, DIP, AL; onay 2025-05-06, öncesi 8 bar kesik) | 1,00 (birleşim 1,00) | 2025-06-30 | ✓ |
+| D6 DESA 2021-10/12 | 2021-10-27 .. 2021-12-23 | 2021-11-04 .. 2021-12-06 (23 bar, DIP, AL; onay 2021-11-15, öncesi 7 bar kesik) | 0,56 (birleşim 0,63) | 2021-12-06 | ✓ |
+| D7 KNFRT 2022-06/09 | 2022-06-15 .. 2022-09-13 (yaklaşık) | 2022-07-25 .. 2022-08-08 (11 bar, YOL, AL; onay 2022-08-03, öncesi 7 bar kesik) | 0,18 (birleşim 0,35) | 2022-08-08 | puan dışı (✗) |
+| D8 TUCLK 2025-06/08 | 2025-06-10 .. 2025-08-21 (yaklaşık) | 2025-06-18 .. 2025-08-06 (35 bar, YOL, AL; onay 2025-07-01, öncesi 9 bar kesik) | 0,67 (birleşim 0,92) | 2025-08-06 | ✓ |
+| D9 YKSLN 2026-03/05 | 2026-03-19 .. 2026-05-15 (yaklaşık) | 2026-02-24 .. 2026-05-08 (51 bar, DIP, AL; onay 2026-03-06, öncesi 8 bar kesik) | 0,90 (birleşim 0,90) | 2026-05-08 | ✓ |
+| D10 PAPIL küçük taban | 2025-11-13 .. 2025-12-10 | 2025-11-11 .. 2025-12-11 (23 bar, DIP, AL; onay 2025-11-21, öncesi 8 bar kesik) | 1,00 (birleşim 1,00) | 2025-12-11 | ✓ |
+| Y1 ENJSA 2021-08/09 (net +%8,0) | 2021-08-11 .. 2021-09-01 | 2021-05-21 .. 2021-08-27 (66 bar, YOL, AL; onay 2021-06-01, öncesi 7 bar kesik) | 0,87 (birleşim 1,00) | 2021-08-27; 2021-09-01 günü bölge kapalı | ✓ |
+| Y2 ENJSA 2021-09/10 (net +%9,7) | 2021-09-28 .. 2021-10-18 | 2021-08-31 .. 2021-10-18 (35 bar, YOL, AL; onay 2021-09-09, öncesi 7 bar kesik) | 1,00 (birleşim 1,00) | 2021-10-18; 2021-10-18 günü bölge kapalı | ✓ |
+| Y3 TUCLK 2026-07/08 (kayan düşüş) | 2026-07-24 .. 2026-08-13 | 2026-07-29 .. 2026-08-25 (20 bar, DIP, AL; onay 2026-08-07, öncesi 7 bar kesik) | 0,80 (birleşim 1,00) | 2026-08-25; 2026-08-13 günü bölge AÇIK | ✗ |
+| A1 KNFRT al mumu 2022-09-14 | 2022-09-14 ±3 | - | - | AL yok | puan dışı (✗) |
+| A2 TUCLK al mumu 2025-08-22 | 2025-08-22 ±3 | - | - | 2025-08-22 | ✓ |
+| A3 PAPIL al mumu 2025-12-11 | 2025-12-11 ±1 | - | - | 2025-12-11 | ✓ |
+| B1 PAPIL büyük taban (bilgi) | 2025-10-27 .. 2026-03-02 | 2025-11-11 .. 2025-12-11 (23 bar, DIP, AL; onay 2025-11-21, öncesi 8 bar kesik) | 0,26 (birleşim 0,62) | 2025-12-11 | bilgi ✗ |
+| B2 ENJSA 2025-07/09 bant %23 (bilgi) | 2025-07-28 .. 2025-09-12 | 2025-07-18 .. 2025-08-13 (19 bar, YOL, AL; onay 2025-07-29, öncesi 7 bar kesik) | 0,37 (birleşim 0,37) | 2025-08-13; 2025-09-12 günü bölge kapalı | bilgi ✓ |
+| B3 DESA taban bitişi (bilgi) | 2021-12-23 ±3 | - | - | AL yok, 2. tarih (2022-02-02) ±3: 2022-02-03; civar işaretler: 2021-12-06 AL, 2022-02-03 AL | bilgi ✗ |
+
+### Evren sıklığı (V_BIST 2016-01-01 .. 2026-08-31, bölge açılış yılına göre; v1.0 raporu: 6,90 bölge, 3,30 AL / hisse-yıl)
+
+| nokta | hisse-yıl | bölge / hisse-yıl | AL / hisse-yıl | açık bar oranı | uzunluk medyan | %90 | bitiş AL / KIRILDI / SONDU / ACIK |
+|---|---|---|---|---|---|---|---|
+| ref açık · BB 0,15 | 4735 | 3,01 | 1,19 | %11,7 | 20 | 39 | 5653 / 1911 / 6587 / 112 |
+| ref açık · BB 0,20 | 4735 | 3,48 | 1,46 | %14,1 | 20 | 38 | 6918 / 2322 / 7111 / 123 |
+| ref açık · BB 0,30 **seçilen** | 4735 | 4,23 | 1,89 | %17,9 | 18 | 38 | 8941 / 3004 / 7930 / 144 |
+| ref açık · BB kapalı | 4735 | 6,90 | 3,30 | %30,0 | 14 | 33 | 15644 / 5249 / 11552 / 203 |
+| ref kapalı · BB 0,15 | 4735 | 3,01 | 1,19 | %11,7 | 20 | 39 | 5657 / 1911 / 6586 / 113 |
+| ref kapalı · BB 0,20 | 4735 | 3,48 | 1,46 | %14,1 | 20 | 38 | 6920 / 2322 / 7111 / 124 |
+| ref kapalı · BB 0,30 | 4735 | 4,23 | 1,89 | %17,9 | 18 | 38 | 8943 / 3007 / 7942 / 145 |
+| ref kapalı · BB kapalı (v1.0) | 4735 | 6,90 | 3,30 | %30,0 | 14 | 33 | 15625 / 5246 / 11592 / 205 |
+
+<!-- V1.1 OTOMATİK SON -->
+
+## v1.1 (16 Kasım 2026) — S7 fikirlerinin entegrasyonu (elle; v1.0 bölümleri yukarıda aynen duruyor)
+
+İş tanımı: `S6_V11_IS_TANIMI.md`. Kaynak: Cemal'in 'COL S7 BÖLGE KUTUSU' kullanım metni (kod yok). Bu bir göz aracıdır: getiri / iz ölçülmedi.
+
+### ÖZET
+- Seçilen v1.1 ayarı: **referans ATR% pencere öncesi AÇIK, Bollinger daralması AÇIK, bbEsik 0,30** (v1.0 eşikleri aynı: bant 0,12 · net 0,03 · kM 0,90 · dipTol 0,05 · daralma kapalı). Etiket puanı 13/14 (16 ölçekte 13/16) = v1.0 ile aynı; düşmedi.
+- bbEsik 0,15 ve 0,20 puanı 12/14'e düşürüyor (A2 TUCLK al mumu kayboluyor: 21 Ağu 2025'te BB yüzdeliği 0,236 > 0,20, taban al mumundan bir gün önce sönüyor, 22 Ağu'da AL çıkmıyor). Kural gereği bunlar seçilemez; 0,30 seçildi (sıradaki ilk 'düşmeyen' aday).
+- Referans ATR (pencere öncesi) puanı da sıklığı da neredeyse değiştirmiyor (BB kapalıyken evrende 32.648 / 32.668 bölge; etiketlerde fark yok). Tanım olarak daha doğru (taban kendi küçük mumlarıyla ölçütünü küçültmez), etkisi küçük.
+- v1.0 kipi (refOnce = bbSart = false) eski sonuçları BİREBİR veriyor: 16 etiket (+3 bilgi) çıktısı v1.0 json'u ile aynı; evren sayımı 6,90 / 3,30 ve bitiş dağılımı (AL 15.625 / KIRILDI 5.246 / SÖNDÜ 11.592 / AÇIK 205) v1.0 raporuyla aynı; git'teki v1.0 koduyla 5 hisse + sentetik, 2 eşik setinde bütün sütunlar fark 0.
+- SIKLIK AZALIYOR: hisse-yıl başına bölge 6,90 -> 4,23 (-%39), AL 3,30 -> 1,89 (-%43), açık bar oranı %30,0 -> %17,9; bölge uzunluğu medyanı 14 -> 18 bar. Hâlâ nadir değil (açık bar > %10).
+- CCOLA 2-20 Eki 2025 (S7 örneği): v1.1'de kutu VAR: 2 Eyl - 20 Eki 2025 (35 bar, DİP, onay 23 Eyl, AL 20 Eki). v1.0'da aynı yerde 2 Tem - 20 Eki (78 bar, ORTA) vardı; BB şartı kutuyu S7'ye yaklaştırdı (bitiş aynı gün, başlangıç bir ay önce).
+
+### Değişiklikler (Python S6_TABAN.py ve Pine COL_S6_TABAN.pine aynı tanım)
+1. (4) küçük mum referansı: `refOnce` (varsayılan açık). ATR% = ort(TR / önceki geçerli C) pencereden ÖNCEKİ cnt = min(250, i-n) geçerli bar [i-n-cnt+1, i-n]; cnt < 120 ise şart tutmaz. Kümülatif toplam ile her n için O(1) (Python np.cumsum, Pine cumT += ...; ikisi de sıralı toplama, bit düzeyinde aynı).
+2. (6) Bollinger daralması: `bbSart` (açık), `bbEsik` 0,30. bbw = 2 x 2 x std(20, ddof 0) / SMA20 (geçerli kapanış); yüzdelik = önceki 250 bbw'den bugünküne <= olanların payı (SIKISMA_OBEK.so_s5 tanımı; ta.percentrank yok). Şart pencerenin son gününde (n'den bağımsız). Toplamlar Pine'daki sırayla yapılıyor; SIKISMA_OBEK'in pandas std'si son ondalıkta ayrışabildiği için 3 hissede 5.803 barın 8'inde yüzdelik 1/250 farklı (eşit genişlikli pencereler), kalanı birebir.
+3. ONAY günü = bölgenin açıldığı bar (durum YENİ: kırpılmış kutu ilk kez >= nMin). Python: `onay`, `onay_i` sütunları, bölge listesinde `onay` ve `onay_once_gun`. Pine: mor elmas (plotshape diamond, mumun altında), dolu kutu onaydan sağa, onaydan önceki kısım kesik kenarlı (%94 saydam) ayrı kutu; tabloda 'onay günü' satırı.
+4. SÖNME: açık bölgede bir gün taban yok ve AL / KIRILDI yok -> SÖNDÜ (v1.0'da da vardı, yalnız çizim yoktu). Python: `bolge_son_tur` sütunu (her bar as-of t: ACIK / AL / KIRILDI / SONDU) ve bölge listesinde aynı ad. Pine: kutu kenarı gri + mum üstünde gri küçük 'sonme' etiketi; aynı taban dönerse (YENİDEN) etiket silinir, kenar eski rengine döner.
+5. Tarih etiketi: her kutunun altında 'ilk .. son' tarih (label, size.tiny, style_label_upper_left); 'Görünüm' grubundan kapatılabilir. Nesne bütçesi: dolu kutu 240 + kesik kutu 240, tavan çizgisi 480, tarih etiketi 240 + sönme etiketi 240 (sınır 500).
+6. ALINMAYANLAR (S7'den): ±%1 kırılım payı (S6: AL = kapanış > tavan, KIRILDI = kapanış < dip x 0,98 kalır), Lmax 80 (nMax 70 kalır), eğim şartı (S6'da yok; sakin şartı var), getiri etiketi (S6'da zaten yok).
+
+### Seçim gerekçesi
+Seçim kuralı v1.1 koşusundan önce kodda (S6_IZGARA_V11) yazıldı: taban = v1.0 kipinin 14 puanlı etiketteki puanı (13); aday sırası (açık, 0,20), (açık, 0,30), (açık, 0,15), (açık, BB kapalı), (kapalı, 0,20), ...; puanı tabanın altına düşmeyen ilk aday. (açık, 0,20) 12/14 -> elendi; (açık, 0,30) 13/14 -> seçildi. En yüksek puan aranmadı (8 noktanın en yüksek puanı da 13). Sıklığın azalması seçime girmedi (bilgi).
+
+### Okuma notu (BB şartının yan etkisi)
+BB şartı her gün ayrı sınanır: kırılımdan hemen önceki gün fiyat oynamaya başlayınca BB genişler, taban o gün sönebilir ve ertesi gün tavan kırılsa da AL çıkmaz (AL için önceki gün taban şart). TUCLK 22 Ağu 2025 bbEsik 0,20'de tam bunu yaşadı; 0,30'da tuttu. Göstergede 'sonme' etiketinden hemen sonra gelen büyük yeşil mum bu durum olabilir: AL üçgeni yoksa kutunun tavanına elle bak.
+
+### Pine (v1.1)
+- `COL_S6_TABAN.pine` 542 satır, `COL_S6_TABAN_ascii.pine` (`python S6_TABAN.py ascii`: ASCII dışı 0, yorum / dize dışı kod birebir, satır numaraları aynı). Girdi varsayılanları = S6_PRM (24 alan; test 14 mekanik denetler, bool girdiler dahil).
+- v1.0'da derlenen kalıplar korundu (dizi tamponu, sonek max / min, yukarı sayan döngüler, break, kutu / çizgi güncelleme, tablo). Python-Pine birebirliği: `s6_pine_ayna` Pine döngüsünün satır satır çevirisi; v1.1 kipinde 4 gerçek hissede (ENJSA, PAPIL, TUCLK bant 0,20 + daralma 0,8, KNFRT) ve ek olarak v1.0 kipi (ENJSA), BB 0,15 + ref kapalı (PAPIL), BB kapalı (TUCLK) ile n, tavan, dip, AL, KIRILDI, bölge, kutu, sınıf, onay, bolge_son_tur, BB yüzdeliği fark 0.
+- İki kez satır satır gözden geçirildi (derleyici yok). Denetlenenler: indeks sınırları (cnt <= i - n ve 400'lük tampon: runtime.error 78-79 nMax + refGun <= 399, bbDagilim <= 399), int / float bölme (`say * 1.0 / bbDagilim`), yerel ad çakışması yok, `break` hâlâ `for kk` içinde, çizim nesneleri yerel blokta, plotshape global.
+- RİSKLİ SATIRLAR (ilk yapıştırmada bakılacak; v1.0 listesine ek):
+  - 78-79 ikinci `runtime.error` (barstate.isfirst).
+  - 197-229 BB: iki iç döngü, `math.sqrt`, `say * 1.0 / bbDagilim` (int / int kesilmesinden kaçınmak için).
+  - 245-246 `bool bbOk` ve `if bbOk` altına alınan n döngüsü (girinti bir kademe arttı; `break` satır 294).
+  - 280-288 refOnce dalı: `int cnt = math.min(refGun, i - nn)`, `array.get(aCum, sz - 1 - nn - cnt)`.
+  - 395 sıfır genişlikli `box.new(bar_index, ..., bar_index, ...)` (dolu kutu onay gününde başlar).
+  - 400 `box.new(..., border_style=line.style_dashed, ...)` (S5 / S6 v1.0'da kullanılmadı).
+  - 410 `label.new(..., style=label.style_label_upper_left, size=size.tiny)`; 426-427 `label.set_xy` / `label.set_text`.
+  - 432-434 `label.delete` + `array.pop(sonmeler)` (dönüş değeri kullanılmıyor).
+  - 444 `label.new(bar_index, high, "sonme", yloc=yloc.abovebar, style=label.style_label_down, ...)`.
+  - 454 `plotshape(..., shape.diamond, ...)`; 456 `table.new(..., 2, 17, ...)`.
+- Bilinen çizim sınırı (v1.0'dan, H-3): bölge 400 geçerli barı aşarsa sol kenar kırpılır (BIST'te en uzun bölge v1.0'da 206 bar).
+
+### KONTROL LİSTESİ (v1.1)
+| Kod | Yanıt | Kanıt |
+|---|---|---|
+| K1 | UYGULANMAZ | tasarım / göz aracı; getiri ve eş karşılaştırması yok |
+| K2 | EVET | referans ATR yalnız [i-n-249, i-n] (test: pencere içi bozulunca değişmez), BB yüzdeliği yalnız t ve önceki 250 gün; önek değişmezliği testi v1.1 varsayılanlarıyla (sentetik her 7 bar, PAPIL her 37 bar: fark 0); onay günü öncesinde bölge bilinmiyor testi |
+| K3 | EVET | geçerli bar süzgeci değişmedi (SY.sy_veri_hazirla; Pine 'gecerli'); BB ve referans geçerli bar dizisinde |
+| K4 | EVET | bölge = durum makinesi bölgesi; onay bölge başına bir kez (test: onay günleri = bölgelerin ilk barı, birebir) |
+| K5 | UYGULANMAZ | giriş / getiri yok |
+| K6 | EVET | V_BIST düzeltilmiş fiyat; BB genişliği ve ATR% oran (birimden bağımsız) |
+| K7 | EVET | evren bugünün listesi (581 hisse; batanlar yok); sayım yanlı olabilir, yazılı |
+| K8 | EVET | 14 puanlı etiket küçük örneklem; 8 noktanın tamamı raporlandı; seçim 'kötüleşmezse aç' kuralıyla, en yüksek puan aranmadı |
+| K9 | EVET (uyarı) | ızgara ve seçim kuralı S6_IZGARA_V11 olarak koşudan önce koda yazıldı (ilk koşu 19:40:35); alt ajan commit yapmadı; kural, ana modelin 7523eea commit'ine (19:41:19, koşu sürerken) ara sürümle birlikte girdi ve sonra değişmedi; iş tanımı commit 42cdd5c'de. Eşikler sonuç görülünce değişmedi; S6_PRM bbEsik 0,20 -> 0,30 güncellemesi kuralın seçimidir |
+| K10 | UYGULANMAZ | metin ayrıştırma yok; S7 metni yalnız fikir kaynağı |
+| K11 | EVET | v1.0 kipi git'teki v1.0 koduyla bütün sütunlarda birebir; evren v1.0 kipi 6,90 / 3,30 ve bitiş dağılımını yeniden üretti; BB yüzdeliği elle numpy ve SIKISMA_OBEK ile; referans ATR elle; Pine aynası 7 gerçek koşuda fark 0 |
+| K12 | EVET | getiri / iz sözü yok; 'göz aracı', 'nadir değil' dili |
+| K13 | EVET | çakışma kapısı korundu; yasak dosyalar değişmedi (git status); commit / push yok; e-posta testi geçti |
+| K14 | UYGULANMAZ | öneri / gerçek para işi değil |
+
+### HATA (v1.1)
+1. (İş tanımı belirsizliği, karar) İş tanımı referansı "[t-n-250, t-n]" (251 bar) yazıyor, aynı cümlede "ÖNCEKİ 250 geçerli bar" diyor; 250 bar [t-n-249, t-n] uygulandı.
+2. (Ölçüt yan etkisi, bilgi) BB şartı günlük kapı olduğu için kırılımdan önceki gün tabanı söndürebiliyor; bbEsik 0,20'de A2 TUCLK al mumu bu yüzden kayboldu. Eşik ızgara kuralıyla 0,30 seçildi; sonuçtan sonra eşik oynanmadı. 'BB yalnız bölge açılışında' gibi bir değişiklik iş tanımında yok (ana model kararı).
+3. (Sayısal, bilgi) S6 BB yüzdeliği SIKISMA_OBEK.so_s5 bbp ile 3 hissede 5.803 barın 8'inde 1/250 farklı: pandas rolling std çevrimiçi algoritma, S6 sıralı toplam (Pine ile birebir olsun diye). Matematiksel tanım aynı; fark yalnız eşit genişlikli pencerelerde.
+4. (Test kurulumu, düzeltildi) v1.0 testi 'kayan kanal: dipTol 0,5 ile taban çıkar' v1.1 varsayılanlarıyla düştü (BB / referans da eliyor); test yalnız (3) dip şartını sınadığı için v1.0 kipiyle koşacak şekilde düzeltildi (kod değil test).
+5. (Süreç, ana modele bildirim) Alt ajan çalışırken ana modelin 7523eea commit'i ('PAPIL mum parmak izi', 19:41:19) çalışma ağacındaki YARIM S6_TABAN.py v1.1'i (bbEsik 0,20 varsayılanı, seçim öncesi) commit'e kattı. Kalan fark son sürümdür; test_s6_taban.py v1.0 kodunu git geçmişinde 'S6_TABAN v1.0' sürüm satırıyla arar (beb8615), bu commit'ten etkilenmez.
+6. (Yazım, düzeltildi) v1.1 otomatik bölüm işaretinde 'elle düzenleme' yazıyordu, 'elle düzenleme YOK' olarak düzeltildi; ikinci koşu tek blok yazdı.
+
+### ÖNERİLEN DEFTER METNİ (IK_GOREV; ana model işler)
+16 Kas 2026 | S6 v1.1 (S7 fikirleri entegre) | S6_TABAN.py v1.1 + test_s6_taban.py 105/105; COL_S6_TABAN.pine v1.1 + ASCII + PINE_S6_NASIL.md | Alınan: referans ATR% pencere öncesi 250 bar (etkisi çok küçük), Bollinger daralması (BB yüzdeliği <= 0,30; 0,15 / 0,20 puanı 13'ten 12'ye düşürdü: TUCLK al mumundan bir gün önce taban sönüyor), onay günü mor elmas + kesik kutu, sönme gri etiket, tarih etiketleri. Alınmayan: ±%1 kırılım payı, Lmax 80, eğim şartı, getiri etiketi. Etiket puanı 13/14 (KNFRT puan dışı) = v1.0. v1.0 kipi eski sonuçlarla birebir. Evren: bölge 6,90 -> 4,23, AL 3,30 -> 1,89 / hisse-yıl, açık bar %30 -> %18 (nadir değil). CCOLA 2-20 Eki 2025: kutu var (2 Eyl - 20 Eki, AL 20 Eki). Getiri ölçülmedi; Pine derleyicisiz, ilk yapıştırma denetimi AÇIK.
+IK_HATA önerileri: madde 1 (iş tanımı belirsizliği), 2 (ölçüt yan etkisi), 4 (test kurulumu), 5 (süreç: yarım dosya başka commit'e girdi).
+
+### DOKUNULAN DOSYALAR (v1.1)
+- Değişen: `S6_TABAN.py`, `test_s6_taban.py`, `arastirma_cikti/sikisma_s6/COL_S6_TABAN.pine`, `COL_S6_TABAN_ascii.pine`, `PINE_S6_NASIL.md`, `S6_TASARIM.md` (yalnız v1.1 bölümleri eklendi), `s6_tasarim.json` ('v11' anahtarı eklendi; v1.0 anahtarları aynı).
+- Değişmeyen (yasak): defter dosyaları, COL_v1.py, takip.py, SIKISMA_*.py, ORTAK_CETVEL.py, COL_S5_OBEK*.pine. Commit / push / stash yok.

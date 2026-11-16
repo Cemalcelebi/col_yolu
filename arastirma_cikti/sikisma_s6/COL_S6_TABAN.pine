@@ -1,5 +1,5 @@
 // =====================================================================================================
-// COL S6 Taban  —  Pine Script v5  (v1.0, 15 Kasım 2026)
+// COL S6 Taban  —  Pine Script v5  (v1.1, 16 Kasım 2026; v1.0: 15 Kasım)
 //
 // Cemal'in çöl kurallarından (CEMAL_COL_KURALLARI.md K1-K8, K6b) çalışan TABAN göstergesi. Python referansı: S6_TABAN.py
 // (s6_taban; döngü karşılığı s6_pine_ayna, test_s6_taban.py ile vektörel tanıma birebir sınandı). Eşikler tasarım sınamasının
@@ -10,8 +10,11 @@
 //   (1) BANT    en yüksek High / en düşük Low - 1 <= bantMax
 //   (2) SAKİN   |bugünkü kapanış / pencerenin ilk kapanışı - 1| <= netMax
 //   (3) DİP     h = n / 2 (aşağı yuvarlanır); L1 = ilk h barın en düşük Low'u, L2 = son n-h barın; L2 >= L1 x (1 - dipTol)
-//   (4) MUM     medyan((H-L)/C) <= kM x ATR%   (ATR% = son atrGun geçerli barın ort(TR / önceki geçerli kapanış))
+//   (4) MUM     medyan((H-L)/C) <= kM x ATR%   (ATR% = ort(TR / önceki geçerli kapanış); v1.1 refOnce AÇIK: pencereden ÖNCEKİ refGun
+//               geçerli bar [i-n-refGun+1, i-n] (yoksa en az refMin bar, o da yoksa şart tutmaz); refOnce KAPALI: son atrGun bar (v1.0))
 //   (5) DARALMA ort((H-L)/C) <= daralmaOran x pencereden önceki daralmaGun barın ortalaması (daralmaOran = 0: şart yok)
+//   (6) BB      v1.1 bbSart AÇIK: BB(bbGun, 2 sigma) genişliği (2 x bbK x std / SMA, std bölen bbGun) pencerenin son gününde, önceki
+//               bbDagilim günün genişliklerinden bugünküne <= olanların payı <= bbEsik (SIKISMA_OBEK tanımı; ta.percentrank değil)
 //   TABAN = şartları sağlayan EN BÜYÜK n (nMax'tan nMin'e ilk tutan). TAVAN = pencerenin en yüksek High'ı (ilk o bar = tavan mumu),
 //   DİP = en düşük Low.
 //   AL: önceki geçerli barda taban varsa ve kapanış > önceki barın TAVAN'ı. KIRILDI: aynı koşulda kapanış < önceki DİP x (1 - kirTol).
@@ -23,6 +26,10 @@
 //   bölgenin son barını geçmez), sağ = son bölge barı, üst / alt = pencere TAVAN / DİP'lerinin en yüksek / en düşüğü.
 //   Sınıf (açılış barında; renk): DİP = 120 geçerli kapanış aralığının alt çeyreği ve tepeden >= %10 aşağı; YOL = kapanış > SMA50 ve
 //   SMA50 20 bar öncesinden yüksek; ikisi de değilse ORTA.
+//   v1.1 ÇİZİM: ONAY günü (kutunun ilk bilindiği gün = bölgenin açıldığı bar) mor elmas; kutunun onaydan ÖNCEKİ kısmı (o günlerde
+//   bilinmiyordu) kesik kenarlı çok soluk kutu, onaydan sonrası dolu kutu. SÖNME: açık bölgede bir gün taban yoksa ve AL / KIRILDI
+//   yoksa bölge söner: gri 'sonme' etiketi ve gri kenar (aynı taban dönerse silinir, kutu sürer). Kutu altında ilk .. son mum tarihi.
+//   v1.0 kipi: refOnce = false ve bbSart = false (eski sonuçlar birebir).
 //
 // Sözdizimi disiplini: sarmalı satır yok, tab yok, tipler açık, döngüler hep yukarı sayar (from <= to), çizimler yerel blokta,
 // plotshape global. Derleyici yok: ilk yapıştırmada TradingView denetler; hata çıkarsa satır numarasıyla bildir.
@@ -38,6 +45,14 @@ netMax      = input.float(0.03, "(2) Sakin: net değişim en çok (oran)", minva
 dipTol      = input.float(0.05, "(3) Dip savunulur: tolerans (oran)", minval=0.0, step=0.01, group=G1)
 kM          = input.float(0.90, "(4) Küçük mum: medyan mum <= kM x ATR%", minval=0.1, step=0.05, group=G1)
 daralmaOran = input.float(0.0, "(5) Daralma oranı (0 = şart yok)", minval=0.0, step=0.1, group=G1)
+refOnce     = input.bool(true, "(4) ATR% referansı pencereden önceki barlar (v1.1; kapalı = v1.0)", group=G1)
+refGun      = input.int(250, "(4) Referans bar sayısı (pencereden önce)", minval=20, maxval=300, group=G1)
+refMin      = input.int(120, "(4) Referans en az bar", minval=10, maxval=300, group=G1)
+bbSart      = input.bool(true, "(6) Bollinger daralması şartı (v1.1; kapalı = v1.0)", group=G1)
+bbEsik      = input.float(0.30, "(6) BB genişliği yüzdeliği en çok", minval=0.01, maxval=1.0, step=0.05, group=G1)
+bbGun       = input.int(20, "(6) BB günü", minval=5, maxval=60, group=G1)
+bbK         = input.float(2.0, "(6) BB sigma katı", minval=0.5, step=0.5, group=G1)
+bbDagilim   = input.int(250, "(6) BB yüzdelik: önceki gün sayısı", minval=20, maxval=300, group=G1)
 kirTol      = input.float(0.02, "Taban kırılımı toleransı (oran)", minval=0.0, step=0.01, group=G1)
 atrGun      = input.int(250, "ATR% günü (geçerli bar)", minval=100, maxval=300, group=G1)
 daralmaGun  = input.int(60, "Daralma: önceki bar sayısı", minval=10, maxval=120, group=G1)
@@ -54,11 +69,14 @@ renkYol     = input.color(color.new(color.orange, 82), "YOL kutusu", group=G2)
 renkOrta    = input.color(color.new(color.gray, 82), "ORTA kutusu", group=G2)
 renkTavan   = input.color(color.new(color.green, 20), "Tavan çizgisi", group=G2)
 gosterTab   = input.bool(true, "Bilgi tablosu", group=G2)
+gosterTar   = input.bool(true, "Kutu altında ilk .. son tarih", group=G2)
 
 TUT = 400
 
 if barstate.isfirst and (nMin > nMax or nMax + daralmaGun > atrGun or konumGun > atrGun + 1 or smaGun + smaEgimGun > atrGun + 1 or hacimGun + 1 > atrGun + 1)
     runtime.error("S6: nMin <= nMax, nMax + daralmaGun <= atrGun ve konum / SMA / hacim günü <= atrGun + 1 olmalı")
+if barstate.isfirst and (refMin > refGun or nMax + refGun > TUT - 1 or bbDagilim > TUT - 1 or bbGun > TUT)
+    runtime.error("S6: refMin <= refGun, nMax + refGun <= 399, bbDagilim <= 399 olmalı (400 barlık tampon)")
 
 hacimOk = not na(volume) and volume > 0
 gecerli = high > low and hacimOk and close > 0 and open > 0 and not na(close)
@@ -71,7 +89,10 @@ var float[] aM   = array.new_float(0)
 var float[] aTRP = array.new_float(0)
 var int[]   aIdx = array.new_int(0)
 var int[]   aZmn = array.new_int(0)
+var float[] aCum = array.new_float(0)
+var float[] aBB  = array.new_float(0)
 var int     nGec = 0
+var float   cumT = 0.0
 
 ekle(float[] a, float v) =>
     array.push(a, v)
@@ -110,6 +131,12 @@ yz(float v) =>
 sinifAd(int s) =>
     s == 1 ? "DİP" : s == 2 ? "YOL" : "ORTA"
 
+kenarRenk(int s) =>
+    s == 1 ? color.new(color.blue, 30) : s == 2 ? color.new(color.orange, 30) : color.new(color.gray, 30)
+
+solukRenk(int s) =>
+    s == 1 ? color.new(color.blue, 94) : s == 2 ? color.new(color.orange, 94) : color.new(color.gray, 94)
+
 // her bar sıfırlanan seri değerler
 bool alS   = false
 bool kirS  = false
@@ -122,6 +149,9 @@ float vMed = na
 float vL1  = na
 float vL2  = na
 int  sinifNow = 0
+float vRef = na
+float bbP  = na
+bool onayS = false
 
 // durum makinesi (Python s6_durum ile aynı)
 var bool  acik   = false
@@ -142,12 +172,19 @@ var float alHac  = na
 var int   alZ    = na
 var int   kutuBasZ = na
 var int   kutuSonZ = na
+var int   onayZ  = na
 
 // çizim
 var box[]  kutular   = array.new_box(0)
+var box[]  kesikler  = array.new_box(0)
 var line[] cizgiler  = array.new_line(0)
+var label[] tarihler = array.new_label(0)
+var label[] sonmeler = array.new_label(0)
 var box    kutu      = na
+var box    kesik     = na
 var line   tavCizgi  = na
+var label  tarihEt   = na
+var label  sonmeEt   = na
 
 if gecerli
     float cOnce = array.size(aC) > 0 ? array.get(aC, array.size(aC) - 1) : na
@@ -158,10 +195,38 @@ if gecerli
     ekle(aV, volume)
     ekle(aM, (high - low) / close)
     ekle(aTRP, na(cOnce) ? na : trv / cOnce)
+    if not na(cOnce)
+        cumT += trv / cOnce
+    ekle(aCum, cumT)
     ekleI(aIdx, bar_index)
     ekleI(aZmn, time)
     nGec += 1
     int i = nGec - 1
+    // (6) Bollinger genişliği (sıralı toplam, std bölen bbGun) ve önceki bbDagilim değere göre yüzdeliği
+    float bw = na
+    int szB = array.size(aC)
+    if szB >= bbGun
+        float smB = 0.0
+        for j = szB - bbGun to szB - 1
+            smB += array.get(aC, j)
+        float mnB = smB / bbGun
+        float vsB = 0.0
+        for j = szB - bbGun to szB - 1
+            float dvB = array.get(aC, j) - mnB
+            vsB += dvB * dvB
+        bw := 2.0 * bbK * math.sqrt(vsB / bbGun) / mnB
+    ekle(aBB, bw)
+    int szP = array.size(aBB)
+    if szP > bbDagilim and not na(bw)
+        int say = 0
+        bool tam = true
+        for j = szP - 1 - bbDagilim to szP - 2
+            float vB = array.get(aBB, j)
+            if na(vB)
+                tam := false
+            else if vB <= bw
+                say += 1
+        bbP := tam ? say * 1.0 / bbDagilim : na
 
     if i >= atrGun
         int sz = array.size(aC)
@@ -176,47 +241,57 @@ if gecerli
             ml := math.min(ml, array.get(aL, sz - k))
             array.set(sufH, k, mh)
             array.set(sufL, k, ml)
-        // n = nMax .. nMin (yukarı sayan döngü, nn = nMax - kk); ilk tutan n taban
-        for kk = 0 to nMax - nMin
-            int nn = nMax - kk
-            int hh = int(nn / 2)
-            bool c1 = array.get(sufH, nn) / array.get(sufL, nn) - 1.0 <= bantMax
-            bool c2 = c1 and math.abs(close / array.get(aC, sz - nn) - 1.0) <= netMax
-            bool c3 = false
-            float l1 = na
-            if c2
-                l1 := array.get(aL, sz - nn)
-                for j = sz - nn to sz - nn + hh - 1
-                    l1 := math.min(l1, array.get(aL, j))
-                c3 := array.get(sufL, nn - hh) >= l1 * (1.0 - dipTol)
-            bool c5 = false
-            if c3
-                if daralmaOran > 0
-                    float sw = 0.0
+        // n = nMax .. nMin (yukarı sayan döngü, nn = nMax - kk); ilk tutan n taban. (6) BB şartı açıksa ve tutmuyorsa taban yok.
+        bool bbOk = not bbSart or (not na(bbP) and bbP <= bbEsik)
+        if bbOk
+            for kk = 0 to nMax - nMin
+                int nn = nMax - kk
+                int hh = int(nn / 2)
+                bool c1 = array.get(sufH, nn) / array.get(sufL, nn) - 1.0 <= bantMax
+                bool c2 = c1 and math.abs(close / array.get(aC, sz - nn) - 1.0) <= netMax
+                bool c3 = false
+                float l1 = na
+                if c2
+                    l1 := array.get(aL, sz - nn)
+                    for j = sz - nn to sz - nn + hh - 1
+                        l1 := math.min(l1, array.get(aL, j))
+                    c3 := array.get(sufL, nn - hh) >= l1 * (1.0 - dipTol)
+                bool c5 = false
+                if c3
+                    if daralmaOran > 0
+                        float sw = 0.0
+                        for j = sz - nn to sz - 1
+                            sw += array.get(aM, j)
+                        float so = 0.0
+                        for j = sz - nn - daralmaGun to sz - nn - 1
+                            so += array.get(aM, j)
+                        c5 := sw / nn <= daralmaOran * (so / daralmaGun)
+                    else
+                        c5 := true
+                bool c4 = false
+                float med = na
+                if c5
+                    float[] wm = array.new_float(0)
                     for j = sz - nn to sz - 1
-                        sw += array.get(aM, j)
-                    float so = 0.0
-                    for j = sz - nn - daralmaGun to sz - nn - 1
-                        so += array.get(aM, j)
-                    c5 := sw / nn <= daralmaOran * (so / daralmaGun)
-                else
-                    c5 := true
-            bool c4 = false
-            float med = na
-            if c5
-                float[] wm = array.new_float(0)
-                for j = sz - nn to sz - 1
-                    array.push(wm, array.get(aM, j))
-                array.sort(wm, order.ascending)
-                int m2 = int(nn / 2)
-                med := nn % 2 == 1 ? array.get(wm, m2) : (array.get(wm, m2 - 1) + array.get(wm, m2)) / 2.0
-                c4 := med <= kM * atrP
-            if c4
-                tN := nn
-                vMed := med
-                vL1 := l1
-                vL2 := array.get(sufL, nn - hh)
-                break
+                        array.push(wm, array.get(aM, j))
+                    array.sort(wm, order.ascending)
+                    int m2 = int(nn / 2)
+                    med := nn % 2 == 1 ? array.get(wm, m2) : (array.get(wm, m2 - 1) + array.get(wm, m2)) / 2.0
+                    if refOnce
+                        int cnt = math.min(refGun, i - nn)
+                        if cnt >= refMin
+                            float refV = (array.get(aCum, sz - 1 - nn) - array.get(aCum, sz - 1 - nn - cnt)) / cnt
+                            c4 := med <= kM * refV
+                            vRef := refV
+                    else
+                        c4 := med <= kM * atrP
+                        vRef := atrP
+                if c4
+                    tN := nn
+                    vMed := med
+                    vL1 := l1
+                    vL2 := array.get(sufL, nn - hh)
+                    break
         if tN > 0
             tTav := array.get(aH, sz - tN)
             tDip := array.get(aL, sz - tN)
@@ -273,15 +348,19 @@ if gecerli
                     box.set_border_width(kutu, 2)
                 if not na(tavCizgi)
                     line.set_x2(tavCizgi, bar_index)
+                if not na(tarihEt)
+                    label.set_text(tarihEt, tarih(kutuBasZ) + " .. " + tarih(kutuSonZ))
         else if tN > 0
             int b = i - tN + 1
             bool yeni = false
             bool kisa = false
+            bool canlandi = false
             if acik
                 sonDurum := "AÇIK"
             else if dogal and rid >= 0 and b <= rSon
                 acik := true
                 sonDurum := "AÇIK"
+                canlandi := true
             else
                 int sinirY = rid >= 0 ? rSon : -1
                 if i - math.max(b, sinirY + 1) + 1 >= nMin
@@ -294,6 +373,8 @@ if gecerli
                     rSinif := sinifNow
                     sonDurum := "AÇIK"
                     yeni := true
+                    onayS := true
+                    onayZ := time
                 else
                     kisa := true
             if not kisa
@@ -306,39 +387,73 @@ if gecerli
             int solBar = idxOf(aIdx, math.max(rBas, 0), i)
             int tavBar = array.get(aIdx, tTavK)
             string uzun = str.tostring(rSon - rBas + 1) + " bar"
+            string tarYazi = tarih(kutuBasZ) + " .. " + tarih(kutuSonZ)
             if yeni
+                // v1.1: dolu kutu ONAY gününden (bu bar) sağa; onaydan ÖNCEKİ kısım (geriye uzatma) kesik kenarlı soluk kutu
                 color dolgu = rSinif == 1 ? renkDip : rSinif == 2 ? renkYol : renkOrta
-                color kenar = rSinif == 1 ? color.new(color.blue, 30) : rSinif == 2 ? color.new(color.orange, 30) : color.new(color.gray, 30)
-                box yk = box.new(solBar, rTop, bar_index, rBot, border_color=kenar, border_width=1, bgcolor=dolgu, text=uzun, text_size=size.small, text_color=color.new(color.black, 30), text_halign=text.align_left, text_valign=text.align_top)
+                color kenar = kenarRenk(rSinif)
+                box yk = box.new(bar_index, rTop, bar_index, rBot, border_color=kenar, border_width=1, bgcolor=dolgu)
                 array.push(kutular, yk)
-                if array.size(kutular) > 480
+                if array.size(kutular) > 240
                     box.delete(array.shift(kutular))
                 kutu := yk
+                box yks = box.new(solBar, rTop, bar_index, rBot, border_color=kenar, border_width=1, border_style=line.style_dashed, bgcolor=solukRenk(rSinif), text=uzun, text_size=size.small, text_color=color.new(color.black, 30), text_halign=text.align_left, text_valign=text.align_top)
+                array.push(kesikler, yks)
+                if array.size(kesikler) > 240
+                    box.delete(array.shift(kesikler))
+                kesik := yks
                 line yc = line.new(tavBar, tTav, bar_index, tTav, color=renkTavan, width=2)
                 array.push(cizgiler, yc)
                 if array.size(cizgiler) > 480
                     line.delete(array.shift(cizgiler))
                 tavCizgi := yc
+                label lt = label.new(solBar, rBot, gosterTar ? tarYazi : "", xloc=xloc.bar_index, yloc=yloc.price, color=color.new(color.white, 100), style=label.style_label_upper_left, textcolor=color.new(color.gray, 0), size=size.tiny)
+                array.push(tarihler, lt)
+                if array.size(tarihler) > 240
+                    label.delete(array.shift(tarihler))
+                tarihEt := lt
+                sonmeEt := na
             else if not kisa
-                box.set_left(kutu, solBar)
                 box.set_right(kutu, bar_index)
                 box.set_top(kutu, rTop)
                 box.set_bottom(kutu, rBot)
-                box.set_text(kutu, uzun)
+                box.set_left(kesik, solBar)
+                box.set_top(kesik, rTop)
+                box.set_bottom(kesik, rBot)
+                box.set_text(kesik, uzun)
                 line.set_xy1(tavCizgi, tavBar, tTav)
                 line.set_xy2(tavCizgi, bar_index, tTav)
+                label.set_xy(tarihEt, solBar, rBot)
+                label.set_text(tarihEt, gosterTar ? tarYazi : "")
+                if canlandi
+                    // söndükten sonra aynı taban döndü: gri kenar ve 'sonme' etiketi geri alınır
+                    box.set_border_color(kutu, kenarRenk(rSinif))
+                    if not na(sonmeEt)
+                        label.delete(sonmeEt)
+                        if array.size(sonmeler) > 0
+                            array.pop(sonmeler)
+                        sonmeEt := na
         else if acik
             acik := false
             dogal := true
             sonDurum := "söndü"
             sonOlayZ := time
+            // v1.1 SÖNME: gri kenar + mum üstünde küçük gri 'sonme' etiketi
+            if not na(kutu)
+                box.set_border_color(kutu, color.new(color.gray, 0))
+            label ls = label.new(bar_index, high, "sonme", xloc=xloc.bar_index, yloc=yloc.abovebar, color=color.new(color.gray, 20), style=label.style_label_down, textcolor=color.new(color.white, 0), size=size.tiny)
+            array.push(sonmeler, ls)
+            if array.size(sonmeler) > 240
+                label.delete(array.shift(sonmeler))
+            sonmeEt := ls
         oncTav := tN > 0 ? tTav : na
         oncDip := tN > 0 ? tDip : na
 
 plotshape(alS, "AL (tavan kapanışla kırıldı)", shape.triangleup, location.belowbar, color.new(color.green, 0), size=size.small, text="AL")
 plotshape(kirS, "KIRILDI (taban kapanışla kırıldı)", shape.xcross, location.abovebar, color.new(color.red, 0), size=size.small, text="KIRILDI")
+plotshape(onayS, "Onay günü (kutu ilk bu gün bilinir)", shape.diamond, location.belowbar, color.new(color.purple, 0), size=size.tiny)
 
-var table tb = table.new(position.top_right, 2, 15, bgcolor=color.new(color.white, 10), border_width=1)
+var table tb = table.new(position.top_right, 2, 17, bgcolor=color.new(color.white, 10), border_width=1)
 if gosterTab and barstate.islast
     bool varT = tN > 0
     float tBant = na
@@ -351,7 +466,7 @@ if gosterTab and barstate.islast
         int szT = array.size(aC)
         tBant := tTav / tDip - 1.0
         tNet := array.get(aC, szT - 1) / array.get(aC, szT - tN) - 1.0
-        tMumAtr := na(atrP) or atrP == 0 ? na : vMed / atrP
+        tMumAtr := na(vRef) or vRef == 0 ? na : vMed / vRef
         tDipSav := na(vL1) or vL1 == 0 ? na : vL2 / vL1 - 1.0
         float swT = 0.0
         for j = szT - tN to szT - 1
@@ -375,7 +490,7 @@ if gosterTab and barstate.islast
     table.cell(tb, 1, 5, yz(tNet), text_size=size.small)
     table.cell(tb, 0, 6, "(3) dip savunması L2/L1-1 >= -" + yz(dipTol), text_size=size.small)
     table.cell(tb, 1, 6, yz(tDipSav), text_size=size.small)
-    table.cell(tb, 0, 7, "(4) medyan mum / ATR% <= " + str.tostring(kM, "#.00"), text_size=size.small)
+    table.cell(tb, 0, 7, "(4) medyan mum / ATR%" + (refOnce ? " (pencere öncesi)" : "") + " <= " + str.tostring(kM, "#.00"), text_size=size.small)
     table.cell(tb, 1, 7, na(tMumAtr) ? "-" : str.tostring(tMumAtr, "#.00"), text_size=size.small)
     table.cell(tb, 0, 8, "(5) daralma oranı" + (daralmaOran > 0 ? " <= " + str.tostring(daralmaOran, "#.0") : " (şart kapalı)"), text_size=size.small)
     table.cell(tb, 1, 8, na(tDar) ? "-" : str.tostring(tDar, "#.00"), text_size=size.small)
@@ -391,33 +506,37 @@ if gosterTab and barstate.islast
     table.cell(tb, 1, 13, str.tostring(nGec) + (nGec > atrGun ? "" : " (en az " + str.tostring(atrGun + 1) + " gerekli)"), text_size=size.small)
     table.cell(tb, 0, 14, "ATR% (son " + str.tostring(atrGun) + ")", text_size=size.small)
     table.cell(tb, 1, 14, yz(atrP), text_size=size.small)
+    table.cell(tb, 0, 15, "onay günü (son bölge; mor elmas)", text_size=size.small)
+    table.cell(tb, 1, 15, rid >= 0 ? tarih(onayZ) : "-", text_size=size.small)
+    table.cell(tb, 0, 16, "(6) BB yüzdelik" + (bbSart ? " <= " + str.tostring(bbEsik, "0.00") : " (şart kapalı)"), text_size=size.small)
+    table.cell(tb, 1, 16, na(bbP) ? "-" : str.tostring(bbP, "0.00"), text_size=size.small)
 
 // =====================================================================================================
-// BEKLENEN ÇIKTI (V_BIST düzeltilmiş fiyat, varsayılan girdiler; `python S6_TABAN.py pine`). TradingView'de günlük grafik,
-// BIST:SEMBOL, ADJ (temettü / bölünme düzeltmesi) AÇIK. Kutu tarihleri = kutunun ilk ve son mumu; AL / KIRILDI = işaret günü.
+// BEKLENEN ÇIKTI (v1.1; V_BIST düzeltilmiş fiyat, varsayılan girdiler: refOnce açık, BB 0,30; `python S6_TABAN.py pine`). TradingView'de
+// günlük grafik, BIST:SEMBOL, ADJ (temettü / bölünme düzeltmesi) AÇIK. Kutu tarihleri = kutunun ilk ve son mumu (kesik + dolu kısım);
+// onay = mor elmas günü (dolu kısım bu günden başlar); AL / KIRILDI = işaret günü; 'söndü' = gri kenar + 'sonme' etiketi.
 // Tarih farkı çıkarsa önce: günlük grafik mi, ADJ açık mı, girdiler varsayılan mı; TradingView'de bar eksik / fazla olabilir.
+// v1.0 kipinin (refOnce ve BB kapalı) beklenen kutuları S6_TASARIM.md v1.0 bölümünde ve git geçmişindeki v1.0 Pine dosyasında.
 //
-// D7 KNFRT (Cemal 2022-06-15 .. 2022-09-13, al mumu 2022-09-14)
-//   kutu 2022-07-25 .. 2022-08-08  11 bar, YOL, AL 2022-08-08 (tavan 5,284 / dip 4,955)
-//   kutu 2022-08-16 .. 2022-08-29  10 bar, YOL, AL 2022-08-29 (tavan 5,521 / dip 5,028)
-//   2022-09-14'te AL YOK (Haziran-Temmuz'da taban yok: mumlar ATR'ye göre büyük; Temmuz sonu +%15 sıçrama var)
+// D7 KNFRT (Cemal 2022-06-15 .. 2022-09-13, al mumu 2022-09-14; etiket puan dışı: tarih Cemal'den beklenir)
+//   kutu 2022-08-16 .. 2022-08-29  10 bar, onay 2022-08-25, YOL, AL 2022-08-29 (tavan 5,521 / dip 5,028)
+//   2022-09-14'te AL YOK; v1.0'daki 25 Tem - 8 Ağu kutusu v1.1'de yok (BB şartı)
 // D8 TUCLK (Cemal 2025-06-10 .. 2025-08-21, al mumu 2025-08-22)
-//   kutu 2025-04-22 .. 2025-06-11  32 bar, ORTA, söndü
-//   kutu 2025-06-18 .. 2025-08-06  35 bar, YOL, AL 2025-08-06 (tavan 5,708 / dip 5,122)
-//   kutu 2025-08-07 .. 2025-08-22  12 bar, YOL, AL 2025-08-22 (tavan 5,836 / dip 5,250; kutu AL barından sonra başlar, 8 bar dolunca açılır)
+//   kutu 2025-06-18 .. 2025-08-06  35 bar, onay 2025-07-16, ORTA, AL 2025-08-06 (tavan 5,708 / dip 5,122)
+//   kutu 2025-08-07 .. 2025-08-22  12 bar, onay 2025-08-18, YOL, AL 2025-08-22 (tavan 5,836 / dip 5,250)
 // D10 PAPIL küçük taban (Cemal 2025-11-13 .. 2025-12-10, al 2025-12-11)
-//   kutu 2025-11-11 .. 2025-12-11  23 bar, DİP, AL 2025-12-11 (tavan 16,96 / dip 15,38)
-//   kutu 2025-12-23 .. 2026-01-14  16 bar, DİP, söndü
+//   kutu 2025-11-11 .. 2025-12-11  23 bar, onay 2025-12-03, DİP, AL 2025-12-11 (tavan 16,96 / dip 15,38)
+//   kutu 2025-12-23 .. 2026-01-14  16 bar, onay 2026-01-06, DİP, söndü
 // D5 ENJSA (Cemal 2025-05-08 .. 2025-06-27)
-//   kutu 2025-04-22 .. 2025-06-30  45 bar, DİP, AL 2025-06-30 (tavan 59,30 / dip 51,25)
-//   kutu 2025-07-02 .. 2025-07-17  11 bar, ORTA, AL 2025-07-17
-//   kutu 2025-07-18 .. 2025-08-13  19 bar, YOL, AL 2025-08-13
+//   kutu 2025-04-25 .. 2025-06-30  43 bar, onay 2025-05-22, DİP, AL 2025-06-30 (tavan 58,25 / dip 51,25)
+//   kutu 2025-07-11 .. 2025-08-13  23 bar, onay 2025-08-06, YOL, AL 2025-08-13 (tavan 67,50 / dip 61,60)
 // D6 DESA (Cemal 2021-10-27 .. 2021-12-23, uzun seçenek 2022-02-02)
-//   kutu 2021-10-01 .. 2021-11-01  21 bar, DİP, söndü
-//   kutu 2021-11-04 .. 2021-12-06  23 bar, DİP, AL 2021-12-06 (tavan 1,046 / dip 0,908)
-//   kutu 2021-12-24 .. 2022-02-03  30 bar, DİP, AL 2022-02-03 (tavan 0,990 / dip 0,900)
+//   kutu 2021-10-01 .. 2021-11-01  21 bar, onay 2021-10-18, DİP, söndü
+//   kutu 2021-11-04 .. 2021-12-06  23 bar, onay 2021-11-15, DİP, AL 2021-12-06 (tavan 1,046 / dip 0,908)
+//   kutu 2021-12-24 .. 2022-02-03  30 bar, onay 2022-01-06, DİP, AL 2022-02-03 (tavan 0,990 / dip 0,900)
 // Y3 TUCLK kayan düşüş (Cemal: çöl yok, 2026-07-24 .. 2026-08-13)
-//   kutu 2026-06-04 .. 2026-07-28  38 bar, DİP, söndü
-//   kutu 2026-07-29 .. 2026-08-25  20 bar, DİP, AL 2026-08-25 (tavan 4,08 / dip 3,67)
+//   kutu 2026-06-05 .. 2026-07-28  37 bar, onay 2026-06-18, DİP, söndü
+//   kutu 2026-07-29 .. 2026-08-25  20 bar, onay 2026-08-07, DİP, AL 2026-08-25 (tavan 4,08 / dip 3,67)
 //   Not: V_BIST 31.08.2026'da kesilir (fon krizi); TradingView'de bu bölge farklı bitebilir.
+// CCOLA (S7 örneği 2-20 Eki 2025): kutu 2025-09-02 .. 2025-10-20  35 bar, onay 2025-09-23, DİP, AL 2025-10-20
 // =====================================================================================================
