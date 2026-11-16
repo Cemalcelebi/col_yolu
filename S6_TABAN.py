@@ -63,7 +63,8 @@ if not s6log.handlers:
     s6log.setLevel(logging.INFO)
     s6log.propagate = False
 
-S6_SURUM = "S6_TABAN v1.0 (2026-11-15): Cemal'in çöl kuralları -> taban bölgesi (bant, sakin, dip savunulur, küçük mum, daralma) + al mumu / taban kırılımı"
+S6_SURUM = ("S6_TABAN v1.1 (2026-11-16): Cemal'in çöl kuralları -> taban bölgesi (bant, sakin, dip savunulur, küçük mum [referans pencere öncesi], "
+            "daralma, Bollinger daralması) + al mumu / taban kırılımı / sönme; v1.0 kipi refOnce = False, bbSart = False")
 S6_YOL = {"cikti": os.path.join(KOK_S6, "arastirma_cikti", "sikisma_s6"), "veri": os.environ.get("S6_VERI", "/tmp/veri"),
           "kod": os.path.join(KOK_S6, "S6_TABAN.py")}
 S6_DOSYA = {"tasarim": "S6_TASARIM.md", "tasarim_json": "s6_tasarim.json"}
@@ -76,8 +77,13 @@ S6_PRM: Dict[str, Any] = {
     "bantMax": 0.12, "netMax": 0.03, "kM": 0.90, "dipTol": 0.05, "daralmaOran": 0.0,
     "kirTol": 0.02, "atrGun": 250, "daralmaGun": 60, "konumGun": 120, "smaGun": 50, "smaEgimGun": 20,
     "dipKonum": 0.25, "dipDusus": -0.10, "surTol": -1, "hacimGun": 20,
+    # v1.1 (S7 fikirleri; iş tanımı S6_V11_IS_TANIMI.md). Varsayılanlar v1.1 tasarım sınamasının SEÇTİĞİ değerlerdir (S6_IZGARA_V11).
+    "refOnce": True, "refGun": 250, "refMin": 120,
+    "bbSart": True, "bbEsik": 0.20, "bbGun": 20, "bbK": 2.0, "bbDagilim": 250,
 }
+S6_V10_KIP = {"refOnce": False, "bbSart": False}       # v1.0 davranışı (eski sonuçlar birebir)
 S6_ESIK_ALAN = ("bantMax", "netMax", "kM", "dipTol", "daralmaOran")
+S6_V11_ALAN = ("refOnce", "bbSart", "bbEsik")
 
 # TASARIM IZGARASI (iş tanımı §4; sonuç görülmeden yazıldı). daralmaOran 0.0 = kapalı.
 S6_IZGARA: Dict[str, Any] = {
@@ -89,6 +95,20 @@ S6_IZGARA: Dict[str, Any] = {
     "yanlis_kurali": "YANLIŞ elendi: hiçbir S6 bölgesinin kutusu bu pencerenin >= 0,5'ini örtmüyor YA DA pencerenin son günü (S5 karar günü) "
                      "S6 bölgesi açık değil (o gün bölge bitmiş: AL / KIRILDI / söndü; iş tanımı §4)",
     "al_kurali": "AL tuttu: etiket gününe ±k geçerli bar içinde bir AL işareti var",
+}
+
+# v1.1 TASARIM IZGARASI (iş tanımı S6_V11_IS_TANIMI.md; v1.1 koşusundan ÖNCE yazıldı, sonuç görülünce değişmez). v1.0 eşikleri (bant 0,12 · net 0,03 ·
+# kM 0,90 · dipTol 0,05 · daralma kapalı) sabit; yalnız yeni iki girdi taranır. Puan: 16 etiketten KNFRT'nin iki etiketi (D7, A1; 'tarih yanlış,
+# Cemal'den beklenir') PUAN DIŞI -> 14 puanlı etiket. Taban çizgisi = v1.0 kipinin aynı 14 etiketteki puanı (v1.0: 13/16 = 13/14, KNFRT ikisi de tutmuyordu).
+S6_IZGARA_V11: Dict[str, Any] = {
+    "refOnce": [True, False], "bbEsik": [0.15, 0.20, 0.30, None],         # None = bbSart kapalı
+    "puan_disi": ["D7 KNFRT 2022-06/09", "A1 KNFRT al mumu 2022-09-14"],
+    "sade_sira": [(True, 0.20), (True, 0.30), (True, 0.15), (True, None), (False, 0.20), (False, 0.30), (False, 0.15), (False, None)],
+    "secim_kurali": "taban = v1.0 kipinin 14 puanlı etiketteki puanı. Aday sırası (sadelik; S7 fikirleri açık olan önce, BB eşiği SIKISMA_OBEK "
+                    "varsayılanı 0,20 önce, sonra gevşek 0,30, sonra sıkı 0,15): (ref açık, BB 0,20), (açık, 0,30), (açık, 0,15), (açık, BB kapalı), "
+                    "(ref kapalı, 0,20), (kapalı, 0,30), (kapalı, 0,15), (kapalı, kapalı = v1.0). Puanı tabanın ALTINA DÜŞMEYEN ilk aday seçilir "
+                    "(kötüleştiren yeni şart varsayılan KAPALI kalır); en yüksek puan aranmaz.",
+    "ccola": {"sembol": "CCOLA", "ilk": "2025-10-02", "son": "2025-10-20"},
 }
 
 # 16 puanlı etiket + BİLGİ etiketleri (CEMAL_COL_KURALLARI.md; iş tanımı §4). 'yaklasik' = aralık fotoğraftan okunmuş.
@@ -161,8 +181,16 @@ def s6_prm(prm: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         if bilinmeyen:
             raise S6Hata(f"bilinmeyen parametre: {bilinmeyen}")
         P.update(prm)
-    for k in ("nMin", "nMax", "atrGun", "daralmaGun", "konumGun", "smaGun", "smaEgimGun", "surTol", "hacimGun"):
+    for k in ("nMin", "nMax", "atrGun", "daralmaGun", "konumGun", "smaGun", "smaEgimGun", "surTol", "hacimGun", "refGun", "refMin", "bbGun", "bbDagilim"):
         P[k] = int(P[k])
+    for k in ("refOnce", "bbSart"):
+        if not isinstance(P[k], (bool, np.bool_)):
+            raise S6Hata(f"{k} True / False olmalı")
+        P[k] = bool(P[k])
+    if not (1 <= P["refMin"] <= P["refGun"]):
+        raise S6Hata("1 <= refMin <= refGun olmalı")
+    if not (0.0 < float(P["bbEsik"]) <= 1.0) or P["bbGun"] < 2 or P["bbDagilim"] < 10 or not (float(P["bbK"]) > 0):
+        raise S6Hata("bbEsik (0, 1], bbGun >= 2, bbDagilim >= 10, bbK > 0 olmalı")
     if not (2 <= P["nMin"] <= P["nMax"]):
         raise S6Hata(f"nMin / nMax geçersiz: {P['nMin']} / {P['nMax']}")
     if P["nMax"] + P["daralmaGun"] > P["atrGun"]:
@@ -185,6 +213,34 @@ def _s6_kaydir(x: np.ndarray, k: int) -> np.ndarray:
     return np.r_[np.full(k, np.nan), x[:-k]] if len(x) > k else np.full(len(x), np.nan)
 
 
+def s6_bb(C: np.ndarray, P: Dict[str, Any]) -> Tuple[np.ndarray, np.ndarray]:
+    """Bollinger genişliği bbw = 2 x bbK x std(ddof=0) / SMA (bbGun geçerli kapanış) ve yüzdeliği bbp(t) = önceki bbDagilim günün bbw'lerinden
+    bbw(t)'ye <= olanların payı (SIKISMA_OBEK.so_s5 tanımı; ta.percentrank DEĞİL). Toplamlar Pine'daki gibi SIRALI (k = 0..bbGun-1) yapılır:
+    Python ile Pine aritmetiği bit düzeyinde aynı olsun diye (pandas rolling std çevrimiçi algoritmadır, son ondalıkta ayrışabilir)."""
+    g, nb = int(P["bbGun"]), int(P["bbDagilim"]); N = len(C)
+    bbw = np.full(N, np.nan); bbp = np.full(N, np.nan)
+    if N >= g:
+        W = np.lib.stride_tricks.sliding_window_view(C.astype(float), g)          # satır r = C[r .. r+g-1], bar t = r+g-1
+        sm = np.zeros(W.shape[0])
+        for k in range(g):
+            sm = sm + W[:, k]
+        mn = sm / g
+        vs = np.zeros(W.shape[0])
+        for k in range(g):
+            dk = W[:, k] - mn
+            vs = vs + dk * dk
+        sd = np.sqrt(vs / g)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            bbw[g - 1:] = 2.0 * float(P["bbK"]) * sd / mn
+    if N > nb:
+        Wb = np.lib.stride_tricks.sliding_window_view(bbw, nb)[:N - nb]             # satır j: bbw[j .. j+nb-1] = t-nb .. t-1, t = j+nb
+        t_ = np.arange(nb, N)
+        with np.errstate(invalid="ignore"):
+            ok = np.isfinite(Wb).all(axis=1) & np.isfinite(bbw[t_])
+            bbp[t_] = np.where(ok, (Wb <= bbw[t_][:, None]).sum(axis=1) / float(nb), np.nan)
+    return bbw, bbp
+
+
 def s6_bilesen(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """d = geçerli barlar (SY.sy_veri_hazirla). Sütun j <-> n = nMax - j. Eşikten bağımsız bileşenler (ızgara için bir kez hesaplanır)."""
     P = s6_prm(prm)
@@ -200,10 +256,13 @@ def s6_bilesen(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> Dict[st
         trp = tr / Cp
     trp[0] = np.nan
     atr = pd.Series(trp).rolling(P["atrGun"], min_periods=P["atrGun"]).mean().to_numpy()
+    # v1.1 referans ATR%: pencereden ÖNCEKİ refGun geçerli bar (yoksa en az refMin). Kümülatif toplam SIRALI (np.cumsum = Pine'daki cumT += ...).
+    cum = np.cumsum(np.r_[0.0, trp[1:]]) if N > 0 else np.zeros(0)
     mum = (H - L) / C
     sH, sL, sC, sM = pd.Series(H), pd.Series(L), pd.Series(C), pd.Series(mum)
     K = len(ns)
-    B = {k: np.full((N, K), np.nan) for k in ("maxH", "minL", "cBas", "L1", "L2", "med", "ortW", "ortOnce")}
+    B = {k: np.full((N, K), np.nan) for k in ("maxH", "minL", "cBas", "L1", "L2", "med", "ortW", "ortOnce", "atrRef")}
+    ii = np.arange(N)
     once = sM.rolling(P["daralmaGun"], min_periods=P["daralmaGun"]).mean().to_numpy()
     for j, n in enumerate(ns):
         n = int(n); h = n // 2
@@ -215,6 +274,11 @@ def s6_bilesen(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> Dict[st
         B["med"][:, j] = sM.rolling(n, min_periods=n).median().to_numpy()
         B["ortW"][:, j] = sM.rolling(n, min_periods=n).mean().to_numpy()
         B["ortOnce"][:, j] = _s6_kaydir(once, n)
+        kk = ii - n                                                      # pencereden önceki son bar; referans [kk-cnt+1, kk]
+        cnt = np.minimum(P["refGun"], kk)
+        okr = (kk >= 0) & (cnt >= P["refMin"])
+        kkc = np.where(okr, kk, 0); c0 = np.where(okr, kk - cnt, 0)
+        B["atrRef"][:, j] = np.where(okr, (cum[kkc] - cum[c0]) / np.where(okr, cnt, 1), np.nan)
     # sınıf (geçerli kapanışlar üzerinde)
     kg = P["konumGun"]
     mx = sC.rolling(kg, min_periods=kg).max().to_numpy(); mn = sC.rolling(kg, min_periods=kg).min().to_numpy()
@@ -228,7 +292,8 @@ def s6_bilesen(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> Dict[st
     olculur = np.arange(N) >= P["atrGun"]
     sinif = np.where(olculur, np.where(dip, "DIP", np.where(yol, "YOL", "ORTA")), "")     # yalnız ölçülür barda (Pine ile aynı)
     hort = _s6_kaydir(pd.Series(V).rolling(P["hacimGun"], min_periods=P["hacimGun"]).mean().to_numpy(), 1)   # önceki 20 geçerli bar
-    return {"P": P, "ns": ns, "B": B, "atr": atr, "mum": mum, "H": H, "L": L, "C": C, "V": V, "sinif": sinif, "konum": konum, "dd": dd,
+    bbw, bbp = s6_bb(C, P)
+    return {"P": P, "ns": ns, "B": B, "atr": atr, "bbw": bbw, "bbp": bbp, "mum": mum, "H": H, "L": L, "C": C, "V": V, "sinif": sinif, "konum": konum, "dd": dd,
             "sma": sma, "hort": hort, "olculur": olculur, "index": d.index}
 
 
@@ -240,9 +305,14 @@ def s6_sec(Z: Dict[str, Any], esik: Optional[Dict[str, Any]] = None) -> np.ndarr
         ok = (B["maxH"] / B["minL"] - 1.0 <= P["bantMax"])
         ok &= (np.abs(Z["C"][:, None] / B["cBas"] - 1.0) <= P["netMax"])
         ok &= (B["L2"] >= B["L1"] * (1.0 - P["dipTol"]))
-        ok &= (B["med"] <= P["kM"] * atr)
+        if P["refOnce"]:
+            ok &= (B["med"] <= P["kM"] * B["atrRef"])                   # v1.1: referans pencereden önceki 250 bar
+        else:
+            ok &= (B["med"] <= P["kM"] * atr)                            # v1.0: t'deki ATR250 (pencere dahil)
         if float(P["daralmaOran"]) > 0:
             ok &= (B["ortW"] <= P["daralmaOran"] * B["ortOnce"])
+        if P["bbSart"]:
+            ok &= (Z["bbp"] <= float(P["bbEsik"]))[:, None]               # (6) BB genişliği yüzdeliği pencerenin son gününde
     ok &= Z["olculur"][:, None]
     var = ok.any(axis=1)
     j = np.argmax(ok, axis=1)
@@ -257,8 +327,9 @@ def s6_durum(Z: Dict[str, Any], nsec: np.ndarray, esik: Optional[Dict[str, Any]]
     nS = np.full(N, np.nan); basS = np.full(N, np.nan); tavS = np.full(N, np.nan); dipS = np.full(N, np.nan); tbarS = np.full(N, np.nan)
     al = np.zeros(N, bool); kir = np.zeros(N, bool); bid = np.full(N, -1, int); durum = np.array([""] * N, dtype=object)
     kSol = np.full(N, np.nan); kSag = np.full(N, np.nan); kUst = np.full(N, np.nan); kAlt = np.full(N, np.nan)
+    onay = np.zeros(N, bool); sonTurA = np.array([""] * N, dtype=object); onayI = np.full(N, np.nan)
     acik = False; rid = -1; rBas = -1; rSon = -1; rTop = np.nan; rBot = np.nan; dogal = False; sinir = -1
-    oncBas = -1; oncTav = np.nan; oncDip = np.nan
+    oncBas = -1; oncTav = np.nan; oncDip = np.nan; sonTur = ""; rOnay = -1
     for i in range(N):
         n = int(nsec[i])
         if n > 0:
@@ -275,18 +346,19 @@ def s6_durum(Z: Dict[str, Any], nsec: np.ndarray, esik: Optional[Dict[str, Any]]
             al[i] = a_; kir[i] = k_
             durum[i] = ("AL" if a_ else "KIRILDI") + ("" if acik else "_BOLGESIZ")
             if acik:
-                rSon = i; acik = False; dogal = False; bid[i] = rid
+                rSon = i; acik = False; dogal = False; bid[i] = rid; sonTur = "AL" if a_ else "KIRILDI"
         elif n > 0:
             b = i - n + 1
             if acik and (P["surTol"] < 0 or b <= oncBas + P["surTol"]):
                 durum[i] = "SURER"
             elif (not acik) and dogal and rid >= 0 and b <= rSon:
-                acik = True; durum[i] = "YENIDEN"
+                acik = True; durum[i] = "YENIDEN"; sonTur = "ACIK"
             else:
                 sinir_y = rSon if (rid >= 0 and not acik) else -1   # yeni kutu önceki bölgenin son barını geçmez
                 if i - max(b, sinir_y + 1) + 1 >= P["nMin"]:          # kırpılmış kutu en az nMin bar (tek mumluk bölge yok)
                     sinir = sinir_y
                     rid += 1; acik = True; rBas = max(b, sinir + 1); rTop = tavS[i]; rBot = dipS[i]; durum[i] = "YENI"
+                    onay[i] = True; rOnay = i; sonTur = "ACIK"                 # v1.1 ONAY günü: kutu ilk bu gün bilinir
                 else:
                     durum[i] = "KISA"
             if durum[i] != "KISA":
@@ -294,9 +366,12 @@ def s6_durum(Z: Dict[str, Any], nsec: np.ndarray, esik: Optional[Dict[str, Any]]
                 bid[i] = rid
         else:
             if acik:
-                acik = False; dogal = True; durum[i] = "SONDU"
+                acik = False; dogal = True; durum[i] = "SONDU"; sonTur = "SONDU"
         if bid[i] >= 0:
             kSol[i] = rBas; kSag[i] = rSon; kUst[i] = rTop; kAlt[i] = rBot
+        sonTurA[i] = sonTur
+        if rid >= 0:
+            onayI[i] = rOnay
         if n > 0:
             oncBas = i - n + 1; oncTav = tavS[i]; oncDip = dipS[i]
         else:
@@ -310,13 +385,14 @@ def s6_durum(Z: Dict[str, Any], nsec: np.ndarray, esik: Optional[Dict[str, Any]]
         return np.where(var, x[r, j], np.nan)
     with np.errstate(invalid="ignore", divide="ignore"):
         bant = _al(B["maxH"] / B["minL"] - 1.0); net = _al(Z["C"][:, None] / B["cBas"] - 1.0)
-        mumAtr = _al(B["med"] / Z["atr"][:, None]); darOran = _al(B["ortW"] / B["ortOnce"]); dipSav = _al(B["L2"] / B["L1"] - 1.0)
+        mumAtr = _al(B["med"] / (B["atrRef"] if P["refOnce"] else Z["atr"][:, None])); darOran = _al(B["ortW"] / B["ortOnce"]); dipSav = _al(B["L2"] / B["L1"] - 1.0)
         alBoy = np.where(al, (H - L) / C, np.nan); alHac = np.where(al, Z["V"] / Z["hort"], np.nan)
     idx = Z["index"]
     return pd.DataFrame({"n": nS, "bas_i": basS, "tavan": tavS, "dip": dipS, "tavan_i": tbarS, "bant": bant, "net": net, "mum_atr": mumAtr,
                          "daralma": darOran, "dip_sav": dipSav, "sinif": Z["sinif"], "al": al, "kirildi": kir, "bolge_id": bid, "durum": durum,
                          "kutu_sol_i": kSol, "kutu_sag_i": kSag, "kutu_ust": kUst, "kutu_alt": kAlt, "al_boy": alBoy, "al_hacim": alHac,
-                         "atr": Z["atr"], "olculur": Z["olculur"]}, index=idx)
+                         "atr": Z["atr"], "olculur": Z["olculur"], "bbp": Z["bbp"], "onay": onay, "onay_i": onayI,
+                         "bolge_son_tur": sonTurA}, index=idx)
 
 
 def s6_taban(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.DataFrame:
@@ -326,7 +402,7 @@ def s6_taban(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.DataFr
     if not d.index.is_monotonic_increasing or d.index.has_duplicates:
         raise S6Hata("indeks artan ve tekil olmalı (SY.sy_veri_hazirla)")
     Z = s6_bilesen(d, prm)
-    T = s6_durum(Z, s6_sec(Z))
+    T = s6_durum(Z, s6_sec(Z))           # Z["P"] = s6_prm(prm): eşikler ve v1.1 girdileri prm'den
     ix = d.index
     T["bas"] = [ix[int(b)] if b == b else pd.NaT for b in T["bas_i"]]
     return T
@@ -346,9 +422,10 @@ def s6_bolgeler(T: pd.DataFrame) -> List[Dict[str, Any]]:
             dur = "ACIK" if konum == len(T) - 1 else "SONDU"
         ilk = g.iloc[0]
         out.append({"id": int(rid), "sol_i": sol, "sag_i": sag, "bas": str(ix[sol].date()), "bitis": str(ix[sag].date()), "gun": sag - sol + 1,
-                    "acilis": str(g.index[0].date()), "sinif": str(ilk["sinif"]), "durum": dur,
+                    "acilis": str(g.index[0].date()), "onay": str(g.index[0].date()), "onay_i": int(ix.get_loc(g.index[0])),
+                    "onay_once_gun": int(ix.get_loc(g.index[0])) - sol, "sinif": str(ilk["sinif"]), "durum": dur,
                     "al_gun": str(g.index[-1].date()) if dur == "AL" else "", "kir_gun": str(g.index[-1].date()) if dur == "KIRILDI" else "",
-                    "tavan": float(son["kutu_ust"]), "dip": float(son["kutu_alt"]),
+                    "bolge_son_tur": dur, "tavan": float(son["kutu_ust"]), "dip": float(son["kutu_alt"]),
                     "al_boy": float(son["al_boy"]) if dur == "AL" else None, "al_hacim": float(son["al_hacim"]) if dur == "AL" else None})
     return out
 
@@ -361,18 +438,48 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
         raise S6Hata("Pine aynası yalnız surTol = -1 (birleşim kipi)")
     O_, H_, L_, C_, V_ = (d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close", "Volume"))
     aH: List[float] = []; aL: List[float] = []; aC: List[float] = []; aM: List[float] = []; aTRP: List[float] = []; aV: List[float] = []
+    aCum: List[float] = []; aBB: List[float] = []
     N = len(C_); nMin, nMax = P["nMin"], P["nMax"]
-    out = {k: np.full(N, np.nan) for k in ("n", "tavan", "dip", "kutu_sol_i", "kutu_sag_i", "kutu_ust", "kutu_alt")}
+    out = {k: np.full(N, np.nan) for k in ("n", "tavan", "dip", "kutu_sol_i", "kutu_sag_i", "kutu_ust", "kutu_alt", "bbp", "onay_i")}
     alA = np.zeros(N, bool); kirA = np.zeros(N, bool); bidA = np.full(N, -1, int); sinA = np.array([""] * N, dtype=object)
+    onA = np.zeros(N, bool); turA = np.array([""] * N, dtype=object)
     acik = False; rid = -1; rBas = -1; rSon = -1; rTop = np.nan; rBot = np.nan; dogal = False; sinir = -1
-    oncTav = np.nan; oncDip = np.nan
+    oncTav = np.nan; oncDip = np.nan; cumT = 0.0; sonTur = ""; rOnay = -1
+    g_, nb_, bbK = P["bbGun"], P["bbDagilim"], float(P["bbK"])
     for i in range(N):
         cOnce = aC[-1] if aC else np.nan
         trv = (H_[i] - L_[i]) if np.isnan(cOnce) else max(H_[i], cOnce) - min(L_[i], cOnce)
         aH.append(H_[i]); aL.append(L_[i]); aC.append(C_[i]); aV.append(V_[i]); aM.append((H_[i] - L_[i]) / C_[i])
         aTRP.append(np.nan if np.isnan(cOnce) else trv / cOnce)
+        if not np.isnan(cOnce):
+            cumT += trv / cOnce
+        aCum.append(cumT)
         sz = len(aC)
+        # Bollinger genişliği (sıralı toplam) ve yüzdeliği (önceki nb_ değer)
+        bw = np.nan
+        if sz >= g_:
+            sm = 0.0
+            for j in range(sz - g_, sz):
+                sm += aC[j]
+            mnb = sm / g_
+            vs = 0.0
+            for j in range(sz - g_, sz):
+                dv = aC[j] - mnb
+                vs += dv * dv
+            bw = 2.0 * bbK * np.sqrt(vs / g_) / mnb
+        aBB.append(bw)
+        bbP = np.nan
+        if sz > nb_ and not np.isnan(bw):
+            say = 0; tam = True
+            for j in range(sz - 1 - nb_, sz - 1):
+                if np.isnan(aBB[j]):
+                    tam = False
+                elif aBB[j] <= bw:
+                    say += 1
+            bbP = say / float(nb_) if tam else np.nan
+        out["bbp"][i] = bbP
         tN = 0; tTav = np.nan; tDip = np.nan
+        bbOk = (not P["bbSart"]) or ((not np.isnan(bbP)) and bbP <= float(P["bbEsik"]))
         if i >= P["atrGun"]:
             s = 0.0
             for j in range(sz - P["atrGun"], sz):
@@ -383,7 +490,7 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
             mh = -np.inf; ml = np.inf
             for k in range(1, nMax + 1):
                 mh = max(mh, aH[sz - k]); ml = min(ml, aL[sz - k]); sufH[k] = mh; sufL[k] = ml
-            for kk in range(0, nMax - nMin + 1):
+            for kk in range(0, nMax - nMin + 1 if bbOk else 0):
                 n = nMax - kk
                 h = n // 2
                 c1 = sufH[n] / sufL[n] - 1.0 <= P["bantMax"]
@@ -411,7 +518,13 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
                     w = sorted(aM[sz - n:sz])
                     m2 = n // 2
                     med = w[m2] if n % 2 == 1 else (w[m2 - 1] + w[m2]) / 2.0
-                    c4 = med <= P["kM"] * atrP
+                    if P["refOnce"]:
+                        cnt = min(P["refGun"], i - n)
+                        if cnt >= P["refMin"]:
+                            ref = (aCum[sz - 1 - n] - aCum[sz - 1 - n - cnt]) / cnt
+                            c4 = med <= P["kM"] * ref
+                    else:
+                        c4 = med <= P["kM"] * atrP
                 if c4:
                     tN = n
                     break
@@ -438,13 +551,13 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
             if a_ or k_:
                 alA[i] = a_; kirA[i] = k_
                 if acik:
-                    rSon = i; acik = False; dogal = False; bidA[i] = rid
+                    rSon = i; acik = False; dogal = False; bidA[i] = rid; sonTur = "AL" if a_ else "KIRILDI"
             elif tN > 0:
                 b = i - tN + 1
                 if acik:
                     kisa = False
                 elif dogal and rid >= 0 and b <= rSon:
-                    acik = True
+                    acik = True; sonTur = "ACIK"
                     kisa = False
                 else:
                     sinirY = rSon if rid >= 0 else -1
@@ -452,12 +565,16 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
                     if not kisa:
                         sinir = sinirY
                         rid += 1; acik = True; rBas = max(b, sinir + 1); rTop = tTav; rBot = tDip
+                        onA[i] = True; rOnay = i; sonTur = "ACIK"
                 if not kisa:
                     rBas = min(rBas, max(b, sinir + 1)); rTop = max(rTop, tTav); rBot = min(rBot, tDip); rSon = i; bidA[i] = rid
             elif acik:
-                acik = False; dogal = True
+                acik = False; dogal = True; sonTur = "SONDU"
             if bidA[i] >= 0:
                 out["kutu_sol_i"][i] = rBas; out["kutu_sag_i"][i] = rSon; out["kutu_ust"][i] = rTop; out["kutu_alt"][i] = rBot
+            turA[i] = sonTur
+            if rid >= 0:
+                out["onay_i"][i] = rOnay
             if tN > 0:
                 oncTav = tTav; oncDip = tDip
             else:
@@ -465,7 +582,7 @@ def s6_pine_ayna(d: pd.DataFrame, prm: Optional[Dict[str, Any]] = None) -> pd.Da
         if tN > 0:
             out["n"][i] = tN; out["tavan"][i] = tTav; out["dip"][i] = tDip
     R = pd.DataFrame(out, index=d.index)
-    R["al"] = alA; R["kirildi"] = kirA; R["bolge_id"] = bidA; R["sinif"] = sinA
+    R["al"] = alA; R["kirildi"] = kirA; R["bolge_id"] = bidA; R["sinif"] = sinA; R["onay"] = onA; R["bolge_son_tur"] = turA
     return R
 
 
@@ -530,7 +647,8 @@ def s6_etiket_sina(T_: Dict[str, pd.DataFrame], R_: Dict[str, List[Dict[str, Any
     acik_son = bool(b >= 0 and T["bolge_id"].iat[b] >= 0 and T["durum"].iat[b] not in ("AL", "KIRILDI"))   # Cemal aralığının son günü bölge açık mı
     tuttu = bulundu if et["tur"] in ("DOGRU", "BILGI_DOGRU") else (not bulundu or not acik_son)
     return {"ad": et["ad"], "tur": et["tur"], "tuttu": bool(tuttu), "ortusme": round(en, 3), "acik_son": acik_son, "birlesim": round(float(birlesim.mean()) if uz > 0 else 0, 3),
-            "cemal_bar": uz, "bolge": ({k: enR[k] for k in ("bas", "bitis", "gun", "sinif", "durum", "al_gun", "kir_gun", "tavan", "dip")} if enR else None)}
+            "cemal_bar": uz, "bolge": ({k: enR[k] for k in ("bas", "bitis", "gun", "sinif", "durum", "al_gun", "kir_gun", "tavan", "dip", "onay", "onay_once_gun")}
+                                       if enR else None)}
 
 
 def _s6_ust_uste(R: List[Dict[str, Any]]) -> int:
@@ -549,8 +667,8 @@ def s6_izgara(Z_: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
     sat = []
     alanlar = list(S6_ESIK_ALAN)
     for deg in itertools.product(*[S6_IZGARA[k] for k in alanlar]):
-        e = dict(zip(alanlar, deg))
-        T_ = {s: s6_durum(Z, s6_sec(Z, e), e) for s, Z in Z_.items()}
+        e = dict(zip(alanlar, deg)); e10 = dict(e, **S6_V10_KIP)           # v1.0 ızgarası v1.0 kipinde (eski sonuçlar birebir)
+        T_ = {s: s6_durum(Z, s6_sec(Z, e10), e10) for s, Z in Z_.items()}
         R_ = {s: s6_bolgeler(T) for s, T in T_.items()}
         S_ = [s6_etiket_sina(T_, R_, et) for et in S6_ETIKET]
         puanli = [x for x in S_ if not x["tur"].startswith("BILGI")]
@@ -574,7 +692,7 @@ def s6_secim(sat: List[Dict[str, Any]]) -> Dict[str, Any]:
 def s6_evren_aday(V: Dict[str, pd.DataFrame], adaylar: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """BİLGİ: en yüksek puanlı noktaların evrende ne kadar sık bölge ürettiği (seçimi değiştirmez). Hisse başına bileşen bir kez hesaplanır."""
     bas, son = pd.Timestamp(S6_EVREN["bas"]), pd.Timestamp(S6_EVREN["son"])
-    top = [{"bolge": 0, "al": 0, "acik": 0, "olc": 0, "uz": []} for _ in adaylar]
+    top = [{"bolge": 0, "al": 0, "acik": 0, "olc": 0, "uz": [], "durum": {}} for _ in adaylar]
     hy = set()
     for s, d in V.items():
         if len(d) < S6_PRM["atrGun"] + 30:
@@ -588,16 +706,19 @@ def s6_evren_aday(V: Dict[str, pd.DataFrame], adaylar: List[Dict[str, Any]]) -> 
             continue
         hy |= {(s, int(y)) for y in np.unique(ix[ol].year)}
         for k, e in enumerate(adaylar):
+            e = dict(S6_V10_KIP, **e)                                        # v1.1 alanları verilmezse v1.0 kipi
             T = s6_durum(Z, s6_sec(Z, e), e)
             top[k]["acik"] += int(((T["bolge_id"].to_numpy() >= 0) & ol).sum()); top[k]["olc"] += int(ol.sum())
             for r in s6_bolgeler(T):
                 if bas <= pd.Timestamp(r["acilis"]) <= son:
                     top[k]["bolge"] += 1; top[k]["al"] += int(r["durum"] == "AL"); top[k]["uz"].append(r["gun"])
+                    top[k]["durum"][r["durum"]] = top[k]["durum"].get(r["durum"], 0) + 1
     out = []
     for e, t in zip(adaylar, top):
         out.append({"esik": e, "bolge_hisse_yil": round(t["bolge"] / max(len(hy), 1), 2), "al_hisse_yil": round(t["al"] / max(len(hy), 1), 2),
                     "acik_bar_orani": round(t["acik"] / max(t["olc"], 1), 4), "uzunluk_medyan": float(np.median(t["uz"])) if t["uz"] else None,
-                    "uzunluk_p90": float(np.percentile(t["uz"], 90)) if t["uz"] else None})
+                    "uzunluk_p90": float(np.percentile(t["uz"], 90)) if t["uz"] else None, "hisse_yil": len(hy), "bolge": t["bolge"], "al": t["al"],
+                    "durum": t["durum"]})
     return out
 
 
@@ -805,14 +926,14 @@ def s6_tasarim(veri: Optional[str] = None, cikti: Optional[str] = None, evren: b
     et_tutan = {et["ad"].split(" ")[0]: int(sum(1 for x in sat for y in x["etiket"] if y["ad"] == et["ad"] and y["tuttu"])) for et in S6_ETIKET}
     kip = {}
     for ad, st in (("birlesim (seçilen)", -1), ("is_tanimi_harfi_2bar", 2)):
-        e2 = dict(sec["secilen"]); e2["surTol"] = st
+        e2 = dict(sec["secilen"], **S6_V10_KIP); e2["surTol"] = st
         T_ = {s: s6_durum(Z, s6_sec(Z, e2), e2) for s, Z in Z_.items()}
         R_ = {s: s6_bolgeler(T) for s, T in T_.items()}
         S_ = [s6_etiket_sina(T_, R_, et) for et in S6_ETIKET]
         kip[ad] = {"puan": int(sum(x["tuttu"] for x in S_ if not x["tur"].startswith("BILGI"))), "bolge": int(sum(len(r) for r in R_.values())),
                    "ust_uste": int(sum(_s6_ust_uste(r) for r in R_.values())),
                    "etiket": [{"ad": x["ad"], "tuttu": x["tuttu"], "ortusme": x.get("ortusme")} for x in S_]}
-    EV = s6_evren(V, sec["secilen"]) if evren else {}
+    EV = s6_evren(V, dict(sec["secilen"], **S6_V10_KIP)) if evren else {}
     if evren:
         EV["aday_sikligi"] = s6_evren_aday(V, sec["aday_esikler"])
     J = {"surum": S6_SURUM, "zaman": _dt.datetime.now().strftime("%Y-%m-%d %H:%M"), "prm": S6_PRM, "izgara_tanim": S6_IZGARA,
@@ -830,6 +951,160 @@ def s6_tasarim(veri: Optional[str] = None, cikti: Optional[str] = None, evren: b
     if not J["secilen_varsayilan_ayni"]:
         s6log.warning("SEÇİLEN eşikler S6_PRM varsayılanından farklı: %s -> S6_PRM ve Pine güncellenmeli", sec["secilen"])
     return J
+
+
+# ---------------------------------------------------------------- 7b) v1.1 TASARIM SINAMASI (S7 fikirleri; S6_IZGARA_V11)
+S6_V11_ISARET = ("<!-- V1.1 OTOMATİK BAŞ (s6_tasarim_v11 yazar; elle düzenleme) -->", "<!-- V1.1 OTOMATİK SON -->")
+
+
+def _s6_v11_esik(e5: Dict[str, Any], ref: bool, bb: Optional[float]) -> Dict[str, Any]:
+    return dict(e5, refOnce=bool(ref), bbSart=bb is not None, bbEsik=float(bb) if bb is not None else float(S6_PRM["bbEsik"]))
+
+
+def _s6_v11_ad(ref: bool, bb: Optional[float]) -> str:
+    return f"ref {'açık' if ref else 'kapalı'} · BB {'kapalı' if bb is None else _sy(bb)}"
+
+
+def s6_v11_nokta(Z_: Dict[str, Dict[str, Any]], e: Dict[str, Any]) -> Dict[str, Any]:
+    """Bir v1.1 noktası: 16 etiket, 14 puanlı (KNFRT puan dışı) ve 16 ölçekli puan, CCOLA Ekim 2025 kutusu, etiket hisselerinde bölge / sönme sayısı."""
+    T_ = {s: s6_durum(Z, s6_sec(Z, e), e) for s, Z in Z_.items()}
+    R_ = {s: s6_bolgeler(T) for s, T in T_.items()}
+    S_ = [s6_etiket_sina(T_, R_, et) for et in S6_ETIKET]
+    disi = set(S6_IZGARA_V11["puan_disi"])
+    p16 = [x for x in S_ if not x["tur"].startswith("BILGI")]
+    p14 = [x for x in p16 if x["ad"] not in disi]
+    cc = S6_IZGARA_V11["ccola"]; Tc = T_[cc["sembol"]]; a, b = _s6_ara_i(Tc.index, cc["ilk"], cc["son"])
+    kut = [r for r in R_[cc["sembol"]] if r["sag_i"] >= a and r["sol_i"] <= b]
+    ccola = {"aralik": f"{cc['ilk']} .. {cc['son']}", "cemal_bar": b - a + 1,
+             "kutular": [{k: r[k] for k in ("bas", "bitis", "gun", "onay", "sinif", "durum", "al_gun", "kir_gun", "tavan", "dip")}
+                         | {"ortusme": round((min(b, r["sag_i"]) - max(a, r["sol_i"]) + 1) / (b - a + 1), 3)} for r in kut]}
+    ccola["kutu_var"] = any(k["ortusme"] >= 0.5 for k in ccola["kutular"])
+    dur: Dict[str, int] = {}
+    for R in R_.values():
+        for r in R:
+            dur[r["durum"]] = dur.get(r["durum"], 0) + 1
+    return {"esik": e, "puan14": int(sum(x["tuttu"] for x in p14)), "puan16": int(sum(x["tuttu"] for x in p16)),
+            "dogru": int(sum(x["tuttu"] for x in p14 if x["tur"] == "DOGRU")), "yanlis": int(sum(x["tuttu"] for x in p14 if x["tur"] == "YANLIS")),
+            "al": int(sum(x["tuttu"] for x in p14 if x["tur"] == "AL")), "etiket": S_, "ccola": ccola,
+            "bolge_etiket_hisse": int(sum(len(r) for r in R_.values())), "durum_etiket_hisse": dur}
+
+
+def _s6_json_esit(a: Any, b: Any) -> bool:
+    return json.loads(json.dumps(a, default=str, ensure_ascii=False)) == json.loads(json.dumps(b, default=str, ensure_ascii=False))
+
+
+def s6_tasarim_v11(veri: Optional[str] = None, cikti: Optional[str] = None, evren: bool = True) -> Dict[str, Any]:
+    """v1.1 sınaması: v1.0 eşikleri sabit; refOnce x bbEsik ızgarası (8 nokta), seçim S6_IZGARA_V11['secim_kurali'], v1.0 kipinin birebirliği,
+    CCOLA 2-20 Eki 2025, evren sıklığı (8 noktanın tamamı). Çıktı: s6_tasarim.json 'v11' anahtarı, S6_TASARIM.md v1.1 otomatik bölümü."""
+    yj = _s6_yol("tasarim_json", cikti)
+    if not os.path.exists(yj):
+        raise S6Hata(f"v1.0 tasarım json'u yok: {yj} (önce python S6_TABAN.py tasarim)")
+    J0 = json.load(open(yj, encoding="utf-8"))
+    e5 = {k: float(J0["secim"]["secilen"][k]) for k in S6_ESIK_ALAN}
+    if any(abs(e5[k] - float(S6_PRM[k])) > 1e-12 for k in S6_ESIK_ALAN):
+        raise S6Hata(f"v1.0 seçilen eşikler S6_PRM'den farklı: {e5}")
+    sem = sorted({et["sembol"] for et in S6_ETIKET} | {S6_IZGARA_V11["ccola"]["sembol"]})
+    V = s6_veri(veri)
+    eksik = [x for x in sem if x not in V]
+    if eksik:
+        raise S6Hata(f"etiket sembolü veride yok: {eksik}")
+    Z_ = {x: s6_bilesen(V[x]) for x in sem}
+    noktalar = [(r, b) for r in S6_IZGARA_V11["refOnce"] for b in S6_IZGARA_V11["bbEsik"]]
+    sat = []
+    for r, b in noktalar:
+        x = s6_v11_nokta(Z_, _s6_v11_esik(e5, r, b)); x["ad"] = _s6_v11_ad(r, b); x["ref"] = r; x["bb"] = b
+        sat.append(x)
+        s6log.info("v1.1 %s: puan %d/14 (%d/16), CCOLA kutu %s", x["ad"], x["puan14"], x["puan16"], x["ccola"]["kutu_var"])
+    taban = [x for x in sat if x["ref"] is False and x["bb"] is None][0]
+    # v1.0 kipi birebir: 16 etiket çıktısı (v1.0 json'daki alanlar) aynı mı
+    eski = J0["secim"]["secilen_satir"]["etiket"]
+    yeni_ = [{k: y.get(k) if k != "bolge" else ({kk: y["bolge"][kk] for kk in (e_["bolge"] or {})} if y.get("bolge") else None) for k in e_}
+             for e_, y in zip(eski, taban["etiket"])]
+    v10_birebir = len(eski) == len(taban["etiket"]) and _s6_json_esit(eski, yeni_)
+    if not v10_birebir:
+        s6log.error("v1.0 kipi eski 16 etiket sonucunu BİREBİR vermiyor")
+    secilen = None
+    for r, b in S6_IZGARA_V11["sade_sira"]:
+        x = [y for y in sat if y["ref"] == r and y["bb"] == b][0]
+        if x["puan14"] >= taban["puan14"]:
+            secilen = x; break
+    sec_e = {"refOnce": secilen["ref"], "bbSart": secilen["bb"] is not None, "bbEsik": secilen["bb"] if secilen["bb"] is not None else float(S6_PRM["bbEsik"])}
+    EV = s6_evren_aday(V, [x["esik"] for x in sat]) if evren else []
+    J1 = {"surum": S6_SURUM, "zaman": _dt.datetime.now().strftime("%Y-%m-%d %H:%M"), "izgara_tanim": S6_IZGARA_V11, "esik_sabit": e5,
+          "taban_puan14": taban["puan14"], "taban_puan16": taban["puan16"], "v10_kipi_birebir": bool(v10_birebir),
+          "izgara": sat, "secilen": sec_e, "secilen_ad": secilen["ad"],
+          "secilen_varsayilan_ayni": all(S6_PRM[k] == sec_e[k] for k in ("refOnce", "bbSart")) and (not sec_e["bbSart"] or abs(S6_PRM["bbEsik"] - sec_e["bbEsik"]) < 1e-12),
+          "evren": EV, "evren_v10_rapor": {"bolge_hisse_yil": J0.get("evren", {}).get("hisse_yil_basina_bolge"),
+                                           "al_hisse_yil": J0.get("evren", {}).get("hisse_yil_basina_al")}}
+    J0["v11"] = J1
+    metin = json.dumps(J0, ensure_ascii=False, indent=1, default=str)
+    if _S6_EPOSTA.search(metin):
+        raise S6Hata("json'da e-posta biçimli parça var")
+    with open(yj, "w", encoding="utf-8") as f:
+        f.write(metin)
+    s6_rapor_v11_md(J1, cikti)
+    if not J1["secilen_varsayilan_ayni"]:
+        s6log.warning("v1.1 SEÇİLEN %s S6_PRM varsayılanından farklı -> S6_PRM ve Pine güncellenmeli", sec_e)
+    return J1
+
+
+def s6_rapor_v11_md(J: Dict[str, Any], cikti: Optional[str] = None) -> str:
+    """S6_TASARIM.md'de v1.1 otomatik bölümünü yazar (işaretler arası); v1.0 bölümü ve elle yazılanlar korunur."""
+    etd = {et["ad"]: et for et in S6_ETIKET}
+    sat = J["izgara"]; sec = [x for x in sat if x["ad"] == J["secilen_ad"]][0]; tab = [x for x in sat if x["ref"] is False and x["bb"] is None][0]
+    s = [S6_V11_ISARET[0], "", "## v1.1 TASARIM SINAMASI (otomatik; `python S6_TABAN.py tasarim11`)", "",
+         f"Sabit eşikler (v1.0 seçimi): {_s6_esik_md(J['esik_sabit'])}. Puan 14 etiket üzerinden (KNFRT'nin D7 ve A1 etiketi puan dışı: "
+         "'tarih yanlış, Cemal'den beklenir'); parantezde 16 ölçekli puan.", "",
+         f"- v1.0 kipi (refOnce kapalı, BB kapalı) eski 16 etiket sonucunu birebir veriyor mu: **{'EVET' if J['v10_kipi_birebir'] else 'HAYIR'}**.",
+         f"- Taban çizgisi (v1.0 kipi): {tab['puan14']}/14 ({tab['puan16']}/16).",
+         f"- Seçilen: **{J['secilen_ad']}** ({sec['puan14']}/14, {sec['puan16']}/16).", "",
+         f"Seçim kuralı (koşudan önce kodda): {S6_IZGARA_V11['secim_kurali']}", "",
+         "| nokta | puan /14 | /16 | DOĞRU /9 | YANLIŞ /3 | AL /2 | tutmayan puanlı etiketler | CCOLA 2-20 Eki 2025 kutu | etiket hisselerinde bölge | bitiş (AL / KIRILDI / SONDU / ACIK) |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    disi = set(S6_IZGARA_V11["puan_disi"])
+    for x in sat:
+        tm = [y["ad"].split(" ")[0] for y in x["etiket"] if not y["tur"].startswith("BILGI") and y["ad"] not in disi and not y["tuttu"]]
+        cc = x["ccola"]; ck = "; ".join(f"{k['bas']}..{k['bitis']} onay {k['onay']} örtüşme {_sy(k['ortusme'])} {k['durum']}" for k in cc["kutular"]) or "kutu yok"
+        d_ = x["durum_etiket_hisse"]
+        s.append(f"| {x['ad']}{' **seçilen**' if x is sec else ''}{' (v1.0)' if x is tab else ''} | {x['puan14']} | {x['puan16']} | {x['dogru']} | {x['yanlis']} | {x['al']} | "
+                 f"{', '.join(tm) or '-'} | {'VAR' if cc['kutu_var'] else 'YOK'}: {ck} | {x['bolge_etiket_hisse']} | "
+                 f"{d_.get('AL', 0)} / {d_.get('KIRILDI', 0)} / {d_.get('SONDU', 0)} / {d_.get('ACIK', 0)} |")
+    for baslik, x in (("SEÇİLEN v1.1", sec), ("v1.0 kipi", tab)):
+        s += ["", f"### Etiket tablosu: {baslik} ({x['ad']})", "",
+              "| etiket | Cemal aralığı / günü | S6 bölgesi (en çok örten; onay günü) | örtüşme | AL günü | sonuç |", "|---|---|---|---|---|---|"]
+        for y in x["etiket"]:
+            satir = _s6_etiket_satir(y, etd[y["ad"]])
+            if y.get("bolge") and y["bolge"].get("onay"):
+                satir = satir.replace(f"{y['bolge']['durum']})", f"{y['bolge']['durum']}; onay {y['bolge']['onay']}, öncesi {y['bolge']['onay_once_gun']} bar kesik)", 1)
+            if y["ad"] in disi:
+                satir = satir.rsplit("|", 2)[0] + "| puan dışı (" + ("✓" if y["tuttu"] else "✗") + ") |"
+            s.append(satir)
+    if J["evren"]:
+        v0 = J["evren_v10_rapor"]
+        s += ["", f"### Evren sıklığı (V_BIST {S6_EVREN['bas']} .. {S6_EVREN['son']}, bölge açılış yılına göre; v1.0 raporu: {_sy(v0['bolge_hisse_yil'])} bölge, "
+              f"{_sy(v0['al_hisse_yil'])} AL / hisse-yıl)", "",
+              "| nokta | hisse-yıl | bölge / hisse-yıl | AL / hisse-yıl | açık bar oranı | uzunluk medyan | %90 | bitiş AL / KIRILDI / SONDU / ACIK |", "|---|---|---|---|---|---|---|---|"]
+        for x, ev in zip(sat, J["evren"]):
+            d_ = ev.get("durum", {})
+            s.append(f"| {x['ad']}{' **seçilen**' if x is sec else ''}{' (v1.0)' if x is tab else ''} | {ev['hisse_yil']} | {_sy(ev['bolge_hisse_yil'])} | {_sy(ev['al_hisse_yil'])} | "
+                     f"{_yz(ev['acik_bar_orani'])} | {_sy(ev['uzunluk_medyan'], 0)} | {_sy(ev['uzunluk_p90'], 0)} | "
+                     f"{d_.get('AL', 0)} / {d_.get('KIRILDI', 0)} / {d_.get('SONDU', 0)} / {d_.get('ACIK', 0)} |")
+    s += ["", S6_V11_ISARET[1]]
+    blok = "\n".join(s)
+    yol = _s6_yol("tasarim", cikti)
+    eski = open(yol, encoding="utf-8").read() if os.path.exists(yol) else ""
+    if S6_V11_ISARET[0] in eski and S6_V11_ISARET[1] in eski:
+        on, kalan = eski.split(S6_V11_ISARET[0], 1)
+        metin = on + blok + kalan.split(S6_V11_ISARET[1], 1)[1]
+    else:
+        if S6_ELLE not in eski:
+            eski = eski.rstrip("\n") + "\n\n" + S6_ELLE + "\n"
+        metin = eski.rstrip("\n") + "\n\n" + blok + "\n"
+    if _S6_EPOSTA.search(metin):
+        raise S6Hata("raporda e-posta biçimli parça var")
+    with open(yol, "w", encoding="utf-8") as f:
+        f.write(metin if metin.endswith("\n") else metin + "\n")
+    return yol
 
 
 def s6_liste(sembol: str, bas: str, son: str, veri: Optional[str] = None) -> str:
@@ -930,7 +1205,7 @@ _cakisma_kontrol_s6()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=S6_SURUM)
-    ap.add_argument("komut", choices=["tasarim", "liste", "pine", "ascii"])
+    ap.add_argument("komut", choices=["tasarim", "tasarim11", "liste", "pine", "ascii"])
     ap.add_argument("arg", nargs="*", help="liste: SEMBOL BAS SON")
     ap.add_argument("--veri", default=None)
     ap.add_argument("--cikti", default=None)
@@ -939,6 +1214,11 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         if a.komut == "tasarim":
             J_ = s6_tasarim(a.veri, a.cikti)
             print(json.dumps({"secilen": J_["secim"]["secilen"], "puan": J_["secim"]["en_puan"], "aday": J_["secim"]["aday_sayi"],
+                              "varsayilan_ayni": J_["secilen_varsayilan_ayni"]}, ensure_ascii=False))
+        elif a.komut == "tasarim11":
+            J_ = s6_tasarim_v11(a.veri, a.cikti)
+            print(json.dumps({"secilen": J_["secilen_ad"], "taban14": J_["taban_puan14"], "v10_birebir": J_["v10_kipi_birebir"],
+                              "puan": {x["ad"]: [x["puan14"], x["puan16"], x["ccola"]["kutu_var"]] for x in J_["izgara"]},
                               "varsayilan_ayni": J_["secilen_varsayilan_ayni"]}, ensure_ascii=False))
         elif a.komut == "liste":
             if len(a.arg) != 3:

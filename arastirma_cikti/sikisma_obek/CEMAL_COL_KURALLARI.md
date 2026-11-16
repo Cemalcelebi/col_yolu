@@ -34,3 +34,23 @@ Kaynak: Cemal'in 15 Kasım'da gönderdiği 10 ekran görüntüsü (ENJSA x3, DES
 
 ## S6 tasarımı için sonuç
 Kodun bulduğu "parçalar" çoğunlukla gerçek tabanın içinde ama tabanın kendisi değil: S6'da bölge, karar günü penceresinden değil tabanın tamamından (başlangıç: sert düşüşün bitip dibin savunulduğu yer; bitiş: tavanı kıran al mumu) tanımlanır; ölçüler (küçük mum, bant, net değişim, BB daralması, dip koruması) tabanın tamamında ölçülür; yanlış pozitifler (kayan düşüş kanalı, eğimli pencere) K3-K4 ile elenir. Kalibrasyon: bu 16 etiket + Cemal'in ekleyeceği yeni bölgeler; eşikler ön kayıtta, sonuç görülmeden.
+
+## Mum parmak izi denemesi (Cemal, 16 Kas: PAPIL Kas-Ara 2025 bölgesi; 'alt fitil yok, üst fitil biraz uzun = has yukarı çıkma mumları; öbek olunca')
+Ölçü (V_BIST, geçerli bar): alt fitil / aralık, alt fitil < %10 olan bar payı, üst fitil / aralık, kapanışın aralıktaki konumu, yeşil payı.
+
+| Bölge | n | alt fitil medyan | alt fitil yok payı | üst fitil medyan | kapanış konumu | yeşil payı |
+|---|---|---|---|---|---|---|
+| PAPIL küçük taban 13 Kas-9 Ara 2025 | 19 | 0,12 | 0,47 | 0,44 | 0,17 | 0,26 |
+| PAPIL bütün günler | 1.700 | 0,18 | 0,34 | 0,26 | 0,38 | 0,43 |
+| FENER (doğru) | 18 | 0,17 | 0,28 | 0,31 | 0,38 | 0,44 |
+| CCOLA (doğru) | 10 | 0,12 | 0,30 | 0,22 | 0,23 | 0,30 |
+| ENJSA Kas 2021 (doğru) | 15 | 0,40 | 0,00 | 0,31 | 0,50 | 0,33 |
+| DESA (doğru) | 41 | 0,26 | 0,20 | 0,33 | 0,43 | 0,51 |
+| YKSLN (doğru) | 34 | 0,18 | 0,21 | 0,35 | 0,37 | 0,50 |
+| TUCLK 2025 (doğru) | 35 | 0,32 | 0,14 | 0,28 | 0,47 | 0,51 |
+| ENJSA May-Haz 2025 (çöl) | 34 | 0,32 | 0,18 | 0,18 | 0,63 | 0,53 |
+| ENJSA Eyl 2021 (YANLIŞ) | 15 | 0,22 | 0,33 | 0,29 | 0,58 | 0,67 |
+| ENJSA Eki 2021 (YANLIŞ) | 15 | 0,32 | 0,20 | 0,38 | 0,44 | 0,67 |
+| TUCLK Ağu 2026 (YANLIŞ) | 15 | 0,10 | 0,53 | 0,31 | 0,17 | 0,27 |
+
+Sonuç: PAPIL bölgesinin parmak izi (alt fitil yok %47, üst fitil uzun, kapanış dipte 0,17, çoğu kırmızı) Cemal'in öteki DOĞRU bölgelerinde YOK (alt fitil yok payı %0-30, kapanış konumu 0,37-0,50); en çok benzeyen bölge TUCLK Ağu 2026 (YANLIŞ). Yani 'alt fitilsiz, üst fitilli öbek' etiket kümesinde çölün ortak izi değil; PAPIL'e özgü. Kural adayı olmadı; ileride etiket çoğalırsa yeniden bakılır.
