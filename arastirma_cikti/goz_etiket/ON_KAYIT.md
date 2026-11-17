@@ -108,3 +108,24 @@ BÖLGE = [kutu_sol_i(t), t-1] (durum AL) ya da [bas_i(t-1), t-1] (AL_BOLGESIZ); 
 | K12 | ifade | EVET | AŞAMA A hiçbir sonuç / iz / emare sözü yazmaz; etiket = Cemal'in gözünün VEKİLİ (dil modeli), Cemal'in kendi etiketi değil (§5 sınırlar); karar dili yalnız §5 kuralıyla |
 | K13 | süreç | EVET | çakışma kapısı _cakisma_kontrol_ge (test); yasak defter dosyalarına dokunulmadı (git diff); e-posta / anahtar taraması yazım öncesi (_ge_sizinti); PNG'ler repoya girmez (scratchpad); push yok; kod değişirse 'çalışma zamanını yeniden başlat' |
 | K14 | boyut (gerçek para) | UYGULANMAZ | öneri / gerçek para işi değil; etiket ve ölçüm hazırlığı |
+
+## SAPMA-1 (AŞAMA C; ana model yazdı, SONUÇ GÖRÜLMEDEN; ölçümden ÖNCE ayrı commit)
+
+Neden: AŞAMA B etiketleri OLUR 6 / BELİRSİZ 51 / OLMAZ 243 (etiket.json; dağılım sonuç değildir). OLUR n = 6 < 30 olduğundan §5 ÖLÇÜ 1 önceden yazılı kuralla ÖLÇÜLEMEDİ olur ve §5 eğitim hedefi (OLUR / OLMAZ, BELİRSİZ dışarı) 6 pozitifle kurulamaz. §5 ölçü 1 ve asıl eğitim yine koşulur ve aynen raporlanır (ÖLÇÜLEMEDİ); aşağıdakiler EKTİR, §5'in yerine geçmez.
+
+- ÖLÇÜ 1b: 'OLMAZ-DEĞİL' (OLUR + BELİRSİZ, n 57) vs OLMAZ (n 243): +%5 payı (h5; Fisher iki yönlü), KAT5 = Σ h5 / Σ es_h5 (ay kümeli bootstrap %95; YAPI_HEDEF.yh_kat = ORTAK_CETVEL.oc_kat algoritması, 2000, tohum 27) iki grup ve eş; P(stop önce) st5 / es_st5. TUTAR = OLMAZ-DEĞİL KAT5 alt uç > 1 VE OLMAZ-DEĞİL +%5 payı > OLMAZ payı (Fisher iki yönlü p < 0,05) VE OLMAZ-DEĞİL stop payı < eş stop payı. OLMAZ-DEĞİL n < 30 ise ÖLÇÜLEMEDİ. Pazar ve dönem kırılımı bilgi.
+- EĞİTİM HEDEFİ: OLMAZ-DEĞİL (1) vs OLMAZ (0), 300 etiket; F1-F18; boru hattı medyan doldurma + standartlaştırma + lojistik (L2, C = 1), dönüşümler yalnız eğitim katından; StratifiedKFold(5, karıştır, tohum 13) kat dışı AUC + kat AUC ortalaması; etiket permütasyonu 200 (tohum 1301) ile AUC p (bilgi). Son model 300 olayla; katsayılar standart birimde; tek özellik AUC (bilgi).
+- ÖLÇÜ 2 genişletildi: neden kodlarının (C1..C13, + ve - ayrı) her biri için var / yok h5 payı (Fisher iki yönlü), KAT5 (var grubu), stop payı; BH q 0,10 (bilgi).
+- GÖZ SKORU: son model 26.663 Y1 olayına; beşte bir sınırları 26.663 olayın skor dağılımından; üst beşte bir (B5) vs alt beşte bir (B1); karar hücreleri (ABD 2023, ABD 2024-26, AVR 2023, AVR 2024-26) B5 olayları YAPI_HEDEF karar kuralıyla (yh_hucre: n >= 30, KAT5 eş alt uç > 1, stop önce < eş, plasebo KAT5 alt uç > 1; yh_durum güç tablosu arastirma_cikti/yapi_hedef/guc_tablosu.json, n >= 1.000 ya da güç >= %80 -> DESTEKLENMEDİ, değilse ÖLÇÜLEMEDİ; yh_etiket). B1 ve B5 vs B1 Fisher bilgi. Ana satır bütün olaylar (§6); DIŞ ÖRNEKLEM (300 etiketli olay çıkarılmış) ayrı satır; iki etiket farklıysa muhafazakâr olan yazılır.
+- OLASILIK TABLOSU: beşli B1..B5 başına +%5 / +%10 / stop payı, eş payı, KAT5 (%95), takip stoplu getiri medyanı (bilgi); karar pazarları (ABD + AVR, 2023 + 2024-26), aynı dış örneklem, bütün olaylar.
+- HAKEM SETİ: iş tanımı §5'teki 8 / 8 / 4 dengesi OLUR 6 ile kurulamaz; ana model kararı: tohum 13, 6 OLUR'un hepsi (3 kör, 3 açık), her yarıda 7 BELİRSİZ + 10 OLMAZ (40 sayfa; 1-20 KÖR, 21-40 AÇIK). hakem_anahtar.json gizli. `python GOZ_ETIKET.py hakem --cevap-dosya` iki yarıyı ayrı raporlar (kör: Cohen kappa + çapraz tablo; açık: doğru / yanlış + kural başına yanlış sayımı).
+- VERİ DENETİMİ (bilgi): No 274'teki dev fitil ham veride denetlenir; 300 görselin 120 bar penceresinde High / max(O, C) ya da min(O, C) / Low > 1,5 olan bar sayılır, C13- ile kesişimi yazılır.
+- AŞAMA A kapısı (ge_kapi) GE_KOD_SHA'yı denetler; AŞAMA C kodu aynı dosyaya eklendiği için o mühür artık tutmaz. AŞAMA C kapısı ge_kapi_c aşağıdaki mühürleri denetler (GE_ESIK ve A dosyaları değişmedi; etiket.json AŞAMA C'de değiştirilmez).
+
+Mühürler (ölçümden önce):
+- GE_C_ESIK_SHA: `f7031494f3f4e08888fb00d9fe72992d4f5a97dc1f0b79566169897cca873295` (GOZ_ETIKET.GE_C_ESIK)
+- GE_KOD_SHA_C: `757c3fa204c8de776c77372f07cc64249b44a6a4be5d54717b593b0f5edbf738` (GOZ_ETIKET.py, AŞAMA C kodu dahil)
+- TEST_SHA_C: `1077c42accf53a6fae4c5d124dec16f6ac2ac7688e75bd6a60dfa10ceca32cf7` (test_goz_etiket.py; 71 test geçti)
+- ETIKET_SHA: `bffcf9a730fe46b350280c6faa2a4bb28c31db41a0d9317f3f581860c7200f23` (etiket.json; git b71e046, 2026-11-17T20:44:22+00:00)
+- GE_ESIK_SHA (A, değişmedi): `a48cd64da71616bdd19f05c3d3763997096d520252622812c244516f94a84d5d`
+- ZAMAN (UTC): `2026-11-17 20:56:04 UTC`
