@@ -65,3 +65,21 @@ Sonuç: PAPIL bölgesinin parmak izi (alt fitil yok %47, üst fitil uzun, kapan�
 | DGXX 2026-10-27..11-13 (ters: S- beklenen) | 14 | — | 0,18 | 0,56 | — | -0,10 | S- tutmadı (üst fitilsiz payı %30) | 2,50 -> 2,02 |
 
 Not: Cemal'in 'Şubat 2026' yazdığı TEHOL etiketi düzeltildi (2024 Aralık - 28 Mayıs 2025). Kod (Ç187 S+ tanımı) üç S+ örneğini de algılıyor: hata 'algılama' halkasında değil; bağlam (taban içi) ve ölçü (60 gün yerine kırılım / 20 gün) halkaları HALKA_IS_TANIMI.md ile sınanıyor.
+
+### Kör set sonucu (17 Kas; 50 sayfa, Cemal işaretledi; anahtar arastirma_cikti/fitil_obek/kor_anahtar.json, yanıtlar kor_cevap_cemal.json)
+| Kodun grubu | n | E | B | H |
+|---|---|---|---|---|
+| S+ taban içi | 15 | 6 | 6 | 3 |
+| S+ taban dışı | 15 | 6 | 8 | 1 |
+| S+ düz dip | 10 | 3 | 7 | 0 |
+| S- (ters) | 10 | 4 | 5 | 1 |
+
+Kodun S+ sayfalarında 'benim mumum' payı %38, S- sayfalarında %40: ALGILAMA KIRIK (kural: S+ E >= 0,60 ve S+ - S- >= 0,30 olmalıydı). Yani S+ tanımı (fitil asimetrisi + alt fitilsiz pay) Cemal'in gözünü yakalamıyor; Cemal'in E dediği 19 sayfanın sonraki 60 gün getirisi medyan -%2,4 (RTALB +%560 hariç ortalama +%3,7), B dediklerinin +%1,9: n küçük, gözün öngörüsü de bu sette görünmüyor.
+
+Cemal'in notlarından çıkan kurallar (S+ tanımının eksikleri):
+- K10 SAVUNMA HATTI: şekil aynı olsa bile savunulan seviye (dip / üst hat) kırılmışsa 'aşağı', kırılmamışsa 'yukarı' (sayfa 41, 37, 38, 28). Sinyal = şekil + hat sağlam; kodda hat yok.
+- K11 YOL ALMIŞ = KOVALAMA YOK: mumlar doğru ama fiyat zaten çıkmışsa giriş değil (24, 25, 21, 20); içindeysen son büyük mumda büyük kısmı satılır (20, 24).
+- K12 DÖNÜM MUMU vs YÖN MUMU: düşüşün son mumları 'son nokta' diyorsa dönüm (22, 3, 9: akümülasyon); yalnız yön gösteren mumlar (4, 2, 1) sinyal değil.
+- K13 TEPEDE DİKKAT: aynı şekil tepede (sol tepe mumları aşağı göstermişse) alım değil (14, 27, 8).
+- K14 KAVGA: alt tabanda savunma var ama her yükselişte satıcı çıkıyorsa belirsiz (19, 18, 23, 5); yatay / stabil (11, 33) sinyal değil.
+- K15 KİM ALIYOR: akümülasyonda alıcının kurumsal olup olmadığı önemli (9) — AKD verisi ücretsiz yok (K25 / Ç171 notu).
