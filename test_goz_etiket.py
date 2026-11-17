@@ -8,6 +8,8 @@
 5) anahtar gizliliği: PNG'de sembol / tarih / pazar yok (metin parçası yok; başlık 'No k'), anahtar yalnız no -> kimlik; e-posta / anahtar taraması
 6) çakışma kapısı (bellekteki adı ezince durur); kontrol tablosu 14 satır kapıdan geçer
 7) (gerçek dosyalar varsa) anahtar.json 300 olay, kotalar; ozellik_Y1.csv.gz 26.663 satır, olay dosyasıyla aynı sıra; PNG klasörü 300 dosya
+8) AŞAMA C: birleştirme bire bir (eksik / fazla DURUR), KAT5 = Σ h5 / Σ es_h5 = oc_kat, CV sızıntısı yok (katta doldurma / ölçek yalnız eğitim katından),
+   hakem seçimi (40 sayfa, 3/7/10, tohum 13), kappa, cevap değerlendirme; gerçek dosyalarda yeniden üretim
 Çalıştır: python test_goz_etiket.py
 """
 import json
@@ -255,6 +257,96 @@ def main():
                         metin_yok = False
                     k += 12 + ln
             kontrol("gerçek PNG'lerin hiçbirinde metin parçası yok (sembol / tarih / pazar gömülemez)", metin_yok)
+        print("8) AŞAMA C: birleştirme, KAT, CV sızıntısı, hakem seçimi, kappa, hakem değerlendirme")
+        rng = np.random.default_rng(5)
+        Xs = sahte_olay(n_sembol=30, tohum=8)
+        Xs["giris"] = pd.to_datetime(Xs["giris"]); Xs["tarih"] = pd.to_datetime(Xs["tarih"])
+        for c in ("h5", "h10", "st5"):
+            Xs[c] = (rng.random(len(Xs)) < 0.3).astype(float)
+        Xs["es_h10"] = rng.random(len(Xs)) * 0.2
+        Ss = Xs.sample(60, random_state=1)[["pazar", "sembol", "tarih", "giris", "donem"]].reset_index(drop=True)
+        Ss.insert(0, "no", np.arange(1, 61))
+        kar = np.array(["OLUR"] * 6 + ["BELİRSİZ"] * 14 + ["OLMAZ"] * 40)
+        Ts = pd.DataFrame({"no": np.arange(1, 61), "karar": kar, "nedenler": [["C5+", "C3-"] if i % 2 else ["C11-"] for i in range(60)],
+                           "guven": 3, "not": "x"})
+        Ms = GE.ge_birlestir(Ss, Ts, Xs)
+        kontrol("C birleştirme: 60 satır, bire bir, sonuç sütunu doğru eşleşti",
+                len(Ms) == 60 and all(float(Xs[(Xs.pazar == r.pazar) & (Xs.sembol == r.sembol) & (Xs.tarih == r.tarih)].h5.iloc[0]) == r.h5
+                                      for r in Ms.itertuples()))
+        S_bad = Ss.copy(); S_bad.loc[0, "sembol"] = "YOK999"
+        try:
+            GE.ge_birlestir(S_bad, Ts, Xs); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("C birleştirme: olay dosyasında olmayan etiketli olay DURUR", ok)
+        try:
+            GE.ge_birlestir(Ss, Ts[Ts.no != 5], Xs); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("C birleştirme: anahtar / etiket numara farkı DURUR", ok)
+        g = GE.ge_grup(Ms[Ms.karar == "OLMAZ"])
+        gg = Ms[Ms.karar == "OLMAZ"]
+        kontrol("C KAT5 = Σ h5 / Σ es_h5 (elle)", abs(g["h5_kat"] - gg.h5.sum() / gg.es_h5.sum()) < 1e-12 and g["h5_alt"] <= g["h5_kat"] <= g["h5_ust"])
+        import ORTAK_CETVEL as OC_
+        ay = pd.to_datetime(gg.sort_values("giris").giris).dt.to_period("M").astype(str).to_numpy()
+        r_oc = OC_.oc_kat(gg.sort_values("giris").h5.to_numpy(float), gg.sort_values("giris").es_h5.to_numpy(float), ay)
+        kontrol("C KAT5 bootstrap = ORTAK_CETVEL.oc_kat (alt / üst)", abs(r_oc["alt"] - g["h5_alt"]) < 1e-12 and abs(r_oc["ust"] - g["h5_ust"]) < 1e-12)
+        R1 = GE.ge_iki_grup(Ms[Ms.karar == "OLUR"], Ms[Ms.karar == "OLMAZ"], "OLUR", "OLMAZ", GE.GE_C_ESIK["olcu1"])
+        kontrol("C ölçü 1: OLUR n < 30 -> ÖLÇÜLEMEDİ", R1["durum"] == "ÖLÇÜLEMEDİ")
+        # CV sızıntısı: her katın doldurma medyanı / ölçek ortalaması yalnız eğitim katından
+        A = rng.normal(size=(120, 18)); A[rng.random(A.shape) < 0.1] = np.nan; A[:, 0] += np.arange(120) / 10
+        y = (rng.random(120) < 0.3).astype(int)
+        cv = GE.ge_cv(A, y, perm=False)
+        sz = True
+        for k in cv["katlar"]:
+            med_tr = np.nanmedian(A[k["tr"]], axis=0); med_tum = np.nanmedian(A, axis=0)
+            sz &= bool(np.allclose(k["doldur"], med_tr)) and not np.allclose(k["doldur"], med_tum) and len(set(k["tr"]) & set(k["te"])) == 0
+        kontrol("C CV sızıntısı yok: doldurma / ölçek her katta yalnız eğitim katından; katlar ayrık", sz and len(cv["katlar"]) == 5)
+        kontrol("C CV: OOF olasılık her satırda tek kez (NaN yok)", np.isfinite(cv["oof"]).all())
+        # hakem seçimi
+        Th = pd.DataFrame({"no": np.arange(1, 301), "karar": ["OLUR"] * 6 + ["BELİRSİZ"] * 51 + ["OLMAZ"] * 243})
+        D1 = GE.ge_hakem_sec(Th); D2 = GE.ge_hakem_sec(Th)
+        kk = D1[D1.yari == "KÖR"].karar.value_counts().to_dict(); ka = D1[D1.yari == "AÇIK"].karar.value_counts().to_dict()
+        kontrol("C hakem: 40 sayfa, her yarı OLUR 3 / BELİRSİZ 7 / OLMAZ 10; 6 OLUR'un hepsi; no tekil; tohum 13 deterministik",
+                len(D1) == 40 and kk == {"OLMAZ": 10, "BELİRSİZ": 7, "OLUR": 3} and ka == kk and set(D1[D1.karar == "OLUR"].no) == set(range(1, 7))
+                and not D1.no.duplicated().any() and D1.equals(D2) and list(D1.sayfa) == list(range(1, 41))
+                and (D1.yari.iloc[:20] == "KÖR").all() and (D1.yari.iloc[20:] == "AÇIK").all())
+        kontrol("C kappa: tam uyum 1, bilinen örnek", abs(GE.ge_kappa(list("aabb"), list("aabb")) - 1) < 1e-12 and
+                abs(GE.ge_kappa(list("aabbab"), list("ababab")) - (4 / 6 - 0.5) / 0.5) < 1e-12)
+        kontrol("C cevap normalleştirme (Türkçe / ASCII)", GE.ge_cevap_norm("doğru") == "DOĞRU" and GE.ge_cevap_norm("Belirsiz") == "BELİRSİZ"
+                and GE.ge_cevap_norm("YANLIS") == "YANLIŞ" and GE.ge_cevap_norm("") is None)
+        # hakem değerlendirme (sahte anahtar + cevap)
+        hk = os.path.join(tmp, "hk"); os.makedirs(hk)
+        Ah = {"sayfa": {str(r.sayfa): {"yari": r.yari, "no": int(r.no), "karar": r.karar, "nedenler": ["C5+", "C11-"]} for r in D1.itertuples()}}
+        json.dump(Ah, open(os.path.join(hk, "hakem_anahtar.json"), "w"))
+        cv_yol = os.path.join(hk, "cevap.csv")
+        sat = ["sayfa,cevap,neden"] + [f"{r.sayfa},{r.karar if r.yari == 'KÖR' else ('YANLIŞ' if r.sayfa % 2 else 'DOĞRU')},C5 yanlış" for r in D1.itertuples()]
+        open(cv_yol, "w").write("\n".join(sat))
+        Hs = GE.ge_hakem_degerlendir(cv_yol, hk)
+        kontrol("C hakem değerlendirme: kör kappa 1 (aynı cevap), açık 10 yanlış, C5 sayımı 10",
+                abs(Hs["kappa"] - 1) < 1e-12 and Hs["yanlis"] == 10 and Hs["dogru"] == 10 and Hs["kural_andigi"].get("C5") == 10
+                and os.path.exists(os.path.join(hk, "HAKEM_SONUC.md")))
+        kontrol("C neden açılımı", GE.ge_neden_acilim("C5-").startswith("C5- kırılım") and "UYMUYOR" in GE.ge_neden_acilim("C5-"))
+        ye = os.path.join(GE.GE_YOL["cikti"], "etiket.json")
+        if os.path.exists(ye):
+            Tg = GE.ge_etiket_oku()
+            kontrol("gerçek etiket.json: 300 etiket, anahtarla aynı numaralar", len(Tg) == 300 and set(Tg.no) == set(range(1, 301)))
+            Dg = GE.ge_hakem_sec(Tg)
+            kontrol("gerçek hakem seçimi: 6 OLUR'un hepsi, yarılar 3/7/10", set(Dg[Dg.karar == "OLUR"].no) == set(Tg[Tg.karar == "OLUR"].no)
+                    and Dg[Dg.yari == "KÖR"].karar.value_counts().to_dict() == {"OLMAZ": 10, "BELİRSİZ": 7, "OLUR": 3})
+            yh = os.path.join(GE.GE_YOL["cikti"], "hakem_anahtar.json")
+            if os.path.exists(yh):
+                Jh = json.load(open(yh, encoding="utf-8"))["sayfa"]
+                kontrol("hakem_anahtar.json = ge_hakem_sec yeniden üretim", all(Jh[str(r.sayfa)]["no"] == r.no and Jh[str(r.sayfa)]["karar"] == r.karar
+                                                                                for r in Dg.itertuples()))
+        ys = os.path.join(GE.GE_YOL["cikti"], "etiket_olcu.csv.gz")
+        if os.path.exists(ys):
+            Ls = pd.read_csv(ys)
+            Lg = Ls[np.isfinite(Ls.h5) & np.isfinite(Ls.es_h5)]
+            Js = json.load(open(os.path.join(GE.GE_YOL["cikti"], "sonuc_C.json"), encoding="utf-8"))
+            od = Lg[Lg.karar != "OLMAZ"]
+            kontrol("yeniden üretim: ölçü 1b OLMAZ-DEĞİL n ve KAT5 satır dosyasından", Js["olcu1b"]["OLMAZ-DEĞİL"]["n"] == len(od) and
+                    abs(Js["olcu1b"]["OLMAZ-DEĞİL"]["h5_kat"] - od.h5.sum() / od.es_h5.sum()) < 1e-9)
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"\nGEÇTİ {len(GECTI)}  KALDI {len(KALDI)}")

@@ -1,0 +1,460 @@
+{
+ "uyari": "GİZLİ HAKEM ANAHTARI: Cemal yanıtlamadan önce açılmaz. sayfa -> örneklem no, aşama B kararı.",
+ "tohum": 13,
+ "etiket_sha": "bffcf9a730fe46b350280c6faa2a4bb28c31db41a0d9317f3f581860c7200f23",
+ "sayfa": {
+  "1": {
+   "yari": "KÖR",
+   "no": 123,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C1+",
+    "C5+",
+    "C6-",
+    "C11-"
+   ]
+  },
+  "2": {
+   "yari": "KÖR",
+   "no": 117,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C6-",
+    "C2-",
+    "C5-",
+    "C11-"
+   ]
+  },
+  "3": {
+   "yari": "KÖR",
+   "no": 41,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C13-",
+    "C11-"
+   ]
+  },
+  "4": {
+   "yari": "KÖR",
+   "no": 62,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C6-",
+    "C2-",
+    "C9+",
+    "C5+",
+    "C11-"
+   ]
+  },
+  "5": {
+   "yari": "KÖR",
+   "no": 7,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C4-",
+    "C7-",
+    "C13-"
+   ]
+  },
+  "6": {
+   "yari": "KÖR",
+   "no": 255,
+   "karar": "OLUR",
+   "nedenler": [
+    "C6+",
+    "C3+",
+    "C5+",
+    "C11+",
+    "C7+"
+   ]
+  },
+  "7": {
+   "yari": "KÖR",
+   "no": 136,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C7-",
+    "C11-",
+    "C13-",
+    "C3-"
+   ]
+  },
+  "8": {
+   "yari": "KÖR",
+   "no": 139,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C6+",
+    "C11+",
+    "C5-"
+   ]
+  },
+  "9": {
+   "yari": "KÖR",
+   "no": 2,
+   "karar": "OLUR",
+   "nedenler": [
+    "C3+",
+    "C5+",
+    "C6+",
+    "C2+"
+   ]
+  },
+  "10": {
+   "yari": "KÖR",
+   "no": 57,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C2+",
+    "C9+",
+    "C5+",
+    "C11-"
+   ]
+  },
+  "11": {
+   "yari": "KÖR",
+   "no": 133,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C6+",
+    "C5+",
+    "C11+",
+    "C7-",
+    "C10-"
+   ]
+  },
+  "12": {
+   "yari": "KÖR",
+   "no": 95,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C10-",
+    "C11-",
+    "C9+"
+   ]
+  },
+  "13": {
+   "yari": "KÖR",
+   "no": 88,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C3-",
+    "C11-"
+   ]
+  },
+  "14": {
+   "yari": "KÖR",
+   "no": 15,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C11-",
+    "C7-"
+   ]
+  },
+  "15": {
+   "yari": "KÖR",
+   "no": 92,
+   "karar": "OLUR",
+   "nedenler": [
+    "C6+",
+    "C3+",
+    "C5+",
+    "C2+",
+    "C11+"
+   ]
+  },
+  "16": {
+   "yari": "KÖR",
+   "no": 5,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C1+",
+    "C2+",
+    "C7+",
+    "C5-",
+    "C11-"
+   ]
+  },
+  "17": {
+   "yari": "KÖR",
+   "no": 73,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C6-",
+    "C13-",
+    "C7-"
+   ]
+  },
+  "18": {
+   "yari": "KÖR",
+   "no": 131,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C5+",
+    "C11+",
+    "C13-",
+    "C10-"
+   ]
+  },
+  "19": {
+   "yari": "KÖR",
+   "no": 156,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C1+",
+    "C2+",
+    "C3+",
+    "C11+",
+    "C5-",
+    "C6-"
+   ]
+  },
+  "20": {
+   "yari": "KÖR",
+   "no": 76,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "C11-",
+    "C6-"
+   ]
+  },
+  "21": {
+   "yari": "AÇIK",
+   "no": 54,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "C13-"
+   ]
+  },
+  "22": {
+   "yari": "AÇIK",
+   "no": 36,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "C4-",
+    "C6-",
+    "C11-"
+   ]
+  },
+  "23": {
+   "yari": "AÇIK",
+   "no": 50,
+   "karar": "OLUR",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C7+",
+    "C5+",
+    "C11+",
+    "C1-"
+   ]
+  },
+  "24": {
+   "yari": "AÇIK",
+   "no": 56,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C4-",
+    "C11-",
+    "C2+"
+   ]
+  },
+  "25": {
+   "yari": "AÇIK",
+   "no": 231,
+   "karar": "OLUR",
+   "nedenler": [
+    "C7+",
+    "C1+",
+    "C2+",
+    "C9+",
+    "C3+",
+    "C5+",
+    "C11+"
+   ]
+  },
+  "26": {
+   "yari": "AÇIK",
+   "no": 20,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C7+",
+    "C3+",
+    "C2-",
+    "C5-",
+    "C11-"
+   ]
+  },
+  "27": {
+   "yari": "AÇIK",
+   "no": 169,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C11-"
+   ]
+  },
+  "28": {
+   "yari": "AÇIK",
+   "no": 222,
+   "karar": "OLUR",
+   "nedenler": [
+    "C7+",
+    "C2+",
+    "C9+",
+    "C3+",
+    "C5+",
+    "C11+"
+   ]
+  },
+  "29": {
+   "yari": "AÇIK",
+   "no": 182,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C6+",
+    "C5+",
+    "C11+",
+    "C12-",
+    "C13-"
+   ]
+  },
+  "30": {
+   "yari": "AÇIK",
+   "no": 146,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C6-",
+    "C7-",
+    "C13-",
+    "C11-"
+   ]
+  },
+  "31": {
+   "yari": "AÇIK",
+   "no": 242,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C2+",
+    "C6-",
+    "C7-",
+    "C11-"
+   ]
+  },
+  "32": {
+   "yari": "AÇIK",
+   "no": 137,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C7-",
+    "C6-",
+    "C11-"
+   ]
+  },
+  "33": {
+   "yari": "AÇIK",
+   "no": 98,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C1+",
+    "C6+",
+    "C5+",
+    "C11-"
+   ]
+  },
+  "34": {
+   "yari": "AÇIK",
+   "no": 46,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C9+",
+    "C3+",
+    "C5+",
+    "C6-",
+    "C11-"
+   ]
+  },
+  "35": {
+   "yari": "AÇIK",
+   "no": 279,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C8-",
+    "C5-",
+    "C6-"
+   ]
+  },
+  "36": {
+   "yari": "AÇIK",
+   "no": 140,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C10-",
+    "C3+"
+   ]
+  },
+  "37": {
+   "yari": "AÇIK",
+   "no": 287,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C12-",
+    "C10-",
+    "C11-",
+    "C5+"
+   ]
+  },
+  "38": {
+   "yari": "AÇIK",
+   "no": 195,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C6+",
+    "C5+",
+    "C11+",
+    "C7-",
+    "C10-"
+   ]
+  },
+  "39": {
+   "yari": "AÇIK",
+   "no": 197,
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C12-"
+   ]
+  },
+  "40": {
+   "yari": "AÇIK",
+   "no": 34,
+   "karar": "BELİRSİZ",
+   "nedenler": [
+    "C5+",
+    "C3+",
+    "C7-",
+    "C10-"
+   ]
+  }
+ }
+}

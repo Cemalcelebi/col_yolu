@@ -687,6 +687,732 @@ def ge_kapi(cikti: Optional[str] = None) -> Dict[str, Any]:
     return {"onkayit": g, "gecti": True}
 
 
+# ================================================================ 5) AŞAMA C — ÖLÇÜM, EĞİTİM, HAKEM (iş tanımı §5 + SAPMA-1)
+# GE_ESIK (AŞAMA A mührü) DEĞİŞMEZ; AŞAMA C sabitleri ayrı sözlük GE_C_ESIK'tedir (sha'sı ON_KAYIT.md SAPMA-1'de, ölçümden önce).
+GE_C_DOSYA = {"etiket": "etiket.json", "satir": "etiket_olcu.csv.gz", "skor": "goz_skor_Y1.csv.gz", "sonuc": "sonuc_C.json", "rapor": "RAPOR.md",
+              "hakem_pdf": "GOZ_HAKEM_SET.pdf", "hakem_anahtar": "hakem_anahtar.json", "hakem_sablon": "hakem_cevap_sablon.csv",
+              "hakem_sonuc": "HAKEM_SONUC.md", "guc": os.path.join(KOK_GE, "arastirma_cikti", "yapi_hedef", "guc_tablosu.json")}
+GE_KARARLAR = ("OLUR", "BELİRSİZ", "OLMAZ")
+GE_F = [f"F{k}" for k in range(1, 19)]
+GE_C_ESIK: Dict[str, Any] = {
+    "surum": "C1.0",
+    "olcu1": {"n_esik": 30, "fisher_p": 0.05, "fisher": "iki yönlü (scipy fisher_exact), yön ayrıca şart",
+              "tanim": "OLUR vs OLMAZ: +%5 payı (h5) Fisher; KAT5 = Σ h5 / Σ es_h5 (ay kümeli bootstrap %95, YAPI_HEDEF.yh_kat = OC.oc_kat); "
+                       "P(stop önce) st5 / es_st5. TUTAR = OLUR KAT5 alt uç > 1 VE OLUR h5 payı > OLMAZ h5 payı (Fisher p < 0,05) VE OLUR st5 "
+                       "< OLUR es_st5. n OLUR < 30 -> ÖLÇÜLEMEDİ"},
+    "olcu1b": {"n_esik": 30, "fisher_p": 0.05,
+               "tanim": "SAPMA-1: OLMAZ-DEĞİL (OLUR + BELİRSİZ) vs OLMAZ: aynı ölçüler; TUTAR = OLMAZ-DEĞİL KAT5 alt uç > 1 VE OLMAZ-DEĞİL h5 "
+                        "payı > OLMAZ h5 payı (Fisher iki yönlü p < 0,05) VE OLMAZ-DEĞİL st5 < OLMAZ-DEĞİL es_st5; OLMAZ-DEĞİL n < 30 -> ÖLÇÜLEMEDİ"},
+    "olcu_satir": "ölçüye giren olay = h5 ve es_h5 sonlu (olay_Y1 'olc'); dışarıda kalan sayısı yazılır, etiketi kalır",
+    "neden": {"bh_q": 0.10, "tanim": "her neden kodu (C1..C13, + / - ayrı) için var / yok: h5 payı, Fisher iki yönlü p, KAT5 (var grubu, ay kümeli %95); "
+                                    "BH q 0,10 Fisher p'leri üzerinde (bilgi; karar değil); var n < 30 olan kod 'n az' notu"},
+    "egitim": {"C": 1.0, "ceza": "l2", "kat": 5, "tohum": 13, "max_iter": 5000, "perm": 200, "perm_tohum": 1301,
+               "tanim": "SAPMA-1 hedefi: OLMAZ-DEĞİL (1) vs OLMAZ (0), 300 etiket; F1-F18; boru hattı = medyan doldurma + standartlaştırma + "
+                        "lojistik (L2, C = 1); bütün dönüşümler YALNIZ eğitim katından öğrenilir (CV sızıntısı yok); StratifiedKFold(5, karıştır, "
+                        "tohum 13): kat AUC ortalaması ve kat dışı (OOF) havuz AUC; etiket permütasyonu 200 (tohum 1301) ile OOF AUC p (bilgi). "
+                        "Son model 300 olayın tamamıyla kurulur; katsayılar standart birimde. Bilgi: §5 asıl hedef OLUR (1) / OLMAZ (0) "
+                        "(BELİRSİZ dışarı) aynı boru hattıyla CV AUC (OLUR n 6 -> ÖLÇÜLEMEDİ)"},
+    "skor": {"besli": 5, "tanim": "GÖZ SKORU = son modelin olasılığı, 26.663 Y1 olayının hepsine; beşte bir sınırları skorun 26.663 olaydaki "
+                                  "dağılımından (np.quantile 0,2/0,4/0,6/0,8); B5 = üst, B1 = alt",
+             "hucre": "karar hücreleri ABD 2023, ABD 2024-26, AVR 2023, AVR 2024-26 (bilgi BIST, 2016-22): B5 olayları YAPI_HEDEF.yh_hucre + "
+                      "yh_durum (güç tablosu yapi_hedef/guc_tablosu.json, yön +) + yh_etiket; B1 aynı (bilgi); B5 vs B1 h5 Fisher (bilgi). "
+                      "Ana satır = bütün olaylar (ön kayıt §6); 'dış' satır = 300 etiketli olay çıkarılmış; ikisinin etiketi farklıysa "
+                      "muhafazakâr olan (İZ > EMARE > DESTEKLENMEDİ / ÖLÇÜLEMEDİ sırasında düşük olan) yazılır"},
+    "hakem": {"tohum": 13, "yari": {"OLUR": 3, "BELİRSİZ": 7, "OLMAZ": 10}, "sayfa": 40,
+              "tanim": "tohum 13: her karar grubu no sırasıyla dizilir, rng.permutation; OLUR 6'sının ilk 3'ü kör, son 3'ü açık; BELİRSİZ ilk 7 kör, "
+                       "sonraki 7 açık; OLMAZ ilk 10 kör, sonraki 10 açık; her yarı ayrı rng.permutation ile sıralanır. Sayfa 1-20 KÖR (yalnız "
+                       "grafik + 'Cemal: OLUR / OLMAZ / BELİRSİZ + neden'), 21-40 AÇIK (grafik + aşama B kararı + neden kodlarının açılımı + not + "
+                       "'Cemal: DOĞRU / YANLIŞ + neden'). Grafik = AŞAMA A kör PNG (t sonrası yok, hisse adı yok)"},
+    "dev_fitil": {"oran": 1.5, "tanim": "bilgi: geçerli barda High / max(O, C) > 1,5 ya da min(O, C) / Low > 1,5 = şüpheli dev fitil (veri hatası adayı)"},
+}
+
+GE_NEDEN_ACILIM: Dict[str, str] = {
+    "C1": "taban net (hat >= 3 dokunuş, aynı seviye, eğim aşağı değil)",
+    "C2": "dip savunulmuş (dipler kırılmamış, alçalan dip yok)",
+    "C3": "mumlar küçük (fitiller dahil, öncesine göre)",
+    "C4": "mum şekli (alt fitil kısa, açılış dibe yakın)",
+    "C5": "kırılım mumu belirgin (kapanış tavanı net aşmış, gövdeli)",
+    "C6": "büyük desen (120-250 bar yükselen / yatay; alçalan kanal değil)",
+    "C7": "yapı boyu (düşüşe göre yeterli)",
+    "C8": "kağıt hafızası (önceki benzer yapılar)",
+    "C9": "kubbe / çanak (sağ kenar dönmüş)",
+    "C10": "yol almış (fiyat tabandan çoktan uzaklaşmış)",
+    "C11": "stop uzaklığı (kapanış hattan %10 içinde)",
+    "C12": "çekiştirme / oluşum yok (yapı yok)",
+    "C13": "dev mum / şüphe (geçmişte dev tek mum)",
+}
+
+
+def ge_neden_acilim(kod: str) -> str:
+    """'C5-' -> 'C5- kırılım mumu belirgin ...: UYMUYOR'. + = kural lehte / uyuyor, - = kural aleyhte / uymuyor."""
+    m = re.fullmatch(r"(C\d+)([+-])", str(kod).strip())
+    if not m or m.group(1) not in GE_NEDEN_ACILIM:
+        return str(kod)
+    return f"{kod} {GE_NEDEN_ACILIM[m.group(1)]}: {'UYUYOR (lehte)' if m.group(2) == '+' else 'UYMUYOR (aleyhte)'}"
+
+
+def ge_c_esik_sha(E: Optional[Dict[str, Any]] = None) -> str:
+    s = json.dumps(GE_C_ESIK if E is None else E, sort_keys=True, default=str, ensure_ascii=False)
+    return hashlib.sha256(s.encode("utf-8")).hexdigest()
+
+
+def ge_etiket_oku(cikti: Optional[str] = None) -> pd.DataFrame:
+    """etiket.json -> DataFrame[no, karar, nedenler, guven, not]. Okur, DEĞİŞTİRMEZ."""
+    yol = os.path.join(cikti or GE_YOL["cikti"], GE_C_DOSYA["etiket"])
+    if not os.path.exists(yol):
+        raise GEHata(f"etiket yok: {yol}")
+    J = json.load(open(yol, encoding="utf-8"))
+    E = J.get("etiket", J)
+    sat = []
+    for k, v in E.items():
+        if v.get("karar") not in GE_KARARLAR:
+            raise GEHata(f"etiket No {k}: karar geçersiz ({v.get('karar')})")
+        ned = [str(x).strip() for x in v.get("nedenler", [])]
+        bad = [x for x in ned if not re.fullmatch(r"C(1[0-3]|[1-9])[+-]", x)]
+        if bad:
+            raise GEHata(f"etiket No {k}: neden kodu geçersiz {bad}")
+        sat.append({"no": int(k), "karar": v["karar"], "nedenler": ned, "guven": v.get("guven"), "not": v.get("not", "")})
+    T = pd.DataFrame(sat).sort_values("no").reset_index(drop=True)
+    if T.no.duplicated().any():
+        raise GEHata("etiket: no tekil değil")
+    return T
+
+
+def ge_birlestir(S: pd.DataFrame, T: pd.DataFrame, X: pd.DataFrame, F: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """anahtar (S: no, pazar, sembol, tarih) x etiket (T: no, karar, nedenler) x olay sonucu (X: olay_Y1 tüm sütunlar) [x özellik F].
+    Bire bir eşleşme zorunlu: eksik / fazla / çift satır DURUR."""
+    if set(S.no) != set(T.no):
+        raise GEHata(f"anahtar / etiket numaraları farklı (anahtar {len(S)}, etiket {len(T)})")
+    K = ["pazar", "sembol", "tarih"]
+    S = S.copy(); X = X.copy()
+    for D in (S, X):
+        D["tarih"] = pd.to_datetime(D["tarih"]); D["sembol"] = D["sembol"].astype(str)
+    if X.duplicated(K).any():
+        raise GEHata("olay dosyasında (pazar, sembol, tarih) tekil değil")
+    M = S.drop(columns=[c for c in ("giris", "donem") if c in S]).merge(T, on="no", how="inner", validate="1:1")
+    M = M.merge(X, on=K, how="left", validate="1:1", indicator=True)
+    if (M["_merge"] != "both").any():
+        raise GEHata(f"{int((M['_merge'] != 'both').sum())} etiketli olay olay dosyasında yok")
+    M = M.drop(columns="_merge")
+    if F is not None:
+        F = F.copy(); F["tarih"] = pd.to_datetime(F["tarih"]); F["sembol"] = F["sembol"].astype(str)
+        M = M.merge(F[K + GE_F], on=K, how="left", validate="1:1", indicator=True)
+        if (M["_merge"] != "both").any():
+            raise GEHata("etiketli olayın özellik satırı yok")
+        M = M.drop(columns="_merge")
+    if len(M) != len(T):
+        raise GEHata(f"birleştirme satır sayısı {len(M)} != {len(T)}")
+    return M.sort_values("no").reset_index(drop=True)
+
+
+def _ge_ay(X: pd.DataFrame) -> np.ndarray:
+    return pd.to_datetime(X.giris).dt.to_period("M").astype(str).to_numpy() if len(X) else np.array([], dtype=object)
+
+
+def ge_olculur(X: pd.DataFrame) -> pd.DataFrame:
+    return X[np.isfinite(X.h5.astype(float)) & np.isfinite(X.es_h5.astype(float))]
+
+
+def ge_grup(X: pd.DataFrame) -> Dict[str, Any]:
+    """Bir grubun ölçüsü: n, h5 / es_h5 payı, KAT5 (ay kümeli %95; YH.yh_kat), h10 / KAT10, st5 / es_st5, getiri (bilgi)."""
+    g = ge_olculur(X).sort_values("giris"); ay = _ge_ay(g)
+    out: Dict[str, Any] = {"n": int(len(g)), "n_ham": int(len(X)), "ay": int(len(np.unique(ay)))}
+    for k in ("h5", "h10", "st5"):
+        r = YH.yh_kat(g[k].to_numpy(float), g["es_" + k].to_numpy(float), ay)
+        out.update({f"{k}_{a}": v for a, v in r.items() if a != "n"})
+    gt = g.getiri.to_numpy(float); gt = gt[np.isfinite(gt)]
+    out["getiri_ort"] = float(gt.mean()) if len(gt) else np.nan
+    out["getiri_med"] = float(np.median(gt)) if len(gt) else np.nan
+    return out
+
+
+def ge_fisher(a: pd.DataFrame, b: pd.DataFrame, k: str = "h5") -> float:
+    from scipy.stats import fisher_exact
+    a = ge_olculur(a); b = ge_olculur(b)
+    if not len(a) or not len(b):
+        return np.nan
+    ah, bh = int(a[k].sum()), int(b[k].sum())
+    return float(fisher_exact([[ah, len(a) - ah], [bh, len(b) - bh]], alternative="two-sided")[1])
+
+
+def ge_iki_grup(A: pd.DataFrame, B: pd.DataFrame, ad_a: str, ad_b: str, kural: Dict[str, Any]) -> Dict[str, Any]:
+    """Ölçü 1 / 1b: A (aday) vs B (OLMAZ). TUTAR kuralı GE_C_ESIK'teki gibi; n A < n_esik -> ÖLÇÜLEMEDİ."""
+    ga, gb = ge_grup(A), ge_grup(B); p = ge_fisher(A, B)
+    s_kat = bool(np.isfinite(ga.get("h5_alt", np.nan)) and ga["h5_alt"] > 1)
+    s_pay = bool(np.isfinite(p) and p < kural["fisher_p"] and ga["h5_p_olay"] > gb["h5_p_olay"])
+    s_stop = bool(np.isfinite(ga.get("st5_p_olay", np.nan)) and ga["st5_p_olay"] < ga["st5_p_ref"])
+    if ga["n"] < kural["n_esik"]:
+        durum = "ÖLÇÜLEMEDİ"
+    else:
+        durum = "TUTAR" if (s_kat and s_pay and s_stop) else "TUTMADI"
+    return {"a": ad_a, "b": ad_b, ad_a: ga, ad_b: gb, "fisher_p": p, "s_kat": s_kat, "s_pay": s_pay, "s_stop": s_stop, "durum": durum}
+
+
+def _ge_bh(p: List[float], q: float) -> List[bool]:
+    return YH._yh_bh(p, q)
+
+
+def ge_neden_olcu(M: pd.DataFrame, E: Dict[str, Any] = GE_C_ESIK) -> List[Dict[str, Any]]:
+    """Ölçü 2: her neden kodu var / yok (bilgi; BH q 0,10)."""
+    kodlar = sorted({k for ned in M.nedenler for k in ned}, key=lambda s: (int(re.sub(r"\D", "", s)), s[-1]))
+    R = []
+    for k in kodlar:
+        var = M.nedenler.apply(lambda n, k=k: k in n)
+        gv, gy = ge_grup(M[var]), ge_grup(M[~var])
+        R.append({"kod": k, "acilim": ge_neden_acilim(k), "n_var": gv["n"], "n_yok": gy["n"], "h5_var": gv.get("h5_p_olay"),
+                  "h5_yok": gy.get("h5_p_olay"), "es_h5_var": gv.get("h5_p_ref"), "kat5_var": gv.get("h5_kat"), "kat5_alt": gv.get("h5_alt"),
+                  "kat5_ust": gv.get("h5_ust"), "st5_var": gv.get("st5_p_olay"), "st5_yok": gy.get("st5_p_olay"),
+                  "p": ge_fisher(M[var], M[~var]), "n_az": bool(gv["n"] < 30)})
+    bh = _ge_bh([r["p"] for r in R], E["neden"]["bh_q"])
+    for r, b in zip(R, bh):
+        r["bh"] = bool(b)
+    return R
+
+
+def ge_boru(E: Dict[str, Any] = GE_C_ESIK):
+    from sklearn.impute import SimpleImputer
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import StandardScaler
+    G = E["egitim"]
+    return Pipeline([("doldur", SimpleImputer(strategy="median")), ("olcek", StandardScaler()),
+                     ("lr", LogisticRegression(C=float(G["C"]), max_iter=int(G["max_iter"]), solver="lbfgs"))])   # varsayılan ceza L2 (GE_C_ESIK "ceza")
+
+
+def _ge_Fmat(D: pd.DataFrame) -> np.ndarray:
+    A = np.array(D[GE_F].to_numpy(float), dtype=float, copy=True)
+    A[~np.isfinite(A)] = np.nan
+    return A
+
+
+def ge_cv(A: np.ndarray, y: np.ndarray, E: Dict[str, Any] = GE_C_ESIK, perm: bool = True) -> Dict[str, Any]:
+    """5 katlı tabakalı CV; her katta boru hattı (doldurma + ölçek + lojistik) YALNIZ eğitim katından öğrenilir. OOF olasılıklar döner."""
+    from sklearn.base import clone
+    from sklearn.metrics import roc_auc_score
+    from sklearn.model_selection import StratifiedKFold
+    G = E["egitim"]; y = np.asarray(y, int)
+    if y.sum() < G["kat"] or (len(y) - y.sum()) < G["kat"]:
+        return {"auc_oof": np.nan, "auc_kat": [], "n1": int(y.sum()), "n0": int(len(y) - y.sum()), "not": "sınıf < kat sayısı"}
+    skf = StratifiedKFold(n_splits=int(G["kat"]), shuffle=True, random_state=int(G["tohum"]))
+    oof = np.full(len(y), np.nan); aucs = []; katlar = []
+    for tr, te in skf.split(A, y):
+        m = clone(ge_boru(E)).fit(A[tr], y[tr])
+        oof[te] = m.predict_proba(A[te])[:, 1]
+        aucs.append(float(roc_auc_score(y[te], oof[te])) if 0 < y[te].sum() < len(te) else np.nan)
+        katlar.append({"tr": tr, "te": te, "doldur": m.named_steps["doldur"].statistics_.copy(), "ort": m.named_steps["olcek"].mean_.copy()})
+    out = {"auc_oof": float(roc_auc_score(y, oof)), "auc_kat": aucs, "auc_kat_ort": float(np.nanmean(aucs)),
+           "auc_kat_sd": float(np.nanstd(aucs)), "n1": int(y.sum()), "n0": int(len(y) - y.sum()), "oof": oof, "katlar": katlar}
+    if perm:
+        rng = np.random.default_rng(int(G["perm_tohum"])); v = []
+        for _ in range(int(G["perm"])):
+            yp = rng.permutation(y); oo = np.full(len(y), np.nan)
+            for tr, te in skf.split(A, yp):
+                oo[te] = clone(ge_boru(E)).fit(A[tr], yp[tr]).predict_proba(A[te])[:, 1]
+            v.append(roc_auc_score(yp, oo))
+        v = np.array(v); out["perm_p"] = float((1 + (v >= out["auc_oof"]).sum()) / (1 + len(v))); out["perm_ort"] = float(v.mean())
+        out["perm_95"] = float(np.quantile(v, 0.95))
+    return out
+
+
+def ge_egitim(M: pd.DataFrame, E: Dict[str, Any] = GE_C_ESIK) -> Dict[str, Any]:
+    """SAPMA-1 hedefi (OLMAZ-DEĞİL 1 / OLMAZ 0) CV + son model; bilgi: asıl hedef OLUR / OLMAZ CV; tek özellik AUC (bilgi)."""
+    from sklearn.metrics import roc_auc_score
+    A = _ge_Fmat(M); y = (M.karar != "OLMAZ").to_numpy(int)
+    cv = ge_cv(A, y, E)
+    son = ge_boru(E).fit(A, y)
+    kat = son.named_steps["lr"].coef_[0]
+    katsayi = sorted([{"F": f, "tanim": GE_ESIK["ozellik"]["F"][f].split(":")[0], "kat": float(c)} for f, c in zip(GE_F, kat)],
+                     key=lambda r: -abs(r["kat"]))
+    tek = []
+    for j, f in enumerate(GE_F):
+        a = A[:, j]; g = np.isfinite(a)
+        tek.append({"F": f, "auc": float(roc_auc_score(y[g], a[g])) if 0 < y[g].sum() < g.sum() else np.nan, "nan": int((~g).sum())})
+    ma = M.karar.isin(["OLUR", "OLMAZ"]).to_numpy()
+    cv0 = ge_cv(A[ma], (M.karar[ma] == "OLUR").to_numpy(int), E, perm=False)
+    return {"cv": {k: v for k, v in cv.items() if k not in ("oof", "katlar")}, "oof": cv["oof"], "model": son, "katsayi": katsayi,
+            "sabit": float(son.named_steps["lr"].intercept_[0]), "tek": tek,
+            "asil": {k: v for k, v in cv0.items() if k not in ("oof", "katlar")}}
+
+
+def ge_skor(model, F: pd.DataFrame) -> np.ndarray:
+    return model.predict_proba(_ge_Fmat(F))[:, 1]
+
+
+def ge_besli(skor: np.ndarray, E: Dict[str, Any] = GE_C_ESIK) -> Tuple[np.ndarray, np.ndarray]:
+    k = int(E["skor"]["besli"]); sin = np.quantile(skor, np.arange(1, k) / k)
+    return np.searchsorted(sin, skor, side="right") + 1, sin
+
+
+_GE_SIRA = {"İZ": 4, "İZ + BIST": 4, "EMARE": 3, "DESTEKLENMEDİ": 1, "ÖLÇÜLEMEDİ": 1}
+
+
+def ge_skor_hucre(O: pd.DataFrame, guc: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """O: olay_Y1 + besli. Her (pazar, dönem): B5 -> YH.yh_hucre + yh_durum; B1 bilgi; B5 vs B1 h5 Fisher. Etiket YH.yh_etiket."""
+    H_, dur = [], {}
+    for p in OC.OC_ESIK["pazar"]:
+        for q, _a, _b in OC.OC_ESIK["donem"]:
+            x = O[(O.pazar == p) & (O.donem == q)]
+            ust, alt = x[x.besli == 5], x[x.besli == 1]
+            h = YH.yh_hucre(ust); ha = YH.yh_hucre(alt)
+            durum, g = YH.yh_durum(h, 1, guc)
+            dur[(p, q)] = durum
+            H_.append({"pazar": p, "donem": q, "karar_hucre": [p, q] in YH.YH_ESIK["karar"]["hucre_karar"], "n_hucre": int(len(x)),
+                       "ust": {k: v for k, v in h.items() if k != "cikis_tur"}, "alt": {k: v for k, v in ha.items() if k != "cikis_tur"},
+                       "fisher_ust_alt": ge_fisher(ust, alt), "guc": g, "durum": durum})
+    return {"hucre": H_, "etiket": YH.yh_etiket(dur)}
+
+
+def ge_olasilik(O: pd.DataFrame, maske: np.ndarray) -> List[Dict[str, Any]]:
+    """Beşli başına (B1..B5) olasılık tablosu: +%5 / +%10 / stop payı, eş payı, KAT (ay kümeli %95), getiri (bilgi)."""
+    R = []
+    for b in range(1, 6):
+        g = ge_grup(O[maske & (O.besli == b).to_numpy()])
+        R.append({"besli": b, **g})
+    return R
+
+
+def ge_dev_fitil(S: pd.DataFrame, T: pd.DataFrame, veri: Optional[str] = None, E: Dict[str, Any] = GE_C_ESIK) -> Dict[str, Any]:
+    """Bilgi (veri denetimi): 300 kör görselin 120 bar penceresinde (t dahil, t sonrası yok) şüpheli dev fitil; C13- ile kesişim."""
+    r_ = float(E["dev_fitil"]["oran"]); sat = []
+    for p in OC.OC_ESIK["pazar"]:
+        Sp = S[S.pazar == p]
+        if not len(Sp):
+            continue
+        Vd = OC.oc_veri(p, klasor=veri or GE_YOL["veri"])
+        for r in Sp.itertuples():
+            d = ge_hazir(Vd["V"][r.sembol]); dk = d[d.index <= pd.Timestamp(r.tarih)].iloc[-int(GE_ESIK["gorsel"]["bar"]):]
+            up = dk.High / np.maximum(dk.Open, dk.Close); dn = np.minimum(dk.Open, dk.Close) / dk.Low
+            m = (up > r_) | (dn > r_)
+            sat.append({"no": int(r.no), "pazar": p, "dev": bool(m.any()), "en_buyuk": float(max(up.max(), dn.max())),
+                        "bar": int(np.flatnonzero(m.to_numpy())[0] - (len(dk) - 1)) if m.any() else None})
+        del Vd
+    D = pd.DataFrame(sat).merge(T[["no", "nedenler", "karar"]], on="no")
+    D["c13"] = D.nedenler.apply(lambda n: "C13-" in n)
+    return {"n_dev": int(D.dev.sum()), "dev_no": D[D.dev].sort_values("no")[["no", "pazar", "en_buyuk", "bar", "karar"]].to_dict("records"),
+            "dev_ve_c13": int((D.dev & D.c13).sum()), "c13": int(D.c13.sum()), "c13_dev_yok": int((D.c13 & ~D.dev).sum())}
+
+
+def ge_no274(veri: Optional[str] = None, cikti: Optional[str] = None) -> Dict[str, Any]:
+    """No 274 dev fitil ham veri denetimi (yalnız t'ye kadar)."""
+    S = ge_anahtar_oku(cikti); r = S[S.no == 274].iloc[0]
+    Vd = OC.oc_veri(r.pazar, klasor=veri or GE_YOL["veri"]); d = ge_hazir(Vd["V"][r.sembol])
+    dk = d[d.index <= r.tarih].iloc[-int(GE_ESIK["gorsel"]["bar"]):]
+    boy = (dk.High - dk.Low) / dk.Close; j = int(np.argmax(boy.to_numpy())); b = dk.iloc[j]
+    kom = dk.iloc[max(0, j - 2): j + 3]
+    return {"pazar": r.pazar, "bar": j - (len(dk) - 1), "O": float(b.Open), "H": float(b.High), "L": float(b.Low), "C": float(b.Close),
+            "boy_C": float(boy.iloc[j]), "boy_medyan": float(boy.median()), "H_komsu_max": float(kom.drop(kom.index[min(2, j)]).High.max())}
+
+
+def ge_olc(cikti: Optional[str] = None, veri: Optional[str] = None, dev: bool = True) -> Dict[str, Any]:
+    """AŞAMA C ölçüm: kapı -> birleştir -> ölçü 1 / 1b / 2 -> eğitim -> göz skoru -> hücreler -> olasılık -> satır dosyaları + sonuc_C.json."""
+    t0 = time.time(); warnings.filterwarnings("ignore", category=RuntimeWarning)
+    cikti = cikti or GE_YOL["cikti"]
+    kapi = ge_kapi_c(cikti)
+    S = ge_anahtar_oku(cikti); T = ge_etiket_oku(cikti)
+    X = pd.read_csv(GE_YOL["olay"], dtype={"sembol": str, "pazar": str, "donem": str}); X["giris"] = pd.to_datetime(X["giris"])
+    F = pd.read_csv(_ge_yol("ozellik", cikti), dtype={"sembol": str, "pazar": str})
+    X["tarih"] = pd.to_datetime(X["tarih"]); F["tarih"] = pd.to_datetime(F["tarih"])
+    if len(X) != len(F) or not ((X.sembol.to_numpy() == F.sembol.to_numpy()).all() and (X.tarih.to_numpy() == F.tarih.to_numpy()).all()):
+        raise GEHata("olay_Y1 ve ozellik_Y1 sıraları aynı değil")
+    M = ge_birlestir(S, T, X, F)
+    E = GE_C_ESIK
+    J: Dict[str, Any] = {"surum": GE_SURUM, "c_esik_sha": ge_c_esik_sha(), "zaman_utc": _ge_simdi(), "kapi": kapi,
+                         "dagilim": M.karar.value_counts().to_dict(), "olcu_disi": int(len(M) - len(ge_olculur(M))),
+                         "olcu_disi_no": ge_olculur(M).pipe(lambda g: sorted(set(M.no) - set(g.no)))}
+    J["neden_sikligi"] = pd.Series([k for n in M.nedenler for k in n]).value_counts().to_dict()
+    J["olcu1"] = ge_iki_grup(M[M.karar == "OLUR"], M[M.karar == "OLMAZ"], "OLUR", "OLMAZ", E["olcu1"])
+    J["olcu1"]["olur_olaylar"] = [{"no": int(r.no), "pazar": r.pazar, "donem": r.donem, "h5": r.h5, "es_h5": r.es_h5, "st5": r.st5,
+                                   "getiri": r.getiri} for r in M[M.karar == "OLUR"].itertuples()]
+    J["olcu1b"] = ge_iki_grup(M[M.karar != "OLMAZ"], M[M.karar == "OLMAZ"], "OLMAZ-DEĞİL", "OLMAZ", E["olcu1b"])
+    J["olcu1b"]["pazar"] = {p: {"OLMAZ-DEĞİL": ge_grup(M[(M.pazar == p) & (M.karar != "OLMAZ")]), "OLMAZ": ge_grup(M[(M.pazar == p) & (M.karar == "OLMAZ")])}
+                            for p in OC.OC_ESIK["pazar"]}
+    J["olcu1b"]["donem"] = {q: {"OLMAZ-DEĞİL": ge_grup(M[(M.donem == q) & (M.karar != "OLMAZ")]), "OLMAZ": ge_grup(M[(M.donem == q) & (M.karar == "OLMAZ")])}
+                            for q in ("2023", "2024-26")}
+    J["grup"] = {k: ge_grup(M[M.karar == k]) for k in GE_KARARLAR}
+    J["neden"] = ge_neden_olcu(M, E)
+    Eg = ge_egitim(M, E)
+    J["egitim"] = {k: v for k, v in Eg.items() if k not in ("model", "oof")}
+    M["oof"] = Eg["oof"]
+    O = X.copy(); O["skor"] = ge_skor(Eg["model"], F)
+    O["besli"], sin = ge_besli(O.skor.to_numpy(), E)
+    J["besli_sinir"] = [float(v) for v in sin]
+    etiketli = set(zip(M.pazar, M.sembol, M.tarih))
+    O["etiketli"] = [k in etiketli for k in zip(O.pazar, O.sembol, O.tarih)]
+    if int(O.etiketli.sum()) != len(M):
+        raise GEHata("etiketli olay sayısı skor tablosunda tutmadı")
+    guc = json.load(open(GE_C_DOSYA["guc"], encoding="utf-8")) if os.path.exists(GE_C_DOSYA["guc"]) else None
+    J["guc_tablosu"] = bool(guc)
+    J["skor_tum"] = ge_skor_hucre(O, guc)
+    J["skor_dis"] = ge_skor_hucre(O[~O.etiketli], guc)
+    e1, e2 = J["skor_tum"]["etiket"], J["skor_dis"]["etiket"]
+    J["skor_etiket"] = e1 if _GE_SIRA.get(e1.split(" (")[0], 1) <= _GE_SIRA.get(e2.split(" (")[0], 1) else e2
+    kp = (O.pazar.isin(["ABD", "AVR"]) & O.donem.isin(["2023", "2024-26"])).to_numpy()
+    J["olasilik_karar"] = ge_olasilik(O, kp)
+    J["olasilik_tum"] = ge_olasilik(O, np.ones(len(O), bool))
+    J["olasilik_dis_karar"] = ge_olasilik(O, kp & ~O.etiketli.to_numpy())
+    J["etiketli_besli"] = M.assign(b=O.set_index(["pazar", "sembol", "tarih"]).loc[list(zip(M.pazar, M.sembol, M.tarih)), "besli"].to_numpy()) \
+        .groupby(["karar", "b"]).size().unstack(fill_value=0).to_dict("index")
+    if dev:
+        J["dev_fitil"] = ge_dev_fitil(S, T, veri); J["no274"] = ge_no274(veri, cikti)
+    # satır dosyaları (yeniden üretim)
+    Ms = M[["no", "pazar", "donem", "sembol", "tarih", "giris", "karar", "guven"] + ["h5", "h10", "st5", "es_h5", "es_h10", "es_st5", "getiri", "oof"]].copy()
+    Ms["nedenler"] = M.nedenler.apply(lambda n: ";".join(n))
+    Ms.to_csv(os.path.join(cikti, GE_C_DOSYA["satir"]), index=False)
+    O[["pazar", "sembol", "tarih", "donem", "skor", "besli", "etiketli"]].to_csv(os.path.join(cikti, GE_C_DOSYA["skor"]), index=False,
+                                                                                    float_format="%.6g")
+    J["sure_sn"] = round(time.time() - t0, 1)
+    _ge_yaz(os.path.join(cikti, GE_C_DOSYA["sonuc"]), json.dumps(_ge_json(J), ensure_ascii=False, indent=1), "sonuç C")
+    gelog.info("AŞAMA C ölçüm bitti (%.0f sn)", J["sure_sn"])
+    return J
+
+
+def _ge_json(o: Any) -> Any:
+    if isinstance(o, dict):
+        return {str(k): _ge_json(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [_ge_json(v) for v in o]
+    if isinstance(o, (np.integer,)):
+        return int(o)
+    if isinstance(o, (np.floating, float)):
+        return None if not np.isfinite(o) else float(o)
+    if isinstance(o, np.bool_):
+        return bool(o)
+    if isinstance(o, np.ndarray):
+        return _ge_json(o.tolist())
+    if isinstance(o, pd.Timestamp):
+        return str(o.date())
+    return o
+
+
+# ---- AŞAMA C kapısı (AŞAMA A ge_kapi kod sha'sı aşama C kodu eklenince değişir; AŞAMA C kod sha'sı SAPMA-1'de mühürlü)
+def ge_kapi_c(cikti: Optional[str] = None) -> Dict[str, Any]:
+    """AŞAMA C başında: ON_KAYIT.md git'te ve SAPMA-1 bölümü var; GE_ESIK (A), GE_C_ESIK, aşama C kodu, etiket, anahtar, özellik, olay sha'ları
+    ön kayıttakiyle aynı; kontrol kapısı açık."""
+    cikti = cikti or GE_YOL["cikti"]; yol = _ge_yol("onkayit", cikti)
+    g = _ge_git(yol)
+    import IZ_KARNE as IK
+    IK.ik_kontrol_kapisi(yol)
+    metin = open(yol, encoding="utf-8").read()
+    if "## SAPMA-1" not in metin:
+        raise GEHata("kapı C: ON_KAYIT.md'de SAPMA-1 bölümü yok")
+    bek = {"GE_ESIK_SHA": ge_esik_sha(), "GE_C_ESIK_SHA": ge_c_esik_sha(), "GE_KOD_SHA_C": _ge_sha_dosya(GE_YOL["kod"]),
+           "ETIKET_SHA": _ge_sha_dosya(os.path.join(cikti, GE_C_DOSYA["etiket"])), "ANAHTAR_SHA": _ge_sha_dosya(_ge_yol("anahtar", cikti)),
+           "OZELLIK_SHA": _ge_sha_dosya(_ge_yol("ozellik", cikti)), "OLAY_Y1_SHA": _ge_sha_dosya(GE_YOL["olay"])}
+    for ad, v in bek.items():
+        m = re.search(rf"{ad}:\s*`([0-9a-f]{{64}})`", metin)
+        if not m or m.group(1) != v:
+            raise GEHata(f"kapı C: {ad} tutmuyor (ön kayıttan sonra değişmiş ya da yok)")
+    try:
+        import subprocess
+        st = subprocess.run(["git", "status", "--porcelain", "--", yol], cwd=KOK_GE, capture_output=True, text=True, timeout=30).stdout
+        if st.strip():
+            raise GEHata("kapı C: ON_KAYIT.md'de commit edilmemiş değişiklik var (SAPMA-1 ölçümden önce commit edilmeli)")
+    except (OSError, subprocess.SubprocessError):
+        gelog.warning("kapı C: git durumu okunamadı")
+    return {"onkayit": g, "gecti": True}
+
+
+# ---- RAPOR
+def _p(x: Any, n: int = 1) -> str:
+    if x is None or (isinstance(x, float) and not np.isfinite(x)):
+        return "-"
+    return ("-" if float(x) < 0 else "") + f"%{abs(100 * float(x)):.{n}f}".replace(".", ",")
+
+
+def _s(x: Any, n: int = 2) -> str:
+    return "-" if x is None or (isinstance(x, float) and not np.isfinite(x)) else f"{float(x):.{n}f}".replace(".", ",")
+
+
+def _pv(x: Any) -> str:
+    return "-" if x is None or (isinstance(x, float) and not np.isfinite(x)) else (f"{float(x):.3f}".replace(".", ",") if x >= 0.001 else "< 0,001")
+
+
+def _ge_grup_satir(ad: str, g: Dict[str, Any]) -> str:
+    return (f"| {ad} | {g['n']} | {_p(g.get('h5_p_olay'))} | {_p(g.get('h5_p_ref'))} | {_s(g.get('h5_kat'))} [{_s(g.get('h5_alt'))}; {_s(g.get('h5_ust'))}] | "
+            f"{_p(g.get('h10_p_olay'))} | {_p(g.get('st5_p_olay'))} / {_p(g.get('st5_p_ref'))} | {_p(g.get('getiri_med'), 2)} |")
+
+
+_GE_GH = "| Grup | n | +%5 payı | eş +%5 | KAT5 [%95] | +%10 payı | stop önce olay / eş | getiri medyan (takip stoplu, bilgi) |\n|---|---|---|---|---|---|---|---|"
+
+
+def ge_c_rapor(J: Dict[str, Any], cikti: Optional[str] = None) -> str:
+    """RAPOR.md (§5 içeriği + SAPMA-1 + sınırlar). Sayılar yalnız sonuc_C.json'dan."""
+    cikti = cikti or GE_YOL["cikti"]
+    o1, o1b, eg = J["olcu1"], J["olcu1b"], J["egitim"]
+    d = J["dagilim"]
+    s = ["# GOZ_ETIKET — AŞAMA C RAPORU (ölçüm, eğitim, göz skoru, hakem seti)", "",
+         f"{J['surum']} · GE_C_ESIK sha `{J['c_esik_sha'][:16]}…` · {J['zaman_utc']}", "",
+         "Etiketleyen bir DİL MODELİDİR (Cemal'in gözünün vekili); Cemal'in kendi etiketi değildir. Aşağıdaki her sonuç bu vekilin sonucudur.", "",
+         "## 1. ÖZET", "",
+         f"- Etiket dağılımı (300): OLUR {d.get('OLUR', 0)} · BELİRSİZ {d.get('BELİRSİZ', 0)} · OLMAZ {d.get('OLMAZ', 0)}. Ölçü dışı (h5 / eş ölçülemedi): {J['olcu_disi']}.",
+         f"- ÖLÇÜ 1 (OLUR vs OLMAZ, ön kayıt): **{o1['durum']}** (OLUR n {o1['OLUR']['n']} < 30).",
+         f"- ÖLÇÜ 1b (SAPMA-1, OLMAZ-DEĞİL vs OLMAZ): **{o1b['durum']}** (KAT5 alt uç > 1: {'evet' if o1b['s_kat'] else 'hayır'}; "
+         f"+%5 payı farkı Fisher p < 0,05 ve yön: {'evet' if o1b['s_pay'] else 'hayır'}; stop payı < eş: {'evet' if o1b['s_stop'] else 'hayır'}).",
+         f"- EĞİTİM (OLMAZ-DEĞİL / OLMAZ, F1-F18 lojistik): 5 kat CV AUC (kat dışı havuz) {_s(eg['cv']['auc_oof'], 3)}; kat ortalaması "
+         f"{_s(eg['cv']['auc_kat_ort'], 3)} ± {_s(eg['cv']['auc_kat_sd'], 3)}; etiket permütasyonu p {_pv(eg['cv'].get('perm_p'))} "
+         f"(permütasyon %95 {_s(eg['cv'].get('perm_95'), 3)}).",
+         f"- GÖZ SKORU (üst beşte bir, YAPI_HEDEF karar kuralı): ETİKET **{J['skor_etiket']}** (bütün olaylar: {J['skor_tum']['etiket']}; "
+         f"dış örneklem: {J['skor_dis']['etiket']}).", "",
+         "## 2. SAPMA-1 (ölçümden önce yazıldı ve commit edildi; ON_KAYIT.md)", "",
+         "OLUR n = 6 < 30 olduğundan ölçü 1 kuralla ÖLÇÜLEMEDİ. Eklenen ölçü 1b: OLMAZ-DEĞİL (OLUR + BELİRSİZ) vs OLMAZ; eğitim hedefi OLMAZ-DEĞİL (1) / "
+         "OLMAZ (0). Ayrıntı ve eşikler ON_KAYIT.md SAPMA-1 bölümünde.", "",
+         "## 3. ETİKET DAĞILIMI ve NEDEN KODU SIKLIĞI", "",
+         "| Karar | n |", "|---|---|"] + [f"| {k} | {d.get(k, 0)} |" for k in GE_KARARLAR] + ["",
+         "| Kod | n | açılım |", "|---|---|---|"] + [f"| {k} | {v} | {ge_neden_acilim(k)} |" for k, v in
+                                                     sorted(J["neden_sikligi"].items(), key=lambda kv: (int(re.sub(r'\D', '', kv[0])), kv[0][-1]))]
+    s += ["", "## 4. ÖLÇÜ 1 (ön kayıt) — OLUR vs OLMAZ", "", _GE_GH, _ge_grup_satir("OLUR", o1["OLUR"]), _ge_grup_satir("OLMAZ", o1["OLMAZ"]), "",
+          f"Fisher (+%5 payı, iki yönlü) p = {_pv(o1['fisher_p'])}. KARAR: **{o1['durum']}** (OLUR n {o1['OLUR']['n']} < 30; olaylar tek tek aşağıda, bulgu değildir).", "",
+          "| No | pazar | dönem | +%5 | eş +%5 | stop önce | getiri |", "|---|---|---|---|---|---|---|"]
+    s += [f"| {r['no']} | {r['pazar']} | {r['donem']} | {_s(r['h5'], 0)} | {_p(r['es_h5'])} | {_s(r['st5'], 0)} | {_p(r['getiri'], 1)} |" for r in o1["olur_olaylar"]]
+    s += ["", "## 5. ÖLÇÜ 1b (SAPMA-1) — OLMAZ-DEĞİL vs OLMAZ", "", _GE_GH, _ge_grup_satir("OLMAZ-DEĞİL", o1b["OLMAZ-DEĞİL"]),
+          _ge_grup_satir("OLMAZ", o1b["OLMAZ"]), "",
+          f"Fisher (+%5 payı, iki yönlü) p = {_pv(o1b['fisher_p'])}. Şartlar: KAT5 alt uç > 1 {'EVET' if o1b['s_kat'] else 'HAYIR'}; pay farkı (p < 0,05 ve "
+          f"yön) {'EVET' if o1b['s_pay'] else 'HAYIR'}; stop önce < eş {'EVET' if o1b['s_stop'] else 'HAYIR'}. KARAR: **{o1b['durum']}**.", "",
+          "Pazar / dönem kırılımı (bilgi; hücreler küçük):", "", _GE_GH]
+    for k, v in list(o1b["pazar"].items()) + list(o1b["donem"].items()):
+        s += [_ge_grup_satir(f"{k} OLMAZ-DEĞİL", v["OLMAZ-DEĞİL"]), _ge_grup_satir(f"{k} OLMAZ", v["OLMAZ"])]
+    s += ["", "Karar grubu başına (bilgi):", "", _GE_GH] + [_ge_grup_satir(k, J["grup"][k]) for k in GE_KARARLAR]
+    s += ["", "## 6. ÖLÇÜ 2 — NEDEN KODLARI (bilgi; BH q 0,10, Fisher iki yönlü)", "",
+          "| Kod | açılım | n var / yok | +%5 var / yok | KAT5 var [%95] | stop önce var / yok | p | BH |", "|---|---|---|---|---|---|---|---|"]
+    for r in J["neden"]:
+        s.append(f"| {r['kod']} | {GE_NEDEN_ACILIM.get(r['kod'][:-1], '')} | {r['n_var']} / {r['n_yok']}{' (n az)' if r['n_az'] else ''} | "
+                 f"{_p(r['h5_var'])} / {_p(r['h5_yok'])} | {_s(r['kat5_var'])} [{_s(r['kat5_alt'])}; {_s(r['kat5_ust'])}] | "
+                 f"{_p(r['st5_var'])} / {_p(r['st5_yok'])} | {_pv(r['p'])} | {'geçer' if r['bh'] else '-'} |")
+    s += [f"", f"BH q 0,10 ile geçen kod sayısı: {sum(r['bh'] for r in J['neden'])} / {len(J['neden'])}.", "",
+          "## 7. EĞİTİM — göz sayısal özelliklerden ne kadar öğrenilebiliyor", "",
+          f"- Hedef OLMAZ-DEĞİL (1, n {eg['cv']['n1']}) / OLMAZ (0, n {eg['cv']['n0']}); F1-F18; medyan doldurma + standartlaştırma + L2 lojistik (C = 1); "
+          "her kat dönüşümleri yalnız eğitim katından (sızıntı yok; test_goz_etiket).",
+          f"- 5 kat CV AUC: kat dışı havuz {_s(eg['cv']['auc_oof'], 3)}; katlar {', '.join(_s(a, 3) for a in eg['cv']['auc_kat'])}; "
+          f"etiket permütasyonu (200) ortalaması {_s(eg['cv'].get('perm_ort'), 3)}, %95'i {_s(eg['cv'].get('perm_95'), 3)}, p {_pv(eg['cv'].get('perm_p'))}.",
+          f"- Bilgi, §5 asıl hedef OLUR (n {eg['asil']['n1']}) / OLMAZ (n {eg['asil']['n0']}): CV AUC {_s(eg['asil'].get('auc_oof'), 3)} — OLUR n 6: ÖLÇÜLEMEDİ.",
+          "", "Katsayılar (standart birim; + = OLMAZ-DEĞİL yönü; |katsayı| sırasıyla) ve tek özellik AUC (bilgi):", "",
+          "| F | tanım | katsayı | tek başına AUC |", "|---|---|---|---|"]
+    tek = {r["F"]: r for r in eg["tek"]}
+    s += [f"| {r['F']} | {r['tanim']} | {_s(r['kat'], 3)} | {_s(tek[r['F']]['auc'], 3)} |" for r in eg["katsayi"]]
+    s += ["", "## 8. GÖZ SKORU — hücre tablosu (B5 = üst beşte bir; YAPI_HEDEF karar kuralı: n >= 30, KAT5 eş alt uç > 1, stop önce < eş, "
+          "plasebo KAT5 alt uç > 1; tutmazsa n >= 1.000 ya da güç >= %80 -> DESTEKLENMEDİ, değilse ÖLÇÜLEMEDİ)", "",
+          f"Beşte bir sınırları (26.663 olay): {', '.join(_s(v, 3) for v in J['besli_sinir'])}.", ""]
+    for ad, K in (("BÜTÜN OLAYLAR", J["skor_tum"]), ("DIŞ ÖRNEKLEM (300 etiketli olay çıkarılmış)", J["skor_dis"])):
+        s += [f"### {ad} — etiket: {K['etiket']}", "",
+              "| Hücre | B5 n | B5 +%5 / eş | KAT5 eş [%95] | plasebo KAT5 alt | stop önce B5 / eş | B1 n | B1 +%5 / eş | B1 KAT5 | B5 vs B1 Fisher p | güç | DURUM |",
+              "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        for h in K["hucre"]:
+            u, a = h["ust"], h["alt"]
+            s.append(f"| {h['pazar']} {h['donem']}{' (karar)' if h['karar_hucre'] else ''} | {u.get('n', 0)} | {_p(u.get('h5_p_olay'))} / {_p(u.get('h5_p_ref'))} | "
+                     f"{_s(u.get('h5_kat'))} [{_s(u.get('h5_alt'))}; {_s(u.get('h5_ust'))}] | {_s(u.get('pl_h5_alt'))} | {_p(u.get('st5_p_olay'))} / {_p(u.get('st5_p_ref'))} | "
+                     f"{a.get('n', 0)} | {_p(a.get('h5_p_olay'))} / {_p(a.get('h5_p_ref'))} | {_s(a.get('h5_kat'))} | {_pv(h['fisher_ust_alt'])} | {_p(h['guc'], 0)} | {h['durum']} |")
+        s.append("")
+    s += [f"ETİKET (muhafazakâr olan): **{J['skor_etiket']}**.", "",
+          "## 9. OLASILIK TABLOSU (göz skoru beşte birleri; 15 bar, giriş t+1 açılış, stop hat x 0,98; eş = aynı gün aynı kova)", "",
+          "### Karar pazarları (ABD + AVR, 2023 + 2024-26)", "", _GE_GH.replace("| Grup |", "| Beşli |")]
+    s += [_ge_grup_satir(f"B{r['besli']}", r) for r in J["olasilik_karar"]]
+    s += ["", "### Aynı, 300 etiketli olay çıkarılmış (dış örneklem)", "", _GE_GH.replace("| Grup |", "| Beşli |")]
+    s += [_ge_grup_satir(f"B{r['besli']}", r) for r in J["olasilik_dis_karar"]]
+    s += ["", "### Bütün olaylar (üç pazar, 2016-26; bilgi)", "", _GE_GH.replace("| Grup |", "| Beşli |")]
+    s += [_ge_grup_satir(f"B{r['besli']}", r) for r in J["olasilik_tum"]]
+    s += ["", "KAT5 = olayın +%5 payı / aynı gün aynı kovadaki eşlerin +%5 payı (1 = eşle aynı). Olasılık tablosu 15 bar standardıdır (12 ay +%100 "
+          "bu ölçüde yoktur).", "", "Etiketli olayların skor beşlisi (eğitim içi; bilgi):", "", "| Karar | B1 | B2 | B3 | B4 | B5 |", "|---|---|---|---|---|---|"]
+    s += [f"| {k} | " + " | ".join(str(J["etiketli_besli"].get(k, {}).get(str(b), J["etiketli_besli"].get(k, {}).get(b, 0))) for b in range(1, 6)) + " |"
+          for k in GE_KARARLAR]
+    if "dev_fitil" in J:
+        df_, n2 = J["dev_fitil"], J["no274"]
+        s += ["", "## 10. VERİ DENETİMİ — dev fitil (No 274 ve 300 görsel)", "",
+              f"- No 274: sinyalden {n2['bar']} bar önce O {_s(n2['O'])} H {_s(n2['H'])} L {_s(n2['L'])} C {_s(n2['C'])}; mum boyu / kapanış {_p(n2['boy_C'])} "
+              f"(pencere medyanı {_p(n2['boy_medyan'])}); komşu barların en yüksek High'ı {_s(n2['H_komsu_max'])}; High / max(O, C) = "
+              f"{_s(n2['H'] / max(n2['O'], n2['C']))}. Açılış, kapanış ve dip komşularla uyumlu, yalnız High sapık: tek alanlık VERİ HATASI (gerçek işlem değil).",
+              f"- 300 görselin {df_['n_dev']}'inde 120 bar penceresinde şüpheli dev fitil (High / max(O, C) ya da min(O, C) / Low > 1,5) var; "
+              f"bunların {df_['dev_ve_c13']}'ünde etiketleyen C13- (dev mum / şüphe) yazmış. C13- toplam {df_['c13']} (fitil > 1,5 olmayan {df_['c13_dev_yok']}; "
+              "C13 eşiği göz kararıdır, 1,5 kat yalnız veri hatası adayı içindir).",
+              "| No | pazar | en büyük oran | bar | karar |", "|---|---|---|---|---|"]
+        s += [f"| {r['no']} | {r['pazar']} | {_s(r['en_buyuk'])} | {r['bar']} | {r['karar']} |" for r in df_["dev_no"]]
+    s += ["", "## 11. SIZINTI DENETİMİ", "",
+          "- Etiketler sonuç görmeden: AŞAMA B kendi raporunda anahtar / olay dosyasını açmadığını yazdı; etiket.json AŞAMA C'de değiştirilmedi (ETIKET_SHA SAPMA-1'de "
+          "mühürlü, kapı C denetler).",
+          "- Özellikler t'ye kadar: AŞAMA A prefix testi (koşuda pazar başına 10 olay + test_goz_etiket).",
+          "- Göz skoru 300 etiketli olay dışında ayrı raporlandı (§8 ve §9 'dış örneklem').",
+          "- CV: doldurma ve ölçek her katta yalnız eğitim katından (test_goz_etiket 'CV sızıntısı yok').", "",
+          "## 12. HAKEM SETİ", "",
+          "arastirma_cikti/goz_etiket/GOZ_HAKEM_SET.pdf (40 sayfa; 1-20 KÖR, 21-40 AÇIK; t sonrası yok, hisse adı yok); hakem_anahtar.json GİZLİ (sayfa -> "
+          "örneklem no, aşama B kararı). Yanıt: hakem_cevap_sablon.csv doldurulur (sayfa, cevap, neden) ve `python GOZ_ETIKET.py hakem --cevap-dosya DOSYA` "
+          "ile iki yarı ayrı raporlanır (kör: Cohen kappa + çapraz tablo; açık: doğru / yanlış, kural başına yanlış sayımı).", "",
+          "## 13. SINIRLAR", "",
+          "- 300 etiket; OLUR yalnız 6: asıl ölçü (OLUR) ve asıl eğitim hedefi ÖLÇÜLEMEDİ. Ölçü 1b ve eğitim SAPMA-1'dir (önceden yazılı ama ön kayıttan sonra).",
+          "- Etiketleyen bir dil modeli: Cemal'in gözünün vekilidir, Cemal'in kendi kararı değildir. Hakem seti bu vekilin Cemal'le ne kadar uyuştuğunu ölçmek içindir.",
+          "- Evren bugün işlem gören hisseler (hayatta kalma yanlılığı): hedef payları yukarı yanlı okunmalı; eşler aynı evrenden olduğu için KAT daha az etkilenir.",
+          "- Veri: tek alanlık dev fitil hataları var (§10); F-özellikleri oran / medyan olduğundan tek bar etkisi sınırlı, ama C13 etiketlerini etkileyebilir.",
+          "- Takip stoplu getiri bilgi satırıdır, karar ölçüsü değildir.", ""]
+    metin = "\n".join(s)
+    _ge_yaz(os.path.join(cikti, GE_C_DOSYA["rapor"]), metin, "rapor C")
+    return os.path.join(cikti, GE_C_DOSYA["rapor"])
+
+
+# ---- HAKEM SETİ
+def ge_hakem_sec(T: pd.DataFrame, E: Dict[str, Any] = GE_C_ESIK) -> pd.DataFrame:
+    """Tohum 13: OLUR 3+3, BELİRSİZ 7+7, OLMAZ 10+10 -> sayfa 1-20 kör, 21-40 açık. DataFrame[sayfa, yari, no, karar]."""
+    H = E["hakem"]; rng = np.random.default_rng(int(H["tohum"])); kor, acik = [], []
+    for k in GE_KARARLAR:
+        nos = np.array(sorted(T[T.karar == k].no.astype(int)))
+        m = int(H["yari"][k])
+        if len(nos) < 2 * m and k != "OLUR":
+            raise GEHata(f"hakem: {k} sayısı {len(nos)} < {2 * m}")
+        p = nos[rng.permutation(len(nos))]
+        kor += [(int(x), k) for x in p[:m]]; acik += [(int(x), k) for x in p[m:2 * m]]
+    kor = [kor[i] for i in rng.permutation(len(kor))]; acik = [acik[i] for i in rng.permutation(len(acik))]
+    R = [{"sayfa": i + 1, "yari": "KÖR", "no": n, "karar": k} for i, (n, k) in enumerate(kor)]
+    R += [{"sayfa": len(kor) + i + 1, "yari": "AÇIK", "no": n, "karar": k} for i, (n, k) in enumerate(acik)]
+    D = pd.DataFrame(R)
+    if len(D) != int(H["sayfa"]) or D.no.duplicated().any():
+        raise GEHata(f"hakem seçimi {len(D)} sayfa / çift no")
+    return D
+
+
+def ge_hakem_pdf(cikti: Optional[str] = None, png: Optional[str] = None) -> Dict[str, Any]:
+    """GOZ_HAKEM_SET.pdf + hakem_anahtar.json (gizli) + hakem_cevap_sablon.csv."""
+    from reportlab.lib.pagesizes import A4, landscape
+    from reportlab.pdfbase import pdfmetrics
+    from reportlab.pdfbase.ttfonts import TTFont
+    from reportlab.pdfgen import canvas
+    from reportlab.lib.utils import simpleSplit
+    cikti = cikti or GE_YOL["cikti"]; png = png or GE_YOL["png"]
+    T = ge_etiket_oku(cikti); D = ge_hakem_sec(T); Tn = T.set_index("no")
+    font = None
+    for y in ("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+              os.path.join(os.path.dirname(__import__("matplotlib").__file__), "mpl-data", "fonts", "ttf", "DejaVuSans.ttf")):
+        if os.path.exists(y):
+            font = y; break
+    if not font:
+        raise GEHata("Türkçe yazı tipi (DejaVuSans) bulunamadı")
+    pdfmetrics.registerFont(TTFont("DV", font))
+    yol = os.path.join(cikti, GE_C_DOSYA["hakem_pdf"])
+    W, Hh = landscape(A4); c = canvas.Canvas(yol, pagesize=(W, Hh), invariant=1)
+    c.setTitle("GOZ HAKEM SETI"); c.setAuthor(""); c.setCreator(""); c.setProducer("")
+    for r in D.itertuples():
+        p = os.path.join(png, f"No_{int(r.no)}.png")
+        if not os.path.exists(p):
+            raise GEHata(f"PNG yok: {p}")
+        c.setFont("DV", 11)
+        c.drawString(30, Hh - 28, f"GÖZ HAKEM SETİ — Sayfa {r.sayfa} / {len(D)} — {'KÖR (yalnız grafik)' if r.yari == 'KÖR' else 'AÇIK (aşama B kararıyla)'}")
+        c.setFont("DV", 8)
+        c.drawString(30, Hh - 40, "Grafik: sinyal günü t (bar 0) dahil son 120 bar; t sonrası YOK; hisse adı / tarih yok. Mavi alan S6 bölgesi, turuncu kesik tavan, mavi çizgi hat.")
+        iw = 600 if r.yari == "AÇIK" else 690; ih = iw * 800 / 1200
+        c.drawImage(p, 30, Hh - 48 - ih, width=iw, height=ih)
+        if r.yari == "KÖR":
+            c.setFont("DV", 12)
+            c.drawString(30, 52, "Cemal: OLUR / OLMAZ / BELİRSİZ  (birini işaretle)")
+            c.drawString(30, 30, "neden: ______________________________________________________________________________")
+        else:
+            e = Tn.loc[int(r.no)]; x0 = 30 + iw + 12; yy = Hh - 60; gen = W - x0 - 20
+            c.setFont("DV", 11); c.drawString(x0, yy, f"Aşama B kararı: {e['karar']}"); yy -= 14
+            c.drawString(x0, yy, f"güven: {e['guven']} / 5"); yy -= 18
+            c.setFont("DV", 9); c.drawString(x0, yy, "Neden kodları:"); yy -= 12
+            for k in e["nedenler"]:
+                for ln in simpleSplit(ge_neden_acilim(k), "DV", 8, gen):
+                    c.setFont("DV", 8); c.drawString(x0, yy, ln); yy -= 10
+                yy -= 2
+            yy -= 6; c.setFont("DV", 9); c.drawString(x0, yy, "Not:"); yy -= 12
+            for ln in simpleSplit(str(e["not"]), "DV", 8, gen):
+                c.setFont("DV", 8); c.drawString(x0, yy, ln); yy -= 10
+            c.setFont("DV", 12)
+            c.drawString(30, 52, "Cemal: DOĞRU / YANLIŞ  (aşama B kararı için)")
+            c.drawString(30, 30, "neden (yanlışsa hangi kural, C1..C13): ______________________________________________")
+        c.showPage()
+    c.save()
+    A = {"uyari": "GİZLİ HAKEM ANAHTARI: Cemal yanıtlamadan önce açılmaz. sayfa -> örneklem no, aşama B kararı.",
+         "tohum": GE_C_ESIK["hakem"]["tohum"], "etiket_sha": _ge_sha_dosya(os.path.join(cikti, GE_C_DOSYA["etiket"])),
+         "sayfa": {str(int(r.sayfa)): {"yari": r.yari, "no": int(r.no), "karar": r.karar, "nedenler": Tn.loc[int(r.no), "nedenler"]} for r in D.itertuples()}}
+    _ge_yaz(os.path.join(cikti, GE_C_DOSYA["hakem_anahtar"]), json.dumps(A, ensure_ascii=False, indent=1), "hakem anahtarı")
+    sab = "sayfa,yari,cevap,neden\n" + "".join(f"{int(r.sayfa)},{r.yari},,\n" for r in D.itertuples())
+    _ge_yaz(os.path.join(cikti, GE_C_DOSYA["hakem_sablon"]), sab, "hakem şablonu")
+    return {"pdf": yol, "boyut_mb": round(os.path.getsize(yol) / 2 ** 20, 2), "sayfa": len(D),
+            "kor": D[D.yari == "KÖR"].karar.value_counts().to_dict(), "acik": D[D.yari == "AÇIK"].karar.value_counts().to_dict()}
+
+
+_GE_TR = str.maketrans({"İ": "I", "ı": "I", "Ş": "S", "ş": "S", "Ğ": "G", "ğ": "G", "Ü": "U", "ü": "U", "Ö": "O", "ö": "O", "Ç": "C", "ç": "C"})
+_GE_CEVAP = {"OLUR": "OLUR", "OLMAZ": "OLMAZ", "BELIRSIZ": "BELİRSİZ", "DOGRU": "DOĞRU", "YANLIS": "YANLIŞ"}
+
+
+def ge_cevap_norm(x: Any) -> Optional[str]:
+    if x is None or (isinstance(x, float) and not np.isfinite(x)):
+        return None
+    k = str(x).strip().translate(_GE_TR).upper()
+    return _GE_CEVAP.get(k)
+
+
+def ge_kappa(a: List[str], b: List[str]) -> float:
+    """Cohen kappa (iki etiketçi, aynı öğeler)."""
+    a = list(a); b = list(b)
+    if not a or len(a) != len(b):
+        return np.nan
+    kat = sorted(set(a) | set(b)); n = len(a)
+    po = sum(x == y for x, y in zip(a, b)) / n
+    pe = sum((a.count(k) / n) * (b.count(k) / n) for k in kat)
+    return float((po - pe) / (1 - pe)) if pe < 1 else np.nan
+
+
+def ge_hakem_degerlendir(cevap_yol: str, cikti: Optional[str] = None) -> Dict[str, Any]:
+    """Cemal'in yanıtı (CSV: sayfa, cevap, neden; ya da JSON {sayfa: {cevap, neden}}) -> iki yarı ayrı: kör kappa + çapraz tablo;
+    açık doğru / yanlış + kural başına yanlış sayımı. HAKEM_SONUC.md yazar."""
+    cikti = cikti or GE_YOL["cikti"]
+    A = json.load(open(os.path.join(cikti, GE_C_DOSYA["hakem_anahtar"]), encoding="utf-8"))["sayfa"]
+    if cevap_yol.endswith(".json"):
+        Jc = json.load(open(cevap_yol, encoding="utf-8"))
+        C = pd.DataFrame([{"sayfa": int(k), "cevap": v.get("cevap"), "neden": v.get("neden", "")} for k, v in Jc.items()])
+    else:
+        C = pd.read_csv(cevap_yol, dtype=str, keep_default_na=False)
+        if "sayfa" not in C or "cevap" not in C:
+            raise GEHata("cevap dosyası: 'sayfa' ve 'cevap' sütunları zorunlu")
+        C["sayfa"] = C.sayfa.astype(int)
+        if "neden" not in C:
+            C["neden"] = ""
+    C["cevap_n"] = C.cevap.apply(ge_cevap_norm)
+    kor, acik, gecersiz = [], [], []
+    for r in C.itertuples():
+        a = A.get(str(int(r.sayfa)))
+        if a is None:
+            raise GEHata(f"cevap: sayfa {r.sayfa} anahtarda yok")
+        if r.cevap_n is None:
+            gecersiz.append(int(r.sayfa)); continue
+        if a["yari"] == "KÖR":
+            if r.cevap_n not in GE_KARARLAR:
+                gecersiz.append(int(r.sayfa)); continue
+            kor.append({"sayfa": int(r.sayfa), "B": a["karar"], "Cemal": r.cevap_n, "neden": r.neden})
+        else:
+            if r.cevap_n not in ("DOĞRU", "YANLIŞ"):
+                gecersiz.append(int(r.sayfa)); continue
+            acik.append({"sayfa": int(r.sayfa), "B": a["karar"], "nedenler": a["nedenler"], "Cemal": r.cevap_n, "neden": r.neden,
+                         "andigi": sorted(set(re.findall(r"C(?:1[0-3]|[1-9])", str(r.neden).upper())))})
+    K = pd.DataFrame(kor); out: Dict[str, Any] = {"kor_n": len(K), "acik_n": len(acik), "gecersiz": gecersiz}
+    if len(K):
+        out["kappa"] = ge_kappa(K.Cemal.tolist(), K.B.tolist())
+        out["uyum"] = float((K.Cemal == K.B).mean())
+        out["capraz"] = pd.crosstab(K.B, K.Cemal).reindex(index=list(GE_KARARLAR), columns=list(GE_KARARLAR), fill_value=0).to_dict("index")
+        K2 = K.assign(B2=np.where(K.B == "OLMAZ", "OLMAZ", "OLMAZ-DEĞİL"), C2=np.where(K.Cemal == "OLMAZ", "OLMAZ", "OLMAZ-DEĞİL"))
+        out["kappa_iki"] = ge_kappa(K2.C2.tolist(), K2.B2.tolist())
+    if acik:
+        Ac = pd.DataFrame(acik)
+        out["dogru"] = int((Ac.Cemal == "DOĞRU").sum()); out["yanlis"] = int((Ac.Cemal == "YANLIŞ").sum())
+        out["yanlis_karar"] = Ac[Ac.Cemal == "YANLIŞ"].B.value_counts().to_dict()
+        y = Ac[Ac.Cemal == "YANLIŞ"]
+        out["kural_andigi"] = pd.Series([k for l in y.andigi for k in l]).value_counts().to_dict() if len(y) else {}
+        out["kural_B_yanlis"] = pd.Series([k[:-1] for l in y.nedenler for k in l]).value_counts().to_dict() if len(y) else {}
+        out["kural_B_tum"] = pd.Series([k[:-1] for l in Ac.nedenler for k in l]).value_counts().to_dict()
+    s = ["# GOZ_ETIKET — HAKEM SONUCU (Cemal vs aşama B vekili)", "", f"Cevap dosyası: {os.path.basename(cevap_yol)} · {_ge_simdi()}", "",
+         "## KÖR YARI (sayfa 1-20)", "", f"- Yanıtlanan: {out['kor_n']}; uyum {_p(out.get('uyum'))}; Cohen kappa (3 sınıf) {_s(out.get('kappa'), 3)}; "
+         f"kappa (OLMAZ / OLMAZ-DEĞİL) {_s(out.get('kappa_iki'), 3)}.", "", "| aşama B \\ Cemal | OLUR | BELİRSİZ | OLMAZ |", "|---|---|---|---|"]
+    for k in GE_KARARLAR:
+        r = out.get("capraz", {}).get(k, {})
+        s.append(f"| {k} | " + " | ".join(str(r.get(c, 0)) for c in GE_KARARLAR) + " |")
+    s += ["", "## AÇIK YARI (sayfa 21-40)", "", f"- Yanıtlanan: {out['acik_n']}; DOĞRU {out.get('dogru', 0)}, YANLIŞ {out.get('yanlis', 0)}; "
+          f"yanlış bulunan kararlar: {out.get('yanlis_karar', {})}.", "", "| Kural | Cemal'in yanlış dediği sayfalarda andığı | yanlış sayfalarda aşama B'nin kullandığı | açık yarıda toplam kullanım |",
+          "|---|---|---|---|"]
+    for k in sorted(set(out.get("kural_andigi", {})) | set(out.get("kural_B_yanlis", {})) | set(out.get("kural_B_tum", {})), key=lambda x: int(x[1:])):
+        s.append(f"| {k} {GE_NEDEN_ACILIM.get(k, '')} | {out.get('kural_andigi', {}).get(k, 0)} | {out.get('kural_B_yanlis', {}).get(k, 0)} | {out.get('kural_B_tum', {}).get(k, 0)} |")
+    s += ["", f"Geçersiz / boş yanıt sayfaları: {gecersiz or 'yok'}.", ""]
+    _ge_yaz(os.path.join(cikti, GE_C_DOSYA["hakem_sonuc"]), "\n".join(s), "hakem sonucu")
+    out["rapor"] = os.path.join(cikti, GE_C_DOSYA["hakem_sonuc"])
+    return out
+
+
 # ================================================================ ÇAKIŞMA KAPISI ve KOMUT
 def _cakisma_kontrol_ge(_once=_CK_ONCE_GE, _dosya="GOZ_ETIKET.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka dosyanın) ezdiyse durur."""
@@ -708,7 +1434,8 @@ _cakisma_kontrol_ge()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=GE_SURUM)
-    ap.add_argument("komut", choices=["orneklem", "gorsel", "ozellik", "onkayit", "kapi", "sha"])
+    ap.add_argument("komut", choices=["orneklem", "gorsel", "ozellik", "onkayit", "kapi", "sha", "kapi_c", "olc", "rapor", "hakem", "no274"])
+    ap.add_argument("--cevap-dosya", default=None)
     ap.add_argument("--islem", type=int, default=1)
     ap.add_argument("--veri", default=None)
     ap.add_argument("--cikti", default=None)
@@ -729,7 +1456,21 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             print(ge_onkayit_yaz(a.cikti, a.png, git=not a.gitsiz, uzerine=a.uzerine_yaz))
         elif a.komut == "kapi":
             print(json.dumps(ge_kapi(a.cikti), ensure_ascii=False))
+        elif a.komut == "kapi_c":
+            print(json.dumps(ge_kapi_c(a.cikti), ensure_ascii=False))
+        elif a.komut == "olc":
+            J_ = ge_olc(a.cikti, a.veri)
+            print(ge_c_rapor(_ge_json(J_), a.cikti))
+        elif a.komut == "rapor":
+            print(ge_c_rapor(json.load(open(os.path.join(a.cikti or GE_YOL["cikti"], GE_C_DOSYA["sonuc"]), encoding="utf-8")), a.cikti))
+        elif a.komut == "hakem":
+            if a.cevap_dosya:
+                print(json.dumps(_ge_json(ge_hakem_degerlendir(a.cevap_dosya, a.cikti)), ensure_ascii=False, indent=1))
+            else:
+                print(json.dumps(ge_hakem_pdf(a.cikti, a.png), ensure_ascii=False))
+        elif a.komut == "no274":
+            print(json.dumps(ge_no274(a.veri, a.cikti), ensure_ascii=False))
         else:
-            print(json.dumps({"esik": ge_esik_sha(), "kod": _ge_sha_dosya(GE_YOL["kod"])}, indent=1))
+            print(json.dumps({"esik": ge_esik_sha(), "c_esik": ge_c_esik_sha(), "kod": _ge_sha_dosya(GE_YOL["kod"])}, indent=1))
     except GEHata as ex:
         gelog.error("%s", ex); sys.exit(1)
