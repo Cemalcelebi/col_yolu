@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 (hepsi SINANMADI; toplam 158; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) (hepsi SINANMADI; toplam 169; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -241,6 +241,17 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K16 | Büyük çöl (TEHOL / BINBN / KETLV, 20-60 mum, çok katlı hedef) gerçekti ama yalnız fon gibi satmayan alıcı grupları girince oluşur (manipülasyon); o dönem kapandı, tekrarı neredeyse imkânsız (müdahale). Büyük çöl aranmaz; küçük yapı + 15 mum hedefi aranır | 17 Kas akşam | Dolaylı (K12 FON_IZI fon lekesi; Ç147 kripto) | SINANMADI | Tez; fon alıcılı yapı sınıfı ayrı etiketle not edilir, giriş kuralı olmaz | FON_IZI K12 (fon izi), COL_v1 fon süzgeci | KAPALI DÖNEM (tez kaydı) |
 | K17 | SON DERS: fon çöllerinden öğrenilen kurallar gerçek ve bugün geçerli (alt fitili az mumlar + dip savunması = yukarı, tersi aşağı) ama etkisi kısa; hedef %5-10 tutulur; eski çöle benzer yapı oluşursa manipülasyon; kurum girişinde benzer yapı en fazla 3-5 günlük | 17 Kas akşam ('kaydet, artık bu kural geçerli') | Hayır (15 bar / %5-10 ölçüsüyle hiç ölçülmedi) | SINANMADI | Ç187 / Ç189 60 günle ölçüldü; şekil + savunma + kısa hedef birlikte sınanmadı | FITIL_V2 s1 + s2 (şekil + hat) var; hedef / ufuk yok | AÇIK: 15 bar + %5 / %10 ölçüsüyle ilk koşu |
 | K18 | YENİ TEST STANDARDI: giriş = dip tavanı / taban kırılım mumu; hedef +%5 / +%10 = 'ulaştı'; takip stopu yukarı revize, yeni ters oluşuma kadar; ilk hedefte stop hedefe yakın; 60 gün testi kapandı. Takip stopu geçici, daha iyisi testle eklenir | 17 Kas akşam ('testler bu şekilde devam etsin') | Hayır | SINANMADI | Cetvel henüz yazılmadı | YOK (ORTAK_CETVEL 60 gün) | AÇIK: cetvel + ilk koşu |
+| K19 | Büyük desen önce: küçük kutu 120-250 barlık büyük yapının içindeyse karar büyük yapıya göre; alçalan büyük kanalda küçük taban girilmez; stop büyük dip | PDF notları s6, 10, 14, 16, 29, 31 | Hayır | SINANMADI | S6 nMax 70; büyük yapı tanımı yok | YOK | AÇIK: Y6 şartı |
+| K20 | Hat net olmalı: >= 3 dokunuş, eğimi aşağı değil; 1-2 mumluk hat hat değil | s7, 16, 17, 27, 28 | Hayır | SINANMADI | S6 dibi = min Low (tek mum); FITIL HAT 10 bar dibi | S6 / FITIL_V2 (tek mum) | AÇIK: Y6 |
+| K21 | Giriş mumu gerçek kırılım: kapanış tavanı ancak dokunuyorsa giriş yok (pay + gövde) | s9 (MKC) | Hayır | SINANMADI | YAPI_HEDEF Y1 pay 0; üretim AL_PAY 1,002 | COL_v1 AL_PAY (üretim) | AÇIK: Y6 |
+| K22 | Kazan şemsiye değil: simetrik çanak + dipte küçük mum + dip savunması; a > 0 uyumu yetmez | s21, 23, 24 (yok), s19 (doğru) | Hayır | SINANMADI | Y3 tanımı V dibi / dağınık pencereyi de seçti | YAPI_HEDEF Y3 (gevşek) | AÇIK: Y7 |
+| K23 | Stop uzaklığı: giriş-hat > %10 ise işlem yok ya da ana stop %5; stop büyük desenin dibi | s22 (%25 'çok büyük stop'), s37, s16, s29 | Hayır | SINANMADI | Y3 stop uzaklığı medyanı %19,8 | YOK (stop0 = hat x 0,98) | AÇIK: Y6 / Y7 (a), bilgi (b) |
+| K24 | Hedef önceki tepe; tepede ters formasyon oluşunca çık | s12, s22 | Hayır | SINANMADI | D2 / D9 ile aynı | YOK | AÇIK (D2) |
+| K25 | Kağıt hafızası Cemal tanımı: aynı hissede benzer yapı patladıysa girilmez (S6 AL sayımı değil) | s15 (TURGG) | Y4 benzeri ölçüldü (farklı tanım) | SINANMADI | Y4 tanımı Cemal'inki değil (H kaydı) | YAPI_HEDEF Y4 (farklı) | AÇIK: Y8 |
+| K26 | Dip savunması şart: küçük mumlu sıkışma tek başına yetmez | s30 (MNKD) | Hayır | SINANMADI | D4 / K19 ile aynı | YOK | AÇIK: Y6 |
+| K27 | Zayıf hat = +%5 hedef; yeniden hat oluşursa yeniden girilir | s17 (SDTTR) | Hayır | SINANMADI | Hedef hat gücüne bağlı; ölçü yok | YOK | AÇIK |
+| K28 | Patlamış yapı / 10 barlık küçük bölge = yapılacak şey yok (Y5 nMin 15) | s37, s38 | Hayır | SINANMADI | Y5 bölge boyu medyanı 13 bar | YAPI_HEDEF Y5 nMin 8 | AÇIK |
+| K29 | Tavan = ilk dip yapısının tavanı; rastgele tavan hattı çizilmez | s31 (RYGYO) | Hayır | SINANMADI | S6 en büyük pencereyi seçer | S6 pencere seçimi | AÇIK |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 
