@@ -10,6 +10,9 @@
 8) kapı: ön kayıt yok / sha tutmuyor -> durur; kontrol listesi 14 satır kapıdan geçer
 9) uçtan uca: sentetik 3 pazar ile onkayit + kos (git'siz) -> sonuc.json, olay csv, RAPOR.md; ikinci koşu durur
 10) e-posta / anahtar taraması; çakışma kapısı (bellekteki adı ezince durur)
+11) 2. TUR (Y6 / Y7 / Y8 / Y8B): hat dokunuş sayımı, kırılım payı, iki kenar, büyük desen eğimi, Y8 hafızası (elle = kod), prefix (geleceğe
+    bakma) değişmezliği bayraklarla, ESIK_TUR1_SHA = 1. tur mührü, E5a stop_uzak düşmesi, E5b bilgi = elle yh_sim; uçtan uca (9'da) 2. tur
+    onkayit2 + kos + kapı, Y1-Y5 sonuçları ve RAPOR.md değişmez
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -339,6 +342,44 @@ try:
         YH.yh_kapi(cikti, git=False); kontrol("sha tutmuyor -> durur", False)
     except YH.YHHata:
         kontrol("sha tutmuyor -> durur", True)
+    # ---- 2. tur uçtan uca (1. tur mührü = yh_esik_sha_tur1; gerçekteki gibi ON_KAYIT.md ve güç tablosu 1. tur sha'sını taşır)
+    t1 = YH.yh_esik_sha_tur1()
+    open(yo, "w", encoding="utf-8").write(m.replace("0" * 64, t1))
+    J["yh_esik_sha"] = t1; open(os.path.join(cikti, "guc_tablosu.json"), "w").write(json.dumps(J))
+    J_once = json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8"))
+    rapor1 = open(os.path.join(cikti, "RAPOR.md"), "rb").read()
+    try:
+        YH.yh_kos(["Y6"], cikti, veri, git=False); kontrol("2. tur: ön kayıt 2 yokken koşu durur", False)
+    except YH.YHHata:
+        kontrol("2. tur: ön kayıt 2 yokken koşu durur", True)
+    yo2 = YH.yh_onkayit2_yaz(cikti, veri, islem=1, git=False)
+    m2 = open(yo2, encoding="utf-8").read()
+    kontrol("2. tur: ON_KAYIT_2 yazıldı, ESIK_TUR1_SHA ve kontrol kapısı", f"ESIK_TUR1_SHA: `{t1}`" in m2 and YH.yh_kapi(cikti, git=False, tur=2)["kontrol"]
+            and "Y6 hunisi" in m2 and "Y7 hunisi" in m2)
+    try:
+        YH.yh_kos(["Y6", "Y1"], cikti, veri, git=False); kontrol("2. tur: 1. ve 2. tur aynı koşuda olmaz", False)
+    except YH.YHHata:
+        kontrol("2. tur: 1. ve 2. tur aynı koşuda olmaz", True)
+    R2 = YH.yh_kos(["Y6", "Y7", "Y8"], cikti, veri, islem=2, git=False)
+    J3 = json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8"))
+    kontrol("2. tur: Y6 / Y7 / Y8 + Y8B (bilgi) eklendi", set(J3["deneme"]) == set(YH.YH_DENEMELER_HEPSI) and J3["deneme"]["Y8B"].get("bilgi") is True)
+    kontrol("2. tur: Y1-Y5 sonuçları, sayımı ve BH'si AYNEN", all(J3["deneme"][k] == J_once["deneme"][k] for k in YH.YH_DENEMELER)
+            and J3["bh"] == J_once["bh"] and all(J3["sayim"][k] == J_once["sayim"][k] for k in YH.YH_DENEMELER) and "bh_tur2" in J3)
+    kontrol("2. tur: RAPOR.md değişmedi, RAPOR_2.md başlıkları", open(os.path.join(cikti, "RAPOR.md"), "rb").read() == rapor1
+            and all(x in R2["rapor"] for x in ("SONUÇ", "HUNİ", "HÜCRE TABLOSU", "OLASILIK TABLOSU", "E5b", "YENİDEN ÜRETİM", "KONTROL LİSTESİ")))
+    kontrol("2. tur: huni taban aşaması = 1. tur Y1 / Y3 girdisi", all(J3["huni"][p]["Y6"]["asama"][0]["sinyal"] == J3["sayim"]["Y1"][p]["girdi"]
+                                                                        and J3["huni"][p]["Y7"]["asama"][0]["sinyal"] == J3["sayim"]["Y3"][p]["girdi"] for p in J3["huni"]))
+    pz6 = {h["pazar"] for h in J3["deneme"]["Y6"]["hucre"] if h.get("n_ham", 0) > 0}
+    kontrol("2. tur: stop_uzak sayımı olay olan her pazarda", all("stop_uzak" in J3["sayim"]["Y6"][p] for p in pz6), (pz6, J3["sayim"]["Y6"]))
+    try:
+        YH.yh_kos(["Y7"], cikti, veri, git=False); kontrol("2. tur: ikinci koşu durur", False)
+    except YH.YHHata:
+        kontrol("2. tur: ikinci koşu durur", True)
+    open(yo2, "w", encoding="utf-8").write(m2.replace(f"ESIK_TUR1_SHA: `{t1}`", "ESIK_TUR1_SHA: `" + "1" * 64 + "`"))
+    try:
+        YH.yh_kapi(cikti, git=False, tur=2); kontrol("2. tur: Y1-Y5 mührü tutmazsa kapı durur", False)
+    except YH.YHHata:
+        kontrol("2. tur: Y1-Y5 mührü tutmazsa kapı durur", True)
 finally:
     YH.YH_YOL.clear(); YH.YH_YOL.update(yol_eski)
     shutil.rmtree(tmp, ignore_errors=True)
@@ -369,6 +410,136 @@ try:
     kontrol("çakışma kapısı: aynı dosya yeniden yüklenince durmaz", True)
 except RuntimeError:
     kontrol("çakışma kapısı: aynı dosya yeniden yüklenince durmaz", False)
+
+print("11) 2. tur şartları")
+n_, ok_ = YH.yh_dokunus(np.array([10.0, 10.1, 12.0, 10.05, 11.0]), 10.0, 0.015, 0.99)
+kontrol("dokunuş: Low <= hat x 1,015 sayımı (3), eğim tuttu", n_ == 3 and ok_)
+n_, ok_ = YH.yh_dokunus(np.array([10.14, 10.1, 10.0]), 10.0, 0.015, 0.99)
+kontrol("dokunuş: alçalan dokunuş (son < ilk x 0,99) -> eğim tutmaz", n_ == 3 and not ok_)
+kontrol("dokunuş: 2 dokunuş", YH.yh_dokunus(np.array([10.0, 11, 12, 10.1]), 10.0, 0.015, 0.99)[0] == 2)
+yuk = np.repeat(np.linspace(80, 100, 10), 25); dus = np.repeat(np.linspace(100, 80, 10), 25)
+kontrol("büyük desen: yükselen dipler eğim > 0, alçalan -%20", YH.yh_buyuk_egim(yuk, 25) > 0.2 and abs(YH.yh_buyuk_egim(dus, 25) + 0.2) < 1e-9)
+kontrol("büyük desen: eksik / bölünmeyen uzunluk -> -inf", YH.yh_buyuk_egim(yuk[:-1], 25) == -np.inf)
+kontrol("büyük desen: eşik -0,05 sınırı", YH.yh_buyuk_egim(np.repeat(np.linspace(100, 95, 10), 25), 25) >= -0.05 - 1e-12
+        and YH.yh_buyuk_egim(np.repeat(np.linspace(100, 94.9, 10), 25), 25) < -0.05)
+U = np.r_[np.full(10, 70.0), np.full(10, 60.0), np.full(10, 66.0)]
+kontrol("iki kenar: U (70 / 60 / 66) tutar", YH.yh_iki_kenar(U, 1.05)[0])
+kontrol("iki kenar: sağ kenar dipte (62) tutmaz", not YH.yh_iki_kenar(np.r_[np.full(10, 70.0), np.full(10, 60.0), np.full(10, 62.0)], 1.05)[0])
+kontrol("iki kenar: orta = W[n//3 : 2n//3]", YH.yh_iki_kenar(np.r_[np.full(10, 70.0), np.full(10, 60.0), np.full(11, 66.0)], 1.05)[2] == 60.0)
+
+# Y6 bayrakları elle (rastgele seriler; Y1 sinyallerinin hepsi)
+okb = True; n6 = 0; nf = {c: 0 for c in ("f_hat", "f_kir", "f_stop", "f_buyuk")}; nk = 0
+for toh in (11, 21, 31, 41, 51, 61, 71, 81):
+    dx = rastgele_hisse(1200, toh, oyn=0.012)
+    F = YH.yh_y6_bayrak(dx); X1_, _ = YH.yh_s6_hisse(dx)
+    okb &= len(F) == len(X1_) and (pd.to_datetime(F.tarih).values == pd.to_datetime(X1_.tarih).values).all()
+    dd_ = SY.sy_veri_hazirla(dx, SY.SY_ESIK); T_ = S6.s6_taban(dd_); Lx, Hx, Cx = dd_.Low.to_numpy(), dd_.High.to_numpy(), dd_.Close.to_numpy()
+    du_ = T_.durum.to_numpy(object)
+    for rr in F.itertuples():
+        i = dd_.index.get_loc(pd.Timestamp(rr.tarih)); n6 += 1
+        sol = int(T_.kutu_sol_i.iloc[i]) if du_[i] == "AL" else int(T_.bas_i.iloc[i - 1])
+        Lz = Lx[sol:i]; tch = np.flatnonzero(Lz <= rr.hat * 1.015)
+        a_ = len(tch) >= 3 and Lz[tch[-1]] >= Lz[tch[0]] * 0.99
+        b_ = Cx[i] > rr.tavan * 1.01 and (Hx[i] - Lx[i]) >= np.median(Hx[sol:i] - Lx[sol:i])
+        c_ = Cx[i] / rr.hat - 1 <= 0.10
+        if i >= 250:
+            mm = Lx[i - 250:i].reshape(10, 25).min(1); bb, aa = np.polyfit(np.arange(10.0), mm, 1); d_ = (aa + 9 * bb) / aa - 1 >= -0.05
+        else:
+            d_ = True
+        k_ = sum(1 for a in range(i - 250, i) if a >= 0 and du_[a] == "KIRILDI")
+        okb &= (bool(a_), bool(b_), bool(c_), bool(d_), k_) == (bool(rr.f_hat), bool(rr.f_kir), bool(rr.f_stop), bool(rr.f_buyuk), int(rr.kir250))
+        for c, v in (("f_hat", a_), ("f_kir", b_), ("f_stop", c_), ("f_buyuk", d_)):
+            nf[c] += int(bool(v))
+        nk += int(k_ > 0)
+    Y6_ = YH.yh_hisse_sinyal(dx, "Y6"); Y8_ = YH.yh_hisse_sinyal(dx, "Y8"); Y8B_ = YH.yh_hisse_sinyal(dx, "Y8B")
+    okb &= len(Y8_) + len(Y8B_) == len(Y6_) and set(pd.to_datetime(Y6_.tarih)) <= set(pd.to_datetime(X1_.tarih))
+kontrol("Y6 bayrakları elle = kod (bölge, dokunuş, kırılım payı + mum, stop, büyük desen, kir250); Y8 + Y8B = Y6", okb and n6 > 20, (n6, nf, nk))
+kontrol("Y6 şartları sentetikte iki yönlü (her bayrak hem tutuyor hem tutmuyor)", all(0 < v < n6 for v in nf.values()), nf)
+
+# Y7 bayrakları elle (kazan serisi + rastgele)
+okk = True; n7 = 0
+for dx in [d3] + [rastgele_hisse(900, t, oyn=0.02) for t in (41, 51)]:
+    F = YH.yh_y7_bayrak(dx); X3_ = YH.yh_y3_hisse(dx)
+    okk &= len(F) == len(X3_)
+    dd_ = SY.sy_veri_hazirla(dx, SY.SY_ESIK); Lx, Hx, Cx = dd_.Low.to_numpy(), dd_.High.to_numpy(), dd_.Close.to_numpy()
+    Cp = np.r_[np.nan, Cx[:-1]]; trp = (np.fmax(Hx, Cp) - np.fmin(Lx, Cp)) / Cp
+    for rr in F.itertuples():
+        i = dd_.index.get_loc(pd.Timestamp(rr.tarih)); n = int(rr.n); W = slice(i - n, i); n7 += 1
+        Lw = Lx[W]; a3, b3 = n // 3, 2 * n // 3
+        ke = Lw[:a3].min() >= Lw[a3:b3].min() * 1.05 and Lw[b3:].min() >= Lw[a3:b3].min() * 1.05
+        cnt = min(250, i - n - 1); atr = trp[i - n - cnt:i - n].mean() if cnt >= 120 else np.nan
+        mu = np.isfinite(atr) and np.median(((Hx - Lx) / Cx)[i - n + a3:i - n + b3]) <= 0.9 * atr
+        dk = (Lw <= rr.hat * 1.015).sum() >= 3
+        st = Cx[i] / rr.hat - 1 <= 0.10
+        okk &= (bool(ke), bool(mu), bool(dk), bool(st)) == (bool(rr.f_kenar), bool(rr.f_mum), bool(rr.f_dok), bool(rr.f_stop))
+kontrol("Y7 bayrakları elle = kod (iki kenar, orta üçte bir mum / ATR, dip savunması, stop)", okk and n7 > 0, n7)
+F3o = YH.yh_y7_bayrak(d3)
+if len(F3o):
+    n3_ = int(F3o.n.iloc[-1]); Lw3 = d3.Low.to_numpy()[-1 - n3_:-1]; k3 = YH.yh_iki_kenar(Lw3, 1.05)
+kontrol("Y7: kazan serisinde (sağ kenar orta dibin yalnız %0,9 üstü) iki kenar TUTMAZ, ek sütunu yardımcıyla aynı",
+        len(F3o) and not bool(F3o.f_kenar.iloc[-1]) and f"kenar={k3[1] / k3[2] - 1:.3f}/{k3[3] / k3[2] - 1:.3f}" in F3o.ek.iloc[-1], F3o.tail(1).ek.tolist() if len(F3o) else "yok")
+
+# Y8 hafızası: elle kurulmuş KIRILDI
+okh8 = True
+for toh in (11, 21, 31):
+    dx = rastgele_hisse(900, toh, oyn=0.012); F = YH.yh_y6_bayrak(dx)
+    Y6_ = YH.yh_tur2_sec(F, "Y6"); Y8_ = YH.yh_tur2_sec(F, "Y8"); Y8B_ = YH.yh_tur2_sec(F, "Y8B")
+    okh8 &= (Y8_.kir250 == 0).all() and (Y8B_.kir250 > 0).all() and len(Y8_) + len(Y8B_) == len(Y6_)
+kontrol("Y8 = Y6 ve kir250 = 0; Y8B = Y6 ve kir250 > 0", okh8)
+
+# geleceğe bakma: bayraklı çerçeve (bütün Y1 / Y3 sinyalleri + bayraklar) kesik seri = tam seri
+for ad, f, kol in (("Y6 bayrak", YH.yh_y6_bayrak, ["f_hat", "f_kir", "f_stop", "f_buyuk", "kir250", "dokunus"]),
+                   ("Y7 bayrak", YH.yh_y7_bayrak, ["f_kenar", "f_mum", "f_dok", "f_stop", "dokunus"])):
+    tamam = True; say_ = 0
+    for toh in (3, 5, 8):
+        dx = rastgele_hisse(700, toh, oyn=0.015)
+        Full = f(dx); Full["tarih"] = pd.to_datetime(Full.tarih)
+        kes = sorted(set(list(Full.tarih[::2])[:10]) | set(dx.index[[300, 555, 699]]))
+        for t in kes:
+            Z_ = f(dx[dx.index <= t]); Z_["tarih"] = pd.to_datetime(Z_.tarih)
+            A = Full[Full.tarih <= t].reset_index(drop=True); B = Z_.reset_index(drop=True)
+            if len(A) != len(B) or not ((A.tarih == B.tarih).all() and all((A[c].astype(float).to_numpy() == B[c].astype(float).to_numpy()).all() for c in kol)
+                                         and np.allclose(A.stop0.to_numpy(float), B.stop0.to_numpy(float), rtol=0, atol=1e-9)):
+                tamam = False
+            say_ += 1
+    kontrol(f"{ad}: {say_} kesimde kesik = tam (tarih, stop0, bayraklar)", tamam)
+for ad in ("Y6", "Y7", "Y8", "Y8B"):
+    tamam = True
+    for toh in (3, 5):
+        dx = rastgele_hisse(700, toh, oyn=0.015); Full = YH.yh_hisse_sinyal(dx, ad); Full["tarih"] = pd.to_datetime(Full.tarih)
+        for t in sorted(set(Full.tarih) | set(dx.index[[400, 699]])):
+            Z_ = YH.yh_hisse_sinyal(dx[dx.index <= t], ad)
+            tamam &= len(Z_) == int((Full.tarih <= t).sum())
+    kontrol(f"{ad}: yh_hisse_sinyal kesik = tam", tamam)
+
+# 1. tur mührü
+y1 = YH._yh_yol("onkayit")
+if os.path.exists(y1):
+    import re as _re
+    m_ = _re.search(r"YH_ESIK_SHA:\s*`([0-9a-f]{64})`", open(y1, encoding="utf-8").read())
+    gj = json.load(open(YH._yh_yol("guc_json"), encoding="utf-8"))
+    kontrol("ESIK_TUR1_SHA = ON_KAYIT.md YH_ESIK_SHA = güç tablosu (Y1-Y5 eşikleri aynen)", m_ and m_.group(1) == YH.yh_esik_sha_tur1() == gj["yh_esik_sha"])
+kontrol("2. tur denemeleri YH_ESIK'te, Y1-Y5 dizini aynı", all(k in YH.YH_ESIK["denemeler"] for k in YH.YH_DENEMELER_2)
+        and [YH.YH_DENEMELER_HEPSI.index(k) for k in YH.YH_DENEMELER] == [0, 1, 2, 3, 4])
+
+# E5a stop_uzak ve E5b bilgi (bölüm 6'nın sentetik paneli)
+sig3 = sig.copy(); sig3["hat"] = [Vs["S03"].Open.iloc[201] / 1.2, Vs["S07"].Open.iloc[251] / 1.05]; sig3["stop0"] = sig3.hat * 0.98
+Z6, say6 = YH.yh_olc_pazar(Vd, P, Cl, sig3, "Y6", "ABD")
+kontrol("E5a: giriş / hat - 1 > %10 olay ölçülmez, stop_uzak sayımında", say6.get("stop_uzak") == 1 and len(Z6) == 1 and Z6.sembol.iloc[0] == "S07", say6)
+Zb = YH.yh_e5b_olc(P, Cl, Z6)
+r6 = Zb.iloc[0]; d6, j6 = int(r6.d), int(r6.j); st_b = max(r6.hat * 0.98, r6.E0 * 0.95)
+Sb = YH.yh_sim(YH._yh_pencere(Cl, d6, 30, np.array([j6])), YH._yh_pencere(P["Hi"], d6, 30, np.array([j6])), YH._yh_pencere(P["Lo"], d6, 30, np.array([j6])),
+               np.array([r6.E0]), np.array([st_b]), 1)
+esb = [k for k in range(len(P["sembol"])) if k != j6 and P["ok"][d6, k] and P["H"][d6, k] == P["H"][d6, j6]]
+vb = []
+for k in esb:
+    S_ = YH.yh_sim(YH._yh_pencere(Cl, d6, 30, np.array([k])), YH._yh_pencere(P["Hi"], d6, 30, np.array([k])), YH._yh_pencere(P["Lo"], d6, 30, np.array([k])),
+                   np.array([P["Op"][d6, k]]), np.array([P["Op"][d6, k] * (1 - r6.b_dd)]), 1)
+    if S_["olc"][0]:
+        vb.append(S_["st5"][0])
+kontrol("E5b: stop0b = max(hat x 0,98, giriş x 0,95); olay ve eş elle = kod", abs(r6.b_dd - (1 - st_b / r6.E0)) < 1e-12 and Sb["h5"][0] == r6.b_h5
+        and len(vb) == int(r6.b_n_es) and (abs(np.mean(vb) - r6.b_es_st5) < 1e-12 if len(vb) >= 3 else np.isnan(r6.b_es_st5)), (r6.b_dd, len(vb)))
+kontrol("E5b: 1. tur ölçümü (yh_olay_olc) b_ sütunu üretmez", "b_h5" not in Z.columns)
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
