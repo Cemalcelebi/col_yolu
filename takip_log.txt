@@ -76,3 +76,5 @@
 2026-11-11 23:01 INFO gun 2026-11-11 aday 6 poz 3 kapanan 14 cds_pct 0.84
 2026-11-12 22:28 INFO gun 2026-11-12 aday 6 poz 3 kapanan 14 cds_pct 0.84
 2026-11-13 22:09 INFO gun 2026-11-13 aday 7 poz 3 kapanan 14 cds_pct 0.84
+2026-11-17 00:28 INFO AL METRO @9.05 poz%12.0 carpan={'cds': 1.5, 'borc': 1.5, 'doji': 1.0, 'fitil': 1.0, 'dar': 1.0, 'kural': 1.0, 'likit': 1.0}
+2026-11-17 00:28 INFO gun 2026-11-16 aday 7 poz 4 kapanan 14 cds_pct 0.84
