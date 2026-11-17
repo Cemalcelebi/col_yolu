@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 16 (hepsi SINANMADI; toplam 156; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 17 (hepsi SINANMADI; toplam 157; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -239,6 +239,7 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K14 | Geri test hedefi büyütür (asıl giriş retest; iki kutu 2. giriş) | No 15 (tek E TAM sayfası) | Hayır | SINANMADI | A4 / B3 ile aynı; ölçülmedi | COL_v1 yorumu, şart yok | AÇIK: A4 ile birleşir |
 | K15 | UFUK 15 MUM: kodun gördüğü yapılar en fazla 15 mumun geleceğini gösterir; 60 gün ölçüsünde rolleri yok. Eski 20-60 mumlu büyük çöller fon iziydi; gerçek hissede küçük yapılar, hedef <= 15 mum | 17 Kas akşam ('bunu kaydet'), CLAUDE.md UFUK 15 MUM | Hayır | SINANMADI | Yapı kuralları 15 barla hiç ölçülmedi; Ç187 / Ç189 60 günlüktü | ORTAK_CETVEL ufuk 60 sabit (15 parametresi yok) | AÇIK: cetvele ufuk 15 eklenir, Ç187 / Ç189 / S5 / S6 yeniden ölçülür |
 | K16 | Büyük çöl (TEHOL / BINBN / KETLV, 20-60 mum, çok katlı hedef) gerçekti ama yalnız fon gibi satmayan alıcı grupları girince oluşur (manipülasyon); o dönem kapandı, tekrarı neredeyse imkânsız (müdahale). Büyük çöl aranmaz; küçük yapı + 15 mum hedefi aranır | 17 Kas akşam | Dolaylı (K12 FON_IZI fon lekesi; Ç147 kripto) | SINANMADI | Tez; fon alıcılı yapı sınıfı ayrı etiketle not edilir, giriş kuralı olmaz | FON_IZI K12 (fon izi), COL_v1 fon süzgeci | KAPALI DÖNEM (tez kaydı) |
+| K17 | SON DERS: fon çöllerinden öğrenilen kurallar gerçek ve bugün geçerli (alt fitili az mumlar + dip savunması = yukarı, tersi aşağı) ama etkisi kısa; hedef %5-10 tutulur; eski çöle benzer yapı oluşursa manipülasyon; kurum girişinde benzer yapı en fazla 3-5 günlük | 17 Kas akşam ('kaydet, artık bu kural geçerli') | Hayır (15 bar / %5-10 ölçüsüyle hiç ölçülmedi) | SINANMADI | Ç187 / Ç189 60 günle ölçüldü; şekil + savunma + kısa hedef birlikte sınanmadı | FITIL_V2 s1 + s2 (şekil + hat) var; hedef / ufuk yok | AÇIK: 15 bar + %5 / %10 ölçüsüyle ilk koşu |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 

@@ -68,6 +68,11 @@ Her ders: KURAL · Cemal'in sözü · grafikte nasıl görünür · kodda var m�
 - Kodda: ORTAK_CETVEL ufuk 60 sabit; 15 bar ufuk parametresi eklenecek (ayrı iş; ön kayıt).
 - Ek (Cemal): 'TEHOL, BINBN, KETLV hedef formasyonları gerçekmiş; ama onlar ancak fon gibi devamlı alıp satmayan alıcı grupları girince oluşur; manipülasyon vardı, herkes girdi satmadı, geleceğini biliyorlardı. Gördüklerim doğru ama artık geride kaldı; benzer grupların girişi zor, manipülasyon var diye hemen müdahale gelir; o oluşumlar gerçek ama bir daha oluşmaları imkânsız gibi.' Sonuç: büyük çöl sınıfı (fon alıcılı, çok katlı hedef) kapalı dönem olarak kaydedildi; tarayıcı küçük yapı + 15 mum hedefi arar.
 
+### D1c. SON DERS (Cemal, 17 Kas akşam, 'kaydet, artık bu kural geçerli')
+- Söz: 'o fon alım formasyonlarında dersler öğrendik: dip oluşumu, mum fitili altta az ise, dip savunması varsa yön yukarı; tersi ise aşağı. O eski fon çöllerindeki kurallar gerçek, onlar şimdi de var ama etkileri kısa süreliğine; çünkü oradaki gibi grup alımı ve sonucu bilen kişiler yoksa formasyon hedefleri yüzde 5-10'da tutulmalı. Eski çöl oluşumuna benzer yapılar zor oluşur; oluşursa bil ki manipülasyon var (sosyal medya grubu girmiş diye sonuç çıkarılır). Büyük kurumlar büyük ihtimale girince benzer yapılar oluşur ancak en fazla 3-5 günlük oluşumlar bunlar.'
+- Kural: S+ şekli (alt fitil az) + dip savunması = yukarı, S- + savunma kırık = aşağı: GEÇERLİ; hedef %5-10; ufuk 15 mum; yapı 3-5 gün kadar kısa olabilir (yapı boyu alt sınırı D7 ile çelişmez: D7 'küçücük yapı güven vermez' uzun düşüş sonrası taban için; kurum girişli 3-5 günlük yapı ayrı sınıf, hedef yine %5-10).
+- Kodda: FITIL_OBEK / FITIL_V2 şekil tanımı var; hedef / ufuk 60 gün (yanlış); 15 bar + %5 / %10 ölçüsü eklenecek. Uzun çöl (büyük hedef) etiketi kapalı; görülürse 'MANİPÜLASYON ŞÜPHESİ' etiketi (sinyal değil).
+
 ### D2. İKİ SAVUNMA, İKİ YÖN: düz taban (alt savunma) yukarı formasyondur, düz tavan (üst savunma) aşağı formasyondur
 - Söz (No 4, 6, 8, 14, 20, 23): 'üst siyah çizgiler üst savunması, alttakiler alt taban savunması; formasyonlar hedefe gitmiş'; 'SAT' (No 20, düz tavandan kopuş); '2'nin hedefi 3 seviyesi' (No 23).
 - Görünüm: toparlanma sonrası aynı seviyede 10-30 mum düz tepe (şemsiye) -> kopuş mumu aşağı; hedef önceki dip. Düz taban -> kırılım yukarı; hedef önceki tepe (arada başka formasyon yoksa, No 9).
