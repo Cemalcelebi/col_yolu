@@ -1,19 +1,20 @@
 # CEMAL'İN KURAL DEFTERİ — TASLAK (17 Kasım 2026)
 
-Kaynak: IZ_DEFTERI.md (0. İNDEKS, A-E), IZ_KARNE.py (IK_KAYIT Ç1-Ç188, IK_GOREV 159 satır, IK_HATA 221 satır, IK_ILERI 22 satır, IK_KONTROL 14 madde, IK_ACIK 43 madde), COL_OZET.md, ONERI_DEFTERI.md, CLAUDE.md, arastirma_cikti/sikisma_obek/CEMAL_COL_KURALLARI.md, arastirma_cikti/fitil_v2/FITIL_V2_IS_TANIMI.md (+ TASARIM.md), arastirma_cikti/fitil_obek/HALKA_RAPOR.md, arastirma_cikti/iz_karne/karne.csv. Ham sohbet repoda yok; kurallar defterdeki aktarımdan alındı. Taslaktır; defter dosyalarına işlenmedi (yalnız ana model işler).
+Kaynak: arastirma_cikti/kural_defteri/DEVIR_NOTU_2026-11-17.md (J grubu), IZ_DEFTERI.md (0. İNDEKS, A-E), IZ_KARNE.py (IK_KAYIT Ç1-Ç188, IK_GOREV 159 satır, IK_HATA 221 satır, IK_ILERI 22 satır, IK_KONTROL 14 madde, IK_ACIK 43 madde), COL_OZET.md, ONERI_DEFTERI.md, CLAUDE.md, arastirma_cikti/sikisma_obek/CEMAL_COL_KURALLARI.md, arastirma_cikti/fitil_v2/FITIL_V2_IS_TANIMI.md (+ TASARIM.md), arastirma_cikti/fitil_obek/HALKA_RAPOR.md, arastirma_cikti/iz_karne/karne.csv. Ham sohbet repoda yok; kurallar defterdeki aktarımdan alındı. Taslaktır; defter dosyalarına işlenmedi (yalnız ana model işler).
 
 Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrulandı) · TUTMADI (güç yeterli ya da önceden yazılı ölçütle ayrışmadı / ters) · TUTMADI* (eski 'İZ DEĞİL'; K58'e göre n < 1.000 hücrelerde aslında ÖLÇÜLEMEDİ sayılır, IK_ILERI 'Ç100-Ç151' satırı) · ÖLÇÜLEMEDİ (n ya da güç yetersiz) · EMARE (tek pazar / tek olay) · SINANMADI (ölçüm yok ya da yalnız tasarım / süreç kuralı). Kodda: YOK = hiçbir modülde şart olarak yok.
 
 ## 1. ÖZET
 
-- Kural sayısı: 121 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9). Bunların 98'i piyasa / işlem kuralı ya da tezi (A-G, I), 23'ü süreç kuralı ya da Cemal'in yönteme itirazı (H).
-- Sınanan: 82 / 121 (sınanmayan 39; 12'si sınanmayacak süreç kuralı).
-- Sonuç, bütün tablo: TUTTU 16 · TUTMADI 47 (36 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 16 · EMARE 3 · SINANMADI 39.
-- Yalnız piyasa / işlem kuralları ve tezler (98): TUTTU 6 · TUTMADI 46 (35 + 11*) · ÖLÇÜLEMEDİ 16 · EMARE 3 · SINANMADI 27.
-- Piyasada TUTAN 6 kuralın hiçbiri getiri izi değil: A9 net değişim sınırı (etiket uyumu), B13 'yükselişte almak zarar ettirmez' (piyasayı geçmiyor), G2 olaysız ekleme yok, G6 boyut öldürür, G7 BIST'te fiyat stopu çalışmaz (eski cetvel), I5 fon krizi kesiği.
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
+- Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
+- Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
+- Piyasada TUTAN 7 kuralın hiçbiri getiri izi değil: A9 net değişim sınırı (etiket uyumu), B13 'yükselişte almak zarar ettirmez' (piyasayı geçmiyor), G2 olaysız ekleme yok, G6 boyut öldürür, G7 BIST'te fiyat stopu çalışmaz (eski cetvel), I5 fon krizi kesiği, J14 'şekil tek başına yazı-tura'.
+- Devir notu (J, 19 madde): 4 TUTMADI (birleşik imza, uzun çöl, bitişteki küçük mumlar, AL kuralı), 1 ÖLÇÜLEMEDİ (doji 'en kritik özellik': doji kutusu n < 1.000, col_ogren'de ayırmadı), 1 TUTTU (732 kırılım yazı-tura; sayı repoda yok, yön repo ölçümleriyle aynı), 13 SINANMADI. Kodda olmayan 5: dev mum şartı (J4), 'azıcık çıkıp dönmek' (J6), kutu 1 SMA200 (J13), J14 (bulgu), J19 (iletişim). İki madde mevcut kurallarla çelişiyor: 'eğim gürültü' (J10, A9 / S6 netMax ile ters), 'yatırım tavsiyesi değildir yazılmaz' (J19, CLAUDE.md dürüstlük kuralıyla ters).
 - EMARE 3: A11 S5 DİP öbek sıkışması (ABD büyük gün 1,14-1,17 kat, yön yok), D2 sektör rüzgârı (ABD +%2,8 / +%3,6, portföy şartı düştü), F12 çöküş sonrası KAP geri alım (tek olay, q 0,003).
 - H grubunda Cemal'in yönteme itirazlarından 10'u TUTTU (H4-H8, H15, H19-H21, H23): rastgele kıyas yoktu, eski kodlarda ~30 hata vardı, batanlar dışarıdaydı, kör set grafikleri okunmuyordu, 'iz değil'lerin çoğu ölçülemedi, sıkışma tanımı rastgeleydi, fotoğraftan tarih yanlıştı.
-- Kodda olmayan kural: 36 / 121. Bunların 13'ü ölçülüp tutmadığı için üretim şartı olarak önerilmez (A15, B4, B5, B6, B11, C8, D3, D4, D5, D6, D9, E3, E10); kalan 23 için bölüm 4b'de tek satırlık şart ya da ölçüm önerisi var (çoğu boyut / çıkış kuralı: C4-C7, G1-G5, G9).
+- Kodda olmayan kural: 41 / 140. Bunların 13'ü ölçülüp tutmadığı için üretim şartı olarak önerilmez (A15, B4, B5, B6, B11, C8, D3, D4, D5, D6, D9, E3, E10); kalan 28 için bölüm 4b'de tek satırlık şart ya da ölçüm önerisi var (çoğu boyut / çıkış kuralı: C4-C7, G1-G5, G9; devir notundan J4 dev mum, J6, J7 doji sütunu, J13).
 - İleri testi takvimde olan: Mart 2027 (A1, A4, A5, A11, A14, A19, A21, B12, B15, D1, D2, E1, E2, E9, E11, I4), Haziran 2027 (F10, F11), Kasım 2027 (I3), Ocak 2027 (I2 60 gün karne).
 
 En çok tekrar eden 5 ders (IK_HATA 221 satır; tür sayımı: ölçüt 49, veri 40, süreç 35, hesap 31, yanlış yorum 20, iletişim 20, geleceğe bakma 14, karar-boyut 6, ayrıştırma 6):
@@ -192,6 +193,30 @@ Ayrıca sık: Cemal'in gözündeki bölge ile kod tanımının ayrışması (H18
 | I8 | Kripto +%100 günü önceden tespit edilir (RITUAL) | 8 Kas, Ç147 | Ç147 | TUTMADI | +%100 günü ancak 1 gün önce < %1 olasılıkla seçilebiliyor; sonrası 30 gün medyan -%49 | arastirma_cikti/kripto_yukselis | KAPALI (Cemal 9 Kas: kripto kapandı) |
 | I9 | Tipik dönüş noktası makineye öğretilebilir | 28 Eki, Ç125, Ç127 | Ç125 K46, Ç127 | TUTMADI* | Makine öğreniyor (AUC 0,6-0,7) ama üst %5 sinyal 2023'te eşik altı; portföyde avantaj kayboluyor | FON_IZI k46 | KAPALI |
 
+### J. Devir notu (Cemal'in başka bir Claude oturumundan getirdiği 'KOD DEVİR NOTU'; kaynak: DEVIR_NOTU_2026-11-17.md, eski oturum, tarihi yazılı değil)
+
+| No | Kural (Cemal'in sözü, kısa) | Kaynak (tarih, Ç / görev) | Sınandı mı (Ç no, cetvel) | Sonuç | Neden (bir cümle) | Kodda (modül.şart) | Durum |
+|---|---|---|---|---|---|---|---|
+| J1 | Çöl swing tepesinden türetilmez; tek mumun H / L'i ile bant kurulmaz | Devir notu 17 Kas; eski oturum (§3) | Yok (tanım) | SINANMADI | Repodaki tanımlar zaten çok mumlu bant kullanıyor (S6 sınırı mumlardan, A6 / A8) | S6_TABAN bant (bölgedeki bütün mumlardan) | KAPALI (tanım) |
+| J2 | Sabit % eşik yanlış; eşikler hisse başına (ATR / kendi oynaklığı) | Devir notu 17 Kas (§3) | Yok | SINANMADI | Küçük mum ATR250'ye göre ölçülüyor; ama bant (0,12), net değişim (0,03), AL payı (1,002) ve tavan %9,5 sabit yüzde | S6_TABAN kM x ATR250 (kısmen); bantMax / netMax / COL_v1.AL_PAY sabit % | AÇIK |
+| J3 | Tek özelliğe bakılmaz: bölge, dip, Bollinger, küçük mum, doji, birikim izi, hacim kuruması BİRLİKTE | Devir notu 17 Kas (§3) | Ç41 D12 (4 imzadan ≥ 3), Ç58 SESSIZ_ML, Ç128 K48 (204 ölçü) | TUTMADI | Birleşik imza (D12) 6 dönemin 3'ünde tabandan iyi; çok ölçülü makine bağımsız testte ek katkı vermedi | COL_v1.col_dip (D12 imza, üretimde değil); S6 birleşik şart | KAPALI |
+| J4 | Peş peşe büyük mumla bölgeden çıkılıyorsa çöl değil; BIST 'dev mum' (~%10) çöl içinde ASLA sayılmaz | Devir notu 17 Kas (§4) | Yok | SINANMADI | Açık şart yok; S6 küçük mum ve bant şartı dev mumu yalnız dolaylı dışlıyor (ana model notu) | YOK (dolaylı: S6 kM, bantMax) | AÇIK |
+| J5 | İniş mumları (bölgeye giren büyük mumlar) çöle dahil edilmez | Devir notu 17 Kas (§4); repoda aynı itiraz 21 Eki (OYLUM / EUYO, H39) | Getiride ayrı ölçüm yok; A16 (D13 kutu yeni dipten) Ç47 | SINANMADI | Kod buna göre düzeltildi (D13 kutusu dipten başlar; S6 geriye uzatmada bant dışı iniş mumları alınmaz), ayrı ölçülmedi | COL_v1.col_dip2 (d = son 120 bar dibi); S6_TABAN refOnce / bant | KAPALI (tanım) |
+| J6 | Bölgeden azıcık çıkıp dönmek olur; uzağa çıkıp dönmek çöl değil | Devir notu 17 Kas (§4) | Yok | SINANMADI | 'Azıcık' ve 'uzak' sayısı tanımlı değil; S6'da bant toleransı girdi olarak var ama ayrı kural yok | YOK (dolaylı: S6 dipTol 0,05, kirTol 0,02) | AÇIK |
+| J7 | EN KRİTİK ÖZELLİK doji: dipteki kutuda 3-5 doji bile birikim / sıkışma işaretidir | Devir notu 17 Kas (§4); Eylül doji çarpanı; A13 DOJI_KUTU 19 Eki | Ç38 (koruma), Ç39 (yukarı, 0,90-1,02), col_ogren 9 Eki (doji çekirdeği), COL_OZET §3 (eski cetvel monoton) | ÖLÇÜLEMEDİ | Tek cetvelde doji kutusu yukarı hareketi artırmadı ama n < 1.000 (H165 listesi); col_ogren'de 5-8 doji ayırmadı; eşli / ortak cetvelde yeniden ölçülmedi | COL_v1 CARPAN doji (boyut) ve col_dip IMZA_DOJI (D12); üretim col_dip2 ve S6'da YOK | AÇIK |
+| J8 | Çöl bir yıla kadar uzar, genişler, içinde sert silkelemeler olur | Devir notu 17 Kas (§4) | Ç181a D9 (6-12 ay, ORTAK CETVEL) | TUTMADI | Uzun dar bant eşlerden iyi değil (dört hücre TUTMADI, +%100 katı 0,40); S6 nMax 70 bir yılı kapsamıyor | COL_v1.uzun_col_olc; S6 nMax 70 | İLERİ TEST Mart 2027 |
+| J9 | Bitişte çok küçük mumlar (3 ya da 7-8 adet) görülebilir (esnek, zorunlu değil) | Devir notu 17 Kas (§4) | Ç49 MUM_SUKUN v1.1 (son 3-4 mum küçülmesi) | TUTMADI | Son 3-4 mumun küçülmesi tek cetvelde 0,96-1,04 | MUM_SUKUN.py; üretimde YOK | KAPALI |
+| J10 | Eğim / 'kanama' gürültüdür | Devir notu 17 Kas (§4) | A9 etiketleri (15 Kas) | SINANMADI | Sonraki etiketlerde Cemal eğimli pencereyi YANLIŞ dedi (net %8-10); kod net değişim sınırı koyuyor: bu madde A9 ile çelişiyor (bölüm 5) | S6_TABAN netMax 0,03 (tersi yönde) | AÇIK (Cemal kararı) |
+| J11 | AL kuralı: dünkü aday + kapanış > tavan x 1,002; kapanışla kırılım high'dan güvenilir | Devir notu 17 Kas (§2, §4) | Ç91 K19 (kırılım girişi aynı gün eşli) | TUTMADI | Kırılım girişi rastgele hisseden iyi değil; high ile kapanış kırılımı ayrıca kıyaslanmadı | COL_v1.AL_PAY 1,002 (bugun_liste, kapanış) | KAPALI (giriş zamanlaması kapalı konu) |
+| J12 | Segmentin en düşük dibi kırılırsa segment oradan yeniden hesaplanır | Devir notu 17 Kas (§4) | Yok (getiri) | SINANMADI | Tanım kodda var (yeni dip yeni kutu); sonucu ayrıca ölçülmedi | COL_v1.col_dip2 (d = son 120 bar dibi); S6_TABAN KIRILDI → yeni kutu | KAPALI (tanım) |
+| J13 | İki kutu: kutu 1 = çöl (SMA200 civarı iyi), kutu 2 = raf | Devir notu 17 Kas (§4); CLAUDE.md iki kutu | Yok (SMA200 kısmı) | SINANMADI | Üç faz / iki kutu A4 / B3'te; 'SMA200 civarı' şartı hiç ölçülmedi | YOK | AÇIK |
+| J14 | Daha önce 732 kırılımda çöl şekli tek başına yazı-tura çıktı (%36 yukarı, %32 aşağı); şekil tek başına yetmez | Devir notu 17 Kas (§4); kaynak yok (bu sayı repoda yok) | Aynı yönlü repo ölçümleri: COL_OZET §3 zıpla-düş ~%27, Ç91-Ç94, Ç96 / Ç178 | TUTTU | Repodaki bütün şekil / kırılım ölçümleri de eşlerden ayrışmıyor | YOK (bulgu, şart değil) | KAPALI |
+| J15 | ABD hissesinde önce sermaye yapısı kontrolü | Devir notu 17 Kas (§5) | Ç155 K60-B kırmızı bayraklar (bilgi düzeyi) | SINANMADI | Kontrol DOSYA kapısında uygulanıyor (seyrelme, raf kaydı, ters bölünme bayrakları); kuralın kendisi bir sonuç ölçüsü değil | oneri tarama / DOSYA kapısı; K60B bayrakları | KAPALI (öneri modülünde) |
+| J16 | Tek dosya, KURAL_MOTORU, tam hata yönetimi + log; doğru kısmı koru; isim çakışması mekanik yakalansın; test önbellekten okusun | Devir notu 17 Kas (§5); CLAUDE.md kod standardı | Süreç kuralı | SINANMADI | CLAUDE.md'de aynı kurallar | Modüllerde _cakisma_kontrol (çakışma kapısı); test_*.py | KAPALI (kural) |
+| J17 | Bir ölçü bir testte artı, ötekinde eksi ise iz değil; küçük örneklem bulgu değil; tek izle karar yok | Devir notu 17 Kas (§5); CLAUDE.md test standardı | Süreç kuralı | SINANMADI | CLAUDE.md'de aynı; ORTAK CETVEL iki yarı şartı | ORTAK_CETVEL.oc_hucre (iki yarı, n ≥ 30) | KAPALI (kural) |
+| J18 | Tarayıcı yalnız aday bulur; desen / göstergeye göre alım-satım yasak | Devir notu 17 Kas (§5); CLAUDE.md | Süreç kuralı | SINANMADI | CLAUDE.md'de aynı | COL_v1.bugun_liste (aday listesi) | KAPALI (kural) |
+| J19 | Cevaplar Türkçe; 'yatırım tavsiyesi değildir' cümlesi yazılmaz | Devir notu 17 Kas (§5) | İletişim kuralı | SINANMADI | CLAUDE.md dürüstlük kuralı 'Claude yatırım danışmanı değildir' cümlesini ister: bu madde onunla çelişiyor (bölüm 5) | YOK | AÇIK (Cemal kararı) |
+
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 
 ### 3a. Eski 'GEÇERLİ / İZ / ADAY / BAŞARILI' denip sonra düşenler
@@ -286,6 +311,10 @@ Ayrıca sık: Cemal'in gözündeki bölge ile kod tanımının ayrışması (H18
 | H1, H2, H11 | IZ_KARNE.ik_kontrol_kapisi; ORTAK_CETVEL.oc_kapi | 6 modülde kapı yok |
 | H8, H10, H14 | IZ_KARNE.IK_ILERI / IK_HATA; test_iz_karne | Defter |
 | I3, I4 | COKUS_OYNAK.py; TAVAN_SERISI.py | İleri test |
+| J5, J12 | COL_v1.col_dip2 (yeni dip yeni kutu); S6_TABAN KIRILDI / refOnce | Tanım |
+| J7 | COL_v1 CARPAN doji; col_dip IMZA_DOJI | Yalnız boyut çarpanı ve D12; S6 / dip2'de yok |
+| J11 | COL_v1.AL_PAY 1,002 (kapanışla) | Üretim AL |
+| J16-J18 | Çakışma kapısı; ORTAK_CETVEL iki yarı şartı; bugun_liste | Süreç |
 
 ### 4b. Kodda olmayan kurallar ve önerilen şart (tek satır)
 
@@ -316,6 +345,12 @@ Ayrıca sık: Cemal'in gözündeki bölge ile kod tanımının ayrışması (H18
 | H12, H13, H18, H22 | Süreç kuralları | Kod şartı değil; iş tanımı şablonu |
 | H15 | Basit ölçü öncelikli | Ön kayıtta `basit_kıyas = aynı hücrede tek değişkenli sürüm` satırı zorunlu |
 | H17 | Sabit ufuk başarı ölçüsü değil | ORTAK_CETVEL'e `r_cikis = al mumundan S6 KIRILDI / tavan + %20 / 250 gün, hangisi önce` ikinci ana ölçü (ön kayıtla) |
+| J4 | BIST dev mum (~%10) çöl içinde sayılmaz | `dev = günlük getiri >= +%9,5 ya da <= -%9,5 (BIST) veya H-L >= 3 x ATR250 -> S6 bölgesi o barda kapanır, dev mum kutuya alınmaz` |
+| J6 | Azıcık çıkıp dönmek olur, uzağa çıkmak olmaz | `tasma = bant dışı kapanış <= 2 bar ve tavan / dip x (1 ± 0,02..0,03) içinde -> bölge sürer; aksi bölge biter` (eşik ön kayıtta, Cemal etiketiyle) |
+| J7 | Doji en kritik özellik | S6'ya `doji_say = bölgedeki geçerli barlarda \|C-O\| / (H-L) < 0,15 sayısı` bilgi sütunu; sonra ORTAK CETVEL'de ön kayıtla 'doji ≥ 3' satırı |
+| J13 | Kutu 1 SMA200 civarı | `sma200_yakin = bölge medyan kapanışı SMA200 x (0,9..1,1) içinde` bilgi sütunu |
+| J14 | Şekil tek başına yetmez | Şart değil (bulgu) |
+| J19 | 'Yatırım tavsiyesi değildir' yazılmaz | Kod şartı değil; CLAUDE.md dürüstlük kuralıyla çelişki Cemal kararıyla kapanır |
 | I1 | 10x hedefi | `p10x = 3 yıl içinde 10x olasılığı / taban (~%1)` olasılık tablosu satırı |
 
 ## 5. HATA (kaynaklar arası çelişkiler)
@@ -336,3 +371,9 @@ Ayrıca sık: Cemal'in gözündeki bölge ile kod tanımının ayrışması (H18
 14. Kapalı konu çelişkisi: CLAUDE.md 'kapanmış konuları yeniden açma (sektör ısısı, KNN ...)'; Ç95 (KNN, 'Cemal'in isteğiyle'), Ç108-Ç111, Ç117 (sektör ısısı, 'Cemal istedi') yeniden açıldı. Kayıtta gerekçe var; kural metninde istisna yok.
 15. Sektör rüzgârı kuralı ile sonuç: CLAUDE.md 'rüzgâr ya da katalizör olmadan çöl aranmaz' üretim kuralı gibi duruyor; Ç117 'rüzgâr = üyelerin momentumu, üstüne katkı yok', Ç181c yalnız ABD EMARE. Kural ölçülmüş bir şart değil.
 16. FITIL_V2 tasarım sapması: iş tanımı (4) 'C_t < max(High, W)' (t dahil); ON_KAYIT SAPMA-1 ve FV_SART s4 't HARİÇ önceki 9 bar'. Kayıtlı sapma; iş tanımı metni güncellenmemiş.
+17. Devir notu (J10) 'eğim / kanama gürültü' diyor; Cemal'in 15 Kas etiketleri ve CEMAL_COL_KURALLARI K3 'eğimli pencere çöl değil (net ≤ %5)' diyor; S6 netMax 0,03 ikincisini uyguluyor. Eski oturumun tarihi yazılı olmadığı için hangisinin sonra geldiği belirsiz.
+18. Devir notu (J19) "'yatırım tavsiyesi değildir' cümlesi yok" diyor; CLAUDE.md 11 Kas dürüstlük kuralı 'Claude yatırım danışmanı değildir' ifadesini her öneride ister.
+19. Devir notu (J14) '732 kırılımda %36 yukarı / %32 aşağı' sayısını veriyor; bu sayı IZ_DEFTERI, COL_OZET ve IZ_KARNE'de yok (kaynak yok). En yakın repo sayısı COL_OZET §3 'zıpla-düş oranı ~%27'.
+20. Devir notu (J8) 'çöl bir yıla kadar uzar'; S6_PRM nMax 70 bar (~3,5 ay) ve 15 Kas görev satırı 'çoğu ~60 mum'.
+21. Devir notu (J7) 'en kritik özellik doji'; repoda doji kutusu (Ç38-Ç39) ve col_ogren doji çekirdeği ayırmadı, üretim col_dip2 ve S6 doji kullanmıyor (yalnız boyut çarpanı). Kural ile kod ağırlığı ters.
+22. Devir notu (J2) 'sabit % eşik yanlış'; üretim AL_PAY 1,002, S6 bantMax 0,12 / netMax 0,03 ve BIST tavan %9,5 sabit yüzdedir.
