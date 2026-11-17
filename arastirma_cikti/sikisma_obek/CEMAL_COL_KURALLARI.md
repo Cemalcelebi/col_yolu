@@ -74,7 +74,7 @@ Not: Cemal'in 'Şubat 2026' yazdığı TEHOL etiketi düzeltildi (2024 Aralık -
 | S+ düz dip | 10 | 3 | 7 | 0 |
 | S- (ters) | 10 | 4 | 5 | 1 |
 
-Kodun S+ sayfalarında 'benim mumum' payı %38, S- sayfalarında %40: ALGILAMA KIRIK (kural: S+ E >= 0,60 ve S+ - S- >= 0,30 olmalıydı). Yani S+ tanımı (fitil asimetrisi + alt fitilsiz pay) Cemal'in gözünü yakalamıyor; Cemal'in E dediği 19 sayfanın sonraki 60 gün getirisi medyan -%2,4 (RTALB +%560 hariç ortalama +%3,7), B dediklerinin +%1,9: n küçük, gözün öngörüsü de bu sette görünmüyor.
+Kodun S+ sayfalarında 'benim mumum' payı B dahil %38 (B hariç paydada %79), S- sayfalarında %40 (B hariç %80); önceden yazılı kurala göre karar KISMİ (SAĞLAM için S+ E >= 0,60 VE S+ - S- farkı >= 0,30 gerekirdi; fark sıfır: kod S+ ile S- sayfalarını Cemal'in gözünde ayıramıyor). Yani S+ tanımı (fitil asimetrisi + alt fitilsiz pay) Cemal'in gözünü yakalamıyor; Cemal'in E dediği 19 sayfanın sonraki 60 gün getirisi medyan -%2,4 (RTALB +%560 hariç ortalama +%3,7), B dediklerinin +%1,9: n küçük, gözün öngörüsü de bu sette görünmüyor.
 
 Cemal'in notlarından çıkan kurallar (S+ tanımının eksikleri):
 - K10 SAVUNMA HATTI: şekil aynı olsa bile savunulan seviye (dip / üst hat) kırılmışsa 'aşağı', kırılmamışsa 'yukarı' (sayfa 41, 37, 38, 28). Sinyal = şekil + hat sağlam; kodda hat yok.
