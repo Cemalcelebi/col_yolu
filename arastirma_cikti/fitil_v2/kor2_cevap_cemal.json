@@ -1,0 +1,254 @@
+{
+ "kaynak": "Cemal'in el yazısıyla işaretlediği FITIL_V2_KOR_SET.pdf (17 Kas 2026, Claude yüklemesi 91d5d57d-FITIL_V2_KOR_SET.pdf); ana model okudu ve yazıya döktü",
+ "pdf_sha_orijinal": "667acb828255d9a0c88d6afff1d6bb9d9b61fa8c235d878641736213e4ebf81f",
+ "kodlama": {
+  "E": "tam girilir",
+  "H": "girmem",
+  "B": "belirsiz",
+  "-": "yanıt yok",
+  "tur": "açık = E/H/B ya da 'belirsiz/girmem' sözcüğü yazılı; çıkarım = ana modelin nottan çıkardığı etiket; yanıtsız = son mum için yorum yok"
+ },
+ "not": "Cemal soruyu 'son mumda tam girilir mi' diye değil, grafikteki bütün formasyonları ve hedeflerini okuyarak yanıtladı; 30-40 arası sayfalarda işaret yok.",
+ "yanit": {
+  "1": {
+   "etiket": "B",
+   "tur": "çıkarım",
+   "cemal_notu": "E yazıp üstünü çizdi. 'bu ne ya, bu şekilde bir mum varsa bu kripto mu, riskli; ama dip tam istediğim gibi'",
+   "ders": "Geçmişte dev tek mum (fitil > +%100) varsa kağıt riskli sayılır; dip yapısı doğru olsa bile güven düşer"
+  },
+  "2": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'belirsiz'",
+   "ders": ""
+  },
+  "3": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'burdaki dip savunması çok net ancak bu taban kırılmış, o mumların hükmü yok artık B' (uzun taban çizgisi çizdi, son düşüşte kırılmış)",
+   "ders": "Savunulan taban kapanışla kırıldıysa o tabanın mumlarının hükmü kalmaz; yeni yapı beklenir"
+  },
+  "4": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "'tam üst siyah çizgiler üst savunması, altta çizilen alt taban savunması; burda oluşan formasyonlar hedefe gitmiş. Çoğu hedef bu kadar küçük; sen 60 gün sonrasını (ölçüyorsun) bu yapılar (onu) göstermez. Ben bunlar ile kod öğrensin: hedeflerde +5 ile +10 yetiyor; bu hedefler ulaşılmışsa ok, sonrası oluşan yapılar belirleyici'",
+   "ders": "Formasyon hedefi küçüktür (+%5..+%10); 60 günlük ölçü bu hedefi ölçmez. Üst savunma (tavan) = aşağı hedef, alt savunma (taban) = yukarı hedef. Hedefe ulaşıldıktan sonra karar yeni oluşan yapıya göre verilir"
+  },
+  "5": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "Soldaki iki yapı: 'burdaki formasyonlar hedefte zaten'. Sağ (son): 'formasyon burda dip savunması var ama dip oluşumu kubbe; daha yukarı dönüşü görmeden girilmez. Kubbe yukarıdan şemsiye şeklinde ise aşağı düşer, aşağıda kazan şeklindeki kubbe ise yukarı çıkar'",
+   "ders": "KUBBE kuralı: şemsiye (tepesi yukarıda kubbe) = aşağı; kazan (çanak) = yukarı. Çanağın yukarı dönüşü görülmeden giriş yok"
+  },
+  "6": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "'1 ve 2 oluşumlarda hedefe gitmiş' (1: yükselen taban -> dev yükseliş; 2: çöküş sonrası düz tavan -> aşağı)",
+   "ders": "Yükselen taban hedefe (yukarı) gitti; çöküş sonrası düz tavan (şemsiye) hedefe (aşağı) gitti"
+  },
+  "7": {
+   "etiket": "B",
+   "tur": "çıkarım",
+   "cemal_notu": "'1 hedefin çok üstüne çıkmış; 2 hedefi var ama önceki tepe seviyesine kadar der, sonrasını işaret etmiyor; 2'deki oluşum büyük bir hedef değil'",
+   "ders": "Yükselişten sonra oluşan küçük taban: hedef yalnız önceki tepeye kadar; büyük hedef değil"
+  },
+  "8": {
+   "etiket": "E",
+   "tur": "çıkarım",
+   "cemal_notu": "'1,2,3,4 hedefleri oluşmuş; özellikle 3'teki işaretli mumda SAT emri var; 4'teki oluşumu görüp kağıda güvenin varsa 4 ve 5 girilir'",
+   "ders": "KAĞIT HAFIZASI (+): aynı hissede önceki formasyonlar hedefe gittiyse kağıda güven artar, sonraki taban girilir. Düz tavandan kopan ilk büyük kırmızı mum = SAT"
+  },
+  "9": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'burda dipler oluşmuş ama tam ters kubbe (çanak) oluşumu bitmemiş; hafif yukarı yuvarlamayı görürsem, üst tepeye kadar arada başka formasyon yoksa, takip edilir' (ok: dipten önceki tepeye)",
+   "ders": "Çanak bitmeden giriş yok; bitince hedef = arada başka formasyon yoksa önceki tepe"
+  },
+  "10": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'işaretli mum satış mumu, hedefe ulaşılmış; dipte bir taban savunma hattı var, üç defa tepmiş, 3'te de sekerse girilebilir ama istediğim yapı yok dipte'",
+   "ders": "Üç kez tepen taban: üçüncü sekmede girilebilir; ama Cemal'in yapısı (çanak / sıkışma) yoksa giriş değil"
+  },
+  "11": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'burda benim zarar edeceğim kesin; benim yapım tutmuyor, iki ikide (1 ve 2 patladı), 3'te tutma ihtimali zayıf; öngörüm bu hissede yok'",
+   "ders": "KAĞIT HAFIZASI (-): aynı hissede yapı iki kez patladıysa üçüncüye güven yok"
+  },
+  "12": {
+   "etiket": "B",
+   "tur": "çıkarım",
+   "cemal_notu": "'dip kırılması beklenmiyor ancak son bölümde sert aşağı kırılım formasyonunun ilk başlangıç oluşumu var; eğer oluşum dibin altına inerse sert aşağı kırılmış, formasyon patlamış olur'",
+   "ders": "Uzun tabanın hemen üstünde daralan küçük yapı: taban altına kapanış = patlama (aşağı); o güne kadar belirsiz"
+  },
+  "13": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'1,2 hedeflere ulaşmış; 3'te net olmayan yapı var, hedef kısa, risk alınır mı bilmiyorum'",
+   "ders": "Net olmayan yapı + kısa hedef = belirsiz"
+  },
+  "14": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'1,2 hedefler gitmiş ama 3 hedefe gitmemiş; 2'nin altına inerse hedef büyür; ilk etaptaki hedef 2 dip seviyesi' (3 = toparlanma sonrası düz tavan, ok aşağı)",
+   "ders": "Düz tavan (şemsiye) formasyonunun ilk hedefi önceki dip; dip kırılırsa hedef büyür"
+  },
+  "15": {
+   "etiket": "E",
+   "tur": "çıkarım",
+   "cemal_notu": "'bu hedefe gitmemiş ve hedef büyük çünkü geri retest var' (taban çizgisi, kırılım sonrası geri test)",
+   "ders": "Taban kırılımından sonra geri test varsa hedef büyür ve henüz gidilmemiş sayılır"
+  },
+  "16": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'yani dip oluşumu var ama net değil; sonraki küçük dip önceki dibin altında, sanki güven olmaz'",
+   "ders": "Yeni küçük dip önceki dibin altındaysa güven yok"
+  },
+  "17": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'hiç güven vermiyor, son bölümde oluşan küçücük yapı'",
+   "ders": "Uzun düşüşün sonunda birkaç mumluk küçücük yapı güven vermez (yapının boyu / süresi gerekir)"
+  },
+  "18": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'üstteki gibi güven vermiyor; dip daha derinde, tutmayan dip'",
+   "ders": "Tutmayan dip (her dip bir öncekinden derin) = giriş yok"
+  },
+  "19": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'belirsiz'",
+   "ders": ""
+  },
+  "20": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "'SAT' + ok: düz tavandan (şemsiye) kopan mum; son 10 mum için yanıt yok",
+   "ders": "Düz tavandan kopuş = SAT; çöküş sonrası ilk günlerde yorum yok"
+  },
+  "21": {
+   "etiket": "H",
+   "tur": "açık",
+   "cemal_notu": "'daha çok ters kubbe şekli ama belirsiz; asla girmem bu seviyelerde' (alçalan kubbe çizgisi)",
+   "ders": "Alçalan / ters kubbe (şemsiye) altında giriş yok"
+  },
+  "22": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'1 formasyonu net ama hedefe gitmemiş; 2'deki yukarı çekiştirme var ama zayıf; bu oluşumlara dikkat: uçurum var ama birileri yukarıdan çekiştiriyor, zayıf mı güçlü mü bilmiyorum; özellikle REEDR hissesinde bu yapı var'",
+   "ders": "ÇEKİŞTİRME: düşüşe karşı yukarı çeken el; gücü belli olmadan belirsiz (REEDR örneği)"
+  },
+  "23": {
+   "etiket": "H",
+   "tur": "çıkarım",
+   "cemal_notu": "'1 hedefe ulaşmış; 2 hedefi 3 seviyesi tabii ki; 3'te dip oluşumu oluşursa (olur), oluşmaz ise daha aşağılara gider' (2 = düz tavan, ok aşağı; 3 = önceki iğne dibi)",
+   "ders": "Düz tavanın hedefi önceki iğne dibi; orada dip oluşmazsa düşüş sürer"
+  },
+  "24": {
+   "etiket": "H",
+   "tur": "açık",
+   "cemal_notu": "'dip daha aşağılarda oluşur gibi, bunu görmeden girmem' (uzun taban çizgisi, son mum altına sarkıyor)",
+   "ders": "Uzun taban son mumla deliniyorsa dip daha aşağıda; görmeden giriş yok"
+  },
+  "25": {
+   "etiket": "H",
+   "tur": "açık",
+   "cemal_notu": "'1,2 formasyon patlamış; 3 hedefe gitmiş; 4'te güvenim yok, 1,2 patladığı için'",
+   "ders": "KAĞIT HAFIZASI (-): aynı hissede patlamış çanaklar varsa yeni çanağa güven yok"
+  },
+  "26": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'diyecek hiçbir oluşumu yok; bu sanki bir yolun ara kesidi: yukarı yolun ara kesidi ise devam, aşağı gidenin ara kesidi ise aşağıya devam'",
+   "ders": "Oluşum yoksa grafik bir yolun ara kesitidir; yön önceki yolun yönüdür (devam)"
+  },
+  "27": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'burda da çekiştirme; düşen çekme; sanki biri düşmüş, önceki uçurum vardı, yukarı çeken vardı 'uçuruma düşmesin' ama zayıf, gücü yetmiyor; burda düşen var ama dipte uçurum yok, 'aşağıya (alt) seviyeye gel ordan kalkarsın ayağa' der gibi aşağı çekiştiriyor; düşen burda tepkili, tepkisi zayıf; dipte kuvvetlenirse bilmem'",
+   "ders": "ÇEKİŞTİRME iki yönlü: yukarı çeken zayıfsa düşüş sürer; aşağı çekiştirme ile dibe indirip oradan kaldırma; tepki zayıfken belirsiz"
+  },
+  "28": {
+   "etiket": "H",
+   "tur": "açık",
+   "cemal_notu": "'bir dip oluşumu gibi, zayıf, asla güvenmem' (çöküş sonrası yükselen taban çizgisi)",
+   "ders": "Çöküş sonrası ince yükselen taban zayıf = güven yok"
+  },
+  "29": {
+   "etiket": "B",
+   "tur": "açık",
+   "cemal_notu": "'diyecek bir şey yok'",
+   "ders": "Oluşum yok"
+  },
+  "30": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "31": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "32": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "33": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "34": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "35": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "36": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "37": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "38": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "39": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  },
+  "40": {
+   "etiket": "-",
+   "tur": "yanıtsız",
+   "cemal_notu": "",
+   "ders": ""
+  }
+ }
+}
