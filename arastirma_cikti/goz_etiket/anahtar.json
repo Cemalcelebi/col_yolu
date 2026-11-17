@@ -1,0 +1,2109 @@
+{
+ "uyari": "GİZLİ ANAHTAR: etiketleyen (AŞAMA B) bu dosyayı AÇMAZ. no -> sembol, pazar, tarih (sinyal günü t), giris, donem.",
+ "surum": "GOZ_ETIKET v1.0 (2026-11-17): AŞAMA A örneklem (300, tohum 11) + kör PNG (t sonrası yok) + F1-F18 özellik + ön kayıt",
+ "esik_sha": "a48cd64da71616bdd19f05c3d3763997096d520252622812c244516f94a84d5d",
+ "olay_sha": "e13eb12699a6d749bccc16ee4cde5ac467ea2bf8687b23a6a821fef74bf8871b",
+ "n": 300,
+ "olay": {
+  "1": {
+   "sembol": "FANG",
+   "pazar": "ABD",
+   "tarih": "2024-02-12",
+   "giris": "2024-02-13",
+   "donem": "2024-26"
+  },
+  "2": {
+   "sembol": "PCG",
+   "pazar": "ABD",
+   "tarih": "2023-03-06",
+   "giris": "2023-03-07",
+   "donem": "2023"
+  },
+  "3": {
+   "sembol": "CRGY",
+   "pazar": "ABD",
+   "tarih": "2024-03-27",
+   "giris": "2024-03-28",
+   "donem": "2024-26"
+  },
+  "4": {
+   "sembol": "COUR",
+   "pazar": "ABD",
+   "tarih": "2023-07-12",
+   "giris": "2023-07-13",
+   "donem": "2023"
+  },
+  "5": {
+   "sembol": "BAS.DE",
+   "pazar": "AVR",
+   "tarih": "2026-01-15",
+   "giris": "2026-01-16",
+   "donem": "2024-26"
+  },
+  "6": {
+   "sembol": "ENI.MI",
+   "pazar": "AVR",
+   "tarih": "2026-01-05",
+   "giris": "2026-01-06",
+   "donem": "2024-26"
+  },
+  "7": {
+   "sembol": "SAFE.L",
+   "pazar": "AVR",
+   "tarih": "2025-06-10",
+   "giris": "2025-06-11",
+   "donem": "2024-26"
+  },
+  "8": {
+   "sembol": "YATAS",
+   "pazar": "BIST",
+   "tarih": "2026-04-15",
+   "giris": "2026-04-16",
+   "donem": "2024-26"
+  },
+  "9": {
+   "sembol": "ALBRK",
+   "pazar": "BIST",
+   "tarih": "2024-11-08",
+   "giris": "2024-11-11",
+   "donem": "2024-26"
+  },
+  "10": {
+   "sembol": "SNGYO",
+   "pazar": "BIST",
+   "tarih": "2023-07-03",
+   "giris": "2023-07-04",
+   "donem": "2023"
+  },
+  "11": {
+   "sembol": "TXNM",
+   "pazar": "ABD",
+   "tarih": "2023-02-10",
+   "giris": "2023-02-13",
+   "donem": "2023"
+  },
+  "12": {
+   "sembol": "CMCSA",
+   "pazar": "ABD",
+   "tarih": "2023-01-04",
+   "giris": "2023-01-05",
+   "donem": "2023"
+  },
+  "13": {
+   "sembol": "STX",
+   "pazar": "ABD",
+   "tarih": "2025-07-23",
+   "giris": "2025-07-24",
+   "donem": "2024-26"
+  },
+  "14": {
+   "sembol": "MAC",
+   "pazar": "ABD",
+   "tarih": "2023-05-01",
+   "giris": "2023-05-02",
+   "donem": "2023"
+  },
+  "15": {
+   "sembol": "ESCAR",
+   "pazar": "BIST",
+   "tarih": "2023-06-12",
+   "giris": "2023-06-13",
+   "donem": "2023"
+  },
+  "16": {
+   "sembol": "OR.PA",
+   "pazar": "AVR",
+   "tarih": "2026-01-09",
+   "giris": "2026-01-12",
+   "donem": "2024-26"
+  },
+  "17": {
+   "sembol": "DDOG",
+   "pazar": "ABD",
+   "tarih": "2025-06-05",
+   "giris": "2025-06-06",
+   "donem": "2024-26"
+  },
+  "18": {
+   "sembol": "KTSKR",
+   "pazar": "BIST",
+   "tarih": "2023-06-27",
+   "giris": "2023-07-03",
+   "donem": "2023"
+  },
+  "19": {
+   "sembol": "CMCSA",
+   "pazar": "ABD",
+   "tarih": "2023-04-27",
+   "giris": "2023-04-28",
+   "donem": "2023"
+  },
+  "20": {
+   "sembol": "XOM",
+   "pazar": "ABD",
+   "tarih": "2024-03-01",
+   "giris": "2024-03-04",
+   "donem": "2024-26"
+  },
+  "21": {
+   "sembol": "BNZL.L",
+   "pazar": "AVR",
+   "tarih": "2024-01-12",
+   "giris": "2024-01-15",
+   "donem": "2024-26"
+  },
+  "22": {
+   "sembol": "PHP.L",
+   "pazar": "AVR",
+   "tarih": "2023-09-14",
+   "giris": "2023-09-15",
+   "donem": "2023"
+  },
+  "23": {
+   "sembol": "DMSAS",
+   "pazar": "BIST",
+   "tarih": "2023-08-17",
+   "giris": "2023-08-18",
+   "donem": "2023"
+  },
+  "24": {
+   "sembol": "ARCLK",
+   "pazar": "BIST",
+   "tarih": "2023-10-02",
+   "giris": "2023-10-03",
+   "donem": "2023"
+  },
+  "25": {
+   "sembol": "SGI",
+   "pazar": "ABD",
+   "tarih": "2024-01-29",
+   "giris": "2024-01-30",
+   "donem": "2024-26"
+  },
+  "26": {
+   "sembol": "UHR.SW",
+   "pazar": "AVR",
+   "tarih": "2023-03-02",
+   "giris": "2023-03-03",
+   "donem": "2023"
+  },
+  "27": {
+   "sembol": "FND",
+   "pazar": "ABD",
+   "tarih": "2023-07-11",
+   "giris": "2023-07-12",
+   "donem": "2023"
+  },
+  "28": {
+   "sembol": "CDE",
+   "pazar": "ABD",
+   "tarih": "2023-01-19",
+   "giris": "2023-01-20",
+   "donem": "2023"
+  },
+  "29": {
+   "sembol": "SLHN.SW",
+   "pazar": "AVR",
+   "tarih": "2024-06-06",
+   "giris": "2024-06-07",
+   "donem": "2024-26"
+  },
+  "30": {
+   "sembol": "BARN.SW",
+   "pazar": "AVR",
+   "tarih": "2026-02-04",
+   "giris": "2026-02-05",
+   "donem": "2024-26"
+  },
+  "31": {
+   "sembol": "SBUX",
+   "pazar": "ABD",
+   "tarih": "2023-01-06",
+   "giris": "2023-01-09",
+   "donem": "2023"
+  },
+  "32": {
+   "sembol": "STMN.SW",
+   "pazar": "AVR",
+   "tarih": "2023-02-02",
+   "giris": "2023-02-03",
+   "donem": "2023"
+  },
+  "33": {
+   "sembol": "CWK.L",
+   "pazar": "AVR",
+   "tarih": "2024-07-30",
+   "giris": "2024-07-31",
+   "donem": "2024-26"
+  },
+  "34": {
+   "sembol": "CSCO",
+   "pazar": "ABD",
+   "tarih": "2023-06-15",
+   "giris": "2023-06-16",
+   "donem": "2023"
+  },
+  "35": {
+   "sembol": "MNDY",
+   "pazar": "ABD",
+   "tarih": "2025-06-02",
+   "giris": "2025-06-03",
+   "donem": "2024-26"
+  },
+  "36": {
+   "sembol": "LRE.L",
+   "pazar": "AVR",
+   "tarih": "2025-12-15",
+   "giris": "2025-12-16",
+   "donem": "2024-26"
+  },
+  "37": {
+   "sembol": "RJF",
+   "pazar": "ABD",
+   "tarih": "2024-09-17",
+   "giris": "2024-09-18",
+   "donem": "2024-26"
+  },
+  "38": {
+   "sembol": "KBH",
+   "pazar": "ABD",
+   "tarih": "2023-07-12",
+   "giris": "2023-07-13",
+   "donem": "2023"
+  },
+  "39": {
+   "sembol": "BORR",
+   "pazar": "ABD",
+   "tarih": "2023-05-19",
+   "giris": "2023-05-22",
+   "donem": "2023"
+  },
+  "40": {
+   "sembol": "PKENT",
+   "pazar": "BIST",
+   "tarih": "2026-02-10",
+   "giris": "2026-02-11",
+   "donem": "2024-26"
+  },
+  "41": {
+   "sembol": "MNG.L",
+   "pazar": "AVR",
+   "tarih": "2023-02-24",
+   "giris": "2023-02-27",
+   "donem": "2023"
+  },
+  "42": {
+   "sembol": "SCT.L",
+   "pazar": "AVR",
+   "tarih": "2025-06-10",
+   "giris": "2025-06-11",
+   "donem": "2024-26"
+  },
+  "43": {
+   "sembol": "FCSS.L",
+   "pazar": "AVR",
+   "tarih": "2023-01-03",
+   "giris": "2023-01-04",
+   "donem": "2023"
+  },
+  "44": {
+   "sembol": "ELISA.HE",
+   "pazar": "AVR",
+   "tarih": "2026-03-13",
+   "giris": "2026-03-16",
+   "donem": "2024-26"
+  },
+  "45": {
+   "sembol": "HLGYO",
+   "pazar": "BIST",
+   "tarih": "2026-02-13",
+   "giris": "2026-02-16",
+   "donem": "2024-26"
+  },
+  "46": {
+   "sembol": "CLN.SW",
+   "pazar": "AVR",
+   "tarih": "2023-02-02",
+   "giris": "2023-02-03",
+   "donem": "2023"
+  },
+  "47": {
+   "sembol": "AKSGY",
+   "pazar": "BIST",
+   "tarih": "2024-10-30",
+   "giris": "2024-10-31",
+   "donem": "2024-26"
+  },
+  "48": {
+   "sembol": "SOFI",
+   "pazar": "ABD",
+   "tarih": "2023-09-12",
+   "giris": "2023-09-13",
+   "donem": "2023"
+  },
+  "49": {
+   "sembol": "ANTO.L",
+   "pazar": "AVR",
+   "tarih": "2023-04-13",
+   "giris": "2023-04-14",
+   "donem": "2023"
+  },
+  "50": {
+   "sembol": "SEQI.L",
+   "pazar": "AVR",
+   "tarih": "2026-02-17",
+   "giris": "2026-02-18",
+   "donem": "2024-26"
+  },
+  "51": {
+   "sembol": "BEN",
+   "pazar": "ABD",
+   "tarih": "2024-10-18",
+   "giris": "2024-10-21",
+   "donem": "2024-26"
+  },
+  "52": {
+   "sembol": "SAMPO.HE",
+   "pazar": "AVR",
+   "tarih": "2025-11-13",
+   "giris": "2025-11-14",
+   "donem": "2024-26"
+  },
+  "53": {
+   "sembol": "KRG",
+   "pazar": "ABD",
+   "tarih": "2023-02-01",
+   "giris": "2023-02-02",
+   "donem": "2023"
+  },
+  "54": {
+   "sembol": "BKR",
+   "pazar": "ABD",
+   "tarih": "2024-11-04",
+   "giris": "2024-11-05",
+   "donem": "2024-26"
+  },
+  "55": {
+   "sembol": "COP",
+   "pazar": "ABD",
+   "tarih": "2023-07-11",
+   "giris": "2023-07-12",
+   "donem": "2023"
+  },
+  "56": {
+   "sembol": "FSV.L",
+   "pazar": "AVR",
+   "tarih": "2024-03-21",
+   "giris": "2024-03-22",
+   "donem": "2024-26"
+  },
+  "57": {
+   "sembol": "BKT.MC",
+   "pazar": "AVR",
+   "tarih": "2023-07-03",
+   "giris": "2023-07-04",
+   "donem": "2023"
+  },
+  "58": {
+   "sembol": "UNIT",
+   "pazar": "ABD",
+   "tarih": "2024-10-15",
+   "giris": "2024-10-16",
+   "donem": "2024-26"
+  },
+  "59": {
+   "sembol": "IMI.L",
+   "pazar": "AVR",
+   "tarih": "2023-01-09",
+   "giris": "2023-01-10",
+   "donem": "2023"
+  },
+  "60": {
+   "sembol": "EGGUB",
+   "pazar": "BIST",
+   "tarih": "2023-04-10",
+   "giris": "2023-04-11",
+   "donem": "2023"
+  },
+  "61": {
+   "sembol": "IHAAS",
+   "pazar": "BIST",
+   "tarih": "2024-02-08",
+   "giris": "2024-02-09",
+   "donem": "2024-26"
+  },
+  "62": {
+   "sembol": "ULUUN",
+   "pazar": "BIST",
+   "tarih": "2026-01-19",
+   "giris": "2026-01-20",
+   "donem": "2024-26"
+  },
+  "63": {
+   "sembol": "SRE.L",
+   "pazar": "AVR",
+   "tarih": "2025-10-22",
+   "giris": "2025-10-23",
+   "donem": "2024-26"
+  },
+  "64": {
+   "sembol": "RAT.L",
+   "pazar": "AVR",
+   "tarih": "2024-04-29",
+   "giris": "2024-05-01",
+   "donem": "2024-26"
+  },
+  "65": {
+   "sembol": "NDA-FI.HE",
+   "pazar": "AVR",
+   "tarih": "2024-10-17",
+   "giris": "2024-10-18",
+   "donem": "2024-26"
+  },
+  "66": {
+   "sembol": "WHR",
+   "pazar": "ABD",
+   "tarih": "2025-05-08",
+   "giris": "2025-05-09",
+   "donem": "2024-26"
+  },
+  "67": {
+   "sembol": "CIMSA",
+   "pazar": "BIST",
+   "tarih": "2025-11-26",
+   "giris": "2025-11-27",
+   "donem": "2024-26"
+  },
+  "68": {
+   "sembol": "FSV.L",
+   "pazar": "AVR",
+   "tarih": "2026-02-27",
+   "giris": "2026-03-02",
+   "donem": "2024-26"
+  },
+  "69": {
+   "sembol": "COP",
+   "pazar": "ABD",
+   "tarih": "2026-01-05",
+   "giris": "2026-01-06",
+   "donem": "2024-26"
+  },
+  "70": {
+   "sembol": "WRB",
+   "pazar": "ABD",
+   "tarih": "2025-09-24",
+   "giris": "2025-09-25",
+   "donem": "2024-26"
+  },
+  "71": {
+   "sembol": "BWA",
+   "pazar": "ABD",
+   "tarih": "2023-03-01",
+   "giris": "2023-03-02",
+   "donem": "2023"
+  },
+  "72": {
+   "sembol": "BAC",
+   "pazar": "ABD",
+   "tarih": "2024-05-21",
+   "giris": "2024-05-22",
+   "donem": "2024-26"
+  },
+  "73": {
+   "sembol": "GRMN",
+   "pazar": "ABD",
+   "tarih": "2025-06-09",
+   "giris": "2025-06-10",
+   "donem": "2024-26"
+  },
+  "74": {
+   "sembol": "ANA.MC",
+   "pazar": "AVR",
+   "tarih": "2024-08-23",
+   "giris": "2024-08-26",
+   "donem": "2024-26"
+  },
+  "75": {
+   "sembol": "AEO",
+   "pazar": "ABD",
+   "tarih": "2023-07-03",
+   "giris": "2023-07-05",
+   "donem": "2023"
+  },
+  "76": {
+   "sembol": "FOXA",
+   "pazar": "ABD",
+   "tarih": "2023-06-08",
+   "giris": "2023-06-09",
+   "donem": "2023"
+  },
+  "77": {
+   "sembol": "MGA",
+   "pazar": "ABD",
+   "tarih": "2025-09-11",
+   "giris": "2025-09-12",
+   "donem": "2024-26"
+  },
+  "78": {
+   "sembol": "DHR",
+   "pazar": "ABD",
+   "tarih": "2024-01-30",
+   "giris": "2024-01-31",
+   "donem": "2024-26"
+  },
+  "79": {
+   "sembol": "FULT",
+   "pazar": "ABD",
+   "tarih": "2023-12-01",
+   "giris": "2023-12-04",
+   "donem": "2023"
+  },
+  "80": {
+   "sembol": "CAG",
+   "pazar": "ABD",
+   "tarih": "2024-03-19",
+   "giris": "2024-03-20",
+   "donem": "2024-26"
+  },
+  "81": {
+   "sembol": "EBEBK",
+   "pazar": "BIST",
+   "tarih": "2025-06-30",
+   "giris": "2025-07-01",
+   "donem": "2024-26"
+  },
+  "82": {
+   "sembol": "TSPOR",
+   "pazar": "BIST",
+   "tarih": "2023-09-12",
+   "giris": "2023-09-13",
+   "donem": "2023"
+  },
+  "83": {
+   "sembol": "CUZ",
+   "pazar": "ABD",
+   "tarih": "2023-01-12",
+   "giris": "2023-01-13",
+   "donem": "2023"
+  },
+  "84": {
+   "sembol": "ITW",
+   "pazar": "ABD",
+   "tarih": "2023-07-18",
+   "giris": "2023-07-19",
+   "donem": "2023"
+  },
+  "85": {
+   "sembol": "NIBAS",
+   "pazar": "BIST",
+   "tarih": "2024-01-15",
+   "giris": "2024-01-16",
+   "donem": "2024-26"
+  },
+  "86": {
+   "sembol": "DASH",
+   "pazar": "ABD",
+   "tarih": "2025-01-23",
+   "giris": "2025-01-24",
+   "donem": "2024-26"
+  },
+  "87": {
+   "sembol": "GNW",
+   "pazar": "ABD",
+   "tarih": "2024-10-09",
+   "giris": "2024-10-10",
+   "donem": "2024-26"
+  },
+  "88": {
+   "sembol": "ADI",
+   "pazar": "ABD",
+   "tarih": "2023-07-13",
+   "giris": "2023-07-14",
+   "donem": "2023"
+  },
+  "89": {
+   "sembol": "JBL",
+   "pazar": "ABD",
+   "tarih": "2025-06-16",
+   "giris": "2025-06-17",
+   "donem": "2024-26"
+  },
+  "90": {
+   "sembol": "DTG.DE",
+   "pazar": "AVR",
+   "tarih": "2023-07-21",
+   "giris": "2023-07-24",
+   "donem": "2023"
+  },
+  "91": {
+   "sembol": "WDAY",
+   "pazar": "ABD",
+   "tarih": "2023-05-18",
+   "giris": "2023-05-19",
+   "donem": "2023"
+  },
+  "92": {
+   "sembol": "NTGY.MC",
+   "pazar": "AVR",
+   "tarih": "2025-07-31",
+   "giris": "2025-08-01",
+   "donem": "2024-26"
+  },
+  "93": {
+   "sembol": "MLTX",
+   "pazar": "ABD",
+   "tarih": "2025-09-02",
+   "giris": "2025-09-03",
+   "donem": "2024-26"
+  },
+  "94": {
+   "sembol": "TRALT",
+   "pazar": "BIST",
+   "tarih": "2024-08-20",
+   "giris": "2024-08-21",
+   "donem": "2024-26"
+  },
+  "95": {
+   "sembol": "VAKBN",
+   "pazar": "BIST",
+   "tarih": "2025-08-26",
+   "giris": "2025-08-27",
+   "donem": "2024-26"
+  },
+  "96": {
+   "sembol": "N91.L",
+   "pazar": "AVR",
+   "tarih": "2025-07-03",
+   "giris": "2025-07-04",
+   "donem": "2024-26"
+  },
+  "97": {
+   "sembol": "IQV",
+   "pazar": "ABD",
+   "tarih": "2026-07-28",
+   "giris": "2026-07-29",
+   "donem": "2024-26"
+  },
+  "98": {
+   "sembol": "ESAB",
+   "pazar": "ABD",
+   "tarih": "2023-06-02",
+   "giris": "2023-06-05",
+   "donem": "2023"
+  },
+  "99": {
+   "sembol": "IOT",
+   "pazar": "ABD",
+   "tarih": "2024-10-10",
+   "giris": "2024-10-11",
+   "donem": "2024-26"
+  },
+  "100": {
+   "sembol": "LISN.SW",
+   "pazar": "AVR",
+   "tarih": "2026-02-05",
+   "giris": "2026-02-06",
+   "donem": "2024-26"
+  },
+  "101": {
+   "sembol": "VFC",
+   "pazar": "ABD",
+   "tarih": "2023-02-01",
+   "giris": "2023-02-02",
+   "donem": "2023"
+  },
+  "102": {
+   "sembol": "RBI.VI",
+   "pazar": "AVR",
+   "tarih": "2023-09-29",
+   "giris": "2023-10-02",
+   "donem": "2023"
+  },
+  "103": {
+   "sembol": "OMF",
+   "pazar": "ABD",
+   "tarih": "2023-05-30",
+   "giris": "2023-05-31",
+   "donem": "2023"
+  },
+  "104": {
+   "sembol": "PENG",
+   "pazar": "ABD",
+   "tarih": "2024-01-10",
+   "giris": "2024-01-11",
+   "donem": "2024-26"
+  },
+  "105": {
+   "sembol": "SBCF",
+   "pazar": "ABD",
+   "tarih": "2025-06-26",
+   "giris": "2025-06-27",
+   "donem": "2024-26"
+  },
+  "106": {
+   "sembol": "AME",
+   "pazar": "ABD",
+   "tarih": "2023-02-06",
+   "giris": "2023-02-07",
+   "donem": "2023"
+  },
+  "107": {
+   "sembol": "BEPC",
+   "pazar": "ABD",
+   "tarih": "2025-05-13",
+   "giris": "2025-05-14",
+   "donem": "2024-26"
+  },
+  "108": {
+   "sembol": "HUN",
+   "pazar": "ABD",
+   "tarih": "2026-01-06",
+   "giris": "2026-01-07",
+   "donem": "2024-26"
+  },
+  "109": {
+   "sembol": "CON.DE",
+   "pazar": "AVR",
+   "tarih": "2025-01-20",
+   "giris": "2025-01-21",
+   "donem": "2024-26"
+  },
+  "110": {
+   "sembol": "KURA",
+   "pazar": "ABD",
+   "tarih": "2023-07-19",
+   "giris": "2023-07-20",
+   "donem": "2023"
+  },
+  "111": {
+   "sembol": "EDP.LS",
+   "pazar": "AVR",
+   "tarih": "2023-03-31",
+   "giris": "2023-04-03",
+   "donem": "2023"
+  },
+  "112": {
+   "sembol": "CCL",
+   "pazar": "ABD",
+   "tarih": "2024-09-13",
+   "giris": "2024-09-16",
+   "donem": "2024-26"
+  },
+  "113": {
+   "sembol": "APA",
+   "pazar": "ABD",
+   "tarih": "2024-07-12",
+   "giris": "2024-07-15",
+   "donem": "2024-26"
+  },
+  "114": {
+   "sembol": "RBA",
+   "pazar": "ABD",
+   "tarih": "2024-02-07",
+   "giris": "2024-02-08",
+   "donem": "2024-26"
+  },
+  "115": {
+   "sembol": "WWH.L",
+   "pazar": "AVR",
+   "tarih": "2024-07-10",
+   "giris": "2024-07-11",
+   "donem": "2024-26"
+  },
+  "116": {
+   "sembol": "VOE.VI",
+   "pazar": "AVR",
+   "tarih": "2023-01-05",
+   "giris": "2023-01-06",
+   "donem": "2023"
+  },
+  "117": {
+   "sembol": "ALK",
+   "pazar": "ABD",
+   "tarih": "2025-07-02",
+   "giris": "2025-07-03",
+   "donem": "2024-26"
+  },
+  "118": {
+   "sembol": "GET.PA",
+   "pazar": "AVR",
+   "tarih": "2023-05-22",
+   "giris": "2023-05-23",
+   "donem": "2023"
+  },
+  "119": {
+   "sembol": "ASHM.L",
+   "pazar": "AVR",
+   "tarih": "2025-07-09",
+   "giris": "2025-07-10",
+   "donem": "2024-26"
+  },
+  "120": {
+   "sembol": "RVLV",
+   "pazar": "ABD",
+   "tarih": "2023-07-10",
+   "giris": "2023-07-11",
+   "donem": "2023"
+  },
+  "121": {
+   "sembol": "AGS.BR",
+   "pazar": "AVR",
+   "tarih": "2024-05-07",
+   "giris": "2024-05-08",
+   "donem": "2024-26"
+  },
+  "122": {
+   "sembol": "STT",
+   "pazar": "ABD",
+   "tarih": "2024-10-11",
+   "giris": "2024-10-14",
+   "donem": "2024-26"
+  },
+  "123": {
+   "sembol": "FTI",
+   "pazar": "ABD",
+   "tarih": "2023-05-05",
+   "giris": "2023-05-08",
+   "donem": "2023"
+  },
+  "124": {
+   "sembol": "WLN.PA",
+   "pazar": "AVR",
+   "tarih": "2024-09-05",
+   "giris": "2024-09-06",
+   "donem": "2024-26"
+  },
+  "125": {
+   "sembol": "GXO",
+   "pazar": "ABD",
+   "tarih": "2026-01-05",
+   "giris": "2026-01-06",
+   "donem": "2024-26"
+  },
+  "126": {
+   "sembol": "DEVA",
+   "pazar": "BIST",
+   "tarih": "2026-05-07",
+   "giris": "2026-05-08",
+   "donem": "2024-26"
+  },
+  "127": {
+   "sembol": "AMT",
+   "pazar": "ABD",
+   "tarih": "2024-09-06",
+   "giris": "2024-09-09",
+   "donem": "2024-26"
+  },
+  "128": {
+   "sembol": "NDA-FI.HE",
+   "pazar": "AVR",
+   "tarih": "2024-06-12",
+   "giris": "2024-06-13",
+   "donem": "2024-26"
+  },
+  "129": {
+   "sembol": "TEP.PA",
+   "pazar": "AVR",
+   "tarih": "2025-06-10",
+   "giris": "2025-06-11",
+   "donem": "2024-26"
+  },
+  "130": {
+   "sembol": "NVT",
+   "pazar": "ABD",
+   "tarih": "2023-12-08",
+   "giris": "2023-12-11",
+   "donem": "2023"
+  },
+  "131": {
+   "sembol": "SN.L",
+   "pazar": "AVR",
+   "tarih": "2025-06-05",
+   "giris": "2025-06-06",
+   "donem": "2024-26"
+  },
+  "132": {
+   "sembol": "OBDC",
+   "pazar": "ABD",
+   "tarih": "2023-12-08",
+   "giris": "2023-12-11",
+   "donem": "2023"
+  },
+  "133": {
+   "sembol": "TELIA.ST",
+   "pazar": "AVR",
+   "tarih": "2026-01-22",
+   "giris": "2026-01-23",
+   "donem": "2024-26"
+  },
+  "134": {
+   "sembol": "PAYO",
+   "pazar": "ABD",
+   "tarih": "2024-10-15",
+   "giris": "2024-10-16",
+   "donem": "2024-26"
+  },
+  "135": {
+   "sembol": "SRP.L",
+   "pazar": "AVR",
+   "tarih": "2023-12-14",
+   "giris": "2023-12-15",
+   "donem": "2023"
+  },
+  "136": {
+   "sembol": "QUAGR",
+   "pazar": "BIST",
+   "tarih": "2023-06-12",
+   "giris": "2023-06-13",
+   "donem": "2023"
+  },
+  "137": {
+   "sembol": "GWIND",
+   "pazar": "BIST",
+   "tarih": "2025-03-06",
+   "giris": "2025-03-07",
+   "donem": "2024-26"
+  },
+  "138": {
+   "sembol": "ADSK",
+   "pazar": "ABD",
+   "tarih": "2024-10-09",
+   "giris": "2024-10-10",
+   "donem": "2024-26"
+  },
+  "139": {
+   "sembol": "FSK",
+   "pazar": "ABD",
+   "tarih": "2023-12-07",
+   "giris": "2023-12-08",
+   "donem": "2023"
+  },
+  "140": {
+   "sembol": "LKQ",
+   "pazar": "ABD",
+   "tarih": "2024-03-21",
+   "giris": "2024-03-22",
+   "donem": "2024-26"
+  },
+  "141": {
+   "sembol": "OZGYO",
+   "pazar": "BIST",
+   "tarih": "2024-07-19",
+   "giris": "2024-07-22",
+   "donem": "2024-26"
+  },
+  "142": {
+   "sembol": "KRVGD",
+   "pazar": "BIST",
+   "tarih": "2024-10-30",
+   "giris": "2024-10-31",
+   "donem": "2024-26"
+  },
+  "143": {
+   "sembol": "RMBS",
+   "pazar": "ABD",
+   "tarih": "2024-06-12",
+   "giris": "2024-06-13",
+   "donem": "2024-26"
+  },
+  "144": {
+   "sembol": "PLAY",
+   "pazar": "ABD",
+   "tarih": "2023-06-07",
+   "giris": "2023-06-08",
+   "donem": "2023"
+  },
+  "145": {
+   "sembol": "TMPL.L",
+   "pazar": "AVR",
+   "tarih": "2023-02-02",
+   "giris": "2023-02-03",
+   "donem": "2023"
+  },
+  "146": {
+   "sembol": "EGSER",
+   "pazar": "BIST",
+   "tarih": "2023-07-03",
+   "giris": "2023-07-04",
+   "donem": "2023"
+  },
+  "147": {
+   "sembol": "RCL",
+   "pazar": "ABD",
+   "tarih": "2025-12-11",
+   "giris": "2025-12-12",
+   "donem": "2024-26"
+  },
+  "148": {
+   "sembol": "AML.L",
+   "pazar": "AVR",
+   "tarih": "2024-02-28",
+   "giris": "2024-02-29",
+   "donem": "2024-26"
+  },
+  "149": {
+   "sembol": "MGNI",
+   "pazar": "ABD",
+   "tarih": "2025-08-14",
+   "giris": "2025-08-15",
+   "donem": "2024-26"
+  },
+  "150": {
+   "sembol": "MNDI.L",
+   "pazar": "AVR",
+   "tarih": "2024-04-19",
+   "giris": "2024-04-22",
+   "donem": "2024-26"
+  },
+  "151": {
+   "sembol": "ESI",
+   "pazar": "ABD",
+   "tarih": "2023-03-03",
+   "giris": "2023-03-06",
+   "donem": "2023"
+  },
+  "152": {
+   "sembol": "ASSA-B.ST",
+   "pazar": "AVR",
+   "tarih": "2024-02-20",
+   "giris": "2024-02-21",
+   "donem": "2024-26"
+  },
+  "153": {
+   "sembol": "CKN.L",
+   "pazar": "AVR",
+   "tarih": "2026-02-26",
+   "giris": "2026-02-27",
+   "donem": "2024-26"
+  },
+  "154": {
+   "sembol": "RYGYO",
+   "pazar": "BIST",
+   "tarih": "2024-09-16",
+   "giris": "2024-09-17",
+   "donem": "2024-26"
+  },
+  "155": {
+   "sembol": "STAN.L",
+   "pazar": "AVR",
+   "tarih": "2025-06-27",
+   "giris": "2025-06-30",
+   "donem": "2024-26"
+  },
+  "156": {
+   "sembol": "CLN.SW",
+   "pazar": "AVR",
+   "tarih": "2026-01-14",
+   "giris": "2026-01-15",
+   "donem": "2024-26"
+  },
+  "157": {
+   "sembol": "SUPR.L",
+   "pazar": "AVR",
+   "tarih": "2025-07-01",
+   "giris": "2025-07-02",
+   "donem": "2024-26"
+  },
+  "158": {
+   "sembol": "FOX",
+   "pazar": "ABD",
+   "tarih": "2023-01-23",
+   "giris": "2023-01-24",
+   "donem": "2023"
+  },
+  "159": {
+   "sembol": "BIGTK",
+   "pazar": "BIST",
+   "tarih": "2025-01-20",
+   "giris": "2025-01-21",
+   "donem": "2024-26"
+  },
+  "160": {
+   "sembol": "ATCO-A.ST",
+   "pazar": "AVR",
+   "tarih": "2024-02-16",
+   "giris": "2024-02-19",
+   "donem": "2024-26"
+  },
+  "161": {
+   "sembol": "RYGYO",
+   "pazar": "BIST",
+   "tarih": "2026-07-27",
+   "giris": "2026-07-28",
+   "donem": "2024-26"
+  },
+  "162": {
+   "sembol": "GLRYH",
+   "pazar": "BIST",
+   "tarih": "2023-10-24",
+   "giris": "2023-10-25",
+   "donem": "2023"
+  },
+  "163": {
+   "sembol": "RKT",
+   "pazar": "ABD",
+   "tarih": "2024-07-12",
+   "giris": "2024-07-15",
+   "donem": "2024-26"
+  },
+  "164": {
+   "sembol": "ALKLC",
+   "pazar": "BIST",
+   "tarih": "2026-01-26",
+   "giris": "2026-01-27",
+   "donem": "2024-26"
+  },
+  "165": {
+   "sembol": "TW.L",
+   "pazar": "AVR",
+   "tarih": "2023-07-18",
+   "giris": "2023-07-19",
+   "donem": "2023"
+  },
+  "166": {
+   "sembol": "CBZ",
+   "pazar": "ABD",
+   "tarih": "2024-07-16",
+   "giris": "2024-07-17",
+   "donem": "2024-26"
+  },
+  "167": {
+   "sembol": "QCOM",
+   "pazar": "ABD",
+   "tarih": "2025-09-16",
+   "giris": "2025-09-17",
+   "donem": "2024-26"
+  },
+  "168": {
+   "sembol": "EXR",
+   "pazar": "ABD",
+   "tarih": "2023-04-10",
+   "giris": "2023-04-11",
+   "donem": "2023"
+  },
+  "169": {
+   "sembol": "MWA",
+   "pazar": "ABD",
+   "tarih": "2026-06-25",
+   "giris": "2026-06-26",
+   "donem": "2024-26"
+  },
+  "170": {
+   "sembol": "NIBE-B.ST",
+   "pazar": "AVR",
+   "tarih": "2025-02-13",
+   "giris": "2025-02-14",
+   "donem": "2024-26"
+  },
+  "171": {
+   "sembol": "BASGZ",
+   "pazar": "BIST",
+   "tarih": "2023-07-03",
+   "giris": "2023-07-04",
+   "donem": "2023"
+  },
+  "172": {
+   "sembol": "BP.L",
+   "pazar": "AVR",
+   "tarih": "2023-09-01",
+   "giris": "2023-09-04",
+   "donem": "2023"
+  },
+  "173": {
+   "sembol": "ADSK",
+   "pazar": "ABD",
+   "tarih": "2024-03-21",
+   "giris": "2024-03-22",
+   "donem": "2024-26"
+  },
+  "174": {
+   "sembol": "CEG",
+   "pazar": "ABD",
+   "tarih": "2025-06-23",
+   "giris": "2025-06-24",
+   "donem": "2024-26"
+  },
+  "175": {
+   "sembol": "BTG",
+   "pazar": "ABD",
+   "tarih": "2026-07-22",
+   "giris": "2026-07-23",
+   "donem": "2024-26"
+  },
+  "176": {
+   "sembol": "EDV.L",
+   "pazar": "AVR",
+   "tarih": "2023-11-27",
+   "giris": "2023-11-28",
+   "donem": "2023"
+  },
+  "177": {
+   "sembol": "GF.SW",
+   "pazar": "AVR",
+   "tarih": "2023-07-12",
+   "giris": "2023-07-13",
+   "donem": "2023"
+  },
+  "178": {
+   "sembol": "ALV.DE",
+   "pazar": "AVR",
+   "tarih": "2025-12-09",
+   "giris": "2025-12-10",
+   "donem": "2024-26"
+  },
+  "179": {
+   "sembol": "ELITE",
+   "pazar": "BIST",
+   "tarih": "2026-04-20",
+   "giris": "2026-04-21",
+   "donem": "2024-26"
+  },
+  "180": {
+   "sembol": "HSBA.L",
+   "pazar": "AVR",
+   "tarih": "2023-04-14",
+   "giris": "2023-04-17",
+   "donem": "2023"
+  },
+  "181": {
+   "sembol": "TELIA.ST",
+   "pazar": "AVR",
+   "tarih": "2023-03-06",
+   "giris": "2023-03-07",
+   "donem": "2023"
+  },
+  "182": {
+   "sembol": "ECL",
+   "pazar": "ABD",
+   "tarih": "2024-09-23",
+   "giris": "2024-09-24",
+   "donem": "2024-26"
+  },
+  "183": {
+   "sembol": "DOX",
+   "pazar": "ABD",
+   "tarih": "2023-06-16",
+   "giris": "2023-06-20",
+   "donem": "2023"
+  },
+  "184": {
+   "sembol": "CCEP",
+   "pazar": "ABD",
+   "tarih": "2025-07-03",
+   "giris": "2025-07-07",
+   "donem": "2024-26"
+  },
+  "185": {
+   "sembol": "RBA",
+   "pazar": "ABD",
+   "tarih": "2026-01-08",
+   "giris": "2026-01-09",
+   "donem": "2024-26"
+  },
+  "186": {
+   "sembol": "PGSUS",
+   "pazar": "BIST",
+   "tarih": "2025-03-05",
+   "giris": "2025-03-06",
+   "donem": "2024-26"
+  },
+  "187": {
+   "sembol": "AFL",
+   "pazar": "ABD",
+   "tarih": "2023-07-19",
+   "giris": "2023-07-20",
+   "donem": "2023"
+  },
+  "188": {
+   "sembol": "BEGYO",
+   "pazar": "BIST",
+   "tarih": "2026-04-01",
+   "giris": "2026-04-02",
+   "donem": "2024-26"
+  },
+  "189": {
+   "sembol": "REL.L",
+   "pazar": "AVR",
+   "tarih": "2023-01-16",
+   "giris": "2023-01-17",
+   "donem": "2023"
+  },
+  "190": {
+   "sembol": "AKSA",
+   "pazar": "BIST",
+   "tarih": "2024-09-24",
+   "giris": "2024-09-25",
+   "donem": "2024-26"
+  },
+  "191": {
+   "sembol": "CNM",
+   "pazar": "ABD",
+   "tarih": "2025-07-02",
+   "giris": "2025-07-03",
+   "donem": "2024-26"
+  },
+  "192": {
+   "sembol": "YUNSA",
+   "pazar": "BIST",
+   "tarih": "2026-01-13",
+   "giris": "2026-01-14",
+   "donem": "2024-26"
+  },
+  "193": {
+   "sembol": "ULCC",
+   "pazar": "ABD",
+   "tarih": "2023-06-02",
+   "giris": "2023-06-05",
+   "donem": "2023"
+  },
+  "194": {
+   "sembol": "SALM.OL",
+   "pazar": "AVR",
+   "tarih": "2023-08-24",
+   "giris": "2023-08-25",
+   "donem": "2023"
+  },
+  "195": {
+   "sembol": "ACM",
+   "pazar": "ABD",
+   "tarih": "2025-09-18",
+   "giris": "2025-09-19",
+   "donem": "2024-26"
+  },
+  "196": {
+   "sembol": "ECILC",
+   "pazar": "BIST",
+   "tarih": "2023-11-22",
+   "giris": "2023-11-23",
+   "donem": "2023"
+  },
+  "197": {
+   "sembol": "PEP",
+   "pazar": "ABD",
+   "tarih": "2023-12-04",
+   "giris": "2023-12-05",
+   "donem": "2023"
+  },
+  "198": {
+   "sembol": "IHP.L",
+   "pazar": "AVR",
+   "tarih": "2023-08-31",
+   "giris": "2023-09-01",
+   "donem": "2023"
+  },
+  "199": {
+   "sembol": "COIN",
+   "pazar": "ABD",
+   "tarih": "2023-10-24",
+   "giris": "2023-10-25",
+   "donem": "2023"
+  },
+  "200": {
+   "sembol": "SWK",
+   "pazar": "ABD",
+   "tarih": "2025-07-01",
+   "giris": "2025-07-02",
+   "donem": "2024-26"
+  },
+  "201": {
+   "sembol": "BEYAZ",
+   "pazar": "BIST",
+   "tarih": "2026-02-16",
+   "giris": "2026-02-17",
+   "donem": "2024-26"
+  },
+  "202": {
+   "sembol": "ENT.L",
+   "pazar": "AVR",
+   "tarih": "2026-06-01",
+   "giris": "2026-06-02",
+   "donem": "2024-26"
+  },
+  "203": {
+   "sembol": "ENI.MI",
+   "pazar": "AVR",
+   "tarih": "2025-09-25",
+   "giris": "2025-09-26",
+   "donem": "2024-26"
+  },
+  "204": {
+   "sembol": "KARSN",
+   "pazar": "BIST",
+   "tarih": "2025-03-07",
+   "giris": "2025-03-10",
+   "donem": "2024-26"
+  },
+  "205": {
+   "sembol": "KGC",
+   "pazar": "ABD",
+   "tarih": "2025-12-22",
+   "giris": "2025-12-23",
+   "donem": "2024-26"
+  },
+  "206": {
+   "sembol": "SPGI",
+   "pazar": "ABD",
+   "tarih": "2023-04-28",
+   "giris": "2023-05-01",
+   "donem": "2023"
+  },
+  "207": {
+   "sembol": "EDIN.L",
+   "pazar": "AVR",
+   "tarih": "2024-03-28",
+   "giris": "2024-04-02",
+   "donem": "2024-26"
+  },
+  "208": {
+   "sembol": "HOLN.SW",
+   "pazar": "AVR",
+   "tarih": "2023-05-19",
+   "giris": "2023-05-22",
+   "donem": "2023"
+  },
+  "209": {
+   "sembol": "LSG.OL",
+   "pazar": "AVR",
+   "tarih": "2025-05-15",
+   "giris": "2025-05-16",
+   "donem": "2024-26"
+  },
+  "210": {
+   "sembol": "CTRE",
+   "pazar": "ABD",
+   "tarih": "2024-10-29",
+   "giris": "2024-10-30",
+   "donem": "2024-26"
+  },
+  "211": {
+   "sembol": "MANAS",
+   "pazar": "BIST",
+   "tarih": "2023-04-11",
+   "giris": "2023-04-12",
+   "donem": "2023"
+  },
+  "212": {
+   "sembol": "BP.L",
+   "pazar": "AVR",
+   "tarih": "2025-06-13",
+   "giris": "2025-06-16",
+   "donem": "2024-26"
+  },
+  "213": {
+   "sembol": "GMED",
+   "pazar": "ABD",
+   "tarih": "2023-06-15",
+   "giris": "2023-06-16",
+   "donem": "2023"
+  },
+  "214": {
+   "sembol": "LVS",
+   "pazar": "ABD",
+   "tarih": "2023-07-13",
+   "giris": "2023-07-14",
+   "donem": "2023"
+  },
+  "215": {
+   "sembol": "DECK",
+   "pazar": "ABD",
+   "tarih": "2023-01-09",
+   "giris": "2023-01-10",
+   "donem": "2023"
+  },
+  "216": {
+   "sembol": "CAT",
+   "pazar": "ABD",
+   "tarih": "2025-06-09",
+   "giris": "2025-06-10",
+   "donem": "2024-26"
+  },
+  "217": {
+   "sembol": "BFREN",
+   "pazar": "BIST",
+   "tarih": "2025-07-24",
+   "giris": "2025-07-25",
+   "donem": "2024-26"
+  },
+  "218": {
+   "sembol": "EFOR",
+   "pazar": "BIST",
+   "tarih": "2025-09-25",
+   "giris": "2025-09-26",
+   "donem": "2024-26"
+  },
+  "219": {
+   "sembol": "ETN",
+   "pazar": "ABD",
+   "tarih": "2026-01-16",
+   "giris": "2026-01-20",
+   "donem": "2024-26"
+  },
+  "220": {
+   "sembol": "MOON.L",
+   "pazar": "AVR",
+   "tarih": "2024-12-04",
+   "giris": "2024-12-05",
+   "donem": "2024-26"
+  },
+  "221": {
+   "sembol": "LPP.WA",
+   "pazar": "AVR",
+   "tarih": "2023-04-20",
+   "giris": "2023-04-21",
+   "donem": "2023"
+  },
+  "222": {
+   "sembol": "MDU",
+   "pazar": "ABD",
+   "tarih": "2023-02-24",
+   "giris": "2023-02-27",
+   "donem": "2023"
+  },
+  "223": {
+   "sembol": "MKS.L",
+   "pazar": "AVR",
+   "tarih": "2023-09-21",
+   "giris": "2023-09-22",
+   "donem": "2023"
+  },
+  "224": {
+   "sembol": "WING",
+   "pazar": "ABD",
+   "tarih": "2023-12-19",
+   "giris": "2023-12-20",
+   "donem": "2023"
+  },
+  "225": {
+   "sembol": "TRY.L",
+   "pazar": "AVR",
+   "tarih": "2025-04-03",
+   "giris": "2025-04-04",
+   "donem": "2024-26"
+  },
+  "226": {
+   "sembol": "BBVA.MC",
+   "pazar": "AVR",
+   "tarih": "2026-07-27",
+   "giris": "2026-07-28",
+   "donem": "2024-26"
+  },
+  "227": {
+   "sembol": "CXW",
+   "pazar": "ABD",
+   "tarih": "2024-06-03",
+   "giris": "2024-06-04",
+   "donem": "2024-26"
+  },
+  "228": {
+   "sembol": "SARKY",
+   "pazar": "BIST",
+   "tarih": "2023-12-08",
+   "giris": "2023-12-11",
+   "donem": "2023"
+  },
+  "229": {
+   "sembol": "KBH",
+   "pazar": "ABD",
+   "tarih": "2026-04-17",
+   "giris": "2026-04-20",
+   "donem": "2024-26"
+  },
+  "230": {
+   "sembol": "TFC",
+   "pazar": "ABD",
+   "tarih": "2024-01-29",
+   "giris": "2024-01-30",
+   "donem": "2024-26"
+  },
+  "231": {
+   "sembol": "DTE.DE",
+   "pazar": "AVR",
+   "tarih": "2023-11-02",
+   "giris": "2023-11-03",
+   "donem": "2023"
+  },
+  "232": {
+   "sembol": "OKE",
+   "pazar": "ABD",
+   "tarih": "2023-06-15",
+   "giris": "2023-06-16",
+   "donem": "2023"
+  },
+  "233": {
+   "sembol": "MNDI.L",
+   "pazar": "AVR",
+   "tarih": "2023-09-18",
+   "giris": "2023-09-19",
+   "donem": "2023"
+  },
+  "234": {
+   "sembol": "ROL",
+   "pazar": "ABD",
+   "tarih": "2023-06-30",
+   "giris": "2023-07-03",
+   "donem": "2023"
+  },
+  "235": {
+   "sembol": "BKT.MC",
+   "pazar": "AVR",
+   "tarih": "2026-04-01",
+   "giris": "2026-04-02",
+   "donem": "2024-26"
+  },
+  "236": {
+   "sembol": "SAYAS",
+   "pazar": "BIST",
+   "tarih": "2026-02-10",
+   "giris": "2026-02-11",
+   "donem": "2024-26"
+  },
+  "237": {
+   "sembol": "TUREX",
+   "pazar": "BIST",
+   "tarih": "2025-08-04",
+   "giris": "2025-08-05",
+   "donem": "2024-26"
+  },
+  "238": {
+   "sembol": "PKENT",
+   "pazar": "BIST",
+   "tarih": "2024-02-12",
+   "giris": "2024-02-13",
+   "donem": "2024-26"
+  },
+  "239": {
+   "sembol": "SEIC",
+   "pazar": "ABD",
+   "tarih": "2023-02-01",
+   "giris": "2023-02-02",
+   "donem": "2023"
+  },
+  "240": {
+   "sembol": "AVPT",
+   "pazar": "ABD",
+   "tarih": "2025-12-05",
+   "giris": "2025-12-08",
+   "donem": "2024-26"
+  },
+  "241": {
+   "sembol": "FIBK",
+   "pazar": "ABD",
+   "tarih": "2025-06-26",
+   "giris": "2025-06-27",
+   "donem": "2024-26"
+  },
+  "242": {
+   "sembol": "OSTIM",
+   "pazar": "BIST",
+   "tarih": "2026-02-03",
+   "giris": "2026-02-04",
+   "donem": "2024-26"
+  },
+  "243": {
+   "sembol": "JAM.L",
+   "pazar": "AVR",
+   "tarih": "2025-10-24",
+   "giris": "2025-10-27",
+   "donem": "2024-26"
+  },
+  "244": {
+   "sembol": "TRMET",
+   "pazar": "BIST",
+   "tarih": "2024-05-22",
+   "giris": "2024-05-23",
+   "donem": "2024-26"
+  },
+  "245": {
+   "sembol": "DOHOL",
+   "pazar": "BIST",
+   "tarih": "2025-12-09",
+   "giris": "2025-12-10",
+   "donem": "2024-26"
+  },
+  "246": {
+   "sembol": "TARKM",
+   "pazar": "BIST",
+   "tarih": "2026-04-01",
+   "giris": "2026-04-02",
+   "donem": "2024-26"
+  },
+  "247": {
+   "sembol": "NHY.OL",
+   "pazar": "AVR",
+   "tarih": "2025-10-01",
+   "giris": "2025-10-02",
+   "donem": "2024-26"
+  },
+  "248": {
+   "sembol": "AAPL",
+   "pazar": "ABD",
+   "tarih": "2023-01-23",
+   "giris": "2023-01-24",
+   "donem": "2023"
+  },
+  "249": {
+   "sembol": "CVSG.L",
+   "pazar": "AVR",
+   "tarih": "2023-02-02",
+   "giris": "2023-02-03",
+   "donem": "2023"
+  },
+  "250": {
+   "sembol": "HALO",
+   "pazar": "ABD",
+   "tarih": "2023-06-21",
+   "giris": "2023-06-22",
+   "donem": "2023"
+  },
+  "251": {
+   "sembol": "CRDA.L",
+   "pazar": "AVR",
+   "tarih": "2025-09-18",
+   "giris": "2025-09-19",
+   "donem": "2024-26"
+  },
+  "252": {
+   "sembol": "SBRY.L",
+   "pazar": "AVR",
+   "tarih": "2024-05-09",
+   "giris": "2024-05-10",
+   "donem": "2024-26"
+  },
+  "253": {
+   "sembol": "CCOI",
+   "pazar": "ABD",
+   "tarih": "2023-01-06",
+   "giris": "2023-01-09",
+   "donem": "2023"
+  },
+  "254": {
+   "sembol": "CON.DE",
+   "pazar": "AVR",
+   "tarih": "2023-01-04",
+   "giris": "2023-01-05",
+   "donem": "2023"
+  },
+  "255": {
+   "sembol": "XYL",
+   "pazar": "ABD",
+   "tarih": "2025-09-30",
+   "giris": "2025-10-01",
+   "donem": "2024-26"
+  },
+  "256": {
+   "sembol": "HOOD",
+   "pazar": "ABD",
+   "tarih": "2026-05-28",
+   "giris": "2026-05-29",
+   "donem": "2024-26"
+  },
+  "257": {
+   "sembol": "ASB",
+   "pazar": "ABD",
+   "tarih": "2023-01-06",
+   "giris": "2023-01-09",
+   "donem": "2023"
+  },
+  "258": {
+   "sembol": "AAL.L",
+   "pazar": "AVR",
+   "tarih": "2025-12-04",
+   "giris": "2025-12-05",
+   "donem": "2024-26"
+  },
+  "259": {
+   "sembol": "YETI",
+   "pazar": "ABD",
+   "tarih": "2023-01-11",
+   "giris": "2023-01-12",
+   "donem": "2023"
+  },
+  "260": {
+   "sembol": "FWONK",
+   "pazar": "ABD",
+   "tarih": "2024-11-06",
+   "giris": "2024-11-07",
+   "donem": "2024-26"
+  },
+  "261": {
+   "sembol": "FISV",
+   "pazar": "ABD",
+   "tarih": "2026-01-08",
+   "giris": "2026-01-09",
+   "donem": "2024-26"
+  },
+  "262": {
+   "sembol": "AVAV",
+   "pazar": "ABD",
+   "tarih": "2025-05-27",
+   "giris": "2025-05-28",
+   "donem": "2024-26"
+  },
+  "263": {
+   "sembol": "IMI.L",
+   "pazar": "AVR",
+   "tarih": "2023-09-27",
+   "giris": "2023-09-28",
+   "donem": "2023"
+  },
+  "264": {
+   "sembol": "TRILC",
+   "pazar": "BIST",
+   "tarih": "2023-06-27",
+   "giris": "2023-07-03",
+   "donem": "2023"
+  },
+  "265": {
+   "sembol": "GLCVY",
+   "pazar": "BIST",
+   "tarih": "2024-07-08",
+   "giris": "2024-07-09",
+   "donem": "2024-26"
+  },
+  "266": {
+   "sembol": "HKTM",
+   "pazar": "BIST",
+   "tarih": "2026-01-23",
+   "giris": "2026-01-26",
+   "donem": "2024-26"
+  },
+  "267": {
+   "sembol": "BBWI",
+   "pazar": "ABD",
+   "tarih": "2023-08-07",
+   "giris": "2023-08-08",
+   "donem": "2023"
+  },
+  "268": {
+   "sembol": "JFJ.L",
+   "pazar": "AVR",
+   "tarih": "2026-02-06",
+   "giris": "2026-02-09",
+   "donem": "2024-26"
+  },
+  "269": {
+   "sembol": "SRT3.DE",
+   "pazar": "AVR",
+   "tarih": "2024-09-09",
+   "giris": "2024-09-10",
+   "donem": "2024-26"
+  },
+  "270": {
+   "sembol": "CMC",
+   "pazar": "ABD",
+   "tarih": "2024-10-17",
+   "giris": "2024-10-18",
+   "donem": "2024-26"
+  },
+  "271": {
+   "sembol": "TSLA",
+   "pazar": "ABD",
+   "tarih": "2025-10-28",
+   "giris": "2025-10-29",
+   "donem": "2024-26"
+  },
+  "272": {
+   "sembol": "PENG",
+   "pazar": "ABD",
+   "tarih": "2024-06-10",
+   "giris": "2024-06-11",
+   "donem": "2024-26"
+  },
+  "273": {
+   "sembol": "OUT",
+   "pazar": "ABD",
+   "tarih": "2024-10-15",
+   "giris": "2024-10-16",
+   "donem": "2024-26"
+  },
+  "274": {
+   "sembol": "RR.L",
+   "pazar": "AVR",
+   "tarih": "2023-05-22",
+   "giris": "2023-05-23",
+   "donem": "2023"
+  },
+  "275": {
+   "sembol": "GF.SW",
+   "pazar": "AVR",
+   "tarih": "2023-01-06",
+   "giris": "2023-01-09",
+   "donem": "2023"
+  },
+  "276": {
+   "sembol": "MCD",
+   "pazar": "ABD",
+   "tarih": "2024-01-19",
+   "giris": "2024-01-22",
+   "donem": "2024-26"
+  },
+  "277": {
+   "sembol": "ACS.MC",
+   "pazar": "AVR",
+   "tarih": "2024-02-28",
+   "giris": "2024-02-29",
+   "donem": "2024-26"
+  },
+  "278": {
+   "sembol": "EDPR.LS",
+   "pazar": "AVR",
+   "tarih": "2023-01-11",
+   "giris": "2023-01-12",
+   "donem": "2023"
+  },
+  "279": {
+   "sembol": "OMF",
+   "pazar": "ABD",
+   "tarih": "2026-06-15",
+   "giris": "2026-06-16",
+   "donem": "2024-26"
+  },
+  "280": {
+   "sembol": "WIHL.ST",
+   "pazar": "AVR",
+   "tarih": "2024-07-05",
+   "giris": "2024-07-08",
+   "donem": "2024-26"
+  },
+  "281": {
+   "sembol": "KIE.L",
+   "pazar": "AVR",
+   "tarih": "2024-02-29",
+   "giris": "2024-03-01",
+   "donem": "2024-26"
+  },
+  "282": {
+   "sembol": "STJ.L",
+   "pazar": "AVR",
+   "tarih": "2023-07-19",
+   "giris": "2023-07-20",
+   "donem": "2023"
+  },
+  "283": {
+   "sembol": "RODRG",
+   "pazar": "BIST",
+   "tarih": "2023-09-13",
+   "giris": "2023-09-14",
+   "donem": "2023"
+  },
+  "284": {
+   "sembol": "WIE.VI",
+   "pazar": "AVR",
+   "tarih": "2023-02-22",
+   "giris": "2023-02-23",
+   "donem": "2023"
+  },
+  "285": {
+   "sembol": "GARAN",
+   "pazar": "BIST",
+   "tarih": "2023-04-11",
+   "giris": "2023-04-12",
+   "donem": "2023"
+  },
+  "286": {
+   "sembol": "DERHL",
+   "pazar": "BIST",
+   "tarih": "2023-11-23",
+   "giris": "2023-11-24",
+   "donem": "2023"
+  },
+  "287": {
+   "sembol": "TTWO",
+   "pazar": "ABD",
+   "tarih": "2023-12-13",
+   "giris": "2023-12-14",
+   "donem": "2023"
+  },
+  "288": {
+   "sembol": "ITRK.L",
+   "pazar": "AVR",
+   "tarih": "2023-02-02",
+   "giris": "2023-02-03",
+   "donem": "2023"
+  },
+  "289": {
+   "sembol": "BLDR",
+   "pazar": "ABD",
+   "tarih": "2025-09-05",
+   "giris": "2025-09-08",
+   "donem": "2024-26"
+  },
+  "290": {
+   "sembol": "RCL",
+   "pazar": "ABD",
+   "tarih": "2024-05-20",
+   "giris": "2024-05-21",
+   "donem": "2024-26"
+  },
+  "291": {
+   "sembol": "MAR",
+   "pazar": "ABD",
+   "tarih": "2024-02-23",
+   "giris": "2024-02-26",
+   "donem": "2024-26"
+  },
+  "292": {
+   "sembol": "NWS",
+   "pazar": "ABD",
+   "tarih": "2023-05-12",
+   "giris": "2023-05-15",
+   "donem": "2023"
+  },
+  "293": {
+   "sembol": "LNTH",
+   "pazar": "ABD",
+   "tarih": "2026-02-17",
+   "giris": "2026-02-18",
+   "donem": "2024-26"
+  },
+  "294": {
+   "sembol": "YYAPI",
+   "pazar": "BIST",
+   "tarih": "2026-01-22",
+   "giris": "2026-01-23",
+   "donem": "2024-26"
+  },
+  "295": {
+   "sembol": "OZGYO",
+   "pazar": "BIST",
+   "tarih": "2023-05-29",
+   "giris": "2023-05-30",
+   "donem": "2023"
+  },
+  "296": {
+   "sembol": "SW.PA",
+   "pazar": "AVR",
+   "tarih": "2023-09-14",
+   "giris": "2023-09-15",
+   "donem": "2023"
+  },
+  "297": {
+   "sembol": "INTC",
+   "pazar": "ABD",
+   "tarih": "2023-07-28",
+   "giris": "2023-07-31",
+   "donem": "2023"
+  },
+  "298": {
+   "sembol": "A1YEN",
+   "pazar": "BIST",
+   "tarih": "2023-10-05",
+   "giris": "2023-10-06",
+   "donem": "2023"
+  },
+  "299": {
+   "sembol": "GOOG",
+   "pazar": "ABD",
+   "tarih": "2025-01-31",
+   "giris": "2025-02-03",
+   "donem": "2024-26"
+  },
+  "300": {
+   "sembol": "GENIL",
+   "pazar": "BIST",
+   "tarih": "2025-02-19",
+   "giris": "2025-02-20",
+   "donem": "2024-26"
+  }
+ }
+}
