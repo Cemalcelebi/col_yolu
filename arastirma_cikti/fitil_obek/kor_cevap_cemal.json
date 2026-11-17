@@ -1,0 +1,37 @@
+{
+ "tarih": "2026-11-17",
+ "cevap": {
+  "50": "B",
+  "49": "B",
+  "48": "B",
+  "47": "E",
+  "46": "H",
+  "45": "E",
+  "44": "E",
+  "43": "B",
+  "42": "B",
+  "41": "E",
+  "40": "B",
+  "39": "B",
+  "38": "E",
+  "37": "E",
+  "36": "B",
+  "35": "E",
+  "34": "B",
+  "33": "B",
+  "32": "B",
+  "31": "B",
+  "30": "B",
+  "29": "B"
+ },
+ "not": {
+  "41": "E ancak savunulan bölge kırılmış",
+  "38": "E ama ters aşağıya gidecek",
+  "37": "E ama aşağıya; üst savunma hattı kırılmış, belirsizlik, girmem",
+  "35": "E ama ters gidecekken dönmüş yukarı",
+  "33": "stabil coin grafiği gibi; normalde çok yatay gitmeli (harf yok -> B)",
+  "30": "ilk soldaki mumlar aşağı izi vermiş, inme oluşmuş; sonraki mumlar belirsiz (B)",
+  "29": "en dip sol mumları esas alınır, kırılırsa girmem (harf yok -> B)"
+ },
+ "durum": "kısmi (29-50); 1-28 bekleniyor"
+}
