@@ -73,6 +73,11 @@ Her ders: KURAL · Cemal'in sözü · grafikte nasıl görünür · kodda var m�
 - Kural: S+ şekli (alt fitil az) + dip savunması = yukarı, S- + savunma kırık = aşağı: GEÇERLİ; hedef %5-10; ufuk 15 mum; yapı 3-5 gün kadar kısa olabilir (yapı boyu alt sınırı D7 ile çelişmez: D7 'küçücük yapı güven vermez' uzun düşüş sonrası taban için; kurum girişli 3-5 günlük yapı ayrı sınıf, hedef yine %5-10).
 - Kodda: FITIL_OBEK / FITIL_V2 şekil tanımı var; hedef / ufuk 60 gün (yanlış); 15 bar + %5 / %10 ölçüsü eklenecek. Uzun çöl (büyük hedef) etiketi kapalı; görülürse 'MANİPÜLASYON ŞÜPHESİ' etiketi (sinyal değil).
 
+### D1d. YENİ TEST STANDARDI (Cemal, 17 Kas akşam, 'testler bu şekilde devam etsin')
+- Söz: 'artık bu oluşumları kod görüp, o oluşumların alım-satım mumları (bu mumlar belli zaten: dip veya tavan kırılırsa hedef başlar), yüzde 5-10 giderse hedefe ulaştı gibi sonuçlarla kod eğitilecek, test edilecek. 60 gün sonrası testi kapandı. O alım mumu gelir, stop her defasında yukarı revize edilip yeni oluşum oluşmayıncaya dek devam eder; yukarı veya aşağı düşüşlerin uzunluğu bu şekilde. İlk hedef oluşursa takip stopu bu seviyeye yakın getirilir. Son kural değil bu takip stopu; daha iyisi varsa test edilir, kurala eklenir; şimdilik bu kadar.'
+- Ölçü: giriş = kırılım mumu (t+1 açılış); HEDEF = +%5 / +%10 stop'tan önce; takip stopu = giriş stopu (hat x 0,98) her yeni yüksekte yukarı; ilk hedefte stop hedefe yakın (+%5 x 0,98 gibi; eşik ön kayıtta); çıkış = stop ya da yeni ters oluşum (D2 düz tavan / SAT mumu). Çıktı: hedef payı, eşli hedef payı, takip stoplu getiri, bar sayısı.
+- Durum: CLAUDE.md 'YENİ TEST STANDARDI'; ORTAK_CETVEL'e yapı ölçüsü olarak eklenecek (ayrı iş, ön kayıt). Takip stopu kuralı GEÇİCİ (ileri testle iyileştirilir).
+
 ### D2. İKİ SAVUNMA, İKİ YÖN: düz taban (alt savunma) yukarı formasyondur, düz tavan (üst savunma) aşağı formasyondur
 - Söz (No 4, 6, 8, 14, 20, 23): 'üst siyah çizgiler üst savunması, alttakiler alt taban savunması; formasyonlar hedefe gitmiş'; 'SAT' (No 20, düz tavandan kopuş); '2'nin hedefi 3 seviyesi' (No 23).
 - Görünüm: toparlanma sonrası aynı seviyede 10-30 mum düz tepe (şemsiye) -> kopuş mumu aşağı; hedef önceki dip. Düz taban -> kırılım yukarı; hedef önceki tepe (arada başka formasyon yoksa, No 9).
