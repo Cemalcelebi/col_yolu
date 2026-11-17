@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 14 (hepsi SINANMADI; toplam 154). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 15 (hepsi SINANMADI; toplam 155; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -237,6 +237,7 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K12 | Geçmişte dev tek mum (fitil > +%100) varsa kağıt şüpheli (kripto gibi) | No 1 | Hayır | SINANMADI | Devir notu J4 ile akraba; boyut kuralı | YOK | AÇIK (G grubu) |
 | K13 | Üç kez tepen taban: üçüncü sekmede girilebilir ama Cemal'in yapısı değil | No 10 | Hayır | SINANMADI | Düşük öncelik | YOK | AÇIK, düşük öncelik |
 | K14 | Geri test hedefi büyütür (asıl giriş retest; iki kutu 2. giriş) | No 15 (tek E TAM sayfası) | Hayır | SINANMADI | A4 / B3 ile aynı; ölçülmedi | COL_v1 yorumu, şart yok | AÇIK: A4 ile birleşir |
+| K15 | UFUK 15 MUM: kodun gördüğü yapılar en fazla 15 mumun geleceğini gösterir; 60 gün ölçüsünde rolleri yok. Eski 20-60 mumlu büyük çöller fon iziydi; gerçek hissede küçük yapılar, hedef <= 15 mum | 17 Kas akşam ('bunu kaydet'), CLAUDE.md UFUK 15 MUM | Hayır | SINANMADI | Yapı kuralları 15 barla hiç ölçülmedi; Ç187 / Ç189 60 günlüktü | ORTAK_CETVEL ufuk 60 sabit (15 parametresi yok) | AÇIK: cetvele ufuk 15 eklenir, Ç187 / Ç189 / S5 / S6 yeniden ölçülür |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 

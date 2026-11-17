@@ -62,6 +62,11 @@ Her ders: KURAL · Cemal'in sözü · grafikte nasıl görünür · kodda var m�
 - Ölçülebilir: `hedef = giriş (t+1 açılış) sonrası 20 geçerli barda kapanış >= giriş x 1,05 (ve ayrı sütun 1,10), stop (hat x 0,98) dokunmadan ÖNCE gelirse 1`; eşli karşılaştırma aynı gün aynı kovadaki hisselerin aynı hedefe ulaşma payı. Bilgi satırı; karar cetveli değişmez (ORTAK CETVEL v1.0 kuralı).
 - Durum: SINANMADI. Not: 60 gün cetvelinde 'ölçülemedi' çıkan bir kural bu ölçüde tutabilir; tersi de olabilir. İki ölçü birlikte raporlanır.
 
+### D1b. UFUK EN FAZLA 15 MUM (Cemal, 17 Kas akşam, 'ilk başta yazmam gerekeni sonunda yazıyorum; bunu kaydet')
+- Söz: 'senin kodun gördüğü yapılar sonraki 60 mumun geleceğini göstermez, taş patlasa 15 mumun geleceğini gösterir. Benim önceki dediğim çöller (20-60 mum, büyük potansiyel) hepsi fon izi imiş; öyle bir büyük alıcı topluluğu gerçek hisselerde olmaz; giriş ve çıkışlar neredeyse eşit, az oluşumlar, küçük yapılar oluşur; hedef gün sayısı en fazla 15 mum. Sen 60 gün sonrasına bakıyorsun; bu oluşumların o 60 mumun geleceğinde bir rolü olmayacak.'
+- Sonuç: yapı ölçümlerinde karar ufku 15 bar (CLAUDE.md 'UFUK 15 MUM'); 60 gün bilgi. Ç187 / Ç189 / S5 / S6'nın 60 günlük 'ölçülemedi / tutmadı' sonuçları yapı kuralları için kapanış değildir; 15 barla yeniden ölçülür (IK_ILERI).
+- Kodda: ORTAK_CETVEL ufuk 60 sabit; 15 bar ufuk parametresi eklenecek (ayrı iş; ön kayıt).
+
 ### D2. İKİ SAVUNMA, İKİ YÖN: düz taban (alt savunma) yukarı formasyondur, düz tavan (üst savunma) aşağı formasyondur
 - Söz (No 4, 6, 8, 14, 20, 23): 'üst siyah çizgiler üst savunması, alttakiler alt taban savunması; formasyonlar hedefe gitmiş'; 'SAT' (No 20, düz tavandan kopuş); '2'nin hedefi 3 seviyesi' (No 23).
 - Görünüm: toparlanma sonrası aynı seviyede 10-30 mum düz tepe (şemsiye) -> kopuş mumu aşağı; hedef önceki dip. Düz taban -> kırılım yukarı; hedef önceki tepe (arada başka formasyon yoksa, No 9).

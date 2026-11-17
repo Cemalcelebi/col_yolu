@@ -94,3 +94,4 @@ Cemal soruyu mum gününe göre değil formasyona göre yanıtladı (26 yanıt: 
 - K23 KAĞIT HAFIZASI: aynı hissede önceki formasyonlar hedefe gittiyse güven artar, patladıysa biter (No 8, 11, 25) — kodda hiç yok, Cemal'in en ağır şartı.
 - K24 SAT MUMU: düz tavandan kopan ilk büyük kırmızı mum (No 8, 10, 14, 20). K25 ÇEKİŞTİRME = belirsiz, bekle (No 22, 27; REEDR). K26 OLUŞUM YOKSA yön önceki yol; kod 'yapı yok' diyebilmeli (No 2, 19, 26, 29).
 - K27 DEV TEK MUM varsa kağıt şüpheli (No 1). K28 ÜÇ KEZ TEPEN TABAN (No 10, düşük öncelik). K29 GERİ TEST hedefi büyütür; asıl giriş retest (No 15; A4 ile aynı).
+- K30 UFUK 15 MUM (17 Kas akşam, 'bunu kaydet'): kodun gördüğü yapılar en fazla 15 mumun geleceğini gösterir; 60 gün ölçüsünde rolleri yok. Eski 20-60 mumlu büyük çöller fon iziydi; gerçek hissede giriş-çıkış eşit, küçük yapılar, hedef <= 15 mum. Yapı ölçümlerinde karar ufku 15 bar (CLAUDE.md).
