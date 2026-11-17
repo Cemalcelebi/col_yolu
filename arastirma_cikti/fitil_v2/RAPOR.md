@@ -298,7 +298,31 @@ TASARIM.md (etiket x şart tablosu, 72 noktalı ızgara).
 
 ## KÖR SET 2
 
-- Cemal'in yanıtı bekleniyor (`python FITIL_V2.py olc --cevap ...`).
+- Karar: **GÖZLE UYUMSUZ** (TAM sayfalarında E payı >= 0,60 VE TAM - DEĞİL E payı farkı >= 0,30 -> 'GÖZLE UYUMLU'; TAM E payı < 0,40 -> 'GÖZLE UYUMSUZ'; aksi 'KISMİ'. Fisher kesin p bilgi. Sonuç (r20 / r60 / önce kırılım-stop) yalnız bilgi; n küçük, bulgu değil). TAM E 1 / 19, DEĞİL E 1 / 7; Fisher p 0,474.
+- Yanıtlı sayfa (n_yanitli) 26 / 40; yanıtsız 14 (paylardan çıkarıldı): 4, 6, 20, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40.
+- TAM: E 1 / H 12 / B 6 (n 19; E payı +5%); DEĞİL: E 1 / H 1 / B 5 (n 7; E payı +14%); TAM BIST: E 0 / H 7 / B 3 (n 10; E payı +0%); TAM ABD: E 1 / H 5 / B 3 (n 9; E payı +11%).
+
+| Yanıt türü | TAM E / H / B (n) | DEĞİL E / H / B (n) |
+|---|---|---|
+| açık | 0 / 4 / 5 (9) | 0 / 0 / 3 (3) |
+| çıkarım | 1 / 8 / 1 (10) | 1 / 1 / 2 (4) |
+
+| Cemal etiketi | TAM | DEĞİL |
+|---|---|---|
+| E | 1 | 1 |
+| H | 12 | 1 |
+| B | 6 | 5 |
+| yanıtsız (-) | 11 | 3 |
+
+| Grup | Cemal etiketi | n | r20 medyan | r60 medyan | önce KIRILIM payı | önce STOP payı |
+|---|---|---|---|---|---|---|
+| TAM | E | 1 | +40,0% | +53,6% | +100% | +0% |
+| TAM | H | 12 | +4,8% | +0,1% | +50% | +50% |
+| TAM | B | 6 | -7,3% | -6,1% | +17% | +83% |
+| DEĞİL | E | 1 | -3,2% | +47,8% | +100% | +0% |
+| DEĞİL | H | 1 | +21,1% | +11,2% | +100% | +0% |
+| DEĞİL | B | 5 | +5,4% | -12,4% | +75% | +25% |
+- Okuma: sonuç sütunları (r20 / r60 / önce kırılım-stop) yalnız bilgi; etiket başına n küçük, bulgu değil.
 
 ## VERİ ve SINIRLAR
 

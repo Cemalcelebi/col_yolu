@@ -227,6 +227,46 @@ for bozuk_metin in ("1:E,2:E", "1:E,1:H,2:B,3:B", "1:X,2:E,3:E"):
         kontrol(f"bozuk yanıt durur ({bozuk_metin})", True)
 kontrol("karar kuralı", FV.fv_kor_karar(0.7, 0.3) == "GÖZLE UYUMLU" and FV.fv_kor_karar(0.7, 0.5) == "KISMİ" and FV.fv_kor_karar(0.3, 0.0) == "GÖZLE UYUMSUZ")
 
+print("8b) kısmi yanıt ('-', eksik_izin, dosya, yanıtsız dışlama)")
+c = FV.fv_cevap_ayristir("1:E, 2:-, 3:b", 3)
+kontrol("'-' yanıtsız ayrışır", c == {1: "E", 2: "-", 3: "B"})
+try:
+    FV.fv_cevap_ayristir("1:E,3:H", 3); kontrol("eksik numara eksik_izin olmadan durur", False)
+except FV.FVHata:
+    kontrol("eksik numara eksik_izin olmadan durur", True)
+kontrol("eksik_izin: yazılmayan numara yanıtsız", FV.fv_cevap_ayristir("1:E,3:H", 3, eksik_izin=True) == {1: "E", 2: "-", 3: "H"})
+with tempfile.TemporaryDirectory() as td:
+    yc = os.path.join(td, "cv.json")
+    Y = {"1": ("E", "açık"), "2": ("H", "çıkarım"), "3": ("-", "yanıtsız"), "4": ("B", "açık"), "5": ("E", "açık"), "6": ("-", "yanıtsız")}
+    json.dump({"yanit": {k: {"etiket": e, "tur": t} for k, (e, t) in Y.items()}}, open(yc, "w", encoding="utf-8"), ensure_ascii=False)
+    cd, td_, sha = FV.fv_cevap_dosya_oku(yc, 6)
+    kontrol("dosyadan okuma (etiket + tur + sha)", cd == {1: "E", 2: "H", 3: "-", 4: "B", 5: "E", 6: "-"} and td_[2] == "çıkarım" and len(sha) == 64)
+    json.dump({"yanit": {"1": {"etiket": "E", "tur": "yanıtsız"}}}, open(os.path.join(td, "b.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    try:
+        FV.fv_cevap_dosya_oku(os.path.join(td, "b.json"), 1); kontrol("etiket / tur çelişkisi durur", False)
+    except FV.FVHata:
+        kontrol("etiket / tur çelişkisi durur", True)
+    # yanıtsız dışlama: sentetik anahtar (TAM 1-4, DEĞİL 5-6) üzerinde fv_olc
+    os.makedirs(os.path.join(td, "c"))
+    A = {"sayfalar": [{"no": i, "grup": "TAM" if i <= 4 else "DEGIL", "pazar": "BIST" if i % 2 else "ABD", "r20": 0.01 * i, "r60": 0.02 * i,
+                       "once": "STOP" if i % 2 else "KIRILIM"} for i in range(1, 7)]}
+    json.dump(A, open(os.path.join(td, "c", FV.FV_DOSYA["anahtar"]), "w", encoding="utf-8"))
+    o = FV.fv_olc(cikti=os.path.join(td, "c"), cevap_dosya=yc)
+    kontrol("yanıtsız paylardan çıkar (TAM n 3, E payı 1/3; DEĞİL n 1)", o["TAM"]["n"] == 3 and abs(o["TAM"]["E_payi"] - 1 / 3) < 1e-12
+            and o["TAM"]["yanitsiz"] == 1 and o["DEGIL"]["n"] == 1 and o["DEGIL"]["E_payi"] == 1.0, o["TAM"])
+    kontrol("n_yanitli / yanıtsız listesi", o["n_yanitli"] == 4 and o["yanitsiz"] == [3, 6] and o["n_yanitsiz"] == 2)
+    kontrol("çapraz tablo ve tur kırılımı", o["capraz"]["-"] == {"TAM": 1, "DEGIL": 1} and o["capraz"]["E"] == {"TAM": 1, "DEGIL": 1}
+            and o["tur"]["çıkarım"]["TAM"]["H"] == 1 and o["tur"]["açık"]["TAM"]["n"] == 2)
+    kontrol("karar kuralı yanıtlı n ile", o["karar"] == FV.fv_kor_karar(1 / 3, 1.0) == "GÖZLE UYUMSUZ")
+    kontrol("sonuç bilgisi yanıtsızı dışlar (TAM H: no 2 r60)", o["sonuc_bilgi"]["H"]["n"] == 1 and abs(o["sonuc_bilgi"]["H"]["r60_medyan"] - 0.04) < 1e-12
+            and o["sonuc_bilgi"]["H"]["kirilim_payi"] == 1.0)
+    try:
+        FV.fv_olc("1:E", cikti=os.path.join(td, "c"), cevap_dosya=yc); kontrol("--cevap ve --cevap-dosya birlikte durur", False)
+    except FV.FVHata:
+        kontrol("--cevap ve --cevap-dosya birlikte durur", True)
+    o2 = FV.fv_olc("1:E,2:H,3:E,4:B,5:H,6:B", cikti=os.path.join(td, "c"))
+    kontrol("tam metin yanıt eski davranış (n 4, yanıtsız 0)", o2["TAM"]["n"] == 4 and o2["n_yanitsiz"] == 0 and o2["tur"] is None)
+
 print("9) kör sayfa sızıntı")
 h2 = rastgele_hisse(300, 5, bas="2019-03-01")
 fig = FV.fv_kor_sayfa(h2, h2.index[250], 7)

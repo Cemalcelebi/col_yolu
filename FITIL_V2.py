@@ -16,6 +16,7 @@ Komut:  python FITIL_V2.py tasarim [--veri K]                    AŞAMA 1: etike
         python FITIL_V2.py kos [--veri K] [--gitsiz]             AŞAMA 2: ORTAK CETVEL ölçümü -> sonuc.json + RAPOR.md (kapılar)
         python FITIL_V2.py korset [--veri K] [--gitsiz]          KÖR SET 2: FITIL_V2_KOR_SET.pdf + kor2_anahtar.json (gizli)
         python FITIL_V2.py olc --cevap "1:E,2:H,..."             Cemal'in kör set 2 yanıtı -> uyum (anahtar ve sonuc.json'a eklenir)
+        python FITIL_V2.py olc --cevap-dosya kor2_cevap_cemal.json   aynı, yanıt dosyasından ('-' = yanıtsız, paylardan çıkar)
         python FITIL_V2.py rapor [--ek DOSYA]                    sonuc.json -> RAPOR.md
 Colab:  exec(open('FITIL_V2.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 Komisyon / kayma yok. Evren bugün işlem gören hisseler: hayatta kalma yanlılığı (getiriler yukarı, -%50 olasılığı aşağı yanlı).
@@ -1089,14 +1090,19 @@ def K_SORU() -> str:
     return V2_ESIK["kor2"]["soru"]
 
 
-def fv_cevap_ayristir(metin: str, n: int = 40) -> Dict[int, str]:
+FV_YANITSIZ = "-"
+
+
+def fv_cevap_ayristir(metin: str, n: int = 40, eksik_izin: bool = False) -> Dict[int, str]:
+    """'1:E,2:H,3:B,4:-' -> {no: E/H/B/-}. '-' = yanıtsız sayfa. eksik_izin=True ise yazılmayan numaralar da '-' (yanıtsız) sayılır;
+    aksi halde eksik numara durdurur (eski davranış)."""
     out: Dict[int, str] = {}
     for parca in re.split(r"[,;\s]+", metin.strip()):
         if not parca:
             continue
-        m = re.fullmatch(r"(\d{1,3})\s*[:=]\s*([EeHhBb])", parca)
+        m = re.fullmatch(r"(\d{1,3})\s*[:=]\s*([EeHhBb-])", parca)
         if not m:
-            raise FVHata(f"yanıt parçası okunamadı: '{parca}' (biçim 1:E,2:H,3:B)")
+            raise FVHata(f"yanıt parçası okunamadı: '{parca}' (biçim 1:E,2:H,3:B,4:-)")
         k = int(m.group(1))
         if not 1 <= k <= n:
             raise FVHata(f"numara {k} 1..{n} dışında")
@@ -1104,9 +1110,46 @@ def fv_cevap_ayristir(metin: str, n: int = 40) -> Dict[int, str]:
             raise FVHata(f"numara {k} iki kez")
         out[k] = m.group(2).upper()
     eksik = [k for k in range(1, n + 1) if k not in out]
+    if eksik and not eksik_izin:
+        raise FVHata(f"yanıtı olmayan numara: {eksik} (yanıtsız sayfa için '{FV_YANITSIZ}' yaz ya da eksik_izin=True)")
+    for k in eksik:
+        out[k] = FV_YANITSIZ
     if eksik:
-        raise FVHata(f"yanıtı olmayan numara: {eksik}")
-    return out
+        fvlog.info("kör yanıt: %d numara yazılmamış, yanıtsız sayıldı: %s", len(eksik), eksik)
+    return dict(sorted(out.items()))
+
+
+FV_TUR = ("açık", "çıkarım", "yanıtsız")
+
+
+def fv_cevap_dosya_oku(yol: str, n: int = 40, eksik_izin: bool = False) -> Tuple[Dict[int, str], Dict[int, str], str]:
+    """Ana modelin yazıya döktüğü yanıt dosyası ('yanit' -> no -> {etiket, tur, ...}) -> (etiket, tur, dosya sha).
+    Denetim: numara 1..n, etiket E/H/B/-, tur açık/çıkarım/yanıtsız, '-' <-> 'yanıtsız' tutarlı; eksik numara eksik_izin ile yanıtsız."""
+    if not os.path.exists(yol):
+        raise FVHata(f"yanıt dosyası yok: {yol}")
+    try:
+        J = json.load(open(yol, encoding="utf-8"))
+    except (OSError, ValueError) as ex:
+        raise FVHata(f"yanıt dosyası okunamadı: {yol}: {ex}")
+    Y = J.get("yanit") if isinstance(J, dict) else None
+    if not isinstance(Y, dict) or not Y:
+        raise FVHata(f"yanıt dosyasında 'yanit' sözlüğü yok: {yol}")
+    parca, tur = [], {}
+    for k, v in Y.items():
+        if not (isinstance(v, dict) and str(k).isdigit()):
+            raise FVHata(f"yanıt dosyası satırı bozuk: {k}")
+        et, tr = str(v.get("etiket", "")).strip().upper(), str(v.get("tur", "")).strip()
+        if et not in ("E", "H", "B", FV_YANITSIZ):
+            raise FVHata(f"yanıt {k}: etiket '{et}' E/H/B/- değil")
+        if tr not in FV_TUR:
+            raise FVHata(f"yanıt {k}: tur '{tr}' {FV_TUR} dışında")
+        if (et == FV_YANITSIZ) != (tr == "yanıtsız"):
+            raise FVHata(f"yanıt {k}: etiket '{et}' ile tur '{tr}' çelişiyor")
+        parca.append(f"{int(k)}:{et}"); tur[int(k)] = tr
+    c = fv_cevap_ayristir(",".join(parca), n, eksik_izin=eksik_izin)
+    for k, v in c.items():
+        tur.setdefault(k, "yanıtsız")
+    return c, dict(sorted(tur.items())), _fv_sha_dosya(yol)
 
 
 def fv_kor_karar(tam_e: Optional[float], degil_e: Optional[float]) -> str:
@@ -1119,28 +1162,54 @@ def fv_kor_karar(tam_e: Optional[float], degil_e: Optional[float]) -> str:
     return "KISMİ"
 
 
-def fv_olc(cevap: str, cikti: Optional[str] = None) -> Dict[str, Any]:
+def fv_olc(cevap: Optional[str] = None, cikti: Optional[str] = None, cevap_dosya: Optional[str] = None,
+           eksik_izin: bool = False) -> Dict[str, Any]:
+    """Kör set 2 uyumu. Yanıt ya metin (--cevap) ya dosya (--cevap-dosya). Yanıtsız ('-') sayfalar paylardan ÇIKAR (n = yanıtlı);
+    karar kuralı (fv_kor_karar) değişmez, yalnız yanıtlı sayfalarla hesaplanır."""
     import FITIL_KOR as FK
+    if (cevap is None) == (cevap_dosya is None):
+        raise FVHata("yanıt için --cevap ya da --cevap-dosya'dan yalnız biri verilmeli")
     ya = _fv_yol("anahtar", cikti)
-    A = json.load(open(ya, encoding="utf-8")); S = A["sayfalar"]; c = fv_cevap_ayristir(cevap, len(S))
+    A = json.load(open(ya, encoding="utf-8")); S = A["sayfalar"]
+    if cevap_dosya is not None:
+        c, tur, csha = fv_cevap_dosya_oku(cevap_dosya, len(S), eksik_izin=eksik_izin)
+    else:
+        c, tur, csha = fv_cevap_ayristir(cevap, len(S), eksik_izin=eksik_izin), None, None
+    if sorted(c) != sorted(int(e["no"]) for e in S):
+        raise FVHata("yanıt numaraları anahtar sayfalarıyla aynı değil")
+    yanitsiz = [k for k, v in sorted(c.items()) if v == FV_YANITSIZ]
 
     def pay(grp):
-        x = [c[e["no"]] for e in S if grp(e)]
+        y = [c[e["no"]] for e in S if grp(e)]; x = [v for v in y if v != FV_YANITSIZ]
         e_, h_, b_ = x.count("E"), x.count("H"), x.count("B")
-        return {"n": len(x), "E": e_, "H": h_, "B": b_, "E_payi": e_ / len(x) if x else None, "E_payi_B_haric": e_ / (e_ + h_) if (e_ + h_) else None}
+        return {"n": len(x), "E": e_, "H": h_, "B": b_, "E_payi": e_ / len(x) if x else None, "E_payi_B_haric": e_ / (e_ + h_) if (e_ + h_) else None,
+                "yanitsiz": len(y) - len(x), "n_toplam": len(y)}
     out = {"cevap": {str(k): v for k, v in sorted(c.items())}, "TAM": pay(lambda e: e["grup"] == "TAM"), "DEGIL": pay(lambda e: e["grup"] == "DEGIL"),
            "TAM_BIST": pay(lambda e: e["grup"] == "TAM" and e["pazar"] == "BIST"), "TAM_ABD": pay(lambda e: e["grup"] == "TAM" and e["pazar"] == "ABD")}
+    out["n_toplam"] = len(c); out["n_yanitli"] = len(c) - len(yanitsiz); out["n_yanitsiz"] = len(yanitsiz); out["yanitsiz"] = yanitsiz
+    out["kaynak"] = {"cevap_dosya": os.path.relpath(cevap_dosya, KOK_FV) if cevap_dosya else None, "cevap_dosya_sha": csha, "eksik_izin": eksik_izin}
+    if tur is not None:
+        out["tur_cevap"] = {str(k): v for k, v in tur.items()}
+        out["tur"] = {tr: {g: pay(lambda e, tr=tr, g=g: e["grup"] == g and tur[e["no"]] == tr) for g in ("TAM", "DEGIL")}
+                      for tr in ("açık", "çıkarım")}
+    else:
+        out["tur"] = None
+    out["capraz"] = {etk: {g: sum(1 for e in S if e["grup"] == g and c[e["no"]] == etk) for g in ("TAM", "DEGIL")} for etk in ("E", "H", "B", FV_YANITSIZ)}
     t, d = out["TAM"], out["DEGIL"]
     out["fisher"] = FK.fk_fisher(t["E"], t["n"] - t["E"], d["E"], d["n"] - d["E"])
     out["karar"] = fv_kor_karar(t["E_payi"], d["E_payi"]); out["kural"] = V2_ESIK["kor2"]["karar"]
-    bil = {}
-    for etk in ("E", "H", "B"):
-        x = [e for e in S if e["grup"] == "TAM" and c[e["no"]] == etk]   # TAM grubu = TAM_DIP günleri
-        r20 = [e["r20"] for e in x if e.get("r20") is not None]; r60 = [e["r60"] for e in x if e.get("r60") is not None]
-        on = [e["once"] for e in x if e.get("once") in ("KIRILIM", "STOP", "YOK")]
-        bil[etk] = {"n": len(x), "r20_medyan": float(np.median(r20)) if r20 else None, "r60_medyan": float(np.median(r60)) if r60 else None,
-                    "kirilim_payi": (on.count("KIRILIM") / len(on)) if on else None, "stop_payi": (on.count("STOP") / len(on)) if on else None}
-    out["sonuc_bilgi"] = bil
+    def bilgi(grup):
+        bil = {}
+        for etk in ("E", "H", "B"):   # yanıtsız ('-') sayfalar dışarıda
+            x = [e for e in S if e["grup"] == grup and c[e["no"]] == etk]
+            r20 = [e["r20"] for e in x if e.get("r20") is not None]; r60 = [e["r60"] for e in x if e.get("r60") is not None]
+            on = [e["once"] for e in x if e.get("once") in ("KIRILIM", "STOP", "YOK")]
+            bil[etk] = {"n": len(x), "r20_medyan": float(np.median(r20)) if r20 else None, "r60_medyan": float(np.median(r60)) if r60 else None,
+                        "kirilim_payi": (on.count("KIRILIM") / len(on)) if on else None, "stop_payi": (on.count("STOP") / len(on)) if on else None,
+                        "n_once_olculen": len(on)}
+        return bil
+    out["sonuc_bilgi"] = bilgi("TAM")   # TAM grubu = TAM_DIP günleri
+    out["sonuc_bilgi_DEGIL"] = bilgi("DEGIL")
     A["olc"] = out
     _fv_yaz(ya, json.dumps(A, ensure_ascii=False, indent=1, default=str), "anahtar")
     ys = _fv_yol("sonuc", cikti)
@@ -1227,6 +1296,8 @@ def fv_rapor(cikti: Optional[str] = None, ek: Optional[str] = None) -> str:
     if k2:
         s.append(f"- Karar: **{k2['karar']}** ({k2['kural']}). TAM E {k2['TAM']['E']} / {k2['TAM']['n']}, DEĞİL E {k2['DEGIL']['E']} / {k2['DEGIL']['n']}; "
                  f"Fisher p {_sy(k2['fisher'], 3)}.")
+        if "n_yanitli" in k2:
+            s += _fv_rapor_kor2_ek(k2)
     else:
         s.append("- Cemal'in yanıtı bekleniyor (`python FITIL_V2.py olc --cevap ...`).")
     s += ["", "## VERİ ve SINIRLAR", ""] + [f"- {p}: {'; '.join(n)}" for p, n in J["veri_not"].items()] + [
@@ -1242,6 +1313,28 @@ def fv_rapor(cikti: Optional[str] = None, ek: Optional[str] = None) -> str:
     metin = "\n".join(s)
     _fv_yaz(_fv_yol("rapor", cikti), metin, "rapor")
     return metin
+
+
+def _fv_rapor_kor2_ek(k2: Dict[str, Any]) -> List[str]:
+    """KÖR SET 2 ek satırları: yanıtlı / yanıtsız, açık / çıkarım kırılımı, çapraz tablo, etiket başına sonuç bilgisi (n küçük; bulgu değil)."""
+    def ehb(p): return f"E {p['E']} / H {p['H']} / B {p['B']} (n {p['n']}; E payı {_yz(p['E_payi'], 0)})"
+    s = [f"- Yanıtlı sayfa (n_yanitli) {k2['n_yanitli']} / {k2['n_toplam']}; yanıtsız {k2['n_yanitsiz']} (paylardan çıkarıldı): "
+         f"{', '.join(str(k) for k in k2['yanitsiz']) or '-'}.",
+         f"- TAM: {ehb(k2['TAM'])}; DEĞİL: {ehb(k2['DEGIL'])}; TAM BIST: {ehb(k2['TAM_BIST'])}; TAM ABD: {ehb(k2['TAM_ABD'])}."]
+    if k2.get("tur"):
+        s += ["", "| Yanıt türü | TAM E / H / B (n) | DEĞİL E / H / B (n) |", "|---|---|---|"]
+        for tr, g in k2["tur"].items():
+            s.append(f"| {tr} | {g['TAM']['E']} / {g['TAM']['H']} / {g['TAM']['B']} ({g['TAM']['n']}) | "
+                     f"{g['DEGIL']['E']} / {g['DEGIL']['H']} / {g['DEGIL']['B']} ({g['DEGIL']['n']}) |")
+    s += ["", "| Cemal etiketi | TAM | DEĞİL |", "|---|---|---|"]
+    for etk, g in k2["capraz"].items():
+        s.append(f"| {'yanıtsız (-)' if etk == FV_YANITSIZ else etk} | {g['TAM']} | {g['DEGIL']} |")
+    s += ["", "| Grup | Cemal etiketi | n | r20 medyan | r60 medyan | önce KIRILIM payı | önce STOP payı |", "|---|---|---|---|---|---|---|"]
+    for grp, ad in (("TAM", "sonuc_bilgi"), ("DEĞİL", "sonuc_bilgi_DEGIL")):
+        for etk, b in (k2.get(ad) or {}).items():
+            s.append(f"| {grp} | {etk} | {b['n']} | {_yz(b['r20_medyan'])} | {_yz(b['r60_medyan'])} | {_yz(b['kirilim_payi'], 0)} | {_yz(b['stop_payi'], 0)} |")
+    s.append("- Okuma: sonuç sütunları (r20 / r60 / önce kırılım-stop) yalnız bilgi; etiket başına n küçük, bulgu değil.")
+    return s
 
 
 # ================================================================ 8) ÇAKIŞMA KAPISI
@@ -1270,6 +1363,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
     ap.add_argument("--veri", default=None)
     ap.add_argument("--ek", default=None)
     ap.add_argument("--cevap", default=None)
+    ap.add_argument("--cevap-dosya", default=None, help="kör set 2 yanıt json'u ('yanit' -> no -> {etiket E/H/B/-, tur})")
+    ap.add_argument("--eksik-izin", action="store_true", help="yazılmayan yanıt numaraları yanıtsız ('-') sayılır")
     ap.add_argument("--uzerine-yaz", action="store_true")
     ap.add_argument("--gitsiz", action="store_true", help="ön kayıt git'e işlenmemişse SAPMA olarak yazıp koş")
     a = ap.parse_args()
@@ -1285,9 +1380,9 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         elif a.komut == "korset":
             print(fv_korset(a.cikti, a.veri, git=not a.gitsiz))
         elif a.komut == "olc":
-            if not a.cevap:
-                raise FVHata("--cevap gerekli")
-            print(json.dumps(fv_olc(a.cevap, a.cikti), ensure_ascii=False, indent=1, default=str))
+            if bool(a.cevap) == bool(a.cevap_dosya):
+                raise FVHata("--cevap ya da --cevap-dosya'dan yalnız biri gerekli")
+            print(json.dumps(fv_olc(a.cevap, a.cikti, cevap_dosya=a.cevap_dosya, eksik_izin=a.eksik_izin), ensure_ascii=False, indent=1, default=str))
         else:
             print(fv_rapor(a.cikti, a.ek))
     except (FVHata, OC.OCHata) as ex:

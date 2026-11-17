@@ -8714,5 +8714,274 @@
    "bh_q10": false
   }
  ],
- "sure_sn": 684.6
+ "sure_sn": 684.6,
+ "kor2": {
+  "cevap": {
+   "1": "B",
+   "2": "B",
+   "3": "B",
+   "4": "-",
+   "5": "H",
+   "6": "-",
+   "7": "B",
+   "8": "E",
+   "9": "H",
+   "10": "H",
+   "11": "H",
+   "12": "B",
+   "13": "B",
+   "14": "H",
+   "15": "E",
+   "16": "H",
+   "17": "H",
+   "18": "H",
+   "19": "B",
+   "20": "-",
+   "21": "H",
+   "22": "B",
+   "23": "H",
+   "24": "H",
+   "25": "H",
+   "26": "B",
+   "27": "B",
+   "28": "H",
+   "29": "B",
+   "30": "-",
+   "31": "-",
+   "32": "-",
+   "33": "-",
+   "34": "-",
+   "35": "-",
+   "36": "-",
+   "37": "-",
+   "38": "-",
+   "39": "-",
+   "40": "-"
+  },
+  "TAM": {
+   "n": 19,
+   "E": 1,
+   "H": 12,
+   "B": 6,
+   "E_payi": 0.05263157894736842,
+   "E_payi_B_haric": 0.07692307692307693,
+   "yanitsiz": 11,
+   "n_toplam": 30
+  },
+  "DEGIL": {
+   "n": 7,
+   "E": 1,
+   "H": 1,
+   "B": 5,
+   "E_payi": 0.14285714285714285,
+   "E_payi_B_haric": 0.5,
+   "yanitsiz": 3,
+   "n_toplam": 10
+  },
+  "TAM_BIST": {
+   "n": 10,
+   "E": 0,
+   "H": 7,
+   "B": 3,
+   "E_payi": 0.0,
+   "E_payi_B_haric": 0.0,
+   "yanitsiz": 5,
+   "n_toplam": 15
+  },
+  "TAM_ABD": {
+   "n": 9,
+   "E": 1,
+   "H": 5,
+   "B": 3,
+   "E_payi": 0.1111111111111111,
+   "E_payi_B_haric": 0.16666666666666666,
+   "yanitsiz": 6,
+   "n_toplam": 15
+  },
+  "n_toplam": 40,
+  "n_yanitli": 26,
+  "n_yanitsiz": 14,
+  "yanitsiz": [
+   4,
+   6,
+   20,
+   30,
+   31,
+   32,
+   33,
+   34,
+   35,
+   36,
+   37,
+   38,
+   39,
+   40
+  ],
+  "kaynak": {
+   "cevap_dosya": "arastirma_cikti/fitil_v2/kor2_cevap_cemal.json",
+   "cevap_dosya_sha": "b649ff6018f50c4c2db6cd7be4e420caad942dbadbb68599e77c560cae0854b3",
+   "eksik_izin": false
+  },
+  "tur_cevap": {
+   "1": "çıkarım",
+   "2": "açık",
+   "3": "açık",
+   "4": "yanıtsız",
+   "5": "çıkarım",
+   "6": "yanıtsız",
+   "7": "çıkarım",
+   "8": "çıkarım",
+   "9": "çıkarım",
+   "10": "çıkarım",
+   "11": "çıkarım",
+   "12": "çıkarım",
+   "13": "açık",
+   "14": "çıkarım",
+   "15": "çıkarım",
+   "16": "çıkarım",
+   "17": "çıkarım",
+   "18": "çıkarım",
+   "19": "açık",
+   "20": "yanıtsız",
+   "21": "açık",
+   "22": "açık",
+   "23": "çıkarım",
+   "24": "açık",
+   "25": "açık",
+   "26": "açık",
+   "27": "açık",
+   "28": "açık",
+   "29": "açık",
+   "30": "yanıtsız",
+   "31": "yanıtsız",
+   "32": "yanıtsız",
+   "33": "yanıtsız",
+   "34": "yanıtsız",
+   "35": "yanıtsız",
+   "36": "yanıtsız",
+   "37": "yanıtsız",
+   "38": "yanıtsız",
+   "39": "yanıtsız",
+   "40": "yanıtsız"
+  },
+  "tur": {
+   "açık": {
+    "TAM": {
+     "n": 9,
+     "E": 0,
+     "H": 4,
+     "B": 5,
+     "E_payi": 0.0,
+     "E_payi_B_haric": 0.0,
+     "yanitsiz": 0,
+     "n_toplam": 9
+    },
+    "DEGIL": {
+     "n": 3,
+     "E": 0,
+     "H": 0,
+     "B": 3,
+     "E_payi": 0.0,
+     "E_payi_B_haric": null,
+     "yanitsiz": 0,
+     "n_toplam": 3
+    }
+   },
+   "çıkarım": {
+    "TAM": {
+     "n": 10,
+     "E": 1,
+     "H": 8,
+     "B": 1,
+     "E_payi": 0.1,
+     "E_payi_B_haric": 0.1111111111111111,
+     "yanitsiz": 0,
+     "n_toplam": 10
+    },
+    "DEGIL": {
+     "n": 4,
+     "E": 1,
+     "H": 1,
+     "B": 2,
+     "E_payi": 0.25,
+     "E_payi_B_haric": 0.5,
+     "yanitsiz": 0,
+     "n_toplam": 4
+    }
+   }
+  },
+  "capraz": {
+   "E": {
+    "TAM": 1,
+    "DEGIL": 1
+   },
+   "H": {
+    "TAM": 12,
+    "DEGIL": 1
+   },
+   "B": {
+    "TAM": 6,
+    "DEGIL": 5
+   },
+   "-": {
+    "TAM": 11,
+    "DEGIL": 3
+   }
+  },
+  "fisher": 0.47384615384615386,
+  "karar": "GÖZLE UYUMSUZ",
+  "kural": "TAM sayfalarında E payı >= 0,60 VE TAM - DEĞİL E payı farkı >= 0,30 -> 'GÖZLE UYUMLU'; TAM E payı < 0,40 -> 'GÖZLE UYUMSUZ'; aksi 'KISMİ'. Fisher kesin p bilgi. Sonuç (r20 / r60 / önce kırılım-stop) yalnız bilgi; n küçük, bulgu değil",
+  "sonuc_bilgi": {
+   "E": {
+    "n": 1,
+    "r20_medyan": 0.39999993497675246,
+    "r60_medyan": 0.53636365508245,
+    "kirilim_payi": 1.0,
+    "stop_payi": 0.0,
+    "n_once_olculen": 1
+   },
+   "H": {
+    "n": 12,
+    "r20_medyan": 0.048042898967073255,
+    "r60_medyan": 0.0007809951399876947,
+    "kirilim_payi": 0.5,
+    "stop_payi": 0.5,
+    "n_once_olculen": 12
+   },
+   "B": {
+    "n": 6,
+    "r20_medyan": -0.07313225151179265,
+    "r60_medyan": -0.06085846699606923,
+    "kirilim_payi": 0.16666666666666666,
+    "stop_payi": 0.8333333333333334,
+    "n_once_olculen": 6
+   }
+  },
+  "sonuc_bilgi_DEGIL": {
+   "E": {
+    "n": 1,
+    "r20_medyan": -0.0316967199530952,
+    "r60_medyan": 0.47793663524737573,
+    "kirilim_payi": 1.0,
+    "stop_payi": 0.0,
+    "n_once_olculen": 1
+   },
+   "H": {
+    "n": 1,
+    "r20_medyan": 0.21069176849376503,
+    "r60_medyan": 0.11163522378019874,
+    "kirilim_payi": 1.0,
+    "stop_payi": 0.0,
+    "n_once_olculen": 1
+   },
+   "B": {
+    "n": 5,
+    "r20_medyan": 0.05358408043833163,
+    "r60_medyan": -0.1242094344173037,
+    "kirilim_payi": 0.75,
+    "stop_payi": 0.25,
+    "n_once_olculen": 4
+   }
+  }
+ }
 }
