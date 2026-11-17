@@ -83,3 +83,14 @@ Cemal'in notlarından çıkan kurallar (S+ tanımının eksikleri):
 - K13 TEPEDE DİKKAT: aynı şekil tepede (sol tepe mumları aşağı göstermişse) alım değil (14, 27, 8).
 - K14 KAVGA: alt tabanda savunma var ama her yükselişte satıcı çıkıyorsa belirsiz (19, 18, 23, 5); yatay / stabil (11, 33) sinyal değil.
 - K15 KİM ALIYOR: akümülasyonda alıcının kurumsal olup olmadığı önemli (9) — AKD verisi ücretsiz yok (K25 / Ç171 notu).
+
+### Kör set 2 dersleri (17 Kas akşam; Cemal'in el yazısıyla işaretlediği FITIL_V2_KOR_SET.pdf; tam metin arastirma_cikti/fitil_v2/KOR2_DERS_CEMAL.md)
+Cemal soruyu mum gününe göre değil formasyona göre yanıtladı (26 yanıt: E 2, H 13, B 11; 14 yanıtsız). Kodun 'tam girilir' günleri Cemal'in girişi değil. Çıkan kurallar (K16-K29; hepsi ölçülmedi, kural defteri K1-K14 ile aynı):
+- K16 HEDEF KÜÇÜK: formasyon hedefi +%5..+%10; 60 gün ölçüsü bunu ölçmez; hedef sonrası yeni yapı belirler (No 4).
+- K17 İKİ SAVUNMA İKİ YÖN: düz taban yukarı (hedef önceki tepe), düz tavan aşağı (hedef önceki dip) (No 4, 6, 8, 14, 20, 23).
+- K18 KUBBE: şemsiye aşağı, kazan yukarı (No 5, 21).
+- K19 DÖNÜŞ GÖRÜLMEDEN GİRİŞ YOK: çanak sağ kenarı yükselmeden alım yok (No 5, 9; H'lerin ana nedeni).
+- K20 KIRIK TABANIN HÜKMÜ YOK (No 3, 12). K21 TUTMAYAN DİP güven yok (No 16, 18, 24). K22 KÜÇÜCÜK YAPI güven vermez; boy düşüşle orantılı (No 7, 13, 17, 28).
+- K23 KAĞIT HAFIZASI: aynı hissede önceki formasyonlar hedefe gittiyse güven artar, patladıysa biter (No 8, 11, 25) — kodda hiç yok, Cemal'in en ağır şartı.
+- K24 SAT MUMU: düz tavandan kopan ilk büyük kırmızı mum (No 8, 10, 14, 20). K25 ÇEKİŞTİRME = belirsiz, bekle (No 22, 27; REEDR). K26 OLUŞUM YOKSA yön önceki yol; kod 'yapı yok' diyebilmeli (No 2, 19, 26, 29).
+- K27 DEV TEK MUM varsa kağıt şüpheli (No 1). K28 ÜÇ KEZ TEPEN TABAN (No 10, düşük öncelik). K29 GERİ TEST hedefi büyütür; asıl giriş retest (No 15; A4 ile aynı).

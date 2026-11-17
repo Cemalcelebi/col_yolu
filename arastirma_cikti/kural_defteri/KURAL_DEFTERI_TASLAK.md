@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 14 (hepsi SINANMADI; toplam 154). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -216,6 +216,27 @@ Ayrıca sık: Cemal'in gözündeki bölge ile kod tanımının ayrışması (H18
 | J17 | Bir ölçü bir testte artı, ötekinde eksi ise iz değil; küçük örneklem bulgu değil; tek izle karar yok | Devir notu 17 Kas (§5); CLAUDE.md test standardı | Süreç kuralı | SINANMADI | CLAUDE.md'de aynı; ORTAK CETVEL iki yarı şartı | ORTAK_CETVEL.oc_hucre (iki yarı, n ≥ 30) | KAPALI (kural) |
 | J18 | Tarayıcı yalnız aday bulur; desen / göstergeye göre alım-satım yasak | Devir notu 17 Kas (§5); CLAUDE.md | Süreç kuralı | SINANMADI | CLAUDE.md'de aynı | COL_v1.bugun_liste (aday listesi) | KAPALI (kural) |
 | J19 | Cevaplar Türkçe; 'yatırım tavsiyesi değildir' cümlesi yazılmaz | Devir notu 17 Kas (§5) | İletişim kuralı | SINANMADI | CLAUDE.md dürüstlük kuralı 'Claude yatırım danışmanı değildir' cümlesini ister: bu madde onunla çelişiyor (bölüm 5) | YOK | AÇIK (Cemal kararı) |
+
+### K. Kör set 2 dersleri (Cemal'in el yazısı, 17 Kas akşam; kaynak arastirma_cikti/fitil_v2/KOR2_DERS_CEMAL.md ve kor2_cevap_cemal.json)
+
+Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasyon + hedef + kağıt hafızası okuyarak işaretledi (26 yanıt: E 2, H 13, B 11; 14 yanıtsız). Aşağıdaki 14 kural o notlardan çıkarıldı; hiçbiri ölçülmedi.
+
+| No | Kural (Cemal'in sözü, kısa) | Kaynak (sayfa) | Sınandı mı | Sonuç | Neden (bir cümle) | Kodda (modül.şart) | Durum |
+|---|---|---|---|---|---|---|---|
+| K1 | Formasyon hedefi küçük (+%5..+%10); 60 gün ölçüsü bunu ölçmez; hedef sonrası yeni yapı belirler | 17 Kas kör set 2 No 4 | Hayır | SINANMADI | ORTAK CETVEL r60 / 250 gün dokunma ölçer; 20 barda +%5 / +%10 'önce' ölçüsü yok | YOK (FITIL_V2 'önce KIRILIM/STOP' en yakın) | AÇIK: bilgi satırı olarak eklenir |
+| K2 | Düz taban = yukarı formasyon (hedef önceki tepe), düz tavan = aşağı formasyon (hedef önceki dip) | No 4, 6, 8, 9, 14, 20, 23 | Hayır | SINANMADI | Tavan aynası hiç tanımlanmadı (SM_TEPE fitil aynasıydı, düz tavan değil) | S6 yalnız taban; tavan YOK | AÇIK: S6 ayna sürümü, ayrı ön kayıt |
+| K3 | Kubbe kuralı: şemsiye aşağı, kazan (çanak) yukarı | No 5, 9, 21 | Hayır | SINANMADI | Eğri biçimi ölçülmedi; S6 düz bant arar | YOK | AÇIK |
+| K4 | Çanağın yukarı dönüşü görülmeden giriş yok | No 5, 9, 10, 16-18, 24, 28 | Hayır (kör set 2 dolaylı) | SINANMADI | FITIL_V2 (4) dönüş istemez; kodun TAM günlerine Cemal'in H demesinin ana nedeni | FITIL_V2 s4 ters yönde | AÇIK: FITIL_V2 (3b) şartı |
+| K5 | Taban kapanışla kırıldıysa o mumların hükmü yok; karantina | No 3, 12 | Hayır | SINANMADI | FITIL_V2 s2 yalnız 30 bar bakar | FITIL_V2 s2 kısmen | AÇIK |
+| K6 | Tutmayan dip (alçalan dipler zinciri) = güven yok | No 16, 18, 24 | Hayır | SINANMADI | 60-120 bar dip zinciri ölçülmedi | FITIL_V2 s2 kısmen (30 bar) | AÇIK |
+| K7 | Küçücük yapı güven vermez; yapı boyu düşüş bacağıyla orantılı | No 7, 13, 17, 28 | Hayır | SINANMADI | S6 nMin 8 / FITIL_V2 10 bar sabit; düşüşe oran yok | S6 nMin (sabit) | AÇIK |
+| K8 | Kağıt hafızası: önceki formasyonlar hedefe gittiyse güven artar, patladıysa biter | No 8, 11, 25 | Hayır | SINANMADI | Hisse bazlı formasyon karnesi hiçbir modülde yok; Cemal'in en ağır şartı | YOK | AÇIK: yeni ölçü |
+| K9 | SAT mumu: düz tavandan kopan ilk büyük kırmızı mum | No 8, 10, 14, 20 | Hayır | SINANMADI | Çıkışlar fiyat stopu; tavan kopuşu tanımı yok | takip.py T6/T10 (farklı) | AÇIK: C grubu |
+| K10 | Çekiştirme (uçurum kenarında zayıf yukarı çeken el) = BELİRSİZ, bekle; REEDR örneği | No 22, 27 | Hayır | SINANMADI | Sinyal değil etiket; tanım REEDR'de doğrulanacak | YOK | AÇIK |
+| K11 | Oluşum yoksa yön önceki yoldur; kod 'yapı yok' diyebilmeli | No 2, 19, 26, 29 | Hayır | SINANMADI | FITIL_V2 No 19 ve 29'a TAM dedi; sessiz kalma şartı yok | YOK | AÇIK |
+| K12 | Geçmişte dev tek mum (fitil > +%100) varsa kağıt şüpheli (kripto gibi) | No 1 | Hayır | SINANMADI | Devir notu J4 ile akraba; boyut kuralı | YOK | AÇIK (G grubu) |
+| K13 | Üç kez tepen taban: üçüncü sekmede girilebilir ama Cemal'in yapısı değil | No 10 | Hayır | SINANMADI | Düşük öncelik | YOK | AÇIK, düşük öncelik |
+| K14 | Geri test hedefi büyütür (asıl giriş retest; iki kutu 2. giriş) | No 15 (tek E TAM sayfası) | Hayır | SINANMADI | A4 / B3 ile aynı; ölçülmedi | COL_v1 yorumu, şart yok | AÇIK: A4 ile birleşir |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 
