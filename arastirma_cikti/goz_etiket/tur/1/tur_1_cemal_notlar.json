@@ -1,0 +1,156 @@
+{
+ "kaynak": "Cemal'in el yazısıyla işaretlediği TUR_1_KOR.pdf (18 Kas 2026); ana model yazıya döktü",
+ "kodlama": "açık = ✓ / X / B / yazılı karar; çıkarım = çizim ya da nottan",
+ "cevap": {
+  "1": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "bölgeye ve öncesine iki kazan çizdi; 'daha önceki oluşumu görmüyorsa bu hedefe gitse de kodu haklı çıkarmaz'"
+  },
+  "2": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "büyük kazan çizdi; 'işaretli alış mumu net değil, bu mumla işleme girmem; daha önceki tepeyi geçmemiş, oysa geçmeli; alım mumu tavan çizgisini tam ortadan kesince hedefe gitme daha sık olur'"
+  },
+  "3": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "'yukarıdaki küçük kubbeye kadar bir yol var, bu da kurtarır mı bilmiyorum' (ΔX)"
+  },
+  "4": {
+   "cevap": "OLUR",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "5": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "6": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "7": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "8": {
+   "cevap": "OLUR",
+   "tur": "açık",
+   "not": "'olur ama alış mumu belirsiz'"
+  },
+  "9": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "X + bütün grafiğe şemsiye"
+  },
+  "10": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ tavan üstüne + önceki kazan çizimi"
+  },
+  "11": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "X + büyük şemsiye"
+  },
+  "12": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (ok işareti)"
+  },
+  "13": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (ok işareti)"
+  },
+  "14": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + iki küçük kazan"
+  },
+  "15": {
+   "cevap": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "'✓ < B' ve iki kazan çizimi: OLUR ile BELİRSİZ arası"
+  },
+  "16": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan çizimi"
+  },
+  "17": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "X; 'aşağıdaki oluşumu önümüze getirmeyen, yukarıdaki belirsiz oluşumu uygun gören kod çöp seviyesinde, çok gelişmeli' (gerçek alış mumu -55'teki kazanda)"
+  },
+  "18": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + büyük şemsiye çizimi; 'büyük resme göre çıkacağı yeri işaretledim, ancak o kadar çıkar' (sınırlı hedef)"
+  },
+  "19": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "aynı not (17): gerçek alış mumu -35'teki kazanda; kodun bölgesi yukarıdaki belirsiz oluşum"
+  },
+  "20": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "büyük şemsiye + 'Tavan' çizgisi (direnç üstte)"
+  },
+  "21": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "22": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (ok)"
+  },
+  "23": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (ok)"
+  },
+  "24": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "25": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "X"
+  },
+  "26": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "aynı not (17): alış mumu -58'deki kazanda"
+  },
+  "27": {
+   "cevap": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "28": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan çizimi"
+  },
+  "29": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan çizimi"
+  },
+  "30": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "aynı not (17): alış mumu -50'deki kazanda"
+  }
+ }
+}
