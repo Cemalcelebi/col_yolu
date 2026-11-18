@@ -10,10 +10,14 @@
 7) (gerçek dosyalar varsa) anahtar.json 300 olay, kotalar; ozellik_Y1.csv.gz 26.663 satır, olay dosyasıyla aynı sıra; PNG klasörü 300 dosya
 8) AŞAMA C: birleştirme bire bir (eksik / fazla DURUR), KAT5 = Σ h5 / Σ es_h5 = oc_kat, CV sızıntısı yok (katta doldurma / ölçek yalnız eğitim katından),
    hakem seçimi (40 sayfa, 3/7/10, tohum 13), kappa, cevap değerlendirme; gerçek dosyalarda yeniden üretim
+9) hakem turları (tur ac / model / olc): örneklem 30 (katmanlar), AŞAMA A ve önceki turların olay / hisseleri hariç, sonuç sütunu okunmaz
+   (silinince / bozulunca aynı), t sonrası bozulunca PNG aynı, PDF'te cevap satırı var / tarih / hisse adı yok, mühür (üzerine yazılmaz),
+   mühür sırası (geçici git deposu), BAŞARI elle, olc uçtan uca + birikimli; gerçek tur 1 dosyaları yeniden üretim
 Çalıştır: python test_goz_etiket.py
 """
 import json
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -347,6 +351,271 @@ def main():
             od = Lg[Lg.karar != "OLMAZ"]
             kontrol("yeniden üretim: ölçü 1b OLMAZ-DEĞİL n ve KAT5 satır dosyasından", Js["olcu1b"]["OLMAZ-DEĞİL"]["n"] == len(od) and
                     abs(Js["olcu1b"]["OLMAZ-DEĞİL"]["h5_kat"] - od.h5.sum() / od.es_h5.sum()) < 1e-9)
+        # ---------------------------------------------------------------- 9) HAKEM TURLARI (tur ac / model / olc)
+        print("9) hakem turları: örneklem dışlama, sonuç sütunu yok, PDF'te sonrası / hisse adı yok, mühür sırası, BAŞARI elle")
+        tk = os.path.join(tmp, "tur_cikti"); os.makedirs(tk)
+        Xt = sahte_olay(n_sembol=90, tohum=21)
+        yt = os.path.join(tmp, "olay_tur.csv"); Xt.to_csv(yt, index=False)
+        Pt = Xt[["pazar", "sembol", "tarih"]].copy(); Pt["F19"] = (np.random.default_rng(31).random(len(Pt)) < 0.5).astype(float)
+        Pt.loc[Pt.index[::17], "F19"] = np.nan
+        Pt.assign(tarih=pd.to_datetime(Pt.tarih).dt.strftime("%Y-%m-%d")).to_csv(os.path.join(tk, "parmak_Y1.csv.gz"), index=False)
+        try:
+            GE.ge_tur_orneklem(1, yt, tk); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur: AŞAMA A anahtarı yoksa dışlama yapılamaz -> DURUR", ok)
+        uyg = Xt[Xt.donem.isin(["2023", "2024-26"]) & (pd.to_datetime(Xt.giris) <= pd.Timestamp("2026-08-01"))]
+        A0 = uyg.sample(25, random_state=4)
+        json.dump({"olay": {str(i + 1): {"sembol": r.sembol, "pazar": r.pazar, "tarih": str(pd.Timestamp(r.tarih).date()),
+                                         "giris": str(pd.Timestamp(r.giris).date()), "donem": r.donem} for i, r in enumerate(A0.itertuples())}},
+                  open(os.path.join(tk, "anahtar.json"), "w"))
+        hisse0 = {(r.pazar, r.sembol) for r in A0.itertuples()}
+        S1 = GE.ge_tur_orneklem(1, yt, tk); S1b = GE.ge_tur_orneklem(1, yt, tk)
+        dag = S1.groupby(["pazar", "parmak"]).size().to_dict()
+        bek = {(p, d): k for p, d, k in GE.GE_TUR_ESIK["katman"]}
+        pk = S1.merge(Pt.assign(tarih=pd.to_datetime(Pt.tarih)), on=["pazar", "sembol", "tarih"])
+        kontrol("tur örneklem: parmak katmanı F19 dosyasıyla aynı; F19 NaN olay girmez", len(pk) == 30 and (pk.F19 == pk.parmak).all())
+        kontrol("tur örneklem: 30 sayfa, parmak ABD 10+10 / AVR 3+2 / BIST 2+3, sayfa 1..30, aynı tohum aynı örneklem",
+                len(S1) == 30 and dag == bek and list(S1.sayfa) == list(range(1, 31)) and S1.equals(S1b), str(dag))
+        kontrol("tur örneklem: AŞAMA A hisseleri ve olayları hariç; turda bir hisse bir kez",
+                not any((r.pazar, r.sembol) in hisse0 for r in S1.itertuples()) and not S1.duplicated(["pazar", "sembol"]).any())
+        kontrol("tur örneklem: uygunluk (dönem 2023 / 2024-26, giriş <= kriz - 30 gün)",
+                S1.donem.isin(["2023", "2024-26"]).all() and (S1.giris <= pd.Timestamp("2026-08-01")).all())
+        Xd = Xt.drop(columns=["h5", "h10", "st5", "es_h5", "es_st5", "getiri", "olc"]); yd_ = os.path.join(tmp, "olay_tur_sonucsuz.csv"); Xd.to_csv(yd_, index=False)
+        Xk = Xt.copy()
+        for c_ in ["h5", "es_h5", "getiri", "olc"]:
+            Xk[c_] = "BOZUK"
+        yk_ = os.path.join(tmp, "olay_tur_bozuk.csv"); Xk.to_csv(yk_, index=False)
+        kontrol("tur örneklem SONUÇ SÜTUNUNA BAKMAZ: sonuç sütunları silinince / bozulunca aynı örneklem",
+                GE.ge_tur_orneklem(1, yd_, tk).equals(S1) and GE.ge_tur_orneklem(1, yk_, tk).equals(S1))
+        kontrol("tur örneklem: tur no tohumu değiştirir (tur 1 != tur 2 sayfaları)",
+                not GE.ge_tur_orneklem(2, yt, tk, gosterilen=GE.ge_tur_gosterilen(1, tk)).equals(S1))
+
+        def tur_anahtar(no, S):
+            kl = GE.ge_tur_klasor(no, tk); os.makedirs(kl, exist_ok=True)
+            json.dump({"sayfa": {str(int(r.sayfa)): {"sembol": r.sembol, "pazar": r.pazar, "tarih": str(pd.Timestamp(r.tarih).date()),
+                                                    "giris": str(pd.Timestamp(r.giris).date()), "donem": r.donem} for r in S.itertuples()}},
+                      open(GE.ge_tur_yol("anahtar", no, tk), "w"))
+        try:
+            GE.ge_tur_gosterilen(2, tk); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur: önceki turun anahtarı yoksa DURUR (turlar sırayla)", ok)
+        tur_anahtar(1, S1)
+        S2 = GE.ge_tur_orneklem(2, yt, tk)
+        kontrol("tur 2 örneklem: tur 1 ve AŞAMA A hisseleri hariç",
+                not ({(r.pazar, r.sembol) for r in S2.itertuples()} & ({(r.pazar, r.sembol) for r in S1.itertuples()} | hisse0)))
+        try:
+            GE.ge_tur_ac(2, tk, png=os.path.join(tmp, "png2"), olay=yt); ok = False
+        except GE.GEHata as ex:
+            ok = "ölçülmedi" in str(ex)
+        kontrol("tur ac: önceki tur ölçülmeden (Cemal yanıtlamadan) sonraki tur açılmaz", ok)
+        try:
+            GE.ge_tur_ac(1, tk, png=os.path.join(tmp, "pngx"), olay=yt); ok = False
+        except GE.GEHata as ex:
+            ok = "zaten" in str(ex)
+        kontrol("tur ac: açılmış tur üzerine yazılmaz", ok)
+        try:
+            GE.ge_tur_ac(3, tk, png=os.path.join(KOK, "tur_png_yasak"), olay=yt); ok = False
+        except GE.GEHata as ex:
+            ok = "repo içinde" in str(ex)
+        kontrol("tur ac: PNG klasörü repo içinde olamaz", ok)
+        # görsel: t sonrası yok
+        dh = GE.ge_hazir(rastgele_hisse(1500, 44)); ia, _T = al_gunleri(dh)
+        it = [i for i in ia if i >= 200][0]; t_ = dh.index[it]
+        G0 = GE.ge_gorsel_veri(dh, t_, hazir=True)
+        pt = os.path.join(tmp, "tpng"); os.makedirs(pt)
+        GE.ge_tur_sayfa_png(dh, t_, 1, os.path.join(pt, "No_1.png"), G0["hat"], G0["tavan"])
+        db = dh.copy(); db.iloc[it + 1:, :4] = db.iloc[it + 1:, :4].to_numpy() * 3.0
+        p2 = os.path.join(tmp, "No_1b.png"); GE.ge_tur_sayfa_png(db, t_, 1, p2, G0["hat"], G0["tavan"])
+        kontrol("tur görsel: t sonrası barlar bozulunca PNG baytları aynı (sonrası yok)",
+                open(os.path.join(pt, "No_1.png"), "rb").read() == open(p2, "rb").read())
+        try:
+            GE.ge_tur_sayfa_png(dh, t_, 1, os.path.join(tmp, "x.png"), G0["hat"] * 1.01, G0["tavan"]); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur görsel: hat olay dosyasıyla tutmazsa DURUR", ok)
+        shutil.copyfile(os.path.join(pt, "No_1.png"), os.path.join(pt, "No_2.png"))
+        yp = GE.ge_tur_pdf(9, [1, 2], pt, os.path.join(tmp, "TUR_9_KOR.pdf"))
+        import pypdf
+        rd = pypdf.PdfReader(yp); met = [pg.extract_text() for pg in rd.pages]
+        kontrol("tur PDF: sayfa sayısı, her sayfada 'Cemal: ✓ OLUR / X OLMAZ / ? BELİRSİZ' satırı",
+                len(rd.pages) == 2 and all(("✓ OLUR" in m and "X OLMAZ" in m and "? BELİRSİZ" in m) for m in met), met[0][-80:].replace("\n", " "))
+        kontrol("tur PDF: metinde tarih / hisse adı yok; üst veri boş",
+                not any(re.search(r"\d{4}-\d{2}-\d{2}|S\d{3}", m) for m in met) and not (rd.metadata or {}).get("/Author"))
+        # parmak izi F19 elle + prefix
+        n_ = 300; O_ = np.full(n_, 10.0); C_ = O_.copy(); H_ = np.full(n_, 10.5); L_ = np.full(n_, 9.5)   # TR = 1 -> ATR 1
+        i_ = 299; hat_ = 9.5
+        for j_, (o, h, l, c) in enumerate([(9.6, 9.9, 9.55, 9.8), (9.7, 9.95, 9.6, 9.65), (9.62, 9.9, 9.58, 9.85), (9.8, 10.1, 9.7, 10.0)]):
+            O_[i_ - 4 + j_], H_[i_ - 4 + j_], L_[i_ - 4 + j_], C_[i_ - 4 + j_] = o, h, l, c
+        P1 = GE.ge_parmak_bar(O_, H_, L_, C_, hat_, i_)
+        # elle: hiza (9.7-9.55)/1 = 0.15 <= 0.5; hat: 9.55 >= 9.405 ve 9.7 <= 9.88; alt fitil medyan {0.0714,0.1429,0.0938,0.25} = 0.1183; boy medyan 0.35 <= 0.9
+        kontrol("parmak F19 elle: dört koşul tutar -> 1 (ATR 1)", P1["F19"] == 1.0 and abs(P1["atr"] - 1.0) < 1e-12, str(P1))
+        L2_ = L_.copy(); L2_[i_ - 1] = 9.3; P2 = GE.ge_parmak_bar(O_, H_, L2_, C_, hat_, i_)
+        kontrol("parmak F19 elle: bir dip hattın %1 altına inince (b) tutmaz -> 0", P2["F19"] == 0.0 and P2["pb"] == 0.0)
+        H3_ = H_.copy(); H3_[i_] = 99.0; L3_ = L_.copy(); L3_[i_] = 0.1
+        kontrol("parmak F19: t barı ve sonrası okunmaz", GE.ge_parmak_bar(O_, H3_, L3_, C_, hat_, i_) == P1)
+        kontrol("parmak F19: ATR için 120 bar yoksa NaN", np.isnan(GE.ge_parmak_bar(O_, H_, L_, C_, hat_, 100)["F19"]))
+        okp = True; nd = 0
+        for ia_ in ia[:40]:
+            if ia_ < 130:
+                continue
+            tt = dh.index[ia_]
+            r_full = GE.ge_parmak_hisse(dh, [tt], hazir=True)[0]
+            r_kes = GE.ge_parmak_hisse(dh[dh.index <= tt], [tt], hazir=True)[0]
+            esit = (lambda a, b: all((np.isnan(a[k]) and np.isnan(b[k])) or a[k] == b[k] for k in a))
+            okp &= esit(r_full, r_kes)
+            if ia_ <= it:      # db: it'den sonraki barlar bozuk -> t <= it için aynı olmalı
+                okp &= esit(r_full, GE.ge_parmak_hisse(db, [tt], hazir=True)[0])
+            nd += 1
+        kontrol("parmak F19 prefix: veri t'de kesilince / t sonrası bozulunca aynı (al günleri)", okp and nd > 0, f"{nd} gün")
+        # model etiketi + mühür
+        def etiket_yaz(yol, sayfalar, karar_f):
+            json.dump({"etiket": {str(s): {"karar": karar_f(s), "nedenler": ["C5+", "CD2-"], "guven": 3, "not": "x"} for s in sayfalar}},
+                      open(yol, "w", encoding="utf-8"), ensure_ascii=False)
+        ye1 = os.path.join(tmp, "model1.json")
+        etiket_yaz(ye1, range(1, 31), lambda s: GE.GE_KARARLAR[s % 3])
+        M1 = GE.ge_tur_model(1, ye1, tk)
+        kontrol("tur model: kopya + sha mühürü (tur_1_muhur.json)",
+                M1["model_sha"] == GE._ge_sha_dosya(GE.ge_tur_yol("model", 1, tk)) == GE._ge_sha_dosya(ye1) and M1["n"] == 30)
+        try:
+            GE.ge_tur_model(1, ye1, tk); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur model: mühür üzerine yazılmaz", ok)
+        bad = os.path.join(tmp, "bad.json")
+        hatalar = 0
+        for fn in (lambda: etiket_yaz(bad, range(1, 30), lambda s: "OLUR"),
+                   lambda: etiket_yaz(bad, range(1, 31), lambda s: "EVET"),
+                   lambda: json.dump({"etiket": {str(s): {"karar": "OLUR", "nedenler": ["Z9+"]} for s in range(1, 31)}}, open(bad, "w"))):
+            fn()
+            try:
+                GE.ge_tur_etiket_oku(bad, list(range(1, 31)))
+            except GE.GEHata:
+                hatalar += 1
+        kontrol("tur model etiketi: eksik sayfa / geçersiz karar / geçersiz neden kodu DURUR", hatalar == 3)
+        kontrol("tur cevap: ✓ / x / ? / belirsiz / OLMAZ / {'cevap': '✔'} normalleşir, 'evet' geçersiz",
+                [GE.ge_tur_cevap_norm(v) for v in ("✓", "x", "?", "belirsiz", "OLMAZ", {"cevap": "✔"}, "evet")] ==
+                ["OLUR", "OLMAZ", "BELİRSİZ", "BELİRSİZ", "OLMAZ", "OLUR", None])
+        # BAŞARI elle
+        Dm = pd.DataFrame({"sayfa": range(1, 11),
+                           "model": ["OLUR", "OLUR", "OLUR", "OLMAZ", "OLMAZ", "OLMAZ", "OLMAZ", "BELİRSİZ", "OLUR", None],
+                           "h5": [1, 0, 1, 0, 0, 1, 0, 1, np.nan, 1], "es_h5": [.4, .3, .5, .2, .4, .6, .3, .5, .4, .2]})
+        g_ = GE.ge_tur_taraf(Dm, "model")
+        from scipy.stats import fisher_exact
+        pf = fisher_exact([[2, 1], [1, 3]])[1]
+        kontrol("tur BAŞARI elle: (2 doğru OLUR + 3 doğru OLMAZ) / 7 karar; BELİRSİZ 1, yanıtsız 1, ölçülemedi 1; Fisher; taban; yanılınan [2, 6]",
+                abs(g_["basari"] - 5 / 7) < 1e-12 and g_["karar"] == 7 and g_["BELİRSİZ"] == 1 and g_["yanitsiz"] == 1 and g_["olculemedi"] == 1
+                and abs(g_["isabet_OLUR"] - 2 / 3) < 1e-12 and abs(g_["isabet_OLMAZ"] - 3 / 4) < 1e-12 and abs(g_["fisher_p"] - pf) < 1e-12
+                and abs(g_["taban_es"] - np.mean([.4, .3, .5, .2, .4, .6, .3, .5, .2])) < 1e-12 and g_["yanilinan"] == [2, 6]
+                and abs(g_["hep_OLMAZ_basari"] - (1 - 5 / 9)) < 1e-12, str({k: g_[k] for k in ("basari", "karar", "yanilinan")}))
+        # olc uçtan uca (git=False) + birikimli
+        Xr = Xt.copy(); rng_t = np.random.default_rng(77)
+        Xr["h5"] = (rng_t.random(len(Xr)) < 0.4).astype(float); Xr["es_h5"] = rng_t.random(len(Xr)) * 0.5
+        yr = os.path.join(tmp, "olay_tur_sonuc.csv"); Xr.to_csv(yr, index=False)
+        isaret = {0: "✓", 1: "X", 2: "?"}
+        yc1 = os.path.join(tmp, "cemal1.json"); json.dump({str(s): isaret[s % 3] for s in range(1, 31)}, open(yc1, "w", encoding="utf-8"), ensure_ascii=False)
+        R1t = GE.ge_tur_olc(1, yc1, tk, olay=yr, git=False)
+        L1 = pd.read_csv(GE.ge_tur_yol("satir", 1, tk), dtype={"sembol": str})
+        Lk = L1[L1.cemal.isin(["OLUR", "OLMAZ"])]
+        el = (((Lk.cemal == "OLUR") & (Lk.h5 == 1)) | ((Lk.cemal == "OLMAZ") & (Lk.h5 == 0))).sum() / len(Lk)
+        kh = L1.merge(Xr[["pazar", "sembol", "tarih", "h5"]].assign(tarih=lambda x: pd.to_datetime(x.tarih).dt.strftime("%Y-%m-%d")),
+                      on=["pazar", "sembol", "tarih"], suffixes=("", "_x"))
+        kontrol("tur olc: satır dosyası 30 sayfa, h5 olay dosyasıyla aynı; Cemal BAŞARI satır dosyasından elle aynı",
+                len(L1) == 30 and len(kh) == 30 and (kh.h5 == kh.h5_x).all() and abs(R1t["cemal"]["basari"] - el) < 1e-12)
+        kontrol("tur olc: model kararları mühürlü etiketten (kappa / uyum hesaplandı)",
+                list(L1.model) == [GE.GE_KARARLAR[s % 3] for s in range(1, 31)] and R1t["uyum"]["n"] == 30)
+        try:
+            GE.ge_tur_olc(1, yc1, tk, olay=yr, git=False); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur olc: ölçülmüş tur yeniden ölçülmez (üzerine yazılmaz)", ok)
+        tur_anahtar(2, S2)
+        try:
+            GE.ge_tur_olc(2, yc1, tk, olay=yr, git=False); ok = False
+        except GE.GEHata as ex:
+            ok = "mühürlü değil" in str(ex)
+        kontrol("tur olc: model mühürü yoksa sonuç AÇILMAZ", ok)
+        ye2 = os.path.join(tmp, "model2.json"); etiket_yaz(ye2, range(1, 31), lambda s: "OLMAZ")
+        GE.ge_tur_model(2, ye2, tk)
+        yc9 = os.path.join(tmp, "cemal9.json"); json.dump({"99": "✓"}, open(yc9, "w"))
+        try:
+            GE.ge_tur_olc(2, yc9, tk, olay=yr, git=False); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tur olc: anahtarda olmayan sayfa yanıtı DURUR", ok)
+        R2t = GE.ge_tur_olc(2, yc1, tk, olay=yr, git=False)
+        L2 = pd.read_csv(GE.ge_tur_yol("satir", 2, tk))
+        LL = pd.concat([L1, L2]); LLk = LL[LL.cemal.isin(["OLUR", "OLMAZ"])]
+        elb = (((LLk.cemal == "OLUR") & (LLk.h5 == 1)) | ((LLk.cemal == "OLMAZ") & (LLk.h5 == 0))).sum() / len(LLk)
+        dft = open(GE.ge_tur_yol("defter", 2, tk), encoding="utf-8").read()
+        kontrol("tur birikimli: tur 1 + 2 satırlarından; TUR_DEFTERI iki bölüm; rapor hedef / taban uyarısı",
+                R2t["birikimli"]["turlar"] == [1, 2] and abs(R2t["birikimli"]["cemal"]["basari"] - elb) < 1e-12
+                and dft.count("## TUR 1 ") == 1 and dft.count("## TUR 2 ") == 1
+                and "%80-90" in open(GE.ge_tur_yol("rapor", 2, tk), encoding="utf-8").read())
+        # mühür sırası (geçici git deposu)
+        import subprocess
+
+        def git(kl, *a):
+            return subprocess.run(["git", "-C", kl, "-c", "user.name=t", "-c", "user.email=t@t", *a], capture_output=True, text=True, check=True)
+
+        def depo(ad, sira):
+            kl = os.path.join(tmp, ad); os.makedirs(kl); git(kl, "init", "-q")
+            json.dump({"x": 1}, open(os.path.join(kl, "model.json"), "w"))
+            json.dump({"model_sha": GE._ge_sha_dosya(os.path.join(kl, "model.json"))}, open(os.path.join(kl, "muhur.json"), "w"))
+            json.dump({"1": "✓"}, open(os.path.join(kl, "cemal.json"), "w"))
+            for grup in sira:
+                git(kl, "add", *grup); git(kl, "commit", "-q", "-m", "c")
+            return kl
+        sonuc_ = []
+        for ad, sira in (("g_ok", [["model.json", "muhur.json"], ["cemal.json"]]), ("g_ters", [["cemal.json"], ["model.json", "muhur.json"]]),
+                         ("g_ayni", [["model.json", "muhur.json", "cemal.json"]])):
+            kl = depo(ad, sira)
+            try:
+                GE.ge_tur_sira(os.path.join(kl, "muhur.json"), os.path.join(kl, "model.json"), os.path.join(kl, "cemal.json")); sonuc_.append("TUTTU")
+            except GE.GEHata:
+                sonuc_.append("DURDU")
+        kl = depo("g_degis", [["model.json", "muhur.json"], ["cemal.json"]])
+        json.dump({"x": 2}, open(os.path.join(kl, "model.json"), "w"))
+        try:
+            GE.ge_tur_sira(os.path.join(kl, "muhur.json"), os.path.join(kl, "model.json"), os.path.join(kl, "cemal.json")); sonuc_.append("TUTTU")
+        except GE.GEHata:
+            sonuc_.append("DURDU")
+        kontrol("tur mühür sırası: mühür önce = TUTTU; Cemal önce / aynı commit / model sonradan değişmiş = DURDU",
+                sonuc_ == ["TUTTU", "DURDU", "DURDU", "DURDU"], str(sonuc_))
+        # gerçek parmak dosyası (F19)
+        ypm = os.path.join(GE.GE_YOL["cikti"], "parmak_Y1.csv.gz")
+        if os.path.exists(ypm):
+            Pm = pd.read_csv(ypm, dtype={"sembol": str})
+            Xo = pd.read_csv(GE.GE_YOL["olay"], usecols=["deneme", "pazar", "sembol", "tarih"], dtype={"sembol": str})
+            Xo = Xo[Xo.deneme == "Y1"]
+            Dn = json.load(open(os.path.join(GE.GE_YOL["cikti"], "parmak_denetim.json"), encoding="utf-8"))
+            kontrol("gerçek parmak_Y1: Y1 olaylarıyla aynı sıra / sayı; yaygınlık denetim dosyasıyla aynı; sha",
+                    len(Pm) == len(Xo) and (Pm[["pazar", "sembol", "tarih"]].to_numpy() == Xo[["pazar", "sembol", "tarih"]].to_numpy()).all()
+                    and all(int((Pm[Pm.pazar == p].F19 == 1).sum()) == v["parmak"] for p, v in Dn["pazar"].items())
+                    and Dn["satir_sha"] == GE._ge_sha_dosya(ypm))
+            A231 = json.load(open(os.path.join(GE.GE_YOL["cikti"], "anahtar.json"), encoding="utf-8"))["olay"]["231"]
+            f231 = Pm[(Pm.pazar == A231["pazar"]) & (Pm.sembol == A231["sembol"]) & (Pm.tarih == A231["tarih"])].F19.tolist()
+            print(f"  BİLGİ hakem sayfa 25 (No 231, Cemal'in parmak izi örneği): F19 = {f231} (beklenen 1; eşik değiştirilmez)")
+        # gerçek tur 1 dosyaları
+        yg = GE.ge_tur_yol("anahtar", 1)
+        if os.path.exists(yg):
+            Sg = GE.ge_tur_anahtar_oku(1)
+            Sr = GE.ge_tur_orneklem(1)
+            Ag = json.load(open(os.path.join(GE.GE_YOL["cikti"], "anahtar.json"), encoding="utf-8"))["olay"]
+            hg = {(v["pazar"], v["sembol"]) for v in Ag.values()}
+            kontrol("gerçek tur 1: 30 sayfa, parmak katmanları, anahtar = ge_tur_orneklem(1) yeniden üretim (parmak dahil)",
+                    len(Sg) == 30 and Sg.groupby(["pazar", "parmak"]).size().to_dict() == bek and (Sg.parmak == Sr.parmak).all()
+                    and all(Sg[c].astype(str).tolist() == Sr[c].astype(str).tolist() for c in ("sayfa", "pazar", "sembol", "tarih")))
+            kontrol("gerçek tur 1: AŞAMA A 300 örneklemin hisseleri yok; turda hisse tekil",
+                    not any((r.pazar, r.sembol) in hg for r in Sg.itertuples()) and not Sg.duplicated(["pazar", "sembol"]).any())
+            ypg = GE.ge_tur_yol("pdf", 1)
+            rg = pypdf.PdfReader(ypg); mg = [pg.extract_text() for pg in rg.pages]
+            kontrol("gerçek TUR_1_KOR.pdf: 30 sayfa, cevap satırı her sayfada, hisse adı / tarih yok, sha anahtarla aynı",
+                    len(rg.pages) == 30 and all("✓ OLUR" in m and "X OLMAZ" in m and "? BELİRSİZ" in m for m in mg)
+                    and not any(re.search(r"\d{4}-\d{2}-\d{2}", m) for m in mg)
+                    and not any(re.search(rf"(?<![A-Za-z0-9]){re.escape(s)}(?![A-Za-z0-9])", m) for s in Sg.sembol for m in mg)
+                    and json.load(open(yg, encoding="utf-8"))["pdf_sha"] == GE._ge_sha_dosya(ypg))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"\nGEÇTİ {len(GECTI)}  KALDI {len(KALDI)}")
