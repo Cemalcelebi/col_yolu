@@ -12,7 +12,14 @@ okunur; ikisi karşılaştırılır, tutmazsa betik durur. Tur puanı tur_N_sonu
 Grafik çizimi hakem_ders_pdf.hd_grafik ile aynıdır (ortak kod; t'de kesik veriden hat / tavan, olay dosyasıyla eşitlik kapısı).
 Kimlik zinciri: tur_N_anahtar.json sayfa -> (pazar, sembol, tarih) -> olay_Y1 satırı. HİSSE ADI / TARİH PDF'E GİRMEZ.
 
-Kullanım:  OC_VERI=/tmp/veri python arastirma_cikti/goz_etiket/tur_ders_pdf.py --no 1 --cemal-pdf YOL [--cikti PDF] [--is KLASOR]
+SONRA SEÇENEĞİ (18 Kas 2026, Cemal: sonrası grafiğinde 30 mum): `--sonra N` (15..60) sağ grafikte giriş sonrası N bar gösterir (varsayılan
+TD_AYAR['sonra'] = 20; --sonra verilmezse çıktı eskisiyle aynıdır). --sonra verilince: sarı pencere yine 15 bar (KARAR ÖLÇÜSÜ), 30 bar
+sonunda ince gri çizgi (N >= 30 ise), sayfa başlığında BİLGİ satırı (30 g kapanış +%5, stop ŞARTSIZ; td_bilgi30) ve özet tablosunda
+'Sonuç (30 g, bilgi)' sütunu + Cemal / model için 30 g OLUR isabeti ve OLMAZ doğruluğu. Puan (+1 / -1) ve BAŞARI değişmez (15 g stop şartlı).
+30 g = bar 0..29 (giriş günü bar 0 dahil 30 geçerli bar; GOZ_ETIKET.GE_TUR_BILGI 15 g / 60 g sayımıyla aynı); 30 bar yoksa 'ölçülemedi'.
+Varsayılan çıktı adı --sonra ile TUR_{no}_DERS_sonra{N}.pdf (TUR_{no}_DERS.pdf ezilmez).
+
+Kullanım:  OC_VERI=/tmp/veri python arastirma_cikti/goz_etiket/tur_ders_pdf.py --no 1 --cemal-pdf YOL [--cikti PDF] [--is KLASOR] [--sonra N]
 """
 from __future__ import annotations
 
@@ -55,7 +62,7 @@ class TDHata(RuntimeError):
     """tur_ders_pdf hatası: durur, yarım PDF yazılmaz."""
 
 
-TD_AYAR = {"dpi_sayfa": 110, "azami_mb": 12.0, "sonra": 20}
+TD_AYAR = {"dpi_sayfa": 110, "azami_mb": 12.0, "sonra": 20, "sonra_aralik": (15, 60), "bilgi_bar": 30, "bilgi_esik": 0.05}
 
 
 def td_yol(no: int) -> Dict[str, str]:
@@ -258,6 +265,37 @@ def td_birikimli(no: int) -> List[Dict[str, Any]]:
     return out
 
 
+# ================================================================ 30 G BİLGİ (stop şartsız; karar ölçüsüne girmez)
+def td_bilgi30(d: pd.DataFrame, giris: Any, E0_dosya: float, n: int = TD_AYAR["bilgi_bar"], esik: float = TD_AYAR["bilgi_esik"]) -> Dict[str, Any]:
+    """d = GE.ge_hazir çıktısı (geçerli bar + kriz kesiği). Bar 0 = giriş günü (geçerli bar olmalı), E0 = giriş açılışı (olay dosyasıyla
+    göreli 1e-4). m30 = max Close(bar 0..n-1) / E0 - 1, c30 = m30 >= esik; n bar yoksa olc = False (ölçülemedi). Stop YOK."""
+    g = pd.Timestamp(giris)
+    j = int(d.index.searchsorted(g))
+    if j >= len(d) or d.index[j] != g:
+        raise TDHata(f"30 g bilgi: giriş günü geçerli bar değil")
+    E0 = float(d.Open.iat[j])
+    if not (np.isfinite(E0) and E0 > 0) or abs(E0 / float(E0_dosya) - 1) > 1e-4:
+        raise TDHata("30 g bilgi: giriş açılışı olay dosyasıyla tutmadı")
+    C = d.Close.to_numpy(float)[j:j + n]
+    if len(C) < n or not np.all(np.isfinite(C)):
+        return {"olc": False, "m30": np.nan, "c30": np.nan}
+    m = float(C.max() / E0 - 1)
+    return {"olc": True, "m30": m, "c30": float(m >= esik - 1e-12)}
+
+
+def td_ozet30(T: pd.DataFrame, kim: str) -> Dict[str, Any]:
+    """30 g bilgi (stop şartsız): OLUR isabeti (c30 = 1) ve OLMAZ doğruluğu (c30 = 0); ölçülemeyen sayfa paydaya girmez."""
+    o = T[(T[kim] == "OLUR") & T.olc30]; z = T[(T[kim] == "OLMAZ") & T.olc30]
+    return {"olur_dogru": int((o.c30 == 1).sum()), "olur_n": len(o), "olmaz_dogru": int((z.c30 == 0).sum()), "olmaz_n": len(z),
+            "olculemedi": int((T[kim].isin(["OLUR", "OLMAZ"]) & ~T.olc30).sum())}
+
+
+def _td_b30(r: pd.Series) -> str:
+    if not bool(r.olc30):
+        return "ölçülemedi"
+    return f"{'EVET' if r.c30 == 1 else 'HAYIR'} {r.m30 * 100:+.1f}%".replace(".", ",")
+
+
 # ================================================================ GÖRSEL
 def td_sayfa_png(cemal_pdf: str, klasor: str, n: int) -> List[str]:
     if not os.path.exists(cemal_pdf):
@@ -299,7 +337,8 @@ def td_model_etiket(r: pd.Series, D: Dict[str, Any]) -> str:
 
 
 # ================================================================ PDF
-def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Optional[str] = None) -> Dict[str, Any]:
+def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Optional[str] = None, sonra: Optional[int] = None) -> Dict[str, Any]:
+    """sonra None: eski çıktı (20 bar, bilgi satırı yok). sonra N (15..60): N bar + 30 g bilgi satırı / sütunu; ad TUR_{no}_DERS_sonra{N}.pdf."""
     from PIL import Image
     from reportlab.lib.pagesizes import A4, landscape
     from reportlab.lib.utils import simpleSplit
@@ -308,7 +347,16 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
     from reportlab.pdfgen import canvas
     warnings.filterwarnings("ignore", category=RuntimeWarning)
     Y_ = td_yol(no); D = TD_DERS.get(no)
-    cikti = cikti or Y_["cikti"]
+    bilgi = sonra is not None
+    if bilgi:
+        lo, hi = TD_AYAR["sonra_aralik"]
+        if isinstance(sonra, bool) or int(sonra) != sonra or not lo <= int(sonra) <= hi:
+            raise TDHata(f"--sonra {lo}..{hi} arası tam sayı olmalı: {sonra}")
+        sonra = int(sonra)
+    n_sonra = sonra if bilgi else TD_AYAR["sonra"]
+    cikti = cikti or (Y_["cikti"][:-4] + f"_sonra{sonra}.pdf" if bilgi else Y_["cikti"])
+    if bilgi and os.path.abspath(cikti) == os.path.abspath(Y_["cikti"]):
+        raise TDHata("--sonra çıktısı mevcut TUR_N_DERS.pdf'i ezemez")
     if os.path.abspath(is_klasor or "/").startswith(TD_KOK + os.sep):
         raise TDHata("ara klasör repo içinde olamaz")
     is_klasor = is_klasor or tempfile.mkdtemp(prefix=f"tur{no}_ders_")
@@ -323,14 +371,18 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
                 raise TDHata(f"sayfa {r.sayfa}: sembol veride yok")
             d = GE.ge_hazir(Vd["V"][r.sembol])
             try:
-                g = HD.hd_grafik(r, d, os.path.join(is_klasor, "graf", f"g{r.sayfa:02d}.png"))
+                g = (HD.hd_grafik(r, d, os.path.join(is_klasor, "graf", f"g{r.sayfa:02d}.png"), sonra=sonra, bilgi_bar=TD_AYAR["bilgi_bar"])
+                     if bilgi else HD.hd_grafik(r, d, os.path.join(is_klasor, "graf", f"g{r.sayfa:02d}.png")))
             except HD.HDHata as ex:
                 raise TDHata(str(ex)) from ex
+            g.update({("olc30" if k == "olc" else k): v for k, v in td_bilgi30(d, r.giris, r.E0).items()} if bilgi else {})
             g["sol_png"] = HD.hd_kirp(sayfa_png[r.sayfa - 1], os.path.join(is_klasor, "graf", f"c{r.sayfa:02d}.png"))
             ek[int(r.sayfa)] = g
         tdlog.info("grafik %s: %d", p, int((T.pazar == p).sum()))
         del Vd
     T["k10"] = [ek[s]["k10"] for s in T.sayfa]
+    if bilgi:
+        T["olc30"] = [bool(ek[s]["olc30"]) for s in T.sayfa]; T["m30"] = [ek[s]["m30"] for s in T.sayfa]; T["c30"] = [ek[s]["c30"] for s in T.sayfa]
 
     for ad, y in (("DV", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"), ("DVB", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf")):
         if not os.path.exists(y):
@@ -439,8 +491,13 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         yy = Hh - 24
         for ln in simpleSplit(baslik, "DVB", 11, W - 50):
             yaz(25, yy, ln, "DVB", 11, renk); yy -= 13
-        yaz(25, yy, f"{r.pazar} · {r.donem} · parmak izi {'var' if r.parmak else 'yok'} · {HD.hd_takip_metni(r)} · eş payı (+%5) "
+        yaz(25, yy, f"{r.pazar} · {r.donem} · parmak izi {'var' if r.parmak else 'yok'} · {HD.hd_takip_metni(r, n_sonra)} · eş payı (+%5) "
             f"{yuzde(r.es_h5, 0)}", n=8, renk=(0.3, 0.3, 0.3))
+        if bilgi:
+            yy -= 11
+            b30 = ("30 günde kapanış +%5: " + ("EVET" if r.c30 == 1 else "HAYIR") + " (bilgi), 30 g en yüksek kapanış "
+                   + f"{r.m30 * 100:+.1f}%".replace(".", ",")) if r.olc30 else "30 günde kapanış +%5: ölçülemedi (30 geçerli bar yok; bilgi)"
+            yaz(25, yy, "BİLGİ: " + b30 + " (stop şartsız; puan ölçüsü 15 g stop şartlı, değişmedi)", "DVB", 8, (0.1, 0.25, 0.5))
         top = yy - 6; kutu_h = top - 172; kw = ((W - 60) * 0.56, (W - 60) * 0.44); hmax = 0.0
         for k, (p, x0) in enumerate(((g["sol_png"], 25), (os.path.join(is_klasor, "graf", f"g{r.sayfa:02d}.png"), 35 + kw[0]))):
             iw, ih = Image.open(p).size; kutu_w = kw[k]
@@ -448,7 +505,8 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
             cv.drawImage(p, x0 + (kutu_w - w_) / 2, top - h_, width=w_, height=h_)
         alt = top - hmax
         yaz(25, alt - 9, "Sol: senin işaretlediğin sayfa (aynen)", n=7, renk=(0.4, 0.4, 0.4))
-        yaz(35 + kw[0], alt - 9, "Sağ: aynı olay, sonrası açık (sarı = 15 bar penceresi)", n=7, renk=(0.4, 0.4, 0.4))
+        yaz(35 + kw[0], alt - 9, "Sağ: aynı olay, sonrası açık (sarı = 15 bar penceresi" + (f"; {n_sonra} bar gösterilir; gri çizgi = 30 bar sonu, bilgi)"
+            if bilgi and n_sonra >= TD_AYAR["bilgi_bar"] else (f"; {n_sonra} bar gösterilir)" if bilgi else ")")), n=7, renk=(0.4, 0.4, 0.4))
         y = alt - 24
         y = paragraf(25, y, f"(1) Cemal'in notu [işaret: {r.cemal_tur}]: {r.cemal_not}", W - 50, n=9, ara=11) - 3
         ned = ", ".join(GE.ge_neden_acilim(k).replace(": UYUYOR (lehte)", " +").replace(": UYMUYOR (aleyhte)", " -") for k in r.nedenler)
@@ -474,6 +532,9 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
     yaz(30, Hh - 32, f"ÖZET — TUR {no}, {n} sayfa", "DVB", 13)
     kol = [("Sayfa", 30), ("Pazar", 72), ("Dönem", 115), ("Parmak", 165), ("Cemal", 210), ("Model", 280), ("Sonuç (15 gün)", 345),
            ("Takip (bilgi)", 545), ("Puan C", 615), ("Puan M", 660), ("Ders", 710)]
+    if bilgi:
+        kol = [("Sayfa", 30), ("Pazar", 66), ("Dönem", 103), ("Parmak", 148), ("Cemal", 186), ("Model", 246), ("Sonuç (15 gün)", 300),
+               ("Sonuç (30 g, bilgi)", 462), ("Takip (bilgi)", 553), ("Puan C", 615), ("Puan M", 658), ("Ders", 703)]
     y = Hh - 54
     for k, x in kol:
         yaz(x, y, k, "DVB", 8)
@@ -483,6 +544,8 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         rm = (0.0, 0.45, 0.0) if r.puan_m == 1 else ((0.7, 0.0, 0.0) if r.puan_m == -1 else (0.3, 0.3, 0.3))
         vals = [str(r.sayfa), r.pazar, r.donem, "var" if r.parmak else "yok", r.cemal, r.model, HD.hd_sonuc_metni(r, r.k10),
                 f"{r.getiri * 100:+.1f}%", _pz(r.puan_c), _pz(r.puan_m), " ".join(x for x in (r.cd, r.vd) if x) or "—"]
+        if bilgi:
+            vals.insert(7, _td_b30(r))
         for (k, x), s in zip(kol, vals):
             yaz(x, y, s, "DV", 7.6, rc if k in ("Cemal", "Puan C") else (rm if k in ("Model", "Puan M") else (0, 0, 0)))
         y -= 13.5
@@ -491,6 +554,13 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         o = td_ozet(T, kim, pk)
         yaz(30, y, f"{ad}: {o['karar']} karar, +1 {o['arti']}, -1 {o['eksi']}, başarı {yuzde(o['basari'])}, BELİRSİZ {o['BELİRSİZ']}; "
             f"yanıldığı sayfalar {', '.join(map(str, o['yanilinan']))}", "DVB", 8.5); y -= 12
+    if bilgi:
+        y -= 2
+        for kim, ad in (("cemal", "Cemal"), ("model", "Model")):
+            o = td_ozet30(T, kim)
+            yaz(30, y, f"{ad}, 30 g kapanış +%5 (stop şartsız, BİLGİ): OLUR isabeti {o['olur_dogru']} / {o['olur_n']}, OLMAZ doğru "
+                f"{o['olmaz_dogru']} / {o['olmaz_n']}" + (f", ölçülemedi {o['olculemedi']}" if o["olculemedi"] else "")
+                + "; puan ve BAŞARI 15 g stop şartlı ölçüyle, değişmedi.", "DV", 8.2, (0.1, 0.25, 0.5)); y -= 11
     if y < 10:
         raise TDHata("özet sayfaya sığmadı")
     cv.showPage(); cv.save()
@@ -499,8 +569,12 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         os.remove(tmp)
         raise TDHata(f"PDF {mb:.1f} MB > {TD_AYAR['azami_mb']} MB")
     os.replace(tmp, cikti)
-    return {"pdf": cikti, "mb": round(mb, 2), "sayfa": 2 + n, "cemal": td_ozet(T, "cemal", "puan_c"), "model": td_ozet(T, "model", "puan_m"),
-            "birikimli": B, "is_klasor": is_klasor}
+    R = {"pdf": cikti, "mb": round(mb, 2), "sayfa": 2 + n, "cemal": td_ozet(T, "cemal", "puan_c"), "model": td_ozet(T, "model", "puan_m"),
+         "birikimli": B, "is_klasor": is_klasor}
+    if bilgi:
+        R.update({"sonra": sonra, "bilgi30": {"cemal": td_ozet30(T, "cemal"), "model": td_ozet30(T, "model")},
+                  "sayfa30": {int(s): (bool(o), m, c) for s, o, m, c in zip(T.sayfa, T.olc30, T.m30, T.c30)}})
+    return R
 
 
 # ================================================================ ÇAKIŞMA KAPISI ve KOMUT
@@ -522,9 +596,11 @@ if __name__ == "__main__":
     ap.add_argument("--cemal-pdf", required=True)
     ap.add_argument("--cikti", default=None)
     ap.add_argument("--is", dest="is_klasor", default=None)
+    ap.add_argument("--sonra", type=int, default=None, help=f"giriş sonrası gösterilen bar ({TD_AYAR['sonra_aralik'][0]}..{TD_AYAR['sonra_aralik'][1]}); "
+                    "verilirse 30 g bilgi satırı eklenir ve çıktı TUR_N_DERS_sonraN.pdf olur")
     a = ap.parse_args()
     try:
-        R = td_pdf(a.no, a.cemal_pdf, a.cikti, a.is_klasor)
+        R = td_pdf(a.no, a.cemal_pdf, a.cikti, a.is_klasor, a.sonra)
         print(json.dumps(R, ensure_ascii=False, indent=1, default=str))
     except (TDHata, HD.HDHata, GE.GEHata) as ex:
         tdlog.error("%s", ex); sys.exit(1)

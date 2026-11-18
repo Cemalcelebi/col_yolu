@@ -192,8 +192,11 @@ def hd_kirp(yol: str, cikis: str) -> str:
     return cikis
 
 
-def hd_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
-    """Sonrası açık grafik: t-60 .. t+1+20 bar; S6 bölgesi (t'de kesik veriden), giriş, +%5 / +%10, stop0, 15 bar penceresi, olaylar."""
+def hd_grafik(r: pd.Series, d: pd.DataFrame, yol: str, sonra: Optional[int] = None, bilgi_bar: Optional[int] = None) -> Dict[str, Any]:
+    """Sonrası açık grafik: t-60 .. t+1+sonra bar (sonra None -> HD_AYAR['sonra'] = 20); S6 bölgesi (t'de kesik veriden), giriş, +%5 / +%10,
+    stop0, 15 bar penceresi, olaylar. bilgi_bar (ör. 30) verilirse ve grafikte ise bar 0..bilgi_bar-1 sonunda ince gri dikey çizgi (bilgi).
+    Varsayılanlarla (sonra None, bilgi_bar None) çıktı eskisiyle aynıdır."""
+    sonra = HD_AYAR["sonra"] if sonra is None else int(sonra)
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -209,7 +212,7 @@ def hd_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
     E0 = O_[gi]
     if abs(E0 / r.E0 - 1) > HD_AYAR["e0_tol"]:
         raise HDHata(f"sayfa {r.sayfa}: giriş açılışı olay dosyasıyla tutmadı")
-    a = max(0, i - HD_AYAR["once"]); b = min(len(d), gi + HD_AYAR["sonra"] + 1)
+    a = max(0, i - HD_AYAR["once"]); b = min(len(d), gi + sonra + 1)
     x = np.arange(a, b) - i; sl = slice(a, b)
     o, h, l, c, v = O_[sl], H_[sl], L_[sl], C_[sl], V_[sl]
     T5, T10 = E0 * (1 + HD_AYAR["hedef"][0]), E0 * (1 + HD_AYAR["hedef"][1])
@@ -248,10 +251,13 @@ def hd_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
         if r.st5 == 1 and r.kst >= 0:
             ax.plot([1 + r.kst], [C_[gi + r.kst]], marker="X", ms=11, color="#a50026", markeredgecolor="k", zorder=8, label=f"STOP (gün +{r.kst})")
         cb = int(r.cikis_bar); xc = 1 + cb
-        if cb >= 0 and gi + cb < len(d) and cb <= HD_AYAR["sonra"]:
+        if cb >= 0 and gi + cb < len(d) and cb <= sonra:
             yc = E0 * (1 + r.getiri)
             ax.plot([xc], [yc], marker="v", ms=10, color="#762a83", markeredgecolor="k", zorder=8,
                     label=f"takip çıkışı ({r.cikis_tur}, {r.getiri * 100:+.1f}%)")
+        if bilgi_bar is not None and int(bilgi_bar) <= sonra:
+            ax.axvline(int(bilgi_bar) + 0.5, color="#999999", linewidth=0.6, linestyle="-", zorder=2,
+                       label=f"{int(bilgi_bar)} bar sonu (gün +{int(bilgi_bar) - 1}; bilgi)")
         ax.set_title(f"{r.pazar} · sonrası açık (bar 0 = sinyal günü t, giriş = bar 1)", fontsize=10)
         fig.legend(*ax.get_legend_handles_labels(), loc="lower center", fontsize=7, frameon=False, ncol=4, bbox_to_anchor=(0.5, -0.12))
         ax.grid(alpha=0.25, zorder=0); ax.set_ylabel("fiyat")
@@ -266,7 +272,7 @@ def hd_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
         fig.savefig(yol, dpi=HD_AYAR["dpi_grafik"], bbox_inches="tight", metadata={"Software": None})
     finally:
         plt.close(fig)
-    return {"k10": k10, "cikis_grafikte": bool(0 <= cb <= HD_AYAR["sonra"])}
+    return {"k10": k10, "cikis_grafikte": bool(0 <= cb <= sonra)}
 
 
 # ================================================================ METİN
@@ -280,8 +286,9 @@ def hd_sonuc_metni(r: pd.Series, k10: int) -> str:
     return s
 
 
-def hd_takip_metni(r: pd.Series) -> str:
-    return f"takip stoplu çıkış: {r.cikis_tur}, gün +{r.cikis_bar}, {r.getiri * 100:+.1f}%" + ("" if r.cikis_bar <= HD_AYAR["sonra"] else " (grafik dışında)")
+def hd_takip_metni(r: pd.Series, sonra: Optional[int] = None) -> str:
+    sonra = HD_AYAR["sonra"] if sonra is None else int(sonra)
+    return f"takip stoplu çıkış: {r.cikis_tur}, gün +{r.cikis_bar}, {r.getiri * 100:+.1f}%" + ("" if r.cikis_bar <= sonra else " (grafik dışında)")
 
 
 def _pz(p: int) -> str:
