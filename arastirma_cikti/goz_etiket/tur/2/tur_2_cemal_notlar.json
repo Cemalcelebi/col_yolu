@@ -1,0 +1,186 @@
+{
+ "kaynak": "Cemal'in işaretlediği TUR_2_KOR.pdf (dosya adı HAKEM_DERS_2026-11-18.pdf; 18 Kas 2026); ana model yazıya döktü",
+ "not": "A satırı (kodun bölgesi doğru mu) hiçbir sayfada işaretlenmedi; yalnız B. açık = yazılı / net işaret; çıkarım = çizimden",
+ "cevap": {
+  "1": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (kazan çizimi)"
+  },
+  "2": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "'alıcı mumu büyük, yolun çoğunu almış, ben girmem buna'"
+  },
+  "3": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (kazan)"
+  },
+  "4": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan eğrisi"
+  },
+  "5": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + 210'da yatay çizgi (önceki tepe = hedef)"
+  },
+  "6": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "X (çapraz)"
+  },
+  "7": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "8": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan"
+  },
+  "9": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "10": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (alçalan trend çizgisi ve dip çizgisi de çizdi)"
+  },
+  "11": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan"
+  },
+  "12": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "'bu alıcı mum gelirse ok' (koşullu; ileri mum çizdi)"
+  },
+  "13": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "B yazdı, sağda ayrıca ✓ ve yükselen çizgi"
+  },
+  "14": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "alçalan trend çizgisi + aşağı oklar"
+  },
+  "15": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + zikzak yükseliş çizimi (alçalan büyük resimde)"
+  },
+  "16": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (kazan)"
+  },
+  "17": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "18": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "kazan + ✓ + çapraz çizgiler (X?) karışık"
+  },
+  "19": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "20": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓"
+  },
+  "21": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "22": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓"
+  },
+  "23": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓"
+  },
+  "24": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "B benzeri karalama + kazan"
+  },
+  "25": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "yıldız / X benzeri karalama + ✓ (okunamadı)"
+  },
+  "26": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (ok)"
+  },
+  "27": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "X"
+  },
+  "28": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ + kazan + yükselen çizgi"
+  },
+  "29": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "B"
+  },
+  "30": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "✓ (kazan)"
+  }
+ }
+}
