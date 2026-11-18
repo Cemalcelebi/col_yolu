@@ -93,6 +93,116 @@
   "YANLIŞ": 0,
   "yanitsiz": 30
  },
+ "bilgi_tanim": {
+  "surum": "B1.0",
+  "tanim": "Fiyat = ge_hazir (YAPI_HEDEF geçerli bar + kriz kesiği 31.08.2026). Bar 0 = giriş günü (olay 'giris'; geçerli bar olmalı, yoksa DURUR), E0 = giriş günü açılışı (olay dosyasında E0 varsa göreli 1e-4 ile aynı olmalı, yoksa DURUR). 15 g = bar 0..14 (15 geçerli bar; h5 ile aynı sayım, stop YOK); 60 g = bar 0..59 (60 geçerli bar; kriz kesiği ya da hissenin son barı yüzünden 60 bar yoksa 60 g sütunları NaN = ölçülemedi). k15 = max Close(0..14) / E0 - 1; gi15 = max High(0..14) / E0 - 1; m60 / n60 / s60 = max / min / son (bar 59) Close(0..59) / E0 - 1.",
+  "cetvel": {
+   "h5": "15 g kapanış +%5 stop'tan önce (olay_Y1 h5; KARAR ÖLÇÜSÜ)",
+   "gi5": "15 g gün içi +%5: gi15 >= +%5 (High; stop yok; bilgi)",
+   "c60": "60 g kapanış +%5: m60 >= +%5 (stop yok; bilgi)"
+  },
+  "esik": 0.05,
+  "kacti_alt": 0.03,
+  "kacti": "yön doğru / eşik kaçtı: karar OLUR VE h5 = 0 VE +%3 <= k15 < +%5 (kapanışla +%3..+%5 arası kaldı). Bilgi; BAŞARI'yı değiştirmez.",
+  "cetvel_basari": "her cetvel için aynı BAŞARI formülü: (OLUR'da cetvel = 1 + OLMAZ'da cetvel = 0) / (OLUR + OLMAZ); cetvel NaN sayfa ölçülemedi. Taban = aynı sayfaların cetvel payı (h5 için ayrıca eş payı); hep OLMAZ = 1 - taban.",
+  "denetim": "h5 = 1 ise k15 >= +%5 ve (olay dosyasında varsa) h5H = 1 ise gi15 >= +%5 olmalı; tutmazsa DURUR (fiyat / olay uyuşmazlığı).",
+  "sabit": "uzerine (yeniden koşu): önceki tur_K_sonuc.json varsa iki tarafın OLUR / OLMAZ / BELİRSİZ / doğru / karar / yanılınan sayıları AYNI olmalı; değilse DURUR ve hiçbir dosya yazılmaz."
+ },
+ "cetvel": {
+  "model": {
+   "h5": {
+    "OLUR": 21,
+    "OLMAZ": 8,
+    "dogru_OLUR": 10,
+    "dogru_OLMAZ": 6,
+    "karar": 29,
+    "isabet_OLUR": 0.47619047619047616,
+    "isabet_OLMAZ": 0.75,
+    "basari": 0.5517241379310345,
+    "taban": 0.4,
+    "hep_OLMAZ_basari": 0.6,
+    "olculemedi": 0
+   },
+   "gi5": {
+    "OLUR": 21,
+    "OLMAZ": 8,
+    "dogru_OLUR": 10,
+    "dogru_OLMAZ": 3,
+    "karar": 29,
+    "isabet_OLUR": 0.47619047619047616,
+    "isabet_OLMAZ": 0.375,
+    "basari": 0.4482758620689655,
+    "taban": 0.5,
+    "hep_OLMAZ_basari": 0.5,
+    "olculemedi": 0
+   },
+   "c60": {
+    "OLUR": 21,
+    "OLMAZ": 8,
+    "dogru_OLUR": 17,
+    "dogru_OLMAZ": 1,
+    "karar": 29,
+    "isabet_OLUR": 0.8095238095238095,
+    "isabet_OLMAZ": 0.125,
+    "basari": 0.6206896551724138,
+    "taban": 0.8,
+    "hep_OLMAZ_basari": 0.19999999999999996,
+    "olculemedi": 0
+   },
+   "kacti": [
+    9,
+    24,
+    25
+   ],
+   "kacti_n": 3
+  },
+  "cemal": {
+   "h5": {
+    "OLUR": 15,
+    "OLMAZ": 4,
+    "dogru_OLUR": 5,
+    "dogru_OLMAZ": 1,
+    "karar": 19,
+    "isabet_OLUR": 0.3333333333333333,
+    "isabet_OLMAZ": 0.25,
+    "basari": 0.3157894736842105,
+    "taban": 0.4,
+    "hep_OLMAZ_basari": 0.6,
+    "olculemedi": 0
+   },
+   "gi5": {
+    "OLUR": 15,
+    "OLMAZ": 4,
+    "dogru_OLUR": 7,
+    "dogru_OLMAZ": 1,
+    "karar": 19,
+    "isabet_OLUR": 0.4666666666666667,
+    "isabet_OLMAZ": 0.25,
+    "basari": 0.42105263157894735,
+    "taban": 0.5,
+    "hep_OLMAZ_basari": 0.5,
+    "olculemedi": 0
+   },
+   "c60": {
+    "OLUR": 15,
+    "OLMAZ": 4,
+    "dogru_OLUR": 12,
+    "dogru_OLMAZ": 0,
+    "karar": 19,
+    "isabet_OLUR": 0.8,
+    "isabet_OLMAZ": 0.0,
+    "basari": 0.631578947368421,
+    "taban": 0.8,
+    "hep_OLMAZ_basari": 0.19999999999999996,
+    "olculemedi": 0
+   },
+   "kacti": [
+    5,
+    15
+   ],
+   "kacti_n": 2
+  }
+ },
  "birikimli": {
   "turlar": [
    1,
@@ -204,6 +314,136 @@
    "n": 60,
    "kappa": 0.09774436090225563,
    "uyum": 0.4
-  }
- }
+  },
+  "cetvel": {
+   "model": {
+    "h5": {
+     "OLUR": 28,
+     "OLMAZ": 31,
+     "dogru_OLUR": 13,
+     "dogru_OLMAZ": 17,
+     "karar": 59,
+     "isabet_OLUR": 0.4642857142857143,
+     "isabet_OLMAZ": 0.5483870967741935,
+     "basari": 0.5084745762711864,
+     "taban": 0.45,
+     "hep_OLMAZ_basari": 0.55,
+     "olculemedi": 0
+    },
+    "gi5": {
+     "OLUR": 28,
+     "OLMAZ": 31,
+     "dogru_OLUR": 14,
+     "dogru_OLMAZ": 10,
+     "karar": 59,
+     "isabet_OLUR": 0.5,
+     "isabet_OLMAZ": 0.3225806451612903,
+     "basari": 0.4067796610169492,
+     "taban": 0.5833333333333334,
+     "hep_OLMAZ_basari": 0.41666666666666663,
+     "olculemedi": 0
+    },
+    "c60": {
+     "OLUR": 28,
+     "OLMAZ": 29,
+     "dogru_OLUR": 23,
+     "dogru_OLMAZ": 8,
+     "karar": 57,
+     "isabet_OLUR": 0.8214285714285714,
+     "isabet_OLMAZ": 0.27586206896551724,
+     "basari": 0.543859649122807,
+     "taban": 0.7586206896551724,
+     "hep_OLMAZ_basari": 0.24137931034482762,
+     "olculemedi": 2
+    },
+    "kacti": [
+     [
+      1,
+      22
+     ],
+     [
+      2,
+      9
+     ],
+     [
+      2,
+      24
+     ],
+     [
+      2,
+      25
+     ]
+    ],
+    "kacti_n": 4
+   },
+   "cemal": {
+    "h5": {
+     "OLUR": 28,
+     "OLMAZ": 13,
+     "dogru_OLUR": 11,
+     "dogru_OLMAZ": 5,
+     "karar": 41,
+     "isabet_OLUR": 0.39285714285714285,
+     "isabet_OLMAZ": 0.38461538461538464,
+     "basari": 0.3902439024390244,
+     "taban": 0.45,
+     "hep_OLMAZ_basari": 0.55,
+     "olculemedi": 0
+    },
+    "gi5": {
+     "OLUR": 28,
+     "OLMAZ": 13,
+     "dogru_OLUR": 16,
+     "dogru_OLMAZ": 3,
+     "karar": 41,
+     "isabet_OLUR": 0.5714285714285714,
+     "isabet_OLMAZ": 0.23076923076923078,
+     "basari": 0.4634146341463415,
+     "taban": 0.5833333333333334,
+     "hep_OLMAZ_basari": 0.41666666666666663,
+     "olculemedi": 0
+    },
+    "c60": {
+     "OLUR": 27,
+     "OLMAZ": 13,
+     "dogru_OLUR": 21,
+     "dogru_OLMAZ": 1,
+     "karar": 40,
+     "isabet_OLUR": 0.7777777777777778,
+     "isabet_OLMAZ": 0.07692307692307693,
+     "basari": 0.55,
+     "taban": 0.7586206896551724,
+     "hep_OLMAZ_basari": 0.24137931034482762,
+     "olculemedi": 2
+    },
+    "kacti": [
+     [
+      1,
+      1
+     ],
+     [
+      1,
+      22
+     ],
+     [
+      1,
+      28
+     ],
+     [
+      2,
+      5
+     ],
+     [
+      2,
+      15
+     ]
+    ],
+    "kacti_n": 5
+   }
+  },
+  "cetvel_eksik_tur": []
+ },
+ "ilk_zaman": "2026-11-18 12:50:38 UTC",
+ "yeniden_zaman": "2026-11-18 12:57:13 UTC",
+ "karar_sabit": "TUTTU (önceki tur_K_sonuc.json ile karar sayıları aynı)"
 }
