@@ -113,3 +113,25 @@ Parmaklı 15 sayfanın 7'si +%5 gördü (%47), parmaksız 15'in 7'si (%47): bu t
 | 15 g gün içi +%5 | %58 | %63 | %55 | ~%45 |
 | 60 g kapanış +%5 | %62 | **%78** | %66 | ~%34 |
 OLUR'ların 60 günde -%5 görme payı %63. Okuma: Cemal'in OLUR seçimleri rastgele sayfadan 10-12 puan iyi (her üç cetvelde); 'yazı-turadan kötü' denmedi, 'hep OLMAZ düzeyi' kıyası yalnız OLUR + OLMAZ toplamı için ve TUR 1'de (%45) geçerliydi; birikimli %60 ~ hep OLMAZ %58. %70-80 sözü 60 günlük OLUR isabetinde doğru, ama taban da %66. Ölçü değişmez; her tur üç cetvel birlikte yazılır (bilgi).
+
+# TUR 2 (18 Kas 2026) — SONUÇ ve DERSLER
+Kaynak: arastirma_cikti/goz_etiket/tur/2/TUR_2_SONUC.md. 30 sayfa; taban (eş payı) %41,4; hep OLMAZ %60. Cemal A satırını (kodun bölgesi doğru mu) hiçbir sayfada işaretlemedi; 11 sayfaya BELİRSİZ.
+
+| Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti | OLMAZ isabeti | BAŞARI |
+|---|---|---|---|---|
+| Model | 21 / 8 / 1 | 10 / 21 (%48) | 6 / 8 (%75) | %55,2 (16 / 29) |
+| Cemal | 15 / 4 / 11 | 5 / 15 (%33) | 1 / 4 (%25) | %31,6 (6 / 19) |
+Birikimli (TUR 1 + 2): model 30 / 59 = %50,8; Cemal 16 / 41 = %39,0. Hakem seti dahil: Cemal 47 / 94 = %50, model 43 / 85 = %51. Kappa bu tur -0,05 (iki taraf bağımsız).
+
+## Cemal'in yanıldığı sayfalar (13)
+- OLUR dedi, gelmedi (10): 4 (stop), 5, 8, 10 (stop), 15 (stop -%13), 16 (stop), 20 (stop), 26 (stop), 28, 30 (stop). YEDİ STOP: OLUR'larının yarısı stop oldu. Ortak resim: 10, 15, 30 alçalan büyük resimde dipte kazan ✓ (kendi C6 kuralına aykırı: CD2 / C6 üçüncü kez); 4, 16, 20, 26 kazan + ✓ ama kırılım sonrası hemen geri döndü (CD3 dönüş teyidi; CD12 önceki tepe aşılmadan giriş yok: 16, 20, 26'da önceki tepe aşılmamıştı).
+- OLMAZ dedi, geldi (3): 2 ('alıcı mumu büyük, yolun çoğunu almış, girmem' -> +%13; CD13 yeni: büyük kırılım mumu tek başına eleme nedeni değil, VD8 ile çelişir, birlikte sınanacak), 14 (alçalan trend çizgisi -> +%5 ve +%10), 27 (X -> +%5).
+- CD14 (yeni): BELİRSİZ 11 / 30: kararsızlık arttı; BELİRSİZ dediklerinin 5'i hedefe gitti (12, 13, 18, 21 +%10 ve 18 +%20). Kararsızlık puan değil ama fırsat kaybı; TUR 3'te BELİRSİZ en çok 5 sayfa.
+
+## Modelin yanıldığı sayfalar (13)
+- OLUR dedi, gelmedi (11 / 21): 4, 7, 8, 9, 16, 17, 20, 24, 25, 26, 29 (7'si stop). VD9 (yeni): TUR 1 derslerini uygulayınca (tepe rafı artık OLMAZ değil, C11 / C5 gevşedi) model OLUR'u 7'den 21'e çıktı ama isabet %48 = taban; OLUR seçiciliği kayboldu. OLMAZ tarafı güçlendi (6 / 8). TUR 3 kuralı: OLUR için en az iki lehte yapı şartı (dönüş + gövdeli kırılım + büyük resim yükselen / yatay) ve C13- (dev mum) varsa OLUR yok.
+- OLMAZ dedi, geldi (2): 14, 23 (+%28; dev mum / dip savunması zayıf diye elendi).
+- Her iki taraf OLUR dediği 9 sayfada (1, 3, 4, 8, 11, 16, 20, 22, 26) isabet 4 / 9; her iki taraf OLMAZ dediği 1 sayfada (6) doğru.
+
+## Parmak izi (P1.1) bilgi
+Parmaklı 15: 5 hedef (%33); parmaksız 15: 6 hedef (%40). Yine fark yok (iki turda 12 / 30 vs 13 / 30).

@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 6 (K30-K35) + TUR 1 2 (K36-K37) (toplam 177; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 6 (K30-K35) + TUR 1 2 (K36-K37) + TUR 2 2 (K38-K39) (toplam 179; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -260,6 +260,8 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K35 | VD1-VD4 vekil / ana model dersleri: kural toplamı göz değil; stop %10 ve kırılım payı süzgeçleri hedefe gidenleri eliyor; 'kararsız' grup en iyi grup; önce hakem sonra eğitim | 18 Kas hakem seti (s2, 4, 9, 15, 23, 25, 26, 28, 30, 33, 35) | Evet (n 40, bilgi) | TUTMADI (vekil) | Vekil OLUR 0 / 6 hedef | GOZ_ETIKET C11 / C5 (vekil kuralı) | KAPALI: vekil yaklaşımı bırakıldı |
 | K36 | CD8 / CD9 (TUR 1): 'kodun bölgesi yanlış' ile 'fiyat gitmez' ayrı hükümler; şemsiye çizimi tek başına OLMAZ değil | TUR 1 s9, 11, 17, 26, 30 | Evet (n 30, bilgi) | SINANMADI | Tek tur | YOK | AÇIK |
 | K37 | VD6-VD8 (TUR 1): dipte kazan OLUR için dönüş + gövdeli kırılım; tepe rafı iki tür (dağıtım / yükselen trend rafı); kırılım mumu tavanı ortalamalı (Cemal s2) | TUR 1 s2, 3, 5, 6, 8, 20-23 | Evet (n 30, bilgi) | SINANMADI | Tek tur; VD7 Y9c ile çelişiyor (n küçük) | TUR 2 model kuralı; YAPI_HEDEF Y1c adayı | AÇIK |
+| K38 | CD13 / CD14 (TUR 2): büyük kırılım mumu tek başına eleme nedeni değil; alçalan büyük resimde kazan ✓ üçüncü kez yanılttı; kararsızlık fırsat kaybı | TUR 2 s2, 10, 15, 30, 12-21 | Evet (n 30, bilgi) | SINANMADI | Tek tur | YOK | AÇIK |
+| K39 | VD9 (TUR 2): gevşetilen kurallarla model OLUR'u 21'e çıktı, isabet %48 = taban; OLUR için üç şart birlikte (dönüş + gövdeli ortalayan kırılım + yükselen / yatay büyük resim) | TUR 2 model 11 / 21 yanlış | Evet (n 30, bilgi) | SINANMADI | TUR 3'te sınanır | TUR 3 model kuralı | AÇIK |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 
