@@ -63,3 +63,27 @@ Vekile / ana modele (VD):
 
 ## 4. SINIR
 40 sayfa; gruplar 3-17; Fisher p 0,06-0,15. Dersler kural değil; Cemal'in >= 100 kör etiketi ve 15 gün cetveliyle sınanır.
+
+# TUR 1 (18 Kas 2026) — SONUÇ ve DERSLER
+Kaynak: arastirma_cikti/goz_etiket/tur/1/TUR_1_SONUC.md (ölçü: 15 barda +%5 stop'tan önce, kodun girişiyle). 30 sayfa; taban (eş payı) %41,5; hep OLMAZ deseydi %50.
+
+| Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti | OLMAZ isabeti | BAŞARI |
+|---|---|---|---|---|
+| Model | 7 / 23 / 0 | 3 / 7 | 11 / 23 | %46,7 |
+| Cemal | 13 / 9 / 8 | 6 / 13 | 4 / 9 | %45,5 |
+
+Uyum (kappa) 0,15. İki taraf da yazı-tura; Fisher p 1,0.
+
+## Cemal'in yanıldığı sayfalar (12)
+- OLUR dedi, gelmedi: 1 (stop -%5), 10 (stop -%9), 12 (-%8), 18 (15 günde sönük; takip +%12), 22 (-%6,5), 23 (stop), 28 (-%4). Ortak resim: 10, 12, 22, 28 yükseliş sonrası TEPE RAFI (CD2 tekrar: 'tepede raf OLUR değil' dersi 2. kez yanılttı); 1 ve 23 dipte kazan + ✓ ama stop (CD3: dönüş görülmeden).
+- OLMAZ dedi, geldi: 9, 11 (şemsiye çizdi; hedef geldi: şemsiye kuralı bu turda 2 / 2 yanılttı), 17, 26, 30 ('kodun bölgesi yanlış, gerçek alış mumu aşağıdaki kazanda' notu; üçü de +%5 gördü, 26 +%14, 30 +%23).
+- CD8 (yeni): 'Kodun bölgesi yanlış' hükmü ile 'fiyat gitmez' hükmü ayrı şeyler. Cemal 17 / 19 / 26 / 30'da kodu eleştirdi (haklı: gerçek alış mumu daha önce, kodun bölgesi yol almış raf); ama ölçü kodun girişine göre ve 4'ün 3'ü +%5 gördü (yükselen trendde raf, VD7). Sonraki turda sayfaya iki ayrı soru: (a) kodun bölgesi doğru mu, (b) bu mumdan girilir mi.
+- CD9: Şemsiye çizimi (9, 11) bu turda hedefe engel olmadı; şemsiye = OLMAZ kuralı tek başına yetmiyor; bağlam (yükselen büyük resim) ve kırılım gövdesi birlikte okunmalı.
+
+## Modelin yanıldığı sayfalar (16)
+- OLMAZ dedi, geldi (12): 3, 4, 5, 6, 7, 8, 9, 11, 17, 26, 29, 30. Ortak neden kodları C6- / C10- (tepe rafı, büyük resim alçalan): VD7 (yeni): 'tepede raf = OLMAZ' kuralı 2024-26 ABD'de yükselen trend raflarını (3, 5, 6, 8, 17, 26, 30) eledi, hepsi +%5 gördü. Y9c (Ç193) 'tepede ters' bulgusuyla çelişiyor; TUR 1'de tepe rafı 7 / 12 hedefe gitti. Küçük n; ama kural tek yönlü uygulanmaz: tepe rafı DÜŞÜŞ sonrası tepe (dağıtım) ise OLMAZ, YÜKSELEN trend içinde raf ise bağlam lehte (C6+).
+- OLUR dedi, gelmedi (4): 20, 21, 22, 23 (düşüş sonrası dipte kazan + gövdeli kırılım). VD6: 'dipte kazan + kırılım' tanımı 7 OLUR'un 4'ünde yanıldı; dönüş teyidi (D4) ve kırılım mumunun tavanı ortalaması (Cemal s2 notu) eklenmeli.
+- VD8 (Cemal s2): alış mumu tavan çizgisini TAM ORTADAN kesmeli (gövdenin yarısı tavanın altında, yarısı üstünde); tavana ancak değen ya da tamamen üstünde açılan mum zayıf. TUR 2 model kuralına girer; YAPI_HEDEF için ölçülebilir: (tavan - O) / (C - O) 0,3-0,7 arası.
+
+## Parmak izi (F19) bilgi
+Parmaklı 15 sayfanın 7'si +%5 gördü (%47), parmaksız 15'in 7'si (%47): bu turda fark yok (n 15 / 15).
