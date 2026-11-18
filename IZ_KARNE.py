@@ -2068,6 +2068,9 @@ IK_GOREV: List[Dict[str, str]] = [
     {"tarih": "2026-11-18", "istek": "Cemal: TUR 1 s17 / s18 / s20 işaretleri ✓ mü ('özellikle 20')",
      "yapilan": "İşaretli sayfalar yeniden bakıldı: 17 kutu üstü X + altta kazan notu (OLMAZ), 18 şemsiye + not (zaten OLUR), 20 aşağı eğimli 'Tavan' çizgisi + ucunda yukarı çizgi (OLMAZ okunmuştu; itirazında 'şemsiye kırılırsa olur' demişti). İki senaryo sayıldı: 20 ✓ olursa TUR 1 Cemal 10/22 -> 9/22 (15 g +%1,6 gelmedi; 30 g +%9,5), 17 de ✓ olursa 10/22. Karar Cemal'e bırakıldı",
      "sonuc": "Cemal: 'boşver'. Etiketler değişmedi (17 OLMAZ, 18 OLUR, 20 OLMAZ); puanlar aynı", "durum": "TAMAMLANDI"},
+    {"tarih": "2026-11-18", "istek": "Cemal, TUR 3 setini işaretlerken (sonuç görülmeden): 'buradaki bölgelerin çoğu kötü bölge; OLMAZ dediklerim hedefe gitse de bilerek gidilmiş yol değil'",
+     "yapilan": "Söz, sonuç açılmadan deftere yazıldı (ön kayıt niteliğinde). Modelin TUR 3 etiketi de 29 / 30 OLMAZ (VD9). Kodun S6 bölgelerinin çoğu tepede (Ç190: taban setinin %58'i 120 günün tepesinde); bu yüzden kör sette 'iyi bölge' az",
+     "sonuc": "TUR 3 ölçümünde ayrıca yazılacak: OLMAZ denip hedefe giden sayfa sayısı (iki taraf) ve bunların 30 g yolu. TUR 4 için karar adayı (Cemal): örneklem 'düşüş sonrası dipte' (sinyal günü kapanışı 120 günün alt yarısında) bölgelerle sınırlansın mı; ön kayıtla, geriye uygulanmaz", "durum": "TAMAMLANDI, AÇIK: TUR 4 örneklem kararı"},
 ]
 IK_ACIK: List[str] = [
     "HAKEM TURLARI (18 Kas): TUR 1 ve TUR 2 bitti (TUR_DEFTERI.md; birikimli stop şartlı: Cemal 37 / 72, model 43 / 85). TUR 3 açıldı: TUR_3_KOR.pdf Cemal'de, model etiketi mühürlü (commit 1deb90c); Cemal yanıtlayınca tur olc --no 3 --cemal, HAKEM_DERSLER TUR 3, TUR_3_DERS.pdf (tur_ders_pdf.py --no 3), sonra TUR 4. Program 2 Ara 2026'ya kadar gün aşırı; 100 etiket geçince göz ölçümü (Ç192 planı) Cemal'in etiketleriyle. Üç cetvel bilgi, BAŞARI yalnız 15 g kapanış-stop.",
