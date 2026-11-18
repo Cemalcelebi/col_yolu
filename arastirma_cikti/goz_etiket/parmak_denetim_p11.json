@@ -1,0 +1,67 @@
+{
+ "zaman_utc": "2026-11-18 10:58:28 UTC",
+ "surum": "P1.1",
+ "esik_sha": "1063e67354eadbefa16815398c253798f880f9e7e6b95536e9e978a5b9cf5141",
+ "esik": {
+  "mum": 4,
+  "atr_gun": 250,
+  "atr_min": 120,
+  "hiza_atr": 0.7,
+  "hat_alt": 0.99,
+  "hat_ust": 1.06,
+  "alt_fitil": 0.25,
+  "boy_atr": 0.9,
+  "prefix_n": 10,
+  "prefix_tohum": 1918,
+  "surum": "P1.1"
+ },
+ "pazar": {
+  "ABD": {
+   "olay": 14881,
+   "olculen": 14881,
+   "parmak": 1183,
+   "yayginlik": 0.07949734560849406,
+   "kosul_payi": {
+    "pa": 0.44170418654660304,
+    "pb": 0.4472817686983402,
+    "pc": 0.4552113433237014,
+    "pd": 0.7174921040252671
+   },
+   "prefix_denetimi": 10
+  },
+  "AVR": {
+   "olay": 7054,
+   "olculen": 7054,
+   "parmak": 547,
+   "yayginlik": 0.07754465551460164,
+   "kosul_payi": {
+    "pa": 0.44641338247802664,
+    "pb": 0.44669690955486246,
+    "pc": 0.4818542670825064,
+    "pd": 0.7130705982421321
+   },
+   "prefix_denetimi": 10
+  },
+  "BIST": {
+   "olay": 4728,
+   "olculen": 4728,
+   "parmak": 905,
+   "yayginlik": 0.19141285956006768,
+   "kosul_payi": {
+    "pa": 0.6292301184433164,
+    "pb": 0.5427241962774958,
+    "pc": 0.574238578680203,
+    "pd": 0.7832064297800339
+   },
+   "prefix_denetimi": 10
+  }
+ },
+ "toplam": {
+  "olay": 26663,
+  "olculen": 26663,
+  "parmak": 2635,
+  "yayginlik": 0.09882608858718074
+ },
+ "satir_sha": "572530891942d26c168b398ecea19439b9d7385cad2dd3f7467740e28d8da770",
+ "sure_sn": 289.2
+}

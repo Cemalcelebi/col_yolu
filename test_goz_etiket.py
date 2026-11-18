@@ -359,6 +359,9 @@ def main():
         Pt = Xt[["pazar", "sembol", "tarih"]].copy(); Pt["F19"] = (np.random.default_rng(31).random(len(Pt)) < 0.5).astype(float)
         Pt.loc[Pt.index[::17], "F19"] = np.nan
         Pt.assign(tarih=pd.to_datetime(Pt.tarih).dt.strftime("%Y-%m-%d")).to_csv(os.path.join(tk, "parmak_Y1.csv.gz"), index=False)
+        Pt11 = Pt.copy(); Pt11["F19"] = (np.random.default_rng(32).random(len(Pt11)) < 0.5).astype(float)   # P1.1 dosyası (tur >= 2) ayrı
+        Pt11.loc[Pt11.index[::19], "F19"] = np.nan
+        Pt11.assign(tarih=pd.to_datetime(Pt11.tarih).dt.strftime("%Y-%m-%d")).to_csv(os.path.join(tk, "parmak_Y1_p11.csv.gz"), index=False)
         try:
             GE.ge_tur_orneklem(1, yt, tk); ok = False
         except GE.GEHata:
@@ -403,6 +406,9 @@ def main():
         kontrol("tur: önceki turun anahtarı yoksa DURUR (turlar sırayla)", ok)
         tur_anahtar(1, S1)
         S2 = GE.ge_tur_orneklem(2, yt, tk)
+        pk2 = S2.merge(Pt11.assign(tarih=pd.to_datetime(Pt11.tarih)), on=["pazar", "sembol", "tarih"])
+        kontrol("tur 2 örneklem (T1.2): parmak katmanı P1.1 dosyasından (parmak_Y1_p11), kotalar aynı",
+                len(pk2) == 30 and (pk2.F19 == pk2.parmak).all() and S2.groupby(["pazar", "parmak"]).size().to_dict() == bek)
         kontrol("tur 2 örneklem: tur 1 ve AŞAMA A hisseleri hariç",
                 not ({(r.pazar, r.sembol) for r in S2.itertuples()} & ({(r.pazar, r.sembol) for r in S1.itertuples()} | hisse0)))
         try:
@@ -441,6 +447,12 @@ def main():
         rd = pypdf.PdfReader(yp); met = [pg.extract_text() for pg in rd.pages]
         kontrol("tur PDF: sayfa sayısı, her sayfada 'Cemal: ✓ OLUR / X OLMAZ / ? BELİRSİZ' satırı",
                 len(rd.pages) == 2 and all(("✓ OLUR" in m and "X OLMAZ" in m and "? BELİRSİZ" in m) for m in met), met[0][-80:].replace("\n", " "))
+        yp2 = GE.ge_tur_pdf(9, [1, 2], pt, os.path.join(tmp, "TUR_9_KOR_iki.pdf"), iki_soru=True)
+        met2 = [pg.extract_text() for pg in pypdf.PdfReader(yp2).pages]
+        kontrol("tur PDF iki soru (T1.2, CD8): her sayfada A) bölge / tavan doğru mu ✓ / X ve B) bu mumdan girilir mi ✓ OLUR / X OLMAZ / ? BELİRSİZ",
+                len(met2) == 2 and all(("A) Kodun bölgesi / tavanı doğru mu" in m and "B) Bu mumdan girilir mi" in m and "✓ OLUR" in m
+                                        and "X OLMAZ" in m and "? BELİRSİZ" in m) for m in met2)
+                and not any("A) Kodun bölgesi" in m for m in met), met2[0][-160:].replace("\n", " "))
         kontrol("tur PDF: metinde tarih / hisse adı yok; üst veri boş",
                 not any(re.search(r"\d{4}-\d{2}-\d{2}|S\d{3}", m) for m in met) and not (rd.metadata or {}).get("/Author"))
         # parmak izi F19 elle + prefix
@@ -456,6 +468,30 @@ def main():
         H3_ = H_.copy(); H3_[i_] = 99.0; L3_ = L_.copy(); L3_[i_] = 0.1
         kontrol("parmak F19: t barı ve sonrası okunmaz", GE.ge_parmak_bar(O_, H3_, L3_, C_, hat_, i_) == P1)
         kontrol("parmak F19: ATR için 120 bar yoksa NaN", np.isnan(GE.ge_parmak_bar(O_, H_, L_, C_, hat_, 100)["F19"]))
+        # P1.1 (hiza <= 0,7; max Low <= hat x 1,06) elle; P1.0 sha / sürüm korunur
+        E11 = GE.ge_parmak_surum("P1.1")["esik"]
+        kontrol("parmak sürümleri: P1.0 sha c41e3e50 aynen (tur 1), P1.1 yalnız hiza 0,7 + hat üstü 1,06 farklı, sha sabit",
+                GE.ge_parmak_surum("P1.0")["sha"].startswith("c41e3e509b5d") and GE.ge_esik_sha(GE.GE_PARMAK_ESIK).startswith("c41e3e509b5d")
+                and GE.GE_PARMAK_ESIK["hiza_atr"] == 0.5 and GE.GE_PARMAK_ESIK["hat_ust"] == 1.04
+                and {k for k in E11 if E11[k] != GE.GE_PARMAK_ESIK.get(k)} == {"surum", "tanim", "hiza_atr", "hat_ust"}
+                and E11["hiza_atr"] == 0.7 and E11["hat_ust"] == 1.06 and GE.ge_parmak_surum("P1.1")["sha"].startswith("1063e67354ea"))
+        L4_ = L_.copy(); L4_[i_ - 1] = 9.55 + 0.6     # hiza (10.15 - 9.55) / 1 = 0,60: P1.0 (0,5) tutmaz, P1.1 (0,7) tutar
+        O4_, C4_, H4_ = O_.copy(), C_.copy(), H_.copy(); O4_[i_ - 1], C4_[i_ - 1], H4_[i_ - 1] = 10.2, 10.4, 10.5
+        # max Low 10.15 / hat 9.5 = 1,068 > 1,06 -> hat'ı 9.6'ya al: min 9.55 >= 9.504, max 10.15 <= 10.176 (P1.1), > 9.984 (P1.0)
+        Pa0 = GE.ge_parmak_bar(O4_, H4_, L4_, C4_, 9.6, i_); Pa1 = GE.ge_parmak_bar(O4_, H4_, L4_, C4_, 9.6, i_, E11)
+        kontrol("parmak P1.1 elle: hiza 0,60 ve max Low / hat 1,057 -> P1.0 = 0 (pa, pb tutmaz), P1.1 = 1",
+                Pa0["F19"] == 0.0 and Pa0["pa"] == 0.0 and Pa0["pb"] == 0.0 and Pa1["F19"] == 1.0, f"{Pa0} {Pa1}")
+        kontrol("tur eşik: tur 1 -> T1.1 (sha 47284ac6 aynen, P1.0, tek soru); tur >= 2 -> T1.2 (P1.1, iki soru, katman ve tohum tabanı aynı)",
+                GE.ge_tur_esik(1) is GE.GE_TUR_ESIK and GE.ge_esik_sha(GE.GE_TUR_ESIK).startswith("47284ac6dc6c")
+                and GE.ge_tur_esik(2)["parmak_surum"] == "P1.1" and GE.ge_tur_esik(2)["iki_soru"] is True
+                and GE.ge_tur_esik(2)["katman"] == GE.GE_TUR_ESIK["katman"] and GE.ge_tur_esik(3)["tohum_taban"] == 100)
+        yc2 = os.path.join(tmp, "cemal_iki.json")
+        json.dump({"1": {"A": "✓", "B": "X"}, "2": {"A": "X", "B": "?"}, "3": "✓", "4": {"A": "z", "cevap": "OLUR"}}, open(yc2, "w", encoding="utf-8"),
+                  ensure_ascii=False)
+        Ci = GE.ge_tur_cemal_oku(yc2, [1, 2, 3, 4, 5])
+        kontrol("Cemal yanıtı iki soru: B -> karar (OLMAZ / BELİRSİZ / OLUR), A -> DOĞRU / YANLIŞ, eski biçim ve eksik sayfa geçerli",
+                Ci.cemal.tolist() == ["OLMAZ", "BELİRSİZ", "OLUR", "OLUR", None]
+                and [x if isinstance(x, str) else None for x in Ci.cemal_bolge] == ["DOĞRU", "YANLIŞ", None, None, None], str(Ci[["cemal", "cemal_bolge"]].values.tolist()))
         okp = True; nd = 0
         for ia_ in ia[:40]:
             if ia_ < 130:
@@ -597,6 +633,18 @@ def main():
             A231 = json.load(open(os.path.join(GE.GE_YOL["cikti"], "anahtar.json"), encoding="utf-8"))["olay"]["231"]
             f231 = Pm[(Pm.pazar == A231["pazar"]) & (Pm.sembol == A231["sembol"]) & (Pm.tarih == A231["tarih"])].F19.tolist()
             print(f"  BİLGİ hakem sayfa 25 (No 231, Cemal'in parmak izi örneği): F19 = {f231} (beklenen 1; eşik değiştirilmez)")
+        ypm11 = os.path.join(GE.GE_YOL["cikti"], "parmak_Y1_p11.csv.gz")
+        if os.path.exists(ypm11) and os.path.exists(ypm):
+            Pm11 = pd.read_csv(ypm11, dtype={"sembol": str})
+            Dn11 = json.load(open(os.path.join(GE.GE_YOL["cikti"], "parmak_denetim_p11.json"), encoding="utf-8"))
+            kontrol("gerçek parmak_Y1_p11 (P1.1): Y1 sırası / sayısı; yaygınlık denetimle aynı; sha; eşik sha P1.1; prefix 10 / pazar",
+                    len(Pm11) == len(Xo) and (Pm11[["pazar", "sembol", "tarih"]].to_numpy() == Xo[["pazar", "sembol", "tarih"]].to_numpy()).all()
+                    and all(int((Pm11[Pm11.pazar == p].F19 == 1).sum()) == v["parmak"] and v["prefix_denetimi"] == 10 for p, v in Dn11["pazar"].items())
+                    and Dn11["satir_sha"] == GE._ge_sha_dosya(ypm11) and Dn11["esik_sha"] == GE.ge_parmak_surum("P1.1")["sha"]
+                    and os.path.getsize(ypm11) < 2 ** 20)
+            g231 = Pm11[(Pm11.pazar == A231["pazar"]) & (Pm11.sembol == A231["sembol"]) & (Pm11.tarih == A231["tarih"])].F19.tolist()
+            kontrol("gerçek P1.1: hakem s25 (No 231) F19 = 1 (iş tanımı ön koşulu); P1.0'da 1 olan her olay P1.1'de de 1 (gevşetme)",
+                    g231 == [1.0] and not ((Pm.F19 == 1) & (Pm11.F19 == 0)).any(), str(g231))
         # gerçek tur 1 dosyaları
         yg = GE.ge_tur_yol("anahtar", 1)
         if os.path.exists(yg):
@@ -616,6 +664,29 @@ def main():
                     and not any(re.search(r"\d{4}-\d{2}-\d{2}", m) for m in mg)
                     and not any(re.search(rf"(?<![A-Za-z0-9]){re.escape(s)}(?![A-Za-z0-9])", m) for s in Sg.sembol for m in mg)
                     and json.load(open(yg, encoding="utf-8"))["pdf_sha"] == GE._ge_sha_dosya(ypg))
+        # gerçek tur 2 dosyaları (T1.2: P1.1, iki soru, tohum 102)
+        yg2 = GE.ge_tur_yol("anahtar", 2)
+        if os.path.exists(yg2):
+            J2 = json.load(open(yg2, encoding="utf-8"))
+            S2g = GE.ge_tur_anahtar_oku(2); S2r = GE.ge_tur_orneklem(2)
+            h1 = {(r.pazar, r.sembol) for r in GE.ge_tur_anahtar_oku(1).itertuples()}
+            hg = {(v["pazar"], v["sembol"]) for v in json.load(open(os.path.join(GE.GE_YOL["cikti"], "anahtar.json"), encoding="utf-8"))["olay"].values()}
+            kontrol("gerçek tur 2: 30 sayfa, P1.1 katmanları, tohum 102, anahtar = ge_tur_orneklem(2) yeniden üretim; sürüm / sha kayıtları",
+                    len(S2g) == 30 and S2g.groupby(["pazar", "parmak"]).size().to_dict() == bek and (S2g.parmak == S2r.parmak).all()
+                    and all(S2g[c].astype(str).tolist() == S2r[c].astype(str).tolist() for c in ("sayfa", "pazar", "sembol", "tarih"))
+                    and J2["tohum"] == 102 and J2["parmak_surum"] == "P1.1" and J2["tur_esik_surum"] == "T1.2" and J2["iki_soru"] is True
+                    and J2["parmak_esik_sha"] == GE.ge_parmak_surum("P1.1")["sha"]
+                    and J2["parmak_sha"] == GE._ge_sha_dosya(os.path.join(GE.GE_YOL["cikti"], "parmak_Y1_p11.csv.gz")))
+            kontrol("gerçek tur 2: AŞAMA A 300 ve tur 1 hisseleri / olayları yok; turda hisse tekil",
+                    not any((r.pazar, r.sembol) in (hg | h1) for r in S2g.itertuples()) and not S2g.duplicated(["pazar", "sembol"]).any())
+            yp2g = GE.ge_tur_yol("pdf", 2)
+            r2 = pypdf.PdfReader(yp2g); m2 = [pg.extract_text() for pg in r2.pages]
+            kontrol("gerçek TUR_2_KOR.pdf: 30 sayfa, her sayfada A ve B soru satırları, hisse adı / tarih yok, sha anahtarla aynı",
+                    len(r2.pages) == 30 and all("A) Kodun bölgesi / tavanı doğru mu" in m and "B) Bu mumdan girilir mi" in m and "✓ OLUR" in m
+                                                and "X OLMAZ" in m and "? BELİRSİZ" in m for m in m2)
+                    and not any(re.search(r"\d{4}-\d{2}-\d{2}", m) for m in m2)
+                    and not any(re.search(rf"(?<![A-Za-z0-9]){re.escape(s)}(?![A-Za-z0-9])", m) for s in S2g.sembol for m in m2)
+                    and J2["pdf_sha"] == GE._ge_sha_dosya(yp2g))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"\nGEÇTİ {len(GECTI)}  KALDI {len(KALDI)}")
