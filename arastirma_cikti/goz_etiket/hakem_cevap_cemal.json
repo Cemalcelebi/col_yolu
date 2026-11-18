@@ -1,0 +1,215 @@
+{
+ "kaynak": "Cemal'in el yazısıyla işaretlediği GOZ_HAKEM_SET.pdf (dosya adı FITIL_KOR_SET.pdf; 18 Kas 2026); ana model yazıya döktü",
+ "kodlama": "kör yarı: karar OLUR/OLMAZ/BELİRSİZ/'-' + tur (açık = yazılı karar; çıkarım = ✓ / X / kazan / şemsiye çiziminden; yanıtsız); açık yarı: DOĞRU/YANLIŞ/'-' (aşama B kararı için)",
+ "kor": {
+  "1": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "fitiller yukarı yönlü uzamış, ters yönde gitmesi beklenilmez; yukarıdaki satıcı emilmiş, altta alıcı olmadığı için alt fitil oluşur (fitil teorisi)"
+  },
+  "2": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "üç alçalan kubbe çizdi; 'tavan bir öncekinden daha yukarıdan tekrar oluşması beklenilir; stop zaten diğer tepenin üstünde olduğu için bence beklenilir'"
+  },
+  "3": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "'X taban': kodun taban dediği taban değil (uzun ortalama çizgisi çizdi)"
+  },
+  "4": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "bölge altına kazan (çanak) çizdi; yazı yok"
+  },
+  "5": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "'fitilsiz kısım yukarıda, dikkat edersen tersi olmalı' (aşağı)"
+  },
+  "6": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "'doğru ama tepede, bu çok dikkatli olunmalı' + kazan + ok yukarı"
+  },
+  "7": {
+   "cevap": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "büyük açılan kanal çizdi, 'ΔX büyük'"
+  },
+  "8": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "'stop çok büyük'"
+  },
+  "9": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "'dip savunması zayıf' + dibe X"
+  },
+  "10": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "kazan çizdi + ✓"
+  },
+  "11": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "'dip savunması yok; son bölümde üstte tavan koruması var; stop çok aşağıda'"
+  },
+  "12": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "'önceki bölüm hedefe ulaşmış, tepede şemsiye oluşuyor; kod önceki oluşumu görmeyip yukarıdakini görüyor, komik'"
+  },
+  "13": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "bütün grafiğe şemsiye çizdi + X"
+  },
+  "14": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "kazan çizdi + ✓"
+  },
+  "15": {
+   "cevap": "OLMAZ",
+   "tur": "çıkarım",
+   "not": "ortaya X çizdi, yazı yok"
+  },
+  "16": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "uzun kazan çizdi + ✓"
+  },
+  "17": {
+   "cevap": "OLMAZ",
+   "tur": "açık",
+   "not": "'aranan hiçbir kuralımız burda yok gibi'"
+  },
+  "18": {
+   "cevap": "-",
+   "tur": "yanıtsız",
+   "not": "işaret yok"
+  },
+  "19": {
+   "cevap": "OLUR",
+   "tur": "çıkarım",
+   "not": "kazan + ✓ (sağda ayrıca bir X var; çizim belirsiz)"
+  },
+  "20": {
+   "cevap": "BELİRSİZ",
+   "tur": "çıkarım",
+   "not": "tavana ok ve X, yükselen dipler çizgisi; yazı yok"
+  }
+ },
+ "acik": {
+  "21": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "22": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓ 'şekil ok ancak fitil aşağıda olması kötü'"
+  },
+  "23": {
+   "cevap": "YANLIŞ",
+   "tur": "çıkarım",
+   "not": "B OLUR dedi; Cemal 'B' yazdı: 'tavan hattı korunmuş, önceki mumların çoğu burdan dönmüş; yeşil mum gün sonu ise ve sonraki gün kalıcılık sağlanırsa girerim' (Cemal: BELİRSİZ, teyit ister)"
+  },
+  "24": {
+   "cevap": "YANLIŞ",
+   "tur": "açık",
+   "not": "B OLMAZ dedi; Cemal OLMAZ'ı çizdi, 'B' yazdı: 'olur bence ama çok defa tavan savunması oluşmuş, sert tavan; güven için iki gün kapanış üstte olmalı'"
+  },
+  "25": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓ 'olur; alış mumunun hemen öncesindeki 4 mum dip bölgesine yakın, alt fitil kısa: parmak izi; büyük yeşil öncesindeki 4 mumun öbeği'"
+  },
+  "26": {
+   "cevap": "YANLIŞ",
+   "tur": "çıkarım",
+   "not": "B OLMAZ dedi; Cemal X çizdi (kazan + ok)"
+  },
+  "27": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "28": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "29": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "30": {
+   "cevap": "YANLIŞ",
+   "tur": "açık",
+   "not": "B OLMAZ dedi; Cemal OLMAZ'ın üstüne X, kazan çizdi"
+  },
+  "31": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "32": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓ + şemsiye çizdi"
+  },
+  "33": {
+   "cevap": "-",
+   "tur": "yanıtsız",
+   "not": "işaret okunamadı (üstte karalama ve çizgi)"
+  },
+  "34": {
+   "cevap": "-",
+   "tur": "yanıtsız",
+   "not": "kazan ve oklar çizdi, ✓ / X yok"
+  },
+  "35": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "36": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "37": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "38": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "39": {
+   "cevap": "DOĞRU",
+   "tur": "açık",
+   "not": "✓"
+  },
+  "40": {
+   "cevap": "YANLIŞ",
+   "tur": "açık",
+   "not": "X (B BELİRSİZ demişti)"
+  }
+ },
+ "ek_dersler": [
+  "Fitil teorisi (s1): üst fitiller uzamışsa yukarıdaki satıcı emiliyor, altta alıcı yoksa alt fitil oluşur; fitilsiz kısım yukarıdaysa yön tersi (s5)",
+  "Giriş teyidi (s23, s24): kırılım mumu gün sonu kapanışla + ertesi gün kalıcılık / iki gün kapanış tavan üstünde; tek mumla girilmez",
+  "Parmak izi (s25): büyük yeşil alış mumundan hemen önceki 4 mum dibe yakın, alt fitili kısa öbek",
+  "Stop çok büyükse işlem yok (s8, s11); kod önceki oluşumu görmeden yukarıdaki oluşumu görüyor (s12: büyük desen / hafıza)",
+  "Kazan çizimi = OLUR, şemsiye çizimi = OLMAZ (s4, s6, s10, s13, s14, s16)"
+ ]
+}

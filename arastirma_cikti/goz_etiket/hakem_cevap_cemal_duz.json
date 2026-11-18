@@ -1,0 +1,150 @@
+{
+ "1": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] fitiller yukarı yönlü uzamış, ters yönde gitmesi beklenilmez; yukarıdaki satıcı emilmiş, altta alıcı olmadığı için alt fitil oluşur (fitil teorisi)"
+ },
+ "2": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] üç alçalan kubbe çizdi; 'tavan bir öncekinden daha yukarıdan tekrar oluşması beklenilir; stop zaten diğer tepenin üstünde olduğu için bence beklenilir'"
+ },
+ "3": {
+  "cevap": "OLMAZ",
+  "neden": "[çıkarım] 'X taban': kodun taban dediği taban değil (uzun ortalama çizgisi çizdi)"
+ },
+ "4": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] bölge altına kazan (çanak) çizdi; yazı yok"
+ },
+ "5": {
+  "cevap": "OLMAZ",
+  "neden": "[çıkarım] 'fitilsiz kısım yukarıda, dikkat edersen tersi olmalı' (aşağı)"
+ },
+ "6": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] 'doğru ama tepede, bu çok dikkatli olunmalı' + kazan + ok yukarı"
+ },
+ "7": {
+  "cevap": "BELİRSİZ",
+  "neden": "[çıkarım] büyük açılan kanal çizdi, 'ΔX büyük'"
+ },
+ "8": {
+  "cevap": "OLMAZ",
+  "neden": "[açık] 'stop çok büyük'"
+ },
+ "9": {
+  "cevap": "OLMAZ",
+  "neden": "[açık] 'dip savunması zayıf' + dibe X"
+ },
+ "10": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] kazan çizdi + ✓"
+ },
+ "11": {
+  "cevap": "OLMAZ",
+  "neden": "[açık] 'dip savunması yok; son bölümde üstte tavan koruması var; stop çok aşağıda'"
+ },
+ "12": {
+  "cevap": "OLMAZ",
+  "neden": "[açık] 'önceki bölüm hedefe ulaşmış, tepede şemsiye oluşuyor; kod önceki oluşumu görmeyip yukarıdakini görüyor, komik'"
+ },
+ "13": {
+  "cevap": "OLMAZ",
+  "neden": "[çıkarım] bütün grafiğe şemsiye çizdi + X"
+ },
+ "14": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] kazan çizdi + ✓"
+ },
+ "15": {
+  "cevap": "OLMAZ",
+  "neden": "[çıkarım] ortaya X çizdi, yazı yok"
+ },
+ "16": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] uzun kazan çizdi + ✓"
+ },
+ "17": {
+  "cevap": "OLMAZ",
+  "neden": "[açık] 'aranan hiçbir kuralımız burda yok gibi'"
+ },
+ "19": {
+  "cevap": "OLUR",
+  "neden": "[çıkarım] kazan + ✓ (sağda ayrıca bir X var; çizim belirsiz)"
+ },
+ "20": {
+  "cevap": "BELİRSİZ",
+  "neden": "[çıkarım] tavana ok ve X, yükselen dipler çizgisi; yazı yok"
+ },
+ "21": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "22": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓ 'şekil ok ancak fitil aşağıda olması kötü'"
+ },
+ "23": {
+  "cevap": "YANLIŞ",
+  "neden": "[çıkarım] B OLUR dedi; Cemal 'B' yazdı: 'tavan hattı korunmuş, önceki mumların çoğu burdan dönmüş; yeşil mum gün sonu ise ve sonraki gün kalıcılık sağlanırsa girerim' (Cemal: BELİRSİZ, teyit ister)"
+ },
+ "24": {
+  "cevap": "YANLIŞ",
+  "neden": "[açık] B OLMAZ dedi; Cemal OLMAZ'ı çizdi, 'B' yazdı: 'olur bence ama çok defa tavan savunması oluşmuş, sert tavan; güven için iki gün kapanış üstte olmalı'"
+ },
+ "25": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓ 'olur; alış mumunun hemen öncesindeki 4 mum dip bölgesine yakın, alt fitil kısa: parmak izi; büyük yeşil öncesindeki 4 mumun öbeği'"
+ },
+ "26": {
+  "cevap": "YANLIŞ",
+  "neden": "[çıkarım] B OLMAZ dedi; Cemal X çizdi (kazan + ok)"
+ },
+ "27": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "28": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "29": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "30": {
+  "cevap": "YANLIŞ",
+  "neden": "[açık] B OLMAZ dedi; Cemal OLMAZ'ın üstüne X, kazan çizdi"
+ },
+ "31": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "32": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓ + şemsiye çizdi"
+ },
+ "35": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "36": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "37": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "38": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "39": {
+  "cevap": "DOĞRU",
+  "neden": "[açık] ✓"
+ },
+ "40": {
+  "cevap": "YANLIŞ",
+  "neden": "[açık] X (B BELİRSİZ demişti)"
+ }
+}
