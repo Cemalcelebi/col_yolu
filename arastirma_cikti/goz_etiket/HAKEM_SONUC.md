@@ -1,16 +1,16 @@
 # GOZ_ETIKET — HAKEM SONUCU (Cemal vs aşama B vekili)
 
-Cevap dosyası: hakem_cevap_cemal_duz.json · 2026-11-18 09:19:31 UTC
+Cevap dosyası: hakem_cevap_cemal_duz.json · 2026-11-18 10:20:25 UTC
 
 ## KÖR YARI (sayfa 1-20)
 
-- Yanıtlanan: 19; uyum %26,3; Cohen kappa (3 sınıf) -0,132; kappa (OLMAZ / OLMAZ-DEĞİL) -0,155.
+- Yanıtlanan: 19; uyum %26,3; Cohen kappa (3 sınıf) -0,118; kappa (OLMAZ / OLMAZ-DEĞİL) -0,155.
 
 | aşama B \ Cemal | OLUR | BELİRSİZ | OLMAZ |
 |---|---|---|---|
 | OLUR | 1 | 0 | 2 |
 | BELİRSİZ | 3 | 0 | 3 |
-| OLMAZ | 4 | 2 | 4 |
+| OLMAZ | 5 | 1 | 4 |
 
 ## AÇIK YARI (sayfa 21-40)
 

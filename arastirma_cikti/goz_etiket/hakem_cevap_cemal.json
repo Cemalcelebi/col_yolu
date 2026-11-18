@@ -98,9 +98,9 @@
    "not": "kazan + ✓ (sağda ayrıca bir X var; çizim belirsiz)"
   },
   "20": {
-   "cevap": "BELİRSİZ",
-   "tur": "çıkarım",
-   "not": "tavana ok ve X, yükselen dipler çizgisi; yazı yok"
+   "cevap": "OLUR",
+   "tur": "açık (Cemal'in düzeltmesi, 18 Kas)",
+   "not": "Cemal: 'X kodun tavan çizgisine: tavan yanlış, dipteki küçük yapının tavanı olmalıydı; şekil doğru, hedef de gelmiş (tavan doğru çizilseydi)'. Veri: küçük yapı tavanı ~30,3 (26-30 Mayıs), 2 Haziran kapanış 30,55 ile kırıldı, kodun sinyal günü kapanışı 32,44 = o girişe göre +%6,2; kodun tavanı 32,43 (bölgenin eski tepesi) geç. İlk yazıya dökümde 'BELİRSİZ' yazılmıştı (ana model okuma hatası)."
   }
  },
  "acik": {

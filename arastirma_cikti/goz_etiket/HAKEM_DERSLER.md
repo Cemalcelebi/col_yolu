@@ -20,6 +20,10 @@ Kaynak: GOZ_HAKEM_SET.pdf (Cemal'in işaretleri hakem_cevap_cemal.json), sonuçl
 Doğru olduğu sayfalar (bilgi): 2, 4, 10, 16, 19 (OLUR, hedef geldi); 3, 7, 12, 13, 15, 17, 20 (OLMAZ / BELİRSİZ, hedef gelmedi); açık yarıda 26, 30 (vekilin OLMAZ'ına karşı olur: hedef geldi), 23, 40 (vekile karşı olmaz: hedef gelmedi).
 Sayı: kör 17 karar, 12 doğru 5 yanlış; 40 sayfa etkin 30 karar, 21 doğru 9 yanlış.
 
+## 1b. DÜZELTME (Cemal, 18 Kas): SAYFA 20 (No 76)
+Cemal'in X'i kodun TAVAN çizgisine idi, karara değil: 'tavan yanlış; dipteki küçük yapının tavanı olmalıydı; şekil doğru, hedef de gelmiş'. Veri doğruladı: küçük yapı tavanı ~30,3 (26-30 Mayıs 2023), 2 Haziran kapanış 30,55 ile kırıldı; kodun sinyal günü (8 Haziran) kapanışı 32,44 = doğru girişe göre +%6,2. Kodun tavanı 32,43 (bölgenin eski tepesi), girişi 6 gün geç; kodun girişine göre 15 günde hedef yok (-1 puan ölçüde kodun hatası). Cemal'in sayfa 20 kararı OLUR ve doğru. Yazıya dökümde 'BELİRSİZ' yazılmıştı (ana model okuma hatası, IK_HATA). Cemal kör: 18 karar, 13 doğru 5 yanlış (ölçü kodun girişiyle).
+- VD5 TAVAN YANLIŞ (E11 / K29 doğrulandı): S6 tavanı bölgenin en yüksek High'ı; küçük yapının tavanı (son dip oluşumuna katılan mumların tepesi) daha aşağıda ve daha önce kırılıyor; kod geç giriyor, hedef kodun girişinden önce tükeniyor. Ölçülebilir: tavan = sinyalden önceki son 10-15 barın max High'ı (bölge max'ı değil); kırılım = bu tavanın kapanışla aşılması. TUR 2'den itibaren model kuralı; YAPI_HEDEF Y1 için ayrı ön kayıt (Y1b 'yakın tavan').
+
 ## 2. VEKİL GÖZÜN (ana modelin kurallarının) YANILDIĞI SAYFALAR
 
 | Sayfa | Vekil | Sonuç | Vekilin nedeni | Ders adayı |
