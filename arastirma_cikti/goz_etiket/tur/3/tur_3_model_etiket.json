@@ -1,0 +1,349 @@
+{
+ "surum": "TUR3 model v1 (C1-C13 + hakem + TUR 1-2 dersleri; VD9)",
+ "etiket": {
+  "1": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C5-",
+    "C11-"
+   ],
+   "guven": 2,
+   "not": "Yükselen trend içi raf, sağ kenar dönmüş ama sinyal mumu küçük gövdeli ve çoğu tavanın üstünde; VD9 2/3 (şart 2 yok)."
+  },
+  "2": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C7-",
+    "C10-"
+   ],
+   "guven": 3,
+   "not": "V dönüşü tepesinde 18 barlık kısa raf, sinyal mumu tavana ancak değiyor; VD9 2/3 (şart 2 yok)."
+  },
+  "3": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C7-",
+    "C10-"
+   ],
+   "guven": 3,
+   "not": "Dipten hızlı yükseliş sonrası kısa raf, sinyal mumu boşlukla tamamen tavanın üstünde açılmış; VD9 2/3 (şart 2 yok)."
+  },
+  "4": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5+",
+    "C2+",
+    "C13-",
+    "C6-"
+   ],
+   "guven": 3,
+   "not": "Kırılım gövdeli ve tavanı ortalıyor ama yapı dev boşluklu düşüşün dibinde; C13- nedeniyle OLUR yok; VD9 2/3."
+  },
+  "5": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C1+",
+    "C3+",
+    "C5-",
+    "C13-",
+    "VD5"
+   ],
+   "guven": 2,
+   "not": "Uzun yatay taban ama sinyal mumu küçük ve tavan üstünde açılmış, yakın tavan (~513) önceki mumda aşılmış, solda dev mum var; VD9 1/3."
+  },
+  "6": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Güçlü yükselen trend içi raf, sağ kenar yukarı ama sinyal mumu tavana ancak değiyor; VD9 2/3 (şart 2 yok)."
+  },
+  "7": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C7-",
+    "C13-",
+    "C11-"
+   ],
+   "guven": 3,
+   "not": "Tepeden geri çekilmede 10 barlık küçük kutu, sinyal mumu tavanın üstünde boşlukla açılmış, solda dev mum var; VD9 1/3."
+  },
+  "8": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C13-",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 4,
+   "not": "Dev boşluklu çöküşün dibinde küçük taban, büyük resim alçalan; VD9 1/3 (şart 3 yok, C13-)."
+  },
+  "9": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C13-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "11 barlık kısa kutu, sinyal mumu tavana ancak değiyor, yakında dev spike mumu var; VD9 1/3."
+  },
+  "10": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "C10-",
+    "C11-"
+   ],
+   "guven": 3,
+   "not": "Kazan dönmüş ama sinyal mumu tavanın çok üstünde boşlukla açılmış, hattan ~%16 uzak; VD9 2/3 (şart 2 yok)."
+  },
+  "11": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C3-",
+    "C7-"
+   ],
+   "guven": 2,
+   "not": "Büyük mumlu dağınık 12 barlık kutu, uzun gövdeli sinyal mumu tavanı ancak kapanışla geçiyor; VD9 1/3."
+  },
+  "12": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C11-",
+    "C10-",
+    "C13-"
+   ],
+   "guven": 4,
+   "not": "Sinyal mumu kendisi dev mum, tavanın çok üstünde boşlukla açılmış, hattan %50 uzak; VD9 1/3."
+  },
+  "13": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5+",
+    "C2+",
+    "C13-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Kırılım gövdeli ve tavanı ortalıyor ama geçmişte dev spike/boşluk var ve kutu 9 bar; C13- nedeniyle OLUR yok; VD9 2/3."
+  },
+  "14": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C10-",
+    "C13-"
+   ],
+   "guven": 3,
+   "not": "V dönüşü sonrası eski direnç bölgesinde raf, sinyal mumu küçük ve tavana ancak değiyor; VD9 1/3."
+  },
+  "15": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C1-",
+    "C5-",
+    "C2-"
+   ],
+   "guven": 3,
+   "not": "Hat tek dokunuşla kutu başında, gerçek dip ~3050; son 5 barın dibi önceki 10 barın altında, kırılım gövdesi çoğunlukla tavanın altında; VD9 1/3."
+  },
+  "16": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C9+",
+    "C1-",
+    "C5-"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş ama hat yalnız kutu başındaki mumda, sinyal mumu küçük ve tavana ancak değiyor; VD9 2/3 (şart 2 yok)."
+  },
+  "17": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C7-"
+   ],
+   "guven": 4,
+   "not": "Sert alçalan trendin dibinde 9 barlık minik kutu, sinyal mumu tavan üstünde açılmış; VD9 1/3."
+  },
+  "18": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C1-",
+    "C2-",
+    "C5-",
+    "C6-"
+   ],
+   "guven": 3,
+   "not": "Kutu taban değil V dibi, hat tek fitil dibinde, tavan kutunun ortasında; sinyal mumu tavana ancak değiyor; VD9 1/3."
+  },
+  "19": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C5-",
+    "C13-"
+   ],
+   "guven": 2,
+   "not": "Yükselen trend içi raf, sağ kenar yukarı ama kırılım gövdesinin çoğu tavan altında ve solda dev kırılım mumu var; VD9 2/3."
+  },
+  "20": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C5-",
+    "C3-"
+   ],
+   "guven": 3,
+   "not": "Yükselen trend içi kısa raf, sinyal mumu fitille çizilen tavana ancak değiyor; VD9 2/3 (şart 2 yok)."
+  },
+  "21": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5+",
+    "C2+",
+    "C6-"
+   ],
+   "guven": 3,
+   "not": "Kırılım gövdeli ve tavanı ortalıyor, sağ kenar dönmüş ama büyük resim alçalan tepeler zinciri; VD9 2/3 (şart 3 yok)."
+  },
+  "22": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C9+"
+   ],
+   "guven": 4,
+   "not": "Alçalan kanalın dibinde küçük kazan, sinyal mumu tavana ancak değiyor; VD9 1/3."
+  },
+  "23": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C2-"
+   ],
+   "guven": 3,
+   "not": "Alçalan tepeler içinde 10 barlık kutu, sinyal mumu tavana ancak değiyor; VD9 0/3."
+  },
+  "24": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Geçmişte dev boşluk yukarı ve aşağı, sinyal mumu tavanı ancak geçiyor; VD9 1/3."
+  },
+  "25": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "C10-"
+   ],
+   "guven": 3,
+   "not": "Dev çöküş sonrası V toparlanmanın üstünde eski direnç altında raf, kırılım zayıf; VD9 1/3."
+  },
+  "26": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C5+",
+    "C4+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Yükselen trend içi raf, son 5 barın dibi yükselmiş, kırılım mumu gövdeli ve tavanı ortalıyor; VD9 3/3 (eski boşluk trend kırılımı sayıldı)."
+  },
+  "27": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C1-",
+    "C5-",
+    "C6-"
+   ],
+   "guven": 2,
+   "not": "86 barlık kutu tepe dağıtımı ve düşüşü kapsıyor, tavan bölge ortasında; kırılım gövdesi çoğunlukla tavan altında; VD9 2/3."
+  },
+  "28": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C6-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Tepeden geri çekilmede 9 barlık kutu, sinyal mumu tavana ancak değiyor; VD9 1/3."
+  },
+  "29": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6+",
+    "C2+",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Yükselen trend içi raf, sinyal mumu tavana ancak değiyor; VD9 2/3 (şart 2 yok)."
+  },
+  "30": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C1+",
+    "C3+",
+    "C5+",
+    "C6-"
+   ],
+   "guven": 3,
+   "not": "Düz küçük mumlu dip tabanı ve gövdeli güçlü kırılım var ama büyük resim alçalan kanal ve sağ kenar dönüşü belirsiz; VD9 1/3."
+  }
+ }
+}
