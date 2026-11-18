@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 4 (K30-K33) (toplam 173; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 6 (K30-K35) (toplam 175; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -256,6 +256,8 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K31 | Giriş teyidi: kırılım mumu gün sonu kapanışla + ertesi gün kalıcılık (iki gün tavan üstünde kapanış); tek mumla girilmez | s23, s24 | Hayır (kapalı konu 'giriş onayı' ile çakışır) | SINANMADI | Cemal'in kendi kuralı; COL_OZET kapalı konu listesiyle çelişki (kaydedildi) | COL_v1 AL tek kapanış | AÇIK: Cemal kararı |
 | K32 | Parmak izi: büyük yeşil alış mumundan hemen önceki 4 mum dibe yakın, alt fitili kısa öbek | s25 | Kısmen (Ç187 S+ öbeği, k 10 bar) | ÖLÇÜLEMEDİ | Ç187 k = 10 bar öbeğiydi; '4 mum + kırılım mumu' tanımı ölçülmedi | FITIL_OBEK (k 10) | AÇIK |
 | K33 | Kazan çizimi = OLUR, şemsiye çizimi = OLMAZ; Cemal kör yarıda 19 sayfanın 8'ine OLUR dedi (vekil 300'de 6): vekil göz Cemal'in gözü değil (kappa -0,13) | hakem PDF kör yarı | Evet (hakem, n 19) | TUTMADI (uyum) | Vekil etiketleri ve göz skoru (Ç192) Cemal'in gözünü temsil etmiyor | GOZ_ETIKET etiket.json | KAPALI: Ç192 yorumu düzeltildi |
+| K34 | CD1-CD7 Cemal'in hakem dersleri: fitil teorisi bağlamsız yön vermez; tepede raf OLMAZ / BELİRSİZ; kazan yetmez dönüş görülmeli; en güzel taban stop olabilir (şekil güzelliği); iki gün teyit korudu | 18 Kas hakem seti (s1, 5, 6, 14, 24, 25, 28, 35) | Evet (n 40, bilgi) | SINANMADI | Sayfa başına tek olay; p 0,06-0,15 | YOK | AÇIK: 100 sayfalık set |
+| K35 | VD1-VD4 vekil / ana model dersleri: kural toplamı göz değil; stop %10 ve kırılım payı süzgeçleri hedefe gidenleri eliyor; 'kararsız' grup en iyi grup; önce hakem sonra eğitim | 18 Kas hakem seti (s2, 4, 9, 15, 23, 25, 26, 28, 30, 33, 35) | Evet (n 40, bilgi) | TUTMADI (vekil) | Vekil OLUR 0 / 6 hedef | GOZ_ETIKET C11 / C5 (vekil kuralı) | KAPALI: vekil yaklaşımı bırakıldı |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 
