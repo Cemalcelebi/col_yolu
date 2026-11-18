@@ -85,5 +85,7 @@ Uyum (kappa) 0,15. İki taraf da yazı-tura; Fisher p 1,0.
 - OLUR dedi, gelmedi (4): 20, 21, 22, 23 (düşüş sonrası dipte kazan + gövdeli kırılım). VD6: 'dipte kazan + kırılım' tanımı 7 OLUR'un 4'ünde yanıldı; dönüş teyidi (D4) ve kırılım mumunun tavanı ortalaması (Cemal s2 notu) eklenmeli.
 - VD8 (Cemal s2): alış mumu tavan çizgisini TAM ORTADAN kesmeli (gövdenin yarısı tavanın altında, yarısı üstünde); tavana ancak değen ya da tamamen üstünde açılan mum zayıf. TUR 2 model kuralına girer; YAPI_HEDEF için ölçülebilir: (tavan - O) / (C - O) 0,3-0,7 arası.
 
+- CD11 (Cemal'in itirazı, s28: 'büyük resme göre düşmemeli'): veri: 15 günde min -%0,8, max +%4,0 (15. gün), 60 günde de +%4'ü geçmedi (60. gün -%3,8). Yön doğru, +%5 eşiği 1 puanla kaçtı; düşüş yok. Ölçü +%5 değişmez; TUR 2'den itibaren bilgi sütunu '+%3 gördü mü' ve 'yön doğru / eşik kaçtı' sayımı eklenir.
+
 ## Parmak izi (F19) bilgi
 Parmaklı 15 sayfanın 7'si +%5 gördü (%47), parmaksız 15'in 7'si (%47): bu turda fark yok (n 15 / 15).
