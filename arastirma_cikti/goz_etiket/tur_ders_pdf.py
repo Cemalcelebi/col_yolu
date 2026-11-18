@@ -89,6 +89,39 @@ TD_DERS: Dict[int, Dict[str, Any]] = {
         "yeni": ("CD8", "CD9", "VD6", "VD7", "VD8"),
         "tekrar": ("CD2", "CD3"),
     },
+    2: {
+        "metin": {
+            "CD2": "(tekrar, 3. kez; kendi C6 kuralın) Alçalan büyük resimde (alçalan tepeler kanalı) dipte kazan + ✓ dedin, stop oldu "
+                   "(10, 15, 30). Büyük resim aşağıyken dipteki kazan OLUR değil; önce alçalan tepeler kırılmalı.",
+            "CD3": "(tekrar) Kazan + ✓ ama kırılımdan hemen sonra geri döndü, stop (4, 16, 20, 26): kazanın sağ kenarı dönüşü (D4) görülmeden giriş.",
+            "CD12": "(hakem setinden; artık yazılı) Önceki tepe aşılmadan giriş yok: 16, 20, 26'da önceki tepe aşılmamıştı, üçü de stop.",
+            "CD13": "(yeni) 'Alıcı mumu büyük, yolun çoğunu almış, girmem' (s2) -> +%5 geldi (takip stoplu +%12,9). Büyük kırılım mumu tek başına "
+                    "eleme nedeni değil; modelin VD8 kuralıyla (mum tavanı ortalamalı) çelişiyor, ikisi birlikte sınanacak.",
+            "CD9": "(TUR 1 dersinin benzeri) Çizgi / X tek başına yetmez: alçalan trend çizgisi (14) ve X (27) ile OLMAZ dedin, ikisi de +%5 gördü "
+                   "(14 +%10 da). Çizginin yanında kırılım mumu ve dip savunması birlikte okunmalı.",
+            "CD11": "(sınıf: sönük) OLUR dedin, stop olmadı ama 15 günde +%5 de gelmedi (5, 8, 28). Yön yanlış değil, hedef gelmedi; puan ölçüsü "
+                    "değişmez (kapanışla +%5).",
+            "CD14": "(yeni) BELİRSİZ 11 / 30: kararsızlık arttı. BELİRSİZ dediğin 11 sayfanın 4'ü hedefe gitti (12, 13, 18, 21): puan değil ama "
+                    "fırsat kaybı. TUR 3'te BELİRSİZ en çok 5 sayfa.",
+            "VD9": "(yeni) TUR 1 dersleri uygulanınca (tepe rafı artık OLMAZ değil, C11 / C5 gevşedi) model OLUR'u 7'den 21'e çıktı, isabet %48 = taban; "
+                   "OLUR seçiciliği kayboldu (11 OLUR gelmedi, 7'si stop). TUR 3: OLUR için en az iki lehte yapı (dönüş + gövdeli kırılım + "
+                   "büyük resim yükselen / yatay); C13- (dev mum) varsa OLUR yok.",
+            "VD7": "(tekrar, bağlam tek başına) Alçalan kanal + kırılım yakın tavanı geçemedi diye OLMAZ; +%5 ve +%10 geldi.",
+            "VD6": "(tekrar, kırılım mumu tanımı) Kırılım mumu tavanın tamamen üstünde boşluklu açıldı ve yapı kısa diye OLMAZ; +%5 geldi "
+                   "(takip stoplu +%28). Kırılım mumu şartı tek başına eleme nedeni değil (CD13 ile aynı soru).",
+        },
+        "cemal": {**{s: "CD2" for s in (10, 15, 30)}, 4: "CD3", **{s: ("CD12", "CD3") for s in (16, 20, 26)}, 2: "CD13",
+                  14: "CD9", 27: "CD9", **{s: "CD11" for s in (5, 8, 28)}, **{s: "CD14" for s in (12, 13, 18, 21)}},
+        "model": {**{s: "VD9" for s in (4, 7, 8, 9, 16, 17, 20, 24, 25, 26, 29)}, 14: "VD7", 23: "VD6"},
+        "yeni": ("CD13", "CD14", "VD9"),
+        "tekrar": ("CD2", "CD3", "CD12", "CD9", "CD11", "VD6", "VD7"),
+        "tekrar_baslik": "TEKRAR EDEN (hakem seti ve TUR 1'den)",
+        "yanlis_kod": ("VD6", "VD7", "VD9"),
+        "cemal_yanlis_kod": ("CD2", "CD3", "CD12", "CD13", "CD9", "CD11"),
+        "kapak_sonuc": ("Sonuç: model tabanın biraz üstünde, sen tabanın altında. Sen {ck} kararda {cb}, model {mk} kararda {mb}; taban {tb}; "
+                        "hepsine OLMAZ deseydin {ho} olurdu (sayfaların {sh}'ı +%5 gördü). Uyum (kappa) {ka}. Fisher p sen {cp} / model {mp}. "
+                        "Senin OLUR'larının 7'si stop; 11 BELİRSİZ. Hedef %80-90; taban ~%40 olduğu için zor. n küçük; dersler SINANMADI, kural değil."),
+    },
 }
 
 
@@ -114,10 +147,17 @@ def td_tablo(no: int) -> pd.DataFrame:
     if no not in TD_DERS:
         raise TDHata(f"tur {no} için ders eşlemesi (TD_DERS) yazılmamış")
     D = TD_DERS[no]
-    bolum = _td_md_bolum(open(Y_["dersler"], encoding="utf-8").read(), no)
+    md = open(Y_["dersler"], encoding="utf-8").read()
+    bolum = _td_md_bolum(md, no)
     for k in D["metin"]:
-        if k not in bolum:
-            raise TDHata(f"ders kodu {k} HAKEM_DERSLER.md TUR {no} bölümünde yok")
+        # tur 1: bütün kodlar TUR 1 bölümünde; tur >= 2: yeni kodlar TUR N bölümünde, tekrar eden kodlar md'nin herhangi bir yerinde
+        if k not in (bolum if (no == 1 or k in D["yeni"]) else md):
+            raise TDHata(f"ders kodu {k} HAKEM_DERSLER.md{f' TUR {no} bölümünde' if (no == 1 or k in D['yeni']) else ''} yok")
+    for kim in ("cemal", "model"):
+        for s, kk in D[kim].items():
+            for k in ((kk,) if isinstance(kk, str) else kk):
+                if k not in D["metin"]:
+                    raise TDHata(f"sayfa {s}: ders kodu {k} metinde yok")
     C = _td_json(Y_["notlar"])["cevap"]; M = _td_json(Y_["model"])["etiket"]; A = _td_json(Y_["anahtar"])["sayfa"]
     S = pd.read_csv(Y_["satir"], dtype={"tarih": str, "giris": str}).set_index("sayfa")
     Y = pd.read_csv(Y_["olay"], dtype={"tarih": str, "giris": str}).set_index(["pazar", "sembol", "tarih"])
@@ -128,6 +168,10 @@ def td_tablo(no: int) -> pd.DataFrame:
         a = A[str(s)]; c = C.get(str(s)); m = M.get(str(s))
         if c is None or m is None:
             raise TDHata(f"sayfa {s}: Cemal ya da model kaydı yok")
+        if "cevap" not in c:  # tur >= 2 yanıt biçimi: A (kodun bölgesi doğru mu) / B (bu mumdan girilir mi = karar)
+            if "B" not in c:
+                raise TDHata(f"sayfa {s}: Cemal kaydında karar (cevap / B) yok")
+            c = {**c, "cevap": c["B"]}
         key = (a["pazar"], a["sembol"], a["tarih"])
         if key not in Y.index:
             raise TDHata(f"sayfa {s}: olay_Y1 satırı yok")
@@ -149,13 +193,24 @@ def td_tablo(no: int) -> pd.DataFrame:
                     "getiri": float(r["getiri"]), "cikis_bar": int(r["cikis_bar"]), "cikis_tur": str(r["cikis_tur"]), "es_h5": float(r["es_h5"]),
                     "hat": float(r["hat"]), "tavan": float(r["tavan"]), "stop0": float(r["stop0"]), "E0": float(r["E0"]),
                     "puan_c": HD.hd_puan(cemal, h5), "puan_m": HD.hd_puan(model, h5),
-                    "cd": D["cemal"].get(s, ""), "vd": D["model"].get(s, "")})
+                    "cd": _td_kod(D["cemal"].get(s, "")), "vd": _td_kod(D["model"].get(s, ""))})
     T = pd.DataFrame(sat)
     # ders eşlemesi tutarlılığı: Cemal'in kırmızı (yanlış) sayfası ders kodsuz kalabilir (md eşlemiyorsa), ama kodlu yanlış sayfa yanlış olmalı
-    for s, k in D["model"].items():
-        if k in ("VD6", "VD7") and int(T.loc[T.sayfa == s, "puan_m"].iloc[0]) != -1:
-            raise TDHata(f"sayfa {s}: {k} modelin yanıldığı sayfa olarak eşlenmiş ama model yanılmamış")
+    for kim, pk, yk, vars_ in (("model", "puan_m", "yanlis_kod", ("VD6", "VD7")), ("cemal", "puan_c", "cemal_yanlis_kod", ())):
+        for s, kk in D[kim].items():
+            for k in ((kk,) if isinstance(kk, str) else kk):
+                if k in D.get(yk, vars_) and int(T.loc[T.sayfa == s, pk].iloc[0]) != -1:
+                    raise TDHata(f"sayfa {s}: {k} {kim} yanıldığı sayfa olarak eşlenmiş ama {kim} yanılmamış")
     return T
+
+
+def _td_kod(kk: Any) -> str:
+    """Ders eşlemesi tek kod ya da kod demeti; tabloda boşlukla birleşik dize."""
+    return kk if isinstance(kk, str) else " ".join(kk)
+
+
+def _td_ders_metni(kod: str, D: Dict[str, Any]) -> str:
+    return " · ".join(f"{k}: {D['metin'][k]}" for k in kod.split())
 
 
 def td_ozet(T: pd.DataFrame, kim: str, pk: str) -> Dict[str, Any]:
@@ -223,7 +278,7 @@ def _pz(p: int) -> str:
     return {1: "+1", -1: "-1", 0: "0"}[int(p)]
 
 
-def td_dogru_cumle(r: pd.Series) -> str:
+def td_dogru_cumle(r: pd.Series, no: int = 1) -> str:
     notu = str(r.cemal_not).strip()
     if r.puan_c == 1 and r.cemal == "OLUR":
         return f"Doğru karar: OLUR; gözün tuttu ({notu[:120]}), +%5 gün +{r.k5} geldi."
@@ -231,7 +286,7 @@ def td_dogru_cumle(r: pd.Series) -> str:
         return f"Doğru karar: OLMAZ; eleme tuttu ({notu[:120]}), 15 günde +%5 gelmedi."
     if r.cemal == "BELİRSİZ":
         return f"Karar yok (puan 0): sonuç {'+%5 geldi' if r.h5 == 1 else '+%5 gelmedi'}; bu şekil bir sonraki turda karar verilecek şekil olarak not edilir."
-    return ("Ders kodu yok (HAKEM_DERSLER TUR 1: 'OLUR dedi, gelmedi' listesinde, ortak derse bağlanmadı): 15 günde +%5 gelmedi"
+    return (f"Ders kodu yok (HAKEM_DERSLER TUR {no}: 'OLUR dedi, gelmedi' listesinde, ortak derse bağlanmadı): 15 günde +%5 gelmedi"
             + (f"; takip stoplu çıkış {r.getiri * 100:+.1f}% (gün +{r.cikis_bar}), hedef penceresinden sonra." if r.getiri > 0.05 else "."))
 
 
@@ -239,7 +294,7 @@ def td_model_etiket(r: pd.Series, D: Dict[str, Any]) -> str:
     durum = "DOĞRU" if r.puan_m == 1 else ("YANLIŞ" if r.puan_m == -1 else "karar yok")
     s = f"MODEL {r.model}: {durum} ({_pz(r.puan_m)})"
     if r.vd:
-        s += f" · {r.vd}: {D['metin'][r.vd]}"
+        s += f" · {_td_ders_metni(r.vd, D)}"
     return s
 
 
@@ -320,10 +375,16 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         y -= 14
     y -= 2
     jc, jm = J["cemal"], J["model"]
-    y = paragraf(30, y, f"Sonuç: iki taraf da yazı-tura düzeyinde. Sen {jc['karar']} kararda {yuzde(jc['basari'])}, model {jm['karar']} kararda "
-                 f"{yuzde(jm['basari'])}; taban {yuzde(jc['taban_es'])}; hepsine OLMAZ deseydin {yuzde(jc['hep_OLMAZ_basari'])} olurdu (sayfaların "
-                 f"yarısı +%5 gördü). Uyum (kappa) {J['uyum']['kappa']:.2f}".replace(".", ",") + f". Fisher p {jc['fisher_p']:.1f}".replace(".", ",")
-                 + ". Hedef %80-90; taban ~%40 olduğu için zor. n küçük; dersler SINANMADI, kural değil.", 555, "DVB", 8.5)
+    if "kapak_sonuc" in D:
+        f2 = lambda v: f"{v:.2f}".replace(".", ",")  # noqa: E731
+        y = paragraf(30, y, D["kapak_sonuc"].format(ck=jc["karar"], cb=yuzde(jc["basari"]), mk=jm["karar"], mb=yuzde(jm["basari"]),
+                     tb=yuzde(jc["taban_es"]), ho=yuzde(jc["hep_OLMAZ_basari"]), sh=yuzde(jc["sayfa_h5"], 0), ka=f2(J["uyum"]["kappa"]),
+                     cp=f2(jc["fisher_p"]), mp=f2(jm["fisher_p"])), 555, "DVB", 8.5)
+    else:
+        y = paragraf(30, y, f"Sonuç: iki taraf da yazı-tura düzeyinde. Sen {jc['karar']} kararda {yuzde(jc['basari'])}, model {jm['karar']} kararda "
+                     f"{yuzde(jm['basari'])}; taban {yuzde(jc['taban_es'])}; hepsine OLMAZ deseydin {yuzde(jc['hep_OLMAZ_basari'])} olurdu (sayfaların "
+                     f"yarısı +%5 gördü). Uyum (kappa) {J['uyum']['kappa']:.2f}".replace(".", ",") + f". Fisher p {jc['fisher_p']:.1f}".replace(".", ",")
+                     + ". Hedef %80-90; taban ~%40 olduğu için zor. n küçük; dersler SINANMADI, kural değil.", 555, "DVB", 8.5)
     # birikimli
     y -= 8
     yaz(30, y, "BİRİKİMLİ (hakem seti + tur)", "DVB", 10); y -= 14
@@ -351,18 +412,18 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         if k.startswith("CD"):
             yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
     yr -= 2
-    yaz(xr, yr, "TEKRAR EDEN (hakem setinden)", "DVB", 9, (0.6, 0.0, 0.0)); yr -= 12
-    for k in D["tekrar"]:
+    yaz(xr, yr, D.get("tekrar_baslik", "TEKRAR EDEN (hakem setinden)"), "DVB", 9, (0.6, 0.0, 0.0)); yr -= 12
+    for k in (k for k in D["tekrar"] if k.startswith("CD")):
         yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
     yr -= 2
     yaz(xr, yr, "MODELE (ana modelin kuralları)", "DVB", 9, (0.15, 0.15, 0.45)); yr -= 12
-    for k in D["yeni"]:
+    for k in list(D["yeni"]) + list(D["tekrar"]):
         if k.startswith("VD"):
             yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
     pm = T[T.parmak == 1]; pz = T[T.parmak == 0]
     yr -= 2
-    yr = paragraf(xr, yr, f"Parmak izi (F19, bilgi): parmaklı {len(pm)} sayfanın {int(pm.h5.sum())}'i, parmaksız {len(pz)} sayfanın "
-                  f"{int(pz.h5.sum())}'i +%5 gördü; bu turda fark yok.", W - xr - 25, n=7.5, ara=9.2, renk=(0.3, 0.3, 0.3))
+    yr = paragraf(xr, yr, f"Parmak izi (F19, bilgi): +%5 gören parmaklı {int(pm.h5.sum())} / {len(pm)}, parmaksız {int(pz.h5.sum())} / "
+                  f"{len(pz)}; n küçük, fark yorumlanmaz.", W - xr - 25, n=7.5, ara=9.2, renk=(0.3, 0.3, 0.3))
     if min(y, yr) < 30:
         raise TDHata("kapak sayfaya sığmadı")
     yaz(30, 18, f"Kaynak: tur_{no}_sonuc.json (= TUR_{no}_SONUC.md), tur_{no}_cemal_notlar.json, tur_{no}_model_etiket.json, tur_{no}_anahtar.json, "
@@ -392,7 +453,7 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         y = paragraf(25, y, f"(1) Cemal'in notu [işaret: {r.cemal_tur}]: {r.cemal_not}", W - 50, n=9, ara=11) - 3
         ned = ", ".join(GE.ge_neden_acilim(k).replace(": UYUYOR (lehte)", " +").replace(": UYMUYOR (aleyhte)", " -") for k in r.nedenler)
         y = paragraf(25, y, f"(2) Model: {r.model} (güven {r.guven}) · nedenler: {ned} · not: {r.model_not}", W - 50, n=8, ara=9.8) - 7
-        metin = "(3) DERS: " + (f"{r.cd}: {D['metin'][r.cd]}" if r.cd else td_dogru_cumle(r))
+        metin = "(3) DERS: " + (_td_ders_metni(r.cd, D) if r.cd else td_dogru_cumle(r, no))
         sat = simpleSplit(metin, "DVB", 9.5, W - 66)
         msat = simpleSplit(td_model_etiket(r, D), "DV", 7.8, W - 66)
         bh = 12.5 * len(sat) + 9.5 * len(msat) + 10
