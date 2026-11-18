@@ -80,3 +80,5 @@
 2026-11-17 00:28 INFO gun 2026-11-16 aday 7 poz 4 kapanan 14 cds_pct 0.84
 2026-11-17 23:39 INFO AL EGEGY @18.12 poz%12.0 carpan={'cds': 1.5, 'borc': 1.0, 'doji': 1.5, 'fitil': 1.0, 'dar': 1.3, 'kural': 0.7, 'likit': 1.0}
 2026-11-17 23:39 INFO gun 2026-11-17 aday 9 poz 5 kapanan 14 cds_pct 0.84
+2026-11-18 23:06 INFO AL BIOEN @13.75 poz%8.2 carpan={'cds': 1.5, 'borc': 0.7, 'doji': 1.0, 'fitil': 1.0, 'dar': 1.3, 'kural': 1.0, 'likit': 1.0}
+2026-11-18 23:06 INFO gun 2026-11-18 aday 8 poz 6 kapanan 14 cds_pct 0.84
