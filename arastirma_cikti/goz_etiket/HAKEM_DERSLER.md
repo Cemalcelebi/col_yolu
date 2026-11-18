@@ -121,12 +121,12 @@ Kaynak: arastirma_cikti/goz_etiket/tur/2/TUR_2_SONUC.md. 30 sayfa; taban (eş pa
 |---|---|---|---|---|
 | Model | 21 / 8 / 1 | 10 / 21 (%48) | 6 / 8 (%75) | %55,2 (16 / 29) |
 | Cemal | 15 / 4 / 11 | 5 / 15 (%33) | 1 / 4 (%25) | %31,6 (6 / 19) |
-Birikimli (TUR 1 + 2): model 30 / 59 = %50,8; Cemal 16 / 41 = %39,0. Hakem seti dahil: Cemal 47 / 94 = %50, model 43 / 85 = %51. Kappa bu tur -0,05 (iki taraf bağımsız).
+Birikimli (TUR 1 + 2): model 30 / 59 = %50,8; Cemal 16 / 41 = %39,0. Hakem seti dahil (ders PDF'i betiğinin tanımı, stop şartlı ölçü): Cemal 37 / 72 = %51, model 43 / 85 = %51. (Düzeltme: ilk yazımda 47 / 94, 'üç cetvel' tablosunun stop şartsız sayımıyla karışmıştı.) Kappa bu tur -0,05 (iki taraf bağımsız).
 
 ## Cemal'in yanıldığı sayfalar (13)
 - OLUR dedi, gelmedi (10): 4 (stop), 5, 8, 10 (stop), 15 (stop -%13), 16 (stop), 20 (stop), 26 (stop), 28, 30 (stop). YEDİ STOP: OLUR'larının yarısı stop oldu. Ortak resim: 10, 15, 30 alçalan büyük resimde dipte kazan ✓ (kendi C6 kuralına aykırı: CD2 / C6 üçüncü kez); 4, 16, 20, 26 kazan + ✓ ama kırılım sonrası hemen geri döndü (CD3 dönüş teyidi; CD12 önceki tepe aşılmadan giriş yok: 16, 20, 26'da önceki tepe aşılmamıştı).
 - OLMAZ dedi, geldi (3): 2 ('alıcı mumu büyük, yolun çoğunu almış, girmem' -> +%13; CD13 yeni: büyük kırılım mumu tek başına eleme nedeni değil, VD8 ile çelişir, birlikte sınanacak), 14 (alçalan trend çizgisi -> +%5 ve +%10), 27 (X -> +%5).
-- CD14 (yeni): BELİRSİZ 11 / 30: kararsızlık arttı; BELİRSİZ dediklerinin 5'i hedefe gitti (12, 13, 18, 21 +%10 ve 18 +%20). Kararsızlık puan değil ama fırsat kaybı; TUR 3'te BELİRSİZ en çok 5 sayfa.
+- CD14 (yeni): BELİRSİZ 11 / 30: kararsızlık arttı; BELİRSİZ dediklerinin 4'ü hedefe gitti (12, 13, 18, 21; +%10 görenler 18 ve 21; 18 takip +%20). (Düzeltme: ilk yazımda '5'i' ve 12 / 13 +%10 yanlıştı.) Kararsızlık puan değil ama fırsat kaybı; TUR 3'te BELİRSİZ en çok 5 sayfa.
 
 ## Modelin yanıldığı sayfalar (13)
 - OLUR dedi, gelmedi (11 / 21): 4, 7, 8, 9, 16, 17, 20, 24, 25, 26, 29 (7'si stop). VD9 (yeni): TUR 1 derslerini uygulayınca (tepe rafı artık OLMAZ değil, C11 / C5 gevşedi) model OLUR'u 7'den 21'e çıktı ama isabet %48 = taban; OLUR seçiciliği kayboldu. OLMAZ tarafı güçlendi (6 / 8). TUR 3 kuralı: OLUR için en az iki lehte yapı şartı (dönüş + gövdeli kırılım + büyük resim yükselen / yatay) ve C13- (dev mum) varsa OLUR yok.
@@ -134,4 +134,4 @@ Birikimli (TUR 1 + 2): model 30 / 59 = %50,8; Cemal 16 / 41 = %39,0. Hakem seti 
 - Her iki taraf OLUR dediği 9 sayfada (1, 3, 4, 8, 11, 16, 20, 22, 26) isabet 4 / 9; her iki taraf OLMAZ dediği 1 sayfada (6) doğru.
 
 ## Parmak izi (P1.1) bilgi
-Parmaklı 15: 5 hedef (%33); parmaksız 15: 6 hedef (%40). Yine fark yok (iki turda 12 / 30 vs 13 / 30).
+Parmaklı 15: 7 hedef (%47); parmaksız 15: 5 hedef (%33). İki turda 14 / 30 vs 12 / 30; n küçük, fark yorumlanmaz. (Düzeltme: ilk yazımda 5 / 6 ters yazılmıştı; betik saydı.)
