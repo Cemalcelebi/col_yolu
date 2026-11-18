@@ -21,7 +21,7 @@ Doğru olduğu sayfalar (bilgi): 2, 4, 10, 16, 19 (OLUR, hedef geldi); 3, 7, 12,
 Sayı: kör 17 karar, 12 doğru 5 yanlış; 40 sayfa etkin 30 karar, 21 doğru 9 yanlış.
 
 ## 1b. DÜZELTME (Cemal, 18 Kas): SAYFA 20 (No 76)
-Cemal'in X'i kodun TAVAN çizgisine idi, karara değil: 'tavan yanlış; dipteki küçük yapının tavanı olmalıydı; şekil doğru, hedef de gelmiş'. Veri doğruladı: küçük yapı tavanı ~30,3 (26-30 Mayıs 2023), 2 Haziran kapanış 30,55 ile kırıldı; kodun sinyal günü (8 Haziran) kapanışı 32,44 = doğru girişe göre +%6,2. Kodun tavanı 32,43 (bölgenin eski tepesi), girişi 6 gün geç; kodun girişine göre 15 günde hedef yok (-1 puan ölçüde kodun hatası). Cemal'in sayfa 20 kararı OLUR ve doğru. Yazıya dökümde 'BELİRSİZ' yazılmıştı (ana model okuma hatası, IK_HATA). Cemal kör: 18 karar, 13 doğru 5 yanlış (ölçü kodun girişiyle).
+Cemal'in X'i kodun TAVAN çizgisine idi, karara değil: 'tavan yanlış; dipteki küçük yapının tavanı olmalıydı; şekil doğru, hedef de gelmiş'. Veri doğruladı: küçük yapı tavanı ~30,3 (26-30 Mayıs 2023), 2 Haziran kapanış 30,55 ile kırıldı; kodun sinyal günü (8 Haziran) kapanışı 32,44 = doğru girişe göre +%6,2. Kodun tavanı 32,43 (bölgenin eski tepesi), girişi 6 gün geç; kodun girişine göre 15 günde hedef yok (-1 puan ölçüde kodun hatası). Cemal'in sayfa 20 kararı OLUR ve gözüyle doğru; ama ÖLÇÜ kodun girişiyle olduğu için puanı -1 (hedef kodun girişinden önce gelmişti). Yazıya dökümde 'BELİRSİZ' yazılmıştı (ana model okuma hatası, IK_HATA). Cemal kör, ölçüye göre: 18 karar, 12 doğru 6 yanlış; 40 sayfa birleşik 31 karar, 21 doğru 10 yanlış (%68; aynı sayfalarda hep OLMAZ deseydi de %68). (Düzeltme 18 Kas: ilk yazımda '13 doğru 5 yanlış' ölçüyle çelişiyordu; ders PDF'i betiği buldu.)
 - VD5 TAVAN YANLIŞ (E11 / K29 doğrulandı): S6 tavanı bölgenin en yüksek High'ı; küçük yapının tavanı (son dip oluşumuna katılan mumların tepesi) daha aşağıda ve daha önce kırılıyor; kod geç giriyor, hedef kodun girişinden önce tükeniyor. Ölçülebilir: tavan = sinyalden önceki son 10-15 barın max High'ı (bölge max'ı değil); kırılım = bu tavanın kapanışla aşılması. TUR 2'den itibaren model kuralı; YAPI_HEDEF Y1 için ayrı ön kayıt (Y1b 'yakın tavan').
 
 ## 2. VEKİL GÖZÜN (ana modelin kurallarının) YANILDIĞI SAYFALAR
@@ -54,11 +54,11 @@ Vekile / ana modele (VD):
 
 | Bölüm | Kim | Karar | +1 | -1 | Başarı | Taban (eş payı) | OLUR isabeti |
 |---|---|---|---|---|---|---|---|
-| Kör | Cemal | 17 | 12 | 5 | %71 | %51 | 5 / 8 |
+| Kör | Cemal | 18 | 12 | 6 | %67 | %51 | 5 / 9 |
 | Kör | Vekil | 13 | 7 | 6 | %54 | %59 | 0 / 3 |
 | Açık | Cemal | 13 | 9 | 4 | %69 | %52 | 2 / 5 |
 | Açık | Vekil | 13 | 6 | 7 | %46 | %47 | 0 / 3 |
-| Toplam | Cemal | 30 | 21 | 9 | %70 | %52 | 7 / 13 |
+| Toplam | Cemal | 31 | 21 | 10 | %68 | %52 | 7 / 14 |
 | Toplam | Vekil | 26 | 13 | 13 | %50 | %53 | 0 / 6 |
 
 ## 4. SINIR
@@ -75,7 +75,7 @@ Kaynak: arastirma_cikti/goz_etiket/tur/1/TUR_1_SONUC.md (ölçü: 15 barda +%5 s
 Uyum (kappa) 0,15. İki taraf da yazı-tura; Fisher p 1,0.
 
 ## Cemal'in yanıldığı sayfalar (12)
-- OLUR dedi, gelmedi: 1 (stop -%5), 10 (stop -%9), 12 (-%8), 18 (15 günde sönük; takip +%12), 22 (-%6,5), 23 (stop), 28 (-%4). Ortak resim: 10, 12, 22, 28 yükseliş sonrası TEPE RAFI (CD2 tekrar: 'tepede raf OLUR değil' dersi 2. kez yanılttı); 1 ve 23 dipte kazan + ✓ ama stop (CD3: dönüş görülmeden).
+- OLUR dedi, gelmedi: 1 (stop -%5), 10 (stop -%9), 12 (-%8), 18 (15 günde sönük; takip +%12, gün 53: CD10 SINIRLI HEDEF / GEÇ GELEN HEDEF: 'büyük resme göre o kadar çıkar' notu doğru çıktı ama 15 gün içinde değil; ölçü ufku kuralı), 22 (-%6,5), 23 (stop), 28 (-%4). Ortak resim: 10, 12, 22, 28 yükseliş sonrası TEPE RAFI (CD2 tekrar: 'tepede raf OLUR değil' dersi 2. kez yanılttı); 1 ve 23 dipte kazan + ✓ ama stop (CD3: dönüş görülmeden).
 - OLMAZ dedi, geldi: 9, 11 (şemsiye çizdi; hedef geldi: şemsiye kuralı bu turda 2 / 2 yanılttı), 17, 26, 30 ('kodun bölgesi yanlış, gerçek alış mumu aşağıdaki kazanda' notu; üçü de +%5 gördü, 26 +%14, 30 +%23).
 - CD8 (yeni): 'Kodun bölgesi yanlış' hükmü ile 'fiyat gitmez' hükmü ayrı şeyler. Cemal 17 / 19 / 26 / 30'da kodu eleştirdi (haklı: gerçek alış mumu daha önce, kodun bölgesi yol almış raf); ama ölçü kodun girişine göre ve 4'ün 3'ü +%5 gördü (yükselen trendde raf, VD7). Sonraki turda sayfaya iki ayrı soru: (a) kodun bölgesi doğru mu, (b) bu mumdan girilir mi.
 - CD9: Şemsiye çizimi (9, 11) bu turda hedefe engel olmadı; şemsiye = OLMAZ kuralı tek başına yetmiyor; bağlam (yükselen büyük resim) ve kırılım gövdesi birlikte okunmalı.
