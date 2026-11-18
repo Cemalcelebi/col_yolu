@@ -87,5 +87,21 @@ Uyum (kappa) 0,15. İki taraf da yazı-tura; Fisher p 1,0.
 
 - CD11 (Cemal'in itirazı, s28: 'büyük resme göre düşmemeli'): veri: 15 günde min -%0,8, max +%4,0 (15. gün), 60 günde de +%4'ü geçmedi (60. gün -%3,8). Yön doğru, +%5 eşiği 1 puanla kaçtı; düşüş yok. Ölçü +%5 değişmez; TUR 2'den itibaren bilgi sütunu '+%3 gördü mü' ve 'yön doğru / eşik kaçtı' sayımı eklenir.
 
+## Cemal'in TUR 1 itirazları (18 Kas; veriyle denetlendi)
+| Sayfa | Cemal | Ölçü (kapanış, 15 g) | Veri | Sonuç |
+|---|---|---|---|---|
+| 17 | OLMAZ; 'yanıldım gibi ama +%5'ten sonra sert düşüş beni haklı çıkardı' | +%5 g2 (-1) | 15 g max +%21 (g2), 60 g min -%26 (g32), son -%18 | Puan -1 kalır (ölçü 15 g); sert düşüş doğru |
+| 18 | OLUR; 'büyük şemsiye, o mesafe kurtarır dedim, yataya sarmış' | gelmedi (-1) | 15 g max +%2,8; g45 +%22,5 | CD10 geç gelen hedef |
+| 20 | OLMAZ; 'büyük şemsiye kırılırsa olur' | gelmedi (+1) | 15 g +%2; g43 +%12,6 | Doğru; kırılım sonradan geldi |
+| 21 | BELİRSİZ | yatay | +%1,3 / -%2,1 | Belirsizlik doğru (0) |
+| 22 | OLUR; '+%5 gelmiş' | kapanış +%4,1 (-1) | gün içi HIGH +%6,0; g30 -%12, g60 +%8 | Gün içi geldi, kapanışla gelmedi (CD11 sınıfı) |
+| 23 | OLUR; 'önceki tepe aşılmalı, yazmadım, hatalıyım' | -%11,9 (-1) | g19 -%16,5; g58 +%22 | CD12 (yeni): önceki tepe aşılmadan giriş yok (Cemal'in yazılı olmayan kuralı; TUR 2'den itibaren yazar) |
+| 24 | BELİRSİZ | 0 | yatay, g22 -%16,6 | Doğru (0) |
+| 27 | BELİRSİZ | 0 | 15 g -%9,7 | Doğru (0) |
+| 28 | OLUR; '+%5 gelmiş' | kapanış +%4,0 (-1) | gün içi +%5,2; 60 g max +%4,0 | CD11: gün içi geldi |
+| 30 | OLMAZ; 'gitmez hükmüm yok zaten' | +%8 g12 (-1) | g46 +%34 | CD8: hüküm kod hakkındaydı |
+
+Karar (ana model): puan ölçüsü (kapanışla +%5, 15 gün) önceden yazılı, DEĞİŞMEZ. TUR 2'den itibaren iki bilgi sütunu eklenir: 'gün içi +%5 (High)' ve '60 gün yolu (max / min / son)'; ayrıca 'yön doğru / eşik kaçtı' sayımı (CD11). Ölçü değişikliği önerisi (High tabanlı) ancak ileri testle, ayrı ön kayıtla.
+
 ## Parmak izi (F19) bilgi
 Parmaklı 15 sayfanın 7'si +%5 gördü (%47), parmaksız 15'in 7'si (%47): bu turda fark yok (n 15 / 15).
