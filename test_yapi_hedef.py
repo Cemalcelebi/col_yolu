@@ -412,7 +412,8 @@ try:
         kontrol("3. tur: başka turla aynı koşuda olmaz", True)
     R3 = YH.yh_kos(["Y9", "Y9b", "Y9c", "Y9d"], cikti, veri, islem=2, git=False)
     J4 = json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8"))
-    kontrol("3. tur: Y9 / Y9b / Y9c / Y9d eklendi, Y9d bilgi", set(J4["deneme"]) == set(YH.YH_DENEMELER_HEPSI) and J4["deneme"]["Y9d"].get("bilgi") is True)
+    kontrol("3. tur: Y9 / Y9b / Y9c / Y9d eklendi, Y9d bilgi", set(J4["deneme"]) == set(YH.YH_DENEMELER + YH.YH_DENEMELER_2 + YH.YH_DENEMELER_3)
+            and J4["deneme"]["Y9d"].get("bilgi") is True)
     kontrol("3. tur: önceki turların sonuçları, sayımı, BH'si, hunisi AYNEN", all(J4["deneme"][k] == J_once3["deneme"][k] for k in YH.YH_DENEMELER + YH.YH_DENEMELER_2)
             and J4["bh"] == J_once3["bh"] and J4["bh_tur2"] == J_once3["bh_tur2"] and J4["huni"] == J_once3["huni"]
             and all(J4["sayim"][k] == J_once3["sayim"][k] for k in YH.YH_DENEMELER + YH.YH_DENEMELER_2) and "bh_tur3" in J4)
@@ -448,6 +449,83 @@ try:
     except YH.YHHata:
         kontrol("3. tur: Y1-Y8B mührü tutmazsa kapı durur", True)
     open(yo3, "w", encoding="utf-8").write(m3)
+    # ---- 4. tur uçtan uca (gerçekteki gibi ON_KAYIT_3.md 3. tur sha'sını taşır: yh_esik_sha_tur3; F1-F18 + S7 dosyaları = Y1 olay satırları)
+    import GOZ_ETIKET as GE
+    t3 = YH.yh_esik_sha_tur3()
+    open(yo3, "w", encoding="utf-8").write(m3.replace(YH.yh_esik_sha(), t3))
+    J_once4 = json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8"))
+    rapor3 = open(os.path.join(cikti, "RAPOR_3.md"), "rb").read()
+    oz4 = []
+    for (pz, sb), g in O1t.groupby(["pazar", "sembol"]):
+        Vt = pd.read_pickle(os.path.join(veri, f"V_{pz}.pkl"))[sb]
+        Fs_, _ = GE.ge_ozellik_hisse(Vt, list(pd.to_datetime(g.tarih)))
+        F_ = pd.DataFrame(Fs_); F_.insert(0, "tarih", pd.to_datetime(g.tarih).to_numpy()); F_.insert(0, "sembol", sb); F_.insert(0, "pazar", pz)
+        oz4.append(F_)
+    oz4 = pd.concat(oz4, ignore_index=True).sample(frac=1.0, random_state=5); oz4.insert(3, "durum", "AL")
+    yoz4 = os.path.join(tmp, "ozellik_Y1_tam.csv.gz"); oz4.to_csv(yoz4, index=False, float_format="%.6g", compression="gzip")
+    YH.YH_YOL["ozellik"] = yoz4; YH.YH_YOL["ozellik_s7"] = os.path.join(tmp, "ozellik_Y1_s7.csv.gz")
+    try:
+        YH.yh_kos(["Y10"], cikti, veri, git=False); kontrol("4. tur: ön kayıt 4 yokken koşu durur", False)
+    except YH.YHHata:
+        kontrol("4. tur: ön kayıt 4 yokken koşu durur", True)
+    try:
+        YH.yh_onkayit4_yaz(cikti, veri, git=False); kontrol("4. tur: S7 özellik dosyası yokken ön kayıt yazılmaz", False)
+    except YH.YHHata:
+        kontrol("4. tur: S7 özellik dosyası yokken ön kayıt yazılmaz", True)
+    Rs7 = YH.yh_s7_ozellik_yaz(veri, cikti, ozellik=yoz4)
+    kontrol("4. tur: S7 dosyası = Y1 olay satırları, prefix denetimi tuttu", Rs7["satir"] == len(oz4) == len(O1t)
+            and all(v["prefix_tuttu"] > 0 for v in Rs7["pazar"].values()), Rs7["pazar"])
+    yo4 = YH.yh_onkayit4_yaz(cikti, veri, islem=1, git=False)
+    m4 = open(yo4, encoding="utf-8").read()
+    kontrol("4. tur: ON_KAYIT_4 yazıldı (S7 tanımı aynen, ESIK_TUR3_SHA, S7_OZELLIK_SHA, GE_KOD_SHA, huni Ş1..Ş8, kapı)",
+            f"ESIK_TUR3_SHA: `{t3}`" in m4 and YH._yh_is_tanimi4_s2() in m4 and "S7_OZELLIK_SHA" in m4 and "GE_KOD_SHA" in m4 and "Y10 hunisi" in m4
+            and "+ Ş8" in m4 and "= Y10b" in m4 and YH.yh_kapi4(cikti, git=False)["kontrol"])
+    try:
+        YH.yh_kos(["Y10", "Y9"], cikti, veri, git=False); kontrol("4. tur: başka turla aynı koşuda olmaz", False)
+    except YH.YHHata:
+        kontrol("4. tur: başka turla aynı koşuda olmaz", True)
+    # MEKANİK test (yalnız test): sentetik veride gerçek S7 şartlarıyla olay çıkmıyor (0); ölçüm yolunu sınamak için koşu Y'si gevşek şartlı
+    # bir kopya (Y10 = Ş1, Y10c = Ş2; Y10b = Ş1 + F14). Kapı ve mühür zinciri GLOBAL YH_ESIK ile denetlenir (gerçek eşikler değişmez).
+    Yg = copy.deepcopy(YH.YH_ESIK); Yg["denemeler"]["Y10"]["sartlar"] = ["S1"]; Yg["denemeler"]["Y10c"]["sartlar"] = ["S2"]
+    R4 = YH.yh_kos(["Y10", "Y10b", "Y10c"], cikti, veri, islem=2, git=False, Y=Yg)
+    J5 = json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8"))
+    kontrol("4. tur: Y10 / Y10b / Y10c eklendi, Y10c bilgi", set(J5["deneme"]) == set(YH.YH_DENEMELER_HEPSI) and J5["deneme"]["Y10c"].get("bilgi") is True)
+    kontrol("4. tur: önceki turların sonuçları, sayımı, BH'si, hunisi AYNEN", all(J5["deneme"][k] == J_once4["deneme"][k] for k in YH.YH_DENEMELER + YH.YH_DENEMELER_2 + YH.YH_DENEMELER_3)
+            and all(J5[a] == J_once4[a] for a in ("bh", "bh_tur2", "bh_tur3", "huni", "huni3")) and "bh_tur4" in J5
+            and all(J5["sayim"][k] == J_once4["sayim"][k] for k in YH.YH_DENEMELER + YH.YH_DENEMELER_2 + YH.YH_DENEMELER_3))
+    kontrol("4. tur: RAPOR.md / RAPOR_2.md / RAPOR_3.md değişmedi, RAPOR_4.md başlıkları", open(os.path.join(cikti, "RAPOR.md"), "rb").read() == rapor1
+            and open(os.path.join(cikti, "RAPOR_2.md"), "rb").read() == rapor2 and open(os.path.join(cikti, "RAPOR_3.md"), "rb").read() == rapor3
+            and all(x in R4["rapor"] for x in ("SONUÇ", "HUNİ", "HÜCRE TABLOSU", "KONUM EŞLİ KAT", "OLASILIK TABLOSU", "DIŞ SINAMA", "BIST (bilgi",
+                                                "İKİ YÖNLÜ", "BAKILMIŞ", "CEMAL'İN GÖZÜYLE UYUM", "TUR 4 ÖRNEKLEMİ", "YENİDEN ÜRETİM", "KONTROL LİSTESİ", "## HATA")))
+    kontrol("4. tur: etiket en fazla EMARE, ters ve kural etiketi var",
+            all(not J5["deneme"][k]["etiket"].startswith("İZ") and "ters_etiket" in J5["deneme"][k] and "etiket_kural" in J5["deneme"][k] for k in YH.YH_DENEMELER_4))
+    rg4 = {k: v for k, v in J5.get("regresyon_y1", {}).items() if k in YH.YH_DENEMELER_4}
+    kontrol("4. tur: Y1 regresyonu (ölçülen satır = olay_Y1 satırı) her ölçülen deneme x pazarda", all(v["esit"] for d_ in rg4.values() for v in d_.values())
+            and sum(v["n"] for d_ in rg4.values() for v in d_.values()) > 0, {k: {p: v["n"] for p, v in d_.items()} for k, d_ in rg4.items()})
+    n10 = {k: sum(h.get("n_ham", 0) for h in J5["deneme"][k]["hucre"]) for k in YH.YH_DENEMELER_4}
+    kontrol("4. tur (gevşek test şartı): Y10b <= Y10 = Y9 (Ş1 = Y9 şartı), Y10c > 0", n10["Y10b"] <= n10["Y10"] == n9["Y9"] and n10["Y10c"] > 0, n10)
+    f10 = os.path.join(cikti, "olay_Y10c.csv.gz")
+    if os.path.exists(f10):
+        x10 = pd.read_csv(f10)
+        kontrol("4. tur: Y10c satırları şartları sağlar (dosya değerleriyle), konum eş sütunları var", bool(YH.yh_y10_maske(x10, "Y10c", Yg).all())
+                and {"k_es_h5", "q_olay", "F20", "F22a", "F23"} <= set(x10.columns), len(x10))
+    try:
+        YH.yh_kos(["Y10b"], cikti, veri, git=False); kontrol("4. tur: ikinci koşu durur", False)
+    except YH.YHHata:
+        kontrol("4. tur: ikinci koşu durur", True)
+    open(yo4, "w", encoding="utf-8").write(m4.replace(f"ESIK_TUR3_SHA: `{t3}`", "ESIK_TUR3_SHA: `" + "3" * 64 + "`"))
+    try:
+        YH.yh_kapi4(cikti, git=False); kontrol("4. tur: Y1-Y9d mührü tutmazsa kapı durur", False)
+    except YH.YHHata:
+        kontrol("4. tur: Y1-Y9d mührü tutmazsa kapı durur", True)
+    open(yo4, "w", encoding="utf-8").write(m4)
+    s7p = YH.YH_YOL["ozellik_s7"]; s7b = open(s7p, "rb").read(); pd.read_csv(s7p).iloc[:-1].to_csv(s7p, index=False, compression="gzip")
+    try:
+        YH.yh_kapi4(cikti, git=False); kontrol("4. tur: S7 dosyası değişince kapı durur", False)
+    except YH.YHHata:
+        kontrol("4. tur: S7 dosyası değişince kapı durur", True)
+    open(s7p, "wb").write(s7b)
+    YH.YH_YOL["ozellik"] = yoz; open(yo3, "w", encoding="utf-8").write(m3)
     ozt.iloc[:-1].to_csv(yoz, index=False, float_format="%.6g", compression="gzip")
     try:
         YH.yh_kapi3(cikti, git=False); kontrol("3. tur: özellik dosyası değişince kapı durur", False)
@@ -742,6 +820,63 @@ for ad in YH.YH_DENEMELER_3:
                                                                                                              equal_nan=True) for c in YH._Y9_OZ + ["stop0"])))
             nn += 1
     kontrol(f"{ad}: {nn} kesimde kesik = tam (tarih, stop0, F1 / F11 / F15 / F17)", tamam)
+# ---------------------------------------------------------------- 13) 4. TUR (S7 / Y10 / Y10b / Y10c)
+print("13) 4. tur (S7: F20-F23, şartlar, Y10 / Y10b / Y10c, prefix, mühür)")
+n_ = 20; Lx = np.full(n_, 11.0); Hx = np.full(n_, 11.5); Ox = np.full(n_, 11.2); Cx = np.full(n_, 11.3)
+Lx[4:14] = [10.4, 10.2, 10.0, 10.3, 10.6, 10.1, 10.5, 10.8, 10.2, 10.9]; Lx[14:19] = [10.6, 10.5, 10.7, 10.9, 10.8]
+Hx[4:19] = 11.5; Hx[9] = 12.0; Lx[19] = 11.5; Hx[19] = 13.0; Ox[19] = 11.8; Cx[19] = 12.6
+b19 = YH.yh_s7_bar(Ox, Hx, Lx, Cx, 19)
+kontrol("F20 = min L[t-5..t-1] / min L[t-15..t-6] - 1 (yapay)", abs(b19["F20"] - (10.5 / 10.0 - 1)) < 1e-12, b19)
+kontrol("F21 = max H[t-15..t-1]; F22 = C_t / F21 - 1; F22a = O_t / F21 - 1; F23 = |C - O| / (H - L) (yapay)",
+        b19["F21"] == 12.0 and abs(b19["F22"] - 0.05) < 1e-12 and abs(b19["F22a"] - (11.8 / 12 - 1)) < 1e-12 and abs(b19["F23"] - 0.8 / 1.5) < 1e-12)
+Lq = Lx.copy(); Lq[3] = 1.0; Hq = Hx.copy(); Hq[3] = 99.0
+kontrol("F20 / F21 yalnız [t-15, t-1] (t-16 barı etkisiz)", YH.yh_s7_bar(Ox, Hq, Lq, Cx, 19) == b19)
+b14 = YH.yh_s7_bar(Ox, Hx, Lx, Cx, 14); b15 = YH.yh_s7_bar(Ox, Hx, Lx, Cx, 15)
+kontrol("t'den önce 15 bar yoksa F20 / F21 / F22 / F22a NaN; 15 bar varsa tanımlı", all(np.isnan(b14[k]) for k in ("F20", "F21", "F22", "F22a"))
+        and all(np.isfinite(b15[k]) for k in ("F20", "F21", "F22", "F22a")))
+Hz_ = Hx.copy(); Hz_[19] = Lx[19]
+kontrol("H_t = L_t -> F23 NaN", np.isnan(YH.yh_s7_bar(Ox, Hz_, Lx, Cx, 19)["F23"]))
+taban = {"F1": 3, "F2": -0.01, "F3": 0.90, "F4": 0.25, "F11": 0.02, "F14": 0.0, "F15": 0.25, "F17": -0.20, "F18": 0.20, "F20": 0.0, "F21": 12.0,
+         "F22": 0.001, "F22a": -0.001, "F23": 0.50}
+deg = [{}, {"F15": 0.2500001}, {"F17": -0.1999}, {"F1": 2}, {"F2": -0.0101}, {"F2": np.nan}, {"F3": 0.9001}, {"F4": 0.2501}, {"F20": -1e-6},
+       {"F20": np.nan}, {"F22": 0.0}, {"F22a": 0.0}, {"F22a": 0.01}, {"F23": 0.4999}, {"F23": np.nan}, {"F18": 0.2001}, {"F14": -1e-6}, {"F14": np.nan},
+       {"F15": 0.9, "F17": 0.1}]
+Fq = pd.DataFrame([{**taban, **d} for d in deg])
+kontrol("Y10: Ş1-Ş8 sınırları kapalı / açık, NaN tutmaz; Ş7 boşluklu açılış (O_t >= F21) elenir",
+        list(YH.yh_y10_maske(Fq, "Y10")) == [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0])
+kontrol("Y10b = Y10 + F14 >= 0 (NaN tutmaz)", list(YH.yh_y10_maske(Fq, "Y10b")) == [1] + [0] * 18)
+kontrol("Y10c = Ş2-Ş8 (Ş1 yok)", list(YH.yh_y10_maske(Fq, "Y10c")) == [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1])
+rng13 = np.random.default_rng(13); Fr = pd.DataFrame({c: rng13.uniform(a, b, 4000) for c, a, b in
+                                                      [("F1", 0, 8), ("F2", -0.05, 0.05), ("F3", 0.3, 1.5), ("F4", 0, 0.5), ("F14", -0.3, 0.3), ("F15", 0, 1),
+                                                       ("F17", -0.6, 0.2), ("F18", 0, 0.4), ("F20", -0.1, 0.1), ("F22", -0.02, 0.05), ("F22a", -0.05, 0.02),
+                                                       ("F23", 0, 1), ("F11", 0, 0.05)]})
+m10, m10b, m10c, m9 = (YH.yh_y10_maske(Fr, "Y10"), YH.yh_y10_maske(Fr, "Y10b"), YH.yh_y10_maske(Fr, "Y10c"), YH.yh_y9_maske(Fr, "Y9"))
+kontrol("Y10b ⊆ Y10 ⊆ Y10c; Y10 ⊆ Y9; Y10 = Y9 ∩ Y10c", not (m10b & ~m10).any() and not (m10 & ~m10c).any() and not (m10 & ~m9).any()
+        and (m10 == (m9 & m10c)).all() and m10.sum() > 0, (int(m10.sum()), int(m10c.sum())))
+okp7, n7 = True, 0
+for toh in (5, 17):
+    dx = rastgele_hisse(900, toh, oyn=0.015); X1_, _ = YH.yh_s6_hisse(dx); tl = list(pd.to_datetime(X1_.tarih))
+    Ft7 = YH.yh_s7_ozellik(dx, tl); dz = YH._yh_hazir(dx)
+    for q, t in enumerate(tl):
+        i = int(dz.index.get_loc(t))
+        a = YH.yh_s7_ozellik(dx[dx.index <= t], [t]).iloc[0].to_numpy(float)
+        b = YH.yh_s7_ozellik(dz.iloc[max(0, i - 250):i + 1], [t], hazir=True).iloc[0].to_numpy(float)
+        okp7 &= bool(np.allclose(a, Ft7.iloc[q].to_numpy(float), rtol=0, atol=0, equal_nan=True) and np.allclose(b, a, rtol=0, atol=0, equal_nan=True)); n7 += 1
+kontrol("S7 prefix: t'de kesik ve [t-250, t] kesiti = tam seri (bütün Y1 günleri)", okp7 and n7 > 10, n7)
+kontrol("4. tur denemeleri YH_ESIK'te; Y1-Y9d dizini aynı (plasebo / denetim tohumu)", all(k in YH.YH_ESIK["denemeler"] for k in YH.YH_DENEMELER_4)
+        and YH.YH_DENEMELER_HEPSI[:13] == YH.YH_DENEMELER + YH.YH_DENEMELER_2 + YH.YH_DENEMELER_3)
+y3_ = YH._yh_yol("onkayit3")
+if os.path.exists(y3_):
+    import re as _re
+    m_ = _re.search(r"YH_ESIK_SHA:\s*`([0-9a-f]{64})`", open(y3_, encoding="utf-8").read())
+    kontrol("ESIK_TUR3_SHA = ON_KAYIT_3.md YH_ESIK_SHA (Y1-Y9d eşikleri aynen)", m_ and m_.group(1) == YH.yh_esik_sha_tur3())
+if os.path.exists(YH.YH_YOL["ozellik_s7"]) and os.path.exists(YH.YH_YOL["ozellik"]):
+    F4r = YH.yh_ozellik4_oku()
+    kontrol("gerçek: S7 dosyası anahtarları = ozellik_Y1 anahtarları (26.663)", len(F4r) == 26663, len(F4r))
+    U4 = YH.yh_cemal_uyum4(F4r)
+    kontrol("gerçek: Cemal uyumu (hakem KÖR + TUR 1 + TUR 2) sayfalar özellikle eşleşti, h5 okunmadı", U4["n"] >= 70 and set(U4["set"]) == {"hakem (KÖR)", "TUR 1", "TUR 2"},
+            (U4["n"], U4["set"]))
+
 # mühürler
 y2_ = YH._yh_yol("onkayit2")
 if os.path.exists(y2_):

@@ -448,6 +448,37 @@ def main():
         except GE.GEHata as ex:
             ok = "repo içinde" in str(ex)
         kontrol("tur ac: PNG klasörü repo içinde olamaz", ok)
+        # T1.4 (4. tur hazırlığı; YAPI_HEDEF_IS_TANIMI_4.md §5): S7 çekirdek (Y10) olaylarından, parmak katmanı yok, kota ABD 20 / AVR 5 / BIST 5
+        E4 = GE.ge_tur_esik(4)
+        kontrol("T1.4: sürüm, deneme Y10, katman ABD 20 / AVR 5 / BIST 5 (parmak yok), tavan s7, olay_Y10, tohum tabanı / dönem / hisse azami T1.3 ile aynı",
+                E4["surum"] == "T1.4" and E4["deneme"] == "Y10" and E4["katman"] == [["ABD", 20], ["AVR", 5], ["BIST", 5]] and E4["tavan_kaynak"] == "s7"
+                and E4["olay_dosya"].endswith("olay_Y10.csv.gz") and E4["parmak_katman"] is False
+                and all(E4[k] == GE.GE_TUR_ESIK_T13[k] for k in ("tohum_taban", "donem", "sembol_azami", "giris_kriz_pay_gun", "parmak_surum", "a_kutu", "iki_soru"))
+                and GE.ge_tur_esik(5) is GE.GE_TUR_ESIK_T14 and GE.ge_tur_esik(3) is GE.GE_TUR_ESIK_T13)
+        kontrol("T1.1 / T1.2 / T1.3 sha'ları sabit (açılmış turlar; tur 3 anahtarı T1.3 sha'sı)",
+                GE.ge_esik_sha(GE.GE_TUR_ESIK) == GE._GE_TUR_ESIK_SHA["T1.1"] and GE.ge_esik_sha(GE.GE_TUR_ESIK_T12) == GE._GE_TUR_ESIK_SHA["T1.2"]
+                and GE.ge_esik_sha(GE.GE_TUR_ESIK_T13) == GE._GE_TUR_ESIK_SHA["T1.3"] == "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29")
+        X4 = Xt.copy(); X4["deneme"] = np.where(np.arange(len(X4)) % 7 == 0, "Y1", "Y10")
+        y4 = os.path.join(tmp, "olay_Y10_sahte.csv"); X4.to_csv(y4, index=False)
+        g12 = GE.ge_tur_gosterilen(2, tk)
+        S4 = GE.ge_tur_orneklem(4, y4, tk, E4, gosterilen=g12); S4b = GE.ge_tur_orneklem(4, y4, tk, E4, gosterilen=g12)
+        p4 = S4.merge(Pt11.assign(tarih=pd.to_datetime(Pt11.tarih)), on=["pazar", "sembol", "tarih"], how="left")
+        u4 = X4[(X4.deneme == "Y10") & X4.donem.isin(["2023", "2024-26"]) & (pd.to_datetime(X4.giris) <= pd.Timestamp("2026-08-01"))]
+        kontrol("T1.4 örneklem (kuru, dosya yazmadan): 30 sayfa, ABD 20 / AVR 5 / BIST 5, aynı tohum aynı örneklem, yalnız deneme Y10 olayları",
+                len(S4) == 30 and S4.groupby("pazar").size().to_dict() == {"ABD": 20, "AVR": 5, "BIST": 5} and S4.equals(S4b)
+                and len(S4.merge(u4[["pazar", "sembol", "tarih"]], on=["pazar", "sembol", "tarih"])) == 30 and not os.path.exists(GE.ge_tur_yol("anahtar", 4, tk)))
+        kontrol("T1.4 örneklem: parmak katmanı yok (F19 bilgi; NaN -> -1), gösterilen hisse yok, turda hisse tekil",
+                (p4.F19.fillna(-1).astype(int) == p4.parmak).all() and not S4.duplicated(["pazar", "sembol"]).any()
+                and not any((r.pazar, r.sembol) in g12[1] for r in S4.itertuples()))
+        nan4 = u4.merge(Pt11[Pt11.F19.isna()].assign(tarih=pd.to_datetime(Pt11.tarih)), on=["pazar", "sembol", "tarih"])
+        kontrol("T1.4 örneklem: F19 NaN olaylar uygun kümede kalır (T1.1-T1.3'te düşerdi)", len(nan4) > 0 and len(S4) == 30, len(nan4))
+        X4k = X4.copy(); X4k.loc[X4k.pazar == "AVR", "deneme"] = "Y1"; y4k = os.path.join(tmp, "olay_Y10_az.csv"); X4k.to_csv(y4k, index=False)
+        try:
+            GE.ge_tur_orneklem(4, y4k, tk, E4, gosterilen=g12); ok = False
+        except GE.GEHata as ex:
+            ok = "kota 5 dolmadı" in str(ex) and "parmak" not in str(ex)
+        kontrol("T1.4 örneklem: kota dolmazsa DURUR (kota düşürülmez)", ok)
+        kontrol("T1.1-T1.3 örneklemi değişmedi (aynı dosya, aynı tohum; parmak katmanlı yol)", GE.ge_tur_orneklem(1, yt, tk).equals(S1))
         # görsel: t sonrası yok
         dh = GE.ge_hazir(rastgele_hisse(1500, 44)); ia, _T = al_gunleri(dh)
         it = [i for i in ia if i >= 200][0]; t_ = dh.index[it]
@@ -463,6 +494,28 @@ def main():
         except GE.GEHata:
             ok = True
         kontrol("tur görsel: hat olay dosyasıyla tutmazsa DURUR", ok)
+        # tavan_kaynak (T1.4): varsayılan s6 çıktısı DEĞİŞMEZ; s7 tavanı farklı çizilir; bilinmeyen kaynak durur
+        p6 = os.path.join(tmp, "No_1_s6.png"); GE.ge_tur_sayfa_png(dh, t_, 1, p6, G0["hat"], G0["tavan"], tavan_kaynak="s6")
+        p7 = os.path.join(tmp, "No_1_s7.png"); GE.ge_tur_sayfa_png(dh, t_, 1, p7, G0["hat"], G0["tavan"], tavan_kaynak="s7")
+        p7b = os.path.join(tmp, "No_1_s7b.png"); GE.ge_tur_sayfa_png(db, t_, 1, p7b, G0["hat"], G0["tavan"], tavan_kaynak="s7")
+        kontrol("tavan_kaynak: varsayılan = 's6' bayt bayt; 's7' farklı; s7'de de t sonrası yok",
+                open(p6, "rb").read() == open(os.path.join(pt, "No_1.png"), "rb").read() and open(p7, "rb").read() != open(p6, "rb").read()
+                and open(p7, "rb").read() == open(p7b, "rb").read())
+        _cz = GE.ge_ciz; _yak = {}
+        try:
+            GE.ge_ciz = lambda G, no, yol, E=GE.GE_ESIK: _yak.update(G) or yol
+            GE.ge_tur_sayfa_png(dh, t_, 1, os.path.join(tmp, "y.png"), G0["hat"], G0["tavan"], tavan_kaynak="s7")
+        finally:
+            GE.ge_ciz = _cz
+        f21 = float(dh.High.to_numpy()[it - 15:it].max())
+        kontrol("tavan_kaynak s7: tavan = F21 = t'den önceki 15 geçerli barın max High (= YAPI_HEDEF yh_s7_bar), hat = S6 hat, başlık 'S7'",
+                abs(_yak["tavan"] - f21) < 1e-12 and _yak["hat"] == G0["hat"] and _yak["baslik_ek"] == " — S7" and _yak["tavan_x0"] == _yak["son"] - 15
+                and abs(YH.yh_s7_bar(*(dh[c].to_numpy(float) for c in ("Open", "High", "Low", "Close")), it)["F21"] - f21) < 1e-12)
+        try:
+            GE.ge_tur_sayfa_png(dh, t_, 1, os.path.join(tmp, "z.png"), G0["hat"], G0["tavan"], tavan_kaynak="xx"); ok = False
+        except GE.GEHata:
+            ok = True
+        kontrol("tavan_kaynak: bilinmeyen kaynak DURUR", ok)
         shutil.copyfile(os.path.join(pt, "No_1.png"), os.path.join(pt, "No_2.png"))
         yp = GE.ge_tur_pdf(9, [1, 2], pt, os.path.join(tmp, "TUR_9_KOR.pdf"))
         import pypdf
@@ -812,6 +865,13 @@ def main():
                     and not any(re.search(r"\d{4}-\d{2}-\d{2}", m) for m in m3)
                     and not any(re.search(rf"(?<![A-Za-z0-9]){re.escape(s)}(?![A-Za-z0-9])", m) for s in S3g.sembol for m in m3)
                     and J3["pdf_sha"] == GE._ge_sha_dosya(yp3g))
+        # KAPI (4. tur, iş tanımı 4 §5): TUR 1-3 kör PNG / PDF yeniden üretimde bayt bayt aynı (tavan_kaynak varsayılanı değişmedi)
+        if os.path.exists(os.path.join(GE.GE_YOL["veri"], "V_ABD.pkl")) and os.environ.get("GE_TEST_YENIDEN", "1") == "1":
+            for no_ in (1, 2, 3):
+                if os.path.exists(GE.ge_tur_yol("anahtar", no_)):
+                    Ry = GE.ge_tur_yeniden(no_)
+                    kontrol(f"KAPI: TUR {no_} kör PDF yeniden üretim = anahtar pdf_sha = dosya; PNG'ler bayt bayt aynı", Ry["esit"],
+                            {k: Ry[k] for k in ("png_karsilastirma", "png_farkli", "pdf_sha")})
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"\nGEÇTİ {len(GECTI)}  KALDI {len(KALDI)}")
