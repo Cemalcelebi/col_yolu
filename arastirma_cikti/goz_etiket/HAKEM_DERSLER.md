@@ -105,3 +105,11 @@ Karar (ana model): puan ölçüsü (kapanışla +%5, 15 gün) önceden yazılı,
 
 ## Parmak izi (F19) bilgi
 Parmaklı 15 sayfanın 7'si +%5 gördü (%47), parmaksız 15'in 7'si (%47): bu turda fark yok (n 15 / 15).
+
+## Üç cetvel (Cemal: 'öngörüm %70-80, nasıl yazı-turadan kötü?'; 18 Kas; hakem 31 + TUR 1 22 = 53 karar)
+| Cetvel | Başarı (OLUR + OLMAZ) | OLUR isabeti | taban (bütün sayfalar) | hep OLMAZ deseydi |
+|---|---|---|---|---|
+| 15 g kapanış +%5 (puan ölçüsü; burada stop şartı yok, 1 sayfa fark) | %60 (32 / 53) | %52 | %42 | ~%58 |
+| 15 g gün içi +%5 | %58 | %63 | %55 | ~%45 |
+| 60 g kapanış +%5 | %62 | **%78** | %66 | ~%34 |
+OLUR'ların 60 günde -%5 görme payı %63. Okuma: Cemal'in OLUR seçimleri rastgele sayfadan 10-12 puan iyi (her üç cetvelde); 'yazı-turadan kötü' denmedi, 'hep OLMAZ düzeyi' kıyası yalnız OLUR + OLMAZ toplamı için ve TUR 1'de (%45) geçerliydi; birikimli %60 ~ hep OLMAZ %58. %70-80 sözü 60 günlük OLUR isabetinde doğru, ama taban da %66. Ölçü değişmez; her tur üç cetvel birlikte yazılır (bilgi).
