@@ -1,0 +1,45 @@
+{
+ "surum": "YAPI_HEDEF v1.0 (2026-11-17): yapı kuralları Y1-Y5, hedef +%5 / +%10 stop'tan önce 15 bar, geçici takip stopu, eş + plasebo",
+ "esik_s9_sha": "94d76caec89d363c0db71af9d9dacb348745cd3b8d50f7af1270c473e91e1ac8",
+ "ozellik_sha": "bae156939290b421fb2320f85a2639db71726ca6f7449081e2bc292f5043fd76",
+ "pazar": {
+  "ABD": {
+   "olay": 14881,
+   "prefix_tuttu": 25,
+   "nan": {
+    "F24": 0,
+    "F25": 7451,
+    "F26": 0,
+    "F27": 7451,
+    "F28": 7451,
+    "F29": 7451
+   }
+  },
+  "AVR": {
+   "olay": 7054,
+   "prefix_tuttu": 25,
+   "nan": {
+    "F24": 0,
+    "F25": 3602,
+    "F26": 0,
+    "F27": 3602,
+    "F28": 3602,
+    "F29": 3602
+   }
+  },
+  "BIST": {
+   "olay": 4728,
+   "prefix_tuttu": 25,
+   "nan": {
+    "F24": 0,
+    "F25": 2093,
+    "F26": 0,
+    "F27": 2093,
+    "F28": 2093,
+    "F29": 2093
+   }
+  }
+ },
+ "satir": 26663,
+ "sha": "c9a6a4e62673fcc56cc82550c915feed3be4b7235ada8a940d4de09ff0f28756"
+}

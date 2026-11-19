@@ -1656,6 +1656,15 @@ GE_TUR_ESIK_T14: Dict[str, Any] = {
     "pdf": GE_TUR_ESIK_T13["pdf"] + " T1.4: grafikte turuncu kesik tavan = F21 (t'den önceki 15 geçerli barın en yükseği; S7), hat = S6 hat "
            "(değişmedi); başlık 'No k — S7'; açıklama satırı S7 tavanını yazar.",
 }
+# T1.5 (YAPI_HEDEF_IS_TANIMI_5.md §6-§7, 19 Kas; ön kayıtlı, sonuç görülmeden): T1.4 ile AYNI, yalnız deneme Y11 (Ş9 U DİP ÇEKİRDEK) ve olay dosyası
+# olay_Y11.csv.gz. ge_tur_esik(>= 5) -> T1.5; ge_tur_esik(4) T1.4 olarak DEĞİŞMEDİ (TUR 4'ün sürümü ana modelin kararı). T1.1-T1.4 DEĞİŞMEZ.
+GE_TUR_ESIK_T15: Dict[str, Any] = {
+    **{k: v for k, v in GE_TUR_ESIK_T14.items() if k not in ("surum", "deneme", "olay_dosya", "orneklem")},
+    "surum": "T1.5", "deneme": "Y11",
+    "olay_dosya": os.path.join("arastirma_cikti", "yapi_hedef", "olay_Y11.csv.gz"),
+    "orneklem": GE_TUR_ESIK_T14["orneklem"].replace("olay_Y10.csv.gz (YAPI_HEDEF 4. tur S7 çekirdek)", "olay_Y11.csv.gz (YAPI_HEDEF 5. tur Ş9 U dip "
+                                                    "çekirdek)").replace("deneme Y10", "deneme Y11"),
+}
 _GE_TUR_ESIK_SHA = {"T1.1": "47284ac6dc6c7eb3bcfdde6c9703fc9386e289208f574a08eb6095a18c40a632",
                     "T1.2": "9cc0bb59e64c8f405588d3b390b66e42994ba3959843794fcca4c463882e89f0",
                     "T1.3": "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29"}
@@ -1678,7 +1687,9 @@ def ge_tur_esik(no: int) -> Dict[str, Any]:
         if ge_esik_sha(GE_TUR_ESIK_T13) != _GE_TUR_ESIK_SHA["T1.3"]:
             raise GEHata("T1.3 tur eşik sha'sı değişmiş (tur 3 yeniden üretilemez)")
         return GE_TUR_ESIK_T13
-    return GE_TUR_ESIK_T14
+    if int(no) == 4:
+        return GE_TUR_ESIK_T14
+    return GE_TUR_ESIK_T15
 
 
 def _ge_tur_olay(E: Dict[str, Any]) -> Optional[str]:

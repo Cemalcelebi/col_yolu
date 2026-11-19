@@ -454,7 +454,13 @@ def main():
                 E4["surum"] == "T1.4" and E4["deneme"] == "Y10" and E4["katman"] == [["ABD", 20], ["AVR", 5], ["BIST", 5]] and E4["tavan_kaynak"] == "s7"
                 and E4["olay_dosya"].endswith("olay_Y10.csv.gz") and E4["parmak_katman"] is False
                 and all(E4[k] == GE.GE_TUR_ESIK_T13[k] for k in ("tohum_taban", "donem", "sembol_azami", "giris_kriz_pay_gun", "parmak_surum", "a_kutu", "iki_soru"))
-                and GE.ge_tur_esik(5) is GE.GE_TUR_ESIK_T14 and GE.ge_tur_esik(3) is GE.GE_TUR_ESIK_T13)
+                and GE.ge_tur_esik(4) is GE.GE_TUR_ESIK_T14 and GE.ge_tur_esik(3) is GE.GE_TUR_ESIK_T13)
+        # T1.5 (5. tur; YAPI_HEDEF_IS_TANIMI_5.md §6-§7): T1.4 ile AYNI, yalnız deneme Y11 ve olay_Y11; ge_tur_esik(>= 5) -> T1.5
+        E5 = GE.ge_tur_esik(5)
+        kontrol("T1.5: sürüm, deneme Y11, olay_Y11; geri kalan T1.4 ile aynı; ge_tur_esik(5 / 6) -> T1.5, ge_tur_esik(4) T1.4",
+                E5 is GE.GE_TUR_ESIK_T15 and GE.ge_tur_esik(6) is GE.GE_TUR_ESIK_T15 and E5["surum"] == "T1.5" and E5["deneme"] == "Y11"
+                and E5["olay_dosya"].endswith("olay_Y11.csv.gz") and "olay_Y11.csv.gz" in E5["orneklem"]
+                and {k for k in set(E5) | set(E4) if E5.get(k) != E4.get(k)} == {"surum", "deneme", "olay_dosya", "orneklem"})
         kontrol("T1.1 / T1.2 / T1.3 sha'ları sabit (açılmış turlar; tur 3 anahtarı T1.3 sha'sı)",
                 GE.ge_esik_sha(GE.GE_TUR_ESIK) == GE._GE_TUR_ESIK_SHA["T1.1"] and GE.ge_esik_sha(GE.GE_TUR_ESIK_T12) == GE._GE_TUR_ESIK_SHA["T1.2"]
                 and GE.ge_esik_sha(GE.GE_TUR_ESIK_T13) == GE._GE_TUR_ESIK_SHA["T1.3"] == "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29")
@@ -478,6 +484,10 @@ def main():
         except GE.GEHata as ex:
             ok = "kota 5 dolmadı" in str(ex) and "parmak" not in str(ex)
         kontrol("T1.4 örneklem: kota dolmazsa DURUR (kota düşürülmez)", ok)
+        X5 = X4.copy(); X5["deneme"] = np.where(X4.deneme == "Y10", "Y11", "Y1"); y5 = os.path.join(tmp, "olay_Y11_sahte.csv"); X5.to_csv(y5, index=False)
+        S5 = GE.ge_tur_orneklem(4, y5, tk, E5, gosterilen=g12)
+        kontrol("T1.5 örneklem (kuru, tur no 4): aynı olaylar Y11 adıyla -> T1.4 ile aynı örneklem; dosya yazılmadı",
+                S5.equals(S4) and not os.path.exists(GE.ge_tur_yol("anahtar", 4, tk)))
         kontrol("T1.1-T1.3 örneklemi değişmedi (aynı dosya, aynı tohum; parmak katmanlı yol)", GE.ge_tur_orneklem(1, yt, tk).equals(S1))
         # görsel: t sonrası yok
         dh = GE.ge_hazir(rastgele_hisse(1500, 44)); ia, _T = al_gunleri(dh)

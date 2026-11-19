@@ -1,0 +1,121 @@
+{
+ "kayit": [
+  {
+   "zaman": "2026-11-19 03:57:29 UTC",
+   "esik": {
+    "F24_alt_acik": 0.0,
+    "F25_alt": 0.2,
+    "F25_ust": 0.75,
+    "F26_min": 0.4,
+    "F27_min": 1.0,
+    "F28_min": 0.5,
+    "F29_mutlak_ust": 5.0
+   },
+   "esik_sha": "ec099da6eec2439707a8537bf4b977a1492c412f8640341766de17f82944d6a3",
+   "satir": [
+    {
+     "kume": "a",
+     "ad": "S7 PDF No 38 (AVR 2016-22, AVR 7.)",
+     "F24": 0.00197855,
+     "F25": 1.23352,
+     "F26": 0.874395,
+     "F27": 4.41489,
+     "F28": 0.0,
+     "F29": -17.1074,
+     "alt": {
+      "a": true,
+      "b": false,
+      "c": true,
+      "d": true,
+      "e": false,
+      "f": false
+     },
+     "S9": false
+    },
+    {
+     "kume": "b",
+     "ad": "TUR 2 sayfa 1",
+     "F24": -0.00292735,
+     "F25": null,
+     "F26": 0.372488,
+     "F27": null,
+     "F28": null,
+     "F29": null,
+     "alt": {
+      "a": false,
+      "b": false,
+      "c": false,
+      "d": false,
+      "e": false,
+      "f": false
+     },
+     "S9": false
+    },
+    {
+     "kume": "b",
+     "ad": "TUR 2 sayfa 3",
+     "F24": -0.00543826,
+     "F25": null,
+     "F26": 0.803263,
+     "F27": null,
+     "F28": null,
+     "F29": null,
+     "alt": {
+      "a": false,
+      "b": false,
+      "c": true,
+      "d": false,
+      "e": false,
+      "f": false
+     },
+     "S9": false
+    },
+    {
+     "kume": "b",
+     "ad": "TUR 2 sayfa 11",
+     "F24": 0.00506922,
+     "F25": 0.584845,
+     "F26": 0.486976,
+     "F27": 2.63726,
+     "F28": 1.32889,
+     "F29": -2.80897,
+     "alt": {
+      "a": true,
+      "b": true,
+      "c": true,
+      "d": true,
+      "e": true,
+      "f": true
+     },
+     "S9": true
+    },
+    {
+     "kume": "b",
+     "ad": "TUR 2 sayfa 22",
+     "F24": 0.00499569,
+     "F25": 0.529731,
+     "F26": 0.540832,
+     "F27": 2.13224,
+     "F28": 1.68042,
+     "F29": -3.65952,
+     "alt": {
+      "a": true,
+      "b": true,
+      "c": true,
+      "d": true,
+      "e": true,
+      "f": true
+     },
+     "S9": true
+    }
+   ],
+   "a_no38_gecmedi": true,
+   "b_tur2_gecen": 2,
+   "tuttu": false,
+   "ozellik_s9_sha": "c9a6a4e62673fcc56cc82550c915feed3be4b7235ada8a940d4de09ff0f28756",
+   "okunan": "yalnız kimlik (pazar, sembol, tarih) + F24-F29; h5 / st5 / getiri okunmadı"
+  }
+ ],
+ "not": "iş tanımı 5 §2 tasarım kontrolü; en çok 2 kayıt (ilk + tek ayar: F26_min 0,30..0,50, F25_alt 0,15..0,25)",
+ "ayar_kullanilmadi_gerekce": "(b) 2 / 4: TUR 2 sayfa 1 ve 3'te son 40 barın Low uyumunda a < 0 (F24 -0,003 / -0,005: şemsiye, x* tanımsız). İzinli tek ayar yalnız F26_min (0,30..0,50) ve F25_alt (0,15..0,25); ikisi de F24 > 0 şartını değiştiremez, bu iki sayfa hiçbir izinli ayarda geçemez (en iyi 2 / 4). Ayar KULLANILMADI; iş tanımı §2 eşikleri kilitlendi. (a) No 38 geçmedi (F25 1,23 > 0,75; F28 0,00 < 0,5; |F29| 17,1 > 5). Tanı (bilgi, eşiği değiştirmez): sayfa 1 ve 3'te 60-80 barlık pencerede a > 0 (U 40 bardan uzun)."
+}
