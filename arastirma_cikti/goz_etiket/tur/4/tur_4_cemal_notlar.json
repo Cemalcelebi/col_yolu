@@ -1,0 +1,246 @@
+{
+ "kaynak": "Cemal'in işaretlediği TUR_4_KOR.pdf (dosya adı HAKEM_DERS_2026-11-18.1.pdf; 19 Kas 2026 ~09:00 UTC; model mührü fcf7a49 07:36 UTC'den SONRA geldi); ana model yazıya döktü",
+ "not": "A kutusu hiçbir sayfada işaretlenmedi; A yalnız notta açıkça 'önceki bölge / tavan yanlış' (YANLIŞ) ya da 'seçim doğru' (DOĞRU) yazılan sayfalarda dolduruldu. B: ok çizimi + yazı. Şartlı girişler (haber / teyit bekleme) BELİRSİZ; 'şartlı ama girilir' (14, 15, 27) OLUR",
+ "cevap": {
+  "1": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "ok: hareket yönü yukarı (çizimle başladım)"
+  },
+  "2": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "bu grafikte fon izi var, normal zamanda görülen oluşum değil; olursa fırsat kaçmaz büyük girilir"
+  },
+  "3": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "ok: hareket yönü yukarı"
+  },
+  "4": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "ok: dibe iniş sonra sert yukarı"
+  },
+  "5": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "altıda dediklerimin tam örneği: toparlanma bu hissede sert ve zaman almıyor; bu bölgede de toparlanma sert ve çabuk beklentisi verir; zaman olgusu bu"
+  },
+  "6": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "düşen trend aşağıdan gelen dip dalgasıyla kırılmış, çok iyi; zaman yıpratması dışında her şey olumlu; önceki toparlanmalar sert / hızlıysa bölgeye olumlu katkı"
+  },
+  "7": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "düşen trend kırılmamış; kırılıp sonra bölge seçimi yapılmalı"
+  },
+  "8": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "çıkarım",
+   "not": "bu da gider gibi"
+  },
+  "9": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "biraz daha mantıklı ama +%5'ten fazlasını beklemiyorum"
+  },
+  "10": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "önceki kazan oluşumu bitmediği için daha derin dip ihtimali var"
+  },
+  "11": {
+   "A": "DOĞRU",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "iki dip daha düzgün, beğendim; daha iyisi seçilmiş, koda güven kazandırır; bütün seçimler böyle akıllı olmalı"
+  },
+  "12": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "bu sert düşüş sanki ölü bir hisseye ait"
+  },
+  "13": {
+   "A": "YANLIŞ",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "güzel dip savunmasını (önceki bölge) görmeyen kod kör; bu grafikte kodun başka yorum yapmasına gerek yok"
+  },
+  "14": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "hacim mumu düşündürücü: mal değişimi, birine devir ya da özel sayım günü; sayım günü değilse girilir (şartlı)"
+  },
+  "15": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "birdeki mumlar küçük; ikiye güvenim azalmış olarak girerim; bir de dışarıdaysa tepe taklak girilir"
+  },
+  "16": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "daha önce dip oluşumu var; daha aşağısı yok izlenimi verir, olumlu"
+  },
+  "17": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "satıcının bitmediği gözlemi var bende"
+  },
+  "18": {
+   "A": "YANLIŞ",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "önceki kazan seçilmeliydi (daha net); burada son bölüm oluşumu yok, beklenmeli"
+  },
+  "19": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "çanak uyumu güzel ama sert satış korkutur; haber beklenir, satışların sebebi kalktı haberi alırsam girerim"
+  },
+  "20": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "girerim: önceki kazanın dibi daha derin ve toparlanma hızlı; burada da toparlanma olursa hızlı olur"
+  },
+  "21": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "önceki kazan dip savunması net, dipte fitil yok, satış mumları önceki alıcılı mumun altına düşmemiş (Dip Savunma yazdı)"
+  },
+  "22": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "alıcı mumu korkutuyor; sonraki mumların alıcılı olmasını bekler, sonra girerim"
+  },
+  "23": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "zaman sıkıntısı olur; haber beklerim, gelirse girilir"
+  },
+  "24": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "bu hisse insanı zamanla bıktırır, girmem"
+  },
+  "25": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "işaretli mumlarda her baş kaldırışta tepesine vurup satıyorlar; güvenmem"
+  },
+  "26": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "yukarıda satıcı var ama kazan oluşumu çok iyi; +%5 kesin gelir gibi"
+  },
+  "27": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "önceki kazanın sağ kenarı yüksek değil, burada da çok yüksek olmaz; sağ kenar desen oluşturmazsa çıkar (sınırlı giriş)"
+  },
+  "28": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "3 kazan var ama sağ kenar oluşmadan yayvan kalmış, derinlik yok; en dip bu kazan mı, asıl soru bu"
+  },
+  "29": {
+   "A": "YANLIŞ",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "kod bu sorguyu yapmalı: belirttiğim (önceki) bölge neden seçilmemiş, dip savunması orada daha belirgin; bu da gider gibi ama daha iyisi varken"
+  },
+  "30": {
+   "A": "YANLIŞ",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "alım mumu net değil; tavan çok derin çizilmiş, önceki yüksek mumlar esas alınsa seçilen mum alım mumu olmaz"
+  },
+  "31": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "alım mumu tavanı kesmiş gibi ama kazan şekli net değil; biraz beklenip netleşirse girerim"
+  },
+  "32": {
+   "A": "YANLIŞ",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "şu (önceki) kazanı görmeyen kod tam eğitilmiş değil; bu seçilen gitse de dediklerim geçerli"
+  },
+  "33": {
+   "A": "DOĞRU",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "önceki kazan derinliği istenen seviyede değil, seçilmemesi doğru; bu daha derin kazan ama alım mumu net değil"
+  },
+  "34": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "en çok sevdiğim şekil: en dip üstünde oluşum = satıcı bitmiş"
+  },
+  "35": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "sevilen şekil, sadece zaman sorunu: sert satış sonrası alıcı hemen gelmez; soldaki şelaleyi görünce 'derdi neydi, çaresi oldu mu' sorgulanır"
+  },
+  "36": {
+   "A": "-",
+   "B": "OLUR",
+   "tur": "açık",
+   "not": "aynı not; ama burada düşüşten sonra bir tık fazla zaman geçmiş, yaralar sarılmış gibi"
+  },
+  "37": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "ikinci kazan daha derin, korkutuyor; daha az derin olsaydı satıcı bitmiş olurdu; çıkarsa da şansa"
+  },
+  "38": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "çanak net ama zaman sorunu; haber bekleyen hisse, haberi duyarsam kesin girerim"
+  },
+  "39": {
+   "A": "-",
+   "B": "OLMAZ",
+   "tur": "açık",
+   "not": "zaman sorunu; silkeleme yok henüz; girersin zamanla sıkılıp çıkarsın"
+  },
+  "40": {
+   "A": "-",
+   "B": "BELİRSİZ",
+   "tur": "açık",
+   "not": "bu mum çok net değil; ama hacim barı var, biraz çıkma ihtimali var"
+  }
+ }
+}
