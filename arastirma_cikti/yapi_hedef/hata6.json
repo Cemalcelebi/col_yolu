@@ -1,0 +1,6 @@
+[
+ "test (ön kayıttan önce bulundu, düzeltildi): 13) mahkeme testi sentetik seride en az 8 Y1 olayı varsaydı, seride 6 vardı -> koşul nm == min(8, olay) ve nm >= 5; kod değişmedi",
+ "süreç: grup6_G3.csv .gitignore'daki *.csv kuralına takıldı; ön kayıt commit'ine `git add -f` ile tek dosya olarak eklendi (kapı git kaydını ister)",
+ "gösterim (ön kayıttan önce düzeltildi): mahkeme tablosunda değer metni '|' içeriyordu (max|r|/ATR, |argmin-x*|) ve md tablosunu bozuyordu -> 'en büyük günlük getiri / ATR', 'mutlak(argmin-x*)'",
+ "bilgi: 6. tur ön kayıt ile A koşusu arasında başka ajan TUR 4 / 5 commit'leri attı (YAPI_HEDEF.py'ye dokunmadı; kod sha kapısı geçti)"
+]

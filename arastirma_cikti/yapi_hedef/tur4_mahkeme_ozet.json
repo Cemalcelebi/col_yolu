@@ -1,0 +1,20 @@
+{
+ "n": 40,
+ "mahkeme": 40,
+ "onceki_daha_uygun": 6,
+ "tam_puan": 2,
+ "eksik_sikligi": {
+  "C8 kağıt hafızası": 23,
+  "F14 büyük resim": 20,
+  "Ş5 alt fitil kısa": 17,
+  "Ş2 hat net": 15,
+  "Ş7 yakın tavan gövdeli kırılım": 10,
+  "C13 dev mum yok": 7,
+  "Ş3 dip savunulmuş": 4,
+  "Ş6 kazan dönüş": 2,
+  "Ş4 küçük mum": 1
+ },
+ "hata": [],
+ "regresyon_esit": 40,
+ "sizinti": 0
+}
