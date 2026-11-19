@@ -7194,7 +7194,8 @@ def _yh_d1_sha(cikti: str) -> Dict[str, str]:
 _YH_D1_DESEN = {"esik_d1": r"YH_ESIK_D1_SHA:\s*`([0-9a-f]{64})`", "esik": r"YH_ESIK_SHA:\s*`([0-9a-f]{64})`", "esik6": r"YH_ESIK6_SHA:\s*`([0-9a-f]{64})`",
                 "esik7": r"YH_ESIK7_SHA:\s*`([0-9a-f]{64})`", "kod": r"YH_KOD_SHA:\s*`([0-9a-f]{64})`",
                 "ozellik_d1": r"D1_OZELLIK_SHA:\s*`([0-9a-f]{64})`", "esik_json": r"D1_ESIK_JSON_SHA:\s*`([0-9a-f]{64})`",
-                "y1olay": r"Y1_OLAY_SHA:\s*`([0-9a-f]{64})`", "y9olay": r"Y9_OLAY_SHA:\s*`([0-9a-f]{64})`", "ozellik": r"OZELLIK_SHA:\s*`([0-9a-f]{64})`"}
+                "y1olay": r"Y1_OLAY_SHA:\s*`([0-9a-f]{64})`", "y9olay": r"Y9_OLAY_SHA:\s*`([0-9a-f]{64})`",
+                "ozellik": r"(?<![A-Z0-9_])OZELLIK_SHA:\s*`([0-9a-f]{64})`"}   # düzeltme: D1_OZELLIK_SHA satırını yakalamasın
 
 
 def _yh_d1_regresyon(cikti: str, M: Optional[pd.DataFrame] = None) -> Dict[str, Any]:

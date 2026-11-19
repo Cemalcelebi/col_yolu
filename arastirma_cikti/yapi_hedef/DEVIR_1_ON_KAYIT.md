@@ -6,13 +6,13 @@ YAPI_HEDEF v1.0 (2026-11-17): yapı kuralları Y1-Y5, hedef +%5 / +%10 stop'tan 
 - YH_ESIK_SHA: `bde83033af9c3a4d1f293278679ff33d7739dfc783a1b75fb391f49399d644a9` (= ON_KAYIT_5.md: Y1-Y11c AYNEN)
 - YH_ESIK6_SHA: `6f05f68cd07560e407c7d1b06431990704b79441c51f4e09bbddfafba4086410` (= ON_KAYIT_6.md)
 - YH_ESIK7_SHA: `14f11dee1c6c96e976f60357771c7bb2b312ce91ad99cde691dad7dd2410ff26` (= ON_KAYIT_7.md; Y12)
-- YH_KOD_SHA: `6007e8423e838d5e470173dc2fe4b4dbb94c587ca807e52ba22679689d9c2f06` (YAPI_HEDEF.py)
+- YH_KOD_SHA: `065b75e3685db0588cb5390f7f7416f94fd6dbe7f1823b92aece199c9a437441` (YAPI_HEDEF.py)
 - D1_OZELLIK_SHA: `e80d9fb9af3d51c72f5f707c9cddb0319518f6aad5f5b25711e8dfb97f91fd7e` (ozellik_Y1_d1.csv.gz; F30-F42)
 - D1_ESIK_JSON_SHA: `9f9db30fce92e9a91edd045b9a5f8b2a1026f5a25b7474d51cb4a03d93ef15e3` (devir1_esik.json; çeyrekler)
 - Y1_OLAY_SHA: `e13eb12699a6d749bccc16ee4cde5ac467ea2bf8687b23a6a821fef74bf8871b` (olay_Y1.csv.gz; ölçü satırları)
 - Y9_OLAY_SHA: `56aa6101aba25cddd66dedddcba3d536a05b8e0850b727f015ef3cec295d5809` (olay_Y9.csv.gz; KOL-B regresyonu)
 - OZELLIK_SHA: `bae156939290b421fb2320f85a2639db71726ca6f7449081e2bc292f5043fd76` (goz_etiket/ozellik_Y1.csv.gz; F8 / F15 / F17)
-- ZAMAN (UTC): `2026-11-19 11:55:36 UTC`
+- ZAMAN (UTC): `2026-11-19 12:04:39 UTC`
 
 ## 1. ADAYLAR, F-KODLARI, TANIM, PENCERE, SABİT EŞİK
 
@@ -179,3 +179,7 @@ Uygulama yorumları (ölçümden önce): (1) CS çiftleri geçerli barlar dizisi
 | K13 | süreç | EVET | çakışma kapısı korundu (yeni adlar yh_d1_ / yh_devir_ / YH_ESIK_D1 / _YH_D1 önekli); yasak defter dosyalarına, GOZ_ETIKET.py'ye, üretim zincirine dokunulmadı (git diff --stat); e-posta / anahtar taraması (_yh_yaz); push yok; kod değişti -> Colab'da 'çalışma zamanını yeniden başlat' |
 | K14 | boyut (gerçek para) | UYGULANMAZ | öneri / gerçek para işi değil; ölçüm ve süzgeç karnesi |
 
+
+## DÜZELTME (ölçümden önce, 2026-11-19)
+
+İlk ön kayıt commit'i b7ee46d (12:04 UTC). Koşu kapısı (yh_d1_kapi) ilk denemede DURDU: `OZELLIK_SHA` deseni `D1_OZELLIK_SHA` satırını da yakalıyordu (kapı kod hatası). Koşu kapıda durduğu için hiçbir getiri (h5 / es_h5 / st5) okunmadı, devir1_sonuc.json yazılmadı. Yalnız desen düzeltildi (`(?<![A-Z0-9_])OZELLIK_SHA`); tanımlar, eşikler (YH_ESIK_D1_SHA, devir1_esik.json), özellik dosyası ve huni değişmedi. Ön kayıt bu düzeltilmiş kodla yeniden üretildi ve ayrı commit'lendi; koşu bu commit'ten sonradır.
