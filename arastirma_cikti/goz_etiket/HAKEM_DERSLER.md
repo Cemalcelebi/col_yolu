@@ -135,3 +135,35 @@ Birikimli (TUR 1 + 2): model 30 / 59 = %50,8; Cemal 16 / 41 = %39,0. Hakem seti 
 
 ## Parmak izi (P1.1) bilgi
 Parmaklı 15: 7 hedef (%47); parmaksız 15: 5 hedef (%33). İki turda 14 / 30 vs 12 / 30; n küçük, fark yorumlanmaz. (Düzeltme: ilk yazımda 5 / 6 ters yazılmıştı; betik saydı.)
+
+## TUR 4 (19 Kas 2026; U dip havuzu: düşüş sonrası dipte + Ş9 çanak; kotasız rastgele 40; ABD 16, AVR 3, BIST 21; dönem karışık, 2016-22 dahil)
+
+Kaynak: tur/4/tur_4_satir.csv, TUR_4_SONUC.md (sayılar betikten). Model etiketi fcf7a49 (07:36 UTC) Cemal'in yanıtından (~09:00 UTC) önce mühürlü; Cemal'in yanıtı e825e1f.
+
+| Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti | OLMAZ doğru | BAŞARI | hep OLMAZ |
+|---|---|---|---|---|---|
+| Cemal | 19 / 11 / 10 | 10 / 19 (%52,6) | 7 / 11 (%63,6) | **%56,7** (17 / 30) | %50,0 |
+| model (TUR 3 kuralları) | 2 / 38 / 0 | 2 / 2 | 20 / 38 (%52,6) | **%55,0** (22 / 40) | %50,0 |
+
+Birikimli (TUR 1 + 2 + 4; stop şartlı karar ölçüsü): Cemal 33 / 71 = %46,5; model 52 / 99 = %52,5. Hedefe giden 20 / 40 (%50); stop 8 / 40.
+Üç cetvel (bilgi): Cemal 15 g kapanış %56,7 / 15 g gün içi %60,0 / 60 g %56,7; model %55,0 / %42,5 / %32,5.
+
+### Cemal'in yanıldığı sayfalar
+- OLUR dedi, gelmedi (9 / 19): 4, 5, 6, 8, 11, 15, 27, 29, 34. Dördü stop (5, 6, 8, 27; stop hat x 0,98); 5 sonra 60 günde +%86 (CD20). 11 (+%4,2) ve 29 (+%2,6; 60 g +%41) eşik kaçtı.
+- OLMAZ dedi, geldi (4 / 11): 10 (+%22), 17 (+%18), 37 (+%5), 39 (+%9). Gerekçeler: 'önceki kazan bitmedi, daha derin dip gelir' (10), 'satıcı bitmedi' (17), 'ikinci kazan daha derin, şansa' (37), 'zaman sorunu, silkeleme yok' (39): dördü de yanılttı (CD21).
+- BELİRSİZ dedi, geldi (6 / 10): 19, 28, 31, 33, 35, 40 (+%6..+%21). 'Haber beklerim / zaman lazım / alım mumu net değil' tereddütleri (CD16).
+
+### Cemal'in doğru çıkan yargıları
+- CD15 ÖNCEKİ BÖLGE / TAVAN YANLIŞ (A: 13, 18, 29, 30, 32; 'kod önceki daha iyi bölgeyi görmeli', 'tavan önceki yüksek mumlardan'): 5 / 5 hedefe gitmedi (18 stop). Mahkeme (Ç196) ile aynı soru; 'ÖNCEKİ BÖLGE DAHA UYGUN' = OLMAZ kural adayı (SINANMADI; n 5). Kodun mahkemesi TUR 4'te 6 sayfada aynı kararı verdi (tur/4/TUR_4_MAHKEME.md); örtüşme bir sonraki işte sayılır.
+- CD19 'fon izi var, büyük girilir' (2) ve '+%5 kesin gibi' (26): 2 / 2 geldi (2: +%16,5; 60 g +%48).
+- OLMAZ tarafı: 24 (bıktırır), 25 (her baş kaldırışta satış), 7 (düşen trend kırılmadı), 12 (ölü hisse), 13, 18, 30: 7 / 11 doğru.
+
+### Dersler (SINANMADI; tek tur, n küçük)
+- CD15 (yeni): kod iki aday bölgeden kötüsünü seçmişse (önceki dip savunması / kazan daha net) hedef gelmiyor: 5 / 5. Kural adayı: mahkeme 'ÖNCEKİ BÖLGE DAHA UYGUN' -> OLMAZ.
+- CD16 (yeni): 'sert düşüş sonrası zaman / haber lazım' tereddüdü fırsat kaçırdı: BELİRSİZ 10 sayfanın 6'sı gitti (zaman-haber gerekçeli 4'ün 2'si gitti, 1 stop). Karar vermemek puan değil ama U dip havuzunda tereddüt pahalı.
+- CD17 (yeni): 'önceki toparlanma sert ve hızlıysa bu da hızlı olur' (5, 6, 20, 21): 2 / 4; 5 ve 6 stop oldu (5 sonra +%86). Yön doğru, giriş zamanlaması / stop darlığı sorun.
+- CD18 (yeni): 'en dip üstünde oluşum = satıcı bitti' (16, 34): 1 / 2.
+- CD20 (yeni): OLUR'ların 4'ü stop'la kaybedildi; hat x 0,98 stopu U dip havuzunda dar (5: stop sonra +%86). Stop sorusu ileri test adayı (eşik önceden yazılır).
+- CD21 (yeni): 'önceki kazan bitmedi / ikinci kazan daha derin / satıcı bitmedi' = OLMAZ gerekçeleri 4 / 4 yanılttı (10, 17, 37, 39). Derin ikinci dip tek başına eleme nedeni değil (ters emare).
+- VD10 (model; yeni): VD9 şart 3 (büyük resim yükselen / yatay) düşüş sonrası dip havuzuyla tanım gereği çelişti: 24 aday elendi, model OLMAZ dediklerinin 18 / 38'i gitti (%47 = taban), OLUR yalnız 2 (ikisi de geldi). TUR 5 kuralı: dipte havuzda şart 3 uygulanmaz; OLUR için şart 1 (sağ kenar dönüşü) + şart 2 (gövdeli ortalayan kırılım) yeter; ek eleme yalnız CD15 (önceki bölge daha uygun) ve C13 (dev mum); 'ikinci kazan daha derin' eleme nedeni DEĞİL (CD21).
+- Parmak izi (bilgi): F19 var 3 sayfa, 2'si gitti.
