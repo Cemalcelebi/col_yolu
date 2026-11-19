@@ -1,33 +1,28 @@
-COL GUNLUK RAPOR — 2026-11-19 02:05 (TR)
+COL GUNLUK RAPOR — 2026-11-20 02:12 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
 Onbellek: sarildi (584 hisse)
-Veri: 584 hisse | son bar 2026-11-18
-Ozet: aday 8 | pozisyon 6 | kapanan 14 | sure 39 sn
-UYARI: bugunun bari yok (son bar 2026-11-18). Yahoo gecikmis olabilir.
+Veri: 585 hisse | son bar 2026-11-19
+Ozet: aday 8 | pozisyon 6 | kapanan 14 | sure 68 sn
+UYARI: bugunun bari yok (son bar 2026-11-19). Yahoo gecikmis olabilir.
 ============================================================
 
-== 2026-11-18  CDS 0.84 -> 1.5x
+== 2026-11-19  CDS 0.84 -> 1.5x
 aday 8 | poz 6 | kapanan 14
 
-AL  (hisse  pozisyon%  borc  doji  fitil  dar)
-  BIOEN  %nan  0.84 OZ-  1  0.2  0.185  serbest
-
 TUT  (hisse  kar%  durum  tabana%)
-  GARAN    +9%  71g  taban -22%  stop=maliyet
-  EGEGY    +9%  120g  taban -29%
-  METRO    +2%  119g  taban -22%
-  ENTRA    +2%  103g  taban -17%  stop=maliyet
-  BIOEN    +0%  120g  taban -35%
-  YKBNK    -1%  71g  taban -14%
+  EGEGY    +7%  119g  taban -27%
+  GARAN    +7%  70g  taban -21%  stop=maliyet
+  METRO    +7%  118g  taban -26%
+  ENTRA    +2%  102g  taban -18%  stop=maliyet
+  BIOEN    +1%  120g  taban -35%
+  YKBNK    -3%  70g  taban -12%
 
 BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 8]
-  ONCSM    -1%   %12.0   0.0  0.115  -       +1  
-  HKTM     -3%   %8.2   0.182  0.219  -       -3  
-  HUNER    -3%   %4.4   nan  nan  -       -2  (serbest)
-  ALBRK    -6%   %5.0   0.227  0.271  -      +17  (serbest)
+  ALBRK    -7%   %5.0   0.227  0.271  -      +17  (serbest)
+  HUNER    -7%   %4.4   nan  nan  -       -3  (serbest)
 
 KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -26.5% (n=14)
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-33.4
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-16, XSGRT %-26
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-35.1
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-18, XGMYO %-26, XSGRT %-27, XULAS %-28
   ruzgarli sektorde uzun colde hisse yok
