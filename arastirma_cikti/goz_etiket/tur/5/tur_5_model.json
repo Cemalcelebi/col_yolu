@@ -1,0 +1,446 @@
+{
+ "surum": "TUR5 model v1 (TUR 3 kuralları + TUR 4 dersleri: VD10, CD15, CD21)",
+ "etiket": {
+  "1": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Çöküşte dev kırmızı mum ve boşluk var; kırılım mumu tavanın üstünde açılan kırmızı mum, ortalamıyor."
+  },
+  "2": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "VD8",
+    "C9+",
+    "C13-"
+   ],
+   "guven": 3,
+   "not": "Sağ kenar dönmüş ama kırılım mumu küçük ve tavanın üstünde boşlukla açılıyor; geçmişte hacimli dev mum var."
+  },
+  "3": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "VD8",
+    "C2+",
+    "VD10"
+   ],
+   "guven": 3,
+   "not": "Dipte kazan sağ kenarı dönmüş, gövdeli yeşil mum yakın tavanı ortalayarak kırıyor."
+  },
+  "4": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kırılım ve dönüş iyi ama son 120 barda büyük yukarı boşluk / dev mum var."
+  },
+  "5": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C13-",
+    "C9+"
+   ],
+   "guven": 3,
+   "not": "Kırılım mumu doji, tavana ancak değiyor; geçmişte aşağı boşluk var."
+  },
+  "6": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Kutu ve kırılım düzgün ama 60 bar önce dev aşağı boşluk ve hacim patlaması var."
+  },
+  "7": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş, kırılım gövdeli; ancak düşüşteki dev boşluklu mum eleme nedeni."
+  },
+  "8": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "C2-"
+   ],
+   "guven": 3,
+   "not": "Kod kutusu yakın tavanla uyumsuz ve çanak dibe oturmuyor; kırılım yok, geçmişte dev boşluk var."
+  },
+  "9": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kazan dönüşü ve ortalayan kırılım var ama geçmişte büyük yukarı boşluk mevcut."
+  },
+  "10": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Düzgün yuvarlak dip ve kırılım var ama düşüşteki boşluklu dev mum eleme nedeni."
+  },
+  "11": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 3,
+   "not": "Dev aşağı boşluk; kırılım mumu tavanın üstünde açılan kırmızı mum."
+  },
+  "12": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5+"
+   ],
+   "guven": 3,
+   "not": "Grafikte iki büyük boşluk var; kırılım gövdeli olsa da eleme."
+  },
+  "13": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Kutu küçük mumlu ve kırılım düzgün, ancak dev aşağı boşluk var."
+  },
+  "14": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C4-"
+   ],
+   "guven": 3,
+   "not": "Dev boşluklu düşüş var; kırılım mumu uzun fitilli ve dağınık."
+  },
+  "15": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Çanak dibi mumların altında kalıyor, dibe oturmuyor; kırılım mumu küçük, iki dev boşluk var."
+  },
+  "16": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş ve kırılım ortalıyor ama geçmişte aşağı ve yukarı boşluklar var."
+  },
+  "17": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "VD8",
+    "C2+",
+    "VD10"
+   ],
+   "guven": 3,
+   "not": "Dipte kazan sağ kenarı dönmüş, gövdeli yeşil mum yakın tavanı ortalayarak kırıyor; boşluk yok."
+  },
+  "18": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 3,
+   "not": "Sağ kenar dönmüş ama kırılım mumu çok küçük gövdeli, tavana ancak değiyor."
+  },
+  "19": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "VD8",
+    "C3+",
+    "VD10"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş, yeşil gövdeli mum tavanı ortalayarak kırıyor; geçmişteki büyük mumlar sınırda."
+  },
+  "20": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Kapanış yakın tavanın altında, kırılım yok; geçmişte dev boşluklu mumlar var."
+  },
+  "21": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C13-",
+    "C7-",
+    "C10-"
+   ],
+   "guven": 4,
+   "not": "Çanak dibi mumların çok altında, dibe oturmuyor; dev çöküş boşluğu sonrası çok küçük kutu."
+  },
+  "22": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kazan dönüşü ve kırılım var ama iki büyük aşağı boşluk eleme nedeni."
+  },
+  "23": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "C13-"
+   ],
+   "guven": 3,
+   "not": "Kırılım mumu doji; geçmişte uzun fitilli dev mum ve boşluk var."
+  },
+  "24": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "VD8",
+    "C3+",
+    "VD10"
+   ],
+   "guven": 2,
+   "not": "Uzun düşüş sonrası dipte kazan dönmüş, gövdeli mum tavanı ortalıyor; 100 bar önceki fitilli mum sınırda."
+  },
+  "25": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş ama düşüşte dev kırmızı mum ve boşluk var."
+  },
+  "26": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Dönüş ve kırılım var ama büyük aşağı boşluk eleme nedeni."
+  },
+  "27": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 2,
+   "not": "Sağ kenar dönmüş ama kırılım mumunun gövdesi neredeyse tamamen tavanın altında, ancak değiyor."
+  },
+  "28": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Çöküşte dev tek mum var; dip yatay ama eleme."
+  },
+  "29": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C5-",
+    "C2-"
+   ],
+   "guven": 3,
+   "not": "Yakın tavan fitil tepesinden çizilmiş, kutuyla uyumsuz; kapanış tavanın altında, son barlarda dip zayıfladı."
+  },
+  "30": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+"
+   ],
+   "guven": 3,
+   "not": "Büyük aşağı boşluk ve hacim patlaması var; kırılım zayıf."
+  },
+  "31": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-"
+   ],
+   "guven": 2,
+   "not": "Geçmişte uzun dev mum ve boşluk; kırılım mumu tavana ancak değiyor."
+  },
+  "32": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 2,
+   "not": "Kazan dönmüş ama kırılım mumu tavanın tamamen üstünde açılıp küçük gövdeli."
+  },
+  "33": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "VD8",
+    "C9+"
+   ],
+   "guven": 3,
+   "not": "Asıl yükseliş önceki barda tavanın altında kaldı; sinyal mumu doji."
+  },
+  "34": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C5-",
+    "VD8",
+    "C13-"
+   ],
+   "guven": 2,
+   "not": "Gövde çoğunlukla tavanın altında, ortalamıyor; geçmişte büyük mumlar var."
+  },
+  "35": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Dev boşluklu çöküş ve tepe öncesi boşluklar; kutu küçük."
+  },
+  "36": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kırılım gövdeli ve ortalıyor ama geçmişte büyük aşağı boşluk var."
+  },
+  "37": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "VD8",
+    "C3+",
+    "VD10",
+    "CD21"
+   ],
+   "guven": 2,
+   "not": "Dipte küçük mumlu kazan dönmüş, hacimli gövdeli mum tavanı ortalıyor; önceki kazandan derin olması eleme değil."
+  },
+  "38": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C9+",
+    "C5+"
+   ],
+   "guven": 2,
+   "not": "Kırılım iyi ama büyük aşağı boşluk eleme nedeni."
+  },
+  "39": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5+"
+   ],
+   "guven": 3,
+   "not": "Geçmişte dev çöküş mumları var; kırılım gövdeli olsa da eleme."
+  },
+  "40": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Dev aşağı boşluk; kapanış yakın tavanın altında, kırılım yok."
+  }
+ }
+}
