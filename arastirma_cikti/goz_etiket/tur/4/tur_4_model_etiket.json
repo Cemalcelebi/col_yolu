@@ -1,0 +1,510 @@
+{
+ "surum": "TUR4 model v1 (TUR 3 kuralları aynen; U dip havuzu)",
+ "etiket": {
+  "1": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C13-",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 4,
+   "not": "Dev boşlukla düşüş sonrası dipte çanak var ama sinyal mumu tavanın üstüne boşlukla açılan kırmızı mum, büyük resim alçalan."
+  },
+  "2": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Sağ kenar dönmüş ve gövdeli kırılım var ama büyük resim alçalan kanal ve geçmişte boşluklu düşüşler var."
+  },
+  "3": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Boşluklu sert düşüş sonrası küçük çanak dönmüş, kırılım gövdeli ama büyük resim alçalan."
+  },
+  "4": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C13-",
+    "VD8"
+   ],
+   "guven": 3,
+   "not": "Alçalan büyük resimde çanak dönmüş ancak kırılım mumu tavanı ortalamıyor, yalnız değiyor."
+  },
+  "5": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C13-",
+    "C9+",
+    "C7-",
+    "VD9"
+   ],
+   "guven": 4,
+   "not": "Yükseliş sonrası şemsiye çöküşü, dipteki küçük raf kısa; gövdeli kırılım olsa da büyük resim dağıtım sonrası düşüş."
+  },
+  "6": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 4,
+   "not": "Alçalan kanal ve boşluklu düşüş; kırılım mumu gövdesiz, tavana ancak değiyor."
+  },
+  "7": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Sağ kenar dönmüş ve gövdeli kırılım var ama 120 barlık resim alçalan kanal, yakın geçmişte dev kırmızı mum var."
+  },
+  "8": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Tepeden dev mumlu düşüş sonrası dipte dönüş ve kırılım var ama büyük resim tepeden alçalan."
+  },
+  "9": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C2-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Çanak dönmüş ve kırılım gövdeli fakat tepe ve dipler alçalıyor, büyük resim alçalan."
+  },
+  "10": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Düzgün çanak ve gövdeli kırılım var ama büyük resim süreklilik gösteren alçalan kanal."
+  },
+  "11": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD7",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Hızlı yükseliş-çöküş (şemsiye) sonrası dip; kırılım güçlü ama dağıtım sonrası resim OLUR'a izin vermiyor."
+  },
+  "12": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C3+",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Küçük mumlu çanak ve gövdeli kırılım var ama büyük resim alçalan kanal."
+  },
+  "13": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C5-",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 4,
+   "not": "Dev boşluklu düşüş sonrası çanak dönmüş ancak kırılım mumu doji, gövdesiz."
+  },
+  "14": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C13-",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 3,
+   "not": "Yükseliş-çöküş sonrası dipte çanak; kırılım mumu küçük gövdeli ve tavana ancak değiyor, dev hacimli kırmızı mum var."
+  },
+  "15": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C6-",
+    "C9+"
+   ],
+   "guven": 4,
+   "not": "Dev kırmızı mumla çöküş sonrası dipte kısa çanak; C13- nedeniyle OLUR yok."
+  },
+  "16": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "C3-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Tepeden dev fitilli çöküş sonrası dip; kırılım gövdeli ama büyük resim tepeden alçalan ve mumlar büyük."
+  },
+  "17": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C4-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Sağ kenar dönmüş, kırılım gövdeli ama uzun üst fitilli ve büyük resim alçalan."
+  },
+  "18": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "VD5",
+    "C13-"
+   ],
+   "guven": 4,
+   "not": "Yükseliş-çöküş sonrası dip; sinyal mumu yakın tavanın (son 15 bar tepesi) belirgin altında, kodun bölge tavanı daha aşağıda."
+  },
+  "19": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "VD7",
+    "VD8"
+   ],
+   "guven": 3,
+   "not": "Tepe sıkışmasından sert düşüş sonrası dip; kırılım küçük gövdeli, tavanı ortalamıyor."
+  },
+  "20": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C1+",
+    "C13-",
+    "C3-"
+   ],
+   "guven": 2,
+   "not": "Geniş yatay resimde uzun dip ve gövdeli kırılım var ama geçmişte dev mum (C13-) nedeniyle OLUR yok."
+  },
+  "21": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C4+",
+    "C2+",
+    "VD3",
+    "VD9"
+   ],
+   "guven": 2,
+   "not": "Yükseliş-düşüş sonrası 120 barın alt bölgesinde çanak dönmüş, kırılım gövdeli ve tavanı ortalıyor, büyük resim yatay aralık."
+  },
+  "22": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C6-",
+    "C5-",
+    "VD8"
+   ],
+   "guven": 4,
+   "not": "Alçalan büyük resim; sinyal mumu tavanın üstüne boşlukla açılıp kırmızı kapanmış."
+  },
+  "23": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Boşluklu düşüş zinciri içinde dip; kırılım küçük gövdeli ve büyük resim alçalan."
+  },
+  "24": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C3+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Küçük mumlu dip ve gövdeli kırılım var ama büyük resim alçalan."
+  },
+  "25": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Dipte çanak ve kırılım var ama alçalan kanal ve geçmişte dev mum."
+  },
+  "26": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C6-",
+    "C13-",
+    "C2-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Yükseliş-çöküş sonrası yeni dip öncekinin altında, dev mumlar var; kırılım zayıf gövdeli."
+  },
+  "27": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Çanak dönmüş ve kırılım tavanı ortalıyor ama büyük resim alçalan."
+  },
+  "28": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C1+",
+    "C3+",
+    "C5-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Çöküş sonrası uzun yatay taban var ama kırılım mumu gövdesiz, tavana ancak değiyor."
+  },
+  "29": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Yatay aralığın altına inilmiş, geçmişte dev mum; kırılım gövdeli olsa da OLUR yok."
+  },
+  "30": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Düzgün dip dönüşü ve gövdeli kırılım var ama büyük resim alçalan kanal."
+  },
+  "31": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Dönüş ve güçlü kırılım var ama 120 bar boyunca alçalan kanal."
+  },
+  "32": {
+   "karar": "OLMAZ",
+   "bolge": "YANLIŞ",
+   "nedenler": [
+    "C6-",
+    "C13-",
+    "C5-",
+    "VD5",
+    "VD7"
+   ],
+   "guven": 4,
+   "not": "Çanak sol kolu tepeden çiziliyor ve dibi gerçek diplerin altında; sinyal mumu yakın tavanın çok altında, dağıtım sonrası resim."
+  },
+  "33": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Çanak dönmüş ve kırılım gövdeli ama büyük resim tepeden alçalan."
+  },
+  "34": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C2+",
+    "C1+",
+    "C6-",
+    "VD8"
+   ],
+   "guven": 2,
+   "not": "Çöküş sonrası yükselen dipli taban var ama sinyal mumu tavanın tamamen üstüne boşlukla açılmış (zayıf)."
+  },
+  "35": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C6-",
+    "VD7",
+    "C13-"
+   ],
+   "guven": 4,
+   "not": "Sert yükseliş-çöküş (şemsiye) sonrası dip, eski tabanın altında; dağıtım resmi."
+  },
+  "36": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C13-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Güçlü gövdeli kırılım ve dönüş var ama yükseliş-çöküş sonrası alçalan resim ve dev mumlar."
+  },
+  "37": {
+   "karar": "OLUR",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C1+",
+    "C2+",
+    "C9+",
+    "C5+",
+    "C3+",
+    "VD3",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Çöküş sonrası 70 barlık yatay taban, dipler aynı seviyede savunulmuş, sağ kenar dönmüş ve gövdeli kırılım tavanı ortalıyor."
+  },
+  "38": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C13-",
+    "C6-",
+    "C5-"
+   ],
+   "guven": 4,
+   "not": "Geçmişte dev fitil ve boşluklu düşüş; kırılım mumu küçük ve tavana ancak değiyor."
+  },
+  "39": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "VD7",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Yükseliş-çöküş sonrası alçalan resimde dip; kırılım gövdeli ama büyük resim alçalan."
+  },
+  "40": {
+   "karar": "OLMAZ",
+   "bolge": "DOĞRU",
+   "nedenler": [
+    "C9+",
+    "C5+",
+    "C6-",
+    "C3-",
+    "C2-",
+    "VD9"
+   ],
+   "guven": 3,
+   "not": "Dipler alçalıyor, mumlar büyük ve dağınık; kırılım gövdeli olsa da büyük resim alçalan."
+  }
+ }
+}

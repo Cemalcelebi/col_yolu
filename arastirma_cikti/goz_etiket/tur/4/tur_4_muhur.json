@@ -1,0 +1,14 @@
+{
+ "tur": 4,
+ "zaman": "2026-11-19 07:36:21 UTC",
+ "model_dosya": "tur_4_model.json",
+ "model_sha": "9b3d9fbb03f1130bf558c27607e8fbb07b287beb191f866be5bce14cea2104f5",
+ "anahtar_sha": "c2c42fc1ab71183911112afbbce645987a3c15b9089e9a7e74fd725b87f0f8b6",
+ "n": 40,
+ "karar": {
+  "OLUR": 2,
+  "BELİRSİZ": 0,
+  "OLMAZ": 38
+ },
+ "kural": "Bu mühür Cemal'in yanıt dosyasından ÖNCE commit edilir; tur olc ilk commit sırasını git ile denetler."
+}
