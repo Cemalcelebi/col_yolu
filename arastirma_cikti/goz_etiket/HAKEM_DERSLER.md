@@ -169,19 +169,23 @@ Birikimli (TUR 1 + 2 + 4; stop şartlı karar ölçüsü): Cemal 33 / 71 = %46,5
 - VD10 (model; yeni): VD9 şart 3 (büyük resim yükselen / yatay) düşüş sonrası dip havuzuyla tanım gereği çelişti: 24 aday elendi, model OLMAZ dediklerinin 18 / 38'i gitti (%47 = taban), OLUR yalnız 2 (ikisi de geldi). TUR 5 kuralı: dipte havuzda şart 3 uygulanmaz; OLUR için şart 1 (sağ kenar dönüşü) + şart 2 (gövdeli ortalayan kırılım) yeter; ek eleme yalnız CD15 (önceki bölge daha uygun) ve C13 (dev mum); 'ikinci kazan daha derin' eleme nedeni DEĞİL (CD21).
 - Parmak izi (bilgi): F19 var 3 sayfa, 2'si gitti.
 
-## TUR 6 (19 Kas 2026; dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı; KISMİ: Cemal yalnız sayfa 4-9'u işaretledi)
+## TUR 6 (19 Kas 2026; dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı; Cemal 22 sayfa işaretledi: 4-9 ve 25-40; 1-3 ve 10-24 işaretsiz)
 
-Kaynak: tur/6/tur_6_satir.csv, TUR_6_SONUC.md (sayılar betikten). Model mührü 438315f (13:46 UTC) Cemal'in yanıtından (~14:00 UTC) önce; Cemal'in yanıtı 540f8b7.
+Kaynak: tur/6/tur_6_satir.csv, TUR_6_SONUC.md (sayılar betikten). Model mührü 438315f (13:46 UTC) Cemal'in yanıtından önce (ilk parça ~14:00, ikinci ~15:00 UTC; 540f8b7, b043044). İlk altı sayfalık kısmi ölçüm tur/6/kismi_ilk6/ klasöründe saklı.
 
-| Sayfa | Cemal | Model | Sonuç (15 g) | 30 g en yüksek |
-|---|---|---|---|---|
-| 4 | OLUR ('desen çok iyi') | OLUR | STOP | −%0,9 |
-| 5 | OLMAZ ('sert düşüş') | OLMAZ | GELDİ +%19,9 | +%35,7 |
-| 6 | OLUR ('sert düşüş ama süper') | OLUR | GELDİ +%31,3 | +%36,0 |
-| 7 | OLUR ('net kırılım, al') | OLUR | gelmedi +%1,9 | +%6,5 |
-| 8 | OLMAZ ('çok dağınık') | OLMAZ | gelmedi +%2,6 | +%6,4 |
-| 9 | OLMAZ ('sert düşüş kötü') | OLMAZ | GELDİ +%27,6 | +%59,5 |
+| Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti | OLMAZ doğru | BAŞARI | hep OLMAZ |
+|---|---|---|---|---|---|
+| Cemal (19 karar) | 13 / 6 / 3 | 6 / 13 (%46,2) | 3 / 6 (%50,0) | **%47,4** (9 / 19) | %52,6 |
+| model (40 sayfa) | 18 / 22 / 0 | 9 / 18 (%50,0) | 12 / 22 (%54,5) | **%52,5** (21 / 40) | %52,5 |
 
-- Altı sayfada Cemal ile model AYNI kararı verdi; ikisi de 2 / 6 (%33,3; taban eş payı %34, hep OLMAZ %52,5). Model 40 sayfanın tamamında %52,5 (OLUR 9 / 18, OLMAZ 12 / 22); hedefe giden 19 / 40.
-- CD22 (yeni; n 2, SINANMADI): 'sert düşüş sonrası hemen toparlanma beklenmez' tezi bu altı sayfada tersine çıktı: sert düşüş gerekçesiyle OLMAZ denen 5 ve 9 ikisi de +%20 / +%28 gitti; 'sert düşüş ama süper' denen 6 da gitti. Cemal'in mesajı ('biri pozitif bir durumda negatif') kayıtta; ders kesin değil, kalan 34 sayfa ve TUR 7 ile birlikte okunur.
-- Kalan 34 sayfa işaretlenince tur yeniden ölçülür (aynı mühür).
+Aynı 19 sayfada model 8 / 19; iki taraf 12 / 19 sayfada aynı kararı verdi. Birikimli (TUR 1, 2, 4, 6): Cemal 42 / 90 = %46,7; model 73 / 139 = %52,5. Hedefe giden 19 / 40.
+
+### Cemal'in yanıldığı sayfalar
+- OLUR dedi, gelmedi (7 / 13): 4, 7, 27, 29, 35, 38, 39 ('İYİ' dedikleri; 4, 27, 38, 39 stop; 7, 29, 35 +%1..+%4 kaldı).
+- OLMAZ dedi, geldi (3 / 6): 5 (+%19,9), 9 (+%27,6), 30 (+%9,6). Üçünün gerekçesi 'sert düşüş' (5, 9) ve 'yok / kötü' (30).
+- Okunamayan (BELİRSİZ) 34, 36, 37: 37 geldi.
+
+### Dersler (SINANMADI)
+- CD22 (TUR 6): 'sert düşüş sonrası hemen toparlanma beklenmez' tezi 3 / 3 ters çıktı (5, 9, 30 geldi; 'sert düşüş ama süper' denen 6 da +%31). Düşüş sonrası U havuzunda sert düşüş eleme nedeni değil; tersine, bu turdaki en büyük çıkışlar sert düşüş sonrası geldi. n 3-4; TUR 7 ve ileri turlarla sınanır.
+- CD23 (TUR 6): 'İYİ' dediği 13 sayfanın 6'sı gitti (%46 = taban): çanak uyumu iyi görünen sayfalarda (R² 0,9+: 6, 32, 40 gitti; 0,4-0,7: 4, 38, 39 stop) uyum iyiliği tek başına ayırt etmedi; stop 4 / 7 yanlışta (dar stop sorusu CD20 ile aynı).
+- VD11 (model): model bu turda 'hep OLMAZ' ile aynı (%52,5); OLUR isabeti %50 = taban. Havuz zaten dip savunması + U içerdiği için kural seti ayırt edici değil; TUR 8 kuralı aranacak şey: önceki toparlanma hızı (C8) ve kırılım mumu ortalaması (VD8) dışında bu havuzda ne ayırıyor (satır dosyasından bilgi: hedefe giden 19'un ortak özelliği).

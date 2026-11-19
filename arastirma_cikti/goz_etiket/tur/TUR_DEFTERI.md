@@ -126,18 +126,19 @@
 - İlk sayfa üst notu: 'havuz: düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım mumu (ölçümde katkı veren iki ölçü)'.
 - TUR 7, TUR 5 / 6 ölçülmeden açılır (ana model kararı; Cemal'in 19 Kas isteği 'başarılı olanları da ver').
 
-## TUR 6 (2026-11-19 14:46:28 UTC)
+## TUR 6 (2026-11-19 18:38:07 UTC)
 
 | Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti (+%5 gördü) | OLMAZ isabeti (+%5 görmedi) | BAŞARI | OLUR sayfalarının eş payı | taban: bütün sayfaların eş payı | hep OLMAZ deseydi | Fisher p | yanıtsız / ölçülemedi |
 |---|---|---|---|---|---|---|---|---|---|
 | model (bu tur) | 18 / 22 / 0 | 9 / 18 (%50,0) | 12 / 22 (%54,5) | **%52,5** (21 / 40) | %51,9 | %48,0 | %52,5 | 1,000 | 0 / 0 |
-| Cemal (bu tur) | 3 / 3 / 0 | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %34,0 | %48,0 | %52,5 | 1,000 | 34 / 0 |
+| Cemal (bu tur) | 13 / 6 / 3 | 6 / 13 (%46,2) | 3 / 6 (%50,0) | **%47,4** (9 / 19) | %48,1 | %48,0 | %52,5 | 1,000 | 18 / 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 48 / 91 / 1 | 24 / 48 (%50,0) | 49 / 91 (%53,8) | **%52,5** (73 / 139) | %47,1 | %46,6 | %52,9 | 0,722 | 0 / 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 50 / 27 / 29 | 22 / 50 (%44,0) | 13 / 27 (%48,1) | **%45,5** (35 / 77) | %43,1 | %46,6 | %52,9 | 0,633 | 34 / 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 / 30 / 32 | 27 / 60 (%45,0) | 15 / 30 (%50,0) | **%46,7** (42 / 90) | %44,7 | %46,6 | %52,9 | 0,662 | 18 / 0 |
 
-- Uyum (kappa, 3 sınıf): bu tur 1,000 (n 6); birikimli 0,095 (n 106).
-- Yanılınan sayfalar: model [4, 5, 7, 9, 10, 15, 16, 17, 20, 22, 23, 25, 26, 27, 29, 30, 31, 37, 40]; Cemal [4, 5, 7, 9].
+- Uyum (kappa, 3 sınıf): bu tur 0,257 (n 22); birikimli 0,092 (n 122).
+- Yanılınan sayfalar: model [4, 5, 7, 9, 10, 15, 16, 17, 20, 22, 23, 25, 26, 27, 29, 30, 31, 37, 40]; Cemal [4, 5, 7, 9, 27, 29, 30, 35, 38, 39].
 - Cemal'in hedefi BAŞARI %80-90; taban oran ~%40 (eş payı) olduğu için bu hedef zordur (her tur raporunda yazılır).
+- Bilgi sütunlarıyla yeniden koşu: 2026-11-19 18:38:40 UTC (TUTTU (önceki tur_K_sonuc.json ile karar sayıları aynı)).
 
 Üç cetvel (bilgi; BAŞARI yalnız ilk cetvelle, değişmez):
 
@@ -146,14 +147,14 @@
 | model (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 9 / 18 (%50,0) | 12 / 22 (%54,5) | **%52,5** (21 / 40) | %47,5 | %52,5 | 0 |
 | model (bu tur) | 15 g gün içi +%5 (High; bilgi) | 11 / 18 (%61,1) | 8 / 22 (%36,4) | **%47,5** (19 / 40) | %62,5 | %37,5 | 0 |
 | model (bu tur) | 60 g kapanış +%5 (bilgi) | 13 / 18 (%72,2) | 5 / 22 (%22,7) | **%45,0** (18 / 40) | %75,0 | %25,0 | 0 |
-| Cemal (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %47,5 | %52,5 | 0 |
-| Cemal (bu tur) | 15 g gün içi +%5 (High; bilgi) | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %62,5 | %37,5 | 0 |
-| Cemal (bu tur) | 60 g kapanış +%5 (bilgi) | 2 / 3 (%66,7) | 0 / 3 (%0,0) | **%33,3** (2 / 6) | %75,0 | %25,0 | 0 |
+| Cemal (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 6 / 13 (%46,2) | 3 / 6 (%50,0) | **%47,4** (9 / 19) | %47,5 | %52,5 | 0 |
+| Cemal (bu tur) | 15 g gün içi +%5 (High; bilgi) | 8 / 13 (%61,5) | 3 / 6 (%50,0) | **%57,9** (11 / 19) | %62,5 | %37,5 | 0 |
+| Cemal (bu tur) | 60 g kapanış +%5 (bilgi) | 9 / 13 (%69,2) | 1 / 6 (%16,7) | **%52,6** (10 / 19) | %75,0 | %25,0 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 24 / 48 (%50,0) | 49 / 91 (%53,8) | **%52,5** (73 / 139) | %47,1 | %52,9 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 27 / 48 (%56,2) | 33 / 91 (%36,3) | **%43,2** (60 / 139) | %60,7 | %39,3 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 38 / 48 (%79,2) | 24 / 89 (%27,0) | **%45,3** (62 / 137) | %74,6 | %25,4 | 2 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 22 / 50 (%44,0) | 13 / 27 (%48,1) | **%45,5** (35 / 77) | %47,1 | %52,9 | 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 29 / 50 (%58,0) | 10 / 27 (%37,0) | **%50,6** (39 / 77) | %60,7 | %39,3 | 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 36 / 49 (%73,5) | 5 / 27 (%18,5) | **%53,9** (41 / 76) | %74,6 | %25,4 | 2 |
-- Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model [27]; Cemal yok; birikimli model 5, Cemal 6.
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 27 / 60 (%45,0) | 15 / 30 (%50,0) | **%46,7** (42 / 90) | %47,1 | %52,9 | 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 36 / 60 (%60,0) | 12 / 30 (%40,0) | **%53,3** (48 / 90) | %60,7 | %39,3 | 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 43 / 59 (%72,9) | 6 / 30 (%20,0) | **%55,1** (49 / 89) | %74,6 | %25,4 | 2 |
+- Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model [27]; Cemal [27, 39]; birikimli model 5, Cemal 8.
 - Cemal'in birikimli etiketi 100'ü geçti: göz ölçümü (Ç192 planı) Cemal'in kendi etiketleriyle koşulur.

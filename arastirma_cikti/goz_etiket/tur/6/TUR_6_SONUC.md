@@ -1,6 +1,6 @@
 # HAKEM TURU 6 — SONUÇ
 
-Mühür sırası: TUTTU · 2026-11-19 14:46:28 UTC
+Mühür sırası: TUTTU · 2026-11-19 18:38:07 UTC
 
 BAŞARI tanımı (önceden yazılı): CLAUDE.md 'Hakem turları' (önceden yazılı, değişmez): sonuç = olay_Y1 h5 (15 geçerli barda +%5 kapanışla, stop'tan önce; 1 / 0; NaN ölçülemedi). OLUR isabeti = OLUR'larda h5 = 1 payı; OLMAZ isabeti = OLMAZ'larda h5 = 0 payı; BAŞARI = (doğru OLUR + doğru OLMAZ) / (OLUR + OLMAZ) (BELİRSİZ karar değil, ayrı sayılır; h5 NaN sayfa ölçülemedi, ayrı sayılır). Taban = aynı sayfaların eş payı (ortalama es_h5). Fisher iki yönlü (karar OLUR / OLMAZ x h5). Uyum = Cohen kappa (3 sınıf, iki tarafın da geçerli yanıtı olan sayfalar). Birikimli = tur 1..K satır dosyaları birleşik.
 
@@ -11,13 +11,14 @@ BAŞARI tanımı (önceden yazılı): CLAUDE.md 'Hakem turları' (önceden yazı
 | Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti (+%5 gördü) | OLMAZ isabeti (+%5 görmedi) | BAŞARI | OLUR sayfalarının eş payı | taban: bütün sayfaların eş payı | hep OLMAZ deseydi | Fisher p | yanıtsız / ölçülemedi |
 |---|---|---|---|---|---|---|---|---|---|
 | model (bu tur) | 18 / 22 / 0 | 9 / 18 (%50,0) | 12 / 22 (%54,5) | **%52,5** (21 / 40) | %51,9 | %48,0 | %52,5 | 1,000 | 0 / 0 |
-| Cemal (bu tur) | 3 / 3 / 0 | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %34,0 | %48,0 | %52,5 | 1,000 | 34 / 0 |
+| Cemal (bu tur) | 13 / 6 / 3 | 6 / 13 (%46,2) | 3 / 6 (%50,0) | **%47,4** (9 / 19) | %48,1 | %48,0 | %52,5 | 1,000 | 18 / 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 48 / 91 / 1 | 24 / 48 (%50,0) | 49 / 91 (%53,8) | **%52,5** (73 / 139) | %47,1 | %46,6 | %52,9 | 0,722 | 0 / 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 50 / 27 / 29 | 22 / 50 (%44,0) | 13 / 27 (%48,1) | **%45,5** (35 / 77) | %43,1 | %46,6 | %52,9 | 0,633 | 34 / 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 / 30 / 32 | 27 / 60 (%45,0) | 15 / 30 (%50,0) | **%46,7** (42 / 90) | %44,7 | %46,6 | %52,9 | 0,662 | 18 / 0 |
 
-- Uyum (kappa, 3 sınıf): bu tur 1,000 (n 6); birikimli 0,095 (n 106).
-- Yanılınan sayfalar: model [4, 5, 7, 9, 10, 15, 16, 17, 20, 22, 23, 25, 26, 27, 29, 30, 31, 37, 40]; Cemal [4, 5, 7, 9].
+- Uyum (kappa, 3 sınıf): bu tur 0,257 (n 22); birikimli 0,092 (n 122).
+- Yanılınan sayfalar: model [4, 5, 7, 9, 10, 15, 16, 17, 20, 22, 23, 25, 26, 27, 29, 30, 31, 37, 40]; Cemal [4, 5, 7, 9, 27, 29, 30, 35, 38, 39].
 - Cemal'in hedefi BAŞARI %80-90; taban oran ~%40 (eş payı) olduğu için bu hedef zordur (her tur raporunda yazılır).
+- Bilgi sütunlarıyla yeniden koşu: 2026-11-19 18:38:40 UTC (TUTTU (önceki tur_K_sonuc.json ile karar sayıları aynı)).
 
 Üç cetvel (bilgi; BAŞARI yalnız ilk cetvelle, değişmez):
 
@@ -26,16 +27,16 @@ BAŞARI tanımı (önceden yazılı): CLAUDE.md 'Hakem turları' (önceden yazı
 | model (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 9 / 18 (%50,0) | 12 / 22 (%54,5) | **%52,5** (21 / 40) | %47,5 | %52,5 | 0 |
 | model (bu tur) | 15 g gün içi +%5 (High; bilgi) | 11 / 18 (%61,1) | 8 / 22 (%36,4) | **%47,5** (19 / 40) | %62,5 | %37,5 | 0 |
 | model (bu tur) | 60 g kapanış +%5 (bilgi) | 13 / 18 (%72,2) | 5 / 22 (%22,7) | **%45,0** (18 / 40) | %75,0 | %25,0 | 0 |
-| Cemal (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %47,5 | %52,5 | 0 |
-| Cemal (bu tur) | 15 g gün içi +%5 (High; bilgi) | 1 / 3 (%33,3) | 1 / 3 (%33,3) | **%33,3** (2 / 6) | %62,5 | %37,5 | 0 |
-| Cemal (bu tur) | 60 g kapanış +%5 (bilgi) | 2 / 3 (%66,7) | 0 / 3 (%0,0) | **%33,3** (2 / 6) | %75,0 | %25,0 | 0 |
+| Cemal (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 6 / 13 (%46,2) | 3 / 6 (%50,0) | **%47,4** (9 / 19) | %47,5 | %52,5 | 0 |
+| Cemal (bu tur) | 15 g gün içi +%5 (High; bilgi) | 8 / 13 (%61,5) | 3 / 6 (%50,0) | **%57,9** (11 / 19) | %62,5 | %37,5 | 0 |
+| Cemal (bu tur) | 60 g kapanış +%5 (bilgi) | 9 / 13 (%69,2) | 1 / 6 (%16,7) | **%52,6** (10 / 19) | %75,0 | %25,0 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 24 / 48 (%50,0) | 49 / 91 (%53,8) | **%52,5** (73 / 139) | %47,1 | %52,9 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 27 / 48 (%56,2) | 33 / 91 (%36,3) | **%43,2** (60 / 139) | %60,7 | %39,3 | 0 |
 | model (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 38 / 48 (%79,2) | 24 / 89 (%27,0) | **%45,3** (62 / 137) | %74,6 | %25,4 | 2 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 22 / 50 (%44,0) | 13 / 27 (%48,1) | **%45,5** (35 / 77) | %47,1 | %52,9 | 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 29 / 50 (%58,0) | 10 / 27 (%37,0) | **%50,6** (39 / 77) | %60,7 | %39,3 | 0 |
-| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 36 / 49 (%73,5) | 5 / 27 (%18,5) | **%53,9** (41 / 76) | %74,6 | %25,4 | 2 |
-- Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model [27]; Cemal yok; birikimli model 5, Cemal 6.
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 27 / 60 (%45,0) | 15 / 30 (%50,0) | **%46,7** (42 / 90) | %47,1 | %52,9 | 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 15 g gün içi +%5 (High; bilgi) | 36 / 60 (%60,0) | 12 / 30 (%40,0) | **%53,3** (48 / 90) | %60,7 | %39,3 | 0 |
+| Cemal (birikimli, tur [1, 2, 4, 6]) | 60 g kapanış +%5 (bilgi) | 43 / 59 (%72,9) | 6 / 30 (%20,0) | **%55,1** (49 / 89) | %74,6 | %25,4 | 2 |
+- Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model [27]; Cemal [27, 39]; birikimli model 5, Cemal 8.
 - Cemal'in birikimli etiketi 100'ü geçti: göz ölçümü (Ç192 planı) Cemal'in kendi etiketleriyle koşulur.
 
 ## Dönem kırılımı (bilgi; T1.6)
@@ -43,11 +44,11 @@ BAŞARI tanımı (önceden yazılı): CLAUDE.md 'Hakem turları' (önceden yazı
 | Taraf (dönem) | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti (+%5 gördü) | OLMAZ isabeti (+%5 görmedi) | BAŞARI | OLUR sayfalarının eş payı | taban: bütün sayfaların eş payı | hep OLMAZ deseydi | Fisher p | yanıtsız / ölçülemedi |
 |---|---|---|---|---|---|---|---|---|---|
 | model (2016-22) | 8 / 9 / 0 | 1 / 8 (%12,5) | 7 / 9 (%77,8) | **%47,1** (8 / 17) | %35,0 | %38,4 | %82,4 | 1,000 | 0 / 0 |
-| cemal (2016-22) | 2 / 2 / 0 | 0 / 2 (%0,0) | 1 / 2 (%50,0) | **%25,0** (1 / 4) | %41,5 | %38,4 | %82,4 | 1,000 | 13 / 0 |
+| cemal (2016-22) | 7 / 4 / 1 | 2 / 7 (%28,6) | 3 / 4 (%75,0) | **%45,5** (5 / 11) | %40,9 | %38,4 | %82,4 | 1,000 | 5 / 0 |
 | model (2023) | 0 / 2 / 0 | 0 / 0 (-) | 1 / 2 (%50,0) | **%50,0** (1 / 2) | - | %59,3 | %50,0 | - | 0 / 0 |
-| cemal (2023) | 0 / 0 / 0 | 0 / 0 (-) | 0 / 0 (-) | **-** (0 / 0) | - | %59,3 | %50,0 | - | 2 / 0 |
+| cemal (2023) | 1 / 0 / 1 | 0 / 1 (%0,0) | 0 / 0 (-) | **%0,0** (0 / 1) | %31,9 | %59,3 | %50,0 | - | 0 / 0 |
 | model (2024-26) | 10 / 11 / 0 | 8 / 10 (%80,0) | 4 / 11 (%36,4) | **%57,1** (12 / 21) | %65,3 | %54,7 | %28,6 | 0,635 | 0 / 0 |
-| cemal (2024-26) | 1 / 1 / 0 | 1 / 1 (%100,0) | 0 / 1 (%0,0) | **%50,0** (1 / 2) | %19,0 | %54,7 | %28,6 | 1,000 | 19 / 0 |
+| cemal (2024-26) | 5 / 2 / 1 | 4 / 5 (%80,0) | 0 / 2 (%0,0) | **%57,1** (4 / 7) | %61,4 | %54,7 | %28,6 | 1,000 | 13 / 0 |
 
 ## Sayfa sayfa (sonuç açıldı)
 
@@ -77,22 +78,22 @@ BAŞARI tanımı (önceden yazılı): CLAUDE.md 'Hakem turları' (önceden yazı
 | 22 | BIST | 2024-26 | 0 | OLMAZ | - | 1 | %42,4 | 0 | 0 | %1,5 | %9,1 | 1 (%11,3) | %10,0 / -%9,2 / -%6,6 |  | X |  |
 | 23 | BIST | 2024-26 | 1 | OLUR | - | 0 | %70,0 | 0 | 1 | -%8,7 | %0,8 | 1 (%6,2) | %2,5 / -%18,4 / -%18,2 |  | X |  |
 | 24 | AVR | 2024-26 | 1 | OLMAZ | - | 0 | %45,0 | 0 | 1 | -%16,4 | -%4,1 | 0 (%0,8) | %1,5 / -%25,8 / %1,1 |  |  |  |
-| 25 | BIST | 2016-22 | 0 | OLUR | - | 0 | %25,0 | 0 | 1 | -%8,7 | -%0,5 | 0 (%0,4) | -%0,5 / -%17,5 / -%12,6 |  | X |  |
-| 26 | BIST | 2024-26 | 0 | OLMAZ | - | 1 | %84,0 | 1 | 0 | %7,7 | %13,7 | 1 (%21,2) | %13,7 / -%14,1 / -%3,4 |  | X |  |
-| 27 | ABD | 2024-26 | 0 | OLUR | - | 0 | %30,4 | 0 | 1 | -%3,4 | %4,3 | 1 (%5,1) | %14,6 / -%6,3 / %14,3 | K | X |  |
-| 28 | BIST | 2024-26 | 0 | OLUR | - | 1 | %89,3 | 0 | 0 | %0,1 | %8,8 | 1 (%11,7) | %8,8 / -%15,5 / -%5,6 |  |  |  |
-| 29 | BIST | 2016-22 | 0 | OLUR | - | 0 | %12,5 | 0 | 0 | -%10,1 | %1,0 | 0 (%1,4) | %3,0 / -%13,3 / %0,0 |  | X |  |
-| 30 | BIST | 2024-26 | 1 | OLMAZ | - | 1 | %31,6 | 0 | 0 | %0,8 | %9,6 | 1 (%11,5) | %9,6 / -%10,4 / -%7,9 |  | X |  |
-| 31 | AVR | 2016-22 | 0 | OLMAZ | - | 1 | %65,5 | 0 | 0 | %5,6 | %9,9 | 1 (%10,5) | %19,4 / -%2,4 / %19,4 |  | X |  |
-| 32 | AVR | 2016-22 | 0 | OLUR | - | 1 | %62,1 | 1 | 0 | %5,9 | %12,6 | 1 (%12,6) | %30,9 / -%1,4 / %25,7 |  |  |  |
-| 33 | ABD | 2016-22 | 0 | OLMAZ | - | 0 | %7,7 | 0 | 0 | %18,5 | %0,6 | 0 (%1,4) | %18,5 / -%6,3 / %18,5 |  |  |  |
-| 34 | ABD | 2024-26 | 0 | OLMAZ | - | 0 | %41,7 | 0 | 1 | -%4,1 | %4,1 | 1 (%7,5) | %20,4 / -%12,8 / %20,1 | K |  |  |
-| 35 | ABD | 2016-22 | 1 | OLMAZ | - | 0 | %31,7 | 0 | 0 | %28,5 | %2,7 | 0 (%5,0) | %28,5 / -%4,0 / %28,5 |  |  |  |
-| 36 | BIST | 2016-22 | 0 | OLMAZ | - | 0 | %52,6 | 0 | 1 | -%5,6 | %1,8 | 1 (%5,6) | %1,8 / -%16,2 / -%13,7 |  |  |  |
-| 37 | ABD | 2023 | 0 | OLMAZ | - | 1 | %86,6 | 0 | 0 | -%0,5 | %6,6 | 1 (%7,5) | %6,6 / -%8,0 / %2,0 |  | X |  |
-| 38 | BIST | 2016-22 | 0 | OLMAZ | - | 0 | %31,6 | 0 | 1 | -%12,6 | -%1,3 | 0 (%3,8) | -%1,3 / -%19,2 / -%14,6 |  |  |  |
-| 39 | ABD | 2023 | 0 | OLMAZ | - | 0 | %31,9 | 0 | 1 | -%4,0 | %3,9 | 1 (%5,8) | %3,9 / -%25,0 / -%22,7 | K |  |  |
-| 40 | BIST | 2024-26 | 0 | OLMAZ | - | 1 | %84,4 | 1 | 0 | %63,6 | %76,7 | 1 (%86,5) | %88,1 / %9,5 / %69,3 |  | X |  |
+| 25 | BIST | 2016-22 | 0 | OLUR | OLMAZ | 0 | %25,0 | 0 | 1 | -%8,7 | -%0,5 | 0 (%0,4) | -%0,5 / -%17,5 / -%12,6 |  | X |  |
+| 26 | BIST | 2024-26 | 0 | OLMAZ | OLUR | 1 | %84,0 | 1 | 0 | %7,7 | %13,7 | 1 (%21,2) | %13,7 / -%14,1 / -%3,4 |  | X |  |
+| 27 | ABD | 2024-26 | 0 | OLUR | OLUR | 0 | %30,4 | 0 | 1 | -%3,4 | %4,3 | 1 (%5,1) | %14,6 / -%6,3 / %14,3 | K | X | X |
+| 28 | BIST | 2024-26 | 0 | OLUR | OLUR | 1 | %89,3 | 0 | 0 | %0,1 | %8,8 | 1 (%11,7) | %8,8 / -%15,5 / -%5,6 |  |  |  |
+| 29 | BIST | 2016-22 | 0 | OLUR | OLUR | 0 | %12,5 | 0 | 0 | -%10,1 | %1,0 | 0 (%1,4) | %3,0 / -%13,3 / %0,0 |  | X | X |
+| 30 | BIST | 2024-26 | 1 | OLMAZ | OLMAZ | 1 | %31,6 | 0 | 0 | %0,8 | %9,6 | 1 (%11,5) | %9,6 / -%10,4 / -%7,9 |  | X | X |
+| 31 | AVR | 2016-22 | 0 | OLMAZ | OLUR | 1 | %65,5 | 0 | 0 | %5,6 | %9,9 | 1 (%10,5) | %19,4 / -%2,4 / %19,4 |  | X |  |
+| 32 | AVR | 2016-22 | 0 | OLUR | OLUR | 1 | %62,1 | 1 | 0 | %5,9 | %12,6 | 1 (%12,6) | %30,9 / -%1,4 / %25,7 |  |  |  |
+| 33 | ABD | 2016-22 | 0 | OLMAZ | OLMAZ | 0 | %7,7 | 0 | 0 | %18,5 | %0,6 | 0 (%1,4) | %18,5 / -%6,3 / %18,5 |  |  |  |
+| 34 | ABD | 2024-26 | 0 | OLMAZ | BELİRSİZ | 0 | %41,7 | 0 | 1 | -%4,1 | %4,1 | 1 (%7,5) | %20,4 / -%12,8 / %20,1 | K |  |  |
+| 35 | ABD | 2016-22 | 1 | OLMAZ | OLUR | 0 | %31,7 | 0 | 0 | %28,5 | %2,7 | 0 (%5,0) | %28,5 / -%4,0 / %28,5 |  |  | X |
+| 36 | BIST | 2016-22 | 0 | OLMAZ | BELİRSİZ | 0 | %52,6 | 0 | 1 | -%5,6 | %1,8 | 1 (%5,6) | %1,8 / -%16,2 / -%13,7 |  |  |  |
+| 37 | ABD | 2023 | 0 | OLMAZ | BELİRSİZ | 1 | %86,6 | 0 | 0 | -%0,5 | %6,6 | 1 (%7,5) | %6,6 / -%8,0 / %2,0 |  | X |  |
+| 38 | BIST | 2016-22 | 0 | OLMAZ | OLUR | 0 | %31,6 | 0 | 1 | -%12,6 | -%1,3 | 0 (%3,8) | -%1,3 / -%19,2 / -%14,6 |  |  | X |
+| 39 | ABD | 2023 | 0 | OLMAZ | OLUR | 0 | %31,9 | 0 | 1 | -%4,0 | %3,9 | 1 (%5,8) | %3,9 / -%25,0 / -%22,7 | K |  | X |
+| 40 | BIST | 2024-26 | 0 | OLMAZ | OLUR | 1 | %84,4 | 1 | 0 | %63,6 | %76,7 | 1 (%86,5) | %88,1 / %9,5 / %69,3 |  | X |  |
 
 Bilgi sütunları (B1.0): Fiyat = ge_hazir (YAPI_HEDEF geçerli bar + kriz kesiği 31.08.2026). Bar 0 = giriş günü (olay 'giris'; geçerli bar olmalı, yoksa DURUR), E0 = giriş günü açılışı (olay dosyasında E0 varsa göreli 1e-4 ile aynı olmalı, yoksa DURUR). 15 g = bar 0..14 (15 geçerli bar; h5 ile aynı sayım, stop YOK); 60 g = bar 0..59 (60 geçerli bar; kriz kesiği ya da hissenin son barı yüzünden 60 bar yoksa 60 g sütunları NaN = ölçülemedi). k15 = max Close(0..14) / E0 - 1; gi15 = max High(0..14) / E0 - 1; m60 / n60 / s60 = max / min / son (bar 59) Close(0..59) / E0 - 1. yön doğru / eşik kaçtı: karar OLUR VE h5 = 0 VE +%3 <= k15 < +%5 (kapanışla +%3..+%5 arası kaldı). Bilgi; BAŞARI'yı değiştirmez. 'eşik kaçtı' sütunu (K) sayfanın kapanış bandını gösterir; taraf sayımı yalnız o tarafın OLUR dediği sayfalarda.
 
