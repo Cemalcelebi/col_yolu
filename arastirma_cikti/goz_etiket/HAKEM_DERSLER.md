@@ -161,6 +161,7 @@ Birikimli (TUR 1 + 2 + 4; stop şartlı karar ölçüsü): Cemal 33 / 71 = %46,5
 ### Dersler (SINANMADI; tek tur, n küçük)
 - CD15 (yeni): kod iki aday bölgeden kötüsünü seçmişse (önceki dip savunması / kazan daha net) hedef gelmiyor: 5 / 5. Kural adayı: mahkeme 'ÖNCEKİ BÖLGE DAHA UYGUN' -> OLMAZ.
 - CD16 (yeni): 'sert düşüş sonrası zaman / haber lazım' tereddüdü fırsat kaçırdı: BELİRSİZ 10 sayfanın 6'sı gitti (zaman-haber gerekçeli 4'ün 2'si gitti, 1 stop). Karar vermemek puan değil ama U dip havuzunda tereddüt pahalı.
+  - DÜZELTME (Cemal, 19 Kas): 'zaman ister' = yeni oluşan bölgede hissenin geçmişine, hikâyesine ve sektörün olumlu olup olmadığına bakılır; kör sette bunlar yok, bu yüzden bu sayfalar 'DOSYA GEREKLİ' sınıfıdır, tereddüt değil; gidip gitmemesi Cemal'i yanıltmaz ('haber okunsaydı al gelme ihtimali çok fazla olurdu'). Kör test bu sınıfı ölçemez (dosya bilgisi tarih sızdırır); BELİRSİZ puana girmez, 6 / 10 gitti notu bilgi olarak kalır.
 - CD17 (yeni): 'önceki toparlanma sert ve hızlıysa bu da hızlı olur' (5, 6, 20, 21): 2 / 4; 5 ve 6 stop oldu (5 sonra +%86). Yön doğru, giriş zamanlaması / stop darlığı sorun.
 - CD18 (yeni): 'en dip üstünde oluşum = satıcı bitti' (16, 34): 1 / 2.
 - CD20 (yeni): OLUR'ların 4'ü stop'la kaybedildi; hat x 0,98 stopu U dip havuzunda dar (5: stop sonra +%86). Stop sorusu ileri test adayı (eşik önceden yazılır).
