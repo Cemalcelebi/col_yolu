@@ -72,3 +72,35 @@
 - TUR 4: 40 sayfa (ABD 2016-22 9, ABD 2023 2, ABD 2024-26 5, AVR 2016-22 1, AVR 2023 1, AVR 2024-26 1, BIST 2016-22 8, BIST 2023 1, BIST 2024-26 12); parmak F19 (bilgi): ABD parmak=0 15, ABD parmak=1 1, AVR parmak=0 3, BIST parmak=0 19, BIST parmak=1 2; PDF 2.54 MB, sızıntı sembol 0 / tarih 0.
 - TUR 5: 40 sayfa (ABD 2016-22 11, ABD 2023 1, ABD 2024-26 10, AVR 2016-22 4, BIST 2016-22 4, BIST 2024-26 10); parmak F19 (bilgi): ABD parmak=0 18, ABD parmak=1 4, AVR parmak=0 4, BIST parmak=0 11, BIST parmak=1 3; PDF 2.52 MB, sızıntı sembol 0 / tarih 0.
 - TUR 4 / 5, TUR 3 ölçülmeden açılır (ana model kararı, TUR4_IS_TANIMI.md; Cemal'in 19 Kas isteği). TUR 5 PDF'i Cemal'e TUR 4 yanıtından sonra gönderilir (ana model).
+
+## TUR 4 (2026-11-19 09:50:28 UTC)
+
+| Taraf | OLUR / OLMAZ / BELİRSİZ | OLUR isabeti (+%5 gördü) | OLMAZ isabeti (+%5 görmedi) | BAŞARI | OLUR sayfalarının eş payı | taban: bütün sayfaların eş payı | hep OLMAZ deseydi | Fisher p | yanıtsız / ölçülemedi |
+|---|---|---|---|---|---|---|---|---|---|
+| model (bu tur) | 2 / 38 / 0 | 2 / 2 (%100,0) | 20 / 38 (%52,6) | **%55,0** (22 / 40) | %52,1 | %53,1 | %50,0 | 0,487 | 0 / 0 |
+| Cemal (bu tur) | 19 / 11 / 10 | 10 / 19 (%52,6) | 7 / 11 (%63,6) | **%56,7** (17 / 30) | %47,8 | %53,1 | %50,0 | 0,466 | 0 / 0 |
+| model (birikimli, tur [1, 2, 4]) | 30 / 69 / 1 | 15 / 30 (%50,0) | 37 / 69 (%53,6) | **%52,5** (52 / 99) | %44,2 | %46,1 | %53,0 | 0,828 | 0 / 0 |
+| Cemal (birikimli, tur [1, 2, 4]) | 47 / 24 / 29 | 21 / 47 (%44,7) | 12 / 24 (%50,0) | **%46,5** (33 / 71) | %43,7 | %46,1 | %53,0 | 0,802 | 0 / 0 |
+
+- Uyum (kappa, 3 sınıf): bu tur -0,014 (n 40); birikimli 0,059 (n 100).
+- Yanılınan sayfalar: model [1, 2, 3, 9, 10, 14, 16, 17, 19, 20, 26, 28, 31, 33, 35, 36, 39, 40]; Cemal [4, 5, 6, 8, 10, 11, 15, 17, 27, 29, 34, 37, 39].
+- Cemal'in hedefi BAŞARI %80-90; taban oran ~%40 (eş payı) olduğu için bu hedef zordur (her tur raporunda yazılır).
+
+Üç cetvel (bilgi; BAŞARI yalnız ilk cetvelle, değişmez):
+
+| Taraf | Cetvel | OLUR isabeti | OLMAZ isabeti | BAŞARI | taban (sayfa payı) | hep OLMAZ deseydi | ölçülemedi |
+|---|---|---|---|---|---|---|---|
+| model (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 2 / 2 (%100,0) | 20 / 38 (%52,6) | **%55,0** (22 / 40) | %50,0 | %50,0 | 0 |
+| model (bu tur) | 15 g gün içi +%5 (High; bilgi) | 2 / 2 (%100,0) | 15 / 38 (%39,5) | **%42,5** (17 / 40) | %62,5 | %37,5 | 0 |
+| model (bu tur) | 60 g kapanış +%5 (bilgi) | 2 / 2 (%100,0) | 11 / 38 (%28,9) | **%32,5** (13 / 40) | %72,5 | %27,5 | 0 |
+| Cemal (bu tur) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 10 / 19 (%52,6) | 7 / 11 (%63,6) | **%56,7** (17 / 30) | %50,0 | %50,0 | 0 |
+| Cemal (bu tur) | 15 g gün içi +%5 (High; bilgi) | 12 / 19 (%63,2) | 6 / 11 (%54,5) | **%60,0** (18 / 30) | %62,5 | %37,5 | 0 |
+| Cemal (bu tur) | 60 g kapanış +%5 (bilgi) | 13 / 19 (%68,4) | 4 / 11 (%36,4) | **%56,7** (17 / 30) | %72,5 | %27,5 | 0 |
+| model (birikimli, tur [1, 2, 4]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 15 / 30 (%50,0) | 37 / 69 (%53,6) | **%52,5** (52 / 99) | %47,0 | %53,0 | 0 |
+| model (birikimli, tur [1, 2, 4]) | 15 g gün içi +%5 (High; bilgi) | 16 / 30 (%53,3) | 25 / 69 (%36,2) | **%41,4** (41 / 99) | %60,0 | %40,0 | 0 |
+| model (birikimli, tur [1, 2, 4]) | 60 g kapanış +%5 (bilgi) | 25 / 30 (%83,3) | 19 / 67 (%28,4) | **%45,4** (44 / 97) | %74,5 | %25,5 | 2 |
+| Cemal (birikimli, tur [1, 2, 4]) | 15 g kapanış +%5, stop'tan önce (KARAR ÖLÇÜSÜ) | 21 / 47 (%44,7) | 12 / 24 (%50,0) | **%46,5** (33 / 71) | %47,0 | %53,0 | 0 |
+| Cemal (birikimli, tur [1, 2, 4]) | 15 g gün içi +%5 (High; bilgi) | 28 / 47 (%59,6) | 9 / 24 (%37,5) | **%52,1** (37 / 71) | %60,0 | %40,0 | 0 |
+| Cemal (birikimli, tur [1, 2, 4]) | 60 g kapanış +%5 (bilgi) | 34 / 46 (%73,9) | 5 / 24 (%20,8) | **%55,7** (39 / 70) | %74,5 | %25,5 | 2 |
+- Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model yok; Cemal [11]; birikimli model 4, Cemal 6.
+- Cemal'in birikimli etiketi 100'ü geçti: göz ölçümü (Ç192 planı) Cemal'in kendi etiketleriyle koşulur.
