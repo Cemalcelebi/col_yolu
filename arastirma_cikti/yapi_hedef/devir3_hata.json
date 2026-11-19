@@ -1,0 +1,13 @@
+[
+ "SÜREÇ: iş tanımı 'yh_devir_ozellik / yh_devir_kos ekle' diyordu; bu adlar DEVİR 1'e ait (çakışma kapısı ezerdi). DEVİR 3 adları yh_devir3_ozellik / yh_devir3_prefix / yh_devir3_kos / yh_d3_* oldu; DEVİR 1-2 fonksiyonları değişmedi (test).",
+ "SÜREÇ (bilgi karışıklığı, sonuca etkisiz): iş tanımında 'devir2_esik.json sha 83c387e6...' ve 'devir1_esik esik_d1_sha 2ffac1e3...' yazıyordu; bunlar YH_ESIK_D2 / YH_ESIK_D1 SÖZLÜK sha'larıdır. Dosya sha'ları: devir2_esik.json d4f2eb2c..., devir1_esik.json 9f9db30f... (ön kayıtta ikisi ayrı satır; DEVIR_1 / DEVIR_2 mühürleriyle aynı).",
+ "SÜREÇ: iş tanımı W2D / W1 için 'dosya ozellik_Y1_d1.csv.gz', not ise 'ozellik_Y1_d2.csv.gz' diyordu; F30 / F32 yalnız d1 dosyasında var, d1 kullanıldı (sha e80d9fb9..., yeniden hesaplanmadı).",
+ "ÖN KAYIT ÖNCESİ DÜZELTME: ilk prefix denetimi ABD GBCI 2017-11-02 F17'de DURDU; neden: goz_etiket/ozellik_Y1.csv.gz 6 anlamlı basamakla yazılı, karşılaştırma rtol 1e-6 idi (yeniden hesap -0,0228512485 / dosya -0,0228512). rtol 1e-5'e çekildi, ön kayıttan ÖNCE; sonra 3 x 30 olay tuttu. Sızıntı değil, yuvarlama.",
+ "SÜREÇ (paylaşılan çalışma ağacı): oturum sırasında GOZ_ETIKET.py başka bir süreç tarafından değiştirildi (13:36:26 UTC; TUR 6 / TUR 7 eşik eklemesi GE_TUR_ESIK_T17 / T18). Bu ajan dosyaya dokunmadı ve commit'lemedi; prefix denetimi o anki GOZ_ETIKET'i import etti (S6 / ge_ozellik_bar değişmemiş görünüyor; 90 olayda mühürlü değerler tuttu).",
+ "SÜREÇ: iş tanımı commit sonuna 'Co-Authored-By: Claude Fable 5.1' istiyordu; oturumun atıf kuralı 'Claude Opus 5.5' olduğundan o kullanıldı.",
+ "KAPSAM: KER_20 ve CHOP (AYK karşılaştırma bilgisi) hesaplanmadı; aday değil, yeni özellik dosyası açılmadı.",
+ "TASARIM NOTU: güç simülasyonu getirisiz değildir (sigma kol tabanı h5 - es_h5 dağılımından); yalnız kol B karar kapısıdır, eşik değil; delta +5 puan ön kayıtta sabit.",
+ "TASARIM NOTU: ATRP şartı her karar pazarı x hücre x tercilde (12 hücre, kol A) MARJ > 0 ister; tercil n 80-1.100; şansla bir hücre düşebilir (ön kayıtta yazılı, sonuçtan sonra gevşetilmedi). Dört adayın hiçbiri tutmadı.",
+ "GÜÇ: kol A AVR sınama hücrelerinde güç < 0,80 (NR7 0,54, W1 0,75); bu hücrelerdeki negatif MARJ 'iz değil' değil, ÖLÇÜLEMEDİ düzeyindedir. Kol B ABD hücrelerinin hepsinde güç 0,12-0,59 -> dört kol B satırı ÖLÇÜLEMEDİ.",
+ "SÜRE: test_yapi_hedef.py 8,5 dakika sürüyor (335 kontrol); 2 dakikalık araç zaman aşımını aşıyor."
+]
