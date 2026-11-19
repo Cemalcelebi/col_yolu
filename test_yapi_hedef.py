@@ -16,6 +16,8 @@
 12) 3. TUR (Y9 / Y9b / Y9c / Y9d): F1 / F11 / F15 / F17 = GOZ_ETIKET.ge_ozellik_bar, seçim sınırları, çeyrek, özellik birleştirme sembol +
     tarih (karışık sıralı dosya; eksik satır durur), prefix (geleceğe bakma), F15 paneli elle, konum eşli KAT elle = kod, TERS ve 3. tur
     etiketi, ESIK_TUR2_SHA = 2. tur mührü; uçtan uca (9'da) onkayit3 + kos + kapı + Y1 regresyonu, önceki turlar değişmez
+13) 7. TUR (PUAN): sızıntı kapısı (ihlal eden bölünme DURUR, simetrik, her eğitimde), tampon, dilim hesabı, plasebo karıştırma,
+    yapay veri ile öğrenilebilir sinyal / gürültü, yürüyen katlar, NaN medyan + bayrak, uçtan uca onkayit7 + kos7 + rapor7 + kapı
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -1160,6 +1162,148 @@ for tm in list(pd.to_datetime(X1m.tarih))[-8:]:
     assert Mm["karar"] == Mk["karar"] and [a["bar"] for a in Mm["adaylar"]] == [a["bar"] for a in Mk["adaylar"]]
     assert all(-250 <= a["bar"] <= -1 for a in Mm["adaylar"])
 kontrol("mahkeme: t sonrası veri kararı değiştirmez; adaylar [t-250, t-1]; aday prefix kapısı geçti", nm == min(8, len(X1m)) and nm >= 5 and npre > 0, (nm, npre, nonc))
+
+# ================================================================ 7. TUR (PUAN): sızıntı kapısı, plasebo, dilim, öğrenilebilir / gürültü, uçtan uca
+print("\n7. TUR (PUAN)")
+E7t = copy.deepcopy(YH.YH_ESIK7); E7t["plasebo"]["tekrar"] = 5
+Yt = copy.deepcopy(YH.YH_ESIK); Yt["kat"]["bootstrap"] = 100
+try:
+    YH.yh_sizinti_kapisi(["2022-12-01"], ["2023-01-15", "2023-06-01"], 60); kapi7 = False
+except YH.YHHata as ex:
+    kapi7 = "SIZINTI KAPISI" in str(ex)
+kontrol("7: sızıntı kapısı: 45 gün yakın eğitim / sınama -> DURUR", kapi7)
+kontrol("7: sızıntı kapısı: 61 gün -> geçer (en küçük uzaklığı döner)", YH.yh_sizinti_kapisi(["2022-11-01"], ["2023-01-01"], 60) == 61)
+try:
+    YH.yh_sizinti_kapisi(["2024-03-01"], ["2024-01-20"], 60); kapi7b = False      # eğitim sınamadan SONRA (yön B) da simetrik
+except YH.YHHata:
+    kapi7b = True
+kontrol("7: sızıntı kapısı simetrik (eğitim sınamadan sonra 41 gün -> DURUR)", kapi7b)
+kt = YH.yh_tampon7(pd.to_datetime(["2022-10-01", "2022-11-15", "2022-12-20"]), pd.to_datetime(["2023-01-02"]), 60)
+kontrol("7: tampon: sınamaya <= 60 gün eğitim satırları atılır", list(kt) == [True, False, False], str(kt))
+
+pt = np.arange(1, 101, dtype=float); Dm7 = YH.yh_dilim7(np.r_[pt, pt[::-1] + 1000], np.r_[np.zeros(100), np.ones(100)], YH.YH_ESIK7)
+kontrol("7: dilim: 100 puanda üst %20 / %10 / %5 / alt %20 = 20 / 10 / 5 / 20 (grup başına), grup içi sıralama",
+        [int(Dm7[k][:100].sum()) for k in ("ust20", "ust10", "ust5", "alt20")] == [20, 10, 5, 20]
+        and [int(Dm7[k][100:].sum()) for k in ("ust20", "ust10", "ust5", "alt20")] == [20, 10, 5, 20]
+        and Dm7["ust5"][:100][-5:].all() and Dm7["alt20"][100:][-20:].all())
+yv = (np.arange(500) % 3 == 0).astype(int)
+p1, p2, p3 = (YH.yh_plasebo_y7(yv, r, 1, 0, YH.YH_ESIK7) for r in (0, 0, 1))
+kontrol("7: plasebo: karıştırma aynı çokluk, aynı tohum = aynı sıra, farklı tekrar = farklı sıra",
+        p1.sum() == yv.sum() and (p1 == p2).all() and not (p1 == p3).all() and not (p1 == yv).all())
+
+
+def _d7(n, tohum, sinyal):
+    rng = np.random.default_rng(tohum)
+    pz = np.array(["ABD", "AVR", "BIST"])[np.arange(n) % 3]
+    gun = pd.bdate_range("2016-02-01", "2026-06-30")
+    t = pd.DatetimeIndex(np.sort(rng.choice(gun, n, replace=True)))
+    D = pd.DataFrame({"deneme": "G6", "pazar": pz, "sembol": [f"S{i % 97}" for i in range(n)], "tarih": t})
+    D = D.drop_duplicates(["pazar", "sembol", "tarih"]).reset_index(drop=True); n = len(D)
+    D["giris"] = D.tarih + pd.Timedelta(days=1)
+    D["donem"] = np.where(D.giris.dt.year <= 2022, "2016-22", np.where(D.giris.dt.year == 2023, "2023", "2024-26"))
+    for c in YH._YH_OZ7:
+        D[c] = rng.normal(0, 1, n)
+    D["F16"] = rng.integers(0, 2, n).astype(float); D["F19"] = rng.integers(0, 2, n).astype(float)
+    D.loc[rng.random(n) < 0.05, "F2"] = np.nan; nn = rng.random(n) < 0.5
+    for c in ("F25", "F27", "F28", "F29"):
+        D.loc[nn, c] = np.nan
+    pr = 1 / (1 + np.exp(-(2.0 * D.F1.to_numpy() - 0.4))) if sinyal else np.full(n, 0.4)
+    D["h5"] = (rng.random(n) < pr).astype(float); D["es_h5"] = 0.4 + rng.normal(0, 0.01, n)
+    for c in ("h10", "st5", "h5H", "h10H"):
+        D[c] = (rng.random(n) < 0.3).astype(float); D["es_" + c] = 0.3
+    D["st5"] = (rng.random(n) < 0.2).astype(float)
+    for c in ("h5", "h10", "st5"):
+        D["tb_" + c] = 0.35; D["pl_" + c] = (rng.random(n) < 0.35).astype(float); D["k_es_" + c] = 0.38
+    D["n_es"] = 50.0; D["k_n_es"] = 40.0; D["getiri"] = rng.normal(0, 0.05, n); D["cikis_bar"] = 10.0; D["cikis_tur"] = "stop"; D["dd"] = 0.05
+    D["olc"] = True; D["j"] = 0; D["d"] = 1; D["hucre"] = 1; D["q_olay"] = 1; D["q_panel"] = 1
+    D["es_f15_ort"] = 0.5; D["es_f15_med"] = 0.5; D["es_ayni_ceyrek"] = 1.0
+    D["olcu"] = True; D["yil"] = D.giris.dt.year
+    return D
+
+
+Ds = _d7(3000, 71, True); Dn = _d7(3000, 72, False)
+Hs = YH.yh_puan_hesap7(Ds, E7t, yonler=("A",), modlar=("birlesik",), y2=False)
+Hn = YH.yh_puan_hesap7(Dn, E7t, yonler=("A",), modlar=("birlesik",), y2=False)
+for nm, D_, H_ in (("sinyal", Ds, Hs), ("gurultu", Dn, Hn)):
+    for mdl in ("M1", "M2"):
+        key = ("A", "birlesik", mdl)
+        R_ = YH.yh_dilim_tablo7(D_, H_["puan"][key], H_["plasebo"][key], "donem", E7t, Yt)
+        u = [r for r in R_["satir"] if r["dilim"] == "ust20"]
+        if nm == "sinyal":
+            kontrol(f"7: öğrenilebilir sinyal ({mdl}): AUC > 0,70, her hücrede üst %20 > plasebo %95 ve KAT5 alt > 1",
+                    R_["auc"] > 0.70 and all(r["s_plasebo7"] and r["s_kat"] for r in u), (round(R_["auc"], 3), [r["tutar"] for r in u]))
+        else:
+            kontrol(f"7: gürültü ({mdl}): AUC 0,40-0,60, en çok 1 / 6 hücre TUTAR (5 plasebo, 100 bootstrap: şans payı)",
+                    0.40 < R_["auc"] < 0.60 and sum(r["tutar"] for r in u) <= 1,
+                    (round(R_["auc"], 3), [r["tutar"] for r in u]))
+kontrol("7: sınama dışı (eğitim) satırların puanı NaN; plasebo tekrar sayısı",
+        np.isnan(Hs["puan"][("A", "birlesik", "M2")][(Ds.donem == "2016-22").to_numpy()]).all() and Hs["plasebo"][("A", "birlesik", "M2")].shape[0] == 5)
+trv = (Ds.donem == "2016-22").to_numpy(); tev = (Ds.donem == "2023").to_numpy()
+try:
+    YH.yh_egit_tahmin7(Ds, trv, tev, "M1", E7=E7t); kapi7c = False                # purge yok: Aralık 2022 eğitim satırları sınamaya yakın
+except YH.YHHata as ex:
+    kapi7c = "SIZINTI" in str(ex)
+kontrol("7: tampon uygulanmamış bölünme ile eğitim DURUR (kapı her eğitimde)", kapi7c)
+bc = YH.yh_bolunme7(Ds, "C", E7t)
+kontrol("7: yürüyen katlar 2019..2026; eğitim yalnız önceki yıllar; her kat kapıdan geçer",
+        [k["ad"] for k in bc] == [f"C{y}" for y in range(2019, 2027)]
+        and all(Ds.yil[k["tr"]].max() < int(k["ad"][1:]) for k in bc)
+        and all(YH.yh_sizinti_kapisi(Ds.giris[k["tr"]], Ds.giris[k["te"]], 60) > 60 for k in bc))
+Mn = pd.DataFrame({"F1": [0.0, 1.0, np.nan], **{c: [1.0, 2.0, 3.0] for c in YH._YH_OZ7 if c != "F1"}})
+Mn.loc[2, "F2"] = np.nan
+Xa, Xb, ad7 = YH._yh_matris7(Mn.iloc[:2], Mn.iloc[2:], YH.YH_ESIK7)
+kontrol("7: NaN -> eğitim medyanı + bayrak sütunları (F2, F14, F25, F27, F28, F29)",
+        Xb[0, 0] == 0.5 and Xb[0, 1] == 1.5 and Xb[0, ad7.index("nan_F2")] == 1 and len(ad7) == 36)
+
+# ---- 7. tur uçtan uca (sentetik çıktı klasörü; git'siz)
+t7 = tempfile.mkdtemp(prefix="yh_t7_"); c7 = os.path.join(t7, "cikti"); os.makedirs(c7)
+Du = _d7(2400, 73, True); k3 = ["pazar", "sembol", "tarih"]
+G6 = Du[[c for c in Du.columns if c not in YH._YH_OZ7 + ["olcu", "yil"]] + ["F14", "F15", "F17"]]
+G6.to_csv(os.path.join(c7, "olay_G6.csv.gz"), index=False, compression="gzip")
+y1p = os.path.join(c7, "olay_Y1.csv.gz"); G6.assign(deneme="Y1").to_csv(y1p, index=False, compression="gzip")
+Fa = Du[k3 + YH._YH_OZ7[:18]].assign(durum="AL"); Fa.to_csv(os.path.join(t7, "oz.csv.gz"), index=False, compression="gzip")
+Du[k3 + ["F19"]].to_csv(os.path.join(t7, "pa.csv.gz"), index=False, compression="gzip")
+Du[k3 + ["F20", "F21", "F22", "F22a", "F23"]].to_csv(os.path.join(t7, "s7.csv.gz"), index=False, compression="gzip")
+Du[k3 + ["F24", "F25", "F26", "F27", "F28", "F29"]].to_csv(os.path.join(t7, "s9.csv.gz"), index=False, compression="gzip")
+eski_yol7 = {k: YH.YH_YOL[k] for k in ("ozellik", "parmak_p11", "ozellik_s7", "ozellik_s9")}
+YH.YH_YOL.update({"ozellik": os.path.join(t7, "oz.csv.gz"), "parmak_p11": os.path.join(t7, "pa.csv.gz"), "ozellik_s7": os.path.join(t7, "s7.csv.gz"),
+                  "ozellik_s9": os.path.join(t7, "s9.csv.gz")})
+try:
+    json.dump({"deneme": {"Y1": {"satir_dosya": y1p}}}, open(os.path.join(c7, "sonuc.json"), "w"))
+    open(os.path.join(c7, "ON_KAYIT_5.md"), "w").write(f"- YH_ESIK_SHA: `{YH.yh_esik_sha()}`\n")
+    shutil.copy(os.path.join(KOK, "arastirma_cikti", "yapi_hedef", "guc_tablosu.json"), os.path.join(c7, "guc_tablosu.json"))
+    oy7 = YH.yh_onkayit7_yaz(c7, git=False)
+    m7 = open(oy7, encoding="utf-8").read()
+    kontrol("7: ON_KAYIT_7 yazıldı (iş tanımı §1-§4, sha'lar, SKLEARN, getirisiz sayımlar, kontrol listesi)",
+            "YH_ESIK7_SHA" in m7 and "SKLEARN:" in m7 and "### §4" in m7 and "| A |" in m7 and "| K14 |" in m7 and "h5_p_olay" not in m7)
+    R7 = YH.yh_kos7(c7, git=False, Y=Yt, tekrar=3, c13=False)
+    J7 = R7["json"]
+    kontrol("7: uçtan uca: puan7.json, puan_Y1.csv.gz, olay_Y12.csv.gz, RAPOR_7.md; etiket ve Y12",
+            all(os.path.exists(os.path.join(c7, f)) for f in ("puan7.json", "puan_Y1.csv.gz", "olay_Y12.csv.gz", "RAPOR_7.md"))
+            and "birlesik|M2" in J7["etiket"] and J7["y12_n"] > 0 and len(J7["tablo"]) == 12, J7["etiket"]["birlesik|M2"]["etiket"])
+    r7 = open(os.path.join(c7, "RAPOR_7.md"), encoding="utf-8").read()
+    kontrol("7: rapor: yeniden üretim iki hücre TUTTU; Y12 PUAN İLERLEME satırı; HATA / KONTROL LİSTESİ",
+            r7.count("TUTTU") >= 2 and "| Y12 PUAN |" in r7 and "## HATA" in r7 and "## KONTROL LİSTESİ" in r7, r7.count("TUTTU"))
+    kontrol("7: en küçük eğitim / sınama uzaklığı > 60 gün (bütün gerçek eğitimler)", min(b["min_gun"] for b in J7["bilgi"]) > 60)
+    try:
+        YH.yh_kos7(c7, git=False, Y=Yt, tekrar=3, c13=False); ik7 = False
+    except YH.YHHata:
+        ik7 = True
+    try:
+        YH.yh_onkayit7_yaz(c7, uzerine=True, git=False); ok7 = False
+    except YH.YHHata:
+        ok7 = True
+    kontrol("7: ikinci koşu ve ölçümden sonra ön kayıt DURUR", ik7 and ok7)
+    os.remove(os.path.join(c7, "puan7.json"))
+    Fa.assign(F3=Fa.F3 + 1e-3).to_csv(os.path.join(t7, "oz.csv.gz"), index=False, compression="gzip")
+    try:
+        YH.yh_kapi7(c7, git=False); sha7 = False
+    except YH.YHHata as ex:
+        sha7 = "sha tutmuyor" in str(ex)
+    kontrol("7: kapı: özellik dosyası değişince koşu DURUR", sha7)
+finally:
+    YH.YH_YOL.update(eski_yol7)
+    shutil.rmtree(t7, ignore_errors=True)
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
