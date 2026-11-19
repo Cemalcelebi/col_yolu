@@ -1,0 +1,8 @@
+[
+ "(koşudan önce, sentetik testte) yh_veri7 F1-F18'i yh_ozellik4_oku'dan almaya çalıştı; o fonksiyon yalnız F1/F2/F3/F4/F11/F14/F15/F17/F18 taşıyor -> F5-F10, F12, F13, F16 eksik kalacaktı. Düzeltme: dört özellik dosyası doğrudan 1:1 birleştirilir (ön kayıttan önce).",
+ "(koşudan önce) yh_kos7 Y12 çerçevesinde 'deneme' sütunu zaten vardı (olay_G6), insert hata verdi; sentetik uçtan uca testte yakalandı, üzerine yazma ile düzeltildi (ön kayıttan önce).",
+ "(koşudan önce) test: kontrol(ek=numpy dizi) belirsiz doğruluk hatası; ek str'ye çevrildi. Gürültü testinde M1 6 hücreden 1'inde şans TUTAR (5 plasebo, 100 bootstrap) -> test beklentisi 'en çok 1/6' yapıldı (kod değişmedi; yöntemin yanlış pozitif payı var demektir).",
+ "(koşudan sonra, K11 denetimi) puan_Y1.csv.gz puan sütunları 6 anlamlı haneyle yazıldı (float_format %.6g): A ABD 2024-26'da dosyadan yeniden dilimlemede eşikte 2 eşit puan çıkıyor -> n 818 (bellekteki kesin puanla 817). dilim_A/B/C sütunları kesin puandan yazıldı ve rapordakiyle aynı (817; P %50,67 / eş %44,24 elle doğrulandı). Karara etkisi yok; dosyadan yeniden dilimleme yapacaklar dilim sütununu kullanmalı. Koşu tek seferlik olduğu için dosya yeniden yazılmadı.",
+ "(tasarım notu, sonuç değil) Y12 eşiği birleşik modelin eğitim puanlarından: model pazar taban farkını (BIST P(+5) ~%50, AVR ~%30) özelliklerden öğrendiği için seçilen pay pazara göre çok farklı (BIST 2023 %78, AVR 2016-22 %4). Ön kayıtlı kural değiştirilmedi.",
+ "ON_KAYIT_7 git satırlarında zaman '?' (6. turda da aynı: _yh_git anahtar adı); commit hash'leri doğru, gösterim sorunu."
+]

@@ -23207,5 +23207,16 @@
   "uyum": true,
   "uyumsuz": []
  },
- "hata_tur5": []
+ "hata_tur5": [],
+ "puan7": {
+  "dosya": "arastirma_cikti/yapi_hedef/puan7.json",
+  "ana_etiket": "ÖLÇÜLEMEDİ",
+  "etiket_kural": "ÖLÇÜLEMEDİ",
+  "y12_n": 5144,
+  "esik12": {
+   "A": 0.464827455587876,
+   "B": 0.4904914314581883
+  },
+  "esik7_sha": "14f11dee1c6c96e976f60357771c7bb2b312ce91ad99cde691dad7dd2410ff26"
+ }
 }
