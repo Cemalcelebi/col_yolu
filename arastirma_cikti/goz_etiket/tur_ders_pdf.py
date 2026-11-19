@@ -12,6 +12,10 @@ okunur; ikisi karşılaştırılır, tutmazsa betik durur. Tur puanı tur_N_sonu
 Grafik çizimi hakem_ders_pdf.hd_grafik ile aynıdır (ortak kod; t'de kesik veriden hat / tavan, olay dosyasıyla eşitlik kapısı).
 Kimlik zinciri: tur_N_anahtar.json sayfa -> (pazar, sembol, tarih) -> olay_Y1 satırı. HİSSE ADI / TARİH PDF'E GİRMEZ.
 
+TUR 4 (19 Kas 2026): 40 sayfa ve 2016-22 dönemi; HAKEM_DERSLER '## TUR 4' başlığı; ders metinleri md'den AYNEN (kapı) ve td_md_kapisi:
+md tablosu / birikimli / ders metni sayıları ve sayfa -> ders eşlemesi tur_4_satir.csv'den sayılanlarla aynı olmak zorunda (tutmazsa DURUR).
+Birikimliye yalnız TD_DERS'te olan turlar girer (TUR 3: Cemal yanıtı yok). 30'dan çok sayfada özet tablosu sıkışık satırla basılır.
+
 SONRA SEÇENEĞİ (18 Kas 2026, Cemal: sonrası grafiğinde 30 mum): `--sonra N` (15..60) sağ grafikte giriş sonrası N bar gösterir (varsayılan
 TD_AYAR['sonra'] = 20; --sonra verilmezse çıktı eskisiyle aynıdır). --sonra verilince: sarı pencere yine 15 bar (KARAR ÖLÇÜSÜ), 30 bar
 sonunda ince gri çizgi (N >= 30 ise), sayfa başlığında BİLGİ satırı (30 g kapanış +%5, stop ŞARTSIZ; td_bilgi30) ve özet tablosunda
@@ -129,6 +133,44 @@ TD_DERS: Dict[int, Dict[str, Any]] = {
                         "hepsine OLMAZ deseydin {ho} olurdu (sayfaların {sh}'ı +%5 gördü). Uyum (kappa) {ka}. Fisher p sen {cp} / model {mp}. "
                         "Senin OLUR'larının 7'si stop; 11 BELİRSİZ. Hedef %80-90; taban ~%40 olduğu için zor. n küçük; dersler SINANMADI, kural değil."),
     },
+    4: {
+        # Metinler HAKEM_DERSLER.md '## TUR 4' bölümünün '### Dersler' maddelerinden (CD19: 'doğru çıkan yargıları' maddesinden) AYNEN;
+        # "aynen" bayrağı: her metin bölümde birebir geçmek zorunda (kapı). Sayılar elle yazılmaz: td_md_kapisi satır dosyasından sayar.
+        "aynen": True,
+        "metin": {
+            "CD15": "(yeni): kod iki aday bölgeden kötüsünü seçmişse (önceki dip savunması / kazan daha net) hedef gelmiyor: 5 / 5. Kural adayı: "
+                    "mahkeme 'ÖNCEKİ BÖLGE DAHA UYGUN' -> OLMAZ.",
+            "CD16": "(yeni): 'sert düşüş sonrası zaman / haber lazım' tereddüdü fırsat kaçırdı: BELİRSİZ 10 sayfanın 6'sı gitti (zaman-haber "
+                    "gerekçeli 4'ün 2'si gitti, 1 stop). Karar vermemek puan değil ama U dip havuzunda tereddüt pahalı.",
+            "CD17": "(yeni): 'önceki toparlanma sert ve hızlıysa bu da hızlı olur' (5, 6, 20, 21): 2 / 4; 5 ve 6 stop oldu (5 sonra +%86). Yön "
+                    "doğru, giriş zamanlaması / stop darlığı sorun.",
+            "CD18": "(yeni): 'en dip üstünde oluşum = satıcı bitti' (16, 34): 1 / 2.",
+            "CD19": "'fon izi var, büyük girilir' (2) ve '+%5 kesin gibi' (26): 2 / 2 geldi (2: +%16,5; 60 g +%48).",
+            "CD20": "(yeni): OLUR'ların 4'ü stop'la kaybedildi; hat x 0,98 stopu U dip havuzunda dar (5: stop sonra +%86). Stop sorusu ileri test "
+                    "adayı (eşik önceden yazılır).",
+            "CD21": "(yeni): 'önceki kazan bitmedi / ikinci kazan daha derin / satıcı bitmedi' = OLMAZ gerekçeleri 4 / 4 yanılttı (10, 17, 37, 39). "
+                    "Derin ikinci dip tek başına eleme nedeni değil (ters emare).",
+            "VD10": "(model; yeni): VD9 şart 3 (büyük resim yükselen / yatay) düşüş sonrası dip havuzuyla tanım gereği çelişti: 24 aday elendi, "
+                    "model OLMAZ dediklerinin 18 / 38'i gitti (%47 = taban), OLUR yalnız 2 (ikisi de geldi). TUR 5 kuralı: dipte havuzda şart 3 "
+                    "uygulanmaz; OLUR için şart 1 (sağ kenar dönüşü) + şart 2 (gövdeli ortalayan kırılım) yeter; ek eleme yalnız CD15 (önceki "
+                    "bölge daha uygun) ve C13 (dev mum); 'ikinci kazan daha derin' eleme nedeni DEĞİL (CD21).",
+        },
+        # Sayfa eşlemesi ana modelin iş tanımından (19 Kas): 4, 11, 15 ders kodsuz (OLUR dedi, gelmedi); 2 ve 26 (CD19) eşlenmedi.
+        "cemal": {**{s: "CD15" for s in (13, 18, 29, 30, 32)}, **{s: "CD16" for s in (19, 28, 31, 33, 35, 40)},
+                  **{s: ("CD17", "CD20") for s in (5, 6)}, 34: "CD18", **{s: "CD20" for s in (8, 27)},
+                  **{s: "CD21" for s in (10, 17, 37, 39)}},
+        "model": {s: "VD10" for s in (1, 2, 3, 9, 10, 14, 16, 17, 19, 20, 26, 28, 31, 33, 35, 36, 39, 40)},
+        "kodsuz": (4, 11, 15),
+        "esik_kacti": (11, 29),  # HAKEM_DERSLER TUR 4: '11 ve 29 eşik kaçtı'; 15 g en yüksek kapanış satır dosyasından (k15) yazılır
+        "yeni": ("CD15", "CD16", "CD17", "CD18", "CD19", "CD20", "CD21", "VD10"),
+        "tekrar": (),
+        "yanlis_kod": ("VD10",),
+        "cemal_yanlis_kod": ("CD17", "CD18", "CD20", "CD21"),
+        "kapak_sonuc": ("Sonuç: iki taraf da taban çevresinde (Fisher p büyük; fark anlamlı değil). Sen {ck} kararda {cb}, model {mk} kararda {mb}; taban {tb}; hepsine OLMAZ "
+                        "deseydin {ho} olurdu (sayfaların {sh}'ı +%5 gördü). Uyum (kappa) {ka}. Fisher p sen {cp} / model {mp}. Senin {c_olur} "
+                        "OLUR'undan {c_olur_stop} tanesi stop; BELİRSİZ {c_bel} sayfanın {c_bel_git} tanesi +%5 gördü. Model {m_olmaz} sayfaya OLMAZ "
+                        "dedi, {m_olmaz_git} tanesi +%5 gördü (VD10). Hedef %80-90; taban ~%40 olduğu için zor. n küçük; dersler SINANMADI, kural değil."),
+    },
 }
 
 
@@ -142,9 +184,10 @@ def _td_json(yol: str) -> Dict[str, Any]:
 
 
 def _td_md_bolum(md: str, no: int) -> str:
-    m = re.search(rf"^# TUR {no} .*?(?=^# TUR {no + 1} |\Z)", md, flags=re.S | re.M)
+    # '# TUR N ' (tur 1, 2) ya da '## TUR N ' (tur 4); bölüm bir sonraki '#' / '##' TUR başlığında ya da dosya sonunda biter
+    m = re.search(rf"^#{{1,2}} TUR {no} .*?(?=^#{{1,2}} TUR \d+ |\Z)", md, flags=re.S | re.M)
     if not m:
-        raise TDHata(f"HAKEM_DERSLER.md'de '# TUR {no}' bölümü yok")
+        raise TDHata(f"HAKEM_DERSLER.md'de '# TUR {no}' / '## TUR {no}' bölümü yok")
     return m.group(0)
 
 
@@ -165,6 +208,10 @@ def td_tablo(no: int) -> pd.DataFrame:
             for k in ((kk,) if isinstance(kk, str) else kk):
                 if k not in D["metin"]:
                     raise TDHata(f"sayfa {s}: ders kodu {k} metinde yok")
+    if D.get("aynen"):
+        for k, v in D["metin"].items():
+            if v not in bolum:
+                raise TDHata(f"ders metni {k} HAKEM_DERSLER.md TUR {no} bölümündekiyle birebir aynı değil")
     C = _td_json(Y_["notlar"])["cevap"]; M = _td_json(Y_["model"])["etiket"]; A = _td_json(Y_["anahtar"])["sayfa"]
     S = pd.read_csv(Y_["satir"], dtype={"tarih": str, "giris": str}).set_index("sayfa")
     Y = pd.read_csv(Y_["olay"], dtype={"tarih": str, "giris": str}).set_index(["pazar", "sembol", "tarih"])
@@ -244,16 +291,112 @@ def td_sonuc_kapisi(T: pd.DataFrame, no: int) -> Dict[str, Any]:
     return J
 
 
+def _td_sayilar(no: int) -> Dict[str, Any]:
+    """Özet cümlesi sayıları YALNIZ satır dosyasından (tur_N_satir.csv) sayılır; elle sayı yok."""
+    S = pd.read_csv(td_yol(no)["satir"])
+    o = {}
+    for kim in ("cemal", "model"):
+        k = S[S[kim].isin(["OLUR", "OLMAZ"])]
+        o[kim] = {"OLUR": int((S[kim] == "OLUR").sum()), "OLMAZ": int((S[kim] == "OLMAZ").sum()), "BELİRSİZ": int((S[kim] == "BELİRSİZ").sum()),
+                  "dogru_OLUR": int(((S[kim] == "OLUR") & (S.h5 == 1)).sum()), "dogru_OLMAZ": int(((S[kim] == "OLMAZ") & (S.h5 == 0)).sum()),
+                  "karar": len(k), "OLUR_stop": int(((S[kim] == "OLUR") & (S.st5 == 1)).sum()),
+                  "BELİRSİZ_git": int(((S[kim] == "BELİRSİZ") & (S.h5 == 1)).sum()), "OLMAZ_git": int(((S[kim] == "OLMAZ") & (S.h5 == 1)).sum())}
+    o["n"] = len(S); o["h5"] = int((S.h5 == 1).sum()); o["st5"] = int((S.st5 == 1).sum())
+    o["kume"] = {(kim, d, h): set(int(x) for x in S.loc[(S[kim] == d) & (S.h5 == h), "sayfa"])
+                 for kim in ("cemal", "model") for d in ("OLUR", "OLMAZ", "BELİRSİZ") for h in (0, 1)}
+    o["k15"] = {int(r.sayfa): float(r.k15) for r in S.itertuples()} if "k15" in S.columns else {}
+    return o
+
+
+def _td_md_sayi(desen: str, metin: str, ad: str) -> Tuple[int, ...]:
+    m = re.search(desen, metin, flags=re.M)
+    if not m:
+        raise TDHata(f"HAKEM_DERSLER.md: '{ad}' satırı bulunamadı")
+    return tuple(int(x) for x in m.groups())
+
+
+def td_md_kapisi(no: int) -> Dict[str, Any]:
+    """'aynen' bayraklı tur (4): HAKEM_DERSLER TUR N tablosu, birikimli satırı ve ders metinlerindeki sayılar = satır dosyasından sayılanlar;
+    sayfa -> ders kodu eşlemesi satır dosyasındaki karar / sonuç kümeleriyle tutarlı. Tutmazsa DURUR (PDF yazılmaz)."""
+    D = TD_DERS[no]
+    if not D.get("aynen"):
+        return {}
+    bolum = _td_md_bolum(open(td_yol(no)["dersler"], encoding="utf-8").read(), no)
+    o = _td_sayilar(no); K = o["kume"]
+    hata = []
+
+    def esit(ad, md_v, betik_v):
+        if tuple(md_v) != tuple(betik_v):
+            hata.append(f"{ad}: {tuple(md_v)} ≠ {tuple(betik_v)} (sol: HAKEM_DERSLER ya da eşleme; sağ: satır dosyası)")
+
+    for kim, desen in (("cemal", r"^\| Cemal \| (\d+) / (\d+) / (\d+) \| (\d+) / (\d+) .*?\| (\d+) / (\d+) .*?\| \*\*%[\d,]+\*\* \((\d+) / (\d+)\)"),
+                       ("model", r"^\| model[^|]*\| (\d+) / (\d+) / (\d+) \| (\d+) / (\d+) .*?\| (\d+) / (\d+) .*?\| \*\*%[\d,]+\*\* \((\d+) / (\d+)\)")):
+        v = _td_md_sayi(desen, bolum, f"tablo {kim}"); c = o[kim]
+        esit(f"tablo {kim}", v, (c["OLUR"], c["OLMAZ"], c["BELİRSİZ"], c["dogru_OLUR"], c["OLUR"], c["dogru_OLMAZ"], c["OLMAZ"],
+                                 c["dogru_OLUR"] + c["dogru_OLMAZ"], c["karar"]))
+    esit("hedefe giden / stop", _td_md_sayi(r"Hedefe giden (\d+) / (\d+) .*?stop (\d+) / (\d+)", bolum, "hedefe giden"), (o["h5"], o["n"], o["st5"], o["n"]))
+    # birikimli (yalnız tur satırları; hakem seti hariç): md satırı ile TD_DERS'teki turların satır dosyaları
+    bc = bm = (0, 0)
+    for t in sorted(x for x in TD_DERS if x <= no):
+        ot = _td_sayilar(t)
+        bc = (bc[0] + ot["cemal"]["dogru_OLUR"] + ot["cemal"]["dogru_OLMAZ"], bc[1] + ot["cemal"]["karar"])
+        bm = (bm[0] + ot["model"]["dogru_OLUR"] + ot["model"]["dogru_OLMAZ"], bm[1] + ot["model"]["karar"])
+    esit("birikimli", _td_md_sayi(r"^Birikimli \(TUR [^)]*\): Cemal (\d+) / (\d+) = .*?model (\d+) / (\d+)", bolum, "birikimli"), bc + bm)
+    # ders metinlerindeki (ve özet cümlesindeki) sayılar
+    c, m = o["cemal"], o["model"]
+    esit("CD16 BELİRSİZ / gitti", _td_md_sayi(r"BELİRSİZ (\d+) sayfanın (\d+)'sı gitti", D["metin"]["CD16"], "CD16"), (c["BELİRSİZ"], c["BELİRSİZ_git"]))
+    esit("CD20 OLUR stop", _td_md_sayi(r"OLUR'ların (\d+)'ü stop", D["metin"]["CD20"], "CD20"), (c["OLUR_stop"],))
+    esit("VD10 OLMAZ gitti / OLUR", _td_md_sayi(r"OLMAZ dediklerinin (\d+) / (\d+)'i gitti.*?OLUR yalnız (\d+)", D["metin"]["VD10"], "VD10"),
+         (m["OLMAZ_git"], m["OLMAZ"], m["OLUR"]))
+    # eşleme kümeleri
+    def sayfalar(kim, kod):
+        return set(s for s, kk in D[kim].items() if kod in ((kk,) if isinstance(kk, str) else kk))
+    a15 = set(_td_md_sayi(r"\(A: (\d+), (\d+), (\d+), (\d+), (\d+);", bolum, "CD15 A listesi"))
+    esit("CD15 sayfaları", sorted(sayfalar("cemal", "CD15")), sorted(a15))
+    esit("CD15 hedefe gitmedi", _td_md_sayi(r"hedef gelmiyor: (\d+) / (\d+)", D["metin"]["CD15"], "CD15"),
+         (len([s for s in a15 if s in K[("cemal", "OLUR", 0)] | K[("cemal", "OLMAZ", 0)] | K[("cemal", "BELİRSİZ", 0)]]), len(a15)))
+    esit("CD16 sayfaları = BELİRSİZ ve gitti", sorted(sayfalar("cemal", "CD16")), sorted(K[("cemal", "BELİRSİZ", 1)]))
+    esit("CD21 sayfaları = OLMAZ ve gitti", sorted(sayfalar("cemal", "CD21")), sorted(K[("cemal", "OLMAZ", 1)]))
+    esit("VD10 sayfaları = model OLMAZ ve gitti", sorted(sayfalar("model", "VD10")), sorted(K[("model", "OLMAZ", 1)]))
+    olur0 = K[("cemal", "OLUR", 0)]
+    kodlu = set(s for s in D["cemal"] if s in olur0)
+    esit("OLUR-gelmedi = kodsuz + kodlu", sorted(olur0), sorted(kodlu | set(D.get("kodsuz", ()))))
+    esit("kodsuz sayfalar eşlenmemiş", sorted(set(D.get("kodsuz", ())) & set(D["cemal"])), [])
+    for s in D.get("esik_kacti", ()):  # md: '11 (+%4,2) ve 29 (+%2,6; ...) eşik kaçtı' -> OLUR, h5 = 0, k15 (15 g en yüksek kapanış) aynı
+        mm = re.search(rf"\b{s} \(\+%(\d+),(\d)", bolum[bolum.find("eşik kaçtı") - 120:bolum.find("eşik kaçtı")])
+        k15 = o["k15"].get(s, np.nan)
+        if s not in olur0 or not mm or round(k15 * 100, 1) != float(f"{mm.group(1)}.{mm.group(2)}"):
+            hata.append(f"sayfa {s}: 'eşik kaçtı' (OLUR, h5 = 0, 15 g en yüksek kapanış) HAKEM_DERSLER ile satır dosyası arasında tutmadı")
+    if hata:
+        raise TDHata("HAKEM_DERSLER / satır dosyası eşitlik kapısı tutmadı: " + "; ".join(hata))
+    return {"cemal": c, "model": m, "n": o["n"], "h5": o["h5"], "st5": o["st5"], "k15": o["k15"]}
+
+
+def _td_kapak_ek(MK: Dict[str, Any]) -> Dict[str, Any]:
+    """kapak_sonuc ek alanları (yalnız md kapısından geçmiş satır dosyası sayıları; md kapısı olmayan turda boş)."""
+    if not MK:
+        return {}
+    c, m = MK["cemal"], MK["model"]
+    return {"c_olur": c["OLUR"], "c_olur_stop": c["OLUR_stop"], "c_bel": c["BELİRSİZ"], "c_bel_git": c["BELİRSİZ_git"],
+            "m_olmaz": m["OLMAZ"], "m_olmaz_git": m["OLMAZ_git"]}
+
+
+def td_birikimli_turlar(no: int) -> List[int]:
+    """Birikimliye giren turlar: 1..N içinde ders eşlemesi (TD_DERS) olanlar; TUR 3 Cemal yanıtı olmadığı için girmez (TUR_4_SONUC.md
+    'birikimli, tur [1, 2, 4]' ile aynı)."""
+    return [t for t in range(1, no + 1) if t in TD_DERS]
+
+
 def td_birikimli(no: int) -> List[Dict[str, Any]]:
     """Hakem seti (hakem_ders_pdf.hd_tablo; 40 sayfa, açık yarıda etkin karar) + tur 1..N. Cemal ve model ayrı; tek tanımlı taban."""
     H = HD.hd_tablo()
     parca = {"Cemal": [], "Model": []}
     parca["Cemal"].append(("Hakem seti (40)", H.rename(columns={"puan_c": "p"})[["cemal", "p", "es_h5", "h5"]].rename(columns={"cemal": "k"})))
     parca["Model"].append(("Hakem seti (40; vekil)", H.rename(columns={"puan_v": "p"})[["vekil", "p", "es_h5", "h5"]].rename(columns={"vekil": "k"})))
-    for t in range(1, no + 1):
+    for t in td_birikimli_turlar(no):
         Tt = td_tablo(t)
-        parca["Cemal"].append((f"TUR {t} (30)", Tt.rename(columns={"puan_c": "p", "cemal": "k"})[["k", "p", "es_h5", "h5"]]))
-        parca["Model"].append((f"TUR {t} (30)", Tt.rename(columns={"puan_m": "p", "model": "k"})[["k", "p", "es_h5", "h5"]]))
+        parca["Cemal"].append((f"TUR {t} ({len(Tt)})", Tt.rename(columns={"puan_c": "p", "cemal": "k"})[["k", "p", "es_h5", "h5"]]))
+        parca["Model"].append((f"TUR {t} ({len(Tt)})", Tt.rename(columns={"puan_m": "p", "model": "k"})[["k", "p", "es_h5", "h5"]]))
     out = []
     for kim, L in parca.items():
         for ad, Dd in L + [("Birikimli", pd.concat([d for _, d in L], ignore_index=True))]:
@@ -360,7 +503,7 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
     if os.path.abspath(is_klasor or "/").startswith(TD_KOK + os.sep):
         raise TDHata("ara klasör repo içinde olamaz")
     is_klasor = is_klasor or tempfile.mkdtemp(prefix=f"tur{no}_ders_")
-    T = td_tablo(no); J = td_sonuc_kapisi(T, no); B = td_birikimli(no)
+    T = td_tablo(no); J = td_sonuc_kapisi(T, no); B = td_birikimli(no); MK = td_md_kapisi(no)
     sayfa_png = td_sayfa_png(cemal_pdf, os.path.join(is_klasor, "sayfa"), len(T))
     os.makedirs(os.path.join(is_klasor, "graf"), exist_ok=True)
     ek: Dict[int, Dict[str, Any]] = {}
@@ -431,7 +574,7 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         f2 = lambda v: f"{v:.2f}".replace(".", ",")  # noqa: E731
         y = paragraf(30, y, D["kapak_sonuc"].format(ck=jc["karar"], cb=yuzde(jc["basari"]), mk=jm["karar"], mb=yuzde(jm["basari"]),
                      tb=yuzde(jc["taban_es"]), ho=yuzde(jc["hep_OLMAZ_basari"]), sh=yuzde(jc["sayfa_h5"], 0), ka=f2(J["uyum"]["kappa"]),
-                     cp=f2(jc["fisher_p"]), mp=f2(jm["fisher_p"])), 555, "DVB", 8.5)
+                     cp=f2(jc["fisher_p"]), mp=f2(jm["fisher_p"]), **_td_kapak_ek(MK)), 555, "DVB", 8.5)
     else:
         y = paragraf(30, y, f"Sonuç: iki taraf da yazı-tura düzeyinde. Sen {jc['karar']} kararda {yuzde(jc['basari'])}, model {jm['karar']} kararda "
                      f"{yuzde(jm['basari'])}; taban {yuzde(jc['taban_es'])}; hepsine OLMAZ deseydin {yuzde(jc['hep_OLMAZ_basari'])} olurdu (sayfaların "
@@ -456,17 +599,19 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
             y -= 4
     y = paragraf(30, y, "* Beklenen = kararlarının eş payına göre beklenen başarısı (OLUR'da eş payı, OLMAZ'da 1 - eş payı); Hep OLMAZ = aynı karar "
                  "sayfalarında hep OLMAZ deseydin. Hakem seti sayfa 20 düzeltmesiyle (Cemal OLUR; ölçü kodun girişiyle -1) sayıldı: 31 karar; "
-                 "düzeltme öncesi 30 karar / 21 doğru.", 555, n=7, ara=8.6, renk=(0.35, 0.35, 0.35))
+                 "düzeltme öncesi 30 karar / 21 doğru." + "".join(f" TUR {t} birikimliye girmez (Cemal yanıtı yok)." for t in range(1, no + 1)
+                 if t not in td_birikimli_turlar(no)), 555, n=7, ara=8.6, renk=(0.35, 0.35, 0.35))
     # sağ sütun: bu turun dersleri
     xr = 600; yr = Hh - 98
     yaz(xr, yr, "BU TURUN DERSLERİ", "DVB", 10, (0.6, 0.0, 0.0)); yr -= 14
     for k in D["yeni"]:
         if k.startswith("CD"):
             yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
-    yr -= 2
-    yaz(xr, yr, D.get("tekrar_baslik", "TEKRAR EDEN (hakem setinden)"), "DVB", 9, (0.6, 0.0, 0.0)); yr -= 12
-    for k in (k for k in D["tekrar"] if k.startswith("CD")):
-        yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
+    if any(k.startswith("CD") for k in D["tekrar"]):  # tekrar eden Cemal dersi yoksa (tur 4) başlık basılmaz
+        yr -= 2
+        yaz(xr, yr, D.get("tekrar_baslik", "TEKRAR EDEN (hakem setinden)"), "DVB", 9, (0.6, 0.0, 0.0)); yr -= 12
+        for k in (k for k in D["tekrar"] if k.startswith("CD")):
+            yr = paragraf(xr, yr, f"{k} {D['metin'][k]}", W - xr - 25, n=7.5, ara=9.2) - 3
     yr -= 2
     yaz(xr, yr, "MODELE (ana modelin kuralları)", "DVB", 9, (0.15, 0.15, 0.45)); yr -= 12
     for k in list(D["yeni"]) + list(D["tekrar"]):
@@ -512,6 +657,9 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         ned = ", ".join(GE.ge_neden_acilim(k).replace(": UYUYOR (lehte)", " +").replace(": UYMUYOR (aleyhte)", " -") for k in r.nedenler)
         y = paragraf(25, y, f"(2) Model: {r.model} (güven {r.guven}) · nedenler: {ned} · not: {r.model_not}", W - 50, n=8, ara=9.8) - 7
         metin = "(3) DERS: " + (_td_ders_metni(r.cd, D) if r.cd else td_dogru_cumle(r, no))
+        if int(r.sayfa) in D.get("esik_kacti", ()):
+            metin += (f" · Not (HAKEM_DERSLER TUR {no}): eşik kaçtı; 15 günde en yüksek kapanış "
+                      + f"{MK['k15'][int(r.sayfa)] * 100:+.1f}%".replace(".", ",") + " (+%5'e varmadı).")
         sat = simpleSplit(metin, "DVB", 9.5, W - 66)
         msat = simpleSplit(td_model_etiket(r, D), "DV", 7.8, W - 66)
         bh = 12.5 * len(sat) + 9.5 * len(msat) + 10
@@ -539,6 +687,7 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
     for k, x in kol:
         yaz(x, y, k, "DVB", 8)
     cv.line(30, y - 3, W - 30, y - 3); y -= 13
+    ara_oz, yt_oz = (13.5, 7.6) if n <= 30 else (10.2, 6.9)
     for _, r in T.iterrows():
         rc = (0.0, 0.45, 0.0) if r.puan_c == 1 else ((0.7, 0.0, 0.0) if r.puan_c == -1 else (0.3, 0.3, 0.3))
         rm = (0.0, 0.45, 0.0) if r.puan_m == 1 else ((0.7, 0.0, 0.0) if r.puan_m == -1 else (0.3, 0.3, 0.3))
@@ -547,8 +696,8 @@ def td_pdf(no: int, cemal_pdf: str, cikti: Optional[str] = None, is_klasor: Opti
         if bilgi:
             vals.insert(7, _td_b30(r))
         for (k, x), s in zip(kol, vals):
-            yaz(x, y, s, "DV", 7.6, rc if k in ("Cemal", "Puan C") else (rm if k in ("Model", "Puan M") else (0, 0, 0)))
-        y -= 13.5
+            yaz(x, y, s, "DV", yt_oz, rc if k in ("Cemal", "Puan C") else (rm if k in ("Model", "Puan M") else (0, 0, 0)))
+        y -= ara_oz
     y -= 4
     for kim, pk, ad in (("cemal", "puan_c", "Cemal"), ("model", "puan_m", "Model")):
         o = td_ozet(T, kim, pk)
