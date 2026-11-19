@@ -623,6 +623,72 @@ try:
     except YH.YHHata:
         kontrol("5. tur: S9 dosyası değişince kapı durur", True)
     open(s9p, "wb").write(s9b)
+    # ---- 6. tur uçtan uca (gruplar + karne + mahkeme; ON_KAYIT_5 YH_ESIK_SHA = yh_esik_sha(): Y1-Y11c aynen)
+    try:
+        YH.yh_kos6(cikti, veri, git=False); kontrol("6. tur: ön kayıt 6 yokken koşu durur", False)
+    except YH.YHHata:
+        kontrol("6. tur: ön kayıt 6 yokken koşu durur", True)
+    yo6 = YH.yh_onkayit6_yaz(cikti, git=False)
+    m6 = open(yo6, encoding="utf-8").read()
+    g3t = pd.read_csv(os.path.join(cikti, "grup6_G3.csv"))
+    kontrol("6. tur: ON_KAYIT_6 yazıldı (§A/§B/§C aynen, YH_ESIK6 / G3 sha, grup sayıları, karne hunisi, kapı)",
+            YH._yh_is_tanimi6_bolum("A") in m6 and YH._yh_is_tanimi6_bolum("C") in m6 and f"YH_ESIK6_SHA: `{YH.yh_esik6_sha()}`" in m6
+            and "G3_SHA" in m6 and "GRUP OLAY SAYILARI" in m6 and "KARNE HUNİSİ" in m6 and YH.yh_kapi6(cikti, git=False)["kontrol"], len(g3t))
+    R6 = YH.yh_kos6(cikti, veri, islem=2, git=False)
+    kontrol("6. tur: tutarlılık kapısı G2 = olay_Y9, F15 >= 0,75 = olay_Y9c", all(v["esit"] for v in R6["tutarlilik"].values()), R6["tutarlilik"])
+    kontrol("6. tur: Y1 regresyonu plasebo dahil her pazarda", all(v["esit"] and v.get("plasebo_esit") for v in R6["regresyon_y1"].values()))
+    ng = {g: sum(h.get("n_ham", 0) for h in R6["grup"][g]["hucre"]) for g in YH._YH_GRUP6}
+    kontrol("6. tur: G0 = Y1 olayı; G2 = Y9; G2u <= G2; G3 = G2 (olay satırı)", ng["G0"] == len(O1t) and ng["G2"] == n9["Y9"] and ng["G2u"] <= ng["G2"]
+            and ng["G3"] == ng["G2"] == len(g3t), ng)
+    x6 = pd.read_csv(os.path.join(cikti, "olay_G6.csv.gz"))
+    hh = [h for h in R6["grup"]["G0"]["hucre"] if h.get("n", 0) > 0][0]
+    xx = x6[x6.G0 & (x6.pazar == hh["pazar"]) & (x6.donem == hh["donem"]) & x6.h5.notna() & x6.es_h5.notna()]
+    kontrol("6. tur: yeniden üretim (satır dosyası) KAT5 = grup6.json", len(xx) == hh["n"] and abs(xx.h5.sum() / xx.es_h5.sum() - hh["h5_kat"]) < 1e-4,
+            (len(xx), hh["h5_kat"]))
+    kontrol("6. tur: grup farkı aralığı noktayı içerir", all((not np.isfinite(v["fark"])) or (v["alt"] <= v["fark"] + 1e-9 and v["fark"] <= v["ust"] + 1e-9)
+                                                        for v in R6["fark"].values()))
+    try:
+        YH.yh_kos6(cikti, veri, git=False); kontrol("6. tur: ikinci koşu durur", False)
+    except YH.YHHata:
+        kontrol("6. tur: ikinci koşu durur", True)
+    try:
+        YH.yh_onkayit6_yaz(cikti, uzerine=True, git=False); kontrol("6. tur: ölçümden sonra ön kayıt yazılmaz", False)
+    except YH.YHHata:
+        kontrol("6. tur: ölçümden sonra ön kayıt yazılmaz", True)
+    Kr = YH.yh_filtre_karne(cikti)
+    kontrol("6. tur: filtre karnesi (2 kol x 10 adım x 4 pazar, tek-çıkarma 18 x 4, SORGULANACAK satırı)",
+            len(Kr["tablo"]) == (10 + 10) * 4 and len(Kr["tek_cikarma"]) == 18 * 4
+            and "SORGULANACAK FİLTRELER" in open(os.path.join(cikti, "FILTRE_KARNE.md"), encoding="utf-8").read())
+    r_ = [r for r in Kr["tablo"] if r["pazar"] == "ABD" and r["kol"] == "S7" and r["adim"] == 1][0]
+    xk = O1t.merge(YH.yh_ozellik5_oku(), on=["pazar", "sembol", "tarih"])
+    xk = xk[(xk.pazar == "ABD") & (xk.donem == "2016-22") & (xk.F15 <= 0.25) & (xk.F17 <= -0.20) & xk.h5.notna() & xk.es_h5.notna()]
+    kontrol("6. tur: karne Ş1 adımı ABD eğitim n / FARK elle = kod", r_["egitim"]["n"] == len(xk)
+            and (len(xk) == 0 or abs(r_["egitim"]["fark"] - (xk.h5.mean() - xk.es_h5.mean())) < 1e-9), (r_["egitim"]["n"], len(xk)))
+    Lm = O1t[["pazar", "sembol", "tarih"]].drop_duplicates().sort_values(["pazar", "sembol", "tarih"]).iloc[::max(1, len(O1t) // 12)].head(12).copy()
+    Lm.insert(0, "no", np.arange(1, len(Lm) + 1))
+    Rm = YH.yh_mahkeme_toplu(Lm, os.path.join(cikti, "M.md"), "test mahkeme", os.path.join(cikti, "M.json"), veri)
+    mt = open(os.path.join(cikti, "M.md"), encoding="utf-8").read()
+    kontrol("6. tur: toplu mahkeme (prefix kapısı geçti, seçilen = özellik dosyası, sembol / tarih sızıntısı yok)",
+            Rm["ozet"]["mahkeme"] == len(Lm) and Rm["ozet"]["regresyon_esit"] == len(Lm) and not any(str(s_) in mt for s_ in Lm.sembol)
+            and not any(pd.Timestamp(t_).strftime("%Y-%m-%d") in mt for t_ in Lm.tarih), Rm["ozet"])
+    try:
+        YH.yh_mahkeme_toplu(Lm, os.path.join(cikti, "M2.md"), "test", None, veri, ek_not=str(Lm.sembol.iloc[0]))
+        kontrol("6. tur: toplu md'de sembol sızıntısı -> yazılmaz", False)
+    except YH.YHHata as ex:
+        kontrol("6. tur: toplu md'de sembol sızıntısı -> yazılmaz", "sızıntı" in str(ex) and not os.path.exists(os.path.join(cikti, "M2.md")))
+    Jm = json.load(open(os.path.join(cikti, "M.json"), encoding="utf-8"))
+    kontrol("6. tur: mahkeme kararı puan kuralıyla tutarlı", all(o["onceki_daha_uygun"] == (bool(o["adaylar"]) and max(a["puan"] for a in o["adaylar"]) > o["secilen"]["puan"])
+                                                               for o in Jm["olay"]))
+    R6r = YH.yh_rapor6(cikti)
+    kontrol("6. tur: RAPOR_6.md başlıkları", all(x in R6r for x in ("A. GRUPLAR", "OLASILIK TABLOSU", "GRUP FARKLARI", "B. FİLTRE KARNESİ",
+                                                                    "SORGULANACAK FİLTRELER", "C. MAHKEME", "YENİDEN ÜRETİM", "KONTROL LİSTESİ", "## HATA")))
+    kontrol("6. tur: önceki turların sonuc.json'u değişmedi", json.load(open(os.path.join(cikti, "sonuc.json"), encoding="utf-8")) == J6)
+    open(yo6, "w", encoding="utf-8").write(m6.replace(YH.yh_esik6_sha(), "6" * 64))
+    try:
+        YH.yh_kapi6(cikti, git=False); kontrol("6. tur: YH_ESIK6 mührü tutmazsa kapı durur", False)
+    except YH.YHHata:
+        kontrol("6. tur: YH_ESIK6 mührü tutmazsa kapı durur", True)
+    open(yo6, "w", encoding="utf-8").write(m6)
     open(yo4, "w", encoding="utf-8").write(m4)
     YH.YH_YOL["ozellik"] = yoz; open(yo3, "w", encoding="utf-8").write(m3)
     ozt.iloc[:-1].to_csv(yoz, index=False, float_format="%.6g", compression="gzip")
@@ -1053,6 +1119,47 @@ if os.path.exists(sj):
     Jr = json.load(open(sj, encoding="utf-8"))
     hr = [h for h in Jr["deneme"]["Y1"]["hucre"] if h["pazar"] == "ABD" and h["donem"] == "2023"][0]
     kontrol("regresyon: Y1 ABD 2023 n 2040, KAT5 0,9752 (sonuc.json)", hr["n"] == 2040 and abs(hr["h5_kat"] - 0.9752) < 5e-5, (hr["n"], hr["h5_kat"]))
+
+print("13) 6. TUR: grup bayrakları, G3, karne etiketi, mahkeme kararı, C13, aday prefix")
+Fg = pd.DataFrame({"F14": [0.0, -0.01, 0.1, np.nan, 0.2], "F15": [0.5, 0.9, 0.25, 0.1, 0.49], "F17": [-0.3, -0.3, -0.2, -0.5, -0.1],
+                   **{c: [np.nan] * 5 for c in YH._Y11_OZ_S9}})
+Mg = YH.yh_grup6_maske(Fg)
+kontrol("G1 = F14 >= 0 VE F15 >= 0,50 (NaN tutmaz)", list(Mg["G1"]) == [True, False, False, False, False])
+kontrol("G2 = F15 <= 0,25 VE F17 <= -0,20 (sınır dahil); G2u Ş9 NaN -> yok", list(Mg["G2"]) == [False, False, True, True, False] and not Mg["G2u"].any())
+Mt = pd.DataFrame({"pazar": ["ABD"] * 40, "sembol": [f"S{i:02d}" for i in range(40)], "tarih": pd.Timestamp("2023-05-01"), "donem": "2023",
+                   "G2": [True] * 7 + [False] * 33})
+g3a = YH.yh_grup6_g3(Mt); g3b = YH.yh_grup6_g3(Mt.sample(frac=1.0, random_state=9))
+kontrol("G3: n = G2 n, satır sırasından bağımsız (tohumlu)", len(g3a) == 7 and g3a.equals(g3b))
+kontrol("G3: G2 0 olan hücrede 0", len(YH.yh_grup6_g3(Mt.assign(G2=False))) == 0)
+kontrol("karne etiketi: KATKI+ / KATKI− / SORGULA (çelişki, n < 30, NaN)",
+        YH._yh_karne_etiket(0.01, 0.02, 30, 31, 30) == "KATKI+" and YH._yh_karne_etiket(-0.01, -0.02, 40, 40, 30) == "KATKI−"
+        and YH._yh_karne_etiket(0.01, -0.02, 40, 40, 30) == "SORGULA" and YH._yh_karne_etiket(0.01, 0.02, 29, 40, 30) == "SORGULA"
+        and YH._yh_karne_etiket(np.nan, 0.02, 40, 40, 30) == "SORGULA")
+kr = lambda tut: {k: (k in tut) for k in YH._YH_KURAL6}  # noqa: E731
+sec_ = {"bar": 0, "tur": "AL", "kural": kr(["S1", "S2", "S3"]), "puan": 3}
+ad_ = [{"bar": -40, "tur": "AL", "kural": kr(["S1", "S2", "S3", "S4", "S5"]), "puan": 5}, {"bar": -10, "tur": "Ş9 ÇANAK", "kural": kr(["S9"]), "puan": 1}]
+Kk = YH.yh_m_karar(sec_, ad_)
+kontrol("mahkeme: önceki aday daha yüksek puanlı -> ÖNCEKİ BÖLGE DAHA UYGUN (bar, puan, eksikler)", Kk["onceki_daha_uygun"]
+        and Kk["karar"].startswith("ÖNCEKİ BÖLGE DAHA UYGUN: bar -40") and "5/12 vs seçilen 3/12" in Kk["karar"] and "Ş4 küçük mum" in Kk["karar"]
+        and not Kk["tam_puan"], Kk["karar"])
+Kk2 = YH.yh_m_karar({**sec_, "kural": kr(YH._YH_KURAL6), "puan": 12}, ad_)
+kontrol("mahkeme: seçilen tam puan -> SEÇİM TUTARLI, eksik yok", not Kk2["onceki_daha_uygun"] and Kk2["karar"].startswith("SEÇİM TUTARLI") and Kk2["tam_puan"])
+Kk3 = YH.yh_m_karar(sec_, [{**ad_[0], "puan": 3}, {**ad_[0], "bar": -5, "puan": 3}])
+kontrol("mahkeme: eşit puan -> SEÇİM TUTARLI; en iyi aday eşitlikte en yakın", not Kk3["onceki_daha_uygun"] and Kk3["en_iyi"]["bar"] == -5)
+kontrol("mahkeme: önceki aday yok -> SEÇİM TUTARLI (önceki aday yok)", YH.yh_m_karar(sec_, [])["karar"] == "SEÇİM TUTARLI (önceki aday yok)")
+Cc = np.r_[np.full(260, 100.0)] * np.cumprod(np.r_[1.0, np.full(259, 1.001)]); Hc = Cc * 1.01; Lc = Cc * 0.99
+c13a = YH._yh_c13(Hc, Lc, Cc, 259, 250); Cc2 = Cc.copy(); Cc2[200:] *= 1.15; c13b = YH._yh_c13(Cc2 * 1.01, Cc2 * 0.99, Cc2, 259, 250)
+kontrol("C13: dev mum yok -> <= 4, %15 sıçrama -> > 4; 250 bar yoksa NaN", c13a <= 4 and c13b > 4 and np.isnan(YH._yh_c13(Hc, Lc, Cc, 200, 250)), (c13a, c13b))
+dfm = rastgele_hisse(1300, 77, bas="2019-01-01", oyn=0.015)
+X1m, _ = YH.yh_s6_hisse(dfm)
+nm, npre, nonc = 0, 0, 0
+for tm in list(pd.to_datetime(X1m.tarih))[-8:]:
+    Mm = YH.yh_mahkeme_hisse(dfm, tm)             # prefix kapısı içeride (aday değerleri t_k'da kesik veriyle aynı, değilse DURUR)
+    Mk = YH.yh_mahkeme_hisse(dfm[dfm.index <= tm + pd.Timedelta(days=400)], tm, prefix=False)
+    nm += 1; npre += len(Mm["adaylar"]); nonc += int(Mm["onceki_daha_uygun"])
+    assert Mm["karar"] == Mk["karar"] and [a["bar"] for a in Mm["adaylar"]] == [a["bar"] for a in Mk["adaylar"]]
+    assert all(-250 <= a["bar"] <= -1 for a in Mm["adaylar"])
+kontrol("mahkeme: t sonrası veri kararı değiştirmez; adaylar [t-250, t-1]; aday prefix kapısı geçti", nm == min(8, len(X1m)) and nm >= 5 and npre > 0, (nm, npre, nonc))
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
