@@ -1,0 +1,461 @@
+{
+ "surum": "TUR7 model v1 (TUR 5 kuralları; havuz şartı eleme değil)",
+ "etiket": {
+  "1": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "C8-",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Dip 2,1 savunulmuş ama kırılım mumu neredeyse gövdesiz (doji benzeri) ve önceki raf aşağı kırılmış."
+  },
+  "2": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Boşluklu düşüş sonrası dip savunulmuş, sağ kenar yükselen diplerle dönmüş, kırılım mumu yakın tavanı ortalıyor."
+  },
+  "3": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+",
+    "C4+"
+   ],
+   "guven": 3,
+   "not": "Uzun düşüş sonrası küçük mumlu yatay dip, sağ kenar hafif dönmüş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "4": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Dip 8,6 civarında savunulmuş, son dipler yükseliyor, kırılım gövdeli; mumlar biraz dağınık."
+  },
+  "5": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C7-"
+   ],
+   "guven": 2,
+   "not": "Sert düşüş sonrası kısa (9 bar) yapı, sağ kenar dönmüş ve kırılım tavanı ortalıyor; yapı kısa olduğu için güven düşük."
+  },
+  "6": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C2-"
+   ],
+   "guven": 2,
+   "not": "Kırılım gövdeli ama son 5 barın dibi önceki 10 barın dibinin altına inmiş, sağ kenar dönüşü yok."
+  },
+  "7": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C2-",
+    "C3-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Kutu içinde alçalan dipler ve dağınık büyük mumlar; kırılım mumu kapanışta tavana ancak değiyor."
+  },
+  "8": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+",
+    "C4+"
+   ],
+   "guven": 4,
+   "not": "Düşüş sonrası küçük mumlu düz dip, sağ kenar net dönmüş, gövdeli kırılım yakın tavanı ortalıyor."
+  },
+  "9": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Düz dip savunulmuş, sağ kenar dönmüş, büyük gövdeli kırılım tavanın altından başlıyor."
+  },
+  "10": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+",
+    "C4+"
+   ],
+   "guven": 4,
+   "not": "Uzun düşüş sonrası düz dip ve hafif yükselen sağ kenar, gövdeli kırılım yakın tavanı ortalıyor."
+  },
+  "11": {
+   "bolge": "YANLIŞ",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C1-",
+    "C7-",
+    "C5-"
+   ],
+   "guven": 2,
+   "not": "Kesintisiz alçalan trend içinde 12 barlık kutu, taban net değil, kırılım gövdesinin çoğu tavanın altında."
+  },
+  "12": {
+   "bolge": "YANLIŞ",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C2-",
+    "C3-",
+    "VD9-"
+   ],
+   "guven": 4,
+   "not": "Kod 60 barlık dağınık bölge seçmiş, dipler alçalıyor ve sağ kenar dönmemiş."
+  },
+  "13": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C3-",
+    "C4-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Kutu mumları büyük ve uzun fitilli, kırılım mumu küçük gövdeli ve tavanın üstünde."
+  },
+  "14": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+",
+    "C4+"
+   ],
+   "guven": 4,
+   "not": "Sert düşüş sonrası küçük mumlu düz dip, sağ kenar dönmüş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "15": {
+   "bolge": "YANLIŞ",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C2-",
+    "C1-"
+   ],
+   "guven": 4,
+   "not": "Alçalan trendde 9 barlık kutu, dipler alçalmaya devam etmiş, sağ kenar dönmemiş."
+  },
+  "16": {
+   "bolge": "YANLIŞ",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C2-"
+   ],
+   "guven": 4,
+   "not": "Kutu içinde dipler sürekli alçalıyor, son 5 bar önceki dipten aşağıda; dönüş yok."
+  },
+  "17": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Sert düşüş sonrası kısa yapı, dipler yükselmiş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "18": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Düşüş sonrası dip savunulmuş ve sağ kenar yükselen diplerle dönmüş, kırılım tavanı ortalıyor."
+  },
+  "19": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C9+"
+   ],
+   "guven": 4,
+   "not": "Çanak dibi geride kalmış, yükselen dipler ve gövdeli kırılım yakın tavanı ortalıyor."
+  },
+  "20": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Son 5 barda yeni dip yapılmış, kırılım mumu küçük gövdeli ve tavanın üstünde."
+  },
+  "21": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Dip 79 civarında savunulmuş, sağ kenar dönmüş, büyük gövdeli kırılım tavanı ortalıyor; bölge mumları biraz dağınık."
+  },
+  "22": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C3-"
+   ],
+   "guven": 2,
+   "not": "Bölge dağınık ve bir bar dibin altına sarkmış, ama sağ kenar dönmüş ve gövdeli kırılım tavanı ortalıyor."
+  },
+  "23": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C5-"
+   ],
+   "guven": 3,
+   "not": "Son 5 barda dip önceki dibin hafif altında, kırılım mumu tavanın üstünde açılmış (ortalamıyor)."
+  },
+  "24": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Dipte savunulan tabanın üstünde yükselen küçük mumlu raf, gövdeli kırılım tavanı kısmen ortalıyor."
+  },
+  "25": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Uzun düşüş sonrası küçük mumlu dip, sağ kenar dönmüş, kırılım tavanı ortalıyor."
+  },
+  "26": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 2,
+   "not": "Dip 29,5 civarında savunulmuş, sağ kenar zayıf dönmüş, kırılım gövdesi çoğunlukla tavanın üstünde."
+  },
+  "27": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C5-",
+    "VD8-"
+   ],
+   "guven": 2,
+   "not": "Sağ kenar dönmüş ama uzun kırılım mumu kapanışta tavana ancak değiyor (ortalamıyor)."
+  },
+  "28": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Sert düşüş sonrası küçük mumlu dip, sağ kenar hafif dönmüş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "29": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Düz dip iki kez savunulmuş, sağ kenar dönmüş, gövdeli kırılım tavanın hemen altından başlıyor."
+  },
+  "30": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C7-"
+   ],
+   "guven": 2,
+   "not": "Boşluklu düşüşün ardından dip savunulmuş, sağ kenar dönmüş, kırılım gövdesi küçük ama tavanı ortalıyor."
+  },
+  "31": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C3-"
+   ],
+   "guven": 3,
+   "not": "Son 5 barda dip yeniden test edilmiş (dönüş yok), bölge mumları tabana göre geniş."
+  },
+  "32": {
+   "bolge": "DOĞRU",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "C13-",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Bölge içinde yüksek hacimli dev kırmızı mum var; dönüş ve kırılım olsa da eleme."
+  },
+  "33": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 2,
+   "not": "Düşüş sonrası küçük mumlu dip, sağ kenar dönmüş, kırılım gövdesi küçük ve çoğu tavanın üstünde."
+  },
+  "34": {
+   "bolge": "YANLIŞ",
+   "karar": "OLMAZ",
+   "nedenler": [
+    "VD9-",
+    "C2-"
+   ],
+   "guven": 3,
+   "not": "Kutu alçalan dipler zinciri içinde, son dip öncekinin altında; dönüş yok."
+  },
+  "35": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Geniş ama küçük mumlu bölgede dip 1,40 savunulmuş, sağ kenar dönmüş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "36": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C7-"
+   ],
+   "guven": 3,
+   "not": "Sert düşüş sonrası kısa yapı, dipler yükselmiş, gövdeli kırılım tavanı ortalıyor."
+  },
+  "37": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+",
+    "C4+"
+   ],
+   "guven": 4,
+   "not": "Düşüş sonrası küçük mumlu yükselen dipler, net dönüş ve tavanı ortalayan gövdeli kırılım."
+  },
+  "38": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+",
+    "C3+"
+   ],
+   "guven": 3,
+   "not": "Uzun düşüş sonrası küçük mumlu düz dip, sağ kenar hafif dönmüş, kırılım tavanı ortalıyor."
+  },
+  "39": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C3-"
+   ],
+   "guven": 2,
+   "not": "Geniş bölgede dip 15,7 savunulmuş, sağ kenar zayıf dönmüş, hacimli gövdeli kırılım tavanı ortalıyor."
+  },
+  "40": {
+   "bolge": "DOĞRU",
+   "karar": "OLUR",
+   "nedenler": [
+    "VD9+",
+    "VD8+",
+    "C2+"
+   ],
+   "guven": 3,
+   "not": "Dip 12,5 savunulmuş, sağ kenar dönmüş, büyük gövdeli kırılım tavanın altından başlıyor."
+  }
+ }
+}
