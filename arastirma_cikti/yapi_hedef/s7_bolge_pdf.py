@@ -13,7 +13,13 @@ hissenin kendi geçerli barlarında yeniden simüle edilir ve h5 / st5 / k5 / ks
 '30 g en yüksek kapanış' = giriş günü dahil ilk 30 geçerli barın en yüksek kapanışı / giriş açılışı - 1 (bilgi; çizimden).
 HİSSE ADI VE TARİH PDF'E GİRMEZ (yalnız pazar); pdftotext ile sızıntı kapısı betik içinde koşar.
 
-Kullanım:  OC_VERI=/tmp/veri python arastirma_cikti/yapi_hedef/s7_bolge_pdf.py [--cikti PDF] [--tohum 104]
+--s9 (19 Kas 2026): aynı 50 olay, aynı sayfa + Ş9 çanağı: son 40 geçerli barın ([t-40, t-1]) Low serisine ikinci derece eğri (mor kalın
+kesik), uyum dibi x* (mor nokta; pencere dışındaysa sınırda içi boş nokta), pencere sınırı (ince mor dikey). F24-F29 ozellik_Y1_s9.csv.gz'den
+OKUNUR; eğri katsayıları Low'dan np.polyfit(derece 2) ile yeniden kurulur ve F24 = a / ATR250 (GOZ_ETIKET F3 tanımı) göreli 1e-3 ile tutmalı.
+Başlık ikinci satırı 'Ş9: U DOĞRU' / 'Ş9: U DEĞİL — neden'; karar ve neden S7_S9_LISTE.md ile 50 / 50 BİREBİR aynı olmalı (değilse DURUR).
+Çıktı S7_BOLGE_2016-22_S9.pdf; --s9'suz çıktı değişmez.
+
+Kullanım:  OC_VERI=/tmp/veri python arastirma_cikti/yapi_hedef/s7_bolge_pdf.py [--cikti PDF] [--tohum 104] [--s9]
 """
 from __future__ import annotations
 
@@ -61,6 +67,9 @@ class S7BHata(RuntimeError):
 S7B_YOL = {
     "olay": os.path.join(S7B_KLASOR, "olay_Y10.csv.gz"),
     "cikti": os.path.join(S7B_KLASOR, "S7_BOLGE_2016-22.pdf"),
+    "cikti_s9": os.path.join(S7B_KLASOR, "S7_BOLGE_2016-22_S9.pdf"),
+    "s9_oz": os.path.join(S7B_KLASOR, "ozellik_Y1_s9.csv.gz"),
+    "s9_liste": os.path.join(S7B_KLASOR, "S7_S9_LISTE.md"),
     "veri": os.environ.get("OC_VERI", "/tmp/veri"),
 }
 S7B_AYAR = {"donem": "2016-22", "kor_donem": ("2023", "2024-26"), "pazar_sira": ("ABD", "AVR", "BIST"), "bist_n": 10, "tohum": 104,
@@ -133,6 +142,107 @@ def s7b_ozet(D: pd.DataFrame, S: pd.DataFrame) -> List[Dict[str, Any]]:
     return out
 
 
+# ================================================================ Ş9 (--s9): F24-F29 dosyadan, karar / neden S7_S9_LISTE.md ile birebir
+S9_OZ = ["F24", "F25", "F26", "F27", "F28", "F29"]
+S9_RENK = "#7b3294"
+
+
+def s9_karar(r: pd.Series, T: Dict[str, float]) -> Dict[str, Any]:
+    """F24-F29 -> ('U DOĞRU' | 'U DEĞİL', neden). Alt şart sırası a, b, c, d, e, f; a <= 0 ise yalnız 'çanak değil'. NaN tutmaz."""
+    f = {k: float(r[k]) for k in S9_OZ}
+    if not (np.isfinite(f["F24"]) and f["F24"] > T["F24_alt_acik"]):
+        return {"karar": "U DEĞİL", "neden": "çanak değil (a<=0)"}
+    n = []
+    if not (f["F25"] >= T["F25_alt"] and f["F25"] <= T["F25_ust"]):
+        n.append(f"dip kenarda (x* {f['F25']:.2f})")
+    if not f["F26"] >= T["F26_min"]:
+        n.append(f"uyum zayıf (R² {f['F26']:.2f})")
+    if not f["F27"] >= T["F27_min"]:
+        n.append(f"sol derinlik az ({f['F27']:.1f} ATR)")
+    if not f["F28"] >= T["F28_min"]:
+        n.append(f"sağ kalkmamış ({f['F28']:.1f} ATR)")
+    if not abs(f["F29"]) <= T["F29_mutlak_ust"]:
+        n.append(f"gerçek dip uyum dibinden uzak ({f['F29']:+.0f} bar)")
+    return {"karar": "U DEĞİL" if n else "U DOĞRU", "neden": "; ".join(n)}
+
+
+def s9_liste_oku(yol: str) -> Dict[int, Dict[str, str]]:
+    """S7_S9_LISTE.md tablosu: | No | pazar | Ş9 | neden |."""
+    try:
+        txt = open(yol, encoding="utf-8").read()
+    except OSError as ex:
+        raise S7BHata(f"S7_S9_LISTE.md okunamadı: {ex}") from ex
+    out: Dict[int, Dict[str, str]] = {}
+    for ln in txt.splitlines():
+        m = re.match(r"^\|\s*(\d+)\s*\|\s*(ABD|AVR|BIST)\s*\|\s*(U DOĞRU|U DEĞİL)\s*\|(.*)\|\s*$", ln)
+        if m:
+            no = int(m.group(1))
+            if no in out:
+                raise S7BHata(f"S7_S9_LISTE.md: No {no} iki kez")
+            out[no] = {"pazar": m.group(2), "karar": m.group(3), "neden": m.group(4).strip()}
+    return out
+
+
+def s9_ekle(S: pd.DataFrame) -> pd.DataFrame:
+    """S (no'lu 50 olay) + F24-F29 (ozellik_Y1_s9.csv.gz) + karar / neden; liste dosyasıyla 50 / 50 eşit değilse DURUR."""
+    try:
+        F = pd.read_csv(S7B_YOL["s9_oz"], dtype={"sembol": str})
+    except Exception as ex:
+        raise S7BHata(f"ozellik_Y1_s9 okunamadı: {ex}") from ex
+    F["tarih"] = pd.to_datetime(F.tarih)
+    if F.duplicated(["pazar", "sembol", "tarih"]).any():
+        raise S7BHata("ozellik_Y1_s9: tekrar eden anahtar")
+    M = S.drop(columns=[k for k in S9_OZ if k in S.columns]).merge(F[["pazar", "sembol", "tarih"] + S9_OZ], on=["pazar", "sembol", "tarih"],
+                                                                     how="left", validate="one_to_one", indicator=True)
+    if (M._merge != "both").any() or len(M) != len(S):
+        raise S7BHata(f"F24-F29 bulunamayan olay: {int((M._merge != 'both').sum())}")
+    M = M.drop(columns="_merge")
+    assert (M.no.to_numpy() == S.no.to_numpy()).all(), "Ş9 birleştirmesi sırayı bozdu"
+    T = YH.YH_ESIK["denemeler"]["Y11"]["esik"]
+    K = [s9_karar(r, T) for _, r in M.iterrows()]
+    M["s9_karar"] = [k["karar"] for k in K]; M["s9_neden"] = [k["neden"] for k in K]
+    # YAPI_HEDEF'in kendi alt şartlarıyla da aynı karar
+    A = YH.yh_s9_alt(M[S9_OZ].reset_index(drop=True))
+    yh = np.all(np.vstack([np.asarray(v, bool) for v in A.values()]), axis=0)
+    if not (yh == (M.s9_karar == "U DOĞRU").to_numpy()).all():
+        raise S7BHata("Ş9 kararı YAPI_HEDEF.yh_s9_alt ile tutmadı")
+    Lst = s9_liste_oku(S7B_YOL["s9_liste"])
+    if sorted(Lst) != list(M.no.astype(int)):
+        raise S7BHata(f"S7_S9_LISTE.md No kümesi ({len(Lst)}) olaylarla aynı değil")
+    fark = [int(r.no) for _, r in M.iterrows()
+            if (Lst[int(r.no)]["pazar"], Lst[int(r.no)]["karar"], Lst[int(r.no)]["neden"]) != (r.pazar, r.s9_karar, r.s9_neden)]
+    esit = len(M) - len(fark)
+    s7blog.info("Ş9 liste karşılaştırması: %d / %d eşit", esit, len(M))
+    if fark:
+        raise S7BHata(f"Ş9 karar / neden S7_S9_LISTE.md ile {esit} / {len(M)} eşit; farklı No: {fark[:10]}")
+    return M
+
+
+def s9_egri(r: pd.Series, d: pd.DataFrame) -> Dict[str, Any]:
+    """[t-40, t-1] Low'a polyfit(2); ATR250 (GOZ_ETIKET F3 tanımı, pencereden önce) ile F24 / F25 / F26 / F29 dosyayla tutmalı."""
+    Pz = YH.YH_ESIK["denemeler"]["Y11"]["s9_prm"]; n = int(Pz["pencere"])
+    i = int(d.index.get_loc(pd.Timestamp(r.tarih))); w0 = i - n
+    cnt = min(int(Pz["atr_gun"]), w0 - 1)
+    if w0 < 0 or cnt < int(Pz["atr_min"]):
+        raise S7BHata(f"No {r.no}: Ş9 penceresi / ATR geçmişi yok")
+    H_, L_, C_ = (d[c].to_numpy(float) for c in ("High", "Low", "Close"))
+    Hh, Ll, Cp = H_[w0 - cnt:w0], L_[w0 - cnt:w0], C_[w0 - cnt - 1:w0 - 1]
+    atr = float(np.mean((np.maximum(Hh, Cp) - np.minimum(Ll, Cp)) / Cp)) * float(np.mean(C_[w0:i]))
+    Lw = L_[w0:i]; x = np.arange(n, dtype=float)
+    a, b, c = (float(v) for v in np.polyfit(x, Lw, 2))
+    f24 = a / atr
+    assert abs(f24 / float(r.F24) - 1) <= 1e-3, f"No {r.no}: F24 yeniden {f24:.6g} != dosya {float(r.F24):.6g}"
+    u = a * x * x + b * x + c
+    r2 = 1.0 - float(np.sum((Lw - u) ** 2)) / float(np.sum((Lw - Lw.mean()) ** 2))
+    assert abs(r2 - float(r.F26)) <= 1e-3, f"No {r.no}: F26 yeniden {r2:.6g} != dosya {float(r.F26):.6g}"
+    xs = np.nan
+    if a > 0:
+        xs = -b / (2.0 * a)
+        assert abs(xs / (n - 1) - float(r.F25)) <= 1e-3 * max(1.0, abs(float(r.F25))), f"No {r.no}: F25 yeniden tutmadı"
+        assert abs((float(np.argmin(Lw)) - xs) - float(r.F29)) <= 1e-2 * max(1.0, abs(float(r.F29))), f"No {r.no}: F29 yeniden tutmadı"
+    return {"xr": x - n, "u": u, "a": a, "b": b, "c": c, "xs": xs, "n": n}
+
+
 # ================================================================ KAPI: yeniden simülasyon
 def s7b_sim_kapi(r: pd.Series, d: pd.DataFrame) -> None:
     """Hissenin kendi geçerli barlarıyla YH.yh_sim; h5 / st5 / k5 / kst satırla aynı olmalı."""
@@ -147,7 +257,7 @@ def s7b_sim_kapi(r: pd.Series, d: pd.DataFrame) -> None:
 
 
 # ================================================================ GÖRSEL
-def s7b_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
+def s7b_grafik(r: pd.Series, d: pd.DataFrame, yol: str, s9: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """hd_grafik geometrisi (sonra=30, bilgi_bar=30) + 120 bar öncesi + F21 (kırmızı kesik) + eski S6 tavanı (gri ince)."""
     import matplotlib
     matplotlib.use("Agg")
@@ -198,6 +308,14 @@ def s7b_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
         ax.hlines(G["tavan"], x0, 0.5, colors="#888888", linestyles="-", linewidth=0.7, zorder=5, label="eski tavan (S6, karşılaştırma)")
         ax.hlines(r.F21_ciz, -15 - 0.5, 0.5, colors="#d7191c", linestyles="--", linewidth=1.5, zorder=6, label="S7 yakın tavan F21 (15 bar tepe)")
         xe = x[-1] + 0.5
+        if s9 is not None:
+            ax.axvline(-s9["n"] - 0.5, color=S9_RENK, linewidth=0.7, linestyle="-", alpha=0.8, zorder=2, label="Ş9 penceresi (son 40 bar)")
+            ax.plot(s9["xr"], s9["u"], color=S9_RENK, linewidth=2.4, linestyle="--", zorder=6, label="Ş9 çanak (2. derece uyum)")
+            if np.isfinite(s9["xs"]):
+                xs = float(s9["xs"]); ic = 0.0 <= xs <= s9["n"] - 1; xc = min(max(xs, 0.0), float(s9["n"] - 1))
+                uc = s9["a"] * xc * xc + s9["b"] * xc + s9["c"]
+                ax.plot([xc - s9["n"]], [uc], marker="o", ms=8, color=S9_RENK if ic else "white", markeredgecolor=S9_RENK, markeredgewidth=1.8,
+                        zorder=9, label="uyum dibi x*" if ic else "uyum dibi x* pencere dışı (sınırda)")
         ax.hlines(T5, 0.5, xe, colors="#1a9850", linestyles="--", linewidth=1.0, zorder=5, label="+%5")
         ax.hlines(T10, 0.5, xe, colors="#006837", linestyles=":", linewidth=1.3, zorder=5, label="+%10")
         ax.hlines(r.stop0, 0.5, xe, colors="#a50026", linestyles="-.", linewidth=1.0, zorder=5, label="stop0")
@@ -225,6 +343,8 @@ def s7b_grafik(r: pd.Series, d: pd.DataFrame, yol: str) -> Dict[str, Any]:
         av.ticklabel_format(axis="y", style="sci", scilimits=(0, 0)); av.grid(alpha=0.25)
         ax.set_xlim(x[0] - 1, x[-1] + 1)
         ylo = min(np.nanmin(l), r.stop0, G["hat"]); yhi = max(np.nanmax(h), T10)
+        if s9 is not None:
+            ylo = min(ylo, float(np.min(s9["u"])))
         ax.set_ylim(ylo - (yhi - ylo) * 0.04, yhi + (yhi - ylo) * 0.06)
         fig.savefig(yol, dpi=S7B_AYAR["dpi_sayfa"], bbox_inches="tight", metadata={"Software": None})
     finally:
@@ -282,7 +402,7 @@ def s7b_sizinti(pdf: str, S: pd.DataFrame) -> Dict[str, int]:
 
 
 # ================================================================ PDF
-def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict[str, Any]:
+def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"], s9: bool = False) -> Dict[str, Any]:
     from reportlab.lib.pagesizes import A4, landscape
     from reportlab.lib.utils import simpleSplit
     from reportlab.pdfbase import pdfmetrics
@@ -290,10 +410,12 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
     from reportlab.pdfgen import canvas
     from PIL import Image
     warnings.filterwarnings("ignore", category=RuntimeWarning)
-    cikti = os.path.abspath(cikti or S7B_YOL["cikti"])
+    cikti = os.path.abspath(cikti or S7B_YOL["cikti_s9" if s9 else "cikti"])
     D = pd.read_csv(S7B_YOL["olay"], dtype={"sembol": str})
     S = s7b_olaylar(tohum)
     S["no"] = np.arange(1, len(S) + 1)
+    if s9:
+        S = s9_ekle(S)
     Z = s7b_ozet(D, S)
     is_k = tempfile.mkdtemp(prefix="s7_bolge_")
     try:
@@ -305,7 +427,7 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
                     raise S7BHata(f"No {r.no}: sembol veride yok")
                 d = GE.ge_hazir(Vd["V"][r.sembol])
                 s7b_sim_kapi(r, d)
-                g = s7b_grafik(r, d, os.path.join(is_k, f"g{int(r.no):02d}.png"))
+                g = s7b_grafik(r, d, os.path.join(is_k, f"g{int(r.no):02d}.png"), s9_egri(r, d) if s9 else None)
                 ek[int(r.no)] = g
             s7blog.info("grafik %s: %d", p, int((S.pazar == p).sum()))
             del Vd
@@ -316,7 +438,7 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
         W, Hh = landscape(A4)
         tmp = cikti + ".tmp"
         cv = canvas.Canvas(tmp, pagesize=(W, Hh), invariant=1)
-        cv.setTitle("S7 BÖLGE 2016-22"); cv.setAuthor(""); cv.setCreator(""); cv.setProducer("")
+        cv.setTitle("S7 BÖLGE 2016-22" + (" Ş9" if s9 else "")); cv.setAuthor(""); cv.setCreator(""); cv.setProducer("")
 
         def yaz(x, y, s, f="DV", n=9, renk=(0, 0, 0)):
             cv.setFillColorRGB(*renk); cv.setFont(f, n); cv.drawString(x, y, s); cv.setFillColorRGB(0, 0, 0)
@@ -355,6 +477,18 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
             for (k, x), s in zip(kol, vals):
                 yaz(x, y, s, f, 10)
             y -= 15
+        if s9:
+            y -= 4
+            nd = {p: int(((S.pazar == p) & (S.s9_karar == "U DOĞRU")).sum()) for p in S7B_AYAR["pazar_sira"]}
+            yaz(30, y, f"Ş9 (U DİP, mor): U DOĞRU {int((S.s9_karar == 'U DOĞRU').sum())} / {len(S)}  (ABD {nd['ABD']}, AVR {nd['AVR']}, "
+                f"BIST {nd['BIST']})", "DVB", 11, (0.48, 0.20, 0.58)); y -= 14
+            y = paragraf(30, y, "Ş9 nedir: sinyalden önceki son 40 barın dip (Low) fiyatlarına bir çanak eğrisi oturtulur (mor kesik). U DOĞRU için "
+                         "altısı birden tutmalı: (1) çanak yukarı açık; (2) çanağın dibi pencerenin içinde, soldan 0,20 ile 0,75 arasında; "
+                         "(3) eğri dipleri iyi izliyor (R² en az 0,40); (4) sol kol derin: pencerenin başı dibin en az 1 ATR üstünde; "
+                         "(5) sağ kol kalkmış: pencerenin sonu dibin en az 0,5 ATR üstünde; (6) gerçek en düşük dip, çanağın dibinin ±5 bar "
+                         "içinde. Mor nokta = çanağın dibi (içi boşsa dip pencerenin dışında, sınırda gösterilir); ince mor dikey = pencere "
+                         "başı. Başlığın ikinci satırı karar ve tutmayan şartlardır (S7_S9_LISTE.md ile aynı).", W - 60, n=9, ara=11.5,
+                         renk=(0.30, 0.10, 0.40)) - 2
         y -= 6
         yaz(30, y, "Eş payı = aynı giriş günü, aynı momentum x likidite kovasındaki öteki hisselerin aynı ölçüdeki payı (olay dosyası).", n=8,
             renk=(0.35, 0.35, 0.35)); y -= 22
@@ -377,6 +511,11 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
             yy = Hh - 26
             for ln in simpleSplit(baslik, "DVB", 12, W - 50):
                 yaz(25, yy, ln, "DVB", 12, rk); yy -= 14
+            if s9:
+                s9s = "Ş9: U DOĞRU" if r.s9_karar == "U DOĞRU" else f"Ş9: U DEĞİL — {r.s9_neden}"
+                assert (r.s9_karar == "U DOĞRU") == (s9s == "Ş9: U DOĞRU"), "Ş9 başlığı kararla çelişiyor"
+                for ln in simpleSplit(s9s, "DVB", 10.5, W - 50):
+                    yaz(25, yy, ln, "DVB", 10.5, (0.48, 0.20, 0.58)); yy -= 12.5
             yaz(25, yy, f"eş payı (+%5) %{r.es_h5 * 100:.0f} · eş stop payı %{r.es_st5 * 100:.0f} · takip stoplu çıkış: {r.cikis_tur}, gün +{int(r.cikis_bar)}, "
                 f"{r.getiri * 100:+.1f}%" + ("" if r.cikis_bar <= S7B_AYAR["sonra"] else " (grafik dışında)"), n=8.5, renk=(0.3, 0.3, 0.3))
             top = yy - 8; kutu_h = top - 48; kutu_w = W - 50
@@ -413,7 +552,8 @@ def s7b_pdf(cikti: Optional[str] = None, tohum: int = S7B_AYAR["tohum"]) -> Dict
     finally:
         shutil.rmtree(is_k, ignore_errors=True)
     return {"pdf": cikti, "mb": round(mb, 2), "sayfa": sayfa, "olay": {p: npz[p] for p in npz}, "sizinti": sz, "kapak": Z,
-            "h5_toplam": int(S.h5.sum()), "st5_toplam": int(S.st5.sum()), "basliklar": basliklar}
+            "h5_toplam": int(S.h5.sum()), "st5_toplam": int(S.st5.sum()), "basliklar": basliklar,
+            **({"s9_u_dogru": {p: int(((S.pazar == p) & (S.s9_karar == "U DOĞRU")).sum()) for p in S7B_AYAR["pazar_sira"]}} if s9 else {})}
 
 
 # ================================================================ ÇAKIŞMA KAPISI ve KOMUT
@@ -433,9 +573,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="S7 bölge PDF'i (2016-22, sonrası 30 mum)")
     ap.add_argument("--cikti", default=None)
     ap.add_argument("--tohum", type=int, default=S7B_AYAR["tohum"])
+    ap.add_argument("--s9", action="store_true", help="Ş9 çanağı (ozellik_Y1_s9) + S7_S9_LISTE.md kararı; çıktı S7_BOLGE_2016-22_S9.pdf")
     a = ap.parse_args()
     try:
-        R = s7b_pdf(a.cikti, a.tohum)
+        R = s7b_pdf(a.cikti, a.tohum, a.s9)
         print(json.dumps(R, ensure_ascii=False, indent=1, default=str))
     except (S7BHata, GE.GEHata, YH.YHHata, AssertionError) as ex:
         s7blog.error("%s", ex); sys.exit(1)
