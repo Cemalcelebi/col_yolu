@@ -20,6 +20,8 @@
     yapay veri ile öğrenilebilir sinyal / gürültü, yürüyen katlar, NaN medyan + bayrak, uçtan uca onkayit7 + kos7 + rapor7 + kapı
 14) DEVİR 1 (F30-F42): Corwin-Schultz / gece-gün içi / Amihud / sıfır getiri / ER / R-MDD / toparlanma hızı elle, prefix (t sonrası
     değişince aynı; veri t'de kesilince mahkeme dahil aynı), süzgeç (NaN / inf), etiket, regresyon kapısı (Y1-Y12 sha), kapı
+15) DEVİR 2 (F43-F64, karne v2): pocket pivot / kutu yüzdeliği / düz tavan (pivot onayı) / RVOL / ATR / NR7 / ID-NR4 / VCP ZigZag elle,
+    prefix, kesit sırası, 60 bar ambargo, süzgeç (d1 / d2 eşik), bootstrap / L3O, etiket, regresyon (DEVİR 1 mührü dahil), kapı
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -1394,6 +1396,155 @@ kontrol("D1: ön kayıt yokken koşu kapısı DURUR", _kp)
 kontrol("D1: kontrol tablosu 14 satır, adlar önekli (çakışma kapısı)", YH.yh_kontrol_tablosu(YH.YH_KONTROL_D1).count("| K") >= 14
         and all(k.startswith(("yh_d1", "yh_devir", "_yh_d1", "YH_D1", "YH_ESIK_D1", "_YH_D1", "YH_KONTROL_D1", "yh_esik_d1"))
                 for k in dir(YH) if "d1" in k.lower() or "devir" in k.lower()))
+
+# ---------------------------------------------------------------- 15) DEVİR 2 (F43-F64, karne v2)
+print("\n15) DEVİR 2: F43-F64 elle, prefix, kesit, ambargo, süzgeç (d1 / d2 eşik), bootstrap / L3O, etiket, tabaka, regresyon, kapı")
+_n = 400; _d2 = rastgele_hisse(_n, 91); _O, _H, _L, _C, _V = (_d2[c].to_numpy(float).copy() for c in ("Open", "High", "Low", "Close", "Volume"))
+_i, _sol = 330, 290
+_r = YH.yh_d2_bar(_O, _H, _L, _C, _V, _i, _sol)
+_jj = np.arange(_i - 10, _i); _dn = _C[_jj] < _C[_jj - 1]; _mx = _V[_jj][_dn].max()
+_pp = (0.0 if not _C[_i] > _C[_i - 1] else float(_V[_i] > _mx))
+kontrol("D2: F43 pocket pivot ve F44 PPR elle", _r["F43"] == _pp and abs(_r["F44"] - _V[_i] / _mx) < 1e-12, f"{_r['F43']}, {_r['F44']:.4g}")
+_V3 = _V.copy(); _C3 = _C.copy(); _C3[_i] = _C3[_i - 1] * 1.01; _V3[_i] = _mx + 1.0
+kontrol("D2: F43 = 1 (yukarı gün, hacim > en büyük düşüş günü hacmi), = hacim eşit ise 0 (kesin büyük)",
+        YH.yh_d2_bar(_O, _H, _L, _C3, _V3, _i, _sol)["F43"] == 1.0
+        and YH.yh_d2_bar(_O, _H, _L, _C3, np.where(np.arange(_n) == _i, _mx, _V3), _i, _sol)["F43"] == 0.0)
+_Cu = _C.copy(); _Cu[_i - 11:_i + 1] = np.linspace(40, 52, 12)
+kontrol("D2: F43 yukarı gün ama 10 günde düşüş günü yok -> NaN; F44 NaN", np.isnan(YH.yh_d2_bar(_O, _H, _L, _Cu, _V, _i, _sol)["F43"])
+        and np.isnan(YH.yh_d2_bar(_O, _H, _L, _Cu, _V, _i, _sol)["F44"]))
+_a = _i - 19; _kb = _H[_a:_i + 1].max() - _L[_a:_i + 1].min(); _R = _H - _L
+kontrol("D2: F47 KAYMA, F48 CV, F49 tek gün payı elle", abs(_r["F47"] - abs(_C[_i] - _C[_a]) / _kb) < 1e-12
+        and abs(_r["F48"] - _R[_a:_i + 1].std() / _R[_a:_i + 1].mean()) < 1e-12 and abs(_r["F49"] - _R[_a:_i + 1].max() / _kb) < 1e-12)
+_Pb = np.array([(_H[s - 19:s + 1].max() - _L[s - 19:s + 1].min()) / _L[s - 19:s + 1].min() for s in range(_i - 251, _i + 1)])
+kontrol("D2: F46 yüzdelik (252 kutu, t dahil, eşitlik orta) elle", abs(_r["F46"] - ((_Pb < _Pb[-1]).sum() + 0.5 * (_Pb == _Pb[-1]).sum()) / 252) < 1e-12,
+        f"{_r['F46']:.4f}")
+kontrol("D2: F46 kutu sayısı < 200 -> NaN", np.isnan(YH.yh_d2_bar(_O, _H, _L, _C, _V, 210, 190)["F46"]))
+# düz tavan elle: düz seri + iki eşit pivot tepe
+_Hd = np.full(120, 10.5); _Ld = np.full(120, 10.0); _Cd = np.full(120, 10.2); _Od = np.full(120, 10.2); _Vd = np.full(120, 1000.0)
+_Hd[60] = 11.0; _Hd[80] = 11.3; _Hd[95] = 11.2                                 # pivotlar 60 / 80 / 95 (95 + 6 <= 101 onaylı)
+_rt = YH.yh_d2_bar(_Od, _Hd, _Ld, _Cd, _Vd, 101, 50)
+_mr = (_Hd[80:96] - _Ld[80:96]).mean()
+kontrol("D2: F50 / F51 düz tavan: son iki onaylı pivot (80, 95), |a-c| / ort(H-L) elle", abs(_rt["F51"] - 0.1 / _mr) < 1e-12 and _rt["F50"] == 1.0,
+        f"{_rt['F51']:.4f}")
+kontrol("D2: F50 pivot 6 bar onaylanmadan sayılmaz (t = 100: 95 + 6 > 100 -> pivotlar 60, 80)",
+        abs(YH.yh_d2_bar(_Od, _Hd, _Ld, _Cd, _Vd, 100, 50)["F51"] - 0.3 / (_Hd[60:81] - _Ld[60:81]).mean()) < 1e-12)
+_Hd2 = _Hd.copy(); _Hd2[95] = 12.5
+kontrol("D2: F50 tepe farkı > ort(H-L) -> 0; tek pivot -> 0 ve F51 NaN", YH.yh_d2_bar(_Od, _Hd2, _Ld, _Cd, _Vd, 101, 50)["F50"] == 0.0
+        and YH.yh_d2_bar(_Od, _Hd, _Ld, _Cd, _Vd, 101, 85)["F50"] == 0.0 and np.isnan(YH.yh_d2_bar(_Od, _Hd, _Ld, _Cd, _Vd, 101, 85)["F51"]))
+_Cp = np.r_[np.nan, _C[:-1]]; _tr = np.fmax(_H, _Cp) - np.fmin(_L, _Cp)
+kontrol("D2: F52 RVOL14 ve F55 ATR14 / C elle", abs(_r["F52"] - _V[_i] / _V[_i - 14:_i].mean()) < 1e-12
+        and abs(_r["F55"] - _tr[_i - 13:_i + 1].mean() / _C[_i]) < 1e-12)
+kontrol("D2: F56 NR7 (t-1), F57 ID/NR4, F58 önceki trend, F59 NR7 (t) elle",
+        _r["F56"] == float(_R[_i - 1] <= _R[_i - 7:_i].min()) and _r["F58"] == float(_C[_i - 1] < _C[_i - 21])
+        and _r["F57"] == float(_R[_i - 1] <= _R[_i - 4:_i].min() and _H[_i - 1] < _H[_i - 2] and _L[_i - 1] > _L[_i - 2])
+        and _r["F59"] == float(_R[_i] <= _R[_i - 6:_i + 1].min()))
+_Hn = _H.copy(); _Ln = _L.copy(); _Hn[_i - 1] = _H[_i - 2] - 1e-6; _Ln[_i - 1] = _L[_i - 2] + 1e-6
+_Ln[_i - 1] = max(_Ln[_i - 1], _Hn[_i - 1] - 1e-4)
+kontrol("D2: F56 / F57 = 1 (iç ve en dar bar)", YH.yh_d2_bar(_O, _Hn, _Ln, _C, _V, _i, _sol)["F56"] == 1.0
+        and YH.yh_d2_bar(_O, _Hn, _Ln, _C, _V, _i, _sol)["F57"] == 1.0)
+kontrol("D2: F64 kırılım hacmi elle", abs(_r["F64"] - _V[_i] / _V[_i - 50:_i].mean()) < 1e-12)
+# VCP: kurgulanmış daralan salınımlar (ATR sabit 1 -> eşik 1,5)
+_Hv = np.full(200, 100.5); _Lv = np.full(200, 99.5)
+_yol = [(40, 120), (55, 100), (70, 114), (85, 104), (100, 111), (115, 105.5), (130, 109.5)]
+_x = [0] + [p for p, _ in _yol] + [199]; _y = [100] + [v for _, v in _yol] + [109]
+_mid = np.interp(np.arange(200), _x, _y); _Hv = _mid + 0.5; _Lv = _mid - 0.5; _Cv = _mid.copy(); _Ov = _mid.copy()
+_Vv = np.full(200, 1000.0); _Vv[100:116] = 400.0       # son daralma (tepe 100 -> dip 115) düşük hacim
+_zz = YH._yh_d2_zigzag(_Hv, _Lv, np.full(200, 1.0), 30, 149, 1.5)
+kontrol("D2: ZigZag onaylı pivotlar (pencere başı dip dahil; tepe / dip sırası; son açık salınım 130 yok)", [p[1] for p in _zz] == [30, 40, 55, 70, 85, 100, 115], [p[1] for p in _zz])
+_vc = YH.yh_d2_vcp(_Hv, _Lv, _Vv, np.full(200, 1.0), 150)
+_d1v = 100 * (120.5 - 99.5) / 120.5
+kontrol("D2: VCP F60 / F61 = 1, F62 = d_n / d_1, F63 daralma sayısı (en yüksek tepeden)", _vc["F60"] == 1.0 and _vc["F61"] == 1.0 and _vc["F63"] == 3.0
+        and abs(_vc["F62"] - (100 * (111.5 - 105.0) / 111.5) / _d1v) < 1e-9, _vc)
+_Vv2 = _Vv.copy(); _Vv2[100:116] = 3000.0
+kontrol("D2: VCP son daralma hacmi ortalamanın üstünde -> 0", YH.yh_d2_vcp(_Hv, _Lv, _Vv2, np.full(200, 1.0), 150)["F60"] == 0.0)
+# prefix (t+1 sonrası değişince aynı)
+_O2, _H2, _L2, _C2, _V2 = (x.copy() for x in (_O, _H, _L, _C, _V))
+for x in (_O2, _H2, _L2, _C2, _V2):
+    x[_i + 1:] = x[_i + 1:] * 3.7
+_r2 = YH.yh_d2_bar(_O2, _H2, _L2, _C2, _V2, _i, _sol)
+kontrol("D2: prefix: t+1 ve sonrası değişince F43-F64 (hisse içi) aynı", all((np.isnan(_r[k]) and np.isnan(_r2[k])) or _r[k] == _r2[k] for k in _r))
+_dh2 = YH._yh_hazir(rastgele_hisse(900, 6)); _tl = [_dh2.index[k] for k in (400, 555, 700, 860)]; _gl = [30.0, 12.0, 80.0, 5.0]
+_F2 = YH.yh_devir2_ozellik(_dh2, _tl, _gl, hazir=True); _ok2 = True
+for _tt, _g, (_, _rr) in zip(_tl, _gl, _F2.iterrows()):
+    _k2 = YH.yh_devir2_ozellik(_dh2[_dh2.index <= _tt], [_tt], [_g], hazir=True).iloc[0]
+    _ok2 &= np.allclose(_k2[YH._YH_D2_BAR].to_numpy(float), _rr[YH._YH_D2_BAR].to_numpy(float), equal_nan=True)
+kontrol("D2: yh_devir2_ozellik veri t'de kesilince aynı (4 gün)", bool(_ok2))
+# kesit
+_Vh = {f"S{k}": YH._yh_hazir(rastgele_hisse(60, 200 + k)) for k in range(5)}
+_Ks = YH.yh_d2_kesit(_Vh, {})
+_g0 = _Vh["S0"].index[40]; _Rg = {s: d.Volume.iloc[40] / d.Volume.iloc[26:40].mean() for s, d in _Vh.items()}
+_srt = sorted(_Rg, key=lambda s: -_Rg[s]); _kk = _Ks[_Ks.tarih == _g0].set_index("sembol")
+kontrol("D2: kesit: R elle, sıra (azalan, 1 = en yüksek), yüzde", all(abs(_kk.loc[s, "R"] - _Rg[s]) < 1e-12 for s in _Rg)
+        and int(_kk.loc[_srt[0], "sira"]) == 1 and int(_kk.loc[_srt[-1], "sira"]) == 5 and abs(_kk.loc[_srt[0], "yuzde"] - 1.0) < 1e-12)
+_Ks2 = YH.yh_d2_kesit(_Vh, {"S0": _Vh["S0"].index[45]})
+kontrol("D2: kesit: evren_bas öncesi hisse evrende yok", not ((_Ks2.sembol == "S0") & (_Ks2.tarih < _Vh["S0"].index[45])).any())
+# ambargo
+_tk = pd.bdate_range("2022-10-03", periods=200)
+_am = YH.yh_d2_ambargo_tarih(_tk, pd.Series([_tk[10], _tk[50]]), pd.Series([_tk[120], _tk[150]]), 60)
+kontrol("D2: ambargo: YÖN 1 ilk izinli = son eğitim + 60 bar; YÖN 2 son izinli = ilk eğitim - 60 bar",
+        _am["yon1_sinama_ilk_izinli"] == str(_tk[110].date()) and _am["yon2_sinama_son_izinli"] == str(_tk[60].date()))
+try:
+    YH.yh_d2_ambargo_tarih(_tk, pd.Series([pd.Timestamp("2022-10-01")]), pd.Series([_tk[150]]), 60); _amk = False
+except YH.YHHata:
+    _amk = True
+kontrol("D2: ambargo: eğitim günü takvimde yoksa DURUR", _amk)
+_Mh = pd.DataFrame({"pazar": ["ABD"] * 5, "donem": ["2016-22", "2016-22", "2023", "2023", "2024-26"],
+                    "giris": pd.to_datetime(["2022-06-01", "2022-12-20", "2023-01-10", "2023-04-01", "2024-02-01"])})
+_hm = YH.yh_d2_hucre_maske(_Mh, {"ambargo": {"ABD": {"yon1_sinama_ilk_izinli": "2023-03-20", "yon2_sinama_son_izinli": "2022-10-01"}}})
+kontrol("D2: hücre maskesi (sınama ambargolu, ters ambargolu)", list(_hm["egitim"]) == [True, True, False, False, False]
+        and list(_hm["sinama"]) == [False, False, False, True, True] and list(_hm["ters"]) == [True, False, False, False, False])
+# süzgeç: d1 eşikleri ve d2 eşikleri ayrı
+_Mt2 = pd.DataFrame({"pazar": ["ABD", "ABD", "AVR", "AVR"], "F30": [0.5, 0.9, 0.5, np.nan], "F47": [0.1, 0.3, 0.2, 0.05],
+                     "F52": [1.5, 1.2, 0.9, 2.0], "F53": [3, 25, 1, 20], "F55": [0.02, 0.02, 0.02, 0.005]})
+_Q2 = {"yon1": {p: {"F47": {"q25": 0.15, "q75": 0.6}} for p in ("ABD", "AVR", "BIST")}}
+_Q1 = {"yon1": {p: {"F30": {"q25": 0.8, "q75": 1.1}} for p in ("ABD", "AVR", "BIST")}}
+kontrol("D2: süzgeç W1 devir1 eşiğiyle, AYK devir2 eşiğiyle, RV üçlü kural, NaN tutmaz",
+        list(YH.yh_d2_maske(_Mt2, "W1", _Q2, _Q1, "yon1")) == [True, False, True, False]
+        and list(YH.yh_d2_maske(_Mt2, "AYK", _Q2, _Q1, "yon1")) == [True, False, False, True]
+        and list(YH.yh_d2_maske(_Mt2, "RV", _Q2, _Q1, "yon1")) == [True, False, False, False])
+# bootstrap / L3O
+_rng = np.random.default_rng(3); _nk = 600
+_Xk = pd.DataFrame({"giris": pd.to_datetime("2023-01-01") + pd.to_timedelta(_rng.integers(0, 700, _nk), "D"),
+                    "h5": _rng.integers(0, 2, _nk).astype(float), "es_h5": _rng.uniform(0.3, 0.5, _nk)})
+_sel = _rng.random(_nk) < 0.3; _Xa = _Xk[_sel].copy(); _Xa["h5"] = 1.0
+_bl = YH.yh_d2_boot_l3o(_Xa, _Xk)
+_mj = (_Xa.h5 - _Xa.es_h5).mean() - (_Xk.h5 - _Xk.es_h5).mean()
+kontrol("D2: bootstrap alt uç < MARJ < 1 ve > 0 (güçlü aday); L3O > 0", 0 < _bl["boot_alt"] < _mj and 0 < _bl["l3o"], f"{_bl}, {_mj:.3f}")
+_ay = _Xk.giris.dt.strftime("%Y-%m"); _Ma = (_Xa.h5 - _Xa.es_h5).groupby(_ay[_sel]).agg(["sum", "count"]); _Mk = (_Xk.h5 - _Xk.es_h5).groupby(_ay).agg(["sum", "count"])
+_Ma = _Ma.reindex(_Mk.index, fill_value=0)
+_tek = {m: (_Ma["sum"].sum() - _Ma.loc[m, "sum"]) / (_Ma["count"].sum() - _Ma.loc[m, "count"]) - (_Mk["sum"].sum() - _Mk.loc[m, "sum"]) / (_Mk["count"].sum() - _Mk.loc[m, "count"]) for m in _Mk.index}
+_c3 = sorted(_tek, key=lambda m: _tek[m])[:3]; _kp3 = [m for m in _Mk.index if m not in _c3]
+_l3 = _Ma.loc[_kp3, "sum"].sum() / _Ma.loc[_kp3, "count"].sum() - _Mk.loc[_kp3, "sum"].sum() / _Mk.loc[_kp3, "count"].sum()
+kontrol("D2: L3O elle (en çok düşüren 3 ay birlikte çıkar)", abs(_l3 - _bl["l3o"]) < 1e-12)
+_h = lambda n, f, m, b=.01, l=.01, st=.3, es=.3: {"n": n, "fark": f, "marjinal": m, "boot_alt": b, "l3o": l, "st": st, "es_st": es}  # noqa: E731
+_cc = lambda **kw: {p: {k: _h(**kw.get(f"{p}_{k}", {"n": 40, "f": .03, "m": .02})) for k in ("egitim", "sinama")} for p in ("ABD", "AVR")}  # noqa: E731
+kontrol("D2: etiket karne v2: KATKI+ / tabaka -> SORGULA / AVR n < 30 / boot alt <= 0 / L3O <= 0 / stop / KATKI−",
+        YH.yh_d2_etiket(_cc(), True, 30, ["ABD", "AVR"]) == "KATKI+"
+        and YH.yh_d2_etiket(_cc(), False, 30, ["ABD", "AVR"]) == "SORGULA"
+        and YH.yh_d2_etiket(_cc(AVR_sinama={"n": 29, "f": .03, "m": .02}), True, 30, ["ABD", "AVR"]) == "SORGULA"
+        and YH.yh_d2_etiket(_cc(ABD_egitim={"n": 40, "f": .03, "m": .02, "b": -.001}), True, 30, ["ABD", "AVR"]) == "SORGULA"
+        and YH.yh_d2_etiket(_cc(AVR_egitim={"n": 40, "f": .03, "m": .02, "l": -.001}), True, 30, ["ABD", "AVR"]) == "SORGULA"
+        and YH.yh_d2_etiket(_cc(ABD_sinama={"n": 40, "f": .03, "m": .02, "st": .4}), True, 30, ["ABD", "AVR"]) == "SORGULA"
+        and YH.yh_d2_etiket({p: {k: _h(40, -.01, -.02) for k in ("egitim", "sinama")} for p in ("ABD", "AVR")}, True, 30, ["ABD", "AVR"]) == "KATKI−")
+try:
+    YH._yh_d2_regresyon(YH.YH_YOL["cikti"]); _rg2 = True
+except YH.YHHata:
+    _rg2 = False
+kontrol("D2: regresyon kapısı: Y1-Y12 sha + YH_ESIK_D1 + devir1_esik.json = mühürler", _rg2)
+_E3 = copy.deepcopy(YH.YH_ESIK_D1); _E3["aday"]["W1"]["kural"][0][2] = 0.99
+kontrol("D2: DEVİR 1 eşik kuralı değişince YH_ESIK_D1 sha değişir", YH.yh_esik_d1_sha(_E3) != YH.yh_esik_d1_sha())
+_td2 = tempfile.mkdtemp()
+try:
+    YH.yh_d2_kapi(_td2, git=False); _kp2 = False
+except YH.YHHata:
+    _kp2 = True
+shutil.rmtree(_td2, ignore_errors=True)
+kontrol("D2: ön kayıt yokken koşu kapısı DURUR", _kp2)
+kontrol("D2: kontrol tablosu 14 satır, K1 EVET (tabakalı), adlar önekli (çakışma kapısı; DEVİR 1 adları korunur)",
+        YH.yh_kontrol_tablosu(YH.YH_KONTROL_D2).count("| K") >= 14 and YH.YH_KONTROL_D2["K1"][0] == "EVET"
+        and all(k.startswith(("yh_d2", "yh_devir2", "_yh_d2", "YH_D2", "YH_ESIK_D2", "_YH_D2", "YH_KONTROL_D2", "yh_esik_d2"))
+                for k in dir(YH) if "d2" in k.lower() or "devir2" in k.lower())
+        and callable(YH.yh_devir_ozellik) and callable(YH.yh_devir_kos) and YH.yh_devir_kos.__doc__.startswith("DEVİR 1"))
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)

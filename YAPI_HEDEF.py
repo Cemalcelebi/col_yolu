@@ -7465,6 +7465,954 @@ def yh_devir_rapor(cikti: Optional[str] = None, E: Dict[str, Any] = YH_ESIK_D1) 
     return metin
 
 
+# ================================================================ DEVİR 2 (2026-11-19): karne v2 (60 bar ambargo, ABD / AVR ayrı, bootstrap, L3O, K1 tabaka)
+# Kodlayıcı alt ajan; iş tanımı: workflow DEVİR 2 (Y2_* web entegrasyon adayları F43-F64 + DEVİR 1 YENİDEN W1 / W2 / W2D, devir1_esik.json AYNEN).
+# Yalnız ekleme: Y1-Y12 eşikleri ve DEVİR 1 (YH_ESIK_D1, devir1_esik.json, ozellik_Y1_d1.csv.gz) değişmez (regresyon kapısı yh_d2_kapi).
+# Not: DEVİR 1 F30-F42 kodlarını kullandı (ozellik_Y1_d1); DEVİR 2 yeni ölçüleri çakışmasın diye F43'ten başlar. Ad: yh_devir2_* (yh_devir_ozellik /
+# yh_devir_kos DEVİR 1'e ait; üzerine yazılmaz).
+_YH_D2_OZ = ["F43", "F44", "F45", "F46", "F47", "F48", "F49", "F50", "F51", "F52", "F53", "F54", "F55", "F56", "F57", "F58", "F59", "F60",
+             "F61", "F62", "F63", "F64"]
+_YH_D2_BAR = [k for k in _YH_D2_OZ if k not in ("F53", "F54")]          # hisse içi (prefix denetimi); F53 / F54 kesit (aynı gün evren)
+YH_D2_DOSYA = {"ozellik": "ozellik_Y1_d2.csv.gz", "denetim": "ozellik_Y1_d2_denetim.json", "esik": "devir2_esik.json",
+               "onkayit": "DEVIR_2_ON_KAYIT.md", "sonuc": "devir2_sonuc.json", "rapor": "DEVIR_2_RAPOR.md", "hata": "devir2_hata.json"}
+
+YH_ESIK_D2: Dict[str, Any] = {
+    "surum": "D2.0",
+    "taban": "YH_ESIK / YH_ESIK6 / YH_ESIK7 AYNEN (ON_KAYIT_5 / 6 / 7 mührü); DEVİR 1 YH_ESIK_D1 + devir1_esik.json + ozellik_Y1_d1.csv.gz AYNEN; "
+             "ölçü satırları olay_Y1.csv.gz (sha)",
+    "pencere": {"pp": 10, "sma_kisa": 10, "sma_uzun": 50, "kutu": 20, "kutu_gecmis": 252, "kutu_min": 200, "pivot": 6, "rvol": 14, "rvol_min": 10,
+                "atr": 14, "atr_min_oran": 0.01, "kesit_ilk": 20, "nr7": 7, "nr4": 4, "trend": 20, "vcp_gun": 120, "vcp_atr_kat": 1.5,
+                "vcp_oran": 0.70, "vcp_ilk": 10.0, "vcp_ilk_kucuk": 5.0, "vcp_son": 15.0, "vcp_bar": 5, "vcp_hacim": 50},
+    "ozellik": {
+        "F43": "Y2_PP pocket pivot (filtresiz, ana): 1 eğer C_t > C_t-1 ve V_t > max{V_i: i in [t-10, t-1], C_i < C_i-1} (kesin büyük); C_t <= C_t-1 "
+               "ise 0; yukarı gün ama pencerede düşüş günü yoksa NaN; t-11'den geçmiş yoksa NaN",
+        "F44": "Y2_PPR = V_t / max(düşüş günü V, [t-10, t-1]) (sürekli; düşüş günü yoksa NaN; yukarı gün şartı YOK)",
+        "F45": "Y2_PP LuxAlgo filtreli (bilgi): F43 = 1 VE C_t > SMA50_t VE L_t <= max(SMA10_t, 1,02 x SMA50_t) VE C_t > SMA10_t; SMA50 için 50 bar yoksa NaN",
+        "F46": "Y2_YUZDELIK: P_s = (max H - min L) / min L, kutu [s-19, s]; F46 = (#{P_s < P_t} + 0,5 x #{P_s = P_t}) / M, s in [t-251, t] "
+               "(t dahil, s-19 >= 0); M < 200 ise NaN",
+        "F47": "Y2_KAYMA = |C_t - C_t-19| / (max H - min L) (kutu [t-19, t])",
+        "F48": "Y2_ARALIK_CV = std(H-L) / ort(H-L), kutu [t-19, t] (ddof 0)",
+        "F49": "Y2_TEK_GUN_PAYI = max(H-L) / (max H - min L), kutu [t-19, t]",
+        "F50": "Y2_DUZ_TAVAN: pivot tepe j = H_j = max H[j-6, j+6] ve H_j > max H[j-6, j-1]; onaylı pivot j + 6 <= t; bölge pivotları j in [sol, t-6]; "
+               "a, c = son iki onaylı pivot (a önce); 1 eğer |a - c| <= ort(H-L)[idx a .. idx c] VE C_t-1 <= max(a, c); ikiden az pivot ise 0",
+        "F51": "Y2_TAVAN_FARK = |a - c| / ort(H-L)[idx a .. idx c] (sürekli; ikiden az pivot NaN)",
+        "F52": "Y2_RVOL14: R_t = V_t / ort(V_t-14..t-1) (geçerli bar; t < 14 ise NaN; ort 0 ise NaN)",
+        "F53": "Y2_KESIT_SIRA: aynı tarih, aynı pazar evreninde (V_<pazar>.pkl o gün geçerli barı olan hisseler; evren_bas sonrası) ATR14/C > %1 "
+               "olanlar içinde R_t'ye göre azalan sıra (1 = en yüksek; eşitlik 'min'); olay hissesi ATR filtresini geçmezse NaN",
+        "F54": "Y2_KESIT_YUZDE: R_t'nin aynı gün aynı pazar bütün evren içindeki yüzdelik sırası (ortalama sıra / sayı; bilgi)",
+        "F55": "Y2_ATRP = ort(TR_j, j in [t-13, t]) / C_t; TR_j = max(H_j, C_j-1) - min(L_j, C_j-1); t < 14 ise NaN",
+        "F56": "Y2_NR7 (t-1): R_i = H_i - L_i; 1 eğer R_t-1 = min(R_t-7..t-1) (eşitlik dahil); t < 8 ise NaN",
+        "F57": "Y2_IDNR4 (t-1): 1 eğer R_t-1 = min(R_t-4..t-1) VE H_t-1 < H_t-2 VE L_t-1 > L_t-2",
+        "F58": "Y2_ONCEKI_TREND_ASAGI = 1 eğer C_t-1 < C_t-21 (bilgi tabakası; t < 21 ise NaN)",
+        "F59": "Y2_NR7 (t; bilgi): 1 eğer R_t = min(R_t-6..t)",
+        "F60": "Y2_VCP (kaynak, ilk derinlik >= %10): ZigZag (H / L, dönüş eşiği 1,5 x ATR14_j) pencere [t-120, t-1]; yalnız ONAYLI pivotlar (dönüş "
+               "görülen; son açık salınım girmez); daralmalar = ardışık (tepe -> sonraki dip) çiftleri, penceredeki EN YÜKSEK tepe pivotundan başlar; "
+               "d_k = 100 (H_k - L_k) / H_k; 1 eğer n >= 2 VE d_1 >= 10 VE her d_k+1 <= 0,70 d_k VE her daralma (dip idx - tepe idx) >= 5 bar VE "
+               "d_n <= 15 VE ort V[son daralma] < ort V[t-50, t-1]; değilse 0; t-120 < 14 ise NaN",
+        "F61": "Y2_VCP5 (bilgi): F60 ile aynı, ilk derinlik >= %5",
+        "F62": "Y2_VCP_ORAN = d_n / d_1 (n >= 2; değilse NaN)",
+        "F63": "Y2_VCP_N = daralma sayısı n (bilgi)",
+        "F64": "Y2_KIRILIM_HACMI = V_t / ort V[t-50, t-1] (bilgi; kaynakta alım şartı >= 1,5)"},
+    "ceyrek": {"alt": 0.25, "ust": 0.75, "yon1": ["2016-22"], "yon2": ["2023", "2024-26"],
+               "tanim": "kaynakta eşik olmayan adaylar (F44 q75, F47 / F48 / F49 q25, F52 q75) için PAZAR içinde bütün Y1 olaylarının sonlu "
+                        "değerlerinden (getirisiz); YÖN 1 eğitim 2016-22, YÖN 2 (ters yürüyen, BİLGİ) 2023-26; KOL-B aynı eşikler; devir2_esik.json"},
+    "d1_esik": "W1 / W2 / W2D (DEVİR 1 YENİDEN) eşikleri devir1_esik.json'dan AYNEN (esik_d1_sha = YH_ESIK_D1 sha; yeni eşik seçilmez)",
+    "aday": {
+        "PP":    {"kaynak": "Y2_PP_HACIM", "tur": "ana", "kural": [["F43", "==", 1.0]], "ad": "Pocket pivot (filtresiz): yukarı gün hacmi > son 10 gün en büyük düşüş günü hacmi", "kapali": True},
+        "PPq":   {"kaynak": "Y2_PP_HACIM", "tur": "bilgi", "kural": [["F44", ">=", "q75"]], "ad": "PPR üst çeyrek"},
+        "PPb":   {"kaynak": "Y2_PP_HACIM", "tur": "bilgi", "kural": [["F45", "==", 1.0]], "ad": "Pocket pivot LuxAlgo filtreli"},
+        "PPt":   {"kaynak": "Y2_PP_HACIM", "tur": "ters", "kural": [["F43", "==", 0.0]], "ad": "ters: pocket pivot değil"},
+        "AY":    {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "ana", "kural": [["F46", "<=", 0.10]], "ad": "20 günlük kutu yüzdeliği <= %10 (nadir sıkışma)"},
+        "AYK":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "ana", "kural": [["F47", "<=", "q25"]], "ad": "KAYMA alt çeyrek (yatay kutu)"},
+        "AY5":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "bilgi", "kural": [["F46", "<=", 0.05]], "ad": "yüzdelik <= %5"},
+        "AY2":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "bilgi", "kural": [["F46", "<=", 0.02]], "ad": "yüzdelik <= %2"},
+        "AYKK":  {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "bilgi", "kural": [["F46", "<=", 0.10], ["F47", "<=", "q25"]], "ad": "nadir VE yatay"},
+        "AYC":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "bilgi", "kural": [["F48", "<=", "q25"]], "ad": "aralık CV alt çeyrek"},
+        "AYT":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "bilgi", "kural": [["F49", "<=", "q25"]], "ad": "tek gün payı alt çeyrek"},
+        "AYt":   {"kaynak": "Y2_ARALIK_YUZDELIK_KAYMA", "tur": "ters", "kural": [["F46", ">=", 0.90]], "ad": "ters: yüzdelik >= %90 (geniş kutu)"},
+        "DT":    {"kaynak": "Y2_DUZ_TAVAN_ABL", "tur": "ana", "kural": [["F50", "==", 1.0]], "ad": "düz tavan: son iki pivot tepe farkı <= 1 x ort(H-L)"},
+        "DT05":  {"kaynak": "Y2_DUZ_TAVAN_ABL", "tur": "bilgi", "kural": [["F51", "<=", 0.5]], "ad": "tavan farkı <= 0,5 x ort(H-L)"},
+        "DT2":   {"kaynak": "Y2_DUZ_TAVAN_ABL", "tur": "bilgi", "kural": [["F51", "<=", 2.0]], "ad": "tavan farkı <= 2 x ort(H-L)"},
+        "DTt":   {"kaynak": "Y2_DUZ_TAVAN_ABL", "tur": "ters", "kural": [["F50", "==", 0.0]], "ad": "ters: düz tavan yok"},
+        "RV":    {"kaynak": "Y2_RVOL14_KESIT", "tur": "ana", "kural": [["F52", ">=", 1.0], ["F53", "<=", 20.0], ["F55", ">", 0.01]],
+                  "ad": "RVOL14 >= 1 VE günün ilk 20'si (ATR/C > %1 evreninde)", "kapali": True},
+        "RVq":   {"kaynak": "Y2_RVOL14_KESIT", "tur": "bilgi", "kural": [["F52", ">=", "q75"]], "ad": "RVOL14 üst çeyrek"},
+        "RVt":   {"kaynak": "Y2_RVOL14_KESIT", "tur": "ters", "kural": [["F52", "<", 1.0]], "ad": "ters: RVOL14 < 1"},
+        "NR7":   {"kaynak": "Y2_NR7_IDNR4", "tur": "ana", "kural": [["F56", "==", 1.0]], "ad": "kırılım öncesi bar NR7"},
+        "NR7a":  {"kaynak": "Y2_NR7_IDNR4", "tur": "bilgi", "kural": [["F56", "==", 1.0], ["F58", "==", 1.0]], "ad": "NR7 VE önceki trend aşağı"},
+        "NR7y":  {"kaynak": "Y2_NR7_IDNR4", "tur": "bilgi", "kural": [["F56", "==", 1.0], ["F58", "==", 0.0]], "ad": "NR7 VE önceki trend yukarı"},
+        "IDNR4": {"kaynak": "Y2_NR7_IDNR4", "tur": "bilgi", "kural": [["F57", "==", 1.0]], "ad": "kırılım öncesi bar ID/NR4"},
+        "NR7t":  {"kaynak": "Y2_NR7_IDNR4", "tur": "ters", "kural": [["F56", "==", 0.0]], "ad": "ters: NR7 değil"},
+        "VCP":   {"kaynak": "Y2_VCP_ORAN", "tur": "ana", "kural": [["F60", "==", 1.0]], "ad": "VCP (kaynak eşikleri; ilk derinlik >= %10)"},
+        "VCP5":  {"kaynak": "Y2_VCP_ORAN", "tur": "bilgi", "kural": [["F61", "==", 1.0]], "ad": "VCP ilk derinlik >= %5 (küçük yapı)"},
+        "VCPt":  {"kaynak": "Y2_VCP_ORAN", "tur": "ters", "kural": [["F60", "==", 0.0]], "ad": "ters: VCP değil"},
+        "W1":    {"kaynak": "DEVİR 1 YENİDEN W1", "tur": "ana", "kural": [["F30", "<", 1.0], ["F30", "<=", "q25"]], "esik": "d1", "ad": "DEVİR 1 YENİDEN: CS spread daraldı"},
+        "W1t":   {"kaynak": "DEVİR 1 YENİDEN W1", "tur": "ters", "kural": [["F30", ">=", "q75"]], "esik": "d1", "ad": "ters: spread üst çeyrek"},
+        "W2":    {"kaynak": "DEVİR 1 YENİDEN W2", "tur": "ana", "kural": [["F31", ">", 0.0], ["F31", ">=", "q75"]], "esik": "d1", "ad": "DEVİR 1 YENİDEN: gün-içi birikim B > 0 ve üst çeyrek"},
+        "W2t":   {"kaynak": "DEVİR 1 YENİDEN W2", "tur": "ters", "kural": [["F31", "<=", "q25"]], "esik": "d1", "ad": "ters: B alt çeyrek"},
+        "W2D":   {"kaynak": "DEVİR 1 YENİDEN W2", "tur": "ana", "kural": [["F32", ">=", "q75"]], "esik": "d1", "ad": "DEVİR 1 YENİDEN: D = gece - gün-içi üst çeyrek"},
+        "W2Dt":  {"kaynak": "DEVİR 1 YENİDEN W2", "tur": "ters", "kural": [["F32", "<=", "q25"]], "esik": "d1", "ad": "ters: D alt çeyrek"}},
+    "kol": {"A": "Y1 (bütün olay_Y1.csv.gz satırları)", "B": "Y9 = Y1 VE Ş1 (F15 <= 0,25 VE F17 <= -0,20; olay_Y9.csv.gz ile küme eşitliği)"},
+    "donem": {"egitim": ["2016-22"], "sinama": ["2023", "2024-26"]},
+    "ambargo": {"bar": 60, "tanim": "pazar takvimi = V_<pazar>.pkl geçerli barlarının birleşimi; YÖN 1: sınama (2023-26) olayı giriş sırası - eğitim "
+                                    "(2016-22) son giriş sırası >= 60 bar; YÖN 2 (BİLGİ): eğitim (2023-26) ilk giriş sırası - sınama (2016-22) olayı "
+                                    "giriş sırası >= 60 bar; kol tabanı aynı ambargoyla"},
+    "pazar": ["ABD+AVR", "ABD", "AVR", "BIST"], "karar_pazar": ["ABD", "AVR"], "n_min": 30,
+    "boot": {"B": 2000, "q": 0.025, "tohum": 1120, "birim": "giriş ayı (YYYY-MM)"},
+    "l3o": "hücrede tek tek çıkarıldığında MARJ'ı en çok düşüren 3 ay birlikte çıkarılır; kalan MARJ > 0 olmalı",
+    "tabaka": {"oz": ["F10", "F15", "F7"], "q": [1 / 3, 2 / 3],
+               "tanim": "tercil sınırları pazar içinde 2016-22 bütün Y1 olaylarından (getirisiz; ozellik_Y1.csv.gz); her ana aday için MARJ (aday VE kol "
+                        "VE tabaka) - (kol VE tabaka) ABD+AVR havuzunda eğitim ve sınama hücrelerinde; n >= 30 olan bir tabakada MARJ <= 0 ise "
+                        "KATKI+ -> SORGULA ('K1 tabaka')"},
+    "olcu": "1. tur 15 bar cetveli AYNEN, satırlar olay_Y1.csv.gz (yeniden simülasyon yok): n = h5 ve es_h5 olan olay; FARK = ort h5 - ort es_h5 "
+            "(aynı gün aynı OC kovası eşleri); MARJ = FARK(aday VE kol) - FARK(kol), aynı pazar x hücre (aynı ambargo); stop: ort st5 / ort es_st5",
+    "etiket": "KARNE v2 (yalnız 'ana' adaylar): KATKI+ = ABD ve AVR AYRI AYRI, eğitim (2016-22) ve sınama (2023-26, ambargolu) dört hücrenin her "
+              "birinde n >= 30 VE FARK > 0 VE MARJ > 0 VE MARJ ay kümeli bootstrap %95 alt ucu > 0 VE leave-3-out MARJ > 0 VE st5 olay <= es_st5 eş; "
+              "ayrıca K1 tabaka şartı; KATKI− = dört hücrede n >= 30 VE MARJ < 0; değilse SORGULA. Ters yön (YÖN 2) hücresi ve 'bilgi' / 'ters' "
+              "adaylar yalnız BİLGİ (bağımsız sayılmaz). BIST ve ABD+AVR bilgi (tabaka hariç)",
+    "kapali": "PP ve RV 'giriş zamanlaması / onay / hacim' kapalı konusuna dokunur (COL_OZET): sonuç yapı ölçüsü olarak raporlanır; KATKI+ çıksa bile "
+              "üretime / kurala girmeden ana model ve Cemal onayı gerekir",
+    "prefix": {"n": 25, "tohum": 1219},
+    "coklu": "10 ana aday x 2 kol = 20 karar satırı: BH uygulanmaz (dört hücre + bootstrap + L3O + tabaka ikili kuralı); şansla KATKI+ notu raporda",
+    "yeniden_uretim": [["AY", "A", "ABD", "sinama"], ["W2", "B", "AVR", "egitim"]],
+}
+
+YH_KONTROL_D2: Dict[str, Tuple[str, str]] = {
+    "K1": ("EVET", "olay ve eş olay_Y1.csv.gz'den (aynı giriş günü, aynı OC momentum x likidite kovası, aynı d / hat / hedef / 15 bar takip "
+                   "geometrisi); MARJ kol tabanına göre (Y1 / Y9) aynı pazar x hücre x ambargo; K1 TABAKALI koşulur: her ana aday MARJ'ı F10, F15, F7 "
+                   "tercil tabakalarında (sınırlar devir2_esik.json, 2016-22 getirisiz) ölçülür, n >= 30 tabakada MARJ <= 0 -> SORGULA; mekanik ilişki "
+                   "Spearman tablosu (F3 / F10 / F13 / F15) ön kayıtta; RV kesit sırası aynı gün eşlerinden bağımsız değil (eşler aynı günün hisseleri) -> raporda"),
+    "K2": ("EVET", "F43-F64 yalnız [.., t] barları (t = sinyal günü kapanışı, giriş t+1 açılış); pivot onayı j+6 <= t; ZigZag yalnız onaylı pivot; "
+                   "yh_d2_bar dizileri t+1'de keser; yh_devir2_ozellik_yaz pazar başına 25 rastgele olayda veri t'de kesilince aynı değer (DURUR) ve "
+                   "panel R (kesit) = olay R (DURUR); kesit evreni o günün geçerli barları (evren_bas sonrası); eşikler getirisiz, ön kayıtta mühürlü"),
+    "K3": ("EVET", "geçerli bar süzgeci _yh_hazir (H > L, V > 0, O/H/L/C > 0, kriz kesiği 31.08.2026); pencereler geçerli bar sayımıyla; kesit "
+                   "evreninde o gün geçerli barı olmayan hisse yok; hacim 0 bar veri dizisinde yok"),
+    "K4": ("EVET", "Y1 olayları OC 60 gün tekil (olay_Y1); n = bağımsız olay (h5 ve es_h5 olan); süzgeç yalnız seçer; FARK ortalama, P olay / P eş ayrı"),
+    "K5": ("EVET", "giriş t+1 açılışı (olay_Y1 E0); yeni simülasyon yok, satırlar mühürlü olay_Y1 (Y1_OLAY_SHA)"),
+    "K6": ("EVET", "aynı V_*.pkl tek kip (Yahoo düzeltilmiş); yeni ölçüler oran / pay / sıra / ikili (birimsiz); AVR yerel para ama hepsi hisse içi "
+                   "oran; RV kesit sırası oranla (birimden bağımsız)"),
+    "K7": ("EVET", "evren bugün işlem gören hisseler (batanlar yok): P olay ve P eş yukarı yanlı, FARK'ta kısmen götürür; kesit evreni de bugünün "
+                   "listesi (geçmiş günlerin batan hisseleri sırada yok) -> RV ilk-20 sırası yanlı; rapora yazılır"),
+    "K8": ("EVET", "hücre n < 30 SORGULA (ölçülemedi); ABD ve AVR ayrı, eğitim + sınama dört hücre aynı yön şartı; 20 karar satırı BH yok -> şans notu; "
+                   "ABD / AVR 2023-26 önceki turlarda görüldü (bakılmış) -> KATKI+ en fazla EMARE düzeyi; küçük n bulgu değil"),
+    "K9": ("EVET", "DEVIR_2_ON_KAYIT.md: YH_ESIK_D2_SHA, YH_ESIK / 6 / 7 / D1 sha, kod / özellik d2 / eşik json d2 / d1 özellik / d1 eşik json / "
+                   "olay_Y1 / olay_Y9 sha + getirisiz huni; yh_d2_kapi hepsini + git kaydını + ik_kontrol_kapisi'ni denetler; ön kayıt commit'i "
+                   "('DEVİR 2 ön kayıt') koşudan önce; eşik sonuca göre oynanmaz; ikinci koşu DURUR"),
+    "K10": ("UYGULANMAZ", "haber / KAP / metin ayrıştırma yok; yalnız OHLCV (V_*.pkl) ve mühürlü özellik / olay dosyaları"),
+    "K11": ("EVET", "devir2_sonuc.json + ozellik_Y1_d2.csv.gz + olay_Y1.csv.gz; DEVIR_2_RAPOR.md 'YENİDEN ÜRETİM' iki hücre (AY A ABD sınama, W2 B "
+                    "AVR eğitim) ayrı kodla (_yh_d2_yeniden: düz pandas sorgusu + kendi ambargo hesabı) yeniden üretilir; fark > 1e-12 ise DURUR"),
+    "K12": ("EVET", "etiket yalnız karne v2 kuralı (KATKI+ / KATKI− / SORGULA / BİLGİ); 'iz / emare' denmez; FARK yüzde puan; h5 hedef payı (stop'tan "
+                    "önce +%5), getiri değil; sayı ile yorum ayrı cümle"),
+    "K13": ("EVET", "çakışma kapısı korundu (yeni adlar yh_d2_ / yh_devir2_ / YH_ESIK_D2 / _YH_D2 önekli; DEVİR 1 adları ezilmez); yasak defter "
+                    "dosyalarına, GOZ_ETIKET.py'ye, üretim zincirine dokunulmadı (git diff --stat); e-posta / anahtar taraması (_yh_yaz); push yok; "
+                    "kod değişti -> Colab'da 'çalışma zamanını yeniden başlat'; PP / RV kapalı konuya dokunur -> raporda onay notu"),
+    "K14": ("UYGULANMAZ", "öneri / gerçek para işi değil; ölçüm ve süzgeç karnesi"),
+}
+
+
+def yh_esik_d2_sha(E: Optional[Dict[str, Any]] = None) -> str:
+    return yh_esik_sha(YH_ESIK_D2 if E is None else E)
+
+
+def _yh_d2_zigzag(H: np.ndarray, L: np.ndarray, atr: np.ndarray, a: int, b: int, kat: float) -> List[Tuple[str, int, float]]:
+    """ZigZag (H / L) barlar [a, b] (b dahil); dönüş eşiği kat x atr[j]. Yalnız ONAYLI pivotlar döner (dönüş görülen): [(tür 'H'/'L', idx, fiyat)].
+    Pivot j'nin onayı j'den sonraki bir bar k <= b'de; k > b bilgisi kullanılmaz."""
+    piv: List[Tuple[str, int, float]] = []
+    if b - a < 2:
+        return piv
+    mod = 0; hi, hi_i, lo, lo_i = H[a], a, L[a], a
+    for j in range(a + 1, b + 1):
+        th = kat * atr[j]
+        if not np.isfinite(th):
+            continue
+        if mod >= 0 and H[j] > hi:
+            hi, hi_i = H[j], j
+        if mod <= 0 and L[j] < lo:
+            lo, lo_i = L[j], j
+        if mod == 0:
+            if hi - L[j] >= th and hi_i < j:
+                piv.append(("H", hi_i, float(hi))); mod = -1; lo, lo_i = L[j], j
+            elif H[j] - lo >= th and lo_i < j:
+                piv.append(("L", lo_i, float(lo))); mod = 1; hi, hi_i = H[j], j
+        elif mod == 1:
+            if hi - L[j] >= th:
+                piv.append(("H", hi_i, float(hi))); mod = -1; lo, lo_i = L[j], j
+        else:
+            if H[j] - lo >= th:
+                piv.append(("L", lo_i, float(lo))); mod = 1; hi, hi_i = H[j], j
+    return piv
+
+
+def yh_d2_vcp(H: np.ndarray, L: np.ndarray, V: np.ndarray, atr: np.ndarray, i: int, E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, float]:
+    """F60-F63 (VCP); pencere [i-120, i-1], ATR dizisi nedensel (atr[j] yalnız <= j)."""
+    P = E["pencere"]; out = {"F60": np.nan, "F61": np.nan, "F62": np.nan, "F63": np.nan}
+    a = i - int(P["vcp_gun"]); b = i - 1
+    if a < int(P["atr"]) or i - int(P["vcp_hacim"]) < 0:
+        return out
+    piv = _yh_d2_zigzag(H, L, atr, a, b, float(P["vcp_atr_kat"]))
+    tep = [k for k, p in enumerate(piv) if p[0] == "H"]
+    d: List[float] = []; bar: List[int] = []; vol_ok = False
+    if tep:
+        k0 = max(tep, key=lambda k: (piv[k][2], -k))          # en yüksek tepe (eşitlikte ilk)
+        k = k0
+        while k + 1 < len(piv):
+            if piv[k][0] == "H" and piv[k + 1][0] == "L":
+                hh, hi_i = piv[k][2], piv[k][1]; ll, lo_i = piv[k + 1][2], piv[k + 1][1]
+                d.append(100.0 * (hh - ll) / hh); bar.append(lo_i - hi_i)
+                last = (hi_i, lo_i)
+            k += 1
+        if d:
+            vol_ok = bool(np.mean(V[last[0]:last[1] + 1]) < np.mean(V[i - int(P["vcp_hacim"]):i]))
+    n = len(d); out["F63"] = float(n)
+    if n >= 2:
+        out["F62"] = d[-1] / d[0]
+    base = (n >= 2 and all(d[k + 1] <= float(P["vcp_oran"]) * d[k] for k in range(n - 1)) and all(x >= int(P["vcp_bar"]) for x in bar)
+            and d[-1] <= float(P["vcp_son"]) and vol_ok)
+    out["F60"] = 1.0 if base and d[0] >= float(P["vcp_ilk"]) else 0.0
+    out["F61"] = 1.0 if base and d[0] >= float(P["vcp_ilk_kucuk"]) else 0.0
+    return out
+
+
+def _yh_d2_atr(H: np.ndarray, L: np.ndarray, C: np.ndarray, k: int) -> np.ndarray:
+    """ATR_k (basit ortalama TR, [j-k+1, j]); TR_j = max(H_j, C_j-1) - min(L_j, C_j-1); j < k NaN. Nedensel."""
+    Cp = np.r_[np.nan, C[:-1]]
+    tr = np.fmax(H, Cp) - np.fmin(L, Cp); tr[0] = np.nan
+    out = np.full(len(H), np.nan)
+    if len(H) > k:
+        cs = np.cumsum(np.r_[0.0, np.nan_to_num(tr)])
+        j = np.arange(k, len(H)); out[j] = (cs[j + 1] - cs[j + 1 - k]) / k
+    return out
+
+
+def yh_d2_bar(O: np.ndarray, H: np.ndarray, L: np.ndarray, C: np.ndarray, V: np.ndarray, i: int, sol: int,
+              E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, float]:
+    """t = i (geçerli bar sırası), bölge [sol, i-1]: F43-F52, F55-F64. Yalnız [0, i] okunur (t+1 ve sonrası kesilir)."""
+    P = E["pencere"]; out = {k: np.nan for k in _YH_D2_BAR}
+    O, H, L, C, V = (np.asarray(x[:i + 1], float) for x in (O, H, L, C, V))
+    R = H - L
+    # PP (F43-F45)
+    w = int(P["pp"])
+    if i >= w + 1:
+        jj = np.arange(i - w, i); dn = C[jj] < C[jj - 1]
+        mx = float(V[jj][dn].max()) if dn.any() else np.nan
+        out["F44"] = V[i] / mx if np.isfinite(mx) and mx > 0 else np.nan
+        if not C[i] > C[i - 1]:
+            out["F43"] = 0.0
+        elif np.isfinite(mx):
+            out["F43"] = 1.0 if V[i] > mx else 0.0
+        su, sk = int(P["sma_uzun"]), int(P["sma_kisa"])
+        if i >= su - 1 and np.isfinite(out["F43"]):
+            s50 = float(np.mean(C[i - su + 1:i + 1])); s10 = float(np.mean(C[i - sk + 1:i + 1]))
+            out["F45"] = 1.0 if (out["F43"] == 1.0 and C[i] > s50 and L[i] <= max(s10, 1.02 * s50) and C[i] > s10) else 0.0
+    # kutu (F46-F49)
+    N = int(P["kutu"]); G = int(P["kutu_gecmis"])
+    if i >= N - 1:
+        a = i - N + 1; mh, ml = float(H[a:i + 1].max()), float(L[a:i + 1].min()); kb = mh - ml
+        if kb > 0:
+            out["F47"] = abs(C[i] - C[a]) / kb; out["F49"] = float(R[a:i + 1].max()) / kb
+        mr = float(R[a:i + 1].mean())
+        if mr > 0:
+            out["F48"] = float(R[a:i + 1].std()) / mr
+        s0 = max(N - 1, i - G + 1)
+        if i - s0 + 1 >= int(P["kutu_min"]):
+            from numpy.lib.stride_tricks import sliding_window_view as _sw
+            hh = _sw(H[s0 - N + 1:i + 1], N).max(axis=1); ll = _sw(L[s0 - N + 1:i + 1], N).min(axis=1)
+            Pb = (hh - ll) / ll; pt = Pb[-1]
+            out["F46"] = (float(np.sum(Pb < pt)) + 0.5 * float(np.sum(Pb == pt))) / len(Pb)
+    # düz tavan (F50 / F51)
+    pv = int(P["pivot"])
+    if 0 < sol <= i:
+        piv = []
+        for j in range(max(sol, pv), i - pv + 1):
+            hj = H[j]
+            if hj >= H[j - pv:j + pv + 1].max() and hj > H[j - pv:j].max():
+                piv.append(j)
+        if len(piv) >= 2:
+            ja, jc = piv[-2], piv[-1]; a_, c_ = H[ja], H[jc]; mr = float(R[ja:jc + 1].mean())
+            out["F51"] = abs(a_ - c_) / mr if mr > 0 else np.nan
+            out["F50"] = 1.0 if (np.isfinite(out["F51"]) and out["F51"] <= 1.0 and C[i - 1] <= max(a_, c_)) else 0.0
+        else:
+            out["F50"] = 0.0
+    # RVOL / ATR (F52, F55)
+    rv = int(P["rvol"])
+    if i >= rv:
+        m = float(np.mean(V[i - rv:i]))
+        out["F52"] = V[i] / m if m > 0 else np.nan
+    atr = _yh_d2_atr(H, L, C, int(P["atr"]))
+    if np.isfinite(atr[i]):
+        out["F55"] = atr[i] / C[i]
+    # NR7 / IDNR4 (F56-F59)
+    n7, n4 = int(P["nr7"]), int(P["nr4"])
+    if i >= n7 + 1:
+        out["F56"] = 1.0 if R[i - 1] <= R[i - n7:i].min() else 0.0
+        out["F57"] = 1.0 if (R[i - 1] <= R[i - n4:i].min() and H[i - 1] < H[i - 2] and L[i - 1] > L[i - 2]) else 0.0
+        out["F59"] = 1.0 if R[i] <= R[i - n7 + 1:i + 1].min() else 0.0
+    tr_ = int(P["trend"])
+    if i >= tr_ + 1:
+        out["F58"] = 1.0 if C[i - 1] < C[i - 1 - tr_] else 0.0
+    # VCP (F60-F63), kırılım hacmi (F64)
+    out.update(yh_d2_vcp(H, L, V, atr, i, E))
+    hv = int(P["vcp_hacim"])
+    if i >= hv:
+        m = float(np.mean(V[i - hv:i]))
+        out["F64"] = V[i] / m if m > 0 else np.nan
+    return out
+
+
+def yh_devir2_ozellik(df: pd.DataFrame, tarihler: List[pd.Timestamp], sol_geri: List[float], hazir: bool = False,
+                      E: Dict[str, Any] = YH_ESIK_D2) -> pd.DataFrame:
+    """Bir hissenin Y1 günleri için F43-F52, F55-F64 (hisse içi). sol = i - F8 (ozellik_Y1 F8 = t - sol; DEVİR 1'de bütün satırlarda doğrulandı).
+    Gün veride yoksa YHHata."""
+    d = df if hazir else _yh_hazir(df)
+    O, H, L, C, V = (d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close", "Volume"))
+    pos = d.index.get_indexer(pd.DatetimeIndex(pd.to_datetime(list(tarihler))))
+    if (pos < 0).any():
+        raise YHHata("DEVİR 2 özellik: sinyal günü geçerli bar değil")
+    sat = []
+    for i, g in zip(pos, sol_geri):
+        i = int(i); sol = i - int(g) if np.isfinite(g) else -1
+        sat.append(yh_d2_bar(O, H, L, C, V, i, sol, E))
+    return pd.DataFrame(sat, columns=_YH_D2_BAR)
+
+
+def yh_d2_kesit(Vh: Dict[str, pd.DataFrame], evren_bas: Dict[str, pd.Timestamp], E: Dict[str, Any] = YH_ESIK_D2) -> pd.DataFrame:
+    """Pazar paneli: her hisse-gün için R (RVOL14) ve ATR14/C (nedensel, geçerli bar), sonra aynı gün kesit: sira (ATR/C > %1 evreni, azalan,
+    'min') ve yuzde (bütün evren, ortalama sıra / sayı). Döner: uzun tablo (sembol, tarih, R, atrp, sira, yuzde)."""
+    P = E["pencere"]; rv = int(P["rvol"]); parca = []
+    for s, d in Vh.items():
+        V = d.Volume.to_numpy(float); H, L, C = (d[c].to_numpy(float) for c in ("High", "Low", "Close"))
+        m = pd.Series(V).shift(1).rolling(rv, min_periods=rv).mean().to_numpy()
+        with np.errstate(invalid="ignore", divide="ignore"):
+            R = np.where(m > 0, V / m, np.nan)
+        atrp = _yh_d2_atr(H, L, C, int(P["atr"])) / C
+        X = pd.DataFrame({"sembol": s, "tarih": d.index, "R": R, "atrp": atrp})
+        b = evren_bas.get(s)
+        if b is not None:
+            X = X[X.tarih >= pd.Timestamp(b)]
+        parca.append(X)
+    K = pd.concat(parca, ignore_index=True)
+    K = K[np.isfinite(K.R.to_numpy(float))]
+    K["yuzde"] = K.groupby("tarih").R.rank(method="average", pct=True)
+    f = K.atrp.to_numpy(float) > float(P["atr_min_oran"])
+    K["sira"] = np.nan
+    K.loc[f, "sira"] = K[f].groupby("tarih").R.rank(method="min", ascending=False)
+    return K
+
+
+_YH_D2_IS_V: Dict[str, pd.DataFrame] = {}
+
+
+def _yh_d2_isci(is_: Tuple[str, List[pd.Timestamp], List[float]]) -> List[Dict[str, Any]]:
+    s, tl, gl = is_
+    try:
+        R = yh_devir2_ozellik(_YH_D2_IS_V[s], tl, gl, hazir=True)
+        return [{"sembol": s, "tarih": pd.Timestamp(t), **r, "_hata": ""} for t, r in zip(tl, R.to_dict("records"))]
+    except Exception as ex:
+        return [{"sembol": s, "tarih": pd.Timestamp(t), **{k: np.nan for k in _YH_D2_BAR}, "_hata": f"hisse: {ex}"[:200]} for t in tl]
+
+
+def yh_d2_ambargo_tarih(takvim: pd.DatetimeIndex, g_egitim1: pd.Series, g_egitim2: pd.Series, bar: int) -> Dict[str, str]:
+    """YÖN 1: sınama ilk izinli giriş = takvim[sıra(son eğitim girişi) + bar]; YÖN 2: sınama son izinli giriş = takvim[sıra(ilk eğitim girişi) - bar]."""
+    T = pd.DatetimeIndex(sorted(set(pd.DatetimeIndex(takvim))))
+    s1 = pd.Timestamp(pd.to_datetime(g_egitim1).max()); s2 = pd.Timestamp(pd.to_datetime(g_egitim2).min())
+    i1 = int(T.searchsorted(s1)); i2 = int(T.searchsorted(s2))
+    if i1 >= len(T) or T[i1] != s1 or i2 >= len(T) or T[i2] != s2:
+        raise YHHata("DEVİR 2 ambargo: eğitim giriş günü pazar takviminde yok -> DURDU")
+    if i1 + bar >= len(T) or i2 - bar < 0:
+        raise YHHata("DEVİR 2 ambargo: takvim yetmiyor -> DURDU")
+    return {"yon1_son_egitim_giris": str(s1.date()), "yon1_sinama_ilk_izinli": str(T[i1 + bar].date()),
+            "yon2_ilk_egitim_giris": str(s2.date()), "yon2_sinama_son_izinli": str(T[i2 - bar].date())}
+
+
+def yh_devir2_ozellik_yaz(veri: Optional[str] = None, cikti: Optional[str] = None, islem: int = 1, denetim_n: Optional[int] = None,
+                          E: Dict[str, Any] = YH_ESIK_D2, olay_y1: Optional[str] = None, ozellik: Optional[str] = None) -> Dict[str, Any]:
+    """Bütün Y1 olayları -> ozellik_Y1_d2.csv.gz (F43-F64) + denetim json (prefix, panel R = olay R, ambargo tarihleri; getirisiz).
+    Kapılar: hisse hatası -> DURUR; pazar başına denetim_n rastgele olay veri t'de kesilince aynı (DURUR); kesit paneli R = olay F52 (DURUR)."""
+    cikti = cikti or YH_YOL["cikti"]; yol = os.path.join(cikti, YH_D2_DOSYA["ozellik"])
+    yo = olay_y1 or os.path.join(cikti, YH_DOSYA["satir"].format(d="Y1"))
+    yf = ozellik or YH_YOL["ozellik"]
+    for y in (yo, yf):
+        if not os.path.exists(y):
+            raise YHHata(f"DEVİR 2: dosya yok: {y}")
+    K = pd.read_csv(yo, usecols=["pazar", "sembol", "tarih", "giris", "donem"], parse_dates=["tarih", "giris"], dtype={"sembol": str, "pazar": str})
+    if K.duplicated(["pazar", "sembol", "tarih"]).any():
+        raise YHHata("olay_Y1'de aynı (pazar, sembol, tarih) iki kez")
+    F8 = pd.read_csv(yf, usecols=["pazar", "sembol", "tarih", "F8"], parse_dates=["tarih"], dtype={"sembol": str, "pazar": str})
+    K = K.merge(F8, on=["pazar", "sembol", "tarih"], how="left", validate="one_to_one")
+    dn = int(E["prefix"]["n"] if denetim_n is None else denetim_n); sat: List[Dict[str, Any]] = []
+    den: Dict[str, Any] = {"surum": YH_SURUM, "esik_d2_sha": yh_esik_d2_sha(E), "olay_y1_sha": _yh_sha_dosya(yo), "pazar": {}, "ambargo": {}}
+    for pi, p in enumerate(OC.OC_ESIK["pazar"]):
+        Kp = K[K.pazar == p]
+        if not len(Kp):
+            continue
+        Vd = OC.oc_veri(p, klasor=veri or YH_YOL["veri"])
+        eksik = sorted(set(Kp.sembol) - set(Vd["V"]))
+        if eksik:
+            raise YHHata(f"DEVİR 2 özellik: {p} veride olmayan sembol {eksik[:5]}")
+        Vh = {s: _yh_hazir(d) for s, d in Vd["V"].items()}
+        takvim = pd.DatetimeIndex(sorted(set().union(*[set(d.index) for d in Vh.values()])))
+        den["ambargo"][p] = yh_d2_ambargo_tarih(takvim, Kp.giris[Kp.donem.isin(E["donem"]["egitim"])],
+                                                Kp.giris[Kp.donem.isin(E["donem"]["sinama"])], int(E["ambargo"]["bar"]))
+        isler = [(s, list(g.tarih), list(g.F8.to_numpy(float))) for s, g in Kp.groupby("sembol", sort=True)]
+        _YH_D2_IS_V.clear(); _YH_D2_IS_V.update({s: Vh[s] for s, _a, _b in isler})
+        if islem > 1:
+            import multiprocessing as mp
+            with mp.get_context("fork").Pool(islem) as pool:
+                parca = pool.map(_yh_d2_isci, isler, chunksize=4)
+        else:
+            parca = [_yh_d2_isci(x) for x in isler]
+        Xp = pd.DataFrame([r for pr in parca for r in pr]); Xp.insert(0, "pazar", p)
+        hh = Xp[Xp._hata.str.startswith("hisse")]
+        if len(hh):
+            raise YHHata(f"DEVİR 2 özellik: {p} hisse hatası {len(hh)} satır, ilk: {hh._hata.iloc[0]} -> DURDU")
+        Ks = yh_d2_kesit(Vh, Vd.get("evren_bas", {}), E)
+        Z = Xp.merge(Ks[["sembol", "tarih", "R", "sira", "yuzde"]], on=["sembol", "tarih"], how="left", validate="one_to_one")
+        a_, b_ = Z.F52.to_numpy(float), Z.R.to_numpy(float)
+        bad = ~(np.isclose(a_, b_, rtol=1e-9, atol=1e-12) | (np.isnan(a_) & np.isnan(b_)))
+        if bad.any():
+            raise YHHata(f"DEVİR 2 özellik: {p} panel R != olay F52 ({int(bad.sum())} satır) -> DURDU")
+        Z["F53"] = np.where(Z.F55.to_numpy(float) > float(E["pencere"]["atr_min_oran"]), Z.sira.to_numpy(float), np.nan)
+        Z["F54"] = Z.yuzde.to_numpy(float)
+        Xp = Z.drop(columns=["R", "sira", "yuzde"])
+        rng = np.random.default_rng([int(E["prefix"]["tohum"]), pi]); ok = 0
+        for q in rng.choice(len(Xp), min(dn, len(Xp)), replace=False):
+            r = Xp.iloc[int(q)]; t = pd.Timestamp(r.tarih); g = float(Kp[(Kp.sembol == r.sembol) & (Kp.tarih == t)].F8.iloc[0])
+            kes = Vd["V"][r.sembol]; kes = kes[kes.index <= t]
+            a = yh_devir2_ozellik(kes, [t], [g]).iloc[0][_YH_D2_BAR].to_numpy(float)
+            c = r[_YH_D2_BAR].to_numpy(float)
+            if not np.allclose(a, c, rtol=1e-9, atol=1e-12, equal_nan=True):
+                raise YHHata(f"DEVİR 2 prefix denetimi TUTMADI: {p} {r.sembol} {t.date()} -> DURDU")
+            ok += 1
+        den["pazar"][p] = {"olay": int(len(Xp)), "prefix_tuttu": ok, "kesit_hisse_gun": int(len(Ks)), "takvim_bar": int(len(takvim)),
+                           "nan": {k: int(Xp[k].isna().sum()) for k in _YH_D2_OZ}}
+        yhlog.info("DEVİR 2 özellik %s: %d olay, prefix %d tuttu", p, len(Xp), ok)
+        sat.extend(Xp.to_dict("records")); _YH_D2_IS_V.clear(); del Vd, Vh, Ks
+    X = pd.DataFrame(sat)[["pazar", "sembol", "tarih"] + _YH_D2_OZ]
+    if len(X) != len(K):
+        raise YHHata(f"DEVİR 2 özellik: satır {len(X)} != olay_Y1 {len(K)}")
+    X = X.sort_values(["pazar", "sembol", "tarih"]).reset_index(drop=True)
+    X.to_csv(yol, index=False, float_format="%.10g", compression="gzip", date_format="%Y-%m-%d")
+    den["satir"] = int(len(X)); den["sha"] = _yh_sha_dosya(yol)
+    _yh_yaz(os.path.join(cikti, YH_D2_DOSYA["denetim"]), json.dumps(den, ensure_ascii=False, indent=1, default=_yh_json), "DEVİR 2 denetim")
+    return {"yol": yol, **den}
+
+
+def yh_d2_taban(cikti: Optional[str] = None, getiri: bool = False) -> pd.DataFrame:
+    """olay_Y1 (kimlik + dönem + giriş; getiri=True ise h5 / es_h5 / st5 / es_st5) ∩ ozellik_Y1_d2 ∩ ozellik_Y1_d1 (F30-F32) ∩ ozellik_Y1
+    (F7 / F10 / F15 / F17) + kolA / kolB."""
+    cikti = cikti or YH_YOL["cikti"]
+    yo = os.path.join(cikti, YH_DOSYA["satir"].format(d="Y1")); y2 = os.path.join(cikti, YH_D2_DOSYA["ozellik"])
+    y1 = os.path.join(cikti, YH_D1_DOSYA["ozellik"])
+    for y in (yo, y2, y1, YH_YOL["ozellik"]):
+        if not os.path.exists(y):
+            raise YHHata(f"DEVİR 2: dosya yok: {y}")
+    kol = ["pazar", "sembol", "tarih", "giris", "donem"] + (["h5", "es_h5", "st5", "es_st5"] if getiri else [])
+    K = pd.read_csv(yo, usecols=kol, parse_dates=["tarih", "giris"], dtype={"sembol": str})
+    D = pd.read_csv(y2, parse_dates=["tarih"], dtype={"sembol": str})
+    D1 = pd.read_csv(y1, usecols=["pazar", "sembol", "tarih", "F30", "F31", "F32"], parse_dates=["tarih"], dtype={"sembol": str})
+    G = pd.read_csv(YH_YOL["ozellik"], usecols=["pazar", "sembol", "tarih", "F7", "F10", "F15", "F17"], parse_dates=["tarih"], dtype={"sembol": str})
+    M = K.merge(D, on=["pazar", "sembol", "tarih"], how="outer", validate="one_to_one", indicator=True)
+    if (M._merge != "both").any():
+        raise YHHata(f"DEVİR 2: olay_Y1 ve ozellik_Y1_d2 anahtarları farklı ({int((M._merge != 'both').sum())}) -> DURDU")
+    M = M.drop(columns="_merge").merge(D1, on=["pazar", "sembol", "tarih"], how="left", validate="one_to_one")
+    M = M.merge(G, on=["pazar", "sembol", "tarih"], how="left", validate="one_to_one")
+    g2 = YH_ESIK6["grup"]["G2"]
+    with np.errstate(invalid="ignore"):
+        M["kolB"] = (M.F15.to_numpy(float) <= g2["F15_ust"]) & (M.F17.to_numpy(float) <= g2["F17_ust"])
+    M["kolA"] = True
+    return M.sort_values(["pazar", "sembol", "tarih"]).reset_index(drop=True)
+
+
+def yh_d2_esik(M: pd.DataFrame, amb: Dict[str, Any], E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, Any]:
+    """Getirisiz eşik sözlüğü: çeyrekler (yön x pazar x özellik; yalnız d2 adayları), tabaka tercilleri (2016-22), ambargo tarihleri."""
+    Q = E["ceyrek"]; kol = sorted({k[0] for a in E["aday"].values() if a.get("esik") != "d1" for k in a["kural"] if k[2] in ("q25", "q75")})
+    out: Dict[str, Any] = {"yon1": {}, "yon2": {}, "tabaka": {}, "ambargo": amb}
+    for yon in ("yon1", "yon2"):
+        for p in OC.OC_ESIK["pazar"]:
+            X = M[(M.pazar == p) & M.donem.isin(Q[yon])]; out[yon][p] = {}
+            for c in kol:
+                v = X[c].to_numpy(float); v = v[np.isfinite(v)]
+                out[yon][p][c] = {"q25": float(np.quantile(v, Q["alt"])) if len(v) else np.nan,
+                                  "q75": float(np.quantile(v, Q["ust"])) if len(v) else np.nan, "n": int(len(v))}
+    T = E["tabaka"]
+    for p in OC.OC_ESIK["pazar"]:
+        X = M[(M.pazar == p) & M.donem.isin(E["donem"]["egitim"])]; out["tabaka"][p] = {}
+        for c in T["oz"]:
+            v = X[c].to_numpy(float); v = v[np.isfinite(v)]
+            out["tabaka"][p][c] = [float(np.quantile(v, q)) for q in T["q"]] if len(v) else [np.nan, np.nan]
+    return out
+
+
+def yh_d2_eski_esik_oku(cikti: str) -> Dict[str, Any]:
+    """devir1_esik.json (DEVİR 1 YENİDEN eşikleri) AYNEN; esik_d1_sha = YH_ESIK_D1 sha değilse DURUR."""
+    y = os.path.join(cikti, YH_D1_DOSYA["esik"])
+    if not os.path.exists(y):
+        raise YHHata(f"DEVİR 2: devir1_esik.json yok: {y}")
+    Q = json.load(open(y, encoding="utf-8"))
+    if Q.get("esik_d1_sha") != yh_esik_d1_sha():
+        raise YHHata("DEVİR 2: devir1_esik.json esik_d1_sha YH_ESIK_D1 ile aynı değil (DEVİR 1 eşikleri değişmiş) -> DURDU")
+    return Q
+
+
+def yh_d2_maske(M: pd.DataFrame, aday: str, esik: Dict[str, Any], esik_d1: Dict[str, Any], yon: str, E: Dict[str, Any] = YH_ESIK_D2) -> np.ndarray:
+    """Aday süzgeci (NaN tutmaz). 'q25' / 'q75' eşikleri: aday 'esik' = 'd1' ise devir1_esik.json, değilse devir2_esik.json (aynı yön, aynı pazar)."""
+    A = E["aday"][aday]; Q = esik_d1 if A.get("esik") == "d1" else esik
+    m = np.zeros(len(M), bool)
+    for p in OC.OC_ESIK["pazar"]:
+        pm = (M.pazar == p).to_numpy()
+        if not pm.any():
+            continue
+        mp_ = np.ones(int(pm.sum()), bool)
+        for c, op, v in A["kural"]:
+            x = M.loc[pm, c].to_numpy(float)
+            th = float(Q[yon][p][c][v]) if isinstance(v, str) else float(v)
+            with np.errstate(invalid="ignore"):
+                mp_ &= ~np.isnan(x) & _YH_D1_OP[op](x, th)
+        m[pm] = mp_
+    return m
+
+
+def yh_d2_hucre_maske(M: pd.DataFrame, esik: Dict[str, Any], E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, np.ndarray]:
+    """Hücre maskeleri (pazar başına ambargo tarihleriyle): egitim (2016-22), sinama (2023-26 VE giriş >= YÖN 1 ilk izinli), ters (2016-22 VE giriş
+    <= YÖN 2 son izinli; BİLGİ)."""
+    Dn = E["donem"]; g = pd.to_datetime(M.giris).to_numpy("datetime64[D]")
+    eg = M.donem.isin(Dn["egitim"]).to_numpy(); si = M.donem.isin(Dn["sinama"]).to_numpy()
+    s_ok = np.zeros(len(M), bool); t_ok = np.zeros(len(M), bool)
+    for p, a in esik["ambargo"].items():
+        pm = (M.pazar == p).to_numpy()
+        s_ok |= pm & (g >= np.datetime64(a["yon1_sinama_ilk_izinli"])); t_ok |= pm & (g <= np.datetime64(a["yon2_sinama_son_izinli"]))
+    return {"egitim": eg, "sinama": si & s_ok, "ters": eg & t_ok}
+
+
+def yh_d2_huni(M: pd.DataFrame, esik: Dict[str, Any], esik_d1: Dict[str, Any], E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, Any]:
+    """Getirisiz huni: aday x kol x pazar x dönem (YÖN 1 eşikleri) + sınama ambargo sonrası (amb) + taban."""
+    dn = [q for q, _a, _b in OC.OC_ESIK["donem"]]; hm = yh_d2_hucre_maske(M, esik, E); out: Dict[str, Any] = {}
+    for kol in ("A", "B"):
+        km = M[f"kol{kol}"].to_numpy(bool)
+        for a in ["taban"] + list(E["aday"]):
+            am = km & (yh_d2_maske(M, a, esik, esik_d1, "yon1", E) if a != "taban" else True)
+            r = {f"{p}|{q}": int((am & (M.pazar == p).to_numpy() & (M.donem == q).to_numpy()).sum()) for p in OC.OC_ESIK["pazar"] for q in dn}
+            r.update({f"{p}|amb": int((am & (M.pazar == p).to_numpy() & hm["sinama"]).sum()) for p in OC.OC_ESIK["pazar"]})
+            out[f"{a}|{kol}"] = r
+    return out
+
+
+def yh_d2_spearman(M: pd.DataFrame) -> Dict[str, Dict[str, float]]:
+    """Getirisiz mekanik ilişki (K1): F44, F46-F49, F51, F52, F54, F55, F62, F64 ile F3 / F10 / F13 / F15 Spearman (bütün Y1)."""
+    G = pd.read_csv(YH_YOL["ozellik"], usecols=["pazar", "sembol", "tarih", "F3", "F13"], parse_dates=["tarih"], dtype={"sembol": str})
+    X = M.merge(G, on=["pazar", "sembol", "tarih"], how="left"); out: Dict[str, Dict[str, float]] = {}
+    for c in ["F44", "F46", "F47", "F48", "F49", "F51", "F52", "F54", "F55", "F62", "F64"]:
+        out[c] = {}
+        for r in ("F3", "F10", "F13", "F15"):
+            Z = X[[c, r]].replace([np.inf, -np.inf], np.nan).dropna()
+            out[c][r] = float(Z[c].rank().corr(Z[r].rank())) if len(Z) > 30 else np.nan
+    return out
+
+
+def _yh_d2_sha(cikti: str) -> Dict[str, str]:
+    out = {"esik_d2": yh_esik_d2_sha(), "esik_d1": yh_esik_d1_sha(), "esik": yh_esik_sha(), "esik6": yh_esik6_sha(), "esik7": yh_esik7_sha(),
+           "kod": _yh_sha_dosya(YH_YOL["kod"])}
+    for ad, yol in (("ozellik_d2", os.path.join(cikti, YH_D2_DOSYA["ozellik"])), ("esik_json_d2", os.path.join(cikti, YH_D2_DOSYA["esik"])),
+                    ("ozellik_d1", os.path.join(cikti, YH_D1_DOSYA["ozellik"])), ("esik_json_d1", os.path.join(cikti, YH_D1_DOSYA["esik"])),
+                    ("y1olay", os.path.join(cikti, YH_DOSYA["satir"].format(d="Y1"))), ("y9olay", os.path.join(cikti, YH_DOSYA["satir"].format(d="Y9"))),
+                    ("ozellik", YH_YOL["ozellik"])):
+        if not os.path.exists(yol):
+            raise YHHata(f"DEVİR 2: dosya yok: {yol}")
+        out[ad] = _yh_sha_dosya(yol)
+    return out
+
+
+_YH_D2_DESEN = {"esik_d2": r"YH_ESIK_D2_SHA:\s*`([0-9a-f]{64})`", "esik_d1": r"YH_ESIK_D1_SHA:\s*`([0-9a-f]{64})`",
+                "esik": r"(?<![A-Z0-9_])YH_ESIK_SHA:\s*`([0-9a-f]{64})`", "esik6": r"YH_ESIK6_SHA:\s*`([0-9a-f]{64})`",
+                "esik7": r"YH_ESIK7_SHA:\s*`([0-9a-f]{64})`", "kod": r"YH_KOD_SHA:\s*`([0-9a-f]{64})`",
+                "ozellik_d2": r"D2_OZELLIK_SHA:\s*`([0-9a-f]{64})`", "esik_json_d2": r"D2_ESIK_JSON_SHA:\s*`([0-9a-f]{64})`",
+                "ozellik_d1": r"D1_OZELLIK_SHA:\s*`([0-9a-f]{64})`", "esik_json_d1": r"D1_ESIK_JSON_SHA:\s*`([0-9a-f]{64})`",
+                "y1olay": r"Y1_OLAY_SHA:\s*`([0-9a-f]{64})`", "y9olay": r"Y9_OLAY_SHA:\s*`([0-9a-f]{64})`",
+                "ozellik": r"(?<![A-Z0-9_])OZELLIK_SHA:\s*`([0-9a-f]{64})`", "zaman": _YH_KAPI_DESEN["zaman"]}
+
+
+def _yh_d2_regresyon(cikti: str, M: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """Regresyon kapısı: DEVİR 1 kapısı (YH_ESIK / 6 / 7 = ON_KAYIT_5 / 6 / 7; KOL-B = olay_Y9) + YH_ESIK_D1 = DEVIR_1_ON_KAYIT mührü +
+    devir1_esik.json sha = DEVIR_1_ON_KAYIT mührü (DEVİR 1 YENİDEN eşikleri aynı)."""
+    out = _yh_d1_regresyon(cikti, M)
+    y = os.path.join(cikti, YH_D1_DOSYA["onkayit"]); metin = open(y, encoding="utf-8").read() if os.path.exists(y) else ""
+    m1 = re.search(_YH_D1_DESEN["esik_d1"], metin); m2 = re.search(_YH_D1_DESEN["esik_json"], metin)
+    if not (m1 and m1.group(1) == yh_esik_d1_sha()):
+        raise YHHata("DEVİR 2 regresyon: YH_ESIK_D1 DEVIR_1_ON_KAYIT mührüyle aynı değil -> DURDU")
+    if not (m2 and m2.group(1) == _yh_sha_dosya(os.path.join(cikti, YH_D1_DOSYA["esik"]))):
+        raise YHHata("DEVİR 2 regresyon: devir1_esik.json DEVIR_1_ON_KAYIT mührüyle aynı değil -> DURDU")
+    out["esik_d1"] = m1.group(1); out["esik_json_d1"] = m2.group(1)
+    return out
+
+
+def yh_d2_onkayit_metni(huni: Dict[str, Any], esik: Dict[str, Any], esik_d1: Dict[str, Any], spm: Dict[str, Any], sha: Dict[str, str],
+                        den: Dict[str, Any], E: Dict[str, Any] = YH_ESIK_D2) -> str:
+    dn = [q for q, _a, _b in OC.OC_ESIK["donem"]]; pz = OC.OC_ESIK["pazar"]
+    s = ["# YAPI_HEDEF — DEVİR 2 ÖN KAYIT (karne v2; Y2 web entegrasyon adayları F43-F64 + DEVİR 1 YENİDEN W1 / W2 / W2D; 2026-11-19)", "",
+         f"{YH_SURUM}; DEVİR 2 eklendi (yh_devir2_ozellik, yh_devir2_kos). Kodlayıcı alt ajan. Bu dosya koşudan ÖNCE yazıldı; aşağıdaki sayılar "
+         "yalnız satır kimliği, dönem, giriş tarihi ve özellik dağılımıdır (getirisiz: h5 / es_h5 / st5 okunmadı).", "",
+         f"- YH_ESIK_D2_SHA: `{sha['esik_d2']}` (DEVİR 2: tanımlar, pencereler, aday kuralları, kol, dönem, ambargo, bootstrap, L3O, tabaka, etiket)",
+         f"- YH_ESIK_D1_SHA: `{sha['esik_d1']}` (= DEVIR_1_ON_KAYIT.md; W1 / W2 / W2D tanım ve eşik kuralı AYNEN)",
+         f"- YH_ESIK_SHA: `{sha['esik']}` (= ON_KAYIT_5.md: Y1-Y11c AYNEN)", f"- YH_ESIK6_SHA: `{sha['esik6']}` (= ON_KAYIT_6.md)",
+         f"- YH_ESIK7_SHA: `{sha['esik7']}` (= ON_KAYIT_7.md; Y12)", f"- YH_KOD_SHA: `{sha['kod']}` (YAPI_HEDEF.py)",
+         f"- D2_OZELLIK_SHA: `{sha['ozellik_d2']}` (ozellik_Y1_d2.csv.gz; F43-F64)",
+         f"- D2_ESIK_JSON_SHA: `{sha['esik_json_d2']}` (devir2_esik.json; çeyrekler, tabaka tercilleri, ambargo tarihleri)",
+         f"- D1_OZELLIK_SHA: `{sha['ozellik_d1']}` (ozellik_Y1_d1.csv.gz; F30-F32 DEVİR 1 YENİDEN)",
+         f"- D1_ESIK_JSON_SHA: `{sha['esik_json_d1']}` (devir1_esik.json; = DEVIR_1_ON_KAYIT mührü, yeni eşik seçilmedi)",
+         f"- Y1_OLAY_SHA: `{sha['y1olay']}` (olay_Y1.csv.gz; ölçü satırları)", f"- Y9_OLAY_SHA: `{sha['y9olay']}` (olay_Y9.csv.gz; KOL-B regresyonu)",
+         f"- OZELLIK_SHA: `{sha['ozellik']}` (goz_etiket/ozellik_Y1.csv.gz; F7 / F8 / F10 / F15 / F17)", f"- ZAMAN (UTC): `{_yh_simdi()}`", "",
+         "## 1. ADAYLAR, F-KODLARI, TANIM, PENCERE, SABİT EŞİK", "",
+         "F-kodları F43'ten başlar: F30-F42 DEVİR 1'in (ozellik_Y1_d1.csv.gz) kodlarıdır; DEVİR 1 YENİDEN adayları F30 / F31 / F32'yi aynen kullanır.",
+         f"Pencereler: {json.dumps(E['pencere'], ensure_ascii=False)}. t = Y1 sinyal günü (kırılım mumu; kapanışı biliniyor), giriş t+1 açılış; "
+         "bölge [sol, t-1], sol = t - F8.", ""]
+    for k, v in E["ozellik"].items():
+        s.append(f"- **{k}**: {v}.")
+    s += ["", f"Çeyrek kuralı: {E['ceyrek']['tanim']}. {E['d1_esik']}.", "",
+          "| Aday | Kaynak | Tür | Süzgeç kuralı | Eşik kaynağı | Ad |", "|---|---|---|---|---|---|"]
+    for a, v in E["aday"].items():
+        s.append(f"| {a} | {v['kaynak']} | {v['tur']}{' (KAPALI KONU)' if v.get('kapali') else ''} | "
+                 f"{' VE '.join(f'{c} {o} {x}' for c, o, x in v['kural'])} | {'devir1_esik.json' if v.get('esik') == 'd1' else 'sabit / devir2_esik.json'} | {v['ad']} |")
+    s += ["", "### Çeyrek eşikleri (devir2_esik.json; YÖN 1 = 2016-22 karar, YÖN 2 = 2023-26 bilgi; pazar içi, bütün Y1 olayları)", "",
+          "| Özellik | Pazar | YÖN 1 q25 / q75 (n) | YÖN 2 q25 / q75 (n) |", "|---|---|---|---|"]
+    for c in sorted(esik["yon1"]["ABD"]):
+        for p in pz:
+            a1, a2 = esik["yon1"][p][c], esik["yon2"][p][c]
+            s.append(f"| {c} | {p} | {a1['q25']:.6g} / {a1['q75']:.6g} ({a1['n']}) | {a2['q25']:.6g} / {a2['q75']:.6g} ({a2['n']}) |")
+    s += ["", "### DEVİR 1 YENİDEN eşikleri (devir1_esik.json AYNEN)", "", "| Özellik | Pazar | YÖN 1 q25 / q75 | YÖN 2 q25 / q75 |", "|---|---|---|---|"]
+    for c in ("F30", "F31", "F32"):
+        for p in pz:
+            a1, a2 = esik_d1["yon1"][p][c], esik_d1["yon2"][p][c]
+            s.append(f"| {c} | {p} | {a1['q25']:.6g} / {a1['q75']:.6g} | {a2['q25']:.6g} / {a2['q75']:.6g} |")
+    s += ["", "### K1 tabaka tercil sınırları (2016-22, pazar içi; getirisiz)", "", "| Pazar | F10 t33 / t67 | F15 t33 / t67 | F7 t33 / t67 |", "|---|---|---|---|"]
+    for p in pz:
+        T = esik["tabaka"][p]
+        s.append(f"| {p} | " + " | ".join(f"{T[c][0]:.4g} / {T[c][1]:.4g}" for c in E["tabaka"]["oz"]) + " |")
+    s += ["", f"### Ambargo ({E['ambargo']['bar']} bar; {E['ambargo']['tanim']})", "",
+          "| Pazar | YÖN 1 eğitim son giriş | YÖN 1 sınama ilk izinli | YÖN 2 eğitim ilk giriş | YÖN 2 sınama son izinli |", "|---|---|---|---|---|"]
+    for p in pz:
+        a = esik["ambargo"][p]
+        s.append(f"| {p} | {a['yon1_son_egitim_giris']} | {a['yon1_sinama_ilk_izinli']} | {a['yon2_ilk_egitim_giris']} | {a['yon2_sinama_son_izinli']} |")
+    s += ["", "## 2. ÖLÇÜ, KOLLAR, KARNE v2", "", f"- KOLLAR: A = {E['kol']['A']}; B = {E['kol']['B']}.", f"- ÖLÇÜ: {E['olcu']}.",
+          f"- KARNE v2 ETİKET: {E['etiket']}.", f"- BOOTSTRAP: {json.dumps(E['boot'], ensure_ascii=False)}; MARJ her örneklemde (aday ve kol tabanı aynı "
+          "aylarla) yeniden hesaplanır.", f"- LEAVE-3-OUT: {E['l3o']}.", f"- K1 TABAKA: {E['tabaka']['tanim']}.", f"- KAPALI KONU: {E['kapali']}.",
+          f"- ÇOKLU KARŞILAŞTIRMA: {E['coklu']}.", f"- YENİDEN ÜRETİM hücreleri: {'; '.join(' / '.join(x) for x in E['yeniden_uretim'])}.",
+          "- REGRESYON KAPISI: YH_ESIK / 6 / 7 sha = ON_KAYIT_5 / 6 / 7; YH_ESIK_D1 ve devir1_esik.json = DEVIR_1_ON_KAYIT mührü; KOL-B = olay_Y9 "
+          "kümesi; eşik json yeniden hesapla aynı; değilse DURUR.", "",
+          "## 3. GETİRİSİZ HUNİ (Y1 olayı -> aday tutan olay sayısı; YÖN 1 eşikleri; pazar x dönem; 'amb' = sınama ambargo sonrası)", "",
+          "| Satır | Kol | " + " | ".join(f"{p} {q}" for p in pz for q in dn + ["amb"]) + " |", "|---|---|" + "---|" * (len(pz) * (len(dn) + 1))]
+    for kol in ("A", "B"):
+        for a in ["taban"] + list(E["aday"]):
+            r = huni[f"{a}|{kol}"]
+            s.append(f"| {a} | {kol} | " + " | ".join(str(r[f'{p}|{q}']) for p in pz for q in dn + ["amb"]) + " |")
+    s += ["", "## 4. ÖZELLİK DENETİMİ (getirisiz)", "", "| Pazar | olay | prefix tuttu | kesit hisse-gün | takvim bar | NaN (F43..F64) |", "|---|---|---|---|---|---|"]
+    for p, v in den.get("pazar", {}).items():
+        s.append(f"| {p} | {v['olay']} | {v['prefix_tuttu']} | {v['kesit_hisse_gun']} | {v['takvim_bar']} | "
+                 f"{', '.join(f'{k} {n}' for k, n in v['nan'].items() if n)} |")
+    s += ["", "### Mekanik ilişki (K1; Spearman, bütün Y1, getirisiz)", "", "| Özellik | F3 mum boyu | F10 bölge net | F13 kırılım hacmi | F15 konum |",
+          "|---|---|---|---|---|"]
+    for c, v in spm.items():
+        s.append(f"| {c} | " + " | ".join("-" if not np.isfinite(v[r]) else f"{v[r]:+.2f}" for r in ("F3", "F10", "F13", "F15")) + " |")
+    s += ["", "Uygulama yorumları (ölçümden önce): (1) t barı (sinyal günü) girdidir; DEVİR 1'den farklı olarak PP / kutu / RVOL / NR7_t t'yi okur, "
+          "NR7 karar hücresi t-1 barıdır; (2) PP'de yukarı gün ama 10 günde düşüş günü yoksa NaN (süzgeç tutmaz); (3) DÜZ TAVAN'da ikiden az onaylı "
+          "pivot = 0 (düz tavan yok), 6 bar onay gecikmesi yüzünden son 6 barın tepeleri sayılmaz (küçük 3-5 günlük yapıyı geç yakalar; karnede not); "
+          "(4) VCP daralmaları penceredeki en yüksek tepeden başlar, son açık salınım girmez; (5) RV kesit evreni bugün işlem gören hisseler (K7), ilk-20 "
+          "pazar büyüklüğüne göre farklı seçicilik (ABD ~1.400, AVR / BIST ~580 hisse); (6) KATKI+ dört hücre + bootstrap + L3O + tabaka şartları "
+          "birlikte; ters yön hücresi yalnız bilgi.", "", yh_kontrol_tablosu(YH_KONTROL_D2), ""]
+    return "\n".join(s) + "\n"
+
+
+def yh_d2_onkayit_yaz(cikti: Optional[str] = None, uzerine: bool = False, git: bool = True) -> str:
+    """DEVIR_2_ON_KAYIT.md + devir2_esik.json (getirisiz). Özellik dosyası yazılmış, DEVİR 2 ölçülmemiş olmalı."""
+    cikti = cikti or YH_YOL["cikti"]; yol = os.path.join(cikti, YH_D2_DOSYA["onkayit"])
+    if os.path.exists(os.path.join(cikti, YH_D2_DOSYA["sonuc"])):
+        raise YHHata("devir2_sonuc.json var: DEVİR 2 ölçülmüş; ön kayıt ölçümden sonra yazılamaz")
+    if os.path.exists(yol):
+        if git:
+            try:
+                _yh_git(yol)
+                raise YHHata(f"DEVİR 2 ön kaydı zaten git'e işlenmiş ({yol}); üzerine yazılmaz")
+            except YHHata as ex:
+                if "zaten" in str(ex):
+                    raise
+        if not uzerine:
+            raise YHHata(f"DEVİR 2 ön kaydı var ({yol}); git'e işlenmemişse --uzerine-yaz")
+    M = yh_d2_taban(cikti, getiri=False)
+    _yh_d2_regresyon(cikti, M)
+    yd = os.path.join(cikti, YH_D2_DOSYA["denetim"])
+    if not os.path.exists(yd):
+        raise YHHata("DEVİR 2: özellik denetim json yok (önce devir2ozellik)")
+    den = json.load(open(yd, encoding="utf-8"))
+    if den.get("sha") != _yh_sha_dosya(os.path.join(cikti, YH_D2_DOSYA["ozellik"])):
+        raise YHHata("DEVİR 2: özellik dosyası denetim json'daki sha ile aynı değil -> DURDU")
+    esik = yh_d2_esik(M, den["ambargo"]); esik_d1 = yh_d2_eski_esik_oku(cikti)
+    _yh_yaz(os.path.join(cikti, YH_D2_DOSYA["esik"]), json.dumps({"esik_d2_sha": yh_esik_d2_sha(), **esik}, ensure_ascii=False, indent=1,
+                                                                default=_yh_json), "DEVİR 2 eşik")
+    _yh_yaz(yol, yh_d2_onkayit_metni(yh_d2_huni(M, esik, esik_d1), esik, esik_d1, yh_d2_spearman(M), _yh_d2_sha(cikti), den), "DEVİR 2 ön kayıt")
+    return yol
+
+
+def yh_d2_kapi(cikti: Optional[str] = None, git: bool = True, kontrol: bool = True) -> Dict[str, Any]:
+    """DEVİR 2 koşu kapısı: kontrol listesi (ik_kontrol_kapisi) + sha'lar + regresyon + git kaydı."""
+    cikti = cikti or YH_YOL["cikti"]; yol = os.path.join(cikti, YH_D2_DOSYA["onkayit"])
+    if not os.path.exists(yol):
+        raise YHHata(f"DEVİR 2 ön kaydı yok: {yol}")
+    metin = open(yol, encoding="utf-8").read(); out: Dict[str, Any] = {"yol": yol}
+    if kontrol:
+        import IZ_KARNE as IK
+        try:
+            out["kontrol"] = IK.ik_kontrol_kapisi(yol)["gecti"]
+        except RuntimeError as ex:
+            raise YHHata(str(ex))
+    bul = {}
+    for ad, d_ in _YH_D2_DESEN.items():
+        m = re.search(d_, metin)
+        if not m:
+            raise YHHata(f"DEVİR 2 ön kaydında {ad} satırı yok")
+        bul[ad] = m.group(1)
+    simdi = _yh_d2_sha(cikti)
+    for ad, v in simdi.items():
+        if bul[ad] != v:
+            raise YHHata(f"{ad} sha tutmuyor: ön kayıt {bul[ad][:12]}…, şimdi {v[:12]}… -> koşu DURDU")
+    out["regresyon"] = _yh_d2_regresyon(cikti)
+    out["sha"] = simdi; out["onkayit_zaman"] = bul["zaman"]
+    if git:
+        out["git_onkayit"] = _yh_git(yol); out["git_kod"] = _yh_git(YH_YOL["kod"])
+    yhlog.info("yh_d2_kapi AÇIK (%s)", yol)
+    return out
+
+
+def _yh_d2_ay_top(X: pd.DataFrame) -> pd.DataFrame:
+    g = X[X.h5.notna() & X.es_h5.notna()]
+    return pd.DataFrame({"s": (g.h5 - g.es_h5).to_numpy(float), "n": 1.0, "ay": pd.to_datetime(g.giris).dt.strftime("%Y-%m").to_numpy()}).groupby("ay")[["s", "n"]].sum()
+
+
+def yh_d2_boot_l3o(Xa: pd.DataFrame, Xk: pd.DataFrame, E: Dict[str, Any] = YH_ESIK_D2, tohum_ek: int = 0) -> Dict[str, float]:
+    """MARJ = FARK(aday) - FARK(kol) için ay kümeli bootstrap %95 alt ucu ve leave-3-out MARJ. Ay birimi kol tabanının ayları (aday ⊂ kol)."""
+    A = _yh_d2_ay_top(Xa); K_ = _yh_d2_ay_top(Xk)
+    if not len(A) or not len(K_):
+        return {"boot_alt": np.nan, "l3o": np.nan}
+    A = A.reindex(K_.index, fill_value=0.0)
+    sa, na, sk, nk = (x.to_numpy(float) for x in (A.s, A.n, K_.s, K_.n))
+    B = int(E["boot"]["B"]); rng = np.random.default_rng([int(E["boot"]["tohum"]), int(tohum_ek)])
+    W = rng.multinomial(len(sk), np.full(len(sk), 1.0 / len(sk)), size=B).astype(float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        mb = (W @ sa) / (W @ na) - (W @ sk) / (W @ nk)
+    mb = mb[np.isfinite(mb)]
+    alt = float(np.quantile(mb, float(E["boot"]["q"]))) if len(mb) else np.nan
+    with np.errstate(invalid="ignore", divide="ignore"):
+        tek = (sa.sum() - sa) / (na.sum() - na) - (sk.sum() - sk) / (nk.sum() - nk)
+    tek = np.where(np.isfinite(tek), tek, np.inf)
+    cik = np.argsort(tek, kind="stable")[:3]; keep = np.ones(len(sk), bool); keep[cik] = False
+    l3o = float(sa[keep].sum() / na[keep].sum() - sk[keep].sum() / nk[keep].sum()) if na[keep].sum() > 0 and nk[keep].sum() > 0 else np.nan
+    return {"boot_alt": alt, "l3o": l3o}
+
+
+def yh_d2_etiket(c: Dict[str, Dict[str, Dict[str, Any]]], tabaka_ok: bool, nmin: int, karar: List[str]) -> str:
+    """c[pazar][hücre] (egitim / sinama) -> {n, fark, marjinal, boot_alt, l3o, st, es_st}. Kural YH_ESIK_D2['etiket']."""
+    H_ = [c[p][k] for p in karar for k in ("egitim", "sinama")]
+    ok_n = all(h["n"] >= nmin and np.isfinite(h["fark"]) and np.isfinite(h["marjinal"]) for h in H_)
+    if ok_n and all(h["fark"] > 0 and h["marjinal"] > 0 and np.isfinite(h["boot_alt"]) and h["boot_alt"] > 0 and np.isfinite(h["l3o"])
+                    and h["l3o"] > 0 and h["st"] <= h["es_st"] for h in H_):
+        return "KATKI+" if tabaka_ok else "SORGULA"
+    if ok_n and all(h["marjinal"] < 0 for h in H_):
+        return "KATKI−"
+    return "SORGULA"
+
+
+def yh_d2_karne(M: pd.DataFrame, esik: Dict[str, Any], esik_d1: Dict[str, Any], E: Dict[str, Any] = YH_ESIK_D2) -> List[Dict[str, Any]]:
+    """Karne v2 satırları: aday x kol x pazar; hücreler egitim / sinama (YÖN 1, ambargolu) ve ters (YÖN 2, ambargolu, BİLGİ); bootstrap ve L3O
+    eğitim / sınama hücrelerinde; K1 tabaka ABD+AVR eğitim ve sınama."""
+    hm = yh_d2_hucre_maske(M, esik, E); nmin = int(E["n_min"]); out = []
+    Tb = E["tabaka"]
+    tab: Dict[str, Dict[str, np.ndarray]] = {}
+    for c in Tb["oz"]:
+        x = M[c].to_numpy(float); lab = np.full(len(M), -1)
+        for p in OC.OC_ESIK["pazar"]:
+            pm = (M.pazar == p).to_numpy(); a, b = esik["tabaka"][p][c]
+            with np.errstate(invalid="ignore"):
+                lab[pm & (x <= a)] = 0; lab[pm & (x > a) & (x <= b)] = 1; lab[pm & (x > b)] = 2
+        tab[c] = {f"T{k}": lab == k for k in range(3)}
+    for ko, kol in enumerate(("A", "B")):
+        km = M[f"kol{kol}"].to_numpy(bool)
+        for pi, pz in enumerate(E["pazar"]):
+            pm = M.pazar.isin(pz.split("+")).to_numpy()
+            tb = {k: yh_d1_hucre(M[km & pm & hm[k]]) for k in ("egitim", "sinama", "ters")}
+            out.append({"aday": "taban", "kol": kol, "pazar": pz, "tur": "taban", **{k: {**v, "marjinal": np.nan} for k, v in tb.items()}, "etiket": "-"})
+            for ai, (a, A) in enumerate(E["aday"].items()):
+                m1 = yh_d2_maske(M, a, esik, esik_d1, "yon1", E); m2 = yh_d2_maske(M, a, esik, esik_d1, "yon2", E)
+                c = {"egitim": yh_d1_hucre(M[km & pm & hm["egitim"] & m1]), "sinama": yh_d1_hucre(M[km & pm & hm["sinama"] & m1]),
+                     "ters": yh_d1_hucre(M[km & pm & hm["ters"] & m2])}
+                for k in c:
+                    c[k]["marjinal"] = c[k]["fark"] - tb[k]["fark"] if c[k]["n"] and tb[k]["n"] else np.nan
+                for hi, k in enumerate(("egitim", "sinama")):
+                    c[k].update(yh_d2_boot_l3o(M[km & pm & hm[k] & m1], M[km & pm & hm[k]], E, tohum_ek=((ko * 10 + pi) * 100 + ai) * 2 + hi))
+                out.append({"aday": a, "kol": kol, "pazar": pz, "tur": A["tur"], **c, "etiket": "?"})
+    # K1 tabaka (ABD+AVR) + etiket
+    for x in out:
+        if x["aday"] == "taban":
+            continue
+        km = M[f"kol{x['kol']}"].to_numpy(bool); pm = M.pazar.isin(["ABD", "AVR"]).to_numpy()
+        m1 = yh_d2_maske(M, x["aday"], esik, esik_d1, "yon1", E); T = {}; tok = True
+        if x["pazar"] == "ABD+AVR" or x["pazar"] in E["karar_pazar"]:
+            for c_ in Tb["oz"]:
+                for tk, tm in tab[c_].items():
+                    for k in ("egitim", "sinama"):
+                        h = yh_d1_hucre(M[km & pm & hm[k] & m1 & tm]); hb = yh_d1_hucre(M[km & pm & hm[k] & tm])
+                        mj = h["fark"] - hb["fark"] if h["n"] and hb["n"] else np.nan
+                        T[f"{c_}|{tk}|{k}"] = {"n": h["n"], "marjinal": mj}
+                        if h["n"] >= nmin and np.isfinite(mj) and mj <= 0:
+                            tok = False
+        x["tabaka"] = T; x["tabaka_ok"] = tok
+    idx = {(x["aday"], x["kol"], x["pazar"]): x for x in out}
+    for x in out:
+        if x["aday"] == "taban":
+            continue
+        c = {p: idx[(x["aday"], x["kol"], p)] for p in E["karar_pazar"]}
+        e = yh_d2_etiket(c, idx[(x["aday"], x["kol"], "ABD")]["tabaka_ok"], nmin, E["karar_pazar"])
+        x["etiket_kural"] = e
+        x["etiket"] = e if x["tur"] == "ana" else f"BİLGİ ({e})"
+    return out
+
+
+def _yh_d2_yeniden(cikti: str, aday: str, kol: str, pazar: str, hucre: str, E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, Any]:
+    """Bağımsız yeniden üretim (K11): ham csv'ler + eşik json'ları, düz pandas sorgusu; ambargo ozellik denetim json'undaki takvim bilgisinden değil,
+    eşik json'undaki tarihten (yh_d2_maske / yh_d2_hucre_maske / yh_d1_hucre kullanılmaz)."""
+    O = pd.read_csv(os.path.join(cikti, YH_DOSYA["satir"].format(d="Y1")), dtype={"sembol": str})
+    D = pd.read_csv(os.path.join(cikti, YH_D2_DOSYA["ozellik"]), dtype={"sembol": str})
+    D1 = pd.read_csv(os.path.join(cikti, YH_D1_DOSYA["ozellik"]), usecols=["pazar", "sembol", "tarih", "F30", "F31", "F32"], dtype={"sembol": str})
+    G = pd.read_csv(YH_YOL["ozellik"], usecols=["pazar", "sembol", "tarih", "F15", "F17"], dtype={"sembol": str})
+    Q2 = json.load(open(os.path.join(cikti, YH_D2_DOSYA["esik"]), encoding="utf-8"))
+    Q1 = json.load(open(os.path.join(cikti, YH_D1_DOSYA["esik"]), encoding="utf-8"))
+    X = O.merge(D, on=["pazar", "sembol", "tarih"]).merge(D1, on=["pazar", "sembol", "tarih"]).merge(G, on=["pazar", "sembol", "tarih"], how="left")
+    X = X[X.pazar.isin(pazar.split("+"))]
+    if kol == "B":
+        X = X.query("F15 <= 0.25 and F17 <= -0.20")
+    yon = "yon2" if hucre == "ters" else "yon1"
+    parca = []
+    for p, g in X.groupby("pazar"):
+        am = Q2["ambargo"][p]
+        if hucre == "egitim":
+            g = g[g.donem == "2016-22"]
+        elif hucre == "sinama":
+            g = g[g.donem.isin(["2023", "2024-26"]) & (g.giris >= am["yon1_sinama_ilk_izinli"])]
+        else:
+            g = g[(g.donem == "2016-22") & (g.giris <= am["yon2_sinama_son_izinli"])]
+        Q = Q1 if E["aday"][aday].get("esik") == "d1" else Q2
+        for c, op, v in E["aday"][aday]["kural"]:
+            th = Q[yon][p][c][v] if isinstance(v, str) else v
+            g = g.query(f"{c} {op} {th!r}")
+        parca.append(g)
+    X = pd.concat(parca) if parca else X.iloc[:0]
+    X = X.dropna(subset=["h5", "es_h5"])
+    return {"n": int(len(X)), "fark": float(X.h5.mean() - X.es_h5.mean()) if len(X) else np.nan}
+
+
+def yh_devir2_kos(cikti: Optional[str] = None, git: bool = True, kontrol: bool = True, E: Dict[str, Any] = YH_ESIK_D2) -> Dict[str, Any]:
+    """DEVİR 2 koşusu: kapı -> karne v2 (iki kol, ambargo, bootstrap, L3O, tabaka) -> yeniden üretim -> devir2_sonuc.json + DEVIR_2_RAPOR.md.
+    İkinci koşu DURUR."""
+    cikti = cikti or YH_YOL["cikti"]; ys = os.path.join(cikti, YH_D2_DOSYA["sonuc"])
+    if os.path.exists(ys):
+        raise YHHata("devir2_sonuc.json var: DEVİR 2 zaten ölçüldü (ikinci koşu yok)")
+    kp = yh_d2_kapi(cikti, git=git, kontrol=kontrol)
+    M = yh_d2_taban(cikti, getiri=True)
+    _yh_d2_regresyon(cikti, M)
+    esik = json.load(open(os.path.join(cikti, YH_D2_DOSYA["esik"]), encoding="utf-8")); esik_d1 = yh_d2_eski_esik_oku(cikti)
+    yeni = yh_d2_esik(M[[c for c in M.columns if c not in ("h5", "es_h5", "st5", "es_st5")]], esik["ambargo"], E)
+    if json.dumps(yeni, sort_keys=True, default=_yh_json) != json.dumps({k: esik[k] for k in yeni}, sort_keys=True, default=_yh_json):
+        raise YHHata("DEVİR 2: eşik json yeniden hesapla aynı değil -> DURDU")
+    K = yh_d2_karne(M, esik, esik_d1, E)
+    yu = []
+    for a, kol, pz, h in E["yeniden_uretim"]:
+        r = [x for x in K if x["aday"] == a and x["kol"] == kol and x["pazar"] == pz][0][h]
+        b = _yh_d2_yeniden(cikti, a, kol, pz, h, E)
+        tut = b["n"] == r["n"] and (np.isclose(b["fark"], r["fark"], rtol=0, atol=1e-12) or (np.isnan(b["fark"]) and np.isnan(r["fark"])))
+        if not tut:
+            raise YHHata(f"DEVİR 2 yeniden üretim TUTMADI: {a} {kol} {pz} {h}: {r['n']} / {r['fark']} vs {b['n']} / {b['fark']} -> DURDU")
+        yu.append({"aday": a, "kol": kol, "pazar": pz, "hucre": h, "kod_n": r["n"], "kod_fark": r["fark"], "yeni_n": b["n"], "yeni_fark": b["fark"],
+                   "durum": "TUTTU"})
+    J = {"surum": YH_SURUM, "zaman_utc": _yh_simdi(), "kapi": {k: v for k, v in kp.items() if k != "yol"}, "karne": K, "yeniden_uretim": yu,
+         "esik_d2_sha": yh_esik_d2_sha(E)}
+    _yh_yaz(ys, json.dumps(J, ensure_ascii=False, indent=1, default=_yh_json), "DEVİR 2 sonuç")
+    return {"json": J, "rapor": yh_devir2_rapor(cikti, E)}
+
+
+def yh_devir2_rapor(cikti: Optional[str] = None, E: Dict[str, Any] = YH_ESIK_D2) -> str:
+    """DEVIR_2_RAPOR.md (devir2_sonuc.json + isteğe bağlı devir2_hata.json)."""
+    cikti = cikti or YH_YOL["cikti"]; ys = os.path.join(cikti, YH_D2_DOSYA["sonuc"])
+    if not os.path.exists(ys):
+        raise YHHata("devir2_sonuc.json yok: önce `python YAPI_HEDEF.py devir2kos`")
+    J = json.load(open(ys, encoding="utf-8")); K = J["karne"]
+    yh_ = os.path.join(cikti, YH_D2_DOSYA["hata"]); H_ = json.load(open(yh_, encoding="utf-8")) if os.path.exists(yh_) else []
+    fn = lambda x: x is not None and np.isfinite(float(x))  # noqa: E731
+    pc = lambda x: f"{100 * float(x):+.1f}".replace(".", ",") if fn(x) else "-"  # noqa: E731
+    pp = lambda x: f"%{100 * float(x):.1f}".replace(".", ",") if fn(x) else "-"  # noqa: E731
+    ana = [x for x in K if x["pazar"] == "ABD" and x["tur"] == "ana"]
+    say = {e: sum(1 for x in ana if x["etiket"] == e) for e in ("KATKI+", "KATKI−", "SORGULA")}
+    s = ["# YAPI_HEDEF — DEVİR 2 RAPORU (karne v2: Y2 web entegrasyon adayları F43-F64 + DEVİR 1 YENİDEN W1 / W2 / W2D)", "",
+         f"{J['surum']}. Koşu: {J['zaman_utc']}. Ön kayıt: DEVIR_2_ON_KAYIT.md ({J['kapi'].get('onkayit_zaman', '?')}"
+         f"{', git ' + J['kapi']['git_onkayit'].get('commit', '?')[:10] if J['kapi'].get('git_onkayit') else ''}). Komut: `python YAPI_HEDEF.py devir2kos`.", "",
+         f"**SONUÇ (karar: ABD ve AVR ayrı ayrı; {len(ana)} ana satır = 10 aday x 2 kol): KATKI+ {say['KATKI+']}, KATKI− {say['KATKI−']}, "
+         f"SORGULA {say['SORGULA']}.** KATKI+ olanlar: " + (", ".join(f"{x['aday']} (kol {x['kol']})" for x in ana if x["etiket"] == "KATKI+") or "yok") + ".", "",
+         f"Ölçü: {E['olcu']}. Etiket: {E['etiket']}. Değerler yüzde puan; P = 15 barda +%5 hedefin stop'tan önce görülme payı. {E['kapali']}.", "",
+         "## 1. Karar tablosu (ana adaylar; her hücre ABD | AVR)", "",
+         "| Aday | Kol | eğitim n / FARK (MARJ; boot alt; L3O) ABD | AVR | sınama n / FARK (MARJ; boot alt; L3O) ABD | AVR | stop olay / eş (eğitim; sınama) ABD | AVR | tabaka | etiket |",
+         "|---|---|---|---|---|---|---|---|---|---|"]
+    idx = {(x["aday"], x["kol"], x["pazar"]): x for x in K}
+
+    def hc(h: Dict[str, Any], tam: bool = True) -> str:
+        r = f"{h['n']} / {pc(h['fark'])} ({pc(h['marjinal'])}"
+        return r + (f"; {pc(h.get('boot_alt'))}; {pc(h.get('l3o'))})" if tam else ")")
+
+    def st(x: Dict[str, Any]) -> str:
+        return f"{pp(x['egitim']['st'])} / {pp(x['egitim']['es_st'])}; {pp(x['sinama']['st'])} / {pp(x['sinama']['es_st'])}"
+    for kol in ("A", "B"):
+        for a, A in E["aday"].items():
+            if A["tur"] != "ana":
+                continue
+            u, v = idx[(a, kol, "ABD")], idx[(a, kol, "AVR")]
+            s.append(f"| {a} | {kol} | {hc(u['egitim'])} | {hc(v['egitim'])} | {hc(u['sinama'])} | {hc(v['sinama'])} | {st(u)} | {st(v)} | "
+                     f"{'tuttu' if u.get('tabaka_ok') else 'İŞARET DEĞİŞTİ'} | {u['etiket']} |")
+    s += ["", "## 2. İstenen tablo biçimi (aday | kol | eğitim n / fark | sınama n / fark | stop olay / eş | etiket); pazar ABD+AVR havuzu bilgi, etiket "
+          "ABD / AVR kuralından", "", "| Aday | Kol | Tür | eğitim n / FARK (MARJ) | sınama n / FARK (MARJ) | ters yön n / FARK (MARJ; BİLGİ) | stop olay / eş "
+          "(eğitim; sınama) | etiket |", "|---|---|---|---|---|---|---|---|"]
+    for kol in ("A", "B"):
+        for a, A in E["aday"].items():
+            x = idx[(a, kol, "ABD+AVR")]; e = idx[(a, kol, "ABD")]["etiket"]
+            s.append(f"| {a} | {kol} | {A['tur']} | {hc(x['egitim'], False)} | {hc(x['sinama'], False)} | {hc(x['ters'], False)} | {st(x)} | {e} |")
+        tb = idx[("taban", kol, "ABD+AVR")]
+        s.append(f"| taban | {kol} | - | {tb['egitim']['n']} / {pc(tb['egitim']['fark'])} | {tb['sinama']['n']} / {pc(tb['sinama']['fark'])} | "
+                 f"{tb['ters']['n']} / {pc(tb['ters']['fark'])} | {st(tb)} | - |")
+    s += ["", "## 3. K1 tabaka (ABD+AVR; ana adaylar; MARJ yüzde puan, n; tabaka T0 / T1 / T2 = alt / orta / üst tercil)", "",
+          "| Aday | Kol | " + " | ".join(f"{c} {t} {k[:3]}" for c in E["tabaka"]["oz"] for t in ("T0", "T1", "T2") for k in ("egitim", "sinama")) + " |",
+          "|---|---|" + "---|" * 18]
+    for kol in ("A", "B"):
+        for a, A in E["aday"].items():
+            if A["tur"] != "ana":
+                continue
+            T = idx[(a, kol, "ABD")]["tabaka"]
+            s.append(f"| {a} | {kol} | " + " | ".join(f"{pc(T[f'{c}|{t}|{k}']['marjinal'])} ({T[f'{c}|{t}|{k}']['n']})" for c in E["tabaka"]["oz"]
+                                                       for t in ("T0", "T1", "T2") for k in ("egitim", "sinama")) + " |")
+    for pz in ("BIST",):
+        s += ["", f"## {pz} (bilgi)", "", "| Aday | Kol | eğitim n / FARK (MARJ) | sınama n / FARK (MARJ) | ters n / FARK (MARJ) | stop olay / eş |",
+              "|---|---|---|---|---|---|"]
+        s += [f"| {x['aday']} | {x['kol']} | {hc(x['egitim'], False)} | {hc(x['sinama'], False)} | {hc(x['ters'], False)} | {st(x)} |"
+              for x in K if x["pazar"] == pz and x["tur"] in ("ana", "taban")]
+    s += ["", "## YENİDEN ÜRETİM (K11; _yh_d2_yeniden: ham csv + eşik json'ları, düz pandas sorgusu)", "",
+          "| Aday | Kol | Pazar | Hücre | kod n / FARK | yeniden n / FARK | durum |", "|---|---|---|---|---|---|---|"]
+    for r in J["yeniden_uretim"]:
+        s.append(f"| {r['aday']} | {r['kol']} | {r['pazar']} | {r['hucre']} | {r['kod_n']} / {pc(r['kod_fark'])} | {r['yeni_n']} / {pc(r['yeni_fark'])} | "
+                 f"{r['durum']} |")
+    s += ["", "## Notlar", "", "- Evren bugün işlem gören hisseler (hayatta kalma yanlılığı): P olay ve P eş yukarı yanlı; FARK'ta kısmen götürür; RV kesit "
+          "sırası da bugünün evreniyle.", "- ABD / AVR 2023-26 hücreleri önceki turlarda görüldü (bakılmış): KATKI+ en fazla EMARE düzeyi okunur, iz değildir.",
+          f"- {E['coklu']}.", "- DÜZ TAVAN 6 bar onay gecikmesi: 3-5 günlük küçük yapıyı geç yakalar (son 6 barın tepeleri sayılmaz).",
+          "- Kod değişti: Colab'da çalışma zamanını yeniden başlat.", "", "## HATA", ""]
+    s += [f"- {h}" for h in H_] if H_ else ["- (koşuda hata kaydı yok)"]
+    s += ["", yh_kontrol_tablosu(YH_KONTROL_D2), ""]
+    metin = "\n".join(s) + "\n"
+    _yh_yaz(os.path.join(cikti, YH_D2_DOSYA["rapor"]), metin, "DEVİR 2 rapor")
+    return metin
+
+
 def _cakisma_kontrol_yh(_once=_CK_ONCE_YH, _dosya="YAPI_HEDEF.py"):
     """Çakışma kapısı: bu dosya bellekteki mevcut bir adı (başka dosyanın) ezdiyse durur."""
     g = globals(); kayit = g.setdefault("_CK_KAYIT", {})
@@ -7488,7 +8436,7 @@ if __name__ == "__main__" and "get_ipython" not in globals():
     ap.add_argument("komut", choices=["guc", "onkayit", "onkayit2", "onkayit3", "s7ozellik", "onkayit4", "kos", "rapor", "rapor2", "rapor3", "rapor4",
                                       "sha", "s9ozellik", "tasarim5", "onkayit5", "rapor5", "onkayit6", "grup6", "filtrekarne", "mahkeme", "rapor6",
                                       "onkayit7", "puan7", "rapor7", "devir1ozellik", "devir1onkayit", "devir1kos",
-                                      "devir1rapor"])
+                                      "devir1rapor", "devir2ozellik", "devir2onkayit", "devir2kos", "devir2rapor"])
     ap.add_argument("--deneme", default=None)
     ap.add_argument("--islem", type=int, default=1)
     ap.add_argument("--veri", default=None)
@@ -7554,6 +8502,15 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             print(R_["rapor"][:6000])
         elif a.komut == "devir1rapor":
             print(yh_devir_rapor(a.cikti))
+        elif a.komut == "devir2ozellik":
+            R_ = yh_devir2_ozellik_yaz(a.veri, a.cikti, a.islem); print(json.dumps({k: v for k, v in R_.items()}, ensure_ascii=False, indent=1, default=_yh_json))
+        elif a.komut == "devir2onkayit":
+            print(yh_d2_onkayit_yaz(a.cikti, uzerine=a.uzerine_yaz, git=not a.gitsiz))
+        elif a.komut == "devir2kos":
+            R_ = yh_devir2_kos(a.cikti, git=not a.gitsiz)
+            print(R_["rapor"][:6000])
+        elif a.komut == "devir2rapor":
+            print(yh_devir2_rapor(a.cikti))
         elif a.komut == "filtrekarne":
             R_ = yh_filtre_karne(a.cikti); print("SORGULANACAK FİLTRELER: " + ("; ".join(R_["sorgulanacak"]) or "yok"))
         elif a.komut == "mahkeme":

@@ -1,0 +1,119 @@
+{
+ "surum": "YAPI_HEDEF v1.0 (2026-11-17): yapı kuralları Y1-Y5, hedef +%5 / +%10 stop'tan önce 15 bar, geçici takip stopu, eş + plasebo",
+ "esik_d2_sha": "83c387e6e0651fc112b40a19d0f9b6123777e4679779c5aeb4707bcfa729e858",
+ "olay_y1_sha": "e13eb12699a6d749bccc16ee4cde5ac467ea2bf8687b23a6a821fef74bf8871b",
+ "pazar": {
+  "ABD": {
+   "olay": 14881,
+   "prefix_tuttu": 25,
+   "kesit_hisse_gun": 3331251,
+   "takvim_bar": 2830,
+   "nan": {
+    "F43": 4,
+    "F44": 4,
+    "F45": 4,
+    "F46": 0,
+    "F47": 0,
+    "F48": 0,
+    "F49": 0,
+    "F50": 0,
+    "F51": 9988,
+    "F52": 0,
+    "F53": 139,
+    "F54": 0,
+    "F55": 0,
+    "F56": 0,
+    "F57": 0,
+    "F58": 0,
+    "F59": 0,
+    "F60": 0,
+    "F61": 0,
+    "F62": 2758,
+    "F63": 0,
+    "F64": 0
+   }
+  },
+  "AVR": {
+   "olay": 7054,
+   "prefix_tuttu": 25,
+   "kesit_hisse_gun": 1602780,
+   "takvim_bar": 2994,
+   "nan": {
+    "F43": 4,
+    "F44": 4,
+    "F45": 4,
+    "F46": 0,
+    "F47": 0,
+    "F48": 0,
+    "F49": 0,
+    "F50": 0,
+    "F51": 4150,
+    "F52": 0,
+    "F53": 109,
+    "F54": 0,
+    "F55": 0,
+    "F56": 0,
+    "F57": 0,
+    "F58": 0,
+    "F59": 0,
+    "F60": 0,
+    "F61": 0,
+    "F62": 1365,
+    "F63": 0,
+    "F64": 0
+   }
+  },
+  "BIST": {
+   "olay": 4728,
+   "prefix_tuttu": 25,
+   "kesit_hisse_gun": 1194101,
+   "takvim_bar": 2819,
+   "nan": {
+    "F43": 9,
+    "F44": 9,
+    "F45": 9,
+    "F46": 0,
+    "F47": 0,
+    "F48": 0,
+    "F49": 0,
+    "F50": 0,
+    "F51": 3832,
+    "F52": 0,
+    "F53": 4,
+    "F54": 0,
+    "F55": 0,
+    "F56": 0,
+    "F57": 0,
+    "F58": 0,
+    "F59": 0,
+    "F60": 0,
+    "F61": 0,
+    "F62": 415,
+    "F63": 0,
+    "F64": 0
+   }
+  }
+ },
+ "ambargo": {
+  "ABD": {
+   "yon1_son_egitim_giris": "2022-12-30",
+   "yon1_sinama_ilk_izinli": "2023-03-29",
+   "yon2_ilk_egitim_giris": "2023-01-03",
+   "yon2_sinama_son_izinli": "2022-10-06"
+  },
+  "AVR": {
+   "yon1_son_egitim_giris": "2022-12-30",
+   "yon1_sinama_ilk_izinli": "2023-03-24",
+   "yon2_ilk_egitim_giris": "2023-01-03",
+   "yon2_sinama_son_izinli": "2022-10-10"
+  },
+  "BIST": {
+   "yon1_son_egitim_giris": "2022-12-28",
+   "yon1_sinama_ilk_izinli": "2023-03-29",
+   "yon2_ilk_egitim_giris": "2023-01-02",
+   "yon2_sinama_son_izinli": "2022-10-10"
+  }
+ },
+ "satir": 26663,
+ "sha": "9f164d91401fc025ac8c6db19d65e1c104a3e9a01491383d89636c02f2ffbbdc"
+}
