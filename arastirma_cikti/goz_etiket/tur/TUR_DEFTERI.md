@@ -63,3 +63,12 @@
 | Cemal (birikimli, tur [1, 2]) | 15 g gün içi +%5 (High; bilgi) | 16 / 28 (%57,1) | 3 / 13 (%23,1) | **%46,3** (19 / 41) | %58,3 | %41,7 | 0 |
 | Cemal (birikimli, tur [1, 2]) | 60 g kapanış +%5 (bilgi) | 21 / 27 (%77,8) | 1 / 13 (%7,7) | **%55,0** (22 / 40) | %75,9 | %24,1 | 2 |
 - Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model [9, 24, 25]; Cemal [5, 15]; birikimli model 4, Cemal 5.
+
+## AÇILIŞ — TUR 4 / 5 (T1.6) (2026-11-19 07:15:21 UTC)
+
+- Sürüm T1.6 (TUR4_IS_TANIMI.md; ön kayıtlı, sonuç görülmeden); tohum 104 (tek permütasyon, kotasız); tur eşik sha 7ed7753fc514.
+- Havuz (U dip = Y1 olayı ∧ Ş1 dipte ∧ Ş9 U dip; Ş2 şart değil; dönem 2016-22 / 2023 / 2024-26): kriz süzgecinden önce 117; giriş <= kriz - 30 gün sonrası 115 (ABD 2016-22 31, ABD 2023 3, ABD 2024-26 20, AVR 2016-22 11, AVR 2023 2, AVR 2024-26 2, BIST 2016-22 16, BIST 2023 2, BIST 2024-26 28); kriz süzgecinde düşen 2.
+- Gösterilmiş (300 + hakem + TUR 1-3 + S7 PDF 50; olay ve hisse) çıkan 26; kalan 89 (ABD 2016-22 23, ABD 2023 3, ABD 2024-26 16, AVR 2016-22 6, AVR 2023 2, AVR 2024-26 2, BIST 2016-22 13, BIST 2023 1, BIST 2024-26 23); hisse başına en çok 2; seçilen 80.
+- TUR 4: 40 sayfa (ABD 2016-22 9, ABD 2023 2, ABD 2024-26 5, AVR 2016-22 1, AVR 2023 1, AVR 2024-26 1, BIST 2016-22 8, BIST 2023 1, BIST 2024-26 12); parmak F19 (bilgi): ABD parmak=0 15, ABD parmak=1 1, AVR parmak=0 3, BIST parmak=0 19, BIST parmak=1 2; PDF 2.54 MB, sızıntı sembol 0 / tarih 0.
+- TUR 5: 40 sayfa (ABD 2016-22 11, ABD 2023 1, ABD 2024-26 10, AVR 2016-22 4, BIST 2016-22 4, BIST 2024-26 10); parmak F19 (bilgi): ABD parmak=0 18, ABD parmak=1 4, AVR parmak=0 4, BIST parmak=0 11, BIST parmak=1 3; PDF 2.52 MB, sızıntı sembol 0 / tarih 0.
+- TUR 4 / 5, TUR 3 ölçülmeden açılır (ana model kararı, TUR4_IS_TANIMI.md; Cemal'in 19 Kas isteği). TUR 5 PDF'i Cemal'e TUR 4 yanıtından sonra gönderilir (ana model).

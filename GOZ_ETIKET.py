@@ -519,11 +519,19 @@ def ge_ciz(G: Dict[str, Any], no: int, yol: str, E: Dict[str, Any] = GE_ESIK) ->
         ust = G["ust"] if np.isfinite(G["ust"]) else G["tavan"]
         ax.add_patch(Rectangle((x0, G["hat"]), x1 - x0, max(ust - G["hat"], 0.0), facecolor="#4575b4", alpha=0.15, edgecolor="#4575b4",
                                linewidth=0.8, zorder=1, label="S6 bölgesi"))
-        ax.hlines(G["tavan"], (x[int(G["tavan_x0"])] - 0.5) if "tavan_x0" in G else x0, x[son] + 0.5, colors="#f46d43", linestyles="--", linewidth=1.2,
-                  zorder=5, label=G.get("tavan_etiket", "tavan"))
+        ax.hlines(G["tavan"], (x[int(G["tavan_x0"])] - 0.5) if "tavan_x0" in G else x0, x[son] + 0.5, colors=G.get("tavan_renk", "#f46d43"),
+                  linestyles="--", linewidth=1.2, zorder=5, label=G.get("tavan_etiket", "tavan"))
+        if G.get("s9") is not None:                    # T1.6 Ş9 çanağı (s7_bolge_pdf --s9 ile aynı biçim); yoksa çizim değişmez
+            s9 = G["s9"]; nn = int(s9["n"]); xr = np.arange(nn, dtype=float) - nn
+            ax.axvline(-nn - 0.5, color=_GE_S9_RENK, linewidth=0.7, linestyle="-", alpha=0.8, zorder=2, label=f"Ş9 penceresi (son {nn} bar)")
+            ax.plot(xr, s9["u"], color=_GE_S9_RENK, linewidth=2.4, linestyle="--", zorder=6, label="Ş9 çanak (2. derece uyum)")
+            if np.isfinite(s9["xs"]):
+                xs = float(s9["xs"]); ic = 0.0 <= xs <= nn - 1; xc = min(max(xs, 0.0), float(nn - 1))
+                ax.plot([xc - nn], [s9["a"] * xc * xc + s9["b"] * xc + s9["c"]], marker="o", ms=8, color=_GE_S9_RENK if ic else "white",
+                        markeredgecolor=_GE_S9_RENK, markeredgewidth=1.8, linestyle="none", zorder=7, label="çanak dibi x*")
         ax.hlines(G["hat"], x0, x[son] + 0.5, colors="#313695", linestyles="-", linewidth=1.2, zorder=5, label="hat")
         ax.set_title(f"No {int(no)}{G.get('baslik_ek', '')}", fontsize=14)
-        ax.legend(loc="upper left", fontsize=9, frameon=False)
+        ax.legend(loc="upper left", fontsize=9, frameon=False, **({"ncol": 2} if G.get("s9") is not None else {}))
         ax.grid(alpha=0.25, zorder=0)
         ax.set_ylabel("fiyat")
         plt.setp(ax.get_xticklabels(), visible=False)
@@ -1665,14 +1673,56 @@ GE_TUR_ESIK_T15: Dict[str, Any] = {
     "orneklem": GE_TUR_ESIK_T14["orneklem"].replace("olay_Y10.csv.gz (YAPI_HEDEF 4. tur S7 çekirdek)", "olay_Y11.csv.gz (YAPI_HEDEF 5. tur Ş9 U dip "
                                                     "çekirdek)").replace("deneme Y10", "deneme Y11"),
 }
+# T1.6 (TUR4_IS_TANIMI.md, 19 Kas; ön kayıtlı, sonuç görülmeden; Cemal: "kota filan istemem; bulduğu rastgele numaralar olsun; ilk 40 + 40"):
+# TUR 4 ve TUR 5 BİRLİKTE açılır. Havuz = U DİP (Y1 olayı ∧ Ş1 dipte ∧ Ş9 U dip; Ş2 şart değil), bütün dönemler; tek permütasyon, KOTASIZ;
+# ilk 40 = TUR 4, sonraki 40 = TUR 5. Kör sayfada S6 bölge + hat, S7 yakın tavan F21 (kırmızı kesik), Ş9 çanak (mor). T1.1-T1.5 DEĞİŞMEZ.
+_GE_S9_RENK = "#7b3294"                                                  # s7_bolge_pdf S9_RENK
+_GE_S9_OZ = ("F24", "F25", "F26", "F27", "F28", "F29")             # YAPI_HEDEF _Y11_OZ_S9 (ozellik_Y1_s9.csv.gz)
+GE_TUR_SORU_A_ETIKET_U = "A) Kodun U / bölge çizimi doğru mu?   (çanak / bölge / tavan çizgisi yanlışsa X)"
+GE_TUR_ESIK_T16: Dict[str, Any] = {
+    "surum": "T1.6", "deneme": "Y1", "tohum_taban": 100, "turlar": [4, 5], "tur_boy": 40,
+    "donem": ["2016-22", "2023", "2024-26"], "giris_kriz_pay_gun": 30, "sembol_azami": 2,
+    "havuz": {"S1": {"F15_ust": 0.25, "F17_ust": -0.20},
+              "S9": {"F24_alt_acik": 0.0, "F25_alt": 0.20, "F25_ust": 0.75, "F26_min": 0.40, "F27_min": 1.0, "F28_min": 0.5, "F29_mutlak_ust": 5.0},
+              "ozellik": "ozellik_Y1.csv.gz (goz_etiket; F15, F17)", "ozellik_s9": os.path.join("arastirma_cikti", "yapi_hedef", "ozellik_Y1_s9.csv.gz"),
+              "ozellik_s7": os.path.join("arastirma_cikti", "yapi_hedef", "ozellik_Y1_s7.csv.gz"),
+              "tanim": "olay_Y1.csv.gz (OC 60 gün tekil) satırı VE Ş1 DİPTE (F15 <= 0,25 VE F17 <= -0,20; ozellik_Y1.csv.gz) VE Ş9 U DİP (F24-F29 "
+                       "ozellik_Y1_s9.csv.gz; YAPI_HEDEF YH_ESIK Y11 eşikleri AYNEN, yh_s9_alt; eşikler burada kopyalı ve çalışma anında YH_ESIK ile "
+                       "aynı olmalı, değilse DURUR). Hat net (Ş2) ŞART DEĞİL. Dönem 2016-22 + 2023 + 2024-26; giriş <= kriz - 30 gün. Özellikler "
+                       "t-1'e kadar bilgi (sonuç sütunu değil); olay dosyasından yalnız kimlik sütunları."},
+    "gosterilen_s7b_tohum": 104,
+    "parmak_surum": "P1.1", "parmak_katman": False, "iki_soru": True, "a_kutu": True, "u_dip": True, "tavan_kaynak": "s7f21",
+    "onceki_tur_olcusuz": "TUR 4 / 5, TUR 3 ölçülmeden açılır (ana model kararı, TUR4_IS_TANIMI.md; Cemal'in 19 Kas isteği). TUR 5 PDF'i Cemal'e "
+                          "TUR 4 yanıtından sonra gönderilir (ana model).",
+    "orneklem": "tur 4 + 5 tek çekiliş: rng = numpy default_rng(100 + 4). Havuz (yukarıdaki tanım) daha önce GÖSTERİLMEMİŞ olay ve (pazar, sembol) "
+                "dışarıda: anahtar.json 300 örneklem (hakem seti aynı olaylardan) + TUR 1-3 anahtarları + S7 bölge PDF'indeki 50 olay "
+                "(s7_bolge_pdf.s7b_olaylar(104); S7_BOLGE_2016-22 / _S9 PDF'leri). Uygunlar (pazar, sembol, tarih) sırasına dizilir; TEK "
+                "rng.permutation, PAZAR / DÖNEM KOTASI YOK; sırayla gezilir, hisse başına en çok 2 olay (iki tur birlikte); ilk 40 = TUR 4 "
+                "(sayfa 1..40), sonraki 40 = TUR 5 (sayfa 1..40; kalan azsa kalan kadar, 0 ise DURUR). Sayfa sırası permütasyon sırasıdır "
+                "(ikinci karıştırma yok; permütasyon pazar / dönem / tarih taşımaz). F19 (P1.1) bilgi sütunu, NaN -> -1.",
+    "gorsel": "GE_ESIK['gorsel'] aynen (veri t'de kesilir, S6 kesik veride yeniden, hat / S6 tavanı olay dosyasıyla aynı olmalı; son 120 bar; hacim). "
+              "Mavi alan S6 bölgesi + mavi hat; KIRMIZI KESİK yakın tavan = F21 (t'den önceki 15 geçerli barın en yükseği; ozellik_Y1_s7.csv.gz ile "
+              "aynı olmalı, yalnız o 15 barın üstünde); Ş9 çanağı = [t-40, t-1] Low'a 2. derece uyum (MOR KALIN KESİK), uyum dibi x* (mor nokta; "
+              "pencere dışındaysa sınırda içi boş), pencere başı ince mor dikey; F24-F29 kesik veriden YAPI_HEDEF.yh_s9_bar ile yeniden = "
+              "ozellik_Y1_s9.csv.gz (göreli 1e-3), değilse DURUR. Başlık 'No k — PAZAR'; hisse adı / tarih yok; t sonrası yok.",
+    "pdf": "yatay A4, tur başına 40 sayfa (TUR 5 kalan kadar), her sayfa: başlık 'HAKEM TURU K — Sayfa s / n — KÖR', pazar, açıklama satırı, grafik, "
+           "altta A sorusu: etiket satırı '" + GE_TUR_SORU_A_ETIKET_U + "' ve ÇERÇEVELİ KUTU '" + GE_TUR_SORU_A_KUTU + "'; en altta '"
+           + GE_TUR_SORU_B + "'. PDF <= 12 MB; sızıntı kapısı (pdftotext: sembol / tarih 0). Karar ölçüsü (BAŞARI) yalnız B; A bilgi.",
+    "basari": GE_TUR_ESIK["basari"], "hedef": GE_TUR_ESIK["hedef"], "muhur": GE_TUR_ESIK["muhur"],
+    "olc": "tur olc --no 4 / 5: T1.1 ile aynı karar ölçüsü (olay_Y1 h5) ve B1.0 bilgi sütunları; sayfa sayısı anahtardan (40); dönem 2016-22 dahil; "
+           "satır dosyasında 'donem' sütunu; raporda dönem kırılımı (bilgi).",
+}
 _GE_TUR_ESIK_SHA = {"T1.1": "47284ac6dc6c7eb3bcfdde6c9703fc9386e289208f574a08eb6095a18c40a632",
                     "T1.2": "9cc0bb59e64c8f405588d3b390b66e42994ba3959843794fcca4c463882e89f0",
-                    "T1.3": "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29"}
+                    "T1.3": "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29",
+                    "T1.6": "7ed7753fc5149e95662899c56d39d1a4e4255733273a9543a81a6404a05af771"}
 
 
 def ge_tur_esik(no: int) -> Dict[str, Any]:
     """Tur numarasına göre tur eşik sözlüğü: tur 1 -> T1.1, tur 2 -> T1.2 (parmak P1.1, iki soru), tur 3 -> T1.3 (A sorusu kutulu), tur >= 4 ->
-    T1.4 (S7 çekirdek Y10 olayları, parmak katmanı yok, S7 tavanı). T1.1 / T1.2 / T1.3 sha'ları sabit (açılmış turlar); değişmişse DURUR."""
+    T1.4 (S7 çekirdek Y10 olayları, parmak katmanı yok, S7 tavanı). T1.1 / T1.2 / T1.3 sha'ları sabit (açılmış turlar); değişmişse DURUR.
+    T1.6 (TUR4_IS_TANIMI.md): tur 4 VE 5 -> T1.6 (U dip havuzu, kotasız tek permütasyon, 40 + 40); tur >= 6 -> T1.5 (ana model karar verir).
+    T1.4 / T1.5 sözlükleri kayıt olarak durur (YAPI_HEDEF kuru sayımları açık E ile çağırmalı)."""
     if int(no) < 1:
         raise GEHata(f"tur numarası >= 1 olmalı ({no})")
     if int(no) == 1:
@@ -1687,8 +1737,10 @@ def ge_tur_esik(no: int) -> Dict[str, Any]:
         if ge_esik_sha(GE_TUR_ESIK_T13) != _GE_TUR_ESIK_SHA["T1.3"]:
             raise GEHata("T1.3 tur eşik sha'sı değişmiş (tur 3 yeniden üretilemez)")
         return GE_TUR_ESIK_T13
-    if int(no) == 4:
-        return GE_TUR_ESIK_T14
+    if int(no) in GE_TUR_ESIK_T16["turlar"]:
+        if _GE_TUR_ESIK_SHA.get("T1.6") and ge_esik_sha(GE_TUR_ESIK_T16) != _GE_TUR_ESIK_SHA["T1.6"]:
+            raise GEHata("T1.6 tur eşik sha'sı değişmiş (tur 4 / 5 yeniden üretilemez)")
+        return GE_TUR_ESIK_T16
     return GE_TUR_ESIK_T15
 
 
@@ -1764,6 +1816,13 @@ def ge_tur_orneklem(no: int, yol: Optional[str] = None, cikti: Optional[str] = N
     """Tur örneklemi (yalnız kimlik sütunları + F19 parmak) -> DataFrame[sayfa, pazar, donem, sembol, tarih, giris, parmak].
     E verilmezse ge_tur_esik(no) (tur 1 T1.1 / P1.0; tur >= 2 T1.2 / P1.1)."""
     E = ge_tur_esik(no) if E is None else E
+    if E.get("havuz"):                                   # T1.6: tur 4 + 5 tek çekiliş (kotasız); bu turun dilimi
+        if int(no) not in [int(x) for x in E["turlar"]]:
+            raise GEHata(f"T1.6 yalnız tur {E['turlar']} için ({no})")
+        Sc = ge_tur_orneklem_t16(yol, cikti, E, gosterilen, parmak)
+        St = Sc[Sc.tur == int(no)].drop(columns="tur").reset_index(drop=True)
+        St.attrs["sayim"] = Sc.attrs.get("sayim", {})
+        return St
     X = ge_olay_oku(GE_KIMLIK_KOL, yol or _ge_tur_olay(E))
     if X.duplicated(["pazar", "sembol", "tarih"]).any():
         raise GEHata("olay dosyasında (pazar, sembol, tarih) tekil değil")
@@ -1812,6 +1871,121 @@ def ge_tur_orneklem(no: int, yol: Optional[str] = None, cikti: Optional[str] = N
     return S[["sayfa", "pazar", "donem", "sembol", "tarih", "giris", "parmak"]]
 
 
+def ge_tur_havuz_t16(yol: Optional[str] = None, cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None,
+                     ozellik_yol: Optional[str] = None, s9_yol: Optional[str] = None) -> pd.DataFrame:
+    """T1.6 U DİP HAVUZU (gösterilmiş dışlanmadan): olay_Y1 (yalnız kimlik) ∧ Ş1 (F15 / F17; ozellik_Y1.csv.gz) ∧ Ş9 (F24-F29;
+    ozellik_Y1_s9.csv.gz; YAPI_HEDEF.yh_s9_alt) ∧ dönem ∧ giriş <= kriz - 30 -> DataFrame[pazar, donem, sembol, tarih, giris].
+    attrs['sayim']: kriz süzgecinden önce / sonra sayılar (rapor). Özellik dosyaları olay kümesiyle bire bir değilse DURUR."""
+    E = GE_TUR_ESIK_T16 if E is None else E
+    T9 = YH.YH_ESIK["denemeler"]["Y11"]["esik"]
+    if {k: float(v) for k, v in T9.items()} != {k: float(v) for k, v in E["havuz"]["S9"].items()}:
+        raise GEHata("T1.6 Ş9 eşikleri YAPI_HEDEF YH_ESIK Y11 ile aynı değil")
+    X = ge_olay_oku(GE_KIMLIK_KOL, yol)
+    X["sembol"] = X["sembol"].astype(str)
+    if X.duplicated(["pazar", "sembol", "tarih"]).any():
+        raise GEHata("olay dosyasında (pazar, sembol, tarih) tekil değil")
+    oy = ozellik_yol or _ge_yol("ozellik", cikti); s9y = s9_yol or os.path.join(KOK_GE, E["havuz"]["ozellik_s9"])
+    try:
+        F = pd.read_csv(oy, usecols=["pazar", "sembol", "tarih", "F15", "F17"], dtype={"sembol": str, "pazar": str})
+        F9 = pd.read_csv(s9y, usecols=["pazar", "sembol", "tarih"] + list(_GE_S9_OZ), dtype={"sembol": str, "pazar": str})
+    except (OSError, ValueError) as ex:
+        raise GEHata(f"T1.6 özellik dosyası okunamadı: {ex}")
+    for Z in (F, F9):
+        Z["tarih"] = pd.to_datetime(Z["tarih"])
+        if Z.duplicated(["pazar", "sembol", "tarih"]).any():
+            raise GEHata("T1.6 özellik dosyasında (pazar, sembol, tarih) tekil değil")
+    M = X.merge(F, on=["pazar", "sembol", "tarih"], how="left", validate="1:1", indicator="_m1")
+    M = M.merge(F9, on=["pazar", "sembol", "tarih"], how="left", validate="1:1", indicator="_m2")
+    if (M._m1 != "both").any() or (M._m2 != "both").any():
+        raise GEHata(f"T1.6: özellik satırı olmayan olay var (F15/F17 {int((M._m1 != 'both').sum())}, F24-F29 {int((M._m2 != 'both').sum())})")
+    T1 = E["havuz"]["S1"]
+    with np.errstate(invalid="ignore"):
+        s1 = (M.F15.to_numpy(float) <= float(T1["F15_ust"])) & (M.F17.to_numpy(float) <= float(T1["F17_ust"]))
+    A = YH.yh_s9_alt(M[list(_GE_S9_OZ)].reset_index(drop=True)); s9 = np.ones(len(M), bool)
+    for v in A.values():
+        s9 &= v
+    sinir = pd.Timestamp(GE_ESIK["kriz"]) - pd.Timedelta(days=int(E["giris_kriz_pay_gun"]))
+    tem = (M.deneme == E["deneme"]).to_numpy() & M.donem.isin(list(E["donem"])).to_numpy() & s1 & s9
+    kr = (M.giris <= sinir).to_numpy()
+    H = M[tem & kr][["pazar", "donem", "sembol", "tarih", "giris"]].sort_values(["pazar", "sembol", "tarih"], kind="mergesort").reset_index(drop=True)
+    say = lambda Z: {f"{a} {b}": int(v) for (a, b), v in Z.groupby(["pazar", "donem"]).size().items()}  # noqa: E731
+    H.attrs["sayim"] = {"kriz_suzgeci_once": int(tem.sum()), "kriz_suzgeci_once_pazar_donem": say(M[tem]),
+                        "kriz_disi": [f"{r.pazar} {r.sembol} giris {pd.Timestamp(r.giris).date()}" for r in M[tem & ~kr].itertuples()],
+                        "havuz": int(len(H)), "havuz_pazar_donem": say(H)}
+    return H
+
+
+def ge_tur_s7b_olaylari(tohum: int) -> set:
+    """S7 bölge PDF'indeki 50 olayın kimliği (s7_bolge_pdf.s7b_olaylar(tohum)); YALNIZ (pazar, sembol, tarih) tutulur."""
+    yk = os.path.join(KOK_GE, "arastirma_cikti", "yapi_hedef")
+    if yk not in sys.path:
+        sys.path.insert(0, yk)
+    try:
+        import s7_bolge_pdf as S7B
+        S = S7B.s7b_olaylar(int(tohum))
+    except Exception as ex:   # S7BHata / dosya hatası: dışlama yapılamaz -> DURUR
+        raise GEHata(f"S7 PDF olayları okunamadı (dışlama yapılamaz): {ex}")
+    K = {(str(p), str(s), str(pd.Timestamp(t).date())) for p, s, t in zip(S.pazar, S.sembol, S.tarih)}
+    del S
+    if len(K) != 50:
+        raise GEHata(f"S7 PDF olay sayısı 50 değil ({len(K)})")
+    return K
+
+
+def ge_tur_gosterilen_t16(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None, s7b: Optional[set] = None) -> Tuple[set, set]:
+    """T1.6 gösterilmiş olay / hisse: ge_tur_gosterilen(ilk tur) (anahtar.json 300 + TUR 1..3) + S7 PDF 50 olay (olay ve hisse)."""
+    E = GE_TUR_ESIK_T16 if E is None else E
+    olay, hisse = ge_tur_gosterilen(int(E["turlar"][0]), cikti)
+    K = ge_tur_s7b_olaylari(int(E["gosterilen_s7b_tohum"])) if s7b is None else set(s7b)
+    olay = set(olay) | K; hisse = set(hisse) | {(p, s) for p, s, _ in K}
+    return olay, hisse
+
+
+def ge_tur_orneklem_t16(yol: Optional[str] = None, cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None,
+                        gosterilen: Optional[Tuple[set, set]] = None, parmak: Optional[pd.DataFrame] = None,
+                        havuz: Optional[pd.DataFrame] = None) -> pd.DataFrame:
+    """T1.6 tek çekiliş (tur 4 + 5): havuz -> gösterilmiş dışarıda -> TEK permütasyon (tohum 100 + 4), kotasız, hisse başına <= 2 ->
+    ilk 40 tur 4, sonraki 40 tur 5. -> DataFrame[tur, sayfa, pazar, donem, sembol, tarih, giris, parmak]; attrs['sayim']."""
+    E = GE_TUR_ESIK_T16 if E is None else E
+    H = ge_tur_havuz_t16(yol, cikti, E) if havuz is None else havuz.copy()
+    sayim = dict(H.attrs.get("sayim", {}))
+    olay_g, hisse_g = gosterilen if gosterilen is not None else ge_tur_gosterilen_t16(cikti, E)
+    H["sembol"] = H["sembol"].astype(str); H["tarih"] = pd.to_datetime(H["tarih"]); H["giris"] = pd.to_datetime(H["giris"])
+    an = np.array([(p, s, str(t.date())) in olay_g or (p, s) in hisse_g for p, s, t in zip(H.pazar, H.sembol, H.tarih)], dtype=bool)
+    U = H[~an] if len(H) else H
+    U = U.sort_values(["pazar", "sembol", "tarih"], kind="mergesort").reset_index(drop=True)
+    sayim.update({"gosterilen_cikan": int(an.sum()), "kalan": int(len(U)),
+                  "kalan_pazar_donem": {f"{a} {b}": int(v) for (a, b), v in U.groupby(["pazar", "donem"]).size().items()}})
+    P = ge_parmak_oku(cikti, E["parmak_surum"]) if parmak is None else parmak.copy()
+    P["tarih"] = pd.to_datetime(P["tarih"]); P["sembol"] = P["sembol"].astype(str)
+    if P.duplicated(["pazar", "sembol", "tarih"]).any():
+        raise GEHata("parmak dosyasında (pazar, sembol, tarih) tekil değil")
+    U = U.merge(P[["pazar", "sembol", "tarih", "F19"]], on=["pazar", "sembol", "tarih"], how="left", validate="1:1")
+    tl = [int(x) for x in E["turlar"]]; boy = int(E["tur_boy"])
+    rng = np.random.default_rng(int(E["tohum_taban"]) + tl[0])
+    say: Dict[Tuple[str, str], int] = {}; al: List[int] = []
+    for r in rng.permutation(len(U)):
+        if len(al) >= boy * len(tl):
+            break
+        a = (str(U.pazar.iat[r]), str(U.sembol.iat[r]))
+        if say.get(a, 0) >= int(E["sembol_azami"]):
+            continue
+        say[a] = say.get(a, 0) + 1; al.append(int(r))
+    if not al:
+        raise GEHata("T1.6: gösterilmemiş uygun olay yok (havuz boş)")
+    S = U.iloc[al].reset_index(drop=True)
+    sira = np.arange(len(S))
+    S.insert(0, "tur", [tl[min(int(i) // boy, len(tl) - 1)] for i in sira])
+    S.insert(1, "sayfa", sira - (S.tur.to_numpy() - tl[0]) * boy + 1)
+    if (S.tur == tl[-1]).sum() == 0:
+        raise GEHata(f"T1.6: tur {tl[-1]} için olay kalmadı (seçilen {len(S)})")
+    S["parmak"] = S.F19.fillna(-1).astype(int)
+    sayim.update({"secilen": int(len(S)), "tur_n": {int(t): int((S.tur == t).sum()) for t in tl}})
+    S = S[["tur", "sayfa", "pazar", "donem", "sembol", "tarih", "giris", "parmak"]]
+    S.attrs["sayim"] = sayim
+    return S
+
+
 def ge_tur_anahtar_oku(no: int, cikti: Optional[str] = None) -> pd.DataFrame:
     yol = ge_tur_yol("anahtar", no, cikti)
     if not os.path.exists(yol):
@@ -1823,7 +1997,7 @@ def ge_tur_anahtar_oku(no: int, cikti: Optional[str] = None) -> pd.DataFrame:
 
 
 def ge_tur_sayfa_png(df: pd.DataFrame, t: pd.Timestamp, sayfa: int, yol: str, hat0: float, tavan0: float,
-                     E: Dict[str, Any] = GE_ESIK, tavan_kaynak: str = "s6") -> str:
+                     E: Dict[str, Any] = GE_ESIK, tavan_kaynak: str = "s6", ek: Optional[Dict[str, Any]] = None) -> str:
     """Bir tur sayfasının kör grafiği: veri t'de kesilir (ge_gorsel_veri), hat / tavan olay dosyasıyla aynı olmalı, son bar t olmalı.
     tavan_kaynak 's6' (varsayılan; TUR 1-3, çıktı değişmez) ya da 's7' (T1.4: tavan çizgisi = F21 = t'den önceki 15 geçerli barın en yükseği,
     yalnız o 15 barın üstünde çizilir; hat = S6 hat; başlık 'No k — S7')."""
@@ -1839,9 +2013,44 @@ def ge_tur_sayfa_png(df: pd.DataFrame, t: pd.Timestamp, sayfa: int, yol: str, ha
             raise GEHata(f"sayfa {sayfa}: S7 tavanı için t'den önce {tg} bar yok")
         G = {**G, "tavan": float(G["W"].High.to_numpy(float)[son - tg:son].max()), "tavan_x0": son - tg, "baslik_ek": " — S7",
              "tavan_etiket": f"tavan {tg} bar (S7)"}
+    elif tavan_kaynak == "s7f21":
+        # T1.6: kırmızı kesik yakın tavan F21 (dosya = kesik veri) + Ş9 çanağı (dosya = kesik veri) + başlıkta pazar
+        ek = ek or {}
+        if not all(k in ek for k in ("F21", "s9", "pazar")):
+            raise GEHata(f"sayfa {sayfa}: s7f21 çizimi için F21 / s9 / pazar gerekli")
+        tg = int(YH.YH_ESIK["denemeler"]["Y10"]["s7_prm"]["tavan_gun"]); son = int(G["son"])
+        if son < tg:
+            raise GEHata(f"sayfa {sayfa}: S7 tavanı için t'den önce {tg} bar yok")
+        f21 = float(G["W"].High.to_numpy(float)[son - tg:son].max())
+        if not (np.isfinite(float(ek["F21"])) and abs(f21 / float(ek["F21"]) - 1) <= 1e-4):
+            raise GEHata(f"sayfa {sayfa}: kesik veride F21 ({f21:.6g}) ozellik_Y1_s7 ile tutmadı ({float(ek['F21']):.6g})")
+        G = {**G, "tavan": f21, "tavan_x0": son - tg, "tavan_renk": "#d7191c", "tavan_etiket": f"yakın tavan: son {tg} barın en yükseği (S7)",
+             "baslik_ek": f" — {ek['pazar']}", "s9": ge_tur_s9_cizim(df, t, ek["s9"], int(sayfa))}
     elif tavan_kaynak != "s6":
         raise GEHata(f"bilinmeyen tavan kaynağı: {tavan_kaynak}")
     return ge_ciz(G, int(sayfa), yol, E)
+
+
+def ge_tur_s9_cizim(df: pd.DataFrame, t: pd.Timestamp, s9_dosya: Dict[str, float], sayfa: int = 0) -> Dict[str, Any]:
+    """T1.6 Ş9 çanağı: veri t'de kesilir (ge_hazir), F24-F29 YAPI_HEDEF.yh_s9_bar ile yeniden = ozellik_Y1_s9 (göreli 1e-3; NaN = NaN), değilse
+    DURUR; [t-40, t-1] Low'a polyfit(2) -> {'n', 'u' (40 değer), 'a', 'b', 'c', 'xs' (x*; a <= 0 ise NaN)}. t barı ve sonrası girmez."""
+    d = ge_hazir(df); t = pd.Timestamp(t)
+    dk = d[d.index <= t]
+    if not len(dk) or dk.index[-1] != t:
+        raise GEHata(f"sayfa {sayfa}: sinyal günü geçerli bar değil (Ş9)")
+    i = len(dk) - 1
+    H, L, C = (dk[c].to_numpy(float) for c in ("High", "Low", "Close"))
+    F = YH.yh_s9_bar(H, L, C, i)
+    for k in _GE_S9_OZ:
+        a, b = float(F[k]), float(s9_dosya.get(k, np.nan))
+        if not (np.isnan(a) and np.isnan(b)) and not np.isclose(a, b, rtol=1e-3, atol=1e-6):
+            raise GEHata(f"sayfa {sayfa}: {k} kesik veride {a:.6g}, ozellik_Y1_s9 {b:.6g} (Ş9 çizimi DURDU)")
+    n = int(YH.YH_ESIK["denemeler"]["Y11"]["s9_prm"]["pencere"])
+    if i < n:
+        raise GEHata(f"sayfa {sayfa}: Ş9 penceresi ({n} bar) yok")
+    x = np.arange(n, dtype=float)
+    a, b, c = (float(v) for v in np.polyfit(x, L[i - n:i], 2))
+    return {"n": n, "u": a * x * x + b * x + c, "a": a, "b": b, "c": c, "xs": (-b / (2.0 * a)) if a > 0 else np.nan}
 
 
 def _ge_tur_font() -> str:
@@ -1855,7 +2064,8 @@ def _ge_tur_font() -> str:
     raise GEHata("Türkçe yazı tipi (DejaVuSans) bulunamadı")
 
 
-def ge_tur_pdf(no: int, sayfalar: List[int], png: str, yol: str, iki_soru: bool = False, a_kutu: bool = False, s7: bool = False) -> str:
+def ge_tur_pdf(no: int, sayfalar: List[int], png: str, yol: str, iki_soru: bool = False, a_kutu: bool = False, s7: bool = False,
+               u_dip: bool = False, pazar: Optional[Dict[int, str]] = None) -> str:
     """TUR_K_KOR.pdf: her sayfa yalnız grafik + açıklama + Cemal'in işaret satırı (hisse adı / tarih / pazar / sonrası yok).
     iki_soru (T1.2, tur >= 2): alt iki satır A (bölge / tavan doğru mu) ve B (bu mumdan girilir mi).
     a_kutu (T1.3, tur >= 3): A sorusu çerçeveli kutuda tek başına ('A:  ✓  /  X'), B'den ayrı satır ve boşlukla; grafik biraz küçülür."""
@@ -1871,19 +2081,31 @@ def ge_tur_pdf(no: int, sayfalar: List[int], png: str, yol: str, iki_soru: bool 
         if not os.path.exists(p):
             raise GEHata(f"PNG yok: {p}")
         c.setFont(f, 12)
-        c.drawString(30, Hh - 28, f"HAKEM TURU {int(no)} — Sayfa {int(s)} / {n} — KÖR (yalnız grafik)")
+        if u_dip:
+            if not pazar or int(s) not in pazar:
+                raise GEHata(f"T1.6 PDF: sayfa {s} pazarı yok")
+            c.drawString(30, Hh - 28, f"HAKEM TURU {int(no)} — Sayfa {int(s)} / {n} — KÖR      Pazar: {pazar[int(s)]}")
+        else:
+            c.drawString(30, Hh - 28, f"HAKEM TURU {int(no)} — Sayfa {int(s)} / {n} — KÖR (yalnız grafik)")
         c.setFont(f, 8)
-        if s7:
+        if u_dip:
+            from reportlab.lib.utils import simpleSplit
+            acik = ("Grafik: sinyal günü t (bar 0) dahil son 120 bar; t sonrası YOK; hisse adı / tarih yok. Mavi alan S6 bölgesi, mavi çizgi hat; "
+                    "kırmızı kesik = yakın tavan (son 15 barın en yükseği, S7); mor kalın kesik = Ş9 çanağı (son 40 bar); mor nokta = çanağın dibi "
+                    "(içi boşsa dip pencerenin dışında); ince mor dikey = çanak penceresinin başı.")
+            for j_, ln in enumerate(simpleSplit(acik, f, 8, W - 60)[:3]):
+                c.drawString(30, Hh - 40 - 10 * j_, ln)
+        elif s7:
             c.drawString(30, Hh - 40, "Grafik: sinyal günü t (bar 0) dahil son 120 bar; t sonrası YOK; hisse adı / tarih yok. Mavi alan S6 "
                                       "bölgesi, turuncu kesik tavan = son 15 barın en yükseği (S7), mavi çizgi hat.")
         else:
             c.drawString(30, Hh - 40, "Grafik: sinyal günü t (bar 0) dahil son 120 bar; t sonrası YOK; hisse adı / tarih yok. "
                                       "Mavi alan S6 bölgesi, turuncu kesik tavan, mavi çizgi hat.")
-        iw = 640 if a_kutu else 690; ih = iw * 800 / 1200
-        c.drawImage(p, 30, Hh - 48 - ih, width=iw, height=ih)
+        iw = (600 if u_dip else 640) if a_kutu else 690; ih = iw * 800 / 1200
+        c.drawImage(p, 30, Hh - (66 if u_dip else 48) - ih, width=iw, height=ih)
         if a_kutu:
             c.setFont(f, 11)
-            c.drawString(30, 104, GE_TUR_SORU_A_ETIKET)
+            c.drawString(30, 104, GE_TUR_SORU_A_ETIKET_U if u_dip else GE_TUR_SORU_A_ETIKET)
             c.setLineWidth(1.8)
             c.rect(30, 62, 230, 34, stroke=1, fill=0)
             c.setFont(f, 18)
@@ -1909,8 +2131,13 @@ def ge_tur_ac(no: int, cikti: Optional[str] = None, png: Optional[str] = None, v
     """tur ac --no K: örneklem (sonuç sütunsuz) -> PNG (scratchpad) -> TUR_K_KOR.pdf + tur_K_anahtar.json (gizli).
     E verilmezse ge_tur_esik(K): tur 1 T1.1 (P1.0, tek soru), tur 2 T1.2 (P1.1, iki soru), tur >= 3 T1.3 (A kutulu)."""
     t0 = time.time(); warnings.filterwarnings("ignore", category=RuntimeWarning)
-    no = int(no); ge_tur_klasor(no, cikti); png = png or ge_tur_png_klasor(no)
+    no = int(no); ge_tur_klasor(no, cikti)
     E = ge_tur_esik(no) if E is None else E
+    if E.get("havuz"):                                   # T1.6: tur 4 ve 5 birlikte (ge_tur_ac_cift)
+        if no != int(E["turlar"][0]):
+            raise GEHata(f"T1.6: tur {no}, tur {E['turlar'][0]} ile BİRLİKTE açılır (`tur ac --no {E['turlar'][0]}`)")
+        return ge_tur_ac_cift(cikti, {int(E["turlar"][0]): png} if png else None, veri, olay, uzerine, E)
+    png = png or ge_tur_png_klasor(no)
     olay = olay or _ge_tur_olay(E)
     PS = ge_parmak_surum(E.get("parmak_surum", "P1.0"))
     if os.path.abspath(png).startswith(os.path.abspath(KOK_GE) + os.sep):
@@ -1959,6 +2186,159 @@ def ge_tur_ac(no: int, cikti: Optional[str] = None, png: Optional[str] = None, v
             "parmak": {f"{k[0]} parmak={k[1]}": int(v) for k, v in S.groupby(["pazar", "parmak"]).size().items()}, "sure_sn": round(time.time() - t0, 1)}
 
 
+def ge_tur_sizinti_pdf(pdf: str, S: pd.DataFrame) -> Dict[str, Any]:
+    """Kör PDF sızıntı kapısı (pypdf metni): sembol (tam ya da '.' öncesi, >= 2 harf, kelime sınırıyla), olay / giriş tarihi (4 biçim) ve
+    herhangi bir YYYY-AA-GG / GG.AA.YYYY tarih sayısı. Dönüş {'sembol', 'tarih', 'sembol_liste'}; 0 / 0 olmalı."""
+    import pypdf
+    try:
+        txt = "\n".join(pg.extract_text() or "" for pg in pypdf.PdfReader(pdf).pages)
+    except Exception as ex:
+        raise GEHata(f"sızıntı kapısı: PDF okunamadı: {ex}")
+    adlar = set()
+    for s_ in S.sembol.astype(str):
+        adlar.add(s_); adlar.add(s_.split(".")[0])
+    adlar = {a for a in adlar if len(a) >= 2}
+    sembol = sorted(a for a in adlar if re.search(rf"(?<![A-Za-z0-9]){re.escape(a)}(?![A-Za-z0-9])", txt))
+    tarih = []
+    for t_ in pd.concat([pd.to_datetime(S.tarih), pd.to_datetime(S.giris)]):
+        for f_ in (t_.strftime("%Y-%m-%d"), t_.strftime("%d.%m.%Y"), t_.strftime("%d/%m/%Y"), t_.strftime("%Y%m%d")):
+            if f_ in txt:
+                tarih.append(f_)
+    yil = re.findall(r"\b(?:19|20)\d\d-\d\d-\d\d\b|\b\d\d\.\d\d\.(?:19|20)\d\d\b", txt)
+    return {"sembol": len(sembol), "tarih": len(tarih) + len(yil), "sembol_liste": sembol[:5]}
+
+
+def _ge_tur_t16_ek(cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """T1.6 çizim girdileri: ozellik_Y1_s7 (F21) ve ozellik_Y1_s9 (F24-F29), (pazar, sembol, tarih) indeksli. Yalnız t-1'e kadar bilgi."""
+    E = GE_TUR_ESIK_T16 if E is None else E
+    out = []
+    for ad, kol in (("ozellik_s7", ["F21"]), ("ozellik_s9", list(_GE_S9_OZ))):
+        y = os.path.join(KOK_GE, E["havuz"][ad])
+        try:
+            Z = pd.read_csv(y, usecols=["pazar", "sembol", "tarih"] + kol, dtype={"sembol": str, "pazar": str})
+        except (OSError, ValueError) as ex:
+            raise GEHata(f"T1.6 çizim girdisi okunamadı ({y}): {ex}")
+        Z["tarih"] = pd.to_datetime(Z["tarih"])
+        if Z.duplicated(["pazar", "sembol", "tarih"]).any():
+            raise GEHata(f"{y}: (pazar, sembol, tarih) tekil değil")
+        out.append(Z.set_index(["pazar", "sembol", "tarih"]))
+    return out[0], out[1]
+
+
+def _ge_tur_t16_ciz(S: pd.DataFrame, hedef: str, veri: Optional[str] = None, olay: Optional[str] = None, E: Optional[Dict[str, Any]] = None) -> int:
+    """T1.6 kör PNG'leri (No_<sayfa>.png) hedef klasöre: hat / S6 tavanı olay dosyasıyla, F21 ozellik_Y1_s7 ile, F24-F29 ozellik_Y1_s9 ile
+    (kesik veride yeniden) tutmalı; tutmazsa DURUR."""
+    E = GE_TUR_ESIK_T16 if E is None else E
+    Xs = ge_olay_oku(["pazar", "sembol", "tarih", "hat", "tavan"], olay)
+    Xs["sembol"] = Xs["sembol"].astype(str); Xs = Xs.set_index(["pazar", "sembol", "tarih"])
+    F7, F9 = _ge_tur_t16_ek(None, E)
+    os.makedirs(hedef, exist_ok=True); k = 0
+    for p in OC.OC_ESIK["pazar"]:
+        Sp = S[S.pazar == p]
+        if not len(Sp):
+            continue
+        Vd = OC.oc_veri(p, klasor=veri or GE_YOL["veri"])
+        for r in Sp.itertuples():
+            if r.sembol not in Vd["V"]:
+                raise GEHata(f"sayfa {r.sayfa}: sembol veride yok")
+            ky = (p, r.sembol, pd.Timestamp(r.tarih))
+            if ky not in F7.index or ky not in F9.index:
+                raise GEHata(f"sayfa {r.sayfa}: F21 / F24-F29 satırı yok")
+            h0, tv0 = (float(v) for v in Xs.loc[ky, ["hat", "tavan"]])
+            ek = {"F21": float(F7.loc[ky, "F21"]), "s9": {c: float(F9.loc[ky, c]) for c in _GE_S9_OZ}, "pazar": p}
+            ge_tur_sayfa_png(Vd["V"][r.sembol], r.tarih, int(r.sayfa), os.path.join(hedef, f"No_{int(r.sayfa)}.png"), h0, tv0,
+                             tavan_kaynak=E["tavan_kaynak"], ek=ek)
+            k += 1
+        del Vd
+    return k
+
+
+def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = None, veri: Optional[str] = None, olay: Optional[str] = None,
+                   uzerine: bool = False, E: Optional[Dict[str, Any]] = None, gosterilen: Optional[Tuple[set, set]] = None) -> Dict[str, Any]:
+    """T1.6: TUR 4 ve TUR 5 BİRLİKTE açılır (tek çekiliş): örneklem (sonuç sütunsuz) -> PNG (scratchpad tur4_png / tur5_png) ->
+    TUR_K_KOR.pdf (sızıntı kapısı 0, <= 12 MB) + tur_K_anahtar.json (gizli), iki tur için; TUR_DEFTERI.md'ye açılış bölümü (ekleme).
+    Önceki tur ÖLÇÜLMEDEN açılır (E['onceki_tur_olcusuz']; ana model kararı); önceki turun anahtarı ŞART (dışlama)."""
+    t0 = time.time(); warnings.filterwarnings("ignore", category=RuntimeWarning)
+    E = GE_TUR_ESIK_T16 if E is None else E
+    tl = [int(x) for x in E["turlar"]]
+    png = {k: (png or {}).get(k) or ge_tur_png_klasor(k) for k in tl}
+    for k in tl:
+        ge_tur_klasor(k, cikti)
+        if os.path.abspath(png[k]).startswith(os.path.abspath(KOK_GE) + os.sep):
+            raise GEHata(f"PNG klasörü repo içinde olamaz: {png[k]}")
+        if os.path.exists(ge_tur_yol("anahtar", k, cikti)) and not uzerine:
+            raise GEHata(f"tur {k} zaten açılmış: {ge_tur_yol('anahtar', k, cikti)} (üzerine yazılmaz)")
+    PS = ge_parmak_surum(E["parmak_surum"])
+    Sc = ge_tur_orneklem_t16(olay, cikti, E, gosterilen)
+    sayim = dict(Sc.attrs.get("sayim", {}))
+    olay_yol = olay or GE_YOL["olay"]
+    R: Dict[str, Any] = {"turlar": tl, "sayim": sayim, "tur": {}}
+    for k in tl:
+        S = Sc[Sc.tur == k].drop(columns="tur").reset_index(drop=True)
+        os.makedirs(png[k], exist_ok=True)
+        for f_ in os.listdir(png[k]):
+            if re.fullmatch(r"No_\d+\.png", f_):
+                os.remove(os.path.join(png[k], f_))
+        _ge_tur_t16_ciz(S, png[k], veri, olay, E)
+        gelog.info("tur %d görsel: %d (%.0f sn)", k, len(S), time.time() - t0)
+        yp = ge_tur_yol("pdf", k, cikti)
+        ge_tur_pdf(k, [int(x) for x in S.sayfa], png[k], yp, iki_soru=True, a_kutu=True, u_dip=True,
+                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()})
+        mb = os.path.getsize(yp) / 2 ** 20
+        sz = ge_tur_sizinti_pdf(yp, S)
+        if sz["sembol"] or sz["tarih"] or mb > 12.0:
+            os.remove(yp)
+            raise GEHata(f"tur {k} kör PDF kapısı KAPALI (sızıntı {sz}, {mb:.1f} MB); PDF silindi")
+        J = {"uyari": f"GİZLİ TUR {k} ANAHTARI: iki taraf (Cemal ve model) etiketleyip model mühürlenmeden açılmaz. sayfa -> sembol, pazar, tarih (t).",
+             "surum": GE_SURUM, "tur": k, "tohum": int(E["tohum_taban"]) + tl[0], "tur_esik_sha": ge_esik_sha(E), "esik_sha": ge_esik_sha(GE_ESIK),
+             "tur_esik_surum": E["surum"], "parmak_surum": PS["surum"], "parmak_esik_sha": PS["sha"],
+             "parmak_sha": _ge_sha_dosya(_ge_yol(PS["dosya"]["satir"], cikti)), "iki_soru": True, "a_kutu": True, "u_dip": True,
+             "tavan_kaynak": E["tavan_kaynak"], "parmak_katman": False, "deneme": E["deneme"], "cift": tl, "cift_sira": tl.index(k) + 1,
+             "onceki_tur_olcusuz": E["onceki_tur_olcusuz"], "havuz": sayim,
+             "olay_sha": _ge_sha_dosya(olay_yol), "ozellik_sha": _ge_sha_dosya(_ge_yol("ozellik", cikti)),
+             "ozellik_s7_sha": _ge_sha_dosya(os.path.join(KOK_GE, E["havuz"]["ozellik_s7"])),
+             "ozellik_s9_sha": _ge_sha_dosya(os.path.join(KOK_GE, E["havuz"]["ozellik_s9"])),
+             "kod_sha": _ge_sha_dosya(GE_YOL["kod"]), "pdf_sha": _ge_sha_dosya(yp), "sizinti": {"sembol": sz["sembol"], "tarih": sz["tarih"]},
+             "n": int(len(S)),
+             "sayfa": {str(int(r.sayfa)): {"sembol": r.sembol, "pazar": r.pazar, "tarih": str(pd.Timestamp(r.tarih).date()),
+                                           "giris": str(pd.Timestamp(r.giris).date()), "donem": r.donem, "parmak": int(r.parmak)}
+                      for r in S.itertuples()}}
+        _ge_yaz(ge_tur_yol("anahtar", k, cikti), json.dumps(J, ensure_ascii=False, indent=1), "tur anahtarı")
+        R["tur"][k] = {"pdf": yp, "sayfa": int(len(S)), "boyut_mb": round(mb, 2), "png": png[k], "sizinti": {"sembol": sz["sembol"], "tarih": sz["tarih"]},
+                       "dagilim": {f"{a} {b}": int(v) for (a, b), v in S.groupby(["pazar", "donem"]).size().items()},
+                       "parmak": {f"{a} parmak={b}": int(v) for (a, b), v in S.groupby(["pazar", "parmak"]).size().items()}}
+    yd = ge_tur_yol("defter", tl[0], cikti)
+    eski = open(yd, encoding="utf-8").read() if os.path.exists(yd) else "# TUR DEFTERİ — hakem turları (Cemal vs model; CLAUDE.md 'Hakem turları')\n"
+    bas = f"## AÇILIŞ — TUR {tl[0]} / {tl[1]} ({E['surum']})"
+    if re.search(rf"^{re.escape(bas)}", eski, flags=re.M):
+        if not uzerine:
+            raise GEHata("TUR_DEFTERI.md'de bu açılış zaten var")
+        eski = re.sub(rf"^{re.escape(bas)}.*?(?=^## |\Z)", "", eski, flags=re.M | re.S)
+    _ge_yaz(yd, eski.rstrip() + "\n\n" + ge_tur_acilis_bolum(R, E) + "\n", "tur defteri")
+    R["sure_sn"] = round(time.time() - t0, 1)
+    return R
+
+
+def ge_tur_acilis_bolum(R: Dict[str, Any], E: Dict[str, Any]) -> str:
+    """TUR_DEFTERI.md açılış bölümü (T1.6; sonuç yok, yalnız kimliksiz sayımlar)."""
+    tl = R["turlar"]; sy = R["sayim"]
+    pzd = lambda d: ", ".join(f"{k} {v}" for k, v in d.items())  # noqa: E731
+    s = [f"## AÇILIŞ — TUR {tl[0]} / {tl[1]} ({E['surum']}) ({_ge_simdi()})", "",
+         f"- Sürüm {E['surum']} (TUR4_IS_TANIMI.md; ön kayıtlı, sonuç görülmeden); tohum {int(E['tohum_taban']) + tl[0]} (tek permütasyon, kotasız); "
+         f"tur eşik sha {ge_esik_sha(E)[:12]}.",
+         f"- Havuz (U dip = Y1 olayı ∧ Ş1 dipte ∧ Ş9 U dip; Ş2 şart değil; dönem {' / '.join(E['donem'])}): kriz süzgecinden önce "
+         f"{sy.get('kriz_suzgeci_once')}; giriş <= kriz - {E['giris_kriz_pay_gun']} gün sonrası {sy.get('havuz')} ({pzd(sy.get('havuz_pazar_donem', {}))}); "
+         f"kriz süzgecinde düşen {len(sy.get('kriz_disi', []))}.",
+         f"- Gösterilmiş (300 + hakem + TUR 1-3 + S7 PDF 50; olay ve hisse) çıkan {sy.get('gosterilen_cikan')}; kalan {sy.get('kalan')} "
+         f"({pzd(sy.get('kalan_pazar_donem', {}))}); hisse başına en çok {E['sembol_azami']}; seçilen {sy.get('secilen')}."]
+    for k in tl:
+        T = R["tur"][k]
+        s.append(f"- TUR {k}: {T['sayfa']} sayfa ({pzd(T['dagilim'])}); parmak F19 (bilgi): {pzd(T['parmak'])}; PDF {T['boyut_mb']} MB, "
+                 f"sızıntı sembol {T['sizinti']['sembol']} / tarih {T['sizinti']['tarih']}.")
+    s.append(f"- {E['onceki_tur_olcusuz']}")
+    return "\n".join(s)
+
+
 def ge_tur_yeniden(no: int, cikti: Optional[str] = None, veri: Optional[str] = None, png_kanon: Optional[str] = None) -> Dict[str, Any]:
     """KAPI (TUR K çıktısı değişmedi mi): kör sayfalar anahtardan yeniden çizilir (veri t'de kesik; tur eşiğinin tavan kaynağıyla), repo içine
     HİÇBİR dosya yazılmaz. Kanonik PNG klasörü (ge_tur_png_klasor) varsa yeni PNG'ler geçici klasöre çizilir ve bayt bayt aynı olmalı; yoksa
@@ -1974,7 +2354,9 @@ def ge_tur_yeniden(no: int, cikti: Optional[str] = None, veri: Optional[str] = N
         os.makedirs(hedef, exist_ok=True)
         Xs = ge_olay_oku(["pazar", "sembol", "tarih", "hat", "tavan"], _ge_tur_olay(E))
         Xs["sembol"] = Xs["sembol"].astype(str); Xs = Xs.set_index(["pazar", "sembol", "tarih"])
-        for p in OC.OC_ESIK["pazar"]:
+        if E.get("u_dip"):                               # T1.6: F21 + Ş9 çizimi (aynı yardımcı)
+            _ge_tur_t16_ciz(S, hedef, veri, None, E)
+        for p in ([] if E.get("u_dip") else OC.OC_ESIK["pazar"]):
             Sp = S[S.pazar == p]
             if not len(Sp):
                 continue
@@ -1988,7 +2370,8 @@ def ge_tur_yeniden(no: int, cikti: Optional[str] = None, veri: Optional[str] = N
                   != open(os.path.join(kan, f"No_{int(s)}.png"), "rb").read()]
         yp = os.path.join(tmp, "kor.pdf")
         ge_tur_pdf(no, [int(x) for x in S.sayfa], kan, yp, iki_soru=bool(E.get("iki_soru", False)), a_kutu=bool(E.get("a_kutu", False)),
-                   s7=E.get("tavan_kaynak") == "s7")
+                   s7=E.get("tavan_kaynak") == "s7", u_dip=bool(E.get("u_dip", False)),
+                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()} if E.get("u_dip") else None)
         sha = _ge_sha_dosya(yp)
         return {"tur": no, "sayfa": int(len(S)), "png_karsilastirma": bool(var), "png_farkli": farkli, "pdf_sha": sha,
                 "anahtar_pdf_sha": J.get("pdf_sha"), "dosya_pdf_sha": _ge_sha_dosya(ge_tur_yol("pdf", no, cikti)),
@@ -2301,6 +2684,9 @@ def ge_tur_olc(no: int, cemal_yol: str, cikti: Optional[str] = None, olay: Optio
                          "uyum": _ge_tur_kappa(D), "basari_tanim": GE_TUR_ESIK["basari"], "hedef": GE_TUR_ESIK["hedef"],
                          "cemal_bolge": {k: int((D.cemal_bolge == k).sum()) for k in ("DOĞRU", "YANLIŞ")} | {"yanitsiz": int(D.cemal_bolge.isna().sum())},
                          "bilgi_tanim": GE_TUR_BILGI, "cetvel": {"model": ge_tur_cetvel(D, "model"), "cemal": ge_tur_cetvel(D, "cemal")}}
+    if json.load(open(ge_tur_yol("anahtar", no, cikti), encoding="utf-8")).get("tur_esik_surum") == "T1.6":   # bilgi: dönem kırılımı
+        R["donem_kirilim"] = {q: {"model": ge_tur_taraf(D[D.donem == q], "model"), "cemal": ge_tur_taraf(D[D.donem == q], "cemal")}
+                              for q in GE_TUR_ESIK_T16["donem"] if (D.donem == q).any()}
     Ds = []
     for k in range(1, no):
         yk = ge_tur_yol("satir", k, cikti)
@@ -2331,7 +2717,7 @@ def ge_tur_olc(no: int, cemal_yol: str, cikti: Optional[str] = None, olay: Optio
     if re.search(rf"^## TUR {no} ", eski, flags=re.M):
         if not uzerine:
             raise GEHata(f"TUR_DEFTERI.md'de tur {no} zaten var")
-        eski = re.sub(rf"^## TUR {no} .*?(?=^## TUR |\Z)", "", eski, flags=re.M | re.S)
+        eski = re.sub(rf"^## TUR {no} .*?(?=^## |\Z)", "", eski, flags=re.M | re.S)     # bir sonraki herhangi '## ' başlığına kadar (AÇILIŞ bölümü korunur)
     _ge_yaz(yd, eski.rstrip() + "\n\n" + ge_tur_defter_bolum(R) + "\n", "tur defteri")
     R["rapor"] = ge_tur_yol("rapor", no, cikti)
     return R
@@ -2390,6 +2776,10 @@ def ge_tur_rapor(R: Dict[str, Any], D: pd.DataFrame) -> str:
          "| Sayfa | Pazar | Dönem | parmak (F19) | Model | Cemal | +%5 gördü (h5) | eş payı | +%10 (h10) | stop önce (st5) | getiri (takip stoplu, bilgi) "
          "| 15 g kapanış max (bilgi) | gün içi +%5 (15 g High; bilgi) | 60 g max / min / son kapanış (bilgi) | eşik kaçtı (+%3..+%5) | model yanıldı | Cemal yanıldı |",
          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    if R.get("donem_kirilim"):                          # T1.6 (bilgi): dönem kırılımı; karar ölçüsü değişmez
+        s[s.index("## Sayfa sayfa (sonuç açıldı)"):s.index("## Sayfa sayfa (sonuç açıldı)")] = (
+            ["## Dönem kırılımı (bilgi; T1.6)", "", _GE_TUR_BASLIK.replace("| Taraf |", "| Taraf (dönem) |")]
+            + [_ge_tur_satir_md(f"{t_} ({q})", g) for q, gg in R["donem_kirilim"].items() for t_, g in gg.items()] + [""])
     ym, yc = set(R["model"]["yanilinan"]), set(R["cemal"]["yanilinan"])
     for r in D.sort_values("sayfa").itertuples():
         k15, gi15 = getattr(r, "k15", np.nan), getattr(r, "gi15", np.nan)
@@ -2401,7 +2791,7 @@ def ge_tur_rapor(R: Dict[str, Any], D: pd.DataFrame) -> str:
                  f"{'X' if r.sayfa in ym else ''} | {'X' if r.sayfa in yc else ''} |")
     s += ["", f"Bilgi sütunları ({GE_TUR_BILGI['surum']}): {GE_TUR_BILGI['tanim']} {GE_TUR_BILGI['kacti']} 'eşik kaçtı' sütunu (K) sayfanın kapanış "
           "bandını gösterir; taraf sayımı yalnız o tarafın OLUR dediği sayfalarda.",
-          "", "Not: küçük örneklem (30 sayfa); tek turdan bulgu denmez, birikimli tablo ve Fisher p ile okunur. Evren bugün işlem gören hisseler "
+          "", f"Not: küçük örneklem ({len(D)} sayfa); tek turdan bulgu denmez, birikimli tablo ve Fisher p ile okunur. Evren bugün işlem gören hisseler "
           "(hayatta kalma yanlılığı; sonuç yukarı yanlı okunur).", ""]
     return "\n".join(s)
 
