@@ -22,6 +22,8 @@
     değişince aynı; veri t'de kesilince mahkeme dahil aynı), süzgeç (NaN / inf), etiket, regresyon kapısı (Y1-Y12 sha), kapı
 15) DEVİR 2 (F43-F64, karne v2): pocket pivot / kutu yüzdeliği / düz tavan (pivot onayı) / RVOL / ATR / NR7 / ID-NR4 / VCP ZigZag elle,
     prefix, kesit sırası, 60 bar ambargo, süzgeç (d1 / d2 eşik), bootstrap / L3O, etiket, regresyon (DEVİR 1 mührü dahil), kapı
+16) DEVİR 3 (dar yeniden sınama, karne v3): yh_devir3_ozellik prefix (14 F, t - sol = F8) ve kaynak fonksiyon eşitliği, süzgeç, eşik kopyası,
+    bootstrap üst ucu, güç simülasyonu, etiket v3 (ATRP / tabaka / ÖLÇÜLEMEDİ / KATKI− üst uç), sentetik uçtan uca karne + rapor, regresyon, kapı
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -1545,6 +1547,148 @@ kontrol("D2: kontrol tablosu 14 satır, K1 EVET (tabakalı), adlar önekli (çak
         and all(k.startswith(("yh_d2", "yh_devir2", "_yh_d2", "YH_D2", "YH_ESIK_D2", "_YH_D2", "YH_KONTROL_D2", "yh_esik_d2"))
                 for k in dir(YH) if "d2" in k.lower() or "devir2" in k.lower())
         and callable(YH.yh_devir_ozellik) and callable(YH.yh_devir_kos) and YH.yh_devir_kos.__doc__.startswith("DEVİR 1"))
+
+# ---------------------------------------------------------------- 16) DEVİR 3 (dar yeniden sınama, karne v3)
+print("\n16) DEVİR 3 (AYK / NR7 / W2D / W1; karne v3: ATRP / F13 tabaka, bootstrap üst ucu, güç, n < 30 listesi)")
+_dh3 = YH._yh_hazir(rastgele_hisse(1200, 31))
+_T3 = _GE.ge_s6(_dh3); _al3 = [k for k in np.flatnonzero(_T3["al"]) if k > 300]
+_ok3 = []
+for _k in _al3:
+    try:
+        _GE.ge_bolge(_T3, int(_k)); _ok3.append(int(_k))
+    except Exception:
+        pass
+_tl3 = [_dh3.index[k] for k in _ok3[:4]]
+if _tl3:
+    _F3 = YH.yh_devir3_ozellik(_dh3, _tl3, hazir=True); _ok = True
+    for _tt, (_, _rr) in zip(_tl3, _F3.iterrows()):
+        _kk3 = YH.yh_devir3_ozellik(_dh3[_dh3.index <= _tt], [_tt], hazir=True).iloc[0]
+        _ok &= np.allclose(_kk3[YH._YH_D3_OZ].to_numpy(float), _rr[YH._YH_D3_OZ].to_numpy(float), equal_nan=True) and _kk3["_sol"] == _rr["_sol"]
+    _i3 = int(_dh3.index.get_loc(_tl3[0])); _O3, _H3, _L3, _C3, _V3 = (_dh3[c].to_numpy(float) for c in ("Open", "High", "Low", "Close", "Volume"))
+    _sol3 = int(_GE.ge_bolge(_T3, _i3)["sol"])
+    _g3 = _GE.ge_ozellik_bar(_O3, _H3, _L3, _C3, _V3, _T3, _i3); _d13 = YH.yh_d1_bar(_O3, _H3, _L3, _C3, _V3, _i3, _sol3)
+    _d23 = YH.yh_d2_bar(_O3, _H3, _L3, _C3, _V3, _i3, _sol3); _r0 = _F3.iloc[0]
+    _ok_kay = (all(np.isclose(_r0[k], _g3[k], equal_nan=True) for k in ("F3", "F7", "F8", "F10", "F13", "F15", "F17"))
+               and all(np.isclose(_r0[k], _d13[k], equal_nan=True) for k in ("F30", "F32"))
+               and all(np.isclose(_r0[k], _d23[k], equal_nan=True) for k in ("F47", "F55", "F56", "F57", "F58")) and _r0["_sol"] == _g3["F8"])
+    kontrol(f"D3: yh_devir3_ozellik veri t'de kesilince aynı ({len(_tl3)} gün) ve t - sol = F8", bool(_ok))
+    kontrol("D3: yh_devir3_ozellik = mühürlü dosyaları üreten fonksiyonlar (ge_ozellik_bar / yh_d1_bar / yh_d2_bar)", bool(_ok_kay))
+else:
+    kontrol("D3: sentetik seride S6 al günü bulundu", False)
+# süzgeç
+_Mt3 = pd.DataFrame({"pazar": ["ABD", "ABD", "AVR", "AVR", "BIST"], "F30": [0.5, 0.9, 0.5, np.nan, 0.6], "F32": [0.07, 0.01, 0.08, 0.2, 0.1],
+                     "F47": [0.1, 0.5, 0.2, 0.05, 0.1], "F56": [1.0, 0.0, np.nan, 1.0, 1.0], "F57": [0.0, 1.0, 0.0, 0.0, 1.0], "F58": [1.0, 0.0, 1.0, 0.0, 0.0]})
+_Q3 = {"yon1": {p: {"F47": {"q25": 0.15, "q75": 0.6}, "F30": {"q25": 0.8, "q75": 1.1}, "F32": {"q25": -0.05, "q75": 0.06}} for p in ("ABD", "AVR", "BIST")}}
+kontrol("D3: süzgeç AYK / NR7 / W2D / W1 / NR7a (NaN tutmaz, eşik devir3_esik)",
+        list(YH.yh_d3_maske(_Mt3, "AYK", _Q3, "yon1")) == [True, False, False, True, True]
+        and list(YH.yh_d3_maske(_Mt3, "NR7", _Q3, "yon1")) == [True, False, False, True, True]
+        and list(YH.yh_d3_maske(_Mt3, "W2D", _Q3, "yon1")) == [True, False, True, True, True]
+        and list(YH.yh_d3_maske(_Mt3, "W1", _Q3, "yon1")) == [True, False, True, False, True]
+        and list(YH.yh_d3_maske(_Mt3, "NR7a", _Q3, "yon1")) == [True, False, False, False, False]
+        and list(YH.yh_d3_maske(_Mt3, "NR7t", _Q3, "yon1")) == [False, True, False, False, False])
+# eşik kopyası: d1 / d2 AYNEN, F55 / F13 tercilleri yeni
+_e1s = {y: {p: {"F30": {"q25": 0.7, "q75": 1.1, "n": 5}, "F32": {"q25": -0.05, "q75": 0.06, "n": 5}} for p in ("ABD", "AVR", "BIST")} for y in ("yon1", "yon2")}
+_e2s = {y: {p: {"F47": {"q25": 0.39, "q75": 0.7, "n": 5}} for p in ("ABD", "AVR", "BIST")} for y in ("yon1", "yon2")}
+_e2s["tabaka"] = {p: {"F10": [0.01, 0.03], "F15": [0.7, 1.0], "F7": [0.48, 0.55]} for p in ("ABD", "AVR", "BIST")}
+_e2s["ambargo"] = {p: {"yon1_sinama_ilk_izinli": "2023-03-29", "yon2_sinama_son_izinli": "2022-10-06", "yon1_son_egitim_giris": "2022-12-30",
+                       "yon2_ilk_egitim_giris": "2023-01-03"} for p in ("ABD", "AVR", "BIST")}
+_Me = pd.DataFrame({"pazar": ["ABD"] * 6 + ["AVR"] * 3 + ["BIST"] * 3, "donem": ["2016-22"] * 5 + ["2023"] + ["2016-22"] * 6,
+                    "F55": [0.01, 0.02, 0.03, 0.04, 0.05, 9.0, 0.1, 0.2, 0.3, 1, 2, 3], "F13": [1.0, 2, 3, 4, 5, 9, 1, 2, 3, 1, 2, 3]})
+_es3 = YH.yh_d3_esik(_Me, _e1s, _e2s)
+kontrol("D3: devir3_esik: F30 / F32 / F47 / F10 / F15 / F7 / ambargo kaynak json'lardan AYNEN; F55 / F13 tercilleri 2016-22 (sınama satırı girmez)",
+        _es3["yon1"]["ABD"]["F30"] == _e1s["yon1"]["ABD"]["F30"] and _es3["yon2"]["AVR"]["F47"] == _e2s["yon2"]["AVR"]["F47"]
+        and _es3["tabaka"]["ABD"]["F10"] == [0.01, 0.03] and _es3["ambargo"] == _e2s["ambargo"]
+        and np.allclose(_es3["tabaka"]["ABD"]["F55"], np.quantile([0.01, 0.02, 0.03, 0.04, 0.05], [1 / 3, 2 / 3])))
+# bootstrap alt / üst + L3O (D2 ile aynı tohumla aynı alt / L3O)
+_E3b = json.loads(json.dumps(YH.YH_ESIK_D3)); _E3b["boot"]["tohum"] = YH.YH_ESIK_D2["boot"]["tohum"]
+_b3 = YH.yh_d3_boot_l3o(_Xa, _Xk, _E3b); _b2 = YH.yh_d2_boot_l3o(_Xa, _Xk)
+kontrol("D3: bootstrap alt = D2 hesabı (aynı tohum), L3O aynı, alt < MARJ < üst", abs(_b3["boot_alt"] - _b2["boot_alt"]) < 1e-12
+        and abs(_b3["l3o"] - _b2["l3o"]) < 1e-12 and _b3["boot_alt"] < _mj < _b3["boot_ust"], f"{_b3}")
+_Xn = _Xk.copy(); _Xn["h5"] = 0.0; _Xan = _Xn[_sel].copy(); _Xn2 = _Xn.copy(); _Xn2.loc[~_sel, "h5"] = 1.0
+_b3n = YH.yh_d3_boot_l3o(_Xan, _Xn2)
+kontrol("D3: zayıf aday (aday h5 = 0, taban yüksek) -> üst uç < 0", _b3n["boot_ust"] < 0, f"{_b3n}")
+# güç
+_gk = pd.DataFrame({"h5": np.r_[np.ones(3000), np.zeros(3000)], "es_h5": 0.5})
+_g_b = YH.yh_d3_guc(_gk, 2000); _g_k = YH.yh_d3_guc(_gk, 20)
+kontrol("D3: güç: n 2000 / 6000 yüksek (>= 0,8), n 20 düşük (< 0,8); n 0 -> 0", _g_b["guc"] >= 0.8 and _g_k["guc"] < 0.8 and YH.yh_d3_guc(_gk, 0)["guc"] == 0.0,
+        f"{_g_b}, {_g_k}")
+_sg = np.sqrt(0.25 / 20 * (6000 - 20) / (6000 - 1))
+kontrol("D3: güç sigma ~ sonlu nüfus standart hatası (n 20)", abs(_g_k["sigma"] - _sg) / _sg < 0.1, f"{_g_k['sigma']:.4f} / {_sg:.4f}")
+# etiket v3
+_h3 = lambda n=40, f=.03, m=.02, b=.01, u=.05, l=.01, st=.3, es=.3: {"n": n, "fark": f, "marjinal": m, "boot_alt": b, "boot_ust": u, "l3o": l, "st": st, "es_st": es}  # noqa: E731
+_c3 = lambda **kw: {p: {k: _h3(**kw.get(f"{p}_{k}", {})) for k in ("egitim", "sinama")} for p in ("ABD", "AVR")}  # noqa: E731
+_KR = ["ABD", "AVR"]
+kontrol("D3: etiket v3: KATKI+ / ATRP tutmaz -> SORGULA / tabaka -> SORGULA / n < 30 -> ÖLÇÜLEMEDİ / güç -> ÖLÇÜLEMEDİ / stop -> SORGULA",
+        YH.yh_d3_etiket(_c3(), _KR, True, True, 30) == "KATKI+" and YH.yh_d3_etiket(_c3(), _KR, True, False, 30) == "SORGULA"
+        and YH.yh_d3_etiket(_c3(), _KR, False, True, 30) == "SORGULA"
+        and YH.yh_d3_etiket(_c3(AVR_sinama={"n": 29}), _KR, True, True, 30) == "ÖLÇÜLEMEDİ"
+        and YH.yh_d3_etiket(_c3(), ["ABD"], True, True, 30, guc_ok=False) == "ÖLÇÜLEMEDİ"
+        and YH.yh_d3_etiket(_c3(ABD_sinama={"st": .4}), _KR, True, True, 30) == "SORGULA")
+_neg = {"f": -.01, "m": -.02, "b": -.05, "u": -.001}
+kontrol("D3: etiket v3: KATKI− yalnız dört hücrede üst uç < 0; bir hücrede üst uç >= 0 -> SORGULA",
+        YH.yh_d3_etiket(_c3(**{f"{p}_{k}": _neg for p in _KR for k in ("egitim", "sinama")}), _KR, True, True, 30) == "KATKI−"
+        and YH.yh_d3_etiket(_c3(**{**{f"{p}_{k}": _neg for p in _KR for k in ("egitim", "sinama")}, "AVR_sinama": {"f": -.01, "m": -.02, "b": -.05, "u": .01}}),
+                            _KR, True, True, 30) == "SORGULA")
+kontrol("D3: karar okuması: KATKI+ -> EMARE (bakılmış); KATKI− n < 1.000 hücre notu",
+        YH.yh_d3_karar("KATKI+", _c3(), _KR).startswith("EMARE (bakılmış)") and "n < 1.000" in YH.yh_d3_karar("KATKI−", _c3(), _KR))
+# uçtan uca karne (sentetik M): güçlü aday KATKI+ değilse bile karne / rapor çalışır; n < 30 listesi
+_rng3 = np.random.default_rng(77); _N3 = 6000
+_M3 = pd.DataFrame({"pazar": _rng3.choice(["ABD", "AVR", "BIST"], _N3, p=[.5, .35, .15]), "sembol": [f"S{k % 300}" for k in range(_N3)],
+                    "tarih": pd.Timestamp("2016-01-04") + pd.to_timedelta(_rng3.integers(0, 3700, _N3), "D")})
+_M3["giris"] = _M3.tarih + pd.Timedelta(days=1)
+_M3["donem"] = np.where(_M3.giris < "2023-01-01", "2016-22", np.where(_M3.giris < "2024-01-01", "2023", "2024-26"))
+for _c in ("F47", "F55", "F13", "F10", "F15", "F7", "F30", "F32", "F17"):
+    _M3[_c] = _rng3.uniform(0, 1, _N3)
+_M3["F56"] = (_rng3.random(_N3) < .2).astype(float); _M3["F57"] = (_rng3.random(_N3) < .1).astype(float); _M3["F58"] = (_rng3.random(_N3) < .5).astype(float)
+_M3["F30"] = _M3.F30 * 1.5; _M3.loc[_rng3.random(_N3) < .1, "F32"] = np.nan
+_M3["kolA"] = True; _M3["kolB"] = (_M3.F15 < .15) & (_M3.F17 < .5)
+_p0 = 0.4 + 0.25 * (_M3.F47 < 0.25)
+_M3["h5"] = (_rng3.random(_N3) < _p0).astype(float); _M3["es_h5"] = 0.4; _M3["st5"] = (_rng3.random(_N3) < .2).astype(float); _M3["es_st5"] = 0.3
+_Q3e = {"yon1": {p: {"F47": {"q25": .25, "q75": .75}, "F30": {"q25": .375, "q75": 1.125}, "F32": {"q25": .25, "q75": .75}} for p in ("ABD", "AVR", "BIST")},
+        "yon2": {p: {"F47": {"q25": .25, "q75": .75}, "F30": {"q25": .375, "q75": 1.125}, "F32": {"q25": .25, "q75": .75}} for p in ("ABD", "AVR", "BIST")},
+        "tabaka": {p: {c: [1 / 3, 2 / 3] for c in ("F10", "F15", "F7", "F55", "F13")} for p in ("ABD", "AVR", "BIST")},
+        "ambargo": {p: {"yon1_sinama_ilk_izinli": "2023-03-29", "yon2_sinama_son_izinli": "2022-10-06"} for p in ("ABD", "AVR", "BIST")}}
+_E3k = json.loads(json.dumps(YH.YH_ESIK_D3)); _E3k["boot"]["B"] = 300; _E3k["guc"]["R"] = 200
+_K3 = YH.yh_d3_karne(_M3, _Q3e, _E3k)
+_x = {(r["aday"], r["kol"], r["pazar"]): r for r in _K3["satir"]}
+kontrol("D3: karne: güçlü sentetik AYK kol A -> KATKI+ (ATRP / tabaka / bootstrap / L3O tuttu); W2D (gürültü) KATKI+ değil",
+        _x[("AYK", "A", "ABD")]["etiket"] == "KATKI+" and _x[("W2D", "A", "ABD")]["etiket"] != "KATKI+", f"{_x[('AYK', 'A', 'ABD')]['etiket']} / "
+        f"{_x[('W2D', 'A', 'ABD')]['etiket']}")
+kontrol("D3: karne: AVR kol B BİLGİ; BIST ve ABD+AVR BİLGİ; bilgi adaylar BİLGİ", _x[("AYK", "B", "AVR")]["etiket"].startswith("BİLGİ")
+        and _x[("AYK", "A", "BIST")]["etiket"].startswith("BİLGİ") and _x[("NR7a", "A", "ABD")]["etiket"].startswith("BİLGİ"))
+_ma = _M3[(_M3.pazar == "ABD") & (_M3.donem == "2016-22") & (_M3.F47 <= .25)]; _mk = _M3[(_M3.pazar == "ABD") & (_M3.donem == "2016-22")]
+kontrol("D3: karne: ABD eğitim MARJ elle", abs(_x[("AYK", "A", "ABD")]["egitim"]["marjinal"] - ((_ma.h5 - _ma.es_h5).mean() - (_mk.h5 - _mk.es_h5).mean())) < 1e-12)
+_fin = _mk[_mk.F32.notna()]; _mw = _mk[_mk.F32 >= .75]
+kontrol("D3: karne: MARJ_sonlu (W2D, taban F32 sonlu) elle", abs(_x[("W2D", "A", "ABD")]["egitim"]["marjinal_sonlu"]
+                                                             - ((_mw.h5 - _mw.es_h5).mean() - (_fin.h5 - _fin.es_h5).mean())) < 1e-12)
+_J3 = {"surum": "test", "zaman_utc": "-", "kapi": {}, "karne": json.loads(json.dumps(_K3["satir"], default=YH._yh_json)), "kucuk": _K3["kucuk"],
+       "yeniden_uretim": []}
+_rm3 = YH.yh_d3_rapor_metni(_J3, ["örnek hata"])
+kontrol("D3: rapor metni: karar tablosu, ATRP tablosu, n < 30 bölümü, HATA, KONTROL LİSTESİ", all(k in _rm3 for k in (
+    "## 1. Karar tablosu", "## 2. ATRP", "## 5. n < 30", "## HATA", "örnek hata", "KONTROL LİSTESİ")) and _rm3.count("| K") >= 14)
+_kb = [r for r in _K3["kucuk"]]
+kontrol("D3: n < 30 listesi: her kayıt 0 < n < 30 ve olay sayısı = n", all(0 < r["n"] < 30 and len(r["olay"]) == r["n"] for r in _kb), f"{len(_kb)} hücre")
+# regresyon kapısı ve kapı
+try:
+    YH._yh_d3_regresyon(YH.YH_YOL["cikti"]); _rg3 = True
+except YH.YHHata as _ex:
+    _rg3 = False; print(_ex)
+kontrol("D3: regresyon kapısı: Y1-Y12 + DEVİR 1 + DEVİR 2 mühürleri (YH_ESIK_D2, devir2_esik.json, ozellik_d2, olay_Y1 / Y9)", _rg3)
+_E3c = json.loads(json.dumps(YH.YH_ESIK_D3)); _E3c["aday"]["AYK"]["kural"][0][2] = "q50"
+kontrol("D3: aday kuralı değişince YH_ESIK_D3 sha değişir", YH.yh_esik_d3_sha(_E3c) != YH.yh_esik_d3_sha())
+_td3 = tempfile.mkdtemp()
+try:
+    YH.yh_d3_kapi(_td3, git=False); _kp3 = False
+except YH.YHHata:
+    _kp3 = True
+shutil.rmtree(_td3, ignore_errors=True)
+kontrol("D3: ön kayıt yokken koşu kapısı DURUR", _kp3)
+kontrol("D3: kontrol tablosu 14 satır, K2 / K7 / K8 / K9 EVET + kanıt; adlar önekli; DEVİR 1-2 adları korunur",
+        YH.yh_kontrol_tablosu(YH.YH_KONTROL_D3).count("| K") >= 14 and all(YH.YH_KONTROL_D3[k][0] == "EVET" and len(YH.YH_KONTROL_D3[k][1]) > 40
+                                                                           for k in ("K2", "K7", "K8", "K9"))
+        and all(k.startswith(("yh_d3", "yh_devir3", "_yh_d3", "YH_D3", "YH_ESIK_D3", "_YH_D3", "YH_KONTROL_D3", "yh_esik_d3"))
+                for k in dir(YH) if "d3" in k.lower() or "devir3" in k.lower())
+        and YH.yh_devir_kos.__doc__.startswith("DEVİR 1") and YH.yh_devir2_kos.__doc__.startswith("DEVİR 2"))
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
