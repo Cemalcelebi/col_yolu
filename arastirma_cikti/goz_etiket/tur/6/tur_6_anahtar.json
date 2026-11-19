@@ -1,0 +1,421 @@
+{
+ "uyari": "GİZLİ TUR 6 ANAHTARI: iki taraf (Cemal ve model) etiketleyip model mühürlenmeden açılmaz. sayfa -> sembol, pazar, tarih (t).",
+ "surum": "GOZ_ETIKET v1.0 (2026-11-17): AŞAMA A örneklem (300, tohum 11) + kör PNG (t sonrası yok) + F1-F18 özellik + ön kayıt",
+ "tur": 6,
+ "tohum": 106,
+ "tur_esik_sha": "57e081e8da946eaa543f0dc17fb659aae024d1a5348c7cba580f566729bd16b5",
+ "esik_sha": "a48cd64da71616bdd19f05c3d3763997096d520252622812c244516f94a84d5d",
+ "tur_esik_surum": "T1.7",
+ "parmak_surum": "P1.1",
+ "parmak_esik_sha": "1063e67354eadbefa16815398c253798f880f9e7e6b95536e9e978a5b9cf5141",
+ "parmak_sha": "572530891942d26c168b398ecea19439b9d7385cad2dd3f7467740e28d8da770",
+ "iki_soru": true,
+ "a_kutu": true,
+ "u_dip": true,
+ "tavan_kaynak": "s7f21",
+ "parmak_katman": false,
+ "deneme": "Y1",
+ "cift": [
+  6
+ ],
+ "cift_sira": 1,
+ "onceki_tur_olcusuz": "TUR 6, TUR 5 ölçülmeden açılır (ana model kararı, TUR6_IS_TANIMI.md; Cemal'in 19 Kas isteği). Kalan havuz TUR 7+ için saklanır (PDF üretilmez).",
+ "havuz": {
+  "kriz_suzgeci_once": 302,
+  "kriz_suzgeci_once_pazar_donem": {
+   "ABD 2016-22": 62,
+   "ABD 2023": 14,
+   "ABD 2024-26": 41,
+   "AVR 2016-22": 37,
+   "AVR 2023": 10,
+   "AVR 2024-26": 23,
+   "BIST 2016-22": 39,
+   "BIST 2023": 2,
+   "BIST 2024-26": 74
+  },
+  "kriz_disi": [
+   "ABD ORCL giris 2026-08-28",
+   "ABD PEGA giris 2026-08-28",
+   "ABD STZ giris 2026-08-17",
+   "BIST AKBNK giris 2026-08-20",
+   "BIST TERA giris 2026-08-03"
+  ],
+  "havuz": 297,
+  "havuz_pazar_donem": {
+   "ABD 2016-22": 62,
+   "ABD 2023": 14,
+   "ABD 2024-26": 38,
+   "AVR 2016-22": 37,
+   "AVR 2023": 10,
+   "AVR 2024-26": 23,
+   "BIST 2016-22": 39,
+   "BIST 2023": 2,
+   "BIST 2024-26": 72
+  },
+  "havuz_s1_dipte": 64,
+  "gosterilen_cikan": 130,
+  "kalan": 167,
+  "kalan_pazar_donem": {
+   "ABD 2016-22": 33,
+   "ABD 2023": 10,
+   "ABD 2024-26": 19,
+   "AVR 2016-22": 23,
+   "AVR 2023": 6,
+   "AVR 2024-26": 15,
+   "BIST 2016-22": 21,
+   "BIST 2024-26": 40
+  },
+  "secilen": 40,
+  "tur_n": {
+   "6": 40
+  },
+  "kalan_secilmeyen": 127,
+  "kalan_secilmeyen_pazar_donem": {
+   "ABD 2016-22": 27,
+   "ABD 2023": 8,
+   "ABD 2024-26": 16,
+   "AVR 2016-22": 20,
+   "AVR 2023": 6,
+   "AVR 2024-26": 12,
+   "BIST 2016-22": 13,
+   "BIST 2024-26": 25
+  },
+  "secilen_s1_dipte": {
+   "6": 1
+  }
+ },
+ "ust_not": "havuz: dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı",
+ "olay_sha": "e13eb12699a6d749bccc16ee4cde5ac467ea2bf8687b23a6a821fef74bf8871b",
+ "ozellik_sha": "bae156939290b421fb2320f85a2639db71726ca6f7449081e2bc292f5043fd76",
+ "ozellik_s7_sha": "9463e08e6bb7eb95820eccc9be9dcb3a1d549312dc62cdcc657b2a2b02e6137d",
+ "ozellik_s9_sha": "c9a6a4e62673fcc56cc82550c915feed3be4b7235ada8a940d4de09ff0f28756",
+ "kod_sha": "76d5c76b3a545ed585634d2994b66c11f4cdc1af924e2d31da1611595503bd9d",
+ "pdf_sha": "4e18ebfe1c0b199ad7370bea49a1271a070f89833c65d3a067be5aec77c6fe8e",
+ "sizinti": {
+  "sembol": 0,
+  "tarih": 0
+ },
+ "n": 40,
+ "sayfa": {
+  "1": {
+   "sembol": "KAREL",
+   "pazar": "BIST",
+   "tarih": "2026-01-28",
+   "giris": "2026-01-29",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "2": {
+   "sembol": "ANHYT",
+   "pazar": "BIST",
+   "tarih": "2024-01-15",
+   "giris": "2024-01-16",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "3": {
+   "sembol": "USAK",
+   "pazar": "BIST",
+   "tarih": "2021-11-04",
+   "giris": "2021-11-05",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "4": {
+   "sembol": "DCI",
+   "pazar": "ABD",
+   "tarih": "2021-11-12",
+   "giris": "2021-11-15",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "5": {
+   "sembol": "BURL",
+   "pazar": "ABD",
+   "tarih": "2024-05-24",
+   "giris": "2024-05-28",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "6": {
+   "sembol": "SKBNK",
+   "pazar": "BIST",
+   "tarih": "2025-03-13",
+   "giris": "2025-03-14",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "7": {
+   "sembol": "PRKME",
+   "pazar": "BIST",
+   "tarih": "2019-01-24",
+   "giris": "2019-01-25",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "8": {
+   "sembol": "RVTY",
+   "pazar": "ABD",
+   "tarih": "2016-12-07",
+   "giris": "2016-12-08",
+   "donem": "2016-22",
+   "parmak": 1
+  },
+  "9": {
+   "sembol": "VAKFN",
+   "pazar": "BIST",
+   "tarih": "2022-08-08",
+   "giris": "2022-08-09",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "10": {
+   "sembol": "GLNG",
+   "pazar": "ABD",
+   "tarih": "2018-09-19",
+   "giris": "2018-09-20",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "11": {
+   "sembol": "HDFGS",
+   "pazar": "BIST",
+   "tarih": "2024-01-22",
+   "giris": "2024-01-23",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "12": {
+   "sembol": "HATEK",
+   "pazar": "BIST",
+   "tarih": "2024-07-23",
+   "giris": "2024-07-24",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "13": {
+   "sembol": "TLMAN",
+   "pazar": "BIST",
+   "tarih": "2024-01-18",
+   "giris": "2024-01-19",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "14": {
+   "sembol": "YAR.OL",
+   "pazar": "AVR",
+   "tarih": "2018-04-26",
+   "giris": "2018-04-27",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "15": {
+   "sembol": "LYFT",
+   "pazar": "ABD",
+   "tarih": "2021-09-21",
+   "giris": "2021-09-22",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "16": {
+   "sembol": "GEDIK",
+   "pazar": "BIST",
+   "tarih": "2026-04-10",
+   "giris": "2026-04-13",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "17": {
+   "sembol": "KRGYO",
+   "pazar": "BIST",
+   "tarih": "2022-04-08",
+   "giris": "2022-04-11",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "18": {
+   "sembol": "TMSN",
+   "pazar": "BIST",
+   "tarih": "2026-01-29",
+   "giris": "2026-01-30",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "19": {
+   "sembol": "ALFAS",
+   "pazar": "BIST",
+   "tarih": "2026-04-17",
+   "giris": "2026-04-20",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "20": {
+   "sembol": "QQ.L",
+   "pazar": "AVR",
+   "tarih": "2025-12-18",
+   "giris": "2025-12-19",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "21": {
+   "sembol": "PRU.L",
+   "pazar": "AVR",
+   "tarih": "2024-12-06",
+   "giris": "2024-12-09",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "22": {
+   "sembol": "ISGYO",
+   "pazar": "BIST",
+   "tarih": "2024-05-07",
+   "giris": "2024-05-08",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "23": {
+   "sembol": "MAKTK",
+   "pazar": "BIST",
+   "tarih": "2026-04-14",
+   "giris": "2026-04-15",
+   "donem": "2024-26",
+   "parmak": 1
+  },
+  "24": {
+   "sembol": "DOCM.SW",
+   "pazar": "AVR",
+   "tarih": "2025-10-16",
+   "giris": "2025-10-17",
+   "donem": "2024-26",
+   "parmak": 1
+  },
+  "25": {
+   "sembol": "THYAO",
+   "pazar": "BIST",
+   "tarih": "2019-07-02",
+   "giris": "2019-07-03",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "26": {
+   "sembol": "BIOEN",
+   "pazar": "BIST",
+   "tarih": "2024-01-26",
+   "giris": "2024-01-29",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "27": {
+   "sembol": "CAH",
+   "pazar": "ABD",
+   "tarih": "2024-06-13",
+   "giris": "2024-06-14",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "28": {
+   "sembol": "OZKGY",
+   "pazar": "BIST",
+   "tarih": "2024-02-02",
+   "giris": "2024-02-05",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "29": {
+   "sembol": "TTKOM",
+   "pazar": "BIST",
+   "tarih": "2021-06-07",
+   "giris": "2021-06-08",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "30": {
+   "sembol": "ASTOR",
+   "pazar": "BIST",
+   "tarih": "2024-05-02",
+   "giris": "2024-05-03",
+   "donem": "2024-26",
+   "parmak": 1
+  },
+  "31": {
+   "sembol": "BRBY.L",
+   "pazar": "AVR",
+   "tarih": "2016-06-29",
+   "giris": "2016-06-30",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "32": {
+   "sembol": "SAB.MC",
+   "pazar": "AVR",
+   "tarih": "2019-09-05",
+   "giris": "2019-09-06",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "33": {
+   "sembol": "PHM",
+   "pazar": "ABD",
+   "tarih": "2016-12-08",
+   "giris": "2016-12-09",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "34": {
+   "sembol": "NOG",
+   "pazar": "ABD",
+   "tarih": "2025-12-03",
+   "giris": "2025-12-04",
+   "donem": "2024-26",
+   "parmak": 0
+  },
+  "35": {
+   "sembol": "VRTX",
+   "pazar": "ABD",
+   "tarih": "2021-11-03",
+   "giris": "2021-11-04",
+   "donem": "2016-22",
+   "parmak": 1
+  },
+  "36": {
+   "sembol": "CRFSA",
+   "pazar": "BIST",
+   "tarih": "2019-01-23",
+   "giris": "2019-01-24",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "37": {
+   "sembol": "VSH",
+   "pazar": "ABD",
+   "tarih": "2023-12-08",
+   "giris": "2023-12-11",
+   "donem": "2023",
+   "parmak": 0
+  },
+  "38": {
+   "sembol": "PRKME",
+   "pazar": "BIST",
+   "tarih": "2016-10-14",
+   "giris": "2016-10-17",
+   "donem": "2016-22",
+   "parmak": 0
+  },
+  "39": {
+   "sembol": "IFF",
+   "pazar": "ABD",
+   "tarih": "2023-07-19",
+   "giris": "2023-07-20",
+   "donem": "2023",
+   "parmak": 0
+  },
+  "40": {
+   "sembol": "VESTL",
+   "pazar": "BIST",
+   "tarih": "2024-01-26",
+   "giris": "2024-01-29",
+   "donem": "2024-26",
+   "parmak": 0
+  }
+ }
+}

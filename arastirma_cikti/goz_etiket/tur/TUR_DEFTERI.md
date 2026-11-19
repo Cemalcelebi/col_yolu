@@ -104,3 +104,24 @@
 | Cemal (birikimli, tur [1, 2, 4]) | 60 g kapanış +%5 (bilgi) | 34 / 46 (%73,9) | 5 / 24 (%20,8) | **%55,7** (39 / 70) | %74,5 | %25,5 | 2 |
 - Yön doğru / eşik kaçtı (OLUR, h5 = 0, 15 g kapanış max +%3..+%5): model yok; Cemal [11]; birikimli model 4, Cemal 6.
 - Cemal'in birikimli etiketi 100'ü geçti: göz ölçümü (Ç192 planı) Cemal'in kendi etiketleriyle koşulur.
+
+## AÇILIŞ — TUR 6 (T1.7) (2026-11-19 13:37:07 UTC)
+
+- Sürüm T1.7 (TUR6_IS_TANIMI.md; ön kayıtlı, sonuç görülmeden); tohum 106 (tek permütasyon, kotasız); tur eşik sha 57e081e8da94.
+- Havuz (dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı = Y1 ∧ Ş3 ∧ Ş5 ∧ Ş9 ∧ F15 <= 0,50; Ş1 bilgi; dönem 2016-22 / 2023 / 2024-26): kriz süzgecinden önce 302; giriş <= kriz - 30 gün sonrası 297 (ABD 2016-22 62, ABD 2023 14, ABD 2024-26 38, AVR 2016-22 37, AVR 2023 10, AVR 2024-26 23, BIST 2016-22 39, BIST 2023 2, BIST 2024-26 72); kriz süzgecinde düşen 5.
+- Gösterilmiş (300 + hakem + TUR 1-5 + S7 PDF 50; olay ve hisse) çıkan 130; kalan 167 (ABD 2016-22 33, ABD 2023 10, ABD 2024-26 19, AVR 2016-22 23, AVR 2023 6, AVR 2024-26 15, BIST 2016-22 21, BIST 2024-26 40); hisse başına en çok 2; seçilen 40.
+- TUR 6: 40 sayfa (ABD 2016-22 6, ABD 2023 2, ABD 2024-26 3, AVR 2016-22 3, AVR 2024-26 3, BIST 2016-22 8, BIST 2024-26 15); parmak F19 (bilgi): ABD parmak=0 9, ABD parmak=1 2, AVR parmak=0 5, AVR parmak=1 1, BIST parmak=0 21, BIST parmak=1 2; PDF 2.56 MB, sızıntı sembol 0 / tarih 0.
+- Ş1 dipte (bilgi, şart değil): havuzda 64; seçilen sayfalarda TUR 6 1.
+- Seçilmeyen kalan havuz (sonraki turlar için saklanır; PDF yok): 127 (ABD 2016-22 27, ABD 2023 8, ABD 2024-26 16, AVR 2016-22 20, AVR 2023 6, AVR 2024-26 12, BIST 2016-22 13, BIST 2024-26 25).
+- İlk sayfa üst notu: 'havuz: dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı'.
+- TUR 6, TUR 5 ölçülmeden açılır (ana model kararı, TUR6_IS_TANIMI.md; Cemal'in 19 Kas isteği). Kalan havuz TUR 7+ için saklanır (PDF üretilmez).
+
+## AÇILIŞ — TUR 7 (T1.8) (2026-11-19 13:37:39 UTC)
+
+- Sürüm T1.8 (TUR6_IS_TANIMI.md + ana model ek iş tanımı (TUR 7, 19 Kas); ön kayıtlı, sonuç görülmeden); tohum 107 (tek permütasyon, kotasız); tur eşik sha 5da2d281d289.
+- Havuz (düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım = Y1 ∧ Ş1 ∧ Ş7 (RAPOR_6 filtre karnesi KATKI+ iki ölçü); dönem 2016-22 / 2023 / 2024-26): kriz süzgecinden önce 765; giriş <= kriz - 30 gün sonrası 750 (ABD 2016-22 176, ABD 2023 69, ABD 2024-26 98, AVR 2016-22 52, AVR 2023 12, AVR 2024-26 32, BIST 2016-22 129, BIST 2023 40, BIST 2024-26 142); kriz süzgecinde düşen 15.
+- Gösterilmiş (300 + hakem + TUR 1-6 + S7 PDF 50; olay ve hisse) çıkan 278; kalan 472 (ABD 2016-22 97, ABD 2023 50, ABD 2024-26 69, AVR 2016-22 30, AVR 2023 10, AVR 2024-26 23, BIST 2016-22 73, BIST 2023 28, BIST 2024-26 92); hisse başına en çok 2; seçilen 40.
+- TUR 7: 40 sayfa (ABD 2016-22 11, ABD 2023 4, ABD 2024-26 2, AVR 2016-22 2, AVR 2024-26 5, BIST 2016-22 5, BIST 2023 2, BIST 2024-26 9); parmak F19 (bilgi): ABD parmak=0 15, ABD parmak=1 2, AVR parmak=0 6, AVR parmak=1 1, BIST parmak=0 8, BIST parmak=1 8; PDF 2.52 MB, sızıntı sembol 0 / tarih 0.
+- Seçilmeyen kalan havuz (sonraki turlar için saklanır; PDF yok): 432 (ABD 2016-22 86, ABD 2023 46, ABD 2024-26 67, AVR 2016-22 28, AVR 2023 10, AVR 2024-26 18, BIST 2016-22 68, BIST 2023 26, BIST 2024-26 83).
+- İlk sayfa üst notu: 'havuz: düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım mumu (ölçümde katkı veren iki ölçü)'.
+- TUR 7, TUR 5 / 6 ölçülmeden açılır (ana model kararı; Cemal'in 19 Kas isteği 'başarılı olanları da ver').

@@ -1712,16 +1712,73 @@ GE_TUR_ESIK_T16: Dict[str, Any] = {
     "olc": "tur olc --no 4 / 5: T1.1 ile aynı karar ölçüsü (olay_Y1 h5) ve B1.0 bilgi sütunları; sayfa sayısı anahtardan (40); dönem 2016-22 dahil; "
            "satır dosyasında 'donem' sütunu; raporda dönem kırılımı (bilgi).",
 }
+# T1.7 (TUR6_IS_TANIMI.md, 19 Kas; ön kayıtlı, sonuç görülmeden; Cemal: "dip savunması ve parabolik yuvarlama olanları; ilkin 40"): TUR 6 tek başına
+# açılır. Havuz = Y1 olayı ∧ Ş3 dip savunulmuş (F2 >= -0,01) ∧ Ş5 alt fitil kısa (F4 <= 0,25) ∧ Ş9 U dip ∧ F15 <= 0,50 (120 günün alt yarısı);
+# Ş1 dipte ŞART DEĞİL (bilgi). Tek permütasyon (100 + 6), kotasız, ilk 40 = TUR 6; kalan havuz TUR 7+ için saklanır. Sayfa T1.6 ile aynı + ilk
+# sayfada havuz notu. T1.1-T1.6 DEĞİŞMEZ (sha sabit).
+GE_TUR_ESIK_T17: Dict[str, Any] = {
+    **{k: v for k, v in GE_TUR_ESIK_T16.items() if k not in ("surum", "turlar", "havuz", "onceki_tur_olcusuz", "orneklem", "pdf", "olc")},
+    "surum": "T1.7", "turlar": [6], "is_tanimi": "TUR6_IS_TANIMI.md",
+    "havuz": {"S3": {"F2_min": -0.01}, "S5": {"F4_ust": 0.25}, "S9": dict(GE_TUR_ESIK_T16["havuz"]["S9"]), "konum": {"F15_ust": 0.50},
+              "S1_bilgi": dict(GE_TUR_ESIK_T16["havuz"]["S1"]),
+              "ozellik": GE_TUR_ESIK_T16["havuz"]["ozellik"].replace("F15, F17", "F2, F4, F15, F17"),
+              "ozellik_s9": GE_TUR_ESIK_T16["havuz"]["ozellik_s9"], "ozellik_s7": GE_TUR_ESIK_T16["havuz"]["ozellik_s7"],
+              "tanim": "olay_Y1.csv.gz (OC 60 gün tekil) satırı VE Ş3 DİP SAVUNULMUŞ (F2 >= -0,01; F2 NaN = tutmaz) VE Ş5 ALT FİTİL KISA (F4 <= 0,25) "
+                       "VE Ş9 U DİP (F24-F29, YH_ESIK Y11 eşikleri AYNEN) VE F15 <= 0,50 (120 günün alt yarısı). Ş3 / Ş5 eşikleri YH_ESIK Y10 ile, "
+                       "Ş9 eşikleri Y11 ile çalışma anında aynı olmalı, değilse DURUR. Ş1 dipte (F15 <= 0,25 VE F17 <= -0,20) ŞART DEĞİL, bilgi sütunu. "
+                       "Dönem 2016-22 + 2023 + 2024-26; giriş <= kriz - 30 gün. Özellikler t-1'e kadar bilgi; olay dosyasından yalnız kimlik sütunları."},
+    "havuz_kisa": "dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı = Y1 ∧ Ş3 ∧ Ş5 ∧ Ş9 ∧ F15 <= 0,50; Ş1 bilgi",
+    "gosterilen_kisa": "300 + hakem + TUR 1-5 + S7 PDF 50",
+    "ust_not": "havuz: dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı",
+    "onceki_tur_olcusuz": "TUR 6, TUR 5 ölçülmeden açılır (ana model kararı, TUR6_IS_TANIMI.md; Cemal'in 19 Kas isteği). Kalan havuz TUR 7+ için "
+                          "saklanır (PDF üretilmez).",
+    "orneklem": "tur 6 tek çekiliş: rng = numpy default_rng(100 + 6). Havuz (yukarıdaki tanım) daha önce GÖSTERİLMEMİŞ olay ve (pazar, sembol) "
+                "dışarıda: anahtar.json 300 örneklem (hakem seti aynı olaylardan) + TUR 1-5 anahtarları + S7 bölge PDF'indeki 50 olay "
+                "(s7_bolge_pdf.s7b_olaylar(104)). Uygunlar (pazar, sembol, tarih) sırasına dizilir; TEK rng.permutation, PAZAR / DÖNEM KOTASI YOK; "
+                "sırayla gezilir, hisse başına en çok 2 olay; ilk 40 = TUR 6 (sayfa 1..40; kalan azsa kalan kadar, 0 ise DURUR). Sayfa sırası "
+                "permütasyon sırasıdır. F19 (P1.1) bilgi sütunu, NaN -> -1.",
+    "pdf": GE_TUR_ESIK_T16["pdf"] + " T1.7: ilk sayfanın üst notu 'havuz: dip savunulmuş + alt fitil kısa + parabolik U, 120 günün alt yarısı' "
+           "(hisse adı / tarih yok).",
+    "olc": "tur olc --no 6: T1.6 ile aynı (olay_Y1 h5 karar ölçüsü, B1.0 bilgi; 40 sayfa; 2016-22 dahil; dönem kırılımı bilgi).",
+}
+# T1.8 (ana model ek iş tanımı, 19 Kas; Cemal: "başarılı olanları da ver"; ön kayıtlı, sonuç görülmeden): TUR 7. Havuz = Y1 olayı ∧ Ş1 DİPTE
+# (F15 <= 0,25 VE F17 <= -0,20) ∧ Ş7 YAKIN TAVAN GÖVDELİ ORTALAYAN KIRILIM (ozellik_Y1_s7: F22 > 0 VE F22a = O_t / F21 - 1 < 0 VE F23 >= 0,50;
+# YH_ESIK Y10 Ş7 aynen) = RAPOR_6 filtre karnesinde KATKI+ çıkan iki ölçü. Tek permütasyon (100 + 7), kotasız, ilk 40 = TUR 7; TUR 6 seçilenleri
+# de dışarıda. Sayfa T1.6 biçimi + ilk sayfa havuz notu. T1.1-T1.7 DEĞİŞMEZ.
+GE_TUR_ESIK_T18: Dict[str, Any] = {
+    **{k: v for k, v in GE_TUR_ESIK_T17.items() if k not in ("surum", "turlar", "havuz", "havuz_kisa", "gosterilen_kisa", "ust_not",
+                                                              "onceki_tur_olcusuz", "orneklem", "pdf", "olc", "is_tanimi")},
+    "surum": "T1.8", "turlar": [7], "is_tanimi": "TUR6_IS_TANIMI.md + ana model ek iş tanımı (TUR 7, 19 Kas)",
+    "havuz": {"S1": dict(GE_TUR_ESIK_T16["havuz"]["S1"]), "S7": {"F22_alt_acik": 0.0, "F22a_ust_acik": 0.0, "F23_min": 0.50},
+              "ozellik": GE_TUR_ESIK_T16["havuz"]["ozellik"],
+              "ozellik_s9": GE_TUR_ESIK_T16["havuz"]["ozellik_s9"], "ozellik_s7": GE_TUR_ESIK_T16["havuz"]["ozellik_s7"],
+              "tanim": "olay_Y1.csv.gz (OC 60 gün tekil) satırı VE Ş1 DİPTE (F15 <= 0,25 VE F17 <= -0,20; ozellik_Y1.csv.gz) VE Ş7 YAKIN TAVAN "
+                       "GÖVDELİ ORTALAYAN KIRILIM (ozellik_Y1_s7.csv.gz: F22 > 0 VE F22a < 0 (O_t < F21) VE F23 >= 0,50; YH_ESIK Y10 Ş7 eşikleri "
+                       "AYNEN; çalışma anında aynı olmalı, değilse DURUR). Dönem 2016-22 + 2023 + 2024-26; giriş <= kriz - 30 gün. F21-F23 t barının "
+                       "O / C'sini kullanır (sinyal mumu; karar t kapanışında, giriş t+1 açılış); olay dosyasından yalnız kimlik sütunları."},
+    "havuz_kisa": "düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım = Y1 ∧ Ş1 ∧ Ş7 (RAPOR_6 filtre karnesi KATKI+ iki ölçü)",
+    "gosterilen_kisa": "300 + hakem + TUR 1-6 + S7 PDF 50",
+    "ust_not": "havuz: düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım mumu (ölçümde katkı veren iki ölçü)",
+    "onceki_tur_olcusuz": "TUR 7, TUR 5 / 6 ölçülmeden açılır (ana model kararı; Cemal'in 19 Kas isteği 'başarılı olanları da ver').",
+    "orneklem": GE_TUR_ESIK_T17["orneklem"].replace("tur 6 tek çekiliş", "tur 7 tek çekiliş").replace("100 + 6", "100 + 7")
+                .replace("TUR 1-5 anahtarları", "TUR 1-6 anahtarları (TUR 6 seçilenleri dahil)").replace("ilk 40 = TUR 6", "ilk 40 = TUR 7"),
+    "pdf": GE_TUR_ESIK_T16["pdf"] + " T1.8: ilk sayfanın üst notu 'havuz: düşüş sonrası dipte + yakın tavanı gövdeli ortalayan kırılım mumu "
+           "(ölçümde katkı veren iki ölçü)' (hisse adı / tarih yok).",
+    "olc": "tur olc --no 7: T1.6 ile aynı (olay_Y1 h5 karar ölçüsü, B1.0 bilgi; 40 sayfa; 2016-22 dahil; dönem kırılımı bilgi).",
+}
 _GE_TUR_ESIK_SHA = {"T1.1": "47284ac6dc6c7eb3bcfdde6c9703fc9386e289208f574a08eb6095a18c40a632",
                     "T1.2": "9cc0bb59e64c8f405588d3b390b66e42994ba3959843794fcca4c463882e89f0",
                     "T1.3": "cece208d4a8e587a6303a3325819edb387ec45cf511adec37dc5e258692dea29",
-                    "T1.6": "7ed7753fc5149e95662899c56d39d1a4e4255733273a9543a81a6404a05af771"}
+                    "T1.6": "7ed7753fc5149e95662899c56d39d1a4e4255733273a9543a81a6404a05af771",
+                    "T1.7": "57e081e8da946eaa543f0dc17fb659aae024d1a5348c7cba580f566729bd16b5",
+                    "T1.8": "5da2d281d289324fbe51f45494fc38135ab7a706626577b0981d4ed4bf5dc999"}
 
 
 def ge_tur_esik(no: int) -> Dict[str, Any]:
     """Tur numarasına göre tur eşik sözlüğü: tur 1 -> T1.1, tur 2 -> T1.2 (parmak P1.1, iki soru), tur 3 -> T1.3 (A sorusu kutulu), tur >= 4 ->
     T1.4 (S7 çekirdek Y10 olayları, parmak katmanı yok, S7 tavanı). T1.1 / T1.2 / T1.3 sha'ları sabit (açılmış turlar); değişmişse DURUR.
-    T1.6 (TUR4_IS_TANIMI.md): tur 4 VE 5 -> T1.6 (U dip havuzu, kotasız tek permütasyon, 40 + 40); tur >= 6 -> T1.5 (ana model karar verir).
+    T1.6 (TUR4_IS_TANIMI.md): tur 4 VE 5 -> T1.6 (U dip havuzu, kotasız tek permütasyon, 40 + 40); tur 6 -> T1.7 (Ş3 + Ş5 + Ş9 + F15 <= 0,50;
+    TUR6_IS_TANIMI.md); tur 7 -> T1.8 (Ş1 + Ş7); tur >= 8 -> T1.5 (ana model karar verir).
     T1.4 / T1.5 sözlükleri kayıt olarak durur (YAPI_HEDEF kuru sayımları açık E ile çağırmalı)."""
     if int(no) < 1:
         raise GEHata(f"tur numarası >= 1 olmalı ({no})")
@@ -1741,6 +1798,11 @@ def ge_tur_esik(no: int) -> Dict[str, Any]:
         if _GE_TUR_ESIK_SHA.get("T1.6") and ge_esik_sha(GE_TUR_ESIK_T16) != _GE_TUR_ESIK_SHA["T1.6"]:
             raise GEHata("T1.6 tur eşik sha'sı değişmiş (tur 4 / 5 yeniden üretilemez)")
         return GE_TUR_ESIK_T16
+    for ad, Ek in (("T1.7", GE_TUR_ESIK_T17), ("T1.8", GE_TUR_ESIK_T18)):
+        if int(no) in Ek["turlar"]:
+            if _GE_TUR_ESIK_SHA.get(ad) and ge_esik_sha(Ek) != _GE_TUR_ESIK_SHA[ad]:
+                raise GEHata(f"{ad} tur eşik sha'sı değişmiş (tur {no} yeniden üretilemez)")
+            return Ek
     return GE_TUR_ESIK_T15
 
 
@@ -1872,46 +1934,83 @@ def ge_tur_orneklem(no: int, yol: Optional[str] = None, cikti: Optional[str] = N
 
 
 def ge_tur_havuz_t16(yol: Optional[str] = None, cikti: Optional[str] = None, E: Optional[Dict[str, Any]] = None,
-                     ozellik_yol: Optional[str] = None, s9_yol: Optional[str] = None) -> pd.DataFrame:
-    """T1.6 U DİP HAVUZU (gösterilmiş dışlanmadan): olay_Y1 (yalnız kimlik) ∧ Ş1 (F15 / F17; ozellik_Y1.csv.gz) ∧ Ş9 (F24-F29;
-    ozellik_Y1_s9.csv.gz; YAPI_HEDEF.yh_s9_alt) ∧ dönem ∧ giriş <= kriz - 30 -> DataFrame[pazar, donem, sembol, tarih, giris].
-    attrs['sayim']: kriz süzgecinden önce / sonra sayılar (rapor). Özellik dosyaları olay kümesiyle bire bir değilse DURUR."""
+                     ozellik_yol: Optional[str] = None, s9_yol: Optional[str] = None, s7_yol: Optional[str] = None) -> pd.DataFrame:
+    """T1.6 / T1.7 / T1.8 HAVUZU (gösterilmiş dışlanmadan): olay_Y1 (yalnız kimlik) ∧ E['havuz'] şartları ∧ dönem ∧ giriş <= kriz - 30 ->
+    DataFrame[pazar, donem, sembol, tarih, giris] (+ 's1' bilgi sütunu, E['havuz']['S1_bilgi'] varsa).
+    Şartlar (her biri E['havuz']'da varsa): S1 dipte (F15 / F17), S3 (F2 >= F2_min; NaN tutmaz), S5 (F4 <= F4_ust), konum (F15 <= F15_ust),
+    S9 (F24-F29; YAPI_HEDEF.yh_s9_alt), S7 (F22 > 0, F22a < 0, F23 >= F23_min; ozellik_Y1_s7). Eşikler çalışma anında YH_ESIK Y10 / Y11 ile
+    aynı olmalı. attrs['sayim']: kriz süzgecinden önce / sonra sayılar (rapor). Özellik dosyaları olay kümesiyle bire bir değilse DURUR."""
     E = GE_TUR_ESIK_T16 if E is None else E
-    T9 = YH.YH_ESIK["denemeler"]["Y11"]["esik"]
-    if {k: float(v) for k, v in T9.items()} != {k: float(v) for k, v in E["havuz"]["S9"].items()}:
-        raise GEHata("T1.6 Ş9 eşikleri YAPI_HEDEF YH_ESIK Y11 ile aynı değil")
+    Hv = E["havuz"]; ad = E["surum"]
+    T9 = YH.YH_ESIK["denemeler"]["Y11"]["esik"]; T10 = YH.YH_ESIK["denemeler"]["Y10"]["esik"]
+    if "S9" in Hv and {k: float(v) for k, v in T9.items()} != {k: float(v) for k, v in Hv["S9"].items()}:
+        raise GEHata(f"{ad} Ş9 eşikleri YAPI_HEDEF YH_ESIK Y11 ile aynı değil")
+    for k_ in ("S1", "S1_bilgi", "S3", "S5", "S7"):
+        if k_ in Hv and any(float(T10[a]) != float(v) for a, v in Hv[k_].items()):
+            raise GEHata(f"{ad} {k_} eşikleri YAPI_HEDEF YH_ESIK Y10 ile aynı değil")
     X = ge_olay_oku(GE_KIMLIK_KOL, yol)
     X["sembol"] = X["sembol"].astype(str)
     if X.duplicated(["pazar", "sembol", "tarih"]).any():
         raise GEHata("olay dosyasında (pazar, sembol, tarih) tekil değil")
-    oy = ozellik_yol or _ge_yol("ozellik", cikti); s9y = s9_yol or os.path.join(KOK_GE, E["havuz"]["ozellik_s9"])
+    oy = ozellik_yol or _ge_yol("ozellik", cikti); s9y = s9_yol or os.path.join(KOK_GE, Hv["ozellik_s9"])
+    s7y = s7_yol or os.path.join(KOK_GE, Hv["ozellik_s7"])
+    kf = ["F15", "F17"] + (["F2", "F4"] if ("S3" in Hv or "S5" in Hv) else [])
     try:
-        F = pd.read_csv(oy, usecols=["pazar", "sembol", "tarih", "F15", "F17"], dtype={"sembol": str, "pazar": str})
+        F = pd.read_csv(oy, usecols=["pazar", "sembol", "tarih"] + kf, dtype={"sembol": str, "pazar": str})
         F9 = pd.read_csv(s9y, usecols=["pazar", "sembol", "tarih"] + list(_GE_S9_OZ), dtype={"sembol": str, "pazar": str})
+        F7 = (pd.read_csv(s7y, usecols=["pazar", "sembol", "tarih", "F22", "F22a", "F23"], dtype={"sembol": str, "pazar": str})
+              if "S7" in Hv else None)
     except (OSError, ValueError) as ex:
-        raise GEHata(f"T1.6 özellik dosyası okunamadı: {ex}")
-    for Z in (F, F9):
+        raise GEHata(f"{ad} özellik dosyası okunamadı: {ex}")
+    for Z in [z for z in (F, F9, F7) if z is not None]:
         Z["tarih"] = pd.to_datetime(Z["tarih"])
         if Z.duplicated(["pazar", "sembol", "tarih"]).any():
-            raise GEHata("T1.6 özellik dosyasında (pazar, sembol, tarih) tekil değil")
+            raise GEHata(f"{ad} özellik dosyasında (pazar, sembol, tarih) tekil değil")
     M = X.merge(F, on=["pazar", "sembol", "tarih"], how="left", validate="1:1", indicator="_m1")
     M = M.merge(F9, on=["pazar", "sembol", "tarih"], how="left", validate="1:1", indicator="_m2")
     if (M._m1 != "both").any() or (M._m2 != "both").any():
-        raise GEHata(f"T1.6: özellik satırı olmayan olay var (F15/F17 {int((M._m1 != 'both').sum())}, F24-F29 {int((M._m2 != 'both').sum())})")
-    T1 = E["havuz"]["S1"]
+        raise GEHata(f"{ad}: özellik satırı olmayan olay var (F15/F17 {int((M._m1 != 'both').sum())}, F24-F29 {int((M._m2 != 'both').sum())})")
+    if F7 is not None:
+        M = M.merge(F7, on=["pazar", "sembol", "tarih"], how="left", validate="1:1", indicator="_m3")
+        if (M._m3 != "both").any():
+            raise GEHata(f"{ad}: özellik satırı olmayan olay var (F22-F23 {int((M._m3 != 'both').sum())})")
+    g = lambda c: M[c].to_numpy(float)  # noqa: E731
+    sart = np.ones(len(M), bool)
     with np.errstate(invalid="ignore"):
-        s1 = (M.F15.to_numpy(float) <= float(T1["F15_ust"])) & (M.F17.to_numpy(float) <= float(T1["F17_ust"]))
-    A = YH.yh_s9_alt(M[list(_GE_S9_OZ)].reset_index(drop=True)); s9 = np.ones(len(M), bool)
-    for v in A.values():
-        s9 &= v
+        s1b = None
+        for k_ in ("S1", "S1_bilgi"):
+            if k_ in Hv:
+                v_ = (g("F15") <= float(Hv[k_]["F15_ust"])) & (g("F17") <= float(Hv[k_]["F17_ust"]))
+                if k_ == "S1":
+                    sart &= v_
+                else:
+                    s1b = v_
+        if "S3" in Hv:
+            sart &= g("F2") >= float(Hv["S3"]["F2_min"])
+        if "S5" in Hv:
+            sart &= g("F4") <= float(Hv["S5"]["F4_ust"])
+        if "konum" in Hv:
+            sart &= g("F15") <= float(Hv["konum"]["F15_ust"])
+        if "S7" in Hv:
+            T7 = Hv["S7"]
+            sart &= (g("F22") > float(T7["F22_alt_acik"])) & (g("F22a") < float(T7["F22a_ust_acik"])) & (g("F23") >= float(T7["F23_min"]))
+    if "S9" in Hv:
+        A = YH.yh_s9_alt(M[list(_GE_S9_OZ)].reset_index(drop=True))
+        for v in A.values():
+            sart &= v
     sinir = pd.Timestamp(GE_ESIK["kriz"]) - pd.Timedelta(days=int(E["giris_kriz_pay_gun"]))
-    tem = (M.deneme == E["deneme"]).to_numpy() & M.donem.isin(list(E["donem"])).to_numpy() & s1 & s9
+    tem = (M.deneme == E["deneme"]).to_numpy() & M.donem.isin(list(E["donem"])).to_numpy() & sart
     kr = (M.giris <= sinir).to_numpy()
-    H = M[tem & kr][["pazar", "donem", "sembol", "tarih", "giris"]].sort_values(["pazar", "sembol", "tarih"], kind="mergesort").reset_index(drop=True)
+    kol = ["pazar", "donem", "sembol", "tarih", "giris"]
+    if s1b is not None:
+        M["s1"] = s1b; kol.append("s1")
+    H = M[tem & kr][kol].sort_values(["pazar", "sembol", "tarih"], kind="mergesort").reset_index(drop=True)
     say = lambda Z: {f"{a} {b}": int(v) for (a, b), v in Z.groupby(["pazar", "donem"]).size().items()}  # noqa: E731
     H.attrs["sayim"] = {"kriz_suzgeci_once": int(tem.sum()), "kriz_suzgeci_once_pazar_donem": say(M[tem]),
                         "kriz_disi": [f"{r.pazar} {r.sembol} giris {pd.Timestamp(r.giris).date()}" for r in M[tem & ~kr].itertuples()],
                         "havuz": int(len(H)), "havuz_pazar_donem": say(H)}
+    if s1b is not None:
+        H.attrs["sayim"]["havuz_s1_dipte"] = int(H.s1.sum())
     return H
 
 
@@ -1981,6 +2080,12 @@ def ge_tur_orneklem_t16(yol: Optional[str] = None, cikti: Optional[str] = None, 
         raise GEHata(f"T1.6: tur {tl[-1]} için olay kalmadı (seçilen {len(S)})")
     S["parmak"] = S.F19.fillna(-1).astype(int)
     sayim.update({"secilen": int(len(S)), "tur_n": {int(t): int((S.tur == t).sum()) for t in tl}})
+    if len(tl) == 1:                                     # T1.7 / T1.8: seçilmeyen havuz sonraki turlar için saklanır (PDF yok)
+        R_ = U.drop(index=U.index[al])
+        sayim.update({"kalan_secilmeyen": int(len(R_)),
+                      "kalan_secilmeyen_pazar_donem": {f"{a} {b}": int(v) for (a, b), v in R_.groupby(["pazar", "donem"]).size().items()}})
+    if "s1" in S.columns:                                # T1.7: Ş1 dipte bilgi (şart değil)
+        sayim["secilen_s1_dipte"] = {int(t): int(S.loc[S.tur == t, "s1"].astype(bool).sum()) for t in tl}
     S = S[["tur", "sayfa", "pazar", "donem", "sembol", "tarih", "giris", "parmak"]]
     S.attrs["sayim"] = sayim
     return S
@@ -2065,10 +2170,11 @@ def _ge_tur_font() -> str:
 
 
 def ge_tur_pdf(no: int, sayfalar: List[int], png: str, yol: str, iki_soru: bool = False, a_kutu: bool = False, s7: bool = False,
-               u_dip: bool = False, pazar: Optional[Dict[int, str]] = None) -> str:
+               u_dip: bool = False, pazar: Optional[Dict[int, str]] = None, ust_not: Optional[str] = None) -> str:
     """TUR_K_KOR.pdf: her sayfa yalnız grafik + açıklama + Cemal'in işaret satırı (hisse adı / tarih / pazar / sonrası yok).
     iki_soru (T1.2, tur >= 2): alt iki satır A (bölge / tavan doğru mu) ve B (bu mumdan girilir mi).
-    a_kutu (T1.3, tur >= 3): A sorusu çerçeveli kutuda tek başına ('A:  ✓  /  X'), B'den ayrı satır ve boşlukla; grafik biraz küçülür."""
+    a_kutu (T1.3, tur >= 3): A sorusu çerçeveli kutuda tek başına ('A:  ✓  /  X'), B'den ayrı satır ve boşlukla; grafik biraz küçülür.
+    ust_not (T1.7 / T1.8): yalnız İLK sayfanın en üstünde havuz notu (hisse adı / tarih yok); None ise çıktı T1.6 ile bayt bayt aynı."""
     from reportlab.lib.pagesizes import A4, landscape
     from reportlab.pdfgen import canvas
     f = _ge_tur_font()
@@ -2076,10 +2182,13 @@ def ge_tur_pdf(no: int, sayfalar: List[int], png: str, yol: str, iki_soru: bool 
     os.makedirs(os.path.dirname(os.path.abspath(yol)), exist_ok=True)
     c = canvas.Canvas(yol, pagesize=(W, Hh), invariant=1)
     c.setTitle(f"HAKEM TURU {int(no)}"); c.setAuthor(""); c.setCreator(""); c.setProducer(""); c.setSubject(""); c.setKeywords("")
-    for s in sayfalar:
+    for j0, s in enumerate(sayfalar):
         p = os.path.join(png, f"No_{int(s)}.png")
         if not os.path.exists(p):
             raise GEHata(f"PNG yok: {p}")
+        if ust_not and j0 == 0:
+            c.setFont(f, 9)
+            c.drawString(30, Hh - 13, f"Not: {ust_not}")
         c.setFont(f, 12)
         if u_dip:
             if not pazar or int(s) not in pazar:
@@ -2255,7 +2364,7 @@ def _ge_tur_t16_ciz(S: pd.DataFrame, hedef: str, veri: Optional[str] = None, ola
 
 def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = None, veri: Optional[str] = None, olay: Optional[str] = None,
                    uzerine: bool = False, E: Optional[Dict[str, Any]] = None, gosterilen: Optional[Tuple[set, set]] = None) -> Dict[str, Any]:
-    """T1.6: TUR 4 ve TUR 5 BİRLİKTE açılır (tek çekiliş): örneklem (sonuç sütunsuz) -> PNG (scratchpad tur4_png / tur5_png) ->
+    """T1.6: TUR 4 ve TUR 5 BİRLİKTE açılır (tek çekiliş; T1.7 / T1.8: tek tur, E['turlar'] tek elemanlı): örneklem (sonuç sütunsuz) -> PNG (scratchpad tur4_png / tur5_png) ->
     TUR_K_KOR.pdf (sızıntı kapısı 0, <= 12 MB) + tur_K_anahtar.json (gizli), iki tur için; TUR_DEFTERI.md'ye açılış bölümü (ekleme).
     Önceki tur ÖLÇÜLMEDEN açılır (E['onceki_tur_olcusuz']; ana model kararı); önceki turun anahtarı ŞART (dışlama)."""
     t0 = time.time(); warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -2283,7 +2392,7 @@ def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = 
         gelog.info("tur %d görsel: %d (%.0f sn)", k, len(S), time.time() - t0)
         yp = ge_tur_yol("pdf", k, cikti)
         ge_tur_pdf(k, [int(x) for x in S.sayfa], png[k], yp, iki_soru=True, a_kutu=True, u_dip=True,
-                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()})
+                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()}, ust_not=E.get("ust_not"))
         mb = os.path.getsize(yp) / 2 ** 20
         sz = ge_tur_sizinti_pdf(yp, S)
         if sz["sembol"] or sz["tarih"] or mb > 12.0:
@@ -2294,7 +2403,7 @@ def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = 
              "tur_esik_surum": E["surum"], "parmak_surum": PS["surum"], "parmak_esik_sha": PS["sha"],
              "parmak_sha": _ge_sha_dosya(_ge_yol(PS["dosya"]["satir"], cikti)), "iki_soru": True, "a_kutu": True, "u_dip": True,
              "tavan_kaynak": E["tavan_kaynak"], "parmak_katman": False, "deneme": E["deneme"], "cift": tl, "cift_sira": tl.index(k) + 1,
-             "onceki_tur_olcusuz": E["onceki_tur_olcusuz"], "havuz": sayim,
+             "onceki_tur_olcusuz": E["onceki_tur_olcusuz"], "havuz": sayim, **({"ust_not": E["ust_not"]} if E.get("ust_not") else {}),
              "olay_sha": _ge_sha_dosya(olay_yol), "ozellik_sha": _ge_sha_dosya(_ge_yol("ozellik", cikti)),
              "ozellik_s7_sha": _ge_sha_dosya(os.path.join(KOK_GE, E["havuz"]["ozellik_s7"])),
              "ozellik_s9_sha": _ge_sha_dosya(os.path.join(KOK_GE, E["havuz"]["ozellik_s9"])),
@@ -2309,7 +2418,7 @@ def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = 
                        "parmak": {f"{a} parmak={b}": int(v) for (a, b), v in S.groupby(["pazar", "parmak"]).size().items()}}
     yd = ge_tur_yol("defter", tl[0], cikti)
     eski = open(yd, encoding="utf-8").read() if os.path.exists(yd) else "# TUR DEFTERİ — hakem turları (Cemal vs model; CLAUDE.md 'Hakem turları')\n"
-    bas = f"## AÇILIŞ — TUR {tl[0]} / {tl[1]} ({E['surum']})"
+    bas = f"## AÇILIŞ — TUR {' / '.join(str(k) for k in tl)} ({E['surum']})"
     if re.search(rf"^{re.escape(bas)}", eski, flags=re.M):
         if not uzerine:
             raise GEHata("TUR_DEFTERI.md'de bu açılış zaten var")
@@ -2320,21 +2429,29 @@ def ge_tur_ac_cift(cikti: Optional[str] = None, png: Optional[Dict[int, str]] = 
 
 
 def ge_tur_acilis_bolum(R: Dict[str, Any], E: Dict[str, Any]) -> str:
-    """TUR_DEFTERI.md açılış bölümü (T1.6; sonuç yok, yalnız kimliksiz sayımlar)."""
+    """TUR_DEFTERI.md açılış bölümü (T1.6 / T1.7 / T1.8; sonuç yok, yalnız kimliksiz sayımlar). T1.6 metni değişmedi (varsayılanlar)."""
     tl = R["turlar"]; sy = R["sayim"]
     pzd = lambda d: ", ".join(f"{k} {v}" for k, v in d.items())  # noqa: E731
-    s = [f"## AÇILIŞ — TUR {tl[0]} / {tl[1]} ({E['surum']}) ({_ge_simdi()})", "",
-         f"- Sürüm {E['surum']} (TUR4_IS_TANIMI.md; ön kayıtlı, sonuç görülmeden); tohum {int(E['tohum_taban']) + tl[0]} (tek permütasyon, kotasız); "
-         f"tur eşik sha {ge_esik_sha(E)[:12]}.",
-         f"- Havuz (U dip = Y1 olayı ∧ Ş1 dipte ∧ Ş9 U dip; Ş2 şart değil; dönem {' / '.join(E['donem'])}): kriz süzgecinden önce "
+    s = [f"## AÇILIŞ — TUR {' / '.join(str(k) for k in tl)} ({E['surum']}) ({_ge_simdi()})", "",
+         f"- Sürüm {E['surum']} ({E.get('is_tanimi', 'TUR4_IS_TANIMI.md')}; ön kayıtlı, sonuç görülmeden); tohum {int(E['tohum_taban']) + tl[0]} "
+         f"(tek permütasyon, kotasız); tur eşik sha {ge_esik_sha(E)[:12]}.",
+         f"- Havuz ({E.get('havuz_kisa', 'U dip = Y1 olayı ∧ Ş1 dipte ∧ Ş9 U dip; Ş2 şart değil')}; dönem {' / '.join(E['donem'])}): kriz süzgecinden önce "
          f"{sy.get('kriz_suzgeci_once')}; giriş <= kriz - {E['giris_kriz_pay_gun']} gün sonrası {sy.get('havuz')} ({pzd(sy.get('havuz_pazar_donem', {}))}); "
          f"kriz süzgecinde düşen {len(sy.get('kriz_disi', []))}.",
-         f"- Gösterilmiş (300 + hakem + TUR 1-3 + S7 PDF 50; olay ve hisse) çıkan {sy.get('gosterilen_cikan')}; kalan {sy.get('kalan')} "
+         f"- Gösterilmiş ({E.get('gosterilen_kisa', '300 + hakem + TUR 1-3 + S7 PDF 50')}; olay ve hisse) çıkan {sy.get('gosterilen_cikan')}; kalan {sy.get('kalan')} "
          f"({pzd(sy.get('kalan_pazar_donem', {}))}); hisse başına en çok {E['sembol_azami']}; seçilen {sy.get('secilen')}."]
     for k in tl:
         T = R["tur"][k]
         s.append(f"- TUR {k}: {T['sayfa']} sayfa ({pzd(T['dagilim'])}); parmak F19 (bilgi): {pzd(T['parmak'])}; PDF {T['boyut_mb']} MB, "
                  f"sızıntı sembol {T['sizinti']['sembol']} / tarih {T['sizinti']['tarih']}.")
+    if "secilen_s1_dipte" in sy:
+        s.append(f"- Ş1 dipte (bilgi, şart değil): havuzda {sy.get('havuz_s1_dipte')}; seçilen sayfalarda "
+                 + ", ".join(f"TUR {k} {v}" for k, v in sy["secilen_s1_dipte"].items()) + ".")
+    if "kalan_secilmeyen" in sy:
+        s.append(f"- Seçilmeyen kalan havuz (sonraki turlar için saklanır; PDF yok): {sy['kalan_secilmeyen']} "
+                 f"({pzd(sy.get('kalan_secilmeyen_pazar_donem', {}))}).")
+    if E.get("ust_not"):
+        s.append(f"- İlk sayfa üst notu: '{E['ust_not']}'.")
     s.append(f"- {E['onceki_tur_olcusuz']}")
     return "\n".join(s)
 
@@ -2371,7 +2488,7 @@ def ge_tur_yeniden(no: int, cikti: Optional[str] = None, veri: Optional[str] = N
         yp = os.path.join(tmp, "kor.pdf")
         ge_tur_pdf(no, [int(x) for x in S.sayfa], kan, yp, iki_soru=bool(E.get("iki_soru", False)), a_kutu=bool(E.get("a_kutu", False)),
                    s7=E.get("tavan_kaynak") == "s7", u_dip=bool(E.get("u_dip", False)),
-                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()} if E.get("u_dip") else None)
+                   pazar={int(r.sayfa): r.pazar for r in S.itertuples()} if E.get("u_dip") else None, ust_not=E.get("ust_not"))
         sha = _ge_sha_dosya(yp)
         return {"tur": no, "sayfa": int(len(S)), "png_karsilastirma": bool(var), "png_farkli": farkli, "pdf_sha": sha,
                 "anahtar_pdf_sha": J.get("pdf_sha"), "dosya_pdf_sha": _ge_sha_dosya(ge_tur_yol("pdf", no, cikti)),
@@ -2684,7 +2801,7 @@ def ge_tur_olc(no: int, cemal_yol: str, cikti: Optional[str] = None, olay: Optio
                          "uyum": _ge_tur_kappa(D), "basari_tanim": GE_TUR_ESIK["basari"], "hedef": GE_TUR_ESIK["hedef"],
                          "cemal_bolge": {k: int((D.cemal_bolge == k).sum()) for k in ("DOĞRU", "YANLIŞ")} | {"yanitsiz": int(D.cemal_bolge.isna().sum())},
                          "bilgi_tanim": GE_TUR_BILGI, "cetvel": {"model": ge_tur_cetvel(D, "model"), "cemal": ge_tur_cetvel(D, "cemal")}}
-    if json.load(open(ge_tur_yol("anahtar", no, cikti), encoding="utf-8")).get("tur_esik_surum") == "T1.6":   # bilgi: dönem kırılımı
+    if json.load(open(ge_tur_yol("anahtar", no, cikti), encoding="utf-8")).get("tur_esik_surum") in ("T1.6", "T1.7", "T1.8"):   # bilgi: dönem kırılımı
         R["donem_kirilim"] = {q: {"model": ge_tur_taraf(D[D.donem == q], "model"), "cemal": ge_tur_taraf(D[D.donem == q], "cemal")}
                               for q in GE_TUR_ESIK_T16["donem"] if (D.donem == q).any()}
     Ds = []
