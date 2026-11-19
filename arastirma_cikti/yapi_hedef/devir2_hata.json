@@ -1,0 +1,12 @@
+[
+ "SAPMA (iş tanımı): F-kodları 'F30'dan başla' denmişti; F30-F42 DEVİR 1'in (ozellik_Y1_d1) kodları olduğu için çakışmasın diye yeni ölçüler F43-F64 olarak kodlandı; DEVİR 1 YENİDEN adayları F30 / F31 / F32'yi aynen kullanır (ön kayıtta yazılı).",
+ "SAPMA (iş tanımı): yh_devir_ozellik / yh_devir_kos adları DEVİR 1'e ait (üzerine yazmak DEVİR 1 regresyonunu bozardı); DEVİR 2 fonksiyonları yh_devir2_ozellik / yh_devir2_kos / yh_d2_* adlarıyla eklendi.",
+ "TEST HATASI (koşudan ve ön kayıt commit'inden önce düzeltildi): VCP / ZigZag sentetik testinin beklentisi yanlıştı (pencere başındaki dip pivotu sayılmamış, son daralma hacmi yanlış aralığa konmuştu); kod değişmedi, test düzeltildi; 314 / 314 geçti.",
+ "YORUM / MEKANİK İLİŞKİ: PP (F43 = 1) Y1 olaylarının ABD'de ~%48'inde, BIST'te ~%85'inde tutuyor (Y1 sinyal günü tanım gereği yukarı ve hacimli kırılım mumu); süzgeç ayırt edici değil, MARJ küçük çıkması beklenen mekanik sonuç.",
+ "KAPALI KONU: PP ve RV 'giriş zamanlaması / onay / hacim' kapalı konusuna dokunur; ana model / Cemal onayı alınmadan yalnız yapı ölçüsü olarak koşuldu (ön kayıtta işaretli); ikisi de KATKI+ değil.",
+ "GÜÇ: KOL-B (Y9) AVR tabanı küçük (eğitim 89, ambargolu sınama 72 olay) -> her kol B adayı AVR'de n < 30; karne v2'nin 'ABD ve AVR ayrı ayrı n >= 30' şartı kol B için yapısal olarak sağlanamaz (kol B satırları ÖLÇÜLEMEDİ okunmalı, iz değil sözü kurulmaz).",
+ "GÜÇ: VCP kaynak eşikleriyle çok nadir (ABD+AVR eğitim 36, sınama 21 olay kol A) -> ÖLÇÜLEMEDİ.",
+ "K1 TABAKA: n < 30 tabakada şart uygulanmadı; küçük n'li satırlarda 'tabaka tuttu' görünmesi boştur (bu satırlar zaten n şartından SORGULA). Kol A'da 9 ana adayın hepsinde en az bir tabakada MARJ <= 0 çıktı (İŞARET DEĞİŞTİ).",
+ "BELİRSİZLİK (ön kayıtta sabitlendi): 'leave-3-out' iş tanımında tanımsızdı; 'tek tek çıkarıldığında MARJ'ı en çok düşüren 3 ay birlikte çıkarılır' olarak koşudan önce yazıldı.",
+ "K7 / seçicilik: RV 'günün ilk 20'si' evren büyüklüğüne bağlı (ABD ~1.400 hisse, AVR / BIST ~580) ve kesit evreni bugünün listesi (batanlar yok); pazarlar arası seçicilik farklı."
+]
