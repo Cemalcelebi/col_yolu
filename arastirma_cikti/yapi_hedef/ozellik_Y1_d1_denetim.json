@@ -1,0 +1,84 @@
+{
+ "surum": "YAPI_HEDEF v1.0 (2026-11-17): yapı kuralları Y1-Y5, hedef +%5 / +%10 stop'tan önce 15 bar, geçici takip stopu, eş + plasebo",
+ "esik_d1_sha": "2b73f2660906871f0c18148e9524cfa3aa577bea303d24f2334769228457a318",
+ "olay_y1_sha": "e13eb12699a6d749bccc16ee4cde5ac467ea2bf8687b23a6a821fef74bf8871b",
+ "pazar": {
+  "ABD": {
+   "olay": 14881,
+   "prefix_tuttu": 25,
+   "mahkeme_prefix_tuttu": 3,
+   "mahkeme_hata": 0,
+   "nan": {
+    "F30": 1403,
+    "F31": 3089,
+    "F32": 3089,
+    "F33": 3089,
+    "F34": 3089,
+    "F35": 3089,
+    "F36": 0,
+    "F37": 0,
+    "F38": 0,
+    "F39": 0,
+    "F40": 130,
+    "F41": 2,
+    "F42": 2
+   },
+   "inf": {
+    "F41": 820,
+    "F42": 390
+   }
+  },
+  "AVR": {
+   "olay": 7054,
+   "prefix_tuttu": 25,
+   "mahkeme_prefix_tuttu": 3,
+   "mahkeme_hata": 0,
+   "nan": {
+    "F30": 382,
+    "F31": 917,
+    "F32": 917,
+    "F33": 917,
+    "F34": 917,
+    "F35": 917,
+    "F36": 0,
+    "F37": 0,
+    "F38": 0,
+    "F39": 0,
+    "F40": 63,
+    "F41": 10,
+    "F42": 10
+   },
+   "inf": {
+    "F41": 590,
+    "F42": 266
+   }
+  },
+  "BIST": {
+   "olay": 4728,
+   "prefix_tuttu": 25,
+   "mahkeme_prefix_tuttu": 3,
+   "mahkeme_hata": 0,
+   "nan": {
+    "F30": 744,
+    "F31": 1588,
+    "F32": 1588,
+    "F33": 1588,
+    "F34": 1588,
+    "F35": 1588,
+    "F36": 0,
+    "F37": 0,
+    "F38": 0,
+    "F39": 0,
+    "F40": 54,
+    "F41": 0,
+    "F42": 0
+   },
+   "inf": {
+    "F41": 273,
+    "F42": 147
+   }
+  }
+ },
+ "satir": 26663,
+ "sha": "e80d9fb9af3d51c72f5f707c9cddb0319518f6aad5f5b25711e8dfb97f91fd7e"
+}

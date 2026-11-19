@@ -18,6 +18,8 @@
     etiketi, ESIK_TUR2_SHA = 2. tur mührü; uçtan uca (9'da) onkayit3 + kos + kapı + Y1 regresyonu, önceki turlar değişmez
 13) 7. TUR (PUAN): sızıntı kapısı (ihlal eden bölünme DURUR, simetrik, her eğitimde), tampon, dilim hesabı, plasebo karıştırma,
     yapay veri ile öğrenilebilir sinyal / gürültü, yürüyen katlar, NaN medyan + bayrak, uçtan uca onkayit7 + kos7 + rapor7 + kapı
+14) DEVİR 1 (F30-F42): Corwin-Schultz / gece-gün içi / Amihud / sıfır getiri / ER / R-MDD / toparlanma hızı elle, prefix (t sonrası
+    değişince aynı; veri t'de kesilince mahkeme dahil aynı), süzgeç (NaN / inf), etiket, regresyon kapısı (Y1-Y12 sha), kapı
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -1304,6 +1306,94 @@ try:
 finally:
     YH.YH_YOL.update(eski_yol7)
     shutil.rmtree(t7, ignore_errors=True)
+
+# ---------------------------------------------------------------- 14) DEVİR 1 (F30-F42, süzgeç karnesi)
+print("\n14) DEVİR 1: F30-F42 elle, prefix, süzgeç, etiket, regresyon kapısı")
+import math as _m  # noqa: E402
+_h = np.array([10.5, 10.8, 11.0]); _l = np.array([10.0, 10.1, 10.4]); _c = np.array([10.2, 10.6, 10.9])
+_b = np.log(10.5 / 10.0) ** 2 + np.log(10.8 / 10.1) ** 2; _g = np.log(10.8 / 10.0) ** 2; _k = 3 - 2 * _m.sqrt(2)
+_a = (_m.sqrt(2 * _b) - _m.sqrt(_b)) / _k - _m.sqrt(_g / _k); _S1 = max(2 * (_m.exp(_a) - 1) / (1 + _m.exp(_a)), 0.0)
+_b2 = np.log(10.8 / 10.1) ** 2 + np.log(11.0 / 10.4) ** 2; _g2 = np.log(11.0 / 10.1) ** 2
+_a2 = (_m.sqrt(2 * _b2) - _m.sqrt(_b2)) / _k - _m.sqrt(_g2 / _k); _S2 = max(2 * (_m.exp(_a2) - 1) / (1 + _m.exp(_a2)), 0.0)
+_v, _n = YH._yh_d1_cs(_h, _l, _c, 0, 3)
+kontrol("D1: Corwin-Schultz iki çift elle = kod (negatif -> 0)", _n == 2 and abs(_v - (_S1 + _S2) / 2) < 1e-12, f"{_v:.6g}")
+_h2 = np.array([10.5, 12.0]); _l2 = np.array([10.0, 11.5]); _c2 = np.array([10.2, 11.8])      # gece boşluğu: L1 > C0 -> 1,3 aşağı kaydırılır
+_b3 = np.log(10.5 / 10.0) ** 2 + np.log(10.7 / 10.2) ** 2; _g3 = np.log(10.7 / 10.0) ** 2
+_a3 = (_m.sqrt(2 * _b3) - _m.sqrt(_b3)) / _k - _m.sqrt(_g3 / _k); _S3 = max(2 * (_m.exp(_a3) - 1) / (1 + _m.exp(_a3)), 0.0)
+kontrol("D1: CS gece düzeltmesi (L_j+1 > C_j) elle = kod", abs(YH._yh_d1_cs(_h2, _l2, _c2, 0, 2)[0] - _S3) < 1e-12)
+
+_d = rastgele_hisse(400, 77); _O, _H, _L, _C, _V = (_d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close", "Volume"))
+_i, _sol = 330, 300
+_r = YH.yh_d1_bar(_O, _H, _L, _C, _V, _i, _sol)
+_j = np.arange(_sol, _i)
+_B = np.prod(_C[_j] / _O[_j]) - 1; _A = np.prod(_O[_j] / _C[_j - 1]) - 1
+kontrol("D1: F31 gün-içi birikim ve F32 = gece - gün-içi elle", abs(_r["F31"] - _B) < 1e-12 and abs(_r["F32"] - (_A - _B)) < 1e-12)
+_il = lambda jj: np.abs(_C[jj] / _C[jj - 1] - 1) / (_C[jj] * _V[jj])  # noqa: E731
+_jo = np.arange(_sol - 60, _sol)
+kontrol("D1: F33 Amihud oranı elle", abs(_r["F33"] - _il(_j).mean() / _il(_jo).mean()) < 1e-9 * abs(_r["F33"]))
+kontrol("D1: F35 ER bölge ve F36 ER_10 elle",
+        abs(_r["F35"] - abs(_C[_i - 1] - _C[_sol - 1]) / np.abs(np.diff(_C[_sol - 1:_i])).sum()) < 1e-12
+        and abs(_r["F36"] - abs(_C[_i - 1] - _C[_i - 11]) / np.abs(np.diff(_C[_i - 11:_i])).sum()) < 1e-12)
+_P = np.log(_C[_i - 30:_i]); _dd = np.maximum.accumulate(_P) - _P; _t = int(np.argmax(_dd))
+kontrol("D1: F37 R/MDD ve F38 R elle", abs(_r["F38"] - (_P[-1] - _P[_t])) < 1e-12 and abs(_r["F37"] - (_P[-1] - _P[_t]) / _dd.max()) < 1e-12)
+_lo = _i - 250; _js = _lo + int(np.argmin(_L[_lo:_sol])); _hit = [m for m in range(_js + 1, _sol) if _C[m] >= _L[_js] * 1.10]
+kontrol("D1: F41 toparlanma hızı elle (UL = inf)", (_r["F41"] == _hit[0] - _js) if _hit else np.isinf(_r["F41"]), _r["F41"])
+_Cz = _C.copy(); _Cz[_sol + 3] = _Cz[_sol + 2]
+kontrol("D1: F34 sıfır getiri payı farkı elle", abs(YH.yh_d1_bar(_O, _H, _L, _Cz, _V, _i, _sol)["F34"] - (1 / 30 - 0.0)) < 1e-12)
+_O2, _H2, _L2, _C2, _V2 = (x.copy() for x in (_O, _H, _L, _C, _V))
+for x in (_O2, _H2, _L2, _C2, _V2):
+    x[_i:] = x[_i:] * 3.7
+_r2 = YH.yh_d1_bar(_O2, _H2, _L2, _C2, _V2, _i, _sol)
+kontrol("D1: prefix: t barı ve sonrası değişince F30-F42 (bar) aynı", all((np.isnan(_r[k]) and np.isnan(_r2[k])) or _r[k] == _r2[k] for k in _r))
+kontrol("D1: kısa bölge (< 15) F31-F35 NaN, ER_10 var", all(np.isnan(YH.yh_d1_bar(_O, _H, _L, _C, _V, 330, 320)[k]) for k in ("F31", "F33", "F35"))
+        and np.isfinite(YH.yh_d1_bar(_O, _H, _L, _C, _V, 330, 320)["F36"]))
+
+import GOZ_ETIKET as _GE  # noqa: E402
+_dh = YH._yh_hazir(rastgele_hisse(900, 5)); _T = _GE.ge_s6(_dh)
+_al = [_dh.index[k] for k in np.flatnonzero(_T["al"]) if k > 300][:4]
+if _al:
+    _F = YH.yh_devir_ozellik(_dh, _al, hazir=True, mahkeme=True)
+    _ok = True
+    for _tt, (_, _rr) in zip(_al, _F.iterrows()):
+        _k2 = YH.yh_devir_ozellik(_dh[_dh.index <= _tt], [_tt], hazir=True, mahkeme=True).iloc[0]
+        _ok &= np.allclose(_k2[YH._YH_D1_OZ].to_numpy(float), _rr[YH._YH_D1_OZ].to_numpy(float), equal_nan=True)
+    kontrol("D1: yh_devir_ozellik veri t'de kesilince aynı (F39 / F40 mahkeme dahil)", bool(_ok) and (_F._hata == "").all(), len(_al))
+else:
+    kontrol("D1: sentetik seride S6 al günü bulundu", False)
+
+_Mt = pd.DataFrame({"pazar": ["ABD"] * 5 + ["AVR"] * 2, "F30": [0.5, 0.9, 1.2, np.nan, 0.7, 0.5, 0.95], "F41": [3, 16, np.inf, np.nan, 15, 1, 2],
+                    "F39": [0, 1, 0, np.nan, 0, 1, 0]})
+_Q = {"yon1": {p: {"F30": {"q25": 0.8, "q75": 1.1}} for p in ("ABD", "AVR", "BIST")}}
+kontrol("D1: süzgeç: W1 (< 1 ve <= q25), NaN tutmaz", list(YH.yh_d1_maske(_Mt, "W1", _Q, "yon1")) == [True, False, False, False, True, True, False])
+kontrol("D1: süzgeç: E2 (<= 15; inf UL tutmaz) / E2t (> 15; UL tutar) / E1 (bayrak 0)",
+        list(YH.yh_d1_maske(_Mt, "E2", _Q, "yon1")) == [True, False, False, False, True, True, True]
+        and list(YH.yh_d1_maske(_Mt, "E2t", _Q, "yon1")) == [False, True, True, False, False, False, False]
+        and list(YH.yh_d1_maske(_Mt, "E1", _Q, "yon1")) == [True, False, True, False, True, False, True])
+_c = lambda n, f, m, st=0.3, es=0.3: {"n": n, "fark": f, "marjinal": m, "st": st, "es_st": es}  # noqa: E731
+kontrol("D1: etiket KATKI+ / KATKI− / SORGULA (n, ters yön, stop şartı)",
+        YH.yh_d1_etiket({"egitim": _c(40, .02, .01), "sinama": _c(50, .03, .02), "ters": _c(40, .01, .005)}, 30) == "KATKI+"
+        and YH.yh_d1_etiket({"egitim": _c(40, .02, .01), "sinama": _c(50, .03, .02, .4, .3), "ters": _c(40, .01, .005)}, 30) == "SORGULA"
+        and YH.yh_d1_etiket({"egitim": _c(40, .02, .01), "sinama": _c(50, .03, .02), "ters": _c(40, -.01, -.005)}, 30) == "SORGULA"
+        and YH.yh_d1_etiket({"egitim": _c(29, .02, .01), "sinama": _c(50, .03, .02), "ters": _c(40, .01, .005)}, 30) == "SORGULA"
+        and YH.yh_d1_etiket({"egitim": _c(40, -.02, -.01), "sinama": _c(50, .01, -.02), "ters": _c(40, -.01, -.005)}, 30) == "KATKI−")
+try:
+    YH._yh_d1_regresyon(YH.YH_YOL["cikti"]); _rg = True
+except YH.YHHata:
+    _rg = False
+kontrol("D1: regresyon kapısı: YH_ESIK / 6 / 7 sha = ON_KAYIT_5 / 6 / 7 (Y1-Y12 eşikleri değişmedi)", _rg)
+_E2 = copy.deepcopy(YH.YH_ESIK)
+_E2["denemeler"]["Y1"] = dict(_E2["denemeler"].get("Y1", {}), _test=1)
+kontrol("D1: Y1 eşiği değişince YH_ESIK sha değişir (kapı yakalar)", YH.yh_esik_sha(_E2) != YH.yh_esik_sha())
+_td = tempfile.mkdtemp()
+try:
+    YH.yh_d1_kapi(_td, git=False); _kp = False
+except YH.YHHata:
+    _kp = True
+shutil.rmtree(_td, ignore_errors=True)
+kontrol("D1: ön kayıt yokken koşu kapısı DURUR", _kp)
+kontrol("D1: kontrol tablosu 14 satır, adlar önekli (çakışma kapısı)", YH.yh_kontrol_tablosu(YH.YH_KONTROL_D1).count("| K") >= 14
+        and all(k.startswith(("yh_d1", "yh_devir", "_yh_d1", "YH_D1", "YH_ESIK_D1", "_YH_D1", "YH_KONTROL_D1", "yh_esik_d1"))
+                for k in dir(YH) if "d1" in k.lower() or "devir" in k.lower()))
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
