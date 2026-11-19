@@ -1,0 +1,6 @@
+[
+ "H-D1-1 (süreç / kod): koşu kapısında OZELLIK_SHA deseni D1_OZELLIK_SHA satırını da yakaladı; ilk koşu kapıda DURDU (getiri okunmadı). Desen düzeltildi, ön kayıt ayrı commit ile yenilendi (b7ee46d -> 87173a0); tanım / eşik / özellik sha'ları aynı.",
+ "H-D1-2 (ölçüt tasarımı): W4t ilk taslakta yalnız 'F34 >= q75' idi; ABD'de q75 = 0 olduğundan süzgeç ABD 2016-22'de 8.686 olayın 5.174'ünü seçiyordu (dejenere). Getiri görülmeden, ilk ön kayıt commit'inden önce 'F34 > 0 VE >= q75' yapıldı (W4 ile simetrik).",
+ "H-D1-3 (veri kapsamı): F31-F35 bölge >= 15 bar şartı yüzünden Y1 olaylarının ~%21'inde NaN (ABD 3.089 / 14.881); bu olaylar W2-W5a süzgeçlerine giremez, karne yalnız uzun bölgeleri sınar.",
+ "H-D1-4 (yorum riski): tek KATKI+ (W2, kol B) küçük n ile (eğitim 41, sınama 33, ters 39); 36 satırda BH yok; aynı adayın kol A sonucu KATKI− (ters yönlü). Bulgu değil, SORGULA düzeyinde okunmalı; ABD / AVR 2023-26 hücreleri bakılmış."
+]
