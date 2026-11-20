@@ -966,9 +966,15 @@ def ct_olc_olaylar(Ad: pd.DataFrame, veri: Optional[str] = None, E: Dict[str, An
             P = OC.oc_panel(Vd); Cl = YH.yh_kapanis(P, Vd)
             sig = g.assign(tarih=pd.to_datetime(g.tarih), yon=1)
             sig["stop0"] = sig.hat.astype(float) * float(E["olcu"]["stop_carp"])
+            kf = []                     # listedeki t kapanışı / yeni verideki t kapanışı - 1 (yarım bar ya da ayarlama kipi farkı; bilgi)
+            for r_ in sig.itertuples():
+                d_ = Vd["V"].get(r_.sembol); k_ = getattr(r_, "kapanis", np.nan)
+                kf.append(float(k_) / float(d_.Close.loc[r_.tarih]) - 1 if d_ is not None and r_.tarih in d_.index and k_ is not None
+                          and np.isfinite(float(k_)) else np.nan)
+            sig["kapanis_farki"] = kf
             X, say = OC.oc_olay_hazirla(sig[["sembol", "tarih", "pazar"]], P)
             if len(X):
-                X = X.merge(sig[["sembol", "tarih", "stop0", "yon", "hat"] + [c for c in ("kapsam", "sira") if c in sig.columns]],
+                X = X.merge(sig[["sembol", "tarih", "stop0", "yon", "hat", "kapanis_farki"] + [c for c in ("kapsam", "sira") if c in sig.columns]],
                             on=["sembol", "tarih"], how="left")
                 Z = YH.yh_olay_olc(P, Cl, Vd, X, YH._yh_deneme_no("Y1"), OC.OC_ESIK["pazar"].index(p) + 1)
                 Z.insert(0, "pazar", p); out.append(Z)
@@ -995,7 +1001,7 @@ def ct_olc(etiket: str, veri: Optional[str] = None, cikti: Optional[str] = None,
         Hv = Hv.assign(kapsam="havuz")
         if len(A):
             Hv = Hv[~Hv.set_index(["pazar", "sembol", "tarih"]).index.isin(A.set_index(["pazar", "sembol", "tarih"]).index)]
-    Ad = pd.concat([x[["pazar", "sembol", "tarih", "hat", "kapsam"] + (["sira"] if "sira" in x.columns else [])] for x in (A, Hv) if len(x)],
+    Ad = pd.concat([x[["pazar", "sembol", "tarih", "hat", "kapsam"] + [c for c in ("sira", "kapanis") if c in x.columns]] for x in (A, Hv) if len(x)],
                    ignore_index=True)
     Z = ct_olc_olaylar(Ad, veri)
     vson = {}
@@ -1045,8 +1051,11 @@ def ct_olc_md(etiket: str, Z: pd.DataFrame, oz: Dict[str, Any], vson: Dict[str, 
     n = oz.get("hepsi", {}).get("n", 0)
     s += ["", f"Örneklem: n = {n}" + (" < 30: ÖRNEKLEM YETERSİZ; olaylar tek tek okunur, bulgu denmez." if n < 30 else "."),
           "Hayatta kalma: evren bugün işlem gören hisseler (yukarı yanlı).", "",
-          "| kapsam | # | pazar | sembol | sinyal | giriş | giriş açılış | stop0 | h5 | h10 | st5 | +%5 günü | stop günü | eş h5 (n eş) | takip getirisi | çıkış |",
-          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+          "Sütun 'liste/yeni t kapanış': listedeki sinyal günü kapanışının yeni verideki kapanışa farkı (yarım bar ya da ayarlama kipi; > %1 ise o "
+          "satır dikkatle okunur; stop0 listedeki değerdir).", "",
+          "| kapsam | # | pazar | sembol | sinyal | giriş | giriş açılış | stop0 | h5 | h10 | st5 | +%5 günü | stop günü | eş h5 (n eş) | takip getirisi | çıkış | "
+          "liste/yeni t kapanış |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
     if len(Z):
         Z = Z.sort_values(["kapsam", "pazar", "sembol"], key=lambda c: c.map({"liste": 0, "havuz": 1}) if c.name == "kapsam" else c)
         for r in Z.to_dict("records"):
@@ -1057,7 +1066,7 @@ def ct_olc_md(etiket: str, Z: pd.DataFrame, oz: Dict[str, Any], vson: Dict[str, 
                      f"{_f(g('E0'))} | {_f(g('stop0'))} | {_f(g('h5'), 0) if ol else 'ölçülemedi'} | {_f(g('h10'), 0) if ol else '-'} | "
                      f"{_f(g('st5'), 0) if ol else '-'} | {int(g('k5')) + 1 if ol and np.isfinite(g('k5')) and g('k5') >= 0 else '-'} | "
                      f"{int(g('kst')) + 1 if ol and np.isfinite(g('kst')) and g('kst') >= 0 else '-'} | {_f(g('es_h5'))} ({_f(g('n_es'), 0)}) | "
-                     f"{_y(g('getiri'))} | {r.get('cikis_tur') or ''} |")
+                     f"{_y(g('getiri'))} | {r.get('cikis_tur') or ''} | {_y(g('kapanis_farki'))} |")
     return "\n".join(s)
 
 
