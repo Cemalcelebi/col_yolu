@@ -919,6 +919,15 @@ def pk_kos(cikti: Optional[str] = None, veri: Optional[str] = None, islem: int =
     return J
 
 
+def _pk_z(x: Dict[str, Any]) -> float:
+    """Gösterim: FARK / (boot %95 yarı genişliği / 1,96)."""
+    try:
+        f, a, u = float(x.get("fark")), float(x.get("boot_alt")), float(x.get("boot_ust"))
+    except (TypeError, ValueError):
+        return float("nan")
+    return f / ((u - a) / 2 / 1.959963984540054) if np.isfinite(f) and u > a else float("nan")
+
+
 def _pk_y(x: Any, n: int = 1, isaret: bool = True) -> str:
     try:
         v = float(x)
@@ -989,6 +998,10 @@ def pk_rapor(cikti: Optional[str] = None) -> str:
     s += ["Düz dil: cetvelin bir hücrede >= %80 yakaladığı en küçük delta ve o delta'da en küçük n: " + ("; ".join(gor) if gor else "hiçbiri") + ".",
           f"Plasebo (delta 0) yanlış pozitif payı: ortalama %{100 * fp.yakala.mean():.1f} (en yüksek hücre %{100 * fp.yakala.max():.0f}); iki yönlü "
           f"p ile %{100 * fp.yakala_iki.mean():.1f}.", ""]
+    S0 = pd.DataFrame(J["A"]["satir"]); S0 = S0[(S0.n > 0) & np.isclose(S0.delta.astype(float), 0.0)]
+    s.append("Plasebo (delta 0) hücre başına ortalama FARK (bütün n ve tohumlar; beklenen 0) / yakalama: " + "; ".join(
+        f"{p} {h} {_pk_y(g.fark.mean(), 2)} puan / %{100 * g.yakala.mean():.0f}" for (p, h), g in S0.groupby(["pazar", "hucre"])) + ".")
+    s.append("")
     for p in Ea["pazar"]:
         sy = J["A"]["say"][p]
         s.append(f"- {p} sürüklenmenin ham h5'e etkisi (bütün ANA olaylar tutan olsaydı; eğitim / sınama): " + "; ".join(
@@ -1015,6 +1028,11 @@ def pk_rapor(cikti: Optional[str] = None) -> str:
         s.append(f"| {y['kod']} | {y['pazar']} | {y['hucre']} | {_pk_y(y['h5']['yayilim'])} [{_pk_y(y['h5']['alt'])}, {_pk_y(y['h5']['ust'])}] | "
                  f"{_pk_y(y['r15']['yayilim'], 2)} [{_pk_y(y['r15']['alt'], 2)}, {_pk_y(y['r15']['ust'], 2)}] | "
                  f"{_pk_y(y['r60']['yayilim'], 2)} [{_pk_y(y['r60']['alt'], 2)}, {_pk_y(y['r60']['ust'], 2)}] |")
+    s += ["", "Duyarlılık (aynı olaylar; z = FARK / (boot %95 yarı genişliği / 1,96); işaret beklenen yönle karşılaştırılır):", "",
+          "| B | pazar | kod | hücre | beklenen | z h5 | z r15 | z r60 |", "|---|---|---|---|---|---|---|---|"]
+    for r in J["B"]["sonuc"]:
+        yon = PK_ESIK["B"][r["kod"][:2]]["yon"][r["kod"][2:]]
+        s.append(f"| {r['kod'][:2]} | {r['pazar']} | {r['kod'][2:]} | {r['hucre']} | {yon} | " + " | ".join(_pk_s(_pk_z(r[c]), 2) for c in ("h5", "r15", "r60")) + " |")
     sb = J["B"]["say"]
     s += ["", "Huni: " + "; ".join(f"{k}: sinyal {v.get('girdi')}, havuz olay {v.get('olay_havuz')}, U {v.get('U')}, A {v.get('A')}, ANA {v.get('ana_donem')}"
                                  for k, v in sb.items() if isinstance(v, dict) and "girdi" in v)]
@@ -1064,6 +1082,16 @@ PK_HATA_NOT: List[str] = [
     "B1 eğitim hücresi V_ABD 2015-06 başlangıcı yüzünden 252 bar geçmiş ancak 2016 ortasından itibaren var (eğitim ilk ayları eksik).",
     "B2 PEAD tepki vekili 2 günlük artık getiri (analist sürprizi değil); 8-K 2.02 bilanço dışı (ara duyuru) başvuruları da içerir.",
     "B'de ambargo yok (önceden yazılı gerekçe: eşikler sonuç kullanmaz); A DS ambargosunu aynen taşır.",
+    "A plasebosunda AVR sınama hücresi sıfır değil: rastgele 'tutan' kümesi DS içi eşlere göre ortalama +2,2 puan FARK veriyor (n 100'de "
+    "yanlış pozitif %20, yarıda %15). Rastgele etiket altında bu fark DS içi eş geometrisinden (eşler olayın stop uzaklığıyla ölçülür) ve "
+    "küçük hücreden geliyor; DS raporundaki AVR sınama FARK'larının çoğunun pozitif olması bununla okunmalı (cetvel bulgusu).",
+    "A'da AVR sınama n = 1000 ölçülmedi: havuz 1.206 olay, önceden yazılı tavan (tutan <= havuzun 2/3'ü = 804).",
+    "C: BINBN-24 ve KTLEV-24 için kutu sonu penceresinde S6 'al' yok; 120 gün kuralı veri kısa olduğu için (BINBN 2024-10, KTLEV 2024-03 "
+    "başlıyor) ancak 2025-04-03 / 2024-12-12'de sinyal verdi: Cemal'in kırılım günü değil, bu iki satır onun örneğinin sınaması sayılmaz.",
+    "Ön kayıttan önce gerçek veride yalnız getirisiz duman denemesi yapıldı (B sinyal / huni sayıları, C sinyal günleri; h5 / getiri "
+    "hesaplanmadı).",
+    "Rapor gösterimi koşudan SONRA genişletildi (plasebo hücre satırı, z duyarlılık tablosu, ters yön satırı, bu HATA maddeleri); hesap kodu ve "
+    "pozitif_kontrol.json değişmedi (gösterim; ön kayıttaki PK_KOD_SHA koşu anındaki koddur).",
 ]
 
 
@@ -1097,11 +1125,23 @@ def pk_sonuc_metni(J: Dict[str, Any]) -> str:
         karar = "EVET"
     else:
         karar = "KISMEN"
+    ters = []
+    for r in J["B"]["sonuc"]:
+        if r.get("bilgi"):
+            continue
+        yon = PK_ESIK["B"][r["kod"][:2]]["yon"][r["kod"][2:]]
+        for cet in ("h5", "r15", "r60"):
+            x = r[cet]
+            if not x.get("n") or x.get("boot_alt") is None or x.get("boot_ust") is None:
+                continue
+            if (yon == "+" and x["boot_ust"] < 0) or (yon == "-" and x["boot_alt"] > 0):
+                ters.append(f"{r['kod']}/{cet} {r['hucre']} ({_pk_y(x['fark'], 2)}, boot [{_pk_y(x['boot_alt'], 2)}, {_pk_y(x['boot_ust'], 2)}])")
     satir = [f"**Cetvel bilinen izi görüyor mu: {karar}** (ön kayıt bölüm 2 kuralı).",
              f"- A: gerçek DS boyutunda (yari) dört hücrede de >= %80 yakalanan en küçük sürüklenme: {('+%' + str(round(100 * a_d))) if a_d else 'yok (delta +%5 bile)'}; "
              f"plasebo yanlış pozitif ortalama %{100 * fp:.1f}.",
              f"- B: iki dönemde de beklenen yönde ve p < 0,05 olan (kod, cetvel): " + (", ".join(f"{k}/{c}" for (k, c), v in gor.items() if v) or "yok") + ".",
-             "- Hangi cetvel daha duyarlı: B tablosunda aynı olaylarda h5 FARK aralığı ile r15 / r60 aralıkları yan yana; A'da delta'nın h5'e "
+             "- Beklenen yönün TERSİNE boot aralığı sıfırı dışlayan (kod, cetvel, hücre): " + ("; ".join(ters) or "yok") + ".",
+             "- Hangi cetvel daha duyarlı: duyarlılık tablosu (z) aynı olaylarda h5 / r15 / r60'ı yan yana koyar; A'da delta'nın h5'e "
              "dönüşümü (sürüklenme satırları) h5'in fiyat sürüklenmesini ne kadar seyrelttiğini gösterir."]
     return "\n".join(satir)
 
