@@ -6,7 +6,7 @@ Sonuç etiketleri: TUTTU (ölçüm kuralın yönünü verdi ya da itiraz doğrul
 
 ## 1. ÖZET
 
-- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 6 (K30-K35) + TUR 1 2 (K36-K37) + TUR 2 2 (K38-K39) + S7 PDF 1 (K40) + TUR 4 6 (K41-K46) + MACD 1 (K47) + çift kazan 1 (K48) (toplam 188; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
+- Kural sayısı: 140 (A çöl / bölge 21, B giriş 15, C çıkış 8, D bağlam 10, E mum okuma 14, F dosya / temel 12, G boyut / risk 9, H süreç ve itirazlar 23, I tezler 9, J devir notu 19). EK (17 Kas akşam): K kör set 2 dersleri 18 + YAPI_HEDEF değerlendirmesi 11 (K19-K29; sonuç görülerek yazıldı, sınanacak) + hakem PDF'i 6 (K30-K35) + TUR 1 2 (K36-K37) + TUR 2 2 (K38-K39) + S7 PDF 1 (K40) + TUR 4 6 (K41-K46) + MACD 1 (K47) + çift kazan 1 (K48) + Ekim eşleri 3 (K49-K51) (toplam 191; K15 ufuk 15 mum Cemal'in ölçüt kararı). Bunların 113'ü piyasa / işlem kuralı ya da tezi (A-G, I, J1-J15), 27'si süreç kuralı ya da Cemal'in yönteme itirazı (H, J16-J19).
 - Sınanan: 88 / 140 (sınanmayan 52; 16'sı sınanmayacak süreç kuralı).
 - Sonuç, bütün tablo: TUTTU 17 · TUTMADI 51 (40 + 11 TUTMADI*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 52.
 - Yalnız piyasa / işlem kuralları ve tezler (113): TUTTU 7 · TUTMADI 50 (39 + 11*) · ÖLÇÜLEMEDİ 17 · EMARE 3 · SINANMADI 36.
@@ -271,6 +271,9 @@ Cemal 40 sayfalık kör set 2'yi 'son mumda tam girilir mi' diye değil, formasy
 | K46 | VD10 (TUR 4, model): 'büyük resim yükselen' şartı düşüş sonrası dip havuzuyla çelişir; dipte havuzda uygulanmaz; OLUR = dönüş + gövdeli ortalayan kırılım; eleme yalnız K41 ve dev mum | TUR 4 model OLMAZ 18 / 38 gitti, OLUR 2 / 2 | Evet | SINANMADI | TUR 5 | TUR 5 model kuralı | AÇIK |
 | K47 | MACD POZİTİF UYUMSUZLUK (Cemal, 20 Kas; ekran görüntüsü: Haziran-Ağustos 2026 iki dip): fiyat aynı / daha derin dip yaparken MACD (12, 26, 9) daha yukarıda dip yapıyorsa fiyat döner; bölge seçiminde kullanılacak | Cemal'in ekran görüntüsü (BIST, 05-06 Ağu 2026 imleç) | Evet (F65-F68, YAPI_HEDEF 8. tur) | SINANMADI | 8. tur ön kayıt | Ş10 adayı | AÇIK |
 | K48 | ÇİFT KAZAN (Cemal, 20 Kas, ALKT): dipler kazan + tepeler şemsiye = mantar / mercek (ortası bombeli) = sıkıntı; doğru taban hem dipler hem tepeler kazan | ALKT Eyl-Eki 2026 (kırılım sonrası −%22) | Evet (F69 a_high; Ş11) | SINANMADI | 9. tur ön kayıt | Ş11 adayı | AÇIK |
+| K49 | H1 bilanço penceresi = kuyruk büyüteci (yön değil): giriş-15. bar arasında bilanço olan olaylarda hem en iyi hem en kötü sonuç (Ekim eşleri: kazanan 20 / 20, kaybeden %70) | KAZANANLAR_2026-10-22 (sonradan bakma) | Evet (BIL15; duyuru <= t) | SINANMADI | 9. tur ön kayıt (BH 3) | - | AÇIK |
+| K50 | H2 düşen bıçak: 120 günün tam dibine son 5 günde düşerek gelen hisse (F15 <= 0,05 ve r5 <= −%3) kaybeder; 'dip savunulmadan giriş yok' (C2 / TUR 4 s7 destek; CD22 ile kısmen çelişir) | KAZANANLAR_2026-10-22 (h5 %64 / st5 %32 vs %71 / %18; n 77) | Evet | SINANMADI | 9. tur ön kayıt (BH 3) | - | AÇIK |
+| K51 | H3 önceden bilinen katalizör (FDA / birleşme tarihi t+5..t+40, t'de kamuya açık) öncesi koşu; çöl tanımındaki 'katalizör olmadan çöl aranmaz' ile uyumlu | CAPR, BHVN, LQDA (n 3) | Kısmen (katalizör takvimi verisi gerekir) | SINANMADI | veri bulunursa | - | AÇIK |
 
 ## 3. SONRADAN YANLIŞ ÇIKAN DOĞRULAR
 

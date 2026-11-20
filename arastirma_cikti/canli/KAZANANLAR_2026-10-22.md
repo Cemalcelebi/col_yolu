@@ -482,3 +482,16 @@ K1 uyarısı (mekanik üstünlük): k15 'en yüksek kapanış' ölçüsü oynak 
 | 274 | BHF | ABD | KAYBEDEN | RARE | %-2,2 | 0 | 0,002 | -0,253 | -0,093 | 0,024 | 0,851 | 0,896 | 0,000 | 1,000 | 0,000 | -0,287 | -0,043 | -0,078 | -0,204 | -0,006 | -0,246 | Financial Services |
 | 275 | SLM | ABD | KAYBEDEN | ALKT | %-4,1 | 0 | 0,272 | -0,181 | -0,070 | 0,030 | 0,949 | 1,059 | 0,000 | 0,000 | 1,000 | -0,252 | 0,010 | -0,077 | -0,034 | 0,030 | -0,089 | Financial Services |
 | 276 | RSI | ABD | KAYBEDEN | RARE | %-5,7 | 0 | 0,000 | -0,436 | 0,439 | 0,050 | 0,686 | 0,562 | 0,000 | 0,000 | 1,000 | -0,483 | -0,085 | -0,228 | -0,256 | -0,064 | -0,436 | Consumer Cyclical |
+
+## (f) ESKİ HİPOTEZLERE EŞLEME (ana model, 20 Kas; Cemal: 'önce farklar, sonra kime uyar')
+
+| Fark (bu kümede) | Cemal'in eski hipotezi / kuralı | Destek mi, çelişki mi |
+|---|---|---|
+| H1 bilanço penceresi: KAZANAN 20 / 20, KAYBEDEN %70, ORTA %74; kazananların sürprizi +, kaybedenlerin − | K57 'sıkı dosya': bilanço günü güçlü tepki; 6-7 Kas bilanço günü kuralları; Ç148 (bilanço günü tepkisi tek başına İZ DEĞİL) | DESTEK, ama yön değil kuyruk büyüteci: bilanço hem en iyi hem en kötü sonucu üretir; iz 'bilanço var' değil 'bilanço + ne' olmalı |
+| H2 düşen bıçak: 120 günün tam dibine son 5 günde düşerek gelen kaybeder (F15 <= 0,05 ve r5 <= −%3: h5 %64 / st5 %32 vs %71 / %18) | C2 dip savunulmuş; TUR 4 s7 'düşen trend kırılmadan bölge seçilmez'; CD22 'sert düşüş sonrası toparlanma beklenmez' | C2 / TUR 4 s7 ile DESTEK; CD22 ile KISMEN ÇELİŞKİ (TUR 6'da sert düşüş sonrası 3 / 3 gitti): fark 'düşüş bitmiş mi' (dip oluştu, savunuldu) ile 'hâlâ düşüyor' arasında; kural adayı 'dip savunulmadan giriş yok' |
+| H3 önceden bilinen katalizör (FDA tarihi, birleşme): CAPR +%92, BHVN +%39, LQDA +%46 (dava uzlaşması) | Çöl tanımı: 'sektör rüzgârı veya katalizör olmadan çöl aranmaz'; K57 isimli sözleşme | DESTEK; ölçülebilir hali: t'de kamuya açık katalizör tarihi t+5..t+40 |
+| Elenen: göreli hacim, SMA konumu, 52 hafta tepe, Ş9 U dip, Ş10 MACD, önceki EPS sürprizi | Kapalı konular (hacim / giriş onayı); Ç195 Ş9, Ç201 Ş10 ÖLÇÜLEMEDİ | TUTARLI: bu kümede de ayırt etmiyor |
+| Sektör ETF yükselişi kazananları açıklamıyor (ETF medyanları eşit); Financials kazananlarda 0 / 20 | 'Sektör ısısı' (kapalı konu, iz değil); Cemal: 'sadece sektör yükselişi mi?' | Cemal'in şüphesi DOĞRU: sektör değil, hisseye özgü olay (bilanço / katalizör) |
+| Oynaklık: kazananlar daha oynak ama +%5-stop cetvelinde oynak hisse ZARAR yazar (h5 %61 / st5 %39 vs %73 / %16) | CD20 dar stop; K14 boyut; Ç186 'çöküşte oynak hisse' ÖLÇÜLEMEDİ | DESTEK (stop darlığı), oynaklık iz adayı değil |
+
+Sonraki adım: H1-H3 tek ön kayıtla (BH q 0,10, 3 hipotez; eşikler yukarıdaki tanımlar, sonuç görülmeden) ORTAK CETVEL 15 barla S6 / Y1 olay kümesinde ölçülür; H1 ve H3 bilgi tarihi (duyuru <= t) kapısıyla.
