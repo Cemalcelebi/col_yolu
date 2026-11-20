@@ -1,0 +1,8 @@
+[
+ "(koşudan önce, süreç) İlk taban test koşusu, YAPI_HEDEF.py düzenlenirken arka planda çalıştı -> testin geçici ön kaydındaki kod sha'sı tutmadı (yh_kapi3 DURDU). Kod hatası değil; test kod sabitken yeniden koşuldu (373 / 373).",
+ "(koşudan önce, kod) yh_macd: pandas to_numpy salt okunur görünüm döndürdü, ısınma NaN ataması ValueError verdi; to_numpy(copy=True) ile düzeltildi (ilk sentetik denemede, ön kayıttan önce).",
+ "(koşudan önce, eşik sözlüğü) YH_ESIK8['esik'] içinde 'F68' anahtarı iki kez yazılmıştı (1.0 eşik + açıklama metni); açıklama eşiği ezdi, yh_s10_maske testte düştü. Açıklama 'F68_tanim' adına taşındı; YH_ESIK8 sha'sı değişti, özellik dosyası yeniden üretildi (değerler aynı, gzip başlığı yüzünden dosya sha'sı farklı). Ön kayıttan önce.",
+ "(koşudan önce, test) Sentetik uçtan uca testte 30 hisselik havuz OC min_havuz (30) eşiğinde kaldı, Y1 olayı 0 çıktı; hisse sayısı 48'e çıkarıldı.",
+ "(koşudan önce, yeniden üretim toleransı) Satır dosyası 6 anlamlı basamakla yazıldığı için Y13 ABD 2023 yeniden üretiminde 1e-9 mutlak tolerans sentetik testte yanlış DURDU; tolerans göreli 1e-5 yapıldı ve YH_ESIK8 'yeniden_uretim' metni buna göre yazıldı (ön kayıttan önce). Karne yeniden üretimi aynı olay_Y1 değerlerinden okuduğu için 1e-9 kaldı.",
+ "(bilgi) Ön kayıttan önce 6 rastgele Y1 olayında (3 Ş10 var, 3 yok) Ş10 / F65 / F67 bağımsız pandas koduyla elle yeniden hesaplandı: 6 / 6 aynı (getirisiz)."
+]
