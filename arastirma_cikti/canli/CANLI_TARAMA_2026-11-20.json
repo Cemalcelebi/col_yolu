@@ -1,0 +1,741 @@
+{
+ "durustluk": "DÜRÜSTLÜK: bu liste 'izleme / ileri test' listesidir, ÖNERİ DEĞİLDİR. CLAUDE.md öneri modülünün üç kapısından (tarama + dosya + risk) burada yalnız tarama kapısı var ve seçici ÖLÇÜLEMEDİ düzeyindedir (dipte + gövdeli kırılım KATKI+ ama hücre başına +3..+9 puan). Alım-satım kararı Cemal'indir; Claude yatırım danışmanı değildir.",
+ "surum": "CANLI_TARAMA v1.0 (2026-11-20): S6 son 5 gün + havuz Ş1 VE Ş7 (kademeli) + puan7 sırası; ileri test olc (YAPI_HEDEF cetveli)",
+ "etiket": "2026-11-20",
+ "uretim_utc": "2026-11-20T06:29:04Z",
+ "esik_sha": "bb85545e07832f3cd0a667bf67fb641b74a801503d4337854365bf31f82d83f1",
+ "kapi": {
+  "esik_sha": "bb85545e07832f3cd0a667bf67fb641b74a801503d4337854365bf31f82d83f1",
+  "kontrol": true
+ },
+ "veri": {
+  "ABD": {
+   "son_tarih": "2026-11-19",
+   "son5": [
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18",
+    "2026-11-19"
+   ],
+   "hisse": 1411,
+   "kaynak": "/tmp/veri_canli",
+   "not": [
+    "k34_yahoo ya da k34_evren.csv yok: ABD evreni yalnız V_ABD",
+    "evren dışı (fon / ETF) çıkarılan: 0 []",
+    "hayatta kalma: evren bugün işlem gören hisseler; getiriler yukarı, -%50 olasılığı aşağı yanlı okunmalı"
+   ]
+  },
+  "AVR": {
+   "son_tarih": "2026-11-19",
+   "son5": [
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18",
+    "2026-11-19"
+   ],
+   "hisse": 580,
+   "kaynak": "/tmp/veri_canli",
+   "not": [
+    "hayatta kalma: evren bugün işlem gören hisseler; getiriler yukarı, -%50 olasılığı aşağı yanlı okunmalı"
+   ]
+  },
+  "BIST": {
+   "son_tarih": "2026-11-19",
+   "son5": [
+    "2026-11-13",
+    "2026-11-16",
+    "2026-11-17",
+    "2026-11-18",
+    "2026-11-19"
+   ],
+   "hisse": 581,
+   "kaynak": "/tmp/veri_canli",
+   "not": [
+    "hayatta kalma: evren bugün işlem gören hisseler; getiriler yukarı, -%50 olasılığı aşağı yanlı okunmalı"
+   ]
+  }
+ },
+ "guncelleme": {
+  "zaman_utc": "2026-11-20T06:24:37Z",
+  "pazar": {
+   "ABD": {
+    "istenen": 1411,
+    "basarili": 1411,
+    "basarisiz": [],
+    "yeni_bar": 28039,
+    "fark_sembol": 422,
+    "olcek_sembol": 57,
+    "supheli": 10,
+    "taban": "/tmp/veri",
+    "yarim_bar_siniri": "2026-11-19",
+    "son_tarih": "2026-11-19",
+    "son_tarih_mod": "2026-11-19",
+    "sure_sn": 78.3,
+    "basarisiz_n": 0
+   },
+   "AVR": {
+    "istenen": 581,
+    "basarili": 580,
+    "basarisiz": [
+     "MT.PA"
+    ],
+    "yeni_bar": 9852,
+    "fark_sembol": 13,
+    "olcek_sembol": 8,
+    "supheli": 4,
+    "taban": "/tmp/veri",
+    "yarim_bar_siniri": "2026-11-19",
+    "son_tarih": "2026-11-19",
+    "son_tarih_mod": "2026-11-18",
+    "sure_sn": 34.7,
+    "basarisiz_n": 1
+   },
+   "BIST": {
+    "istenen": 581,
+    "basarili": 581,
+    "basarisiz": [],
+    "yeni_bar": 10460,
+    "fark_sembol": 426,
+    "olcek_sembol": 93,
+    "supheli": 19,
+    "taban": "/tmp/veri",
+    "yarim_bar_siniri": "2026-11-19",
+    "son_tarih": "2026-11-19",
+    "son_tarih_mod": "2026-11-18",
+    "sure_sn": 27.2,
+    "basarisiz_n": 0
+   }
+  },
+  "supheli": [
+   {
+    "pazar": "ABD",
+    "sembol": "AEHL",
+    "neden": "yeni barda günlük getiri %178"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "ARI",
+    "neden": "ortak günlerde yeni/eski oranı 0.364 (bölünme / birim)"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "GDYN",
+    "neden": "yeni barda günlük getiri %41"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "SGRY",
+    "neden": "yeni barda günlük getiri %48"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "SLS",
+    "neden": "yeni barda günlük getiri %156"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "SOC",
+    "neden": "yeni barda günlük getiri %54"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "STLN",
+    "neden": "yeni barda günlük getiri %46"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "VCYT",
+    "neden": "yeni barda günlük getiri %54"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "XRX",
+    "neden": "yeni barda günlük getiri %40"
+   },
+   {
+    "pazar": "ABD",
+    "sembol": "ZURA",
+    "neden": "yeni barda günlük getiri %70"
+   },
+   {
+    "pazar": "AVR",
+    "sembol": "BCG.L",
+    "neden": "ortak günlerde yeni/eski oranı 0.010 (bölünme / birim)"
+   },
+   {
+    "pazar": "AVR",
+    "sembol": "CLDN.L",
+    "neden": "ortak günlerde yeni/eski oranı 100.000 (bölünme / birim)"
+   },
+   {
+    "pazar": "AVR",
+    "sembol": "MEGP.L",
+    "neden": "ortak günlerde oran tek tip değil (0.010 .. 1.000; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "AVR",
+    "sembol": "ROSE.L",
+    "neden": "ortak günlerde oran tek tip değil (0.010 .. 1.000; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "BRMEN",
+    "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.888; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "CVKMD",
+    "neden": "ortak günlerde yeni/eski oranı 2.623 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "DITAS",
+    "neden": "ortak günlerde oran tek tip değil (0.983 .. 1.790; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "DUNYH",
+    "neden": "ortak günlerde yeni/eski oranı 6.923 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "FENER",
+    "neden": "ortak günlerde oran tek tip değil (0.964 .. 2.754; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "KENT",
+    "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.499; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "KONTR",
+    "neden": "ortak günlerde oran tek tip değil (0.986 .. 1.944; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "KRTEK",
+    "neden": "ortak günlerde yeni/eski oranı 3.529 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "MANAS",
+    "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.868; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "MARTI",
+    "neden": "ortak günlerde oran tek tip değil (0.926 .. 1.579; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "MERCN",
+    "neden": "ortak günlerde yeni/eski oranı 0.330 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "MERKO",
+    "neden": "ortak günlerde yeni/eski oranı 7.388 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "MRGYO",
+    "neden": "ortak günlerde oran tek tip değil (0.940 .. 1.474; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "ORCAY",
+    "neden": "ortak günlerde oran tek tip değil (0.995 .. 2.529; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "SEKFK",
+    "neden": "ortak günlerde yeni/eski oranı 1.809 (bölünme / birim)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "SELVA",
+    "neden": "ortak günlerde oran tek tip değil (0.979 .. 1.722; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "TUCLK",
+    "neden": "ortak günlerde oran tek tip değil (0.990 .. 1.724; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "USAK",
+    "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.596; ayarlama / birim karışık)"
+   },
+   {
+    "pazar": "BIST",
+    "sembol": "YKSLN",
+    "neden": "ortak günlerde oran tek tip değil (0.973 .. 1.693; ayarlama / birim karışık)"
+   }
+  ]
+ },
+ "sayim": {
+  "ABD": {
+   "al_son5": 7,
+   "havuz_disi": 1,
+   "likidite_alt20": 1,
+   "bolunme": 0,
+   "tekil": 4,
+   "sinyal": 2,
+   "supheli_dislanan": 0,
+   "ozellik_hata": 0,
+   "ozellik_hata_liste": []
+  },
+  "AVR": {
+   "al_son5": 9,
+   "havuz_disi": 1,
+   "likidite_alt20": 1,
+   "bolunme": 0,
+   "tekil": 1,
+   "sinyal": 7,
+   "supheli_dislanan": 0,
+   "ozellik_hata": 0,
+   "ozellik_hata_liste": []
+  },
+  "BIST": {
+   "al_son5": 3,
+   "havuz_disi": 0,
+   "likidite_alt20": 0,
+   "bolunme": 0,
+   "tekil": 0,
+   "sinyal": 3,
+   "supheli_dislanan": 0,
+   "ozellik_hata": 0,
+   "ozellik_hata_liste": []
+  }
+ },
+ "havuz": {
+  "kademe": "S1",
+  "sayi": {
+   "S1_S7": 0,
+   "S1_F22": 0,
+   "S1": 1
+  },
+  "sayi_pazar": {
+   "S1_S7": {
+    "ABD": 0,
+    "AVR": 0,
+    "BIST": 0
+   },
+   "S1_F22": {
+    "ABD": 0,
+    "AVR": 0,
+    "BIST": 0
+   },
+   "S1": {
+    "ABD": 0,
+    "AVR": 0,
+    "BIST": 1
+   }
+  }
+ },
+ "adaylar": [
+  {
+   "sira": 1,
+   "pazar": "BIST",
+   "sembol": "VAKFN",
+   "tarih": "2026-11-17",
+   "durum": "AL",
+   "kapanis": 0.8799999952316284,
+   "acilis": 0.8600000143051147,
+   "hat": 0.8100000023841858,
+   "F21": 0.9399999976158142,
+   "stop0": 0.793800002336502,
+   "stop_uzak": -0.09795453791160225,
+   "hedef5": 0.9239999949932098,
+   "hedef10": 0.9679999947547914,
+   "puan7": 0.5420648356380124,
+   "S9": false,
+   "S10": 1.0,
+   "F19": 1.0,
+   "F15": 0.12467542914692474,
+   "F17": -0.3000000496705353,
+   "F18": 0.08641974400173069,
+   "F22": -0.06382978993230626,
+   "F23": 0.4,
+   "kural12": 7,
+   "mahkeme_onceki": true,
+   "mahkeme": "ÖNCEKİ BÖLGE DAHA UYGUN: bar -92 (KIRILDI), puan 8/12 vs seçilen 7/12; seçilenin tutmadığı kurallar: Ş2 hat net, Ş9 U dip, Ş7 yakın tavan gövdeli kırılım, F14 büyük resim, C8 kağıt hafızası; önceki adayın tutmadığı: Ş6 kazan dönüş, Ş9 U dip, Ş7 yakın tavan gövdeli kırılım, F14 büyük resim",
+   "mahkeme_eksik": "S2,S9,S7,F14,C8",
+   "likidite20": 71233404.31121758,
+   "para": "TL",
+   "kademe": "S1",
+   "olcum_tarihi": "2026-12-08",
+   "veri_son": "2026-11-18",
+   "n": 9.0,
+   "ek": "AL;haf=-1;hit=0;kir=1",
+   "giris_varsayim": "sinyal gününden sonraki ilk işlem günü açılışı (t+1)"
+  }
+ ],
+ "havuz_tumu": [
+  {
+   "pazar": "BIST",
+   "sembol": "VAKFN",
+   "tarih": "2026-11-17",
+   "puan7": 0.5420648356380124,
+   "kademe": "S1",
+   "hat": 0.8100000023841858,
+   "kapanis": 0.8799999952316284,
+   "F15": 0.12467542914692474,
+   "F17": -0.3000000496705353,
+   "F18": 0.08641974400173069,
+   "S9": false,
+   "stop0": 0.793800002336502
+  }
+ ],
+ "sinyal_tumu": [
+  {
+   "pazar": "ABD",
+   "sembol": "LNTH",
+   "tarih": "2026-11-18",
+   "puan7": 0.1790870367020999,
+   "S1": false,
+   "S7": true,
+   "S9": false,
+   "F15": 0.3893440700736987,
+   "F17": -0.07319273993049236,
+   "F22": 0.0012761092560422682,
+   "F23": 0.9032289820830872
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "SJM",
+   "tarih": "2026-11-16",
+   "puan7": 0.26712651800971865,
+   "S1": false,
+   "S7": false,
+   "S9": false,
+   "F15": 1.0,
+   "F17": -0.020175289053202317,
+   "F22": 0.003541717120806087,
+   "F23": 0.3817413987413101
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "AV.L",
+   "tarih": "2026-11-13",
+   "puan7": 0.22823796123565673,
+   "S1": false,
+   "S7": true,
+   "S9": false,
+   "F15": 1.0,
+   "F17": -0.024508028322089093,
+   "F22": 0.004201696835099522,
+   "F23": 0.8989898367154434
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "CRDA.L",
+   "tarih": "2026-11-16",
+   "puan7": 0.24921375521125044,
+   "S1": false,
+   "S7": false,
+   "S9": false,
+   "F15": 1.0,
+   "F17": 0.0073926642024453315,
+   "F22": 0.01004228329809731,
+   "F23": 0.0875
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "CTEC.L",
+   "tarih": "2026-11-18",
+   "puan7": 0.29157343721447887,
+   "S1": false,
+   "S7": false,
+   "S9": false,
+   "F15": 1.0,
+   "F17": 0.008403361344537785,
+   "F22": 0.03926101880789745,
+   "F23": 0.6226417267181242
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "EVK.DE",
+   "tarih": "2026-11-17",
+   "puan7": 0.3569127023856673,
+   "S1": false,
+   "S7": true,
+   "S9": false,
+   "F15": 1.0,
+   "F17": 0.027217691735162308,
+   "F22": 0.020332742443056384,
+   "F23": 0.7343750232830519
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "TEL2-B.ST",
+   "tarih": "2026-11-16",
+   "puan7": 0.26632242056789335,
+   "S1": false,
+   "S7": false,
+   "S9": true,
+   "F15": 0.5377017627146632,
+   "F17": -0.12207645135629686,
+   "F22": 0.007235435056259343,
+   "F23": 0.37500476838370866
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "WISE.L",
+   "tarih": "2026-11-13",
+   "puan7": 0.38337701915425076,
+   "S1": false,
+   "S7": false,
+   "S9": false,
+   "F15": 0.5671040236700603,
+   "F17": -0.1622117914914054,
+   "F22": 0.03041477467057896,
+   "F23": 0.24074074074074073
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "ZAL.DE",
+   "tarih": "2026-11-18",
+   "puan7": 0.42534957315587596,
+   "S1": false,
+   "S7": true,
+   "S9": false,
+   "F15": 0.8732876048687903,
+   "F17": 0.037522723157351834,
+   "F22": 0.0062175610736969755,
+   "F23": 0.5862055924784684
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "INVES",
+   "tarih": "2026-11-13",
+   "puan7": 0.358908650765348,
+   "S1": false,
+   "S7": true,
+   "S9": false,
+   "F15": 0.41360294117647056,
+   "F17": -0.235705950991832,
+   "F22": 0.010869565217391353,
+   "F23": 0.5949367088607594
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "OTKAR",
+   "tarih": "2026-11-16",
+   "puan7": 0.52184324190568,
+   "S1": false,
+   "S7": false,
+   "S9": false,
+   "F15": 0.5119305856832972,
+   "F17": -0.08933717579250722,
+   "F22": 0.012195121951219523,
+   "F23": 0.32432432432432434
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "VAKFN",
+   "tarih": "2026-11-17",
+   "puan7": 0.5420648356380124,
+   "S1": true,
+   "S7": false,
+   "S9": false,
+   "F15": 0.12467542914692474,
+   "F17": -0.3000000496705353,
+   "F22": -0.06382978993230626,
+   "F23": 0.4
+  }
+ ],
+ "supheli": [
+  {
+   "pazar": "ABD",
+   "sembol": "AEHL",
+   "neden": "yeni barda günlük getiri %178"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "ARI",
+   "neden": "ortak günlerde yeni/eski oranı 0.364 (bölünme / birim)"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "GDYN",
+   "neden": "yeni barda günlük getiri %41"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "SGRY",
+   "neden": "yeni barda günlük getiri %48"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "SLS",
+   "neden": "yeni barda günlük getiri %156"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "SOC",
+   "neden": "yeni barda günlük getiri %54"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "STLN",
+   "neden": "yeni barda günlük getiri %46"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "VCYT",
+   "neden": "yeni barda günlük getiri %54"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "XRX",
+   "neden": "yeni barda günlük getiri %40"
+  },
+  {
+   "pazar": "ABD",
+   "sembol": "ZURA",
+   "neden": "yeni barda günlük getiri %70"
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "BCG.L",
+   "neden": "ortak günlerde yeni/eski oranı 0.010 (bölünme / birim)"
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "CLDN.L",
+   "neden": "ortak günlerde yeni/eski oranı 100.000 (bölünme / birim)"
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "MEGP.L",
+   "neden": "ortak günlerde oran tek tip değil (0.010 .. 1.000; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "AVR",
+   "sembol": "ROSE.L",
+   "neden": "ortak günlerde oran tek tip değil (0.010 .. 1.000; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "BRMEN",
+   "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.888; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "CVKMD",
+   "neden": "ortak günlerde yeni/eski oranı 2.623 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "DITAS",
+   "neden": "ortak günlerde oran tek tip değil (0.983 .. 1.790; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "DUNYH",
+   "neden": "ortak günlerde yeni/eski oranı 6.923 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "FENER",
+   "neden": "ortak günlerde oran tek tip değil (0.964 .. 2.754; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "KENT",
+   "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.499; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "KONTR",
+   "neden": "ortak günlerde oran tek tip değil (0.986 .. 1.944; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "KRTEK",
+   "neden": "ortak günlerde yeni/eski oranı 3.529 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "MANAS",
+   "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.868; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "MARTI",
+   "neden": "ortak günlerde oran tek tip değil (0.926 .. 1.579; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "MERCN",
+   "neden": "ortak günlerde yeni/eski oranı 0.330 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "MERKO",
+   "neden": "ortak günlerde yeni/eski oranı 7.388 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "MRGYO",
+   "neden": "ortak günlerde oran tek tip değil (0.940 .. 1.474; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "ORCAY",
+   "neden": "ortak günlerde oran tek tip değil (0.995 .. 2.529; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "SEKFK",
+   "neden": "ortak günlerde yeni/eski oranı 1.809 (bölünme / birim)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "SELVA",
+   "neden": "ortak günlerde oran tek tip değil (0.979 .. 1.722; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "TUCLK",
+   "neden": "ortak günlerde oran tek tip değil (0.990 .. 1.724; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "USAK",
+   "neden": "ortak günlerde oran tek tip değil (1.000 .. 1.596; ayarlama / birim karışık)"
+  },
+  {
+   "pazar": "BIST",
+   "sembol": "YKSLN",
+   "neden": "ortak günlerde oran tek tip değil (0.973 .. 1.693; ayarlama / birim karışık)"
+  }
+ ],
+ "model": {
+  "n": 26508,
+  "pozitif": 0.3771691564810623,
+  "esik7_sha": "14f11dee1c6c96e976f60357771c7bb2b312ce91ad99cde691dad7dd2410ff26",
+  "sklearn": "1.9.1",
+  "egitim_sinir": "2026-08-31",
+  "giris_max": "2026-08-11",
+  "n_iter": 134,
+  "zaman_utc": "2026-11-20T06:13:01Z"
+ },
+ "ileri_test": {
+  "komut": "python CANLI_TARAMA.py olc --tarih 2026-11-20",
+  "olcum_tarihi": {
+   "BIST:VAKFN": "2026-12-08"
+  },
+  "olcum_tarihi_en_gec": "2026-12-08",
+  "cetvel": "YAPI_HEDEF yh_olay_olc: giriş t+1 açılış, 15 geçerli bar, +%5 / +%10 kapanışla stop'tan önce (h5 / h10), stop önce (st5), takip stopu; eş = aynı giriş günü aynı OC momentum x likidite kovası (en az 3); liste (10) ve havuzun tamamı ölçülür; sonuç CANLI_SONUC.md'ye eklenir (satır silinmez)",
+  "kapsam": [
+   "adaylar",
+   "havuz_tumu"
+  ]
+ },
+ "sure_sn": 125.8
+}
