@@ -250,3 +250,10 @@ ATRP tercil FARK'ı (sınama; T0 / T1 / T2, puan) ve L3O (sınama):
 | K14 | boyut (gerçek para) | UYGULANMAZ | öneri / gerçek para işi değil; ölçüm |
 
 Kod değişti: Colab'da çalışma zamanını yeniden başlat.
+
+## ANA MODEL DENETİMİ (20 Kas 2026, 12:0x UTC)
+- Ön kayıt (5cc3cad, 11:24:51 UTC) koşudan (a29948f, 11:32:48 UTC) önce; eşik dosyası sha'ları tuttu. Yasak defter dosyaları, YAPI_HEDEF.py ve ORTAK_CETVEL.py değişmedi (git diff boş). E-posta / anahtar taraması temiz.
+- Yeniden üretim (ds_olay.csv.gz, düz pandas, ana model): DS06 ABD sınama FARK +0,0691, DS25 ABD sınama +0,0221, DS28 AVR sınama +0,1209, DS17 ABD sınama −0,040; DS kümesi vs dış eş 6 hücre (ABD +4,0 / +3,0, AVR +5,5 / +6,9, BIST −1,1 / −1,6) birebir. TUTTU.
+- NOT (K12): hücre n'si yalnız eşi olan (>= 3 tutmayan eş) olayları sayar; ham tutan olay sayısı daha büyüktür (DS28 AVR sınama 195 olay -> n 77; DS25 ABD 1.826 -> 1.724; DS06 227 -> 224). Sonraki raporda iki sütun.
+- Çapraz kontrol (hakemli kaynaklı DS01, DS02, DS03, DS21): ABD'de güç >= 0,90, FARK −0,4..+0,5 puan, aralıklar 0'ı kesiyor; hakemli yönün TERSİNE ve 0'ı dışlayan hücre yok. Kitap kaynaklı DS17 (−4,0 [−6,9; −1,1]) ve DS20 (+2,4 [+0,3; +4,8]) ters; ileri testte izlenir.
+- Karar: 25 / 25 ÖLÇÜLEMEDİ kalır; DS06 / DS25 / DS14 'bilgi'; Mart 2027 ileri testi (IK_ILERI Ç202).
