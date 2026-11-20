@@ -1,28 +1,31 @@
-COL GUNLUK RAPOR — 2026-11-20 02:12 (TR)
+COL GUNLUK RAPOR — 2026-11-21 01:48 (TR)
 Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
-Onbellek: sarildi (584 hisse)
-Veri: 585 hisse | son bar 2026-11-19
-Ozet: aday 8 | pozisyon 6 | kapanan 14 | sure 68 sn
-UYARI: bugunun bari yok (son bar 2026-11-19). Yahoo gecikmis olabilir.
+Onbellek: sarildi (585 hisse)
+Veri: 586 hisse | son bar 2026-11-20
+Ozet: aday 9 | pozisyon 5 | kapanan 15 | sure 46 sn
 ============================================================
 
-== 2026-11-19  CDS 0.84 -> 1.5x
-aday 8 | poz 6 | kapanan 14
+== 2026-11-20  CDS 0.84 -> 1.5x
+aday 9 | poz 5 | kapanan 15
+
+SAT  (hisse  kar%  endeks%)
+  EGEGY  +0%  ?  maliyet
 
 TUT  (hisse  kar%  durum  tabana%)
-  EGEGY    +7%  119g  taban -27%
-  GARAN    +7%  70g  taban -21%  stop=maliyet
-  METRO    +7%  118g  taban -26%
-  ENTRA    +2%  102g  taban -18%  stop=maliyet
-  BIOEN    +1%  120g  taban -35%
-  YKBNK    -3%  70g  taban -12%
+  GARAN    +8%  69g  taban -21%  stop=maliyet
+  BIOEN    +5%  119g  taban -38%
+  METRO    +2%  117g  taban -23%
+  ENTRA    +2%  101g  taban -17%  stop=maliyet
+  YKBNK    -2%  69g  taban -13%
 
-BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 8]
-  ALBRK    -7%   %5.0   0.227  0.271  -      +17  (serbest)
-  HUNER    -7%   %4.4   nan  nan  -       -3  (serbest)
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 9]
+  HKTM     -1%   %8.2   0.182  0.219  -       -4  
+  ONCSM    -5%   %12.0   0.0  0.115  -       +0  
+  EYGYO    -6%   %12.0   0.15  0.076  -       +9  (serbest)
+  ALBRK    -7%   %5.0   0.227  0.271  -      +15  (serbest)
 
-KAPANAN 14: kazanan %7  ort -26.5% | acilis->acilis ort -26.5% (n=14)
+KAPANAN 15: kazanan %7  ort -24.7% | acilis->acilis ort -26.5% (n=14)
 
-=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-35.1
-  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-18, XGMYO %-26, XSGRT %-27, XULAS %-28
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-34.9
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-19, XSGRT %-28, XULAS %-29
   ruzgarli sektorde uzun colde hisse yok
