@@ -24,6 +24,10 @@
     prefix, kesit sırası, 60 bar ambargo, süzgeç (d1 / d2 eşik), bootstrap / L3O, etiket, regresyon (DEVİR 1 mührü dahil), kapı
 16) DEVİR 3 (dar yeniden sınama, karne v3): yh_devir3_ozellik prefix (14 F, t - sol = F8) ve kaynak fonksiyon eşitliği, süzgeç, eşik kopyası,
     bootstrap üst ucu, güç simülasyonu, etiket v3 (ATRP / tabaka / ÖLÇÜLEMEDİ / KATKI− üst uç), sentetik uçtan uca karne + rapor, regresyon, kapı
+17) 8. TUR (Ş10 MACD pozitif uyumsuzluk): MACD = elle EMA, ısınma; yapay vakalar (uyumsuzluk var / yok / MACD sıfırın üstünde / L1 yok / F65
+    sınırı), dip kuralı (eşitlikte ilk bar, pencere, L1 en az 8 bar önce), yalnız [t-250, t], prefix (kesik / t sonrası değişen veri), maske,
+    plasebo deneme no, eşik mühürleri, regresyon kapısı, karne v3 (ambargolu hücreler, etiket, sentetik uçtan uca, elle MARJ), Cemal sayfaları
+    ve uyum sayımı, huni, kapı
 Çalıştır: python test_yapi_hedef.py
 """
 import copy
@@ -1689,6 +1693,296 @@ kontrol("D3: kontrol tablosu 14 satır, K2 / K7 / K8 / K9 EVET + kanıt; adlar �
         and all(k.startswith(("yh_d3", "yh_devir3", "_yh_d3", "YH_D3", "YH_ESIK_D3", "_YH_D3", "YH_KONTROL_D3", "yh_esik_d3"))
                 for k in dir(YH) if "d3" in k.lower() or "devir3" in k.lower())
         and YH.yh_devir_kos.__doc__.startswith("DEVİR 1") and YH.yh_devir2_kos.__doc__.startswith("DEVİR 2"))
+
+# ================================================================ 17) 8. TUR (Ş10 MACD pozitif uyumsuzluk; Y13 / Y13b / Y13c)
+print("\n17) 8. TUR: Ş10 MACD uyumsuzluk, karne v3 (sınama dönemleri ayrı)")
+_E8 = YH.YH_ESIK8
+
+
+def _s10_seri(r2=0.995, adim=20, dus2=None):
+    """200 düz bar -> 20 bar %3 düşüş (L1) -> 15 bar %2 tepki -> L2'ye iniş (adim bar; r2 = L2 / L1) -> 10 bar %1 tepki. Low = Close x 0,99."""
+    C = [100.0] * 200; x = 100.0
+    for _ in range(20):
+        x *= 0.97; C.append(x)
+    l1 = x
+    for _ in range(15):
+        x *= 1.02; C.append(x)
+    r = (l1 * r2 / x) ** (1 / adim)
+    for _ in range(adim):
+        x *= r; C.append(x)
+    for _ in range(10):
+        x *= 1.01; C.append(x)
+    C = np.array(C); return C * 0.99, C
+
+
+# MACD: elle özyinelemeli EMA (alfa = 2 / (n + 1), ilk değer tohum) ve ısınma
+_cm = 50 + np.cumsum(np.random.default_rng(81).normal(0, 1, 120))
+def _ema(x, n):
+    a = 2 / (n + 1); o = np.empty(len(x)); o[0] = x[0]
+    for k in range(1, len(x)):
+        o[k] = a * x[k] + (1 - a) * o[k - 1]
+    return o
+_me = _ema(_cm, 12) - _ema(_cm, 26); _se = _ema(_me, 9)
+_m8, _s8, _h8 = YH.yh_macd(_cm)
+kontrol("T8: MACD(12, 26, 9) = elle özyinelemeli EMA; histogram = MACD - sinyal; ilk 35 bar NaN (ısınma)",
+        np.allclose(_m8[35:], _me[35:]) and np.allclose(_s8[35:], _se[35:]) and np.allclose(_h8[35:], (_me - _se)[35:])
+        and np.isnan(_m8[:35]).all() and np.isnan(_s8[:35]).all() and np.isfinite(_m8[35]))
+# uyumsuzluk VAR
+_L8, _C8 = _s10_seri(); _i8 = len(_C8) - 1; _b8 = YH.yh_s10_bar(_L8, _C8, _i8)
+kontrol("T8: uyumsuzluk VAR (fiyat L2 = L1 x 0,995, MACD daha yukarı ve < 0) -> Ş10 = 1; F67 = L2 - L1, tL2", _b8["S10"] == 1.0 and _b8["s65"] == 1.0
+        and _b8["s66"] == 1.0 and _b8["F66"] > 0 and _b8["F66m"] < 0 and _b8["F67"] == 35.0 and _b8["tL2"] == 10.0, f"{_b8}")
+# fiyat şartı tutmaz (L2 %5 yukarıda)
+_b8b = YH.yh_s10_bar(*_s10_seri(1.05), _i8)
+kontrol("T8: L2 > L1 x 1,01 -> F65 tutmaz, Ş10 = 0 (MACD şartı tek başına yetmez)", _b8b["s65"] == 0.0 and _b8b["s66"] == 1.0 and _b8b["S10"] == 0.0)
+# sınır: L2 = L1 x 1,01 tam (eşit izinli)
+_Lq = _L8.copy(); _dq = YH.yh_s10_dipler(_Lq, _i8); _Lq[_dq[-1]] = _Lq[_dq[0]] * 1.01
+_bq = YH.yh_s10_bar(_Lq, _C8, _i8)
+kontrol("T8: F65 sınırı Low(L2) = Low(L1) x 1,01 -> tutar (<=)", _bq["s65"] == 1.0)
+# uyumsuzluk YOK: ikinci düşüş birincisinden sert (MACD daha aşağı)
+_C9 = [100.0] * 200; _x = 100.0
+for _ in range(30):
+    _x *= 0.995; _C9.append(_x)
+_l1 = _x
+for _ in range(12):
+    _x *= 1.01; _C9.append(_x)
+for _ in range(8):
+    _x *= 0.95; _C9.append(_x)
+for _ in range(12):
+    _x *= 1.005; _C9.append(_x)
+_C9 = np.array(_C9); _L9 = _C9 * 0.99; _i9 = len(_C9) - 1; _b9 = YH.yh_s10_bar(_L9, _C9, _i9)
+kontrol("T8: uyumsuzluk YOK (ikinci düşüş sert, MACD(L2) < MACD(L1)) -> s66 = 0, Ş10 = 0", _b9["s65"] == 1.0 and _b9["F66"] < 0 and _b9["S10"] == 0.0, f"{_b9}")
+# MACD sıfırın üstünde: yükseliş içinde sert düşüş (L1), sonra fitilli eşit dip (L2; kapanış yüksek) -> MACD(L2) > MACD(L1) ama > 0
+_Ca = list(np.linspace(50, 120, 250)); _x0, _y0 = 249, 120.0
+for _xe, _ye in ((253, 112), (263, 122), (292, 128)):
+    for _k in range(_x0 + 1, _xe + 1):
+        _Ca.append(_y0 + (_ye - _y0) * (_k - _x0) / (_xe - _x0))
+    _x0, _y0 = _xe, _ye
+_Ca = np.array(_Ca); _La = _Ca - 0.3; _La[273] = _La[253]; _ia = len(_Ca) - 1; _ba = YH.yh_s10_bar(_La, _Ca, _ia)
+kontrol("T8: MACD sıfırın üstünde (F66 > 0 ama F66m > 0) -> s66 = 0, Ş10 = 0", _ba["s65"] == 1.0 and _ba["F66"] > 0 and _ba["F66m"] > 0
+        and _ba["s66"] == 0.0 and _ba["S10"] == 0.0, f"{_ba}")
+# L1 yok: pencerede tek dip
+_Cb = np.r_[np.full(200, 100.0), np.linspace(100, 80, 30), np.linspace(80, 95, 30)]; _Lb = _Cb * 0.99; _ib = len(_Cb) - 1
+_bb = YH.yh_s10_bar(_Lb, _Cb, _ib)
+kontrol("T8: L1 yok (tek dip) -> F65-F67 NaN, Ş10 = 0; F68 yine hesaplanır", np.isnan(_bb["F67"]) and np.isnan(_bb["F65"]) and _bb["S10"] == 0.0
+        and np.isfinite(_bb["F68"]) and np.isfinite(_bb["tL2"]))
+# dip kuralı: eşitlikte ilk bar; komşular pencerede; L1 en az 8 bar önce
+_Ld = np.full(100, 10.0); _Ld[70] = 5.0; _Ld[71] = 5.0; _Ld[80] = 4.0; _Ld[86] = 3.0
+_dd = YH.yh_s10_dipler(_Ld, 99)
+kontrol("T8: dipler: eşit dizide ilk bar (70, 71 değil); aralık [t-55, t-6]; 8 bardan yakın dipler L1 olamaz",
+        _dd == [70, 80, 86] and YH.yh_s10_dipler(_Ld, 59) == [], f"{_dd}")
+_bd = YH.yh_s10_bar(_Ld, np.full(100, 10.0), 99)
+kontrol("T8: L2 = 86 (en yakın), L1 = 70 (80, L2 - 8 = 78'den sonra)", _bd["tL2"] == 13.0 and _bd["F67"] == 16.0, f"{_bd}")
+# EMA ısınma: kısa seri, L1 pencerenin ilk 35 barında -> NaN
+_Le, _Ce = _s10_seri(); _Ce2 = _Ce[190:]; _Le2 = _Le[190:]; _ie = len(_Ce2) - 1
+_be = YH.yh_s10_bar(_Le2, _Ce2, _ie)
+kontrol("T8: EMA ısınma: seri kısa (t < 250) ve L1 ilk 35 barda -> MACD(L1) NaN, Ş10 = 0 (L2 var)", _be["tL2"] == 10.0
+        and np.isnan(_be["F66"]) and _be["S10"] == 0.0, f"{_be}")
+# pencere: t-250'den eskisi okunmaz (baştaki 300 barı değiştirmek sonucu değiştirmez)
+_Lw, _Cw = _s10_seri(); _Cw = np.r_[np.linspace(10, 100, 300), _Cw]; _Lw = _Cw * 0.99; _iw = len(_Cw) - 1
+_Cw2 = _Cw.copy(); _Cw2[:_iw - 250] *= 3.0; _Lw2 = _Cw2 * 0.99
+kontrol("T8: yalnız [t-250, t] okunur (t-251 ve öncesi değişince F'ler aynı)",
+        np.allclose(pd.Series(YH.yh_s10_bar(_Lw, _Cw, _iw)).to_numpy(float), pd.Series(YH.yh_s10_bar(_Lw2, _Cw2, _iw)).to_numpy(float), equal_nan=True))
+# prefix: rastgele hisse, veri t'de kesilince aynı; t sonrası değişince aynı
+_dfp = rastgele_hisse(700, 83); _dfh = YH._yh_hazir(_dfp); _tp = list(_dfh.index[[100, 260, 400, 555, 699]])
+_Fp8 = YH.yh_s10_ozellik(_dfh, _tp, hazir=True); _okp = True
+for _t, (_, _r) in zip(_tp, _Fp8.iterrows()):
+    _a = YH.yh_s10_ozellik(_dfp[_dfp.index <= _t], [_t]).iloc[0]
+    _dfx = _dfp.copy(); _dfx.loc[_dfx.index > _t, ["Open", "High", "Low", "Close"]] *= 1.7
+    _b = YH.yh_s10_ozellik(_dfx, [_t]).iloc[0]
+    _okp &= np.allclose(_a.to_numpy(float), _r.to_numpy(float), equal_nan=True) and np.allclose(_b.to_numpy(float), _r.to_numpy(float), equal_nan=True)
+kontrol("T8: prefix: veri t'de kesilince ve t sonrası değişince F65-F68 / bayraklar aynı (5 gün)", bool(_okp))
+kontrol("T8: S10 = s65 VE s66 her satırda; bayraklar 0 / 1", bool(((_Fp8.S10 == 1) == ((_Fp8.s65 == 1) & (_Fp8.s66 == 1))).all())
+        and set(np.unique(_Fp8[["s65", "s66", "S10"]].to_numpy(float))) <= {0.0, 1.0})
+try:
+    YH.yh_s10_ozellik(_dfh, [pd.Timestamp("1990-01-01")], hazir=True); _kg = False
+except YH.YHHata:
+    _kg = True
+kontrol("T8: sinyal günü geçerli bar değilse DURUR", _kg)
+# maske
+_Fm = pd.DataFrame({"S10": [1.0, 1.0, 0.0, 1.0], "F68": [1.0, 0.0, 1.0, np.nan], "kolB": [True, False, True, True]})
+kontrol("T8: maske Y13 = Ş10; Y13b = kol B VE Ş10; Y13c = Ş10 VE F68 = 1 (NaN tutmaz)",
+        list(YH.yh_s10_maske(_Fm, "Y13")) == [True, True, False, True] and list(YH.yh_s10_maske(_Fm, "Y13b")) == [True, False, False, True]
+        and list(YH.yh_s10_maske(_Fm, "Y13c")) == [True, False, False, False])
+# deneme no / eşik mühürleri
+kontrol("T8: plasebo deneme no: Y1-Y11c önceki turlarla AYNI (sıra + 1), Y13 / Y13b / Y13c 20 / 21 / 22; HEPSI değişmedi",
+        [YH._yh_deneme_no(k) for k in YH.YH_DENEMELER_HEPSI] == list(range(1, len(YH.YH_DENEMELER_HEPSI) + 1))
+        and [YH._yh_deneme_no(k) for k in YH.YH_DENEMELER_8] == [20, 21, 22] and "Y13" not in YH.YH_DENEMELER_HEPSI)
+_Y8t = YH.yh_y8()
+kontrol("T8: yh_y8 YH_ESIK'i değiştirmez (sha ON_KAYIT_5 ile aynı), Y13* girdileri yalnız kopyada", YH.yh_esik_sha() == YH.yh_esik_sha(YH.YH_ESIK)
+        and "Y13" not in YH.YH_ESIK["denemeler"] and _Y8t["denemeler"]["Y13c"].get("bilgi") is True and _Y8t["denemeler"]["Y13b"]["yon"] == 1)
+_E8c = json.loads(json.dumps(_E8)); _E8c["esik"]["F65_ust"] = 0.02
+kontrol("T8: Ş10 eşiği değişince YH_ESIK8 sha değişir", YH.yh_esik8_sha(_E8c) != YH.yh_esik8_sha())
+try:
+    _rg8 = YH.yh_t8_regresyon(YH.YH_YOL["cikti"]); _rgo = True
+except YH.YHHata as _ex:
+    _rgo = False; print(_ex)
+kontrol("T8: regresyon kapısı: YH_ESIK / ESIK6 / ESIK7 / ESIK_D3 / devir3_esik / olay_Y1 / olay_Y9 önceki mühürlerle aynı", _rgo)
+# karne hücreleri (ambargo) ve etiket
+_amb = {"ambargo": {"ABD": {"yon1_sinama_ilk_izinli": "2023-03-29", "yon2_sinama_son_izinli": "2022-10-06"}}}
+_Mh = pd.DataFrame({"pazar": ["ABD"] * 5, "donem": ["2023", "2023", "2024-26", "2016-22", "2016-22"],
+                    "giris": pd.to_datetime(["2023-02-01", "2023-04-01", "2024-05-01", "2022-11-01", "2022-01-03"])})
+_hm8 = YH.yh_k8_hucre_maske(_Mh, _amb)
+kontrol("T8: karne hücreleri: 2023 ambargo (yon1 ilk izinli) sonrası; 2024-26 tam; 2016-22 dış yon2 son izinliye kadar",
+        list(_hm8["2023"]) == [False, True, False, False, False] and list(_hm8["2024-26"]) == [False, False, True, False, False]
+        and list(_hm8["2016-22"]) == [False, False, False, False, True])
+_hk8 = lambda n=40, f=.03, m=.02, b=.01, u=.05, l=.01, st=.3, es=.3: {"n": n, "fark": f, "marjinal": m, "boot_alt": b, "boot_ust": u, "l3o": l, "st": st, "es_st": es}  # noqa: E731
+_ck8 = lambda **kw: {p: {k: _hk8(**kw.get(f"{p}_{k.replace('-', '')}", {})) for k in ("2023", "2024-26")} for p in ("ABD", "AVR")}  # noqa: E731
+_H8 = ["2023", "2024-26"]
+kontrol("T8: karne etiketi: KATKI+ / ATRP -> SORGULA / tabaka -> SORGULA / n < 30 -> ÖLÇÜLEMEDİ / stop -> SORGULA / KATKI−",
+        YH.yh_k8_etiket(_ck8(), _KR, _H8, True, True, 30) == "KATKI+" and YH.yh_k8_etiket(_ck8(), _KR, _H8, True, False, 30) == "SORGULA"
+        and YH.yh_k8_etiket(_ck8(), _KR, _H8, False, True, 30) == "SORGULA"
+        and YH.yh_k8_etiket(_ck8(AVR_2023={"n": 29}), _KR, _H8, True, True, 30) == "ÖLÇÜLEMEDİ"
+        and YH.yh_k8_etiket(_ck8(ABD_202426={"st": .4}), _KR, _H8, True, True, 30) == "SORGULA"
+        and YH.yh_k8_etiket(_ck8(**{f"{p}_{k}": _neg for p in _KR for k in ("2023", "202426")}), _KR, _H8, True, True, 30) == "KATKI−")
+# uçtan uca karne (sentetik): güçlü Ş10 -> kol A KATKI+; gürültü Ş10 -> KATKI+ değil
+_rng8 = np.random.default_rng(88); _N8 = 9000
+_M8 = pd.DataFrame({"pazar": _rng8.choice(["ABD", "AVR", "BIST"], _N8, p=[.5, .35, .15]), "sembol": [f"S{k % 300}" for k in range(_N8)],
+                    "tarih": pd.Timestamp("2016-01-04") + pd.to_timedelta(_rng8.integers(0, 3700, _N8), "D")})
+_M8["giris"] = _M8.tarih + pd.Timedelta(days=1)
+_M8["donem"] = np.where(_M8.giris < "2023-01-01", "2016-22", np.where(_M8.giris < "2024-01-01", "2023", "2024-26"))
+for _c in ("F55", "F13", "F10", "F15", "F7", "F17"):
+    _M8[_c] = _rng8.uniform(0, 1, _N8)
+_M8["S10"] = (_rng8.random(_N8) < .3).astype(float); _M8["F68"] = (_rng8.random(_N8) < .5).astype(float)
+_M8["kolA"] = True; _M8["kolB"] = (_M8.F15 < .3) & (_M8.F17 < .5)
+_M8["h5"] = (_rng8.random(_N8) < 0.4 + 0.25 * _M8.S10).astype(float); _M8["es_h5"] = 0.4
+_M8["st5"] = (_rng8.random(_N8) < .2).astype(float); _M8["es_st5"] = 0.3
+_Qk = {"tabaka": {p: {c: [1 / 3, 2 / 3] for c in ("F10", "F15", "F7", "F55", "F13")} for p in ("ABD", "AVR", "BIST")},
+       "ambargo": {p: {"yon1_sinama_ilk_izinli": "2023-03-29", "yon2_sinama_son_izinli": "2022-10-06"} for p in ("ABD", "AVR", "BIST")}}
+_E8k = json.loads(json.dumps(_E8)); _E8k["karne"]["boot"]["B"] = 300; _E8k["karne"]["guc"]["R"] = 200
+_K8 = YH.yh_k8_karne(_M8, _Qk, _E8k); _x8 = {(r["aday"], r["kol"], r["pazar"]): r for r in _K8["satir"]}
+_M8n = _M8.copy(); _M8n["h5"] = (_rng8.random(_N8) < 0.4).astype(float)
+_K8n = YH.yh_k8_karne(_M8n, _Qk, _E8k); _x8n = {(r["aday"], r["kol"], r["pazar"]): r for r in _K8n["satir"]}
+kontrol("T8: karne: güçlü sentetik Ş10 kol A ABD / AVR -> KATKI+; gürültüde KATKI+ değil; NS10 ters satırı BİLGİ; BIST BİLGİ",
+        _x8[("S10", "A", "ABD")]["etiket"] == "KATKI+" and _x8n[("S10", "A", "ABD")]["etiket"] != "KATKI+"
+        and _x8[("NS10", "A", "ABD")]["etiket"].startswith("BİLGİ") and _x8[("S10", "A", "BIST")]["etiket"].startswith("BİLGİ"),
+        f"{_x8[('S10', 'A', 'ABD')]['etiket']} / {_x8n[('S10', 'A', 'ABD')]['etiket']}")
+_ma8 = _M8[(_M8.pazar == "AVR") & (_M8.donem == "2024-26") & _M8.kolB & (_M8.S10 == 1)]; _mk8 = _M8[(_M8.pazar == "AVR") & (_M8.donem == "2024-26") & _M8.kolB]
+kontrol("T8: karne: kol B AVR 2024-26 MARJ elle", abs(_x8[("S10", "B", "AVR")]["2024-26"]["marjinal"]
+                                                  - ((_ma8.h5 - _ma8.es_h5).mean() - (_mk8.h5 - _mk8.es_h5).mean())) < 1e-12)
+_g23 = _M8[(_M8.pazar == "ABD") & (_M8.donem == "2023") & (_M8.giris >= "2023-03-29") & (_M8.S10 == 1)]
+kontrol("T8: karne: 2023 hücresi ambargolu n elle", _x8[("S10", "A", "ABD")]["2023"]["n"] == len(_g23))
+# Cemal sayfaları (sonuç sütunu yok)
+try:
+    _Dc = YH.yh_t8_cemal_sayfa(); _cs = set(_Dc.set)
+    kontrol("T8: Cemal sayfaları hakem KÖR + TUR 1 / 2 / 4 / 6; sonuç sütunu yok", {"hakem (KÖR)", "TUR 1", "TUR 2", "TUR 4", "TUR 6"} <= _cs
+            and not any(c in _Dc.columns for c in ("h5", "es_h5", "st5", "getiri")), f"{_Dc.set.value_counts().to_dict()}")
+except YH.YHHata as _ex:
+    kontrol("T8: Cemal sayfaları okunur", False, str(_ex))
+_Cu = pd.DataFrame({"set": ["TUR 6"] * 4 + ["TUR 1"] * 2, "sayfa": [5, 9, 26, 30, 1, 2], "pazar": ["ABD"] * 6, "cemal": ["OLMAZ", "OLMAZ", "OLUR", "OLMAZ", "OLUR", "BELİRSİZ"],
+                    "S10": [1.0, 0.0, 1.0, 0.0, 0.0, 1.0], "F68": [1.0, 0.0, 1.0, np.nan, 1.0, 0.0], "F67": [10.0, np.nan, 12.0, 9.0, 20.0, 11.0],
+                    "F65": 0.0, "F66": 0.001, "F66m": -0.01, "not": ["", "", "", "", "", ""]})
+_U8 = YH.yh_t8_cemal_uyum(_Cu)
+_r8 = [r for r in _U8["tablo"] if r["set"] == "hepsi" and r["bayrak"] == "S10"][0]
+kontrol("T8: Cemal uyum tablosu sayımları elle; TUR 6 sert / iyi listesi", _r8["OLUR_tutar"] == 1 and _r8["OLUR_tutmaz"] == 1 and _r8["OLMAZ_tutar"] == 1
+        and _r8["OLMAZ_tutmaz"] == 2 and _r8["BELİRSİZ_tutar"] == 1 and [r["sayfa"] for r in _U8["tur6"] if r["grup"] == "sert düşüş"] == [5, 9, 30]
+        and [r for r in _U8["tur6"] if r["sayfa"] == 5][0]["S10"] is True)
+# kapı
+_td8 = tempfile.mkdtemp()
+try:
+    YH.yh_kapi8(_td8, git=False); _kp8 = False
+except YH.YHHata:
+    _kp8 = True
+shutil.rmtree(_td8, ignore_errors=True)
+kontrol("T8: ön kayıt yokken koşu kapısı DURUR", _kp8)
+kontrol("T8: kontrol tablosu 14 satır, K1-K9 / K11-K13 EVET + kanıt; adlar önekli; önceki tur adları korunur",
+        YH.yh_kontrol_tablosu(YH.YH_KONTROL_8).count("| K") >= 14 and all(YH.YH_KONTROL_8[k][0] == "EVET" and len(YH.YH_KONTROL_8[k][1]) > 40
+                                                                          for k in ("K1", "K2", "K3", "K4", "K5", "K6", "K7", "K8", "K9", "K11", "K12", "K13"))
+        and YH.yh_devir3_kos.__doc__.startswith("DEVİR 3") and callable(YH.yh_kos5))
+_var8 = _rng8.random(_N8) >= .1; _Mu8 = _M8.assign(F67=np.where(_var8, 20.0, np.nan), S10=_M8.S10 * _var8)
+_Mu8["s65"] = _Mu8.S10; _Mu8["s66"] = _Mu8.S10
+_hu8 = YH.yh_t8_huni(_Mu8)
+kontrol("T8: huni monoton (Y1 >= L1/L2 var >= F65 >= Ş10 >= Ş10 VE F68) ve Ş10 + NOT Ş10 = Y1 (kol A ve B)", all(
+    _hu8[f"{k_}|Y1 olayı (kol)"][k] >= _hu8[f"{k_}|L1 / L2 var"][k] >= _hu8[f"{k_}|+ F65 fiyat eşit / daha derin"][k]
+    >= _hu8[f"{k_}|+ F66 MACD daha yukarı ve < 0 = Ş10"][k] >= _hu8[f"{k_}|+ F68 MACD > sinyal (Y13c)"][k]
+    and _hu8[f"{k_}|+ F66 MACD daha yukarı ve < 0 = Ş10"][k] + _hu8[f"{k_}|(ayrı) NOT Ş10 (uyumsuzluk yok)"][k] == _hu8[f"{k_}|Y1 olayı (kol)"][k]
+    for k_ in ("A", "B") for k in _hu8["A|Y1 olayı (kol)"]))
+_Mbad = _Mu8.copy(); _Mbad.loc[_Mbad.index[:5], "S10"] = 1.0; _Mbad.loc[_Mbad.index[:5], "s65"] = 0.0
+try:
+    YH.yh_t8_huni(_Mbad); _hb = False
+except YH.YHHata:
+    _hb = True
+kontrol("T8: S10 != s65 VE s66 ise huni DURUR (bozuk dosya)", _hb)
+
+# sentetik uçtan uca (git'siz): s10ozellik -> onkayit8 -> kos8 -> RAPOR_8; ikinci koşu durur; sha tutmazsa durur
+_t8 = tempfile.mkdtemp(prefix="yh_t8_"); _v8 = os.path.join(_t8, "veri"); _c8 = os.path.join(_t8, "cikti"); os.makedirs(_v8); os.makedirs(_c8)
+_yol8 = dict(YH.YH_YOL)
+try:
+    _Ys = YH.yh_y8(); _O = []; _G = []
+    for _pi, _p in enumerate(["ABD", "AVR", "BIST"]):
+        _V = {f"{_p}{_i:02d}": rastgele_hisse(2600, 5000 + 100 * _pi + _i, bas="2016-01-04", oyn=0.018) for _i in range(48)}
+        pd.to_pickle(_V, os.path.join(_v8, f"V_{_p}.pkl"))
+        _Vd = OC.oc_veri(_p, klasor=_v8); _P = OC.oc_panel(_Vd); _Cl = YH.yh_kapanis(_P, _Vd)
+        _S = YH.yh_sinyaller(_Vd, _p, ["Y1"], 1)["Y1"]
+        _Z, _ = YH.yh_olc_pazar(_Vd, _P, _Cl, _S, "Y1", _p, 1)
+        _O.append(_Z)
+        for _sb, _g in _Z.groupby("sembol"):
+            _F = YH.yh_y9_ozellik(_V[_sb], list(pd.to_datetime(_g.tarih)))
+            _F.insert(0, "tarih", pd.to_datetime(_g.tarih).to_numpy()); _F.insert(0, "sembol", _sb); _F.insert(0, "pazar", _p); _G.append(_F)
+    _O1 = pd.concat(_O, ignore_index=True); _O1.to_csv(os.path.join(_c8, "olay_Y1.csv.gz"), index=False, compression="gzip", date_format="%Y-%m-%d")
+    _Gz = pd.concat(_G, ignore_index=True); _rz = np.random.default_rng(5)
+    for _c in ("F7", "F10", "F13"):
+        _Gz[_c] = _rz.uniform(0, 1, len(_Gz))
+    _yoz8 = os.path.join(_t8, "ozellik_Y1.csv.gz"); _Gz.to_csv(_yoz8, index=False, float_format="%.6g", compression="gzip", date_format="%Y-%m-%d")
+    _Gk = pd.read_csv(_yoz8, parse_dates=["tarih"])
+    _y9 = _O1.assign(tarih=pd.to_datetime(_O1.tarih)).merge(_Gk[["pazar", "sembol", "tarih", "F15", "F17"]], on=["pazar", "sembol", "tarih"])
+    _y9 = _y9[(_y9.F15 <= .25) & (_y9.F17 <= -.20)].drop(columns=["F15", "F17"])
+    _y9.to_csv(os.path.join(_c8, "olay_Y9.csv.gz"), index=False, compression="gzip", date_format="%Y-%m-%d")
+    pd.DataFrame({"pazar": _Gk.pazar, "sembol": _Gk.sembol, "tarih": _Gk.tarih, "F55": _rz.uniform(0, 1, len(_Gk))}).to_csv(
+        os.path.join(_c8, YH.YH_D2_DOSYA["ozellik"]), index=False, compression="gzip", date_format="%Y-%m-%d")
+    _d3 = {"tabaka": {p: {c: [1 / 3, 2 / 3] for c in ("F10", "F15", "F7", "F55", "F13")} for p in ("ABD", "AVR", "BIST")},
+           "ambargo": {p: {"yon1_sinama_ilk_izinli": "2023-03-29", "yon2_sinama_son_izinli": "2022-10-06"} for p in ("ABD", "AVR", "BIST")}}
+    open(os.path.join(_c8, YH.YH_D3_DOSYA["esik"]), "w").write(json.dumps(_d3))
+    _Jg = {"yh_esik_sha": YH.yh_esik_sha(), "surum": "test", "guc": {str(y): {str(n): {f"{k:.2f}": {f"{dd:.2f}": 0.5 for dd in YH.YH_ESIK["guc"]["d"]}
+                                                                           for k in YH.YH_ESIK["guc"]["kat_ref"]} for n in YH.YH_ESIK["guc"]["n"]} for y in (1, -1)}}
+    open(os.path.join(_c8, "guc_tablosu.json"), "w").write(json.dumps(_Jg))
+    _sha = lambda y: YH._yh_sha_dosya(os.path.join(_c8, y))  # noqa: E731
+    open(os.path.join(_c8, "ON_KAYIT_5.md"), "w", encoding="utf-8").write(f"- YH_ESIK_SHA: `{YH.yh_esik_sha()}`\n")
+    open(os.path.join(_c8, "ON_KAYIT_6.md"), "w", encoding="utf-8").write(f"- YH_ESIK6_SHA: `{YH.yh_esik6_sha()}`\n")
+    open(os.path.join(_c8, "ON_KAYIT_7.md"), "w", encoding="utf-8").write(f"- YH_ESIK7_SHA: `{YH.yh_esik7_sha()}`\n- Y1_OLAY_SHA: `{_sha('olay_Y1.csv.gz')}`\n")
+    open(os.path.join(_c8, YH.YH_D3_DOSYA["onkayit"]), "w", encoding="utf-8").write(
+        f"- YH_ESIK_D3_SHA: `{YH.yh_esik_d3_sha()}`\n- D3_ESIK_JSON_SHA: `{_sha(YH.YH_D3_DOSYA['esik'])}`\n- Y9_OLAY_SHA: `{_sha('olay_Y9.csv.gz')}`\n")
+    open(os.path.join(_c8, "sonuc.json"), "w").write(json.dumps({"surum": "test", "deneme": {}, "kos": []}))
+    YH.YH_YOL["ozellik"] = _yoz8; YH.YH_YOL["ozellik_s10"] = os.path.join(_t8, "ozellik_Y1_s10.csv.gz")
+    try:
+        YH.yh_kos8(_c8, _v8, git=False); _k0 = False
+    except YH.YHHata:
+        _k0 = True
+    kontrol("T8 uçtan uca: ön kayıt 8 yokken koşu DURUR", _k0)
+    _den8 = YH.yh_s10_ozellik_yaz(_v8, _c8, denetim_n=10)
+    kontrol("T8 uçtan uca: s10ozellik satır = Y1 olayı, prefix tuttu", _den8["satir"] == len(_O1) and all(r["prefix_tuttu"] > 0 for r in _den8["pazar"].values()))
+    _yo8 = YH.yh_onkayit8_yaz(_c8, _v8, git=False); _m8 = open(_yo8, encoding="utf-8").read()
+    kontrol("T8 uçtan uca: ON_KAYIT_8 (§1-§4 aynen, GE_FN / V_*.pkl / HUNI8 sha, huni, kontrol kapısı)", YH._yh_is_tanimi8_bolum() in _m8
+            and all(f"{k}:" in _m8 for k in ("GE_FN_SHA", "V_ABD_SHA", "V_AVR_SHA", "V_BIST_SHA", "HUNI8_SHA", "S10_OZELLIK_SHA"))
+            and YH.yh_kapi8(_c8, _v8, git=False)["kontrol"])
+    _R8 = YH.yh_kos8(_c8, _v8, islem=2, git=False)
+    _J8 = json.load(open(os.path.join(_c8, "sonuc.json"), encoding="utf-8"))
+    kontrol("T8 uçtan uca: sonuc.json Y13 / Y13b / Y13c (Y13c bilgi) + tur8 (karne, var_yok, cemal, BH, yeniden üretim TUTTU)",
+            all(k in _J8["deneme"] for k in YH.YH_DENEMELER_8) and _J8["deneme"]["Y13c"].get("bilgi") is True and "tur8" in _J8
+            and all(r["durum"] == "TUTTU" for r in _J8["tur8"]["yeniden_uretim"]) and len(_J8["tur8"]["karne"]) > 0)
+    kontrol("T8 uçtan uca: RAPOR_8 başlıkları", all(x in _R8["rapor"] for x in ("## 1. Huni", "## 2. SONUÇ", "## 3. Dış sınama", "## 4. MACD uyumsuzluğu",
+                                                                             "## 5. KARNE v3", "## 6. CEMAL UYUMU", "## 7. YENİDEN ÜRETİM", "## HATA",
+                                                                             "KONTROL LİSTESİ", "Colab")))
+    _o13 = pd.read_csv(os.path.join(_c8, "olay_Y13.csv.gz"))
+    _s10t = pd.read_csv(YH.YH_YOL["ozellik_s10"])
+    kontrol("T8 uçtan uca: olay_Y13 = Y1 olayı VE Ş10 (küme)", set(zip(_o13.pazar, _o13.sembol, _o13.tarih))
+            == set(zip(_s10t.pazar[_s10t.S10 == 1], _s10t.sembol[_s10t.S10 == 1], _s10t.tarih[_s10t.S10 == 1])))
+    try:
+        YH.yh_kos8(_c8, _v8, git=False); _k2 = False
+    except YH.YHHata:
+        _k2 = True
+    kontrol("T8 uçtan uca: ikinci koşu DURUR", _k2)
+    open(_yo8, "w", encoding="utf-8").write(_m8.replace(YH.yh_esik8_sha(), "0" * 64))
+    try:
+        YH.yh_kapi8(_c8, _v8, git=False); _k3 = False
+    except YH.YHHata:
+        _k3 = True
+    kontrol("T8 uçtan uca: YH_ESIK8 sha tutmazsa kapı DURUR", _k3)
+except Exception as _ex:   # noqa: BLE001
+    import traceback; traceback.print_exc()
+    kontrol("T8 uçtan uca çalıştı", False, str(_ex))
+finally:
+    YH.YH_YOL.clear(); YH.YH_YOL.update(_yol8)
+    shutil.rmtree(_t8, ignore_errors=True)
 
 print(f"\nSONUÇ: {len(GECTI)} geçti, {len(KALDI)} kaldı" + (f" -> {KALDI}" if KALDI else ""))
 sys.exit(1 if KALDI else 0)
