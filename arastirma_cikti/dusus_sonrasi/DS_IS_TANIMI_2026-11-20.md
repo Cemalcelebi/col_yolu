@@ -1,0 +1,55 @@
+# DÜŞÜŞ SONRASI PARMAK İZİ — WEB ARAŞTIRMASI İŞ TANIMI (20 Kasım 2026)
+
+Cemal (20 Kas): "bizde olmayan hipotezleri web'de araştır; özellikle düşüş sonrası iyi yükselen hisselerde bir parmak izi bul; bütün olasılıkları dene, alt ajanlara yaptır."
+
+## 0. Ön uçuş kontrol listesi (okunmadan başlanmaz)
+```
+ÖN UÇUŞ KONTROLÜ (zorunlu; hata defterinden): kod yazmaya başlamadan önce oku, ön kayıt dosyasına KONTROL LİSTESİ tablosunu (`python IZ_KARNE.py kontrol`) doldurarak koy, raporunda 'HATA' başlığıyla bulduğun her hatayı ayrı listele.
+- K1 kontrol grubu: Eşler aynı giriş günü, aynı momentum x likidite hücresi, aynı giriş / çıkış geometrisi mi; taban rastgele olay sağlamasıyla (200 eş portföy) mi? Mekanik üstünlük (sinyal tanımının kendiliğinden ürettiği fark) dışlandı mı? [geçmiş: 22 kez (H005, H006, H026-H032, H055, H064, H100...)]
+- K2 geleceğe bakma: Her girdi alanının bilgi tarihi <= karar günü ve bu KODDA mekanik denetleniyor mu? Satır tarihi mi (sayfa / haber tarihi değil)? Etiket, evren listesi, sektör karar günündeki haliyle mi? [geçmiş: 12 kez (H003, H016, H034, H051, H130...)]
+- K3 geçerli bar: H>L ve V>0 olmayan bar sinyal ya da ölçü üretmiyor mu; hacim 0 gün fiyatı bayat sayılıyor mu; seans açıkken yarım bar atılıyor mu? [geçmiş: 2 kez aynı hata (H004, H037), H134, H141]
+- K4 tekilleştirme: Aynı hissede olay 60 günde bir mi; n bağımsız olay sayısı mı; aynı işlem bir kez mi sayılıyor; ortalama yanında medyan var mı? [geçmiş: H006 (n 4-5 kat şişkin), H014]
+- K5 giriş fiyatı: Giriş = sinyalden (yayın saatinden) sonraki ilk işlem fiyatı mı (ertesi açılış), sinyal günü kapanışı değil mi? [geçmiş: H005, 60 gün ufuk itirazı]
+- K6 veri birimi: Fiyat tek kipte mi (ekran fiyatı ya da düzeltilmiş, karışık değil); birim (lot / TL, peni / sterlin, 100x), bölünme marjı (12.03.2020 öncesi +-%20), bedelsiz denetlendi mi; yeni pazar birim denetiminden geçti mi? [geçmiş: veri 34 satır (H007, H017, H060...)]
+- K7 hayatta kalma: Evren bugünün listesi mi? Batanlar / kottan çıkanlar yoksa raporda yazılı ve sonuç 'yukarı yanlı' okunuyor mu? [geçmiş: 8 kez (H008, H057, H142...)]
+- K8 örneklem ve dönem: n < 30 'örneklem yetersiz' ve olaylar tek tek listeli mi; iki alt dönem aynı yönde mi; çoklu karşılaştırma BH ile mi; küçük örneklemden 'bulgu' denmiyor mu? [geçmiş: H010, Ç169 n 11, K1 / K2 n < 30]
+- K9 ön kayıt: Tanım + eşik sözlüğü + kod sha ön kayıtta; ön kayıt commit zamanı < koşu zamanı; sonuçtan sonra yalnız gösterim değişti, aksi SAPMA; eşik sonuca göre oynanmadı mı? [geçmiş: H079, H097 (ön kayıt geç commit)]
+- K10 ayrıştırma: Ham kaynaktan rastgele >= 3 satır elle doğrulandı mı; haber türü (günlük / aylık / dönemsel), kurum etiketi (çok kurumlu haber), kenar kuşağı çöpü, güncelleme damgası, kurum adı hisse satırı dört ayrı denetim maddesi olarak kontrol edildi mi? [geçmiş: 5 kez tek günde (H128-H132, H136)]
+- K11 yeniden üretim: Raporlanan >= 2 hücre satır dosyasından bağımsız kodla yeniden üretildi mi; metindeki sıra / tarih / sayı ham kayıtla aynı mı? [geçmiş: H136 (PEKGY 1. / 4.), H137 (blok filtresi)]
+- K12 ifade: Fiyat değişimi ile gerçekleşen kâr / zarar ayrı mı; aracı kurum akışı ile kurum pozisyonu ayrı mı; 'anlamlı / ters / iz / emare' sözü yalnız bu liste geçince mi; sayı ile yorum ayrı cümlede mi? [geçmiş: yanlış yorum 16 satır (H133, H135...)]
+- K13 süreç: Çakışma kapısı korundu mu; kod değiştiyse 'çalışma zamanını yeniden başlat' yazıldı mı; e-posta / anahtar sızıntı taraması yapıldı mı; kota / ücret / yeni dal Cemal onayıyla mı; yasak defter dosyalarına dokunulmadı mı? [geçmiş: süreç 21 satır (H019, H021, H143...)]
+- K14 boyut (gerçek para): Öneri işinde boyut tavanı, zarardaki isme ekleme yasağı, olay bazlı çıkış ve 2x kuralı alımdan önce yazılı mı; taban oranlar (10x ~%1) yazılı mı? [geçmiş: karar-boyut 6 satır (H012, H013)]
+```
+
+## 1. YASAKLAR (her kol için)
+- IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md, KURAL_DEFTERI_TASLAK.md, CEMAL_COL_KURALLARI.md, HAKEM_DERSLER.md, TUR_DEFTERI.md dosyalarına DOKUNMA. Üretim zincirine (BASLAT, COL_v1, takip, YAPI_HEDEF, GOZ_ETIKET, CANLI_TARAMA) dokunma. git commit yapma; yalnız kendi çıktı dosyanı yaz.
+- Ölçüm yapma, fiyat indirme, getiri hesaplama YOK. Bu iş yalnız araştırma + envanterdir.
+- E-posta, anahtar, kişisel bilgi hiçbir isteğe ve dosyaya yazılmaz. Dış servislere genel istemci adı.
+- Kaynak uydurma YOK: her URL WebFetch ile açılır; açılamayan 'doğrulanamadı' diye işaretlenir, sayısı yazılır. Açılan sayfada olmayan sayı yazılmaz. Sosyal medya / forum / blog kaynağı 'İDDİA' etiketi alır.
+- Dil Türkçe, kısa. Tablo satırları tek cümle.
+
+## 2. SORU (hepsi için ortak)
+Olay: hisse son 6 ayda tepeden en az %30 düşmüş ve dip bölgesinde (120 günlük aralığın alt çeyreği). Soru: giriş gününde (t) BİLİNEN hangi ölçülebilir özellik, sonraki 15 barda +%5 / +%10 hedefinin stop'tan (hat x 0,98) önce görülmesini (bilgi olarak 60 gün ve 12 ay toparlanmayı) ayırt eder? İki yön de aranır: 'toparlanır' (+) ve 'düşen bıçak sürer' (−). Pazarlar: ABD ve Avrupa karar, BIST bilgi.
+Bizde ZATEN OLANLAR (yalnız bunların dışındakiler YENİ sayılır; önce oku):
+- arastirma_cikti/yol_haritasi/SINYAL_ENVANTERI.md (120 sinyal: momentum, değer, kârlılık, yatırım, seyrelme, içeriden, kısa pozisyon, hacim, oynaklık, olay vb.)
+- arastirma_cikti/yapi_hedef/WEB_SEKIL_METRIKLERI.md ve WEB_GUNCEL_SISTEMLER_2026-11-19.md (şekil ölçüleri, Bulkowski, güncel sistemler)
+- arastirma_cikti/kural_defteri/KURAL_DEFTERI_TASLAK.md (Cemal'in kuralları K1-K51; C1-C13 ve CD/VD dersleri arastirma_cikti/goz_etiket/HAKEM_DERSLER.md)
+- arastirma_cikti/canli/KAZANANLAR_2026-10-22.md (H1 bilanço penceresi, H2 düşen bıçak, H3 katalizör)
+- Kapalı konular: COL_OZET.md 'kapalı konular' listesi (giriş zamanlaması / onay / hacim, stop / erken kesme, sektör ısısı, KNN, VIX / DXY, 90'dan fazla şekil ölçüsü). Kapalı konuya giren hipotez yazılır ama 'KAPALI' etiketi alır, ölçüm önerilmez.
+Veri envanteri (bizde var mı sütunu için): arastirma_cikti/veri_envanteri/IZ_VERI_ENVANTERI.md bölüm 0 (fiyat ABD 2010+, AVR, BIST; Form 4 k30; 8-K madde kodları k55; FINRA kısa pozisyon 2017-12+; SEC finansallar 2021+; Yahoo bilanço takvimi; analist not günlüğü; KAP).
+
+## 3. KOLLAR (her kol ayrı alt ajan, ayrı dosya)
+- KOL A — AKADEMİK: SSRN, arXiv q-fin, JF / JFE / RFS / JFQA / RAPS özetleri, Chen-Zimmermann açık kaynak, Alpha Architect / QuantPedia özetleri. Konular: aşırı tepki ve dönüş (De Bondt-Thaler sonrası), 52 hafta dibi etkisi, teslim (capitulation) hacmi, idiosinkratik oynaklık ve MAX (piyango), kısa pozisyon ve sıkışma, analist revizyonu / düşürme dalgası sonrası, içeriden alım kümesi düşüş sonrası, geri alım duyurusu düşüş sonrası, likidite şoku ve geri dönüş, kurumsal sahiplik değişimi (13F), 'düşen bıçak' çalışmaları (Brandes 'Falling Knives'), sıkıntılı hisse toparlanması (Altman / Ohlson + düşüş), kalite-kaybeden kesişimi (Piotroski kaybedenlerde), haber duyarlılığı ve dikkat (Google / Reddit), opsiyon imzaları (put/call, IV skew), kazanç duyurusu sonrası sürüklenme düşüş sonrası, endeks çıkışı / girişi, zorunlu satış (fon çıkışı, margin), vergi kaybı satışı (Aralık / Ocak), 'dead cat bounce' ölçümleri.
+- KOL B — PRATİSYEN KİTAP + SİSTEM: Wyckoff (selling climax, spring, sign of strength), O'Neil / Minervini (VCP, follow-through day, RS line yeni tepe, 'power play'), Weinstein evre 1 -> 2, Darvas, Livermore pivotal point, Connors (RSI2, Double 7s, 'TPS'), Larry Williams (Williams %R, 'smash day'), DeMark (TD Sequential buy, TD Combo), Raschke, Elder (Impulse, force index), Bulkowski dip istatistikleri (WEB_SEKIL'de olmayanlar), Zweig / breadth thrust (piyasa koşulu olarak), Dorsey point & figure, Bollinger squeeze düşüş sonrası, ATR / Keltner, QuantPedia 'reversal' stratejileri, QuantConnect / Quantopian forum ölçülmüş sonuçlar, Robot Wealth / Quantocracy. Her sistem için: kitap / sayfa ya da URL, kuralın ÖLÇÜLEBİLİR tanımı, yazarın verdiği sayı (varsa) ve bağımsız test (varsa).
+- KOL C — GÜNCEL AÇIK KAYNAK + SOSYAL (2024-2026): GitHub / Kaggle (düşüş sonrası / rebound / mean reversion / bottom detection özellikleri; yıldız ve tarih yaz), Reddit r/algotrading, r/quant, X (Twitter) quant hesapları, TradingView en çok kullanılan betikler (SMC: liquidity sweep, order block, FVG, 'stop hunt then reclaim', VWAP reclaim, anchored VWAP, relative volume, 'gap fill'), Substack / Medium quant yazıları, YouTube sistem tanımları (yalnız ölçülebilir kural varsa). Her biri İDDİA; ölçülebilir tanıma çevir; sosyal medya sayısı yazılmaz, 'ölçülmedi' denir.
+- KOL D — TEMEL + OLAY + SAHİPLİK (düşüş sonrası): içeriden küme alımı (3+ yönetici, 30 gün), geri alım duyurusu / ASR, 13D aktivist, CEO / CFO değişimi, öngörü yükseltme, going-concern kalkması, borç yeniden yapılandırma / refinansman, temettü yeniden başlatma, endeks dahil olma, analist yükseltme dalgası, kısa pozisyon + days-to-cover sıkışma, ters bölünme (−), ATM / seyrelme (−), 8-K madde kodları (1.01 sözleşme, 2.02 sonuç, 5.02 yönetici, 8.01 diğer) düşüş sonrası, konferans / yatırımcı günü, FDA / PDUFA takvimi, birleşme söylentisi, iflas sonrası hisse, spin-off, 'mahkeme / dava uzlaşması', hükûmet sözleşmesi, hisse senedi opsiyonu fiyatlama (yönetici opsiyon tarihi dibe denk gelme = 'opsiyon dibi' sinyali), sahiplik: 13F kurumsal artış, fon akışı. Her olay için: ücretsiz veri kaynağı (SEC EDGAR full-text, Form 4, FINRA, Yahoo, KAP) ve bizde var mı.
+
+## 4. ÇIKTI (her kol kendi dosyası: arastirma_cikti/dusus_sonrasi/WEB_<KOL>_2026-11-20.md)
+1. Özet 5 satır: kaç hipotez bulundu, kaçı YENİ (envanterde yok), kaçı bizde mevcut veriyle 15 bar cetvelle ölçülebilir, en umut veren 3 (kaynaktaki sayıyla, iddia dili yok).
+2. Tablo: kod (A1, A2 ...) | hipotez (düz dil, tek cümle) | ölçülebilir tanım (formül, pencere, gecikme; t'de bilinir mi) | yön (+ / − / ?) | kaynak (yazar yıl ya da sistem adı; URL; DOĞRULANDI / doğrulanamadı / İDDİA) | kaynaktaki büyüklük (sayı + örneklem + dönem; yoksa 'yok') | gereken veri | bizde var mı (EVET / EVET† / İNDİR / YOK; IZ_VERI_ENVANTERI'ye göre) | envanter (SINYAL_ENVANTERI kodu ya da YENİ ya da KAPALI) | 15 bar ölçülebilir mi (EVET / HAYIR, neden) | not (düşüş sonrası bağlamına özgü mü, genel mi).
+3. 'Önerilen ön kayıt adayları': YENİ + bizde EVET olanlardan en çok 10; her birine kaynaktan alınan SABİT eşik (kaynakta yoksa 'eğitim döneminde medyan / üst çeyrek' yazılır, sonuç görülmeden). Eşik sonuca göre oynanmaz.
+4. 'Yön çelişkileri': aynı ölçü için kaynaklar farklı yön veriyorsa yaz.
+5. KAYNAK SAYIMI: açılan URL sayısı, doğrulanan, doğrulanamayan; sosyal medya (İDDİA) sayısı.
+6. HATA başlığı (bulduğun her hata / çelişki / veri sorunu; ayrı liste).
+7. KONTROL LİSTESİ başlığı (K1-K14; araştırma işi için çoğu UYGULANMAZ, K2 / K7 / K10 / K12 / K13 doldurulur).
+Hedef: kol başına en az 15 YENİ hipotez; bulunamazsa dürüstçe az yazılır, sayı şişirilmez. En çok ~30 WebFetch; WebSearch 'standard', niş konuda 'extended'.
