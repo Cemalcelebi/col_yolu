@@ -85,12 +85,12 @@ CT_ESIK: Dict[str, Any] = {
     "pazar": ["ABD", "AVR", "BIST"],
     "para": {"ABD": "USD", "AVR": "EUR", "BIST": "TL"},
     "veri": {"yahoo_ek": {"ABD": "", "AVR": "", "BIST": ".IS"}, "indir_gun": 400, "paket": 100, "fark_esik": 0.01, "supheli_getiri": 0.40,
-             "olcek_azami": 0.40, "kapanis_utc": {"BIST": "15:30", "AVR": "16:45", "ABD": "21:15"},
+             "olcek_azami": 0.40, "oran_yayilim_azami": 1.40, "kapanis_utc": {"BIST": "15:30", "AVR": "16:45", "ABD": "21:15"},
              "tanim": "yfinance auto_adjust=True, son 400 takvim günü, 100'lük paket, threads; başarısızlar ikinci turda 20'lik pakette bir kez "
                       "daha. Birleştirme: eski seri korunur, yeni barlar eklenir; ortak günlerde Close farkı > %1 olan gün sayısı uyarıdır ve ortak "
                       "günlerde yeni veri esastır; ortak günlerin medyan oranı (yeni / eski) 1'den > %1 farklıysa (temettü / ayarlama kipi) eski "
                       "kısmın O/H/L/C'si bu oranla ölçeklenir (tek fiyat kipi, K6); oran 1'den > %40 farklıysa (bölünme / birim: peni-sterlin) "
-                      "sembol ŞÜPHELİ. Yeni barlarda |günlük getiri| > %40 -> ŞÜPHELİ (listeden dışlanır). AVR yeni barlarda Kur = son bilinen "
+                      "sembol ŞÜPHELİ; ortak günlerin gün oranlarında en büyük / en küçük > 1,40 ise (ayarlama ya da birim ortak pencerenin bir kısmında farklı: BIST bedelsiz, Londra peni-sterlin) sembol ŞÜPHELİ (SAPMA 1, 20 Kas: ön kayıttan sonra, liste görülmeden eklendi). Yeni barlarda |günlük getiri| > %40 -> ŞÜPHELİ (listeden dışlanır). AVR yeni barlarda Kur = son bilinen "
                       "Kur (ileri taşınır; yalnız likidite ölçüsü). Seans kapanmadan (pazar kapanış UTC saati + pay) gelen bugünkü bar atılır."},
     "sinyal": {"son_bar": 5, "tekil_gun": 60, "likidite_gun": 20, "likidite_min": 10, "likidite_alt": 0.20, "mom_gun": 60, "bolunme_geri": 61,
                "tanim": "S6 AL (YAPI_HEDEF.yh_s6_hisse X1 = Y1) günü t; havuz t günündeki bilgiyle (OC 'gecmis' kipinin t+1 girişli hali): "
@@ -140,6 +140,14 @@ CT_KONTROL: Dict[str, Tuple[str, str]] = {
     "K14": ("EVET", "öneri değil; boyut / giriş / çıkış kuralı yazılmaz; gerçek para kararı için öneri modülü üç kapısı (dosya + risk) "
                     "ayrıca gerekir; taban oran (3 yılda 10x ~%1) her çıktıda dürüstlük cümlesiyle"),
 }
+
+
+CT_SAPMA: List[str] = [
+    "SAPMA 1 (20 Kas 2026, ilk ön kayıt 03b9658'den sonra; Ekim listesi bu kuraldan etkilenmez, güncellemesiz koştu): ilk yfinance güncellemesinin "
+    "ÖZETİ (liste değil) görülünce veri denetimi eklendi: ortak günlerin gün oranlarında en büyük / en küçük > 1,40 -> ŞÜPHELİ. Neden: BIST 19, "
+    "AVR 4 (Londra peni-sterlin), ABD 1 sembolde Yahoo'nun ayarlaması ortak pencerenin yalnız bir kısmında farklıydı; 'yeni veri esas' kuralı bu "
+    "sembollerde seriye sahte sıçrama sokuyordu (K6). Seçim / sıralama / havuz kuralı değişmedi.",
+]
 
 
 class CTHata(RuntimeError):
@@ -330,6 +338,9 @@ def ct_birlestir(eski: pd.DataFrame, yeni: pd.DataFrame, sinir: pd.Timestamp, E:
             bilgi["fark_gun"] = int(np.sum(np.abs(r - 1) > V["fark_esik"]))
             if abs(med - 1) > V["olcek_azami"]:
                 bilgi["supheli"] = True; bilgi["neden"] = f"ortak günlerde yeni/eski oranı {med:.3f} (bölünme / birim)"
+            elif float(np.max(r)) / float(np.min(r)) > V["oran_yayilim_azami"]:
+                bilgi["supheli"] = True
+                bilgi["neden"] = f"ortak günlerde oran tek tip değil ({float(np.min(r)):.3f} .. {float(np.max(r)):.3f}; ayarlama / birim karışık)"
             elif abs(med - 1) > V["fark_esik"]:
                 bilgi["olcek"] = True
                 for c in ("Open", "High", "Low", "Close"):
@@ -656,7 +667,7 @@ def ct_onkayit_metni(E: Dict[str, Any] = CT_ESIK) -> str:
          "## Kurallar (CT_ESIK)", ""]
     for k in ("veri", "sinyal", "havuz", "sira", "olcu", "model"):
         s.append(f"- **{k}**: {E[k]['tanim']}")
-    s += [f"- **kriz**: {E['kriz']}", "", "## KONTROL LİSTESİ (IZ_KARNE.IK_KONTROL)", "",
+    s += [f"- **kriz**: {E['kriz']}", "", "## SAPMA kaydı", ""] + [f"- {x}" for x in CT_SAPMA] + ["", "## KONTROL LİSTESİ (IZ_KARNE.IK_KONTROL)", "",
           "| Kod | Madde | Yanıt | Kanıt (dosya / fonksiyon / sayı) |", "|---|---|---|---|"]
     ad = {"K1": "kontrol grubu", "K2": "geleceğe bakma", "K3": "geçerli bar", "K4": "tekilleştirme", "K5": "giriş fiyatı", "K6": "veri birimi",
           "K7": "hayatta kalma", "K8": "örneklem ve dönem", "K9": "ön kayıt", "K10": "ayrıştırma", "K11": "yeniden üretim", "K12": "ifade",

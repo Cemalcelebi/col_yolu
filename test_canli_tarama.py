@@ -72,6 +72,9 @@ kontrol("ölçek sonrası birleşim sürekli (ortak ilk gün oranı 1)", abs(B2.
 y3 = y.copy(); y3[["Open", "High", "Low", "Close"]] *= 0.5
 _, b3 = CT.ct_birlestir(e, y3, pd.Timestamp("2100-01-01"))
 kontrol("oran 0,5 (bölünme / birim) -> şüpheli", b3["supheli"] and "oran" in b3["neden"])
+y3b = y.copy(); y3b.iloc[:20, [y3b.columns.get_loc(c) for c in ("Open", "High", "Low", "Close")]] *= 1.6
+_, b3b = CT.ct_birlestir(e, y3b, pd.Timestamp("2100-01-01"))
+kontrol("ortak günlerde oran tek tip değil (1,0 / 1,6) -> şüpheli (SAPMA 1)", b3b["supheli"] and "tek tip değil" in b3b["neden"])
 y4 = y.copy(); y4.iloc[-3, y4.columns.get_loc("Close")] *= 1.6
 _, b4 = CT.ct_birlestir(e, y4, pd.Timestamp("2100-01-01"))
 kontrol("yeni barda +%60 -> şüpheli", b4["supheli"] and "getiri" in b4["neden"])

@@ -2,21 +2,25 @@
 
 DÜRÜSTLÜK: bu liste 'izleme / ileri test' listesidir, ÖNERİ DEĞİLDİR. CLAUDE.md öneri modülünün üç kapısından (tarama + dosya + risk) burada yalnız tarama kapısı var ve seçici ÖLÇÜLEMEDİ düzeyindedir (dipte + gövdeli kırılım KATKI+ ama hücre başına +3..+9 puan). Alım-satım kararı Cemal'indir; Claude yatırım danışmanı değildir.
 
-- Zaman (UTC): 2026-11-20T06:12:49Z
+- Zaman (UTC): 2026-11-20T06:24:21Z
 - Sürüm: CANLI_TARAMA v1.0 (2026-11-20): S6 son 5 gün + havuz Ş1 VE Ş7 (kademeli) + puan7 sırası; ileri test olc (YAPI_HEDEF cetveli)
-- CT_ESIK_SHA: `a43ec505618579ffe47e99defc1b404844738b9654fac6c61f8147df53958f32`
+- CT_ESIK_SHA: `bb85545e07832f3cd0a667bf67fb641b74a801503d4337854365bf31f82d83f1`
 - YH_ESIK7_SHA (puan7 ayarları): `14f11dee1c6c96e976f60357771c7bb2b312ce91ad99cde691dad7dd2410ff26`
 - İş tanımı: arastirma_cikti/yapi_hedef/CANLI_TARAMA_IS_TANIMI.md (commit 39a8d2f)
 
 ## Kurallar (CT_ESIK)
 
-- **veri**: yfinance auto_adjust=True, son 400 takvim günü, 100'lük paket, threads; başarısızlar ikinci turda 20'lik pakette bir kez daha. Birleştirme: eski seri korunur, yeni barlar eklenir; ortak günlerde Close farkı > %1 olan gün sayısı uyarıdır ve ortak günlerde yeni veri esastır; ortak günlerin medyan oranı (yeni / eski) 1'den > %1 farklıysa (temettü / ayarlama kipi) eski kısmın O/H/L/C'si bu oranla ölçeklenir (tek fiyat kipi, K6); oran 1'den > %40 farklıysa (bölünme / birim: peni-sterlin) sembol ŞÜPHELİ. Yeni barlarda |günlük getiri| > %40 -> ŞÜPHELİ (listeden dışlanır). AVR yeni barlarda Kur = son bilinen Kur (ileri taşınır; yalnız likidite ölçüsü). Seans kapanmadan (pazar kapanış UTC saati + pay) gelen bugünkü bar atılır.
+- **veri**: yfinance auto_adjust=True, son 400 takvim günü, 100'lük paket, threads; başarısızlar ikinci turda 20'lik pakette bir kez daha. Birleştirme: eski seri korunur, yeni barlar eklenir; ortak günlerde Close farkı > %1 olan gün sayısı uyarıdır ve ortak günlerde yeni veri esastır; ortak günlerin medyan oranı (yeni / eski) 1'den > %1 farklıysa (temettü / ayarlama kipi) eski kısmın O/H/L/C'si bu oranla ölçeklenir (tek fiyat kipi, K6); oran 1'den > %40 farklıysa (bölünme / birim: peni-sterlin) sembol ŞÜPHELİ; ortak günlerin gün oranlarında en büyük / en küçük > 1,40 ise (ayarlama ya da birim ortak pencerenin bir kısmında farklı: BIST bedelsiz, Londra peni-sterlin) sembol ŞÜPHELİ (SAPMA 1, 20 Kas: ön kayıttan sonra, liste görülmeden eklendi). Yeni barlarda |günlük getiri| > %40 -> ŞÜPHELİ (listeden dışlanır). AVR yeni barlarda Kur = son bilinen Kur (ileri taşınır; yalnız likidite ölçüsü). Seans kapanmadan (pazar kapanış UTC saati + pay) gelen bugünkü bar atılır.
 - **sinyal**: S6 AL (YAPI_HEDEF.yh_s6_hisse X1 = Y1) günü t; havuz t günündeki bilgiyle (OC 'gecmis' kipinin t+1 girişli hali): t'de geçerli bar, momentum C(t)/C(t-60) sonlu (kapanış en çok 5 gün ileri taşınır), likidite = C*V*Kur'un t dahil son 20 birleşik takvim günü medyanı (en az 10), aynı gün geçerli barı olan pazar hisseleri arasında alt %20 değil, [t-60, t] içinde bölünme şüphesi (OC.oc_bolunme_supheli) yok; aynı hissede havuzdan geçen AL günleri birleşik takvimde >= 60 gün arayla tekil (ilk tutulur). Liste: pazarın birleşik takviminin son 5 günündeki tekil AL günleri.
 - **havuz**: Ş1 = F15 <= 0,25 VE F17 <= -0,20; Ş7 = F22 > 0 VE F22a < 0 (O_t < F21) VE F23 >= 0,50 (YAPI_HEDEF.yh_s7_sartlar, YH_ESIK Y10 eşikleri). Kademe 0: Ş1 VE Ş7. Bütün pazarlarda havuz boşsa kademe (i): Ş1 VE F22 > 0; o da boşsa (ii): Ş1. Kademe atlanmaz; raporda yazılır.
 - **sira**: puan7 azalan; eşitlikte Ş9 (U dip) var önce; sonra F18 küçük (yol almamış). Pazar karışık, pazar başına en çok 5.
 - **olcu**: stop0 = hat x 0,98; hedef fiyatları kapanışa göre (giriş = sonraki açılış varsayımı; gerçek ölçüm giriş açılışıyla); ileri test yh_olay_olc (YAPI_HEDEF 15 bar cetveli; eş aynı gün aynı OC kovası, en az 3); ölçüm tarihi = sinyal + 15 işlem günü (giriş t+1, 15. geçerli bar t+15)
 - **model**: eğitim = YH.yh_veri7() satırlarından ölçülen (h5 ve es_h5 var) VE giriş <= 2026-08-31 olanlar; özellikler _YH_OZ7 (F1-F29, F22a dahil) + NaN bayrakları (YH_ESIK7['nan_bayrak']); NaN -> eğitim medyanı; puan7 = P(h5 = 1)
 - **kriz**: canlı taramada 31.08.2026 kesiği bellekte geçici olarak kaldırılır (SY_ESIK / OC_ESIK / YH_ESIK 'kriz' -> 2100-01-01); dosyalar değişmez; fonksiyon çıkışında eski değer geri yazılır
+
+## SAPMA kaydı
+
+- SAPMA 1 (20 Kas 2026, ilk ön kayıt 03b9658'den sonra; Ekim listesi bu kuraldan etkilenmez, güncellemesiz koştu): ilk yfinance güncellemesinin ÖZETİ (liste değil) görülünce veri denetimi eklendi: ortak günlerin gün oranlarında en büyük / en küçük > 1,40 -> ŞÜPHELİ. Neden: BIST 19, AVR 4 (Londra peni-sterlin), ABD 1 sembolde Yahoo'nun ayarlaması ortak pencerenin yalnız bir kısmında farklıydı; 'yeni veri esas' kuralı bu sembollerde seriye sahte sıçrama sokuyordu (K6). Seçim / sıralama / havuz kuralı değişmedi.
 
 ## KONTROL LİSTESİ (IZ_KARNE.IK_KONTROL)
 
