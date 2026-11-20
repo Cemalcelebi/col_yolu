@@ -1,0 +1,92 @@
+# Canli tarama (ileri test listesi; ONERI DEGIL) — CANLI_TARAMA.py tara --guncelle + olc --vadesi.
+# Zaman: Pazartesi ve Persembe 20:30 TR (17:30 UTC). ABD seansi o saatte acik oldugu icin ABD'nin o gunku yarim bari atilir
+# (CANLI_TARAMA ct_yarim_bar_sinir); BIST ve Avrupa o gunun kapanisiyla girer.
+# Elle calistirmak: GitHub > col_yolu > Actions > "Canli Tarama" > Run workflow.
+# Veri onbellegi (/tmp/veri_canli: V_*.pkl + puan7_model.pkl) actions/cache'te; repoya yalniz md / json / pdf girer.
+# Not: gunluk_col_tarama.yml'ye dokunulmaz; bu is akisi ondan bagimsizdir.
+name: Canli Tarama
+
+on:
+  schedule:
+    - cron: "30 17 * * 1,4"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: canli-tarama
+  cancel-in-progress: false
+
+jobs:
+  tara:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      OC_VERI: /tmp/veri
+      CT_VERI_CANLI: /tmp/veri_canli
+    steps:
+      - name: Kodu al
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Python kur
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Paketleri kur
+        run: pip install "pandas==2.2.2" "numpy==2.0.2" "scikit-learn==1.9.1" "matplotlib>=3.8" "yfinance>=1.0" requests
+
+      - name: Canli veri onbellegini geri yukle
+        uses: actions/cache/restore@v4
+        with:
+          path: /tmp/veri_canli
+          key: canli-veri-${{ github.run_id }}
+          restore-keys: canli-veri-
+
+      - name: Taban veriyi ac (onbellek yoksa islenmis-veri dalindan)
+        run: |
+          if [ ! -f /tmp/veri_canli/V_ABD.pkl ] || [ ! -f /tmp/veri_canli/V_AVR.pkl ] || [ ! -f /tmp/veri_canli/V_BIST.pkl ]; then
+            git fetch origin islenmis-veri
+            git worktree add /tmp/iv origin/islenmis-veri
+            python FON_IZI.py vpac /tmp/iv/veri /tmp/veri
+          fi
+          ls -la /tmp/veri_canli /tmp/veri 2>/dev/null || true
+
+      - name: Tarama (yfinance guncellemesi + liste)
+        id: tarama
+        run: python -u CANLI_TARAMA.py tara --guncelle --islem 2
+
+      - name: Ileri test olcumu (vadesi gelen listeler)
+        if: always()
+        run: python -u CANLI_TARAMA.py olc --vadesi
+
+      - name: Onbellek var mi
+        id: ob
+        if: always()
+        run: if [ -f /tmp/veri_canli/V_ABD.pkl ]; then echo "var=1" >> "$GITHUB_OUTPUT"; else echo "var=0" >> "$GITHUB_OUTPUT"; fi
+
+      - name: Canli veri onbellegini sakla
+        if: always() && steps.ob.outputs.var == '1'
+        uses: actions/cache/save@v4
+        with:
+          path: /tmp/veri_canli
+          key: canli-veri-${{ github.run_id }}
+
+      - name: Sonucu repoya kaydet (yalniz md / json / pdf)
+        if: always()
+        run: |
+          git config user.name "col-yolu-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for f in arastirma_cikti/canli/CANLI_TARAMA_*.md arastirma_cikti/canli/CANLI_TARAMA_*.json arastirma_cikti/canli/CANLI_TARAMA_*.pdf arastirma_cikti/canli/CANLI_SONUC.md; do
+            [ -e "$f" ] && git add "$f"
+          done
+          if git diff --cached --quiet; then echo "Degisiklik yok"; exit 0; fi
+          git commit -m "Canli tarama $(TZ=Europe/Istanbul date +%F) (izleme / ileri test; oneri degil)"
+          for i in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep 5
+          done
+          echo "Push basarisiz"; exit 1
