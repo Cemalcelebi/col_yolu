@@ -7,6 +7,7 @@
    açık veri işareti ve öteki ufuk işareti şartları  7) Bonferroni / BH sabitleri, m = 20, ufuklar (R45 bilgi)
 8) ön kayıt kapısı (geçici git deposunda): işlenmiş + sha'lar aynı -> geçer; bağımlı sha farkı / KT_ESIK farkı / işlenmemiş değişiklik /
    hipotez farkı -> durur  9) 6 anlamlı basamak yuvarlaması  10) sızıntı taraması (e-posta / anahtar)  11) kontrol tablosu IZ_KARNE kapısından geçer
+13) kt_d9_durum = D9_YENIDEN.d9_durum kopyası (kısa seri hariç birebir)
 12) gerçek ön kayıt (varsa ve git'e işlenmişse) KASA 'ac' ön kayıt kapısından (KASA.ks_onkayit_kapi) ve kt_onkayit_kapisi'ndan geçer
 """
 from __future__ import annotations
@@ -298,6 +299,33 @@ def test_gercek_onkayit_kapisi():
     G = KS.ks_onkayit_kapi(y, KT.KT_HIPOTEZ, kontrol=True)
     assert {k["yol"] for k in G["kod"]} >= {"KART_TUR1.py", "CETVEL2.py"}
     assert KT.kt_onkayit_kapisi(y)["bagimli"] == len(KT.KT_BAGIMLI)
+
+
+# ------------------------------------------------------------------ 13
+def test_d9_durum_kopya():
+    """kt_d9_durum = D9_YENIDEN.d9_durum (uzun serilerde birebir); kısa seride d9_durum durur, kopya durmaz."""
+    import D9_YENIDEN as D9
+    sk = pd.read_csv(os.path.join(KOK, "sektor_ABD.csv")).dropna(subset=["endustri"])
+    g = sk.groupby("endustri").sembol.apply(list); grp = [x for x in g if len(x) >= 8][:2]
+    rng = np.random.default_rng(13); V = {}
+    idx = pd.bdate_range("2017-01-02", "2021-12-31")
+    for i, uy in enumerate(grp):
+        for j, s in enumerate(uy[:7]):
+            d = _seri(rng, idx); d["Close"] *= np.exp(np.linspace(0, 0.8 * (i == 0), len(idx))); d["High"] = np.maximum(d.High, d.Close)
+            d["Low"] = np.minimum(d.Low, d.Close); V[str(s).upper().replace(".AM", "")] = d
+    Vd = {"V": V, "evren_bas": {}}
+    A = D9.d9_durum(Vd, "ABD"); B = KT.kt_d9_durum(Vd, "ABD")
+    pd.testing.assert_frame_equal(A.reset_index(drop=True), B.reset_index(drop=True))
+    assert int(B.ruzgar.sum()) > 0
+    kisa = str(grp[0][7]).upper().replace(".AM", ""); V[kisa] = _seri(rng, idx[-100:])     # sektör üyesi, 100 bar
+    try:
+        D9.d9_durum(Vd, "ABD")
+    except AttributeError:
+        pass
+    else:
+        raise AssertionError("d9_durum kısa seride durmadı (kopya gerekçesi geçersiz)")
+    B2 = KT.kt_d9_durum(Vd, "ABD")                   # kısa seri piyasa medyanına girer (d9_durum ile aynı); D9 bayrağı yok
+    assert not B2[B2.sembol == kisa].D9.astype(bool).any() and (B2.sembol == kisa).any() and B2[B2.sembol == kisa].bant250.isna().all()
 
 
 if __name__ == "__main__":

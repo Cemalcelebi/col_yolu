@@ -517,10 +517,46 @@ def kt_bofa(pazar: str, veri: str) -> Tuple[pd.DataFrame, Dict[str, Any]]:
                                                                                "son": info.get("son")}, "V": V}
 
 
+def kt_d9_durum(Vd: Dict[str, Any], pazar: str) -> pd.DataFrame:
+    """D9_YENIDEN.d9_durum ile AYNI hesap (satır satır kopya; D9_YENIDEN değiştirilmez). Tek fark: 250 bardan kısa seride d9_uzun_seri
+    'bant250' sütununu üretmediği için d9_durum AttributeError ile duruyor (açık kesikte yeni doğan k34 hissesi); burada eksik bilgi
+    sütunları NaN konur. D9 / rüzgâr bayrağı değişmez (ok250 = False zaten)."""
+    import D9_YENIDEN as D9
+    E = D9.D9_ESIK; P = E["param"]; V = Vd["V"]; sek = D9.d9_sektor(pazar, E)
+    RP = D9.d9_ruzgar_panel(Vd, sek, P) if sek else None
+    a, b = pd.Timestamp(E["olay_bas"]), pd.Timestamp(E["olay_son"])
+    parca = []
+    for s in sorted(V):
+        x = V[s]
+        U = D9.d9_uzun_seri(x, P, tuple(E["bilgi"]["sure_W"])[::-1])
+        for c in ("bant250", "bant125"):
+            if c not in U.columns:
+                U[c] = np.nan
+        tar = x.index
+        if RP is not None:
+            r = RP["tarih"].get_indexer(tar); j = RP["kol"][s]
+            ruz = RP["ruz"][r, j]; sep = RP["sepet"][r, j]; rz = RP["ruzgar"][r, j]
+        else:
+            ruz = np.full(len(tar), np.nan); sep = ruz.copy(); rz = np.zeros(len(tar), bool)
+        evb = Vd.get("evren_bas", {}).get(s)
+        m = (U.D9.to_numpy() | rz) & (tar >= a) & (tar <= b)
+        if evb is not None:
+            m &= tar >= pd.Timestamp(evb)
+        if not m.any():
+            continue
+        parca.append(pd.DataFrame({"sembol": s, "tarih": tar[m], "pazar": pazar, "D9": U.D9.to_numpy()[m], "uzun": U.uzun.to_numpy()[m],
+                                   "sure": U.sure.to_numpy()[m], "ruz": ruz[m], "sepet": sep[m], "ruzgar": rz[m],
+                                   "bant250": U.bant250.to_numpy()[m], "bant125": U.bant125.to_numpy()[m]}))
+    D = pd.concat(parca, ignore_index=True) if parca else pd.DataFrame(columns=["sembol", "tarih", "pazar", "D9", "uzun", "sure", "ruz",
+                                                                                "sepet", "ruzgar", "bant250", "bant125"])
+    D["sektor_var"] = bool(sek)
+    return D
+
+
 def kt_d9(Vo: Dict[str, Any]) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     import D9_YENIDEN as D9
     t0 = time.time()
-    Dd = D9.d9_durum(Vo, "ABD")
+    Dd = kt_d9_durum(Vo, "ABD")
     Xc = D9.d9_satir(Dd, "c")
     O = pd.DataFrame({"pazar": "ABD", "sembol": Xc.sembol.astype(str), "tarih": pd.to_datetime(Xc.tarih), "F_KT10": 1.0})
     ktlog.info("D9 ABD: %d durum, %d rüzgâr-D9 değil (%.0f sn)", len(Dd), len(O), time.time() - t0)
