@@ -1,0 +1,37 @@
+# KASA: MÜHÜRLÜ VERİ BLOKLARI İLE İLERİ TEST (iş tanımı, 21 Kasım 2026)
+
+Cemal (21 Kas): "veriyi aylık / 3 aylık gruplara böl, şifreli olsun, şifre sende olsun; alt model eski veriyle test etsin, sonrası elinde olmasın; sızma olmaz." + "bunu kullanmak istiyorum."
+
+## 0. Kontrol listesi
+```
+ÖN UÇUŞ KONTROLÜ (zorunlu; hata defterinden): kod yazmaya başlamadan önce oku, ön kayıt dosyasına KONTROL LİSTESİ tablosunu (`python IZ_KARNE.py kontrol`) doldurarak koy, raporunda 'HATA' başlığıyla bulduğun her hatayı ayrı listele.
+- K1 kontrol grubu: Eşler aynı giriş günü, aynı momentum x likidite hücresi, aynı giriş / çıkış geometrisi mi; taban rastgele olay sağlamasıyla (200 eş portföy) mi? Mekanik üstünlük (sinyal tanımının kendiliğinden ürettiği fark) dışlandı mı? [geçmiş: 22 kez (H005, H006, H026-H032, H055, H064, H100...)]
+- K2 geleceğe bakma: Her girdi alanının bilgi tarihi <= karar günü ve bu KODDA mekanik denetleniyor mu? Satır tarihi mi (sayfa / haber tarihi değil)? Etiket, evren listesi, sektör karar günündeki haliyle mi? [geçmiş: 12 kez (H003, H016, H034, H051, H130...)]
+- K3 geçerli bar: H>L ve V>0 olmayan bar sinyal ya da ölçü üretmiyor mu; hacim 0 gün fiyatı bayat sayılıyor mu; seans açıkken yarım bar atılıyor mu? [geçmiş: 2 kez aynı hata (H004, H037), H134, H141]
+- K4 tekilleştirme: Aynı hissede olay 60 günde bir mi; n bağımsız olay sayısı mı; aynı işlem bir kez mi sayılıyor; ortalama yanında medyan var mı? [geçmiş: H006 (n 4-5 kat şişkin), H014]
+- K5 giriş fiyatı: Giriş = sinyalden (yayın saatinden) sonraki ilk işlem fiyatı mı (ertesi açılış), sinyal günü kapanışı değil mi? [geçmiş: H005, 60 gün ufuk itirazı]
+- K6 veri birimi: Fiyat tek kipte mi (ekran fiyatı ya da düzeltilmiş, karışık değil); birim (lot / TL, peni / sterlin, 100x), bölünme marjı (12.03.2020 öncesi +-%20), bedelsiz denetlendi mi; yeni pazar birim denetiminden geçti mi? [geçmiş: veri 34 satır (H007, H017, H060...)]
+- K7 hayatta kalma: Evren bugünün listesi mi? Batanlar / kottan çıkanlar yoksa raporda yazılı ve sonuç 'yukarı yanlı' okunuyor mu? [geçmiş: 8 kez (H008, H057, H142...)]
+- K8 örneklem ve dönem: n < 30 'örneklem yetersiz' ve olaylar tek tek listeli mi; iki alt dönem aynı yönde mi; çoklu karşılaştırma BH ile mi; küçük örneklemden 'bulgu' denmiyor mu? [geçmiş: H010, Ç169 n 11, K1 / K2 n < 30]
+- K9 ön kayıt: Tanım + eşik sözlüğü + kod sha ön kayıtta; ön kayıt commit zamanı < koşu zamanı; sonuçtan sonra yalnız gösterim değişti, aksi SAPMA; eşik sonuca göre oynanmadı mı? [geçmiş: H079, H097 (ön kayıt geç commit)]
+- K10 ayrıştırma: Ham kaynaktan rastgele >= 3 satır elle doğrulandı mı; haber türü (günlük / aylık / dönemsel), kurum etiketi (çok kurumlu haber), kenar kuşağı çöpü, güncelleme damgası, kurum adı hisse satırı dört ayrı denetim maddesi olarak kontrol edildi mi? [geçmiş: 5 kez tek günde (H128-H132, H136)]
+- K11 yeniden üretim: Raporlanan >= 2 hücre satır dosyasından bağımsız kodla yeniden üretildi mi; metindeki sıra / tarih / sayı ham kayıtla aynı mı? [geçmiş: H136 (PEKGY 1. / 4.), H137 (blok filtresi)]
+- K12 ifade: Fiyat değişimi ile gerçekleşen kâr / zarar ayrı mı; aracı kurum akışı ile kurum pozisyonu ayrı mı; 'anlamlı / ters / iz / emare' sözü yalnız bu liste geçince mi; sayı ile yorum ayrı cümlede mi? [geçmiş: yanlış yorum 16 satır (H133, H135...)]
+- K13 süreç: Çakışma kapısı korundu mu; kod değiştiyse 'çalışma zamanını yeniden başlat' yazıldı mı; e-posta / anahtar sızıntı taraması yapıldı mı; kota / ücret / yeni dal Cemal onayıyla mı; yasak defter dosyalarına dokunulmadı mı? [geçmiş: süreç 21 satır (H019, H021, H143...)]
+- K14 boyut (gerçek para): Öneri işinde boyut tavanı, zarardaki isme ekleme yasağı, olay bazlı çıkış ve 2x kuralı alımdan önce yazılı mı; taban oranlar (10x ~%1) yazılı mı? [geçmiş: karar-boyut 6 satır (H012, H013)]
+```
+
+## 1. YASAKLAR
+Defter dosyalarına (IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md, KURAL_DEFTERI_TASLAK.md, CEMAL_COL_KURALLARI.md, HAKEM_DERSLER.md, TUR_DEFTERI.md), üretim zincirine ve mevcut ölçüm modüllerine (YAPI_HEDEF, DUSUS_SONRASI, ORTAK_CETVEL, POZITIF_KONTROL, CETVEL2, GOZ_ETIKET) dokunma. arastirma_cikti/cetvel2/ altına dokunma (başka ajan çalışıyor). Yeni kod: KASA.py + test_kasa.py; çıktı arastirma_cikti/kasa/. Veri ve anahtar repoya GİRMEZ. git add -A yok; e-posta / anahtar yok; dış servis yok. Commit sonu iki satır AYNEN: 'Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>' ve 'Claude-Session: https://claude.ai/code/session_01F7vgWZPNpBhrsGQEHDtRis'; push `git push -u origin ccr-27195a1e-djv6v3`.
+
+## 2. TASARIM (sabit)
+- BLOK: takvim çeyreği (parametre: --blok ceyrek | ay). Kaynak: /tmp/veri/V_ABD.pkl, V_AVR.pkl, V_BIST.pkl (yapıyı incele; ORTAK_CETVEL.oc_veri'nin beklediği biçim korunur).
+- `python KASA.py kur`: anahtar çifti üretir (cryptography kütüphanesi varsa X25519 / RSA + AES-GCM hibrit; yoksa openssl CLI). AÇIK anahtar arastirma_cikti/kasa/kasa_acik_anahtar.pem (repoya girer; mühürlemek için yeter). GİZLİ anahtar yalnız --gizli ile verilen yola yazılır (repo ve scratchpad DIŞI, chmod 600); yol hiçbir çıktıya, loga, rapora yazılmaz; KASA.py içinde varsayılan gizli yol YOK (ortam değişkeni KASA_GIZLI zorunlu).
+- `python KASA.py muhurle --kesik 2025-12-31 --cikti /tmp/kasa`: (a) AÇIK KISIM: tarih <= kesik satırlardan aynı biçimde V_*.pkl (/tmp/kasa/acik/), (b) kesikten sonraki her blok ayrı dosya, açık anahtarla şifreli (/tmp/kasa/muhurlu/<pazar>_<blok>.kasa), (c) manifest: blok, satır sayısı, tarih aralığı, şifreli dosya sha256, açık kısım sha256 (arastirma_cikti/kasa/KASA_MANIFEST.json; getiri / fiyat içermez).
+- `python KASA.py ac --blok 2026Q1 --hipotez <kod> --onkayit <yol>`: KASA_GIZLI gerekir; KAPI: ön kayıt dosyası git'e işlenmiş ve değişmemiş, kod sha'sı ön kayıtta yazılı sha ile aynı, bu (blok, hipotez) çifti KASA_DEFTERI'nde daha önce AÇILMAMIŞ (tek kullanım; ikinci açma durur), bloklar sırayla açılır (aradaki blok atlanamaz). Açınca /tmp/kasa/acik/ verisine bloğu ekler ve arastirma_cikti/kasa/KASA_DEFTERI.md'ye satır yazar (UTC, blok, hipotez, ön kayıt commit, kod sha, açan).
+- `python KASA.py denetim <pkl ya da csv yolu ...>`: verilen dosyalardaki en geç tarihi bulur; açık kesikten büyükse HATA ile durur (ölçüm modülleri koşudan önce çağırır: kasa_kapisi(veri_yolu, kesik)).
+- `python KASA.py durum`: açık kesik, mühürlü blok listesi, defter özeti.
+- Sınır (rapora yazılır): fiyat verisi islenmis-veri dalında ve Yahoo'da açık durur; kasa fiziksel engel değil SÜREÇ KAPISIDIR (alt modele yalnız /tmp/kasa/acik verilir + denetim komutu + tek kullanım defteri). Gerçek kör = bugünden sonra gelen veri; yeni veri gelince `muhurle --ekle` ile doğrudan mühürlenir.
+
+## 3. TEST VE TESLİM
+test_kasa.py (sentetik veri): mühürle -> açık kısımda kesikten sonra satır yok; şifreli blok anahtarsız açılmaz; aç -> birleşik veri özgünle bayt / değer eşit; ikinci açma durur; sıra atlama durur; ön kayıt değişmişse durur; denetim komutu kesik aşımını yakalar; gizli yol hiçbir çıktıda geçmez; çakışma kapısı. GERÇEK VERİYİ MÜHÜRLEME: yalnız sentetik test + kuru koşu sayımı (blok başına satır sayısı tablosu, kesik 2025-12-31 varsayımıyla; şifreleme yapmadan). Gerçek `kur` ve `muhurle` komutlarını ana model çalıştırır. Rapor: arastirma_cikti/kasa/KASA_RAPOR.md (kullanım 5 satır, blok sayım tablosu, sınırlar, HATA, KONTROL LİSTESİ). Commit 'KASA: mühürlü veri blokları aracı'. SubagentHandback: commit hash, test sonucu, kullanılan şifreleme, blok sayım tablosu, HATA, KONTROL LİSTESİ.
