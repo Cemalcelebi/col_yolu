@@ -62,8 +62,8 @@ if not c2log.handlers:
     c2log.setLevel(logging.INFO)
     c2log.propagate = False
 
-C2_SURUM = "CETVEL2 v2.0 (2026-11-21): R15 konum eşli fark (bütün evren), plasebo kapısı, güç eğrisi; pozitif kontrol v2"
-C2_ETIKET_SURUM = os.environ.get("C2_SURUM_ETIKET", "")      # '' = v2.0; '_v2.1' = düzeltilmiş ön kayıt (eski dosyalar silinmez)
+C2_SURUM = "CETVEL2 v2.1 (2026-11-21): R15 konum eşli fark (bütün evren), plasebo kapısı (200 tohum), güç eğrisi; pozitif kontrol v2"
+C2_ETIKET_SURUM = os.environ.get("C2_SURUM_ETIKET", "_v2.1")  # '' = v2.0 (ilk ön kayıt / koşu, silinmez); '_v2.1' = düzeltilmiş ön kayıt
 C2_YOL = {"cikti": os.path.join(KOK_C2, "arastirma_cikti", "cetvel2"), "veri": os.environ.get("C2_VERI", "/tmp/veri"),
           "kod": os.path.join(KOK_C2, "CETVEL2.py"),
           "ds_olay": os.path.join(KOK_C2, "arastirma_cikti", "dusus_sonrasi", "ds_olay.csv.gz"),
@@ -86,7 +86,12 @@ C2_KOVA_SAYI = 36          # 3 ATRP x 3 likidite x 4 F15
 
 # ================================================================ MÜHÜRLÜ AYAR SÖZLÜĞÜ (sha ön kayıtta; sonuçtan sonra DEĞİŞMEZ)
 C2_ESIK: Dict[str, Any] = {
-    "surum": "C2.0",
+    "surum": "C2.1",
+    "duzeltme_v21": "v2.0 pozitif kontrolü (CETVEL2_POZITIF_KONTROL.md) KUSUR verdi: (iii) A RAST delta 0 ABD eğitim n 1000 3 / 20 "
+                    "tohum. Neden (yalnız sıfır verisiyle, 100 tohumlu tanı): cetvel hafif gevşek (sıfırda yakalama %1-7, ort ~%3,5; nominal %2,5) "
+                    "ve 20 tohumlu kapılar kaba: plasebo kapısı (<= %7 = en çok 1 / 20) doğru ayarlı hücrede bile ~%9-15 şansla düşer, (iii) tek "
+                    "(n) hücresinde > %10 (>= 3 / 20) 32 denemede şansla tetiklenir. DÜZELTME: plasebo tohum 20 -> 200 (eşikler AYNI); (iii) n >= "
+                    "100 tohumları birleşik (80 tohum-hücre) > %10. R15, eş, kova, TUTAR, güç, etiket DEĞİŞMEDİ",
     "veri": "DUSUS_SONRASI.ds_veri (OC.oc_veri, evren dışı listesi, k34 YÜKLENMEZ, açılış H-L kırpması) + OC.oc_panel (kip 'gecmis'): geçerli bar "
             "(O/H/L/C > 0, H > L, V > 0), havuz (momentum / likidite bilinir, alt %20 likidite dışı, geçmiş bölünme şüphesi dışı), kriz kesiği "
             "31.08.2026",
@@ -121,10 +126,10 @@ C2_ESIK: Dict[str, Any] = {
     "hucre": {"n_min": 30, "sira": 0.50,
               "tutar": "n >= 30 VE güç >= 0,80 VE ort FARK > 0 VE boot alt > 0 VE ort SIRA > 0,50 VE L3O > 0 (beklenen yön '-' ise: FARK < 0 VE "
                        "boot üst < 0 VE SIRA < 0,50 VE L3O(-) < 0; '?' iki yönden biri)"},
-    "plasebo": {"tohum_sayi": 20, "tohum": 2114, "fark_mutlak": 0.005, "tutar_pay": 0.07,
+    "plasebo": {"tohum_sayi": 200, "tohum": 2114, "fark_mutlak": 0.005, "tutar_pay": 0.07,
                 "tanim": "hücrenin ölçülen her olayı yerine AYNI GİRİŞ GÜNÜ havuzdan rastgele bir hisse (gün içinde yerine koymadan; R15 "
-                         "ölçülebilir, kovası var) -> aynı cetvel (eşler, en az 5, boot, p, SIRA, L3O, güç) -> 20 tohum. KAPI GEÇER = |20 tohum "
-                         "ortalama FARK| < 0,005 (0,5 puan) VE TUTAR payı (hipotezin yönünde; '?' iki yön) <= %7. Geçmeyen hücre KARAR VERMEZ "
+                         "ölçülebilir, kovası var) -> aynı cetvel (eşler, en az 5, boot, SIRA, L3O, güç) -> 200 tohum (v2.1; v2.0 20). KAPI GEÇER = |200 "
+                         "tohum ortalama FARK| < 0,005 (0,5 puan) VE TUTAR payı (hipotezin yönünde; '?' iki yön) <= %7. Geçmeyen hücre KARAR VERMEZ "
                          "(BİLGİ); nedeni yazılır"},
     "etiket": {"tanim": "karar hücreleri ABD x {eğitim, sınama}, AVR x {eğitim, sınama}; sıra: (1) ÇELİŞKİLİ = bir karar pazarında eğitim ve "
                         "sınama boot aralıkları sıfırın zıt taraflarında (ayrık); (2) ÖLÇÜLEMEDİ = bir karar hücresinde n < 30 ya da güç < 0,80; "
@@ -160,7 +165,8 @@ C2_ESIK: Dict[str, Any] = {
     "sonuc_kurali": {
         "KUSUR": "(i) B1A (momentum alt onda) ABD eğitim ya da sınama hücresinde R15 FARK > 0 VE boot alt > 0; ya da (ii) plasebo kapısı ABD "
                  "eğitim / sınama DS hücrelerinden (tam n) birinde düşer; ya da (iii) A RAST tabanı delta 0 yakalama payı (güç hariç) bir ABD / AVR "
-                 "hücresinde n >= 100'de > %10. KUSUR -> nedeni yazılır, cetvel düzeltilir, ön kayıt v2.1, yeniden koşu (en çok 2 tur)",
+                 "hücresinde n >= 100 tohumları BİRLEŞİK (100 / 300 / 1000 / yarı x 20 tohum) > %10 (v2.1; v2.0 tek n hücresi). KUSUR -> nedeni "
+                 "yazılır, cetvel düzeltilir, ön kayıt v2.2, yeniden koşu (en çok 2 tur)",
         "EVET": "KUSUR yok VE A RAST tabanında delta +%2'de dört karar hücresinin her birinde bir n'de >= %80 yakalama VE B'de bir + etki (B1U ya da "
                 "B2U) ABD eğitim ve sınamada FARK > 0 ve en az birinde boot alt > 0 VE bir - etki (B1A ya da B2A) ABD eğitim ve sınamada FARK < 0",
         "KISMEN": "KUSUR yok ama EVET şartlarından biri eksik (hangisi yazılır)",
@@ -188,7 +194,7 @@ C2_KONTROL: Dict[str, Tuple[str, str]] = {
     "K7": ("EVET", "evren bugün işlem gören hisseler (V_ABD 1.411, V_AVR 580, V_BIST); yanlılık hem olaya hem eşe; raporda yazılır"),
     "K8": ("EVET", "eğitim 2016-22 / sınama 2023-01 .. 2026-08 ayrı hücre; n < 30 ÖLÇÜLEMEDİ; güç eğrisi (delta +2 puan, %80) ile n yeterliliği; "
                    "BH q 0,10 (m sabit); A: 20 tohum x 5 n x 5 delta"),
-    "K9": ("EVET", "CETVEL2_ON_KAYIT.md: C2_ESIK sha, CETVEL2.py sha, kova sınırları (sayı), güç eğrisi, DS / YH / OC / PK sha'ları, girdi dosyası "
+    "K9": ("EVET", "CETVEL2_ON_KAYIT_v2.1.md (v2.0 CETVEL2_ON_KAYIT.md silinmedi; düzeltme C2_ESIK['duzeltme_v21']): C2_ESIK sha, CETVEL2.py sha, kova sınırları (sayı), güç eğrisi, DS / YH / OC / PK sha'ları, girdi dosyası "
                    "sha'ları; c2_kapi ön kaydın git'te işlenmiş ve değişmemiş olduğunu + ik_kontrol_kapisi'ni denetler; sıra kod commit -> ön kayıt "
                    "commit -> koşu; tasarım iş tanımından (ca5d2a8) sonuç görülmeden"),
     "K10": ("UYGULANMAZ", "ham haber / KAP / SEC ayrıştırması yok; olay kümeleri önceki koşuların satır dosyalarından (ds_olay.csv.gz, "
@@ -506,13 +512,17 @@ def c2_plasebo(Pn: Dict[str, Any], d: np.ndarray, yon: str, egri: Optional[Dict[
         rd, rj = c2_rastgele(Pn, d, rng)
         x = Pn["R15"][rd, rj]
         e = c2_es(Pn, rd, rj, x, rd, rj)
-        c = c2_hucre(x, e["es_r15"], e["sira"], idx[rd], yon, tohum_ek=900000 + t, egri=egri, perm=False)
+        c = c2_hucre(x, e["es_r15"], e["sira"], idx[rd], yon, tohum_ek=900000 + t, egri=egri, perm=False, l3o_neg=True)
         sat.append({"tohum": t, "n": c["n"], "fark": c["fark"], "sira": c["sira"], "tutar": bool(c["tutar"]), "yakala": bool(c["yakala"]),
+                    "tutar_p": bool(c["tutar_p"]), "tutar_n": bool(c["tutar_n"]), "yakala_p": bool(c.get("yakala_p", False)),
                     "boot_alt": c["boot_alt"], "boot_ust": c["boot_ust"]})
     S = pd.DataFrame(sat)
     fo = float(S.fark.mean()) if len(S) else np.nan; tp = float(S.tutar.mean()) if len(S) else np.nan
     gec = bool(np.isfinite(fo) and abs(fo) < float(Pl["fark_mutlak"]) and np.isfinite(tp) and tp <= float(Pl["tutar_pay"]))
     return {"fark_ort": fo, "fark_sd": float(S.fark.std(ddof=1)) if len(S) > 1 else np.nan, "tutar_pay": tp,
+            "tutar_pay_arti": float(S.tutar_p.mean()) if len(S) else np.nan, "tutar_pay_eksi": float(S.tutar_n.mean()) if len(S) else np.nan,
+            "gecti_arti": bool(np.isfinite(fo) and abs(fo) < float(Pl["fark_mutlak"]) and len(S) and S.tutar_p.mean() <= float(Pl["tutar_pay"])),
+            "gecti_eksi": bool(np.isfinite(fo) and abs(fo) < float(Pl["fark_mutlak"]) and len(S) and S.tutar_n.mean() <= float(Pl["tutar_pay"])),
             "yakala_pay": float(S.yakala.mean()) if len(S) else np.nan, "n_ort": float(S.n.mean()) if len(S) else np.nan, "gecti": gec,
             "tohum": sat}
 
@@ -880,11 +890,10 @@ def c2_c_kos(veri: Optional[str] = None, guc: Optional[Dict[str, Any]] = None, d
                         continue
                     rng = np.random.default_rng([int(Ec["tohum"]), pi, hi, ni]); dsec = np.sort(rng.choice(d_all, size=int(nk), replace=False))
                 pl = c2_plasebo(Pn, dsec, "+", egri, tohum_ek=700000 + pi * 100 + hi * 10 + ni)
-                pn_ = c2_plasebo(Pn, dsec, "-", egri, tohum_ek=700000 + pi * 100 + hi * 10 + ni)
                 sat.append({"pazar": pazar, "hucre": h, "n_hedef": str(nk), "n": pl["n_ort"], "fark_ort": pl["fark_ort"], "fark_sd": pl["fark_sd"],
-                            "tutar_pay_arti": pl["tutar_pay"], "tutar_pay_eksi": pn_["tutar_pay"], "yakala_pay_arti": pl["yakala_pay"],
-                            "gecti_arti": pl["gecti"], "gecti_eksi": pn_["gecti"],
-                            "gecti": bool(pl["gecti"] and pn_["gecti"]), "karar": pazar in C2_KARAR})
+                            "tutar_pay_arti": pl["tutar_pay_arti"], "tutar_pay_eksi": pl["tutar_pay_eksi"], "yakala_pay_arti": pl["yakala_pay"],
+                            "gecti_arti": pl["gecti_arti"], "gecti_eksi": pl["gecti_eksi"],
+                            "gecti": bool(pl["gecti_arti"] and pl["gecti_eksi"]), "karar": pazar in C2_KARAR})
             # tanı
             gm = (pd.Series(_c2_donem(idx)) == h).to_numpy()
             hv = (P["ok"] & (P["H"] >= 0))[gm].sum(1); rv = ((Pn["KV"] >= 0) & np.isfinite(Pn["R15"]))[gm].sum(1)
@@ -1134,10 +1143,12 @@ def c2_sonuc(J: Dict[str, Any]) -> Dict[str, Any]:
         c = Ct[(Ct.pazar == "ABD") & (Ct.hucre == hc) & (Ct.n_hedef == "tam")]
         if len(c) and not bool(c.iloc[0]["gecti"]):
             kusur.append(f"plasebo kapısı ABD {hc} (tam n) düştü")
-    r0 = At[(At.taban == "RAST") & (At.delta == 0.0) & At.pazar.isin(C2_KARAR) & At.n_hedef.isin(["100", "300", "1000", "yari"])]
-    for r in r0.itertuples():
-        if r.yakala > 0.10:
-            kusur.append(f"A RAST delta 0 yakalama {r.pazar} {r.hucre} n {r.n_hedef}: %{100 * r.yakala:.0f}")
+    r0 = At[(At.taban == "RAST") & (At.delta == 0.0) & At.pazar.isin(C2_KARAR) & At.n_hedef.isin(["100", "300", "1000", "yari"])].copy()
+    r0["tohum"] = pd.to_numeric(r0["tohum"], errors="coerce")
+    for (p_, hc_), x_ in r0.groupby(["pazar", "hucre"]):
+        bp = float((x_.yakala * x_.tohum).sum() / x_.tohum.sum()) if x_.tohum.sum() > 0 else np.nan
+        if np.isfinite(bp) and bp > 0.10:
+            kusur.append(f"A RAST delta 0 yakalama {p_} {hc_} (n >= 100 birleşik, {int(x_.tohum.sum())} tohum-hücre): %{100 * bp:.1f}")
     a2 = At[(At.taban == "RAST") & (np.isclose(At.delta, 0.02)) & At.pazar.isin(C2_KARAR)]
     a_ok = all(((a2.pazar == p) & (a2.hucre == hc) & (a2.yakala >= 0.80)).any() for p in C2_KARAR for hc in C2_HUCRE)
     if not a_ok:
@@ -1271,13 +1282,17 @@ def c2_rapor(cikti: Optional[str] = None) -> str:
             s.append(f"| {r['kod']} | {r['pazar']} | {r['etiket_ham']} | {r['neden']} | {r['etiket']} |")
     # C
     C = pd.DataFrame(J["C"]["satir"]); Tn = pd.DataFrame(J["C"]["tani"])
-    s += ["", "## 3. C — PLASEBO KAPISI (aynı gün rastgele havuz hissesi, 20 tohum; geçer = |ort FARK| < 0,5 puan VE TUTAR payı <= %7)", "",
+    s += ["", f"## 3. C — PLASEBO KAPISI (aynı gün rastgele havuz hissesi, {C2_ESIK['plasebo']['tohum_sayi']} tohum; geçer = |ort FARK| < 0,5 puan "
+          "VE TUTAR payı <= %7)", "",
           "| pazar | hücre | n | ort FARK (puan) | sd (tohumlar) | TUTAR payı + / - | yakalama payı + (güç hariç) | geçti | karar hücresi |",
           "|---|---|---|---|---|---|---|---|---|"]
     for r in C.to_dict("records"):
         s.append(f"| {r['pazar']} | {r['hucre']} | {r['n_hedef']} ({r['n']:.0f}) | {_c2_y(r['fark_ort'], 2)} | {_c2_y(r['fark_sd'], 2, False)} | "
                  f"%{100 * r['tutar_pay_arti']:.0f} / %{100 * r['tutar_pay_eksi']:.0f} | %{100 * r['yakala_pay_arti']:.0f} | "
                  f"{'EVET' if r['gecti'] else 'HAYIR'} | {'karar' if r['karar'] else 'bilgi'} |")
+    r0 = T[(T.taban == "RAST") & np.isclose(T.delta, 0.0) & T.n_hedef.isin(["100", "300", "1000", "yari"])]
+    s += ["", "A RAST delta 0 (saf plasebo) yakalama payı, n >= 100 birleşik (sonuç kuralı iii): " + "; ".join(
+        f"{p} {h} %{100 * float((x.yakala * x.tohum).sum() / x.tohum.sum()):.1f}" for (p, h), x in r0.groupby(["pazar", "hucre"]))]
     s += ["", "Tanı (AVR sınama sapması için; eski cetvelde AVR sınama plasebo +2,2 puan):", "",
           "| pazar | hücre | gün | havuz / gün (medyan) | R15 + kova / gün | dolu kova / gün | DS olay (R15) | eşsiz payı | eş sayısı medyan / p10 | "
           "olay günü | DS FARK0 ort | havuz R15 ort |", "|" + "---|" * 12]

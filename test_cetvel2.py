@@ -185,6 +185,7 @@ def test_plasebo_sifir_ve_yapay_iz():
     finally:
         C2.C2_ESIK["es_min"] = old
     assert abs(pl["fark_ort"]) < 0.005 and pl["tutar_pay"] <= 0.2 and pl["n_ort"] > 300
+    assert pl["tutar_pay"] == pl["tutar_pay_arti"] and 0 <= pl["tutar_pay_eksi"] <= 0.2
     rd, rj = C2.c2_rastgele(Pn, np.repeat(d[:5], 4), np.random.default_rng(0))
     assert len(set(zip(rd.tolist(), rj.tolist()))) == len(rd)          # gün içinde yerine koymadan
 
@@ -235,6 +236,20 @@ def test_etiket():
     assert C2.c2_etiket(Hn, "-")["etiket"] == "KATKI−"
     assert C2.c2_etiket(Hn, "+")["etiket"] == "KATKI− (ters)"
     assert C2.c2_bh([0.001, 0.5, 0.04], 0.10) == [True, False, True]
+
+
+# ------------------------------------------------------------------ sonuç kuralı (iii) birleşik
+def test_sonuc_kurali_birlesik():
+    def J(yakala_1000):
+        A = [{"pazar": p, "hucre": h, "taban": "RAST", "n_hedef": nk, "delta": 0.0, "yakala": (yakala_1000 if nk == "1000" else 0.0), "tohum": 20}
+             for p in C2.C2_KARAR for h in C2.C2_HUCRE for nk in ("100", "300", "1000", "yari")]
+        A += [{"pazar": p, "hucre": h, "taban": "RAST", "n_hedef": "300", "delta": 0.02, "yakala": 0.9, "tohum": 20} for p in C2.C2_KARAR for h in C2.C2_HUCRE]
+        B = [{"kod": k, "pazar": "ABD", "hucre": h, "fark": f, "boot_alt": a, "boot_ust": 0.02} for k, f, a in
+             (("B1U", 0.01, 0.001), ("B1A", -0.01, -0.02), ("B2U", 0.0, -0.01), ("B2A", 0.0, -0.01)) for h in C2.C2_HUCRE]
+        C = [{"pazar": p, "hucre": h, "n_hedef": "tam", "gecti": True} for p in C2.C2_KARAR for h in C2.C2_HUCRE]
+        return {"A": {"ozet": {"tablo": A}}, "B": {"hucre": B}, "C": {"satir": C}}
+    assert C2.c2_sonuc(J(0.15))["karar"] == "EVET"            # tek n hücresinde 3 / 20 artık KUSUR değil (birleşik %3,75)
+    assert C2.c2_sonuc(J(0.45))["karar"] == "HAYIR (KUSUR)"   # birleşik %11,25 > %10
 
 
 # ------------------------------------------------------------------ c2_olc uçtan uca
@@ -307,13 +322,13 @@ def test_onkayit_kapi_kos_sentetik():
         yol = C2.c2_onkayit_yaz(cikti, veri, ds_yol=dsy)
         metin = open(yol, encoding="utf-8").read()
         assert "KONTROL LİSTESİ" in metin and "C2_ESIK_SHA" in metin and "ATRP t1" in metin and "## 1. CETVEL2 TANIMI" in metin
-        assert os.path.exists(os.path.join(cikti, "cetvel2_guc.json")) and os.path.exists(os.path.join(cikti, "cetvel2_esik.json"))
+        assert os.path.exists(C2._c2_yol("guc", cikti)) and os.path.exists(C2._c2_yol("esik", cikti))
         C2.c2_kapi(cikti, veri, git=False, kontrol=True)
         C2._C2_PN.clear(); C2._C2_A.clear()
         J = C2.c2_kos(cikti, veri, islem=1, git=False, kontrol=True)
         assert J["yeniden"]["tuttu"], J["yeniden"]
         assert J["sonuc"]["karar"] in ("EVET", "KISMEN", "HAYIR (KUSUR)")
-        assert os.path.exists(os.path.join(cikti, "CETVEL2_POZITIF_KONTROL.md"))
+        assert os.path.exists(C2._c2_yol("rapor", cikti))
         try:
             C2.c2_kos(cikti, veri, islem=1, git=False)
         except C2.C2Hata as ex:
