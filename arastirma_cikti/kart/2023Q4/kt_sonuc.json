@@ -1,0 +1,113 @@
+{
+ "surum": "KART_TUR1 v1.0 (2026-11-21): 11 kart (KT00 kontrol + KT01-KT10), CETVEL2 v2.2 R15 / R30 karar, R45 bilgi, KASA yürüyen ileri test",
+ "durum": {
+  "acilan": [
+   "2023Q1",
+   "2023Q2",
+   "2023Q3",
+   "2023Q4"
+  ],
+  "blok_sayi": 4,
+  "bakis": "BAKIŞ 1: 2023Q1-2023Q4 birikimli",
+  "bakis_no": 1,
+  "muhur_id": "4a7fbad49def764c",
+  "durum_sha": "e603b2a1abdd85d207b523ad0479a4f42b53067fd309da9f7b6d0772fb8aafee"
+ },
+ "kesik": "2023-12-31",
+ "hucreler": {
+  "acik": [
+   "2016-01-01",
+   "2022-12-31"
+  ],
+  "birikimli": [
+   "2023-01-01",
+   "2023-12-31"
+  ]
+ },
+ "kasa": {
+  "kesik": "2023-12-31",
+  "dosya": {
+   "/tmp/kasa/acik/V_ABD.pkl": "2023-12-29",
+   "/tmp/kasa/acik/V_AVR.pkl": "2023-12-29",
+   "/tmp/kasa/acik/V_BIST.pkl": "2023-12-29",
+   "/tmp/kasa/acik/k34_yahoo.pkl": "2023-12-29"
+  }
+ },
+ "onkayit_kapi": {
+  "onkayit": "arastirma_cikti/kart/KART_TUR1_ON_KAYIT.md",
+  "commit": "e0976cbd77685d0bafc6f8d31af2bb7b45739adf",
+  "commit_utc": "2026-11-21T12:50:23Z",
+  "kod": [
+   {
+    "yol": "KART_TUR1.py",
+    "sha256": "334cc4f9bdafef0accf754b229626eb92010d519ba23dc8e9037a14f8713640b"
+   },
+   {
+    "yol": "CETVEL2.py",
+    "sha256": "2c0fd9b9968515f1acea03da31cb550b9d7e0d837391139e1194da6eb39530e6"
+   }
+  ],
+  "kontrol": true,
+  "bagimli": 16
+ },
+ "yeniden": {
+  "tuttu": true,
+  "hucre": [
+   {
+    "hucre": "KT01 ABD R15 acik",
+    "n": 8568,
+    "fark": -0.0018016196057328976,
+    "sira": 0.49553144909154473,
+    "esit": true
+   },
+   {
+    "hucre": "KT08 AVR R30 acik",
+    "n": 1366,
+    "fark": 0.004191942747841824,
+    "sira": 0.5129707104271153,
+    "esit": true
+   }
+  ]
+ },
+ "en_gec": {
+  "kt_satir.csv.gz": "2023-12-29",
+  "olculen_son_giris": {
+   "15": "2023-12-11",
+   "30": "2023-11-20",
+   "45": "2023-10-27"
+  }
+ },
+ "sha": {
+  "esik": {
+   "KART_TUR1.py": "334cc4f9bdafef0accf754b229626eb92010d519ba23dc8e9037a14f8713640b",
+   "KT_ESIK_SHA": "3080dce505a769dd54be85739442ab45aa4b358def3b7803af79a6d642411310",
+   "KT_KART_SHA": "16d107cdd75e961b22de6fc434eb3ebe1c899ad042f50e6d910d854aab9a47f5",
+   "C2_ESIK22_SHA": "df651ccbcd312f2e260befcbf5fa84bb192598c051467d081dc874b77889c71a",
+   "C2_ESIK_SHA": "c44d76dd5da1d42c358f5bc1a9db3a34ee826c2c142d3113239248023637ff03",
+   "YH_Y10_ESIK_SHA": "b4ed76a3d6dc594b4e6e38af083c93e54b06958293b9988211065b0b37bdd235",
+   "GE_OZELLIK_SHA": "68ea14bd5e5d31e0334eb55f953dd273fcb40a898c8441ba302584a74acfa206",
+   "DS_OLAY_SHA": "167f3feb96c7a54970319691c1ebc9fb411046bc741ed65ce8b9171c0966229c",
+   "DP_KURULUM_SHA": "e84a409896b6885bcb9aedec431797a43638cae4aa87c86bf375a0f76316bbf2",
+   "D9_PARAM_SHA": "73dde4dbed813dc26779d522cbf2d74173571eabaf5f6b0ba0b72c30583e85e8",
+   "OC_ESIK_SHA": "4763c4586262b7a60c55fbe43d9b21855b0a2afd9e579331984d3fba8b48491e"
+  },
+  "bagimli": {
+   "CETVEL2.py": "2c0fd9b9968515f1acea03da31cb550b9d7e0d837391139e1194da6eb39530e6",
+   "YAPI_HEDEF.py": "812d188c20a64e27f351764ec462969b352322b7763181e696e24dca392ea95e",
+   "GOZ_ETIKET.py": "76d5c76b3a545ed585634d2994b66c11f4cdc1af924e2d31da1611595503bd9d",
+   "DUSUS_SONRASI.py": "b3b3a2154c68d77f61dcd7d2246262bd08753e4ee3735a78b83659ba9ca46ddf",
+   "BOFA_IZI.py": "fdbf98dfcfcf63d67ce8ac5e3e598084d30fcd0376ac63a27f31e39aaafc87b6",
+   "D9_YENIDEN.py": "a759d916915f2fc97f8258933fc5ce7d1b2cb8f6036691e1531e5d140c6bb80c",
+   "ORTAK_CETVEL.py": "7bd6f6db4bbc10b83ba926ddbbfb74556909400f73f10168e8a5124ccc6e28eb",
+   "POZITIF_KONTROL.py": "896a70ed704442531a0a4d747dff23fe241ac623b4c3a192114395baa5876fd6",
+   "KASA.py": "3db7b60d44bee8234c7c41e42ba7a8c3a3fc43803222a1f7e06adc154d41805b",
+   "S6_TABAN.py": "ebfc5ae01ee1c7653923f2c3817d23f937f359ca5307f6daacc0ff504a947c2d",
+   "SIKISMA_YENIDEN.py": "ecc369cd01edacfcf965713dddb18cf9baeacca32a4d3994558c58ebc6cd19ae",
+   "sektor_ABD.csv": "f715c532d83cce13c53927a8134442f5f1be60c65322ecc60321f0ad355eef32",
+   "evren_disi_ABD.csv": "-",
+   "arastirma_cikti/col_yolu_abd/k34_evren.csv": "e138026a00492c25698dc5464d37c9f56769ab38f3ff1829252cc96c6e4946f1",
+   "arastirma_cikti/cetvel2/cetvel2_esik_v2.2.json": "f45e68ed49de307188ba35f894ee94f81035e357b59d6ce46f5e94fb0da74335",
+   "arastirma_cikti/cetvel2/cetvel2_guc_v2.2.json": "95528165cb5ce2752a727a3f4d796f7cae48cb54848d0d0269b9b4afe4f4a13b"
+  }
+ }
+}

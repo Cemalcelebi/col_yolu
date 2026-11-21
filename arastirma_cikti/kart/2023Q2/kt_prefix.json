@@ -1,0 +1,46 @@
+{
+ "Y1|ABD": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "D9|ABD": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "MOM|ABD": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "BOFA|ABD": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "DS|ABD": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "Y1|AVR": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "MOM|AVR": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "BOFA|AVR": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "DS|AVR": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "Y1|BIST": {
+  "n": 8,
+  "tuttu": 8
+ },
+ "DS|BIST": {
+  "n": 8,
+  "tuttu": 8
+ }
+}

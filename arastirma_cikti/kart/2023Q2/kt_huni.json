@@ -1,0 +1,855 @@
+{
+ "ABD": {
+  "Y1": {
+   "sinyal": 25580,
+   "girdi": 25580,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 74,
+   "giris_gec": 0,
+   "likidite_alt20": 3241,
+   "bolunme_gecmis": 37,
+   "evren_once": 0,
+   "gecmis_eksik": 2,
+   "havuz_az": 0,
+   "havuz_disi": 3280,
+   "tekil": 12413,
+   "y1_olay": 9813,
+   "F_KT02": 438,
+   "F_KT03": 8599,
+   "F_KT04": 4297,
+   "F_KT05": 9360,
+   "F_KT06": 5561,
+   "F_KT07": 182,
+   "sure_sn": 88.0
+  },
+  "D9": {
+   "durum": 555930,
+   "c": 260750,
+   "sure_sn": 38.7
+  },
+  "MOM": {
+   "sinyal": 91607,
+   "ana": 14646,
+   "U": 7360,
+   "A": 7286,
+   "son_tarih": "2023-05-31",
+   "pk": {
+    "girdi": 91607,
+    "olay_havuz": 73234,
+    "U": 7360,
+    "A": 7286,
+    "ana": 14646
+   }
+  },
+  "BOFA": {
+   "hisse": 1368,
+   "kurulum": 554,
+   "son": "2023-06-30"
+  },
+  "DS": {
+   "girdi": 214975,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 123,
+   "giris_gec": 0,
+   "likidite_alt20": 49671,
+   "bolunme_gecmis": 3959,
+   "evren_once": 0,
+   "gecmis_eksik": 5,
+   "havuz_az": 0,
+   "havuz_disi": 53635,
+   "tekil": 0,
+   "ds_gun": 214975,
+   "havuz_gun": 161217,
+   "ana": 15563,
+   "F_KT08": 5286,
+   "sure_sn": 77.1
+  },
+  "cetvel": {
+   "MOM|15": {
+    "girdi": 14646,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 14646,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 13367,
+     "birikimli": 1279
+    }
+   },
+   "MOM|30": {
+    "girdi": 14646,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 5983,
+    "olcum_r15": 8527,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 7899,
+     "birikimli": 764
+    }
+   },
+   "MOM|45": {
+    "girdi": 14646,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 8087,
+    "olcum_r15": 6356,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 5979,
+     "birikimli": 580
+    }
+   },
+   "Y1|15": {
+    "girdi": 9813,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 9723,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 8686,
+     "birikimli": 1127
+    }
+   },
+   "Y1|30": {
+    "girdi": 9813,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 9573,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 8686,
+     "birikimli": 1127
+    }
+   },
+   "Y1|45": {
+    "girdi": 9813,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 9393,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 8686,
+     "birikimli": 1127
+    }
+   },
+   "DS|15": {
+    "girdi": 15563,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 15428,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 14061,
+     "birikimli": 1261,
+     "dis": 241
+    }
+   },
+   "DS|30": {
+    "girdi": 15563,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 6358,
+    "olcum_r15": 9051,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 8320,
+     "birikimli": 743,
+     "dis": 142
+    }
+   },
+   "DS|45": {
+    "girdi": 15563,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 8469,
+    "olcum_r15": 6874,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 6400,
+     "birikimli": 552,
+     "dis": 142
+    }
+   },
+   "BOFA|15": {
+    "girdi": 554,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 8,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 337,
+    "bolunme_gecmis": 24,
+    "evren_once": 0,
+    "gecmis_eksik": 3,
+    "havuz_az": 0,
+    "havuz_disi": 364,
+    "tekil": 0,
+    "olcum_r15": 182,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 167,
+     "birikimli": 15
+    }
+   },
+   "BOFA|30": {
+    "girdi": 554,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 8,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 337,
+    "bolunme_gecmis": 24,
+    "evren_once": 0,
+    "gecmis_eksik": 3,
+    "havuz_az": 0,
+    "havuz_disi": 364,
+    "tekil": 0,
+    "olcum_r15": 180,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 167,
+     "birikimli": 15
+    }
+   },
+   "BOFA|45": {
+    "girdi": 554,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 8,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 337,
+    "bolunme_gecmis": 24,
+    "evren_once": 0,
+    "gecmis_eksik": 3,
+    "havuz_az": 0,
+    "havuz_disi": 364,
+    "tekil": 0,
+    "olcum_r15": 180,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 167,
+     "birikimli": 15
+    }
+   },
+   "D9|15": {
+    "girdi": 260750,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 310,
+    "giris_gec": 23,
+    "likidite_alt20": 58151,
+    "bolunme_gecmis": 2257,
+    "evren_once": 0,
+    "gecmis_eksik": 717,
+    "havuz_az": 0,
+    "havuz_disi": 61125,
+    "tekil": 178835,
+    "olcum_r15": 20222,
+    "kova_yok": 559,
+    "donem": {
+     "acik": 18014,
+     "birikimli": 1959,
+     "dis": 484
+    }
+   },
+   "D9|30": {
+    "girdi": 260750,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 310,
+    "giris_gec": 23,
+    "likidite_alt20": 58151,
+    "bolunme_gecmis": 2257,
+    "evren_once": 0,
+    "gecmis_eksik": 717,
+    "havuz_az": 0,
+    "havuz_disi": 61125,
+    "tekil": 186547,
+    "olcum_r15": 12469,
+    "kova_yok": 374,
+    "donem": {
+     "acik": 11241,
+     "birikimli": 1182,
+     "dis": 322
+    }
+   },
+   "D9|45": {
+    "girdi": 260750,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 310,
+    "giris_gec": 23,
+    "likidite_alt20": 58151,
+    "bolunme_gecmis": 2257,
+    "evren_once": 0,
+    "gecmis_eksik": 717,
+    "havuz_az": 0,
+    "havuz_disi": 61125,
+    "tekil": 189165,
+    "olcum_r15": 9808,
+    "kova_yok": 346,
+    "donem": {
+     "acik": 8853,
+     "birikimli": 1006,
+     "dis": 268
+    }
+   }
+  }
+ },
+ "AVR": {
+  "Y1": {
+   "sinyal": 13621,
+   "girdi": 13621,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 18,
+   "giris_gec": 0,
+   "likidite_alt20": 2075,
+   "bolunme_gecmis": 6,
+   "evren_once": 0,
+   "gecmis_eksik": 7,
+   "havuz_az": 0,
+   "havuz_disi": 2088,
+   "tekil": 6531,
+   "y1_olay": 4984,
+   "F_KT02": 99,
+   "F_KT03": 4326,
+   "F_KT04": 2446,
+   "F_KT05": 4639,
+   "F_KT06": 3102,
+   "F_KT07": 42,
+   "sure_sn": 43.3
+  },
+  "MOM": {
+   "sinyal": 46612,
+   "ana": 7368,
+   "U": 3723,
+   "A": 3645,
+   "son_tarih": "2023-05-31",
+   "pk": {
+    "girdi": 46612,
+    "olay_havuz": 36862,
+    "U": 3723,
+    "A": 3645,
+    "ana": 7368
+   }
+  },
+  "BOFA": {
+   "hisse": 576,
+   "kurulum": 33,
+   "son": "2023-06-30"
+  },
+  "DS": {
+   "girdi": 53297,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 24,
+   "giris_gec": 0,
+   "likidite_alt20": 2889,
+   "bolunme_gecmis": 822,
+   "evren_once": 0,
+   "gecmis_eksik": 18,
+   "havuz_az": 0,
+   "havuz_disi": 3729,
+   "tekil": 0,
+   "ds_gun": 53297,
+   "havuz_gun": 49544,
+   "ana": 4977,
+   "F_KT08": 2026,
+   "sure_sn": 29.3
+  },
+  "cetvel": {
+   "MOM|15": {
+    "girdi": 7368,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 7368,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 6832,
+     "birikimli": 536
+    }
+   },
+   "MOM|30": {
+    "girdi": 7368,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 2886,
+    "olcum_r15": 4429,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 4144,
+     "birikimli": 338
+    }
+   },
+   "MOM|45": {
+    "girdi": 7368,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 3869,
+    "olcum_r15": 3412,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 3230,
+     "birikimli": 269
+    }
+   },
+   "Y1|15": {
+    "girdi": 4984,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 4951,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 4496,
+     "birikimli": 488
+    }
+   },
+   "Y1|30": {
+    "girdi": 4984,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 4899,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 4496,
+     "birikimli": 488
+    }
+   },
+   "Y1|45": {
+    "girdi": 4984,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 4828,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 4496,
+     "birikimli": 488
+    }
+   },
+   "DS|15": {
+    "girdi": 4977,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 4944,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 4562,
+     "dis": 259,
+     "birikimli": 156
+    }
+   },
+   "DS|30": {
+    "girdi": 4977,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 1977,
+    "olcum_r15": 2965,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2741,
+     "dis": 163,
+     "birikimli": 96
+    }
+   },
+   "DS|45": {
+    "girdi": 4977,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 2627,
+    "olcum_r15": 2312,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2148,
+     "dis": 129,
+     "birikimli": 73
+    }
+   },
+   "BOFA|15": {
+    "girdi": 33,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 9,
+    "bolunme_gecmis": 3,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 12,
+    "tekil": 0,
+    "olcum_r15": 21,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 20,
+     "birikimli": 1
+    }
+   },
+   "BOFA|30": {
+    "girdi": 33,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 9,
+    "bolunme_gecmis": 3,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 12,
+    "tekil": 0,
+    "olcum_r15": 21,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 20,
+     "birikimli": 1
+    }
+   },
+   "BOFA|45": {
+    "girdi": 33,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 9,
+    "bolunme_gecmis": 3,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 12,
+    "tekil": 0,
+    "olcum_r15": 21,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 20,
+     "birikimli": 1
+    }
+   }
+  }
+ },
+ "BIST": {
+  "Y1": {
+   "sinyal": 5749,
+   "girdi": 5749,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 16,
+   "giris_gec": 1,
+   "likidite_alt20": 1314,
+   "bolunme_gecmis": 9,
+   "evren_once": 0,
+   "gecmis_eksik": 13,
+   "havuz_az": 0,
+   "havuz_disi": 1336,
+   "tekil": 1661,
+   "y1_olay": 2735,
+   "F_KT02": 313,
+   "F_KT03": 2517,
+   "F_KT04": 1688,
+   "F_KT05": 2680,
+   "F_KT06": 1691,
+   "F_KT07": 185,
+   "sure_sn": 33.3
+  },
+  "DS": {
+   "girdi": 52037,
+   "sembol_yok": 0,
+   "sinyal_bar_gecersiz": 0,
+   "giris_yok": 88,
+   "giris_gec": 1,
+   "likidite_alt20": 1932,
+   "bolunme_gecmis": 345,
+   "evren_once": 0,
+   "gecmis_eksik": 41,
+   "havuz_az": 0,
+   "havuz_disi": 2318,
+   "tekil": 0,
+   "ds_gun": 52037,
+   "havuz_gun": 49630,
+   "ana": 4601,
+   "F_KT08": 993,
+   "sure_sn": 25.5
+  },
+  "cetvel": {
+   "Y1|15": {
+    "girdi": 2735,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 2717,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2588,
+     "birikimli": 147
+    }
+   },
+   "Y1|30": {
+    "girdi": 2735,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 2664,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2588,
+     "birikimli": 147
+    }
+   },
+   "Y1|45": {
+    "girdi": 2735,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 2650,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2588,
+     "birikimli": 147
+    }
+   },
+   "DS|15": {
+    "girdi": 4601,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 0,
+    "olcum_r15": 4408,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 2947,
+     "birikimli": 1636,
+     "dis": 18
+    }
+   },
+   "DS|30": {
+    "girdi": 4601,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 1867,
+    "olcum_r15": 2502,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 1787,
+     "birikimli": 934,
+     "dis": 13
+    }
+   },
+   "DS|45": {
+    "girdi": 4601,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 0,
+    "tekil": 2474,
+    "olcum_r15": 1844,
+    "kova_yok": 0,
+    "donem": {
+     "acik": 1423,
+     "birikimli": 691,
+     "dis": 13
+    }
+   }
+  }
+ }
+}
