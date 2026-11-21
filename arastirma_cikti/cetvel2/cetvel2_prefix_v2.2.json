@@ -1,0 +1,563 @@
+{
+ "ABD": {
+  "pazar": "ABD",
+  "n": 30,
+  "bozuk": 0,
+  "olay": [
+   {
+    "sembol": "KEEL",
+    "tarih": "2022-03-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "XYZ",
+    "tarih": "2022-10-21",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "GME",
+    "tarih": "2015-12-31",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "VTRS",
+    "tarih": "2019-08-01",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CVNA",
+    "tarih": "2022-08-11",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "YUMC",
+    "tarih": "2022-05-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "DFTX",
+    "tarih": "2022-09-06",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BHC",
+    "tarih": "2022-06-10",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "PLAY",
+    "tarih": "2017-11-15",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "OMER",
+    "tarih": "2019-11-08",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BBY",
+    "tarih": "2019-01-07",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "RARE",
+    "tarih": "2016-05-03",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "SHC",
+    "tarih": "2022-12-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "INSM",
+    "tarih": "2022-03-24",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BGS",
+    "tarih": "2019-10-28",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "EOLS",
+    "tarih": "2019-08-02",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "NWL",
+    "tarih": "2019-06-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "NUE",
+    "tarih": "2022-06-13",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "IVZ",
+    "tarih": "2020-04-21",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "SLB",
+    "tarih": "2020-09-25",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CRL",
+    "tarih": "2022-05-12",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "LAZ",
+    "tarih": "2018-10-26",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "DOCN",
+    "tarih": "2022-05-16",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "FLR",
+    "tarih": "2020-03-31",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "FSM",
+    "tarih": "2017-03-22",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ECHO",
+    "tarih": "2020-07-02",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ENTG",
+    "tarih": "2022-10-12",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AXGN",
+    "tarih": "2019-08-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "APP",
+    "tarih": "2022-05-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TRTX",
+    "tarih": "2020-04-15",
+    "tut": true,
+    "fark": []
+   }
+  ]
+ },
+ "AVR": {
+  "pazar": "AVR",
+  "n": 30,
+  "bozuk": 0,
+  "olay": [
+   {
+    "sembol": "FRVIA.PA",
+    "tarih": "2020-03-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "VOE.VI",
+    "tarih": "2018-11-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AO.L",
+    "tarih": "2022-01-28",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ISP.MI",
+    "tarih": "2016-04-05",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "OERL.SW",
+    "tarih": "2022-03-03",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "COLR.BR",
+    "tarih": "2019-09-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "WIZZ.L",
+    "tarih": "2022-05-25",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "G1A.DE",
+    "tarih": "2019-01-15",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "DHL.DE",
+    "tarih": "2022-05-02",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "HOC.L",
+    "tarih": "2021-10-07",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "GAMA.L",
+    "tarih": "2022-09-01",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "PNN.L",
+    "tarih": "2021-09-28",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BNR.DE",
+    "tarih": "2020-04-02",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CURY.L",
+    "tarih": "2022-04-27",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BBVA.MC",
+    "tarih": "2020-03-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "SSPG.L",
+    "tarih": "2020-05-29",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CON.DE",
+    "tarih": "2020-03-05",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TGS.OL",
+    "tarih": "2020-09-10",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "EDEN.PA",
+    "tarih": "2016-01-05",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BP.L",
+    "tarih": "2020-10-07",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AF.PA",
+    "tarih": "2022-06-13",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CTEC.L",
+    "tarih": "2019-01-11",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CNA.L",
+    "tarih": "2019-04-16",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CBK.DE",
+    "tarih": "2019-10-30",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "CFR.SW",
+    "tarih": "2020-04-27",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "EXPN.L",
+    "tarih": "2020-03-18",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "SAFE.L",
+    "tarih": "2020-03-19",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "LOGN.SW",
+    "tarih": "2022-07-05",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BME.L",
+    "tarih": "2022-07-20",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "HMSO.L",
+    "tarih": "2019-06-27",
+    "tut": true,
+    "fark": []
+   }
+  ]
+ },
+ "BIST": {
+  "pazar": "BIST",
+  "n": 30,
+  "bozuk": 0,
+  "olay": [
+   {
+    "sembol": "VERUS",
+    "tarih": "2019-10-09",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "BUCIM",
+    "tarih": "2022-01-20",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ANELE",
+    "tarih": "2021-04-22",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "KRSTL",
+    "tarih": "2018-03-12",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TEKTU",
+    "tarih": "2021-07-26",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TUKAS",
+    "tarih": "2018-04-27",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "DGNMO",
+    "tarih": "2018-10-05",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ASUZU",
+    "tarih": "2020-04-02",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "LYDHO",
+    "tarih": "2018-08-10",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ISCTR",
+    "tarih": "2021-06-29",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "YAPRK",
+    "tarih": "2021-07-07",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AYEN",
+    "tarih": "2018-06-11",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "LYDYE",
+    "tarih": "2022-06-20",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TUKAS",
+    "tarih": "2021-06-15",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "FADE",
+    "tarih": "2021-11-03",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "HUBVC",
+    "tarih": "2021-09-14",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "KARTN",
+    "tarih": "2021-04-16",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "PNSUT",
+    "tarih": "2021-05-12",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "NETAS",
+    "tarih": "2018-05-10",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AGYO",
+    "tarih": "2021-06-17",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "KRSTL",
+    "tarih": "2017-12-15",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AVHOL",
+    "tarih": "2021-09-13",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "ALGYO",
+    "tarih": "2016-07-19",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "PNSUT",
+    "tarih": "2021-03-23",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "OYLUM",
+    "tarih": "2021-12-20",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "YKBNK",
+    "tarih": "2018-08-28",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "TATGD",
+    "tarih": "2020-03-16",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "DERIM",
+    "tarih": "2022-02-24",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "AFYON",
+    "tarih": "2021-05-06",
+    "tut": true,
+    "fark": []
+   },
+   {
+    "sembol": "KATMR",
+    "tarih": "2021-06-04",
+    "tut": true,
+    "fark": []
+   }
+  ]
+ }
+}
