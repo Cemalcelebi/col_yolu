@@ -1,0 +1,178 @@
+{
+ "ABD": {
+  "y1_yeni_giris_kesik": 8686,
+  "y1_eski": 8686,
+  "kesisim": 8686,
+  "yalniz_yeni": [],
+  "yalniz_eski": [],
+  "yalniz_yeni_yil": {},
+  "bayrak_karsilastirilan": 8686,
+  "bayrak_farkli": {
+   "F_KT02": 0,
+   "F_KT03": 0,
+   "F_KT04": 0,
+   "F_KT05": 0,
+   "F_KT06": 0,
+   "F_KT07": 0
+  },
+  "ozellik_max_goreli_fark": {
+   "F1": 0.0,
+   "F2": 0.0,
+   "F3": 0.0,
+   "F4": 0.0,
+   "F11": 0.0,
+   "F14": 0.0,
+   "F15": 0.0,
+   "F17": 0.0,
+   "F18": 0.0,
+   "F20": 0.0,
+   "F21": 0.0,
+   "F22": 0.0,
+   "F22a": 0.0,
+   "F23": 0.0
+  },
+  "ds": {
+   "yeni": 14301,
+   "eski": 14061,
+   "kesisim": 14056,
+   "yalniz_yeni": [
+    "ACAD 2015-11-17",
+    "ACAD 2015-12-09",
+    "ADM 2015-11-20",
+    "ADM 2015-12-14",
+    "AES 2015-11-17",
+    "AES 2015-12-09",
+    "AGEN 2015-11-17",
+    "AGEN 2015-12-09",
+    "AKAM 2015-12-09",
+    "ALNY 2015-12-11"
+   ],
+   "yalniz_eski": [
+    "BFLY 2022-12-16",
+    "LWLG 2022-12-29",
+    "PAR 2022-11-01",
+    "PAR 2022-11-22",
+    "PAR 2022-12-14"
+   ],
+   "yalniz_yeni_yil": {
+    "2015": 241,
+    "2022": 4
+   }
+  }
+ },
+ "AVR": {
+  "y1_yeni_giris_kesik": 4497,
+  "y1_eski": 4496,
+  "kesisim": 4496,
+  "yalniz_yeni": [
+   "FEV.L 2022-12-13"
+  ],
+  "yalniz_eski": [],
+  "yalniz_yeni_yil": {
+   "2022": 1
+  },
+  "bayrak_karsilastirilan": 4496,
+  "bayrak_farkli": {
+   "F_KT02": 0,
+   "F_KT03": 0,
+   "F_KT04": 0,
+   "F_KT05": 0,
+   "F_KT06": 0,
+   "F_KT07": 0
+  },
+  "ozellik_max_goreli_fark": {
+   "F1": 0.0,
+   "F2": 0.0,
+   "F3": 0.0,
+   "F4": 0.0,
+   "F11": 0.0,
+   "F14": 0.0,
+   "F15": 0.0,
+   "F17": 0.0,
+   "F18": 0.0,
+   "F20": 0.0,
+   "F21": 0.0,
+   "F22": 0.0,
+   "F22a": 0.0,
+   "F23": 0.0
+  },
+  "ds": {
+   "yeni": 4821,
+   "eski": 4562,
+   "kesisim": 4561,
+   "yalniz_yeni": [
+    "AAL.L 2015-07-07",
+    "AAL.L 2015-07-28",
+    "AAL.L 2015-08-18",
+    "AAL.L 2015-09-08",
+    "AAL.L 2015-09-29",
+    "AAL.L 2015-10-20",
+    "AAL.L 2015-11-10",
+    "AAL.L 2015-12-01",
+    "AAL.L 2015-12-22",
+    "ACX.MC 2015-08-17"
+   ],
+   "yalniz_eski": [
+    "XPP.L 2022-10-28"
+   ],
+   "yalniz_yeni_yil": {
+    "2015": 259,
+    "2022": 1
+   }
+  }
+ },
+ "BIST": {
+  "y1_yeni_giris_kesik": 2588,
+  "y1_eski": 2588,
+  "kesisim": 2588,
+  "yalniz_yeni": [],
+  "yalniz_eski": [],
+  "yalniz_yeni_yil": {},
+  "bayrak_karsilastirilan": 2588,
+  "bayrak_farkli": {
+   "F_KT02": 0,
+   "F_KT03": 0,
+   "F_KT04": 0,
+   "F_KT05": 0,
+   "F_KT06": 0,
+   "F_KT07": 0
+  },
+  "ozellik_max_goreli_fark": {
+   "F1": 0.0,
+   "F2": 0.0,
+   "F3": 0.0,
+   "F4": 0.0,
+   "F11": 0.0,
+   "F14": 0.0,
+   "F15": 0.0,
+   "F17": 0.0,
+   "F18": 0.0,
+   "F20": 0.0,
+   "F21": 0.0,
+   "F22": 0.0,
+   "F22a": 0.0,
+   "F23": 0.0
+  },
+  "ds": {
+   "yeni": 2965,
+   "eski": 2947,
+   "kesisim": 2947,
+   "yalniz_yeni": [
+    "AFYON 2015-12-17",
+    "ALCTL 2015-12-11",
+    "DOAS 2015-11-25",
+    "DOAS 2015-12-16",
+    "EREGL 2015-12-14",
+    "GUBRF 2015-12-14",
+    "KLGYO 2015-12-10",
+    "KRDMD 2015-12-08",
+    "KRDMD 2015-12-29",
+    "PGSUS 2015-11-26"
+   ],
+   "yalniz_eski": [],
+   "yalniz_yeni_yil": {
+    "2015": 18
+   }
+  }
+ }
+}
