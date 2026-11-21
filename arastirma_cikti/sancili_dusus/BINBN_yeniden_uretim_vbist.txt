@@ -1,0 +1,42 @@
+BINBN | 510 bar | 10 çöl
+======================================================================
+#1[SD]↘ [SANCİLI DÜŞÜŞ]  2024-10-30 → 2024-11-12
+   Ust:139.7 Alt:120.6 | pslope:0.0115 | dip_yakin:0.22
+   Max hareket:5.4% | Puan:[1P] | IHLAL
+
+#2[P]↗  2024-12-16 → 2025-01-28
+   Ust:125.3 Alt:110.3 | pslope:0.0080 | dip_yakin:0.00
+   Max hareket:31.0% | Puan:[3P] | DOGRU
+
+#3[P?]↗  2025-02-06 → 2025-02-26
+   Ust:144.3 Alt:114.7 | pslope:0.0053 | dip_yakin:0.15
+   Max hareket:125.8% | Puan:[5P] | DOGRU
+
+#4[P?]↗  2025-04-09 → 2025-04-25
+   Ust:328.2 Alt:246.8 | pslope:0.0251 | dip_yakin:1.17
+   Max hareket:9.1% | Puan:[1P] | IHLAL
+
+#5[P]↗  2025-08-12 → 2025-08-28
+   Ust:220.8 Alt:196.6 | pslope:-0.0033 | dip_yakin:0.06
+   Max hareket:0.0% | Puan:[-] | IHLAL
+
+#6[P]↗  2025-09-17 → 2025-10-24
+   Ust:176.0 Alt:137.5 | pslope:-0.0150 | dip_yakin:0.05
+   Max hareket:17.0% | Puan:[2P] | DOGRU
+
+#7[P?]↗  2025-12-03 → 2026-01-15
+   Ust:199.5 Alt:175.8 | pslope:-0.0016 | dip_yakin:0.30
+   Max hareket:10.8% | Puan:[2P] | IHLAL
+
+#8[P]↘  2026-01-19 → 2026-04-20
+   Ust:226.9 Alt:145.0 | pslope:-0.0025 | dip_yakin:0.03
+   Max hareket:13.0% | Puan:[2P] | BASARISIZ
+
+#9[P]↗  2026-05-26 → 2026-08-14
+   Ust:201.3 Alt:165.8 | pslope:-0.0028 | dip_yakin:0.08
+   Max hareket:9.6% | Puan:[1P] | IHLAL
+
+#10[SD]↘ [SANCİLI DÜŞÜŞ]  2026-09-01 → 2026-09-17
+   Ust:191.0 Alt:150.8 | pslope:0.0016 | dip_yakin:0.02
+   Max hareket:0.0% | Puan:[-] | IHLAL
+
