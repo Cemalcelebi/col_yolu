@@ -1,0 +1,1141 @@
+{
+ "zaman_utc": "2026-11-21 10:04:08 UTC",
+ "huni": {
+  "C194": {
+   "F_Y10": {
+    "ABD|egitim": 31,
+    "ABD|sinama": 38,
+    "AVR|egitim": 9,
+    "AVR|sinama": 12,
+    "BIST|egitim": 40,
+    "BIST|sinama": 76
+   },
+   "F_Y10b": {
+    "ABD|egitim": 8,
+    "ABD|sinama": 12,
+    "AVR|egitim": 1,
+    "AVR|sinama": 3,
+    "BIST|egitim": 14,
+    "BIST|sinama": 40
+   },
+   "F_Y10c": {
+    "ABD|egitim": 873,
+    "ABD|sinama": 758,
+    "AVR|egitim": 566,
+    "AVR|sinama": 370,
+    "BIST|egitim": 486,
+    "BIST|sinama": 443
+   }
+  },
+  "C195": {
+   "F_Y11": {
+    "ABD|egitim": 20,
+    "ABD|sinama": 18,
+    "AVR|egitim": 6,
+    "AVR|sinama": 3,
+    "BIST|egitim": 10,
+    "BIST|sinama": 12
+   },
+   "F_Y11b": {
+    "ABD|egitim": 4,
+    "ABD|sinama": 3,
+    "AVR|egitim": 2,
+    "AVR|sinama": 2,
+    "BIST|egitim": 4,
+    "BIST|sinama": 9
+   },
+   "F_Y11c": {
+    "ABD|egitim": 464,
+    "ABD|sinama": 359,
+    "AVR|egitim": 231,
+    "AVR|sinama": 161,
+    "BIST|egitim": 141,
+    "BIST|sinama": 156
+   }
+  },
+  "C196": {
+   "F_S1": {
+    "ABD|egitim": 346,
+    "ABD|sinama": 378,
+    "AVR|egitim": 89,
+    "AVR|sinama": 75,
+    "BIST|egitim": 238,
+    "BIST|sinama": 378
+   },
+   "F_S2": {
+    "ABD|egitim": 5024,
+    "ABD|sinama": 3886,
+    "AVR|egitim": 2723,
+    "AVR|sinama": 1576,
+    "BIST|egitim": 1572,
+    "BIST|sinama": 1275
+   },
+   "F_S3": {
+    "ABD|egitim": 7614,
+    "ABD|sinama": 5509,
+    "AVR|egitim": 3910,
+    "AVR|sinama": 2236,
+    "BIST|egitim": 2379,
+    "BIST|sinama": 1936
+   },
+   "F_S4": {
+    "ABD|egitim": 8245,
+    "ABD|sinama": 5871,
+    "AVR|egitim": 4160,
+    "AVR|sinama": 2378,
+    "BIST|egitim": 2535,
+    "BIST|sinama": 2110
+   },
+   "F_S5": {
+    "ABD|egitim": 3823,
+    "ABD|sinama": 3001,
+    "AVR|egitim": 2208,
+    "AVR|sinama": 1385,
+    "BIST|egitim": 1572,
+    "BIST|sinama": 1583
+   },
+   "F_S6": {
+    "ABD|egitim": 6960,
+    "ABD|sinama": 4873,
+    "AVR|egitim": 3621,
+    "AVR|sinama": 2109,
+    "BIST|egitim": 2193,
+    "BIST|sinama": 1668
+   },
+   "F_S7": {
+    "ABD|egitim": 4953,
+    "ABD|sinama": 3378,
+    "AVR|egitim": 2801,
+    "AVR|sinama": 1534,
+    "BIST|egitim": 1626,
+    "BIST|sinama": 1251
+   },
+   "F_S8": {
+    "ABD|egitim": 8539,
+    "ABD|sinama": 6014,
+    "AVR|egitim": 4456,
+    "AVR|sinama": 2522,
+    "BIST|egitim": 2467,
+    "BIST|sinama": 2087
+   },
+   "F_S9": {
+    "ABD|egitim": 464,
+    "ABD|sinama": 359,
+    "AVR|egitim": 231,
+    "AVR|sinama": 161,
+    "BIST|egitim": 141,
+    "BIST|sinama": 156
+   },
+   "F_F14": {
+    "ABD|egitim": 6058,
+    "ABD|sinama": 3953,
+    "AVR|egitim": 2936,
+    "AVR|sinama": 1614,
+    "BIST|egitim": 1764,
+    "BIST|sinama": 1464
+   },
+   "F_B_S2": {
+    "ABD|egitim": 206,
+    "ABD|sinama": 233,
+    "AVR|egitim": 51,
+    "AVR|sinama": 51,
+    "BIST|egitim": 145,
+    "BIST|sinama": 220
+   },
+   "F_B_S3": {
+    "ABD|egitim": 303,
+    "ABD|sinama": 346,
+    "AVR|egitim": 80,
+    "AVR|sinama": 67,
+    "BIST|egitim": 217,
+    "BIST|sinama": 334
+   },
+   "F_B_S4": {
+    "ABD|egitim": 310,
+    "ABD|sinama": 354,
+    "AVR|egitim": 78,
+    "AVR|sinama": 70,
+    "BIST|egitim": 236,
+    "BIST|sinama": 375
+   },
+   "F_B_S5": {
+    "ABD|egitim": 171,
+    "ABD|sinama": 165,
+    "AVR|egitim": 38,
+    "AVR|sinama": 43,
+    "BIST|egitim": 141,
+    "BIST|sinama": 307
+   },
+   "F_B_S6": {
+    "ABD|egitim": 271,
+    "ABD|sinama": 263,
+    "AVR|egitim": 76,
+    "AVR|sinama": 53,
+    "BIST|egitim": 198,
+    "BIST|sinama": 289
+   },
+   "F_B_S7": {
+    "ABD|egitim": 176,
+    "ABD|sinama": 169,
+    "AVR|egitim": 52,
+    "AVR|sinama": 47,
+    "BIST|egitim": 129,
+    "BIST|sinama": 192
+   },
+   "F_B_S8": {
+    "ABD|egitim": 342,
+    "ABD|sinama": 375,
+    "AVR|egitim": 89,
+    "AVR|sinama": 75,
+    "BIST|egitim": 233,
+    "BIST|sinama": 376
+   },
+   "F_B_S9": {
+    "ABD|egitim": 31,
+    "ABD|sinama": 23,
+    "AVR|egitim": 11,
+    "AVR|sinama": 5,
+    "BIST|egitim": 16,
+    "BIST|sinama": 31
+   },
+   "F_B_F14": {
+    "ABD|egitim": 100,
+    "ABD|sinama": 138,
+    "AVR|egitim": 22,
+    "AVR|sinama": 17,
+    "BIST|egitim": 113,
+    "BIST|sinama": 232
+   },
+   "F_G1": {
+    "ABD|egitim": 5346,
+    "ABD|sinama": 3294,
+    "AVR|egitim": 2683,
+    "AVR|sinama": 1440,
+    "BIST|egitim": 1363,
+    "BIST|sinama": 864
+   },
+   "F_G2": {
+    "ABD|egitim": 346,
+    "ABD|sinama": 378,
+    "AVR|egitim": 89,
+    "AVR|sinama": 75,
+    "BIST|egitim": 238,
+    "BIST|sinama": 378
+   },
+   "F_G2u": {
+    "ABD|egitim": 31,
+    "ABD|sinama": 23,
+    "AVR|egitim": 11,
+    "AVR|sinama": 5,
+    "BIST|egitim": 16,
+    "BIST|sinama": 31
+   }
+  },
+  "C197": {
+   "F_P_AB_ust20": {
+    "ABD|egitim": 1737,
+    "ABD|sinama": 1225,
+    "AVR|egitim": 899,
+    "AVR|sinama": 506,
+    "BIST|egitim": 518,
+    "BIST|sinama": 420
+   },
+   "F_P_C_ust20": {
+    "ABD|egitim": 1110,
+    "ABD|sinama": 1226,
+    "AVR|egitim": 527,
+    "AVR|sinama": 507,
+    "BIST|egitim": 360,
+    "BIST|sinama": 421
+   },
+   "F_P_AB_alt20": {
+    "ABD|egitim": 1737,
+    "ABD|sinama": 1225,
+    "AVR|egitim": 899,
+    "AVR|sinama": 506,
+    "BIST|egitim": 518,
+    "BIST|sinama": 420
+   },
+   "F_P_C_alt20": {
+    "ABD|egitim": 1110,
+    "ABD|sinama": 1226,
+    "AVR|egitim": 527,
+    "AVR|sinama": 507,
+    "BIST|egitim": 360,
+    "BIST|sinama": 421
+   }
+  },
+  "C198": {
+   "F_D1_W1_A": {
+    "ABD|egitim": 1978,
+    "ABD|sinama": 1316,
+    "AVR|egitim": 1060,
+    "AVR|sinama": 521,
+    "BIST|egitim": 572,
+    "BIST|sinama": 433
+   },
+   "F_D1_W1_B": {
+    "ABD|egitim": 53,
+    "ABD|sinama": 59,
+    "AVR|egitim": 15,
+    "AVR|sinama": 6,
+    "BIST|egitim": 56,
+    "BIST|sinama": 86
+   },
+   "F_D1_W1t_A": {
+    "ABD|egitim": 1978,
+    "ABD|sinama": 1499,
+    "AVR|egitim": 1060,
+    "AVR|sinama": 629,
+    "BIST|egitim": 572,
+    "BIST|sinama": 488
+   },
+   "F_D1_W1t_B": {
+    "ABD|egitim": 84,
+    "ABD|sinama": 100,
+    "AVR|egitim": 31,
+    "AVR|sinama": 27,
+    "BIST|egitim": 54,
+    "BIST|sinama": 73
+   },
+   "F_D1_W2_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1262,
+    "AVR|egitim": 973,
+    "AVR|sinama": 598,
+    "BIST|egitim": 469,
+    "BIST|sinama": 268
+   },
+   "F_D1_W2_B": {
+    "ABD|egitim": 37,
+    "ABD|sinama": 23,
+    "AVR|egitim": 4,
+    "AVR|sinama": 10,
+    "BIST|egitim": 34,
+    "BIST|sinama": 22
+   },
+   "F_D1_W2t_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1311,
+    "AVR|egitim": 973,
+    "AVR|sinama": 541,
+    "BIST|egitim": 469,
+    "BIST|sinama": 358
+   },
+   "F_D1_W2t_B": {
+    "ABD|egitim": 78,
+    "ABD|sinama": 103,
+    "AVR|egitim": 22,
+    "AVR|sinama": 26,
+    "BIST|egitim": 49,
+    "BIST|sinama": 88
+   },
+   "F_D1_W2D_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1189,
+    "AVR|egitim": 973,
+    "AVR|sinama": 554,
+    "BIST|egitim": 469,
+    "BIST|sinama": 320
+   },
+   "F_D1_W2D_B": {
+    "ABD|egitim": 51,
+    "ABD|sinama": 70,
+    "AVR|egitim": 15,
+    "AVR|sinama": 22,
+    "BIST|egitim": 43,
+    "BIST|sinama": 68
+   },
+   "F_D1_W2Dt_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1326,
+    "AVR|egitim": 973,
+    "AVR|sinama": 607,
+    "BIST|egitim": 469,
+    "BIST|sinama": 260
+   },
+   "F_D1_W2Dt_B": {
+    "ABD|egitim": 51,
+    "ABD|sinama": 36,
+    "AVR|egitim": 8,
+    "AVR|sinama": 10,
+    "BIST|egitim": 48,
+    "BIST|sinama": 26
+   },
+   "F_D1_W3_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1061,
+    "AVR|egitim": 973,
+    "AVR|sinama": 426,
+    "BIST|egitim": 469,
+    "BIST|sinama": 185
+   },
+   "F_D1_W3_B": {
+    "ABD|egitim": 20,
+    "ABD|sinama": 18,
+    "AVR|egitim": 7,
+    "AVR|sinama": 9,
+    "BIST|egitim": 25,
+    "BIST|sinama": 8
+   },
+   "F_D1_W3t_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1164,
+    "AVR|egitim": 973,
+    "AVR|sinama": 623,
+    "BIST|egitim": 469,
+    "BIST|sinama": 419
+   },
+   "F_D1_W3t_B": {
+    "ABD|egitim": 78,
+    "ABD|sinama": 93,
+    "AVR|egitim": 21,
+    "AVR|sinama": 24,
+    "BIST|egitim": 64,
+    "BIST|sinama": 105
+   },
+   "F_D1_W4_A": {
+    "ABD|egitim": 1756,
+    "ABD|sinama": 1058,
+    "AVR|egitim": 1180,
+    "AVR|sinama": 682,
+    "BIST|egitim": 608,
+    "BIST|sinama": 468
+   },
+   "F_D1_W4_B": {
+    "ABD|egitim": 59,
+    "ABD|sinama": 51,
+    "AVR|egitim": 22,
+    "AVR|sinama": 17,
+    "BIST|egitim": 45,
+    "BIST|sinama": 68
+   },
+   "F_D1_W4t_A": {
+    "ABD|egitim": 1450,
+    "ABD|sinama": 877,
+    "AVR|egitim": 986,
+    "AVR|sinama": 601,
+    "BIST|egitim": 469,
+    "BIST|sinama": 159
+   },
+   "F_D1_W4t_B": {
+    "ABD|egitim": 29,
+    "ABD|sinama": 43,
+    "AVR|egitim": 7,
+    "AVR|sinama": 13,
+    "BIST|egitim": 54,
+    "BIST|sinama": 35
+   },
+   "F_D1_W5a_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1337,
+    "AVR|egitim": 973,
+    "AVR|sinama": 578,
+    "BIST|egitim": 469,
+    "BIST|sinama": 317
+   },
+   "F_D1_W5a_B": {
+    "ABD|egitim": 76,
+    "ABD|sinama": 86,
+    "AVR|egitim": 16,
+    "AVR|sinama": 21,
+    "BIST|egitim": 44,
+    "BIST|sinama": 50
+   },
+   "F_D1_W5b_A": {
+    "ABD|egitim": 2172,
+    "ABD|sinama": 1471,
+    "AVR|egitim": 1124,
+    "AVR|sinama": 709,
+    "BIST|egitim": 647,
+    "BIST|sinama": 405
+   },
+   "F_D1_W5b_B": {
+    "ABD|egitim": 70,
+    "ABD|sinama": 58,
+    "AVR|egitim": 21,
+    "AVR|sinama": 20,
+    "BIST|egitim": 70,
+    "BIST|sinama": 72
+   },
+   "F_D1_W6_A": {
+    "ABD|egitim": 2172,
+    "ABD|sinama": 1209,
+    "AVR|egitim": 1124,
+    "AVR|sinama": 578,
+    "BIST|egitim": 647,
+    "BIST|sinama": 385
+   },
+   "F_D1_W6_B": {
+    "ABD|egitim": 17,
+    "ABD|sinama": 13,
+    "AVR|egitim": 4,
+    "AVR|sinama": 4,
+    "BIST|egitim": 24,
+    "BIST|sinama": 13
+   },
+   "F_D1_W6t_A": {
+    "ABD|egitim": 2172,
+    "ABD|sinama": 1980,
+    "AVR|egitim": 1124,
+    "AVR|sinama": 712,
+    "BIST|egitim": 647,
+    "BIST|sinama": 744
+   },
+   "F_D1_W6t_B": {
+    "ABD|egitim": 256,
+    "ABD|sinama": 272,
+    "AVR|egitim": 59,
+    "AVR|sinama": 56,
+    "BIST|egitim": 120,
+    "BIST|sinama": 242
+   },
+   "F_D1_E1_A": {
+    "ABD|egitim": 3281,
+    "ABD|sinama": 2029,
+    "AVR|egitim": 1687,
+    "AVR|sinama": 886,
+    "BIST|egitim": 1125,
+    "BIST|sinama": 794
+   },
+   "F_D1_E1_B": {
+    "ABD|egitim": 176,
+    "ABD|sinama": 155,
+    "AVR|egitim": 40,
+    "AVR|sinama": 33,
+    "BIST|egitim": 132,
+    "BIST|sinama": 189
+   },
+   "F_D1_E1t_A": {
+    "ABD|egitim": 5405,
+    "ABD|sinama": 4166,
+    "AVR|egitim": 2809,
+    "AVR|sinama": 1672,
+    "BIST|egitim": 1463,
+    "BIST|sinama": 1346
+   },
+   "F_D1_E1t_B": {
+    "ABD|egitim": 170,
+    "ABD|sinama": 223,
+    "AVR|egitim": 49,
+    "AVR|sinama": 42,
+    "BIST|egitim": 106,
+    "BIST|sinama": 189
+   },
+   "F_D1_E2_A": {
+    "ABD|egitim": 6874,
+    "ABD|sinama": 5094,
+    "AVR|egitim": 3154,
+    "AVR|sinama": 1842,
+    "BIST|egitim": 2170,
+    "BIST|sinama": 1931
+   },
+   "F_D1_E2_B": {
+    "ABD|egitim": 214,
+    "ABD|sinama": 274,
+    "AVR|egitim": 47,
+    "AVR|sinama": 37,
+    "BIST|egitim": 176,
+    "BIST|sinama": 289
+   },
+   "F_D1_E2t_A": {
+    "ABD|egitim": 1811,
+    "ABD|sinama": 1100,
+    "AVR|egitim": 1337,
+    "AVR|sinama": 711,
+    "BIST|egitim": 418,
+    "BIST|sinama": 209
+   },
+   "F_D1_E2t_B": {
+    "ABD|egitim": 132,
+    "ABD|sinama": 104,
+    "AVR|egitim": 42,
+    "AVR|sinama": 38,
+    "BIST|egitim": 62,
+    "BIST|sinama": 89
+   }
+  },
+  "C199": {
+   "F_D2_PP_A": {
+    "ABD|egitim": 4195,
+    "ABD|sinama": 3041,
+    "AVR|egitim": 2175,
+    "AVR|sinama": 1170,
+    "BIST|egitim": 2265,
+    "BIST|sinama": 1745
+   },
+   "F_D2_PP_B": {
+    "ABD|egitim": 150,
+    "ABD|sinama": 163,
+    "AVR|egitim": 42,
+    "AVR|sinama": 39,
+    "BIST|egitim": 208,
+    "BIST|sinama": 315
+   },
+   "F_D2_AY_A": {
+    "ABD|egitim": 1813,
+    "ABD|sinama": 1458,
+    "AVR|egitim": 823,
+    "AVR|sinama": 460,
+    "BIST|egitim": 465,
+    "BIST|sinama": 648
+   },
+   "F_D2_AY_B": {
+    "ABD|egitim": 74,
+    "ABD|sinama": 118,
+    "AVR|egitim": 10,
+    "AVR|sinama": 19,
+    "BIST|egitim": 77,
+    "BIST|sinama": 134
+   },
+   "F_D2_AYK_A": {
+    "ABD|egitim": 2172,
+    "ABD|sinama": 1814,
+    "AVR|egitim": 1124,
+    "AVR|sinama": 609,
+    "BIST|egitim": 647,
+    "BIST|sinama": 681
+   },
+   "F_D2_AYK_B": {
+    "ABD|egitim": 157,
+    "ABD|sinama": 203,
+    "AVR|egitim": 41,
+    "AVR|sinama": 36,
+    "BIST|egitim": 101,
+    "BIST|sinama": 196
+   },
+   "F_D2_DT_A": {
+    "ABD|egitim": 1753,
+    "ABD|sinama": 1142,
+    "AVR|egitim": 1046,
+    "AVR|sinama": 647,
+    "BIST|egitim": 396,
+    "BIST|sinama": 194
+   },
+   "F_D2_DT_B": {
+    "ABD|egitim": 24,
+    "ABD|sinama": 22,
+    "AVR|egitim": 6,
+    "AVR|sinama": 5,
+    "BIST|egitim": 33,
+    "BIST|sinama": 16
+   },
+   "F_D2_RV_A": {
+    "ABD|egitim": 587,
+    "ABD|sinama": 319,
+    "AVR|egitim": 585,
+    "AVR|sinama": 282,
+    "BIST|egitim": 1091,
+    "BIST|sinama": 551
+   },
+   "F_D2_RV_B": {
+    "ABD|egitim": 18,
+    "ABD|sinama": 11,
+    "AVR|egitim": 12,
+    "AVR|sinama": 5,
+    "BIST|egitim": 112,
+    "BIST|sinama": 115
+   },
+   "F_D2_NR7_A": {
+    "ABD|egitim": 1164,
+    "ABD|sinama": 765,
+    "AVR|egitim": 612,
+    "AVR|sinama": 312,
+    "BIST|egitim": 381,
+    "BIST|sinama": 317
+   },
+   "F_D2_NR7_B": {
+    "ABD|egitim": 48,
+    "ABD|sinama": 64,
+    "AVR|egitim": 13,
+    "AVR|sinama": 6,
+    "BIST|egitim": 44,
+    "BIST|sinama": 54
+   },
+   "F_D2_VCP_A": {
+    "ABD|egitim": 24,
+    "ABD|sinama": 20,
+    "AVR|egitim": 12,
+    "AVR|sinama": 4,
+    "BIST|egitim": 9,
+    "BIST|sinama": 14
+   },
+   "F_D2_VCP_B": {
+    "ABD|egitim": 0,
+    "ABD|sinama": 1,
+    "AVR|egitim": 0,
+    "AVR|sinama": 0,
+    "BIST|egitim": 0,
+    "BIST|sinama": 0
+   },
+   "F_D2_W1_A": {
+    "ABD|egitim": 1978,
+    "ABD|sinama": 1316,
+    "AVR|egitim": 1060,
+    "AVR|sinama": 521,
+    "BIST|egitim": 572,
+    "BIST|sinama": 433
+   },
+   "F_D2_W1_B": {
+    "ABD|egitim": 53,
+    "ABD|sinama": 59,
+    "AVR|egitim": 15,
+    "AVR|sinama": 6,
+    "BIST|egitim": 56,
+    "BIST|sinama": 86
+   },
+   "F_D2_W2_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1262,
+    "AVR|egitim": 973,
+    "AVR|sinama": 598,
+    "BIST|egitim": 469,
+    "BIST|sinama": 268
+   },
+   "F_D2_W2_B": {
+    "ABD|egitim": 37,
+    "ABD|sinama": 23,
+    "AVR|egitim": 4,
+    "AVR|sinama": 10,
+    "BIST|egitim": 34,
+    "BIST|sinama": 22
+   },
+   "F_D2_W2D_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1189,
+    "AVR|egitim": 973,
+    "AVR|sinama": 554,
+    "BIST|egitim": 469,
+    "BIST|sinama": 320
+   },
+   "F_D2_W2D_B": {
+    "ABD|egitim": 51,
+    "ABD|sinama": 70,
+    "AVR|egitim": 15,
+    "AVR|sinama": 22,
+    "BIST|egitim": 43,
+    "BIST|sinama": 68
+   }
+  },
+  "C200": {
+   "F_D3_AYK_A": {
+    "ABD|egitim": 2172,
+    "ABD|sinama": 1814,
+    "AVR|egitim": 1124,
+    "AVR|sinama": 609,
+    "BIST|egitim": 647,
+    "BIST|sinama": 681
+   },
+   "F_D3_AYK_B": {
+    "ABD|egitim": 157,
+    "ABD|sinama": 203,
+    "AVR|egitim": 41,
+    "AVR|sinama": 36,
+    "BIST|egitim": 101,
+    "BIST|sinama": 196
+   },
+   "F_D3_NR7_A": {
+    "ABD|egitim": 1164,
+    "ABD|sinama": 765,
+    "AVR|egitim": 612,
+    "AVR|sinama": 312,
+    "BIST|egitim": 381,
+    "BIST|sinama": 317
+   },
+   "F_D3_NR7_B": {
+    "ABD|egitim": 48,
+    "ABD|sinama": 64,
+    "AVR|egitim": 13,
+    "AVR|sinama": 6,
+    "BIST|egitim": 44,
+    "BIST|sinama": 54
+   },
+   "F_D3_W2D_A": {
+    "ABD|egitim": 1752,
+    "ABD|sinama": 1189,
+    "AVR|egitim": 973,
+    "AVR|sinama": 554,
+    "BIST|egitim": 469,
+    "BIST|sinama": 320
+   },
+   "F_D3_W2D_B": {
+    "ABD|egitim": 51,
+    "ABD|sinama": 70,
+    "AVR|egitim": 15,
+    "AVR|sinama": 22,
+    "BIST|egitim": 43,
+    "BIST|sinama": 68
+   },
+   "F_D3_W1_A": {
+    "ABD|egitim": 1978,
+    "ABD|sinama": 1316,
+    "AVR|egitim": 1060,
+    "AVR|sinama": 521,
+    "BIST|egitim": 572,
+    "BIST|sinama": 433
+   },
+   "F_D3_W1_B": {
+    "ABD|egitim": 53,
+    "ABD|sinama": 59,
+    "AVR|egitim": 15,
+    "AVR|sinama": 6,
+    "BIST|egitim": 56,
+    "BIST|sinama": 86
+   }
+  },
+  "C201": {
+   "F_Y13": {
+    "ABD|egitim": 712,
+    "ABD|sinama": 612,
+    "AVR|egitim": 360,
+    "AVR|sinama": 235,
+    "BIST|egitim": 312,
+    "BIST|sinama": 356
+   },
+   "F_Y13b": {
+    "ABD|egitim": 123,
+    "ABD|sinama": 132,
+    "AVR|egitim": 28,
+    "AVR|sinama": 24,
+    "BIST|egitim": 98,
+    "BIST|sinama": 156
+   },
+   "F_Y13c": {
+    "ABD|egitim": 685,
+    "ABD|sinama": 596,
+    "AVR|egitim": 346,
+    "AVR|sinama": 232,
+    "BIST|egitim": 310,
+    "BIST|sinama": 354
+   }
+  },
+  "C202": {
+   "F_DS01": {
+    "ABD|egitim": 2813,
+    "ABD|sinama": 1719,
+    "AVR|egitim": 913,
+    "AVR|sinama": 287,
+    "BIST|egitim": 590,
+    "BIST|sinama": 881
+   },
+   "F_DS04": {
+    "ABD|egitim": 1604,
+    "ABD|sinama": 1115,
+    "AVR|egitim": 319,
+    "AVR|sinama": 183,
+    "BIST|egitim": 159,
+    "BIST|sinama": 81
+   },
+   "F_DS02": {
+    "ABD|egitim": 1253,
+    "ABD|sinama": 848,
+    "AVR|egitim": 449,
+    "AVR|sinama": 134,
+    "BIST|egitim": 283,
+    "BIST|sinama": 192
+   },
+   "F_DS03": {
+    "ABD|egitim": 1407,
+    "ABD|sinama": 1590,
+    "AVR|egitim": 457,
+    "AVR|sinama": 307,
+    "BIST|egitim": 295,
+    "BIST|sinama": 442
+   },
+   "F_DS08": {
+    "ABD|egitim": 11096,
+    "ABD|sinama": 7834,
+    "AVR|egitim": 4092,
+    "AVR|sinama": 1737,
+    "BIST|egitim": 1701,
+    "BIST|sinama": 3449
+   },
+   "F_DS05": {
+    "ABD|egitim": 5721,
+    "ABD|sinama": 4316,
+    "AVR|egitim": 2058,
+    "AVR|sinama": 909,
+    "BIST|egitim": 876,
+    "BIST|sinama": 1332
+   },
+   "F_DS06": {
+    "ABD|egitim": 351,
+    "ABD|sinama": 246,
+    "AVR|egitim": 97,
+    "AVR|sinama": 38,
+    "BIST|egitim": 54,
+    "BIST|sinama": 112
+   },
+   "F_DS11": {
+    "ABD|egitim": 7715,
+    "ABD|sinama": 5298,
+    "AVR|egitim": 2618,
+    "AVR|sinama": 1027,
+    "BIST|egitim": 1624,
+    "BIST|sinama": 2969
+   },
+   "F_DS09": {
+    "ABD|egitim": 3450,
+    "ABD|sinama": 2352,
+    "AVR|egitim": 1322,
+    "AVR|sinama": 528,
+    "BIST|egitim": 890,
+    "BIST|sinama": 1397
+   },
+   "F_DS14": {
+    "ABD|egitim": 74,
+    "ABD|sinama": 40,
+    "AVR|egitim": 17,
+    "AVR|sinama": 13,
+    "BIST|egitim": 17,
+    "BIST|sinama": 34
+   },
+   "F_DS15": {
+    "ABD|egitim": 1,
+    "ABD|sinama": 0,
+    "AVR|egitim": 0,
+    "AVR|sinama": 1,
+    "BIST|egitim": 1,
+    "BIST|sinama": 3
+   },
+   "F_DS16": {
+    "ABD|egitim": 1206,
+    "ABD|sinama": 1301,
+    "AVR|egitim": 460,
+    "AVR|sinama": 339,
+    "BIST|egitim": 134,
+    "BIST|sinama": 237
+   },
+   "F_DS18": {
+    "ABD|egitim": 2889,
+    "ABD|sinama": 1909,
+    "AVR|egitim": 997,
+    "AVR|sinama": 335,
+    "BIST|egitim": 622,
+    "BIST|sinama": 1179
+   },
+   "F_DS21": {
+    "ABD|egitim": 2878,
+    "ABD|sinama": 1970,
+    "AVR|egitim": 952,
+    "AVR|sinama": 504,
+    "BIST|egitim": 573,
+    "BIST|sinama": 703
+   },
+   "F_DS22": {
+    "ABD|egitim": 117,
+    "ABD|sinama": 101,
+    "AVR|egitim": 28,
+    "AVR|sinama": 23,
+    "BIST|egitim": 31,
+    "BIST|sinama": 62
+   },
+   "F_DS13": {
+    "ABD|egitim": 332,
+    "ABD|sinama": 227,
+    "AVR|egitim": 144,
+    "AVR|sinama": 48,
+    "BIST|egitim": 81,
+    "BIST|sinama": 187
+   },
+   "F_DS12": {
+    "ABD|egitim": 1038,
+    "ABD|sinama": 759,
+    "AVR|egitim": 325,
+    "AVR|sinama": 132,
+    "BIST|egitim": 199,
+    "BIST|sinama": 453
+   },
+   "F_DS19": {
+    "ABD|egitim": 1014,
+    "ABD|sinama": 741,
+    "AVR|egitim": 317,
+    "AVR|sinama": 141,
+    "BIST|egitim": 245,
+    "BIST|sinama": 263
+   },
+   "F_DS20": {
+    "ABD|egitim": 4019,
+    "ABD|sinama": 2486,
+    "AVR|egitim": 1530,
+    "AVR|sinama": 566,
+    "BIST|egitim": 778,
+    "BIST|sinama": 1281
+   },
+   "F_DS17": {
+    "ABD|egitim": 3516,
+    "ABD|sinama": 2523,
+    "AVR|egitim": 1141,
+    "AVR|sinama": 396,
+    "BIST|egitim": 737,
+    "BIST|sinama": 1370
+   },
+   "F_DS07": {
+    "ABD|egitim": 416,
+    "ABD|sinama": 329,
+    "AVR|egitim": 130,
+    "AVR|sinama": 63,
+    "BIST|egitim": 55,
+    "BIST|sinama": 160
+   },
+   "F_DS28": {
+    "ABD|egitim": 2769,
+    "ABD|sinama": 1821,
+    "AVR|egitim": 504,
+    "AVR|sinama": 199,
+    "BIST|egitim": 472,
+    "BIST|sinama": 715
+   },
+   "F_DS10": {
+    "ABD|egitim": 3815,
+    "ABD|sinama": 2538,
+    "AVR|egitim": 1644,
+    "AVR|sinama": 516,
+    "BIST|egitim": 733,
+    "BIST|sinama": 1004
+   },
+   "F_DS23": {
+    "ABD|egitim": 2520,
+    "ABD|sinama": 1920,
+    "AVR|egitim": 1182,
+    "AVR|sinama": 489,
+    "BIST|egitim": 597,
+    "BIST|sinama": 1189
+   },
+   "F_DS25": {
+    "ABD|egitim": 2666,
+    "ABD|sinama": 1851,
+    "AVR|egitim": 890,
+    "AVR|sinama": 358,
+    "BIST|egitim": 393,
+    "BIST|sinama": 988
+   }
+  },
+  "TABAN": {
+   "hepsi": {
+    "ABD|egitim": 8686,
+    "ABD|sinama": 6195,
+    "AVR|egitim": 4496,
+    "AVR|sinama": 2558,
+    "BIST|egitim": 2588,
+    "BIST|sinama": 2140
+   }
+  },
+  "TABAN_DS": {
+   "hepsi": {
+    "ABD|egitim": 14061,
+    "ABD|sinama": 10103,
+    "AVR|egitim": 4562,
+    "AVR|sinama": 1928,
+    "BIST|egitim": 2947,
+    "BIST|sinama": 5975
+   }
+  },
+  "TUR": {
+   "F_T_MODEL_OLUR": {
+    "ABD|egitim": 3,
+    "ABD|sinama": 1,
+    "AVR|egitim": 1,
+    "AVR|sinama": 0,
+    "BIST|egitim": 4,
+    "BIST|sinama": 11
+   },
+   "F_T_MODEL_OLMAZ": {
+    "ABD|egitim": 12,
+    "ABD|sinama": 11,
+    "AVR|egitim": 3,
+    "AVR|sinama": 5,
+    "BIST|egitim": 12,
+    "BIST|sinama": 17
+   },
+   "F_T_CEMAL_OLUR": {
+    "ABD|egitim": 5,
+    "ABD|sinama": 7,
+    "AVR|egitim": 2,
+    "AVR|sinama": 2,
+    "BIST|egitim": 7,
+    "BIST|sinama": 9
+   },
+   "F_T_CEMAL_OLMAZ": {
+    "ABD|egitim": 6,
+    "ABD|sinama": 1,
+    "AVR|egitim": 0,
+    "AVR|sinama": 0,
+    "BIST|egitim": 5,
+    "BIST|sinama": 5
+   }
+  }
+ },
+ "regresyon": {
+  "Y9": {
+   "bayrak": 1504,
+   "dosya": 1504,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y10": {
+   "bayrak": 206,
+   "dosya": 206,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y10b": {
+   "bayrak": 78,
+   "dosya": 78,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y10c": {
+   "bayrak": 3496,
+   "dosya": 3496,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y11": {
+   "bayrak": 69,
+   "dosya": 69,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y11b": {
+   "bayrak": 24,
+   "dosya": 24,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y11c": {
+   "bayrak": 1512,
+   "dosya": 1512,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y13": {
+   "bayrak": 2587,
+   "dosya": 2587,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y13b": {
+   "bayrak": 561,
+   "dosya": 561,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  },
+  "Y13c": {
+   "bayrak": 2523,
+   "dosya": 2523,
+   "esit": true,
+   "yalniz_bayrak": 0,
+   "yalniz_dosya": 0
+  }
+ }
+}
