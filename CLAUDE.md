@@ -156,3 +156,4 @@ Kodlar Google Colab'da Drive'dan çalışır. Repodaki dosya adları Drive'dakiy
 - Sonnet: web araştırması, iddia taşımayan sonuçların yeniden üretim kontrolü, rapor özetleme, defter satırı TASLAĞI (ana model yalnız uygular ve commit eder).
 - Haiku: mekanik işler (dosya arama, sayım, biçim dönüştürme, tablo çıkarma, dosya boyutu / sha kontrolü).
 - Her Agent çağrısında model açıkça seçilir; varsayılan yok.
+- KURAL (Cemal, 21 Kas 2026, ikinci kez): Fable limiti bir haftaya yetmeli. Her görev alt modele verilir; Fable yalnız iş tanımı + denetim. Alt modellerin geçmişte yaptığı hatalar (yanlış test, yanlış hipotez, yanlış kurgu, yanlış kod) Fable DENETİMİYLE önlenir: her alt ajan teslimi Fable'ın yazdığı iş tanımına göre denetlenir (ön kayıt sırası, >= 2 hücre yeniden üretim, kontrol listesi, yasak dosyalar); denetim de mümkün olduğunca alt modele (sonnet: yeniden üretim; opus: iddia taşıyan sonuç) yaptırılır, Fable yalnız sonucu okur ve karar verir.
