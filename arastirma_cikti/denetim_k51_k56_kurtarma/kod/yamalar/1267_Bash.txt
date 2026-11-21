@@ -1,0 +1,93 @@
+cd /home/user/col_yolu/arastirma_cikti/k57_denetim && python3 - <<'EOF'
+p = "K57_rapor_uret.py"; s = open(p, encoding="utf-8").read()
+yeni = '''
+
+# ------------------------------------------------------------------ yeni hipotez önerileri (kartlar, eleştiri, jüri) + birleşik hipotez envanteri + durum
+def oneri(g):
+    kim = Kimlik(); kartlar = []; gerekce_yok = []
+    for k in sorted(x for x in g if x.startswith("oneri:")):
+        kartlar += g[k]["kartlar"]
+        if not g[k]["kartlar"]:
+            gerekce_yok.append(f"{k.split(':')[1]}: {g[k]['bu_alanda_oneri_olmamasi_gerekce']}")
+    el = {k.split(":")[1]: g[k] for k in g if k.startswith("elestiri:")}; jr = {k.split(":")[1]: g[k] for k in g if k.startswith("juri:")}
+    elestiri = defaultdict(list)
+    for lens, e in el.items():
+        for r in e["kartlar"]:
+            elestiri[r["kart_id"]].append({"lens": lens, **r})
+    puan = defaultdict(dict); sira = defaultdict(list)
+    for ad, j in jr.items():
+        for p_ in j["puanlar"]:
+            puan[p_["kart_id"]][ad] = p_
+        for i, kid in enumerate(j["sira"]):
+            sira[kid].append(i + 1)
+    satirlar = []
+    for c in kartlar:
+        kid = c["kart_id"]; kararlar = {e["lens"]: e["karar"] for e in elestiri.get(kid, [])}; elendi = any(v == "ELENMELİ" for v in kararlar.values())
+        pj = puan.get(kid, {}); olc = ["mekanizma_ayirt_etme_gucu", "veri_hazirligi", "maliyet_sure_uygunlugu", "yenilik", "yanlilik_sizinti_guvenligi"]
+        ort = {o: (sum(p_[o] for p_ in pj.values()) / len(pj) if pj else None) for o in olc}
+        toplam = sum(v for v in ort.values() if v is not None) if pj else None
+        satirlar.append({"kart_id": kid, "ana_alan": c["ana_alan"], "hipotez": c["hipotez"], "gozlenen_veya_varsayilan_davranis": c["gozlenen_veya_varsayilan_davranis"], "olculebilir_mekanizma": c["olculebilir_mekanizma"],
+                         "gerekli_veri_kaynagi": c["gerekli_veri_kaynagi"], "veri_kaynak_idleri": ", ".join(kim.kaynaklar(c["veri_kaynak_idleri"], kid)), "veri_durumu": c["veri_durumu"], "veri_durumu_aciklamasi": c["veri_durumu_aciklamasi"],
+                         "gozlem_birimi": c["gozlem_birimi"], "karsilastirma_grubu": c["karsilastirma_grubu"], "alternatif_aciklamalar": " | ".join(c["alternatif_aciklamalar"]), "yanlilik_ve_sizinti_riskleri": " | ".join(c["yanlilik_ve_sizinti_riskleri"]),
+                         "onceden_belirlenmis_test": c["onceden_belirlenmis_test"], "basari_ve_basarisizlik_kriteri": c["basari_ve_basarisizlik_kriteri"], "bagimsiz_dogrulama_gereksinimi": c["bagimsiz_dogrulama_gereksinimi"],
+                         "yenilik_gerekcesi": c["yenilik_gerekcesi"], "ilgili_onceki_testler": ", ".join(kim.testler(c["ilgili_onceki_testler"], kid)), "kapattigi_acik_sorular": ", ".join(c["kapattigi_acik_sorular"]),
+                         "mekanizma_sorulari": ", ".join(c["mekanizma_sorulari"]), "maliyet_ve_sure_tahmini": c["maliyet_ve_sure_tahmini"], "onerilen_durum": c["onerilen_durum"],
+                         "elestiri_yenilik": kararlar.get("yenilik", ""), "elestiri_veri": kararlar.get("veri", ""), "elestiri_yanlilik": kararlar.get("yanlilik", ""),
+                         "elestiri_notlari": " || ".join(f"[{e['lens']}/{e['karar']}] {kisalt(e['sorun'], 200)} -> {kisalt(e['duzeltme_onerisi'], 160)}" for e in elestiri.get(kid, []) if e["karar"] != "UYGUN"),
+                         "elendi": "EVET" if elendi else "", **{f"puan_{o}": (round(v, 2) if v is not None else "") for o, v in ort.items()}, "puan_toplam": (round(toplam, 2) if toplam is not None else ""),
+                         "juri_siralari": ", ".join(map(str, sira.get(kid, []))), "ortalama_sira": (round(sum(sira[kid]) / len(sira[kid]), 2) if sira.get(kid) else ""),
+                         "juri_gerekceleri": " || ".join(f"[{ad}] {kisalt(p_['kisa_gerekce'], 200)}" for ad, p_ in pj.items())})
+    def anahtar(r):
+        return (r["elendi"] == "EVET", r["ortalama_sira"] if r["ortalama_sira"] != "" else 999, -(r["puan_toplam"] if r["puan_toplam"] != "" else 0))
+    satirlar.sort(key=anahtar)
+    for i, r in enumerate(satirlar, 1):
+        r["oncelik_sirasi"] = "" if r["elendi"] == "EVET" else i
+    yaz_csv("HIPOTEZ_ONERILERI.csv", satirlar, list(satirlar[0].keys()))
+    # birleşik hipotez envanteri (önceki + yeni), Cemal'in alan listesiyle
+    onceki = oku_csv("HIPOTEZ_ENVANTERI_ONCEKI.csv"); T = {r["id"]: r for r in oku_csv("TEST_ENVANTERI.csv")}; birlesik = []
+    for r in onceki:
+        birlesik.append({"id": r["id"], "kaynak": r["kaynak"], "ana_alan": r["ana_alan"], "hipotez": r["hipotez"], "onceki_ilgili_calismalar": r["onceki_ilgili_calismalar"], "onceki_test_sonucu": r["onceki_test_sonucu"],
+                         "test_gecerliligi": r["test_gecerliligi"], "ilgili_test_idleri": r["ilgili_test_idleri"], "eksik_veri": r["eksik_veri"], "acik_kalan_soru": r["acik_kalan_soru"], "sonraki_islem": r["sonraki_islem"],
+                         "durum": r["durum"], "durum_gerekcesi": r["durum_gerekcesi"], "veri_kaynak_idleri": "", "oncelik_sirasi": "", "onkayit_ve_kod_hash": "; ".join(sorted({T[t]["onkayit_kod_hash"] for t in kimlikler(r["ilgili_test_idleri"]) if t in T and T[t]["onkayit_kod_hash"]}))[:600] or "KAYITLI DEĞİL",
+                         "son_guncelleme": BUGUN})
+    for r in satirlar:
+        birlesik.append({"id": r["kart_id"], "kaynak": "YENİ ÖNERİ (K57; araştırma sahibi değerlendirmesi bekliyor)", "ana_alan": r["ana_alan"], "hipotez": r["hipotez"], "onceki_ilgili_calismalar": r["ilgili_onceki_testler"],
+                         "onceki_test_sonucu": "yok (yeni kart)", "test_gecerliligi": "E (hiç test edilmedi)", "ilgili_test_idleri": r["ilgili_onceki_testler"], "eksik_veri": r["veri_durumu"] + ": " + r["veri_durumu_aciklamasi"],
+                         "acik_kalan_soru": r["kapattigi_acik_sorular"], "sonraki_islem": "ELENDİ (eleştirmen): " + r["elestiri_notlari"][:200] if r["elendi"] else "Araştırma sahibi onayı; ön kayıt yazılmadan test yok",
+                         "durum": "REDDEDİLDİ" if r["elendi"] else r["onerilen_durum"], "durum_gerekcesi": ("eleştirmen eledi" if r["elendi"] else "yeni kart; " + r["veri_durumu"]), "veri_kaynak_idleri": r["veri_kaynak_idleri"],
+                         "oncelik_sirasi": r["oncelik_sirasi"], "onkayit_ve_kod_hash": "YOK (ön kayıt yazılmadı)", "son_guncelleme": BUGUN})
+    yaz_csv("HIPOTEZ_ENVANTERI.csv", birlesik, list(birlesik[0].keys()))
+    # durum dosyası
+    durum = {"surum": "K57-DENETIM-v1.0", "guncelleme": BUGUN, "test_sayisi": len(T), "test_sinif_sayilari": dict(Counter(r["sinif"] for r in T.values())), "hipotez_sayisi": len(birlesik),
+             "durum_sayilari": dict(Counter(r["durum"] for r in birlesik)), "yeni_oneri_sayisi": len(satirlar), "yeni_oneri_elenen": sum(1 for r in satirlar if r["elendi"]), "yeni_test_baslatildi": False,
+             "veri_kaynagi_sayisi": len(oku_csv("VERI_KAYNAKLARI.csv")), "acik_soru_sayisi": len(json.load(open(os.path.join(K.CIKTI, "acik_sorular.json"), encoding="utf-8"))["sorular"]) if os.path.exists(os.path.join(K.CIKTI, "acik_sorular.json")) else None,
+             "bekleyen_karar": "Araştırma sahibi (Cemal) ilk teslimatı değerlendirmeden yeni test / indirme başlatılmaz (KARAR_KAYDI K57-K06).", "dosyalar": sorted(f for f in os.listdir(K.CIKTI) if f.endswith((".md", ".csv", ".json", ".py")))}
+    with open(K.cikti_yolu("ARASTIRMA_DURUM.json"), "w", encoding="utf-8") as fh:
+        json.dump(durum, fh, ensure_ascii=False, indent=1)
+    # okunabilir öncelik listesi
+    L = ["# YENİ HİPOTEZ ÖNERİLERİ — gerekçeli öncelik sırası (araştırma sahibi değerlendirmesi bekliyor)", "",
+         f"Sürüm K57-DENETIM-v1.0, {BUGUN}. {len(kartlar)} araştırma kartı önerildi (10 alan ajanı); üç bağımsız eleştirmen (yenilik, veri gerçekçiliği, yanlılık / sızıntı) inceledi, {sum(1 for r in satirlar if r['elendi'])} kart elendi; kalanları üç jüri üyesi puanladı ve sıraladı (ortalama sıra). HİÇBİR KART TEST EDİLMEDİ, veri indirilmedi. Her kartın 12 alanı HIPOTEZ_ONERILERI.csv'de; birleşik envanter HIPOTEZ_ENVANTERI.csv.", ""]
+    if gerekce_yok:
+        L += ["Kart önerilmeyen alanlar: " + "; ".join(kisalt(x, 200) for x in gerekce_yok), ""]
+    L += ["| Sıra | Kart | Alan | Hipotez (kısa) | Veri | Puan (5 ölçü ort. toplamı / 25) | Eleştirmenler (yenilik / veri / yanlılık) |", "|---|---|---|---|---|---|---|"]
+    for r in satirlar:
+        L.append(f"| {r['oncelik_sirasi'] or 'ELENDİ'} | {r['kart_id']} | {r['ana_alan']} | {kisalt(r['hipotez'], 110)} | {r['veri_durumu']} | {r['puan_toplam']} | {r['elestiri_yenilik'] or '-'} / {r['elestiri_veri'] or '-'} / {r['elestiri_yanlilik'] or '-'} |")
+    for r in satirlar:
+        L += ["", f"## {r['oncelik_sirasi'] or 'ELENDİ'}. {r['kart_id']} ({r['ana_alan']}) — {kisalt(r['hipotez'], 220)}",
+              f"- Gözlenen / varsayılan davranış: {kisalt(r['gozlenen_veya_varsayilan_davranis'], 360)}", f"- Ölçülebilir mekanizma: {kisalt(r['olculebilir_mekanizma'], 360)}",
+              f"- Veri: {r['veri_durumu']} — {kisalt(r['veri_durumu_aciklamasi'], 300)} (kaynaklar: {r['veri_kaynak_idleri'] or 'yok'})", f"- Gözlem birimi / karşılaştırma grubu: {kisalt(r['gozlem_birimi'], 160)} / {kisalt(r['karsilastirma_grubu'], 220)}",
+              f"- Alternatif açıklamalar: {kisalt(r['alternatif_aciklamalar'], 360)}", f"- Yanlılık ve sızıntı riskleri: {kisalt(r['yanlilik_ve_sizinti_riskleri'], 360)}",
+              f"- Önceden belirlenmiş test: {kisalt(r['onceden_belirlenmis_test'], 360)}", f"- Başarı / başarısızlık kriteri: {kisalt(r['basari_ve_basarisizlik_kriteri'], 300)}",
+              f"- Bağımsız doğrulama gereksinimi: {kisalt(r['bagimsiz_dogrulama_gereksinimi'], 240)}", f"- NEDEN YENİ: {kisalt(r['yenilik_gerekcesi'], 400)} (önceki testler: {r['ilgili_onceki_testler'] or 'yok'}; kapattığı açık sorular: {r['kapattigi_acik_sorular'] or '-'}; mekanizma soruları: {r['mekanizma_sorulari'] or '-'})",
+              f"- Maliyet / süre: {kisalt(r['maliyet_ve_sure_tahmini'], 200)}; önerilen durum: {r['onerilen_durum']}"]
+        if r["elestiri_notlari"]:
+            L.append(f"- Eleştirmen notları: {kisalt(r['elestiri_notlari'], 600)}")
+        if r["juri_gerekceleri"]:
+            L.append(f"- Jüri: sıralar {r['juri_siralari']}; {kisalt(r['juri_gerekceleri'], 500)}")
+    yaz("HIPOTEZ_ONERILERI.md", "\\n".join(L)); return atif_yaz(kim, ek=True), len(satirlar), durum["durum_sayilari"]
+'''
+s = s.replace("\n\ndef main(bolum, yollar):", yeni + "\n\ndef main(bolum, yollar):")
+s = s.replace('    elif bolum == "rapor": print("geçersiz kimlik toplamı:", rapor(g))', '    elif bolum == "rapor": print("geçersiz kimlik toplamı:", rapor(g))\n    elif bolum == "oneri": print(oneri(g))')
+open(p, "w", encoding="utf-8").write(s)
+import ast; ast.parse(s); print("renderer oneri eklendi, sözdizimi ok")
+EOF

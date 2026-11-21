@@ -1,0 +1,32 @@
+cd /home/user/col_yolu/arastirma_cikti/k57_denetim && python3 - <<'EOF'
+p = "K57_rapor_uret.py"; s = open(p, encoding="utf-8").read()
+old = '''def acik(g):
+    kim = Kimlik(); a = g["sentez:acik-sorular"]; t = g.get("sentez:tamlik"); S = a["sorular"]
+    for s in S:
+        s["ilgili_testler"] = kim.testler(s["ilgili_testler"], s["id"])
+    with open(K.cikti_yolu("acik_sorular.json"), "w", encoding="utf-8") as fh:
+        json.dump({"sorular": S, "birlestirme_notu": a["birlestirme_notu"], "tamlik_elestirmeni": t}, fh, ensure_ascii=False, indent=1)'''
+new = '''def acik(g):
+    """Önce sentez (38 soru) + tamlık eleştirmeni; birleştirme ajanı (acik:birlestir) varsa nihai liste odur (kimlikler korunur, yeniler AS-039+)."""
+    kim = Kimlik(); b = g.get("acik:birlestir"); a = b or g["sentez:acik-sorular"]; t = g.get("sentez:tamlik"); S = a["sorular"]
+    for s in S:
+        s["ilgili_testler"] = kim.testler(s["ilgili_testler"], s["id"])
+    with open(K.cikti_yolu("acik_sorular.json"), "w", encoding="utf-8") as fh:
+        json.dump({"sorular": S, "birlestirme_notu": a["birlestirme_notu"], "elenen_adaylar": (b or {}).get("elenen_adaylar", []), "tamlik_elestirmeni": t,
+                   "surec_notu": "Tamlık eleştirmeni, liste dosyası yazılmadan koştuğu için 27 'eksik aday' derledi; ayrı bir birleştirme ajanı adayları 38 soruyla karşılaştırdı (ham/acik_birlestir.json)." if b else ""}, fh, ensure_ascii=False, indent=1)'''
+assert s.count(old) == 1; s = s.replace(old, new)
+old2 = '''    if t:
+        L += ["", "## Tamlık eleştirmeninin bulguları (bağımsız okuyucu)", f"- {kisalt(t['genel_not'], 600)}"] + [f"- Eksik soru adayı: {kisalt(e['soru'], 200)} — {kisalt(e['neden_onemli'], 200)} ({kisalt(e['kaynak'], 100)})" for e in t["eksik_sorular"]] + [f"- Hatalı satır {h['id']}: {kisalt(h['sorun'], 250)}" for h in t["hatali_satirlar"]]'''
+new2 = '''    if b:
+        L += ["", "## Birleştirme notu (tamlık eleştirmeninin 27 adayı ile)", f"- {kisalt(b['birlestirme_notu'], 700)}", f"- Mevcut soruyla aynı olduğu için eklenmeyen adaylar ({len(b['elenen_adaylar'])}):"] + [f"  - {kisalt(x, 220)}" for x in b["elenen_adaylar"]]
+    if t:
+        L += ["", "## Tamlık eleştirmeninin ilk bulguları (liste görülmeden derlenen adaylar; birleştirme yukarıda)", f"- {kisalt(t['genel_not'], 500)}"] + [f"- Aday: {kisalt(e['soru'], 180)} ({kisalt(e['kaynak'], 80)})" for e in t["eksik_sorular"]]'''
+assert s.count(old2) == 1; s = s.replace(old2, new2); open(p, "w", encoding="utf-8").write(s); print("ok")
+EOF
+W=/root/.claude/projects/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/subagents/workflows; python3 K57_rapor_uret.py acik $W/wf_90986306-fc5/journal.jsonl $W/wf_514c8b8a-77f/journal.jsonl && python3 - <<'EOF'
+import json, collections
+a = json.load(open("acik_sorular.json")); S = a["sorular"]
+print(len(S), collections.Counter(s["onem"] for s in S), collections.Counter(s["kategori"] for s in S))
+print("yeni:", [s["id"] for s in S if int(s["id"].split("-")[1]) > 38]); print([ (s["id"], s["soru"][:90]) for s in S if int(s["id"].split("-")[1]) > 38])
+EOF
+cd /home/user/col_yolu && python3 test_k57.py

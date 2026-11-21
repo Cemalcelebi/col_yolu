@@ -1,0 +1,54 @@
+geçersiz kimlik toplamı: 0
+kontrol 45 eşleşen başlık 0 geçersiz kimlik []
+== DÜZELTME GEREKLİ | B1 Hayatta kalma / batan ele alışı (108 test)
+   sorun: Kimliklerin 108'i de CSV'de var, A/B=51 doğru, 9 birimin 9'unda birim-geneli kaydı doğrulandı (K51A[1], K51B[1], K52[1], K53[0], K54[0], K55[0], K56A[0], K56B[0], K56C[1]). Ana sayılar CSV ile birebir: K51A-T56 505/505, 422/158/159/19, K51B-T05 171 olaydan 5 iflas, 110/158, 242/249, 7.249 olay, İÇ 288/4.105 (%7,0), BAĞ 213/8.052
+   düzeltme: Sayıyı 'kayıt düzeyinde 108; kusurlar alanında doğrudan 43 (A/B 25); kalanı kopya referans' diye yaz. K51B-T54 ve K51B-T02'yi çıkar, K56C-T04'ü 'kapsam notu' diye ayır (A/B 51 yerine 49). (c) maddesini 'analist kaydı oranı: iflas %0, birleşme %1,3, olay payı: sınıf 1 %97-99,8' diye ayır. 'Etkilenen olay 0' cümlesine 'V8 kod kesm
+== DÜZELTME GEREKLİ | B4 Negatif sonucun gücü / eşdeğerlik yok (32 test)
+   sorun: 32 kimlik geçerli, A/B=23 doğru. 'DESTEKLENMİYOR' içeren 26 test ve 18'inin A/B olması doğru. K53-T01 V2 hesabı (%9, ADE %13, +8 için %69), K52-T02 MDE 8-15, K51A-T01 +6,0/+5,1, K51A-T03 +6,5/+5,4, K51B-T09 +9,6/+19,1/+19,4 CSV ile birebir. Sorunlar: (i) Birim-geneli atfı yanlış. Güç maddesi K51A[6]'dır; K51A[5] 'aynı ajan ailes
+   düzeltme: K51A[5] -> K51A[6]. 'Yalnız iki DESTEKLENİYOR' cümlesine 'ayrıca dört testte tek dönem TUTAR' ekle. K55-T12'yi güç bulgusunda 'eşik tanımı' notu olarak ayır. %9-13'ü 'K53-T01/T06 için' diye sınırla.
+== DÜZELTME GEREKLİ | B6 Duyarlılık gösterilmemiş: pozitif kontrol yok, başarısız olamayan ölçüler (31
+   sorun: 31 kimlik geçerli, A/B=20 doğru. Atıflar uyuşuyor: K56B-T01 k2, K55-T03 k4-k5, K55-T12 k4, K56A-T03 k4, K56A-T06 k4, K56A-T07 k3/k6, K56A-T10 k2, K54-T04 k1-k2, K54-T05 k2-k3, K55-T51 k2 (0/141), K53-T51 k2 ('27/27' sabit metin), K56B-T12 k1, K56C-T03 k4, K56C-T05 k4. Sorunlar: (i) 'GECTI kodda sabit' K56A-T09/T10/T12/T51/T52 iç
+   düzeltme: 'GECTI kodda sabit' için yalnız K56A-T07, T51, T52 yaz; T09/T10/T12 için 'GECTI = erişim, test edilebilirlik değil' de. K51A-T07'yi 'pozitif kontrol yalnız büyük sızıntı için var' diye ayır.
+== KANITSIZ | B8b '42 testte kural/eşik sonradan yazılmış ya da ön kayıttan sapmış'
+   sorun: 42 sayısı CSV alanlarından yeniden üretilemedi. Anahtar sözcük vekilleriyle (sonradan, sapma, sonuç görüldükten sonra, ön kayıtta yok) 60 testin içinde yaklaşık 20 (dar) ile 40 (geniş) satır çıkıyor. 42 ile 26 toplamı 60'ı aşıyor, örtüşme belirtilmemiş. Tek tek atıflar doğru: K51A-T01 k5 (3346f03, 262 satır), K51A-T08 k4, K51A-T
+   düzeltme: '42' yerine 'çoğu / en az 20 satırda açık kayıt var' yaz, ya da 42 satırın kimlik listesini ekle. 42 ve 26'nın örtüşmesini belirt.
+== DÜZELTME GEREKLİ | B13 Veri tanımı belirsizlikleri ve yeniden üretilemezlik (26 test)
+   sorun: 26 kimlik geçerli, A/B=13 doğru. Atıflar tutuyor: K52-T01 k3-k5, K53-T10 k1, K51B-T01 k4, K51A-T13 k1 (D1 kodu depoda yok), K51A-T14 k4 (k51olcut yok), K51A-T52 k3, K56A-T05 k1 (/tmp betikleri), K56C-T52 k6 (.gitignore). Hata: 'Tiingo CSV lisans gereği repoda yok (K51B-T53, K55-T52)' atfı yanlış. 'Lisans' sözcüğü bu iki satırda 
+   düzeltme: Atfı 'K51B-T01 duzeltme_kaydi ve CLAUDE.md' olarak düzelt. K55-T52 için 'tam evren ikinci kez koşulmadı (k3)' yaz.
+== DÜZELTME GEREKLİ | B14 Rapor/özet sayı tutarsızlıkları, karar değiştirmeyen (10 test)
+   sorun: 10 kimlik geçerli, A/B=6 doğru. Sayılar CSV ile uyuşuyor: K51A-T10 k4 (-9,7/-5,9 vs -9,2/-3,7), K51A-T14 k3 (2023 P1 portföy +%89,5 > p90 +%62,9), K51A-T53 k2 (medyan_gun 36/36 aynı), K51B-T04 k1 (HT 2023 1,0 puan), K51B-T06 k3 (+0,6 vs +0,000), K52-T01 k1 (%94,2 vs %86,0), K53-T02 k2, K56A-T01 k6 (265 içinde 39 yöntem denetimi)
+   düzeltme: K53-T10'u bu bulgudan çıkarıp B9'da (kodlama hatası) tut. 'Karar değiştirmeyen' ibaresini yalnız satırında 'yön aynı / karar değişmez' yazan testlere (K51A-T10, K51A-T14, K51B-T04) uygula.
+== DÜZELTME GEREKLİ | Eski sonuçlara etkisi alanları (ilke c): 14/14 bulgu
+   sorun: 14 bulgunun 14'ü 'Sonuç değişmez' ile açılıyor; yorum sınırı dili genel olarak ilkeye uyuyor (K51-K56 sonuçları değiştirilmiyor). İki nokta ilkeyi zorluyor: (i) B1'deki 'K56 nihai kararı için üst sınır ABD-ADAY' ifadesi bir iz kategorisi etiketidir; görev 'sinyal / iz iddiası yazma' diyor ve K55 kararı İZ YOK. (ii) B14'teki 'öze
+   düzeltme: 'Üst sınır ABD-ADAY' parantezini sil, 'yaşayan evrene bağlı okunur' yaz. B14 cümlesini 'özet ile CSV farkında CSV değeri okunur; karar kaydı değişmez' diye yumuşat.
+== DÜZELTME GEREKLİ | negatif_sonuclarin_genel_siniri
+   sorun: 'Gerçek +5 etkide yakalama olasılığı ~%9-13; tek dönemde MDE ~8-15 puan' K51-K56'nın tümüne uygulanıyor. Bu iki sayı yalnız K53-T01/T06 (%9/%13) ve K52-T02 (MDE 8-15) için hesaplandı. K51A-T01 aralığı ±3 puan, K55-T12 üst ucu ≤%1,7, K56B-T07/T10 ≤%0,97/≤%2,86, K56B-T01 |d| ≳ 0,06 dışlıyor. Genelleme bu testler için gereğinden ka
+   düzeltme: Cümleyi 'K53 ve K52 analist testlerinde ~%9-13 / MDE 8-15; K51 ve K55-K56'da ±3 puan ve ≥%3-5 ölçeğinde' diye test grubuna göre ayır.
+== DÜZELTME GEREKLİ | Güvenilir dayanak 1: K56C-T04 yeniden üretim
+   sorun: Kimlik geçerli (A). Panel 4.909.423 = 4.909.423 ve olay 22.502 = 22.502, ilk geçersiz deneme kayıtlı, doğru. 'Bit düzeyinde' yalnız panel için geçerli (sıfır tolerans); olay tablosu 1e-9 toleranslı (K56C-T04 k1). Dayanağın kendi sınır notu 1e-9 diyerek çelişiyor.
+   düzeltme: 'Bit düzeyinde' yerine 'panel sıfır toleransla, olay tablosu 1e-9 toleransla özdeş' yaz.
+== DÜZELTME GEREKLİ | Güvenilir dayanak 2: K51A-T01/T02/T14/T53 (P1/P2 üstünlük yok)
+   sorun: Kimlikler geçerli. +6,0/+5,1 üst uçları, net fark ≈0 (K51A-T01 net -%1,8/-%1,1, taban farkı +0,1/-0,1; K51A-T53 -0,2/-0,1; K51A-T02 +%0,3/-%0,4) ve 'dört şartı sağlayan hücre yok' doğru. Eksikler: (i) 'net getiri avantajı yok' bariyer-net ölçüsüdür. K51A-T14'te r60 eşli fark pozitif: ABD P1 +%3,05 ve +%4,79 [+0,15; +9,9]; düşen 
+   düzeltme: Sınır notuna K51A-T14 r60 eşli farkın pozitif işaretli olduğunu ve K51A-T53 2024-26 hücresini ekle. '2024-26'da >+5,1' ifadesini koru, '≥+5 dışlandı' yazma.
+== DÜZELTME GEREKLİ | Güvenilir dayanak 4: Hacimli taban ve ÇEK (K51A-T12, K51B-T07, K51B-T10, K51A-T1
+   sorun: Kimlikler geçerli, sayılar birebir: HT 2023 >+3,3 / 2024-26 >+4,2, ÇEK 2016-22 +0,0 [-2,4; +2,3], HT 2023-26 -1,6 [-7,7; +4,4], AVR P1 >+8,4, P2 >+4,5, BIST >+1,8/>+0,7, ÇEK +3,1 [+0,8; +5,2] Holm 0,0275, HT +9,2 [-3,1; +20,8], yaşayanlarda +7,5 [-4,1; +18,4]. Sorunlar: (i) 'Tüm evrende (batanlar dahil)' K51A-T12'nin sözü, ama B
+   düzeltme: 'Batanlar dahil' yerine 'kısıtlı batan örneği dahil' yaz. Sınıra AVR 2023 pozitif hücrelerini ekle.
+== DÜZELTME GEREKLİ | Güvenilir dayanak 6: K53-T01/T05/T09/T08 (BDS-3, KGS, bileşenler)
+   sorun: Kimlikler geçerli. V_ABD alt kümesi +1,0 [-1,0; +2,9], birleşik -0,2 [-1,7; +1,4], bileşen aralıkları ±1-3 CSV'de var. Sorunlar: (i) K53-T08 (zamanlama sorusu) dayanak cümlelerinin hiçbirini taşımıyor; aralığı ±5-6 olup +5'i kapsıyor ve ham fark +12,7/+8,4/+10,1. Güvenilir listesinde olmamalı. (ii) 'BDS-3 >~+5 artırmıyor' başlık
+   düzeltme: K53-T08'i dayanaktan çıkar (B4'te zaten sınırlı). Başlık cümlesini 'V_ABD alt kümesinde >~+5 puan yok; dönem bazında +5 dışlanamadı' diye daralt.
+== DÜZELTME GEREKLİ | Güvenilir dayanak 11: Ölçü fonksiyonları ve yan etkisizlik (K52-T51, K53-T51, K5
+   sorun: Kimlikler geçerli. 40/63 dosya, boş klasörde geçen kol, '27/27' sabit metin, -%60 bariyer ve grup atamasının testte yeniden yazılması kayıtla uyuşuyor. Ama 'doğru' hükmü kayıtlı sonuçlara dayanıyor: K52-T51 'Bu denetimde çalıştırılmadı' (21/21), K55-T52/T53 30/30 kayıtlı. K55-T52 'aritmetik' değil tekrar üretilebilirlik/koşu kim
+   düzeltme: Dayanağa 'kayıtlı sonuç, K57'de çalıştırılmadı' ekle. K55-T52'yi 'tekrar üretilebilirlik (koşu kimliği)' diye ayır.
+== DÜZELTME GEREKLİ | Güvenilmez 1: 'DESTEKLENMİYOR / TUTMAZ / İZ DEĞİL = etki yok' (14 test)
+   sorun: Kimlikler geçerli. Gerekçe 'üst uçlar +5'i kapsıyor, eşdeğerlik yok, %9 güç' 14 testin hepsi için doğru değil: K55-T12 üst ucu ≤%1,7 (≥%5 net dışlanıyor, G7 ile çelişir); K52-T07 havuz üst ucu +3,7 <5; K51B-T10 2023-26 üst ucu +4,4; K53-T06 iki dönemde üst uç +4,4/+4,2. %9 yalnız K53-T01 (ADE %13). Doğru olanlar: K51A-T01, T03, 
+   düzeltme: Listeyi 'en az bir aralığı +5'i kapsayan' testlerle sınırla, K55-T12'yi çıkar. %9'u K53-T01/T06'ya bağla. K52-T07 ve K51B-T10 için 'havuz <5, dönem bazında +5 kapsanıyor' yaz.
+== DÜZELTME GEREKLİ | Güvenilmez 3: Batanlarda eksi / yanlılık küçük / K54 SAĞLAM / DERS 43 (10 test)
+   sorun: Kimlikler geçerli. 158/422 işlem gören, 5/171 iflas, 242/249 yanlış pozitif, etkilenen olay %0,17-%3 (K54 birim[1]) ve DERS 43 (1) alıntısı doğru. 'K54 testi yanlışlanamaz' kaydı yalnız K54-T04 (k2) ve T05'te var; K54-T06/T07/T08 için kayıtlı gerekçe farklı (tek olay 1,1 puan, eşleşmeyen %83/%90, AUC gürültü sınırı).
+   düzeltme: 'Yanlışlanamaz'ı K54-T04/T05'e bağla; T06-T08 için kendi kayıtlı gerekçelerini yaz.
+== DÜZELTME GEREKLİ | Güvenilmez 9: Erişim/kapsam 'GECTI' = yeterli ve kaliteli (9 test)
+   sorun: Kimlikler geçerli. 12/12 tüm 2016-2026 penceresi (K56A-T07 k6), 'GECTI erişimdir, test edilebilirlik değil' (K56A-T10 k2), dairesel yfinance karşılaştırması (K56A-T11 k4) doğru. İki yumuşatma gerekli: 'GECTI kodda sabit' yalnız T07, T51, T52 için kayıtlı. 'CIK payı 1,0 yapısal' kayıtta 'büyük olasılıkla yapısal / tautolojik olab
+   düzeltme: 'Kodda sabit'i T07/T51/T52 ile sınırla, 'CIK payı 1,0' için 'büyük olasılıkla yapısal' yaz.
+== DÜZELTME GEREKLİ | Güvenilmez 13: 'Birkaç hisseye dayanıyor' ve kısmi yıl 'TERS YÖN' (5 test)
+   sorun: Kimlikler geçerli. -3,3/-2,5, -2,43, ~1,5 puan ve ~6 ay kümesi doğru (K51A-T01 k7, K51A-T52 k1, K51B-T06 k1/k2, K52-T14 k2). K52-T11 yanlış gruplanmış: konusu kısmi yıl değil 2016-22 hücresi; hakem kaydına göre A ⊂ B fark katsayısı 0,783 ile sıfıra çeker, 'yapay TERS YÖN üretemez', yani etiketi zayıflatmaz, yanlış negatif üretir
+   düzeltme: K52-T11'i bu maddeden çıkarıp 'A ⊂ B seyreltmesi, yanlış negatif yönünde' diye ayrı yaz.
+GENEL: Salt okuma yapıldı: yalnız TEST_ENVANTERI.csv, ham/denetim_*.json ve IZ_DEFTERI.md okundu; ağ, hesap, e-posta, boru hattı ve repoya yazma yok (araçlar yalnız scratchpad'de). Raporda geçen ~115 tam kimlik ve 14 etkilenen_testler, 11 güvenilir_dayanaklar, 14 güvenilmez listesi CSV ile eşlendi: geçersiz kimlik yok. Kusur numaraları (k1, k2...) kusurlar alanının ' || ' ayracına göre sayıldı; tüm atıflar yerinde, tek yanlış indeks K51A[5] (olması gereken K51A[6]). Kullanıcı mesajındaki ücretsiz hesap/e-posta ile veri erişimi sorusu bu doğrulama adımının kapsamı dışında; hiçbir hesap bilgisi kullanılmadı. K57-K09'a göre üyelik, e-posta doğrulama ve anahtar edinme Cemal'dedir, anahtarlar yalnız .env'de tutulur. Mesajdaki e-posta ile oturum hesabındaki adres bir karakter farklı görünüyor; hesap aç

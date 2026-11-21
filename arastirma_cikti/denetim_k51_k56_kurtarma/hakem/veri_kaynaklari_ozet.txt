@@ -1,0 +1,39 @@
+K56_VERI_KAYNAKLARI.csv (28, 16)
+['kimlik', 'sinif', 'ad', 'erisim', 'kapsam', 'gecikme', 'maliyet', 'boyut', 'eslesme', 'olcer', 'olcemez', 'projede', 'erisim_testi', 'erisim_durumu', 'kesif_kapsam', 'kesif_not']
+{'kimlik': 'SEC_13F_DS', 'sinif': 'A_kurumsal_sahiplik', 'ad': 'SEC Form 13F veri setleri (INFOTABLE, SUBMISSION, COVERPAGE)', 'erisim': 'www.sec.gov/data-research/sec-markets-data/form-13f-data-sets (çeyreklik zip; 2024 sonrası', 'kapsam': '2013q2 -> 2026; KEŞİF tam', 'gecikme': 'çeyrek sonundan 45 güne kadar; point-in-time için başvuru tarihi', 'maliyet': 'ücretsiz (kamu verisi)', 'boyut': 'KEŞİF 24 çeyrek ~1,1 GB zip (INFOTABLE çeyrek başına ~160 MB açık)', 'eslesme': "CUSIP (9) -> sembol OpenFIGI; FIGI sütunu 2016'da çoğu boş", 'olcer': 'yönetici uzun pozisyonları, sahip sayısı, pay değişimi', 'olcemez': 'açığa satış, gün içi akış, 100 mn $ altı yöneticiler', 'projede': "yok (Ç103'te CUSIP eşlemesinde tıkandı)", 'erisim_testi': 'liste: GECTI (zip sayısı = 54); KEŞİF 2016-21 boy: GECTI (toplam MB = 1109.5); zip içeriği', 'erisim_durumu': 'GECTI', 'kesif_kapsam': 'tam', 'kesif_not': '2013q2+'}
+K56_VERI_ERISIM_TESTI.csv (37, 9)
+['modul', 'kaynak', 'test', 'durum', 'olcu', 'deger', 'ayrinti', 'url', 'sure_sn']
+{'modul': 'kurumsal_sahiplik', 'kaynak': 'OPENFIGI', 'test': "örneklem CUSIP'i (FTD 2016-01) -> sembol geri eşleme", 'durum': 'GECTI', 'olcu': 'doğru / bulunan', 'deger': '5/7', 'ayrinti': 'AERI:00771V108->nan; APO:037612306->nan; BNS:064149107->BNS; EXR:30225T102->EXR; TRMB:8962', 'url': 'https://api.openfigi.com/v3/mapping', 'sure_sn': '19.2'}
+K56_UYGULAMA_SIRASI.csv (10, 7)
+['sira', 'adim', 'icerik', 'donem', 'maliyet_sure', 'karar_gerekir', 'ne_kazanilir']
+{'sira': '1', 'adim': 'M01 gerçek veri seçimsiz kontrol (v1.1-2)', 'icerik': "K55 paneli: KEŞİF'i sağlayan 125 (varyant, ufuk) satırında d(ilk geçiş), d(bütün nitelikli", 'donem': 'KEŞİF (yeniden kullanım kayıtlı)', 'maliyet_sure': 'yerel, indirme yok, ~30 dk', 'karar_gerekir': 'hayır', 'ne_kazanilir': 'MEKANİK çıkan hücreler kesin YANLIŞ BULGU; kalan küçük aynı yönlü etki (Y60 ~-0,02..-0,05)'}
+K56_RISKLER.csv (18, 4)
+['risk', 'ayrinti', 'etki', 'onlem']
+{'risk': 'Olay tanımı seçim etkisi (M01)', 'ayrinti': 'K55 A farkları ilk geçiş etiketinin eseri olmaya aday: bilgisiz veride aynı fark; denetçi ', 'etki': 'yüksek', 'onlem': 'mekanizma testlerinde olay günü etiketi yerine seçimsiz / sinyal sabit tasarım; her testte'}
+K56_TALIMAT_SUZGECI.csv (13, 3)
+['oneri', 'karar', 'gerekce']
+{'oneri': 'Etki envanteri (10 alan, bütün bulgular)', 'karar': 'AYNEN', 'gerekce': "K51-K55'in bütün hipotez / hücre / denetim bulguları; K55 sayıları CSV'den otomatik, öteki"}
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ACIKLANMAMIS_BULGULAR.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_BAGIMSIZ_ACILIS.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_DENETIM_BULGULARI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ENVANTER_DENETIMI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ERISIM_ORNEKLEM.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ERISIM_SEC_COMPANYFACTS.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ERISIM_SEC_SUBMISSIONS_OZET.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ETKI_ENVANTERI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_HIPOTEZLER.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_HIPOTEZ_VERI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_ISTEK_GUNLUGU.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_KAYNAK_KAYDI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_KAYNAK_KAYDI_ERISIM.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_KAYNAK_KAYDI_SENTETIK.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_KAYNAK_KAYDI_SENTETIK_KESIF.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_RISKLER.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_SECIM_SENTETIK.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_SECIM_SENTETIK_KESIF.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_SECIM_SENTETIK_KESIF_SATIR.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_SECIM_SENTETIK_OZET.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_TALIMAT_SUZGECI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_UYGULAMA_SIRASI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_VERI_ERISIM_TESTI.csv
+/home/user/col_yolu/arastirma_cikti/k56_mekanizma/K56_VERI_KAYNAKLARI.csv
