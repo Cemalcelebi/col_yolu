@@ -40,7 +40,7 @@ c2_b_olay_v2.1.csv.gz'den satır dosyasıyla: momentum alt on (B1A, F_A == 1, ko
 - Dört karar hücresinin (ABD / AVR x eğitim / sınama) hepsinde güç >= 0,80 VE TUTAR hücre 0 VE ters hücre 0: **52**. Ç dağılımı: C196 9, C197 3, C198 16, C199 8, C200 3, C201 2, C202 11 (C194 ve C195 0). Kod listesi: /tmp/claude-0/-home-user-col-yolu/14e1a07f-5469-51eb-acde-431a683fafa5/scratchpad/f_liste.txt ve aşağıda.
 - En az bir karar hücresinde güç < 0,80 (güç None = n < 30 olan 7 hücre dahil): **63**.
 - Güçlü ama en az bir TUTAR / ters hücresi olan: **9** (Y10c, P_C_ust20, D1_W1_A, D1_W3t_A, D3_W1_A, DS08, DS16, DS21, DS28). 52 + 63 + 9 = 124.
-- 0,79-0,80 sınırında kod yok (en yakın 0,7998; eşik yakınlığı kararı etkilemedi).
+- Hücre bazında sınırda olanlar var (C196 G2 ABD güç 0,79986 ve 0,79996: eşiğin hemen altı); kod bazında (dört hücrenin en küçüğü) 0,79-0,80 aralığında kod yok.
 - Toplam TUTAR hücre 15 (BİLGİ pazarı dahil), karar hücrelerinde 6; ters 3.
 
 52 kod: C196: A_F14 A_S2 A_S3 A_S4 A_S5 A_S6 A_S7 A_S8 G1 | C197: P_AB_alt20 P_AB_ust20 P_C_alt20 | C198: D1_E1_A D1_E1t_A D1_E2_A D1_E2t_A D1_W1t_A D1_W2D_A D1_W2Dt_A D1_W2_A D1_W2t_A D1_W3_A D1_W4_A D1_W4t_A D1_W5a_A D1_W5b_A D1_W6_A D1_W6t_A | C199: D2_AYK_A D2_AY_A D2_DT_A D2_NR7_A D2_PP_A D2_W1_A D2_W2D_A D2_W2_A | C200: D3_AYK_A D3_NR7_A D3_W2D_A | C201: Y13 Y13c | C202: DS01 DS03 DS05 DS09 DS10 DS11 DS17 DS18 DS20 DS23 DS25.
