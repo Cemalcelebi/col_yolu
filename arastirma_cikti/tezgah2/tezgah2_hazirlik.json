@@ -1,0 +1,1259 @@
+{
+ "surum": "TEZGAH2_DOGRULAMA v1.0 (2026-11-22)",
+ "esik_sha": "0c9b1d2ce8f326e4db5f804bbf0acb01f4c345d60e9b297ebff0fd5293d8d980",
+ "zaman": "2026-11-22 10:46:54 UTC",
+ "kasa": {
+  "durum": {
+   "acik_kesik": "2023-12-31",
+   "acilan": [],
+   "guncelleme_utc": "2026-11-22T10:31:04Z",
+   "kesik_ilk": "2023-12-31",
+   "muhur_id": "32d362ecaae2e2da"
+  },
+  "hisse": {
+   "kesik": "2023-12-31",
+   "dosya": {
+    "/tmp/kasa2/acik/V_ABD2.pkl": "2023-12-29",
+    "/tmp/kasa2/acik/V_AVR2.pkl": "2023-12-29"
+   }
+  },
+  "referans": {
+   "kesik": "2023-12-31",
+   "dosya": {
+    "/tmp/claude-0/tezgah_ref/ref_kesik.pkl": "2023-12-31",
+    "/tmp/claude-0/tezgah_ref/yahoo_kesik.pkl": "2023-12-29",
+    "/tmp/claude-0/tezgah2_ref/eurusd_kesik.pkl": "2023-12-29"
+   }
+  }
+ },
+ "sinir": {
+  "ABD": {
+   "KV1_ATRP": [
+    0.02496298683654129,
+    0.0418801751616038
+   ],
+   "KV1_F15": [
+    0.23345296346069216,
+    0.5581271928100532,
+    0.8488934532165978
+   ],
+   "KV2_ATRP": [
+    0.016163776964023227,
+    0.02019036470281992,
+    0.023813416301810893,
+    0.027541828046980122,
+    0.03190153891659376,
+    0.03741502192832012,
+    0.04491618613970647,
+    0.05606622854287649,
+    0.07570716120270136
+   ],
+   "n_KV1": 4566860,
+   "n_KV2": 4603975
+  },
+  "AVR": {
+   "KV1_ATRP": [
+    0.019559290051277323,
+    0.02836184453749112
+   ],
+   "KV1_F15": [
+    0.28224258561611526,
+    0.6103212224324032,
+    0.8709724126665116
+   ],
+   "KV2_ATRP": [
+    0.01414257576843198,
+    0.01664977468135037,
+    0.01884662016492124,
+    0.021040835322904967,
+    0.023425004721893142,
+    0.026190452694734502,
+    0.029632655074456452,
+    0.0344759377960784,
+    0.04331358912364459
+   ],
+   "n_KV1": 748897,
+   "n_KV2": 750428
+  }
+ },
+ "prefix": {
+  "ABD": {
+   "tutar": true,
+   "son": "2015-05-29",
+   "n_gun": 3875,
+   "n_hisse_kisa": 2852,
+   "n_hisse_uzun": 4606,
+   "yeni_hisse": 1754,
+   "fark": {
+    "ok": 0,
+    "ok_yeni": 0,
+    "H": 0,
+    "H_yeni": 0,
+    "KV1": 0,
+    "KV1_yeni": 0,
+    "KV2": 0,
+    "KV2_yeni": 0,
+    "sup": 0,
+    "sup_yeni": 0,
+    "lik_alt": 0,
+    "lik_alt_yeni": 0,
+    "evren": 0,
+    "evren_yeni": 0,
+    "ATRP": 0,
+    "F15": 0,
+    "Lq": 0,
+    "M": 0
+   },
+   "olay": {
+    "MOM+_H15": {
+     "n_kisa": 25971,
+     "n_uzun": 25971,
+     "fark": 0
+    },
+    "MOM+_H30": {
+     "n_kisa": 15427,
+     "n_uzun": 15427,
+     "fark": 0
+    },
+    "MOM+_H60": {
+     "n_kisa": 11666,
+     "n_uzun": 11666,
+     "fark": 0
+    },
+    "MOM-_H15": {
+     "n_kisa": 25812,
+     "n_uzun": 25812,
+     "fark": 0
+    },
+    "MOM-_H30": {
+     "n_kisa": 15516,
+     "n_uzun": 15516,
+     "fark": 0
+    },
+    "MOM-_H60": {
+     "n_kisa": 11739,
+     "n_uzun": 11739,
+     "fark": 0
+    },
+    "STREV+_H15": {
+     "n_kisa": 27325,
+     "n_uzun": 27325,
+     "fark": 0
+    },
+    "STREV+_H30": {
+     "n_kisa": 23607,
+     "n_uzun": 23607,
+     "fark": 0
+    },
+    "STREV+_H60": {
+     "n_kisa": 21069,
+     "n_uzun": 21069,
+     "fark": 0
+    },
+    "STREV-_H15": {
+     "n_kisa": 27491,
+     "n_uzun": 27491,
+     "fark": 0
+    },
+    "STREV-_H30": {
+     "n_kisa": 24081,
+     "n_uzun": 24081,
+     "fark": 0
+    },
+    "STREV-_H60": {
+     "n_kisa": 21603,
+     "n_uzun": 21603,
+     "fark": 0
+    },
+    "HIGH52+_H15": {
+     "n_kisa": 26068,
+     "n_uzun": 26068,
+     "fark": 0
+    },
+    "HIGH52+_H30": {
+     "n_kisa": 19709,
+     "n_uzun": 19709,
+     "fark": 0
+    },
+    "HIGH52+_H60": {
+     "n_kisa": 16718,
+     "n_uzun": 16718,
+     "fark": 0
+    }
+   },
+   "toplam_fark": 0,
+   "havuz_kisa": {
+    "P1": 5707162,
+    "P2": 4388056,
+    "P3": 4380097
+   },
+   "havuz_fark": {
+    "P1": 0,
+    "P1_yeni": 0,
+    "P2": 0,
+    "P2_yeni": 0,
+    "P3": 0,
+    "P3_yeni": 0,
+    "SG": 0
+   }
+  },
+  "AVR": {
+   "tutar": true,
+   "son": "2015-05-29",
+   "n_gun": 3954,
+   "n_hisse_kisa": 497,
+   "n_hisse_uzun": 574,
+   "yeni_hisse": 77,
+   "fark": {
+    "ok": 0,
+    "ok_yeni": 0,
+    "H": 0,
+    "H_yeni": 0,
+    "KV1": 0,
+    "KV1_yeni": 0,
+    "KV2": 0,
+    "KV2_yeni": 0,
+    "sup": 0,
+    "sup_yeni": 0,
+    "lik_alt": 0,
+    "lik_alt_yeni": 0,
+    "evren": 0,
+    "evren_yeni": 0,
+    "ATRP": 0,
+    "F15": 0,
+    "Lq": 0,
+    "M": 0
+   },
+   "olay": {
+    "MOM+_H15": {
+     "n_kisa": 5135,
+     "n_uzun": 5135,
+     "fark": 0
+    },
+    "MOM+_H30": {
+     "n_kisa": 3177,
+     "n_uzun": 3177,
+     "fark": 0
+    },
+    "MOM+_H60": {
+     "n_kisa": 2458,
+     "n_uzun": 2458,
+     "fark": 0
+    },
+    "MOM-_H15": {
+     "n_kisa": 4979,
+     "n_uzun": 4979,
+     "fark": 0
+    },
+    "MOM-_H30": {
+     "n_kisa": 3047,
+     "n_uzun": 3047,
+     "fark": 0
+    },
+    "MOM-_H60": {
+     "n_kisa": 2317,
+     "n_uzun": 2317,
+     "fark": 0
+    },
+    "STREV+_H15": {
+     "n_kisa": 5245,
+     "n_uzun": 5245,
+     "fark": 0
+    },
+    "STREV+_H30": {
+     "n_kisa": 4576,
+     "n_uzun": 4576,
+     "fark": 0
+    },
+    "STREV+_H60": {
+     "n_kisa": 4190,
+     "n_uzun": 4190,
+     "fark": 0
+    },
+    "STREV-_H15": {
+     "n_kisa": 5404,
+     "n_uzun": 5404,
+     "fark": 0
+    },
+    "STREV-_H30": {
+     "n_kisa": 4901,
+     "n_uzun": 4901,
+     "fark": 0
+    },
+    "STREV-_H60": {
+     "n_kisa": 4450,
+     "n_uzun": 4450,
+     "fark": 0
+    },
+    "HIGH52+_H15": {
+     "n_kisa": 5142,
+     "n_uzun": 5142,
+     "fark": 0
+    },
+    "HIGH52+_H30": {
+     "n_kisa": 3964,
+     "n_uzun": 3964,
+     "fark": 0
+    },
+    "HIGH52+_H60": {
+     "n_kisa": 3417,
+     "n_uzun": 3417,
+     "fark": 0
+    }
+   },
+   "toplam_fark": 0,
+   "havuz_kisa": {
+    "P1": 1160615,
+    "P2": 999230,
+    "P3": 998727
+   },
+   "havuz_fark": {
+    "P1": 0,
+    "P1_yeni": 0,
+    "P2": 0,
+    "P2_yeni": 0,
+    "P3": 0,
+    "P3_yeni": 0,
+    "SG": 0
+   }
+  }
+ },
+ "sayim": {
+  "ABD": {
+   "pazar": "ABD",
+   "hisse_toplam": 4606,
+   "havuz": {
+    "P1": {
+     "yil": {
+      "2000": {
+       "hisse": 1256,
+       "gunluk_ort": 702.1269841269841,
+       "hisse_gun": 176936,
+       "lik_ust_pay": 0.6259834064294434
+      },
+      "2001": {
+       "hisse": 1325,
+       "gunluk_ort": 1101.032258064516,
+       "hisse_gun": 273056,
+       "lik_ust_pay": 0.6255346888550334
+      },
+      "2002": {
+       "hisse": 1376,
+       "gunluk_ort": 1156.4285714285713,
+       "hisse_gun": 291420,
+       "lik_ust_pay": 0.6254924164436209
+      },
+      "2003": {
+       "hisse": 1446,
+       "gunluk_ort": 1222.9166666666667,
+       "hisse_gun": 308175,
+       "lik_ust_pay": 0.626897055244585
+      },
+      "2004": {
+       "hisse": 1523,
+       "gunluk_ort": 1301.9325396825398,
+       "hisse_gun": 328087,
+       "lik_ust_pay": 0.6257852337946948
+      },
+      "2005": {
+       "hisse": 1582,
+       "gunluk_ort": 1368.6626984126983,
+       "hisse_gun": 344903,
+       "lik_ust_pay": 0.6262427407126061
+      },
+      "2006": {
+       "hisse": 1638,
+       "gunluk_ort": 1441.3784860557769,
+       "hisse_gun": 361786,
+       "lik_ust_pay": 0.6262403741438309
+      },
+      "2007": {
+       "hisse": 1719,
+       "gunluk_ort": 1524.9203187250996,
+       "hisse_gun": 382755,
+       "lik_ust_pay": 0.6257893430523442
+      },
+      "2008": {
+       "hisse": 1732,
+       "gunluk_ort": 1556.0750988142292,
+       "hisse_gun": 393687,
+       "lik_ust_pay": 0.6264976999494523
+      },
+      "2009": {
+       "hisse": 1796,
+       "gunluk_ort": 1580.5039682539682,
+       "hisse_gun": 398287,
+       "lik_ust_pay": 0.6263297571851454
+      },
+      "2010": {
+       "hisse": 1860,
+       "gunluk_ort": 1650.357142857143,
+       "hisse_gun": 415890,
+       "lik_ust_pay": 0.6256029238500566
+      },
+      "2011": {
+       "hisse": 1913,
+       "gunluk_ort": 1713.2420634920634,
+       "hisse_gun": 431737,
+       "lik_ust_pay": 0.625804598632964
+      },
+      "2012": {
+       "hisse": 1970,
+       "gunluk_ort": 1747.848,
+       "hisse_gun": 436962,
+       "lik_ust_pay": 0.6256585240821856
+      },
+      "2013": {
+       "hisse": 2084,
+       "gunluk_ort": 1839.8690476190477,
+       "hisse_gun": 463647,
+       "lik_ust_pay": 0.6256289806684827
+      },
+      "2014": {
+       "hisse": 2238,
+       "gunluk_ort": 1955.8373015873017,
+       "hisse_gun": 492871,
+       "lik_ust_pay": 0.6259852983843642
+      },
+      "2015": {
+       "hisse": 2324,
+       "gunluk_ort": 2050.0119047619046,
+       "hisse_gun": 516603,
+       "lik_ust_pay": 0.6257377522004325
+      },
+      "2016": {
+       "hisse": 2425,
+       "gunluk_ort": 2143.535714285714,
+       "hisse_gun": 540171,
+       "lik_ust_pay": 0.6261683800129959
+      },
+      "2017": {
+       "hisse": 2570,
+       "gunluk_ort": 2255.334661354582,
+       "hisse_gun": 566089,
+       "lik_ust_pay": 0.6262866793030778
+      },
+      "2018": {
+       "hisse": 2782,
+       "gunluk_ort": 2392.366533864542,
+       "hisse_gun": 600484,
+       "lik_ust_pay": 0.6269842327189401
+      },
+      "2019": {
+       "hisse": 2939,
+       "gunluk_ort": 2528.8373015873017,
+       "hisse_gun": 637267,
+       "lik_ust_pay": 0.6275627013481005
+      },
+      "2020": {
+       "hisse": 3214,
+       "gunluk_ort": 2692.2727272727275,
+       "hisse_gun": 681145,
+       "lik_ust_pay": 0.6288176526290291
+      },
+      "2021": {
+       "hisse": 3659,
+       "gunluk_ort": 3006.9523809523807,
+       "hisse_gun": 757752,
+       "lik_ust_pay": 0.6268383323303667
+      },
+      "2022": {
+       "hisse": 3887,
+       "gunluk_ort": 3271.1832669322707,
+       "hisse_gun": 821067,
+       "lik_ust_pay": 0.6273105605267293
+      },
+      "2023": {
+       "hisse": 4058,
+       "gunluk_ort": 3395.376,
+       "hisse_gun": 848844,
+       "lik_ust_pay": 0.628951845097568
+      }
+     },
+     "hisse_gun_toplam": 11469621,
+     "hisse_toplam": 4382
+    },
+    "P2": {
+     "yil": {
+      "2000": {
+       "hisse": 765,
+       "gunluk_ort": 417.25,
+       "hisse_gun": 105147,
+       "lik_ust_pay": 0.9909174774363511
+      },
+      "2001": {
+       "hisse": 849,
+       "gunluk_ort": 670.0927419354839,
+       "hisse_gun": 166183,
+       "lik_ust_pay": 0.9913047664321862
+      },
+      "2002": {
+       "hisse": 883,
+       "gunluk_ort": 715.4325396825396,
+       "hisse_gun": 180289,
+       "lik_ust_pay": 0.9745297827377155
+      },
+      "2003": {
+       "hisse": 972,
+       "gunluk_ort": 780.8690476190476,
+       "hisse_gun": 196779,
+       "lik_ust_pay": 0.949791390341449
+      },
+      "2004": {
+       "hisse": 1145,
+       "gunluk_ort": 926.5079365079365,
+       "hisse_gun": 233480,
+       "lik_ust_pay": 0.8568185711838273
+      },
+      "2005": {
+       "hisse": 1243,
+       "gunluk_ort": 1023.1785714285714,
+       "hisse_gun": 257841,
+       "lik_ust_pay": 0.821738978672903
+      },
+      "2006": {
+       "hisse": 1343,
+       "gunluk_ort": 1157.8605577689243,
+       "hisse_gun": 290623,
+       "lik_ust_pay": 0.7688861514745908
+      },
+      "2007": {
+       "hisse": 1487,
+       "gunluk_ort": 1294.5258964143427,
+       "hisse_gun": 324926,
+       "lik_ust_pay": 0.7302985910638115
+      },
+      "2008": {
+       "hisse": 1466,
+       "gunluk_ort": 1285.3596837944665,
+       "hisse_gun": 325196,
+       "lik_ust_pay": 0.7478597522724757
+      },
+      "2009": {
+       "hisse": 1438,
+       "gunluk_ort": 1210.6587301587301,
+       "hisse_gun": 305086,
+       "lik_ust_pay": 0.8022918128003251
+      },
+      "2010": {
+       "hisse": 1525,
+       "gunluk_ort": 1307.1468253968253,
+       "hisse_gun": 329401,
+       "lik_ust_pay": 0.782007340597023
+      },
+      "2011": {
+       "hisse": 1592,
+       "gunluk_ort": 1387.5992063492063,
+       "hisse_gun": 349675,
+       "lik_ust_pay": 0.7671838135411454
+      },
+      "2012": {
+       "hisse": 1600,
+       "gunluk_ort": 1381.656,
+       "hisse_gun": 345414,
+       "lik_ust_pay": 0.7867197044705774
+      },
+      "2013": {
+       "hisse": 1777,
+       "gunluk_ort": 1506.3253968253969,
+       "hisse_gun": 379594,
+       "lik_ust_pay": 0.7601410981206236
+      },
+      "2014": {
+       "hisse": 1955,
+       "gunluk_ort": 1674.579365079365,
+       "hisse_gun": 421994,
+       "lik_ust_pay": 0.7281122480414414
+      },
+      "2015": {
+       "hisse": 2032,
+       "gunluk_ort": 1754.4166666666667,
+       "hisse_gun": 442113,
+       "lik_ust_pay": 0.7271217991780382
+      },
+      "2016": {
+       "hisse": 2080,
+       "gunluk_ort": 1810.0039682539682,
+       "hisse_gun": 456121,
+       "lik_ust_pay": 0.737865610221849
+      },
+      "2017": {
+       "hisse": 2262,
+       "gunluk_ort": 1946.9482071713148,
+       "hisse_gun": 488684,
+       "lik_ust_pay": 0.7231830794542077
+      },
+      "2018": {
+       "hisse": 2440,
+       "gunluk_ort": 2070.565737051793,
+       "hisse_gun": 519712,
+       "lik_ust_pay": 0.722394326088295
+      },
+      "2019": {
+       "hisse": 2541,
+       "gunluk_ort": 2137.9444444444443,
+       "hisse_gun": 538762,
+       "lik_ust_pay": 0.7398832879824486
+      },
+      "2020": {
+       "hisse": 2914,
+       "gunluk_ort": 2339.8616600790515,
+       "hisse_gun": 591985,
+       "lik_ust_pay": 0.7183948917624602
+      },
+      "2021": {
+       "hisse": 3511,
+       "gunluk_ort": 2821.9523809523807,
+       "hisse_gun": 711132,
+       "lik_ust_pay": 0.6666905722144412
+      },
+      "2022": {
+       "hisse": 3377,
+       "gunluk_ort": 2763.972111553785,
+       "hisse_gun": 693757,
+       "lik_ust_pay": 0.7397056894561064
+      },
+      "2023": {
+       "hisse": 3271,
+       "gunluk_ort": 2710.332,
+       "hisse_gun": 677583,
+       "lik_ust_pay": 0.7839290537100252
+      }
+     },
+     "hisse_gun_toplam": 9331477,
+     "hisse_toplam": 4053
+    },
+    "P3": {
+     "yil": {
+      "2000": {
+       "hisse": 760,
+       "gunluk_ort": 415.91269841269843,
+       "hisse_gun": 104810,
+       "lik_ust_pay": 0.9909359793912794
+      },
+      "2001": {
+       "hisse": 847,
+       "gunluk_ort": 669.5564516129032,
+       "hisse_gun": 166050,
+       "lik_ust_pay": 0.9913640469738031
+      },
+      "2002": {
+       "hisse": 883,
+       "gunluk_ort": 714.9047619047619,
+       "hisse_gun": 180156,
+       "lik_ust_pay": 0.9745498345878016
+      },
+      "2003": {
+       "hisse": 969,
+       "gunluk_ort": 779.6507936507936,
+       "hisse_gun": 196472,
+       "lik_ust_pay": 0.9500895801946333
+      },
+      "2004": {
+       "hisse": 1144,
+       "gunluk_ort": 925.2896825396825,
+       "hisse_gun": 233173,
+       "lik_ust_pay": 0.857110385850849
+      },
+      "2005": {
+       "hisse": 1238,
+       "gunluk_ort": 1021.5952380952381,
+       "hisse_gun": 257442,
+       "lik_ust_pay": 0.8218705572517305
+      },
+      "2006": {
+       "hisse": 1340,
+       "gunluk_ort": 1156.9282868525897,
+       "hisse_gun": 290389,
+       "lik_ust_pay": 0.768940972282008
+      },
+      "2007": {
+       "hisse": 1482,
+       "gunluk_ort": 1293.4501992031871,
+       "hisse_gun": 324656,
+       "lik_ust_pay": 0.7308443398551082
+      },
+      "2008": {
+       "hisse": 1465,
+       "gunluk_ort": 1284.0513833992095,
+       "hisse_gun": 324865,
+       "lik_ust_pay": 0.7479753128222493
+      },
+      "2009": {
+       "hisse": 1417,
+       "gunluk_ort": 1199.547619047619,
+       "hisse_gun": 302286,
+       "lik_ust_pay": 0.8038116221062173
+      },
+      "2010": {
+       "hisse": 1517,
+       "gunluk_ort": 1303.3174603174602,
+       "hisse_gun": 328436,
+       "lik_ust_pay": 0.7830353554421562
+      },
+      "2011": {
+       "hisse": 1590,
+       "gunluk_ort": 1386.9444444444443,
+       "hisse_gun": 349510,
+       "lik_ust_pay": 0.7675030757345999
+      },
+      "2012": {
+       "hisse": 1597,
+       "gunluk_ort": 1381.172,
+       "hisse_gun": 345293,
+       "lik_ust_pay": 0.7869953923189871
+      },
+      "2013": {
+       "hisse": 1771,
+       "gunluk_ort": 1505.0753968253969,
+       "hisse_gun": 379279,
+       "lik_ust_pay": 0.7603663793671677
+      },
+      "2014": {
+       "hisse": 1945,
+       "gunluk_ort": 1670.7738095238096,
+       "hisse_gun": 421035,
+       "lik_ust_pay": 0.729174534183619
+      },
+      "2015": {
+       "hisse": 2024,
+       "gunluk_ort": 1753.3174603174602,
+       "hisse_gun": 441836,
+       "lik_ust_pay": 0.7275120180338406
+      },
+      "2016": {
+       "hisse": 2069,
+       "gunluk_ort": 1807.5674603174602,
+       "hisse_gun": 455507,
+       "lik_ust_pay": 0.7388185033380387
+      },
+      "2017": {
+       "hisse": 2241,
+       "gunluk_ort": 1943.3227091633466,
+       "hisse_gun": 487774,
+       "lik_ust_pay": 0.7242862473194553
+      },
+      "2018": {
+       "hisse": 2395,
+       "gunluk_ort": 2062.641434262948,
+       "hisse_gun": 517723,
+       "lik_ust_pay": 0.7245380251601725
+      },
+      "2019": {
+       "hisse": 2502,
+       "gunluk_ort": 2130.722222222222,
+       "hisse_gun": 536942,
+       "lik_ust_pay": 0.7418752863437764
+      },
+      "2020": {
+       "hisse": 2824,
+       "gunluk_ort": 2290.2648221343875,
+       "hisse_gun": 579437,
+       "lik_ust_pay": 0.7254852555152674
+      },
+      "2021": {
+       "hisse": 3394,
+       "gunluk_ort": 2719.9523809523807,
+       "hisse_gun": 685428,
+       "lik_ust_pay": 0.6767421231697567
+      },
+      "2022": {
+       "hisse": 3314,
+       "gunluk_ort": 2738.4541832669324,
+       "hisse_gun": 687352,
+       "lik_ust_pay": 0.7430457756724357
+      },
+      "2023": {
+       "hisse": 3191,
+       "gunluk_ort": 2687.108,
+       "hisse_gun": 671777,
+       "lik_ust_pay": 0.7873773588556917
+      }
+     },
+     "hisse_gun_toplam": 9267628,
+     "hisse_toplam": 3944
+    }
+   },
+   "sg_hisse_gun": 63849
+  },
+  "AVR": {
+   "pazar": "AVR",
+   "hisse_toplam": 574,
+   "havuz": {
+    "P1": {
+     "yil": {
+      "2000": {
+       "hisse": 218,
+       "gunluk_ort": 124.15625,
+       "hisse_gun": 31784,
+       "lik_ust_pay": 0.6261641077271584
+      },
+      "2001": {
+       "hisse": 260,
+       "gunluk_ort": 196.05859375,
+       "hisse_gun": 50191,
+       "lik_ust_pay": 0.6266462114721763
+      },
+      "2002": {
+       "hisse": 294,
+       "gunluk_ort": 225.94921875,
+       "hisse_gun": 57843,
+       "lik_ust_pay": 0.6285289490517435
+      },
+      "2003": {
+       "hisse": 303,
+       "gunluk_ort": 245.53515625,
+       "hisse_gun": 62857,
+       "lik_ust_pay": 0.6263582417232767
+      },
+      "2004": {
+       "hisse": 315,
+       "gunluk_ort": 263.35521235521236,
+       "hisse_gun": 68209,
+       "lik_ust_pay": 0.6269260654752306
+      },
+      "2005": {
+       "hisse": 337,
+       "gunluk_ort": 280.15564202334633,
+       "hisse_gun": 72000,
+       "lik_ust_pay": 0.6265138888888889
+      },
+      "2006": {
+       "hisse": 349,
+       "gunluk_ort": 294.08984375,
+       "hisse_gun": 75287,
+       "lik_ust_pay": 0.6253403642063039
+      },
+      "2007": {
+       "hisse": 365,
+       "gunluk_ort": 313.58203125,
+       "hisse_gun": 80277,
+       "lik_ust_pay": 0.6256960275047647
+      },
+      "2008": {
+       "hisse": 363,
+       "gunluk_ort": 322.52140077821014,
+       "hisse_gun": 82888,
+       "lik_ust_pay": 0.6263270919795386
+      },
+      "2009": {
+       "hisse": 371,
+       "gunluk_ort": 322.9455252918288,
+       "hisse_gun": 82997,
+       "lik_ust_pay": 0.6262274540043616
+      },
+      "2010": {
+       "hisse": 395,
+       "gunluk_ort": 338.25581395348837,
+       "hisse_gun": 87270,
+       "lik_ust_pay": 0.6264008250257821
+      },
+      "2011": {
+       "hisse": 390,
+       "gunluk_ort": 349.92217898832683,
+       "hisse_gun": 89930,
+       "lik_ust_pay": 0.6267430223507172
+      },
+      "2012": {
+       "hisse": 403,
+       "gunluk_ort": 354.5252918287938,
+       "hisse_gun": 91113,
+       "lik_ust_pay": 0.6268150538342497
+      },
+      "2013": {
+       "hisse": 423,
+       "gunluk_ort": 361.71484375,
+       "hisse_gun": 92599,
+       "lik_ust_pay": 0.6263026598559379
+      },
+      "2014": {
+       "hisse": 437,
+       "gunluk_ort": 373.921875,
+       "hisse_gun": 95724,
+       "lik_ust_pay": 0.6260916802473778
+      },
+      "2015": {
+       "hisse": 450,
+       "gunluk_ort": 385.07003891050584,
+       "hisse_gun": 98963,
+       "lik_ust_pay": 0.6264260380142074
+      },
+      "2016": {
+       "hisse": 441,
+       "gunluk_ort": 396.26070038910507,
+       "hisse_gun": 101839,
+       "lik_ust_pay": 0.6264692308447648
+      },
+      "2017": {
+       "hisse": 449,
+       "gunluk_ort": 400.6484375,
+       "hisse_gun": 102566,
+       "lik_ust_pay": 0.6261334165317941
+      },
+      "2018": {
+       "hisse": 471,
+       "gunluk_ort": 404.31640625,
+       "hisse_gun": 103505,
+       "lik_ust_pay": 0.6258345007487561
+      },
+      "2019": {
+       "hisse": 483,
+       "gunluk_ort": 414.90625,
+       "hisse_gun": 106216,
+       "lik_ust_pay": 0.6269582737064096
+      },
+      "2020": {
+       "hisse": 499,
+       "gunluk_ort": 426.4031007751938,
+       "hisse_gun": 110012,
+       "lik_ust_pay": 0.6259862560447951
+      },
+      "2021": {
+       "hisse": 499,
+       "gunluk_ort": 434.1937984496124,
+       "hisse_gun": 112022,
+       "lik_ust_pay": 0.6259395475888665
+      },
+      "2022": {
+       "hisse": 510,
+       "gunluk_ort": 444.6225680933852,
+       "hisse_gun": 114268,
+       "lik_ust_pay": 0.6258970140371758
+      },
+      "2023": {
+       "hisse": 508,
+       "gunluk_ort": 447.75,
+       "hisse_gun": 114624,
+       "lik_ust_pay": 0.6267012144053601
+      }
+     },
+     "hisse_gun_toplam": 2084984,
+     "hisse_toplam": 548
+    },
+    "P2": {
+     "yil": {
+      "2000": {
+       "hisse": 182,
+       "gunluk_ort": 100.71484375,
+       "hisse_gun": 25783,
+       "lik_ust_pay": 0.7496024512275531
+      },
+      "2001": {
+       "hisse": 212,
+       "gunluk_ort": 157.17578125,
+       "hisse_gun": 40237,
+       "lik_ust_pay": 0.7568158659939856
+      },
+      "2002": {
+       "hisse": 231,
+       "gunluk_ort": 170.984375,
+       "hisse_gun": 43772,
+       "lik_ust_pay": 0.7887233848122087
+      },
+      "2003": {
+       "hisse": 235,
+       "gunluk_ort": 181.95703125,
+       "hisse_gun": 46581,
+       "lik_ust_pay": 0.7906657220755243
+      },
+      "2004": {
+       "hisse": 260,
+       "gunluk_ort": 210.15830115830116,
+       "hisse_gun": 54431,
+       "lik_ust_pay": 0.7547720967830832
+      },
+      "2005": {
+       "hisse": 294,
+       "gunluk_ort": 240.7976653696498,
+       "hisse_gun": 61885,
+       "lik_ust_pay": 0.7089278500444373
+      },
+      "2006": {
+       "hisse": 317,
+       "gunluk_ort": 273.34375,
+       "hisse_gun": 69976,
+       "lik_ust_pay": 0.6649708471475935
+      },
+      "2007": {
+       "hisse": 348,
+       "gunluk_ort": 304.33984375,
+       "hisse_gun": 77911,
+       "lik_ust_pay": 0.6445816380228723
+      },
+      "2008": {
+       "hisse": 336,
+       "gunluk_ort": 292.00389105058366,
+       "hisse_gun": 75045,
+       "lik_ust_pay": 0.6797388233726431
+      },
+      "2009": {
+       "hisse": 323,
+       "gunluk_ort": 274.55642023346303,
+       "hisse_gun": 70561,
+       "lik_ust_pay": 0.7121497711200238
+      },
+      "2010": {
+       "hisse": 335,
+       "gunluk_ort": 291.3217054263566,
+       "hisse_gun": 75161,
+       "lik_ust_pay": 0.7116722768457046
+      },
+      "2011": {
+       "hisse": 339,
+       "gunluk_ort": 299.7976653696498,
+       "hisse_gun": 77048,
+       "lik_ust_pay": 0.716332675734607
+      },
+      "2012": {
+       "hisse": 343,
+       "gunluk_ort": 296.852140077821,
+       "hisse_gun": 76291,
+       "lik_ust_pay": 0.7320522735316093
+      },
+      "2013": {
+       "hisse": 364,
+       "gunluk_ort": 315.94140625,
+       "hisse_gun": 80881,
+       "lik_ust_pay": 0.704677241873864
+      },
+      "2014": {
+       "hisse": 386,
+       "gunluk_ort": 336.1328125,
+       "hisse_gun": 86050,
+       "lik_ust_pay": 0.6913190005810576
+      },
+      "2015": {
+       "hisse": 411,
+       "gunluk_ort": 364.31517509727627,
+       "hisse_gun": 93629,
+       "lik_ust_pay": 0.6603082378322955
+      },
+      "2016": {
+       "hisse": 415,
+       "gunluk_ort": 377.99610894941634,
+       "hisse_gun": 97145,
+       "lik_ust_pay": 0.6509341705697669
+      },
+      "2017": {
+       "hisse": 434,
+       "gunluk_ort": 388.9453125,
+       "hisse_gun": 99570,
+       "lik_ust_pay": 0.6407753339359245
+      },
+      "2018": {
+       "hisse": 459,
+       "gunluk_ort": 397.296875,
+       "hisse_gun": 101708,
+       "lik_ust_pay": 0.6323298068981791
+      },
+      "2019": {
+       "hisse": 469,
+       "gunluk_ort": 408.25390625,
+       "hisse_gun": 104513,
+       "lik_ust_pay": 0.6310698190655708
+      },
+      "2020": {
+       "hisse": 492,
+       "gunluk_ort": 418.4186046511628,
+       "hisse_gun": 107952,
+       "lik_ust_pay": 0.6285849266340596
+      },
+      "2021": {
+       "hisse": 494,
+       "gunluk_ort": 430.73643410852713,
+       "hisse_gun": 111130,
+       "lik_ust_pay": 0.6257086295329793
+      },
+      "2022": {
+       "hisse": 503,
+       "gunluk_ort": 436.9649805447471,
+       "hisse_gun": 112300,
+       "lik_ust_pay": 0.6285040071237756
+      },
+      "2023": {
+       "hisse": 500,
+       "gunluk_ort": 437.99609375,
+       "hisse_gun": 112127,
+       "lik_ust_pay": 0.6339418694872778
+      }
+     },
+     "hisse_gun_toplam": 1901687,
+     "hisse_toplam": 537
+    },
+    "P3": {
+     "yil": {
+      "2000": {
+       "hisse": 182,
+       "gunluk_ort": 100.71484375,
+       "hisse_gun": 25783,
+       "lik_ust_pay": 0.7496024512275531
+      },
+      "2001": {
+       "hisse": 211,
+       "gunluk_ort": 156.71484375,
+       "hisse_gun": 40119,
+       "lik_ust_pay": 0.7564994142426282
+      },
+      "2002": {
+       "hisse": 231,
+       "gunluk_ort": 170.9140625,
+       "hisse_gun": 43754,
+       "lik_ust_pay": 0.7890478584815103
+      },
+      "2003": {
+       "hisse": 235,
+       "gunluk_ort": 181.90625,
+       "hisse_gun": 46568,
+       "lik_ust_pay": 0.790886445627899
+      },
+      "2004": {
+       "hisse": 260,
+       "gunluk_ort": 210.15830115830116,
+       "hisse_gun": 54431,
+       "lik_ust_pay": 0.7547720967830832
+      },
+      "2005": {
+       "hisse": 294,
+       "gunluk_ort": 240.7976653696498,
+       "hisse_gun": 61885,
+       "lik_ust_pay": 0.7089278500444373
+      },
+      "2006": {
+       "hisse": 317,
+       "gunluk_ort": 273.34375,
+       "hisse_gun": 69976,
+       "lik_ust_pay": 0.6649708471475935
+      },
+      "2007": {
+       "hisse": 348,
+       "gunluk_ort": 303.73046875,
+       "hisse_gun": 77755,
+       "lik_ust_pay": 0.6438685615072985
+      },
+      "2008": {
+       "hisse": 335,
+       "gunluk_ort": 291.63813229571986,
+       "hisse_gun": 74951,
+       "lik_ust_pay": 0.6794705874504676
+      },
+      "2009": {
+       "hisse": 322,
+       "gunluk_ort": 274.29571984435796,
+       "hisse_gun": 70494,
+       "lik_ust_pay": 0.7126847674979431
+      },
+      "2010": {
+       "hisse": 335,
+       "gunluk_ort": 291.1782945736434,
+       "hisse_gun": 75124,
+       "lik_ust_pay": 0.7120227889888717
+      },
+      "2011": {
+       "hisse": 339,
+       "gunluk_ort": 299.7976653696498,
+       "hisse_gun": 77048,
+       "lik_ust_pay": 0.716332675734607
+      },
+      "2012": {
+       "hisse": 343,
+       "gunluk_ort": 296.852140077821,
+       "hisse_gun": 76291,
+       "lik_ust_pay": 0.7320522735316093
+      },
+      "2013": {
+       "hisse": 364,
+       "gunluk_ort": 315.94140625,
+       "hisse_gun": 80881,
+       "lik_ust_pay": 0.704677241873864
+      },
+      "2014": {
+       "hisse": 386,
+       "gunluk_ort": 336.1328125,
+       "hisse_gun": 86050,
+       "lik_ust_pay": 0.6913190005810576
+      },
+      "2015": {
+       "hisse": 411,
+       "gunluk_ort": 364.31517509727627,
+       "hisse_gun": 93629,
+       "lik_ust_pay": 0.6603082378322955
+      },
+      "2016": {
+       "hisse": 415,
+       "gunluk_ort": 377.99610894941634,
+       "hisse_gun": 97145,
+       "lik_ust_pay": 0.6509341705697669
+      },
+      "2017": {
+       "hisse": 434,
+       "gunluk_ort": 388.9453125,
+       "hisse_gun": 99570,
+       "lik_ust_pay": 0.6407753339359245
+      },
+      "2018": {
+       "hisse": 459,
+       "gunluk_ort": 397.296875,
+       "hisse_gun": 101708,
+       "lik_ust_pay": 0.6323298068981791
+      },
+      "2019": {
+       "hisse": 469,
+       "gunluk_ort": 408.25390625,
+       "hisse_gun": 104513,
+       "lik_ust_pay": 0.6310698190655708
+      },
+      "2020": {
+       "hisse": 492,
+       "gunluk_ort": 417.6937984496124,
+       "hisse_gun": 107765,
+       "lik_ust_pay": 0.628775576485872
+      },
+      "2021": {
+       "hisse": 494,
+       "gunluk_ort": 430.5,
+       "hisse_gun": 111069,
+       "lik_ust_pay": 0.6255030656618858
+      },
+      "2022": {
+       "hisse": 503,
+       "gunluk_ort": 436.9649805447471,
+       "hisse_gun": 112300,
+       "lik_ust_pay": 0.6285040071237756
+      },
+      "2023": {
+       "hisse": 500,
+       "gunluk_ort": 437.99609375,
+       "hisse_gun": 112127,
+       "lik_ust_pay": 0.6339418694872778
+      }
+     },
+     "hisse_gun_toplam": 1900936,
+     "hisse_toplam": 537
+    }
+   },
+   "sg_hisse_gun": 751
+  }
+ },
+ "veri_not": {
+  "ABD": {
+   "hisse": 4606,
+   "en_gec": "2023-12-29",
+   "ilk": "2000-01-03",
+   "not": [
+    "evren dışı (fon / ETF) çıkarılan: 0 []",
+    "hayatta kalma: evren bugün işlem gören hisseler; getiriler yukarı, -%50 olasılığı aşağı yanlı okunmalı",
+    "açılış H-L dışı kırpılan bar: 7; min_bar süzgeci YOK (evren kendi 80. barından sonra); k34 yok"
+   ]
+  },
+  "AVR": {
+   "hisse": 574,
+   "en_gec": "2023-12-29",
+   "ilk": "2000-01-03",
+   "not": [
+    "hayatta kalma: evren bugün işlem gören hisseler; getiriler yukarı, -%50 olasılığı aşağı yanlı okunmalı",
+    "açılış H-L dışı kırpılan bar: 8711; min_bar süzgeci YOK (evren kendi 80. barından sonra); k34 yok"
+   ]
+  }
+ },
+ "sure_sn": 218
+}
