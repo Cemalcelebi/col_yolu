@@ -1,0 +1,498 @@
+{
+ "acik_anahtar_sha256": "e8745886852ad3527dd0c28a36522db82cea80e2a2bdc64144f471f43e3edebc",
+ "blok_tipi": "ceyrek",
+ "bloklar": [
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-03-31",
+   "blok": "2024Q1",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "6a26286962fdcb22c9d380fde8d959814e0e03eb08710b08f143c623e6e7151c",
+   "ilk": "2024-01-02",
+   "kasa_dosya": "V_ABD2_2024Q1.kasa",
+   "satir": 282931,
+   "sembol": 4664,
+   "sha256": "92471528eb7f49186a29a3f536088558650e14b69ac7d570b0354aeef65f9ed5",
+   "sira": [
+    2024,
+    1,
+    1
+   ],
+   "son": "2024-03-28"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-06-30",
+   "blok": "2024Q2",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "311eae26a9e6462b616331d2cca8762b7ec8ff033a8ce554eeaad5b08ed9fc8d",
+   "ilk": "2024-04-01",
+   "kasa_dosya": "V_ABD2_2024Q2.kasa",
+   "satir": 295666,
+   "sembol": 4718,
+   "sha256": "16b376996c8655771d5c90c7265e1f8d1a8dda8c8c23535db5c48596c9a7a7f0",
+   "sira": [
+    2024,
+    4,
+    1
+   ],
+   "son": "2024-06-28"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-09-30",
+   "blok": "2024Q3",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "13eca4ec088794c31257cbc12a9a738bf24acd22905f4e6b913277e97a576ebd",
+   "ilk": "2024-07-01",
+   "kasa_dosya": "V_ABD2_2024Q3.kasa",
+   "satir": 304064,
+   "sembol": 4789,
+   "sha256": "b5ed64b742f9cfc7d3fc979d69905be7e1736cb66b5c4c1025835310f0026720",
+   "sira": [
+    2024,
+    7,
+    1
+   ],
+   "son": "2024-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-12-31",
+   "blok": "2024Q4",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "9fe15cc1cec83dc8dc5b997625bdf2e2027c5a7b9a365bb3aca1b0daee1eb93a",
+   "ilk": "2024-10-01",
+   "kasa_dosya": "V_ABD2_2024Q4.kasa",
+   "satir": 309104,
+   "sembol": 4864,
+   "sha256": "a03e4316456ecd0fa03aa6007a42470a95cdc48546fce82b55771ecabf947298",
+   "sira": [
+    2024,
+    10,
+    1
+   ],
+   "son": "2024-12-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-03-31",
+   "blok": "2025Q1",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "465bac24b02d9022df37bb22c14ab7715d06ab4d9ebfb865c08993b66493f3cd",
+   "ilk": "2025-01-02",
+   "kasa_dosya": "V_ABD2_2025Q1.kasa",
+   "satir": 294574,
+   "sembol": 4948,
+   "sha256": "9bf3fa5395372536166d7c0c7e9a461a2ddebb2fd8cefc60f3acfb7ceb473656",
+   "sira": [
+    2025,
+    1,
+    1
+   ],
+   "son": "2025-03-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-06-30",
+   "blok": "2025Q2",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "22f36d39619b7384c157e1013c3936efc621fbb09afb8c1d20ae723fd2b4f742",
+   "ilk": "2025-04-01",
+   "kasa_dosya": "V_ABD2_2025Q2.kasa",
+   "satir": 309453,
+   "sembol": 5046,
+   "sha256": "7860dc80b1788ee2d46e13a67f39d9e6cd399870e6021f3d10e006e86b0d1a67",
+   "sira": [
+    2025,
+    4,
+    1
+   ],
+   "son": "2025-06-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-09-30",
+   "blok": "2025Q3",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "5133bc1a48fc42c29a214bc1f0a82617d113c10e330dae3b0c386de652d362e0",
+   "ilk": "2025-07-01",
+   "kasa_dosya": "V_ABD2_2025Q3.kasa",
+   "satir": 326578,
+   "sembol": 5155,
+   "sha256": "0b105ebdfee4cd8c588bee235dff69611d13569d53ae0b960a16ab8730a412c4",
+   "sira": [
+    2025,
+    7,
+    1
+   ],
+   "son": "2025-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-12-31",
+   "blok": "2025Q4",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "a77215b08bf9acdda6fd26ce9d7df9765b94c90532ab4ba00d2227afd38bb546",
+   "ilk": "2025-10-01",
+   "kasa_dosya": "V_ABD2_2025Q4.kasa",
+   "satir": 333404,
+   "sembol": 5249,
+   "sha256": "7dddfb2bc61fe9b8033b63f2633c43f0bcd6fa8e62c416692a0dc02dcd1652fd",
+   "sira": [
+    2025,
+    10,
+    1
+   ],
+   "son": "2025-12-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-03-31",
+   "blok": "2026Q1",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "2fe645ce997227d313a1be016ae47f7c9c3dbe3fe3967b5d1d5617231701ba72",
+   "ilk": "2026-01-02",
+   "kasa_dosya": "V_ABD2_2026Q1.kasa",
+   "satir": 323667,
+   "sembol": 5366,
+   "sha256": "c6c0a87aed4c5abaa3a16b5c45fa501f2c479286e36167e5ebc8361f13b74211",
+   "sira": [
+    2026,
+    1,
+    1
+   ],
+   "son": "2026-03-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-06-30",
+   "blok": "2026Q2",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "9a2d19b537d814e2ee7a9ced8f6a42d6bdad1f41693144c15407105252f8b946",
+   "ilk": "2026-04-01",
+   "kasa_dosya": "V_ABD2_2026Q2.kasa",
+   "satir": 334330,
+   "sembol": 5396,
+   "sha256": "79c80998a540abd63f391d2d652722f0fbeded5ceee63d280cc2bc8772d2e459",
+   "sira": [
+    2026,
+    4,
+    1
+   ],
+   "son": "2026-06-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-09-30",
+   "blok": "2026Q3",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "8a8b7f116b015be4c9ae831e94c94911c9185bc860fb5c1891c2f4b135aa18f8",
+   "ilk": "2026-07-01",
+   "kasa_dosya": "V_ABD2_2026Q3.kasa",
+   "satir": 345344,
+   "sembol": 5396,
+   "sha256": "936f79f5b4c96336460aa788b028b147f57bdd9878611f213b590cbf5d2af8e1",
+   "sira": [
+    2026,
+    7,
+    1
+   ],
+   "son": "2026-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-11-20",
+   "blok": "2026Q4",
+   "dosya": "V_ABD2.pkl",
+   "duz_sha256": "a305afd92eabba226d5e96c658a67c385f8681824adee4bef5df3777e3ebf01c",
+   "ilk": "2026-10-01",
+   "kasa_dosya": "V_ABD2_2026Q4.kasa",
+   "satir": 199615,
+   "sembol": 5396,
+   "sha256": "65e0407d937de0918ba0b00ed8bff36b5b351e0a86b43427e447bf711739a7f0",
+   "sira": [
+    2026,
+    10,
+    1
+   ],
+   "son": "2026-11-20"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-03-31",
+   "blok": "2024Q1",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "31181d366d7d37124a8abf960e1f8d1c3f622199bfbcbab3cc10d35b8b56bf98",
+   "ilk": "2024-01-02",
+   "kasa_dosya": "V_AVR2_2024Q1.kasa",
+   "satir": 36048,
+   "sembol": 573,
+   "sha256": "7be599f063242060a1bb88e6863d29a415389d9e8e035843fdf7bac7cde3c8c4",
+   "sira": [
+    2024,
+    1,
+    1
+   ],
+   "son": "2024-03-28"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-06-30",
+   "blok": "2024Q2",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "10488344da54a0c2e84ebb547bf79e4940f08b47efddb06840aa9c7ce5b1be7f",
+   "ilk": "2024-04-02",
+   "kasa_dosya": "V_AVR2_2024Q2.kasa",
+   "satir": 35580,
+   "sembol": 574,
+   "sha256": "af276d22b2b6a8e86d1669c01fd904bfc94ad9dbdf3052ff2cf4543f1afb3bf4",
+   "sira": [
+    2024,
+    4,
+    1
+   ],
+   "son": "2024-06-28"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-09-30",
+   "blok": "2024Q3",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "f33cba11b22e714c9b6baa68d2bf2bc6a9682c9df8f0063f6a494cc69d4a72a4",
+   "ilk": "2024-07-01",
+   "kasa_dosya": "V_AVR2_2024Q3.kasa",
+   "satir": 37565,
+   "sembol": 575,
+   "sha256": "adb41ecb177c6366c8edc49c2639ad39d8d2748d6fa6b9a214b6162980368074",
+   "sira": [
+    2024,
+    7,
+    1
+   ],
+   "son": "2024-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2024-12-31",
+   "blok": "2024Q4",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "7c06d095ff0c344e50b404c09d00908daf35cc0339974c68da0d7f51217e4e81",
+   "ilk": "2024-10-01",
+   "kasa_dosya": "V_AVR2_2024Q4.kasa",
+   "satir": 36512,
+   "sembol": 576,
+   "sha256": "45e16d001971eba9471d67f18ca0ccdc68a0a217d366e56788e000e2a1e7a2ae",
+   "sira": [
+    2024,
+    10,
+    1
+   ],
+   "son": "2024-12-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-03-31",
+   "blok": "2025Q1",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "3c961fccfada4a60b418e5a3a0704c7057e28f0609e2d6b16226c80a686520e0",
+   "ilk": "2025-01-02",
+   "kasa_dosya": "V_AVR2_2025Q1.kasa",
+   "satir": 36216,
+   "sembol": 576,
+   "sha256": "e7cbdcb49fa67106ee52a1fc272b762830438f8259b293362da9d954bbd84a2f",
+   "sira": [
+    2025,
+    1,
+    1
+   ],
+   "son": "2025-03-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-06-30",
+   "blok": "2025Q2",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "b807e62c36a5308a9f758085eed4cd5f0d6d087b23761cffb7e8f52ea8e64b00",
+   "ilk": "2025-04-01",
+   "kasa_dosya": "V_AVR2_2025Q2.kasa",
+   "satir": 35170,
+   "sembol": 576,
+   "sha256": "01bf918e0d00ef6d6e38ea0f44b22b5a5f1f9d53aad753e0d09022bdcffdc512",
+   "sira": [
+    2025,
+    4,
+    1
+   ],
+   "son": "2025-06-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-09-30",
+   "blok": "2025Q3",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "34341ffa23acad77d394fa019253d96266354be8dd8cff7a374f089d6b699aeb",
+   "ilk": "2025-07-01",
+   "kasa_dosya": "V_AVR2_2025Q3.kasa",
+   "satir": 37640,
+   "sembol": 576,
+   "sha256": "4fde05493e14849494b7b613556021913957430fe9f83b74bbc533c19bbe13ba",
+   "sira": [
+    2025,
+    7,
+    1
+   ],
+   "son": "2025-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2025-12-31",
+   "blok": "2025Q4",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "a1c8f752ff1368ba335eff23f6b7bc7a387af1df8e7baae803dfc8d4336571a2",
+   "ilk": "2025-10-01",
+   "kasa_dosya": "V_AVR2_2025Q4.kasa",
+   "satir": 36584,
+   "sembol": 577,
+   "sha256": "d961f8e60756cc215932185cd0406c5a7f7b171307e2383361d81ed56c66d745",
+   "sira": [
+    2025,
+    10,
+    1
+   ],
+   "son": "2025-12-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-03-31",
+   "blok": "2026Q1",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "c0fbe68be9a486021e19f3780fd1da5ffa33f97c7b51181009ec1ce5dbe5444d",
+   "ilk": "2026-01-02",
+   "kasa_dosya": "V_AVR2_2026Q1.kasa",
+   "satir": 36273,
+   "sembol": 577,
+   "sha256": "8f602ade172147972c854b057181e82386ad8c26de24d91798490a53d19244ee",
+   "sira": [
+    2026,
+    1,
+    1
+   ],
+   "son": "2026-03-31"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-06-30",
+   "blok": "2026Q2",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "b055c36ba6ec614c3c05ab8fa8c85397753525c268751dc072bdd78b2d50ad43",
+   "ilk": "2026-04-01",
+   "kasa_dosya": "V_AVR2_2026Q2.kasa",
+   "satir": 35258,
+   "sembol": 577,
+   "sha256": "811159445880568c1428741e20d7f3003600dbdf7fa46d88af2137c40c96560d",
+   "sira": [
+    2026,
+    4,
+    1
+   ],
+   "son": "2026-06-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-09-30",
+   "blok": "2026Q3",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "806e69df846497c7429ff23929b601e1371caffe2fa6c5d3c5bb2188dd2869a6",
+   "ilk": "2026-07-01",
+   "kasa_dosya": "V_AVR2_2026Q3.kasa",
+   "satir": 37755,
+   "sembol": 577,
+   "sha256": "7244fa18263b1d06e23a1e62adff9c3a3937af18b800ab7af9021225430b8f43",
+   "sira": [
+    2026,
+    7,
+    1
+   ],
+   "son": "2026-09-30"
+  },
+  {
+   "alg": "X25519-HKDF-SHA256-AES256GCM",
+   "baslangic": null,
+   "bitis": "2026-11-20",
+   "blok": "2026Q4",
+   "dosya": "V_AVR2.pkl",
+   "duz_sha256": "f34033c85f863249d6cc7a00f862da99bfff17aa7db6f2ecd0b2a641db13b3ed",
+   "ilk": "2026-10-01",
+   "kasa_dosya": "V_AVR2_2026Q4.kasa",
+   "satir": 21340,
+   "sembol": 577,
+   "sha256": "b4fbf331a2c1c2e644c554c5285aba6cf6b9e58dffe2ee08cced3dff1d91ef1f",
+   "sira": [
+    2026,
+    10,
+    1
+   ],
+   "son": "2026-11-20"
+  }
+ ],
+ "dosyalar": {
+  "V_ABD2.pkl": {
+   "acik_ilk": "2000-01-03",
+   "acik_satir": 16063435,
+   "acik_sembol": 4613,
+   "acik_sha256": "e892d27a9c5cf9d7cc672a32051cbe5e33ea5b1318a6fd44d1222c5453472c75",
+   "acik_son": "2023-12-29",
+   "atlanan_ust_anahtar": [],
+   "bos_seri": 0,
+   "kaynak_satir": 19722165,
+   "kaynak_sembol": 5396,
+   "kaynak_son": "2026-11-20",
+   "sirasiz_seri": 0
+  },
+  "V_AVR2.pkl": {
+   "acik_ilk": "2000-01-03",
+   "acik_satir": 2815031,
+   "acik_sembol": 574,
+   "acik_sha256": "a53320b65c7115c267d753c550b4fa677d298f531f4173f05b10f0b647fa33e1",
+   "acik_son": "2023-12-29",
+   "atlanan_ust_anahtar": [],
+   "bos_seri": 0,
+   "kaynak_satir": 3236972,
+   "kaynak_sembol": 578,
+   "kaynak_son": "2026-11-20",
+   "sirasiz_seri": 0
+  }
+ },
+ "ekler": [],
+ "kaynak_klasor": "/tmp/kasa_kaynak2",
+ "kesik": "2023-12-31",
+ "muhur_id": "32d362ecaae2e2da",
+ "not": "Manifest getiri / fiyat içermez: yalnız satır, sembol, tarih aralığı ve sha256.",
+ "olusturma_utc": "2026-11-22T10:31:04Z",
+ "son_tarih": "2026-11-20",
+ "surum": "KASA v1 (21 Kasım 2026)"
+}
