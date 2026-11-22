@@ -41,7 +41,7 @@ Resmi kapanış Yahoo düşüğünün (0,370) ALTINDA: kapanış, sürekli seans
 | 27.02.2018-26.01.2021 | 21.681 | %34,0 | %12,4 | %2,6 |
 | Dönem dışı | 36.978 | %0,9 | %0,6 | %0,3 |
 
-Yıl yıl (Yahoo ham, > 0,5 / > 1 / > 2): 2016 %0,5 / %0,3 / %0,03; 2017 %0,01 / %0,01 / %0; 2018 %30,7 / %11,6 / %1,7; 2019 %38,6 / %14,6 / %3,5; 2020 %28,3 / %9,2 / %2,1; 2021 %1,6 / %0,7 / %0,1; 2022 %3,2 / %1,7 / %0,7; 2023 %0,8 / %0,8 / %0,7. Hisse bazında > 1 puan payı %1,3 (PETKM) ile %11,3 (ERSU) arası (tüm hisseler JSON'da `sonuc.hisse`). 2022-23'teki küçük paylar farklı türdür: Yahoo'nun tek tek bayat/kaymış günleri (örn. 10-11.05.2022 KAPLM, MEPET, ARSAN).
+Yıl yıl (Yahoo ham, > 0,5 / > 1 / > 2): 2016 %0,5 / %0,3 / %0,03; 2017 %0,01 / %0,01 / %0; 2018 %30,7 / %11,6 / %1,7; 2019 %38,6 / %14,6 / %3,5; 2020 %28,3 / %9,2 / %2,1; 2021 %1,6 / %0,7 / %0,1; 2022 %3,2 / %1,7 / %0,7; 2023 %0,8 / %0,8 / %0,7. Hisse bazında > 1 puan payı %1,3 (PETKM) ile %15,0 (TSKB) arası (tüm hisseler JSON'da `sonuc.hisse`). 2022-23'teki küçük paylar farklı türdür: Yahoo'nun tek tek bayat/kaymış günleri (örn. 10-11.05.2022 KAPLM, MEPET, ARSAN).
 
 **(b) Kapanış seviyesi (Yahoo kapanış / yerel ölçek / resmi kapanış)**
 
