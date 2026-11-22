@@ -1073,6 +1073,9 @@ def td_yeniden_kos(veri: Optional[str] = None) -> Dict[str, Any]:
     J["sapma"] = {"zaman": _td_simdi(), "kod_sha": OS._os_sha_dosya(TD_YOL["kod"]),
                   "metin": "yeniden üretim adımı düzeltilmiş kodla json üzerinde yeniden koşuldu (H-TD1); ölçüm / seriler / hükümler koşu 1"}
     J["hata"] = list(TD_HATA)
+    kullan = {c["biz"] for c in J["ciftler"]} | set(TD_ESIK["yeniden"]["seri"])   # json küçük kalsın: yalnız çiftlerde kullanılan seriler
+    J["seriler_tum_sayi"] = len(J["seriler"])
+    J["seriler"] = {k: v for k, v in J["seriler"].items() if k in kullan}
     _td_yaz(_td_yol("json"), json.dumps(OS._os_temizle(J), ensure_ascii=False, default=OS._os_json), "json")
     return J
 
