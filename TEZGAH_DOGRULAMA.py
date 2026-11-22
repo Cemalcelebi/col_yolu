@@ -11,6 +11,7 @@ Panel: OLCU_SINAMA (OS.os_veri, OS.os_panel, OS.os_kart_sinyal, OS.os_olcu_hesap
 Komut:  python TEZGAH_DOGRULAMA.py ref       referans indir + ayrıştır + 2023-12 kesiği -> /tmp/claude-0/tezgah_ref/ (ref_kesik.pkl, yahoo_kesik.pkl, ref_durum.json)
         python TEZGAH_DOGRULAMA.py onkayit   TEZGAH_DOGRULAMA_ON_KAYIT.md (kontrol tablosu, hüküm kuralı aynen, kaynak / erişim, sha'lar)
         python TEZGAH_DOGRULAMA.py kos       kapılar (KASA, ön kayıt git + sha + kontrol) -> seriler -> karşılaştırma -> json + rapor
+        python TEZGAH_DOGRULAMA.py yeniden   yalnız yeniden üretim adımı (koşu json'u üzerinde; H-TD1 SAPMA kaydıyla)
         python TEZGAH_DOGRULAMA.py rapor     TEZGAH_DOGRULAMA_RAPOR.md (json'dan)
 Colab:  exec(open('TEZGAH_DOGRULAMA.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 """
@@ -768,7 +769,7 @@ def td_french_elle(J: Dict[str, Any], kl: Optional[str] = None) -> List[Dict[str
         try:
             z = zipfile.ZipFile(os.path.join(kl or TD_YOL["ref"], dosya))
             metin = z.read([n for n in z.namelist() if n.lower().endswith(".csv")][0]).decode("latin-1")
-            satir = next(s for s in metin.splitlines() if s.strip().startswith(ay + ","))
+            satir = next(s for s in metin.splitlines() if re.match(rf"^\s*{ay}\s*,", s))   # Avrupa dosyalarında '201912    ,2.45'
             c = [float(x) for x in satir.strip().split(",")[1:]]
             elle = {"c[0]": c[0], "c[0] + c[3]": c[0] + c[3] if len(c) > 3 else float("nan"), "c[9] - c[0]": c[9] - c[0] if len(c) > 9 else float("nan")}[hesap] / 100
             kod = J["ref_seriler"].get(seri, {}).get(f"{ay[:4]}-{ay[4:]}")
@@ -947,7 +948,7 @@ def td_rapor(J: Optional[Dict[str, Any]] = None) -> str:
          f"{J['bas']} .. {J['bit']} ({J['sure_sn']} sn). Hisse verisi yalnız KASA açık kısmı (kesik 2023-12-31); referans French veri "
          f"kütüphanesi ({'yedek: ' + J['ref_durum']['yedek'] if J['ref_durum'].get('yedek') else 'yedek kullanılmadı'}), 2023-12'de kesik.", "",
          "## 1. TEK SAYFA ÖZET", "",
-         f"**Sonuç: {J['sonuc']['cumle']}**", "",
+         f"**Sonuç: {J['sonuc']['cumle']}**", ""] + [f"- {x}" for x in td_okuma(J)] + ["",
          "Seri başına hüküm (karşılaştırma penceresi: tutma ayı 2016-01..2023-12; kural: korelasyon >= 0,70 ve işaret uyumu >= %70 DOĞRU, "
          "piyasa serisinde korelasyon >= 0,90; 0,40-0,70 KISMEN; < 0,40 UYUŞMUYOR):", "",
          "| kod | seri | ay | Pearson | Spearman | işaret uyumu | eğim | hüküm |", "|---|---|---|---|---|---|---|---|"]
@@ -1021,7 +1022,59 @@ def td_rapor(J: Optional[Dict[str, Any]] = None) -> str:
           "## 7. VERİ NOTU", ""]
     for p, v in J["veri_not"].items():
         L.append(f"- {p}: {v['hisse']} hisse, kesit satırı {v['kesit_satir']}, havuz satırı {v['havuz_satir']}; kur: {v['fx']}")
+    L += ["", "## 8. HATA (koşu sırasında ve sonrasında bulunan; IK_HATA'ya ana model yazar)", ""]
+    L += [f"- {h}" for h in (J.get("hata") or ["yok"])]
+    L += ["", "## 9. KONTROL LİSTESİ (ön kayıttaki tablo aynen)", "", "| Kod | Yanıt | Kanıt |", "|---|---|---|"]
+    L += [f"| {k} | {y} | {kn} |" for k, (y, kn) in TD_KONTROL.items()]
     return "\n".join(L) + "\n"
+
+
+def td_okuma(J: Dict[str, Any]) -> List[str]:
+    """Düz Türkçe tek sayfa maddeleri (sayılar json'dan; yorum cümlesi sayıdan ayrı)."""
+    K = {c["kod"]: c for c in J["ciftler"]}; rd = {r["seri"]: r for r in J["ref_donem"]}
+    def s(k: str) -> str:
+        x = K[k]["sonuc"]
+        return f"{x['hukum']} (korelasyon {_p(x.get('pearson'))}, işaret uyumu %{(x.get('isaret') or 0) * 100:.0f})"
+    def r(k: str, d: str) -> str:
+        x = rd.get(k, {}).get(d)
+        return "-" if not x else f"ayda {_y(x['ort'])}% (t {_p(x['t'])})"
+    return [f"Piyasa: ABD eşit ağırlıklı {s('A1')}, işlem değeri ağırlıklı {s('A2')}; Avrupa {s('E1')}.",
+            f"Momentum (12-1): French Mom ile {s('A5')}; onluk farkı ağırlıklı {s('A4')}, eşit ağırlıklı {s('A3')}; Avrupa WML ile {s('E3')}.",
+            f"Kısa vadeli dönüş: French ST_Rev ile {s('A8')}; onluk farkı ağırlıklı {s('A7')}, eşit ağırlıklı {s('A6')}.",
+            f"Yayımlanmış ABD momentumu (French Mom): 2000-15 {r('US_MOM', '2000-15')}, 2016-23 {r('US_MOM', '2016-23')}. ST_Rev: 2000-15 "
+            f"{r('US_STREV', '2000-15')}, 2016-23 {r('US_STREV', '2016-23')}. Avrupa WML: 2000-15 {r('EU_WML', '2000-15')}, 2016-23 {r('EU_WML', '2016-23')}.",
+            f"Veri kipi (E2): {J['e2'].get('gecen', '-')} / {J['e2'].get('n', '-')} büyük hissede bizim aylık getiri = Yahoo ayarlı kapanış "
+            f"(en düşük korelasyon {_p(J['e2'].get('min_r_adj'), 4)}; medyan fark {_p(J['e2'].get('med_fark_adj_bp'))} bp): fiyatlar temettü dahil ayarlı.",
+            "Evren bugün yaşayan hisseler: batan hisseler yok, bu yüzden alt onluklar (kaybedenler) olduğundan iyi görünür; korelasyon (ay ay "
+            "zamanlama) bundan az, ortalama (seviye) çok etkilenir."]
+
+
+TD_HATA: List[str] = [
+    "H-TD1 (doğrulama kodu, koşu 1): td_french_elle Avrupa dosyasında ay satırını 'YYYYMM,' önekiyle aradı; Avrupa dosyalarında ay kodundan "
+    "sonra boşluk var ('201912    ,2.45') -> satır bulunamadı (StopIteration), yeniden üretim TUTMADI göründü (bizim 6 hücre ve French 3 "
+    "satır tutmuştu). Ayrıştırıcı td_french_ayristir etkilenmedi (parçaları strip ediyor; EU_WML serisi doğru). Düzeltme: düzenli ifade "
+    "'^\\s*YYYYMM\\s*,'. SAPMA: kod sha ön kayıttan farklı; ölçüm YENİDEN KOŞULMADI, yalnız yeniden üretim adımı 'yeniden' komutuyla "
+    "koşu json'u üzerinde (KASA kapısından sonra) yeniden koşuldu; hükümler ve seriler koşu 1'in aynısı.",
+    "H-TD2 (rapor üreteci, koşu 1): ilk rapor HATA / KONTROL LİSTESİ bölümlerini ve düz Türkçe özet maddelerini basmıyordu (iş tanımı "
+    "istiyordu). Yalnız gösterim eklendi; sayılar json'dan, değişmedi.",
+    "GÖZLEM (hata değil): 'tum' maskesinde (OS havuz süzgeci yok: likidite alt %20 ve bölünme şüpheli hisse-aylar dahil) STREV onluk farkı "
+    "EW ayda +3,62% (A6.2, French ile korelasyon 0,30) — havuz dışı hisse-aylarda bayat / ayarsız fiyat sıçramaları alt-üst onluk farkını "
+    "şişiriyor; havuz süzgeci bunu dışlıyor (A6: 0,74). Ayrıca araştırılmadı.",
+]
+
+
+def td_yeniden_kos(veri: Optional[str] = None) -> Dict[str, Any]:
+    """Koşu json'u üzerinde YALNIZ yeniden üretim adımı (H-TD1 düzeltmesi; SAPMA kaydıyla). Ölçüm yeniden koşulmaz."""
+    td_kasa_kapi(veri)
+    J = json.load(open(_td_yol("json"), encoding="utf-8"))
+    eski = J.get("yeniden")
+    J["yeniden"] = td_yeniden(J, veri)
+    J["yeniden_koşu1"] = eski
+    J["sapma"] = {"zaman": _td_simdi(), "kod_sha": OS._os_sha_dosya(TD_YOL["kod"]),
+                  "metin": "yeniden üretim adımı düzeltilmiş kodla json üzerinde yeniden koşuldu (H-TD1); ölçüm / seriler / hükümler koşu 1"}
+    J["hata"] = list(TD_HATA)
+    _td_yaz(_td_yol("json"), json.dumps(OS._os_temizle(J), ensure_ascii=False, default=OS._os_json), "json")
+    return J
 
 
 # ================================================================ ÇAKIŞMA KAPISI
@@ -1045,7 +1098,7 @@ _cakisma_kontrol_td()
 if __name__ == "__main__" and "get_ipython" not in globals():
     import argparse
     ap = argparse.ArgumentParser(description=TD_SURUM)
-    ap.add_argument("komut", choices=["ref", "onkayit", "kos", "rapor", "sha", "kapi"])
+    ap.add_argument("komut", choices=["ref", "onkayit", "kos", "yeniden", "rapor", "sha", "kapi"])
     ap.add_argument("--veri", default=None)
     ap.add_argument("--uzerine-yaz", action="store_true")
     a = ap.parse_args()
@@ -1062,6 +1115,9 @@ if __name__ == "__main__" and "get_ipython" not in globals():
             J_ = td_kos(a.veri)
             print(_td_yaz(_td_yol("rapor"), td_rapor(J_), "rapor"))
             print(J_["sonuc"]["cumle"]); print("yeniden üretim:", J_["yeniden"]["tutar"])
+        elif a.komut == "yeniden":
+            J_ = td_yeniden_kos(a.veri)
+            print(_td_yaz(_td_yol("rapor"), td_rapor(J_), "rapor")); print("yeniden üretim:", J_["yeniden"]["tutar"])
         elif a.komut == "rapor":
             print(_td_yaz(_td_yol("rapor"), td_rapor(), "rapor"))
         else:

@@ -120,6 +120,23 @@ def test_french_seriler_ve_kesik():
     assert TD._ay_ts("2023-12") == pd.Timestamp("2023-12-31")                       # KASA kesiğini aşmaz (end_time değil)
 
 
+def test_french_elle_bosluklu():
+    tmp = tempfile.mkdtemp(prefix="td_test_")
+    try:
+        icerik = {"F-F_Momentum_Factor_CSV.zip": "x\n\n,Mom\n202003,   8.20\n",
+                  "F-F_Research_Data_Factors_CSV.zip": "x\n\n,Mkt-RF,SMB,HML,RF\n201811,   1.71,  -0.72,   0.34,   0.18\n",
+                  "10_Portfolios_Prior_12_2_CSV.zip": "x\n  Value Weight Returns -- Monthly\n,a,b,c,d,e,f,g,h,i,j\n202106,   2.55,0,0,0,0,0,0,0,0,   9.25\n",
+                  "Europe_Mom_Factor_CSV.zip": "x\n\n,WML\n201912    ,2.45\n"}
+        for ad, m in icerik.items():
+            open(os.path.join(tmp, ad), "wb").write(_zip(ad, m))
+        J = {"ref_seriler": {"US_MOM": {"2020-03": 0.082}, "US_MKT": {"2018-11": 0.0189}, "US_P12_VW_FARK": {"2021-06": 0.067},
+                             "EU_WML": {"2019-12": 0.0245}}}
+        R = TD.td_french_elle(J, kl=tmp)
+        assert all(r["tutar"] for r in R), R                        # Avrupa '201912    ,' biçimi dahil (H-TD1)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
 # ------------------------------------------------------------------ hüküm ve karşılaştırma
 def test_hukum():
     h = TD.td_hukum
