@@ -1,0 +1,219 @@
+{
+ "surum": "OLCU_SINAMA v1.0 (2026-11-22)",
+ "prefix": {
+  "ABD": {
+   "tutar": true,
+   "son": "2022-05-31",
+   "n_gun": 1764,
+   "n_hisse_kisa": 1349,
+   "n_hisse_uzun": 1380,
+   "yeni_hisse": 31,
+   "fark": {
+    "ok": 0,
+    "ok_yeni": 0,
+    "H": 0,
+    "H_yeni": 0,
+    "KV1": 0,
+    "KV1_yeni": 0,
+    "KV2": 0,
+    "KV2_yeni": 0,
+    "sup": 0,
+    "sup_yeni": 0,
+    "lik_alt": 0,
+    "lik_alt_yeni": 0,
+    "evren": 0,
+    "evren_yeni": 0,
+    "ATRP": 0,
+    "F15": 0,
+    "Lq": 0,
+    "M": 0
+   },
+   "olay": {
+    "MOM+_H15": {
+     "n_kisa": 6055,
+     "n_uzun": 6055,
+     "fark": 0
+    },
+    "MOM+_H30": {
+     "n_kisa": 3580,
+     "n_uzun": 3580,
+     "fark": 0
+    },
+    "MOM+_H60": {
+     "n_kisa": 2709,
+     "n_uzun": 2709,
+     "fark": 0
+    },
+    "MOM-_H15": {
+     "n_kisa": 5991,
+     "n_uzun": 5991,
+     "fark": 0
+    },
+    "MOM-_H30": {
+     "n_kisa": 3584,
+     "n_uzun": 3584,
+     "fark": 0
+    },
+    "MOM-_H60": {
+     "n_kisa": 2719,
+     "n_uzun": 2719,
+     "fark": 0
+    },
+    "STREV+_H15": {
+     "n_kisa": 6737,
+     "n_uzun": 6737,
+     "fark": 0
+    },
+    "STREV+_H30": {
+     "n_kisa": 5868,
+     "n_uzun": 5868,
+     "fark": 0
+    },
+    "STREV+_H60": {
+     "n_kisa": 5238,
+     "n_uzun": 5238,
+     "fark": 0
+    },
+    "STREV-_H15": {
+     "n_kisa": 6809,
+     "n_uzun": 6809,
+     "fark": 0
+    },
+    "STREV-_H30": {
+     "n_kisa": 5997,
+     "n_uzun": 5997,
+     "fark": 0
+    },
+    "STREV-_H60": {
+     "n_kisa": 5440,
+     "n_uzun": 5440,
+     "fark": 0
+    },
+    "HIGH52+_H15": {
+     "n_kisa": 6058,
+     "n_uzun": 6058,
+     "fark": 0
+    },
+    "HIGH52+_H30": {
+     "n_kisa": 4696,
+     "n_uzun": 4696,
+     "fark": 0
+    },
+    "HIGH52+_H60": {
+     "n_kisa": 4031,
+     "n_uzun": 4031,
+     "fark": 0
+    }
+   },
+   "toplam_fark": 0,
+   "havuz_kisa": 1406633
+  },
+  "AVR": {
+   "tutar": true,
+   "son": "2022-05-31",
+   "n_gun": 1903,
+   "n_hisse_kisa": 572,
+   "n_hisse_uzun": 576,
+   "yeni_hisse": 4,
+   "fark": {
+    "ok": 0,
+    "ok_yeni": 0,
+    "H": 0,
+    "H_yeni": 0,
+    "KV1": 0,
+    "KV1_yeni": 0,
+    "KV2": 0,
+    "KV2_yeni": 0,
+    "sup": 0,
+    "sup_yeni": 0,
+    "lik_alt": 0,
+    "lik_alt_yeni": 0,
+    "evren": 0,
+    "evren_yeni": 0,
+    "ATRP": 0,
+    "F15": 0,
+    "Lq": 0,
+    "M": 0
+   },
+   "olay": {
+    "MOM+_H15": {
+     "n_kisa": 3174,
+     "n_uzun": 3174,
+     "fark": 0
+    },
+    "MOM+_H30": {
+     "n_kisa": 1946,
+     "n_uzun": 1946,
+     "fark": 0
+    },
+    "MOM+_H60": {
+     "n_kisa": 1504,
+     "n_uzun": 1504,
+     "fark": 0
+    },
+    "MOM-_H15": {
+     "n_kisa": 3104,
+     "n_uzun": 3104,
+     "fark": 0
+    },
+    "MOM-_H30": {
+     "n_kisa": 1875,
+     "n_uzun": 1875,
+     "fark": 0
+    },
+    "MOM-_H60": {
+     "n_kisa": 1443,
+     "n_uzun": 1443,
+     "fark": 0
+    },
+    "STREV+_H15": {
+     "n_kisa": 3433,
+     "n_uzun": 3433,
+     "fark": 0
+    },
+    "STREV+_H30": {
+     "n_kisa": 3054,
+     "n_uzun": 3054,
+     "fark": 0
+    },
+    "STREV+_H60": {
+     "n_kisa": 2758,
+     "n_uzun": 2758,
+     "fark": 0
+    },
+    "STREV-_H15": {
+     "n_kisa": 3511,
+     "n_uzun": 3511,
+     "fark": 0
+    },
+    "STREV-_H30": {
+     "n_kisa": 3146,
+     "n_uzun": 3146,
+     "fark": 0
+    },
+    "STREV-_H60": {
+     "n_kisa": 2900,
+     "n_uzun": 2900,
+     "fark": 0
+    },
+    "HIGH52+_H15": {
+     "n_kisa": 3174,
+     "n_uzun": 3174,
+     "fark": 0
+    },
+    "HIGH52+_H30": {
+     "n_kisa": 2453,
+     "n_uzun": 2453,
+     "fark": 0
+    },
+    "HIGH52+_H60": {
+     "n_kisa": 2114,
+     "n_uzun": 2114,
+     "fark": 0
+    }
+   },
+   "toplam_fark": 0,
+   "havuz_kisa": 754809
+  }
+ }
+}
