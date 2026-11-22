@@ -286,16 +286,33 @@ def tz_ham_topla(pazar: str) -> Tuple[Dict[str, pd.DataFrame], List[str]]:
 
 
 # ================================================================ 3) BICIM
-def tz_temizle(d: pd.DataFrame, bugun: Optional[str] = None) -> pd.DataFrame:
+def tz_negatif_kes(d: pd.DataFrame, son: int = 5) -> Tuple[pd.DataFrame, int]:
+    """Duzeltmeli (auto_adjust) fiyatta O/H/L/C <= 0 bar = duzeltme bozulmasi (cok buyuk temettu / bolunme: ornek ANA.MC 2000-01 negatif).
+    Son bozuk barin onceki butun tarih guvenilmez: o bara kadar (dahil) kesilir. Bozuk bar son `son` bar icindeyse yalniz o bar atilir
+    (kesilirse hisse silinirdi). Dondurur (veri, kesilen bar sayisi)."""
+    kol = [c for c in ("Open", "High", "Low", "Close") if c in d.columns]
+    kotu = (d[kol] <= 0).any(axis=1).to_numpy()
+    if not kotu.any():
+        return d, 0
+    p = int(np.flatnonzero(kotu).max())
+    if p >= len(d) - son:
+        return d[~kotu], 0
+    return d.iloc[p + 1:], p + 1
+
+
+def tz_temizle(d: pd.DataFrame, bugun: Optional[str] = None, kes: Optional[Dict[str, int]] = None, kod: str = "") -> pd.DataFrame:
     """fi_k1_veri ile ayni suzgec (H>=L, Close>0, bos OHLC atilir) + bugunku (yarim olabilir) bar atilir (K3).
     Indeks 'Date' datetime64[s]; sutunlar Open High Low Close Volume float; 'Price' sutun adi (V_*.pkl gibi)."""
     d = d.copy()
     if getattr(d.index, "tz", None) is not None:
         d.index = d.index.tz_localize(None)
     d.index = pd.DatetimeIndex(d.index).normalize()
-    d = d[~d.index.duplicated(keep="last")]
+    d = d[~d.index.duplicated(keep="last")].sort_index()
     d = d.dropna(subset=["Open", "High", "Low", "Close"])
-    d = d[(d.High >= d.Low) & (d.Close > 0)].sort_index()
+    d, n_kes = tz_negatif_kes(d)
+    if n_kes and kes is not None:
+        kes[kod] = n_kes
+    d = d[(d.High >= d.Low) & (d.Close > 0)]
     if bugun is None:
         bugun = _dt.datetime.now(_dt.timezone.utc).strftime("%Y-%m-%d")
     d = d[d.index < pd.Timestamp(bugun)]
@@ -307,14 +324,16 @@ def tz_temizle(d: pd.DataFrame, bugun: Optional[str] = None) -> pd.DataFrame:
 
 
 def tz_avr_duzelt(d: pd.DataFrame, para: str, fx: Dict[str, pd.Series]) -> Tuple[Optional[pd.DataFrame], str]:
-    """fi_avr_evren ile ayni mantik: 80-125x sicrama -> 100'e bol / carp; baska >=20x sicrama -> (None, 'sicrama'); Kur ekler."""
+    """Avrupa: 80-125x (ya da tersi) birim sicramalari (Londra peni / sterlin, 100x) SON parcanin birimine gore duzeltilir (onceki parca 100 ile
+    carpilir / bolunur; eski fi_avr_evren onceki birime gore yapip Kur'u sterline cevirirdi, EUR degeri ayni); baska >=20x sicrama -> (None,
+    'aciklanamayan fiyat sicramasi'); Kur (yerel -> EUR; GBp icin /100) eklenir. Dogru birimin teyidi tz_birim_kalibre ile eski veriden."""
     d = d.copy()
     r = (d.Close / d.Close.shift(1)).to_numpy(float); carpan = np.ones(len(d)); kot = False
     for i in np.flatnonzero((r >= 20) | (r <= 0.05)):
         if 80 <= r[i] <= 125:
-            carpan[i:] /= 100.0
+            carpan[:i] *= 100.0
         elif 1 / 125 <= r[i] <= 1 / 80:
-            carpan[i:] *= 100.0
+            carpan[:i] /= 100.0
         else:
             kot = True
     if kot:
@@ -322,17 +341,29 @@ def tz_avr_duzelt(d: pd.DataFrame, para: str, fx: Dict[str, pd.Series]) -> Tuple
     if (carpan != 1).any():
         for kol in ("Open", "High", "Low", "Close"):
             d[kol] = d[kol] * carpan
-        if para == "GBp" and carpan[-1] < 1:
-            para = "GBP"
     if para == "EUR":
         d["Kur"] = 1.0
     else:
-        f = fx.get("GBp" if para == "GBP" else para)
+        f = fx.get(para)
         if f is None:
             return None, "kur yok"
         k = f.reindex(d.index).ffill().bfill().astype(float)
         d["Kur"] = (k / 100.0) if para == "GBp" else k
     return d, ""
+
+
+def tz_birim_kalibre(yeni: pd.DataFrame, eski: pd.DataFrame, tol: float = 0.03) -> float:
+    """Eski V_AVR ile ortak gunlerde EUR degeri (Close*Kur) medyan orani 100 ya da 0.01'e tol icinde yakinsa Kur duzeltme carpani (0.01 ya da 100),
+    degilse 1.0. (Yahoo bazi Londra hisselerinde tum gecmisi pound olarak veriyor: BCG.L; eski veri birim denetiminden gecmisti.)"""
+    j = yeni.index.intersection(eski.index)
+    if len(j) < 30:
+        return 1.0
+    f = float(((yeni.Close * yeni.Kur).loc[j] / (eski.Close * eski.Kur).loc[j]).median())
+    if abs(f / 100.0 - 1) < tol:
+        return 0.01
+    if abs(f * 100.0 - 1) < tol:
+        return 100.0
+    return 1.0
 
 
 def tz_fx_indir() -> Dict[str, pd.Series]:
@@ -358,7 +389,8 @@ def tz_fx_indir() -> Dict[str, pd.Series]:
 
 def tz_birlestir(pazar: str) -> Dict[str, Any]:
     veri, yok = tz_ham_topla(pazar)
-    V: Dict[str, pd.DataFrame] = {}; atilan: List[Tuple[str, str]] = []; splits: Dict[str, pd.Series] = {}
+    V: Dict[str, pd.DataFrame] = {}; atilan: List[Tuple[str, str]] = []; splits: Dict[str, pd.Series] = {}; kes: Dict[str, int] = {}
+    eski_v: Dict[str, pd.DataFrame] = {}; birim: List[Dict[str, Any]] = []
     fx = tz_fx_indir() if pazar == "AVR" else {}
     ul: Dict[str, str] = {}
     if pazar == "AVR":
@@ -370,7 +402,7 @@ def tz_birlestir(pazar: str) -> Dict[str, Any]:
                 if len(sp):
                     sp.index = pd.DatetimeIndex(sp.index).tz_localize(None).normalize() if getattr(sp.index, "tz", None) is not None else pd.DatetimeIndex(sp.index).normalize()
                     splits[k] = sp
-            d = tz_temizle(d0)
+            d = tz_temizle(d0, None, kes, k)
             if len(d) < TZ_AYAR["min_bar"]:
                 atilan.append((k, f"bar<{TZ_AYAR['min_bar']} ({len(d)})")); continue
             if pazar == "AVR":
@@ -378,6 +410,12 @@ def tz_birlestir(pazar: str) -> Dict[str, Any]:
                 if d is None:
                     atilan.append((k, neden)); continue
                 d.index = d.index.astype("datetime64[s]"); d.index.name = "Date"; d.columns.name = "Price"
+                if not eski_v:
+                    eski_v = pickle.load(open(os.path.join(TZ_AYAR["eski"], "V_AVR.pkl"), "rb"))
+                if k in eski_v:
+                    ck = tz_birim_kalibre(d, eski_v[k])
+                    if ck != 1.0:
+                        d["Kur"] = d["Kur"] * ck; birim.append({"sembol": k, "kur_carpani": ck})
             V[k] = d
         except Exception as ex:
             atilan.append((k, f"hata {ex}"))
@@ -385,9 +423,11 @@ def tz_birlestir(pazar: str) -> Dict[str, Any]:
     pickle.dump(V, open(cikti + ".tmp", "wb"), protocol=4); os.replace(cikti + ".tmp", cikti)
     pickle.dump(splits, open(os.path.join(tz_ham_dir(), f"splits_{pazar}.pkl"), "wb"))
     pd.DataFrame(atilan, columns=["sembol", "neden"]).to_csv(tz_yol(f"atilan_{pazar}.csv"), index=False)
+    pd.DataFrame(birim, columns=["sembol", "kur_carpani"]).to_csv(tz_yol(f"birim_duzeltme_{pazar}.csv"), index=False)
+    pd.DataFrame(sorted(kes.items()), columns=["sembol", "kesilen_bar"]).to_csv(tz_yol(f"negatif_kesilen_{pazar}.csv"), index=False)
     pd.DataFrame({"sembol": yok}).to_csv(tz_yol(f"indirilemeyen_{pazar}.csv"), index=False)
     tzlog.info("%s: V_%s2 %d sembol, atilan %d, indirilemeyen %d", pazar, pazar, len(V), len(atilan), len(yok))
-    return {"yazilan": len(V), "atilan": len(atilan), "indirilemeyen": len(yok)}
+    return {"yazilan": len(V), "atilan": len(atilan), "indirilemeyen": len(yok), "negatif_kesilen": len(kes), "birim_duzeltme": len(birim)}
 
 
 # ================================================================ 4) KALITE
@@ -503,10 +543,21 @@ def tz_kalite(pazar: str) -> Dict[str, Any]:
             sup.append({"sembol": x.sembol, "neden": f"eski/yeni kapanis orani CV {x.cv_Close:.4f} > %1"})
         R["oran_ort_dagilim"] = {"min": float(S.oran_ort.min()), "medyan": float(S.oran_ort.median()), "max": float(S.oran_ort.max()),
                                   "oran_1den_uzak_5pct": int(((S.oran_ort - 1).abs() > 0.05).sum())}
+    if pazar == "AVR":
+        eo = {}
+        for k in sorted(set(V) & set(eski)):
+            j = V[k].index.intersection(eski[k].index)
+            if len(j) > 30:
+                eo[k] = float(((V[k].Close * V[k].Kur).loc[j] / (eski[k].Close * eski[k].Kur).loc[j]).median())
+        sp = {k: v for k, v in eo.items() if abs(v - 1) > 0.02}
+        R["eur_deger_oran_medyan_2pct_disi"] = {k: round(v, 4) for k, v in sp.items()}
+        R["eur_deger_oran_n"] = len(eo)
+        for k, v in sp.items():
+            sup.append({"sembol": k, "neden": f"EUR degeri (Close*Kur) yeni/eski medyan {v:.4f}"})
     # c) bar gecerliligi + d) sicrama
     G = []; J = []
     for k, d in V.items():
-        g = tz_gecerlilik(d); g["sembol"] = k; G.append(g.reset_index().rename(columns={"index": "yil"}))
+        g = tz_gecerlilik(d); g.index.name = "yil"; g["sembol"] = k; G.append(g.reset_index())
         j = tz_sicrama(d, spl.get(k)); j["sembol"] = k; J.append(j)
     G = pd.concat(G); Y = G.groupby("yil")[["bar", "h_lt_l", "aralik_disi", "hacim0", "h_eq_l"]].sum()
     R["bar_gecerlilik_yil"] = {int(y): {c: int(Y.loc[y, c]) for c in Y.columns} for y in Y.index}
@@ -535,6 +586,22 @@ def tz_kalite(pazar: str) -> Dict[str, Any]:
     sup_df.to_csv(tz_yol(f"supheli_{pazar}.csv"), index=False)
     R["supheli_sayi"] = int(sup_df.sembol.nunique())
     return R
+
+
+def tz_evren_son() -> Dict[str, Any]:
+    """evren2_ABD.csv (sembol, borsa, ad, adr, spac, ilk_bar, son_bar, bar_sayisi, durum) + birlesik supheli.csv."""
+    E = pd.read_csv(tz_yol("evren2_ABD_ham.csv"), keep_default_na=False, dtype=str)
+    V = pickle.load(open(tz_yol("V_ABD2.pkl"), "rb"))
+    at = pd.read_csv(tz_yol("atilan_ABD.csv"), keep_default_na=False, dtype=str).set_index("sembol").neden.to_dict()
+    ilk = {k: str(d.index.min().date()) for k, d in V.items()}; son = {k: str(d.index.max().date()) for k, d in V.items()}
+    E["ilk_bar"] = E.yahoo.map(ilk).fillna(""); E["son_bar"] = E.yahoo.map(son).fillna(""); E["bar_sayisi"] = E.yahoo.map({k: str(len(d)) for k, d in V.items()}).fillna("0")
+    E["durum"] = [("dahil" if y in V else "atilan: " + at.get(y, "indirilemedi")) for y in E.yahoo]
+    E = E.rename(columns={"yahoo": "sembol_yahoo"})[["sembol_yahoo", "sembol", "borsa", "ad", "adr", "spac", "ilk_bar", "son_bar", "bar_sayisi", "durum"]]
+    E.to_csv(tz_yol("evren2_ABD.csv"), index=False)
+    Z = [pd.read_csv(tz_yol(f"supheli_{p}.csv"), keep_default_na=False, dtype=str) for p in ("ABD", "AVR") if os.path.exists(tz_yol(f"supheli_{p}.csv"))]
+    pd.concat(Z).to_csv(tz_yol("supheli.csv"), index=False)
+    return {"dahil": int((E.durum == "dahil").sum()), "atilan": int(E.durum.str.startswith("atilan").sum()),
+            "atilan_spac": int(((E.durum.str.startswith("atilan")) & (E.spac == "1")).sum()), "atilan_adr": int(((E.durum.str.startswith("atilan")) & (E.adr == "1")).sum())}
 
 
 # ================================================================ KOMUT
@@ -578,6 +645,8 @@ if __name__ == "__main__" and "get_ipython" not in globals():
         else:
             R = tz_kalite(a.pazar)
             json.dump(R, open(tz_yol(f"kalite_{a.pazar}.json"), "w"), indent=1, default=str)
+            if a.pazar == "ABD" or os.path.exists(tz_yol("kalite_ABD.json")):
+                json.dump(tz_evren_son(), open(tz_yol("evren_ozet.json"), "w"))
             print("kalite yazildi", a.pazar)
     except TZHata as ex:
         tzlog.error("%s", ex); sys.exit(1)

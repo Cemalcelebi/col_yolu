@@ -95,8 +95,19 @@ kontrol("bicim: bugunku (yarim olabilir) bar yok", t.index.max() < pd.Timestamp(
 a = sentetik(300, 3); a.iloc[150:, :4] = a.iloc[150:, :4] * 100.0   # pens -> 100x sicrama
 fx = {"GBp": pd.Series(1.15, index=a.index)}
 b, neden = T.tz_avr_duzelt(T.tz_temizle(a, "2100-01-01"), "GBp", fx)
-kontrol("AVR: 100x sicrama duzeltilir, seri surekli", b is not None and abs(b.Close.pct_change()).max() < 0.2)
-kontrol("AVR: sterline inince Kur peni degil sterlin (carpan<1)", b is not None and abs(b.Kur.iloc[-1] - 1.15) < 1e-9)
+kontrol("AVR: 100x sicrama duzeltilir, seri surekli (son parca birimi)", b is not None and abs(b.Close.pct_change()).max() < 0.2 and b.Close.iloc[-1] > 1000)
+kontrol("AVR: GBp -> Kur = fx/100", b is not None and abs(b.Kur.iloc[-1] - 0.0115) < 1e-9)
+gec = sentetik(300, 14); gec.iloc[100:200, :4] = gec.iloc[100:200, :4] * 100.0    # gecici 100x parca (PNL.L tipi)
+g2, _ = T.tz_avr_duzelt(T.tz_temizle(gec, "2100-01-01"), "EUR", {})
+kontrol("AVR: gecici 100x parca (yukari + geri) duzelir", g2 is not None and abs(g2.Close.pct_change()).max() < 0.2)
+kal = T.tz_birim_kalibre(g2.assign(Kur=1.0), g2.assign(Kur=1.0, Close=g2.Close * 100))
+kontrol("birim kalibre: yeni 100x kucukse Kur x100", kal == 100.0 and T.tz_birim_kalibre(g2.assign(Kur=1.0), g2.assign(Kur=1.0)) == 1.0)
+ng = sentetik(300, 15); ng.iloc[100:110, :4] = -5.0
+cg, nk = T.tz_negatif_kes(ng)
+kontrol("negatif kesme: son bozuk bara kadar kesilir", nk == 110 and len(cg) == 190)
+ng2 = sentetik(300, 16); ng2.iloc[-1, :4] = -5.0
+cg2, nk2 = T.tz_negatif_kes(ng2)
+kontrol("negatif kesme: son barlardaki bozuk bar yalniz atilir", nk2 == 0 and len(cg2) == 299)
 c = sentetik(300, 4); c.iloc[100] = c.iloc[100] * 30   # aciklanamayan 30x sicrama
 kontrol("AVR: aciklanamayan sicrama dislanir", T.tz_avr_duzelt(T.tz_temizle(c, "2100-01-01"), "EUR", {})[0] is None)
 e, _ = T.tz_avr_duzelt(T.tz_temizle(sentetik(300, 5), "2100-01-01"), "EUR", {})
