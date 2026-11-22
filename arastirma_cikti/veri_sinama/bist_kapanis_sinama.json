@@ -1,0 +1,871 @@
+{
+ "secilen_hisseler": [
+  "BURCE",
+  "LIDFA",
+  "AVHOL",
+  "TRMET",
+  "ENJSA",
+  "SELEC",
+  "PETKM",
+  "ERSU",
+  "TRGYO",
+  "KLNMA",
+  "VANGD",
+  "TMSN",
+  "AKYHO",
+  "ARSAN",
+  "TRHOL",
+  "KONYA",
+  "AKBNK",
+  "DERIM",
+  "MEPET",
+  "PAGYO",
+  "OZKGY",
+  "EMNIS",
+  "TSKB",
+  "KAPLM",
+  "HATEK",
+  "KRONT",
+  "PSDTC",
+  "FROTO",
+  "PNSUT",
+  "ODAS"
+ ],
+ "tohum": 20261122,
+ "atlanan_adaylar": [],
+ "pdf5": [
+  "BURCE",
+  "LIDFA",
+  "AVHOL",
+  "TRMET",
+  "ENJSA"
+ ],
+ "ornek_BURCE_2019_07": [
+  {
+   "tarih": "16.07.2019",
+   "resmi_kapanis_ham": 3.37,
+   "resmi_min_ham": 3.08,
+   "resmi_max_ham": 3.4,
+   "resmi_ort_fiyat_ham": 3.281,
+   "resmi_hacim_TL": 13473210.0,
+   "resmi_degisim_pct": 8.36,
+   "yahoo_ham_acilis": 0.3100000023841858,
+   "yahoo_ham_yuksek": 0.3400000035762787,
+   "yahoo_ham_dusuk": 0.30799999833106995,
+   "yahoo_ham_kapanis": 0.33799999952316284,
+   "yahoo_hacim": 40119310.0,
+   "yahoo_degisim_pct": 8.68,
+   "olcek_s": 0.10000000016614535,
+   "resmi_hacim_hisse_yahoo_birim": 41064340.071974665,
+   "V_BIST_kapanis": 0.4490772134020076,
+   "V_BIST_degisim_pct": 8.68
+  },
+  {
+   "tarih": "17.07.2019",
+   "resmi_kapanis_ham": 3.88,
+   "resmi_min_ham": 3.06,
+   "resmi_max_ham": 3.93,
+   "resmi_ort_fiyat_ham": 3.504,
+   "resmi_hacim_TL": 39997162.0,
+   "resmi_degisim_pct": 15.13,
+   "yahoo_ham_acilis": 0.3400000035762787,
+   "yahoo_ham_yuksek": 0.3930000066757202,
+   "yahoo_ham_dusuk": 0.3059999942779541,
+   "yahoo_ham_kapanis": 0.3919999897480011,
+   "yahoo_hacim": 112725170.0,
+   "yahoo_degisim_pct": 15.98,
+   "olcek_s": 0.10000000016614535,
+   "resmi_hacim_hisse_yahoo_birim": 114147151.63683383,
+   "V_BIST_kapanis": 0.5208232641952537,
+   "V_BIST_degisim_pct": 15.98
+  },
+  {
+   "tarih": "18.07.2019",
+   "resmi_kapanis_ham": 4.4,
+   "resmi_min_ham": 3.8,
+   "resmi_max_ham": 4.57,
+   "resmi_ort_fiyat_ham": 4.3,
+   "resmi_hacim_TL": 193982907.0,
+   "resmi_degisim_pct": 13.4,
+   "yahoo_ham_acilis": 0.382999986410141,
+   "yahoo_ham_yuksek": 0.4569999873638153,
+   "yahoo_ham_dusuk": 0.3799999952316284,
+   "yahoo_ham_kapanis": 0.4359999895095825,
+   "yahoo_hacim": 444957210.0,
+   "yahoo_degisim_pct": 11.22,
+   "olcek_s": 0.10000000016614535,
+   "resmi_hacim_hisse_yahoo_birim": 451123038.78536373,
+   "V_BIST_kapanis": 0.5792830195517501,
+   "V_BIST_degisim_pct": 11.22
+  },
+  {
+   "tarih": "19.07.2019",
+   "resmi_kapanis_ham": 3.65,
+   "resmi_min_ham": 3.65,
+   "resmi_max_ham": 4.8,
+   "resmi_ort_fiyat_ham": 4.459,
+   "resmi_hacim_TL": 52295841.0,
+   "resmi_degisim_pct": -17.04,
+   "yahoo_ham_acilis": 0.43700000643730164,
+   "yahoo_ham_yuksek": 0.47999998927116394,
+   "yahoo_ham_dusuk": 0.3700000047683716,
+   "yahoo_ham_kapanis": 0.3700000047683716,
+   "yahoo_hacim": 112781740.0,
+   "yahoo_degisim_pct": -15.14,
+   "olcek_s": 0.1,
+   "resmi_hacim_hisse_yahoo_birim": 117281545.18950437,
+   "V_BIST_kapanis": 0.4915934063151475,
+   "V_BIST_degisim_pct": -15.14
+  },
+  {
+   "tarih": "22.07.2019",
+   "resmi_kapanis_ham": 3.95,
+   "resmi_min_ham": 3.6,
+   "resmi_max_ham": 4.23,
+   "resmi_ort_fiyat_ham": 3.928,
+   "resmi_hacim_TL": 4243966.0,
+   "resmi_degisim_pct": 8.23,
+   "yahoo_ham_acilis": 0.36000001430511475,
+   "yahoo_ham_yuksek": 0.4230000078678131,
+   "yahoo_ham_dusuk": 0.36000001430511475,
+   "yahoo_ham_kapanis": 0.39899998903274536,
+   "yahoo_hacim": 10655920.0,
+   "yahoo_degisim_pct": 7.84,
+   "olcek_s": 0.1,
+   "resmi_hacim_hisse_yahoo_birim": 10804394.093686353,
+   "V_BIST_kapanis": 0.5301236789202354,
+   "V_BIST_degisim_pct": 7.84
+  },
+  {
+   "tarih": "23.07.2019",
+   "resmi_kapanis_ham": 3.75,
+   "resmi_min_ham": 3.65,
+   "resmi_max_ham": 3.97,
+   "resmi_ort_fiyat_ham": 3.786,
+   "resmi_hacim_TL": 2434974.0,
+   "resmi_degisim_pct": -5.08,
+   "yahoo_ham_acilis": 0.3919999897480011,
+   "yahoo_ham_yuksek": 0.3970000147819519,
+   "yahoo_ham_dusuk": 0.36500000953674316,
+   "yahoo_ham_kapanis": 0.375,
+   "yahoo_hacim": 6405880.0,
+   "yahoo_degisim_pct": -6.02,
+   "olcek_s": 0.09999999891337377,
+   "resmi_hacim_hisse_yahoo_birim": 6431521.464498326,
+   "V_BIST_kapanis": 0.49823655403352235,
+   "V_BIST_degisim_pct": -6.02
+  },
+  {
+   "tarih": "24.07.2019",
+   "resmi_kapanis_ham": 3.6,
+   "resmi_min_ham": 3.38,
+   "resmi_max_ham": 3.74,
+   "resmi_ort_fiyat_ham": 3.598,
+   "resmi_hacim_TL": 1618840.0,
+   "resmi_degisim_pct": -4.0,
+   "yahoo_ham_acilis": 0.37299999594688416,
+   "yahoo_ham_yuksek": 0.37400001287460327,
+   "yahoo_ham_dusuk": 0.33799999952316284,
+   "yahoo_ham_kapanis": 0.36000001430511475,
+   "yahoo_hacim": 4409730.0,
+   "yahoo_degisim_pct": -4.0,
+   "olcek_s": 0.09999999891337377,
+   "resmi_hacim_hisse_yahoo_birim": 4499277.425210507,
+   "V_BIST_kapanis": 0.47830711087839767,
+   "V_BIST_degisim_pct": -4.0
+  }
+ ],
+ "sonuc": {
+  "chg_gun_karsilastirilan": 58738,
+  "ayar_gunu_hariç": 79,
+  "yahoo_ham_vs_resmi": {
+   "n": 58659,
+   "gt05": 0.13160810787773403,
+   "gt1": 0.04930189740704751,
+   "gt2": 0.011234422680236621
+  },
+  "V_BIST_vs_resmi_hepsi": {
+   "n": 58659,
+   "gt05": 0.13160810787773403,
+   "gt1": 0.049335992771782675,
+   "gt2": 0.011319661092074532
+  },
+  "V_BIST_vs_resmi_temettu_hariç": {
+   "n": 58647,
+   "gt05": 0.13143042269851826,
+   "gt1": 0.049141473562160046,
+   "gt2": 0.011117363206984159
+  },
+  "V_BIST_vs_Yahoo_ham_uyumsuz_gun_payi": 0.00020457218841098552,
+  "V_BIST_uyumsuz_gun_n": 12,
+  "yil_yahoo_ham_vs_resmi": {
+   "2016": {
+    "n": 6927,
+    "gt05": 0.00490832972426736,
+    "gt1": 0.0033203406958279198,
+    "gt2": 0.00028872527789807997
+   },
+   "2017": {
+    "n": 7071,
+    "gt05": 0.0001414227124876255,
+    "gt1": 0.0001414227124876255,
+    "gt2": 0.0
+   },
+   "2018": {
+    "n": 7359,
+    "gt05": 0.3066992797934502,
+    "gt1": 0.11632015219459166,
+    "gt2": 0.017257779589618154
+   },
+   "2019": {
+    "n": 7458,
+    "gt05": 0.3864306784660767,
+    "gt1": 0.14588361491016358,
+    "gt2": 0.035398230088495575
+   },
+   "2020": {
+    "n": 7486,
+    "gt05": 0.2831952978893935,
+    "gt1": 0.09177130643868554,
+    "gt2": 0.020838899278653487
+   },
+   "2021": {
+    "n": 7464,
+    "gt05": 0.016211146838156484,
+    "gt1": 0.007234726688102894,
+    "gt2": 0.0013397642015005359
+   },
+   "2022": {
+    "n": 7552,
+    "gt05": 0.0323093220338983,
+    "gt1": 0.016684322033898306,
+    "gt2": 0.006753177966101695
+   },
+   "2023": {
+    "n": 7342,
+    "gt05": 0.00830836284391174,
+    "gt1": 0.007763552165622446,
+    "gt2": 0.006673930809043857
+   }
+  },
+  "yil_V_BIST_temettu_hariç": {
+   "2016": {
+    "n": 6927,
+    "gt05": 0.00490832972426736,
+    "gt1": 0.0033203406958279198,
+    "gt2": 0.00028872527789807997
+   },
+   "2017": {
+    "n": 7071,
+    "gt05": 0.0001414227124876255,
+    "gt1": 0.0001414227124876255,
+    "gt2": 0.0
+   },
+   "2018": {
+    "n": 7356,
+    "gt05": 0.3064165307232191,
+    "gt1": 0.11595976073953236,
+    "gt2": 0.016992930940728658
+   },
+   "2019": {
+    "n": 7456,
+    "gt05": 0.38626609442060084,
+    "gt1": 0.14565450643776823,
+    "gt2": 0.03527360515021459
+   },
+   "2020": {
+    "n": 7484,
+    "gt05": 0.28300374131480494,
+    "gt1": 0.09152859433458044,
+    "gt2": 0.020710849812934258
+   },
+   "2021": {
+    "n": 7464,
+    "gt05": 0.016211146838156484,
+    "gt1": 0.007234726688102894,
+    "gt2": 0.0013397642015005359
+   },
+   "2022": {
+    "n": 7547,
+    "gt05": 0.03166821253478203,
+    "gt1": 0.016297866702000795,
+    "gt2": 0.006360143103219823
+   },
+   "2023": {
+    "n": 7342,
+    "gt05": 0.00830836284391174,
+    "gt1": 0.007763552165622446,
+    "gt2": 0.006673930809043857
+   }
+  },
+  "hisse": {
+   "AKBNK": {
+    "n": 1994,
+    "gt05": 0.08676028084252758,
+    "gt1": 0.02357071213640923,
+    "gt2": 0.006519558676028084
+   },
+   "AKYHO": {
+    "n": 1988,
+    "gt05": 0.15191146881287726,
+    "gt1": 0.04074446680080483,
+    "gt2": 0.005030181086519115
+   },
+   "ARSAN": {
+    "n": 1938,
+    "gt05": 0.17337461300309598,
+    "gt1": 0.05056759545923633,
+    "gt2": 0.005159958720330237
+   },
+   "AVHOL": {
+    "n": 1373,
+    "gt05": 0.2294246176256373,
+    "gt1": 0.10706482155863073,
+    "gt2": 0.02986161689730517
+   },
+   "BURCE": {
+    "n": 1999,
+    "gt05": 0.11905952976488245,
+    "gt1": 0.03451725862931466,
+    "gt2": 0.009004502251125562
+   },
+   "DERIM": {
+    "n": 1999,
+    "gt05": 0.09504752376188094,
+    "gt1": 0.02801400700350175,
+    "gt2": 0.007003501750875438
+   },
+   "EMNIS": {
+    "n": 1995,
+    "gt05": 0.14586466165413534,
+    "gt1": 0.09172932330827067,
+    "gt2": 0.03859649122807018
+   },
+   "ENJSA": {
+    "n": 1464,
+    "gt05": 0.12773224043715847,
+    "gt1": 0.0389344262295082,
+    "gt2": 0.007513661202185792
+   },
+   "ERSU": {
+    "n": 1999,
+    "gt05": 0.16258129064532267,
+    "gt1": 0.11305652826413207,
+    "gt2": 0.02001000500250125
+   },
+   "FROTO": {
+    "n": 1986,
+    "gt05": 0.16112789526686808,
+    "gt1": 0.0649546827794562,
+    "gt2": 0.011077542799597181
+   },
+   "HATEK": {
+    "n": 1995,
+    "gt05": 0.11077694235588972,
+    "gt1": 0.03208020050125313,
+    "gt2": 0.006516290726817042
+   },
+   "KAPLM": {
+    "n": 1999,
+    "gt05": 0.15507753876938468,
+    "gt1": 0.062031015507753876,
+    "gt2": 0.018509254627313655
+   },
+   "KLNMA": {
+    "n": 1991,
+    "gt05": 0.08186840783525866,
+    "gt1": 0.026117528879959818,
+    "gt2": 0.0065293822199899544
+   },
+   "KONYA": {
+    "n": 1996,
+    "gt05": 0.07765531062124248,
+    "gt1": 0.022044088176352707,
+    "gt2": 0.006513026052104208
+   },
+   "KRONT": {
+    "n": 1999,
+    "gt05": 0.1340670335167584,
+    "gt1": 0.05652826413206603,
+    "gt2": 0.015007503751875938
+   },
+   "LIDFA": {
+    "n": 1997,
+    "gt05": 0.10966449674511768,
+    "gt1": 0.04456685027541312,
+    "gt2": 0.009514271407110666
+   },
+   "MEPET": {
+    "n": 1999,
+    "gt05": 0.17658829414707353,
+    "gt1": 0.04452226113056528,
+    "gt2": 0.007503751875937969
+   },
+   "ODAS": {
+    "n": 1999,
+    "gt05": 0.15807903951975988,
+    "gt1": 0.03701850925462731,
+    "gt2": 0.007503751875937969
+   },
+   "OZKGY": {
+    "n": 1999,
+    "gt05": 0.11955977988994497,
+    "gt1": 0.03301650825412707,
+    "gt2": 0.004502251125562781
+   },
+   "PAGYO": {
+    "n": 1992,
+    "gt05": 0.09236947791164658,
+    "gt1": 0.029116465863453816,
+    "gt2": 0.0030120481927710845
+   },
+   "PETKM": {
+    "n": 1995,
+    "gt05": 0.06015037593984962,
+    "gt1": 0.013032581453634085,
+    "gt2": 0.005012531328320802
+   },
+   "PNSUT": {
+    "n": 1992,
+    "gt05": 0.08383534136546185,
+    "gt1": 0.020080321285140562,
+    "gt2": 0.0030120481927710845
+   },
+   "PSDTC": {
+    "n": 1990,
+    "gt05": 0.11256281407035176,
+    "gt1": 0.05025125628140704,
+    "gt2": 0.013567839195979899
+   },
+   "SELEC": {
+    "n": 1992,
+    "gt05": 0.12550200803212852,
+    "gt1": 0.050200803212851405,
+    "gt2": 0.010542168674698794
+   },
+   "TMSN": {
+    "n": 1999,
+    "gt05": 0.08704352176088044,
+    "gt1": 0.017508754377188594,
+    "gt2": 0.0050025012506253125
+   },
+   "TRGYO": {
+    "n": 1998,
+    "gt05": 0.16916916916916916,
+    "gt1": 0.05905905905905906,
+    "gt2": 0.010510510510510511
+   },
+   "TRHOL": {
+    "n": 1998,
+    "gt05": 0.2057057057057057,
+    "gt1": 0.07807807807807808,
+    "gt2": 0.022022022022022022
+   },
+   "TRMET": {
+    "n": 1999,
+    "gt05": 0.06753376688344172,
+    "gt1": 0.021010505252626314,
+    "gt2": 0.006003001500750375
+   },
+   "TSKB": {
+    "n": 1996,
+    "gt05": 0.2219438877755511,
+    "gt1": 0.15030060120240482,
+    "gt2": 0.02755511022044088
+   },
+   "VANGD": {
+    "n": 1999,
+    "gt05": 0.17658829414707353,
+    "gt1": 0.054527263631815905,
+    "gt2": 0.013506753376688344
+   }
+  },
+  "fark_isaretli_yahoo_ham_eksi_resmi_pct_puan": {
+   "n": 58659,
+   "q01": -1.4914446872031313,
+   "q05": -0.6401537406889002,
+   "q25": -0.0011385934582885948,
+   "med": 0.0,
+   "q75": 0.0012604415656869428,
+   "q95": 0.632910212918858,
+   "q99": 1.5269286663072035,
+   "ort": -0.00035056395662199193
+  },
+  "fark_isaretli_V_BIST_eksi_resmi": {
+   "n": 58647,
+   "q01": -1.4859816970704394,
+   "q05": -0.6393009555377526,
+   "q25": -0.0011383495996220017,
+   "med": 0.0,
+   "q75": 0.0012581835143798958,
+   "q95": 0.6326455834372811,
+   "q99": 1.5203253768367022,
+   "ort": -0.000861734893526685
+  },
+  "kapanis_seviye_fark_pct": {
+   "n": 57301,
+   "q01": -1.09890212923206,
+   "q05": -0.4184447119047974,
+   "q25": -3.4905027090914587e-06,
+   "med": 0.0,
+   "q75": 3.5987710145235496e-06,
+   "q95": 0.42844639952202,
+   "q99": 1.0855219634949842,
+   "ort": 0.0027528017103119655
+  },
+  "kapanis_seviye_esit_payi_abs<0.2": 0.8308755519100889,
+  "kapanis_seviye_yahoo_buyuk": 0.08767735292577791,
+  "kapanis_seviye_yahoo_kucuk": 0.08144709516413326,
+  "kapanis_seviye_n": 57301,
+  "kapanis_seviye_yil": {
+   "2016": {
+    "n": 6799,
+    "esit": 0.9960288277687895,
+    "yahoo_buyuk": 0.0025003677011325195,
+    "yahoo_kucuk": 0.0014708045300779527,
+    "mutlak_med": 3.2825987705820125e-06
+   },
+   "2017": {
+    "n": 6895,
+    "esit": 1.0,
+    "yahoo_buyuk": 0.0,
+    "yahoo_kucuk": 0.0,
+    "mutlak_med": 3.060123410225657e-06
+   },
+   "2018": {
+    "n": 7129,
+    "esit": 0.5891429372983589,
+    "yahoo_buyuk": 0.20493757890307196,
+    "yahoo_kucuk": 0.20591948379856923,
+    "mutlak_med": 0.06398769345312694
+   },
+   "2019": {
+    "n": 7268,
+    "esit": 0.5295817281232801,
+    "yahoo_buyuk": 0.25137589433131535,
+    "yahoo_kucuk": 0.2190423775454045,
+    "mutlak_med": 0.16891653840905296
+   },
+   "2020": {
+    "n": 7386,
+    "esit": 0.6015434606011373,
+    "yahoo_buyuk": 0.20268074735987002,
+    "yahoo_kucuk": 0.1957757920389927,
+    "mutlak_med": 0.1213655728125651
+   },
+   "2021": {
+    "n": 7251,
+    "esit": 0.9764170459247,
+    "yahoo_buyuk": 0.013101641152944422,
+    "yahoo_kucuk": 0.010481312922355537,
+    "mutlak_med": 2.2718047665293284e-06
+   },
+   "2022": {
+    "n": 7370,
+    "esit": 0.9763907734056988,
+    "yahoo_buyuk": 0.013568521031207599,
+    "yahoo_kucuk": 0.010040705563093623,
+    "mutlak_med": 2.1517343129495714e-06
+   },
+   "2023": {
+    "n": 7203,
+    "esit": 0.9961127308066083,
+    "yahoo_buyuk": 0.003748438150770512,
+    "yahoo_kucuk": 0.00013883104262113008,
+    "mutlak_med": 1.8708491644758851e-06
+   }
+  },
+  "aralik_tum": {
+   "n": 57301,
+   "resmi_kapanis_eq_resmi_dusuk": 0.11347096909303503,
+   "resmi_kapanis_eq_resmi_yuksek": 0.0845011430865081,
+   "resmi_kapanis_yahoo_aralik_disi": 0.011553026997783634,
+   "yahoo_yuksek_esit_resmi_max": 0.9888134587529014,
+   "yahoo_dusuk_esit_resmi_min": 0.9872602572380936,
+   "yahoo_kapanis_esit_resmi": 0.9174883509886389,
+   "yahoo_kapanis_resmi_aralikta": 0.9996160625469015
+  },
+  "aralik_fark_gt1": {
+   "n": 2802,
+   "resmi_kapanis_eq_resmi_dusuk": 0.14739471805852963,
+   "resmi_kapanis_eq_resmi_yuksek": 0.11884368308351177,
+   "resmi_kapanis_yahoo_aralik_disi": 0.122412562455389,
+   "yahoo_yuksek_esit_resmi_max": 0.9179157744468237,
+   "yahoo_dusuk_esit_resmi_min": 0.8993576017130621,
+   "yahoo_kapanis_esit_resmi": 0.37080656673804424,
+   "yahoo_kapanis_resmi_aralikta": 0.9978586723768736
+  },
+  "aralik_fark_le0.5": {
+   "n": 49680,
+   "resmi_kapanis_eq_resmi_dusuk": 0.11268115942028986,
+   "resmi_kapanis_eq_resmi_yuksek": 0.08363526570048309,
+   "resmi_kapanis_yahoo_aralik_disi": 0.002958937198067633,
+   "yahoo_yuksek_esit_resmi_max": 0.99579307568438,
+   "yahoo_dusuk_esit_resmi_min": 0.9955515297906602,
+   "yahoo_kapanis_esit_resmi": 0.9799114331723028,
+   "yahoo_kapanis_resmi_aralikta": 0.9998389694041868
+  },
+  "aralik_yil": {
+   "2016": {
+    "n": 6799,
+    "resmi_kapanis_eq_resmi_dusuk": 0.15487571701720843,
+    "resmi_kapanis_eq_resmi_yuksek": 0.1147227533460803,
+    "resmi_kapanis_yahoo_aralik_disi": 0.0,
+    "yahoo_yuksek_esit_resmi_max": 0.9998529195469922,
+    "yahoo_dusuk_esit_resmi_min": 1.0,
+    "yahoo_kapanis_esit_resmi": 0.997793793204883,
+    "yahoo_kapanis_resmi_aralikta": 0.9995587586409767
+   },
+   "2017": {
+    "n": 6895,
+    "resmi_kapanis_eq_resmi_dusuk": 0.13023930384336477,
+    "resmi_kapanis_eq_resmi_yuksek": 0.07034082668600435,
+    "resmi_kapanis_yahoo_aralik_disi": 0.0,
+    "yahoo_yuksek_esit_resmi_max": 1.0,
+    "yahoo_dusuk_esit_resmi_min": 1.0,
+    "yahoo_kapanis_esit_resmi": 1.0,
+    "yahoo_kapanis_resmi_aralikta": 1.0
+   },
+   "2018": {
+    "n": 7129,
+    "resmi_kapanis_eq_resmi_dusuk": 0.0944031420956656,
+    "resmi_kapanis_eq_resmi_yuksek": 0.05218123158928321,
+    "resmi_kapanis_yahoo_aralik_disi": 0.017253471735166222,
+    "yahoo_yuksek_esit_resmi_max": 0.9799410857062701,
+    "yahoo_dusuk_esit_resmi_min": 0.9760134661242811,
+    "yahoo_kapanis_esit_resmi": 0.8016552111095525,
+    "yahoo_kapanis_resmi_aralikta": 0.9994389114882872
+   },
+   "2019": {
+    "n": 7268,
+    "resmi_kapanis_eq_resmi_dusuk": 0.10566868464501926,
+    "resmi_kapanis_eq_resmi_yuksek": 0.07801320858558063,
+    "resmi_kapanis_yahoo_aralik_disi": 0.028343423225096313,
+    "yahoo_yuksek_esit_resmi_max": 0.9548706659328564,
+    "yahoo_dusuk_esit_resmi_min": 0.9510181618051734,
+    "yahoo_kapanis_esit_resmi": 0.7414694551458448,
+    "yahoo_kapanis_resmi_aralikta": 0.9986241056686846
+   },
+   "2020": {
+    "n": 7386,
+    "resmi_kapanis_eq_resmi_dusuk": 0.11494719740048741,
+    "resmi_kapanis_eq_resmi_yuksek": 0.12117519631735717,
+    "resmi_kapanis_yahoo_aralik_disi": 0.033712428919577576,
+    "yahoo_yuksek_esit_resmi_max": 0.9838884375846195,
+    "yahoo_dusuk_esit_resmi_min": 0.9833468724614135,
+    "yahoo_kapanis_esit_resmi": 0.8356349851069591,
+    "yahoo_kapanis_resmi_aralikta": 0.999458434876794
+   },
+   "2021": {
+    "n": 7251,
+    "resmi_kapanis_eq_resmi_dusuk": 0.10177906495655771,
+    "resmi_kapanis_eq_resmi_yuksek": 0.06730106192249345,
+    "resmi_kapanis_yahoo_aralik_disi": 0.002068680182043856,
+    "yahoo_yuksek_esit_resmi_max": 0.9987587918907737,
+    "yahoo_dusuk_esit_resmi_min": 0.998345055854365,
+    "yahoo_kapanis_esit_resmi": 0.991449455247552,
+    "yahoo_kapanis_resmi_aralikta": 0.9998620879878637
+   },
+   "2022": {
+    "n": 7370,
+    "resmi_kapanis_eq_resmi_dusuk": 0.09728629579375848,
+    "resmi_kapanis_eq_resmi_yuksek": 0.07856173677069199,
+    "resmi_kapanis_yahoo_aralik_disi": 0.007191316146540027,
+    "yahoo_yuksek_esit_resmi_max": 0.9944369063772048,
+    "yahoo_dusuk_esit_resmi_min": 0.9933514246947083,
+    "yahoo_kapanis_esit_resmi": 0.9842605156037992,
+    "yahoo_kapanis_resmi_aralikta": 1.0
+   },
+   "2023": {
+    "n": 7203,
+    "resmi_kapanis_eq_resmi_dusuk": 0.11189782035263085,
+    "resmi_kapanis_eq_resmi_yuksek": 0.09384978481188394,
+    "resmi_kapanis_yahoo_aralik_disi": 0.0022212966819380813,
+    "yahoo_yuksek_esit_resmi_max": 1.0,
+    "yahoo_dusuk_esit_resmi_min": 0.9973622101901986,
+    "yahoo_kapanis_esit_resmi": 0.9961127308066083,
+    "yahoo_kapanis_resmi_aralikta": 1.0
+   }
+  },
+  "fark_gt1_yon": {
+   "resmi_alt (yahoo_chg>resmi_chg)": 0.49857244825124913,
+   "n": 2802
+  },
+  "hacim_orani_resmi_bizim": {
+   "n": 57301,
+   "q01": 0.926017389967349,
+   "q05": 0.9998581338447173,
+   "q25": 0.9999914798106667,
+   "med": 1.0000270532187558,
+   "q75": 1.008309257660475,
+   "q95": 1.0631558952895777,
+   "q99": 1.2398577902943464,
+   "ort": 91.1897474238449
+  },
+  "hacim_orani_pay_resmi_buyuk>1.02": 0.16483132929617283,
+  "hacim_orani_pay_resmi_kucuk<0.98": 0.012844452976387847,
+  "hacim_orani_yil": {
+   "2016": {
+    "med": 1.000000083065454,
+    "q25": 0.9999316382930996,
+    "q75": 1.000063766039068
+   },
+   "2017": {
+    "med": 1.000000189874076,
+    "q25": 0.9999490974160725,
+    "q75": 1.0000544167395988
+   },
+   "2018": {
+    "med": 1.011731996732984,
+    "q25": 1.0001329657557252,
+    "q75": 1.033053986993664
+   },
+   "2019": {
+    "med": 1.0235921935906114,
+    "q25": 1.0073908456736906,
+    "q75": 1.052963215641345
+   },
+   "2020": {
+    "med": 1.0115783886098009,
+    "q25": 1.0045640217392313,
+    "q75": 1.0246966795174486
+   },
+   "2021": {
+    "med": 1.0000005846845392,
+    "q25": 0.9999806627154226,
+    "q75": 1.0000293488745975
+   },
+   "2022": {
+    "med": 1.0000004672304375,
+    "q25": 0.9999865973164256,
+    "q75": 1.0000194012820458
+   },
+   "2023": {
+    "med": 1.000000027323013,
+    "q25": 0.9999916141684753,
+    "q75": 1.0000091990953117
+   }
+  },
+  "V_BIST_hacim_ham_oranina_karsi_fiyat_oranina_gore_sapma": {
+   "n": 57301,
+   "q01": -2.220446049250313e-16,
+   "q05": -1.1102230246251565e-16,
+   "q25": 0.0,
+   "med": 0.0,
+   "q75": 0.0,
+   "q95": 0.0,
+   "q99": 2.2204460492503128e-16,
+   "ort": -1.251255701127251e-17
+  },
+  "rejim_tarihleri": [
+   "2018-02-27",
+   "2021-01-26"
+  ],
+  "rejim_ici_yahoo_ham_vs_resmi": {
+   "n": 21681,
+   "gt05": 0.33997509339975096,
+   "gt1": 0.12351828790184954,
+   "gt2": 0.025690696923573637
+  },
+  "rejim_disi_yahoo_ham_vs_resmi": {
+   "n": 36978,
+   "gt05": 0.009438044242522581,
+   "gt1": 0.005787224836389204,
+   "gt2": 0.0027583968846341066
+  },
+  "aralik_rejim_ici": {
+   "n": 21151,
+   "resmi_kapanis_eq_resmi_dusuk": 0.10538508817549998,
+   "resmi_kapanis_eq_resmi_yuksek": 0.08722991820717696,
+   "resmi_kapanis_yahoo_aralik_disi": 0.028036499456290484,
+   "yahoo_yuksek_esit_resmi_max": 0.9717271051014137,
+   "yahoo_dusuk_esit_resmi_min": 0.9687485225284856,
+   "yahoo_kapanis_esit_resmi": 0.7839818448300316,
+   "yahoo_kapanis_resmi_aralikta": 0.9991016973192757
+  },
+  "aralik_rejim_disi": {
+   "n": 36150,
+   "resmi_kapanis_eq_resmi_dusuk": 0.11820193637621024,
+   "resmi_kapanis_eq_resmi_yuksek": 0.0829045643153527,
+   "resmi_kapanis_yahoo_aralik_disi": 0.001908713692946058,
+   "yahoo_yuksek_esit_resmi_max": 0.9988105117565699,
+   "yahoo_dusuk_esit_resmi_min": 0.9980912863070539,
+   "yahoo_kapanis_esit_resmi": 0.9956016597510373,
+   "yahoo_kapanis_resmi_aralikta": 0.9999170124481328
+  },
+  "aralik_rejim_ici_fark_gt1": {
+   "n": 2606,
+   "resmi_kapanis_eq_resmi_dusuk": 0.148119723714505,
+   "resmi_kapanis_eq_resmi_yuksek": 0.12279355333844973,
+   "resmi_kapanis_yahoo_aralik_disi": 0.10974673829623945,
+   "yahoo_yuksek_esit_resmi_max": 0.9236377590176515,
+   "yahoo_dusuk_esit_resmi_min": 0.9090560245587107,
+   "yahoo_kapanis_esit_resmi": 0.3607060629316961,
+   "yahoo_kapanis_resmi_aralikta": 0.9984650805832693
+  },
+  "hacim_orani_rejim_ici": {
+   "n": 21151,
+   "q01": 0.7639642465909113,
+   "q05": 0.9999197974173979,
+   "q25": 1.0051968838003376,
+   "med": 1.0159019337419828,
+   "q75": 1.037093026060139,
+   "q95": 1.1305239778323244,
+   "q99": 1.4034974393466704,
+   "ort": 1.0868678369854763
+  },
+  "hacim_orani_rejim_disi": {
+   "n": 36150,
+   "q01": 0.99958353594574,
+   "q05": 0.9998503761159593,
+   "q25": 0.9999751724206001,
+   "med": 1.000000127358477,
+   "q75": 1.0000278709210955,
+   "q95": 1.0001565622509259,
+   "q99": 1.0005921777240165,
+   "ort": 143.90803251766684
+  },
+  "kapanis_seviye_rejim_ici": {
+   "n": 21151,
+   "esit": 0.5526452649992908,
+   "yahoo_buyuk": 0.2307219516807716,
+   "yahoo_kucuk": 0.2166327833199376,
+   "mutlak_med": 0.1537297000087534,
+   "mutlak_q90": 0.7999982059592181
+  },
+  "getiri15_yahoo_ham_eksi_resmi": {
+   "n": 10890,
+   "sd_pct_puan": 0.4661636188185728,
+   "ort": -0.00018277229458635598,
+   "mutlak_med": 0.0014539515002354175,
+   "mutlak_q90": 0.6463882117049835,
+   "mutlak_q99": 2.0097297270477052,
+   "sd_robust_mad": 0.00215562849424903
+  },
+  "getiri15_V_BIST_eksi_resmi_temettu_dahil": {
+   "n": 10890,
+   "sd_pct_puan": 1.581566519374076,
+   "mutlak_med": 0.0014712437674813117,
+   "mutlak_q90": 0.6669190498017754
+  },
+  "getiri15_yahoo_ham_eksi_resmi_rejim_ici": {
+   "n": 3998,
+   "sd_pct_puan": 0.7577661904032024,
+   "mutlak_med": 0.3117134477238326,
+   "mutlak_q90": 1.1520650263113865,
+   "mutlak_q99": 2.587136031661704
+  },
+  "getiri15_yahoo_ham_eksi_resmi_rejim_disi": {
+   "n": 6892,
+   "sd_pct_puan": 0.10135450173700737,
+   "mutlak_med": 0.00022331145496101712,
+   "mutlak_q90": 0.0072796795298280086,
+   "mutlak_q99": 0.3941751543739701
+  }
+ },
+ "ilk_tarih_son_tarih": [
+  "2016-01-04",
+  "2023-12-29"
+ ],
+ "n_satir_toplam": 58854
+}
