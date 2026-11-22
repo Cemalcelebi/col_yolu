@@ -558,6 +558,10 @@ def k2_y1(V: Dict[str, pd.DataFrame], islem: int = 1, kes_eski: Optional[pd.Time
     Yn = pd.DataFrame([y for r in R for y in r["yeni"]])
     Yn = Yn.reindex(columns=kol) if len(Yn) else pd.DataFrame(columns=kol)
     Ye = pd.DataFrame([y for r in R for y in r["eski"]], columns=["sembol", "tarih", "hat", "tavan"])
+    for X_ in (Yn, Ye):   # boş tabloda bile tür sabit (önbellekle birleşimde tarih datetime64 kalsın)
+        X_["sembol"] = X_["sembol"].astype(str); X_["tarih"] = pd.to_datetime(X_["tarih"])
+        for c in X_.columns[2:]:
+            X_[c] = X_[c].astype(float)
     Yn = k2_y1_bayrak(Yn).sort_values(["sembol", "tarih"], kind="mergesort").reset_index(drop=True)
     k2log.info("Y1: %d yeni (özellikli) + %d eski sinyal (%.0f sn)", len(Yn), len(Ye), time.time() - t0)
     return {"yeni": Yn, "eski": Ye.sort_values(["sembol", "tarih"], kind="mergesort").reset_index(drop=True)}
@@ -1196,6 +1200,8 @@ def k2_yeniden(S: pd.DataFrame, Hc: pd.DataFrame, acik_tablo: Optional[str] = No
     plasebo) o tabloyla birebir (dondurulmuş açık veri)."""
     out, tut = [], True
     for kod, P, H, hc in K2_ESIK["yeniden"]:
+        if P not in set(S.pazar):   # --pazar ile o pazar ölçülmediyse (deneme koşusu) hücre atlanır; tam koşuda iki hücre de denetlenir
+            out.append({"hucre": f"{kod} {P} R{H} {hc}", "not": "pazar ölçülmedi"}); continue
         g = S[(S.kod == kod) & (S.pazar == P) & (S.ufuk == H) & (S.hucre == hc) & (S.durum == "olculdu")]
         n = int(len(g)); f = float((g.R - g.es).mean()) if n else np.nan; s = float(g.sira.mean()) if n else np.nan
         c = _k2_c(Hc, kod, H, P, hc)
