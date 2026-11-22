@@ -1,0 +1,119 @@
+{
+ "ABD": {
+  "bilgi": {
+   "evren": 1348,
+   "ust_yari": 674,
+   "atlamali_aday": 538,
+   "digeri": 136,
+   "medyan_tl": 36886501.67608261
+  },
+  "secim": [
+   {
+    "kod": "NTLA",
+    "tip": "atlama",
+    "bas": "2019-12-17",
+    "son": "2020-06-09"
+   },
+   {
+    "kod": "CROX",
+    "tip": "atlama",
+    "bas": "2023-01-31",
+    "son": "2023-07-24"
+   },
+   {
+    "kod": "WTRG",
+    "tip": "atlama",
+    "bas": "2019-12-18",
+    "son": "2020-06-10"
+   },
+   {
+    "kod": "SNPS",
+    "tip": "rastgele",
+    "bas": "2022-08-18",
+    "son": "2023-02-08"
+   },
+   {
+    "kod": "ABT",
+    "tip": "rastgele",
+    "bas": "2020-01-17",
+    "son": "2020-07-09"
+   },
+   {
+    "kod": "CAT",
+    "tip": "rastgele",
+    "bas": "2020-04-14",
+    "son": "2020-10-01"
+   }
+  ]
+ },
+ "AVR": {
+  "bilgi": {
+   "evren": 572,
+   "ust_yari": 286,
+   "atlamali_aday": 157,
+   "digeri": 129,
+   "medyan_tl": 8083379.17243785
+  },
+  "secim": [
+   {
+    "kod": "BATS.L",
+    "tip": "rastgele",
+    "bas": "2019-06-13",
+    "son": "2019-11-28"
+   },
+   {
+    "kod": "TEL2-B.ST",
+    "tip": "rastgele",
+    "bas": "2018-12-11",
+    "son": "2019-06-11"
+   },
+   {
+    "kod": "RCO.PA",
+    "tip": "rastgele",
+    "bas": "2019-01-09",
+    "son": "2019-06-28"
+   }
+  ]
+ },
+ "BIST": {
+  "bilgi": {
+   "evren": 457,
+   "ust_yari": 229,
+   "atlamali_aday": 114,
+   "digeri": 115,
+   "medyan_tl": 29426177.09928131
+  },
+  "secim": [
+   {
+    "kod": "BURCE",
+    "tip": "atlama",
+    "bas": "2019-04-16",
+    "son": "2019-10-14"
+   },
+   {
+    "kod": "LIDFA",
+    "tip": "atlama",
+    "bas": "2018-10-10",
+    "son": "2019-03-28"
+   },
+   {
+    "kod": "AVHOL",
+    "tip": "atlama",
+    "bas": "2019-12-17",
+    "son": "2020-06-10"
+   },
+   {
+    "kod": "TRMET",
+    "tip": "rastgele",
+    "bas": "2018-03-21",
+    "son": "2018-09-14"
+   },
+   {
+    "kod": "ENJSA",
+    "tip": "rastgele",
+    "bas": "2022-01-20",
+    "son": "2022-07-14"
+   }
+  ]
+ }
+}
