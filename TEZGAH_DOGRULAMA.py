@@ -809,7 +809,7 @@ def td_onkayit_metni(veri: Optional[str] = None, kl: Optional[str] = None) -> st
          "## 2. SONUÇ KURALI (tek cümle)", "", TD_ESIK["sonuc"]["kural"], "",
          "## 3. ÇİFTLER (önceden yazılı)", "", "| kod | bizim seri | referans | piyasa | açıklama |", "|---|---|---|---|---|"]
     for k, b, r, p, a in TD_CIFT:
-        L.append(f"| {k} | `{b}` | `{r}` | {'E' if p else 'H'} | {a} |")
+        L.append(f"| {k} | `{_ad(b)}` | `{r}` | {'E' if p else 'H'} | {a} |")
     L += ["", f"Teşhis sürümleri (her ana çift için, hükümden bağımsız hep hesaplanır): {TD_ESIK['teshis']}.",
           "Bilgi: ABD MOM ve STREV onluk seviyeleri D1..D10 (EW vs French EW, LQ vs French VW; piyasa eşiği).", "",
           "## 4. TANIMLAR (TD_ESIK)", "", "```json", json.dumps(TD_ESIK, ensure_ascii=False, indent=1), "```", "",
@@ -927,6 +927,11 @@ def _p(x: Any, n: int = 2) -> str:
     return f"{x:+.{n}f}".replace(".", ",")
 
 
+def _ad(s: str) -> str:
+    """Seri adı markdown tablosunda: '|' sütun ayırıcısıyla karışmasın."""
+    return str(s).replace("|", " · ")
+
+
 def _y(x: Any, n: int = 2) -> str:
     """ondalık getiri -> yüzde (işaretli)."""
     if x is None or (isinstance(x, float) and not math.isfinite(x)):
@@ -968,7 +973,7 @@ def td_rapor(J: Optional[Dict[str, Any]] = None) -> str:
         if c["tur"] == "BİLGİ":
             continue
         s = c["sonuc"]; al = s.get("alt", {})
-        L.append(f"| {c['kod']} | {c['tur']} | `{c['biz']}` | `{c['ref']}` | {s.get('n', 0)} | {_p(s.get('pearson'))} | {_p(s.get('spearman'))} | "
+        L.append(f"| {c['kod']} | {c['tur']} | `{_ad(c['biz'])}` | `{c['ref']}` | {s.get('n', 0)} | {_p(s.get('pearson'))} | {_p(s.get('spearman'))} | "
                  f"{'-' if s.get('isaret') is None else f'%{s['isaret'] * 100:.0f}'} | {_p(s.get('egim'))} | {_y(s.get('biz_ort'))} ({_p(s.get('biz_t'))}) | "
                  f"{_y(s.get('ref_ort'))} ({_p(s.get('ref_t'))}) | {_p(al.get('d1', {}).get('pearson'))} | {_p(al.get('d2', {}).get('pearson'))} | {s['hukum']} |")
     L += ["", "### Onluk seviyeleri (bilgi; piyasa eşiği)", "", "| kod | ay | Pearson | işaret | eğim | biz ort | ref ort | hüküm |", "|---|---|---|---|---|---|---|---|"]
@@ -1005,7 +1010,7 @@ def td_rapor(J: Optional[Dict[str, Any]] = None) -> str:
     L += ["", "## 5. YENİDEN ÜRETİM: " + ("TUTTU" if J["yeniden"]["tutar"] else "TUTMADI"), "",
           "Ham V_ABD.pkl'den düz pandas (OC / OS kodu kullanılmadan):", "", "| seri | tutma ayı | elle | kod | tutar |", "|---|---|---|---|---|"]
     for r in J["yeniden"]["satir"]:
-        L.append(f"| `{r['seri']}` | {r['ay']} | {r['elle']:.10f} | {('-' if r['kod'] is None else f'{r['kod']:.10f}')} | {'E' if r['tutar'] else 'H'} |")
+        L.append(f"| `{_ad(r['seri'])}` | {r['ay']} | {r['elle']:.10f} | {('-' if r['kod'] is None else f'{r['kod']:.10f}')} | {'E' if r['tutar'] else 'H'} |")
     L += ["", "French ham satırından elle (ayrıştırıcı kullanılmadan; değerler ondalık):", "", "| dosya | ay | ham satır | hesap | elle | kod | tutar |",
           "|---|---|---|---|---|---|---|"]
     for r in J["yeniden"].get("french", []):
