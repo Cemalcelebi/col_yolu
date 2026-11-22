@@ -1,0 +1,44 @@
+# TEZGÂH 2: VERİ TEZGÂHINI BÜYÜTME, ADIM 1 İNDİRME + KALİTE (iş tanımı, 22 Kasım 2026)
+
+Cemal (22 Kas): 12 aylık ölçü olmaz (genel yükseliş karışır); bölge etkisi 15-30 mumdur. Ç206: darboğaz veri tezgâhı (yaşayan ~2.000 hisse, 8 yıl; bilinen etkiler klasik yöntemle bile görünmüyor). Çözüm: aynı 15-30 mum ufkunda daha uzun geçmiş ve daha geniş evren. Tiingo hesabı ücretsiz katman (saatte 50 istek; sınandı), bu yüzden bu adım yalnız ÜCRETSİZ Yahoo: yaşayan hisseler. Batan şirketler ayrı karar (Cemal).
+
+## 0. Kontrol listesi
+```
+ÖN UÇUŞ KONTROLÜ (zorunlu; hata defterinden): kod yazmaya başlamadan önce oku, ön kayıt dosyasına KONTROL LİSTESİ tablosunu (`python IZ_KARNE.py kontrol`) doldurarak koy, raporunda 'HATA' başlığıyla bulduğun her hatayı ayrı listele.
+- K1 kontrol grubu: Eşler aynı giriş günü, aynı momentum x likidite hücresi, aynı giriş / çıkış geometrisi mi; taban rastgele olay sağlamasıyla (200 eş portföy) mi? Mekanik üstünlük (sinyal tanımının kendiliğinden ürettiği fark) dışlandı mı? [geçmiş: 22 kez (H005, H006, H026-H032, H055, H064, H100...)]
+- K2 geleceğe bakma: Her girdi alanının bilgi tarihi <= karar günü ve bu KODDA mekanik denetleniyor mu? Satır tarihi mi (sayfa / haber tarihi değil)? Etiket, evren listesi, sektör karar günündeki haliyle mi? [geçmiş: 12 kez (H003, H016, H034, H051, H130...)]
+- K3 geçerli bar: H>L ve V>0 olmayan bar sinyal ya da ölçü üretmiyor mu; hacim 0 gün fiyatı bayat sayılıyor mu; seans açıkken yarım bar atılıyor mu? [geçmiş: 2 kez aynı hata (H004, H037), H134, H141]
+- K4 tekilleştirme: Aynı hissede olay 60 günde bir mi; n bağımsız olay sayısı mı; aynı işlem bir kez mi sayılıyor; ortalama yanında medyan var mı? [geçmiş: H006 (n 4-5 kat şişkin), H014]
+- K5 giriş fiyatı: Giriş = sinyalden (yayın saatinden) sonraki ilk işlem fiyatı mı (ertesi açılış), sinyal günü kapanışı değil mi? [geçmiş: H005, 60 gün ufuk itirazı]
+- K6 veri birimi: Fiyat tek kipte mi (ekran fiyatı ya da düzeltilmiş, karışık değil); birim (lot / TL, peni / sterlin, 100x), bölünme marjı (12.03.2020 öncesi +-%20), bedelsiz denetlendi mi; yeni pazar birim denetiminden geçti mi? [geçmiş: veri 34 satır (H007, H017, H060...)]
+- K7 hayatta kalma: Evren bugünün listesi mi? Batanlar / kottan çıkanlar yoksa raporda yazılı ve sonuç 'yukarı yanlı' okunuyor mu? [geçmiş: 8 kez (H008, H057, H142...)]
+- K8 örneklem ve dönem: n < 30 'örneklem yetersiz' ve olaylar tek tek listeli mi; iki alt dönem aynı yönde mi; çoklu karşılaştırma BH ile mi; küçük örneklemden 'bulgu' denmiyor mu? [geçmiş: H010, Ç169 n 11, K1 / K2 n < 30]
+- K9 ön kayıt: Tanım + eşik sözlüğü + kod sha ön kayıtta; ön kayıt commit zamanı < koşu zamanı; sonuçtan sonra yalnız gösterim değişti, aksi SAPMA; eşik sonuca göre oynanmadı mı? [geçmiş: H079, H097 (ön kayıt geç commit)]
+- K10 ayrıştırma: Ham kaynaktan rastgele >= 3 satır elle doğrulandı mı; haber türü (günlük / aylık / dönemsel), kurum etiketi (çok kurumlu haber), kenar kuşağı çöpü, güncelleme damgası, kurum adı hisse satırı dört ayrı denetim maddesi olarak kontrol edildi mi? [geçmiş: 5 kez tek günde (H128-H132, H136)]
+- K11 yeniden üretim: Raporlanan >= 2 hücre satır dosyasından bağımsız kodla yeniden üretildi mi; metindeki sıra / tarih / sayı ham kayıtla aynı mı? [geçmiş: H136 (PEKGY 1. / 4.), H137 (blok filtresi)]
+- K12 ifade: Fiyat değişimi ile gerçekleşen kâr / zarar ayrı mı; aracı kurum akışı ile kurum pozisyonu ayrı mı; 'anlamlı / ters / iz / emare' sözü yalnız bu liste geçince mi; sayı ile yorum ayrı cümlede mi? [geçmiş: yanlış yorum 16 satır (H133, H135...)]
+- K13 süreç: Çakışma kapısı korundu mu; kod değiştiyse 'çalışma zamanını yeniden başlat' yazıldı mı; e-posta / anahtar sızıntı taraması yapıldı mı; kota / ücret / yeni dal Cemal onayıyla mı; yasak defter dosyalarına dokunulmadı mı? [geçmiş: süreç 21 satır (H019, H021, H143...)]
+- K14 boyut (gerçek para): Öneri işinde boyut tavanı, zarardaki isme ekleme yasağı, olay bazlı çıkış ve 2x kuralı alımdan önce yazılı mı; taban oranlar (10x ~%1) yazılı mı? [geçmiş: karar-boyut 6 satır (H012, H013)]
+```
+
+## 1. ROL VE YASAKLAR
+- Sen VERİ AJANISIN: yalnız indirme, biçimleme, kalite denetimi. GETİRİ / OLAY / SİNYAL ÖLÇÜMÜ YASAK (hiçbir hipotez, kontrol kartı, ileri getiri hesabı yok). Ham veriyi (2024+ dahil) görmen işin gereği; bu yüzden ölçüm yapamazsın ve ölçüm kodlarına veri vermezsin.
+- Çıktı verisi YALNIZ /root/.kasa/ham/veri3/ altına yazılır (repo, /tmp/veri, /tmp/veri2, /tmp/kasa DIŞI). /tmp/veri, /tmp/veri2, /tmp/kasa'ya DOKUNMA (kasa açık verisi). Repoya veri (.pkl, .csv, .parquet) girmez; repoya yalnız kod + rapor + küçük json girer.
+- DEĞİŞTİRİLMEZ: defter dosyaları (IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md, KURAL_DEFTERI_TASLAK.md, CEMAL_COL_KURALLARI.md, HAKEM_DERSLER.md, TUR_DEFTERI.md) ve bütün mevcut .py modülleri, arastirma_cikti/kart/, arastirma_cikti/kasa/. Yeni kod: TEZGAH2_VERI.py + test_tezgah2_veri.py (tek dosya, çakışma kapısı, tam hata yakalama, loglama, kaldığı yerden devam).
+- Dış istekler: yalnız Yahoo (yfinance 1.8.0 kurulu) ve gerekirse evren listesi için SEC company_tickers.json'ın YEREL kopyası (aşağıda) ya da nasdaqtrader symbol dizini. İsteklerde e-posta, isim, proje adı YOK; genel istemci. Tiingo'ya istek ATMA (saatlik kota). git add -A yok. Commit sonu iki satır AYNEN: 'Co-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>' ve 'Claude-Session: https://claude.ai/code/session_01F7vgWZPNpBhrsGQEHDtRis'; push `git push -u origin ccr-27195a1e-djv6v3`. Uzun indirme nohup + ilerleme logu; yarım teslim yok. Rapor SubagentHandback.
+
+## 2. EVREN
+- ABD: bugün işlem gören bütün ABD adi hisseleri (NYSE / Nasdaq / NYSE American). Liste kaynağı sırayla: (a) nasdaqtrader.com symbol directory (nasdaqlisted.txt, otherlisted.txt; erişilemiyorsa) (b) `git worktree add /tmp/iv_veri origin/islenmis-veri` içindeki secfs/company_tickers.json (bu daldan YALNIZ bu liste dosyası ve avr/ evren listesi okunur; V_*.pkl açılmaz). Elenir: ETF / ETN / fon (evren_disi kuralı: K55_EVREN_DISI.csv varsa uygula), warrant / unit / right / preferred (kod ekleri W, U, R, -P, .WS vb.), test sembolleri. ADR ve SPAC ayrı bayrakla işaretlenir (elenmez; bayrak sütunu). Mevcut V_ABD'deki 1.411 sembolün hepsi listede olmalı (/root/.kasa/ham/veri/V_ABD.pkl yalnız SEMBOL LİSTESİ ve kalite karşılaştırması için okunur).
+- AVR: mevcut evren (islenmis-veri dalı avr/ listesi ya da /root/.kasa/ham/veri/V_AVR.pkl sembolleri; 581). Yeni Avrupa hissesi eklenmez (liste kararı sonra).
+- BIST: bu adımda yok.
+
+## 3. İNDİRME VE BİÇİM
+- Dönem 2000-01-03 -> bugün (veri sonu yazılır). Günlük OHLCV. Fiyat kipi: mevcut V_ABD / V_AVR ile AYNI (FON_IZI.fi_k1_veri ve V_*.pkl yapısını oku: sütunlar, ayarlı / ayarsız, Kur sütunu, indeks tipi; aynen üret). AVR için Kur (EUR çevirimi) aynı yöntemle.
+- yfinance toplu indirme (parça 50-100 sembol), nazik hız, 3 yeniden deneme, başarısızlar listesi; aynı sembol iki kez indirilmez (kaldığı yerden devam; ham parçalar /root/.kasa/ham/veri3/ham/).
+- Çıktı: /root/.kasa/ham/veri3/V_ABD2.pkl, V_AVR2.pkl (V_*.pkl ile aynı yapı; ORTAK_CETVEL.oc_veri okuyabilmeli: yalnız yapı testi, ölçüm değil) + evren2_ABD.csv (sembol, borsa, ad, ADR / SPAC bayrağı, ilk / son bar, bar sayısı; bu dosya da veri3'te).
+
+## 4. KALİTE DENETİMİ (rapora; getiri ölçümü değil, veri tutarlılığı)
+(a) Kapsam: sembol sayısı, yıl yıl aktif hisse sayısı (2000-2026), ilk bar dağılımı; indirilemeyenler ve nedenleri. (b) Eski veriyle örtüşme: V_ABD (1.411) ve V_AVR (581) ile ortak hisse-günlerde kapanış oranı (yeni / eski) hisse başına sabit mi (ayar kipi farkı = sabit çarpan olabilir; günlük oran oynuyorsa ayar tutarsız): oranın hisse içi değişim katsayısı dağılımı, > %1 olan hisse listesi; OHLC ve hacim için de. (c) Bar geçerliliği: H < L, O / C aralık dışı, hacim 0, H = L gün payları yıl yıl; |günlük getiri| > %50 gün sayısı ve bunların bölünme olayıyla eşleşme payı (yfinance splits). (d) Bölünme / birim: sıçra-geri dön (tek günlük > %40 ve ertesi gün geri) sayısı; ters bölünme sonrası süreklilik. (e) Yinelenen / eski adlı semboller (aynı şirketin iki kodu), sınıf payları (GOOG / GOOGL) bayrağı. (f) HAYATTA KALMA NOTU: evren yalnız bugün yaşayanlar; 2000-2010 yıllarında aktif hisse sayısı gerçek sayının kaçta kaçı olabilir (yalnız sayım; kaynak yoksa 'bilinmiyor' yaz). Her bulgu sayıyla; şüpheli semboller listesi veri3/supheli.csv.
+
+## 5. TESLİM
+TEZGAH2_VERI.py + test (sentetik: biçim, devam, kalite fonksiyonları) commit 'TEZGÂH 2 veri kodu'; indirme + kalite; arastirma_cikti/tezgah2/TEZGAH2_VERI_RAPOR.md + tezgah2_veri.json (sayımlar; fiyat yok) commit 'TEZGÂH 2 veri raporu'. SubagentHandback: commit'ler, sembol sayıları (ABD / AVR; indirilen / başarısız), yıl yıl aktif hisse (2000, 2005, 2010, 2015, 2020, 2025), eski veriyle tutarlılık özeti, kalite sayıları, dosya yolları ve boyutları, veri sonu tarihi, HATA, KONTROL LİSTESİ (K2, K3, K6, K7, K10, K13 dolu; ötekiler UYGULANMAZ).
