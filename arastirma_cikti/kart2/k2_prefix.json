@@ -1,0 +1,265 @@
+{
+ "surum": "KART_TUR2 v1.0 (2026-11-22): 14 kart (KT00 / KT13 kontrol + KT01-KT12), geniş tezgâh P2, R15 / R30 karar, KASA 2 yürüyen ileri test",
+ "esik_sha": "ca747d20f2fd6960fddabf1462dd440bed1a18dd2fe526c0a32c0c8d1aee8c8d",
+ "kod_sha": "8baed7940c5422d5d3923dfb50b9b2bd22a6e58446b56e789e21a2fdea7c0842",
+ "kasa": {
+  "kesik": "2023-12-31",
+  "dosya": {
+   "/tmp/kasa2/acik/V_ABD2.pkl": "2023-12-29",
+   "/tmp/kasa2/acik/V_AVR2.pkl": "2023-12-29"
+  }
+ },
+ "prefix": {
+  "ABD": {
+   "sinyal": {
+    "Y1": {
+     "n_tam": 166791,
+     "n_kisa": 166791,
+     "esit": true
+    },
+    "DS": {
+     "n_tam": 848969,
+     "n_kisa": 848969,
+     "esit": true
+    },
+    "D9": {
+     "n_tam": 451259,
+     "n_kisa": 451259,
+     "esit": true
+    },
+    "BOFA": {
+     "n_tam": 4265,
+     "n_kisa": 4265,
+     "esit": true
+    }
+   },
+   "olay": {
+    "KT01": {
+     "n_tam": 50225,
+     "n_kisa": 50225,
+     "esit": true
+    },
+    "KT02": {
+     "n_tam": 1934,
+     "n_kisa": 1934,
+     "esit": true
+    },
+    "KT03": {
+     "n_tam": 43733,
+     "n_kisa": 43733,
+     "esit": true
+    },
+    "KT04": {
+     "n_tam": 21664,
+     "n_kisa": 21664,
+     "esit": true
+    },
+    "KT05": {
+     "n_tam": 47760,
+     "n_kisa": 47760,
+     "esit": true
+    },
+    "KT06": {
+     "n_tam": 29817,
+     "n_kisa": 29817,
+     "esit": true
+    },
+    "KT07": {
+     "n_tam": 835,
+     "n_kisa": 835,
+     "esit": true
+    },
+    "KT11": {
+     "n_tam": 2595,
+     "n_kisa": 2595,
+     "esit": true
+    },
+    "KT12": {
+     "n_tam": 3915,
+     "n_kisa": 3915,
+     "esit": true
+    },
+    "KT08": {
+     "n_tam": 25758,
+     "n_kisa": 25758,
+     "esit": true
+    },
+    "KT09": {
+     "n_tam": 959,
+     "n_kisa": 959,
+     "esit": true
+    },
+    "KT10": {
+     "n_tam": 379803,
+     "n_kisa": 379803,
+     "esit": true
+    },
+    "KT00": {
+     "n_tam": 38054,
+     "n_kisa": 38054,
+     "esit": true
+    },
+    "KT13": {
+     "n_tam": 39378,
+     "n_kisa": 39378,
+     "esit": true
+    }
+   },
+   "tutar": true
+  },
+  "AVR": {
+   "sinyal": {
+    "Y1": {
+     "n_tam": 33730,
+     "n_kisa": 33730,
+     "esit": true
+    },
+    "DS": {
+     "n_tam": 112772,
+     "n_kisa": 112772,
+     "esit": true
+    },
+    "D9": {
+     "n_tam": 0,
+     "n_kisa": 0,
+     "esit": true
+    },
+    "BOFA": {
+     "n_tam": 166,
+     "n_kisa": 166,
+     "esit": true
+    }
+   },
+   "olay": {
+    "KT01": {
+     "n_tam": 10567,
+     "n_kisa": 10567,
+     "esit": true
+    },
+    "KT02": {
+     "n_tam": 180,
+     "n_kisa": 180,
+     "esit": true
+    },
+    "KT03": {
+     "n_tam": 9231,
+     "n_kisa": 9231,
+     "esit": true
+    },
+    "KT04": {
+     "n_tam": 4804,
+     "n_kisa": 4804,
+     "esit": true
+    },
+    "KT05": {
+     "n_tam": 9881,
+     "n_kisa": 9881,
+     "esit": true
+    },
+    "KT06": {
+     "n_tam": 6582,
+     "n_kisa": 6582,
+     "esit": true
+    },
+    "KT07": {
+     "n_tam": 66,
+     "n_kisa": 66,
+     "esit": true
+    },
+    "KT11": {
+     "n_tam": 533,
+     "n_kisa": 533,
+     "esit": true
+    },
+    "KT12": {
+     "n_tam": 728,
+     "n_kisa": 728,
+     "esit": true
+    },
+    "KT08": {
+     "n_tam": 3902,
+     "n_kisa": 3902,
+     "esit": true
+    },
+    "KT09": {
+     "n_tam": 53,
+     "n_kisa": 53,
+     "esit": true
+    },
+    "KT00": {
+     "n_tam": 7731,
+     "n_kisa": 7731,
+     "esit": true
+    },
+    "KT13": {
+     "n_tam": 7738,
+     "n_kisa": 7738,
+     "esit": true
+    }
+   },
+   "tutar": true
+  }
+ },
+ "onbellek": {
+  "ABD": {
+   "pazar": "ABD",
+   "kesik": "2023-12-31",
+   "kod_sha": "8baed7940c5422d5d3923dfb50b9b2bd22a6e58446b56e789e21a2fdea7c0842",
+   "esik_sha": "ca747d20f2fd6960fddabf1462dd440bed1a18dd2fe526c0a32c0c8d1aee8c8d",
+   "tablo_sha": {
+    "Y1": "626dbe865997da1e92008c0e98c13d19c5e8e81b0b0650c74b67cf6f815e8b8f",
+    "DS": "631ec4c37af83382d23fb1619547d08e2431a1e7c7874b554388dd04c5f048e6",
+    "D9": "dc5f429d1227a2b5e3daf4ffc2d1d067b78c99ff25143e78270f00b0880c0222",
+    "BOFA": "3c0c4fcb6413feac491424fda2630b28c27c95f4f6a0c8966e2f34740e2e16ca"
+   },
+   "satir": {
+    "Y1": 184021,
+    "DS": 1037337,
+    "D9": 519641,
+    "BOFA": 6166
+   },
+   "zaman": "2026-11-22 12:32:01 UTC",
+   "dosya_sha": "463f4afd9818af6c5b95b1274074a9bb44853ee92c58744bafc9ada1e27e1e42"
+  },
+  "AVR": {
+   "pazar": "AVR",
+   "kesik": "2023-12-31",
+   "kod_sha": "8baed7940c5422d5d3923dfb50b9b2bd22a6e58446b56e789e21a2fdea7c0842",
+   "esik_sha": "ca747d20f2fd6960fddabf1462dd440bed1a18dd2fe526c0a32c0c8d1aee8c8d",
+   "tablo_sha": {
+    "Y1": "42be17b1c4c38f21d243ab3ffe927b294cd0e58bd7a8683eebd5cda28c3d4449",
+    "DS": "607c9716e71bc7086afda755a4d14abe18850e4a556f1741feadfbdf645df590",
+    "D9": "3ee3474680a56f4f93609bdd95ec163826fa31d3c8b0aaf16c7bb24ca8712996",
+    "BOFA": "c900133102007b01629fcdbdc9f543c789033242c9a8863fc0785cead84935ad"
+   },
+   "satir": {
+    "Y1": 36625,
+    "DS": 129417,
+    "D9": 0,
+    "BOFA": 177
+   },
+   "zaman": "2026-11-22 12:55:19 UTC",
+   "dosya_sha": "eba0fd824e10afa63467daca83957a736beab28d8505d949316a7b862bf15261"
+  }
+ },
+ "ds_kopya": {
+  "ABD": {
+   "n": 200,
+   "esit": 200,
+   "durum_gunu": 43280
+  },
+  "AVR": {
+   "n": 200,
+   "esit": 200,
+   "durum_gunu": 45085
+  }
+ },
+ "sure": {
+  "ABD_tam": 1149,
+  "ABD_kisa": 847,
+  "AVR_tam": 332,
+  "AVR_kisa": 137,
+  "toplam": 2470
+ },
+ "zaman": "2026-11-22 13:00:23 UTC"
+}

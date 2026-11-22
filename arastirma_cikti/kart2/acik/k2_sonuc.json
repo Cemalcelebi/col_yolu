@@ -1,0 +1,140 @@
+{
+ "surum": "KART_TUR2 v1.0 (2026-11-22): 14 kart (KT00 / KT13 kontrol + KT01-KT12), geniş tezgâh P2, R15 / R30 karar, KASA 2 yürüyen ileri test",
+ "durum": {
+  "acilan": [],
+  "blok_sayi": 0,
+  "bakis_no": 0,
+  "muhur_id": "32d362ecaae2e2da",
+  "durum_sha": "df6923bf0ab5376e99e97fa21f121eb3d30e7513ce4b1b4cc59f00d1627d7c6b"
+ },
+ "kesik": "2023-12-31",
+ "kasa": {
+  "kesik": "2023-12-31",
+  "dosya": {
+   "/tmp/kasa2/acik/V_ABD2.pkl": "2023-12-29",
+   "/tmp/kasa2/acik/V_AVR2.pkl": "2023-12-29"
+  }
+ },
+ "onkayit_kapi": {
+  "not": "blok yok (açık veri kuru koşusu); ön kayıt kapısı aranmaz"
+ },
+ "yeniden": {
+  "tuttu": true,
+  "hucre": [
+   {
+    "hucre": "KT01 ABD R15 acik_d3",
+    "n": 27176,
+    "fark": -0.002261640883038292,
+    "sira": 0.49134488775335683,
+    "esit": true
+   },
+   {
+    "hucre": "KT08 AVR R30 acik_d2",
+    "n": 1258,
+    "fark": 0.00645289309076718,
+    "sira": 0.5049644495495362,
+    "esit": true
+   }
+  ],
+  "acik": {
+   "yapildi": false
+  }
+ },
+ "en_gec": {
+  "satir_en_gec_giris": "2023-12-29",
+  "olculen_son_giris": {
+   "15": "2023-12-08",
+   "30": "2023-11-16"
+  }
+ },
+ "onbellek": {
+  "ABD": {
+   "Y1_onbellek": {
+    "eski": 184021,
+    "yeni": 0
+   },
+   "DS_onbellek": {
+    "eski": 1037337,
+    "yeni": 0
+   },
+   "D9_onbellek": {
+    "eski": 519641,
+    "yeni": 0
+   },
+   "BOFA_acik_son_bar": 0,
+   "BOFA_onbellek": {
+    "eski": 6166,
+    "yeni": 0
+   },
+   "sayi": {
+    "Y1": 184021,
+    "DS": 1037337,
+    "D9": 519641,
+    "BOFA": 6166
+   }
+  },
+  "AVR": {
+   "Y1_onbellek": {
+    "eski": 36625,
+    "yeni": 0
+   },
+   "DS_onbellek": {
+    "eski": 129417,
+    "yeni": 0
+   },
+   "D9_onbellek": {
+    "eski": 0,
+    "yeni": 0
+   },
+   "BOFA_acik_son_bar": 0,
+   "BOFA_onbellek": {
+    "eski": 177,
+    "yeni": 0
+   },
+   "sayi": {
+    "Y1": 36625,
+    "DS": 129417,
+    "D9": 0,
+    "BOFA": 177
+   }
+  }
+ },
+ "sha": {
+  "esik": {
+   "KART_TUR2.py": "8baed7940c5422d5d3923dfb50b9b2bd22a6e58446b56e789e21a2fdea7c0842",
+   "K2_ESIK_SHA": "ca747d20f2fd6960fddabf1462dd440bed1a18dd2fe526c0a32c0c8d1aee8c8d",
+   "YH_Y10_ESIK_SHA": "b4ed76a3d6dc594b4e6e38af083c93e54b06958293b9988211065b0b37bdd235",
+   "YH_Y11_ESIK_SHA": "e3ab7a3b3e81c36baf443975e5595158f0a61b45e09be526323200e24bceacf0",
+   "YH_ESIK8_SHA": "d28e8257274a85e0301d262d5808e51460fb944f4e5dd56a5f7ade762b03b09c",
+   "GE_OZELLIK_SHA": "68ea14bd5e5d31e0334eb55f953dd273fcb40a898c8441ba302584a74acfa206",
+   "DS_OLAY_SHA": "167f3feb96c7a54970319691c1ebc9fb411046bc741ed65ce8b9171c0966229c",
+   "OC_ESIK_SHA": "4763c4586262b7a60c55fbe43d9b21855b0a2afd9e579331984d3fba8b48491e",
+   "OS_ESIK_SHA": "4bdc1d0617daed80531095f246e3d6c5e3c594374fd3021595c038b26bf441ab",
+   "T2_ESIK_SHA": "0c9b1d2ce8f326e4db5f804bbf0acb01f4c345d60e9b297ebff0fd5293d8d980",
+   "DP_KURULUM_SHA": "e84a409896b6885bcb9aedec431797a43638cae4aa87c86bf375a0f76316bbf2",
+   "D9_PARAM_SHA": "73dde4dbed813dc26779d522cbf2d74173571eabaf5f6b0ba0b72c30583e85e8"
+  },
+  "bagimli": {
+   "KART_TUR1.py": "334cc4f9bdafef0accf754b229626eb92010d519ba23dc8e9037a14f8713640b",
+   "YAPI_HEDEF.py": "812d188c20a64e27f351764ec462969b352322b7763181e696e24dca392ea95e",
+   "GOZ_ETIKET.py": "76d5c76b3a545ed585634d2994b66c11f4cdc1af924e2d31da1611595503bd9d",
+   "DUSUS_SONRASI.py": "b3b3a2154c68d77f61dcd7d2246262bd08753e4ee3735a78b83659ba9ca46ddf",
+   "BOFA_IZI.py": "fdbf98dfcfcf63d67ce8ac5e3e598084d30fcd0376ac63a27f31e39aaafc87b6",
+   "D9_YENIDEN.py": "a759d916915f2fc97f8258933fc5ce7d1b2cb8f6036691e1531e5d140c6bb80c",
+   "ORTAK_CETVEL.py": "7bd6f6db4bbc10b83ba926ddbbfb74556909400f73f10168e8a5124ccc6e28eb",
+   "OLCU_SINAMA.py": "86c8402136e0b77f9e95d5f75556251728ae48f59647cc6f97d91cf38eead087",
+   "TEZGAH2_DOGRULAMA.py": "843b326cd53419c82a5e0eff593cbe615576c2fc0878da3e0a40d792088b4a91",
+   "TEZGAH_DOGRULAMA.py": "24232ab516bae5699306e9d9e60f5c24121421b7f1206a08a68a7fae7aeda702",
+   "KASA.py": "3db7b60d44bee8234c7c41e42ba7a8c3a3fc43803222a1f7e06adc154d41805b",
+   "S6_TABAN.py": "ebfc5ae01ee1c7653923f2c3817d23f937f359ca5307f6daacc0ff504a947c2d",
+   "SIKISMA_YENIDEN.py": "ecc369cd01edacfcf965713dddb18cf9baeacca32a4d3994558c58ebc6cd19ae",
+   "CETVEL2.py": "2c0fd9b9968515f1acea03da31cb550b9d7e0d837391139e1194da6eb39530e6",
+   "POZITIF_KONTROL.py": "896a70ed704442531a0a4d747dff23fe241ac623b4c3a192114395baa5876fd6",
+   "sektor_ABD.csv": "f715c532d83cce13c53927a8134442f5f1be60c65322ecc60321f0ad355eef32",
+   "arastirma_cikti/tezgah2/tezgah2_hazirlik.json": "baba2309e2968828a60b78fa69505f241f6716dde113081b8c6f5fe934447ea8",
+   "arastirma_cikti/kasa/KASA2_MANIFEST.json": "29ebf402cbedfffe441b3321e629b6fd8fa7cfa590137dce44ce1de0362b21e8",
+   "arastirma_cikti/k55_dallanma/K55_EVREN_DISI.csv": "e080ba048c071e063b40c1b9e7d97f0c62aefbf59d974651cf229dd6b8478da9"
+  }
+ },
+ "acik_tablo_sha": "e28d59b0f050f70d8a666b15438862293f9862cedb3c43a22c33e28f37b347f9"
+}
