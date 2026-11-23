@@ -1,0 +1,39 @@
+46449 bayt; 12 test
+K51 sonrası denetim v1.2 (ön kayıt 78ea2ff+8e99902; kod cy_v12_calistir; tek koşu 10,6 dk, tohum 512) 12 satıra ayrıldı: 6 veri bütünlüğü/kırılganlık denetimi (V1-V3, V4/V8, V5-V6-V8, V7, kaynak kırılımı, hisse/yıl/rejim kırılımı), 5 ön kayıtlı hipotez (H-A..H-E, Holm) ve ön kayıtta tanımlı ama çıktıda bulunmayan H-A K51-tabanı karşılaştırması. Ön kayıt, 5 çıktı, kod, git diff ve ESLESMIS/EVREN_PIT dosyaları okundu; 'kendi hesabım' ibareli sayılar bu dosyalardan yeniden hesaplandı. Sınıf dağılımı: B 4, C 4, D 4... (B: T01, T04, T07, T09, T10; C: T03, T05, T06, T08; D: T02, T11, T12).
+K51B-T01 B V1-V3: sayı uzlaşması, point-in-time evren tablosu, 2016-20 evreni | kusur: 3
+K51B-T02 D V4/V8: çıkış sınıflaması ve kod yeniden kullanımı denetimi | kusur: 3
+K51B-T03 C V5/V6/V8: delist (-%30/%0/-%100), ham fiyat ve kod kesme duyarlılığı (P1/P2/HT) | kusur: 4
+K51B-T04 B V7: eski kod (b3835d8) – yeni kod (v1.2) karşılaştırması | kusur: 4
+K51B-T05 C Kırılganlık: kaynak kırılımı (V_ABD / K34 Yahoo / K34 Tiingo) ve hayatta kalma y | kusur: 4
+K51B-T06 C Kırılganlık: hisse katkısı, yıl, rejim, örtüşme ve iki kümeleme | kusur: 4
+K51B-T07 B H-A: sert düşüş + yataylaşma (ÇEK) > eşleşmiş genel kontrol | kusur: 6
+K51B-T08 C H-B: küçük mum imzaları (P1) > ÇEK içi imzasız eşler (ES) | kusur: 5
+K51B-T09 B H-C: ÇEK + hacim kuruması > ÇEK hacim kurumasız (öteki imzalar eşit) | kusur: 4
+K51B-T10 B H-D: hacimli taban (HT) > eşleşmiş genel kontrol; ÇEK ile bağımsızlık | kusur: 4
+K51B-T11 D H-E: P1 etkisi rejime göre (SPY 200 gün ortalaması AYI / BOĞA) | kusur: 4
+K51B-T12 D H-A için K51 tabanı karşılaştırması (ön kayıtta 'bilgi' olarak tanımlı, çıktıda  | kusur: 2
+birim kusurları: ["'Bağımsız' denetim aynı yazar, kod, panel ve olay/etiket tanımıyla yapıldı; 2023 ve 2024-26 K51'de görüldü, 2016-22 K51 ızgara/meta seçiminde kullanıldı, H-A..H", 'Hayatta kalma yanlılığı çözülmedi: V_ABD ve 2016-20 yalnız bugün işlem görenler, evrende 19 doğrulanmış iflas (K54); delist senaryoları hiçbir olayı etkilemediğ', "Hayatta kalma, şirket türü ve dönem kaynak değişkeninde karışık; 421 K34-işaretli sembol V_ABD'de; sektör sınıflaması iki sistemden (Yahoo / SIC) olduğu için eş", "Çoklu test: Holm yalnız 5 hipotezin 2023-26 birleşik p'sinde; aile K51 H1-H10, B1-B9, D1 ve K52-K54'ü (aynı veri) içermiyor; kırılganlıkta ~84 düzeltmesiz aralı"]
+{
+ "test_id": "K51B-T01",
+ "ad": "V1-V3: sayı uzlaşması, point-in-time evren tablosu, 2016-20 evreni",
+ "soru": "ABD evren sayıları (3.267 / 2.752 / 515) uzlaşıyor mu, evren sinyal gününde bilinen bilgiyle mi kuruldu, 2016-20 yalnız hayatta kalanlardan mı oluşuyor?",
+ "olculen_davranis": "Davranış ölçülmüyor; evren envanteri: K51_EVREN_PIT.csv (3.267 satır: sembol, CIK, kaynak, evren girişi, ilk/son fiyat günü, çıkış türü tahmini) ve yinelenen K34 kodları.",
+ "alanlar": [
+  "A8",
+  "A1"
+ ],
+ "veri_kaynagi_kapsam": "V_ABD.pkl (Yahoo, düzeltilmiş, bugün işlem gören; 2015-06→), k34_yahoo.pkl, Tiingo adj CSV (449 dosya, lisans gereği repoda yok), k34_evren.csv. Fiyat 31.08.2026'da kesik; sinyal 2016-01→05.06.2026.",
+ "orneklem": "3.267 tekil sembol = 1.410 V_ABD + 1.435 K34 Yahoo + 422 K34 Tiingo; 2.752 likit; 515 likitsiz; panel 3.175.671 likit hisse-gün; 4 yinelenen kod (BG, RDUS, SBGI, ZYME) farklı CIK.",
+ "batan_delist_birlesme": "V_ABD'de yok. Tiingo 422'nin 257'si 01.08.2026 öncesi bitiyor (ağırlık 1,83). 2021 öncesi evrende 1.203 sembol var, hepsi V_ABD: 2016-20 yalnız hayatta kalanlar, doldurulmadı (V3).",
+ "olay_baslangici": "Evren girişi: V_ABD seri başı (934'ü 2015); K34 ilk SEC nakit pisti bildirimi (>= 2021-01-08). Olay tanımı bu testte yok.",
+ "gozlem_birimi": "Sembol (şirket) envanteri; panel birimi hisse-gün.",
+ "bagimli_gozlem": "Uygulanmaz. Aynı kodun iki CIK'i ayrı yazıldı; yüklemede ilk satır alınır, ikincisi atlanır (cy_veri_yukle satır 334).",
+ "eslestirme": "Yok.",
+ "sizinti_secim_yanliligi": "V_ABD girişi bugün hayatta olmaya koşullu (geleceğe bakan seçim). K34 girişi bildirim tarihi; ilk_giris üretimi bu çıktılarda doğrulanamadı. fiyat_min >= 1 $ düzeltilmiş kapanışa uygulanıyor (satır 1852); ters bölünen şirket geçmişte >1 $ görünür (çıkarım).",
+ "coklu_test_asiri_uyum": "Karar üretmez; çoklu test yok.",
+ "mekanizma_ayirt_edebilir_mi": "KISMEN: sayı uzlaşmasını ayırt eder; 'point-in-time' ve hayatta kalma sorusunu V_ABD için ayırt edemez (giriş sonuca koşullu).",
+ "negatif_dislananlar": "Sayım ve çift yükleme hatalarını dışlar (3.267 = 1.410+1.435+422; tekillik testi 13).",
+ "negatif_dislanmayanlar": "Hayatta kalma yanlılığının büyüklüğünü, 2016-20'de dışlanan batanları, gerçek tarihsel üyeliği, fiyat_min'in ham fiyat karşılığını.",
+ "sonuc": "Kayıt: sayılar uzlaşıyor (3.267 / 2.752 / 515); 4 yinelenen kod farklı CIK; 2016-20 yalnız bugün işlem görenler ('iyimser olabilir' notu). Karar yok.",
+ "sinif": "B",
+ "sinif_gerekcesi": "Sayıla

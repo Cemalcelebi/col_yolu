@@ -1,0 +1,64 @@
+89:| 2026-10-29 | K51 sonrası bağımsız araştırma planı + 11 maddelik ön kayıt eki: veri bütünlüğü, kırılganlık, model eklemeden beş hipotezi ayır, eşleşmiş kontroller, test disiplini, beş çıktı dosyası; K51 kararını değiştirme; �
+90:| 2026-10-29 | K51 — grafik izi + analist revizyonları: yeni araştırma görevi (önce veri kaynağı ve tarihsel kapsam denetimi; A-H değişkenleri ayrı; sızıntı kuralları; dört grup; H1-H6 ön kayıt; K51 ölçütü; altı çıktı; K51 kararı
+193:| Ç132 | 2026-10-29 | ABD ÇÖL YOLU, AKADEMİK YÖNTEMLERLE: sert düşüş -> küçük mumlu sıkışma (P1 oluşurken) -> kırılım (P2); batanlar dahil ABD evreni (1.411 + 1.435 nakdi biten + 422 batan); üçlü bariyer (+%20 / -%10 / 60 gün; ayrıc
+194:| Ç133 | 2026-10-29 | KIRILIM DEVAMLILIĞI GİRİŞİ: P2 kırılımından sonra 10 gün kapanışlar kutu tavanı üstünde kalırsa 11. gün al (K51-D1; veri esinli, bağımsız hücreler ABD 2016-22 + Avrupa) | COL_YOLU_ABD.py (betik k51d1) | Keşif (�
+195:| Ç134 | 2026-10-29 | K51 SONRASI BAĞIMSIZ DENETİM (v1.2): veri bütünlüğü (sayı uzlaşması, point-in-time evren, çıkış sınıflaması, delist / ham fiyat / kod yeniden kullanımı duyarlılığı, eski-yeni kod), kırılganlık (kaynak, hisse
+196:| Ç135 | 2026-10-29 | K52 GRAFİK İZİ + ANALİST REVİZYONLARI (v1.3): Yahoo analist not günlüğü ile K51 izlerine (P1, P2) olay öncesi 20 işlem günü içindeki yeni olumlu revizyonun (tavsiye yükseltme / hedef fiyat yükseltme / alım notuyla ba
+197:| Ç136 | 2026-10-29 | K53 BİLGİ DİRENCİ (v1.4): ilk olumlu analist revizyonundan sonraki 5 günde fiyat zayıf + satış baskısı azalıyor + oynaklık düşüyor (BDS 0-3); analist dağınıklığı (ADE, hedef fiyat değişim katsayısı); karar ge
+198:| Ç137 | 2026-10-30 | K54 TARİHSEL HİSSE EVRENİ SAĞLAMLIK DENETİMİ (v1.5): 3.267 sembol SEC başvuru geçmişi (8-K 1.03 / 2.01, 25-NSE, birleşme belgeleri, 10-K / 10-Q devamı, güncel semboller) + Tiingo sembol listesi (bitiş tarihi) + company_t
+199:| Ç138 | 2026-10-30 | K55 DALLANMALI İZ ARAMA — FAZ 0 (tam evren) + FAZ 1 (63 OHLCV hücresi, yalnız KEŞİF 2016-21) + vekil kıyası: büyük yükselişlerden (Y60 +%30 / Y120 +%50 / Y250 +%100; giriş ertesi gün açılışı; örtüşmez) ÖNCE ya
+200:| Ç139 | 2026-10-30 | K56 K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI — FAZ 0: bütün K51-K55 bulgularının envanteri, mekanizma hipotezleri (M01-M19), veri kaynakları (28; kapsam / gecikme / maliyet / lisans), küçük örneklem erişim testi (12 sembo
+201:| Ç140 | 2026-10-31 | K56-F1A FAZ 1 YEREL (KEŞİF 2016-21, keşif verisi yeniden kullanımı): K55'in KEŞİF'i sağlayan 125 (hücre, varyant, ufuk) satırında seçimsiz kontrol (A1: (i) ilk geçiş, (ii) bütün nitelikli günler, (iii) olay dizisinde
+202:| Ç141 | 2026-10-31 | K56-IC İÇ DOĞRULAMA 2022-23: yalnız önceden belirlenmiş 125 satır / 64 varyant; B1 K55 A (ilk geçiş), B2 seçimsiz kontrol (belirleyici), B3 K55 B (eşleşmiş ileri getiri), B4 bileşim + A2; BAĞIMSIZ 2024-26 kapalı (kod 
+203:| Ç142 | 2026-10-31 | K56-EVREN2 BATAN ŞİRKETLERLE EVREN v2 (aday ve hazırlık): Ö1 K34 eşleme kuralı (212), Ö2 Tiingo listesinden KEŞİF döneminde biten adi hisseler (278, tohum 56; havuz 1.626); SEC geçmişi ve ön sınıf; Tiingo indirici (1 
+204:| Ç143 | 2026-10-31 | K56-AYR (iii) RASTGELE GÜN / BÜTÜN GÜNLER AYRIŞMASI (KEŞİF + İÇ, yapay veri denetimiyle): 125 satırda olay ağırlıklı E1 ile gün ağırlıklı E2 farkı (G = işaret × (E1 − E2) = −Cov(L, f) / ort L), olay düzeyi 
+205:| Ç144 | 2026-10-31 | K56-PBO PBO / DEFLATED SHARPE (K55 ön kaydı §7; KEŞİF + İÇ, donem60): 64 KEŞİF yapısı, K55 B seçiminin eşleşmiş net farkının aylık serisi; CSCV 16 blok, DSR N = 64; yön A (keşfedilen) ve kayıt (K55 B); BAĞIMSIZ'
+206:| Ç145 | 2026-10-31 | K56-SIZ İÇ → BAĞIMSIZ DOLAYLI ERİŞİM SINAMASI: T0 K55 panel / olay tablosunun baştan yeniden üretimi; T1 aynı evren, fiyat / endeks / SEC özeti 2023-12-31'de kesik, İÇ motoru (S / H / B3), bileşim, ayrışma İÇ ve PB
+207:| Ç146 | 2026-11-01 | K56-BAG BAĞIMSIZ DOĞRULAMA 2024-26 (TEK AÇILIŞ, K55_125_B) + K55 NİHAİ KARAR: yalnız ön kayıtlı 125 satır / 64 varyant; B1 K55 A (ilk geçiş), B2 seçimsiz kontrol (belirleyici), B3 K55 B (eşleşmiş ileri getiri), A2 / 
+262:| Ç130 | 2026-10-28 | KABUK DIŞI DERLEME: her ölçü iki yönde (normal / ters, olayda açığa satış), pazar pazar, bütün birleşimi; banka = K48'in 203 sürekli ölçüsü + 114 olay kümesi (K43 bankası, K47 BBIO, K24 çöl, K26, K18 kutular, K3
+263:| Ç131 | 2026-10-28 | MAKİNE SİNYALİYLE GERÇEKÇİ PORTFÖY: K48 / K48-B üst %5 sinyalleri, 10 yuva, günde en çok 2 yeni giriş, +%8 hedef / -%8 stop ya da 20 gün; piyasa ve aynı kurallı 20 rastgele portföy (K50) | FON_IZI.py (k50) | Keşif (ö
+394:- K51 SONRASI BAĞIMSIZ DENETİM (29 Eki 2026, COL_YOLU_ABD.py v1.2 + IZ_KARNE Ç134; Cemal'in planı, ön kayıt 8e99902). Veri bütünlüğü, kırılganlık ve eşleşmiş kontrollerle beş önceden tanımlı hipotez: sert düşüş + yataylaşma, küç
+397:- K52 GRAFİK İZİ + ANALİST REVİZYONLARI (29 Eki 2026, COL_YOLU_ABD.py v1.3 + IZ_KARNE Ç135; Cemal'in görevi, ön kayıt c33a10e). Yahoo analist not günlüğüyle (310 bin kayıt, 2.515 hisse; EPS, gerekçe ve tarihsel sürüm yok) K51 izlerinden ö
+----
+1:# K56 — K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI: FAZ 0 RAPORU (K56-FAZ0-20261030-175944-13cb4be)
+7:## 0. Özet
+21:## 0b. Talimatın süzgeçten geçirilmesi
+39:## 1. K51-K55 etki envanteri
+321:## 2. Açıklanmamış bulgular
+347:## 3. Mekanizma hipotezleri
+373:## 4. Hipotez başına gerekli veri
+417:## 5. Veri kaynakları: kapsam, gecikme, maliyet (erişim testiyle)
+492:## 6. Doğrulama ve çürütme yöntemleri
+708:## 7. Veri eksiklikleri ve teknik riskler
+731:## 8. Önerilen uygulama sırası
+748:## Denetim: bağımsız gözden geçirme bulguları ve durumu
+800:## Ek: envanter denetimi uyuşmazlıkları
+
+1:# K56 — K51-K55 ETKİ VE MEKANİZMA ARAŞTIRMASI: ÖN KAYIT (KİLİT)
+6:## 1. Amaç, sınır ve bağımsızlık
+16:## 2. Dönem politikası
+23:## 3. Kanıt sınıfları (her bulgu ve her mekanizma için tek sınıf; kurallar sırayla uygulanır)
+41:## 4. Hipotez kaydı kuralı
+48:## 5. Karşıt örnekler (her mekanizma testinde zorunlu)
+55:## 6. M01 olay başlangıcı seçim etkisi: sentetik sıfır sınaması (yöntem kalibrasyonu)
+71:## 7. Faz 0 veri erişim testi kuralları
+78:## v1.0-a (30 Ekim 2026, tam sentetik koşudan sonra; eşik ve tasarım DEĞİŞMEDİ)
+82:## v1.1 (30 Ekim 2026; Faz 0 sonuçları ve bağımsız denetim GÖRÜLDÜKTEN SONRA, Faz 1'den ÖNCE; gerekçeli ek — v1.0 eşikleri değişmedi)
+115:## v1.2 (31 Ekim 2026; Cemal'in Faz 1 kararları — üç ayrı çalışma; HİÇBİR koşudan önce commit'lenir)
+121:### A. Faz 1 yerel analizler (çalışma kimliği K56-F1A; KEŞİF 2016-21, keşif verisi yeniden kullanımı işaretli; indirme YOK)
+154:### B. İÇ DOĞRULAMA (çalışma kimliği K56-IC; 2022-01-01..2023-12-31; K55 dönem ve purge / embargo etiketleri aynen)
+166:### C. Batan şirketlerle yeni evren sürümü (çalışma kimliği K56-EVREN2; K51-K55 evren ve sonuçları DEĞİŞMEZ)
+182:### v1.2-a (31 Ekim 2026, fiyat isteği ve sonuç görülmeden): Ö2 aday tanımı düzeltmesi (sapma kaydı)
+203:### v1.2-b (31 Ekim 2026): bağımsız kod denetimi sonrası düzeltmeler (sapma kaydı)
+220:### Genel
+224:## v1.3 (31 Ekim 2026; Cemal'in BAĞIMSIZ dönem kararı — 9 madde; BAĞIMSIZ açılmadan, kilit üretilmeden ÖNCE commit'lenir)
+231:### D. BAĞIMSIZ açılışı (çalışma kimliği K56-BAG; açılış adı K55_125_B; BİR KEZ)
+259:### E. Ayrışma incelemesi (çalışma kimliği K56-AYR; KEŞİF, İÇ ve yapay veri; Cemal madde 4)
+276:### F. PBO / Deflated Sharpe (çalışma kimliği K56-PBO; K55 ön kaydı §7 "DOĞRULAMA BEKLİYOR adayları için PBO ve DSR"; yalnız KEŞİF + İÇ, açılıştan önce)
+282:### G. İÇ → BAĞIMSIZ dolaylı erişim sınaması (çalışma kimliği K56-SIZ; açılıştan önce; K56/sizinti_denetimi.py)
+293:### H. K55 nihai karar eşlemesi (sonuç görülmeden; Cemal madde 9)
+304:### I. EVREN2 v1.3 (fiyat görülmeden; 1 Kasım indirmesinden önce)
+325:### v1.3-a (31 Ekim 2026; çok merceğli kod incelemesi sonrası; BAĞIMSIZ açılmadan, EVREN2 fiyatı görülmeden)
+357:### v1.3-b (31 Ekim 2026; T0 ilk denemesi sonrası; BAĞIMSIZ açılmadan)
+365:### v1.3-c (31 Ekim 2026; ilk tam sızıntı denemesi sonrası; BAĞIMSIZ açılmadan)
+384:### v1.3-d (31 Ekim 2026; ilk kilit denemesi sonrası; BAĞIMSIZ açılmadan)

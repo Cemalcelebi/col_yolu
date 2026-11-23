@@ -1,0 +1,23 @@
+python3 - <<'EOF'
+p = "K57_rapor_uret.py"; s = open(p, encoding="utf-8").read()
+old = '''def rapor(g):
+    kim = Kimlik(); s = g["rapor:sentez"]; d = g.get("rapor:dogrulama"); T = oku_csv("TEST_ENVANTERI.csv")'''
+new = '''def rapor(g):
+    """Sentez + bağımsız doğrulama; doğrulayıcının düzeltmeleri uygulanmış sürüm (rapor:duzeltme) varsa metin ondan, orijinal ham/rapor_sentez.json'da kalır."""
+    kim = Kimlik(); s = g.get("rapor:duzeltme") or g["rapor:sentez"]; d = g.get("rapor:dogrulama"); T = oku_csv("TEST_ENVANTERI.csv"); duz = g.get("rapor:duzeltme")'''
+assert s.count(old) == 1; s = s.replace(old, new)
+old = '''    if d:
+        L += ["", "## Rapor bulgularının bağımsız doğrulaması", f"- {kisalt(d['genel_not'], 500)}"] + ([f"- Geçersiz kimlik: {', '.join(d['gecersiz_kimlikler'])}"] if d["gecersiz_kimlikler"] else [])'''
+new = '''    if d:
+        nd = sum(1 for k in d["kontrol"] if k["durum"] != "DOĞRU")
+        L += ["", "## Rapor bulgularının bağımsız doğrulaması", f"- Doğrulayıcı {len(d['kontrol'])} kontrol satırı yazdı; {nd} satırda düzeltme istedi (sayı, atıf ya da genelleme). {kisalt(d['genel_not'], 420)}"] + ([f"- Geçersiz kimlik: {', '.join(d['gecersiz_kimlikler'])}"] if d["gecersiz_kimlikler"] else [])
+        if duz:
+            L += [f"- Düzeltmeler bu metne işlendi ({len(duz['uygulanan_duzeltmeler'])} uygulandı, {len(duz['uygulanmayan_duzeltmeler'])} uygulanmadı); orijinal sentez ham/rapor_sentez.json, doğrulayıcı notları ham/rapor_dogrulama.json."] + [f"  - {kisalt(x, 220)}" for x in duz["uygulanan_duzeltmeler"]] + [f"  - UYGULANMADI: {kisalt(x, 220)}" for x in duz["uygulanmayan_duzeltmeler"]]'''
+assert s.count(old) == 1; s = s.replace(old, new)
+old = '''        if dk and dk["durum"] != "DOĞRU":
+            L.append(f"- Bağımsız doğrulama notu ({dk['durum']}): {kisalt(dk['sorun'], 300)} → {kisalt(dk['duzeltme'], 300)}")'''
+new = '''        if dk and dk["durum"] != "DOĞRU" and not duz:
+            L.append(f"- Bağımsız doğrulama notu ({dk['durum']}): {kisalt(dk['sorun'], 300)} → {kisalt(dk['duzeltme'], 300)}")'''
+assert s.count(old) == 1; s = s.replace(old, new); open(p, "w", encoding="utf-8").write(s); print("ok")
+EOF
+S=/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad; for i in $(seq 1 50); do n=$(python3 $S/k57_d2.py wf_a4296a48-611 wf_c29bf282-19c | grep -c "çalışan: \[\]"); [ "$n" -ge 2 ] && break; sleep 10; done; date -u; python3 $S/k57_d2.py wf_a4296a48-611 wf_c29bf282-19c

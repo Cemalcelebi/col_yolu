@@ -1,0 +1,73 @@
+python3 - <<'EOF'
+p = "K57_envanter_birlestir.py"; s = open(p, encoding="utf-8").read()
+old_start = s.index("def birlestir(g):"); old_end = s.index("def main(yollar):")
+yeni = '''def _v1_uygula(t, k):
+    t["_dogrulama"] = {"DOĞRU": "DOĞRU", "DÜZELTME GEREKLİ": "DÜZELTİLDİ", "KANITLANAMADI": "KANITLANAMADI"}[k["durum"]]
+    for d in k["duzeltmeler"]:
+        alan = d["alan"].strip()
+        if alan in ALAN_METIN:
+            t["_duzeltme"].append(f"{alan}: [{str(t.get(alan, ''))[:140]}] -> [{d['dogru_deger'][:200]}] kanıt: {d['kanit'][:140]}"); t[alan] = d["dogru_deger"]
+        else:
+            t["_duzeltme"].append(f"{alan} (alan eşlenemedi, metne eklendi): {d['dogru_deger'][:200]} kanıt: {d['kanit'][:140]}")
+    if k.get("not") and k["durum"] != "DOĞRU":
+        t["_duzeltme"].append("V1 notu: " + k["not"][:200])
+
+
+def birlestir(g):
+    """Önce birim başına denetim + V1 + V2 + hakem; sonra tamamlama satırları için ayrı V1 (v1t:*) kimlik üzerinden uygulanır."""
+    man = manifest(); birimler = sorted({k.split(":", 1)[1] for k in g if k.startswith("denetim:")}); tum = []; ozet = []
+    for b in birimler:
+        a = g.get(f"denetim:{b}")
+        if not a:
+            ozet.append(f"{b}: denetim sonucu yok"); continue
+        v1, v2, ek = g.get(f"v1:{b}"), g.get(f"v2:{b}"), g.get(f"tamamla:{b}")
+        testler = [dict(t, _kaynak="denetim") for t in a["testler"]] + ([dict(t, _kaynak="tamamlama (V2 eksik test bulgusu)") for t in ek["testler"]] if ek else [])
+        for t in testler:
+            t["_birim"] = b; t["_duzeltme"] = []; t["_v2"] = []; t["_dogrulama"] = "V1 YOK"; t["_sinif_denetci"] = t["sinif"]; t["_itiraz"] = ""; t["_hakem"] = ""
+        by = {t["test_id"]: t for t in testler}
+        for k in (v1["kontrol"] if v1 else []):
+            if k["test_id"] in by:
+                _v1_uygula(by[k["test_id"]], k)
+        if v2:
+            for m in v2["mantik_hatalari"]:
+                t = by.get(m["test_id"])
+                if t:
+                    t["_v2"].append(f"[mantık/{m['alan']}] {m['sorun'][:220]}" + (f" | önerilen: {m['onerilen_metin'][:200]}" if m.get("onerilen_metin") else ""))
+            for kz in v2["gozden_kacan_kusurlar"]:
+                t = by.get(kz["test_id"])
+                if t:
+                    t["kusurlar"] = list(t["kusurlar"]) + [f"[V2] {kz['kusur']} (kanıt: {kz['kanit'][:140]})"]
+            for i in v2["sinif_itirazlari"]:
+                t = by.get(i["test_id"])
+                if t and t["sinif"] != i["onerilen_sinif"]:
+                    t["_itiraz"] = f"{i['onerilen_sinif']}: {i['gerekce'][:240]}"
+        for tid, t in by.items():
+            h = g.get(f"hakem:{tid}")
+            if h and t["_itiraz"]:
+                t["_hakem"] = f"{h['nihai_sinif']}: {h['gerekce'][:240]}"; t["sinif"] = h["nihai_sinif"]
+        tum += testler; ozet.append(f"{b}: {len(testler)} test" + (f" (+{len(ek['testler'])} tamamlama)" if ek else ""))
+    genel = {t["test_id"]: t for t in tum}
+    for k_, v in g.items():                                           # tamamlama satırlarının bağımsız V1'i
+        if k_.startswith("v1t:"):
+            for k in v["kontrol"]:
+                if k["test_id"] in genel:
+                    _v1_uygula(genel[k["test_id"]], k)
+    satirlar = []
+    for t in tum:
+        satirlar.append({
+            "id": t["test_id"], "calisma_birimi": t["_birim"], **{k: t.get(k, "") for k in ALAN_METIN if k not in ("onkayit_dosya", "kod_dosya", "kosu_kimligi")},
+            "alanlar": ",".join(t["alanlar"]), "sinif": t["sinif"], "sinif_denetci": t["_sinif_denetci"], "sinif_itirazi": t["_itiraz"], "sinif_hakem": t["_hakem"],
+            "kusurlar": " || ".join(t["kusurlar"]), "onceki_ilgili_calismalar": " | ".join(t.get("onceki_ilgili_calismalar", [])),
+            "onkayit_dosya": t["onkayit_dosya"], "kod_dosya": t["kod_dosya"], "kosu_kimligi": t["kosu_kimligi"],
+            "onkayit_kod_hash": hash_bagla(t["onkayit_dosya"] + "," + t["kod_dosya"], man), "dogrulama_durumu": t["_dogrulama"] + (f" ({t['_kaynak']})" if t["_kaynak"] != "denetim" else ""),
+            "duzeltme_kaydi": " || ".join(t["_duzeltme"]), "v2_notlari": " || ".join(t["_v2"]), "kaynak_atiflari": " | ".join(t["kaynak_atiflari"]),
+        })
+    return satirlar, ozet
+
+
+'''
+s = s[:old_start] + yeni + s[old_end:]
+s = s.replace('return " | ".join(out) if out else "MANİFESTTE EŞLEŞEN DOSYA YOK"', 'return " | ".join(out) if out else "MANİFESTTE EŞLEŞEN DOSYA YOK (ön kayıt yok ya da kapsam dışı dosya)"')
+open(p, "w", encoding="utf-8").write(s); print("ok")
+EOF
+python3 -c "import ast; ast.parse(open('/home/user/col_yolu/arastirma_cikti/k57_denetim/K57_envanter_birlestir.py').read()); print('sözdizimi ok')"

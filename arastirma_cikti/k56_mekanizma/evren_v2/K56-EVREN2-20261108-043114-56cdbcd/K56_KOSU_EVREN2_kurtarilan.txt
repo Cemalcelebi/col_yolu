@@ -1,0 +1,47 @@
+{
+ "kimlik": "K56-EVREN2-20261108-043114-56cdbcd",
+ "commit": "56cdbcd",
+ "klasor": "K56-EVREN2-20261108-043114-56cdbcd"
+}K56_EVREN2_DOGRULAMA.csv
+K56_EVREN2_EKLEME.csv
+K56_EVREN2_ETKI.csv
+K56_EVREN2_ETKI_DUYARLILIK.csv
+K56_EVREN2_FIYAT_DENETIMI.csv
+K56_EVREN2_GETIRI_DUYARLILIK.csv
+K56_EVREN2_KAPSAM.csv
+K56_EVREN2_KAYNAK_KAYDI.csv
+K56_EVREN2_OLAY_SAYILARI.csv
+K56_EVREN2_YENI_SIRKET.csv
+K56_KOSU_EVREN2.json
+RAPOR.md
+
+kimlik => "K56-EVREN2-20261108-043114-56cdbcd"
+surum => "K56 v0.1 (2026-10-30, Faz 0: etki envanteri, mekanizma hipotezleri, veri kaynakları, küçük örneklem erişim testi, seçim etkisi sentetik sınaması)"
+commit => "56cdbcd"
+git_kirli => []
+onkayit_sha => "2d3814e1aa2e5e57289c1ed5d21938773608f4d1eda9fc1328e9b72987bc0abd"
+kod_sha => {"K56/ONKAYIT_K56.md": "2d3814e1aa2e5e57289c1ed5d21938773608f4d1eda9fc1328e9b72987bc0abd", "K56/ONKAYIT_K56_SATIRLAR.csv": "f53683abc0d67412979e8cc0b7e29d706c4f0469848527610946d0574f352f34", "K56/__init__.py": "74ee731f59fd065f838c1b1c61b38b2e43a953279408eb78cbda7ae96ef0123a", "K56/ayrisma.py": "229
+ayar => {"cikti": "/home/user/col_yolu/arastirma_cikti/k56_mekanizma", "abd": "/home/user/col_yolu/arastirma_cikti/col_yolu_abd", "k55": "/home/user/col_yolu/arastirma_cikti/k55_dallanma/tam_evren", "veri": "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/cy_veri", "iv": "/
+python => "3.13.16"
+numpy => "2.5.3"
+pandas => "3.0.5"
+aday => 490
+kaynak => {"Ö2 (Tiingo KEŞİF bitişi)": 291, "Ö1 (K34 kalan)": 199}
+meta_disi => {"CIK bağlanamadı (sınıf 6)": 101, "KİMLİK: Tiingo adı SEC adlarıyla uyumsuz (Jaccard 0.33)": 17, "ad: ETF": 2, "SEC KAPSAM: dönemsel rapor yok": 2, "META VARLIK: başlangıç 2022-05-03 ≠ liste 2014-09-25": 1, "META VARLIK: başlangıç 2020-12-14 ≠ liste 2006-12-28": 1, "META VARLIK: başlangıç 2023-07-2
+fiyat_istenen => 356
+seri_durum => {"TAMAM": 353, "İNMEDİ": 3}
+baglama => {"K34 eşleme (Ö1)": 199, "ad + tarih": 183, "BAĞLANAMADI": 108}
+kimlik_ad => {"UYUMLU": 323, "SEC YOK": 108, "YAKIN": 39, "UYUMSUZ": 19, "META YOK": 1}
+son_islem => {"TUTARLI": 325, "YAKIN": 14, "OTC KUYRUĞU": 13, "UYUMSUZ": 1}
+sinif_son_k56 => {"BİRLEŞME": 267, "VERİ SAĞLAYICISI KAYBOLMASI": 36, "İFLAS": 21, "SEMBOL DEĞİŞİKLİĞİ": 21, "TASFİYE": 11}
+evren_disi_neden => {"CIK bağlanamadı (sınıf 6)": 101, "KİMLİK: Tiingo adı SEC adlarıyla uyumsuz (Jaccard 0.33)": 17, "CIK tekrarı (aynı şirket K55'te ya da başka yeni sembolde; eklenmedi)": 10, "seri: İNMEDİ": 3, "ad: ETF": 2, "SEC KAPSAM: dönemsel rapor yok": 2, "META VARLIK: başlangıç 2022-05-03 ≠ liste 2014-09-25":
+evrene_giren => 342
+duyarlilik_haric => 96
+evren_v2_sembol => 3602
+evren_k55_sembol => 3260
+evren_v2_surum => "3055f07be1ba1337be2e0c3f54187a054aa8e0fcf4509eda5f8b18c78e8554eb"
+dogrulama_sha => "131c350f13e1a50f37541b931e8e8574bb486887170b64284ed250ba0359e06b"
+bagimsiz => "koşulmaz (v1.2-C ve v1.3-I: EVREN2 etkisi yalnız KEŞİF ve İÇ; BAĞIMSIZ bir kez açılır)"
+sure_dk => 48.7
+kiyas => {"faz1_yerel": "K56-F1A-20261031-073957-5d41245", "ic_dogrulama": "K56-IC-20261031-070828-d1922e5"}
+----

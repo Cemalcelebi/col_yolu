@@ -1,0 +1,130 @@
+mkdir -p /home/user/col_yolu/arastirma_cikti/k57_denetim/ham && cat > /home/user/col_yolu/arastirma_cikti/k57_denetim/K57_envanter_birlestir.py <<'EOF'
+"""K57 test envanteri birleştirici: iş akışı günlüğündeki (journal.jsonl) denetim, doğrulama, eksik test ve hakem sonuçlarını TEST_ENVANTERI.csv'ye birleştirir.
+Yalnız okur (günlük + KAYNAK_MANIFEST.csv) ve yalnız arastirma_cikti/k57_denetim/ altına yazar (yol sınırı: cikti_yolu). Ham ajan çıktıları ham/ altında olduğu gibi saklanır
+(başarısız / düzeltilen satırlar silinmez; düzeltme_kaydi sütunu eski ve yeni değeri tutar). Kullanım: python K57_envanter_birlestir.py <journal.jsonl> [...]"""
+import csv, json, os, sys
+
+KOK = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+CIKTI = os.path.realpath(os.path.dirname(os.path.abspath(__file__)))
+ALAN_METIN = ("ad", "soru", "olculen_davranis", "veri_kaynagi_kapsam", "orneklem", "batan_delist_birlesme", "olay_baslangici", "gozlem_birimi", "bagimli_gozlem", "eslestirme",
+              "sizinti_secim_yanliligi", "coklu_test_asiri_uyum", "mekanizma_ayirt_edebilir_mi", "negatif_dislananlar", "negatif_dislanmayanlar", "sonuc", "sinif_gerekcesi",
+              "onkayit_dosya", "kod_dosya", "kosu_kimligi")
+SUTUNLAR = ["id", "calisma_birimi", "ad", "soru", "olculen_davranis", "alanlar", "veri_kaynagi_kapsam", "orneklem", "batan_delist_birlesme", "olay_baslangici", "gozlem_birimi",
+            "bagimli_gozlem", "eslestirme", "sizinti_secim_yanliligi", "coklu_test_asiri_uyum", "mekanizma_ayirt_edebilir_mi", "negatif_dislananlar", "negatif_dislanmayanlar",
+            "sonuc", "sinif", "sinif_gerekcesi", "sinif_denetci", "sinif_itirazi", "sinif_hakem", "kusurlar", "onceki_ilgili_calismalar", "onkayit_dosya", "kod_dosya", "kosu_kimligi",
+            "onkayit_kod_hash", "dogrulama_durumu", "duzeltme_kaydi", "v2_notlari", "kaynak_atiflari"]
+
+
+def cikti_yolu(ad: str) -> str:
+    y = os.path.realpath(os.path.join(CIKTI, ad))
+    if os.path.commonpath([y, CIKTI]) != CIKTI:
+        raise ValueError(f"çıktı yolu K57 klasörü dışında: {y}")
+    return y
+
+
+def gunluk_oku(yollar):
+    """label -> son sonuç (aynı etiket yeniden koşulduysa sonuncusu)."""
+    out = {}
+    for y in yollar:
+        etiket = {}
+        for satir in open(y, encoding="utf-8"):
+            d = json.loads(satir)
+            if d.get("type") == "started":
+                etiket[d["agentId"]] = d.get("label")
+            elif d.get("type") == "result" and d.get("result") is not None and etiket.get(d["agentId"]):
+                out[etiket[d["agentId"]]] = d["result"]
+    return out
+
+
+def manifest():
+    with open(os.path.join(CIKTI, "KAYNAK_MANIFEST.csv"), encoding="utf-8") as fh:
+        return {r["yol"]: r for r in csv.DictReader(fh)}
+
+
+def hash_bagla(metin: str, man) -> str:
+    """Ajanın yazdığı dosya yollarını manifestle eşleştirir; hash'i LLM değil manifest üretir."""
+    out = []
+    for parca in [p.strip() for p in metin.replace(";", ",").replace(" + ", ",").split(",")]:
+        for yol, r in man.items():
+            if parca and (yol == parca or yol.endswith("/" + parca) or parca.endswith(yol) or os.path.basename(yol) == os.path.basename(parca.split(" ")[0])):
+                if f"{yol}:{r['sha256'][:12]}" not in out:
+                    out.append(f"{yol}:{r['sha256'][:12]}")
+                break
+    return " | ".join(out) if out else "MANİFESTTE EŞLEŞEN DOSYA YOK"
+
+
+def birlestir(g):
+    man = manifest(); birimler = sorted({k.split(":", 1)[1] for k in g if k.startswith("denetim:")}); satirlar = []; ozet = []
+    for b in birimler:
+        a = g.get(f"denetim:{b}")
+        if not a:
+            ozet.append(f"{b}: denetim sonucu yok"); continue
+        v1, v2, ek = g.get(f"v1:{b}"), g.get(f"v2:{b}"), g.get(f"tamamla:{b}")
+        testler = [dict(t, _kaynak="denetim") for t in a["testler"]] + ([dict(t, _kaynak="tamamlama (V2 eksik test bulgusu)") for t in ek["testler"]] if ek else [])
+        for t in testler:
+            t["_duzeltme"] = []; t["_v2"] = []; t["_dogrulama"] = "V1 YOK" if not v1 else "V1 satırı yok"; t["_sinif_denetci"] = t["sinif"]; t["_itiraz"] = ""; t["_hakem"] = ""
+        by = {t["test_id"]: t for t in testler}
+        for k in (v1["kontrol"] if v1 else []):
+            t = by.get(k["test_id"])
+            if not t:
+                continue
+            t["_dogrulama"] = {"DOĞRU": "DOĞRU", "DÜZELTME GEREKLİ": "DÜZELTİLDİ", "KANITLANAMADI": "KANITLANAMADI"}[k["durum"]]
+            for d in k["duzeltmeler"]:
+                alan = d["alan"].strip()
+                if alan in ALAN_METIN:
+                    t["_duzeltme"].append(f"{alan}: [{str(t.get(alan, ''))[:140]}] -> [{d['dogru_deger'][:200]}] kanıt: {d['kanit'][:140]}"); t[alan] = d["dogru_deger"]
+                else:
+                    t["_duzeltme"].append(f"{alan} (alan eşlenemedi, metne eklendi): {d['dogru_deger'][:200]} kanıt: {d['kanit'][:140]}")
+            if k.get("not") and k["durum"] != "DOĞRU":
+                t["_duzeltme"].append("V1 notu: " + k["not"][:200])
+        if v2:
+            for m in v2["mantik_hatalari"]:
+                t = by.get(m["test_id"])
+                if t:
+                    t["_v2"].append(f"[mantık/{m['alan']}] {m['sorun'][:220]}" + (f" | önerilen: {m['onerilen_metin'][:200]}" if m.get("onerilen_metin") else ""))
+            for kz in v2["gozden_kacan_kusurlar"]:
+                t = by.get(kz["test_id"])
+                if t:
+                    t["kusurlar"] = list(t["kusurlar"]) + [f"[V2] {kz['kusur']} (kanıt: {kz['kanit'][:140]})"]
+            for i in v2["sinif_itirazlari"]:
+                t = by.get(i["test_id"])
+                if t and t["sinif"] != i["onerilen_sinif"]:
+                    t["_itiraz"] = f"{i['onerilen_sinif']}: {i['gerekce'][:240]}"
+        for tid, t in by.items():                                  # hakem kararı
+            h = g.get(f"hakem:{tid}")
+            if h and t["_itiraz"]:
+                t["_hakem"] = f"{h['nihai_sinif']}: {h['gerekce'][:240]}"; t["sinif"] = h["nihai_sinif"]
+        for t in testler:
+            satirlar.append({
+                "id": t["test_id"], "calisma_birimi": b, **{k: t.get(k, "") for k in ALAN_METIN if k not in ("onkayit_dosya", "kod_dosya", "kosu_kimligi")},
+                "alanlar": ",".join(t["alanlar"]), "sinif": t["sinif"], "sinif_denetci": t["_sinif_denetci"], "sinif_itirazi": t["_itiraz"], "sinif_hakem": t["_hakem"],
+                "kusurlar": " || ".join(t["kusurlar"]), "onceki_ilgili_calismalar": " | ".join(t.get("onceki_ilgili_calismalar", [])),
+                "onkayit_dosya": t["onkayit_dosya"], "kod_dosya": t["kod_dosya"], "kosu_kimligi": t["kosu_kimligi"],
+                "onkayit_kod_hash": hash_bagla(t["onkayit_dosya"] + "," + t["kod_dosya"], man), "dogrulama_durumu": t["_dogrulama"] + (f" ({t['_kaynak']})" if t["_kaynak"] != "denetim" else ""),
+                "duzeltme_kaydi": " || ".join(t["_duzeltme"]), "v2_notlari": " || ".join(t["_v2"]), "kaynak_atiflari": " | ".join(t["kaynak_atiflari"]),
+            })
+        ozet.append(f"{b}: {len(testler)} test" + (f" (+{len(ek['testler'])} tamamlama)" if ek else ""))
+    return satirlar, ozet
+
+
+def main(yollar):
+    g = gunluk_oku(yollar)
+    for k, v in g.items():                                           # ham ajan çıktıları olduğu gibi saklanır
+        with open(cikti_yolu(os.path.join("ham", k.replace(":", "_") + ".json")), "w", encoding="utf-8") as fh:
+            json.dump(v, fh, ensure_ascii=False, indent=1)
+    satirlar, ozet = birlestir(g)
+    with open(cikti_yolu("TEST_ENVANTERI.csv"), "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=SUTUNLAR); w.writeheader(); w.writerows(satirlar)
+    print("\n".join(ozet)); print(len(satirlar), "satır -> TEST_ENVANTERI.csv")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        sys.exit(__doc__)
+    main(sys.argv[1:])
+EOF
+cd /home/user/col_yolu/arastirma_cikti/k57_denetim && cp /dev/null /dev/null; python3 -c "
+import sys; sys.path.insert(0,'.')
+import K57_envanter_birlestir as K
+g=K.gunluk_oku(['/root/.claude/projects/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/subagents/workflows/wf_0295f6e6-649/journal.jsonl'])
+print(sorted(g)); s,o=K.birlestir(g); print(o); print(len(s)); r=s[0]; print(r['onkayit_kod_hash'][:300])"

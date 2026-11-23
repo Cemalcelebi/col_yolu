@@ -1,0 +1,10 @@
+python3 - <<'EOF'
+p = "/tmp/claude-0/-home-user-col-yolu/82c570e4-187d-577a-9149-eeb29748a7da/scratchpad/k57_w3.js"; s = open(p, encoding="utf-8").read()
+old = "Girdiler (${K57}): TEST_ENVANTERI.csv (denetlenmiş testler: id, ad, soru, alanlar, sinif A-D, sonuc, kusurlar, negatif_dislananlar / dislanmayanlar), HIPOTEZ_ENVANTERI_ONCEKI.csv (önceki hipotezler), ACIK_SORULAR.md / acik_sorular.json (açık sorular, AS-xxx), ALAN_HARITASI.md, MEKANIZMA_SORULARI.md, VERI_KAYNAKLARI.csv (74 kaynak: kapsam, point_in_time, erisim_testi), VERI_BOSLUKLARI.json."
+new = "Girdiler (${K57}): K57_DENETIM_RAPORU.md (ÖNCE OKU: 'Ana yöntemsel bulgular', 'Güvenilmemesi gereken yorumlar' ve 'Sonraki her araştırma kartı için zorunlu tasarım ilkeleri' bölümleri; her kart bu ilkelere uymak zorundadır ve 'yanlilik_ve_sizinti_riskleri' alanında hangi ilkeyi nasıl karşıladığını yazar), TEST_ENVANTERI.csv (denetlenmiş testler: id, ad, soru, alanlar, sinif A-D, sonuc, kusurlar, negatif_dislananlar / dislanmayanlar), HIPOTEZ_ENVANTERI_ONCEKI.csv (önceki hipotezler, durumları), ACIK_SORULAR.md / acik_sorular.json (açık sorular, AS-xxx), ARASTIRMA_YOL_HARITASI.md (10 alan haritası), MEKANIZMA_SORULARI.md / .csv (4.1-4.6), VERI_KAYNAKLARI.csv (74 kaynak: kapsam, point_in_time, erisim_testi), VERI_BOSLUKLARI.json."
+assert s.count(old) == 1; s = s.replace(old, new)
+old2 = "Önce alanı oku: ALAN_HARITASI.md bölümü ${kod}"
+new2 = "Önce alanı oku: K57_DENETIM_RAPORU.md zorunlu tasarım ilkeleri, ARASTIRMA_YOL_HARITASI.md bölümü ${kod}"
+assert s.count(old2) == 1; s = s.replace(old2, new2)
+open(p, "w", encoding="utf-8").write(s); print("w3 ok")
+EOF
