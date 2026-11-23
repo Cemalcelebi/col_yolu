@@ -1,0 +1,1311 @@
+{
+ "ABD": {
+  "sinyal_donem": {
+   "Y1": {
+    "acik_d1": 42719,
+    "acik_d2": 63528,
+    "acik_d3": 77774,
+    "blok": 3549
+   },
+   "DS": {
+    "acik_d1": 123511,
+    "acik_d2": 286880,
+    "acik_d3": 611421,
+    "blok": 14144,
+    "dis": 15525
+   },
+   "D9": {
+    "acik_d1": 88880,
+    "acik_d2": 126458,
+    "acik_d3": 287099,
+    "blok": 20829,
+    "dis": 17204
+   },
+   "BOFA": {
+    "acik_d1": 654,
+    "acik_d2": 1271,
+    "acik_d3": 4175,
+    "blok": 247,
+    "dis": 70
+   }
+  },
+  "olay": {
+   "Y1": {
+    "sinyal": 187570,
+    "girdi": 187570,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 165,
+    "giris_gec": 76,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 51331,
+    "tekil": 77870,
+    "y1_olay": 58128
+   },
+   "DS": {
+    "girdi": 1051481,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 192,
+    "giris_gec": 51,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 22947,
+    "tekil": 0,
+    "ds_gun": 1051481,
+    "havuz_gun": 1028291,
+    "ana": 95457,
+    "F_KT08": 31034
+   },
+   "BOFA": {
+    "kurulum": 6417,
+    "girdi": 6417,
+    "sembol_yok": 17,
+    "sinyal_bar_gecersiz": 700,
+    "giris_yok": 0,
+    "giris_gec": 12,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 4291,
+    "tekil": 0
+   },
+   "D9": {
+    "c": 540470,
+    "girdi": 540470,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 317,
+    "giris_gec": 68,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 83717,
+    "tekil": 0
+   },
+   "MOM_STREV": {
+    "ay_sonu_aday": 725083,
+    "p2": 452152,
+    "KT00": 43689,
+    "KT13": 45077
+   }
+  },
+  "olcum": {
+   "KT01|ABD|H15": {
+    "olay": 58128,
+    "tekil": 58128,
+    "acik_tasan": 483,
+    "bekleyen": 323,
+    "essiz": 249,
+    "olculdu": 57071,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 11025,
+     "acik_d2": 18254,
+     "acik_d3": 27694,
+     "blok": 1155
+    },
+    "olculen_hucre": {
+     "acik_d1": 10921,
+     "acik_d2": 18142,
+     "acik_d3": 27176,
+     "blok": 832
+    }
+   },
+   "KT02|ABD|H15": {
+    "olay": 2605,
+    "tekil": 2605,
+    "acik_tasan": 22,
+    "bekleyen": 9,
+    "essiz": 47,
+    "olculdu": 2527,
+    "olay_hucre": {
+     "acik_d1": 425,
+     "acik_d2": 599,
+     "acik_d3": 1555,
+     "blok": 26
+    },
+    "olculen_hucre": {
+     "acik_d1": 397,
+     "acik_d2": 584,
+     "acik_d3": 1529,
+     "blok": 17
+    }
+   },
+   "KT03|ABD|H15": {
+    "olay": 50708,
+    "tekil": 50708,
+    "acik_tasan": 455,
+    "bekleyen": 278,
+    "essiz": 217,
+    "olculdu": 49756,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 9586,
+     "acik_d2": 15734,
+     "acik_d3": 24354,
+     "blok": 1034
+    },
+    "olculen_hucre": {
+     "acik_d1": 9493,
+     "acik_d2": 15637,
+     "acik_d3": 23870,
+     "blok": 756
+    }
+   },
+   "KT04|ABD|H15": {
+    "olay": 25681,
+    "tekil": 25681,
+    "acik_tasan": 281,
+    "bekleyen": 176,
+    "essiz": 114,
+    "olculdu": 25108,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 5454,
+     "acik_d2": 7053,
+     "acik_d3": 12603,
+     "blok": 571
+    },
+    "olculen_hucre": {
+     "acik_d1": 5402,
+     "acik_d2": 7007,
+     "acik_d3": 12304,
+     "blok": 395
+    }
+   },
+   "KT05|ABD|H15": {
+    "olay": 55377,
+    "tekil": 55377,
+    "acik_tasan": 475,
+    "bekleyen": 313,
+    "essiz": 235,
+    "olculdu": 54352,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 10365,
+     "acik_d2": 17318,
+     "acik_d3": 26570,
+     "blok": 1124
+    },
+    "olculen_hucre": {
+     "acik_d1": 10266,
+     "acik_d2": 17211,
+     "acik_d3": 26064,
+     "blok": 811
+    }
+   },
+   "KT06|ABD|H15": {
+    "olay": 34166,
+    "tekil": 34166,
+    "acik_tasan": 299,
+    "bekleyen": 212,
+    "essiz": 138,
+    "olculdu": 33516,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 6973,
+     "acik_d2": 10807,
+     "acik_d3": 15726,
+     "blok": 660
+    },
+    "olculen_hucre": {
+     "acik_d1": 6906,
+     "acik_d2": 10749,
+     "acik_d3": 15413,
+     "blok": 448
+    }
+   },
+   "KT07|ABD|H15": {
+    "olay": 1104,
+    "tekil": 1104,
+    "acik_tasan": 11,
+    "bekleyen": 7,
+    "essiz": 14,
+    "olculdu": 1072,
+    "olay_hucre": {
+     "acik_d1": 188,
+     "acik_d2": 228,
+     "acik_d3": 672,
+     "blok": 16
+    },
+    "olculen_hucre": {
+     "acik_d1": 179,
+     "acik_d2": 223,
+     "acik_d3": 661,
+     "blok": 9
+    }
+   },
+   "KT11|ABD|H15": {
+    "olay": 3136,
+    "tekil": 3136,
+    "acik_tasan": 16,
+    "bekleyen": 16,
+    "essiz": 10,
+    "olculdu": 3094,
+    "olay_hucre": {
+     "acik_d1": 582,
+     "acik_d2": 943,
+     "acik_d3": 1561,
+     "blok": 50
+    },
+    "olculen_hucre": {
+     "acik_d1": 576,
+     "acik_d2": 940,
+     "acik_d3": 1544,
+     "blok": 34
+    }
+   },
+   "KT12|ABD|H15": {
+    "olay": 4930,
+    "tekil": 4930,
+    "acik_tasan": 47,
+    "bekleyen": 41,
+    "essiz": 33,
+    "olculdu": 4809,
+    "olay_hucre": {
+     "acik_d1": 860,
+     "acik_d2": 1373,
+     "acik_d3": 2614,
+     "blok": 83
+    },
+    "olculen_hucre": {
+     "acik_d1": 843,
+     "acik_d2": 1361,
+     "acik_d3": 2563,
+     "blok": 42
+    }
+   },
+   "KT08|ABD|H15": {
+    "olay": 31034,
+    "tekil": 31034,
+    "acik_tasan": 31,
+    "bekleyen": 88,
+    "essiz": 196,
+    "olculdu": 30715,
+    "olculemez": 4,
+    "olay_hucre": {
+     "acik_d1": 3875,
+     "acik_d2": 8790,
+     "acik_d3": 17601,
+     "blok": 360,
+     "dis": 408
+    },
+    "olculen_hucre": {
+     "acik_d1": 3770,
+     "acik_d2": 8710,
+     "acik_d3": 17558,
+     "blok": 272,
+     "dis": 405
+    }
+   },
+   "KT09|ABD|H15": {
+    "olay": 1397,
+    "tekil": 1397,
+    "acik_tasan": 4,
+    "bekleyen": 2,
+    "essiz": 9,
+    "olculdu": 1382,
+    "olay_hucre": {
+     "acik_d1": 140,
+     "acik_d2": 246,
+     "acik_d3": 973,
+     "blok": 22,
+     "dis": 16
+    },
+    "olculen_hucre": {
+     "acik_d1": 139,
+     "acik_d2": 242,
+     "acik_d3": 965,
+     "blok": 20,
+     "dis": 16
+    }
+   },
+   "KT10|ABD|H15": {
+    "olay": 456368,
+    "tekil": 46322,
+    "acik_tasan": 331,
+    "bekleyen": 287,
+    "essiz": 1109,
+    "olculdu": 44592,
+    "olculemez": 3,
+    "olay_hucre": {
+     "acik_d1": 69967,
+     "acik_d2": 104572,
+     "acik_d3": 252506,
+     "blok": 17925,
+     "dis": 11398
+    },
+    "olculen_hucre": {
+     "acik_d1": 7035,
+     "acik_d2": 10842,
+     "acik_d3": 24591,
+     "blok": 1357,
+     "dis": 767
+    }
+   },
+   "KT00|ABD|H15": {
+    "olay": 43689,
+    "tekil": 43689,
+    "essiz": 1842,
+    "olculdu": 41846,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 7664,
+     "acik_d2": 13560,
+     "acik_d3": 21631,
+     "blok": 834
+    },
+    "olculen_hucre": {
+     "acik_d1": 6989,
+     "acik_d2": 12710,
+     "acik_d3": 21313,
+     "blok": 834
+    }
+   },
+   "KT13|ABD|H15": {
+    "olay": 45077,
+    "tekil": 45077,
+    "essiz": 3181,
+    "olculdu": 41895,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 7799,
+     "acik_d2": 13729,
+     "acik_d3": 22222,
+     "blok": 843,
+     "dis": 484
+    },
+    "olculen_hucre": {
+     "acik_d1": 6770,
+     "acik_d2": 12349,
+     "acik_d3": 21589,
+     "blok": 840,
+     "dis": 347
+    }
+   },
+   "KT01|ABD|H30": {
+    "olay": 58128,
+    "tekil": 58128,
+    "acik_tasan": 772,
+    "bekleyen": 632,
+    "essiz": 248,
+    "olculdu": 56474,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 11025,
+     "acik_d2": 18254,
+     "acik_d3": 27694,
+     "blok": 1155
+    },
+    "olculen_hucre": {
+     "acik_d1": 10921,
+     "acik_d2": 18142,
+     "acik_d3": 26888,
+     "blok": 523
+    }
+   },
+   "KT02|ABD|H30": {
+    "olay": 2605,
+    "tekil": 2605,
+    "acik_tasan": 51,
+    "bekleyen": 21,
+    "essiz": 47,
+    "olculdu": 2486,
+    "olay_hucre": {
+     "acik_d1": 425,
+     "acik_d2": 599,
+     "acik_d3": 1555,
+     "blok": 26
+    },
+    "olculen_hucre": {
+     "acik_d1": 397,
+     "acik_d2": 584,
+     "acik_d3": 1500,
+     "blok": 5
+    }
+   },
+   "KT03|ABD|H30": {
+    "olay": 50708,
+    "tekil": 50708,
+    "acik_tasan": 707,
+    "bekleyen": 567,
+    "essiz": 217,
+    "olculdu": 49215,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 9586,
+     "acik_d2": 15734,
+     "acik_d3": 24354,
+     "blok": 1034
+    },
+    "olculen_hucre": {
+     "acik_d1": 9493,
+     "acik_d2": 15637,
+     "acik_d3": 23618,
+     "blok": 467
+    }
+   },
+   "KT04|ABD|H30": {
+    "olay": 25681,
+    "tekil": 25681,
+    "acik_tasan": 425,
+    "bekleyen": 303,
+    "essiz": 114,
+    "olculdu": 24837,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 5454,
+     "acik_d2": 7053,
+     "acik_d3": 12603,
+     "blok": 571
+    },
+    "olculen_hucre": {
+     "acik_d1": 5402,
+     "acik_d2": 7007,
+     "acik_d3": 12160,
+     "blok": 268
+    }
+   },
+   "KT05|ABD|H30": {
+    "olay": 55377,
+    "tekil": 55377,
+    "acik_tasan": 751,
+    "bekleyen": 610,
+    "essiz": 234,
+    "olculdu": 53780,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 10365,
+     "acik_d2": 17318,
+     "acik_d3": 26570,
+     "blok": 1124
+    },
+    "olculen_hucre": {
+     "acik_d1": 10266,
+     "acik_d2": 17211,
+     "acik_d3": 25789,
+     "blok": 514
+    }
+   },
+   "KT06|ABD|H30": {
+    "olay": 34166,
+    "tekil": 34166,
+    "acik_tasan": 521,
+    "bekleyen": 373,
+    "essiz": 138,
+    "olculdu": 33133,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 6973,
+     "acik_d2": 10807,
+     "acik_d3": 15726,
+     "blok": 660
+    },
+    "olculen_hucre": {
+     "acik_d1": 6906,
+     "acik_d2": 10749,
+     "acik_d3": 15191,
+     "blok": 287
+    }
+   },
+   "KT07|ABD|H30": {
+    "olay": 1104,
+    "tekil": 1104,
+    "acik_tasan": 24,
+    "bekleyen": 15,
+    "essiz": 14,
+    "olculdu": 1051,
+    "olay_hucre": {
+     "acik_d1": 188,
+     "acik_d2": 228,
+     "acik_d3": 672,
+     "blok": 16
+    },
+    "olculen_hucre": {
+     "acik_d1": 179,
+     "acik_d2": 223,
+     "acik_d3": 648,
+     "blok": 1
+    }
+   },
+   "KT11|ABD|H30": {
+    "olay": 3136,
+    "tekil": 3136,
+    "acik_tasan": 56,
+    "bekleyen": 39,
+    "essiz": 10,
+    "olculdu": 3031,
+    "olay_hucre": {
+     "acik_d1": 582,
+     "acik_d2": 943,
+     "acik_d3": 1561,
+     "blok": 50
+    },
+    "olculen_hucre": {
+     "acik_d1": 576,
+     "acik_d2": 940,
+     "acik_d3": 1504,
+     "blok": 11
+    }
+   },
+   "KT12|ABD|H30": {
+    "olay": 4930,
+    "tekil": 4930,
+    "acik_tasan": 83,
+    "bekleyen": 68,
+    "essiz": 32,
+    "olculdu": 4747,
+    "olay_hucre": {
+     "acik_d1": 860,
+     "acik_d2": 1373,
+     "acik_d3": 2614,
+     "blok": 83
+    },
+    "olculen_hucre": {
+     "acik_d1": 843,
+     "acik_d2": 1361,
+     "acik_d3": 2528,
+     "blok": 15
+    }
+   },
+   "KT08|ABD|H30": {
+    "olay": 31034,
+    "tekil": 25414,
+    "acik_tasan": 77,
+    "bekleyen": 142,
+    "essiz": 164,
+    "olculdu": 25027,
+    "olculemez": 4,
+    "olay_hucre": {
+     "acik_d1": 3875,
+     "acik_d2": 8790,
+     "acik_d3": 17601,
+     "blok": 360,
+     "dis": 408
+    },
+    "olculen_hucre": {
+     "acik_d1": 3116,
+     "acik_d2": 7165,
+     "acik_d3": 14263,
+     "blok": 152,
+     "dis": 331
+    }
+   },
+   "KT09|ABD|H30": {
+    "olay": 1397,
+    "tekil": 1397,
+    "acik_tasan": 14,
+    "bekleyen": 15,
+    "essiz": 9,
+    "olculdu": 1359,
+    "olay_hucre": {
+     "acik_d1": 140,
+     "acik_d2": 246,
+     "acik_d3": 973,
+     "blok": 22,
+     "dis": 16
+    },
+    "olculen_hucre": {
+     "acik_d1": 139,
+     "acik_d2": 242,
+     "acik_d3": 955,
+     "blok": 7,
+     "dis": 16
+    }
+   },
+   "KT10|ABD|H30": {
+    "olay": 456368,
+    "tekil": 28468,
+    "acik_tasan": 361,
+    "bekleyen": 358,
+    "essiz": 734,
+    "olculdu": 27013,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 69967,
+     "acik_d2": 104572,
+     "acik_d3": 252506,
+     "blok": 17925,
+     "dis": 11398
+    },
+    "olculen_hucre": {
+     "acik_d1": 4277,
+     "acik_d2": 6806,
+     "acik_d3": 14930,
+     "blok": 536,
+     "dis": 464
+    }
+   },
+   "KT00|ABD|H30": {
+    "olay": 43689,
+    "tekil": 26021,
+    "acik_tasan": 169,
+    "bekleyen": 177,
+    "essiz": 1103,
+    "olculdu": 24572,
+    "olay_hucre": {
+     "acik_d1": 7664,
+     "acik_d2": 13560,
+     "acik_d3": 21631,
+     "blok": 834
+    },
+    "olculen_hucre": {
+     "acik_d1": 4181,
+     "acik_d2": 7586,
+     "acik_d3": 12477,
+     "blok": 328
+    }
+   },
+   "KT13|ABD|H30": {
+    "olay": 45077,
+    "tekil": 39131,
+    "acik_tasan": 252,
+    "bekleyen": 237,
+    "essiz": 2589,
+    "olculdu": 36051,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 7799,
+     "acik_d2": 13729,
+     "acik_d3": 22222,
+     "blok": 843,
+     "dis": 484
+    },
+    "olculen_hucre": {
+     "acik_d1": 5959,
+     "acik_d2": 10823,
+     "acik_d3": 18483,
+     "blok": 474,
+     "dis": 312
+    }
+   }
+  }
+ },
+ "AVR": {
+  "sinyal_donem": {
+   "Y1": {
+    "acik_d1": 8572,
+    "acik_d2": 13673,
+    "acik_d3": 14380,
+    "blok": 514
+   },
+   "DS": {
+    "acik_d1": 23011,
+    "acik_d2": 50534,
+    "acik_d3": 53679,
+    "blok": 1663,
+    "dis": 2193
+   },
+   "D9": {},
+   "BOFA": {
+    "acik_d1": 66,
+    "acik_d2": 73,
+    "acik_d3": 35,
+    "dis": 3
+   }
+  },
+  "olay": {
+   "Y1": {
+    "sinyal": 37139,
+    "girdi": 37139,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 9,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 9279,
+    "tekil": 15986,
+    "y1_olay": 11865
+   },
+   "DS": {
+    "girdi": 131080,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 0,
+    "giris_yok": 23,
+    "giris_gec": 8,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 14479,
+    "tekil": 0,
+    "ds_gun": 131080,
+    "havuz_gun": 116570,
+    "ana": 11404,
+    "F_KT08": 4505
+   },
+   "BOFA": {
+    "kurulum": 177,
+    "girdi": 177,
+    "sembol_yok": 0,
+    "sinyal_bar_gecersiz": 11,
+    "giris_yok": 0,
+    "giris_gec": 0,
+    "likidite_alt20": 0,
+    "bolunme_gecmis": 0,
+    "evren_once": 0,
+    "gecmis_eksik": 0,
+    "havuz_az": 0,
+    "havuz_disi": 107,
+    "tekil": 0
+   },
+   "MOM_STREV": {
+    "ay_sonu_aday": 123402,
+    "p2": 87854,
+    "KT00": 8669,
+    "KT13": 8661
+   }
+  },
+  "olcum": {
+   "KT01|AVR|H15": {
+    "olay": 11865,
+    "tekil": 11865,
+    "acik_tasan": 79,
+    "bekleyen": 45,
+    "essiz": 1223,
+    "olculdu": 10511,
+    "olculemez": 7,
+    "olay_hucre": {
+     "acik_d1": 2470,
+     "acik_d2": 4047,
+     "acik_d3": 5167,
+     "blok": 181
+    },
+    "olculen_hucre": {
+     "acik_d1": 2029,
+     "acik_d2": 3588,
+     "acik_d3": 4763,
+     "blok": 131
+    }
+   },
+   "KT02|AVR|H15": {
+    "olay": 229,
+    "tekil": 229,
+    "acik_tasan": 1,
+    "bekleyen": 2,
+    "essiz": 39,
+    "olculdu": 187,
+    "olay_hucre": {
+     "acik_d1": 32,
+     "acik_d2": 87,
+     "acik_d3": 104,
+     "blok": 6
+    },
+    "olculen_hucre": {
+     "acik_d1": 19,
+     "acik_d2": 71,
+     "acik_d3": 93,
+     "blok": 4
+    }
+   },
+   "KT03|AVR|H15": {
+    "olay": 10361,
+    "tekil": 10361,
+    "acik_tasan": 72,
+    "bekleyen": 39,
+    "essiz": 1096,
+    "olculdu": 9148,
+    "olculemez": 6,
+    "olay_hucre": {
+     "acik_d1": 2173,
+     "acik_d2": 3543,
+     "acik_d3": 4487,
+     "blok": 158
+    },
+    "olculen_hucre": {
+     "acik_d1": 1778,
+     "acik_d2": 3131,
+     "acik_d3": 4124,
+     "blok": 115
+    }
+   },
+   "KT04|AVR|H15": {
+    "olay": 5468,
+    "tekil": 5468,
+    "acik_tasan": 48,
+    "bekleyen": 24,
+    "essiz": 565,
+    "olculdu": 4828,
+    "olculemez": 3,
+    "olay_hucre": {
+     "acik_d1": 998,
+     "acik_d2": 1809,
+     "acik_d3": 2561,
+     "blok": 100
+    },
+    "olculen_hucre": {
+     "acik_d1": 794,
+     "acik_d2": 1602,
+     "acik_d3": 2358,
+     "blok": 74
+    }
+   },
+   "KT05|AVR|H15": {
+    "olay": 11086,
+    "tekil": 11086,
+    "acik_tasan": 71,
+    "bekleyen": 44,
+    "essiz": 1124,
+    "olculdu": 9840,
+    "olculemez": 7,
+    "olay_hucre": {
+     "acik_d1": 2300,
+     "acik_d2": 3798,
+     "acik_d3": 4822,
+     "blok": 166
+    },
+    "olculen_hucre": {
+     "acik_d1": 1883,
+     "acik_d2": 3381,
+     "acik_d3": 4458,
+     "blok": 118
+    }
+   },
+   "KT06|AVR|H15": {
+    "olay": 7359,
+    "tekil": 7359,
+    "acik_tasan": 39,
+    "bekleyen": 26,
+    "essiz": 728,
+    "olculdu": 6563,
+    "olculemez": 3,
+    "olay_hucre": {
+     "acik_d1": 1549,
+     "acik_d2": 2523,
+     "acik_d3": 3181,
+     "blok": 106
+    },
+    "olculen_hucre": {
+     "acik_d1": 1278,
+     "acik_d2": 2262,
+     "acik_d3": 2946,
+     "blok": 77
+    }
+   },
+   "KT07|AVR|H15": {
+    "olay": 89,
+    "tekil": 89,
+    "acik_tasan": 1,
+    "bekleyen": 1,
+    "essiz": 14,
+    "olculdu": 73,
+    "olay_hucre": {
+     "acik_d1": 7,
+     "acik_d2": 32,
+     "acik_d3": 47,
+     "blok": 3
+    },
+    "olculen_hucre": {
+     "acik_d1": 5,
+     "acik_d2": 25,
+     "acik_d3": 41,
+     "blok": 2
+    }
+   },
+   "KT11|AVR|H15": {
+    "olay": 626,
+    "tekil": 626,
+    "bekleyen": 2,
+    "essiz": 64,
+    "olculdu": 560,
+    "olay_hucre": {
+     "acik_d1": 127,
+     "acik_d2": 216,
+     "acik_d3": 271,
+     "blok": 12
+    },
+    "olculen_hucre": {
+     "acik_d1": 103,
+     "acik_d2": 195,
+     "acik_d3": 253,
+     "blok": 9
+    }
+   },
+   "KT12|AVR|H15": {
+    "olay": 867,
+    "tekil": 867,
+    "acik_tasan": 7,
+    "bekleyen": 3,
+    "essiz": 113,
+    "olculdu": 744,
+    "olay_hucre": {
+     "acik_d1": 160,
+     "acik_d2": 272,
+     "acik_d3": 424,
+     "blok": 11
+    },
+    "olculen_hucre": {
+     "acik_d1": 120,
+     "acik_d2": 236,
+     "acik_d3": 381,
+     "blok": 7
+    }
+   },
+   "KT08|AVR|H15": {
+    "olay": 4505,
+    "tekil": 4505,
+    "acik_tasan": 2,
+    "bekleyen": 8,
+    "essiz": 221,
+    "olculdu": 4273,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 788,
+     "acik_d2": 1660,
+     "acik_d3": 1928,
+     "blok": 43,
+     "dis": 86
+    },
+    "olculen_hucre": {
+     "acik_d1": 726,
+     "acik_d2": 1570,
+     "acik_d3": 1867,
+     "blok": 35,
+     "dis": 75
+    }
+   },
+   "KT09|AVR|H15": {
+    "olay": 59,
+    "tekil": 59,
+    "olculdu": 59,
+    "olay_hucre": {
+     "acik_d1": 17,
+     "acik_d2": 21,
+     "acik_d3": 20,
+     "dis": 1
+    },
+    "olculen_hucre": {
+     "acik_d1": 17,
+     "acik_d2": 21,
+     "acik_d3": 20,
+     "dis": 1
+    }
+   },
+   "KT00|AVR|H15": {
+    "olay": 8669,
+    "tekil": 8669,
+    "essiz": 2075,
+    "olculdu": 6585,
+    "olculemez": 9,
+    "olay_hucre": {
+     "acik_d1": 1774,
+     "acik_d2": 2871,
+     "acik_d3": 3888,
+     "blok": 136
+    },
+    "olculen_hucre": {
+     "acik_d1": 1149,
+     "acik_d2": 2182,
+     "acik_d3": 3126,
+     "blok": 128
+    }
+   },
+   "KT13|AVR|H15": {
+    "olay": 8661,
+    "tekil": 8661,
+    "essiz": 2806,
+    "olculdu": 5848,
+    "olculemez": 7,
+    "olay_hucre": {
+     "acik_d1": 1773,
+     "acik_d2": 2808,
+     "acik_d3": 3834,
+     "blok": 134,
+     "dis": 112
+    },
+    "olculen_hucre": {
+     "acik_d1": 1013,
+     "acik_d2": 1816,
+     "acik_d3": 2869,
+     "blok": 90,
+     "dis": 60
+    }
+   },
+   "KT01|AVR|H30": {
+    "olay": 11865,
+    "tekil": 11865,
+    "acik_tasan": 119,
+    "bekleyen": 101,
+    "essiz": 1217,
+    "olculdu": 10423,
+    "olculemez": 5,
+    "olay_hucre": {
+     "acik_d1": 2470,
+     "acik_d2": 4047,
+     "acik_d3": 5167,
+     "blok": 181
+    },
+    "olculen_hucre": {
+     "acik_d1": 2032,
+     "acik_d2": 3587,
+     "acik_d3": 4725,
+     "blok": 79
+    }
+   },
+   "KT02|AVR|H30": {
+    "olay": 229,
+    "tekil": 229,
+    "acik_tasan": 4,
+    "bekleyen": 5,
+    "essiz": 39,
+    "olculdu": 181,
+    "olay_hucre": {
+     "acik_d1": 32,
+     "acik_d2": 87,
+     "acik_d3": 104,
+     "blok": 6
+    },
+    "olculen_hucre": {
+     "acik_d1": 19,
+     "acik_d2": 71,
+     "acik_d3": 90,
+     "blok": 1
+    }
+   },
+   "KT03|AVR|H30": {
+    "olay": 10361,
+    "tekil": 10361,
+    "acik_tasan": 110,
+    "bekleyen": 85,
+    "essiz": 1092,
+    "olculdu": 9070,
+    "olculemez": 4,
+    "olay_hucre": {
+     "acik_d1": 2173,
+     "acik_d2": 3543,
+     "acik_d3": 4487,
+     "blok": 158
+    },
+    "olculen_hucre": {
+     "acik_d1": 1780,
+     "acik_d2": 3130,
+     "acik_d3": 4088,
+     "blok": 72
+    }
+   },
+   "KT04|AVR|H30": {
+    "olay": 5468,
+    "tekil": 5468,
+    "acik_tasan": 69,
+    "bekleyen": 64,
+    "essiz": 563,
+    "olculdu": 4770,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 998,
+     "acik_d2": 1809,
+     "acik_d3": 2561,
+     "blok": 100
+    },
+    "olculen_hucre": {
+     "acik_d1": 795,
+     "acik_d2": 1602,
+     "acik_d3": 2337,
+     "blok": 36
+    }
+   },
+   "KT05|AVR|H30": {
+    "olay": 11086,
+    "tekil": 11086,
+    "acik_tasan": 107,
+    "bekleyen": 93,
+    "essiz": 1120,
+    "olculdu": 9761,
+    "olculemez": 5,
+    "olay_hucre": {
+     "acik_d1": 2300,
+     "acik_d2": 3798,
+     "acik_d3": 4822,
+     "blok": 166
+    },
+    "olculen_hucre": {
+     "acik_d1": 1886,
+     "acik_d2": 3380,
+     "acik_d3": 4423,
+     "blok": 72
+    }
+   },
+   "KT06|AVR|H30": {
+    "olay": 7359,
+    "tekil": 7359,
+    "acik_tasan": 63,
+    "bekleyen": 66,
+    "essiz": 725,
+    "olculdu": 6503,
+    "olculemez": 2,
+    "olay_hucre": {
+     "acik_d1": 1549,
+     "acik_d2": 2523,
+     "acik_d3": 3181,
+     "blok": 106
+    },
+    "olculen_hucre": {
+     "acik_d1": 1279,
+     "acik_d2": 2262,
+     "acik_d3": 2922,
+     "blok": 40
+    }
+   },
+   "KT07|AVR|H30": {
+    "olay": 89,
+    "tekil": 89,
+    "acik_tasan": 4,
+    "bekleyen": 3,
+    "essiz": 14,
+    "olculdu": 68,
+    "olay_hucre": {
+     "acik_d1": 7,
+     "acik_d2": 32,
+     "acik_d3": 47,
+     "blok": 3
+    },
+    "olculen_hucre": {
+     "acik_d1": 5,
+     "acik_d2": 25,
+     "acik_d3": 38
+    }
+   },
+   "KT11|AVR|H30": {
+    "olay": 626,
+    "tekil": 626,
+    "acik_tasan": 5,
+    "bekleyen": 10,
+    "essiz": 63,
+    "olculdu": 548,
+    "olay_hucre": {
+     "acik_d1": 127,
+     "acik_d2": 216,
+     "acik_d3": 271,
+     "blok": 12
+    },
+    "olculen_hucre": {
+     "acik_d1": 103,
+     "acik_d2": 195,
+     "acik_d3": 248,
+     "blok": 2
+    }
+   },
+   "KT12|AVR|H30": {
+    "olay": 867,
+    "tekil": 867,
+    "acik_tasan": 11,
+    "bekleyen": 8,
+    "essiz": 112,
+    "olculdu": 736,
+    "olay_hucre": {
+     "acik_d1": 160,
+     "acik_d2": 272,
+     "acik_d3": 424,
+     "blok": 11
+    },
+    "olculen_hucre": {
+     "acik_d1": 120,
+     "acik_d2": 236,
+     "acik_d3": 377,
+     "blok": 3
+    }
+   },
+   "KT08|AVR|H30": {
+    "olay": 4505,
+    "tekil": 3732,
+    "acik_tasan": 7,
+    "bekleyen": 21,
+    "essiz": 193,
+    "olculdu": 3510,
+    "olculemez": 1,
+    "olay_hucre": {
+     "acik_d1": 788,
+     "acik_d2": 1660,
+     "acik_d3": 1928,
+     "blok": 43,
+     "dis": 86
+    },
+    "olculen_hucre": {
+     "acik_d1": 589,
+     "acik_d2": 1258,
+     "acik_d3": 1587,
+     "blok": 19,
+     "dis": 57
+    }
+   },
+   "KT09|AVR|H30": {
+    "olay": 59,
+    "tekil": 59,
+    "olculdu": 59,
+    "olay_hucre": {
+     "acik_d1": 17,
+     "acik_d2": 21,
+     "acik_d3": 20,
+     "dis": 1
+    },
+    "olculen_hucre": {
+     "acik_d1": 17,
+     "acik_d2": 21,
+     "acik_d3": 20,
+     "dis": 1
+    }
+   },
+   "KT00|AVR|H30": {
+    "olay": 8669,
+    "tekil": 5352,
+    "acik_tasan": 33,
+    "bekleyen": 24,
+    "essiz": 1250,
+    "olculdu": 4037,
+    "olculemez": 8,
+    "olay_hucre": {
+     "acik_d1": 1774,
+     "acik_d2": 2871,
+     "acik_d3": 3888,
+     "blok": 136
+    },
+    "olculen_hucre": {
+     "acik_d1": 718,
+     "acik_d2": 1372,
+     "acik_d3": 1896,
+     "blok": 51
+    }
+   },
+   "KT13|AVR|H30": {
+    "olay": 8661,
+    "tekil": 7638,
+    "acik_tasan": 42,
+    "bekleyen": 33,
+    "essiz": 2389,
+    "olculdu": 5171,
+    "olculemez": 3,
+    "olay_hucre": {
+     "acik_d1": 1773,
+     "acik_d2": 2808,
+     "acik_d3": 3834,
+     "blok": 134,
+     "dis": 112
+    },
+    "olculen_hucre": {
+     "acik_d1": 907,
+     "acik_d2": 1608,
+     "acik_d3": 2556,
+     "blok": 44,
+     "dis": 56
+    }
+   }
+  }
+ }
+}
