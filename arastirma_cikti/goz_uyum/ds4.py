@@ -498,7 +498,7 @@ def ds4_onay(onbellek: Optional[str] = None) -> Dict[str, Any]:
                     "(bu PDF kör değil, onay için).\n"
                     "Daha önce görmediğin yeni grafikler. Hisse adı yok; son günden sonrası gösterilmez.\n"
                     "Kutulardan birini işaretlemen yeter.")
-        fig.text(0.08, 0.50, aciklama, fontsize=10, ha="left", va="top", linespacing=1.4)
+        fig.text(0.08, 0.40, aciklama, fontsize=10, ha="left", va="top", linespacing=1.4)
         pdf.savefig(fig); plt.close(fig)
         for rr in T.to_dict("records"):
             W = ds4_pencere(rr["pazar"], rr["sembol"], rr["sinyal_gunu"])
@@ -916,9 +916,11 @@ def ds4_olc(deneme: bool = False, cemal1: Optional[str] = None, cemal2: Optional
 def _sonuc_md4(S: Dict[str, Any]) -> str:
     B = S["kume"]["birleşik"]; v1 = B["model"]["V1"]
     L = [("# [DENEME — UYDURMA ETİKET] " if S["deneme"] else "# ") + "DİP SAVUNMASI v4 (DS4) — SONUÇ (iki kör set, 80 sayfa)", "",
-         f"Üretim: {GU._simdi()} (UTC). Etiket dosyaları (cemal_isaret.json, cemal_isaret2.json) bu komutla açıldı: {S['etiket_acilis_utc']} (UTC). "
-         "Mühür denetimi: ds4_anahtar.json, ds4.py, DS4_ESIK, kural kaynağı, DS4_ONAY.pdf ve ds4_onay_anahtar.json sha'ları DS4_ON_KAYIT ile aynı; "
-         "80 sayfanın P1 / P2 / P3 ve V1 / V2 / V3 yanıtı veriden yeniden hesaplandı, mühürle aynı. GETİRİ YOK.", "",
+         (f"Üretim: {GU._simdi()} (UTC). DENEME: uydurma etiket dosyaları; mühür denetimi YAPILMADI; 80 yanıt veriden yeniden hesaplandı, "
+          "anahtarla aynı. GETİRİ YOK." if S["deneme"] else
+          f"Üretim: {GU._simdi()} (UTC). Etiket dosyaları (cemal_isaret.json, cemal_isaret2.json) bu komutla açıldı: {S['etiket_acilis_utc']} (UTC). "
+          "Mühür denetimi: ds4_anahtar.json, ds4.py, DS4_ESIK, kural kaynağı, DS4_ONAY.pdf ve ds4_onay_anahtar.json sha'ları DS4_ON_KAYIT ile aynı; "
+          "80 sayfanın P1 / P2 / P3 ve V1 / V2 / V3 yanıtı veriden yeniden hesaplandı, mühürle aynı. GETİRİ YOK."), "",
          f"Karar: birleşik {B['karar_n']} (Cemal VAR {B['cemal_VAR']}); işaretsiz / '?' (karar dışı): {B['isaretsiz']} {B['isaretsiz_sayfa']}.", "",
          f"## HÜKÜM (V1, ön kayıttaki eşikle): **{v1['hukum']}** — birleşik kappa {_f4(v1['kappa'])}, %95 [{_f4(v1['ar95'][0])}, {_f4(v1['ar95'][1])}]",
          "", "Sınır: Cemal tarifini DS3 görselindeki 6 set-1 sayfasını görerek verdi; bu yüzden sonuç YARI BAĞIMSIZDIR. Kesin hüküm yalnız Cemal'in "

@@ -1,0 +1,1807 @@
+{
+ "surum": "ds4 onay v1",
+ "uretim_utc": "2026-11-23T18:35:32Z",
+ "uyari": "GİZLİ ANAHTAR (hisse adları): Cemal DS4_ONAY.pdf'i işaretlemeden önce gösterilmez. GETİRİ YOK.",
+ "esik_sha": "e8b36572a3ce3e02ce6585ceb5a91a15a9b2ad0c789d616b062d579411da04b0",
+ "kural_sha": "12edb54e24b47f62b119119ec5b1870849a9c6f45c34f91b73293f2b17d88d6f",
+ "havuz_sha": "47afd46429a53cd57272ead2e126217957385d8ea5bda61c737c25092ac1d781",
+ "havuz": {
+  "havuz_n": 2849,
+  "iki_set_haric_n": 2695,
+  "havuz_pazar": {
+   "ABD": 2451,
+   "AVR": 221,
+   "BIST": 177
+  },
+  "iki_set_haric_pazar": {
+   "ABD": 2329,
+   "AVR": 202,
+   "BIST": 164
+  },
+  "havuz_V1_VAR": {
+   "ABD": 409,
+   "AVR": 38,
+   "BIST": 36
+  },
+  "havuz_parca": {
+   "P1": 2644,
+   "P2": 1739,
+   "P3i": 2510,
+   "P3ii": 1004,
+   "P3iii": 2104,
+   "P3": 720,
+   "V1": 483,
+   "V2": 713,
+   "V3": 1613
+  },
+  "VAR_pazar_sayfa": {
+   "ABD": 12,
+   "AVR": 2,
+   "BIST": 2
+  },
+  "notlar": []
+ },
+ "pdf_sha": "57d377634bff26b56d362fddd82832e41cbe8b10771b66eca99b24f6f2cdc166",
+ "pdf_bayt": 275061,
+ "sayfalar": [
+  {
+   "sayfa": 1,
+   "pazar": "ABD",
+   "sembol": "NRG",
+   "sinyal_gunu": "2012-02-21",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 99,
+   "m": 21,
+   "low_d": 11.852667981928812,
+   "d_glob_idx": 99,
+   "dip_yeni": false,
+   "tepe_idx": 13,
+   "tepe": 17.801144481711514,
+   "dusus": 0.50186814553922,
+   "P1": true,
+   "pivot_tepeler": [
+    7,
+    13,
+    50,
+    66,
+    82
+   ],
+   "h1_idx": 13,
+   "h1": 17.801144481711514,
+   "h2_idx": 82,
+   "h2": 13.845324958454515,
+   "egim": -0.0573307177283623,
+   "egim_atr": -0.1748458339910167,
+   "kirilim_idx": 102,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.009962522662908535,
+   "P3i": true,
+   "atr_d": 0.32789295815482716,
+   "bant": 12.016614461006226,
+   "pivot_dipler": [
+    116
+   ],
+   "pivot_dip_low": [
+    12.295477456182494
+   ],
+   "pivot_dip_atr": [
+    1.3504696067446278
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2012-01-20",
+   "h1_tarih": "2011-09-16",
+   "h2_tarih": "2011-12-23",
+   "kirilim_tarih": "2012-01-25",
+   "pivot_dip_tarih": [
+    "2012-02-14"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 2,
+   "pazar": "ABD",
+   "sembol": "MTZ",
+   "sinyal_gunu": "2021-11-05",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 103,
+   "m": 17,
+   "low_d": 83.9000015258789,
+   "d_glob_idx": 103,
+   "dip_yeni": false,
+   "tepe_idx": 15,
+   "tepe": 122.33000183105469,
+   "dusus": 0.45804528732126504,
+   "P1": true,
+   "pivot_tepeler": [
+    15,
+    27,
+    52,
+    69,
+    84,
+    97
+   ],
+   "h1_idx": 15,
+   "h1": 122.33000183105469,
+   "h2_idx": 97,
+   "h2": 90.41999816894531,
+   "egim": -0.38914638612328506,
+   "egim_atr": -0.15222260250431555,
+   "kirilim_idx": 107,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.013706811739737423,
+   "P3i": true,
+   "atr_d": 2.5564297267368863,
+   "bant": 85.17821638924735,
+   "pivot_dipler": [
+    113
+   ],
+   "pivot_dip_low": [
+    86.33999633789062
+   ],
+   "pivot_dip_atr": [
+    0.9544540913808771
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2021-10-13",
+   "h1_tarih": "2021-06-09",
+   "h2_tarih": "2021-10-05",
+   "kirilim_tarih": "2021-10-19",
+   "pivot_dip_tarih": [
+    "2021-10-27"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 3,
+   "pazar": "ABD",
+   "sembol": "MTRX",
+   "sinyal_gunu": "2017-07-27",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 95,
+   "m": 25,
+   "low_d": 7.800000190734863,
+   "d_glob_idx": 95,
+   "dip_yeni": false,
+   "tepe_idx": 1,
+   "tepe": 22.200000762939453,
+   "dusus": 1.8461538743690618,
+   "P1": true,
+   "pivot_tepeler": [
+    38,
+    45,
+    56,
+    88
+   ],
+   "h1_idx": 56,
+   "h1": 17.700000762939453,
+   "h2_idx": 88,
+   "h2": 9.199999809265137,
+   "egim": -0.2656250298023224,
+   "egim_atr": -0.7378474502074053,
+   "kirilim_idx": 96,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.03205128126752599,
+   "P3i": true,
+   "atr_d": 0.35999992915562223,
+   "bant": 7.980000155312674,
+   "pivot_dipler": [
+    104,
+    113,
+    117
+   ],
+   "pivot_dip_low": [
+    9.050000190734863,
+    9.100000381469727,
+    9.149999618530273
+   ],
+   "pivot_dip_atr": [
+    3.4722229055207534,
+    3.6111123515607524,
+    3.749999148504907
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2017-06-21",
+   "h1_tarih": "2017-04-26",
+   "h2_tarih": "2017-06-12",
+   "kirilim_tarih": "2017-06-22",
+   "pivot_dip_tarih": [
+    "2017-07-05",
+    "2017-07-18",
+    "2017-07-24"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 4,
+   "pazar": "ABD",
+   "sembol": "GEO",
+   "sinyal_gunu": "2022-03-29",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 110,
+   "m": 10,
+   "low_d": 5.210000038146973,
+   "d_glob_idx": 110,
+   "dip_yeni": false,
+   "tepe_idx": 28,
+   "tepe": 9.8100004196167,
+   "dusus": 0.8829175331648935,
+   "P1": true,
+   "pivot_tepeler": [
+    28,
+    51,
+    61,
+    77
+   ],
+   "h1_idx": 28,
+   "h1": 9.8100004196167,
+   "h2_idx": 77,
+   "h2": 7.769999980926514,
+   "egim": -0.04163266201408542,
+   "egim_atr": -0.16748765097977467,
+   "kirilim_idx": 120,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.06333971617847145,
+   "P3i": true,
+   "atr_d": 0.2485715321132115,
+   "bant": 5.334285804203579,
+   "pivot_dipler": [
+    117
+   ],
+   "pivot_dip_low": [
+    5.710000038146973
+   ],
+   "pivot_dip_atr": [
+    2.011493414991206
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2022-03-15",
+   "h1_tarih": "2021-11-15",
+   "h2_tarih": "2022-01-26",
+   "kirilim_tarih": "2022-03-29",
+   "pivot_dip_tarih": [
+    "2022-03-24"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 5,
+   "pazar": "ABD",
+   "sembol": "IIPR",
+   "sinyal_gunu": "2023-05-09",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 111,
+   "m": 9,
+   "low_d": 43.08126109010511,
+   "d_glob_idx": 111,
+   "dip_yeni": false,
+   "tepe_idx": 14,
+   "tepe": 81.75680430077438,
+   "dusus": 0.8977347048819853,
+   "P1": true,
+   "pivot_tepeler": [
+    14,
+    33,
+    43,
+    54,
+    71,
+    77,
+    95
+   ],
+   "h1_idx": 14,
+   "h1": 81.75680430077438,
+   "h2_idx": 95,
+   "h2": 51.8873508079513,
+   "egim": -0.3687586850965812,
+   "egim_atr": -0.2553078135783146,
+   "kirilim_idx": 112,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.018955364351607606,
+   "P3i": true,
+   "atr_d": 1.4443689753485198,
+   "bant": 43.80344557777937,
+   "pivot_dipler": [
+    117
+   ],
+   "pivot_dip_low": [
+    45.04020626532048
+   ],
+   "pivot_dip_atr": [
+    1.35626367545224
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2023-04-26",
+   "h1_tarih": "2022-12-05",
+   "h2_tarih": "2023-04-03",
+   "kirilim_tarih": "2023-04-27",
+   "pivot_dip_tarih": [
+    "2023-05-04"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 6,
+   "pazar": "ABD",
+   "sembol": "WTS",
+   "sinyal_gunu": "2022-03-17",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 113,
+   "m": 7,
+   "low_d": 132.4093661223094,
+   "d_glob_idx": 113,
+   "dip_yeni": false,
+   "tepe_idx": 34,
+   "tepe": 203.97922281408574,
+   "dusus": 0.5405195930449944,
+   "P1": true,
+   "pivot_tepeler": [
+    34,
+    41,
+    51,
+    67,
+    102
+   ],
+   "h1_idx": 34,
+   "h1": 203.97922281408574,
+   "h2_idx": 102,
+   "h2": 143.88281888963806,
+   "egim": -0.8837706459477601,
+   "egim_atr": -0.1867086755911781,
+   "kirilim_idx": 114,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.021065648813892057,
+   "P3i": true,
+   "atr_d": 4.733420357406883,
+   "bant": 134.77607630101284,
+   "pivot_dipler": [
+    117
+   ],
+   "pivot_dip_low": [
+    135.19865532871202
+   ],
+   "pivot_dip_atr": [
+    0.5892756180080082
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2022-03-08",
+   "h1_tarih": "2021-11-11",
+   "h2_tarih": "2022-02-18",
+   "kirilim_tarih": "2022-03-09",
+   "pivot_dip_tarih": [
+    "2022-03-14"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 7,
+   "pazar": "ABD",
+   "sembol": "IRDM",
+   "sinyal_gunu": "2021-06-14",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 97,
+   "m": 23,
+   "low_d": 30.664779643640255,
+   "d_glob_idx": 97,
+   "dip_yeni": false,
+   "tepe_idx": 33,
+   "tepe": 51.01462281829577,
+   "dusus": 0.6636226775846401,
+   "P1": true,
+   "pivot_tepeler": [
+    26,
+    33,
+    49,
+    55,
+    75
+   ],
+   "h1_idx": 33,
+   "h1": 51.01462281829577,
+   "h2_idx": 75,
+   "h2": 40.27028193189167,
+   "egim": -0.25581764015247865,
+   "egim_atr": -0.19260355745653188,
+   "kirilim_idx": 100,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.06362256916947362,
+   "P3i": true,
+   "atr_d": 1.3282082819794925,
+   "bant": 31.32888378463,
+   "pivot_dipler": [
+    103,
+    113
+   ],
+   "pivot_dip_low": [
+    32.61575170758442,
+    34.31468513249592
+   ],
+   "pivot_dip_atr": [
+    1.468875093171788,
+    2.7479918160245416
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2021-05-11",
+   "h1_tarih": "2021-02-08",
+   "h2_tarih": "2021-04-09",
+   "kirilim_tarih": "2021-05-14",
+   "pivot_dip_tarih": [
+    "2021-05-19",
+    "2021-06-03"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 8,
+   "pazar": "ABD",
+   "sembol": "VCYT",
+   "sinyal_gunu": "2021-07-28",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 83,
+   "m": 37,
+   "low_d": 32.869998931884766,
+   "d_glob_idx": 83,
+   "dip_yeni": false,
+   "tepe_idx": 4,
+   "tepe": 86.02999877929688,
+   "dusus": 1.6172802426180035,
+   "P1": true,
+   "pivot_tepeler": [
+    27,
+    41,
+    47,
+    55
+   ],
+   "h1_idx": 41,
+   "h1": 59.834999084472656,
+   "h2_idx": 55,
+   "h2": 51.72999954223633,
+   "egim": -0.5789285387311663,
+   "egim_atr": -0.2467651143962122,
+   "kirilim_idx": 85,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.012169198018771255,
+   "P3i": true,
+   "atr_d": 2.346071243286133,
+   "bant": 34.04303455352783,
+   "pivot_dipler": [
+    91,
+    106,
+    111
+   ],
+   "pivot_dip_low": [
+    34.77000045776367,
+    36.29999923706055,
+    35.10300064086914
+   ],
+   "pivot_dip_atr": [
+    0.8098652295049581,
+    1.4620188176260978,
+    0.9518047311541222
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2021-06-04",
+   "h1_tarih": "2021-04-06",
+   "h2_tarih": "2021-04-26",
+   "kirilim_tarih": "2021-06-08",
+   "pivot_dip_tarih": [
+    "2021-06-16",
+    "2021-07-08",
+    "2021-07-15"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 9,
+   "pazar": "ABD",
+   "sembol": "SLAB",
+   "sinyal_gunu": "2010-10-15",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 94,
+   "m": 26,
+   "low_d": 34.099998474121094,
+   "d_glob_idx": 94,
+   "dip_yeni": false,
+   "tepe_idx": 1,
+   "tepe": 51.68000030517578,
+   "dusus": 0.5155425987598319,
+   "P1": true,
+   "pivot_tepeler": [
+    11,
+    26,
+    36,
+    54,
+    63,
+    72
+   ],
+   "h1_idx": 11,
+   "h1": 47.9900016784668,
+   "h2_idx": 72,
+   "h2": 41.70000076293945,
+   "egim": -0.10311476910700564,
+   "egim_atr": -0.08552176117477725,
+   "kirilim_idx": 117,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.0026393007805027846,
+   "P3i": true,
+   "atr_d": 1.2057138170514787,
+   "bant": 34.70285538264683,
+   "pivot_dipler": [
+    103,
+    110,
+    115
+   ],
+   "pivot_dip_low": [
+    35.38999938964844,
+    35.65999984741211,
+    35.65999984741211
+   ],
+   "pivot_dip_atr": [
+    1.0699063884678583,
+    1.293840504462271,
+    1.293840504462271
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2010-09-09",
+   "h1_tarih": "2010-05-12",
+   "h2_tarih": "2010-08-09",
+   "kirilim_tarih": "2010-10-12",
+   "pivot_dip_tarih": [
+    "2010-09-22",
+    "2010-10-01",
+    "2010-10-08"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 10,
+   "pazar": "ABD",
+   "sembol": "HLIO",
+   "sinyal_gunu": "2022-10-26",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 97,
+   "m": 23,
+   "low_d": 46.76453932679587,
+   "d_glob_idx": 97,
+   "dip_yeni": false,
+   "tepe_idx": 21,
+   "tepe": 71.24634217028527,
+   "dusus": 0.5235121140060379,
+   "P1": true,
+   "pivot_tepeler": [
+    8,
+    21,
+    36,
+    64,
+    87
+   ],
+   "h1_idx": 21,
+   "h1": 71.24634217028527,
+   "h2_idx": 87,
+   "h2": 55.3094471166811,
+   "egim": -0.24146810687279052,
+   "egim_atr": -0.13488149829964602,
+   "kirilim_idx": 104,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.012636972954731096,
+   "P3i": true,
+   "atr_d": 1.7902240849694375,
+   "bant": 47.65965136928059,
+   "pivot_dipler": [
+    111,
+    116
+   ],
+   "pivot_dip_low": [
+    48.59292680345745,
+    49.14611558393914
+   ],
+   "pivot_dip_atr": [
+    1.0213176618572843,
+    1.3303229898082456
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2022-09-23",
+   "h1_tarih": "2022-06-06",
+   "h2_tarih": "2022-09-09",
+   "kirilim_tarih": "2022-10-04",
+   "pivot_dip_tarih": [
+    "2022-10-13",
+    "2022-10-20"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 11,
+   "pazar": "ABD",
+   "sembol": "LGND",
+   "sinyal_gunu": "2005-06-17",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 77,
+   "m": 43,
+   "low_d": 13.16154457539669,
+   "d_glob_idx": 77,
+   "dip_yeni": false,
+   "tepe_idx": 2,
+   "tepe": 33.67559735869635,
+   "dusus": 1.5586356651214976,
+   "P1": true,
+   "pivot_tepeler": [
+    16,
+    30,
+    54,
+    61
+   ],
+   "h1_idx": 16,
+   "h1": 31.851502317569356,
+   "h2_idx": 61,
+   "h2": 23.46066504118773,
+   "egim": -0.1864630505862583,
+   "egim_atr": -0.21785070455830854,
+   "kirilim_idx": 95,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.012793186979322302,
+   "P3i": true,
+   "atr_d": 0.8559212648144123,
+   "bant": 13.589505207803896,
+   "pivot_dipler": [
+    87,
+    102,
+    113
+   ],
+   "pivot_dip_low": [
+    14.424380418021217,
+    15.883656851280318,
+    16.023971766054913
+   ],
+   "pivot_dip_atr": [
+    1.4754112259360042,
+    3.1803302333817562,
+    3.3442646050847658
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2005-04-18",
+   "h1_tarih": "2005-01-19",
+   "h2_tarih": "2005-03-24",
+   "kirilim_tarih": "2005-05-12",
+   "pivot_dip_tarih": [
+    "2005-05-02",
+    "2005-05-23",
+    "2005-06-08"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 12,
+   "pazar": "ABD",
+   "sembol": "HLF",
+   "sinyal_gunu": "2023-06-26",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 100,
+   "m": 20,
+   "low_d": 11.140000343322754,
+   "d_glob_idx": 100,
+   "dip_yeni": false,
+   "tepe_idx": 31,
+   "tepe": 21.329999923706055,
+   "dusus": 0.9147216576605515,
+   "P1": true,
+   "pivot_tepeler": [
+    21,
+    31,
+    43,
+    82,
+    90
+   ],
+   "h1_idx": 31,
+   "h1": 21.329999923706055,
+   "h2_idx": 90,
+   "h2": 15.010000228881836,
+   "egim": -0.10711863889532575,
+   "egim_atr": -0.1471698317206294,
+   "kirilim_idx": 115,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.012567269778618329,
+   "P3i": true,
+   "atr_d": 0.7278573172433036,
+   "bant": 11.503929001944405,
+   "pivot_dipler": [
+    117
+   ],
+   "pivot_dip_low": [
+    11.979999542236328
+   ],
+   "pivot_dip_atr": [
+    1.1540712431043467
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2023-05-25",
+   "h1_tarih": "2023-02-15",
+   "h2_tarih": "2023-05-11",
+   "kirilim_tarih": "2023-06-16",
+   "pivot_dip_tarih": [
+    "2023-06-21"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 13,
+   "pazar": "BIST",
+   "sembol": "HALKB",
+   "sinyal_gunu": "2023-04-13",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 79,
+   "m": 41,
+   "low_d": 9.529999732971191,
+   "d_glob_idx": 79,
+   "dip_yeni": false,
+   "tepe_idx": 41,
+   "tepe": 18.621789182939683,
+   "dusus": 0.9540178074206431,
+   "P1": true,
+   "pivot_tepeler": [
+    20,
+    28,
+    41,
+    67
+   ],
+   "h1_idx": 41,
+   "h1": 18.621789182939683,
+   "h2_idx": 67,
+   "h2": 15.046926730132633,
+   "egim": -0.13749470972334807,
+   "egim_atr": -0.14585542271965343,
+   "kirilim_idx": 92,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.04931797273852334,
+   "P3i": true,
+   "atr_d": 0.9426780791525635,
+   "bant": 10.001338772547474,
+   "pivot_dipler": [
+    87,
+    102,
+    108,
+    116
+   ],
+   "pivot_dip_low": [
+    10.720000267028809,
+    10.800000190734863,
+    10.390000343322754,
+    10.930000305175781
+   ],
+   "pivot_dip_atr": [
+    1.2623615212601405,
+    1.3472260423254567,
+    0.9122951189494877,
+    1.4851311419728188
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2023-02-15",
+   "h1_tarih": "2022-12-16",
+   "h2_tarih": "2023-01-23",
+   "kirilim_tarih": "2023-03-06",
+   "pivot_dip_tarih": [
+    "2023-02-27",
+    "2023-03-20",
+    "2023-03-28",
+    "2023-04-07"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 14,
+   "pazar": "AVR",
+   "sembol": "RIO.L",
+   "sinyal_gunu": "2021-12-07",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 107,
+   "m": 13,
+   "low_d": 4339.297211568678,
+   "d_glob_idx": 107,
+   "dip_yeni": false,
+   "tepe_idx": 32,
+   "tepe": 6316.3972704985,
+   "dusus": 0.455626789900176,
+   "P1": true,
+   "pivot_tepeler": [
+    7,
+    16,
+    32,
+    50,
+    79
+   ],
+   "h1_idx": 32,
+   "h1": 6316.3972704985,
+   "h2_idx": 79,
+   "h2": 5135.598815068431,
+   "egim": -25.123371392129133,
+   "egim_atr": -0.2643034983005605,
+   "kirilim_idx": 108,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.010909486773818866,
+   "P3i": true,
+   "atr_d": 95.05500893355318,
+   "bant": 4386.824716035455,
+   "pivot_dipler": [
+    113
+   ],
+   "pivot_dip_low": [
+    4464.871216290589
+   ],
+   "pivot_dip_atr": [
+    1.3210666763462329
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2021-11-18",
+   "h1_tarih": "2021-08-04",
+   "h2_tarih": "2021-10-11",
+   "kirilim_tarih": "2021-11-19",
+   "pivot_dip_tarih": [
+    "2021-11-26"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 15,
+   "pazar": "AVR",
+   "sembol": "CBK.DE",
+   "sinyal_gunu": "2012-09-06",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 87,
+   "m": 33,
+   "low_d": 9.836809076332083,
+   "d_glob_idx": 87,
+   "dip_yeni": false,
+   "tepe_idx": 6,
+   "tepe": 17.568878175262125,
+   "dusus": 0.7860342758439662,
+   "P1": true,
+   "pivot_tepeler": [
+    6,
+    29,
+    55,
+    62
+   ],
+   "h1_idx": 6,
+   "h1": 17.568878175262125,
+   "h2_idx": 62,
+   "h2": 13.0159383715473,
+   "egim": -0.08130249649490759,
+   "egim_atr": -0.21223322191614272,
+   "kirilim_idx": 91,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.0035810257842681104,
+   "P3i": true,
+   "atr_d": 0.38308091335027517,
+   "bant": 10.028349533007221,
+   "pivot_dipler": [
+    95,
+    103,
+    116
+   ],
+   "pivot_dip_low": [
+    10.497294081308192,
+    10.224294147221434,
+    10.77029274423837
+   ],
+   "pivot_dip_atr": [
+    1.7241396842243257,
+    1.0114966770350393,
+    2.436779373167945
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2012-07-23",
+   "h1_tarih": "2012-03-27",
+   "h2_tarih": "2012-06-18",
+   "kirilim_tarih": "2012-07-27",
+   "pivot_dip_tarih": [
+    "2012-08-02",
+    "2012-08-14",
+    "2012-08-31"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 16,
+   "pazar": "BIST",
+   "sembol": "NETAS",
+   "sinyal_gunu": "2021-11-01",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 95,
+   "m": 25,
+   "low_d": 18.43037960421471,
+   "d_glob_idx": 95,
+   "dip_yeni": false,
+   "tepe_idx": 2,
+   "tepe": 30.410125332920856,
+   "dusus": 0.6499999449803293,
+   "P1": true,
+   "pivot_tepeler": [
+    27,
+    35,
+    44,
+    62,
+    78
+   ],
+   "h1_idx": 27,
+   "h1": 26.79493620683578,
+   "h2_idx": 78,
+   "h2": 21.915610207485724,
+   "egim": -0.09567305881078539,
+   "egim_atr": -0.19889923362387904,
+   "kirilim_idx": 101,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.010256400224333495,
+   "P3i": true,
+   "atr_d": 0.48101270712638516,
+   "bant": 18.6708859577779,
+   "pivot_dipler": [
+    105,
+    110
+   ],
+   "pivot_dip_low": [
+    19.02109688477667,
+    19.292826293017352
+   ],
+   "pivot_dip_atr": [
+    1.2280700110626206,
+    1.7929810918197544
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": true,
+   "V2": true,
+   "V3": true,
+   "d_tarih": "2021-09-24",
+   "h1_tarih": "2021-06-14",
+   "h2_tarih": "2021-09-01",
+   "kirilim_tarih": "2021-10-04",
+   "pivot_dip_tarih": [
+    "2021-10-08",
+    "2021-10-15"
+   ],
+   "grup": "VAR",
+   "V1_dusen": [],
+   "neden": [],
+   "yanit": {
+    "V1": "VAR",
+    "V2": "VAR",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 17,
+   "pazar": "ABD",
+   "sembol": "OLN",
+   "sinyal_gunu": "2022-07-19",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 110,
+   "m": 10,
+   "low_d": 38.8917792313695,
+   "d_glob_idx": 110,
+   "dip_yeni": false,
+   "tepe_idx": 89,
+   "tepe": 60.7966523892934,
+   "dusus": 0.5632263061972689,
+   "P1": true,
+   "pivot_tepeler": [
+    12,
+    24,
+    38,
+    59,
+    70,
+    78,
+    89
+   ],
+   "h1_idx": 89,
+   "h1": 60.7966523892934,
+   "h2_idx": -1,
+   "h2": NaN,
+   "egim": NaN,
+   "egim_atr": NaN,
+   "kirilim_idx": -1,
+   "P2": false,
+   "P2_neden": "H1'den sonra pivot tepe yok",
+   "min_post_low_oran": 0.014876787428095284,
+   "P3i": true,
+   "atr_d": 2.228456508936192,
+   "bant": 40.00600748583759,
+   "pivot_dipler": [
+    117
+   ],
+   "pivot_dip_low": [
+    40.952992233614616
+   ],
+   "pivot_dip_atr": [
+    0.9249509667249861
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": false,
+   "V2": true,
+   "V3": false,
+   "d_tarih": "2022-07-05",
+   "h1_tarih": "2022-06-02",
+   "h2_tarih": NaN,
+   "kirilim_tarih": NaN,
+   "pivot_dip_tarih": [
+    "2022-07-14"
+   ],
+   "grup": "YOK_rastgele",
+   "V1_dusen": [
+    "P2"
+   ],
+   "neden": [
+    "P2 H1'den sonra pivot tepe yok"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "VAR",
+    "V3": "YOK"
+   }
+  },
+  {
+   "sayfa": 18,
+   "pazar": "ABD",
+   "sembol": "IOSP",
+   "sinyal_gunu": "2004-11-24",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 98,
+   "m": 22,
+   "low_d": 6.942251754782567,
+   "d_glob_idx": 98,
+   "dip_yeni": false,
+   "tepe_idx": 13,
+   "tepe": 10.412616304314882,
+   "dusus": 0.499890334161615,
+   "P1": true,
+   "pivot_tepeler": [
+    13,
+    28,
+    36,
+    50,
+    67,
+    85
+   ],
+   "h1_idx": 13,
+   "h1": 10.412616304314882,
+   "h2_idx": 85,
+   "h2": 8.668495109541464,
+   "egim": -0.024223905482964145,
+   "egim_atr": -0.09759674797313118,
+   "kirilim_idx": -1,
+   "P2": false,
+   "P2_neden": "d'den sonra hiçbir kapanış düşen çizginin üstünde değil",
+   "min_post_low_oran": 0.015037387205206532,
+   "P3i": true,
+   "atr_d": 0.24820402304422165,
+   "bant": 7.066353766304678,
+   "pivot_dipler": [
+    108,
+    117
+   ],
+   "pivot_dip_low": [
+    7.1435845256894765,
+    7.214423299605546
+   ],
+   "pivot_dip_atr": [
+    0.811158370591918,
+    1.096563792499395
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": false,
+   "V2": true,
+   "V3": false,
+   "d_tarih": "2004-10-25",
+   "h1_tarih": "2004-06-24",
+   "h2_tarih": "2004-10-06",
+   "kirilim_tarih": NaN,
+   "pivot_dip_tarih": [
+    "2004-11-08",
+    "2004-11-19"
+   ],
+   "grup": "YOK_P2",
+   "V1_dusen": [
+    "P2"
+   ],
+   "neden": [
+    "P2 d'den sonra hiçbir kapanış düşen çizginin üstünde değil"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "VAR",
+    "V3": "YOK"
+   }
+  },
+  {
+   "sayfa": 19,
+   "pazar": "AVR",
+   "sembol": "BARC.L",
+   "sinyal_gunu": "2008-12-31",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 93,
+   "m": 27,
+   "low_d": 107.77526895229823,
+   "d_glob_idx": 93,
+   "dip_yeni": false,
+   "tepe_idx": 51,
+   "tepe": 436.8029010435759,
+   "dusus": 3.0529047646070513,
+   "P1": true,
+   "pivot_tepeler": [
+    11,
+    21,
+    43,
+    51,
+    79
+   ],
+   "h1_idx": 51,
+   "h1": 436.8029010435759,
+   "h2_idx": 79,
+   "h2": 209.66534835118262,
+   "egim": -8.11205545329976,
+   "egim_atr": -0.5042879783532573,
+   "kirilim_idx": 94,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.09215035770749691,
+   "P3i": true,
+   "atr_d": 16.08615672296913,
+   "bant": 115.8183473137828,
+   "pivot_dipler": [
+    104,
+    109,
+    114
+   ],
+   "pivot_dip_low": [
+    125.43124468975837,
+    127.27045820353993,
+    125.06357061482832
+   ],
+   "pivot_dip_atr": [
+    1.0975881959579254,
+    1.2119233690795064,
+    1.0747316441250656
+   ],
+   "P3ii": true,
+   "P3iii": false,
+   "P3": false,
+   "V1": false,
+   "V2": false,
+   "V3": true,
+   "d_tarih": "2008-11-20",
+   "h1_tarih": "2008-09-19",
+   "h2_tarih": "2008-10-31",
+   "kirilim_tarih": "2008-11-21",
+   "pivot_dip_tarih": [
+    "2008-12-05",
+    "2008-12-12",
+    "2008-12-19"
+   ],
+   "grup": "YOK_rastgele",
+   "V1_dusen": [
+    "P3(iii)"
+   ],
+   "neden": [
+    "P3(iii) son pivot dip ilkinden düşük"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "YOK",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 20,
+   "pazar": "BIST",
+   "sembol": "EGEEN",
+   "sinyal_gunu": "2023-04-24",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 8,
+   "m": 112,
+   "low_d": 3718.913701466581,
+   "d_glob_idx": 8,
+   "dip_yeni": false,
+   "tepe_idx": 6,
+   "tepe": 4080.8054008904214,
+   "dusus": 0.09731113128038582,
+   "P1": false,
+   "pivot_tepeler": [],
+   "h1_idx": -1,
+   "h1": NaN,
+   "h2_idx": -1,
+   "h2": NaN,
+   "egim": NaN,
+   "egim_atr": NaN,
+   "kirilim_idx": -1,
+   "P2": false,
+   "P2_neden": "d'den önce onaylı pivot tepe yok",
+   "min_post_low_oran": 0.005267936489350422,
+   "P3i": true,
+   "atr_d": 150.68796431612168,
+   "bant": 3794.257683624642,
+   "pivot_dipler": [
+    14,
+    27,
+    34,
+    54,
+    73,
+    79,
+    93,
+    98,
+    106,
+    110,
+    117
+   ],
+   "pivot_dip_low": [
+    3755.932228194103,
+    5014.560376336624,
+    5721.035969985258,
+    6223.069130080359,
+    4708.60009765625,
+    4900.10009765625,
+    4844.89990234375,
+    4786.7998046875,
+    4335.2001953125,
+    4362.0,
+    4419.7998046875
+   ],
+   "pivot_dip_atr": [
+    0.2456634602207671,
+    8.598209424025152,
+    13.286544002402954,
+    16.618151555624046,
+    6.567786622383783,
+    7.838624680811996,
+    7.4723034848026195,
+    7.086737869659234,
+    4.089818962269862,
+    4.267668632010426,
+    4.6512414339247465
+   ],
+   "P3ii": false,
+   "P3iii": true,
+   "P3": false,
+   "V1": false,
+   "V2": false,
+   "V3": false,
+   "d_tarih": "2022-11-09",
+   "h1_tarih": NaN,
+   "h2_tarih": NaN,
+   "kirilim_tarih": NaN,
+   "pivot_dip_tarih": [
+    "2022-11-17",
+    "2022-12-06",
+    "2022-12-15",
+    "2023-01-12",
+    "2023-02-15",
+    "2023-02-23",
+    "2023-03-15",
+    "2023-03-22",
+    "2023-04-03",
+    "2023-04-07",
+    "2023-04-18"
+   ],
+   "grup": "YOK_rastgele",
+   "V1_dusen": [
+    "P1",
+    "P2",
+    "P3(ii)"
+   ],
+   "neden": [
+    "P1 düşüş yok (%10 < %20)",
+    "P2 d'den önce onaylı pivot tepe yok",
+    "P3(ii) pivot dip dibe yapışık (en yakın 0.25 ATR <= 0,5)"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "YOK",
+    "V3": "YOK"
+   }
+  },
+  {
+   "sayfa": 21,
+   "pazar": "ABD",
+   "sembol": "APG",
+   "sinyal_gunu": "2022-07-19",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 102,
+   "m": 18,
+   "low_d": 9.420000076293945,
+   "d_glob_idx": 102,
+   "dip_yeni": false,
+   "tepe_idx": 5,
+   "tepe": 15.100000381469727,
+   "dusus": 0.6029724266637617,
+   "P1": true,
+   "pivot_tepeler": [
+    16,
+    22,
+    37,
+    44,
+    59,
+    91
+   ],
+   "h1_idx": 16,
+   "h1": 14.886667251586914,
+   "h2_idx": 91,
+   "h2": 12.173333168029785,
+   "egim": -0.03617778778076172,
+   "egim_atr": -0.08450874338547514,
+   "kirilim_idx": -1,
+   "P2": false,
+   "P2_neden": "d'den sonra hiçbir kapanış düşen çizginin üstünde değil",
+   "min_post_low_oran": 0.024062255696887913,
+   "P3i": true,
+   "atr_d": 0.4280952044895717,
+   "bant": 9.634047678538732,
+   "pivot_dipler": [
+    110,
+    116
+   ],
+   "pivot_dip_low": [
+    9.646666526794434,
+    9.760000228881836
+   ],
+   "pivot_dip_atr": [
+    0.5294767335007833,
+    0.7942162141089177
+   ],
+   "P3ii": true,
+   "P3iii": true,
+   "P3": true,
+   "V1": false,
+   "V2": true,
+   "V3": false,
+   "d_tarih": "2022-06-22",
+   "h1_tarih": "2022-02-16",
+   "h2_tarih": "2022-06-06",
+   "kirilim_tarih": NaN,
+   "pivot_dip_tarih": [
+    "2022-07-05",
+    "2022-07-13"
+   ],
+   "grup": "YOK_P2",
+   "V1_dusen": [
+    "P2"
+   ],
+   "neden": [
+    "P2 d'den sonra hiçbir kapanış düşen çizginin üstünde değil"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "VAR",
+    "V3": "YOK"
+   }
+  },
+  {
+   "sayfa": 22,
+   "pazar": "ABD",
+   "sembol": "SKYD",
+   "sinyal_gunu": "2021-12-30",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 113,
+   "m": 7,
+   "low_d": 25.35031171622117,
+   "d_glob_idx": 113,
+   "dip_yeni": false,
+   "tepe_idx": 1,
+   "tepe": 38.49448170703485,
+   "dusus": 0.5185013161949792,
+   "P1": true,
+   "pivot_tepeler": [
+    13,
+    19,
+    27,
+    40,
+    48,
+    55,
+    63,
+    82,
+    89,
+    104
+   ],
+   "h1_idx": 13,
+   "h1": 37.513553002048454,
+   "h2_idx": 104,
+   "h2": 28.9279568320692,
+   "egim": -0.09434721065911268,
+   "egim_atr": -0.0896095455363266,
+   "kirilim_idx": 120,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.012725378162366408,
+   "P3i": true,
+   "atr_d": 1.0528700943011198,
+   "bant": 25.87674676337173,
+   "pivot_dipler": [],
+   "pivot_dip_low": [],
+   "pivot_dip_atr": [],
+   "P3ii": false,
+   "P3iii": true,
+   "P3": false,
+   "V1": false,
+   "V2": false,
+   "V3": true,
+   "d_tarih": "2021-12-20",
+   "h1_tarih": "2021-07-29",
+   "h2_tarih": "2021-12-07",
+   "kirilim_tarih": "2021-12-30",
+   "pivot_dip_tarih": [],
+   "grup": "YOK_rastgele",
+   "V1_dusen": [
+    "P3(ii)"
+   ],
+   "neden": [
+    "P3(ii) dip sonrası onaylı pivot dip yok"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "YOK",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 23,
+   "pazar": "ABD",
+   "sembol": "OXY",
+   "sinyal_gunu": "2019-07-12",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 94,
+   "m": 26,
+   "low_d": 40.07890375107874,
+   "d_glob_idx": 94,
+   "dip_yeni": false,
+   "tepe_idx": 54,
+   "tepe": 58.69427036873423,
+   "dusus": 0.46446795883618575,
+   "P1": true,
+   "pivot_tepeler": [
+    9,
+    21,
+    29,
+    40,
+    54,
+    75,
+    87
+   ],
+   "h1_idx": 54,
+   "h1": 58.69427036873423,
+   "h2_idx": 87,
+   "h2": 46.03105060544756,
+   "egim": -0.38373393222080815,
+   "egim_atr": -0.32440810839547646,
+   "kirilim_idx": 98,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.013829566877776145,
+   "P3i": true,
+   "atr_d": 1.1828740475037982,
+   "bant": 40.67034077483064,
+   "pivot_dipler": [
+    108,
+    113
+   ],
+   "pivot_dip_low": [
+    42.75433586311772,
+    41.54986345947032
+   ],
+   "pivot_dip_atr": [
+    2.261806417754199,
+    1.2435471988718725
+   ],
+   "P3ii": true,
+   "P3iii": false,
+   "P3": false,
+   "V1": false,
+   "V2": false,
+   "V3": true,
+   "d_tarih": "2019-06-05",
+   "h1_tarih": "2019-04-08",
+   "h2_tarih": "2019-05-24",
+   "kirilim_tarih": "2019-06-11",
+   "pivot_dip_tarih": [
+    "2019-06-25",
+    "2019-07-02"
+   ],
+   "grup": "YOK_P3",
+   "V1_dusen": [
+    "P3(iii)"
+   ],
+   "neden": [
+    "P3(iii) son pivot dip ilkinden düşük"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "YOK",
+    "V3": "VAR"
+   }
+  },
+  {
+   "sayfa": 24,
+   "pazar": "ABD",
+   "sembol": "OSW",
+   "sinyal_gunu": "2022-08-02",
+   "t_idx": 120,
+   "s0_idx": 1,
+   "d_idx": 108,
+   "m": 12,
+   "low_d": 6.652178918775923,
+   "d_glob_idx": 108,
+   "dip_yeni": false,
+   "tepe_idx": 6,
+   "tepe": 10.751096092056946,
+   "dusus": 0.6161766277379788,
+   "P1": true,
+   "pivot_tepeler": [
+    6,
+    27,
+    34,
+    50,
+    59,
+    68,
+    81,
+    103
+   ],
+   "h1_idx": 6,
+   "h1": 10.751096092056946,
+   "h2_idx": 103,
+   "h2": 7.160875327015607,
+   "egim": -0.037012585206611735,
+   "egim_atr": -0.13564428573217202,
+   "kirilim_idx": 110,
+   "P2": true,
+   "P2_neden": "",
+   "min_post_low_oran": 0.004411787771966491,
+   "P3i": true,
+   "atr_d": 0.2728650529347962,
+   "bant": 6.788611445243321,
+   "pivot_dipler": [],
+   "pivot_dip_low": [],
+   "pivot_dip_atr": [],
+   "P3ii": false,
+   "P3iii": true,
+   "P3": false,
+   "V1": false,
+   "V2": false,
+   "V3": true,
+   "d_tarih": "2022-07-15",
+   "h1_tarih": "2022-02-16",
+   "h2_tarih": "2022-07-08",
+   "kirilim_tarih": "2022-07-19",
+   "pivot_dip_tarih": [],
+   "grup": "YOK_P3",
+   "V1_dusen": [
+    "P3(ii)"
+   ],
+   "neden": [
+    "P3(ii) dip sonrası onaylı pivot dip yok"
+   ],
+   "yanit": {
+    "V1": "YOK",
+    "V2": "YOK",
+    "V3": "VAR"
+   }
+  }
+ ],
+ "sure_sn": 15.7
+}
