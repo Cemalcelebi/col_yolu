@@ -551,7 +551,7 @@ def ds5_onay(onbellek: Optional[str] = None) -> Dict[str, Any]:
                     "(bu PDF kör değil, onay için).\n"
                     "Daha önce görmediğin yeni grafikler. Hisse adı yok; son günden sonrası gösterilmez.\n"
                     "Kutulardan birini işaretlemen yeter.")
-        fig.text(0.06, 0.47, aciklama, fontsize=9.5, ha="left", va="top", linespacing=1.35)
+        fig.text(0.06, 0.41, aciklama, fontsize=9.5, ha="left", va="top", linespacing=1.35)
         pdf.savefig(fig); plt.close(fig)
         for rr in T.to_dict("records"):
             W = ds5_pencere(rr["pazar"], rr["sembol"], rr["sinyal_gunu"])
