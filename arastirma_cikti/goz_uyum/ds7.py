@@ -843,7 +843,7 @@ def ds7_muhur() -> str:
 - içe alınan kural kodu: `arastirma_cikti/goz_uyum/ds6.py` sha256: `{GU._sha(DS7_YOL['ds6_kod'])}` (değiştirilmedi)
 - içe alınan kural kodu: `arastirma_cikti/goz_uyum/ds5.py` sha256: `{GU._sha(DS7_YOL['ds5_kod'])}` (değiştirilmedi)
 - eşik sözlüğü (DS7_ESIK) sha256: `{_sha_esik7()}`
-- kural kaynağı (_ds7_ana_trend + ds7_parca_dizi + ds7_parca + DS6 kural sha) sha256: `{_kural_sha7()}`
+- kural kaynağı (_ds7_zarf + _ds7_delme + _ds7_dayanikli + _ds7_ana_trend + ds7_parca_dizi + ds7_parca + DS6 kural sha) sha256: `{_kural_sha7()}`
 - görsel onay PDF: `arastirma_cikti/goz_uyum/DS7_ONAY.pdf` sha256: `{GU._sha(DS7_YOL['pdf'])}`
 - görsel onay anahtarı: `arastirma_cikti/goz_uyum/ds7_onay_anahtar.json` sha256: `{GU._sha(DS7_YOL['onay_anahtar'])}`
 - iş tanımı: `arastirma_cikti/goz_uyum/DS7_IS_TANIMI.md` sha256: `{GU._sha(DS7_YOL['is_tanimi'])}`
