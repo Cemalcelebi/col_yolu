@@ -1,0 +1,2033 @@
+{
+ "etiket_acilis_utc": "2026-11-23T19:42:35Z",
+ "deneme": false,
+ "n_sayfa": 80,
+ "kume": {
+  "set 1": {
+   "karar_n": 40,
+   "isaretsiz": 0,
+   "isaretsiz_sayfa": [],
+   "cemal_VAR": 14,
+   "model": {
+    "V1": {
+     "kod_VAR": 4,
+     "uyum": 0.65,
+     "kappa": 0.07894736842105243,
+     "ar95": [
+      -0.14868243243243207,
+      0.3356924025702726
+     ],
+     "ar_bon": [
+      -0.1934715626413386,
+      0.4138914825189309
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 2,
+      "Cemal YOK + kod YOK": 24,
+      "Cemal YOK + kod VAR": 2,
+      "Cemal VAR + kod YOK": 12
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 14",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 26",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 6,
+     "uyum": 0.7,
+     "kappa": 0.24050632911392397,
+     "ar95": [
+      -0.045770633834928846,
+      0.5362318840579712
+     ],
+     "ar_bon": [
+      -0.1192877150860341,
+      0.6104033467519134
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 4,
+      "Cemal YOK + kod YOK": 24,
+      "Cemal YOK + kod VAR": 2,
+      "Cemal VAR + kod YOK": 10
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 8,
+     "uyum": 0.7,
+     "kappa": 0.26829268292682923,
+     "ar95": [
+      -0.03559870550161823,
+      0.5653342683496945
+     ],
+     "ar_bon": [
+      -0.09965532286212905,
+      0.6373056994818651
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 5,
+      "Cemal YOK + kod YOK": 23,
+      "Cemal YOK + kod VAR": 3,
+      "Cemal VAR + kod YOK": 9
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 23,
+     "uyum": 0.675,
+     "kappa": 0.3779904306220096,
+     "ar95": [
+      0.115395875909895,
+      0.6144578313253013
+     ],
+     "ar_bon": [
+      0.07376543209876564,
+      0.667545217686811
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 12,
+      "Cemal YOK + kod YOK": 15,
+      "Cemal YOK + kod VAR": 11,
+      "Cemal VAR + kod YOK": 2
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 8",
+      "set 1 / 9",
+      "set 1 / 11",
+      "set 1 / 16",
+      "set 1 / 18",
+      "set 1 / 21",
+      "set 1 / 30",
+      "set 1 / 31",
+      "set 1 / 32",
+      "set 1 / 33"
+     ]
+    }
+   }
+  },
+  "set 2": {
+   "karar_n": 39,
+   "isaretsiz": 1,
+   "isaretsiz_sayfa": [
+    "set 2 / 39"
+   ],
+   "cemal_VAR": 16,
+   "model": {
+    "V1": {
+     "kod_VAR": 5,
+     "uyum": 0.5641025641025641,
+     "kappa": -0.006069802731411346,
+     "ar95": [
+      -0.23708760632800707,
+      0.23529411764705888
+     ],
+     "ar_bon": [
+      -0.28102189781021897,
+      0.2885257880242829
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 2,
+      "Cemal YOK + kod YOK": 20,
+      "Cemal YOK + kod VAR": 3,
+      "Cemal VAR + kod YOK": 14
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 5,
+     "uyum": 0.5641025641025641,
+     "kappa": -0.006069802731411346,
+     "ar95": [
+      -0.23708760632800707,
+      0.23529411764705888
+     ],
+     "ar_bon": [
+      -0.28102189781021897,
+      0.2885257880242829
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 2,
+      "Cemal YOK + kod YOK": 20,
+      "Cemal YOK + kod VAR": 3,
+      "Cemal VAR + kod YOK": 14
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 12,
+     "uyum": 0.5897435897435898,
+     "kappa": 0.11864406779661028,
+     "ar95": [
+      -0.18807947019867538,
+      0.42105263157894746
+     ],
+     "ar_bon": [
+      -0.2482007532956685,
+      0.47723924731182626
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 6,
+      "Cemal YOK + kod YOK": 17,
+      "Cemal YOK + kod VAR": 6,
+      "Cemal VAR + kod YOK": 10
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 12",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 26,
+     "uyum": 0.6410256410256411,
+     "kappa": 0.3225806451612904,
+     "ar95": [
+      0.06941431670282,
+      0.5617977528089889
+     ],
+     "ar_bon": [
+      0.015151515151515122,
+      0.6403162055335968
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 14,
+      "Cemal YOK + kod YOK": 11,
+      "Cemal YOK + kod VAR": 12,
+      "Cemal VAR + kod YOK": 2
+     },
+     "uyusmayan": [
+      "set 2 / 1",
+      "set 2 / 5",
+      "set 2 / 6",
+      "set 2 / 8",
+      "set 2 / 16",
+      "set 2 / 17",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 26",
+      "set 2 / 34",
+      "set 2 / 35",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 40"
+     ]
+    }
+   }
+  },
+  "birleşik": {
+   "karar_n": 79,
+   "isaretsiz": 1,
+   "isaretsiz_sayfa": [
+    "set 2 / 39"
+   ],
+   "cemal_VAR": 30,
+   "model": {
+    "V1": {
+     "kod_VAR": 9,
+     "uyum": 0.6075949367088608,
+     "kappa": 0.03620621802439998,
+     "ar95": [
+      -0.12149753197120196,
+      0.22068231363271676
+     ],
+     "ar_bon": [
+      -0.15532022188603098,
+      0.2610544217687075
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 4,
+      "Cemal YOK + kod YOK": 44,
+      "Cemal YOK + kod VAR": 5,
+      "Cemal VAR + kod YOK": 26
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 14",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 26",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 11,
+     "uyum": 0.6329113924050633,
+     "kappa": 0.1116711903838698,
+     "ar95": [
+      -0.06711558964681355,
+      0.305664799493098
+     ],
+     "ar_bon": [
+      -0.10465938995007634,
+      0.3506024228628548
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 6,
+      "Cemal YOK + kod YOK": 44,
+      "Cemal YOK + kod VAR": 5,
+      "Cemal VAR + kod YOK": 24
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 20,
+     "uyum": 0.6455696202531646,
+     "kappa": 0.19563636363636364,
+     "ar95": [
+      -0.01666006395847008,
+      0.40642124769054805
+     ],
+     "ar_bon": [
+      -0.06458076329194354,
+      0.44464693092848584
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 11,
+      "Cemal YOK + kod YOK": 40,
+      "Cemal YOK + kod VAR": 9,
+      "Cemal VAR + kod YOK": 19
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 12",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 49,
+     "uyum": 0.6582278481012658,
+     "kappa": 0.3538321720690699,
+     "ar95": [
+      0.18267809636417376,
+      0.533125972006221
+     ],
+     "ar_bon": [
+      0.1440466914645041,
+      0.5690653497124255
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 26,
+      "Cemal YOK + kod YOK": 26,
+      "Cemal YOK + kod VAR": 23,
+      "Cemal VAR + kod YOK": 4
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 8",
+      "set 1 / 9",
+      "set 1 / 11",
+      "set 1 / 16",
+      "set 1 / 18",
+      "set 1 / 21",
+      "set 1 / 30",
+      "set 1 / 31",
+      "set 1 / 32",
+      "set 1 / 33",
+      "set 2 / 1",
+      "set 2 / 5",
+      "set 2 / 6",
+      "set 2 / 8",
+      "set 2 / 16",
+      "set 2 / 17",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 26",
+      "set 2 / 34",
+      "set 2 / 35",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 40"
+     ]
+    }
+   }
+  }
+ },
+ "govde_kural": {
+  "ozellik": "G4_fitil_govde_arasi",
+  "yon": "<=",
+  "esik": 0.4046040192474485,
+  "kappa_40": 0.3779904306220096,
+  "loocv_kappa_40": 0.3779904306220096,
+  "tanim": "FİTİL DİBİ ile GÖVDE DİBİ ARASI: (S_g - lo) / ATR14 (küçük = dip gövdeyle kurulmuş, fitille aşağı sarkmamış)"
+ },
+ "cemal_VAR_kod_YOK_parca": {
+  "V1": {
+   "n": 26,
+   "dusen": {
+    "P1": 1,
+    "P2": 2,
+    "P3": 8,
+    "P4": 0,
+    "D2": 6,
+    "P5": 21
+   },
+   "yalniz_bu_dusen": {
+    "P1": 0,
+    "P2": 0,
+    "P3": 3,
+    "P4": 0,
+    "D2": 2,
+    "P5": 13
+   }
+  },
+  "V1_cemal_YOK_kod_VAR": {
+   "n": 5,
+   "sayfa": [
+    "set 1 / 2",
+    "set 1 / 21",
+    "set 2 / 2",
+    "set 2 / 22",
+    "set 2 / 36"
+   ]
+  }
+ },
+ "V1_uyusmayan": [
+  {
+   "sayfa": "set 1 / 2",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "m": 28,
+   "dusus": 0.46339879119704297,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 3,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.04721768115802994,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 6,
+   "kirilim_m": -13,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 1 / 5",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 10,
+   "dusus": 0.8089600290468222,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 1,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.6614163294860356,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 1: ilk yarı 1, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 12",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 32,
+   "dusus": 0.6407477075027528,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 5,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 5,
+   "min_post_low_atr": 1.2353556007625168,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 27,
+   "kirilim_m": -26,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 5: ilk yarı 0, ikinci yarı 5)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 14",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 70,
+   "dusus": 1.123701253346776,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 10,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.3597644454320017,
+   "tepe_dokunus_n": 2,
+   "gecerli": false,
+   "sahte_n": 1,
+   "ust_kapanis_n": 53,
+   "kirilim_m": -54,
+   "dusen": [
+    "D2"
+   ],
+   "neden": [
+    "D2 kapanışla kesilmemiş çizgi yok: kirli çizgi (sahte kırılım 1)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 17",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 21,
+   "dusus": 1.3674911788092943,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 6,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.48738856487557464,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 19",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 14,
+   "dusus": 0.5111696327724446,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 5,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.13125868346122557,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 20",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 24,
+   "dusus": 1.3361740495557761,
+   "mavi_dusus_atr": 2.123303023773673,
+   "dokunus_n": 1,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.08847095932390305,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P2 mavi çizgi 2.12 ATR aşağı (> 0,5)",
+    "P3 takip yok (dokunuş 1: ilk yarı 1, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 21",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 55,
+   "dusus": 0.590792898722964,
+   "mavi_dusus_atr": 3.3289768874655153e-06,
+   "dokunus_n": 4,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.09120223029755575,
+   "tepe_dokunus_n": 4,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 46,
+   "kirilim_m": -45,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 1 / 26",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 45,
+   "dusus": 1.3100222203984173,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 3,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.4002855978932179,
+   "tepe_dokunus_n": 2,
+   "gecerli": false,
+   "sahte_n": 1,
+   "ust_kapanis_n": 45,
+   "kirilim_m": -44,
+   "dusen": [
+    "D2"
+   ],
+   "neden": [
+    "D2 kapanışla kesilmemiş çizgi yok: kirli çizgi (sahte kırılım 1)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 32",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "m": 11,
+   "dusus": 0.6225962133626286,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 9,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.687441577317861,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 34",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 68,
+   "dusus": 1.6334270086196354,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 12,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 12,
+   "min_post_low_atr": 0.8767395190885076,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 14,
+   "kirilim_m": -54,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 12: ilk yarı 0, ikinci yarı 12)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 37",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 22,
+   "dusus": 0.6810960415125127,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 9,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.2963190531996806,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 1,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 39",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 43,
+   "dusus": 0.9305020634017354,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 4,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.06573235382453432,
+   "tepe_dokunus_n": 2,
+   "gecerli": false,
+   "sahte_n": 2,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P3",
+    "D2",
+    "P5"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 4: ilk yarı 4, ikinci yarı 0)",
+    "D2 kapanışla kesilmemiş çizgi yok: kirli çizgi (sahte kırılım 2)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 40",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 12,
+   "dusus": 0.7055555324986151,
+   "mavi_dusus_atr": 0.07768964283186379,
+   "dokunus_n": 5,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 1,
+   "min_post_low_atr": 0.032369140994083695,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 2",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "m": 57,
+   "dusus": 0.7790949727790906,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 6,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.14407058495856803,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 43,
+   "kirilim_m": -43,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 3",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 44,
+   "dusus": 0.5042510656772612,
+   "mavi_dusus_atr": 11.363452411544872,
+   "dokunus_n": 2,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.05380463332048404,
+   "tepe_dokunus_n": 6,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P2 mavi çizgi 11.36 ATR aşağı (> 0,5)",
+    "P3 takip yok (dokunuş 2: ilk yarı 2, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 9",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 28,
+   "dusus": 1.6263578891183528,
+   "mavi_dusus_atr": 0.12849901739661795,
+   "dokunus_n": 3,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 8.977342739487995e-07,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 3: ilk yarı 3, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 10",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 18,
+   "dusus": 0.7118780527273205,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 9,
+   "dokunus_ilk": 6,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.08715510988955898,
+   "tepe_dokunus_n": 0,
+   "gecerli": false,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "neden": [
+    "D2 düşen çizgi yok",
+    "P5 alçalan pivot tepe çifti yok (düşen çizgi yok)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 14",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 23,
+   "dusus": 0.5017821057008045,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 11,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 10,
+   "min_post_low_atr": 0.6744692468923568,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 15",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 78,
+   "dusus": 0.9817471453430553,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 15,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 15,
+   "min_post_low_atr": 0.3679028100303599,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 77,
+   "kirilim_m": -76,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 15: ilk yarı 0, ikinci yarı 15)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 18",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 34,
+   "dusus": 0.49096047091957984,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 5,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.4063988551304214,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 19",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 37,
+   "dusus": 1.0263658098728565,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 12,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 10,
+   "min_post_low_atr": 0.07535823786016303,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 21",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "YOK",
+   "m": 14,
+   "dusus": 0.49323768368076015,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 4,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.6152969517950007,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 1,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 22",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 27,
+   "dusus": 1.5,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 7,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.11808809746954078,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 8,
+   "kirilim_m": -10,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 25",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 29,
+   "dusus": 1.6029411210423943,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 4,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.4558135491180563,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 9,
+   "kirilim_m": -8,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 kırılımdan sonra mavi çizgiye dokunuş yok"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 27",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 119,
+   "dusus": NaN,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 8,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.6363644245232718,
+   "tepe_dokunus_n": 0,
+   "gecerli": false,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P1",
+    "D2",
+    "P5"
+   ],
+   "neden": [
+    "P1 düşüş yok (- < %20)",
+    "D2 düşen çizgi yok",
+    "P5 alçalan pivot tepe çifti yok (düşen çizgi yok)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 30",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 17,
+   "dusus": 0.3750913441660635,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 10,
+   "dokunus_ilk": 5,
+   "dokunus_ikinci": 5,
+   "min_post_low_atr": 0.3639190746254065,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 32",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "m": 85,
+   "dusus": 1.6656935011827998,
+   "mavi_dusus_atr": 0.13975875042707028,
+   "dokunus_n": 5,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.4247573916722915,
+   "tepe_dokunus_n": 0,
+   "gecerli": false,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "neden": [
+    "D2 düşen çizgi yok",
+    "P5 alçalan pivot tepe çifti yok (düşen çizgi yok)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 36",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 12,
+   "dusus": 1.9071170335937642,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 4,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.21761603548577801,
+   "tepe_dokunus_n": 2,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 9,
+   "kirilim_m": -8,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 37",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "YOK",
+   "m": 14,
+   "dusus": 0.28656911152900166,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 11,
+   "dokunus_ilk": 5,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.4053457312909771,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 0,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 38",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "m": 18,
+   "dusus": 1.0012313588006942,
+   "mavi_dusus_atr": 0.0,
+   "dokunus_n": 7,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.5599995244427307,
+   "tepe_dokunus_n": 3,
+   "gecerli": true,
+   "sahte_n": 0,
+   "ust_kapanis_n": 1,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  }
+ ],
+ "karsilastirma": {
+  "V1_V3": {
+   "iki_kod_ayni_yanit": 66,
+   "karar_n": 79,
+   "kod_kappa": 0.4681512169860176,
+   "V1_dogru_oteki_yanlis": 5,
+   "oteki_dogru_V1_yanlis": 8
+  },
+  "V1_GOVDE_1": {
+   "iki_kod_ayni_yanit": 33,
+   "karar_n": 79,
+   "kod_kappa": 0.017837837837837784,
+   "V1_dogru_oteki_yanlis": 21,
+   "oteki_dogru_V1_yanlis": 25
+  }
+ },
+ "V1_V3_degisen": [
+  {
+   "sayfa": "set 1 / 14",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "D2"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 26",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "D2"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 28",
+   "cemal": "YOK",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "D2",
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 32",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 8",
+   "cemal": "YOK",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 12",
+   "cemal": "YOK",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 18",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 19",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 24",
+   "cemal": "YOK",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 25",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 29",
+   "cemal": "VAR",
+   "V3_DS5": "YOK",
+   "V1_DS6": "VAR",
+   "dusen": []
+  },
+  {
+   "sayfa": "set 2 / 30",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 38",
+   "cemal": "VAR",
+   "V3_DS5": "VAR",
+   "V1_DS6": "YOK",
+   "dusen": [
+    "P5"
+   ]
+  }
+ ],
+ "sayfa_cemal": {
+  "1/1": "YOK",
+  "1/2": "YOK",
+  "1/3": "VAR",
+  "1/4": "YOK",
+  "1/5": "VAR",
+  "1/6": "YOK",
+  "1/7": "VAR",
+  "1/8": "YOK",
+  "1/9": "YOK",
+  "1/10": "YOK",
+  "1/11": "YOK",
+  "1/12": "VAR",
+  "1/13": "YOK",
+  "1/14": "VAR",
+  "1/15": "YOK",
+  "1/16": "YOK",
+  "1/17": "VAR",
+  "1/18": "YOK",
+  "1/19": "VAR",
+  "1/20": "VAR",
+  "1/21": "YOK",
+  "1/22": "YOK",
+  "1/23": "YOK",
+  "1/24": "YOK",
+  "1/25": "YOK",
+  "1/26": "VAR",
+  "1/27": "YOK",
+  "1/28": "YOK",
+  "1/29": "YOK",
+  "1/30": "YOK",
+  "1/31": "YOK",
+  "1/32": "VAR",
+  "1/33": "YOK",
+  "1/34": "VAR",
+  "1/35": "YOK",
+  "1/36": "YOK",
+  "1/37": "VAR",
+  "1/38": "YOK",
+  "1/39": "VAR",
+  "1/40": "VAR",
+  "2/1": "YOK",
+  "2/2": "YOK",
+  "2/3": "VAR",
+  "2/4": "YOK",
+  "2/5": "YOK",
+  "2/6": "YOK",
+  "2/7": "YOK",
+  "2/8": "YOK",
+  "2/9": "VAR",
+  "2/10": "VAR",
+  "2/11": "YOK",
+  "2/12": "YOK",
+  "2/13": "YOK",
+  "2/14": "VAR",
+  "2/15": "VAR",
+  "2/16": "YOK",
+  "2/17": "YOK",
+  "2/18": "VAR",
+  "2/19": "VAR",
+  "2/20": "YOK",
+  "2/21": "VAR",
+  "2/22": "YOK",
+  "2/23": "VAR",
+  "2/24": "YOK",
+  "2/25": "VAR",
+  "2/26": "YOK",
+  "2/27": "VAR",
+  "2/28": "YOK",
+  "2/29": "VAR",
+  "2/30": "VAR",
+  "2/31": "YOK",
+  "2/32": "VAR",
+  "2/33": "YOK",
+  "2/34": "YOK",
+  "2/35": "YOK",
+  "2/36": "YOK",
+  "2/37": "VAR",
+  "2/38": "VAR",
+  "2/39": "?",
+  "2/40": "YOK"
+ },
+ "eski24": [
+  {
+   "sayfa": 1,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "Kutu: büyük X DOĞRU ÇİZGİ üzerinde. Grafiğe çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "DİKKAT: Cemal'in DOĞRU dediği yanıt değişti"
+  },
+  {
+   "sayfa": 2,
+   "pazar": "ABD",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Grafikte soldan (170,490) sağa yukarı kısa kırmızı çizgi, orta H1-H2 hattında dikey çizgi ve ok; sağ üstte 'Sahte' yazısı ve '?'; son mumlarda 2 küçük daire/nokta. Düşen çizginin ortadaki kırılımını sahte bulmuş, hat zayıf.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 3,
+   "pazar": "ABD",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Sol-üst H1 sonrası tepe bölgesinde ∧/yukarı ok çizimi (çizgiyi sahte kırılım gibi gösteriyor), sağ-orta sarı bölgede büyük '?'. Mavi çizgiye dokunmamış.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 4,
+   "pazar": "ABD",
+   "cemal": "YANLIŞ",
+   "cizim": "Sayfa boyunca büyük X (kutuya değil alta), kutu işaretsiz ama ret. Düşen çizgi boyunca 2-3 tepede ∧ biçimli sahte kırılım kıvrımları (sol-üst 180-450, orta 400-570); sağ altta son mumlarda ok-spiral. Düşen çizgi/sahte kırılımlar itiraz.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "itiraz yanıtı değişti"
+  },
+  {
+   "sayfa": 5,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafiğe çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "DİKKAT: Cemal'in DOĞRU dediği yanıt değişti"
+  },
+  {
+   "sayfa": 6,
+   "pazar": "ABD",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Soldan alt (95,675) yükselen uzun çizgi, orta-üstte (430-500,395) ok ile tepe bölgesine; H1 sonrası tepeler; ortada '?' ve dikey kısa çizgi. Düşen çizgi yerine farklı/yükselen çizgi çizmiş, çizgiyi sorguluyor.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 7,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafiğe çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 1,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "etiket": "DİKKAT: Cemal'in DOĞRU dediği yanıt değişti"
+  },
+  {
+   "sayfa": 8,
+   "pazar": "ABD",
+   "cemal": "YANLIŞ",
+   "cizim": "Büyük X sonuç satırı ve YANLIŞ kutusu üzerinde, ayrıca 'Çizgi yatay/yukarı' satırı yanında kısa çizgi. Grafikte soldan (100,655) yükselen eğri ile orta tepeye (445,460) ok-döngü, altta '?' kıvrımı. Düşen çizgi (H1-H2) ve mavi eğim itiraz.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "itiraz yanıtı değişti"
+  },
+  {
+   "sayfa": 9,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafikte orta-solda küçük V/✓ benzeri çizim (330-410,515-685).",
+   "ds5_V1": "VAR",
+   "ds6_V1": "VAR",
+   "ds6_V2": "VAR",
+   "degisti": false,
+   "cizgi_degisti": false,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [],
+   "etiket": "korundu"
+  },
+  {
+   "sayfa": 10,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde ve grafikte sol-altta büyük ✓.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "VAR",
+   "ds6_V2": "VAR",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [],
+   "etiket": "korundu"
+  },
+  {
+   "sayfa": 11,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafiğe çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 3,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "etiket": "DİKKAT: Cemal'in DOĞRU dediği yanıt değişti"
+  },
+  {
+   "sayfa": 12,
+   "pazar": "ABD",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. H1 sonrası tepe bölgesinde (380-450,190-310) daire, sağında '?' ve kesik çizgi. Düşen çizgiyi/tepe öbeğini sorguluyor.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 13,
+   "pazar": "AVR",
+   "cemal": "YANLIŞ",
+   "cizim": "X YANLIŞ kutusu üzerinde. Grafikte soldan (45,365) başlayıp sağ alta (715,715) inen uzun farklı düşen çizgi (kodun H1-H2'sinden daha geniş/soldan); ayrıca H1-H2 hattı alta ok gibi uzatılmış, 'VAR' yazısına ok. Düşen çizgi yanlış.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 1,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "etiket": "itiraz yanıtı değişti"
+  },
+  {
+   "sayfa": 14,
+   "pazar": "BIST",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Sol-üst tepe mumlarında daire + ∧ işareti, H2 bölgesinde yay, son mumlarda büyük daire (dip sonrası ilk yükseliş mumları); alt yarıda büyük yazı 'Net değil' ve üstünde çarpı. Kod çizimleri net değil.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 15,
+   "pazar": "BIST",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Hiç işaret/çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 2,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 16,
+   "pazar": "AVR",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Hiç işaret/çizim yok.",
+   "ds5_V1": "VAR",
+   "ds6_V1": "YOK",
+   "ds6_V2": "VAR",
+   "degisti": true,
+   "cizgi_degisti": true,
+   "sahte_n": 2,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "D2"
+   ],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 17,
+   "pazar": "AVR",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Sol-üst tepe mumlarında daire, sarı bölgenin ilk mumlarında daire (540-645,455-550) ve kısa çizgi; sayfaya büyük 'Net değil' yazısı. Dip/mavi çizgi net değil.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.9102656569063298,
+   "dusen": [
+    "P2",
+    "P5"
+   ],
+   "etiket": "bilgi"
+  },
+  {
+   "sayfa": 18,
+   "pazar": "AVR",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Dairelenmiş iki yer: sol-üstte düşen çizgiyi kıran tepe mumları ('1') ve sağdaki son kırılım mumları ('2'); yazı: '1 ve 2 nin fark yok' (okuma: 1 ve 2'nin farkı yok). Yani kırılım var, kod YOK demiş.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "bilgi"
+  },
+  {
+   "sayfa": 19,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafikte orta-üstten (460,235) aşağı (480,495) kancalı ok: düşen çizgiye/dibe doğru.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P3",
+    "P5"
+   ],
+   "etiket": "korundu"
+  },
+  {
+   "sayfa": 20,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafikte tek nokta.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P3"
+   ],
+   "etiket": "korundu"
+  },
+  {
+   "sayfa": 21,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Sağ altta dibin altından geçip sağa çıkan dalgalı döngü çizgisi (435-720,680-745), mavi (aşağı eğimli) çizgi bölgesi.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 2.819792209122651,
+   "dusen": [
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "etiket": "korundu"
+  },
+  {
+   "sayfa": 22,
+   "pazar": "ABD",
+   "cemal": "YANLIŞ",
+   "cizim": "X YANLIŞ kutusu üzerinde (iki çapraz çizgi). Grafikte soldan (260,565) tepe (480,380) ok, dikey ok: ortadaki yukarı tepe bölgesine; düşüş mumlarının tepesi H1 olmalı gibi.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": true,
+   "sahte_n": 0,
+   "gecerli": false,
+   "mavi_dusus_atr": 0.46281425910085294,
+   "dusen": [
+    "D2",
+    "P5"
+   ],
+   "etiket": "yanıt aynı (çizgi değişti)"
+  },
+  {
+   "sayfa": 23,
+   "pazar": "AVR",
+   "cemal": "İŞARETSİZ",
+   "cizim": "Kutu işaretsiz. Büyük yazı üstte 'Şekil doğru'(okuma) ve altta 'ama mavi yok(?)...' (kısmen sayfa dışı); orta alta ve sağda kırmızı kalın çizgi/ok, son mumlarda yukarı ok (610,700 -> 720,655). Şekil doğru ama mavi çizgi sorunlu.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "VAR",
+   "ds6_V2": "VAR",
+   "degisti": true,
+   "cizgi_degisti": false,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.2816900905622115,
+   "dusen": [],
+   "etiket": "bilgi (yanıt değişti)"
+  },
+  {
+   "sayfa": 24,
+   "pazar": "ABD",
+   "cemal": "DOĞRU",
+   "cizim": "X DOĞRU ÇİZGİ üzerinde. Grafiğe çizim yok.",
+   "ds5_V1": "YOK",
+   "ds6_V1": "YOK",
+   "ds6_V2": "YOK",
+   "degisti": false,
+   "cizgi_degisti": false,
+   "sahte_n": 0,
+   "gecerli": true,
+   "mavi_dusus_atr": 0.0,
+   "dusen": [
+    "P5"
+   ],
+   "etiket": "korundu"
+  }
+ ]
+}
