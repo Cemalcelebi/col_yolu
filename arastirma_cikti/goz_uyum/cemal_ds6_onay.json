@@ -1,0 +1,411 @@
+{
+ "1": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "dip bölgesi (mavi çizgi)",
+    "isaret": "✓ (yazıyla: DİP VAR)",
+    "nerede": "sayfa altı büyük yazı; ok yok"
+   }
+  ],
+  "cizim": "Büyük el yazısı \"DİP VAR\"; sağ altta \"X kırd...\" yazısı ve sayfa sağ kenarından o yazıya inen kıvrık çizgi; YANLIŞ kutusu üstünde X",
+  "yazi": "DİP VAR / X kırd(ı)? (son kelime okunamadı)"
+ },
+ "2": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "3": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "yukarı ok (son mumdan ince trend çizgisine)",
+    "isaret": "-",
+    "nerede": "sağ kenar, y~400-650"
+   }
+  ],
+  "cizim": "Son mumdan sağ kenarda ince kırmızı çizgi seviyesine kadar yukarı çıkan el çizimi ok/halka; DOĞRU üstünde X",
+  "yazi": ""
+ },
+ "4": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "5": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "6": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "7": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "8": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "çizgi 1 (uzun düşen)",
+    "isaret": "-",
+    "nerede": "sol üst zirve -> sağ alt, dipten sonraki bölgeyi keser"
+   },
+   {
+    "oge": "çizgi 2 + 3 (yatay tavan + yükselen taban)",
+    "isaret": "-",
+    "nerede": "ara trend olarak adlandırılmış"
+   }
+  ],
+  "cizim": "Cemal 3 çizgi çizdi ve numaraladı: 1 = sol üst zirveden sağ alta inen uzun düşen çizgi (kodun çizgisi değil, daha uzun); 2 = iki tepeden geçen yatay çizgi (kodun yatay çizgisi); 3 = aralığın diplerinden yükselen çizgi; YANLIŞ üstünde X",
+  "yazi": "1 / 2 / 3 / 2 ve 3 ara trend"
+ },
+ "9": {
+  "kod_sonuc": "VAR",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "10": {
+  "kod_sonuc": "VAR",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "11": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "Cemal çizgisi: orta aralık dipleri yükselen",
+    "isaret": "✗ (olası, ok sol alttaki büyük X ye gidiyor)",
+    "nerede": "sol alt X"
+   },
+   {
+    "oge": "dip okundan sola giden ok",
+    "isaret": "✗ (olası)",
+    "nerede": "sol alt"
+   },
+   {
+    "oge": "∧ sahte kırılım / tepeler halkası",
+    "isaret": "-",
+    "nerede": "üst sol"
+   },
+   {
+    "oge": "Mavi çizgi yatay/yukarı ✓ metnine ok",
+    "isaret": "-",
+    "nerede": "alt"
+   }
+  ],
+  "cizim": "Kırmızı el çizimi: (a) alttan yükselen düz çizgi (orta aralığın diplerinden, sol-alttan sağ-yukarı), ucundaki ok sol alta, büyük X ile bitiyor; (b) dip okundan sola-aşağı giden çizgi + sol alta ok; (c) yukarıdaki ∧ ve tepeler çevresine büyük halka; (d) alttan \"Mavi çizgi yatay/yukarı ✓\" metnine inen ok. Alt kutularda işaret YOK",
+  "yazi": ""
+ },
+ "12": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "13": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "14": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "üstten kırmızı çizgiye ok + zigzag",
+    "isaret": "belirsiz",
+    "nerede": "orta-sağ"
+   },
+   {
+    "oge": "dip/mavi çizgiden sola ok",
+    "isaret": "✗ (olası)",
+    "nerede": "sol alt X"
+   }
+  ],
+  "cizim": "Üstten kırmızı çizgiye inen uzun ok + karışık zigzag (✓/✗ okunamıyor); dipten başlayıp sola kıvrılan ok sol alttaki X e gidiyor. Alt kutularda işaret YOK",
+  "yazi": ""
+ },
+ "15": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "✗",
+  "diger": [
+   {
+    "oge": "dipten sola kıvrık ok + orta aşağı ok",
+    "isaret": "-",
+    "nerede": "orta-alt"
+   }
+  ],
+  "cizim": "Kesikli kırmızı çizgiden yukarı sağ üste ok ve orada X (çapraz iki çizgi); dipten sola kıvrılıp ok başı olan eğri; ortada aşağı ok. Alt kutularda işaret YOK",
+  "yazi": ""
+ },
+ "16": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "17": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "mavi çizgi ucuna ok",
+    "isaret": "-",
+    "nerede": "sağ alt"
+   }
+  ],
+  "cizim": "Dip okundan sağa mavi çizgi ucuna uzanan eğri ok (mavi çizgi aşağı eğimli, kod ×); YANLIŞ üstünde X",
+  "yazi": ""
+ },
+ "18": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "19": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "✗",
+  "diger": [
+   {
+    "oge": "kubbe eğri + sol aşağı oklar",
+    "isaret": "-",
+    "nerede": "orta alt"
+   }
+  ],
+  "cizim": "Kırmızı çizgi altından aşağı ok, ucunda artı/X; dip bölgesi üstünde kubbe eğri ve ok başları; sol üstten aşağı uzun ok. Alt kutularda işaret YOK",
+  "yazi": ""
+ },
+ "20": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "21": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "22": {
+  "kod_sonuc": "YOK",
+  "genel": "YANLIŞ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "yalnız alttaki kutu üstünde büyük X",
+  "yazi": ""
+ },
+ "23": {
+  "kod_sonuc": "VAR",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "son mumlar çevresi halka",
+    "isaret": "-",
+    "nerede": "sağ alt"
+   }
+  ],
+  "cizim": "Dip sonrası bölgede mavi çizgi altından sağ uca kıvrık çizgi ve son mumlar çevresinde halka; DOĞRU üstünde X",
+  "yazi": ""
+ },
+ "24": {
+  "kod_sonuc": "YOK",
+  "genel": "DOĞRU",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [
+   {
+    "oge": "dip sonrası dik yükselen çizgi",
+    "isaret": "-",
+    "nerede": "sağ alt"
+   }
+  ],
+  "cizim": "Dip bölgesinden yukarı çıkan düz kırmızı çizgi (yükseliş beklentisi); DOĞRU üstünde X",
+  "yazi": ""
+ },
+ "25": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "26": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "27": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "28": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "29": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "30": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "31": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "32": {
+  "kod_sonuc": "VAR",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "33": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "34": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "35": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ },
+ "36": {
+  "kod_sonuc": "YOK",
+  "genel": "İŞARETSİZ",
+  "mavi_dip": "-",
+  "kirmizi_trend": "-",
+  "diger": [],
+  "cizim": "işaretsiz",
+  "yazi": ""
+ }
+}
