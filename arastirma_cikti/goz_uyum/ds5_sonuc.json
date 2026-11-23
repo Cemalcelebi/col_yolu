@@ -1,0 +1,1639 @@
+{
+ "etiket_acilis_utc": "2026-11-23T18:59:32Z",
+ "deneme": false,
+ "n_sayfa": 80,
+ "kume": {
+  "set 1": {
+   "karar_n": 40,
+   "isaretsiz": 0,
+   "isaretsiz_sayfa": [],
+   "cemal_VAR": 14,
+   "model": {
+    "V1": {
+     "kod_VAR": 8,
+     "uyum": 0.7,
+     "kappa": 0.26829268292682923,
+     "ar95": [
+      -0.048043738554725705,
+      0.5616438356164385
+     ],
+     "ar_bon": [
+      -0.13053976545296264,
+      0.6268656716417909
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 5,
+      "Cemal YOK + kod YOK": 23,
+      "Cemal YOK + kod VAR": 3,
+      "Cemal VAR + kod YOK": 9
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 6,
+     "uyum": 0.7,
+     "kappa": 0.24050632911392397,
+     "ar95": [
+      -0.05888925402563237,
+      0.5270270270270271
+     ],
+     "ar_bon": [
+      -0.13924050632911375,
+      0.6
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 4,
+      "Cemal YOK + kod YOK": 24,
+      "Cemal YOK + kod VAR": 2,
+      "Cemal VAR + kod YOK": 10
+     },
+     "uyusmayan": [
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 26",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 16,
+     "uyum": 0.65,
+     "kappa": 0.2553191489361702,
+     "ar95": [
+      -0.05882352941176477,
+      0.5360824742268041
+     ],
+     "ar_bon": [
+      -0.13636363636363621,
+      0.5980100755667495
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 8,
+      "Cemal YOK + kod YOK": 18,
+      "Cemal YOK + kod VAR": 8,
+      "Cemal VAR + kod YOK": 6
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 2",
+      "set 1 / 4",
+      "set 1 / 5",
+      "set 1 / 9",
+      "set 1 / 12",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 25",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 35",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 23,
+     "uyum": 0.675,
+     "kappa": 0.3779904306220096,
+     "ar95": [
+      0.13252265259384663,
+      0.6116504854368933
+     ],
+     "ar_bon": [
+      0.07407407407407414,
+      0.6624056094929853
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 12,
+      "Cemal YOK + kod YOK": 15,
+      "Cemal YOK + kod VAR": 11,
+      "Cemal VAR + kod YOK": 2
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 8",
+      "set 1 / 9",
+      "set 1 / 11",
+      "set 1 / 16",
+      "set 1 / 18",
+      "set 1 / 21",
+      "set 1 / 30",
+      "set 1 / 31",
+      "set 1 / 32",
+      "set 1 / 33"
+     ]
+    },
+    "DS4_V1": {
+     "kod_VAR": 9,
+     "uyum": 0.675,
+     "kappa": 0.221556886227545,
+     "ar95": [
+      -0.09757859861835587,
+      0.5252225519287835
+     ],
+     "ar_bon": [
+      -0.15853658536585352,
+      0.588235294117647
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 5,
+      "Cemal YOK + kod YOK": 22,
+      "Cemal YOK + kod VAR": 4,
+      "Cemal VAR + kod YOK": 9
+     },
+     "uyusmayan": [
+      "set 1 / 5",
+      "set 1 / 7",
+      "set 1 / 13",
+      "set 1 / 14",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 26",
+      "set 1 / 28",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 36",
+      "set 1 / 38",
+      "set 1 / 40"
+     ]
+    },
+    "DS3_V1": {
+     "kod_VAR": 3,
+     "uyum": 0.625,
+     "kappa": -0.00671140939597331,
+     "ar95": [
+      -0.19151864142104189,
+      0.2142857142857144
+     ],
+     "ar_bon": [
+      -0.23076923076923078,
+      0.26916073848238403
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 1,
+      "Cemal YOK + kod YOK": 24,
+      "Cemal YOK + kod VAR": 2,
+      "Cemal VAR + kod YOK": 13
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 3",
+      "set 1 / 5",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 12",
+      "set 1 / 14",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 26",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40"
+     ]
+    }
+   }
+  },
+  "set 2": {
+   "karar_n": 39,
+   "isaretsiz": 1,
+   "isaretsiz_sayfa": [
+    "set 2 / 39"
+   ],
+   "cemal_VAR": 16,
+   "model": {
+    "V1": {
+     "kod_VAR": 12,
+     "uyum": 0.5897435897435898,
+     "kappa": 0.11864406779661028,
+     "ar95": [
+      -0.18807947019867538,
+      0.42262268350760934
+     ],
+     "ar_bon": [
+      -0.2580645161290322,
+      0.48
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 6,
+      "Cemal YOK + kod YOK": 17,
+      "Cemal YOK + kod VAR": 6,
+      "Cemal VAR + kod YOK": 10
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 12",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 8,
+     "uyum": 0.5897435897435898,
+     "kappa": 0.08235294117647067,
+     "ar95": [
+      -0.1916666666666667,
+      0.3755572052401745
+     ],
+     "ar_bon": [
+      -0.24675221673569067,
+      0.4365971107544143
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 4,
+      "Cemal YOK + kod YOK": 19,
+      "Cemal YOK + kod VAR": 4,
+      "Cemal VAR + kod YOK": 12
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 23",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 20,
+     "uyum": 0.6923076923076923,
+     "kappa": 0.3874345549738219,
+     "ar95": [
+      0.09302325581395343,
+      0.6459143968871595
+     ],
+     "ar_bon": [
+      0.023319415138637188,
+      0.6982054961041025
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 12,
+      "Cemal YOK + kod YOK": 15,
+      "Cemal YOK + kod VAR": 8,
+      "Cemal VAR + kod YOK": 4
+     },
+     "uyusmayan": [
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 12",
+      "set 2 / 15",
+      "set 2 / 20",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 28",
+      "set 2 / 36"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 26,
+     "uyum": 0.6410256410256411,
+     "kappa": 0.3225806451612904,
+     "ar95": [
+      0.07721046077210451,
+      0.5617977528089889
+     ],
+     "ar_bon": [
+      0.022556390977443618,
+      0.629598997493733
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 14,
+      "Cemal YOK + kod YOK": 11,
+      "Cemal YOK + kod VAR": 12,
+      "Cemal VAR + kod YOK": 2
+     },
+     "uyusmayan": [
+      "set 2 / 1",
+      "set 2 / 5",
+      "set 2 / 6",
+      "set 2 / 8",
+      "set 2 / 16",
+      "set 2 / 17",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 26",
+      "set 2 / 34",
+      "set 2 / 35",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 40"
+     ]
+    },
+    "DS4_V1": {
+     "kod_VAR": 9,
+     "uyum": 0.5641025641025641,
+     "kappa": 0.03493449781659382,
+     "ar95": [
+      -0.24711569767441843,
+      0.32669322709163334
+     ],
+     "ar_bon": [
+      -0.3056768558951966,
+      0.3880171184022824
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 4,
+      "Cemal YOK + kod YOK": 18,
+      "Cemal YOK + kod VAR": 5,
+      "Cemal VAR + kod YOK": 12
+     },
+     "uyusmayan": [
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 24",
+      "set 2 / 25",
+      "set 2 / 26",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 33",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "DS3_V1": {
+     "kod_VAR": 6,
+     "uyum": 0.4358974358974359,
+     "kappa": -0.28828828828828823,
+     "ar95": [
+      -0.46109510086455324,
+      -0.1016949152542372
+     ],
+     "ar_bon": [
+      -0.5059920106524635,
+      -0.05147058823529418
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 0,
+      "Cemal YOK + kod YOK": 17,
+      "Cemal YOK + kod VAR": 6,
+      "Cemal VAR + kod YOK": 16
+     },
+     "uyusmayan": [
+      "set 2 / 1",
+      "set 2 / 3",
+      "set 2 / 4",
+      "set 2 / 5",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 20",
+      "set 2 / 21",
+      "set 2 / 23",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 28",
+      "set 2 / 29",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 34",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    }
+   }
+  },
+  "birleşik": {
+   "karar_n": 79,
+   "isaretsiz": 1,
+   "isaretsiz_sayfa": [
+    "set 2 / 39"
+   ],
+   "cemal_VAR": 30,
+   "model": {
+    "V1": {
+     "kod_VAR": 20,
+     "uyum": 0.6455696202531646,
+     "kappa": 0.19563636363636364,
+     "ar95": [
+      -0.020356859265098108,
+      0.4033232628398791
+     ],
+     "ar_bon": [
+      -0.07611600817674896,
+      0.45274222766713784
+     ],
+     "hukum": "GEÇERSİZ",
+     "tablo": {
+      "Cemal VAR + kod VAR": 11,
+      "Cemal YOK + kod YOK": 40,
+      "Cemal YOK + kod VAR": 9,
+      "Cemal VAR + kod YOK": 19
+     },
+     "uyusmayan": [
+      "set 1 / 2",
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 12",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "V2": {
+     "kod_VAR": 14,
+     "uyum": 0.6455696202531646,
+     "kappa": 0.16084977238239764,
+     "ar95": [
+      -0.04169768885187806,
+      0.36046595842266344
+     ],
+     "ar_bon": [
+      -0.07987874110021476,
+      0.4098227281899326
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 8,
+      "Cemal YOK + kod YOK": 43,
+      "Cemal YOK + kod VAR": 6,
+      "Cemal VAR + kod YOK": 22
+     },
+     "uyusmayan": [
+      "set 1 / 5",
+      "set 1 / 12",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 26",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 23",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "V3": {
+     "kod_VAR": 36,
+     "uyum": 0.6708860759493671,
+     "kappa": 0.3274394237066143,
+     "ar95": [
+      0.11575839608207086,
+      0.5285145888594165
+     ],
+     "ar_bon": [
+      0.06818755453665265,
+      0.5647093106661794
+     ],
+     "hukum": "BİLGİ (Bonferroni alt uç ile: GEÇERSİZ)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 20,
+      "Cemal YOK + kod YOK": 33,
+      "Cemal YOK + kod VAR": 16,
+      "Cemal VAR + kod YOK": 10
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 2",
+      "set 1 / 4",
+      "set 1 / 5",
+      "set 1 / 9",
+      "set 1 / 12",
+      "set 1 / 20",
+      "set 1 / 21",
+      "set 1 / 25",
+      "set 1 / 28",
+      "set 1 / 34",
+      "set 1 / 35",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 2",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 12",
+      "set 2 / 15",
+      "set 2 / 20",
+      "set 2 / 22",
+      "set 2 / 24",
+      "set 2 / 27",
+      "set 2 / 28",
+      "set 2 / 36"
+     ]
+    },
+    "GOVDE_1": {
+     "kod_VAR": 49,
+     "uyum": 0.6582278481012658,
+     "kappa": 0.3538321720690699,
+     "ar95": [
+      0.1726577979054627,
+      0.5313768342179208
+     ],
+     "ar_bon": [
+      0.12913326739193276,
+      0.5737925153206884
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 26,
+      "Cemal YOK + kod YOK": 26,
+      "Cemal YOK + kod VAR": 23,
+      "Cemal VAR + kod YOK": 4
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 8",
+      "set 1 / 9",
+      "set 1 / 11",
+      "set 1 / 16",
+      "set 1 / 18",
+      "set 1 / 21",
+      "set 1 / 30",
+      "set 1 / 31",
+      "set 1 / 32",
+      "set 1 / 33",
+      "set 2 / 1",
+      "set 2 / 5",
+      "set 2 / 6",
+      "set 2 / 8",
+      "set 2 / 16",
+      "set 2 / 17",
+      "set 2 / 21",
+      "set 2 / 22",
+      "set 2 / 26",
+      "set 2 / 34",
+      "set 2 / 35",
+      "set 2 / 36",
+      "set 2 / 37",
+      "set 2 / 40"
+     ]
+    },
+    "DS4_V1": {
+     "kod_VAR": 18,
+     "uyum": 0.620253164556962,
+     "kappa": 0.12610619469026554,
+     "ar95": [
+      -0.08498924249644203,
+      0.33569248076312896
+     ],
+     "ar_bon": [
+      -0.12972163752808255,
+      0.38792079663362644
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 9,
+      "Cemal YOK + kod YOK": 40,
+      "Cemal YOK + kod VAR": 9,
+      "Cemal VAR + kod YOK": 21
+     },
+     "uyusmayan": [
+      "set 1 / 5",
+      "set 1 / 7",
+      "set 1 / 13",
+      "set 1 / 14",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 26",
+      "set 1 / 28",
+      "set 1 / 32",
+      "set 1 / 34",
+      "set 1 / 36",
+      "set 1 / 38",
+      "set 1 / 40",
+      "set 2 / 3",
+      "set 2 / 8",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 24",
+      "set 2 / 25",
+      "set 2 / 26",
+      "set 2 / 27",
+      "set 2 / 29",
+      "set 2 / 32",
+      "set 2 / 33",
+      "set 2 / 36",
+      "set 2 / 37"
+     ]
+    },
+    "DS3_V1": {
+     "kod_VAR": 9,
+     "uyum": 0.5316455696202531,
+     "kappa": -0.15033451397087763,
+     "ar95": [
+      -0.2804372408594042,
+      -0.008510638297872321
+     ],
+     "ar_bon": [
+      -0.312536143783305,
+      0.02786408190835653
+     ],
+     "hukum": "BİLGİ (önceki kural)",
+     "tablo": {
+      "Cemal VAR + kod VAR": 1,
+      "Cemal YOK + kod YOK": 41,
+      "Cemal YOK + kod VAR": 8,
+      "Cemal VAR + kod YOK": 29
+     },
+     "uyusmayan": [
+      "set 1 / 1",
+      "set 1 / 3",
+      "set 1 / 5",
+      "set 1 / 6",
+      "set 1 / 7",
+      "set 1 / 12",
+      "set 1 / 14",
+      "set 1 / 17",
+      "set 1 / 19",
+      "set 1 / 20",
+      "set 1 / 26",
+      "set 1 / 34",
+      "set 1 / 37",
+      "set 1 / 39",
+      "set 1 / 40",
+      "set 2 / 1",
+      "set 2 / 3",
+      "set 2 / 4",
+      "set 2 / 5",
+      "set 2 / 9",
+      "set 2 / 10",
+      "set 2 / 14",
+      "set 2 / 15",
+      "set 2 / 18",
+      "set 2 / 19",
+      "set 2 / 20",
+      "set 2 / 21",
+      "set 2 / 23",
+      "set 2 / 25",
+      "set 2 / 27",
+      "set 2 / 28",
+      "set 2 / 29",
+      "set 2 / 30",
+      "set 2 / 32",
+      "set 2 / 34",
+      "set 2 / 37",
+      "set 2 / 38"
+     ]
+    }
+   }
+  }
+ },
+ "govde_kural": {
+  "ozellik": "G4_fitil_govde_arasi",
+  "yon": "<=",
+  "esik": 0.4046040192474485,
+  "kappa_40": 0.3779904306220096,
+  "loocv_kappa_40": 0.3779904306220096,
+  "tanim": "FİTİL DİBİ ile GÖVDE DİBİ ARASI: (S_g - lo) / ATR14 (küçük = dip gövdeyle kurulmuş, fitille aşağı sarkmamış)"
+ },
+ "cemal_VAR_kod_YOK_parca": {
+  "V1": {
+   "n": 19,
+   "dusen": {
+    "P1": 1,
+    "P2": 4,
+    "P3": 8,
+    "P4": 0,
+    "P5": 14
+   },
+   "yalniz_bu_dusen": {
+    "P1": 0,
+    "P2": 0,
+    "P3": 4,
+    "P4": 0,
+    "P5": 9
+   }
+  },
+  "V1_cemal_YOK_kod_VAR": {
+   "n": 9,
+   "sayfa": [
+    "set 1 / 2",
+    "set 1 / 21",
+    "set 1 / 28",
+    "set 2 / 2",
+    "set 2 / 8",
+    "set 2 / 12",
+    "set 2 / 22",
+    "set 2 / 24",
+    "set 2 / 36"
+   ]
+  }
+ },
+ "V1_uyusmayan": [
+  {
+   "sayfa": "set 1 / 2",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 28,
+   "dusus": 0.46339879119704297,
+   "s_atr20": 0.0357636270549666,
+   "dokunus_n": 3,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.04721768115802994,
+   "ust_kapanis_n": 27,
+   "son_ust": true,
+   "kirilim_m": -26,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 1 / 5",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 10,
+   "dusus": 0.8089600290468222,
+   "s_atr20": 0.0,
+   "dokunus_n": 1,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.6614163294860356,
+   "ust_kapanis_n": 10,
+   "son_ust": true,
+   "kirilim_m": -9,
+   "dusen": [
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 1: ilk yarı 1, ikinci yarı 0)",
+    "P5 kırılımdan sonra çizgiye dokunuş yok"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 12",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 32,
+   "dusus": 0.6407477075027528,
+   "s_atr20": 1.0348111469596306,
+   "dokunus_n": 5,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 5,
+   "min_post_low_atr": 1.2353556007625168,
+   "ust_kapanis_n": 27,
+   "son_ust": true,
+   "kirilim_m": -26,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 5: ilk yarı 0, ikinci yarı 5)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 17",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 21,
+   "dusus": 1.3674911788092943,
+   "s_atr20": 0.820604466823214,
+   "dokunus_n": 6,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.48738856487557464,
+   "ust_kapanis_n": 1,
+   "son_ust": true,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 19",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 14,
+   "dusus": 0.5111696327724446,
+   "s_atr20": 0.14584098974664797,
+   "dokunus_n": 5,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.13125868346122557,
+   "ust_kapanis_n": 1,
+   "son_ust": true,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 20",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 24,
+   "dusus": 1.3361740495557761,
+   "s_atr20": -1.769419186478061,
+   "dokunus_n": 1,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.08847095932390305,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P2 çizgi alçalan (-1.77 ATR / 20 mum)",
+    "P3 takip yok (dokunuş 1: ilk yarı 1, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 21",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 55,
+   "dusus": 0.590792898722964,
+   "s_atr20": -1.2105370499874601e-06,
+   "dokunus_n": 4,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.09120223029755575,
+   "ust_kapanis_n": 46,
+   "son_ust": true,
+   "kirilim_m": -45,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 1 / 28",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 31,
+   "dusus": 0.5040003628074661,
+   "s_atr20": 0.6349174765925417,
+   "dokunus_n": 7,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.8888865779632995,
+   "ust_kapanis_n": 31,
+   "son_ust": true,
+   "kirilim_m": -30,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 1 / 34",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 68,
+   "dusus": 1.6334270086196354,
+   "s_atr20": 0.33609647992323305,
+   "dokunus_n": 12,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 12,
+   "min_post_low_atr": 0.8767395190885076,
+   "ust_kapanis_n": 68,
+   "son_ust": true,
+   "kirilim_m": -67,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 12: ilk yarı 0, ikinci yarı 12)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 37",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 22,
+   "dusus": 0.6810960415125127,
+   "s_atr20": 0.49926726644151065,
+   "dokunus_n": 9,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.2963190531996806,
+   "ust_kapanis_n": 1,
+   "son_ust": true,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 39",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 43,
+   "dusus": 0.9305020634017354,
+   "s_atr20": 4.864773359452852e-05,
+   "dokunus_n": 4,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.06573235382453432,
+   "ust_kapanis_n": 43,
+   "son_ust": true,
+   "kirilim_m": -42,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 4: ilk yarı 4, ikinci yarı 0)"
+   ]
+  },
+  {
+   "sayfa": "set 1 / 40",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 12,
+   "dusus": 0.7055555324986151,
+   "s_atr20": -0.1294827380531063,
+   "dokunus_n": 5,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 1,
+   "min_post_low_atr": 0.032369140994083695,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P2",
+    "P5"
+   ],
+   "neden": [
+    "P2 çizgi alçalan (-0.13 ATR / 20 mum)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 2",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 57,
+   "dusus": 0.7790949727790906,
+   "s_atr20": 0.2582143091807309,
+   "dokunus_n": 6,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.14407058495856803,
+   "ust_kapanis_n": 44,
+   "son_ust": true,
+   "kirilim_m": -43,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 3",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 44,
+   "dusus": 0.5042510656772612,
+   "s_atr20": -5.165205641611306,
+   "dokunus_n": 2,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 0.05380463332048404,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P2",
+    "P3",
+    "P5"
+   ],
+   "neden": [
+    "P2 çizgi alçalan (-5.17 ATR / 20 mum)",
+    "P3 takip yok (dokunuş 2: ilk yarı 2, ikinci yarı 0)",
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 8",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 12,
+   "dusus": 0.686706288059973,
+   "s_atr20": 2.184289465169582,
+   "dokunus_n": 7,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.23172828970233075,
+   "ust_kapanis_n": 5,
+   "son_ust": true,
+   "kirilim_m": -7,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 9",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 28,
+   "dusus": 1.6263578891183528,
+   "s_atr20": -0.09178501242615568,
+   "dokunus_n": 3,
+   "dokunus_ilk": 3,
+   "dokunus_ikinci": 0,
+   "min_post_low_atr": 8.977342739487995e-07,
+   "ust_kapanis_n": 19,
+   "son_ust": true,
+   "kirilim_m": -24,
+   "dusen": [
+    "P2",
+    "P3"
+   ],
+   "neden": [
+    "P2 çizgi alçalan (-0.09 ATR / 20 mum)",
+    "P3 takip yok (dokunuş 3: ilk yarı 3, ikinci yarı 0)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 10",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 18,
+   "dusus": 0.7118780527273205,
+   "s_atr20": 0.5810181746914662,
+   "dokunus_n": 9,
+   "dokunus_ilk": 6,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.08715510988955898,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 H1'den sonra pivot tepe yok"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 12",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 26,
+   "dusus": 1.6330858027732806,
+   "s_atr20": 0.23948635755464637,
+   "dokunus_n": 10,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 9,
+   "min_post_low_atr": 0.2357426033751385,
+   "ust_kapanis_n": 10,
+   "son_ust": true,
+   "kirilim_m": -15,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 14",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 23,
+   "dusus": 0.5017821057008045,
+   "s_atr20": 0.8855010011068573,
+   "dokunus_n": 11,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 10,
+   "min_post_low_atr": 0.6744692468923568,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 15",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 78,
+   "dusus": 0.9817471453430553,
+   "s_atr20": 0.022207332399859905,
+   "dokunus_n": 15,
+   "dokunus_ilk": 0,
+   "dokunus_ikinci": 15,
+   "min_post_low_atr": 0.3679028100303599,
+   "ust_kapanis_n": 77,
+   "son_ust": true,
+   "kirilim_m": -76,
+   "dusen": [
+    "P3"
+   ],
+   "neden": [
+    "P3 takip yok (dokunuş 15: ilk yarı 0, ikinci yarı 15)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 21",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 14,
+   "dusus": 0.49323768368076015,
+   "s_atr20": 0.5883481076368212,
+   "dokunus_n": 4,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 2,
+   "min_post_low_atr": 0.6152969517950007,
+   "ust_kapanis_n": 1,
+   "son_ust": true,
+   "kirilim_m": 0,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 1 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 22",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 27,
+   "dusus": 1.5,
+   "s_atr20": 0.06845686809828451,
+   "dokunus_n": 7,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.11808809746954078,
+   "ust_kapanis_n": 8,
+   "son_ust": true,
+   "kirilim_m": -10,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 24",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 13,
+   "dusus": 0.9561201885147657,
+   "s_atr20": 1.4462811171247332,
+   "dokunus_n": 8,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 7,
+   "min_post_low_atr": 0.7000009103255628,
+   "ust_kapanis_n": 13,
+   "son_ust": true,
+   "kirilim_m": -12,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 27",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "YOK",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 119,
+   "dusus": NaN,
+   "s_atr20": 0.9177481671206935,
+   "dokunus_n": 8,
+   "dokunus_ilk": 4,
+   "dokunus_ikinci": 4,
+   "min_post_low_atr": 0.6363644245232718,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P1",
+    "P5"
+   ],
+   "neden": [
+    "P1 düşüş yok (- < %20)",
+    "P5 d'den önce onaylı pivot tepe yok"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 29",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 20,
+   "dusus": 0.7762637007505324,
+   "s_atr20": 0.5444428620288314,
+   "dokunus_n": 9,
+   "dokunus_ilk": 6,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.037119677170354116,
+   "ust_kapanis_n": 2,
+   "son_ust": true,
+   "kirilim_m": -1,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 2 kapanış (< 3)"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 32",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 85,
+   "dusus": 1.6656935011827998,
+   "s_atr20": -0.032884411865193,
+   "dokunus_n": 5,
+   "dokunus_ilk": 2,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.4247573916722915,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 H1'den sonra pivot tepe yok"
+   ]
+  },
+  {
+   "sayfa": "set 2 / 36",
+   "cemal": "YOK",
+   "V1": "VAR",
+   "V2": "VAR",
+   "V3": "VAR",
+   "GOVDE_1": "VAR",
+   "DS4_V1": "VAR",
+   "DS3_V1": "YOK",
+   "m": 12,
+   "dusus": 1.9071170335937642,
+   "s_atr20": 2.3212414013656617,
+   "dokunus_n": 4,
+   "dokunus_ilk": 1,
+   "dokunus_ikinci": 3,
+   "min_post_low_atr": 0.21761603548577801,
+   "ust_kapanis_n": 9,
+   "son_ust": true,
+   "kirilim_m": -8,
+   "dusen": [],
+   "neden": []
+  },
+  {
+   "sayfa": "set 2 / 37",
+   "cemal": "VAR",
+   "V1": "YOK",
+   "V2": "YOK",
+   "V3": "VAR",
+   "GOVDE_1": "YOK",
+   "DS4_V1": "YOK",
+   "DS3_V1": "YOK",
+   "m": 14,
+   "dusus": 0.28656911152900166,
+   "s_atr20": 0.6495885429527284,
+   "dokunus_n": 11,
+   "dokunus_ilk": 5,
+   "dokunus_ikinci": 6,
+   "min_post_low_atr": 0.4053457312909771,
+   "ust_kapanis_n": 0,
+   "son_ust": false,
+   "kirilim_m": null,
+   "dusen": [
+    "P5"
+   ],
+   "neden": [
+    "P5 düşen çizginin üstünde 0 kapanış (< 3)"
+   ]
+  }
+ ],
+ "karsilastirma": {
+  "V1_GOVDE_1": {
+   "iki_kod_ayni_yanit": 36,
+   "karar_n": 79,
+   "kod_kappa": 0.026926382125465446,
+   "V1_dogru_oteki_yanlis": 21,
+   "oteki_dogru_V1_yanlis": 22
+  },
+  "V1_DS4_V1": {
+   "iki_kod_ayni_yanit": 57,
+   "karar_n": 79,
+   "kod_kappa": 0.23838737949167393,
+   "V1_dogru_oteki_yanlis": 12,
+   "oteki_dogru_V1_yanlis": 10
+  },
+  "V1_DS3_V1": {
+   "iki_kod_ayni_yanit": 52,
+   "karar_n": 79,
+   "kod_kappa": -0.10460901087519446,
+   "V1_dogru_oteki_yanlis": 18,
+   "oteki_dogru_V1_yanlis": 9
+  }
+ },
+ "sayfa_cemal": {
+  "1/1": "YOK",
+  "1/2": "YOK",
+  "1/3": "VAR",
+  "1/4": "YOK",
+  "1/5": "VAR",
+  "1/6": "YOK",
+  "1/7": "VAR",
+  "1/8": "YOK",
+  "1/9": "YOK",
+  "1/10": "YOK",
+  "1/11": "YOK",
+  "1/12": "VAR",
+  "1/13": "YOK",
+  "1/14": "VAR",
+  "1/15": "YOK",
+  "1/16": "YOK",
+  "1/17": "VAR",
+  "1/18": "YOK",
+  "1/19": "VAR",
+  "1/20": "VAR",
+  "1/21": "YOK",
+  "1/22": "YOK",
+  "1/23": "YOK",
+  "1/24": "YOK",
+  "1/25": "YOK",
+  "1/26": "VAR",
+  "1/27": "YOK",
+  "1/28": "YOK",
+  "1/29": "YOK",
+  "1/30": "YOK",
+  "1/31": "YOK",
+  "1/32": "VAR",
+  "1/33": "YOK",
+  "1/34": "VAR",
+  "1/35": "YOK",
+  "1/36": "YOK",
+  "1/37": "VAR",
+  "1/38": "YOK",
+  "1/39": "VAR",
+  "1/40": "VAR",
+  "2/1": "YOK",
+  "2/2": "YOK",
+  "2/3": "VAR",
+  "2/4": "YOK",
+  "2/5": "YOK",
+  "2/6": "YOK",
+  "2/7": "YOK",
+  "2/8": "YOK",
+  "2/9": "VAR",
+  "2/10": "VAR",
+  "2/11": "YOK",
+  "2/12": "YOK",
+  "2/13": "YOK",
+  "2/14": "VAR",
+  "2/15": "VAR",
+  "2/16": "YOK",
+  "2/17": "YOK",
+  "2/18": "VAR",
+  "2/19": "VAR",
+  "2/20": "YOK",
+  "2/21": "VAR",
+  "2/22": "YOK",
+  "2/23": "VAR",
+  "2/24": "YOK",
+  "2/25": "VAR",
+  "2/26": "YOK",
+  "2/27": "VAR",
+  "2/28": "YOK",
+  "2/29": "VAR",
+  "2/30": "VAR",
+  "2/31": "YOK",
+  "2/32": "VAR",
+  "2/33": "YOK",
+  "2/34": "YOK",
+  "2/35": "YOK",
+  "2/36": "YOK",
+  "2/37": "VAR",
+  "2/38": "VAR",
+  "2/39": "?",
+  "2/40": "YOK"
+ }
+}
