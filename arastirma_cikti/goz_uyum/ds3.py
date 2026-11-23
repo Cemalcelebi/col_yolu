@@ -367,7 +367,10 @@ def ds3_hukum(k: float, alt: float, n: int) -> str:
 
 def _etiket_oku(yol: str) -> Dict[int, str]:
     C = json.load(open(yol, encoding="utf-8"))
-    return {int(k): (GU.gu_norm(v) or "?") for k, v in C.items()}
+    atla = [k for k in C if not str(k).strip().isdigit()]
+    if atla:
+        dslog.warning("etiket dosyasında sayfa olmayan anahtar(lar) atlandı: %s", atla)
+    return {int(k): (GU.gu_norm(v) or "?") for k, v in C.items() if str(k).strip().isdigit()}
 
 
 def _neden(r: Dict[str, Any]) -> List[str]:
@@ -500,8 +503,11 @@ def _sonuc_md(S: Dict[str, Any], J: Dict[str, Any]) -> str:
          f"Karar: birleşik {B['karar_n']} (Cemal VAR {B['cemal_VAR']}); işaretsiz / '?' (karar dışı): {B['isaretsiz']} {B['isaretsiz_sayfa']}.", "",
          f"## HÜKÜM (V1, ön kayıttaki eşikle): **{v1['hukum']}** — birleşik kappa {_f(v1['kappa'])}, %95 [{_f(v1['ar95'][0])}, {_f(v1['ar95'][1])}]", ""]
     s1 = S["kume"]["set 1"]["model"]["V1"]["kappa"]; s2 = S["kume"]["set 2"]["model"]["V1"]["kappa"]
-    if (np.isfinite(s1) and s1 < 0.40) or (np.isfinite(s2) and s2 < 0.40):
-        L += [f"NOT: **tutarsız** — V1 kappa set 1 {_f(s1)}, set 2 {_f(s2)}; en az biri < 0,40.", ""]
+    dus1 = bool(np.isfinite(s1) and s1 < 0.40); dus2 = bool(np.isfinite(s2) and s2 < 0.40)
+    if dus1 and dus2:
+        L += [f"NOT: V1 kappa set 1 {_f(s1)}, set 2 {_f(s2)}: İKİ SETTE DE < 0,40 (iki set aynı yönde düşük; 'tutarsız' değil).", ""]
+    elif dus1 or dus2:
+        L += [f"NOT: **tutarsız** — V1 kappa set 1 {_f(s1)}, set 2 {_f(s2)}; biri < 0,40.", ""]
     L += ["## Kappa tablosu", "", "| model | küme | karar | kod VAR | uyum | kappa | %95 aralık | %98,33 (Bonferroni 3) | hüküm |",
           "|---|---|---|---|---|---|---|---|---|"]
     for v in ("V1", "V2", "V3", "GOVDE_1"):
@@ -544,40 +550,50 @@ def _isaret(x: bool) -> str:
     return "✓" if x else "✗"
 
 
+def _ds3_eksen(ax, W: pd.DataFrame, r: Dict[str, Any], i_bas: int, yakin: bool) -> None:
+    from matplotlib.patches import Rectangle
+    n = len(W); x = np.arange(n) - (n - 1)
+    O, H, L, C = (W[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
+    d = int(r["d_idx"]); t = n - 1
+    s = slice(i_bas, n); Hs, Ls = H[s], L[s]
+    renk = np.where(C >= O, "#1a9850", "#d73027")
+    if t - 59 >= i_bas:
+        ax.axvspan(x[t - 59] - 0.5, x[t] + 0.5, color="#f2f2f2", zorder=0)                      # karar penceresi (son 60 mum)
+    ax.vlines(x[s], L[s], H[s], colors=renk[s], linewidth=1.0 if not yakin else 1.6, zorder=3)
+    gen = 0.35 if not yakin else 0.38
+    for xi, o, c, col in zip(x[s], O[s], C[s], renk[s]):
+        ax.add_patch(Rectangle((xi - gen, min(o, c)), 2 * gen, max(abs(c - o), (Hs.max() - Ls.min()) * 0.0008), facecolor=col, edgecolor=col,
+                               linewidth=0.4, zorder=4))
+    post = np.arange(d + 1, t + 1)
+    bp = np.minimum(O[post], C[post])
+    ax.vlines(x[post], L[post], bp, colors="#ff8c00", linewidth=3.2 if not yakin else 6.0, zorder=5, alpha=0.85)   # dip sonrası alt fitiller
+    ax.hlines(r["low_d"], x[d] - 0.5, x[t] + 0.5, colors="#1f4e9c", linestyles="--", linewidth=1.2, zorder=6)
+    xx = (post - d).astype(float); hat = r["hat_kesisim"] + r["hat_egim"] * xx
+    ax.plot(x[post], hat, color="#7b2cbf", linewidth=1.8, zorder=6)
+    pad = (Hs.max() - Ls.min()) * 0.06
+    ax.annotate("DİP", xy=(x[d], L[d]), xytext=(x[d], L[d] - pad * 0.9), ha="center", va="top", fontsize=9, color="#1f4e9c",
+                fontweight="bold", arrowprops=dict(arrowstyle="->", color="#1f4e9c", lw=1.2), zorder=7)
+    ti = int(r["tepe_idx"])
+    if ti >= i_bas:
+        ax.plot([x[ti]], [H[ti]], marker="v", color="#555555", markersize=7, zorder=7)
+        ax.text(x[ti], H[ti] + pad * 0.25, "tepe", ha="center", va="bottom", fontsize=8, color="#555555")
+    ax.axvline(x[-1] + 0.5, color="#555555", linewidth=0.8, zorder=2)
+    ax.axvline(x[-1] - 0.5, color="#555555", linewidth=0.8, zorder=2)
+    ax.set_ylim(Ls.min() - pad * 1.8, Hs.max() + pad); ax.set_xlim(x[i_bas] - 1, x[-1] + 2)
+    ax.set_xticks([]); ax.set_yticks([])
+    for sp in ax.spines.values():
+        sp.set_linewidth(0.6); sp.set_color("#888888")
+
+
 def ds3_sayfa_ciz(W: pd.DataFrame, r: Dict[str, Any], baslik: str, cemal: str):
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.patches import Rectangle
     fig = plt.figure(figsize=(7.5, 10.5))
-    n = len(W); x = np.arange(n) - (n - 1)
-    O, H, L, C = (W[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
-    ax = fig.add_axes([0.05, 0.30, 0.91, 0.56])
-    yes = C >= O; renk = np.where(yes, "#1a9850", "#d73027")
-    d = int(r["d_idx"]); t = n - 1
-    ax.axvspan(x[t - 59] - 0.5, x[t] + 0.5, color="#f2f2f2", zorder=0)                          # karar penceresi (son 60 mum)
-    ax.vlines(x, L, H, colors=renk, linewidth=1.0, zorder=3)
-    for xi, o, c, col in zip(x, O, C, renk):
-        ax.add_patch(Rectangle((xi - 0.35, min(o, c)), 0.7, max(abs(c - o), (H.max() - L.min()) * 0.0008), facecolor=col, edgecolor=col,
-                               linewidth=0.4, zorder=4))
-    post = np.arange(d + 1, t + 1)
-    bp = np.minimum(O[post], C[post])
-    ax.vlines(x[post], L[post], bp, colors="#ff8c00", linewidth=3.2, zorder=5, alpha=0.85)        # dip sonrası alt fitiller
-    ax.hlines(r["low_d"], x[d] - 0.5, x[t] + 0.5, colors="#1f4e9c", linestyles="--", linewidth=1.2, zorder=6)
-    xx = (post - d).astype(float); hat = r["hat_kesisim"] + r["hat_egim"] * xx
-    ax.plot(x[post], hat, color="#7b2cbf", linewidth=1.8, zorder=6)
-    rngp = H.max() - L.min(); pad = rngp * 0.06
-    ax.annotate("DİP", xy=(x[d], L[d]), xytext=(x[d], L[d] - pad * 0.8), ha="center", va="top", fontsize=9, color="#1f4e9c",
-                fontweight="bold", arrowprops=dict(arrowstyle="->", color="#1f4e9c", lw=1.2), zorder=7)
-    ti = int(r["tepe_idx"])
-    ax.plot([x[ti]], [H[ti]], marker="v", color="#555555", markersize=7, zorder=7)
-    ax.text(x[ti], H[ti] + pad * 0.25, "tepe", ha="center", va="bottom", fontsize=8, color="#555555")
-    ax.axvline(x[-1] + 0.5, color="#555555", linewidth=0.8, zorder=2)
-    ax.axvline(x[-1] - 0.5, color="#555555", linewidth=0.8, zorder=2)
-    ax.set_ylim(L.min() - pad * 1.6, H.max() + pad); ax.set_xlim(x[0] - 1, x[-1] + 2)
-    ax.set_xticks([]); ax.set_yticks([])
-    for sp in ax.spines.values():
-        sp.set_linewidth(0.6); sp.set_color("#888888")
+    n = len(W); d = int(r["d_idx"])
+    ax = fig.add_axes([0.05, 0.52, 0.91, 0.35]); _ds3_eksen(ax, W, r, 0, False)
+    az = fig.add_axes([0.05, 0.27, 0.91, 0.22]); _ds3_eksen(az, W, r, max(0, d - 10), True)
+    fig.text(0.05, 0.495, "yakın görünüm: dipten 10 mum önce -> sinyal günü", fontsize=8, ha="left", va="center", color="#555555")
     fig.text(0.05, 0.94, baslik, fontsize=30, fontweight="bold", va="center", ha="left")
     fig.text(0.96, 0.94, f"KOD (V1): {'VAR' if r['V1'] else 'YOK'}\nCEMAL: {cemal}", fontsize=13, va="center", ha="right")
     fig.text(0.50, 0.885, "gri alan = son 60 mum · mavi kesik = dip seviyesi · mor = dip sonrası hat · turuncu = dip sonrası alt fitiller",
@@ -590,9 +606,9 @@ def ds3_sayfa_ciz(W: pd.DataFrame, r: Dict[str, Any], baslik: str, cemal: str):
         f"{_isaret(r['d'])}  fitil küçülüyor: alt fitil ilk 1/3 {r['w_ilk']:.2f} -> son 1/3 {r['w_son']:.2f} ATR ; "
         f"eğim {'aşağı' if r['d_egim'] else 'aşağı DEĞİL'}",
     ]
-    for i, s in enumerate(satir):
-        fig.text(0.06, 0.235 - i * 0.042, s, fontsize=11.5, ha="left", va="center")
-    fig.text(0.06, 0.055, "Yanlış gördüğü parça:   ☐ düşüş    ☐ dip    ☐ hat    ☐ fitil    ☐ hepsi doğru", fontsize=12, ha="left", va="center")
+    for i, s_ in enumerate(satir):
+        fig.text(0.06, 0.215 - i * 0.037, s_, fontsize=11, ha="left", va="center")
+    fig.text(0.06, 0.05, "Yanlış gördüğü parça:   ☐ düşüş    ☐ dip    ☐ hat    ☐ fitil    ☐ hepsi doğru", fontsize=12, ha="left", va="center")
     return fig
 
 
