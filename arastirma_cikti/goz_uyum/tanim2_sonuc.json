@@ -1,0 +1,146 @@
+{
+ "n_sayfa": 40,
+ "soru_isareti": 1,
+ "karar_n": 39,
+ "cemal_VAR": 16,
+ "modeller": {
+  "ADAY_1": {
+   "uyum": 0.6153846153846154,
+   "kappa": 0.22721268163804503,
+   "aralik": {
+    "alt": -0.08764940239043825,
+    "ust": 0.5275908479138628,
+    "gecersiz": 0
+   },
+   "hukum": "GEÇERSİZ",
+   "tablo": {
+    "Cemal VAR + kod VAR": 10,
+    "Cemal YOK + kod YOK": 14,
+    "Cemal YOK + kod VAR": 9,
+    "Cemal VAR + kod YOK": 6
+   },
+   "uyusmayan": [
+    3,
+    6,
+    7,
+    8,
+    9,
+    13,
+    17,
+    18,
+    20,
+    22,
+    23,
+    25,
+    34,
+    35,
+    38
+   ]
+  },
+  "ADAY_2": {
+   "uyum": 0.5897435897435898,
+   "kappa": 0.18324607329842932,
+   "aralik": {
+    "alt": -0.1311475409836065,
+    "ust": 0.4786443850267375,
+    "gecersiz": 0
+   },
+   "hukum": "GEÇERSİZ",
+   "tablo": {
+    "Cemal VAR + kod VAR": 10,
+    "Cemal YOK + kod YOK": 13,
+    "Cemal YOK + kod VAR": 10,
+    "Cemal VAR + kod YOK": 6
+   },
+   "uyusmayan": [
+    2,
+    3,
+    6,
+    7,
+    8,
+    9,
+    13,
+    17,
+    18,
+    20,
+    22,
+    23,
+    25,
+    34,
+    35,
+    38
+   ]
+  },
+  "KONTROL": {
+   "uyum": 0.5641025641025641,
+   "kappa": 0.1241743725231176,
+   "aralik": {
+    "alt": -0.1880866247179467,
+    "ust": 0.42109159169795235,
+    "gecersiz": 0
+   },
+   "hukum": "karşılaştırma (hüküm yok)",
+   "tablo": {
+    "Cemal VAR + kod VAR": 9,
+    "Cemal YOK + kod YOK": 13,
+    "Cemal YOK + kod VAR": 10,
+    "Cemal VAR + kod YOK": 7
+   },
+   "uyusmayan": [
+    1,
+    2,
+    4,
+    5,
+    6,
+    8,
+    14,
+    15,
+    17,
+    20,
+    21,
+    23,
+    25,
+    28,
+    29,
+    36,
+    37
+   ]
+  }
+ },
+ "bilgi_pazar": {
+  "ABD": {
+   "n": 32,
+   "uyum": 0.5625
+  },
+  "AVR": {
+   "n": 2,
+   "uyum": 0.5
+  },
+  "BIST": {
+   "n": 5,
+   "uyum": 1.0
+  }
+ },
+ "bilgi_hucre": {
+  "A1=False S3=False": {
+   "n": 10,
+   "uyum": 0.8,
+   "Cemal_VAR": 2
+  },
+  "A1=False S3=True": {
+   "n": 10,
+   "uyum": 0.6,
+   "Cemal_VAR": 4
+  },
+  "A1=True S3=False": {
+   "n": 10,
+   "uyum": 0.5,
+   "Cemal_VAR": 5
+  },
+  "A1=True S3=True": {
+   "n": 9,
+   "uyum": 0.5555555555555556,
+   "Cemal_VAR": 5
+  }
+ }
+}
