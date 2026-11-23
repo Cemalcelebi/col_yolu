@@ -1,0 +1,1466 @@
+{
+ "surum": "govde v1",
+ "uretim_utc": "2026-11-23T16:55:17Z",
+ "uyari": "GETİRİ YOK; ikinci setin Cemal işaretleri bu dosya yazılırken YOK (Cemal işaretliyor)",
+ "esik": {
+  "pencere_bar": 40,
+  "atr_n": 14,
+  "bant_atr_k": 0.5,
+  "dip_bolge": 0.2,
+  "tepki_bar": 3,
+  "tepki_govde_oran": 0.5,
+  "s3": {
+   "ozellik": "F2",
+   "yon": ">=",
+   "esik": -0.01,
+   "tanim": "eski Ş3: F2 (hat eğimi) >= -0,01 (dip delinmemiş)"
+  },
+  "kural": {
+   "amac": "dengeli doğruluk = (VAR duyarlılığı + YOK duyarlılığı) / 2",
+   "nan": "NaN = YOK",
+   "esitlik": "dengeli doğruluk büyük > ham doğruluk büyük > alt-orta eşik",
+   "secim": "Her özellik için YÖN ÖNCEDEN SABİT (GV_OZ['yon']); tek eşik = ilk 40 sayfada (goz_uyum_anahtar.json + cemal_isaret.json; hedef = Cemal VAR) dengeli doğruluğu en yüksek yapan (eşik adayları: ardışık benzersiz sonlu değerlerin orta noktaları; eşitlikte ham doğruluk büyük > eşit eşik listesinin alt-orta elemanı; NaN = YOK). LOOCV kappa: her dışarıda bırakılan sayfa için eşik kalan 39 sayfadan aynı kuralla yeniden seçilir. GOVDE_1 = LOOCV kappa'sı en yüksek tek özellik (eşitlikte 40 sayfa kappa büyük > G sırası); GOVDE_2 = GOVDE_1 VE eski Ş3 (dip delinmemiş: F2 >= -0,01). Eşik 40 sayfanın TAMAMIYLA seçilir ve SAYI olarak mühürlenir."
+  },
+  "kappa": {
+   "B": 5000,
+   "tohum": 20261124,
+   "gecerli": 0.6,
+   "gecerli_alt": 0.4,
+   "kismen": 0.4,
+   "karar_min": 30
+  },
+  "hukum": "ikinci sette GOVDE_1 (ve GOVDE_2) kappa >= 0,60 ve bootstrap %95 alt ucu >= 0,40 -> TANIM GEÇERLİ; kappa 0,40-0,60 (ya da kappa >= 0,60 ama alt uç < 0,40) KISMEN; < 0,40 GEÇERSİZ; karar sayısı < 30 ise ÖLÇÜLEMEDİ. ADAY_1 / ADAY_2 / KONTROL (tanim2 mührü) karşılaştırma için yazılır",
+  "not": "ikinci set GOVDE'ye göre tabakalanmadı; GOVDE ikinci sette ikincil adaydır; tanım Cemal'in 23 Kas sözünden, ikinci setin işaretleri gelmeden mühürlendi",
+  "tanim_sha": "516b49f0fc23f2c4f0717147bbd21aa23f2058d0e1d1852f061fd5a126908a85"
+ },
+ "esik_sha": "f1b5706b300937fbe62f039debd3ecc27c9dfccbd01ceca4067e7798819bb2b3",
+ "tanim_sha": "516b49f0fc23f2c4f0717147bbd21aa23f2058d0e1d1852f061fd5a126908a85",
+ "tanimlar": {
+  "G1_govde_dokunus_n": {
+   "tanim": "GÖVDE DESTEĞİ: son 40 mumda gövde altı (min(O,C)) gövde dibi S_g'nin S_g x (1 + 0,5 x ATRP14) bandında kalan mum sayısı (dip gövdeyle kaç kez savunuldu)",
+   "yon": ">=",
+   "nan": "NaN olmaz (S_g barının kendisi her zaman bantta; en az 1)"
+  },
+  "G2_dip_alt_fitil": {
+   "tanim": "GÖVDE / FİTİL DİBİ: son 40 mumda dip bölgesi (L <= lo + 0,20 x (hi - lo)) barlarında ortalama alt fitil payı (min(O,C) - L) / (H - L) (küçük = dipte gövde tepkisi, uzun alt fitil yok)",
+   "yon": "<=",
+   "nan": "NaN olmaz (lo barı her zaman dip bölgesinde)"
+  },
+  "G3_govdeli_tepki_payi": {
+   "tanim": "GÖVDELİ TEPKİ: her gövde dokunuşundan (G1 bandı, bar j) sonraki 3 mum [j+1..min(j+3, t)] içinde C > O ve (C - O) >= 0,5 x (H - L) olan (güçlü gövdeli yükselen) mum bulunan dokunuşların payı; payda = j < t olan dokunuşlar",
+   "yon": ">=",
+   "nan": "j < t olan dokunuş yoksa NaN (kuralda YOK)"
+  },
+  "G4_fitil_govde_arasi": {
+   "tanim": "FİTİL DİBİ ile GÖVDE DİBİ ARASI: (S_g - lo) / ATR14 (küçük = dip gövdeyle kurulmuş, fitille aşağı sarkmamış)",
+   "yon": "<=",
+   "nan": "ATR14 <= 0 ise NaN (ge_hazir geçerli barda olmaz)"
+  }
+ },
+ "secim_kurali": "Her özellik için YÖN ÖNCEDEN SABİT (GV_OZ['yon']); tek eşik = ilk 40 sayfada (goz_uyum_anahtar.json + cemal_isaret.json; hedef = Cemal VAR) dengeli doğruluğu en yüksek yapan (eşik adayları: ardışık benzersiz sonlu değerlerin orta noktaları; eşitlikte ham doğruluk büyük > eşit eşik listesinin alt-orta elemanı; NaN = YOK). LOOCV kappa: her dışarıda bırakılan sayfa için eşik kalan 39 sayfadan aynı kuralla yeniden seçilir. GOVDE_1 = LOOCV kappa'sı en yüksek tek özellik (eşitlikte 40 sayfa kappa büyük > G sırası); GOVDE_2 = GOVDE_1 VE eski Ş3 (dip delinmemiş: F2 >= -0,01). Eşik 40 sayfanın TAMAMIYLA seçilir ve SAYI olarak mühürlenir.",
+ "tanim2_anahtar_sha": "c0cc3e82c2895c222393932f7ab217f626444e516cb159ba6696ac888e00e916",
+ "kurallar": {
+  "GOVDE_1": {
+   "ozellik": "G4_fitil_govde_arasi",
+   "yon": "<=",
+   "esik": 0.4046040192474485,
+   "kappa_40": 0.3779904306220096,
+   "loocv_kappa_40": 0.3779904306220096,
+   "tanim": "FİTİL DİBİ ile GÖVDE DİBİ ARASI: (S_g - lo) / ATR14 (küçük = dip gövdeyle kurulmuş, fitille aşağı sarkmamış)"
+  },
+  "GOVDE_2": {
+   "tanim": "GOVDE_1 VE Ş3 (G4_fitil_govde_arasi <= 0.4046040192474485 VE F2 >= -0,01)",
+   "kappa_40": 0.4972067039106146,
+   "loocv_kappa_40": 0.4972067039106146
+  }
+ },
+ "kesif": {
+  "etiket": "KEŞİF (ilk 40 sayfa; küçük örneklem; 4 özellik; seçilen kural ikinci sette sınanır)",
+  "n": 40,
+  "cemal_VAR": 14,
+  "cemal_YOK": 26,
+  "S3_kappa_40": 0.3999999999999999,
+  "tablo": [
+   {
+    "ozellik": "G4_fitil_govde_arasi",
+    "yon": "<=",
+    "esik": 0.4046040192474485,
+    "bal": 0.7170329670329669,
+    "kappa": 0.3779904306220096,
+    "loocv_kappa": 0.3779904306220096,
+    "loocv_uyum": 0.675,
+    "tam_VAR": 23,
+    "s3_ile_kappa": 0.4972067039106146,
+    "dagilim": {
+     "VAR": {
+      "n": 14,
+      "nan": 0,
+      "medyan": 0.24821269106056354,
+      "q25": 0.17580139965598898,
+      "q75": 0.3603499392948844
+     },
+     "YOK": {
+      "n": 26,
+      "nan": 0,
+      "medyan": 0.4399533189742674,
+      "q25": 0.28014002273052485,
+      "q75": 0.6559529265631212
+     }
+    }
+   },
+   {
+    "ozellik": "G2_dip_alt_fitil",
+    "yon": "<=",
+    "esik": 0.3005774296955476,
+    "bal": 0.6236263736263736,
+    "kappa": 0.20930232558139522,
+    "loocv_kappa": 0.05660377358490571,
+    "loocv_uyum": 0.5,
+    "tam_VAR": 25,
+    "s3_ile_kappa": 0.3406593406593405,
+    "dagilim": {
+     "VAR": {
+      "n": 14,
+      "nan": 0,
+      "medyan": 0.27924676376137403,
+      "q25": 0.26106944570853463,
+      "q75": 0.30012314168812065
+     },
+     "YOK": {
+      "n": 26,
+      "nan": 0,
+      "medyan": 0.2990833790114849,
+      "q25": 0.23235069646466888,
+      "q75": 0.33583265339223667
+     }
+    }
+   },
+   {
+    "ozellik": "G3_govdeli_tepki_payi",
+    "yon": ">=",
+    "esik": 0.8375,
+    "bal": 0.4697802197802198,
+    "kappa": -0.061452513966480375,
+    "loocv_kappa": -0.13636363636363621,
+    "loocv_uyum": 0.5,
+    "tam_VAR": 13,
+    "s3_ile_kappa": 0.07894736842105243,
+    "dagilim": {
+     "VAR": {
+      "n": 14,
+      "nan": 0,
+      "medyan": 0.5,
+      "q25": 0.3333333333333333,
+      "q75": 0.8506944444444444
+     },
+     "YOK": {
+      "n": 26,
+      "nan": 0,
+      "medyan": 0.8,
+      "q25": 0.5,
+      "q75": 1.0
+     }
+    }
+   },
+   {
+    "ozellik": "G1_govde_dokunus_n",
+    "yon": ">=",
+    "esik": 7.0,
+    "bal": 0.5879120879120879,
+    "kappa": 0.21052631578947334,
+    "loocv_kappa": -0.38297872340425543,
+    "loocv_uyum": 0.35,
+    "tam_VAR": 4,
+    "s3_ile_kappa": 0.26174496644295286,
+    "dagilim": {
+     "VAR": {
+      "n": 14,
+      "nan": 0,
+      "medyan": 3.0,
+      "q25": 2.25,
+      "q75": 5.75
+     },
+     "YOK": {
+      "n": 26,
+      "nan": 0,
+      "medyan": 3.0,
+      "q25": 2.0,
+      "q75": 4.75
+     }
+    }
+   }
+  ],
+  "ilk_degerler": [
+   {
+    "sayfa": 1,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.41399945083634687,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.32978126216706566
+   },
+   {
+    "sayfa": 2,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 8.0,
+    "G2_dip_alt_fitil": 0.31676007689548713,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.6638509323416095
+   },
+   {
+    "sayfa": 3,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": false,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.2653624553173184,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.13315959921288212
+   },
+   {
+    "sayfa": 4,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.14645652497022954,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.5802145766796076
+   },
+   {
+    "sayfa": 5,
+    "pazar": "BIST",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.3005235055985685,
+    "G3_govdeli_tepki_payi": 0.0,
+    "G4_fitil_govde_arasi": 0.1971828337346711
+   },
+   {
+    "sayfa": 6,
+    "pazar": "BIST",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.31580666794152634,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.17014844067208465
+   },
+   {
+    "sayfa": 7,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 18.0,
+    "G2_dip_alt_fitil": 0.3859147994418159,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.7528891274893332
+   },
+   {
+    "sayfa": 8,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.0,
+    "G3_govdeli_tepki_payi": 0.0,
+    "G4_fitil_govde_arasi": 0.0
+   },
+   {
+    "sayfa": 9,
+    "pazar": "AVR",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 5.0,
+    "G2_dip_alt_fitil": 0.28224679236025196,
+    "G3_govdeli_tepki_payi": 0.8,
+    "G4_fitil_govde_arasi": 0.2805614482876365
+   },
+   {
+    "sayfa": 10,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.21705304113198765,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.5208852413207347
+   },
+   {
+    "sayfa": 11,
+    "pazar": "AVR",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 6.0,
+    "G2_dip_alt_fitil": 0.30063135379252676,
+    "G3_govdeli_tepki_payi": 0.6666666666666666,
+    "G4_fitil_govde_arasi": 0.28275267116798536
+   },
+   {
+    "sayfa": 12,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": false,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.2683496275904469,
+    "G3_govdeli_tepki_payi": 0.0,
+    "G4_fitil_govde_arasi": 0.16867425496309493
+   },
+   {
+    "sayfa": 13,
+    "pazar": "BIST",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 5.0,
+    "G2_dip_alt_fitil": 0.3081133985688424,
+    "G3_govdeli_tepki_payi": 0.8,
+    "G4_fitil_govde_arasi": 0.7473311975786885
+   },
+   {
+    "sayfa": 14,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.2875260470150684,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.13138844478803047
+   },
+   {
+    "sayfa": 15,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.31976627612171055,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.4901476707591076
+   },
+   {
+    "sayfa": 16,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.1481209722694687,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.14395870125275761
+   },
+   {
+    "sayfa": 17,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.251214053265707,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.286342105443311
+   },
+   {
+    "sayfa": 18,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.2291192242008536,
+    "G3_govdeli_tepki_payi": 0.75,
+    "G4_fitil_govde_arasi": 0.20652009062024398
+   },
+   {
+    "sayfa": 19,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 6.0,
+    "G2_dip_alt_fitil": 0.2926330668407828,
+    "G3_govdeli_tepki_payi": 0.3333333333333333,
+    "G4_fitil_govde_arasi": 0.38297707917325646
+   },
+   {
+    "sayfa": 20,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 9.0,
+    "G2_dip_alt_fitil": 0.21604936352101192,
+    "G3_govdeli_tepki_payi": 0.7777777777777778,
+    "G4_fitil_govde_arasi": 0.2742037429801565
+   },
+   {
+    "sayfa": 21,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.20182803120248258,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.2799995475448209
+   },
+   {
+    "sayfa": 22,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 6.0,
+    "G2_dip_alt_fitil": 0.30048274260150254,
+    "G3_govdeli_tepki_payi": 0.8,
+    "G4_fitil_govde_arasi": 0.43894516686941426
+   },
+   {
+    "sayfa": 23,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.2181559060684447,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 1.4134749896317935
+   },
+   {
+    "sayfa": 24,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 5.0,
+    "G2_dip_alt_fitil": 0.29639969469601546,
+    "G3_govdeli_tepki_payi": 0.8,
+    "G4_fitil_govde_arasi": 0.6322589092276565
+   },
+   {
+    "sayfa": 25,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.4425689592479945,
+    "G3_govdeli_tepki_payi": 0.6666666666666666,
+    "G4_fitil_govde_arasi": 0.7926545652442266
+   },
+   {
+    "sayfa": 26,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": false,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.2989220499567771,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.2222216391409706
+   },
+   {
+    "sayfa": 27,
+    "pazar": "BIST",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.34118811248241204,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.7707705108994838
+   },
+   {
+    "sayfa": 28,
+    "pazar": "AVR",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.42574130662365944,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.4409614710791206
+   },
+   {
+    "sayfa": 29,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.2976840154214673,
+    "G3_govdeli_tepki_payi": 0.6666666666666666,
+    "G4_fitil_govde_arasi": 0.4262309593216405
+   },
+   {
+    "sayfa": 30,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.34310523615903676,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.2916687323821438
+   },
+   {
+    "sayfa": 31,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.24204511325611475,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.0
+   },
+   {
+    "sayfa": 32,
+    "pazar": "BIST",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 3.0,
+    "G2_dip_alt_fitil": 0.25963844250560675,
+    "G3_govdeli_tepki_payi": 0.3333333333333333,
+    "G4_fitil_govde_arasi": 0.49833255487049405
+   },
+   {
+    "sayfa": 33,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.26028176841840484,
+    "G3_govdeli_tepki_payi": 1.0,
+    "G4_fitil_govde_arasi": 0.24347682729359052
+   },
+   {
+    "sayfa": 34,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 4.0,
+    "G2_dip_alt_fitil": 0.2526326774130913,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.20895555435357813
+   },
+   {
+    "sayfa": 35,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": false,
+    "G1_govde_dokunus_n": 5.0,
+    "G2_dip_alt_fitil": 0.3562298332549885,
+    "G3_govdeli_tepki_payi": 0.8,
+    "G4_fitil_govde_arasi": 0.4937612933626122
+   },
+   {
+    "sayfa": 36,
+    "pazar": "ABD",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.2540776408345039,
+    "G3_govdeli_tepki_payi": 0.5,
+    "G4_fitil_govde_arasi": 0.8788960852511671
+   },
+   {
+    "sayfa": 37,
+    "pazar": "AVR",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 5.0,
+    "G2_dip_alt_fitil": 0.2709674805076796,
+    "G3_govdeli_tepki_payi": 0.6,
+    "G4_fitil_govde_arasi": 0.37918658173562153
+   },
+   {
+    "sayfa": 38,
+    "pazar": "AVR",
+    "cemal": "YOK",
+    "S3": true,
+    "G1_govde_dokunus_n": 2.0,
+    "G2_dip_alt_fitil": 0.36069301608411175,
+    "G3_govdeli_tepki_payi": 0.0,
+    "G4_fitil_govde_arasi": 1.2875669981138982
+   },
+   {
+    "sayfa": 39,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 1.0,
+    "G2_dip_alt_fitil": 0.39927417261488574,
+    "G3_govdeli_tepki_payi": 0.0,
+    "G4_fitil_govde_arasi": 0.1616632205927808
+   },
+   {
+    "sayfa": 40,
+    "pazar": "ABD",
+    "cemal": "VAR",
+    "S3": true,
+    "G1_govde_dokunus_n": 8.0,
+    "G2_dip_alt_fitil": 0.37482791963383405,
+    "G3_govdeli_tepki_payi": 0.875,
+    "G4_fitil_govde_arasi": 0.303840011972673
+   }
+  ]
+ },
+ "ikinci_ozet": {
+  "GOVDE_1_VAR": 26,
+  "GOVDE_2_VAR": 15,
+  "ADAY_1_VAR": 20,
+  "GOVDE_1_ADAY_1_ayrisan": 18,
+  "ayrisan_sayfalar": [
+   1,
+   3,
+   5,
+   7,
+   9,
+   13,
+   16,
+   18,
+   20,
+   21,
+   23,
+   25,
+   26,
+   36,
+   37,
+   38,
+   39,
+   40
+  ],
+  "GOVDE_2_ADAY_1_ayrisan": 19
+ },
+ "sayfalar": [
+  {
+   "sayfa": 1,
+   "pazar": "AVR",
+   "sembol": "LDO.MI",
+   "sinyal_gunu": "2022-10-21",
+   "F2": 0.0005786155309110974,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.2331615678725414,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.4045798569125757,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 2,
+   "pazar": "ABD",
+   "sembol": "CTS",
+   "sinyal_gunu": "2001-12-12",
+   "F2": 0.013370726076730177,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.33614344987329897,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.41702108732005255,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 3,
+   "pazar": "ABD",
+   "sembol": "BBW",
+   "sinyal_gunu": "2015-07-08",
+   "F2": -0.003227866146598868,
+   "S3": true,
+   "G1_govde_dokunus_n": 6.0,
+   "G2_dip_alt_fitil": 0.20615208723787143,
+   "G3_govdeli_tepki_payi": 0.8333333333333334,
+   "G4_fitil_govde_arasi": 0.07788723027222429,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 4,
+   "pazar": "ABD",
+   "sembol": "PGEN",
+   "sinyal_gunu": "2017-04-25",
+   "F2": 0.002151641089316758,
+   "S3": true,
+   "G1_govde_dokunus_n": 7.0,
+   "G2_dip_alt_fitil": 0.322704583054447,
+   "G3_govdeli_tepki_payi": 0.8571428571428571,
+   "G4_fitil_govde_arasi": 0.6104276798692517,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 5,
+   "pazar": "BIST",
+   "sembol": "MAKTK",
+   "sinyal_gunu": "2021-07-08",
+   "F2": 0.0,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.1939006924149658,
+   "G3_govdeli_tepki_payi": 0.3333333333333333,
+   "G4_fitil_govde_arasi": 0.0,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 6,
+   "pazar": "ABD",
+   "sembol": "KEP",
+   "sinyal_gunu": "2004-06-07",
+   "F2": -0.0056753872050592236,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.3445521966054921,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.0,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 7,
+   "pazar": "ABD",
+   "sembol": "FCN",
+   "sinyal_gunu": "2003-10-28",
+   "F2": -0.012352887321920969,
+   "S3": false,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.33094210343278374,
+   "G3_govdeli_tepki_payi": 0.2,
+   "G4_fitil_govde_arasi": 0.44927477283586925,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 8,
+   "pazar": "ABD",
+   "sembol": "BKR",
+   "sinyal_gunu": "2022-08-23",
+   "F2": 0.005408498608895584,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.3293695186601177,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.06777683853709315,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 9,
+   "pazar": "ABD",
+   "sembol": "FRO",
+   "sinyal_gunu": "2009-01-02",
+   "F2": -0.0003570827722317871,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.30626445322296625,
+   "G3_govdeli_tepki_payi": 0.3333333333333333,
+   "G4_fitil_govde_arasi": 0.06012037522781084,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 10,
+   "pazar": "ABD",
+   "sembol": "SHEN",
+   "sinyal_gunu": "2016-09-22",
+   "F2": 0.001584766418048389,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.30511232885133593,
+   "G3_govdeli_tepki_payi": 0.6666666666666666,
+   "G4_fitil_govde_arasi": 0.14522873439933673,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 11,
+   "pazar": "BIST",
+   "sembol": "YAYLA",
+   "sinyal_gunu": "2021-11-30",
+   "F2": -0.01351350045186761,
+   "S3": false,
+   "G1_govde_dokunus_n": 7.0,
+   "G2_dip_alt_fitil": 0.22618730989121616,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.5316448476030567,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 12,
+   "pazar": "ABD",
+   "sembol": "AURA",
+   "sinyal_gunu": "2023-02-06",
+   "F2": -0.012060290237125626,
+   "S3": false,
+   "G1_govde_dokunus_n": 7.0,
+   "G2_dip_alt_fitil": 0.46435573478511805,
+   "G3_govdeli_tepki_payi": 0.5714285714285714,
+   "G4_fitil_govde_arasi": 0.6300358483826108,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 13,
+   "pazar": "ABD",
+   "sembol": "WCC",
+   "sinyal_gunu": "2022-07-19",
+   "F2": -0.013354640843329602,
+   "S3": false,
+   "G1_govde_dokunus_n": 4.0,
+   "G2_dip_alt_fitil": 0.37813154433207863,
+   "G3_govdeli_tepki_payi": 0.75,
+   "G4_fitil_govde_arasi": 0.4421059398661639,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 14,
+   "pazar": "ABD",
+   "sembol": "RRGB",
+   "sinyal_gunu": "2014-09-17",
+   "F2": NaN,
+   "S3": false,
+   "G1_govde_dokunus_n": 1.0,
+   "G2_dip_alt_fitil": 0.3475073077334647,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.38509973406435577,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 15,
+   "pazar": "BIST",
+   "sembol": "MAALT",
+   "sinyal_gunu": "2021-08-23",
+   "F2": -0.010545886975345309,
+   "S3": false,
+   "G1_govde_dokunus_n": 8.0,
+   "G2_dip_alt_fitil": 0.20659032503240246,
+   "G3_govdeli_tepki_payi": 0.375,
+   "G4_fitil_govde_arasi": 0.3139014097276514,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 16,
+   "pazar": "ABD",
+   "sembol": "AZTA",
+   "sinyal_gunu": "2003-02-14",
+   "F2": -0.014448256934155634,
+   "S3": false,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.2724007809697949,
+   "G3_govdeli_tepki_payi": 0.4,
+   "G4_fitil_govde_arasi": 0.26667357458466034,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 17,
+   "pazar": "ABD",
+   "sembol": "TSEM",
+   "sinyal_gunu": "2018-07-19",
+   "F2": -0.0046685518727145325,
+   "S3": true,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.257671081290629,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.23628874220863622,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 18,
+   "pazar": "ABD",
+   "sembol": "STRA",
+   "sinyal_gunu": "2013-10-22",
+   "F2": 0.0020161354510703777,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.26823490773188907,
+   "G3_govdeli_tepki_payi": 0.0,
+   "G4_fitil_govde_arasi": 0.23601642434876705,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 19,
+   "pazar": "BIST",
+   "sembol": "EGGUB",
+   "sinyal_gunu": "2023-04-10",
+   "F2": 0.012073869120391212,
+   "S3": true,
+   "G1_govde_dokunus_n": 1.0,
+   "G2_dip_alt_fitil": 0.2882837727318015,
+   "G3_govdeli_tepki_payi": 0.0,
+   "G4_fitil_govde_arasi": 0.13166165630596421,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 20,
+   "pazar": "ABD",
+   "sembol": "PLRX",
+   "sinyal_gunu": "2021-10-12",
+   "F2": 0.007462738793704071,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.3158383893673667,
+   "G3_govdeli_tepki_payi": 0.0,
+   "G4_fitil_govde_arasi": 0.4246924859339174,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 21,
+   "pazar": "ABD",
+   "sembol": "VRTS",
+   "sinyal_gunu": "2014-12-19",
+   "F2": -0.010106900208370573,
+   "S3": false,
+   "G1_govde_dokunus_n": 7.0,
+   "G2_dip_alt_fitil": 0.26392955789699485,
+   "G3_govdeli_tepki_payi": 0.14285714285714285,
+   "G4_fitil_govde_arasi": 0.6537284240400559,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 22,
+   "pazar": "ABD",
+   "sembol": "ABEO",
+   "sinyal_gunu": "2019-02-04",
+   "F2": -0.010852713178294615,
+   "S3": false,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.33238805676382843,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.3361921097770154,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 23,
+   "pazar": "AVR",
+   "sembol": "HOC.L",
+   "sinyal_gunu": "2017-11-21",
+   "F2": -0.010295867656852753,
+   "S3": false,
+   "G1_govde_dokunus_n": 15.0,
+   "G2_dip_alt_fitil": 0.14082990987667582,
+   "G3_govdeli_tepki_payi": 0.9333333333333333,
+   "G4_fitil_govde_arasi": 0.1446923204252303,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 24,
+   "pazar": "ABD",
+   "sembol": "RGEN",
+   "sinyal_gunu": "2003-12-02",
+   "F2": -0.010869503246587309,
+   "S3": false,
+   "G1_govde_dokunus_n": 4.0,
+   "G2_dip_alt_fitil": 0.37061753156603156,
+   "G3_govdeli_tepki_payi": 0.25,
+   "G4_fitil_govde_arasi": 0.6449869793685795,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 25,
+   "pazar": "ABD",
+   "sembol": "UEC",
+   "sinyal_gunu": "2011-07-05",
+   "F2": -0.010309268214748757,
+   "S3": false,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.24645950296190022,
+   "G3_govdeli_tepki_payi": 0.4,
+   "G4_fitil_govde_arasi": 0.2009567773286483,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 26,
+   "pazar": "ABD",
+   "sembol": "ANET",
+   "sinyal_gunu": "2019-12-19",
+   "F2": -0.014705882352941124,
+   "S3": false,
+   "G1_govde_dokunus_n": 1.0,
+   "G2_dip_alt_fitil": 0.39877914889941557,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.08571680239588088,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 27,
+   "pazar": "ABD",
+   "sembol": "FTEK",
+   "sinyal_gunu": "2014-04-16",
+   "F2": 0.011999988555908114,
+   "S3": true,
+   "G1_govde_dokunus_n": 5.0,
+   "G2_dip_alt_fitil": 0.23246963855039868,
+   "G3_govdeli_tepki_payi": 0.6,
+   "G4_fitil_govde_arasi": 0.2616819125769104,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 28,
+   "pazar": "ABD",
+   "sembol": "ARDX",
+   "sinyal_gunu": "2018-05-10",
+   "F2": 0.0,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.35555542839897997,
+   "G3_govdeli_tepki_payi": 0.0,
+   "G4_fitil_govde_arasi": 0.9491541149358848,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 29,
+   "pazar": "ABD",
+   "sembol": "TOL",
+   "sinyal_gunu": "2005-12-14",
+   "F2": -0.014598312537821623,
+   "S3": false,
+   "G1_govde_dokunus_n": 8.0,
+   "G2_dip_alt_fitil": 0.290471567624974,
+   "G3_govdeli_tepki_payi": 0.875,
+   "G4_fitil_govde_arasi": 0.3948114476906851,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 30,
+   "pazar": "ABD",
+   "sembol": "LPX",
+   "sinyal_gunu": "2014-06-30",
+   "F2": 0.009440783951732312,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.29986236307454556,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.29893437787260246,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 31,
+   "pazar": "ABD",
+   "sembol": "AVAV",
+   "sinyal_gunu": "2012-06-06",
+   "F2": -0.012149543622267278,
+   "S3": false,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.3571752488670101,
+   "G3_govdeli_tepki_payi": 0.3333333333333333,
+   "G4_fitil_govde_arasi": 0.6586271183593947,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 32,
+   "pazar": "ABD",
+   "sembol": "QUIT",
+   "sinyal_gunu": "2021-01-07",
+   "F2": 0.013003888672104003,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.3007922789187517,
+   "G3_govdeli_tepki_payi": 0.6666666666666666,
+   "G4_fitil_govde_arasi": 0.12923065546700813,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 33,
+   "pazar": "ABD",
+   "sembol": "VST",
+   "sinyal_gunu": "2021-06-03",
+   "F2": -0.014649707445800852,
+   "S3": false,
+   "G1_govde_dokunus_n": 12.0,
+   "G2_dip_alt_fitil": 0.4015702725960922,
+   "G3_govdeli_tepki_payi": 0.6666666666666666,
+   "G4_fitil_govde_arasi": 0.827736234800963,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 34,
+   "pazar": "ABD",
+   "sembol": "WDC",
+   "sinyal_gunu": "2012-07-09",
+   "F2": -0.010485933895132193,
+   "S3": false,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.2638993006128677,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.31818230194439207,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 35,
+   "pazar": "ABD",
+   "sembol": "HRL",
+   "sinyal_gunu": "2016-06-27",
+   "F2": -0.014331527441332592,
+   "S3": false,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.2813518691727487,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.19825890746390998,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 36,
+   "pazar": "BIST",
+   "sembol": "BAGFS",
+   "sinyal_gunu": "2023-05-30",
+   "F2": 0.0009460954749822559,
+   "S3": true,
+   "G1_govde_dokunus_n": 2.0,
+   "G2_dip_alt_fitil": 0.14016131792080885,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.0,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 37,
+   "pazar": "ABD",
+   "sembol": "LUV",
+   "sinyal_gunu": "2004-01-07",
+   "F2": -0.014175347941330685,
+   "S3": false,
+   "G1_govde_dokunus_n": 7.0,
+   "G2_dip_alt_fitil": 0.23958360078887098,
+   "G3_govdeli_tepki_payi": 0.7142857142857143,
+   "G4_fitil_govde_arasi": 0.8601722823390796,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "YOK",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 38,
+   "pazar": "ABD",
+   "sembol": "GPRE",
+   "sinyal_gunu": "2010-09-10",
+   "F2": 0.0,
+   "S3": true,
+   "G1_govde_dokunus_n": 3.0,
+   "G2_dip_alt_fitil": 0.19766281942018404,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.24312567316835576,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "VAR"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "VAR",
+    "ADAY_2": "YOK"
+   }
+  },
+  {
+   "sayfa": 39,
+   "pazar": "AVR",
+   "sembol": "RWE.DE",
+   "sinyal_gunu": "2013-09-05",
+   "F2": 0.0038703082845081838,
+   "S3": true,
+   "G1_govde_dokunus_n": 10.0,
+   "G2_dip_alt_fitil": 0.3192460651856742,
+   "G3_govdeli_tepki_payi": 0.7,
+   "G4_fitil_govde_arasi": 0.47179727386736336,
+   "yanit": {
+    "GOVDE_1": "YOK",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "VAR",
+    "KONTROL": "VAR",
+    "ADAY_2": "VAR"
+   }
+  },
+  {
+   "sayfa": 40,
+   "pazar": "ABD",
+   "sembol": "HIMX",
+   "sinyal_gunu": "2015-05-22",
+   "F2": -0.011824152616560557,
+   "S3": false,
+   "G1_govde_dokunus_n": 1.0,
+   "G2_dip_alt_fitil": 0.3142680373491584,
+   "G3_govdeli_tepki_payi": 1.0,
+   "G4_fitil_govde_arasi": 0.0,
+   "yanit": {
+    "GOVDE_1": "VAR",
+    "GOVDE_2": "YOK"
+   },
+   "tanim2_yanit": {
+    "ADAY_1": "YOK",
+    "KONTROL": "YOK",
+    "ADAY_2": "YOK"
+   }
+  }
+ ],
+ "sure_sn": 4.7
+}
