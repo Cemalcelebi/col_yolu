@@ -579,7 +579,7 @@ TZ_KONTROL: Dict[str, Tuple[str, str]] = {
     "K5": ("UYGULANMAZ", "giriş fiyatı / getiri bu işte hesaplanmaz; yalnız sinyal öncesi grafik"),
     "K6": ("EVET", "tek kip V_*.pkl (goz_uyum ile aynı); yeni özellikler birimsiz oran / bar sayısı; AVR likidite EUR (Close x Kur)"),
     "K7": ("EVET", "evren bugün işlem gören hisseler (hayatta kalma yanlılığı); görsel uyum sınaması, getiri iddiası yok; raporda yazılı"),
-    "K8": ("EVET", "keşif 40 sayfa küçük örneklem: TANIM2_KESIF 'keşif' etiketli + çoklu karşılaştırma uyarısı (tek ~32 özellik, 30 çift kural); seçilen kural "
+    "K8": ("EVET", "keşif 40 sayfa küçük örneklem: TANIM2_KESIF 'keşif' etiketli + çoklu karşılaştırma uyarısı (40 tek özellik, 30 çift kural); seçilen kural "
                    "YALNIZ ikinci bağımsız 40 sayfada sınanır; karar < 30 ise ÖLÇÜLEMEDİ; kappa bootstrap %95 (B 5000); pazar dağılımı ABD 30 / AVR 5 / BIST 5"),
     "K9": ("EVET", "yeni özellik tanımları + seçim kuralı keşiften önce commit (TZ_YENI, TZ_SECIM_KURALI; ilk commit); ADAY eşikleri SAYI olarak bu dosyada; "
                    "anahtar + PDF + kesif + tanim2.py + TZ_ESIK sha'ları burada; bu dosya Cemal işaretlemeden ÖNCE commit; hüküm eşikleri sabit"),
