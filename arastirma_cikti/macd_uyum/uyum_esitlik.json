@@ -1,0 +1,41 @@
+{
+ "ABD": {
+  "pazar": "ABD",
+  "n": 150,
+  "tur": {
+   "rastgele": 50,
+   "aday": 50,
+   "olay": 50
+  },
+  "esit": 150,
+  "S10_1": 47,
+  "F68_1": 105,
+  "bozuk": []
+ },
+ "AVR": {
+  "pazar": "AVR",
+  "n": 150,
+  "tur": {
+   "rastgele": 50,
+   "aday": 50,
+   "olay": 50
+  },
+  "esit": 150,
+  "S10_1": 44,
+  "F68_1": 87,
+  "bozuk": []
+ },
+ "BIST": {
+  "pazar": "BIST",
+  "n": 150,
+  "tur": {
+   "rastgele": 50,
+   "aday": 50,
+   "olay": 50
+  },
+  "esit": 150,
+  "S10_1": 54,
+  "F68_1": 107,
+  "bozuk": []
+ }
+}

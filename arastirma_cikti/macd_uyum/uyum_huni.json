@@ -1,0 +1,2110 @@
+{
+ "surum": "MACD_UYUM v1.0 (2026-11-24): K47 MACD pozitif uyumsuzluk tek başına ve DİPTE; CETVEL2 v2.2 R15 + 1. tur 15 bar cetveli; açık veri",
+ "olay_sha": "297e7672bac0598e3304243a43832b9680e6d40d0dfea7f956bcaddbd4238899",
+ "olay_dosya_sha": "7b6720b895b0fa899f3e7a005025e2e85383e0ea03228d9e466dfb2e3fe9a29d",
+ "huni": [
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 59621
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 56479
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 59274
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 56156
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 30774
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 29237
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 6868
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 9243
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2343
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3278
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2267
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3183
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1946
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 2705
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1298
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1930
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1298
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1911
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1279
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1893
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 3826
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 5126
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2744
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3929
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2744
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3896
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2684
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3872
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 4952
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 5309
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 3672
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3941
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 3672
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3909
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 3581
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3780
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1267
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1441
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 893
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1065
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 893
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1063
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 881
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1057
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 838
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 929
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 571
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 664
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 571
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 661
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 563
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 656
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 156
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 230
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 15
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 51
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 15
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 48
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 15
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 48
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 32186
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 25785
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 32040
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 25667
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 17554
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 13566
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2685
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 3474
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 969
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1046
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 942
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1013
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 807
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 845
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 683
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 681
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 683
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 677
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 631
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 636
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 1414
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 2111
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 1200
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1730
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 1200
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1723
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 1087
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1677
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2829
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 2113
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2272
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1667
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2272
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1659
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2074
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1507
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 589
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 587
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 506
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 482
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 506
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 480
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 468
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 467
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 374
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 372
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 323
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 305
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 323
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 303
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 299
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 290
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 21129
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "L2 onaylı dip (L2 + 6 >= 60)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 17558
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 20947
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ L1 var (L2 + 6'da)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 17291
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 11263
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F65 (L2 + 6'da)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 7954
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 3345
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ DİPTE",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 1828
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1184
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ Ş10 bir günde (L2 + 6 .. L2 + 20)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 653
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1130
+  },
+  {
+   "hipotez": "U1 (L2 hunisi)",
+   "asama": "+ F68 aynı gün = U1 ham olay",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 627
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 959
+  },
+  {
+   "hipotez": "U1",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 517
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 714
+  },
+  {
+   "hipotez": "U1",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 353
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 714
+  },
+  {
+   "hipotez": "U1",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 353
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 659
+  },
+  {
+   "hipotez": "U1",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 320
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1738
+  },
+  {
+   "hipotez": "U0",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 997
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1343
+  },
+  {
+   "hipotez": "U0",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 716
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1342
+  },
+  {
+   "hipotez": "U0",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 715
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1244
+  },
+  {
+   "hipotez": "U0",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 644
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 2088
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 1245
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1535
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 870
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1535
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 870
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1366
+  },
+  {
+   "hipotez": "U1b",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 723
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 621
+  },
+  {
+   "hipotez": "U2",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 248
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 489
+  },
+  {
+   "hipotez": "U2",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 196
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 489
+  },
+  {
+   "hipotez": "U2",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 196
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 452
+  },
+  {
+   "hipotez": "U2",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 181
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 423
+  },
+  {
+   "hipotez": "U3",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 153
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 337
+  },
+  {
+   "hipotez": "U3",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 121
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 337
+  },
+  {
+   "hipotez": "U3",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 121
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 315
+  },
+  {
+   "hipotez": "U3",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 113
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "olay (ilk gün + 15 bar; t tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "OC sonrası (giriş + havuz + tekil; giriş tarihi)",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "R15 ölçülebilir",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 0
+  },
+  {
+   "hipotez": "U1d",
+   "asama": "eşli (>= 5 eş) = n",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 0
+  }
+ ],
+ "guc": [
+  {
+   "hipotez": "U1",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 1279,
+   "guc": 0.9999985179594006,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1893,
+   "guc": 0.9999998481330512,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 631,
+   "guc": 0.9999637676792514,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 636,
+   "guc": 0.9993565269890204,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 659,
+   "guc": 0.9999991782935485,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 320,
+   "guc": 0.8962101661443856,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 2684,
+   "guc": 0.9999999999999986,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3872,
+   "guc": 1.0,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 1087,
+   "guc": 0.999999999190248,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1677,
+   "guc": 0.9999999999966459,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1244,
+   "guc": 0.9999999999999994,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U0",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 644,
+   "guc": 0.9972597441144853,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 3581,
+   "guc": 1.0,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 3780,
+   "guc": 1.0,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 2074,
+   "guc": 1.0,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 1507,
+   "guc": 0.9999999998993436,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 1366,
+   "guc": 1.0,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U1b",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 723,
+   "guc": 0.9989984411037883,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 881,
+   "guc": 0.9997446586055349,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 1057,
+   "guc": 0.9993466402845512,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 468,
+   "guc": 0.9989319529428842,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 467,
+   "guc": 0.992030921339706,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 452,
+   "guc": 0.9996600675641647,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U2",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 181,
+   "guc": 0.6521947950993555,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 563,
+   "guc": 0.989784822041487,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 656,
+   "guc": 0.9794558007964363,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 299,
+   "guc": 0.9757623527232789,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 290,
+   "guc": 0.9197702138492156,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 315,
+   "guc": 0.990157542222268,
+   "durum": "güç yeterli"
+  },
+  {
+   "hipotez": "U3",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 113,
+   "guc": 0.44152385265613053,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "n": 15,
+   "guc": 0.08953967225731149,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "n": 48,
+   "guc": 0.16342580909232937,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "n": 0,
+   "guc": 0.0,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "n": 0,
+   "guc": 0.0,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "n": 0,
+   "guc": 0.0,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  },
+  {
+   "hipotez": "U1d",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "n": 0,
+   "guc": 0.0,
+   "durum": "ÖLÇÜLEMEDİ beklenir"
+  }
+ ],
+ "ortak_L2_U1_U0": {
+  "ABD": 0,
+  "AVR": 0,
+  "BIST": 0
+ },
+ "c2_say": {
+  "ABD": {
+   "U1": {
+    "oc": {
+     "d1619": 1298,
+     "d2022": 1930,
+     "dis": 38
+    },
+    "r15": {
+     "d1619": 1298,
+     "d2022": 1911,
+     "dis": 38
+    },
+    "esli": {
+     "d1619": 1279,
+     "d2022": 1893,
+     "dis": 38
+    },
+    "say": {
+     "girdi": 4716,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 1,
+     "likidite_alt20": 1367,
+     "bolunme_gecmis": 70,
+     "evren_once": 0,
+     "gecmis_eksik": 12,
+     "havuz_az": 0,
+     "havuz_disi": 1449,
+     "tekil": 0,
+     "olcum_r15": 3247,
+     "kova_yok": 0
+    }
+   },
+   "U0": {
+    "oc": {
+     "d1619": 2744,
+     "d2022": 3929,
+     "dis": 85
+    },
+    "r15": {
+     "d1619": 2744,
+     "d2022": 3896,
+     "dis": 85
+    },
+    "esli": {
+     "d1619": 2684,
+     "d2022": 3872,
+     "dis": 85
+    },
+    "say": {
+     "girdi": 9087,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 5,
+     "giris_gec": 1,
+     "likidite_alt20": 2230,
+     "bolunme_gecmis": 74,
+     "evren_once": 0,
+     "gecmis_eksik": 19,
+     "havuz_az": 0,
+     "havuz_disi": 2323,
+     "tekil": 0,
+     "olcum_r15": 6725,
+     "kova_yok": 0
+    }
+   },
+   "U1b": {
+    "oc": {
+     "d1619": 3672,
+     "d2022": 3941,
+     "dis": 507
+    },
+    "r15": {
+     "d1619": 3672,
+     "d2022": 3909,
+     "dis": 507
+    },
+    "esli": {
+     "d1619": 3581,
+     "d2022": 3780,
+     "dis": 107
+    },
+    "say": {
+     "girdi": 10949,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 2,
+     "giris_gec": 1,
+     "likidite_alt20": 2698,
+     "bolunme_gecmis": 103,
+     "evren_once": 0,
+     "gecmis_eksik": 25,
+     "havuz_az": 0,
+     "havuz_disi": 2826,
+     "tekil": 0,
+     "olcum_r15": 8088,
+     "kova_yok": 473
+    }
+   },
+   "U2": {
+    "oc": {
+     "d1619": 893,
+     "d2022": 1065,
+     "dis": 26
+    },
+    "r15": {
+     "d1619": 893,
+     "d2022": 1063,
+     "dis": 26
+    },
+    "esli": {
+     "d1619": 881,
+     "d2022": 1057,
+     "dis": 26
+    },
+    "say": {
+     "girdi": 2751,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 720,
+     "bolunme_gecmis": 42,
+     "evren_once": 0,
+     "gecmis_eksik": 5,
+     "havuz_az": 0,
+     "havuz_disi": 767,
+     "tekil": 0,
+     "olcum_r15": 1982,
+     "kova_yok": 0
+    }
+   },
+   "U3": {
+    "oc": {
+     "d1619": 571,
+     "d2022": 664,
+     "dis": 15
+    },
+    "r15": {
+     "d1619": 571,
+     "d2022": 661,
+     "dis": 15
+    },
+    "esli": {
+     "d1619": 563,
+     "d2022": 656,
+     "dis": 15
+    },
+    "say": {
+     "girdi": 1796,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 515,
+     "bolunme_gecmis": 28,
+     "evren_once": 0,
+     "gecmis_eksik": 3,
+     "havuz_az": 0,
+     "havuz_disi": 546,
+     "tekil": 0,
+     "olcum_r15": 1247,
+     "kova_yok": 0
+    }
+   },
+   "U1d": {
+    "oc": {
+     "d1619": 15,
+     "d2022": 51,
+     "dis": 1
+    },
+    "r15": {
+     "d1619": 15,
+     "d2022": 48,
+     "dis": 1
+    },
+    "esli": {
+     "d1619": 15,
+     "d2022": 48,
+     "dis": 1
+    },
+    "say": {
+     "girdi": 394,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 1,
+     "likidite_alt20": 301,
+     "bolunme_gecmis": 19,
+     "evren_once": 0,
+     "gecmis_eksik": 6,
+     "havuz_az": 0,
+     "havuz_disi": 326,
+     "tekil": 0,
+     "olcum_r15": 64,
+     "kova_yok": 0
+    }
+   }
+  },
+  "AVR": {
+   "U1": {
+    "oc": {
+     "d1619": 683,
+     "d2022": 681,
+     "dis": 135
+    },
+    "r15": {
+     "d1619": 683,
+     "d2022": 677,
+     "dis": 135
+    },
+    "esli": {
+     "d1619": 631,
+     "d2022": 636,
+     "dis": 127
+    },
+    "say": {
+     "girdi": 1798,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 285,
+     "bolunme_gecmis": 12,
+     "evren_once": 0,
+     "gecmis_eksik": 2,
+     "havuz_az": 0,
+     "havuz_disi": 299,
+     "tekil": 0,
+     "olcum_r15": 1495,
+     "kova_yok": 0
+    }
+   },
+   "U0": {
+    "oc": {
+     "d1619": 1200,
+     "d2022": 1730,
+     "dis": 275
+    },
+    "r15": {
+     "d1619": 1200,
+     "d2022": 1723,
+     "dis": 275
+    },
+    "esli": {
+     "d1619": 1087,
+     "d2022": 1677,
+     "dis": 263
+    },
+    "say": {
+     "girdi": 3844,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 3,
+     "giris_gec": 0,
+     "likidite_alt20": 618,
+     "bolunme_gecmis": 16,
+     "evren_once": 0,
+     "gecmis_eksik": 2,
+     "havuz_az": 0,
+     "havuz_disi": 636,
+     "tekil": 0,
+     "olcum_r15": 3198,
+     "kova_yok": 0
+    }
+   },
+   "U1b": {
+    "oc": {
+     "d1619": 2272,
+     "d2022": 1667,
+     "dis": 435
+    },
+    "r15": {
+     "d1619": 2272,
+     "d2022": 1659,
+     "dis": 435
+    },
+    "esli": {
+     "d1619": 2074,
+     "d2022": 1507,
+     "dis": 335
+    },
+    "say": {
+     "girdi": 5490,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 1,
+     "giris_gec": 1,
+     "likidite_alt20": 1086,
+     "bolunme_gecmis": 18,
+     "evren_once": 0,
+     "gecmis_eksik": 10,
+     "havuz_az": 0,
+     "havuz_disi": 1114,
+     "tekil": 0,
+     "olcum_r15": 4366,
+     "kova_yok": 65
+    }
+   },
+   "U2": {
+    "oc": {
+     "d1619": 506,
+     "d2022": 482,
+     "dis": 106
+    },
+    "r15": {
+     "d1619": 506,
+     "d2022": 480,
+     "dis": 106
+    },
+    "esli": {
+     "d1619": 468,
+     "d2022": 467,
+     "dis": 100
+    },
+    "say": {
+     "girdi": 1291,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 187,
+     "bolunme_gecmis": 9,
+     "evren_once": 0,
+     "gecmis_eksik": 1,
+     "havuz_az": 0,
+     "havuz_disi": 197,
+     "tekil": 0,
+     "olcum_r15": 1092,
+     "kova_yok": 0
+    }
+   },
+   "U3": {
+    "oc": {
+     "d1619": 323,
+     "d2022": 305,
+     "dis": 53
+    },
+    "r15": {
+     "d1619": 323,
+     "d2022": 303,
+     "dis": 53
+    },
+    "esli": {
+     "d1619": 299,
+     "d2022": 290,
+     "dis": 48
+    },
+    "say": {
+     "girdi": 805,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 116,
+     "bolunme_gecmis": 8,
+     "evren_once": 0,
+     "gecmis_eksik": 0,
+     "havuz_az": 0,
+     "havuz_disi": 124,
+     "tekil": 0,
+     "olcum_r15": 679,
+     "kova_yok": 0
+    }
+   },
+   "U1d": {
+    "oc": {},
+    "r15": {},
+    "esli": {},
+    "say": {}
+   }
+  },
+  "BIST": {
+   "U1": {
+    "oc": {
+     "d1619": 714,
+     "d2022": 353,
+     "dis": 6
+    },
+    "r15": {
+     "d1619": 714,
+     "d2022": 353,
+     "dis": 6
+    },
+    "esli": {
+     "d1619": 659,
+     "d2022": 320,
+     "dis": 3
+    },
+    "say": {
+     "girdi": 1486,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 393,
+     "bolunme_gecmis": 9,
+     "evren_once": 0,
+     "gecmis_eksik": 11,
+     "havuz_az": 0,
+     "havuz_disi": 413,
+     "tekil": 0,
+     "olcum_r15": 1073,
+     "kova_yok": 0
+    }
+   },
+   "U0": {
+    "oc": {
+     "d1619": 1343,
+     "d2022": 716,
+     "dis": 79
+    },
+    "r15": {
+     "d1619": 1342,
+     "d2022": 715,
+     "dis": 79
+    },
+    "esli": {
+     "d1619": 1244,
+     "d2022": 644,
+     "dis": 70
+    },
+    "say": {
+     "girdi": 2827,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 665,
+     "bolunme_gecmis": 7,
+     "evren_once": 0,
+     "gecmis_eksik": 17,
+     "havuz_az": 0,
+     "havuz_disi": 689,
+     "tekil": 0,
+     "olcum_r15": 2136,
+     "kova_yok": 0
+    }
+   },
+   "U1b": {
+    "oc": {
+     "d1619": 1535,
+     "d2022": 870,
+     "dis": 115
+    },
+    "r15": {
+     "d1619": 1535,
+     "d2022": 870,
+     "dis": 115
+    },
+    "esli": {
+     "d1619": 1366,
+     "d2022": 723,
+     "dis": 9
+    },
+    "say": {
+     "girdi": 3494,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 1,
+     "likidite_alt20": 930,
+     "bolunme_gecmis": 14,
+     "evren_once": 0,
+     "gecmis_eksik": 29,
+     "havuz_az": 0,
+     "havuz_disi": 973,
+     "tekil": 0,
+     "olcum_r15": 2520,
+     "kova_yok": 133
+    }
+   },
+   "U2": {
+    "oc": {
+     "d1619": 489,
+     "d2022": 196,
+     "dis": 11
+    },
+    "r15": {
+     "d1619": 489,
+     "d2022": 196,
+     "dis": 11
+    },
+    "esli": {
+     "d1619": 452,
+     "d2022": 181,
+     "dis": 7
+    },
+    "say": {
+     "girdi": 884,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 179,
+     "bolunme_gecmis": 7,
+     "evren_once": 0,
+     "gecmis_eksik": 2,
+     "havuz_az": 0,
+     "havuz_disi": 188,
+     "tekil": 0,
+     "olcum_r15": 696,
+     "kova_yok": 0
+    }
+   },
+   "U3": {
+    "oc": {
+     "d1619": 337,
+     "d2022": 121,
+     "dis": 3
+    },
+    "r15": {
+     "d1619": 337,
+     "d2022": 121,
+     "dis": 3
+    },
+    "esli": {
+     "d1619": 315,
+     "d2022": 113,
+     "dis": 2
+    },
+    "say": {
+     "girdi": 582,
+     "sembol_yok": 0,
+     "sinyal_bar_gecersiz": 0,
+     "giris_yok": 0,
+     "giris_gec": 0,
+     "likidite_alt20": 112,
+     "bolunme_gecmis": 7,
+     "evren_once": 0,
+     "gecmis_eksik": 2,
+     "havuz_az": 0,
+     "havuz_disi": 121,
+     "tekil": 0,
+     "olcum_r15": 461,
+     "kova_yok": 0
+    }
+   },
+   "U1d": {
+    "oc": {},
+    "r15": {},
+    "esli": {},
+    "say": {}
+   }
+  }
+ }
+}
