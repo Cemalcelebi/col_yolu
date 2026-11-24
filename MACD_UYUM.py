@@ -424,7 +424,7 @@ def mu_hisse(d: pd.DataFrame, E: Dict[str, Any] = MU_ESIK, E8: Dict[str, Any] = 
     Dp = E["dipte"]; Ol = E["olay"]; U2 = E["u2"]
     huni: Dict[str, Dict[str, int]] = {}
     bos = pd.DataFrame(columns=_MU_OLAY_KOL)
-    if n < 70:
+    if n <= int(E8["dip"]["pencere"]):        # t >= 60 gerekir (yh_s10_dipler); eşik GELECEKTEN bağımsız olmalı (v1.0'da n < 70: prefix DURDU, HATA)
         return bos, huni
     isd = mu_dip(L, E8); son = _mu_son_dip(isd); dips = np.flatnonzero(isd)
     if not len(dips):
@@ -936,7 +936,7 @@ def _mu_tablo_md(T: pd.DataFrame) -> List[str]:
     return L
 
 
-def mu_onkayit_yaz(veri: Optional[str] = None, cikti: Optional[str] = None, uzerine: bool = False) -> str:
+def mu_onkayit_yaz(veri: Optional[str] = None, cikti: Optional[str] = None, uzerine: bool = False, not_: Optional[str] = None) -> str:
     c = cikti or MU_YOL["cikti"]; yol = _mu_yol("onkayit", c)
     if os.path.exists(yol) and not uzerine:
         raise MUHata(f"ön kayıt zaten var: {yol}")
@@ -957,6 +957,8 @@ def mu_onkayit_yaz(veri: Optional[str] = None, cikti: Optional[str] = None, uzer
          f"(bu oturumda islenmis-veri fce5d94'ten aynı kesikle yeniden mühürlendi; manifest repo dışında). En geç tarih: "
          + "; ".join(f"{os.path.basename(k)} {v}" for k, v in J["kasa"]["dosya"].items()), "",
          f"Kod commit (MACD_UYUM.py son git kaydı): `{kod_git}`", ""]
+    if not_:
+        L += [f"NOT (yeniden ön kayıt): {not_}", ""]
     L += [f"- {k}: `{v}`" for k, v in S.items()]
     L += [f"- OLAY_TABLO_SHA (içerik): `{J['olay_sha']}`", f"- OLAY_DOSYA_SHA ({MU_DOSYA['olay']}): `{J['olay_dosya_sha']}`",
           f"- HUNI_JSON_SHA ({MU_DOSYA['huni']}): `{_mu_sha(_mu_yol('huni', c))}`", f"- ESITLIK_JSON_SHA ({MU_DOSYA['esitlik']}): `{_mu_sha(_mu_yol('esitlik', c))}`", ""]
@@ -1289,7 +1291,7 @@ def _mu_ana(argv: Optional[List[str]] = None) -> int:
     for k in ("esitlik", "onkayit", "kos", "rapor", "sha"):
         p = alt.add_parser(k); p.add_argument("--veri", default=None); p.add_argument("--cikti", default=None)
         if k == "onkayit":
-            p.add_argument("--uzerine", action="store_true")
+            p.add_argument("--uzerine", action="store_true"); p.add_argument("--not", dest="not_", default=None)
     a = ap.parse_args(argv)
     try:
         if a.komut == "esitlik":
@@ -1299,7 +1301,7 @@ def _mu_ana(argv: Optional[List[str]] = None) -> int:
                 O, _ = mu_pazar(p, a.veri, Pb["Vd"])
                 print(json.dumps(mu_esitlik(Pb["Vd"], O, p, pi), ensure_ascii=False, default=_mu_json))
         elif a.komut == "onkayit":
-            print("ÖN KAYIT:", mu_onkayit_yaz(a.veri, a.cikti, a.uzerine))
+            print("ÖN KAYIT:", mu_onkayit_yaz(a.veri, a.cikti, a.uzerine, a.not_))
         elif a.komut == "kos":
             J = mu_kos(a.veri, a.cikti)
             print("KOŞU TAMAM:", J["karar"]["karar"], "-", J["karar"]["neden"])

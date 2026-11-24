@@ -220,6 +220,20 @@ def test_prefix_kesik():
         assert len(e) == 1 and int(e.iloc[0].L2) == r.L2 and int(e.iloc[0].L1) == r.L1 and e.iloc[0].S10 == r.S10
 
 
+def test_prefix_seri_basi():
+    """Seri başına yakın olay (t = 60 .. 70): kesik seri kısa olsa da olay aynı çıkmalı (v1.0 hatası: n < 70 erken dönüş)."""
+    bulundu = 0
+    for t in range(40):
+        d = YH._yh_hazir(_rw(300, 500 + t, vol=0.04, drift=-0.002))
+        O, _ = MU.mu_hisse(d)
+        for r in O[O.i <= 75].itertuples():
+            Ok, _ = MU.mu_hisse(d.iloc[:r.i + 1])
+            e = Ok[(Ok.hipotez == r.hipotez) & (Ok.tarih == r.tarih)]
+            assert len(e) == 1 and int(e.iloc[0].L2) == r.L2, (t, r.hipotez, r.i)
+            bulundu += 1
+    assert bulundu >= 1
+
+
 def test_hukum():
     c = {"n": 500, "guc": 0.9, "fark": 0.01, "boot_alt": 0.002, "sira": 0.55, "sira_alt": 0.52, "l3o": 0.004, "plasebo_gecti": True}
     assert MU.mu_hukum(c)[0] == "TUTAR"
