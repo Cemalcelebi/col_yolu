@@ -1,16 +1,18 @@
-# MACD_UYUM — ÖN KAYIT (K47 MACD pozitif uyumsuzluk, tek başına ve DİPTE) — 2026-11-24 16:27:13 UTC
+# MACD_UYUM — ÖN KAYIT (K47 MACD pozitif uyumsuzluk, tek başına ve DİPTE) — 2026-11-24 16:36:46 UTC
 
 Bu dosya ölçümden (R15 / h5 / getiri) ÖNCE yazıldı ve git'e işlendi; aşağıdaki sayılar yalnız olay SAYILARI, güç beklentisi (CETVEL2 v2.2 eğrisi, getirisiz) ve yh_s10_bar eşitlik denetimidir. `python MACD_UYUM.py kos` mu_kapi ile bu dosyanın git kaydını, değişmemişliğini, sha'larını, olay tablosu sha'sını, IZ_KARNE.ik_kontrol_kapisi'ni ve KASA kapısını denetler; biri tutmazsa DURUR. İkinci koşu DURUR.
 
 KASA: açık kesik 2022-12-31 (KASA_DURUM mühür f674b4ee291c2f35, açılan blok []); veri /tmp/veri -> /tmp/kasa/acik; açık kısım V_*.pkl sha'ları arastirma_cikti/kasa/KASA_MANIFEST.json (mühür 4a7fbad49def764c) acik_sha256 ile AYNI (bu oturumda islenmis-veri fce5d94'ten aynı kesikle yeniden mühürlendi; manifest repo dışında). En geç tarih: V_ABD.pkl 2022-12-30; V_AVR.pkl 2022-12-30; V_BIST.pkl 2022-12-30
 
-Kod commit (MACD_UYUM.py son git kaydı): `9656b02f2ed67298a2e6d576b2d6ea5628f068b4 2026-11-24T19:26:03+03:00`
+Kod commit (MACD_UYUM.py son git kaydı): `ec4f8c3c454fe05c909e404bb27b933cc6a0cc65 2026-11-24T19:34:16+03:00`
+
+NOT (yeniden ön kayıt): İlk ön kayıt (git d200069, 16:27 UTC) ile koşu 16:28 UTC'de prefix (K2) denetiminde DURDU: BIST 2 / 30 olay (GENIL 2021-11-11, TMSN 2015-09-01; ikisi de seri başına yakın, t = 65 / 67). Neden: mu_hisse 'n < 70' erken dönüşü olay taramasını serinin GELECEK uzunluğuna bağlıyordu (kesik seride 66 / 68 bar -> olay yok). Ölçüm (R15 / h5 / getiri) BAŞLAMADAN durdu; sonuç görülmedi. Düzeltme: eşik n <= 60 (git ec4f8c3; test 17 / 17, yeni test_prefix_seri_basi). MU_ESIK (eşikler) DEĞİŞMEDİ (sha aynı). Tam veride olay tablosu DEĞİŞMEDİ (OLAY_TABLO_SHA, huni ve eşitlik dosyaları bayt bayt aynı): düzeltme yalnız kesik (kısa) serilerde etkili.
 
 - MU_ESIK_SHA: `d53e8cf81ba49dd5f58bce7bb2d0d8f8f8a25d7367a2a5cab6e47f0b08d6eb21`
 - YH_ESIK8_SHA: `d28e8257274a85e0301d262d5808e51460fb944f4e5dd56a5f7ade762b03b09c`
 - C2_ESIK22_SHA: `df651ccbcd312f2e260befcbf5fa84bb192598c051467d081dc874b77889c71a`
 - C2_ESIK_SHA: `c44d76dd5da1d42c358f5bc1a9db3a34ee826c2c142d3113239248023637ff03`
-- MU_KOD_SHA: `0adfa43c2b3bc63e504a9a1b3a3166941e7357e4c38d536db677489135988fb6`
+- MU_KOD_SHA: `a8b37d06e9d8efee749f5b30dd26932d081fcc6d02f468cf94acb71b68fffbd0`
 - KOD:YAPI_HEDEF.py: `812d188c20a64e27f351764ec462969b352322b7763181e696e24dca392ea95e`
 - KOD:CETVEL2.py: `2c0fd9b9968515f1acea03da31cb550b9d7e0d837391139e1194da6eb39530e6`
 - KOD:ORTAK_CETVEL.py: `7bd6f6db4bbc10b83ba926ddbbfb74556909400f73f10168e8a5124ccc6e28eb`
