@@ -1,0 +1,136 @@
+{
+ "kaynak": "MUM_IZI4_ONAY_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet)",
+ "sayfalar": {
+  "1": {
+   "isaret": "YOK",
+   "kutu_disi": "işaret/yazı yok (özgün ile piksel farkı sıfır)",
+   "guven": "yuksek"
+  },
+  "2": {
+   "isaret": "YOK",
+   "kutu_disi": "işaret/yazı yok (özgün ile piksel farkı sıfır)",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok; çizgilerden biri kutunun altına taşıyor (kutu dışı kıvrık kuyruk). Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "YOK",
+   "kutu_disi": "grafikte ve kutularda işaret yok (özgün ile piksel farkı sıfır)",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "8": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok; çizgi kutu kenarını aşıyor. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "11": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "12": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "13": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "14": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "15": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli çizim × benzemiyor kutusunda; ayrıca grafik üstünde, bölgenin son ~8 haftalık mumları boyunca (yükselen mumların üstünden) aşağıdan yukarı uzun kırmızı bir çizgi, grafiğin altından başlayıp son kırmızı mumların soluna kadar. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "orta"
+  },
+  "16": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "17": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "18": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "19": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "20": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "21": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "22": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok; çizgi kutu kenarını aşıyor. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "23": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok; çizgi kutu kenarını aşıyor. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "24": {
+   "isaret": "EVET",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) ✓ benziyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "25": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  },
+  "26": {
+   "isaret": "HAYIR",
+   "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
+   "guven": "yuksek"
+  }
+ }
+}
