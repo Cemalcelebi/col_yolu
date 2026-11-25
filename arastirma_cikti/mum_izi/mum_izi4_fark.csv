@@ -1,0 +1,40 @@
+olcu,aciklama,sablon,olay,fark_sd,uyum
+boy_cv,mum boyu değişkenliği (std / ortalama boy),0.77957,0.43729,-5.62126,UYMUYOR
+govde_oran,ortalama gövde / boy,0.37852,0.45374,1.28371,UYMUYOR
+ust_fitil,ortalama üst fitil / boy,0.41861,0.30007,-2.15945,UYMUYOR
+alt_fitil,ortalama alt fitil / boy,0.20287,0.24618,0.89694,UYUYOR
+ust_alt_log,üst fitil baskınlığı: log(toplam üst fitil / toplam alt fitil),1.08549,0.25459,-3.65822,UYMUYOR
+yesil_pay,yeşil (C > O) mum payı,0.60000,0.56250,-0.42833,UYUYOR
+doji_pay,"doji payı (gövde / boy < 0,10)",0.30000,0.25000,-0.66153,UYUYOR
+uzun_ust_pay,uzun üst fitilli mum payı (üst fitil >= boyun yarısı),0.45000,0.25000,-2.23823,UYMUYOR
+buyuk_mum_pay,"büyük mum payı (boy >= 1,5 x ortalama)",0.20000,0.18750,-0.30798,UYUYOR
+kucuk_mum_pay,"küçük mum payı (boy <= 0,7 x ortalama)",0.55000,0.31250,-3.81595,UYMUYOR
+yuk_dip_pay,yükselen dip payı (L > önceki L),0.63158,0.66667,0.47829,UYUYOR
+yuk_tepe_pay,yükselen tepe payı (H > önceki H),0.68421,0.60000,-1.33456,UYMUYOR
+yuk_kapanis_pay,yükselen kapanış payı,0.63158,0.46667,-2.43736,UYMUYOR
+ortusme,ardışık mumların örtüşme oranı (ortak aralık / küçük boy),0.81132,0.77930,-0.63728,UYUYOR
+govde_orta_egim,gövde ortası eğimi (mum boyu / mum),0.11488,0.14689,1.58500,UYMUYOR
+kapanis_egim,kapanış doğrusu eğimi (mum boyu / mum),0.11573,0.17089,2.54616,UYMUYOR
+kapanis_r2,kapanış doğrusu R^2 (düzgün yürüyüş),0.84485,0.75543,-1.69602,UYMUYOR
+net_hareket,net hareket: (son kapanış - ilk açılış) / boy,2.28184,2.45280,0.62033,UYUYOR
+dipten_yukselis,dipten yükseliş: (son kapanış - en düşük) / boy,3.07193,3.46459,1.56176,UYMUYOR
+dip_konum,"en düşük mumun yeri (0 = baş, 1 = son)",0.10526,0.06667,-1.20552,UYMUYOR
+tepe_konum,"en yüksek mumun yeri (0 = baş, 1 = son)",0.94737,1.00000,7.88864,UYMUYOR
+dip_sonrasi_alt_fitil,dipten sonraki mumlarda ortalama alt fitil / boy,0.20835,0.25007,0.78238,UYUYOR
+dip_sonrasi_ust_fitil,dipten sonraki mumlarda ortalama üst fitil / boy,0.45325,0.30047,-2.47846,UYMUYOR
+pB_bas,"ilk 3 mumda kapanışın bant içi yeri %B (0 alt bant, 1 üst bant)",0.06069,0.17626,0.41666,UYUYOR
+pB_son,son 3 mumda %B,0.98740,0.92383,-0.95052,UYUYOR
+pB_egim,%B eğimi (mum başına),0.05314,0.05685,0.19674,UYUYOR
+sma_ustu_pay,kapanışı SMA20 üstünde olan mum payı,0.50000,0.56250,0.27132,UYUYOR
+sma_mesafe_son,son kapanışın SMA20'ye uzaklığı (mum boyu),1.35053,1.90848,2.19186,UYMUYOR
+sma_gecis_konum,"SMA20 üstüne kalıcı geçişin yeri (0 baş, 1 = hiç / son)",0.50000,0.50000,0.00000,UYUYOR
+bant_gen_bas,ilk 3 mumda bant genişliği / mum boyu,2.53820,3.02350,0.12779,UYUYOR
+bant_gen_oran_log,bant açılması: log(son 3 genişlik / ilk 3 genişlik),0.07448,0.07658,0.00352,UYUYOR
+bant_dar_konum,"bandın en dar olduğu yer (0 baş, 1 son)",0.63158,0.73333,0.40015,UYUYOR
+sma_egim,SMA20 eğimi (mum boyu / mum),-0.01716,-0.00962,0.06222,UYUYOR
+ust_bant_asim_pay,High > üst bant mum payı,0.40000,0.12500,-1.74126,UYMUYOR
+alt_bant_asim_pay,Low < alt bant mum payı,0.15000,0.06250,-1.90069,UYMUYOR
+mum_bant,"ortalama (H - L) / (üst - alt bant), mum başına oranların ortalaması",0.41140,0.32435,-0.74943,UYUYOR
+govde_bant,ortalama |C - O| / (üst - alt bant),0.12178,0.16254,0.93312,UYUYOR
+max_mum_bant,en büyük (H - L) / (üst - alt bant),1.21657,0.61605,-2.54936,UYMUYOR
+max_govde_bant,en büyük |C - O| / (üst - alt bant),0.39349,0.54838,1.09160,UYMUYOR

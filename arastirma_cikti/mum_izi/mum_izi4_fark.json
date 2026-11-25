@@ -1,0 +1,1883 @@
+{
+ "surum": "MUM_IZI_V2 v1.0 (2026-11-25): Cemal'in itirazı -> fark ölçümü, hata dökümü, v2 = v1 S + 7 zorunlu mum yapısı kapısı (getirisiz), görsel onay",
+ "zaman": "2026-11-25T11:04:13Z",
+ "sd20": {
+  "tam": {
+   "boy_cv": 0.060890528058953126,
+   "govde_oran": 0.058602290893180066,
+   "ust_fitil": 0.054894840467994394,
+   "alt_fitil": 0.04829046654438851,
+   "ust_alt_log": 0.22713274005606346,
+   "yesil_pay": 0.08754939813355274,
+   "doji_pay": 0.07558196592587216,
+   "uzun_ust_pay": 0.08935617531530587,
+   "buyuk_mum_pay": 0.04058728070860331,
+   "kucuk_mum_pay": 0.062238743619542534,
+   "yuk_dip_pay": 0.07336054659091593,
+   "yuk_tepe_pay": 0.0630997602822919,
+   "yuk_kapanis_pay": 0.06766030045266017,
+   "ortusme": 0.05023683587065999,
+   "govde_orta_egim": 0.020195959165374856,
+   "kapanis_egim": 0.021667138822371437,
+   "kapanis_r2": 0.052726103388701456,
+   "net_hareket": 0.27558679488908744,
+   "dipten_yukselis": 0.2514162372607273,
+   "dip_konum": 0.0320165404458956,
+   "tepe_konum": 0.0066718185556702446,
+   "dip_sonrasi_alt_fitil": 0.05332782437380622,
+   "dip_sonrasi_ust_fitil": 0.06164357393725433,
+   "pB_bas": 0.27738394942260325,
+   "pB_son": 0.06687839466072108,
+   "pB_egim": 0.018881795485704362,
+   "sma_ustu_pay": 0.23035908152029871,
+   "sma_mesafe_son": 0.25455750759613116,
+   "sma_gecis_konum": 0.2461232542243895,
+   "bant_gen_bas": 3.7977774946194973,
+   "bant_gen_oran_log": 0.5979345609737956,
+   "bant_dar_konum": 0.2542876384529847,
+   "sma_egim": 0.12122588737306741,
+   "ust_bant_asim_pay": 0.15793132196195958,
+   "alt_bant_asim_pay": 0.04603586727587058,
+   "mum_bant": 0.11615481313820994,
+   "govde_bant": 0.04368103500642548,
+   "max_mum_bant": 0.23555501921503186,
+   "max_govde_bant": 0.14189658786325385
+  },
+  "tepesiz": {
+   "boy_cv": 0.05800747920776902,
+   "govde_oran": 0.06323551983544375,
+   "ust_fitil": 0.056321695221069945,
+   "alt_fitil": 0.05242593273879742,
+   "ust_alt_log": 0.24885831992600949,
+   "yesil_pay": 0.08912987751904315,
+   "doji_pay": 0.0810658726377754,
+   "uzun_ust_pay": 0.09147399283255117,
+   "buyuk_mum_pay": 0.04528162493933607,
+   "kucuk_mum_pay": 0.06798215517823007,
+   "yuk_dip_pay": 0.07830965448005098,
+   "yuk_tepe_pay": 0.07489286822888636,
+   "yuk_kapanis_pay": 0.06680805893024895,
+   "ortusme": 0.05469637809418705,
+   "govde_orta_egim": 0.013691237539574021,
+   "kapanis_egim": 0.015452490205273907,
+   "kapanis_r2": 0.06870582971466373,
+   "net_hareket": 0.25971665726755916,
+   "dipten_yukselis": 0.2824363453222581,
+   "dip_konum": 0.033018049166433305,
+   "tepe_konum": 0.0780162079931676,
+   "dip_sonrasi_alt_fitil": 0.059647692180166335,
+   "dip_sonrasi_ust_fitil": 0.0661161809957726,
+   "pB_bas": 0.2760200182940753,
+   "pB_son": 0.09003723434117121,
+   "pB_egim": 0.02054948123555028,
+   "sma_ustu_pay": 0.26594543160057066,
+   "sma_mesafe_son": 0.2760174887320844,
+   "sma_gecis_konum": 0.2847903463011289,
+   "bant_gen_bas": 4.312683812504037,
+   "bant_gen_oran_log": 0.5673161984635972,
+   "bant_dar_konum": 0.30102234724363003,
+   "sma_egim": 0.1459206264414218,
+   "ust_bant_asim_pay": 0.18299858205623135,
+   "alt_bant_asim_pay": 0.05323118871131222,
+   "mum_bant": 0.1326424792023839,
+   "govde_bant": 0.05076138817464919,
+   "max_mum_bant": 0.3853701898493156,
+   "max_govde_bant": 0.15419064262222615
+  }
+ },
+ "sablon_EK": {
+  "tam": {
+   "mum_bant": 0.41139781736250647,
+   "govde_bant": 0.12178220143821232,
+   "max_mum_bant": 1.2165680416613536,
+   "max_govde_bant": 0.39348897156726387
+  },
+  "tepesiz": {
+   "mum_bant": 0.36767749361643454,
+   "govde_bant": 0.12456649897176124,
+   "max_mum_bant": 0.8631245153938512,
+   "max_govde_bant": 0.39348897156726387
+  }
+ },
+ "sablon_kapi": {
+  "gunluk": {
+   "tam": {
+    "k1": true,
+    "k2": true,
+    "k3": true,
+    "k4": true,
+    "k5": true,
+    "k6": true,
+    "k7": true
+   },
+   "tepesiz": {
+    "k1": true,
+    "k2": true,
+    "k3": true,
+    "k4": true,
+    "k5": true,
+    "k6": true,
+    "k7": true
+   }
+  },
+  "haftalik": {
+   "tam": {
+    "k1": true,
+    "k2": true,
+    "k3": true,
+    "k4": true,
+    "k5": true,
+    "k6": true,
+    "k7": true
+   },
+   "tepesiz": {
+    "k1": true,
+    "k2": true,
+    "k3": true,
+    "k4": true,
+    "k5": true,
+    "k6": true,
+    "k7": true
+   }
+  }
+ },
+ "sablon_yuzdelik": {
+  "gunluk": {
+   "boy_cv": 0.9417,
+   "govde_oran": 0.13605,
+   "ust_fitil": 0.9837,
+   "alt_fitil": 0.1315,
+   "ust_alt_log": 0.99475,
+   "yesil_pay": 0.8463,
+   "doji_pay": 0.975525,
+   "uzun_ust_pay": 0.9875,
+   "buyuk_mum_pay": 0.907,
+   "kucuk_mum_pay": 0.977625,
+   "yuk_dip_pay": 0.818025,
+   "yuk_tepe_pay": 0.94395,
+   "yuk_kapanis_pay": 0.88115,
+   "ortusme": 0.9064,
+   "govde_orta_egim": 0.7351,
+   "kapanis_egim": 0.73815,
+   "kapanis_r2": 0.9127,
+   "net_hareket": 0.7534,
+   "dipten_yukselis": 0.66565,
+   "dip_konum": 0.258725,
+   "tepe_konum": 0.842125,
+   "dip_sonrasi_alt_fitil": 0.24625,
+   "dip_sonrasi_ust_fitil": 0.95085,
+   "pB_bas": 0.07135,
+   "pB_son": 0.9414,
+   "pB_egim": 0.9804,
+   "sma_ustu_pay": 0.467675,
+   "sma_mesafe_son": 0.77805,
+   "sma_gecis_konum": 0.2259,
+   "bant_gen_bas": 0.15935,
+   "bant_gen_oran_log": 0.55145,
+   "bant_dar_konum": 0.577725,
+   "sma_egim": 0.4125,
+   "ust_bant_asim_pay": 0.9229,
+   "alt_bant_asim_pay": 0.659375,
+   "mum_bant": 0.931,
+   "govde_bant": 0.5245,
+   "max_mum_bant": 0.9459,
+   "max_govde_bant": 0.50975
+  },
+  "haftalik": {
+   "boy_cv": 0.95145,
+   "govde_oran": 0.12515,
+   "ust_fitil": 0.99095,
+   "alt_fitil": 0.06975,
+   "ust_alt_log": 0.99755,
+   "yesil_pay": 0.770475,
+   "doji_pay": 0.98645,
+   "uzun_ust_pay": 0.9933,
+   "buyuk_mum_pay": 0.9073,
+   "kucuk_mum_pay": 0.981425,
+   "yuk_dip_pay": 0.7603,
+   "yuk_tepe_pay": 0.91645,
+   "yuk_kapanis_pay": 0.843425,
+   "ortusme": 0.86795,
+   "govde_orta_egim": 0.7131,
+   "kapanis_egim": 0.714,
+   "kapanis_r2": 0.9018,
+   "net_hareket": 0.7244,
+   "dipten_yukselis": 0.6516,
+   "dip_konum": 0.285625,
+   "tepe_konum": 0.804575,
+   "dip_sonrasi_alt_fitil": 0.18075,
+   "dip_sonrasi_ust_fitil": 0.964,
+   "pB_bas": 0.0583,
+   "pB_son": 0.9308,
+   "pB_egim": 0.98525,
+   "sma_ustu_pay": 0.42275,
+   "sma_mesafe_son": 0.7538,
+   "sma_gecis_konum": 0.262175,
+   "bant_gen_bas": 0.1694,
+   "bant_gen_oran_log": 0.5523,
+   "bant_dar_konum": 0.582625,
+   "sma_egim": 0.3695,
+   "ust_bant_asim_pay": 0.897,
+   "alt_bant_asim_pay": 0.697675,
+   "mum_bant": 0.9377,
+   "govde_bant": 0.4522,
+   "max_mum_bant": 0.95475,
+   "max_govde_bant": 0.4482
+  }
+ },
+ "ayirt_edici": {
+  "boy_cv": "Y",
+  "ust_fitil": "Y",
+  "ust_alt_log": "Y",
+  "doji_pay": "Y",
+  "uzun_ust_pay": "Y",
+  "buyuk_mum_pay": "Y",
+  "kucuk_mum_pay": "Y",
+  "yuk_tepe_pay": "Y",
+  "ortusme": "Y",
+  "kapanis_r2": "Y",
+  "dip_sonrasi_ust_fitil": "Y",
+  "pB_bas": "D",
+  "pB_son": "Y",
+  "pB_egim": "Y",
+  "ust_bant_asim_pay": "Y"
+ },
+ "A1": {
+  "sayfa": "MUM_IZI3_HAFTALIK.pdf sayfa 3 (ayri_ABD, en yüksek S)",
+  "pazar": "ABD",
+  "sembol": "NEE",
+  "bolge_bas": "2007-07-16",
+  "bolge_son": "2007-11-02",
+  "m": 16,
+  "renk": "GRGGRGRRGGRGGRGR",
+  "S_bilesen": {
+   "S": 0.6612287788465151,
+   "dizi": 0.37051024401859245,
+   "bant": 0.24549706811411331,
+   "oz": 0.6249588542860243
+  },
+  "uyuyor": 19,
+  "olcu": 39,
+  "uymayan": [
+   "boy_cv",
+   "govde_oran",
+   "ust_fitil",
+   "ust_alt_log",
+   "uzun_ust_pay",
+   "kucuk_mum_pay",
+   "yuk_tepe_pay",
+   "yuk_kapanis_pay",
+   "govde_orta_egim",
+   "kapanis_egim",
+   "kapanis_r2",
+   "dipten_yukselis",
+   "dip_konum",
+   "tepe_konum",
+   "dip_sonrasi_ust_fitil",
+   "sma_mesafe_son",
+   "ust_bant_asim_pay",
+   "alt_bant_asim_pay",
+   "max_mum_bant",
+   "max_govde_bant"
+  ]
+ },
+ "A2": {
+  "gunluk|ABD": {
+   "n": 19368,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.4105026742600364,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.03448988021478728
+    },
+    "govde_oran": {
+     "medyan": 0.41652518587817433,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.596602643535729
+    },
+    "ust_fitil": {
+     "medyan": 0.35041421193134625,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.3735543163981826
+    },
+    "alt_fitil": {
+     "medyan": 0.23124995698529505,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.6011462205700124
+    },
+    "ust_alt_log": {
+     "medyan": 0.39806404014121044,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.06521065675340769
+    },
+    "yesil_pay": {
+     "medyan": 0.5555555555555556,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.503304419661297
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.13620404791408508
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.2916666666666667,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.2641470466749277
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.125,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.21050185873605948
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.25,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.050547294506402315
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.5574142916150351
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.5333333333333333,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.21587154068566708
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.5882352941176471,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.46891780256092525
+    },
+    "ortusme": {
+     "medyan": 0.7399435739505198,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.33415943824865757
+    },
+    "govde_orta_egim": {
+     "medyan": 0.13724350013998785,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.29987608426270135
+    },
+    "kapanis_egim": {
+     "medyan": 0.14608840700628906,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.2996695580338703
+    },
+    "kapanis_r2": {
+     "medyan": 0.6747582938367267,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.16899008674101612
+    },
+    "net_hareket": {
+     "medyan": 1.9466393573539067,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.1974907063197026
+    },
+    "dipten_yukselis": {
+     "medyan": 3.193644111934584,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.21437422552664187
+    },
+    "dip_konum": {
+     "medyan": 0.13333333333333333,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.2253717472118959
+    },
+    "tepe_konum": {
+     "medyan": 0.9333333333333333,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.058808343659644775
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.22852429980355363,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.6156546881453945
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.35270785511410896,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.2507744733581165
+    },
+    "pB_bas": {
+     "medyan": 0.18128670787772105,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.8645187938868236
+    },
+    "pB_son": {
+     "medyan": 0.8867302925222948,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.30736266005782736
+    },
+    "pB_egim": {
+     "medyan": 0.05121782774059051,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.8553800082610492
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.910212722015696
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.3590022257040568,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.3042131350681537
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.5625,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8393225939694341
+    },
+    "bant_gen_bas": {
+     "medyan": 4.2476856355651496,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.7915634035522512
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.2817464088537767,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.6883002891367204
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6699710863279636
+    },
+    "sma_egim": {
+     "medyan": -0.04053187635585059,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9164601404378356
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.1875,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.3502684840974804
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.05555555555555555,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.2575898389095415
+    },
+    "mum_bant": {
+     "medyan": 0.29051039746321267,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.44496076001652207
+    },
+    "govde_bant": {
+     "medyan": 0.1249389889716804,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.703583230070219
+    },
+    "max_mum_bant": {
+     "medyan": 0.6134491737414939,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.10744527054935978
+    },
+    "max_govde_bant": {
+     "medyan": 0.3830030694486851,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.6294919454770755
+    }
+   },
+   "en_cok_kacan": [
+    "boy_cv",
+    "kucuk_mum_pay",
+    "tepe_konum",
+    "ust_alt_log",
+    "max_mum_bant",
+    "doji_pay",
+    "kapanis_r2",
+    "net_hareket",
+    "buyuk_mum_pay",
+    "dipten_yukselis"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.23977695167286245,
+    "ust_fitil": 0.8181020239570426,
+    "ust_alt_log": 0.7930090871540686,
+    "doji_pay": 0.36968194960760015,
+    "uzun_ust_pay": 0.7215510119785212,
+    "buyuk_mum_pay": 0.2549049979347377,
+    "kucuk_mum_pay": 0.25289136720363486,
+    "yuk_tepe_pay": 0.46964064436183395,
+    "ortusme": 0.4409851301115242,
+    "kapanis_r2": 0.43907476249483685,
+    "dip_sonrasi_ust_fitil": 0.6529326724494011,
+    "pB_bas": 0.7379182156133829,
+    "pB_son": 0.8221292854192482,
+    "pB_egim": 0.9929781082197439,
+    "ust_bant_asim_pay": 0.23771168938455184
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    7,
+    97,
+    380,
+    1005,
+    2057,
+    3102,
+    4045,
+    3720,
+    2678,
+    1438,
+    624,
+    188,
+    25,
+    2
+   ],
+   "hepsini_tasiyan_pay": 0.00010326311441553078,
+   "ayirt_say_medyan": 8.0,
+   "mum_bant_sablondan_buyuk_pay": 0.14054109871953738,
+   "govde_bant_sablondan_buyuk_pay": 0.529946303180504,
+   "max_mum_bant_sablondan_buyuk_pay": 0.07698265179677818,
+   "max_govde_bant_sablondan_buyuk_pay": 0.4741842213961173
+  },
+  "gunluk|AVR": {
+   "n": 2455,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.3806570269478375,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.012219959266802444
+    },
+    "govde_oran": {
+     "medyan": 0.42205875316063807,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.5596741344195519
+    },
+    "ust_fitil": {
+     "medyan": 0.3440013418306674,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.32423625254582483
+    },
+    "alt_fitil": {
+     "medyan": 0.2308966483418524,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.5979633401221995
+    },
+    "ust_alt_log": {
+     "medyan": 0.361927660670649,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.04562118126272913
+    },
+    "yesil_pay": {
+     "medyan": 0.5625,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.5213849287169042
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.15519348268839103
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.2727272727272727,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.239918533604888
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.1111111111111111,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.16415478615071283
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.25,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.021995926680244398
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.5637474541751527
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.6,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.2708757637474542
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.4920570264765784
+    },
+    "ortusme": {
+     "medyan": 0.7326217037030159,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.29938900203665986
+    },
+    "govde_orta_egim": {
+     "medyan": 0.139833912476845,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.29816700610997965
+    },
+    "kapanis_egim": {
+     "medyan": 0.14865354964358657,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.28065173116089615
+    },
+    "kapanis_r2": {
+     "medyan": 0.6941756822015966,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.19633401221995928
+    },
+    "net_hareket": {
+     "medyan": 1.987670304426909,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.20122199592668025
+    },
+    "dipten_yukselis": {
+     "medyan": 3.2121501245926902,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.2419551934826884
+    },
+    "dip_konum": {
+     "medyan": 0.13333333333333333,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.23177189409368634
+    },
+    "tepe_konum": {
+     "medyan": 0.9411764705882353,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.06272912423625254
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.232619444203438,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.5995926680244399
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.34393889111453896,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.20610997963340122
+    },
+    "pB_bas": {
+     "medyan": 0.1838938829613194,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.8610997963340122
+    },
+    "pB_son": {
+     "medyan": 0.887321793326716,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.3132382892057026
+    },
+    "pB_egim": {
+     "medyan": 0.050648789542766436,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.8647657841140529
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.9205702647657841
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.3431760318863732,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.329938900203666
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.5625,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8570264765784114
+    },
+    "bant_gen_bas": {
+     "medyan": 4.182774057144546,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.8028513238289205
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.251103724368507,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.7181262729124236
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6887983706720978
+    },
+    "sma_egim": {
+     "medyan": -0.035359248813582725,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9303462321792261
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.1875,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.325050916496945
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.05555555555555555,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.26354378818737273
+    },
+    "mum_bant": {
+     "medyan": 0.2900527906904088,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.4366598778004073
+    },
+    "govde_bant": {
+     "medyan": 0.12796307577776567,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.6928716904276986
+    },
+    "max_mum_bant": {
+     "medyan": 0.5878096411620876,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.08716904276985743
+    },
+    "max_govde_bant": {
+     "medyan": 0.384671450033671,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.6472505091649694
+    }
+   },
+   "en_cok_kacan": [
+    "boy_cv",
+    "kucuk_mum_pay",
+    "ust_alt_log",
+    "tepe_konum",
+    "max_mum_bant",
+    "doji_pay",
+    "buyuk_mum_pay",
+    "kapanis_r2",
+    "net_hareket",
+    "dip_sonrasi_ust_fitil"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.12790224032586558,
+    "ust_fitil": 0.7812627291242362,
+    "ust_alt_log": 0.7592668024439918,
+    "doji_pay": 0.37922606924643587,
+    "uzun_ust_pay": 0.6936863543788188,
+    "buyuk_mum_pay": 0.18085539714867618,
+    "kucuk_mum_pay": 0.1604887983706721,
+    "yuk_tepe_pay": 0.5621181262729125,
+    "ortusme": 0.41792260692464356,
+    "kapanis_r2": 0.48879837067209775,
+    "dip_sonrasi_ust_fitil": 0.5922606924643584,
+    "pB_bas": 0.7270875763747454,
+    "pB_son": 0.8334012219959267,
+    "pB_egim": 0.9938900203665988,
+    "ust_bant_asim_pay": 0.22810590631364563
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    5,
+    8,
+    49,
+    175,
+    305,
+    451,
+    537,
+    450,
+    276,
+    144,
+    41,
+    11,
+    3,
+    0
+   ],
+   "hepsini_tasiyan_pay": 0.0,
+   "ayirt_say_medyan": 8.0,
+   "mum_bant_sablondan_buyuk_pay": 0.14012219959266803,
+   "govde_bant_sablondan_buyuk_pay": 0.554786150712831,
+   "max_mum_bant_sablondan_buyuk_pay": 0.048472505091649694,
+   "max_govde_bant_sablondan_buyuk_pay": 0.47820773930753563
+  },
+  "gunluk|BIST": {
+   "n": 3984,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.5070770126245381,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.07228915662650602
+    },
+    "govde_oran": {
+     "medyan": 0.40004008475884656,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.6345381526104418
+    },
+    "ust_fitil": {
+     "medyan": 0.3761658967777568,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.5587349397590361
+    },
+    "alt_fitil": {
+     "medyan": 0.22053610421569014,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.6297690763052208
+    },
+    "ust_alt_log": {
+     "medyan": 0.5557874614345806,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.13453815261044177
+    },
+    "yesil_pay": {
+     "medyan": 0.4444444444444444,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.25
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.17821285140562249
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.3125,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.4011044176706827
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.125,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.3642068273092369
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.35,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.13403614457831325
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.47816265060240964
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.5217391304347826,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.09061244979919679
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.5333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.3634538152610442
+    },
+    "ortusme": {
+     "medyan": 0.7554925479506998,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.3958333333333333
+    },
+    "govde_orta_egim": {
+     "medyan": 0.12795877392605481,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.3107429718875502
+    },
+    "kapanis_egim": {
+     "medyan": 0.13724905504705892,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.3117469879518072
+    },
+    "kapanis_r2": {
+     "medyan": 0.6339295299878906,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.12776104417670683
+    },
+    "net_hareket": {
+     "medyan": 1.8449780668689626,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.18674698795180722
+    },
+    "dipten_yukselis": {
+     "medyan": 3.0638284650852308,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.20933734939759036
+    },
+    "dip_konum": {
+     "medyan": 0.13333333333333333,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.20256024096385541
+    },
+    "tepe_konum": {
+     "medyan": 0.9333333333333333,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.058483935742971886
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.21195787420175607,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.6475903614457831
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.38751036684403395,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.4369979919678715
+    },
+    "pB_bas": {
+     "medyan": 0.2021310762825644,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.7894076305220884
+    },
+    "pB_son": {
+     "medyan": 0.8886440182663149,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.29994979919678716
+    },
+    "pB_egim": {
+     "medyan": 0.04902811430588379,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.7831325301204819
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8541666666666666
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.347883792004113,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.27836345381526106
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.625,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.7680722891566265
+    },
+    "bant_gen_bas": {
+     "medyan": 4.311746408209104,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.7821285140562249
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.3131023359517056,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.6450803212851406
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7647058823529411,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6277610441767069
+    },
+    "sma_egim": {
+     "medyan": -0.03688309470335673,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9001004016064257
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.1875,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.40813253012048195
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.0,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.20783132530120482
+    },
+    "mum_bant": {
+     "medyan": 0.29693960718470447,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.4508032128514056
+    },
+    "govde_bant": {
+     "medyan": 0.12208636230992027,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.6849899598393574
+    },
+    "max_mum_bant": {
+     "medyan": 0.7111359598929241,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.17620481927710843
+    },
+    "max_govde_bant": {
+     "medyan": 0.4062526400432399,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.5923694779116466
+    }
+   },
+   "en_cok_kacan": [
+    "tepe_konum",
+    "boy_cv",
+    "yuk_tepe_pay",
+    "kapanis_r2",
+    "kucuk_mum_pay",
+    "ust_alt_log",
+    "max_mum_bant",
+    "doji_pay",
+    "net_hareket",
+    "dip_konum"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.4636044176706827,
+    "ust_fitil": 0.9083835341365462,
+    "ust_alt_log": 0.9269578313253012,
+    "doji_pay": 0.43373493975903615,
+    "uzun_ust_pay": 0.8330823293172691,
+    "buyuk_mum_pay": 0.4538152610441767,
+    "kucuk_mum_pay": 0.5025100401606426,
+    "yuk_tepe_pay": 0.24849397590361447,
+    "ortusme": 0.5153112449799196,
+    "kapanis_r2": 0.3428714859437751,
+    "dip_sonrasi_ust_fitil": 0.8258032128514057,
+    "pB_bas": 0.6626506024096386,
+    "pB_son": 0.7843875502008032,
+    "pB_egim": 0.9774096385542169,
+    "ust_bant_asim_pay": 0.2924196787148594
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    1,
+    7,
+    24,
+    80,
+    207,
+    445,
+    648,
+    795,
+    789,
+    575,
+    292,
+    92,
+    26,
+    3
+   ],
+   "hepsini_tasiyan_pay": 0.0007530120481927711,
+   "ayirt_say_medyan": 9.0,
+   "mum_bant_sablondan_buyuk_pay": 0.17821285140562249,
+   "govde_bant_sablondan_buyuk_pay": 0.5030120481927711,
+   "max_mum_bant_sablondan_buyuk_pay": 0.12474899598393574,
+   "max_govde_bant_sablondan_buyuk_pay": 0.5266064257028112
+  },
+  "haftalik|ABD": {
+   "n": 8794,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.443588746153694,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.049351830793722996
+    },
+    "govde_oran": {
+     "medyan": 0.4166627479407443,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.6009779395042074
+    },
+    "ust_fitil": {
+     "medyan": 0.3393831791500228,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.2861041619285877
+    },
+    "alt_fitil": {
+     "medyan": 0.24050538890869522,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.5693654764612236
+    },
+    "ust_alt_log": {
+     "medyan": 0.36300859769439087,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.05867637025244485
+    },
+    "yesil_pay": {
+     "medyan": 0.5625,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.5988173754832841
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.12963384125540142
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.25,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.19615647032067318
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.125,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.25926768251080284
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.3125,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.08039572435751649
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.5598135092108255
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.5333333333333333,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.20957471002956563
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.5882352941176471,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.48669547418694564
+    },
+    "ortusme": {
+     "medyan": 0.7762697625735995,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.4802137821241756
+    },
+    "govde_orta_egim": {
+     "medyan": 0.13692685057322648,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.31168978849215373
+    },
+    "kapanis_egim": {
+     "medyan": 0.14605505210846775,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.30770980213782123
+    },
+    "kapanis_r2": {
+     "medyan": 0.6843178485912516,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.17671139413236298
+    },
+    "net_hareket": {
+     "medyan": 1.9769908707707757,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.19797589265408233
+    },
+    "dipten_yukselis": {
+     "medyan": 3.1411248621159027,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.21776211052990677
+    },
+    "dip_konum": {
+     "medyan": 0.13333333333333333,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.2358426199681601
+    },
+    "tepe_konum": {
+     "medyan": 0.9333333333333333,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.05776665908574028
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.23659840536703383,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.6286104161928587
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.34186212123291426,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.1925176256538549
+    },
+    "pB_bas": {
+     "medyan": 0.18855789255976582,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.8523993632021833
+    },
+    "pB_son": {
+     "medyan": 0.8902698871719423,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.30634523538776437
+    },
+    "pB_egim": {
+     "medyan": 0.05071428689681588,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.8552422105981351
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8985672049124404
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.365812073390947,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.30338867409597453
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.5625,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8387536957016147
+    },
+    "bant_gen_bas": {
+     "medyan": 4.1546774632462515,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.7984989765749374
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.2613817458383835,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.6914942005913123
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6588583124857857
+    },
+    "sma_egim": {
+     "medyan": -0.03774172262481751,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9229019786217876
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.1875,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.34534910166022287
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.0,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.2406186035933591
+    },
+    "mum_bant": {
+     "medyan": 0.29181617340579896,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.4499658858312486
+    },
+    "govde_bant": {
+     "medyan": 0.12686901597134276,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.7251535137593814
+    },
+    "max_mum_bant": {
+     "medyan": 0.645330129974439,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.11951330452581306
+    },
+    "max_govde_bant": {
+     "medyan": 0.39842190743138334,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.6381623834432568
+    }
+   },
+   "en_cok_kacan": [
+    "boy_cv",
+    "tepe_konum",
+    "ust_alt_log",
+    "kucuk_mum_pay",
+    "max_mum_bant",
+    "doji_pay",
+    "kapanis_r2",
+    "dip_sonrasi_ust_fitil",
+    "uzun_ust_pay",
+    "net_hareket"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.3131680691380487,
+    "ust_fitil": 0.8162383443256765,
+    "ust_alt_log": 0.8270411644302934,
+    "doji_pay": 0.3480782351603366,
+    "uzun_ust_pay": 0.695929042528997,
+    "buyuk_mum_pay": 0.31487377757561974,
+    "kucuk_mum_pay": 0.3354559927223107,
+    "yuk_tepe_pay": 0.44769160791448714,
+    "ortusme": 0.47907664316579485,
+    "kapanis_r2": 0.43188537639299523,
+    "dip_sonrasi_ust_fitil": 0.6841027973618377,
+    "pB_bas": 0.7771207641573801,
+    "pB_son": 0.7362974755515124,
+    "pB_egim": 0.9931771662497157,
+    "ust_bant_asim_pay": 0.2028655901751194
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    8,
+    39,
+    152,
+    438,
+    813,
+    1387,
+    1739,
+    1674,
+    1271,
+    743,
+    398,
+    108,
+    23,
+    1
+   ],
+   "hepsini_tasiyan_pay": 0.00011371389583807141,
+   "ayirt_say_medyan": 8.0,
+   "mum_bant_sablondan_buyuk_pay": 0.14566750056856947,
+   "govde_bant_sablondan_buyuk_pay": 0.5521946781896748,
+   "max_mum_bant_sablondan_buyuk_pay": 0.10643620650443485,
+   "max_govde_bant_sablondan_buyuk_pay": 0.5138730952922447
+  },
+  "haftalik|AVR": {
+   "n": 1244,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.39369589664458915,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.017684887459807074
+    },
+    "govde_oran": {
+     "medyan": 0.42205271606346473,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.5868167202572347
+    },
+    "ust_fitil": {
+     "medyan": 0.3278823614083078,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.18971061093247588
+    },
+    "alt_fitil": {
+     "medyan": 0.24787660043149226,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.5176848874598071
+    },
+    "ust_alt_log": {
+     "medyan": 0.2717391751691347,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.01527331189710611
+    },
+    "yesil_pay": {
+     "medyan": 0.5625,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.632636655948553
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.09807073954983923
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.25,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.11655948553054662
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.125,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.1647909967845659
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.25,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.03054662379421222
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6190476190476191,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.590032154340836
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.6,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.31511254019292606
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.5176848874598071
+    },
+    "ortusme": {
+     "medyan": 0.7664714627752809,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.4807073954983923
+    },
+    "govde_orta_egim": {
+     "medyan": 0.14522651985834095,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.2958199356913183
+    },
+    "kapanis_egim": {
+     "medyan": 0.1569442897149057,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.2821543408360129
+    },
+    "kapanis_r2": {
+     "medyan": 0.7308603975934163,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.25482315112540194
+    },
+    "net_hareket": {
+     "medyan": 2.080289218856164,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.21382636655948553
+    },
+    "dipten_yukselis": {
+     "medyan": 3.3470751973152675,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.21784565916398713
+    },
+    "dip_konum": {
+     "medyan": 0.11764705882352941,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.2709003215434084
+    },
+    "tepe_konum": {
+     "medyan": 1.0,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.06028938906752412
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.24643470291651728,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.5916398713826366
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.33208460237353077,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.12218649517684887
+    },
+    "pB_bas": {
+     "medyan": 0.18066385174492794,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.8834405144694534
+    },
+    "pB_son": {
+     "medyan": 0.890353282656626,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.34646302250803857
+    },
+    "pB_egim": {
+     "medyan": 0.05169400808948345,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.8954983922829582
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.9180064308681672
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.4370876596428477,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.34646302250803857
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8954983922829582
+    },
+    "bant_gen_bas": {
+     "medyan": 4.117610374141926,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.8183279742765274
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.20352740525338758,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.7540192926045016
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6945337620578779
+    },
+    "sma_egim": {
+     "medyan": -0.03176930564215661,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9389067524115756
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.18181818181818182,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.3327974276527331
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.0625,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.2845659163987138
+    },
+    "mum_bant": {
+     "medyan": 0.2858073811109784,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.4437299035369775
+    },
+    "govde_bant": {
+     "medyan": 0.1257267258110439,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.7620578778135049
+    },
+    "max_mum_bant": {
+     "medyan": 0.5865483325808272,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.06270096463022508
+    },
+    "max_govde_bant": {
+     "medyan": 0.37114171866171275,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.707395498392283
+    }
+   },
+   "en_cok_kacan": [
+    "ust_alt_log",
+    "boy_cv",
+    "kucuk_mum_pay",
+    "tepe_konum",
+    "max_mum_bant",
+    "doji_pay",
+    "uzun_ust_pay",
+    "dip_sonrasi_ust_fitil",
+    "buyuk_mum_pay",
+    "ust_fitil"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.16237942122186494,
+    "ust_fitil": 0.7508038585209004,
+    "ust_alt_log": 0.7017684887459807,
+    "doji_pay": 0.33520900321543406,
+    "uzun_ust_pay": 0.5996784565916399,
+    "buyuk_mum_pay": 0.1937299035369775,
+    "kucuk_mum_pay": 0.19694533762057878,
+    "yuk_tepe_pay": 0.5618971061093248,
+    "ortusme": 0.42604501607717044,
+    "kapanis_r2": 0.569935691318328,
+    "dip_sonrasi_ust_fitil": 0.617363344051447,
+    "pB_bas": 0.7998392282958199,
+    "pB_son": 0.772508038585209,
+    "pB_egim": 0.9967845659163987,
+    "ust_bant_asim_pay": 0.18488745980707397
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    0,
+    6,
+    36,
+    103,
+    159,
+    225,
+    239,
+    246,
+    125,
+    65,
+    28,
+    11,
+    1,
+    0
+   ],
+   "hepsini_tasiyan_pay": 0.0,
+   "ayirt_say_medyan": 8.0,
+   "mum_bant_sablondan_buyuk_pay": 0.10530546623794212,
+   "govde_bant_sablondan_buyuk_pay": 0.5418006430868167,
+   "max_mum_bant_sablondan_buyuk_pay": 0.05144694533762058,
+   "max_govde_bant_sablondan_buyuk_pay": 0.43488745980707394
+  },
+  "haftalik|BIST": {
+   "n": 1118,
+   "olcu": {
+    "boy_cv": {
+     "medyan": 0.5366627784235909,
+     "sablon": 0.7795747881394053,
+     "uyuyor_pay": 0.09928443649373882
+    },
+    "govde_oran": {
+     "medyan": 0.39058120897097337,
+     "sablon": 0.3785154452643765,
+     "uyuyor_pay": 0.6744186046511628
+    },
+    "ust_fitil": {
+     "medyan": 0.38291883595761006,
+     "sablon": 0.4186146314281608,
+     "uyuyor_pay": 0.6001788908765653
+    },
+    "alt_fitil": {
+     "medyan": 0.2229513095584123,
+     "sablon": 0.20286992330746267,
+     "uyuyor_pay": 0.6887298747763864
+    },
+    "ust_alt_log": {
+     "medyan": 0.5788913279284249,
+     "sablon": 1.0854922856918583,
+     "uyuyor_pay": 0.1368515205724508
+    },
+    "yesil_pay": {
+     "medyan": 0.5,
+     "sablon": 0.6,
+     "uyuyor_pay": 0.4186046511627907
+    },
+    "doji_pay": {
+     "medyan": 0.125,
+     "sablon": 0.3,
+     "uyuyor_pay": 0.1404293381037567
+    },
+    "uzun_ust_pay": {
+     "medyan": 0.3125,
+     "sablon": 0.45,
+     "uyuyor_pay": 0.3855098389982111
+    },
+    "buyuk_mum_pay": {
+     "medyan": 0.16666666666666666,
+     "sablon": 0.2,
+     "uyuyor_pay": 0.3774597495527728
+    },
+    "kucuk_mum_pay": {
+     "medyan": 0.375,
+     "sablon": 0.55,
+     "uyuyor_pay": 0.16279069767441862
+    },
+    "yuk_dip_pay": {
+     "medyan": 0.6,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.49821109123434704
+    },
+    "yuk_tepe_pay": {
+     "medyan": 0.5333333333333333,
+     "sablon": 0.6842105263157895,
+     "uyuyor_pay": 0.15026833631484796
+    },
+    "yuk_kapanis_pay": {
+     "medyan": 0.5333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.40966010733452596
+    },
+    "ortusme": {
+     "medyan": 0.7647936610797067,
+     "sablon": 0.8113189862819669,
+     "uyuyor_pay": 0.44364937388193204
+    },
+    "govde_orta_egim": {
+     "medyan": 0.1224204176495993,
+     "sablon": 0.1148833167825224,
+     "uyuyor_pay": 0.28354203935599287
+    },
+    "kapanis_egim": {
+     "medyan": 0.13382532131397648,
+     "sablon": 0.11572563484182151,
+     "uyuyor_pay": 0.29964221824686943
+    },
+    "kapanis_r2": {
+     "medyan": 0.6154957586895023,
+     "sablon": 0.844850925570748,
+     "uyuyor_pay": 0.10912343470483005
+    },
+    "net_hareket": {
+     "medyan": 1.7139031595259975,
+     "sablon": 2.2818396226415096,
+     "uyuyor_pay": 0.1511627906976744
+    },
+    "dipten_yukselis": {
+     "medyan": 2.9486134279549003,
+     "sablon": 3.071933962264151,
+     "uyuyor_pay": 0.19946332737030412
+    },
+    "dip_konum": {
+     "medyan": 0.13333333333333333,
+     "sablon": 0.10526315789473684,
+     "uyuyor_pay": 0.17262969588550983
+    },
+    "tepe_konum": {
+     "medyan": 0.9333333333333333,
+     "sablon": 0.9473684210526315,
+     "uyuyor_pay": 0.038461538461538464
+    },
+    "dip_sonrasi_alt_fitil": {
+     "medyan": 0.20914379300105254,
+     "sablon": 0.2083501906261373,
+     "uyuyor_pay": 0.6985688729874776
+    },
+    "dip_sonrasi_ust_fitil": {
+     "medyan": 0.3991303124641974,
+     "sablon": 0.45325021535749926,
+     "uyuyor_pay": 0.4991055456171735
+    },
+    "pB_bas": {
+     "medyan": 0.22109478183674863,
+     "sablon": 0.06068939866380494,
+     "uyuyor_pay": 0.7584973166368515
+    },
+    "pB_son": {
+     "medyan": 0.8954299505078216,
+     "sablon": 0.987401003206941,
+     "uyuyor_pay": 0.2853309481216458
+    },
+    "pB_egim": {
+     "medyan": 0.04889017422489905,
+     "sablon": 0.05313720044749267,
+     "uyuyor_pay": 0.8005366726296959
+    },
+    "sma_ustu_pay": {
+     "medyan": 0.5,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.8479427549194991
+    },
+    "sma_mesafe_son": {
+     "medyan": 1.3037617810678335,
+     "sablon": 1.35052969024859,
+     "uyuyor_pay": 0.2638640429338104
+    },
+    "sma_gecis_konum": {
+     "medyan": 0.625,
+     "sablon": 0.5,
+     "uyuyor_pay": 0.7602862254025045
+    },
+    "bant_gen_bas": {
+     "medyan": 3.9259234540838572,
+     "sablon": 2.538196962937541,
+     "uyuyor_pay": 0.8452593917710197
+    },
+    "bant_gen_oran_log": {
+     "medyan": -0.24222914197603024,
+     "sablon": 0.07447976074741441,
+     "uyuyor_pay": 0.6815742397137746
+    },
+    "bant_dar_konum": {
+     "medyan": 0.7333333333333333,
+     "sablon": 0.631578947368421,
+     "uyuyor_pay": 0.6431127012522362
+    },
+    "sma_egim": {
+     "medyan": -0.027251122777884704,
+     "sablon": -0.017161287557998048,
+     "uyuyor_pay": 0.9311270125223614
+    },
+    "ust_bant_asim_pay": {
+     "medyan": 0.1875,
+     "sablon": 0.4,
+     "uyuyor_pay": 0.43559928443649376
+    },
+    "alt_bant_asim_pay": {
+     "medyan": 0.0,
+     "sablon": 0.15,
+     "uyuyor_pay": 0.24597495527728086
+    },
+    "mum_bant": {
+     "medyan": 0.3193350224666065,
+     "sablon": 0.41139781736250647,
+     "uyuyor_pay": 0.5152057245080501
+    },
+    "govde_bant": {
+     "medyan": 0.13092331553072512,
+     "sablon": 0.12178220143821232,
+     "uyuyor_pay": 0.7039355992844365
+    },
+    "max_mum_bant": {
+     "medyan": 0.7650617463165987,
+     "sablon": 1.2165680416613536,
+     "uyuyor_pay": 0.2146690518783542
+    },
+    "max_govde_bant": {
+     "medyan": 0.4467088805293578,
+     "sablon": 0.39348897156726387,
+     "uyuyor_pay": 0.5858676207513417
+    }
+   },
+   "en_cok_kacan": [
+    "tepe_konum",
+    "boy_cv",
+    "kapanis_r2",
+    "ust_alt_log",
+    "doji_pay",
+    "yuk_tepe_pay",
+    "net_hareket",
+    "kucuk_mum_pay",
+    "dip_konum",
+    "dipten_yukselis"
+   ],
+   "ayirt_pay": {
+    "boy_cv": 0.5232558139534884,
+    "ust_fitil": 0.9669051878354203,
+    "ust_alt_log": 0.9651162790697675,
+    "doji_pay": 0.4016100178890877,
+    "uzun_ust_pay": 0.8676207513416816,
+    "buyuk_mum_pay": 0.501788908765653,
+    "kucuk_mum_pay": 0.5420393559928444,
+    "yuk_tepe_pay": 0.35152057245080504,
+    "ortusme": 0.41681574239713776,
+    "kapanis_r2": 0.28711985688729874,
+    "dip_sonrasi_ust_fitil": 0.9230769230769231,
+    "pB_bas": 0.6627906976744186,
+    "pB_son": 0.6905187835420393,
+    "pB_egim": 0.9776386404293381,
+    "ust_bant_asim_pay": 0.2826475849731664
+   },
+   "ayirt_say_dagilim": [
+    0,
+    0,
+    1,
+    1,
+    4,
+    13,
+    46,
+    103,
+    184,
+    223,
+    244,
+    163,
+    100,
+    34,
+    2,
+    0
+   ],
+   "hepsini_tasiyan_pay": 0.0,
+   "ayirt_say_medyan": 9.0,
+   "mum_bant_sablondan_buyuk_pay": 0.21914132379248658,
+   "govde_bant_sablondan_buyuk_pay": 0.5760286225402504,
+   "max_mum_bant_sablondan_buyuk_pay": 0.16279069767441862,
+   "max_govde_bant_sablondan_buyuk_pay": 0.6055456171735242
+  }
+ },
+ "A4": {
+  "tam": {
+   "n1": {
+    "S": 0.4348556242442261,
+    "dizi": 0.4587856273919788,
+    "bant": 0.0,
+    "oz": 2.039437976427068
+   },
+   "n2": {
+    "S": 0.5449100942790436,
+    "dizi": 0.45405927565106075,
+    "bant": 0.0,
+    "oz": 1.3673441120069239
+   },
+   "n3": {
+    "S": 0.8676612000373799,
+    "dizi": 0.27835934608305996,
+    "bant": 0.0,
+    "oz": 0.14750254308205177
+   },
+   "p1": {
+    "S": 0.5374922356994286,
+    "dizi": 0.5567186921661199,
+    "bant": 0.8166588071408417,
+    "oz": 0.48914539357809106
+   },
+   "p1b": {
+    "S": 0.31811864466959866,
+    "dizi": 1.1134373843322398,
+    "bant": 1.6333176142816834,
+    "oz": 0.6892376094056364
+   }
+  },
+  "tepesiz": {
+   "n1": {
+    "S": 0.42987779493424105,
+    "dizi": 0.4603462399048084,
+    "bant": 0.0,
+    "oz": 2.072416685636384
+   },
+   "n2": {
+    "S": 0.5520654618854577,
+    "dizi": 0.46602948328721217,
+    "bant": 0.0,
+    "oz": 1.316236464805142
+   },
+   "n3": {
+    "S": 0.8644646150736298,
+    "dizi": 0.2705563545503309,
+    "bant": 0.0,
+    "oz": 0.16637836280590046
+   },
+   "p1": {
+    "S": 0.5709455197866373,
+    "dizi": 0.5411127091006618,
+    "bant": 0.6814687206077202,
+    "oz": 0.4588030277230239
+   },
+   "p1b": {
+    "S": 0.36266983203435293,
+    "dizi": 1.0822254182013236,
+    "bant": 1.3629374412154402,
+    "oz": 0.5976243772928804
+   }
+  },
+  "esik": {
+   "tam": 0.59,
+   "tepesiz": 0.56
+  }
+ },
+ "kume_S": {
+  "n": 11156,
+  "kume_max_sonra_pay": 0.6117784152025816,
+  "S_ilk_med": 0.5990649591690655,
+  "S_kume_max_med": 0.6111975236977342,
+  "kume_max_ge_069_ilk_lt_069": 0.013714593044101829,
+  "kume_max_ge_069": 153
+ },
+ "sure_sn": 369
+}
