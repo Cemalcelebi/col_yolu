@@ -1,0 +1,39 @@
+olcu,aciklama,grup,tam,tepesiz,benzerlikte
+boy_cv,mum boyu değişkenliği (std / ortalama boy),mum,0.7796,0.7004,False
+govde_oran,ortalama gövde / boy,mum,0.3785,0.4159,True
+ust_fitil,ortalama üst fitil / boy,mum,0.4186,0.3884,True
+alt_fitil,ortalama alt fitil / boy,mum,0.2029,0.1957,True
+ust_alt_log,üst fitil baskınlığı: log(toplam üst fitil / toplam alt fitil),mum,1.0855,0.9820,True
+yesil_pay,yeşil (C > O) mum payı,mum,0.6000,0.5882,False
+doji_pay,"doji payı (gövde / boy < 0,10)",mum,0.3000,0.2353,False
+uzun_ust_pay,uzun üst fitilli mum payı (üst fitil >= boyun yarısı),mum,0.4500,0.4118,False
+buyuk_mum_pay,"büyük mum payı (boy >= 1,5 x ortalama)",mum,0.2000,0.2353,False
+kucuk_mum_pay,"küçük mum payı (boy <= 0,7 x ortalama)",mum,0.5500,0.5294,True
+yuk_dip_pay,yükselen dip payı (L > önceki L),dizilim,0.6316,0.5625,True
+yuk_tepe_pay,yükselen tepe payı (H > önceki H),dizilim,0.6842,0.6875,False
+yuk_kapanis_pay,yükselen kapanış payı,dizilim,0.6316,0.5625,False
+ortusme,ardışık mumların örtüşme oranı (ortak aralık / küçük boy),dizilim,0.8113,0.8157,False
+govde_orta_egim,gövde ortası eğimi (mum boyu / mum),dizilim,0.1149,0.1163,False
+kapanis_egim,kapanış doğrusu eğimi (mum boyu / mum),dizilim,0.1157,0.1136,True
+kapanis_r2,kapanış doğrusu R^2 (düzgün yürüyüş),dizilim,0.8449,0.7506,True
+net_hareket,net hareket: (son kapanış - ilk açılış) / boy,dizilim,2.2818,1.7219,False
+dipten_yukselis,dipten yükseliş: (son kapanış - en düşük) / boy,dizilim,3.0719,2.6375,False
+dip_konum,"en düşük mumun yeri (0 = baş, 1 = son)",dizilim,0.1053,0.1250,False
+tepe_konum,"en yüksek mumun yeri (0 = baş, 1 = son)",dizilim,0.9474,0.4375,False
+dip_sonrasi_alt_fitil,dipten sonraki mumlarda ortalama alt fitil / boy,dizilim,0.2084,0.2008,False
+dip_sonrasi_ust_fitil,dipten sonraki mumlarda ortalama üst fitil / boy,dizilim,0.4533,0.4240,False
+pB_bas,"ilk 3 mumda kapanışın bant içi yeri %B (0 alt bant, 1 üst bant)",bant,0.0607,0.0607,True
+pB_son,son 3 mumda %B,bant,0.9874,0.9011,True
+pB_egim,%B eğimi (mum başına),bant,0.0531,0.0575,False
+sma_ustu_pay,kapanışı SMA20 üstünde olan mum payı,bant,0.5000,0.4118,True
+sma_mesafe_son,son kapanışın SMA20'ye uzaklığı (mum boyu),bant,1.3505,0.9538,False
+sma_gecis_konum,"SMA20 üstüne kalıcı geçişin yeri (0 baş, 1 = hiç / son)",bant,0.5000,0.5882,False
+bant_gen_bas,ilk 3 mumda bant genişliği / mum boyu,bant,2.5382,2.9414,False
+bant_gen_oran_log,bant açılması: log(son 3 genişlik / ilk 3 genişlik),bant,0.0745,-0.1767,True
+bant_dar_konum,"bandın en dar olduğu yer (0 baş, 1 son)",bant,0.6316,0.7500,False
+sma_egim,SMA20 eğimi (mum boyu / mum),bant,-0.0172,-0.0383,False
+ust_bant_asim_pay,High > üst bant mum payı,bant,0.4000,0.2941,False
+alt_bant_asim_pay,Low < alt bant mum payı,bant,0.1500,0.1765,False
+baglam_kirmizi_boy,bölge öncesi büyük kırmızı mumun boyu / bölge ortalama boyu,baglam,1.0377,1.0377,False
+baglam_kirmizi_govde,büyük kırmızı mumun gövdesi / bölge ortalama boyu,baglam,1.0377,1.0377,False
+baglam_dusus,bağlam en yüksek High'dan bölge en düşük Low'a düşüş / bölge ortalama boyu,baglam,1.9811,1.9811,False

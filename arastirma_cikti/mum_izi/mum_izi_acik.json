@@ -1,0 +1,86 @@
+{
+ "zaman": "2026-11-25T09:34:48Z",
+ "kesik": "2022-12-31",
+ "veri_bas": "2015-01-01",
+ "ABD": {
+  "kaynak": "/root/.kasa/ham/veri3/V_ABD2.pkl",
+  "kaynak_sha": "cd91b9991d3680157394144b95c4461cfcf2b57aa8843a8b5000655ff1dd8786",
+  "kaynak_sembol": 5394,
+  "yazilan": 4450,
+  "sembol": 5394,
+  "bos": 944,
+  "sha": "81899ab74c2fe7bd8546c54e1e1ae9b1cfd93646953d216c41f57709c3537a60",
+  "ilk": "2015-01-02",
+  "son": "2022-12-30",
+  "yil_sembol": {
+   "2015": 2939,
+   "2016": 3034,
+   "2017": 3180,
+   "2018": 3373,
+   "2019": 3544,
+   "2020": 3815,
+   "2021": 4296,
+   "2022": 4450
+  }
+ },
+ "havuz": {
+  "hisse": 300,
+  "aday": 1853,
+  "bar": 699480,
+  "sha": "8dc22a9eb5148d94d0ab09a467b88c5e7dd04fd64b14e30f6510d3a5e477fb5f",
+  "donem": [
+   "2005-01-01",
+   "2014-12-31"
+  ]
+ },
+ "AVR": {
+  "kaynak": "/root/.kasa/ham/veri3/V_AVR2.pkl",
+  "kaynak_sha": "817f6536a885c288e5462301dee93597e2d0a8a37fa859e94911f57ca157a04a",
+  "kaynak_sembol": 578,
+  "yazilan": 572,
+  "sembol": 578,
+  "bos": 6,
+  "sha": "45cfdd5e0d24a9601b5d278c0479b2a5e9f0b39d5f4a7c92fd648358305ad7a0",
+  "ilk": "2015-01-01",
+  "son": "2022-12-30",
+  "yil_sembol": {
+   "2015": 505,
+   "2016": 515,
+   "2017": 524,
+   "2018": 536,
+   "2019": 546,
+   "2020": 550,
+   "2021": 569,
+   "2022": 571
+  }
+ },
+ "BIST": {
+  "kaynak": "/tmp/veri/V_BIST.pkl",
+  "kaynak_sha": "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+  "kaynak_sembol": 581,
+  "yazilan": 475,
+  "sembol": 581,
+  "bos": 106,
+  "sha": "08b6228ddc3ecdc34e6f86c0c9fae46015ca7e8a9730b7eab403285c83bba950",
+  "ilk": "2015-06-01",
+  "son": "2022-12-30",
+  "yil_sembol": {
+   "2015": 358,
+   "2016": 360,
+   "2017": 363,
+   "2018": 373,
+   "2019": 378,
+   "2020": 387,
+   "2021": 439,
+   "2022": 475
+  }
+ },
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/mum_izi/acik/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_BIST.pkl": "2022-12-30"
+  }
+ }
+}
