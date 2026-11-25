@@ -1,0 +1,395 @@
+{
+ "surum": "UC_IZ2 v1.0 (2026-11-25): R (KT10) + B (8-K 2.02 tepkisi) + İ (Form 4 A1) bilanço olayında; ABD 2016-22; R15 + R60 karar",
+ "form4": {
+  "zaman": "2026-11-25T08:19:55Z",
+  "ceyrek": 29,
+  "zip": {
+   "2015q4_form345.zip": {
+    "mb": 9.38,
+    "sha256": "a31dc71e838e9b81e77ff6d528af3be0f1a39b7fcfe0c2486a89dd0a369910fa"
+   },
+   "2016q1_form345.zip": {
+    "mb": 13.63,
+    "sha256": "5b3bd7e2bcc3c8468c3b6d3bcb1f8ca77596ca4ea7ccf696682e84d98a6bdc0b"
+   },
+   "2016q2_form345.zip": {
+    "mb": 10.39,
+    "sha256": "b99ffbceff8e31d49c6a01bc475ec8c7105c2895632b9eb3d72066db94c252a7"
+   },
+   "2016q3_form345.zip": {
+    "mb": 8.7,
+    "sha256": "5a25d3c6cb874875904b2be0059bb4784e4da28b315af30b15568fd250bd0dde"
+   },
+   "2016q4_form345.zip": {
+    "mb": 9.11,
+    "sha256": "3fd9daf61e256a9463958dc57f90eb9885c9d9f00e98a2d437346d78991252bd"
+   },
+   "2017q1_form345.zip": {
+    "mb": 14.21,
+    "sha256": "e3c135d06aeb13ccb7554e4b89cd4ade40faf9d0d39c8c6a7010b3f3260e5371"
+   },
+   "2017q2_form345.zip": {
+    "mb": 10.63,
+    "sha256": "071c75391305e5e5f01db18fd5c954da3800164a15fdad8b1161098fecd63786"
+   },
+   "2017q3_form345.zip": {
+    "mb": 7.97,
+    "sha256": "ca64bbc6a5a728c80e9532d91028b5a19bd8f8f8d179344e30e9eb361bb1bd18"
+   },
+   "2017q4_form345.zip": {
+    "mb": 9.04,
+    "sha256": "d529e3ebe7d1f4f022580eabb703b25ef66b42199dbb8adfe06e988d99bca06d"
+   },
+   "2018q1_form345.zip": {
+    "mb": 13.94,
+    "sha256": "8541f5c8a975ec99bf21964a77593775e02f55200a7fdf4c0711a7c858a9e2fb"
+   },
+   "2018q2_form345.zip": {
+    "mb": 10.76,
+    "sha256": "3e0942f34eae067a676b4482e927297216d8adc7449ac27ea8860f643724d05b"
+   },
+   "2018q3_form345.zip": {
+    "mb": 8.49,
+    "sha256": "c5c7e1f946b80dd2419356974a717d1e92b875436f7dad4b6b8e2094f867682e"
+   },
+   "2018q4_form345.zip": {
+    "mb": 9.23,
+    "sha256": "03dd59b0da4e10e98425a0961d04126707b127b8b8f33e13092b80deed087a9f"
+   },
+   "2019q1_form345.zip": {
+    "mb": 13.75,
+    "sha256": "3206a941a818d1210857277b8dff86900df8aa00e10902bfa2fa8879b1011a5d"
+   },
+   "2019q2_form345.zip": {
+    "mb": 10.59,
+    "sha256": "0d6d5fb5cc922dee8ca7451156a44ba76c5e1db65b02bb6473fe16354087c308"
+   },
+   "2019q3_form345.zip": {
+    "mb": 8.19,
+    "sha256": "d3ae11e56f9ec064e95b074e808bd08c19a7a1320fcfd146708bc80543a963bd"
+   },
+   "2019q4_form345.zip": {
+    "mb": 8.42,
+    "sha256": "df28aa75bf703f0c202c59d94046e84e8e082a97a49965a4b66149d3184e540c"
+   },
+   "2020q1_form345.zip": {
+    "mb": 13.89,
+    "sha256": "3c3bc3fefa4dbe32cb68f052ac4ea32cae16099bb2b104a0bd8d242465e004a8"
+   },
+   "2020q2_form345.zip": {
+    "mb": 10.24,
+    "sha256": "665be773d41b30fae10f4dea03096a0e33a7557b0acbb3fab9f1cd5796ee2b22"
+   },
+   "2020q3_form345.zip": {
+    "mb": 8.77,
+    "sha256": "5b89d93d94b70a649355bd47ec5a68a0450e40cc12f082b2817079589aa541b1"
+   },
+   "2020q4_form345.zip": {
+    "mb": 10.16,
+    "sha256": "0abb3ec65cb2ef4ef15d0e3f4c7ba782a2801b9998d32b5b36c3f44cc4130af3"
+   },
+   "2021q1_form345.zip": {
+    "mb": 15.89,
+    "sha256": "3ea90731d424e9b0324f00a6bab1ad603cc9419d9366025f7d7120fffc2a73c5"
+   },
+   "2021q2_form345.zip": {
+    "mb": 12.49,
+    "sha256": "7277d43d94cda0fdb83d7e6f4d9021a3baa2d886a963c0cd97b65e6875aec3b6"
+   },
+   "2021q3_form345.zip": {
+    "mb": 10.2,
+    "sha256": "8323d1ceb62ebbdc27da242533501f8abea7ef9703bc374dc28cef7379aa0070"
+   },
+   "2021q4_form345.zip": {
+    "mb": 10.82,
+    "sha256": "cd630b3ba9402d578b9ec88d637f022248f1452476de9066b4813823200e3fca"
+   },
+   "2022q1_form345.zip": {
+    "mb": 14.25,
+    "sha256": "bc733530b3360ec59b624041043a4b50619feba4cd8a13aea441d171d6d2c2c5"
+   },
+   "2022q2_form345.zip": {
+    "mb": 10.6,
+    "sha256": "fc091183d24d25283826e7e11e0318a8027995a9d77ea8bc4667589eb2b4d8f5"
+   },
+   "2022q3_form345.zip": {
+    "mb": 8.02,
+    "sha256": "846c1115906b1c45dd8761da076a32ea0cb9f8995dae76f81d0cd93b7e05b032"
+   },
+   "2022q4_form345.zip": {
+    "mb": 8.4,
+    "sha256": "6c6a909bd2eaaa0a24ccf5f0071b404670c115845d2939bc592bf3ce420dcdb9"
+   }
+  },
+  "a1_satir": 84054,
+  "a1_ilk": "2015-10-01",
+  "a1_son": "2022-12-30",
+  "a1_ihracci": 6502,
+  "a1_ihracci_cik_yok": 0,
+  "a1_yil": {
+   "2015": 3618,
+   "2016": 11502,
+   "2017": 9730,
+   "2018": 12320,
+   "2019": 11155,
+   "2020": 13207,
+   "2021": 10223,
+   "2022": 12299
+  },
+  "a1_pkl_sha": "2a1caf97020aac894ef7f1115c77c7942149ca7d837b1139ddf54c9f483bb0bd",
+  "saglama_k30_2022": {
+   "yeni_2022": 2119,
+   "k30_2022": 2119,
+   "ortak": 2119,
+   "yalniz_yeni": 0,
+   "yalniz_k30": 0,
+   "ornek5": [
+    {
+     "acc": "0000899243-22-028710",
+     "sembol": "CRGY",
+     "D": "2022-08-15",
+     "deger_yeni": 99807.1,
+     "deger_k30": 99807.1,
+     "rol": "Officer",
+     "esit": {
+      "sembol": true,
+      "D": true,
+      "cik": true,
+      "rol": true,
+      "deger": true
+     },
+     "tumu": true
+    },
+    {
+     "acc": "0001567619-22-018931",
+     "sembol": "TROX",
+     "D": "2022-10-31",
+     "deger_yeni": 47560.0,
+     "deger_k30": 47560.0,
+     "rol": "Officer",
+     "esit": {
+      "sembol": true,
+      "D": true,
+      "cik": true,
+      "rol": true,
+      "deger": true
+     },
+     "tumu": true
+    },
+    {
+     "acc": "0001104659-22-032483",
+     "sembol": "YEXT",
+     "D": "2022-03-10",
+     "deger_yeni": 20195.0,
+     "deger_k30": 20195.0,
+     "rol": "Director",
+     "esit": {
+      "sembol": true,
+      "D": true,
+      "cik": true,
+      "rol": true,
+      "deger": true
+     },
+     "tumu": true
+    },
+    {
+     "acc": "0001062993-22-002063",
+     "sembol": "MSFT",
+     "D": "2022-02-01",
+     "deger_yeni": 1000764.0,
+     "deger_k30": 1000764.0,
+     "rol": "Director",
+     "esit": {
+      "sembol": true,
+      "D": true,
+      "cik": true,
+      "rol": true,
+      "deger": true
+     },
+     "tumu": true
+    },
+    {
+     "acc": "0000899243-22-028092",
+     "sembol": "ECVT",
+     "D": "2022-08-09",
+     "deger_yeni": 364784.31,
+     "deger_k30": 364784.31,
+     "rol": "Director",
+     "esit": {
+      "sembol": true,
+      "D": true,
+      "cik": true,
+      "rol": true,
+      "deger": true
+     },
+     "tumu": true
+    }
+   ],
+   "tuttu": true
+  },
+  "istek": {
+   "istek": 29,
+   "yeniden": 0,
+   "404": 0
+  },
+  "sure_sn": 36
+ },
+ "acik_kopya": {
+  "zaman": "2026-11-25T08:28:41Z",
+  "ABD": {
+   "kaynak_sha": "cd91b9991d3680157394144b95c4461cfcf2b57aa8843a8b5000655ff1dd8786",
+   "kaynak_sembol": 5394,
+   "tam": {
+    "sembol": 5394,
+    "bos": 944,
+    "atilan_satir": 4798676,
+    "yazilan": 4450,
+    "sha": "e58016325f30243e45b41444b92b5aa260c5f9b3c95fec93518f95e37aebf119",
+    "ilk": "2000-01-03",
+    "son": "2022-12-30"
+   },
+   "acik": {
+    "sembol": 5394,
+    "bos": 944,
+    "atilan_satir": 4798676,
+    "yazilan": 4450,
+    "sha": "99e2fa9267058cc4ca1ad535b4b7456cd75ac56f62934bf16a974f93171fe5d0",
+    "ilk": "2012-01-03",
+    "son": "2022-12-30"
+   }
+  },
+  "AVR": {
+   "kaynak_sha": "817f6536a885c288e5462301dee93597e2d0a8a37fa859e94911f57ca157a04a",
+   "kaynak_sembol": 578,
+   "tam": {
+    "sembol": 578,
+    "bos": 6,
+    "atilan_satir": 566733,
+    "yazilan": 572,
+    "sha": "56cb4220f1a2cdaa9091fcb6c14f74a8d9d28b029132bac0a1096af05262a89c",
+    "ilk": "2000-01-03",
+    "son": "2022-12-30"
+   }
+  },
+  "kapi_tam": {
+   "kesik": "2022-12-31",
+   "dosya": {
+    "/tmp/uc_iz2/acik_tam/V_ABD.pkl": "2022-12-30",
+    "/tmp/uc_iz2/acik_tam/V_AVR.pkl": "2022-12-30"
+   }
+  },
+  "kapi_acik": {
+   "kesik": "2022-12-31",
+   "dosya": {
+    "/tmp/uc_iz2/acik/V_ABD.pkl": "2022-12-30"
+   }
+  }
+ },
+ "t2_dogrulama": {
+  "zaman": "2026-11-25T08:32:46Z",
+  "kapi": {
+   "kesik": "2022-12-31",
+   "dosya": {
+    "/tmp/uc_iz2/acik_tam/V_ABD.pkl": "2022-12-30",
+    "/tmp/uc_iz2/acik_tam/V_AVR.pkl": "2022-12-30"
+   }
+  },
+  "veri_not": {
+   "ABD": {
+    "hisse": 4441,
+    "en_gec": "2022-12-30",
+    "kesit_satir": 658831
+   },
+   "AVR": {
+    "hisse": 572,
+    "en_gec": "2022-12-30",
+    "kesit_satir": 114839
+   }
+  },
+  "secilen": "P1",
+  "orijinal_secilen": "P1",
+  "yol": "tam: bütün ana hükümler DOĞRU olanlar arasında en geniş",
+  "tablo": {
+   "P1": {
+    "dogru": 21,
+    "n": 21,
+    "dusen": [],
+    "orijinal_dogru": 21,
+    "orijinal_dusen": []
+   },
+   "P2": {
+    "dogru": 20,
+    "n": 21,
+    "dusen": [
+     [
+      "A1",
+      "d1",
+      "KISMEN",
+      0.8969495969123314,
+      0.9166666666666666
+     ]
+    ],
+    "orijinal_dogru": 20,
+    "orijinal_dusen": [
+     [
+      "A1",
+      "d1",
+      "KISMEN"
+     ]
+    ]
+   },
+   "P3": {
+    "dogru": 20,
+    "n": 21,
+    "dusen": [
+     [
+      "A1",
+      "d1",
+      "KISMEN",
+      0.8961932624360842,
+      0.9166666666666666
+     ]
+    ],
+    "orijinal_dogru": 20,
+    "orijinal_dusen": [
+     [
+      "A1",
+      "d1",
+      "KISMEN"
+     ]
+    ]
+   }
+  },
+  "kural": "seçim kuralıyla seçilen havuz 21 / 21 DOĞRU ve orijinal seçimle aynı (orijinal: P1 21 / 21, P2 20 / 21 A1 d1 KISMEN)",
+  "gecti": true,
+  "ref_en_gec": "2023-12"
+ },
+ "k8": {
+  "zaman": "2026-11-25T08:38:02Z",
+  "sembol_kaynak": "evren2_ABD_ham",
+  "sembol": 5649,
+  "sembol_cik_eslesen": 5628,
+  "sembol_eslenmeyen": 21,
+  "cik": 5580,
+  "ct_kaynak": "sec_bugun",
+  "indirme": {
+   "cik": 5580,
+   "var": 0,
+   "indirildi": 5580,
+   "yok_404": 0,
+   "ek_sayfa": 936
+  },
+  "cik_dosya_yok_ya_da_404": 0,
+  "sirket_bilgi": 5580,
+  "k8_202_satir": 188048,
+  "k8_202_8K": 186496,
+  "k8_202_8KA": 1552,
+  "k8_pkl_sha": "0dfb9ecea437c2ad1559afea04964fedaa34bbdc657a06f329f236a777e12158",
+  "istek": {
+   "istek": 6517,
+   "yeniden": 0,
+   "404": 0
+  },
+  "sure_sn": 1086
+ }
+}
