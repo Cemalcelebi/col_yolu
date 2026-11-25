@@ -1693,6 +1693,32 @@ def mi_kos(acik: Optional[str] = None, cikti: Optional[str] = None, kuru: bool =
     return J
 
 
+def mi_konum_taban(acik: Optional[str] = None, cikti: Optional[str] = None) -> Dict[str, Any]:
+    """EK BİLGİ (ön kayıtta yoktu; kos'tan sonra eklendi, SAPMA 2): taranan bütün pencere sonu günlerinde (2016-22, tam şablonun en kısa
+    penceresi tanımlı) TEPE / DİP / ORTA / KISA payı = konum payının rastgele gün tabanı. Hüküm yok."""
+    acik = acik or MI_YOL["acik"]; cikti = cikti or MI_YOL["cikti"]
+    G = MI_ESIK["gercek"]; n = int(G["konum_bar"]); q = float(G["konum_pay"]); bas, son = G["tarama"]
+    e0 = int(MI_ESIK["benzerlik"]["bant"]["n"]) - 1 + min(int(round(20 * f)) for f in MI_ESIK["sablon"]["esneme"]) - 1
+    out: Dict[str, Any] = {"tanim": mi_konum_taban.__doc__}
+    for pz in G["pazar_karar"] + G["pazar_bilgi"]:
+        Vd = mi_veri(pz, acik); say = {"TEPE": 0, "DIP": 0, "ORTA": 0, "KISA": 0}
+        for d in Vd["V"].values():
+            if len(d) < 40:
+                continue
+            C = d.Close.to_numpy(float); ix = d.index
+            e = np.flatnonzero((ix >= pd.Timestamp(bas)) & (ix <= pd.Timestamp(son))); e = e[e >= e0]
+            if not len(e):
+                continue
+            mx = pd.Series(C).rolling(n, min_periods=n).max().to_numpy()[e]; mn = pd.Series(C).rolling(n, min_periods=n).min().to_numpy()[e]
+            ce = C[e]; ks = ~np.isfinite(mx); tp = ~ks & (ce >= (1 - q) * mx); dp = ~ks & ~tp & (ce <= (1 + q) * mn)
+            say["TEPE"] += int(tp.sum()); say["DIP"] += int(dp.sum()); say["KISA"] += int(ks.sum()); say["ORTA"] += int((~ks & ~tp & ~dp).sum())
+        tot = sum(say.values())
+        out[pz] = {**say, "n": tot, **{f"{k.lower()}_pay": v / max(tot, 1) for k, v in say.items()}}
+        del Vd; gc.collect()
+    _mi_jyaz(os.path.join(cikti, "mum_izi_konum_taban.json"), out, "konum tabanı")
+    return out
+
+
 # ================================================================ 6) KURU KOŞU (sentetik panel; kapı yok)
 def mi_kuru_veri(klasor: str, n_hisse: int = 80, tohum: int = 2517, ayar: Optional[str] = None) -> str:
     """Sentetik ABD / AVR / BIST pkl'leri (2015-01-01..2022-12-30 iş günleri), içine şablon gömülmüş; yalnız kod hattı sınaması."""
@@ -1905,7 +1931,8 @@ def mi_gorsel(cikti: Optional[str] = None, acik: Optional[str] = None, kuru: boo
                     fk = f"{100 * r.fark:+.1f}" if hasattr(r, "fark") and pd.notna(r.fark) else "-"
                     h5 = getattr(r, "h5", np.nan)
                     h5s = "-" if not (isinstance(h5, (int, float)) and np.isfinite(h5)) else ("evet" if h5 >= 0.5 else "hayır")
-                    mi_olay_ciz(axs[k], d, r, f"{ad} | {tur} | {r.pazar} {r.sembol} {r.tarih} | S {r.S:.2f}, {r.m} mum | {r.konum} | R15 {r15}, eşli {fk} puan | +%5 stop öncesi: {h5s}")
+                    mi_olay_ciz(axs[k], d, r, f"{ad} | {tur} | {r.pazar} {r.sembol} {r.tarih} | S {r.S:.2f}, {r.m} mum | {r.konum}\n"
+                                              f"R15 {r15}, eşli {fk} puan | +%5 stop öncesi: {h5s}")
                 for k in range(len(liste[i0:i0 + 4]), 4):
                     axs[k].axis("off")
                 fig.suptitle(f"EŞLEŞMELER ({ad}): turuncu = pencere, sağı sonraki 15 mum; yeşil kesik = giriş +%5, kırmızı kesik = stop (pencere dibi x 0,98)",
@@ -1986,7 +2013,7 @@ _cakisma_kontrol_mi()
 def _mi_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="MUM_IZI: Cemal'in mum bölgesi parmak izi")
-    ap.add_argument("komut", choices=["sayisallastir", "acik", "sentetik", "kuru", "onkayit", "kos", "gorsel", "rapor", "sha"])
+    ap.add_argument("komut", choices=["sayisallastir", "acik", "sentetik", "kuru", "onkayit", "kos", "gorsel", "rapor", "sha", "konum_taban"])
     ap.add_argument("--tohum", type=int, default=None)
     ap.add_argument("--plasebo_tohum", type=int, default=None)
     a = ap.parse_args(argv)
@@ -2019,6 +2046,8 @@ def _mi_ana(argv: Optional[List[str]] = None) -> int:
             print(mi_gorsel())
         elif a.komut == "rapor":
             print(mi_rapor())
+        elif a.komut == "konum_taban":
+            print(json.dumps(_mi_json(mi_konum_taban()), ensure_ascii=False)[:3000])
     except MIHata as ex:
         milog.error("DURDU: %s", ex)
         return 2

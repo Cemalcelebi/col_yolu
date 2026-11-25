@@ -1,0 +1,36 @@
+{
+ "tanim": "EK BİLGİ (ön kayıtta yoktu; kos'tan sonra eklendi, SAPMA 2): taranan bütün pencere sonu günlerinde (2016-22, tam şablonun en kısa\npenceresi tanımlı) TEPE / DİP / ORTA / KISA payı = konum payının rastgele gün tabanı. Hüküm yok.",
+ "ABD": {
+  "TEPE": 1129545,
+  "DIP": 611730,
+  "ORTA": 4034510,
+  "KISA": 136352,
+  "n": 5912137,
+  "tepe_pay": 0.1910552817027075,
+  "dip_pay": 0.10347020036917277,
+  "orta_pay": 0.6824114529145722,
+  "kisa_pay": 0.023063065013547556
+ },
+ "AVR": {
+  "TEPE": 258452,
+  "DIP": 107314,
+  "ORTA": 572199,
+  "KISA": 6097,
+  "n": 944062,
+  "tepe_pay": 0.27376591791640803,
+  "dip_pay": 0.113672618959348,
+  "orta_pay": 0.6061032008490967,
+  "kisa_pay": 0.006458262275147183
+ },
+ "BIST": {
+  "TEPE": 103380,
+  "DIP": 58197,
+  "ORTA": 480898,
+  "KISA": 12021,
+  "n": 654496,
+  "tepe_pay": 0.1579536009387376,
+  "dip_pay": 0.08891880164279078,
+  "orta_pay": 0.7347607930376961,
+  "kisa_pay": 0.018366804380775436
+ }
+}
