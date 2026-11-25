@@ -665,12 +665,14 @@ def mh_pdf(cikti: Optional[str] = None, klasor: Optional[str] = None) -> str:
         ks = [k for k, c in J["hucre"].items() if c.get("n", 0) >= 30]
         ayr = [k for k in ks if str(J["hucre"][k].get("hukum", "")).startswith("TUTAR") and J["bh"].get(k)]
         fk = [J["hucre"][k]["fark"] for k in ks if J["hucre"][k].get("fark") is not None]
-        cumle = (f"OKUMA: n >= 30 olan {len(ks)} hücrenin {len(ayr)}'inde olay eşinden ayrıştı (c2 TUTAR + BH); eşli fark {100 * min(fk):+.1f} .. "
-                 f"{100 * max(fk):+.1f} puan." if fk else "OKUMA: n >= 30 hücre yok.")
+        ay_a = sum(1 for k in ayr if J["hucre"][k].get("yon") == "-"); ay_y = len(ayr) - ay_a
+        cumle = (f"OKUMA: n >= 30 olan {len(ks)} hücrenin {len(ayr)}'inde olay eşinden ayrıştı (c2 TUTAR + BH): {ay_a} hücrede AŞAĞI (olay eşinden "
+                 f"kötü), {ay_y} hücrede YUKARI; eşli fark {100 * min(fk):+.1f} .. {100 * max(fk):+.1f} puan." if fk else "OKUMA: n >= 30 hücre yok.")
         fig.text(0.04, 0.975, "HAFTALIK MUMDA AYNI KALIP: kaç bölge bulundu, sonra ne oldu?", fontsize=11, weight="bold", va="top")
         fig.text(0.04, 0.95, "Bulunan bölge (tam şablon, eşik; evren içi): " + bul, fontsize=7, va="top", wrap=True)
+        import textwrap
         fig.text(0.04, 0.905, "eş = aynı gün aynı kovadaki öteki hisseler; +%10 / +%20 = stop'tan önce dokunma; stop = bölge dibi x 0,98; ufuk 15 haftalık mum.\n"
-                 + cumle, fontsize=7.5, va="top")
+                 + textwrap.fill(cumle, 140), fontsize=7.5, va="top")
         pdf.savefig(fig); plt.close(fig)
         fig = plt.figure(figsize=(8.3, 11.7))
         a1 = fig.add_axes([0.02, 0.35, 0.47, 0.6]); a1.imshow(Image.open(MI.MI_YOL["goruntu"])); a1.axis("off"); a1.set_title("Cemal'in grafiği (4 saatlik)", fontsize=8)
@@ -679,7 +681,10 @@ def mh_pdf(cikti: Optional[str] = None, klasor: Optional[str] = None) -> str:
                  "Aynı şablon ve aynı eşik HAFTALIK mumlara uygulandı (tam S >= 0,59; TAM UYAN S >= 0,69).", fontsize=8)
         pdf.savefig(fig); plt.close(fig)
         G = MH_ESIK["pdf"]
-        for r in S.itertuples():
+        # EK (SAPMA, kos'tan sonra eklendi): TAM UYAN bölgeleri (tam şablon, TAM_UYAN listesi, evren içi), yalnız S'ye göre, hisse başına bir, 12
+        S2 = O[(O.sablon == "tam") & (O.seviye == "TAM_UYAN") & O.evren_ici.astype(bool)].sort_values("S", ascending=False).drop_duplicates("sembol").head(12).copy()
+        S2["grup"] = "EK: TAM UYAN (ön kayıtta yoktu; yalnız S'ye göre)"
+        for r in pd.concat([S, S2]).itertuples():
             if r.pazar not in Vc:
                 Vc[r.pazar] = MI.mi_veri(r.pazar, kl)["V"]
             W = mh_haftalik(Vc[r.pazar][r.sembol], MH_KESIK)
@@ -701,7 +706,7 @@ def mh_pdf(cikti: Optional[str] = None, klasor: Optional[str] = None) -> str:
             eksik = "" if i1 - (t + 1) >= G["sonra"] else f" (sonra yalnız {i1 - t - 1} hafta: veri kesiği)"
             ax.set_title(f"{r.pazar} {r.sembol} | bölge {r.bolge_bas} .. {r.tarih} ({int(r.m)} hafta) | {r.sablon}, S {r.S:.2f}"
                          f"{' TAM UYAN' if r.tam_uyan else ''}", fontsize=9)
-            fig.text(0.08, 0.32, f"Seçim: {r.grup} (yalnız S'ye göre; ön kayıtlı)\n"
+            fig.text(0.08, 0.32, f"Seçim: {r.grup}{'' if str(r.grup).startswith('EK') else ' (yalnız S ye göre; ön kayıtlı)'}\n"
                      f"Sonraki 15 hafta: getiri {fmt(r.R15h)} | aynı gün aynı kovadaki eşlerin ortalaması {fmt(getattr(r, 'es_R15h', np.nan))}\n"
                      f"En yüksek {fmt(r.max15)}, en derin {fmt(r.min15)} | +%10 {('evet' if r.d10 == 1 else 'hayır') if pd.notna(r.d10) else '-'}, "
                      f"+%20 {('evet' if r.d20 == 1 else 'hayır') if pd.notna(r.d20) else '-'}, stop {('evet' if r.stop15 == 1 else 'hayır') if pd.notna(r.stop15) else '-'}\n"
