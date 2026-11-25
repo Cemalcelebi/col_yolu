@@ -1,0 +1,48 @@
+{
+ "ref": {
+  "k": 10,
+  "m": 20,
+  "govde_med": 0.13052620183758523,
+  "govde_max": 0.45029015832391184,
+  "ortusme": 0.7022695344305183
+ },
+ "k": 10,
+ "VAR": true,
+ "PUAN4": 0.5,
+ "E1": true,
+ "E2": true,
+ "E3": true,
+ "E4": true,
+ "p_E1": 0.6866005239387593,
+ "p_E2": 0.9999999999999999,
+ "p_E3": 0.625,
+ "p_E4": 0.5,
+ "deger": {
+  "E1_bC_ort": -0.41196031436325553,
+  "E1_degisim": 6.0,
+  "E2_yesil": 0.7890791431569915,
+  "E2_onceki": -0.10907461675903234,
+  "E2_ust_pay": 1.0,
+  "E3_icerden": 1.0,
+  "E3_govde_med": 1.0,
+  "E3_govde_max": 1.0,
+  "E3_spearman": 0.7,
+  "E3_son_bC": 0.9047922566947657,
+  "E3_ortusme": 1.0,
+  "E4_pay": 0.5
+ },
+ "alt_gecti": {
+  "E1_bC_ort": true,
+  "E1_degisim": true,
+  "E2_yesil": true,
+  "E2_onceki": true,
+  "E2_ust_pay": true,
+  "E3_icerden": true,
+  "E3_govde_med": true,
+  "E3_govde_max": true,
+  "E3_spearman": true,
+  "E3_son_bC": true,
+  "E3_ortusme": true,
+  "E4_pay": true
+ }
+}
