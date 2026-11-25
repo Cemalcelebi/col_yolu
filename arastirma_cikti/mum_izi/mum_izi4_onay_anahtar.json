@@ -1,0 +1,221 @@
+{
+ "not": "sayfa -> hisse / tarih; PDF'e girmez",
+ "sayfalar": [
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "IZINV",
+   "tarih": "2019-09-11",
+   "m": 16,
+   "S": 0.6327469042552215,
+   "sayfa": 3
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "AVR",
+   "sembol": "RS1.L",
+   "tarih": "2020-08-14",
+   "m": 22,
+   "S": 0.6038961908997202,
+   "sayfa": 4
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "RYGYO",
+   "tarih": "2021-11-01",
+   "m": 22,
+   "S": 0.6241085062709163,
+   "sayfa": 5
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "TMPOL",
+   "tarih": "2019-08-01",
+   "m": 18,
+   "S": 0.6884272661257255,
+   "sayfa": 6
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "SRI",
+   "tarih": "2008-04-04",
+   "m": 22,
+   "S": 0.5949127687393653,
+   "sayfa": 7
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "AETR",
+   "tarih": "2020-07-31",
+   "m": 20,
+   "S": 0.5992385624177441,
+   "sayfa": 8
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "BIST",
+   "sembol": "TUCLK",
+   "tarih": "2019-08-29",
+   "m": 16,
+   "S": 0.6892581466317433,
+   "sayfa": 9
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "PCILT",
+   "tarih": "2022-03-23",
+   "m": 16,
+   "S": 0.6040274991696702,
+   "sayfa": 10
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "CNP",
+   "tarih": "2020-09-04",
+   "m": 22,
+   "S": 0.6283308088504622,
+   "sayfa": 11
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "BNTAS",
+   "tarih": "2018-09-12",
+   "m": 18,
+   "S": 0.6093649404437389,
+   "sayfa": 12
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "STAA",
+   "tarih": "2015-05-15",
+   "m": 16,
+   "S": 0.6176003791988167,
+   "sayfa": 13
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "SARKY",
+   "tarih": "2016-01-06",
+   "m": 18,
+   "S": 0.6438104494378232,
+   "sayfa": 14
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "BIST",
+   "sembol": "VAKFN",
+   "tarih": "2019-01-11",
+   "m": 16,
+   "S": 0.6491778243451125,
+   "sayfa": 15
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "ATNI",
+   "tarih": "2016-12-09",
+   "m": 16,
+   "S": 0.607753071396527,
+   "sayfa": 16
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "DESPC",
+   "tarih": "2017-10-20",
+   "m": 22,
+   "S": 0.5908449140521236,
+   "sayfa": 17
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "ABD",
+   "sembol": "CMC",
+   "tarih": "2020-07-02",
+   "m": 16,
+   "S": 0.6218074177507691,
+   "sayfa": 18
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "BIST",
+   "sembol": "AKMGY",
+   "tarih": "2016-11-18",
+   "m": 18,
+   "S": 0.6770141898255354,
+   "sayfa": 19
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "ZOREN",
+   "tarih": "2022-03-24",
+   "m": 20,
+   "S": 0.6281073602122718,
+   "sayfa": 20
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "BIST",
+   "sembol": "TSPOR",
+   "tarih": "2017-05-30",
+   "m": 16,
+   "S": 0.6239325196379454,
+   "sayfa": 21
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "ABD",
+   "sembol": "BBSI",
+   "tarih": "2016-03-03",
+   "m": 18,
+   "S": 0.6033501793188156,
+   "sayfa": 22
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "ABD",
+   "sembol": "BFRI",
+   "tarih": "2022-04-07",
+   "m": 22,
+   "S": 0.6389315489303937,
+   "sayfa": 23
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "AVR",
+   "sembol": "BNZL.L",
+   "tarih": "2006-11-10",
+   "m": 24,
+   "S": 0.6759728004011353,
+   "sayfa": 24
+  },
+  {
+   "zaman": "gunluk",
+   "pazar": "ABD",
+   "sembol": "SY",
+   "tarih": "2021-11-19",
+   "m": 16,
+   "S": 0.6699319786253948,
+   "sayfa": 25
+  },
+  {
+   "zaman": "haftalik",
+   "pazar": "BIST",
+   "sembol": "KLNMA",
+   "tarih": "2020-07-30",
+   "m": 22,
+   "S": 0.592088569117257,
+   "sayfa": 26
+  }
+ ]
+}
