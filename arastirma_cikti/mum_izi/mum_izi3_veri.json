@@ -1,0 +1,68 @@
+{
+ "zaman": "2026-11-25T10:24:09Z",
+ "ABD": {
+  "kaynak": "/root/.kasa/ham/veri3/V_ABD2.pkl",
+  "kaynak_sha": "cd91b9991d3680157394144b95c4461cfcf2b57aa8843a8b5000655ff1dd8786",
+  "tam": {
+   "sembol": 5394,
+   "bos": 944,
+   "yazilan": 4450,
+   "sha": "6e109322b2f0f9e08ca3f8e3ac6b1f054ae49061d15424026adc0ecf22e3f2c3",
+   "ilk": "2000-01-03",
+   "son": "2022-12-30"
+  },
+  "p1": {
+   "sembol": 4450,
+   "bos": 1416,
+   "yazilan": 3034,
+   "sha": "72a1207a57cd4205aa6891b479c107fc49db8c18b46192a65a29eda03766992b",
+   "son": "2016-12-30"
+  }
+ },
+ "AVR": {
+  "kaynak": "/root/.kasa/ham/veri3/V_AVR2.pkl",
+  "kaynak_sha": "817f6536a885c288e5462301dee93597e2d0a8a37fa859e94911f57ca157a04a",
+  "tam": {
+   "sembol": 578,
+   "bos": 6,
+   "yazilan": 572,
+   "sha": "1e290e182e0ab99a2c07d21c07a8b2a86a3748a035b4f513ed7acadd580dab51",
+   "ilk": "2000-01-03",
+   "son": "2022-12-30"
+  },
+  "p1": {
+   "sembol": 572,
+   "bos": 57,
+   "yazilan": 515,
+   "sha": "12d069f689ff65ed4b684638bb74bb10d20b2a485f7441046dc6faf9ee000602",
+   "son": "2016-12-30"
+  }
+ },
+ "BIST": {
+  "kaynak": "/tmp/veri/V_BIST.pkl",
+  "kaynak_sha": "bbd09faa33fc5d1350c72fdfd038962e8079f950b5ae6eddc19c1efa881b1f51",
+  "tam": {
+   "sembol": 581,
+   "bos": 106,
+   "yazilan": 475,
+   "sha": "08b6228ddc3ecdc34e6f86c0c9fae46015ca7e8a9730b7eab403285c83bba950",
+   "ilk": "2015-06-01",
+   "son": "2022-12-30"
+  }
+ },
+ "p2": {
+  "ABD": "81899ab74c2fe7bd8546c54e1e1ae9b1cfd93646953d216c41f57709c3537a60",
+  "AVR": "45cfdd5e0d24a9601b5d278c0479b2a5e9f0b39d5f4a7c92fd648358305ad7a0",
+  "BIST": "08b6228ddc3ecdc34e6f86c0c9fae46015ca7e8a9730b7eab403285c83bba950"
+ },
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/mum_izi/haftalik/tam/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_ABD.pkl": "2016-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_AVR.pkl": "2016-12-30"
+  }
+ }
+}
