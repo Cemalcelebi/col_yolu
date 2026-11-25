@@ -1,0 +1,1353 @@
+{
+ "zaman": "2026-11-25T05:11:14Z",
+ "sha": {
+  "kod": "cf11efdb57c4c78bcf0b45dd41d9b14d321939d13fe429aa19138105ab6685a8",
+  "esik": "cead08e439b0bf74411630c73ed6dd96630112fe146bbedd91d0cbc3f75df7b9",
+  "MACD_UYUM.py": "a8b37d06e9d8efee749f5b30dd26932d081fcc6d02f468cf94acb71b68fffbd0",
+  "CETVEL2.py": "2c0fd9b9968515f1acea03da31cb550b9d7e0d837391139e1194da6eb39530e6",
+  "uyum_olay": "7b6720b895b0fa899f3e7a005025e2e85383e0ea03228d9e466dfb2e3fe9a29d",
+  "uyum_satir": "c8964b7bc42d19b42c27675f49fa7f5c893c18e90ad5dfd5ef636fdeb9c41df2",
+  "V_ABD": "e96a5728320e59ef51b340aa092e227a9f42ee457a41ae4ce460df7afece238b",
+  "V_AVR": "0c47dd662dcf90f49b3bcfac7f46d32519e655f1914737dec8738165564907c0",
+  "V_BIST": "d6e9466e3c4577d5f0b194f0c4df0d4a4e9227e0b72079561f3704eb8f66c529"
+ },
+ "kod_commit": "ffd448bc486a63464725be085f42d96000bc5685 2026-11-25T08:10:06+03:00",
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/veri/V_ABD.pkl": "2022-12-30",
+   "/tmp/veri/V_AVR.pkl": "2022-12-30",
+   "/tmp/veri/V_BIST.pkl": "2022-12-30"
+  },
+  "muhur_id": "f674b4ee291c2f35",
+  "acilan": []
+ },
+ "dogrulama": {
+  "ABD": {
+   "D1": {
+    "pazar": "ABD",
+    "olay_dosya": 4716,
+    "ham_uretim": 4716,
+    "ortak": 4716,
+    "yalniz_dosya": 0,
+    "yalniz_ham": 0,
+    "tuttu": true
+   },
+   "D2": {
+    "pazar": "ABD",
+    "n": 3266,
+    "olculen": 3210,
+    "bozuk": {},
+    "tuttu": true,
+    "satir_dosya": 3266
+   },
+   "D3": {
+    "pazar": "ABD",
+    "n": 30,
+    "kirli_K20": 15,
+    "tuttu": 30,
+    "cift": [
+     {
+      "sembol": "BYD",
+      "gun": "2022-06-28",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "NEO",
+      "gun": "2022-06-28",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "MIR",
+      "gun": "2021-10-15",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TEX",
+      "gun": "2022-03-07",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "CAKE",
+      "gun": "2022-01-20",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "MDB",
+      "gun": "2022-03-23",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SHAK",
+      "gun": "2021-12-29",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "COMP",
+      "gun": "2022-03-17",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "VIRT",
+      "gun": "2022-06-29",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "ARWR",
+      "gun": "2022-03-24",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "KTOS",
+      "gun": "2022-01-18",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "NKE",
+      "gun": "2022-06-29",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "ZION",
+      "gun": "2022-07-05",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "FSM",
+      "gun": "2022-02-10",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SHOO",
+      "gun": "2022-05-06",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "BKD",
+      "gun": "2016-01-19",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "CDNA",
+      "gun": "2019-11-25",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "JNJ",
+      "gun": "2019-01-04",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "CLOV",
+      "gun": "2022-07-01",
+      "K20": false,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "GLNG",
+      "gun": "2019-01-07",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "WDC",
+      "gun": "2019-01-02",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "COMP",
+      "gun": "2021-11-12",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "NXE",
+      "gun": "2022-05-09",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "PZZA",
+      "gun": "2022-05-05",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "PII",
+      "gun": "2018-04-30",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "STAG",
+      "gun": "2022-10-24",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "UPST",
+      "gun": "2022-10-24",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "CELH",
+      "gun": "2022-11-02",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "LKQ",
+      "gun": "2018-06-07",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "AMZN",
+      "gun": "2021-10-12",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     }
+    ]
+   },
+   "D4": {
+    "pazar": "ABD",
+    "olay": 20,
+    "karsilastirma": 40,
+    "tuttu": 40
+   }
+  },
+  "AVR": {
+   "D1": {
+    "pazar": "AVR",
+    "olay_dosya": 1798,
+    "ham_uretim": 1798,
+    "ortak": 1798,
+    "yalniz_dosya": 0,
+    "yalniz_ham": 0,
+    "tuttu": true
+   },
+   "D2": {
+    "pazar": "AVR",
+    "n": 1499,
+    "olculen": 1394,
+    "bozuk": {},
+    "tuttu": true,
+    "satir_dosya": 1499
+   },
+   "D3": {
+    "pazar": "AVR",
+    "n": 30,
+    "kirli_K20": 15,
+    "tuttu": 30,
+    "cift": [
+     {
+      "sembol": "AO.L",
+      "gun": "2022-02-02",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "BALD-B.ST",
+      "gun": "2022-08-05",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SYNC.L",
+      "gun": "2019-06-28",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "HTG.L",
+      "gun": "2016-02-22",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TIT.MI",
+      "gun": "2022-10-10",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "VCT.L",
+      "gun": "2022-07-01",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SAFE.L",
+      "gun": "2022-07-15",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TCAP.L",
+      "gun": "2021-11-11",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "ADEN.SW",
+      "gun": "2022-07-15",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "PTEC.L",
+      "gun": "2018-04-04",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SIKA.SW",
+      "gun": "2022-07-21",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "ALO.PA",
+      "gun": "2021-10-29",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "IWG.L",
+      "gun": "2017-01-12",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "PSON.L",
+      "gun": "2016-02-22",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "RR.L",
+      "gun": "2016-02-22",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "WIX.L",
+      "gun": "2022-03-01",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "SCR.PA",
+      "gun": "2022-06-23",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "BAER.SW",
+      "gun": "2022-03-10",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "SMT.L",
+      "gun": "2016-02-17",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "PAG.L",
+      "gun": "2018-09-18",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "VTY.L",
+      "gun": "2016-02-17",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "RIO.L",
+      "gun": "2022-07-15",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "SRG.MI",
+      "gun": "2022-10-10",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "BOL.ST",
+      "gun": "2016-02-22",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "TOM.OL",
+      "gun": "2016-02-22",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "EZJ.L",
+      "gun": "2020-05-29",
+      "K20": false,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "CVSG.L",
+      "gun": "2022-05-27",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "JUP.L",
+      "gun": "2021-12-13",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "MRL.MC",
+      "gun": "2022-10-21",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "SHEL.L",
+      "gun": "2018-03-12",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     }
+    ]
+   },
+   "D4": {
+    "pazar": "AVR",
+    "olay": 20,
+    "karsilastirma": 40,
+    "tuttu": 40
+   }
+  },
+  "BIST": {
+   "D1": {
+    "pazar": "BIST",
+    "olay_dosya": 1486,
+    "ham_uretim": 1486,
+    "ortak": 1486,
+    "yalniz_dosya": 0,
+    "yalniz_ham": 0,
+    "tuttu": true
+   },
+   "D2": {
+    "pazar": "BIST",
+    "n": 1073,
+    "olculen": 982,
+    "bozuk": {},
+    "tuttu": true,
+    "satir_dosya": 1073
+   },
+   "D3": {
+    "pazar": "BIST",
+    "n": 30,
+    "kirli_K20": 15,
+    "tuttu": 30,
+    "cift": [
+     {
+      "sembol": "YATAS",
+      "gun": "2021-08-06",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "DEVA",
+      "gun": "2021-10-26",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "CCOLA",
+      "gun": "2018-09-04",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "SAYAS",
+      "gun": "2018-10-17",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "KRSTL",
+      "gun": "2019-05-29",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "KATMR",
+      "gun": "2018-12-03",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "DOAS",
+      "gun": "2018-12-27",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "AGYO",
+      "gun": "2019-02-25",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "OYAYO",
+      "gun": "2018-07-25",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "OZGYO",
+      "gun": "2019-05-31",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TSPOR",
+      "gun": "2022-07-13",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "GUBRF",
+      "gun": "2018-06-27",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "ALARK",
+      "gun": "2018-06-26",
+      "K20": true,
+      "K1": true,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TTKOM",
+      "gun": "2018-09-04",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "BANVT",
+      "gun": "2018-07-05",
+      "K20": true,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "MEPET",
+      "gun": "2018-07-24",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "SELEC",
+      "gun": "2021-06-30",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "BRISA",
+      "gun": "2016-01-14",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "ATEKS",
+      "gun": "2017-11-29",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "KUYAS",
+      "gun": "2016-08-01",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "VANGD",
+      "gun": "2019-05-31",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "PSDTC",
+      "gun": "2021-06-30",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "EMKEL",
+      "gun": "2016-05-18",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "KCHOL",
+      "gun": "2018-06-25",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "BRSAN",
+      "gun": "2021-10-27",
+      "K20": false,
+      "K1": false,
+      "KG": true,
+      "tuttu": true
+     },
+     {
+      "sembol": "TUCLK",
+      "gun": "2018-09-24",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "KNFRT",
+      "gun": "2016-08-02",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "PNSUT",
+      "gun": "2018-06-01",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "TKNSA",
+      "gun": "2016-01-14",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     },
+     {
+      "sembol": "OZGYO",
+      "gun": "2016-07-11",
+      "K20": false,
+      "K1": false,
+      "KG": false,
+      "tuttu": true
+     }
+    ]
+   },
+   "D4": {
+    "pazar": "BIST",
+    "olay": 20,
+    "karsilastirma": 40,
+    "tuttu": 40
+   }
+  }
+ },
+ "pay": [
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 1279,
+   "pay_ort": 0.15618092651479498,
+   "pay_med": 0.14285714285714285,
+   "pay_p90": 0.3,
+   "en_az_bir": 0.9022673964034402,
+   "pay_ge25": 0.2111024237685692,
+   "taban": 0.049199380495859306
+  },
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 1279,
+   "pay_ort": 0.06809981558654402,
+   "pay_med": 0.05,
+   "pay_p90": 0.16133333333333363,
+   "en_az_bir": 0.7216575449569976,
+   "pay_ge25": 0.03205629397967162,
+   "taban": 0.018937115209850627
+  },
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 1279,
+   "pay_ort": 0.28182519822068275,
+   "pay_med": 0.2727272727272727,
+   "pay_p90": 0.4647619047619049,
+   "en_az_bir": 0.9843627834245504,
+   "pay_ge25": 0.5809225957779516,
+   "taban": 0.13788063025586544
+  },
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 1893,
+   "pay_ort": 0.2209780818903961,
+   "pay_med": 0.21212121212121213,
+   "pay_p90": 0.4153846153846154,
+   "en_az_bir": 0.9624933967247755,
+   "pay_ge25": 0.39461172741679873,
+   "taban": 0.07764538299322478
+  },
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 1893,
+   "pay_ort": 0.09726722913549649,
+   "pay_med": 0.07086614173228346,
+   "pay_p90": 0.23717948717948717,
+   "en_az_bir": 0.8742736397253037,
+   "pay_ge25": 0.08452192287374538,
+   "taban": 0.030784691142589138
+  },
+  {
+   "grup": "U1",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 1893,
+   "pay_ort": 0.3237784827209849,
+   "pay_med": 0.3076923076923077,
+   "pay_p90": 0.5454545454545454,
+   "en_az_bir": 0.9968304278922345,
+   "pay_ge25": 0.6634970945589013,
+   "taban": 0.1593773650913561
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 631,
+   "pay_ort": 0.17076932191582828,
+   "pay_med": 0.14285714285714285,
+   "pay_p90": 0.34210526315789475,
+   "en_az_bir": 0.8510301109350238,
+   "pay_ge25": 0.2757527733755943,
+   "taban": 0.04875292171253234
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 631,
+   "pay_ort": 0.08201031068924027,
+   "pay_med": 0.05263157894736842,
+   "pay_p90": 0.22727272727272727,
+   "en_az_bir": 0.6735340729001584,
+   "pay_ge25": 0.08082408874801902,
+   "taban": 0.019252041591720132
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 631,
+   "pay_ort": 0.3181846125439521,
+   "pay_med": 0.30434782608695654,
+   "pay_p90": 0.5217391304347826,
+   "en_az_bir": 0.9825673534072901,
+   "pay_ge25": 0.6418383518225039,
+   "taban": 0.1599487317603378
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 636,
+   "pay_ort": 0.16176942778505943,
+   "pay_med": 0.14285714285714285,
+   "pay_p90": 0.3011627906976744,
+   "en_az_bir": 0.9040880503144654,
+   "pay_ge25": 0.17452830188679244,
+   "taban": 0.06037824574518753
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 636,
+   "pay_ort": 0.07439374371285468,
+   "pay_med": 0.0597029702970297,
+   "pay_p90": 0.17105263157894737,
+   "en_az_bir": 0.7531446540880503,
+   "pay_ge25": 0.026729559748427674,
+   "taban": 0.02436230564715954
+  },
+  {
+   "grup": "U1",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 636,
+   "pay_ort": 0.26485563766357134,
+   "pay_med": 0.2597402597402597,
+   "pay_p90": 0.42857142857142855,
+   "en_az_bir": 0.9716981132075472,
+   "pay_ge25": 0.5660377358490566,
+   "taban": 0.1479523243966697
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 659,
+   "pay_ort": 0.2352085863947492,
+   "pay_med": 0.2,
+   "pay_p90": 0.5172413793103449,
+   "en_az_bir": 0.874051593323217,
+   "pay_ge25": 0.40364188163884673,
+   "taban": 0.07896442942567702
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 659,
+   "pay_ort": 0.11489935584889654,
+   "pay_med": 0.07142857142857142,
+   "pay_p90": 0.3036363636363644,
+   "en_az_bir": 0.644916540212443,
+   "pay_ge25": 0.16843702579666162,
+   "taban": 0.03161909315136962
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 659,
+   "pay_ort": 0.34291669585084905,
+   "pay_med": 0.32,
+   "pay_p90": 0.6138888888888896,
+   "en_az_bir": 0.9620637329286799,
+   "pay_ge25": 0.6494688922610015,
+   "taban": 0.1666938308360407
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 320,
+   "pay_ort": 0.18544969688670548,
+   "pay_med": 0.175,
+   "pay_p90": 0.35336134453781526,
+   "en_az_bir": 0.86875,
+   "pay_ge25": 0.309375,
+   "taban": 0.04517638431790207
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 320,
+   "pay_ort": 0.08549266608270249,
+   "pay_med": 0.06458333333333333,
+   "pay_p90": 0.1826839826839829,
+   "en_az_bir": 0.6625,
+   "pay_ge25": 0.053125,
+   "taban": 0.018345540414313275
+  },
+  {
+   "grup": "U1",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 320,
+   "pay_ort": 0.3394734680789643,
+   "pay_med": 0.3333333333333333,
+   "pay_p90": 0.5714285714285714,
+   "en_az_bir": 0.965625,
+   "pay_ge25": 0.665625,
+   "taban": 0.11038314811743241
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 505,
+   "pay_ort": 0.16556182818841447,
+   "pay_med": 0.14634146341463414,
+   "pay_p90": 0.30434782608695654,
+   "en_az_bir": 0.9168316831683169,
+   "pay_ge25": 0.2396039603960396,
+   "taban": 0.049199380495859306
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 505,
+   "pay_ort": 0.07079724152845646,
+   "pay_med": 0.05405405405405406,
+   "pay_p90": 0.16666666666666666,
+   "en_az_bir": 0.7683168316831683,
+   "pay_ge25": 0.027722772277227723,
+   "taban": 0.018937115209850627
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 505,
+   "pay_ort": 0.2713614176918062,
+   "pay_med": 0.26666666666666666,
+   "pay_p90": 0.44070588235294117,
+   "en_az_bir": 0.9821782178217822,
+   "pay_ge25": 0.5544554455445545,
+   "taban": 0.13788063025586544
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 848,
+   "pay_ort": 0.22854059510534921,
+   "pay_med": 0.22522522522522523,
+   "pay_p90": 0.40142857142857175,
+   "en_az_bir": 0.9799528301886793,
+   "pay_ge25": 0.4115566037735849,
+   "taban": 0.07764538299322478
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 848,
+   "pay_ort": 0.10111443214503317,
+   "pay_med": 0.07407407407407407,
+   "pay_p90": 0.23650717703349286,
+   "en_az_bir": 0.910377358490566,
+   "pay_ge25": 0.07900943396226415,
+   "taban": 0.030784691142589138
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "ABD",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 848,
+   "pay_ort": 0.32771088033299967,
+   "pay_med": 0.31666666666666665,
+   "pay_p90": 0.5454545454545454,
+   "en_az_bir": 0.9988207547169812,
+   "pay_ge25": 0.6922169811320755,
+   "taban": 0.1593773650913561
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 189,
+   "pay_ort": 0.18189850477470063,
+   "pay_med": 0.15789473684210525,
+   "pay_p90": 0.3769230769230771,
+   "en_az_bir": 0.9047619047619048,
+   "pay_ge25": 0.3333333333333333,
+   "taban": 0.04875292171253234
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 189,
+   "pay_ort": 0.0937341991703072,
+   "pay_med": 0.06451612903225806,
+   "pay_p90": 0.23494252873563232,
+   "en_az_bir": 0.7671957671957672,
+   "pay_ge25": 0.08465608465608465,
+   "taban": 0.019252041591720132
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 189,
+   "pay_ort": 0.3005336986005488,
+   "pay_med": 0.2857142857142857,
+   "pay_p90": 0.5,
+   "en_az_bir": 1.0,
+   "pay_ge25": 0.5873015873015873,
+   "taban": 0.1599487317603378
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 260,
+   "pay_ort": 0.16180572353939154,
+   "pay_med": 0.14371772805507743,
+   "pay_p90": 0.29411764705882354,
+   "en_az_bir": 0.9230769230769231,
+   "pay_ge25": 0.16923076923076924,
+   "taban": 0.06037824574518753
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 260,
+   "pay_ort": 0.07983477851180457,
+   "pay_med": 0.06896551724137931,
+   "pay_p90": 0.17118874773139744,
+   "en_az_bir": 0.8076923076923077,
+   "pay_ge25": 0.03076923076923077,
+   "taban": 0.02436230564715954
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "AVR",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 260,
+   "pay_ort": 0.26077868730799825,
+   "pay_med": 0.2597402597402597,
+   "pay_p90": 0.4194193548387097,
+   "en_az_bir": 0.9807692307692307,
+   "pay_ge25": 0.573076923076923,
+   "taban": 0.1479523243966697
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "K20",
+   "n_olay": 271,
+   "pay_ort": 0.22982697859018283,
+   "pay_med": 0.19047619047619047,
+   "pay_p90": 0.5,
+   "en_az_bir": 0.8597785977859779,
+   "pay_ge25": 0.3948339483394834,
+   "taban": 0.07896442942567702
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "K1",
+   "n_olay": 271,
+   "pay_ort": 0.11417108372690221,
+   "pay_med": 0.07142857142857142,
+   "pay_p90": 0.2916666666666667,
+   "en_az_bir": 0.6605166051660517,
+   "pay_ge25": 0.15129151291512916,
+   "taban": 0.03161909315136962
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d1619",
+   "bayrak": "KG",
+   "n_olay": 271,
+   "pay_ort": 0.33297556041931886,
+   "pay_med": 0.3076923076923077,
+   "pay_p90": 0.625,
+   "en_az_bir": 0.948339483394834,
+   "pay_ge25": 0.6309963099630996,
+   "taban": 0.1666938308360407
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "K20",
+   "n_olay": 114,
+   "pay_ort": 0.15543997996693515,
+   "pay_med": 0.13484848484848483,
+   "pay_p90": 0.3280701754385965,
+   "en_az_bir": 0.8421052631578947,
+   "pay_ge25": 0.21929824561403508,
+   "taban": 0.04517638431790207
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "K1",
+   "n_olay": 114,
+   "pay_ort": 0.0697485016075629,
+   "pay_med": 0.04880952380952381,
+   "pay_p90": 0.16666666666666666,
+   "en_az_bir": 0.6228070175438597,
+   "pay_ge25": 0.02631578947368421,
+   "taban": 0.018345540414313275
+  },
+  {
+   "grup": "BARIZ",
+   "pazar": "BIST",
+   "hucre": "d2022",
+   "bayrak": "KG",
+   "n_olay": 114,
+   "pay_ort": 0.3002447440775055,
+   "pay_med": 0.2857142857142857,
+   "pay_p90": 0.5,
+   "en_az_bir": 0.9649122807017544,
+   "pay_ge25": 0.5789473684210527,
+   "taban": 0.11038314811743241
+  }
+ ],
+ "taban": {
+  "ABD": {
+   "d1619|K20": 0.049199380495859306,
+   "d1619|K1": 0.018937115209850627,
+   "d1619|KG": 0.13788063025586544,
+   "d1619|n": 781270,
+   "d2022|K20": 0.07764538299322478,
+   "d2022|K1": 0.030784691142589138,
+   "d2022|KG": 0.1593773650913561,
+   "d2022|n": 717467
+  },
+  "AVR": {
+   "d1619|K20": 0.04875292171253234,
+   "d1619|K1": 0.019252041591720132,
+   "d1619|KG": 0.1599487317603378,
+   "d1619|n": 415852,
+   "d2022|K20": 0.06037824574518753,
+   "d2022|K1": 0.02436230564715954,
+   "d2022|KG": 0.1479523243966697,
+   "d2022|n": 331742
+  },
+  "BIST": {
+   "d1619|K20": 0.07896442942567702,
+   "d1619|K1": 0.03161909315136962,
+   "d1619|KG": 0.1666938308360407,
+   "d1619|n": 276099,
+   "d2022|K20": 0.04517638431790207,
+   "d2022|K1": 0.018345540414313275,
+   "d2022|KG": 0.11038314811743241,
+   "d2022|n": 229102
+  }
+ },
+ "ham_u1_bar": {
+  "ABD": 53991,
+  "AVR": 21056,
+  "BIST": 17544
+ }
+}
