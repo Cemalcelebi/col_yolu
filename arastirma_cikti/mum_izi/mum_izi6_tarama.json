@@ -1,0 +1,187 @@
+{
+ "surum": "MUM_IZI_ETIKET2 v1.0 (2026-11-25): etiket seti 2 (8 tekrar + 40 katmanlı yeni), T1-T4 ön kayıtlı",
+ "kapi": {
+  "kontrol": {
+   "gecti": true
+  },
+  "onkayit_commit": "59a0742b32f8e64d610a5ce0bc2a65c8c2864b7f 2026-11-25T14:56:23+00:00",
+  "KOD6_SHA": "cc8c6c914d7ecaa02682eb9c302e63635e567a1d828f7416a0cbb6bdeb291f1d",
+  "ESIK6_SHA": "4f544d473ee64ed522b3583f51ca62fea017a8f87f8ef1b82267edf5b1ea7fb1",
+  "V3_KOD_SHA": "70fc2fb979c47b2a2bd5fb260e1fb1891e7b34268f49c4a4276f482b66a4eb69",
+  "ESIK5_SHA": "0a46827a22295a4fb60c46233d036619a014bf40ab6899716c98f7ac5d19101c",
+  "DAGILIM5_JSON_SHA": "1f9e7a62dc27c4f742a67034f8971dfe12e078fb02e2cb3f86439834401b7dd5",
+  "DAGILIM_GUNLUK_PKL_SHA": "43c5c98f71340649ee6d91b4865f849f778dac9de5c60acf588263dfe653249f",
+  "DAGILIM_HAFTALIK_PKL_SHA": "aacce3c017838cd05170cbf52cf84840828616fb1f53b1ad278dd1384dbea3d1",
+  "MI_KOD_SHA": "370d582043567440101ade832d560f4a3eebf7a764eb758f634a8811cfd288b9",
+  "MH_KOD_SHA": "8f7440d199dfcf018f838da77da5cf0eabd89062fdc67cf26a0a5678ed4da200",
+  "MV_KOD_SHA": "1bb586cb825b8b437b97df4ec193a682bc626ecc796e9130d27e4906b68d81dc"
+ },
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/mum_izi/acik/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_ABD.pkl": "2016-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_AVR.pkl": "2016-12-30"
+  }
+ },
+ "p2_dogrulama": {
+  "gunluk|ABD|acik": {
+   "n": 1999,
+   "fark": 0,
+   "p2_pay": 0.5887943971985993
+  },
+  "gunluk|AVR|acik": {
+   "n": 1995,
+   "fark": 0,
+   "p2_pay": 0.7588972431077694
+  },
+  "haftalik|ABD|p1": {
+   "n": 1997,
+   "fark": 0,
+   "p2_pay": 0.5232849273910867
+  },
+  "haftalik|ABD|acik": {
+   "n": 1998,
+   "fark": 0,
+   "p2_pay": 0.5955955955955956
+  },
+  "haftalik|AVR|p1": {
+   "n": 1984,
+   "fark": 0,
+   "p2_pay": 0.6154233870967742
+  },
+  "haftalik|AVR|acik": {
+   "n": 1985,
+   "fark": 0,
+   "p2_pay": 0.744080604534005
+  }
+ },
+ "evren_sayim": {
+  "gunluk|ABD": {
+   "hisse": 4402,
+   "pencere": 29529067,
+   "evren": 19987850,
+   "K1": 129360,
+   "K2": 964900,
+   "K3": 3068882,
+   "K4": 19987850
+  },
+  "gunluk|AVR": {
+   "hisse": 571,
+   "pencere": 4718320,
+   "evren": 3669515,
+   "K1": 23403,
+   "K2": 179962,
+   "K3": 572107,
+   "K4": 3669515
+  },
+  "gunluk|BIST": {
+   "hisse": 467,
+   "pencere": 3270077,
+   "evren": 1627157,
+   "K1": 10241,
+   "K2": 75290,
+   "K3": 249485,
+   "K4": 1627157
+  },
+  "haftalik|ABD": {
+   "hisse": 4303,
+   "pencere": 13410948,
+   "evren": 8720842,
+   "K1": 46413,
+   "K2": 451360,
+   "K3": 1314051,
+   "K4": 8720842
+  },
+  "haftalik|AVR": {
+   "hisse": 570,
+   "pencere": 2484675,
+   "evren": 1793867,
+   "K1": 9538,
+   "K2": 90314,
+   "K3": 264375,
+   "K4": 1793867
+  },
+  "haftalik|BIST": {
+   "hisse": 449,
+   "pencere": 646637,
+   "evren": 328451,
+   "K1": 1448,
+   "K2": 17178,
+   "K3": 54022,
+   "K4": 328451
+  }
+ },
+ "katman_evren": {
+  "K1": {
+   "gunluk": 163004,
+   "haftalik": 57399
+  },
+  "K2": {
+   "gunluk": 1220152,
+   "haftalik": 558852
+  },
+  "K3": {
+   "gunluk": 3890474,
+   "haftalik": 1632448
+  },
+  "K4": {
+   "gunluk": 25284522,
+   "haftalik": 10843160
+  }
+ },
+ "secim": null,
+ "tekrar": null,
+ "sure_sn": 620,
+ "ham_sha": "c53fcd427010a759cd7fd06c42c7330352154b5ce7f4ff75500a23adc56b19a9",
+ "anahtar_sha": "12bdea2a22f5f6d38d213d998a2f9c62186038bbccda89332aa296f990850835",
+ "pdf_sha": "fbf7f448b377022a7d18f6ee2fca992c9a40311b89dea71b6eac43da23cf6145",
+ "sayim": {
+  "toplam": 48,
+  "katman": {
+   "K1": 16,
+   "K2": 12,
+   "K3": 6,
+   "K4": 6,
+   "T": 8
+  },
+  "katman_zaman": {
+   "K1|gunluk": 8,
+   "K1|haftalik": 8,
+   "K2|gunluk": 6,
+   "K2|haftalik": 6,
+   "K3|gunluk": 3,
+   "K3|haftalik": 3,
+   "K4|gunluk": 3,
+   "K4|haftalik": 3,
+   "T|gunluk": 3,
+   "T|haftalik": 5
+  },
+  "katman_pazar": {
+   "K1|ABD": 13,
+   "K1|AVR": 3,
+   "K2|ABD": 9,
+   "K2|AVR": 3,
+   "K3|ABD": 4,
+   "K3|AVR": 2,
+   "K4|ABD": 3,
+   "K4|AVR": 3,
+   "T|ABD": 3,
+   "T|BIST": 5
+  },
+  "zaman": {
+   "haftalik": 25,
+   "gunluk": 23
+  },
+  "pazar": {
+   "ABD": 32,
+   "AVR": 11,
+   "BIST": 5
+  }
+ }
+}
