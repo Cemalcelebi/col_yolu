@@ -1,0 +1,205 @@
+{
+ "sinama": {
+  "surum": "MUM_IZI_V4 v1.0 (2026-11-25): evre kuralı E1-E4 (Cemal'in kapak notu), PUAN4 = en küçük parça puanı",
+  "kapi": {
+   "kontrol": {
+    "gecti": true
+   },
+   "onkayit_commit": "9fafd702afe9dddb1098dacdee27c0b2ee811b4d 2026-11-25T21:06:10+00:00",
+   "KOD7_SHA": "6b3e2e4fa74f9cde3b4e99c1b47c8f4b9c31765cc604d478e5699bf2768cafbe",
+   "ESIK7_SHA": "78b41aa0d540b4cbc6aff3a759385d029439b7ec301dcd03df8b15d1a8c71750",
+   "SABLON7_SHA": "dc61888d92bfc7781598d54892d0edb5a1ccb91f18f8214500a0be9ab6e2a3bc",
+   "SENTETIK7_SHA": "40cec1fb16cd2c1425ea42f6afaa85e55da2418230b274734421eed7d919ea71",
+   "V3_KOD_SHA": "70fc2fb979c47b2a2bd5fb260e1fb1891e7b34268f49c4a4276f482b66a4eb69",
+   "MI_KOD_SHA": "370d582043567440101ade832d560f4a3eebf7a764eb758f634a8811cfd288b9",
+   "MH_KOD_SHA": "8f7440d199dfcf018f838da77da5cf0eabd89062fdc67cf26a0a5678ed4da200",
+   "MV_KOD_SHA": "1bb586cb825b8b437b97df4ec193a682bc626ecc796e9130d27e4906b68d81dc",
+   "E6_KOD_SHA": "cc8c6c914d7ecaa02682eb9c302e63635e567a1d828f7416a0cbb6bdeb291f1d"
+  },
+  "etiket_git": {
+   "isaret1": "062f14bc5af8f69e303a41ab881715db3bd4dd6d 2026-11-25T14:22:23+00:00",
+   "isaret2": "2e79fa30d0014711b28fed41f0a00d466914ed1b 2026-11-25T20:54:45+00:00",
+   "anahtar2": "6daa939eaec57355e0b210fbd7f466e746d575ed 2026-11-25T15:18:46+00:00"
+  },
+  "etiket_sayim": {
+   "set1": {
+    "HAYIR": 17,
+    "EVET": 7
+   },
+   "set2": {
+    "HAYIR": 32,
+    "EVET": 13,
+    "IKISI": 1,
+    "BELIRSIZ": 1,
+    "YOK": 1
+   }
+  },
+  "birlesik": {
+   "n": 61,
+   "cemal_evet": 16,
+   "v4_var": 0,
+   "tablo": {
+    "evet_var": 0,
+    "evet_yok": 16,
+    "hayir_var": 0,
+    "hayir_yok": 45
+   },
+   "uyum": 0.7377049180327869,
+   "kappa": 4.2327252813834083e-16,
+   "boot95": [
+    -3.386180225106728e-16,
+    4.2327252813834083e-16
+   ],
+   "atilan": 0,
+   "puan4_auc": {
+    "auc": 0.5027777777777778,
+    "boot95": [
+     0.4222222222222222,
+     0.6
+    ],
+    "p": 0.5652618770388427
+   }
+  },
+  "set1": {
+   "n": 24,
+   "cemal_evet": 7,
+   "v4_var": 0,
+   "tablo": {
+    "evet_var": 0,
+    "evet_yok": 7,
+    "hayir_var": 0,
+    "hayir_yok": 17
+   },
+   "uyum": 0.7083333333333334,
+   "kappa": 3.806478941571964e-16,
+   "boot95": [
+    -3.3306690738754706e-16,
+    3.806478941571964e-16
+   ],
+   "atilan": 1,
+   "puan4_auc": {
+    "auc": 0.4411764705882353,
+    "boot95": [
+     0.35294117647058826,
+     0.5
+    ],
+    "p": 1.0
+   }
+  },
+  "set2": {
+   "n": 37,
+   "cemal_evet": 9,
+   "v4_var": 0,
+   "tablo": {
+    "evet_var": 0,
+    "evet_yok": 9,
+    "hayir_var": 0,
+    "hayir_yok": 28
+   },
+   "uyum": 0.7567567567567568,
+   "kappa": 0.0,
+   "boot95": [
+    0.0,
+    5.868321701590111e-16
+   ],
+   "atilan": 0,
+   "puan4_auc": {
+    "auc": 0.5496031746031746,
+    "boot95": [
+     0.4166666666666667,
+     0.7083333333333334
+    ],
+    "p": 0.32472900708194824
+   }
+  },
+  "gunluk": {
+   "n": 31,
+   "cemal_evet": 8,
+   "v4_var": 0,
+   "tablo": {
+    "evet_var": 0,
+    "evet_yok": 8,
+    "hayir_var": 0,
+    "hayir_yok": 23
+   },
+   "uyum": 0.7419354838709677,
+   "kappa": 0.0,
+   "boot95": [
+    -3.441691376337986e-16,
+    0.0
+   ],
+   "atilan": 1,
+   "puan4_auc": {
+    "auc": 0.5,
+    "boot95": [
+     0.5,
+     0.5
+    ],
+    "p": 1.0
+   }
+  },
+  "haftalik": {
+   "n": 30,
+   "cemal_evet": 8,
+   "v4_var": 0,
+   "tablo": {
+    "evet_var": 0,
+    "evet_yok": 8,
+    "hayir_var": 0,
+    "hayir_yok": 22
+   },
+   "uyum": 0.7333333333333333,
+   "kappa": -4.163336342344338e-16,
+   "boot95": [
+    -4.163336342344338e-16,
+    4.758098676964955e-16
+   ],
+   "atilan": 0,
+   "puan4_auc": {
+    "auc": 0.4943181818181818,
+    "boot95": [
+     0.3409090909090909,
+     0.6789772727272727
+    ],
+    "p": 0.5885293250810493
+   }
+  },
+  "evet_yok_dusus": {
+   "n": 16,
+   "yapi": 1,
+   "E1": 4,
+   "E2": 5,
+   "E3": 16,
+   "E4": 9,
+   "alt": {
+    "E1_bC_ort": 1,
+    "E1_degisim": 4,
+    "E2_yesil": 3,
+    "E2_onceki": 1,
+    "E2_ust_pay": 4,
+    "E3_icerden": 9,
+    "E3_govde_med": 10,
+    "E3_govde_max": 9,
+    "E3_spearman": 11,
+    "E3_son_bC": 4,
+    "E3_ortusme": 1,
+    "E4_pay": 9
+   }
+  },
+  "hayir_var": 0,
+  "hukum": "ÖLÇÜLEMEDİ (kural çok dar)",
+  "esnek_bilgi": {
+   "VAR": 3,
+   "kappa": 0.024459078080903494,
+   "auc": {
+    "auc": 0.5375,
+    "boot95": [
+     0.3895659722222222,
+     0.6930902777777772
+    ],
+    "p": 0.31278388794604406
+   }
+  },
+  "sure_sn": 102
+ }
+}
