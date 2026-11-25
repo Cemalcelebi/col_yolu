@@ -23,9 +23,11 @@
    "guven": "yuksek"
   },
   "5": {
-   "isaret": "YOK",
+   "isaret": "HAYIR",
    "kutu_disi": "grafikte ve kutularda işaret yok (özgün ile piksel farkı sıfır)",
-   "guven": "yuksek"
+   "guven": "yuksek",
+   "isaret_pdf": "YOK",
+   "ek": "Cemal sözlü (25 Kas 2026, PDF'ten sonra): 'o hiç benzemiyor' (ana model yorumu: işaretsiz kalan sayfa 5 kastediliyor); guven orta"
   },
   "6": {
    "isaret": "EVET",
@@ -132,5 +134,6 @@
    "kutu_disi": "kırmızı X biçimli iki çizgi (mürekkep) × benzemiyor kutusunun üstünde; grafik üstünde çizim yok. Not: işaret biçimi her sayfada aynı X; X'in seçilen kutuyu mu işaretlediği yoksa karaladığı (iptal) mi yorumlanmalı, kutu konumuna göre okundu.",
    "guven": "yuksek"
   }
- }
+ },
+ "guncelleme": "sayfa 5 sözlü yanıtla HAYIR yapıldı (ana model, 25 Kas); toplam EVET 7 / HAYIR 17"
 }
