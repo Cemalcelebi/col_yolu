@@ -1,0 +1,104 @@
+{
+ "sinama": {
+  "surum": "MUM_IZI_V3 v1.0 (2026-11-25): bant koordinatında mum dizisi (F1 konum, F2 açılış / kapanış ilişkisi, F3 fitil), telafi yasağı, D3",
+  "kapi": {
+   "kontrol": {
+    "gecti": true
+   },
+   "onkayit_commit": "4a3146a0c4248519b0c7fe626faf234d0c25162f 2026-11-25T14:29:43+00:00",
+   "KOD5_SHA": "70fc2fb979c47b2a2bd5fb260e1fb1891e7b34268f49c4a4276f482b66a4eb69",
+   "ESIK5_SHA": "0a46827a22295a4fb60c46233d036619a014bf40ab6899716c98f7ac5d19101c",
+   "DAGILIM5_SHA": "1f9e7a62dc27c4f742a67034f8971dfe12e078fb02e2cb3f86439834401b7dd5",
+   "SENTETIK5_SHA": "99d7f4b05ce7c97e813ec4be66a334c1a4e846ed55e4634eb1bea27576b9724c",
+   "MI_KOD_SHA": "370d582043567440101ade832d560f4a3eebf7a764eb758f634a8811cfd288b9",
+   "MH_KOD_SHA": "8f7440d199dfcf018f838da77da5cf0eabd89062fdc67cf26a0a5678ed4da200",
+   "MV_KOD_SHA": "1bb586cb825b8b437b97df4ec193a682bc626ecc796e9130d27e4906b68d81dc"
+  },
+  "isaret_dosyasi_commit": "062f14bc5af8f69e303a41ab881715db3bd4dd6d 2026-11-25T14:22:23+00:00",
+  "kaydirma": 0,
+  "n_isaretli": 24,
+  "n_benziyor": 7,
+  "n_isaretsiz": 0,
+  "auc": {
+   "D3": {
+    "auc": 0.6302521008403361,
+    "auc_sira_toplami": 0.6302521008403361,
+    "p": 0.17463248041051244,
+    "boot95": [
+     0.3779411764705883,
+     0.865546218487395
+    ]
+   },
+   "F1": {
+    "auc": 0.7058823529411765,
+    "auc_sira_toplami": 0.7058823529411764,
+    "p": 0.06485044957585004,
+    "boot95": [
+     0.44537815126050423,
+     0.9243697478991597
+    ]
+   },
+   "F2": {
+    "auc": 0.48739495798319327,
+    "auc_sira_toplami": 0.4873949579831933,
+    "p": 0.5493175461710931,
+    "boot95": [
+     0.226890756302521,
+     0.7563025210084033
+    ]
+   },
+   "F3": {
+    "auc": 0.6386554621848739,
+    "auc_sira_toplami": 0.6386554621848739,
+    "p": 0.15879619998613134,
+    "boot95": [
+     0.35294117647058826,
+     0.8991596638655462
+    ]
+   },
+   "v1_S": {
+    "auc": 0.6638655462184874,
+    "auc_sira_toplami": 0.6638655462184874,
+    "p": 0.11685216004437972,
+    "boot95": [
+     0.40336134453781514,
+     0.8907563025210085
+    ]
+   },
+   "v1_dizi": {
+    "auc": 0.6050420168067226,
+    "auc_sira_toplami": 0.6050420168067228,
+    "p": 0.22756165776760742,
+    "boot95": [
+     0.36134453781512604,
+     0.8151260504201681
+    ]
+   },
+   "v1_bant": {
+    "auc": 0.6638655462184874,
+    "auc_sira_toplami": 0.6638655462184874,
+    "p": 0.11685216004437972,
+    "boot95": [
+     0.3949579831932773,
+     0.8991596638655462
+    ]
+   },
+   "v1_oz": {
+    "auc": 0.42857142857142855,
+    "auc_sira_toplami": 0.4285714285714286,
+    "p": 0.7119420752143865,
+    "boot95": [
+     0.19327731092436976,
+     0.6890756302521008
+    ]
+   }
+  },
+  "hukum": "UYUMSUZ",
+  "benziyor_en_benzer_yarida": 4,
+  "benziyor_medyan_D3": 0.6716612176202634,
+  "aday_benziyor": 1,
+  "aday_benzemiyor": 2,
+  "sure_sn": 75,
+  "v2_not": "v2 bütün sayfaları kabul etmişti (kapılar hepsinde geçti): v2'nin sıralama puanı v1 S; kabul / ret olarak ayırt edemez"
+ }
+}
