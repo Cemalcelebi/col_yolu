@@ -1,0 +1,246 @@
+{
+ "kaynak": "MUM_IZI6_ETIKET_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet)",
+ "sayfalar": {
+  "2": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "8": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "11": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "12": {
+   "isaret": "IKISI",
+   "kutu_disi": "sag kutudan yukari uzanan egri cizgi grafigin sag alt kenarina (kutu X lerinin kuyrugu)",
+   "guven": "yuksek"
+  },
+  "13": {
+   "isaret": "HAYIR",
+   "kutu_disi": "grafigin sag kenarinda, bolge sonunun altindan yukari uzanan dikey cizgi (X nin kuyrugu olasi)",
+   "guven": "yuksek"
+  },
+  "14": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "15": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "16": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "17": {
+   "isaret": "EVET",
+   "kutu_disi": "bolgenin ustunde grafik alaninda el yazisi: 'ama fitiller' (okunus orta guvenli; son sozcuk 'filitre/fitiller' gibi), alt kisimda ve sag kenarda uzayan cizgiler",
+   "guven": "orta"
+  },
+  "18": {
+   "isaret": "EVET",
+   "kutu_disi": "bolgenin son 4-6 mumunun (ust fitil/gövde bolgesi, sag uc) uzerine daire ve karalama",
+   "guven": "yuksek"
+  },
+  "19": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "20": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "21": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "22": {
+   "isaret": "BELIRSIZ",
+   "kutu_disi": "kutularda isaret yok; grafigin sag alt kismina (bolgenin son mumlarinin altindan sag kenara) bir egri ve dikey cizgiden olusan X benzeri isaret, kutulara ulasmiyor",
+   "guven": "dusuk"
+  },
+  "23": {
+   "isaret": "HAYIR",
+   "kutu_disi": "sag kutudan grafigin altina uzanan uzun dikey cizgi (X kuyrugu)",
+   "guven": "yuksek"
+  },
+  "24": {
+   "isaret": "HAYIR",
+   "kutu_disi": "grafigin sag alt kenarinda bolge sonundan asagi uzanan cizgi (X kuyrugu olasi)",
+   "guven": "yuksek"
+  },
+  "25": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "26": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "27": {
+   "isaret": "EVET",
+   "kutu_disi": "grafigin sag alt kenarinda kisa dikey cizgi (X kuyrugu olasi)",
+   "guven": "yuksek"
+  },
+  "28": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "29": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "30": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "31": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "32": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "33": {
+   "isaret": "EVET",
+   "kutu_disi": "bolge basindaki dusus mumlari boyunca egri cizgi ve son yukselen mumlar boyunca iki yukari cizgi",
+   "guven": "yuksek"
+  },
+  "34": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "35": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "36": {
+   "isaret": "YOK",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "37": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "38": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "39": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "40": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "41": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "42": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "43": {
+   "isaret": "EVET",
+   "kutu_disi": "bolge sonundaki son ~8 mumun uzerine yogun taralama/cizgiler (sag uc, yukselis mumu ve sonrasi)",
+   "guven": "yuksek"
+  },
+  "44": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "45": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "46": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "47": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "48": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "49": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  }
+ }
+}
