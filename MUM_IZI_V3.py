@@ -426,6 +426,8 @@ def v3_etiket_oku(yol: Optional[str] = None) -> Dict[int, Optional[int]]:
             for k, v in o.items():
                 if str(k).strip().isdigit() and not isinstance(v, (dict, list)):
                     out[int(k)] = lab(v)
+                elif str(k).strip().isdigit() and isinstance(v, dict) and "isaret" in v:
+                    out[int(k)] = lab(v["isaret"])    # {"sayfalar": {"3": {"isaret": "HAYIR", ...}}} (ön kayıttan sonra görülen biçim; SAPMA)
                 elif isinstance(v, list) and v and all(str(x).strip().isdigit() for x in v) and (lab(k) is not None or "isaretsiz" in str(k).lower()
                                                                                                     or "işaretsiz" in str(k).lower()):
                     for x in v:                       # {"benziyor": [3, 5], "benzemiyor": [...], "isaretsiz": [...]}

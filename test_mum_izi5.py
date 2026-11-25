@@ -84,7 +84,8 @@ def test_auc_perm():
 
 def test_isaret_ayristirici():
     ornekler = [({"sayfalar": [{"sayfa": 3, "isaret": "benziyor"}, {"sayfa": 4, "isaret": "benzemiyor"}, {"sayfa": 5, "isaret": None}]}, 0),
-                ({"3": "✓", "4": "✗", "5": ""}, 0), ({"isaretler": {"1": "BENZİYOR", "2": "x"}}, 2), ({"benziyor": [3], "benzemiyor": [4, 6], "isaretsiz": [5]}, 0)]
+                ({"3": "✓", "4": "✗", "5": ""}, 0), ({"isaretler": {"1": "BENZİYOR", "2": "x"}}, 2), ({"benziyor": [3], "benzemiyor": [4, 6], "isaretsiz": [5]}, 0),
+                ({"sayfalar": {"1": {"isaret": "YOK", "kutu_disi": "benzemiyor yazısı"}, "3": {"isaret": "EVET"}, "4": {"isaret": "HAYIR"}}}, 0)]
     for J, kay in ornekler:
         with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as f:
             json.dump(J, f, ensure_ascii=False); yol = f.name
