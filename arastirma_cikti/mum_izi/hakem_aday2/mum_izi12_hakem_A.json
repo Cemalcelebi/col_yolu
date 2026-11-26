@@ -1,0 +1,755 @@
+{
+ "hakem": "alt ajan (sonnet) v3 A",
+ "sayfalar": {
+  "1": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri karışık mumlar, geniş bant"
+  },
+  "2": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonu bandı tırmanıyor, baş dağınık"
+  },
+  "3": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum bandın dışında"
+  },
+  "4": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumla V kırılım"
+  },
+  "5": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "dev mum sıçrama, sonra bandın altında küçükler"
+  },
+  "6": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlu V dönüş"
+  },
+  "7": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler, sert dönüş"
+  },
+  "8": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "son kısım küçük mumlarla tırmanış, baş büyük"
+  },
+  "9": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "10": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı aşıyor"
+  },
+  "11": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı yürüyüş"
+  },
+  "12": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük gövdeli sert çıkış"
+  },
+  "13": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dağınık irili ufaklı mum"
+  },
+  "14": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "15": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert düşüş sonrası irili ufaklı"
+  },
+  "16": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "sert düşüş hemen ardından V"
+  },
+  "17": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "orta mumlar dağınık, düzensiz"
+  },
+  "18": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler, sert V"
+  },
+  "19": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük mumlar bandın altına tırmanıyor, daralma"
+  },
+  "20": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonu bandı yokluyor, baş dağınık"
+  },
+  "21": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler, dağınık, bant genişliyor"
+  },
+  "22": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "iri gövdeli sert salınım"
+  },
+  "23": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "irili ufaklı dağınık mumlar"
+  },
+  "24": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonu küçük tırmanış, baş dev mumlu"
+  },
+  "25": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "orta mumlar düzensiz, dağınık"
+  },
+  "26": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlarla dönüş, bant dışı"
+  },
+  "27": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlarla V dönüş"
+  },
+  "28": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük muntazam mumlar üst bandın altında tırmanıyor"
+  },
+  "29": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bandı deliyor"
+  },
+  "30": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert V dönüş, bant dışı"
+  },
+  "31": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "orta mumlar, geniş bant, dağınık"
+  },
+  "32": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar, bandın dışında"
+  },
+  "33": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli dönüş, dağınık"
+  },
+  "34": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "35": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandın üstüne taşıyor"
+  },
+  "36": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar sert çıkış"
+  },
+  "37": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "sert düşüş sonrası büyük mumlar"
+  },
+  "38": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "iri dağınık gövdeler"
+  },
+  "39": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "düzenli tırmanış ama bant geniş, mumlar orta"
+  },
+  "40": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, dağınık"
+  },
+  "41": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler dağınık, bant geniş"
+  },
+  "42": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor, çöküş"
+  },
+  "43": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dar bantta küçük mumlar, sonda üst bandın altı"
+  },
+  "44": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "iri gövdeli sert dönüş"
+  },
+  "45": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, dağınık dizilim"
+  },
+  "46": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert V dönüş, büyük mumlar"
+  },
+  "47": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar dağınık, geniş bant"
+  },
+  "48": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "küçük mumlar bandı izliyor, baş dağınık"
+  },
+  "49": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "sonu küçük tırmanış, baş dağınık"
+  },
+  "50": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev yeşil mum orta bandı aşıyor"
+  },
+  "51": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "52": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler, sert çıkış"
+  },
+  "53": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, bant dışına taşma"
+  },
+  "54": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık irili ufaklı mumlar"
+  },
+  "55": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık, dev son mum"
+  },
+  "56": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandın üstüne taşıyor"
+  },
+  "57": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert V, dağınık mumlar"
+  },
+  "58": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "iri dağınık gövdeler"
+  },
+  "59": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük mumlar bant altı, baş dağınık"
+  },
+  "60": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "61": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mum ve sert yükseliş"
+  },
+  "62": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık irili ufaklı mumlar"
+  },
+  "63": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, sert V dönüş"
+  },
+  "64": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "çok dağınık büyük mumlar"
+  },
+  "65": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev mum ve dağınık mumlar"
+  },
+  "66": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "bant altında tırmanış ama büyük mumlar var"
+  },
+  "67": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük tırmanış, baş dağınık"
+  },
+  "68": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumla orta bandı aşıyor"
+  },
+  "69": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sonda dev mumlar bandı deliyor"
+  },
+  "70": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "71": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor, dev son mum"
+  },
+  "72": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dar taban küçük mumlar, sonra fitilli sıçrama"
+  },
+  "73": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı"
+  },
+  "74": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mum bandı aşıyor"
+  },
+  "75": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük dağınık mumlar, dev son mum"
+  },
+  "76": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük gövdeler, bandı deliyor"
+  },
+  "77": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık büyük mumlar, dev fitil"
+  },
+  "78": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı"
+  },
+  "79": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "irili ufaklı dağınık mumlar"
+  },
+  "80": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük mumlar düzenli tırmanış, üst banda yakın"
+  },
+  "81": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "sonda küçük mumlar üst bandı izliyor, orta dağınık"
+  },
+  "82": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "83": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "84": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık büyük mumlar"
+  },
+  "85": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda band yakını, mumlar dağınık"
+  },
+  "86": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "düzenli tırmanış ama mumlar orta boy"
+  },
+  "87": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "küçük mumlar bandın altında tırmanıyor, baş dağınık"
+  },
+  "88": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, sert çıkış"
+  },
+  "89": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı aşıyor"
+  },
+  "90": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı"
+  },
+  "91": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "92": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, sert dönüş"
+  },
+  "93": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük mumlar, daralma, üst bant altına tırmanış"
+  },
+  "94": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "küçük düzenli tırmanış, baş sert düşüşlü"
+  },
+  "95": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık mumlar, uzun fitiller karışık"
+  },
+  "96": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "97": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlarla V dönüş"
+  },
+  "98": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "büyük mumlarla tırmanış, bant dışı"
+  },
+  "99": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "sonda küçük mumlar bant altında, baş dağınık"
+  },
+  "100": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, dağınık dizilim"
+  },
+  "101": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı dağınık"
+  },
+  "102": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeler, geniş bant"
+  },
+  "103": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar, bandı deliyor"
+  },
+  "104": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, V dönüş"
+  },
+  "105": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük mumlar, baş sert düşüşlü"
+  },
+  "106": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "sonda küçük mumlar bandın altına tırmanıyor, baş orta boy"
+  },
+  "107": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, sert düşüş sonrası"
+  },
+  "108": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dar bantta küçük mumlar, sonda üst banda sızıyor"
+  },
+  "109": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "110": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük dağınık mumlar"
+  },
+  "111": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, sert V"
+  },
+  "112": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "113": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "sert düşüş V dönüş, büyük mumlar"
+  },
+  "114": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bant dışı"
+  },
+  "115": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "orta küçük düzenli tırmanış, baş büyük mumlu"
+  },
+  "116": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, bandı deliyor"
+  },
+  "117": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "düzenli küçük mumlar üst bandın altına tırmanıyor"
+  },
+  "118": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar bandı deliyor"
+  },
+  "119": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük mumlar bantta, baş V dönüşlü"
+  },
+  "120": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, dağınık"
+  },
+  "121": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük tırmanış, baş dağınık"
+  },
+  "122": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık irili ufaklı, büyük mum"
+  },
+  "123": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük mumlar bantta, baş orta boy"
+  },
+  "124": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda tırmanış bant altında, baş dağınık"
+  },
+  "125": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, bantları deliyor"
+  },
+  "126": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dağınık mumlar, büyük gövdeler"
+  },
+  "127": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "128": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, dağınık"
+  },
+  "129": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük mumlar bantta, baş dağınık"
+  },
+  "130": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, V dönüş"
+  },
+  "131": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "132": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "133": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "sonda küçük düzenli mumlar bandı izliyor, baş orta boy"
+  },
+  "134": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar dağınık"
+  },
+  "135": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bant dışı"
+  },
+  "136": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda tırmanış, baş dağınık"
+  },
+  "137": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "138": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, dağınık"
+  },
+  "139": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "pürüzsüz küçük mumlar bandın altında tırmanıyor"
+  },
+  "140": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "küçük düzenli tırmanış üst banda, bant geniş"
+  },
+  "141": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar bandı deliyor"
+  },
+  "142": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, sert dönüş"
+  },
+  "143": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev son mum bandı deliyor"
+  },
+  "144": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük dağınık mumlar"
+  },
+  "145": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük mumlar, sert V"
+  },
+  "146": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "küçük mumlar üst fitilli, baş dağınık"
+  },
+  "147": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar, sert V dönüş"
+  },
+  "148": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sonda küçük tırmanış, baş dağınık"
+  },
+  "149": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük mumlar bandın altında düzenli tırmanıyor"
+  },
+  "150": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük mumlar dağınık"
+  }
+ }
+}

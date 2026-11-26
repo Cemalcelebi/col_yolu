@@ -1,0 +1,126 @@
+{
+ "hakem": "alt ajan (sonnet) v2, kör",
+ "sayfalar": {
+  "2": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Dipte küçük gel-git, sonda yeşil mumlar bandı aşıyor; üst fitil az."
+  },
+  "3": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Düşüş sonrası küçük mumlar üst banda yürüyor; baş kısım sert düşüş."
+  },
+  "4": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "Geniş dağınık bant, irili ufaklı mumlar, düzensiz dizilim."
+  },
+  "5": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Haftalık küçük mumlar, dar bant, sonda üst banda tırmanış."
+  },
+  "6": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Sert düşüş sonrası küçük muntazam mumlar yavaş tırmanıyor, bant çöküyor."
+  },
+  "7": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Küçük mumlar düzenli üst banda yaslanarak tırmanıyor."
+  },
+  "8": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Aralıktan çıkış, üst banda yaslı orta boy mumlar; bant geniş."
+  },
+  "9": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Dipten orta bandı aşan orta boy mumlar, sonda üst banda yakın."
+  },
+  "10": {
+   "karar": "EVET",
+   "puan": 8,
+   "gerekce": "Çok dar bant, minik mumlar, üst bandın altında düzenli tırmanış."
+  },
+  "11": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Dipte küçük mumlar, sonda büyük kırmızı üst fitilli mumlar dağıtıyor."
+  },
+  "12": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Dipte küçük mumlar, son kısımda büyük yeşil gövdeler."
+  },
+  "13": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "Sonda büyük yeşil mumlarla bandı delen V dönüş."
+  },
+  "14": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Dipte küçük gel-git, orta boy yeşiller, sonda üst banda yakın küçük mumlar."
+  },
+  "15": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Minik mumlar bantlarla sıkışık; tırmanış yok, sonda tek büyük yeşil."
+  },
+  "16": {
+   "karar": "EVET",
+   "puan": 8,
+   "gerekce": "Küçük mumlar düzenli, üst bandın hemen altında sürekli tırmanış."
+  },
+  "17": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Dar bantta küçük mumlar, uzun fitilli yeşil, sonda düzenli tırmanış."
+  },
+  "18": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "Dağınık irili ufaklı mumlar, belirgin tırmanış yok."
+  },
+  "19": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Orta banda yakın küçük mumlar, hafif tırmanış, üst banda varmıyor."
+  },
+  "20": {
+   "karar": "EVET",
+   "puan": 8,
+   "gerekce": "Haftalık minik mumlar, dar bant, üst banda düzenli yaklaşma."
+  },
+  "21": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Dipte gel-git, sonda orta boy yeşillerle orta bandı aşıyor."
+  },
+  "22": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Küçük mumlarla merdiven gibi düzenli tırmanış, üst banda varıyor."
+  },
+  "23": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Dipten bantlara yaslı orta boy mumlarla tırmanış, sonda büyüyor."
+  },
+  "24": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Dipte gel-git, sonda küçük mumlar üst bandın altında."
+  },
+  "25": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Orta bandı yeşil mumla aşıyor, sonra düzensiz uzun fitilli tırmanış."
+  }
+ },
+ "ogrenme_notu": "1) Benziyenlerde mumlar bant genişliğine göre çok küçük ve muntazam. 2) Son kısım üst bandın hemen altında/yaslı tırmanış. 3) Dipte kısa gel-git sonra yeşille orta bandı aşış. 4) Büyük gövdeli mum, tek dev mumla geçiş, V dönüş benzemiyor. 5) Geniş, çöken ya da hiç daralmayan bant benzemiyor. 6) Dağınık irili ufaklı dizilim eler. 7) Yalnız son kısmı uyanlar KISMEN. 8) Sadece bant dibinde yatay sıkışma tırmanış yoksa tam benzemez. (Not: yalnız MUM_IZI4 öğrenildi.)"
+}
