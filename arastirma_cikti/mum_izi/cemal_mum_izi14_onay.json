@@ -1,0 +1,127 @@
+{
+ "kaynak": "MUM_IZI14_ONAY_OLCEKLI_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet) + ana model (işaret konumu mekanik; 7. ve 15. sayfaya gözle bakıldı); iki okuma birebir aynı",
+ "sayfa1": "Kapak, işaret yok. Üç kutu: ✓ benziyor / K kısmen / × benzemiyor; yüzde eksenli (ölçekli) sürüm.",
+ "kural": "işaretin gövdesinin durduğu kutu seçimdir; kuyruk sayılmaz; kutu dışı el yazısı yok",
+ "sayfalar": {
+  "2": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "8": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "9": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "orta"
+  },
+  "11": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "12": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "13": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "14": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "15": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "16": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "17": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "18": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  }
+ }
+}
