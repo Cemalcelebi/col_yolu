@@ -251,8 +251,8 @@ def g2_pdf(cikti: Optional[str] = None) -> str:
         fig.text(0.05, 0.43, "İlk 104 bölgede: " + ozet(J["ilk_bakis"]["tablo"], J["ilk_bakis_evet_es"]) + ".", fontsize=9.5, va="top", wrap=True)
         fig.text(0.05, 0.36, "Yeni 24 bölgede: " + ozet(J["ikinci_bakis"]["tablo"], J["ikinci_bakis"]["evet_es"]) + ".", fontsize=9.5, va="top", wrap=True)
         fig.text(0.05, 0.28, "Sayılar az (N < 30): bu bir sonuç değil, ilk bakış.", fontsize=13, weight="bold")
-        fig.text(0.05, 0.24, "Sonraki sayfalar: YENİ 24 bölgeden BENZİYOR dediklerin (önce haftalık, sonra günlük), sonra KISMEN dediklerin. Hisse ve tarih açık;\n"
-                 "turuncu kutu = bölge, yeşil çizgi = giriş, kırmızı = stop (bölge dibi x 0,98), gri dikey = 15. mum.", fontsize=9.5, va="top")
+        fig.text(0.05, 0.24, "Sonraki sayfalar: YENİ 24 bölgeden BENZİYOR dediklerin (önce haftalık, sonra günlük), sonra KISMEN dediklerin.\n"
+                 "Hisse ve tarih açık; turuncu kutu = bölge, yeşil çizgi = giriş, kırmızı = stop (bölge dibi x 0,98), gri dikey = 15. mum.", fontsize=9.5, va="top")
         pdf.savefig(fig); plt.close(fig)
         for s in ("EVET", "KISMEN"):
             X = O[(O.set == "set5") & (O.sinif == s)].copy(); X["zs"] = X.zaman.map({"haftalik": 0, "gunluk": 1}); X = X.sort_values(["zs", "bolge_son"])
