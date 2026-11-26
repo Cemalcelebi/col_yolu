@@ -8,3 +8,6 @@ Yazan: ana model. Cemal (26 Kas; ana modelin 'kısmen dediklerin kabul sayılsı
 - Örneklem: gerçek ölçekle ve sonrası görülmeden işaretlenen setler (set 6 + 7 + 8 + 9), zaman dilimleri birlikte; ayrıca yalnız kapı havuzu (set 7 + 8 + 9). n < 30 ise sonuç ne çıkarsa çıksın 'ÖRNEKLEM YETERSİZ' notu eklenir.
 - KISMEN KABUL SAYILIR <=> KISMEN sınıfı 'SONRASI İYİ'. 'GÖSTERİLEMEDİ' ya da 'SONRASI KÖTÜ' ise sayılmaz (tespit payı yalnız BENZİYOR ile okunur). Aynı ölçü BENZİYOR sınıfına da uygulanır: BENZİYOR 'SONRASI İYİ' değilse tespit payının yüksek olması tek başına bir şey kazandırmaz; bu da yazılır.
 - Büyük örnek (EK 24, 'kodun seçtiği bölgeler') bu kuraldan bağımsız kendi ön kayıtlı hükmüyle okunur.
+
+## GÜNCELLEME (26 Kasım 2026; EK 23 / EK 24 sonuçları ana modele gelmeden)
+Cemal 'eş aynı gün değil, rastgele günlerde olmalı; yapı görüldüğünde piyasa toplamı yükseliyorsa başarısız saymak mantıksız' dedi. Bu yüzden 'kısmen kabul' kuralının ölçüsü eşli fark değil, RASTGELE GÜN TABANINA göre TOPLAM FARK'tır (tanım MUM_IZI25_IS_TANIMI.md 3. bölüm). Eşli farkla okuma bilgi olarak yine yazılır.
