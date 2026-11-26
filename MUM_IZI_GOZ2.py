@@ -9,6 +9,7 @@ kasa açılmaz. Veri <= 2022-12-31.
 Komut:  python MUM_IZI_GOZ2.py ornek | onkayit | kos | pdf
 EK 15 (kopma ayrımı; yeni getiri yok, mum_izi13_olay.csv gruplama):  python MUM_IZI_GOZ2.py kopma_sayim | kopma_onkayit | kopma
 EK 16 (ölçek: sayfadaki / gerçek mum boyu; yeni getiri yok):            python MUM_IZI_GOZ2.py olcek_olcu | olcek_onkayit | olcek
+EK 17 (üçüncü bakış: set 6 = MUM_IZI14 ölçekli onay 17 bölge; birleşik 145): python MUM_IZI_GOZ2.py set6_sayim | set6_onkayit | set6_kos | set6_pdf
 """
 from __future__ import annotations
 
@@ -999,6 +1000,492 @@ def k16_kos(cikti: Optional[str] = None) -> Dict[str, Any]:
     return J
 
 
+# ================================================================ 4d) MUM_IZI EK 17: ÜÇÜNCÜ BAKIŞ (set 6 = MUM_IZI14 ölçekli onay seti, 17 bölge) + BİRLEŞİK set 1-6
+K17_SURUM = "MUM_IZI_GOZ2 set6 v1.0 (2026-11-26): EK 17 göz ölçümü üçüncü bakış (set 6) + birleşik 145; tanımlar MUM_IZI_GOZ GZ_ESIK ve G2_EK aynen"
+K17_DOSYA = {"onkayit": "MUM_IZI17_ON_KAYIT.md", "rapor": "MUM_IZI17_RAPOR.md", "sonuc": "mum_izi17_sonuc.json", "olay": "mum_izi17_olay.csv", "pdf": "MUM_IZI17_SONRASI.pdf"}
+K17_YOL = {"isaret6": os.path.join(_C, "cemal_mum_izi14_onay.json"), "anahtar6": os.path.join(_C, "MUM_IZI14_onay_anahtar.json"),
+           "olcekli6": os.path.join(_C, "MUM_IZI14_onay_olcekli.json"), "olay13": os.path.join(_C, "mum_izi13_olay.csv"), "sonuc13": os.path.join(_C, "mum_izi13_sonuc.json")}
+K17_SET6_AD = "MUM_IZI14_ONAY_OLCEKLI"
+K17_EK: Dict[str, Any] = {
+    "surum": "K17-1.0", "tanim": "MUM_IZI_GOZ GZ_ESIK aynen (ESIK11_SHA) + G2_EK aynen (EK13_SHA): giriş, ufuk 15 mum, stop = bölge dibi x 0,98, CETVEL2 konum eşi, "
+                                "tablolar, permütasyonlar, işaret çevirme",
+    "set6": "MUM_IZI14_ONAY_OLCEKLI (s2-18): sayfa -> bölge mühürlü MUM_IZI14_onay_anahtar.json 'yeni_sayfa' (zaman, pazar, sembol, bolge_bas = ilk barın tarihi, bolge_son, "
+            "pencere); işaret cemal_mum_izi14_onay.json (EVET / KISMEN / HAYIR); üç dosyada sayfa kümesi ve zaman aynı olmalı (değilse DUR); mum boyu / olağan / oran "
+            "MUM_IZI14_onay_olcekli.json'dan aynen (yeniden hesaplanmaz)",
+    "birlesik": "set 1-6 (145 bölge); eş dışlama kümesi 145 olayla kurulur; set 1-5 değerleri mum_izi13_olay.csv ile karşılaştırılır (R15, es_R15, fark, n_es): değişen satır "
+                "sayısı ve en büyük mutlak fark yazılır",
+    "gecit": "getirisiz ölçülebilirlik: gz_olc_bir'in kapıları aynen (giris_yok, ufuk_kesik (15. mum > 2022-12-31), giris_stop_altinda); getiri hesaplamaz; hesapta gz_olc ile "
+             "birebir aynı olmalı (değilse DUR)",
+    "d5_tum": "BİLGİ ek ölçü: +%5 stop'tan önce (gz_olc_bir dokunma kuralı aynen: günlük sırayla High >= giriş x 1,05 olan ilk gün, Low <= stop olan ilk günden ÖNCE; aynı gün "
+              "= stop önce); günlükte GZ d5 ile aynı; haftalıkta yeni (GZ haftalık hedefleri +%10 / +%20); aynı fonksiyonla hesaplanan haftalık +%10 GZ d10 ile aynı olmalı "
+              "(değilse DUR); eşler için yok",
+    "hucre": "n (ölçülen), n_es, R15 ort / medyan, eş ort, eşli fark ort / medyan, artıda payı (R15 > 0), eşinden iyi payı (fark > 0; eşi olanlarda), +%5 ve +%10 stop'tan "
+             "önce payı (d5_tum, d10), stop payı",
+    "tablolar": {"ucuncu_bakis": "yalnız set 6: Cemal sınıfı (EVET / KISMEN / HAYIR) x zaman (haftalık, günlük; birlikte bilgi) k17 hücresi + GZ tabloları (gz_tablolar) + "
+                                 "g2_evet_es; BENZİYOR hücreleri n 3 / n 1: 'karşılaştırma yapılamaz / yalnız döküm'; 17 bölgenin tek tek dökümü",
+                 "hakem": "BİLGİ: set 6'nın 17 bölgesi Cemal'in işaretinden bağımsız, zaman dilimine göre (haftalık, günlük, birlikte) k17 hücresi; karşılaştırma satırı set 5'in "
+                          "24 bölgesi (hakem v3) aynı ölçülerle; ek bilgi: set 6 hakem sınıfı a (iki hakem EVET) / b",
+                 "birlesik": "set 1-6 (145): GZ gz_tablolar (MUM_IZI13 birleşik tablosunun aynısı) + g2_evet_es + k17 hücresi (eşinden iyi payı, +%5); MUM_IZI13 birleşik "
+                             "(mum_izi13_sonuc.json) ile fark: EVET - HAYIR eşli fark farkı ve p, EVET - eş, hücre n / R15 / eşli fark",
+                 "yon": "üçüncü bakış iki bakışla aynı yönde mi: her dilimde EVET - HAYIR eşli fark farkının ve EVET - eş farkının İŞARETİ (MUM_IZI13 ilk / ikinci bakış ile); "
+                        "hesaplanamazsa 'karşılaştırma yapılamaz'"},
+    "etiket": "BİLGİ; ÖRNEKLEM YETERSİZ (bütün hücreler n < 30)",
+    "es_siniri": "eşler bölgenin kendi koşusuyla eşlenmedi (Ç229 / Ç240): aynı gün aynı kova konum eşi",
+    "pdf": "kapak: set 6 düz dil özet tablo (Cemal sınıfı x zaman) + hakem ve birleşik birer satır; sonra set 6'nın 17 bölgesinin HEPSİ: BENZİYOR, KISMEN, BENZEMİYOR "
+           "(her sınıfta önce haftalık sonra günlük, bölge sonu sırası); her sayfada işaret, hisse, tarih, öncesi 15 mum + bölge + sonrası 30 mum, giriş / stop / 15. mum "
+           "çizgileri, sağda girişe göre yüzde ekseni (MUM_IZI_HAKEM adım kuralı), R15, eş ortalaması, en yüksek / en derin, R30, stop, mum boyu satırı (olcekli json)",
+}
+K17_KONTROL: Dict[str, Tuple[str, str]] = {
+    "K1": ("EVET", "eş = aynı giriş günü aynı kova (CETVEL2 v2.2 konum eşi) aynı takvim aralığı aynı stop geometrisi (GZ aynen); eş dışlama 145 olayla; sınır: eşler bölgenin "
+                   "kendi koşusuyla eşlenmedi (Ç229 / Ç240)"),
+    "K2": ("EVET", "Cemal set 6'yı sonrasını görmeden işaretledi (ölçekli sayfa bölge sonunda kesik; MUM_IZI_HAKEM yalnız t'ye kadar bar); işaret dosyası commit 0c6dfec, bu ön "
+                   "kayıt set 6 getirilerinden önce; giriş bölgeden SONRAKİ barın açılışı; veri <= 2022-12-31 + KASA kapısı"),
+    "K3": ("EVET", "MI.mi_veri geçerli bar (H > L, V > 0); haftalık barlar tamamlanmış ISO haftaları (MH / MV aynen)"),
+    "K4": ("EVET", "145 tekil bölge (zaman + sembol + bölge sonu; k17_ornek DUR); setler arası sembol tekrarı sayılıp yazılır"),
+    "K5": ("EVET", "giriş = bölgeden sonraki ilk geçerli barın açılışı (haftalıkta sonraki haftanın ilk günü); giriş <= stop olay ölçülmez (sayısı yazılır)"),
+    "K6": ("EVET", "MI bölünme düzeltmeli fiyatlar (GZ aynen); getiriler oransal; ABD USD, AVR yerel para; pazarlar arası karşılaştırma eşli farkla"),
+    "K7": ("EVET", "evren bugün yaşayan hisseler (hayatta kalma yanlılığı); sonuç bilgi, kasa açılmaz"),
+    "K8": ("EVET", "set 6 hücreleri n 1-4, birleşik hücreler n < 30 (HAYIR hariç): etiket 'BİLGİ; ÖRNEKLEM YETERSİZ'; n < 2 'karşılaştırma yapılamaz'; 17 bölge tek tek listeli; "
+                   "tek dönem (<= 2022), BH yok (karar yok)"),
+    "K9": ("EVET", "MUM_IZI17_ON_KAYIT.md: KOD17 / EK17 / ESIK11 / EK13 / işaret / anahtar / ölçekli / olay13 / sonuç13 sha + getirisiz sayımlar; set 6 getirilerinden önce commit; "
+                   "k17_kapi sha + commit + temiz ağaç + IZ_KARNE.ik_kontrol_kapisi"),
+    "K10": ("EVET", "işaret şeması GZ.gz_isaret_oku (bilinmeyen değer DUR); üç set 6 dosyasında sayfa kümesi ve zaman aynı (DUR); bölge başı veriden yeniden hesaplanıp anahtarla "
+                    "denetlenir (GZ K10)"),
+    "K11": ("EVET", "getirisiz geçit hesapta gz_olc ile birebir (DUR); haftalık +%10 k17 dokunma fonksiyonuyla GZ d10'a eşit (DUR); set 1-5 satırları mum_izi13_olay.csv ile "
+                    "karşılaştırılır; tablo sayılarından >= 2 hücre olay csv'sinden bağımsız kodla yeniden üretilir (rapor öncesi)"),
+    "K12": ("EVET", "'iz / tuttu / anlamlı' sözü yok; sayı ile yorum ayrı; n < 30 'örneklem yetersiz'"),
+    "K13": ("EVET", "çakışma kapısı korunur; çalışan fonksiyonlar değişmez (test_mum_izi17 ast karşılaştırması); yasak defter / mühürlü dosyalara dokunulmaz; yalnız kendi yolları "
+                    "commit; sızıntı taraması MI._mi_yaz"),
+    "K14": ("UYGULANMAZ", "öneri / gerçek para işi değil; karar vermez"),
+}
+K17_AD = {"EVET": "BENZİYOR", "KISMEN": "KISMEN", "HAYIR": "BENZEMİYOR"}
+K17_ZAMAN = ("haftalik", "gunluk")
+
+
+def _k17_yol(ad: str, cikti: Optional[str] = None) -> str:
+    return os.path.join(cikti or G2_YOL["cikti"], K17_DOSYA[ad])
+
+
+def k17_ek_sha() -> str:
+    return hashlib.sha256(json.dumps(K17_EK, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+# ---------------------------------------------------------------- örneklem
+def k17_set6() -> pd.DataFrame:
+    """Set 6: sayfa -> bölge (mühürlü anahtar), işaret (Cemal), mum boyu (ölçekli json). Üç dosyanın sayfa ve zaman tutarlılığı denetlenir."""
+    E = GZ.gz_isaret_oku(K17_YOL["isaret6"]); EJ = json.load(open(K17_YOL["isaret6"], encoding="utf-8"))["sayfalar"]
+    A = json.load(open(K17_YOL["anahtar6"], encoding="utf-8"))["sayfalar"]; B = {int(s["yeni_sayfa"]): s for s in json.load(open(K17_YOL["olcekli6"], encoding="utf-8"))["sayfalar"]}
+    pa = {int(r["yeni_sayfa"]) for r in A}
+    if pa != set(E) or pa != set(B) or len(pa) != len(A):
+        raise G2Hata(f"K10: set 6 sayfa kümeleri uyuşmuyor (anahtar {sorted(pa)}, işaret {sorted(E)}, ölçekli {sorted(B)})")
+    rows = []
+    for r in A:
+        pg = int(r["yeni_sayfa"]); b = B[pg]; ez = EJ[str(pg)].get("zaman")
+        if b.get("zaman") != r["zaman"] or (ez is not None and ez != r["zaman"]):
+            raise G2Hata(f"K10: set 6 sayfa {pg} zaman uyuşmuyor ({r['zaman']}, {b.get('zaman')}, {ez})")
+        rows.append({"set": "set6", "set_ad": K17_SET6_AD, "sayfa": pg, "isaret": E[pg], "zaman": r["zaman"], "pazar": r["pazar"], "sembol": r["sembol"], "tarih": r["bolge_son"],
+                     "m": int(r["pencere"]), "bolge_bas_anahtar": r["bolge_bas"], "hakem_sinif": r.get("sinif"), "hakem_karar": r.get("hakem_karar"),
+                     "hakem2_karar": r.get("hakem2_karar"), "boy_mutlak": b.get("boy_mutlak"), "boy_onceki": b.get("onceki"), "boy_onceki_n": b.get("onceki_n"),
+                     "boy_oran": b.get("oran")})
+    X = pd.DataFrame(rows)
+    for c in ("boy_mutlak", "boy_onceki", "boy_oran"):
+        X[c] = pd.to_numeric(X[c], errors="coerce")
+    X["sinif"] = np.where(X.isaret.isin(GZ.SINIF), X.isaret, None); X["sinif_son"] = X["sinif"]
+    return X[X.sinif.notna()].reset_index(drop=True)
+
+
+def k17_ornek() -> pd.DataFrame:
+    X = pd.concat([g2_ornek(), k17_set6()], ignore_index=True)
+    if X.duplicated(["zaman", "sembol", "tarih"]).any():
+        raise G2Hata("K4: aynı bölge iki kez (set 1-6)")
+    return X
+
+
+def k17_sembol_tekrar(X: pd.DataFrame) -> Dict[str, Any]:
+    s6 = X[X.set == "set6"]; once = X[X.set != "set6"]
+    ort = sorted(set(s6.sembol) & set(once.sembol))
+    return {"set6_onceki_setlerle_ortak_sembol": ort, "n": len(ort)}
+
+
+# ---------------------------------------------------------------- getirisiz geçit
+def _k17_veri(Vc: Dict[Any, Any], zaman: str, pazar: str) -> Tuple[Dict[str, pd.DataFrame], Optional[Dict[str, pd.DataFrame]]]:
+    k = (zaman, pazar)
+    if k not in Vc:
+        if zaman == "gunluk":
+            Vc[k] = (MI.mi_veri(pazar, MV.MV_YOL["gunluk"])["V"], None)
+        else:
+            Vd = MI.mi_veri(pazar, MH.MH_YOL["tam"])["V"]; Vc[k] = (Vd, MV.mv_haftalik_panel(Vd))
+    return Vc[k]
+
+
+def k17_gecit_bir(Dg: pd.DataFrame, W: Optional[pd.DataFrame], r: Dict[str, Any], kesik: pd.Timestamp) -> Dict[str, Any]:
+    """gz_olc_bir'in kapıları aynen; getiri hesaplanmaz (yalnız giriş açılışı ve bölge dibi okunur)."""
+    E = GZ.GZ_ESIK["olcu"]; U = int(E["ufuk"]); sc = float(E["stop_carpan"])
+    B = W if r["zaman"] == "haftalik" else Dg
+    t = B.index.get_loc(pd.Timestamp(r["tarih"])); m = int(r["m"]); s = t - m + 1
+    rec: Dict[str, Any] = {"olculebilir": False, "neden": "", "bolge_bas_bar": B.index[s]}
+    stop = float(B.Low.to_numpy(float)[s:t + 1].min()) * sc
+    if t + 1 >= len(B):
+        rec["neden"] = "giris_yok"; return rec
+    g = W.bas.iloc[t + 1] if r["zaman"] == "haftalik" else Dg.index[t + 1]; E0 = float(Dg.Open.iloc[Dg.index.get_loc(g)])
+    if t + U >= len(B) or B.index[t + U] > kesik:
+        rec["neden"] = "ufuk_kesik"; return rec
+    if E0 <= stop:
+        rec["neden"] = "giris_stop_altinda"; return rec
+    rec.update({"olculebilir": True, "son15_tarih": str(pd.Timestamp(B.index[t + U]).date())})
+    return rec
+
+
+def k17_gecit(X: pd.DataFrame) -> pd.DataFrame:
+    Vc: Dict[Any, Any] = {}; out = []
+    for r in X.to_dict("records"):
+        Vd, Vw = _k17_veri(Vc, r["zaman"], r["pazar"])
+        if r["sembol"] not in Vd:
+            out.append({"olculebilir": False, "neden": "veri_yok"}); continue
+        rec = k17_gecit_bir(Vd[r["sembol"]], Vw[r["sembol"]] if Vw is not None else None, r, MI.MI_KESIK)
+        if isinstance(r.get("bolge_bas_anahtar"), str) and str(pd.Timestamp(rec["bolge_bas_bar"]).date()) != r["bolge_bas_anahtar"]:
+            raise G2Hata(f"K10: {r['set']} s{r['sayfa']} bölge başı anahtarla uyuşmuyor")
+        out.append(rec)
+    return pd.concat([X.reset_index(drop=True), pd.DataFrame(out)[["olculebilir", "neden"] + (["son15_tarih"] if any("son15_tarih" in o for o in out) else [])]], axis=1)
+
+
+def k17_sayim(G: pd.DataFrame) -> Dict[str, Any]:
+    """GETİRİSİZ sayım: sınıf x zaman, ölçülebilen / ölçülemeyen ve nedeni (set 6 ve birleşik)."""
+    def bir(g: pd.DataFrame) -> Dict[str, Any]:
+        o = g[g.olculebilir.astype(bool)]
+        return {"toplam": int(len(g)), "olculebilir": int(len(o)), "olculemedi": g[~g.olculebilir.astype(bool)].neden.value_counts().to_dict(),
+                "sinif_zaman": {f"{s}|{z}": int(((g.sinif == s) & (g.zaman == z)).sum()) for s in GZ.SINIF for z in K17_ZAMAN},
+                "sinif_zaman_olculebilir": {f"{s}|{z}": int(((o.sinif == s) & (o.zaman == z)).sum()) for s in GZ.SINIF for z in K17_ZAMAN},
+                "pazar": g.pazar.value_counts().to_dict(), "en_gec_15_mum": (str(o.son15_tarih.max()) if "son15_tarih" in o and len(o) else None)}
+    s6 = G[G.set == "set6"]
+    return {"set6": bir(s6), "birlesik": bir(G), "set5": bir(G[G.set == "set5"]),
+            "set6_hakem_sinif": s6.hakem_sinif.value_counts().to_dict() if "hakem_sinif" in s6 else {}}
+
+
+# ---------------------------------------------------------------- ek ölçü (+%5 her iki dilimde) ve hücre
+def k17_dokunma(Hs: np.ndarray, Ls: np.ndarray, E0: float, stop: float, x: float) -> float:
+    """gz_olc_bir dokunma kuralı aynen: günlük sırayla High >= E0 x (1 + x) olan ilk gün, Low <= stop olan ilk günden ÖNCE (aynı gün = stop önce)."""
+    Hs = np.asarray(Hs, float); Ls = np.asarray(Ls, float)
+    sk = np.flatnonzero(Ls <= stop); ks = int(sk[0]) if len(sk) else 10 ** 9
+    hk = np.flatnonzero(Hs >= E0 * (1 + x))
+    return float(len(hk) > 0 and int(hk[0]) < ks)
+
+
+def k17_d5(Y: pd.DataFrame) -> pd.DataFrame:
+    """d5_tum: günlükte GZ d5 aynen; haftalıkta günlük veriyle aynı kural. Denetim: aynı fonksiyonla haftalık +%10 = GZ d10."""
+    Y = Y.copy(); Y["d5_tum"] = np.nan; Vc: Dict[Any, Any] = {}
+    g = Y.olculdu.astype(bool) & (Y.zaman == "gunluk"); Y.loc[g, "d5_tum"] = Y.loc[g, "d5"].astype(float)
+    for i in Y.index[Y.olculdu.astype(bool) & (Y.zaman == "haftalik")]:
+        r = Y.loc[i]; Vd, _ = _k17_veri(Vc, "haftalik", r.pazar); Dg = Vd[r.sembol]
+        gi = Dg.index.get_loc(pd.Timestamp(r.giris)); ei = Dg.index.get_loc(pd.Timestamp(r.son15))
+        Hs = Dg.High.to_numpy(float)[gi:ei + 1]; Ls = Dg.Low.to_numpy(float)[gi:ei + 1]
+        if k17_dokunma(Hs, Ls, float(r.E0), float(r.stop), 0.10) != float(r.d10):
+            raise G2Hata(f"K11: haftalık +%10 yeniden hesabı GZ d10 ile uyuşmuyor ({r.set} s{r.sayfa})")
+        Y.loc[i, "d5_tum"] = k17_dokunma(Hs, Ls, float(r.E0), float(r.stop), 0.05)
+    return Y
+
+
+def k17_hucre(g: pd.DataFrame) -> Dict[str, Any]:
+    out = k15_hucre(g); o = g[g.olculdu.astype(bool)]; f = o[np.isfinite(o.fark.astype(float))]
+    out.update({"es_ort": float(f.es_R15.astype(float).mean()) if len(f) else None,
+                "d5_pay": float(o.d5_tum.astype(float).mean()) if len(o) and "d5_tum" in o else None,
+                "d10_pay": float(o.d10.astype(float).mean()) if len(o) else None, "stop_pay": float(o.stop15.astype(float).mean()) if len(o) else None})
+    out["etiket"] = "boş" if not out["n"] else K17_EK["etiket"]
+    return out
+
+
+def k17_tablolar(Y: pd.DataFrame) -> Dict[str, Any]:
+    Y6 = Y[Y.set == "set6"]; Y5 = Y[Y.set == "set5"]; zz = K17_ZAMAN + ("birlikte",)
+
+    def zs(D: pd.DataFrame, z: str) -> pd.DataFrame:
+        return D if z == "birlikte" else D[D.zaman == z]
+    uc = {f"{s}|{z}": k17_hucre(zs(Y6[Y6.sinif == s], z)) for s in GZ.SINIF for z in zz}
+    hk = {f"{st}|{z}": k17_hucre(zs(D, z)) for st, D in (("set6", Y6), ("set5", Y5)) for z in zz}
+    hk.update({f"set6_hakem_{h}|{z}": k17_hucre(zs(Y6[Y6.hakem_sinif == h], z)) for h in ("a", "b") for z in zz})
+    bk = {f"{s}|{z}": k17_hucre(zs(Y[Y.sinif.isin(sl)], z)) for s, sl in (("EVET", ["EVET"]), ("KISMEN", ["KISMEN"]), ("HAYIR", ["HAYIR"]), ("EVET+KISMEN", ["EVET", "KISMEN"]))
+          for z in zz}
+    return {"ucuncu_bakis": {"hucre": uc, "gz": GZ.gz_tablolar(Y6), "evet_es": g2_evet_es(Y6)}, "hakem": hk,
+            "birlesik": {"tablo": GZ.gz_tablolar(Y), "evet_es": g2_evet_es(Y), "k17_hucre": bk, "duyarlilik_son_isaret": GZ.gz_tablolar(Y, "sinif_son")["karsilastirma"]}}
+
+
+def k17_dokum(Y: pd.DataFrame) -> List[Dict[str, Any]]:
+    Y6 = Y[Y.set == "set6"].copy(); Y6["_s"] = Y6.sinif.map({s: i for i, s in enumerate(GZ.SINIF)}); Y6["_z"] = Y6.zaman.map({"haftalik": 0, "gunluk": 1})
+    kol = ["sayfa", "isaret", "zaman", "pazar", "sembol", "bolge_bas", "bolge_son", "m", "olculdu", "neden", "R15", "es_R15", "n_es", "fark", "max15", "min15", "stop15", "d5_tum",
+           "d10", "R30", "boy_mutlak", "boy_onceki", "boy_oran", "hakem_sinif", "hakem2_karar"]
+    return [{k: (None if isinstance(v, float) and not np.isfinite(v) else v) for k, v in r.items()} for r in Y6.sort_values(["_s", "_z", "bolge_son"])[kol].to_dict("records")]
+
+
+def k17_yon(T: Dict[str, Any], J13: Dict[str, Any]) -> Dict[str, Any]:
+    out = {}
+    for z in K17_ZAMAN:
+        k = T["ucuncu_bakis"]["gz"]["karsilastirma"][f"EVET-HAYIR|{z}"]["esli_fark_fark"]; e = T["ucuncu_bakis"]["evet_es"][f"EVET-es|{z}"]
+        e3 = e["esli_fark_ort"] if e["n_es"] >= 2 else None
+        r = {}
+        for ad, v3, v1, v2 in (("EVET-HAYIR_esli", k, J13["ilk_bakis"]["tablo"]["karsilastirma"][f"EVET-HAYIR|{z}"]["esli_fark_fark"],
+                                J13["ikinci_bakis"]["tablo"]["karsilastirma"][f"EVET-HAYIR|{z}"]["esli_fark_fark"]),
+                               ("EVET-es", e3, J13["ilk_bakis_evet_es"][f"EVET-es|{z}"]["esli_fark_ort"], J13["ikinci_bakis"]["evet_es"][f"EVET-es|{z}"]["esli_fark_ort"])):
+            r[ad] = {"ilk": v1, "ikinci": v2, "ucuncu": v3,
+                     "ilkle_ayni_yon": None if (v3 is None or v1 is None) else bool(np.sign(v3) == np.sign(v1)),
+                     "ikinciyle_ayni_yon": None if (v3 is None or v2 is None) else bool(np.sign(v3) == np.sign(v2)),
+                     "durum": "karşılaştırma yapılamaz" if v3 is None else "hesaplandı"}
+        out[z] = r
+    return out
+
+
+def k17_fark13(J13: Dict[str, Any], T: Dict[str, Any]) -> Dict[str, Any]:
+    """MUM_IZI13 birleşik (128) -> MUM_IZI17 birleşik (145)."""
+    a = J13["birlesik"]; b = T["birlesik"]; out: Dict[str, Any] = {"karsilastirma": {}, "evet_es": {}, "hucre": {}}
+    for k, v in b["tablo"]["karsilastirma"].items():
+        o = a["tablo"]["karsilastirma"].get(k, {})
+        out["karsilastirma"][k] = {"esli_fark_fark_13": o.get("esli_fark_fark"), "esli_fark_fark_17": v.get("esli_fark_fark"), "esli_p_13": o.get("esli_p"), "esli_p_17": v.get("esli_p")}
+    for k, v in b["evet_es"].items():
+        o = a["evet_es"].get(k, {})
+        out["evet_es"][k] = {"ort_13": o.get("esli_fark_ort"), "ort_17": v.get("esli_fark_ort"), "p_13": o.get("p"), "p_17": v.get("p"), "n_13": o.get("n_es"), "n_17": v.get("n_es")}
+    for k, v in b["tablo"]["hucre"].items():
+        if k.endswith("|BIST"):
+            continue
+        o = a["tablo"]["hucre"].get(k, {})
+        out["hucre"][k] = {"n_13": o.get("n"), "n_17": v.get("n"), "R15_ort_13": o.get("R15_ort"), "R15_ort_17": v.get("R15_ort"), "fark_ort_13": o.get("fark_ort"),
+                           "fark_ort_17": v.get("fark_ort")}
+    return out
+
+
+def k17_set15_farki(O13: pd.DataFrame, O17: pd.DataFrame) -> Dict[str, Any]:
+    M = O13.merge(O17[O17.set != "set6"], on=["set", "sayfa"], suffixes=("_13", "_17")); fk = {}; en = {}
+    for c in ("R15", "es_R15", "fark", "n_es"):
+        a = M[f"{c}_13"].to_numpy(float); b = M[f"{c}_17"].to_numpy(float); ayni = np.isclose(a, b, atol=1e-9) | (np.isnan(a) & np.isnan(b))
+        fk[c] = int((~ayni).sum()); d = np.abs(a - b); d = d[~ayni & np.isfinite(d)]; en[c] = float(d.max()) if len(d) else 0.0
+    nan_deg = int(((M.es_neden_13.fillna("") != M.es_neden_17.fillna(""))).sum()) if "es_neden_13" in M else None
+    degisen = M[~(np.isclose(M.fark_13.to_numpy(float), M.fark_17.to_numpy(float), atol=1e-9) | (M.fark_13.isna() & M.fark_17.isna()))][["set", "sayfa", "sembol_13", "fark_13", "fark_17"]]
+    return {"satir": int(len(M)), "beklenen": int(len(O13)), "farkli": fk, "en_buyuk_mutlak_fark": en, "es_neden_degisen": nan_deg,
+            "degisen_satirlar": degisen.to_dict("records")}
+
+
+# ---------------------------------------------------------------- kapı, ön kayıt, koşu
+def k17_sha_simdi() -> Dict[str, str]:
+    return {"KOD17_SHA": MI._mi_sha(G2_YOL["kod"]), "EK17_SHA": k17_ek_sha(), "EK13_SHA": g2_ek_sha(), "GZ_KOD_SHA": MI._mi_sha(GZ.GZ_YOL["kod"]), "ESIK11_SHA": GZ.gz_esik_sha(),
+            "ISARET_SET6_SHA": MI._mi_sha(K17_YOL["isaret6"]), "ANAHTAR_SET6_SHA": MI._mi_sha(K17_YOL["anahtar6"]), "OLCEKLI_SET6_SHA": MI._mi_sha(K17_YOL["olcekli6"]),
+            "OLAY13_SHA": MI._mi_sha(K17_YOL["olay13"]), "SONUC13_SHA": MI._mi_sha(K17_YOL["sonuc13"])}
+
+
+def k17_kapi(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import IZ_KARNE as IK
+    yol = _k17_yol("onkayit", cikti)
+    try:
+        k = IK.ik_kontrol_kapisi(yol)
+    except RuntimeError as ex:
+        raise G2Hata(str(ex)) from ex
+    metin = open(yol, encoding="utf-8").read(); bek = k17_sha_simdi()
+    for ad, v in bek.items():
+        if f"{ad}: {v}" not in metin:
+            raise G2Hata(f"ön kayıt 17 kapısı: {ad} farklı -> DURDU")
+    rel = os.path.relpath(yol, KOK_G2); c = MI._mi_git(["log", "-1", "--format=%H %cI", "--", rel])
+    if not c:
+        raise G2Hata("ön kayıt 17 commit'li değil -> DURDU")
+    if MI._mi_git(["status", "--porcelain", "--", rel, "MUM_IZI_GOZ2.py", "MUM_IZI_GOZ.py"] + [os.path.relpath(v, KOK_G2) for v in K17_YOL.values()]):
+        raise G2Hata("ön kayıt / kod / girdiler çalışma ağacında değişmiş -> DURDU")
+    return {"kontrol": {"gecti": k["gecti"]}, "onkayit_commit": c, **bek}
+
+
+def k17_onkayit_yaz(cikti: Optional[str] = None) -> str:
+    import IZ_KARNE as IK
+    y = _k17_yol("onkayit", cikti)
+    if os.path.exists(y):
+        raise G2Hata("ön kayıt 17 zaten var")
+    X = k17_ornek(); G = k17_gecit(X); S = k17_sayim(G); sh = k17_sha_simdi(); st = k17_sembol_tekrar(X)
+    ad = {k["kod"]: k.get("ad", k["kod"]) for k in IK.IK_KONTROL}
+    kt = "\n".join(["| Kod | Madde | Yanıt | Kanıt |", "|---|---|---|---|"] + [f"| {k} | {ad.get(k, k)} | {a} | {b} |" for k, (a, b) in K17_KONTROL.items()])
+    kc = MI._mi_git(["log", "-1", "--format=%H %cI", "--", "MUM_IZI_GOZ2.py"])
+
+    def tablo(s: Dict[str, Any]) -> List[str]:
+        t = ["| Cemal | haftalık (ölçülebilen) | günlük (ölçülebilen) |", "|---|---|---|"]
+        for c in GZ.SINIF:
+            t.append(f"| {K17_AD[c]} | {s['sinif_zaman'][f'{c}|haftalik']} ({s['sinif_zaman_olculebilir'][f'{c}|haftalik']}) | "
+                     f"{s['sinif_zaman'][f'{c}|gunluk']} ({s['sinif_zaman_olculebilir'][f'{c}|gunluk']}) |")
+        return t
+    s6 = S["set6"]; sb = S["birlesik"]
+    s = [f"# MUM_IZI17 ÖN KAYIT ({MI._mi_simdi()})", "",
+         "MUM_IZI11_ON_KAYIT ve MUM_IZI13_ON_KAYIT tanımları AYNEN (MUM_IZI_GOZ.py GZ_ESIK: ESIK11_SHA; MUM_IZI_GOZ2 G2_EK: EK13_SHA): giriş = bölgeden sonraki ilk geçerli barın "
+         "açılışı; ufuk 15 mum; stop = bölge dibi x 0,98; dokunma; R30; CETVEL2 konum eşi; tablolar; permütasyonlar. Ek: set 6 = MUM_IZI14_ONAY_OLCEKLI 17 bölge (Cemal'in "
+         "sonrasını görmeden, yüzde eksenli sayfada işaretlediği ilk set). Bu dosya set 6'nın getirileri hesaplanmadan ÖNCE commit edilir; getirisiz sayımlar aşağıda.", "",
+         "## Mühürler", "", *[f"{k}: {v}" for k, v in sh.items()], "", f"- MUM_IZI_GOZ2.py commit'i: {kc or 'yok'}", "",
+         "## GETİRİSİZ SAYIM (getiri hesaplanmadı; yalnız işaret, zaman, veri kapıları)", "",
+         f"Set 6: {s6['toplam']} bölge, ölçülebilen {s6['olculebilir']}, ölçülemeyen {s6['toplam'] - s6['olculebilir']} {json.dumps(s6['olculemedi'], ensure_ascii=False)}; "
+         f"pazar {json.dumps(s6['pazar'], ensure_ascii=False)}; en geç 15. mum {s6['en_gec_15_mum']}; hakem sınıfı {json.dumps(S['set6_hakem_sinif'], ensure_ascii=False)} "
+         "(a = iki hakem EVET).", "", *tablo(s6), "",
+         f"Birleşik set 1-6: {sb['toplam']} bölge, ölçülebilen {sb['olculebilir']}, ölçülemeyen {sb['toplam'] - sb['olculebilir']} "
+         f"{json.dumps(sb['olculemedi'], ensure_ascii=False)}; pazar {json.dumps(sb['pazar'], ensure_ascii=False)}.", "", *tablo(sb), "",
+         f"- Set 6'nın önceki setlerle ortak sembolü: {st['n']} {st['set6_onceki_setlerle_ortak_sembol']} (bölge tekrarı yok: zaman + sembol + bölge sonu tekil, denetlendi).",
+         "- Eş sayısı (eşi < 5 / kovasız) hesapta belirlenir ve yazılır; eşsiz olay eşli tabloya girmez (GZ aynen).",
+         "- Set 6 BENZİYOR: haftalık 3, günlük 1 -> günlük BENZİYOR hücresi 'yalnız döküm'; haftalık BENZİYOR - BENZEMİYOR karşılaştırması n 3 / 3 ile (bilgi).", "",
+         "## Tablolar (önceden; sonuçtan sonra değişmez)", "",
+         "- (i) ÜÇÜNCÜ BAKIŞ = yalnız set 6: Cemal sınıfı x zaman dilimi: n, R15 ort / medyan, eş ort, eşli fark ort / medyan, artıda payı, eşinden iyi payı, +%5 / +%10 "
+         "stop'tan önce payı, stop payı. +%5 haftalıkta GZ'de yoktu (haftalık hedefler +%10 / +%20): aynı dokunma kuralıyla BİLGİ olarak eklenir (d5_tum); GZ tabloları "
+         "(haftalık +%10 / +%20) aynen ayrıca yazılır. BENZİYOR hücreleri (n 3 ve n 1): 'karşılaştırma yapılamaz / yalnız döküm'. 17 bölge tek tek döküm (sayfa, işaret, "
+         "zaman, sembol, R15, eş ort, mum boyu %, oran).",
+         "- (ii) HAKEMİN SEÇTİKLERİ (BİLGİ): set 6'nın 17 bölgesi Cemal'in işaretinden bağımsız, zaman dilimine göre (haftalık, günlük, birlikte); karşılaştırma satırı set 5 "
+         "(24, hakem v3, dokuzuncu ölçütsüz) aynı ölçülerle; ek bilgi satırı hakem sınıfı a / b.",
+         "- (iii) BİRLEŞİK = set 1-6 (145): MUM_IZI13 birleşik tablosunun aynısı (EVET / KISMEN / HAYIR / EVET+KISMEN x zaman; EVET - HAYIR ve (EVET + KISMEN) - HAYIR eşli "
+         "fark farkı + permütasyon p; EVET - eş işaret çevirme p) + MUM_IZI13 birleşiğine göre değişim. Soru: iki bakıştaki yön (haftalıkta BENZİYOR eşlerin gerisinde; günlükte "
+         "fark yok) üçüncüyle değişti mi: 'aynı yön' = farkın İŞARETİ; hesaplanamazsa 'karşılaştırma yapılamaz'.",
+         "- Set 1-5 satırları mum_izi13_olay.csv ile karşılaştırılır (R15, es_R15, fark, n_es): eş dışlama kümesi 145 olayla kurulduğu için eş değerleri değişebilir; değişen satır "
+         "sayısı ve en büyük fark yazılır.",
+         "- OKUMA: bütün hücreler n < 30 (birleşik HAYIR hariç): etiket 'BİLGİ; ÖRNEKLEM YETERSİZ'. Eş sınırı: eşler bölgenin kendi koşusuyla eşlenmedi (Ç229 / Ç240).", "",
+         "## Ek tanımlar (K17_EK; sha yukarıda)", "", "```", json.dumps(K17_EK, ensure_ascii=False, indent=1), "```", "",
+         "## KONTROL LİSTESİ (`python IZ_KARNE.py kontrol`; K8: set 6 hücreleri n < 30)", "", kt, "", "## SAPMA", "", "(ön kayıt anında yok)", ""]
+    return MI._mi_yaz(y, "\n".join(s), "ön kayıt 17")
+
+
+K17_KOL = ["set", "set_ad", "sayfa", "isaret", "sinif", "sinif_son", "zaman", "pazar", "sembol", "bolge_bas", "bolge_son", "m", "olculdu", "neden", "giris", "E0", "stop", "son15",
+           "R15", "max15", "min15", "stop15", "d5", "d10", "d20", "R30", "panel", "kova", "n_es", "es_R15", "es_med", "fark", "sira", "es_max15", "es_min15", "es_d5", "es_d10",
+           "es_d20", "es_stop15", "es_neden", "d5_tum", "hakem_sinif", "hakem_karar", "hakem2_karar", "boy_mutlak", "boy_onceki", "boy_onceki_n", "boy_oran"]
+
+
+def k17_kos(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import KASA as KS
+    t0 = time.time(); cikti = cikti or G2_YOL["cikti"]
+    if os.path.exists(_k17_yol("sonuc", cikti)):
+        raise G2Hata("sonuç 17 zaten var")
+    G0 = k17_kapi(cikti)
+    kasa = KS.kasa_kapisi([os.path.join(MV.MV_YOL["gunluk"], f"V_{p}.pkl") for p in ("ABD", "AVR", "BIST")] +
+                          [os.path.join(MH.MH_YOL["tam"], f"V_{p}.pkl") for p in ("ABD", "AVR", "BIST")] + [os.path.join(MH.MH_YOL["p1"], f"V_{p}.pkl") for p in ("ABD", "AVR")],
+                          "2022-12-31")
+    X = k17_ornek(); Gt = k17_gecit(X)
+    Y = GZ.gz_es(GZ.gz_olc(X))
+    if not (Y.olculdu.astype(bool).to_numpy() == Gt.olculebilir.astype(bool).to_numpy()).all() or \
+            not (Y.neden.fillna("").to_numpy() == Gt.neden.fillna("").to_numpy()).all():
+        raise G2Hata("K11: getirisiz geçit ile gz_olc uyuşmuyor")
+    Y = k17_d5(Y).sort_values(["set", "sayfa"]).reset_index(drop=True)
+    for c in K17_KOL:
+        if c not in Y:
+            Y[c] = np.nan
+    O = Y[K17_KOL].copy()
+    for c in ("bolge_bas", "bolge_son", "giris", "son15"):
+        O[c] = pd.to_datetime(O[c]).dt.strftime("%Y-%m-%d")
+    O.to_csv(_k17_yol("olay", cikti), index=False, float_format="%.6f")
+    O17 = pd.read_csv(_k17_yol("olay", cikti)); O13 = pd.read_csv(K17_YOL["olay13"])
+    J13 = json.load(open(K17_YOL["sonuc13"], encoding="utf-8")); T = k17_tablolar(O)      # tablolar tam duyarlıkla (g2_kos gibi bellekteki satırlardan)
+    Y6 = O[O.set == "set6"]
+    J = {"surum": K17_SURUM, "kapi": G0, "kasa": kasa, "sayim": k17_sayim(Gt), "sembol_tekrar": k17_sembol_tekrar(X),
+         "es_yok": {"set6": Y6[Y6.olculdu.astype(bool)].es_neden.fillna("").replace("", "var").value_counts().to_dict(),
+                    "birlesik": O[O.olculdu.astype(bool)].es_neden.fillna("").replace("", "var").value_counts().to_dict()},
+         "set1_5_mum_izi13_farki": k17_set15_farki(O13, O17), **T, "dokum_set6": k17_dokum(O), "yon": k17_yon(T, J13), "mum_izi13_birlesik_farki": k17_fark13(J13, T),
+         "etiket": K17_EK["etiket"], "es_siniri": K17_EK["es_siniri"], "olay_sha": MI._mi_sha(_k17_yol("olay", cikti)), "sure_sn": round(time.time() - t0)}
+    MI._mi_jyaz(_k17_yol("sonuc", cikti), J, "sonuç 17")
+    return J
+
+
+# ---------------------------------------------------------------- PDF
+def _k17_yuzde(p: Optional[float]) -> str:
+    return "-" if p is None or not np.isfinite(p) else f"{'+' if p >= 0 else '-'}%{abs(p) * 100:.1f}".replace(".", ",")
+
+
+def _k17_pay(p: Optional[float], n: int) -> str:
+    return "-" if p is None or not n or not np.isfinite(p) else f"{int(round(p * n))} / {n}"
+
+
+def k17_sayfa(fig, r: Any, d: pd.DataFrame) -> None:
+    """Tek bölge sonrası sayfası (g2_pdf düzeni + sağda girişe göre yüzde ekseni + mum boyu satırı)."""
+    import MUM_IZI_HAKEM as HK   # yalnız okunur: yüzde adımı ve mum boyu satırı aynı kuralla
+    t = d.index.get_loc(pd.Timestamp(r.bolge_son)) if r.zaman == "gunluk" else int(np.flatnonzero(d.index >= pd.Timestamp(r.bolge_son))[0])
+    m = int(r.m); i0 = max(0, t - m + 1 - 15); i1 = min(len(d) - 1, t + 30); eksik = (t + 30) - i1
+    BU, BO, BA = MI.mi_bant(d.Close.to_numpy(float)); sl = slice(i0, i1 + 1); zad = "haftalık" if r.zaman == "haftalik" else "günlük"
+    fig.text(0.07, 0.955, f"Senin işaretin: {K17_AD[r.sinif]}", fontsize=17, weight="bold", color={"EVET": "#1a9850", "KISMEN": "#e08214", "HAYIR": "#d73027"}[r.sinif])
+    ax = fig.add_axes([0.07, 0.38, 0.8, 0.52])
+    MV._mv_ciz(ax, *(d[c].to_numpy(float)[sl] for c in ("Open", "High", "Low", "Close")), BU[sl], BO[sl], BA[sl], (t - m + 1 - i0, t - i0),
+               f"{r.sembol} ({r.pazar}) · {zad} · bölge {r.bolge_bas} .. {r.bolge_son}")
+    xg = t + 1 - i0
+    if np.isfinite(r.E0):
+        ax.axvline(xg - 0.5, color="#1a9850", linewidth=1.2, linestyle="--"); ax.hlines(r.E0, xg - 0.5, i1 - i0 + 0.5, color="#1a9850", linewidth=1)
+    if np.isfinite(r.stop):
+        ax.hlines(r.stop, t - m + 1 - i0 - 0.5, i1 - i0 + 0.5, color="#d73027", linewidth=1)
+    if t + 15 <= i1:
+        ax.axvline(t + 15 - i0 + 0.4, color="#777777", linewidth=1.2)
+    ax.set_xticks([t - m + 1 - i0, xg] + ([t + 15 - i0] if t + 15 <= i1 else []))
+    ax.set_xticklabels([str(d.index[t - m + 1].date()), "giriş"] + (["15. mum"] if t + 15 <= i1 else []), fontsize=9)
+    lo = float(np.nanmin(d.Low.to_numpy(float)[sl])); hi = float(np.nanmax(d.High.to_numpy(float)[sl])); pd_ = 0.05 * (hi - lo)
+    lo, hi = lo - pd_, hi + pd_; ax.set_ylim(lo, hi)      # dikey ölçek mumlara göre (bant çerçevede kesilir); yüzde ekseni gerçek boyu gösterir
+    ref = float(r.E0) if np.isfinite(r.E0) else float(d.Close.iloc[t])
+    _, ps = HK.hk_yuzde_adim(lo, hi, ref); yv = [ref * (1 + p / 100) for p in ps]
+    for v in yv:
+        ax.axhline(v, color="#cccccc", linewidth=0.5, zorder=0)
+    ax2 = ax.twinx(); ax2.set_ylim(lo, hi); ax2.set_yticks(yv); ax2.set_yticklabels([HK._hk_yuzde_yazi(p) for p in ps], fontsize=10)
+    ax2.set_ylabel("girişe göre (0 = giriş fiyatı)", fontsize=9)
+    if bool(r.olculdu):
+        es = f"{_k17_yuzde(r.es_R15)} ({int(r.n_es)} hisse)" if np.isfinite(r.es_R15) else "eş yok"
+        alt = [f"15 mum getirisi: {_k17_yuzde(r.R15)}      eşlerin ortalaması: {es}",
+               f"eşinden fark: {_k17_yuzde(r.fark) if np.isfinite(r.fark) else '-'}      en yüksek: {_k17_yuzde(r.max15)}      en derin: {_k17_yuzde(r.min15)}",
+               f"+%5'e stop'tan önce: {'evet' if r.d5_tum == 1 else 'hayır'}      +%10'a: {'evet' if r.d10 == 1 else 'hayır'}      stop: {'oldu' if r.stop15 == 1 else 'olmadı'}"
+               f"      30 mum: {_k17_yuzde(r.R30) if np.isfinite(r.R30) else '-'}"]
+    else:
+        alt = [f"ölçülmedi: {r.neden}"]
+    B = {"boy_mutlak": float(r.boy_mutlak), "onceki": float(r.boy_onceki) if np.isfinite(r.boy_onceki) else float("nan"),
+         "onceki_n": int(r.boy_onceki_n) if np.isfinite(r.boy_onceki_n) else 0, "oran": float(r.boy_oran) if np.isfinite(r.boy_oran) else float("nan")}
+    b1, b2 = HK.hk_boy_satiri(B)
+    alt += ["", b1, b2]
+    if eksik > 0:
+        alt.append(f"sonrası {30 - eksik} mum (veri 2022-12-30'da bitiyor)")
+    fig.text(0.07, 0.32, "\n".join(alt), fontsize=11.5, va="top", linespacing=1.6)
+    fig.text(0.07, 0.06, "Turuncu kutu = bölge · yeşil kesik = giriş · kırmızı = stop (bölge dibi x 0,98) · gri dikey = 15. mum · mor = Bollinger 20 ve SMA20",
+             fontsize=8.5, color="#555555")
+
+
+def k17_pdf(cikti: Optional[str] = None, olay: Optional[pd.DataFrame] = None, sonuc: Optional[Dict[str, Any]] = None, yol: Optional[str] = None) -> str:
+    """MUM_IZI17_SONRASI.pdf. olay / sonuc / yol verilirse (deneme basımı) dosyalar okunmaz."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    cikti = cikti or G2_YOL["cikti"]; y = yol or _k17_yol("pdf", cikti)
+    if olay is None:
+        J = json.load(open(_k17_yol("sonuc", cikti), encoding="utf-8"))
+        if MI._mi_sha(_k17_yol("olay", cikti)) != J["olay_sha"]:
+            raise G2Hata("olay csv'si sonuç 17 json'uyla uyuşmuyor")
+        O = pd.read_csv(_k17_yol("olay", cikti))
+    else:
+        O, J = olay, sonuc
+    st = "set6" if (O.set == "set6").any() else "set5"; U = J["ucuncu_bakis"]["hucre"]; HK_ = J["hakem"]; BK = J["birlesik"]["k17_hucre"]
+    Vc: Dict[Any, Any] = {}
+    with PdfPages(y, metadata={"Title": "MUM_IZI17 sonrası", "CreationDate": None, "ModDate": None}) as pdf:
+        fig = plt.figure(figsize=(8.3, 11.7)); n6 = int((O.set == st).sum())
+        fig.text(0.05, 0.955, f"Son {n6} bölge (yüzde eksenli sayfa): işaretlerin sonrasında ne yaptı", fontsize=14, weight="bold")
+        fig.text(0.05, 0.928, "Giriş: bölgeden sonraki ilk mumun açılışı. 15 mum sonraki kapanışla getiri. Eş: aynı gün, benzer oynaklık ve likiditedeki hisseler.",
+                 fontsize=9)
+        ax = fig.add_axes([0.02, 0.66, 0.96, 0.25]); ax.axis("off"); sat = []
+        for z, zad in (("haftalik", "haftalık"), ("gunluk", "günlük")):
+            for s in GZ.SINIF:
+                c = U[f"{s}|{z}"]; n = c.get("n", 0); ne = c.get("n_es", 0)
+                sat.append([K17_AD[s], zad, str(n), _k17_pay(c.get("arti_pay"), n), _k17_yuzde(c.get("R15_ort")), _k17_yuzde(c.get("R15_med")), _k17_yuzde(c.get("es_ort")),
+                            _k17_pay(c.get("esinden_iyi_pay"), ne), _k17_pay(c.get("d5_pay"), n), _k17_pay(c.get("stop_pay"), n)])
+        tb = ax.table(cellText=sat, colLabels=["senin\nişaretin", "mum", "bölge", "artıda\nkapanan", "ortalama", "medyan", "eşlerin\nort.", "eşinden\niyi", "+%5'e\nstop'tan önce",
+                                               "stop\nolan"], loc="upper center", cellLoc="center",
+                      colWidths=[0.13, 0.09, 0.06, 0.09, 0.1, 0.1, 0.09, 0.09, 0.13, 0.08])
+        tb.auto_set_font_size(False); tb.set_fontsize(9.5); tb.scale(1, 2.3)
+
+        def sat_yaz(c: Dict[str, Any]) -> str:
+            return (f"{c.get('n', 0)} bölge, ortalama {_k17_yuzde(c.get('R15_ort'))}, eşlerinden {_k17_yuzde(c.get('fark_ort'))}, eşinden iyi "
+                    f"{_k17_pay(c.get('esinden_iyi_pay'), c.get('n_es', 0))}")
+        sat2 = [f"Hakemin seçtiği {n6} bölgenin hepsi: haftalık {sat_yaz(HK_[f'{st}|haftalik'])}; günlük {sat_yaz(HK_[f'{st}|gunluk'])}.",
+                f"Bütün bölgeler ({int(len(O))}): haftalık BENZİYOR {sat_yaz(BK['EVET|haftalik'])}; BENZEMİYOR {sat_yaz(BK['HAYIR|haftalik'])}.",
+                f"Günlük BENZİYOR {sat_yaz(BK['EVET|gunluk'])}; BENZEMİYOR {sat_yaz(BK['HAYIR|gunluk'])}."]
+        import textwrap
+        yy = 0.63
+        for s_ in sat2:
+            w = textwrap.fill(s_, 95); fig.text(0.05, yy, w, fontsize=9.5, va="top", linespacing=1.4); yy -= 0.019 * (w.count("\n") + 1) + 0.015
+        fig.text(0.05, yy - 0.01, "Sayılar çok az (N < 30): bu bir sonuç değil, bilgi.", fontsize=13, weight="bold")
+        fig.text(0.05, yy - 0.06, "Sonraki sayfalar: bu bölgelerin hepsi; önce BENZİYOR, sonra KISMEN, sonra BENZEMİYOR dediklerin\n(her birinde önce haftalık). "
+                 "Hisse ve tarih açık. Sağdaki eksen girişe göre yüzde (0 = giriş fiyatı).\nAltta bölgedeki gerçek mum boyu "
+                 "ve bu hissenin olağanına oranı (1'den küçük = bölgede mumlar olağandan küçük).", fontsize=9.5, va="top", linespacing=1.5)
+        pdf.savefig(fig); plt.close(fig)
+        X = O[O.set == st].copy(); X["_s"] = X.sinif.map({s: i for i, s in enumerate(GZ.SINIF)}); X["_z"] = X.zaman.map({"haftalik": 0, "gunluk": 1})
+        for r in X.sort_values(["_s", "_z", "bolge_son"]).itertuples():
+            k = (r.zaman, r.pazar)
+            if k not in Vc:
+                Vc[k] = MV.mv_veri(*k)
+            fig = plt.figure(figsize=(8.3, 11.7)); k17_sayfa(fig, r, Vc[k][r.sembol]); pdf.savefig(fig); plt.close(fig)
+    return y
+
+
 # ================================================================ 5) ÇAKIŞMA KAPISI ve ANA
 def _cakisma_kontrol_g2(_once=_CK_ONCE_G2, _dosya="MUM_IZI_GOZ2.py"):
     g = globals(); ezilen = []
@@ -1017,7 +1504,8 @@ _cakisma_kontrol_g2()
 def _g2_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="MUM_IZI_GOZ2")
-    ap.add_argument("komut", choices=["ornek", "onkayit", "kos", "pdf", "kopma_sayim", "kopma_onkayit", "kopma", "olcek_olcu", "olcek_onkayit", "olcek"])
+    ap.add_argument("komut", choices=["ornek", "onkayit", "kos", "pdf", "kopma_sayim", "kopma_onkayit", "kopma", "olcek_olcu", "olcek_onkayit", "olcek",
+                                      "set6_sayim", "set6_onkayit", "set6_kos", "set6_pdf"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "ornek":
@@ -1040,6 +1528,14 @@ def _g2_ana(argv: Optional[List[str]] = None) -> int:
             print(k16_onkayit_yaz())
         elif a.komut == "olcek":
             J = k16_kos(); print(json.dumps(MI._mi_json({"okuma": J["okuma"], "sure_sn": J["sure_sn"]}), ensure_ascii=False))
+        elif a.komut == "set6_sayim":
+            print(json.dumps(MI._mi_json(k17_sayim(k17_gecit(k17_ornek()))), ensure_ascii=False))
+        elif a.komut == "set6_onkayit":
+            print(k17_onkayit_yaz())
+        elif a.komut == "set6_kos":
+            J = k17_kos(); print(json.dumps(MI._mi_json({k: J[k] for k in ("sayim", "es_yok", "set1_5_mum_izi13_farki", "yon", "sure_sn")}), ensure_ascii=False))
+        elif a.komut == "set6_pdf":
+            print(k17_pdf())
     except (G2Hata, GZ.GZHata) as ex:
         g2log.error("DURDU: %s", ex)
         return 2
