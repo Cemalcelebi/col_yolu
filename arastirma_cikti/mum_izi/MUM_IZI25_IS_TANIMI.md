@@ -25,6 +25,12 @@ Her olay için (hisse s, giriş günü t, pazar, dönem d = 2016 öncesi / 2016-
 - Örneklemler: (a) EK 24'ün KAPILI ana örneği ve duyarlılık (hepsi); (b) KAPISIZ kontrol; (c) göz ölçümü: gerçek ölçekle işaretlenen setler (set 6-9) Cemal sınıfına göre (BENZİYOR / KISMEN / BENZEMİYOR) ve kapı havuzu (set 7-9); bölge kimlikleri mum_izi23_olay.csv'den (yoksa mum_izi21_olay.csv + MUM_IZI22 anahtarı + cemal_mum_izi22_onay.json etiketi yalnız sınıf için okunur).
 - Hücreler: zaman dilimi x (ABD 2016-19, ABD 2020-22, AVR 2016-19, AVR 2020-22 karar; BIST ve 2016 öncesi bilgi); ayrıca hepsi birlikte.
 
+## 2b. PİYASA TAHMİNİ, TAKVİM ZAMANI (ek; 26 Kasım 2026; EK 23 / EK 24 sonuçları ana modele gelmeden yazıldı)
+Cemal (hemen ardından; yazdığı gibi): "Çok bku asıl derdimiz piyasani yükseliş tahmin etmektir" (ana modelin okuması: asıl dert piyasanın yükselişini tahmin etmek).
+- Her pazar (ABD, AVR; BIST bilgi) ve GÜNLÜK zaman dilimi için takvim serisi: g günü SAYI(g) = son 5 işlem gününde bölgesi biten KAPILI olay sayısı (bölge sonu <= g; geleceğe bakma yok); PİYASA15(g) = o pazarın bütün hisselerinin g + 1 açılışından 15. işlem günü kapanışına eşit ağırlıklı ortalama getirisi.
+- Üç durum (önceden sabit): SAYI = 0; SAYI = 1-2; SAYI >= 3. Her durum için gün sayısı, PİYASA15 ortalaması / medyanı, artıda kapanan gün payı; farklar (SAYI >= 1) - (SAYI = 0) ve (SAYI >= 3) - (SAYI = 0); çıkarım AY KÜMELİ bootstrap %95 (günler örtüşen pencereli olduğu için gün değil ay sayılır). Dönemler: 2016-19, 2020-22 ayrı ve birlikte. Aynısı KAPISIZ olay sayısıyla (kontrol: kapı zamanlamaya bir şey katıyor mu).
+- OKUMA: 'PİYASA YÜKSELİŞİNİ ÖNCELİYOR' <=> iki dönemde de (SAYI >= 1) - (SAYI = 0) farkı > 0 ve ay kümeli alt ucu > 0 (ABD'de; AVR aynı yöndeyse 'iki pazarda'). Tek dönemde ise 'TEK DÖNEM'; aralık sıfırı içeriyorsa 'GÖSTERİLEMEDİ'. Uyarı: düşüş sonrası dip yapıları tanım gereği düşüşlerden sonra görülür; düşüşten sonraki toparlanma ortalaması zaten yüksek olabilir: karşılaştırma satırı olarak 'pazar son 20 günde %5'ten fazla düşmüş günler' için PİYASA15 de yazılır (yapı, bu basit bilgiden fazlasını söylüyor mu).
+
 ## 3. Okuma (önceden)
 - 'MUTLAK KÂRLI (rastgele güne göre)' <=> hücrede n >= 30 VE farklı ay >= 12 VE TOPLAM FARK (T1) ortalaması > 0 ve ay kümeli alt ucu > 0. Aralık sıfırı içeriyorsa 'AYRIŞMIYOR'; üst ucu < 0 ise 'RASTGELE GÜNDEN KÖTÜ'; n ya da ay sayısı yetmezse 'ÖLÇÜLEMEDİ'.
 - 'ZAMANLAMA VAR' <=> ZAMANLAMA ortalaması > 0 ve ay kümeli alt ucu > 0 (aynı n / ay şartı).
