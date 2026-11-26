@@ -1,0 +1,168 @@
+{
+ "kaynak": "MUM_IZI10_ONAY_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet)",
+ "sayfa1": "Kapak metni; ozgun dosyayla piksel farki yok (isaret yok).",
+ "sayfalar": {
+  "2": {
+   "isaret": "HAYIR",
+   "zaman": "gunluk",
+   "kutu_disi": "Sayfa genelinde iri kirmizi el yazisi ve egri darbeler (sol kalip, grafik ustu/alti); harfler okunamadi.",
+   "guven": "orta"
+  },
+  "3": {
+   "isaret": "HAYIR",
+   "zaman": "gunluk",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "HAYIR",
+   "zaman": "gunluk",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "EVET",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "EVET",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "EVET",
+   "zaman": "gunluk",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "8": {
+   "isaret": "HAYIR",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "HAYIR",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "EVET",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "11": {
+   "isaret": "KISMEN",
+   "zaman": "gunluk",
+   "kutu_disi": "Bolge sonundaki son yukselis mumlari (sag uc) daire icinde; sol ustte kalibin ust fitiline uzanan cizgi; ustte buyuk el yazisi okunamadi (olasi 'Benzer').",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Benzer yer'; bölgenin son tırmanış mumları ve kalıbın sağ üst kısmı daire içinde"
+  },
+  "12": {
+   "isaret": "KISMEN",
+   "zaman": "haftalik",
+   "kutu_disi": "Bolge sonu (sag, yukselis mumlari) daire icinde; sol kalipta orta mumlar etrafinda daire, kaliptan grafige uzun cizgi; ustte buyuk el yazisi okunamadi.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Benzer'; kalıbın tırmanış kısmı ile bölgenin sonu daire içinde, arada ok"
+  },
+  "13": {
+   "isaret": "KISMEN",
+   "zaman": "gunluk",
+   "kutu_disi": "Bolge sonundaki yukselis mumlari (sag uc) daire icinde; sol kalipta ust bolge dikdortgen/daire, grafige uzanan cizgi; ustte buyuk el yazisi okunamadi.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Benzer yeri'; kalıbın tırmanış kısmı ile bölgenin son tırmanışı daire içinde"
+  },
+  "14": {
+   "isaret": "KISMEN",
+   "zaman": "gunluk",
+   "kutu_disi": "Grafigin ust yarisinda iri el yazisi, olasi 'KISMEN BENZER' (okunamadi/dusuk); bolge ici isaret yok.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'KISMEN BENZER'"
+  },
+  "15": {
+   "isaret": "KISMEN",
+   "zaman": "haftalik",
+   "kutu_disi": "Grafik ortasi ve alt-solunda iri el yazisi ve oklar (kalin dusus mumu uzerine ok); olasi 'Kismen', okunamadi; bolge ici isaret yok.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Kısmen'"
+  },
+  "16": {
+   "isaret": "EVET",
+   "zaman": "gunluk",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "17": {
+   "isaret": "EVET",
+   "zaman": "haftalik",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "18": {
+   "isaret": "KISMEN",
+   "zaman": "gunluk",
+   "kutu_disi": "Sol kalip ve grafigin sol-ustunde daire/egri, bolge sonunda (sag) yukselis mumlari uzerinde cizgiler; ustte buyuk el yazisi okunamadi (olasi 'Kismen').",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Kısmen'; kalıbın tırmanış kısmı ve bölgenin sonu daire içinde"
+  },
+  "19": {
+   "isaret": "KISMEN",
+   "zaman": "gunluk",
+   "kutu_disi": "Sol kalip-grafik arasinda ilmek; bolge sonunda (sag uc) mumlar uzerinde kirmizi cizgi/ilmek; ustte buyuk el yazisi okunamadi.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'Kısmen'; bölgenin sonu daire içinde"
+  },
+  "20": {
+   "isaret": "KISMEN",
+   "zaman": "haftalik",
+   "kutu_disi": "Tum sayfaya yayilan buyuk el yazisi (olasi 'KISMEN ...'), sol ustte buyuk ilmek, bolge ustunde oval cizgi; okunamadi. Kutularda net isaret yok.",
+   "guven": "orta",
+   "isaret_pdf": "BELIRSIZ",
+   "ana_model_okuma": "el yazısı 'KISMEN ... yukarı' (devamı okunamadı)"
+  },
+  "21": {
+   "isaret": "HAYIR",
+   "zaman": "gunluk",
+   "kutu_disi": "Sol kalipta alttan yukari ok/ilmek; grafikte sol-ustten bolgeye uzun ok cizgisi; yazi yok.",
+   "guven": "orta"
+  },
+  "22": {
+   "isaret": "HAYIR",
+   "zaman": "haftalik",
+   "kutu_disi": "Grafikte ve altinda iri el yazisi ve ilmekler, okunamadi (olasi 'Benzemez').",
+   "guven": "orta"
+  },
+  "23": {
+   "isaret": "EVET",
+   "zaman": "haftalik",
+   "kutu_disi": "Sol kalipta ve grafigin sol-ustunde (dusus mumlari uzerinde) iri ilmek/yazi, okunamadi.",
+   "guven": "orta"
+  },
+  "24": {
+   "isaret": "HAYIR",
+   "zaman": "gunluk",
+   "kutu_disi": "",
+   "guven": "yuksek"
+  },
+  "25": {
+   "isaret": "HAYIR",
+   "zaman": "haftalik",
+   "kutu_disi": "Sol kalipta alttan ust banda ilmek/ok; grafikte sol-ustten bolgenin ust bandina uzanan ok cizgisi; yazi yok.",
+   "guven": "orta"
+  }
+ },
+ "guncelleme": "ana model 8 sayfayı (11-15, 18-20) kendisi okudu: kutular boş, el yazısı 'kısmen / benzer yer' -> isaret KISMEN (üçüncü sınıf). Sayım: EVET 7, KISMEN 8, HAYIR 9"
+}
