@@ -1,0 +1,152 @@
+{
+ "kaynak": "MUM_IZI8_ONAY_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet)",
+ "sayfa1": "İşaret/çizim/yazı yok (piksel farkı 0).",
+ "sayfa2": "İşaret/çizim/yazı yok (piksel farkı 0).",
+ "sayfalar": {
+  "3": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Çok büyük kırmızı el yazısı: grafik ve sol metin alanı üstünde iri kıvrımlı harfler; kısmen 'Bolinger/Bollinger' gibi okundu ama kesin değil. Mavi, turuncu ve öncesi mumların hepsi üstünde.",
+   "parca": "birden_fazla",
+   "guven": "orta"
+  },
+  "4": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Grafik üstünde iri el yazısı (kısmen 'mum ... sonra' gibi, okunamadı); mavi, turuncu ve öncesi mumlar üstünde, grafik dışına taşıyor.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "5": {
+   "isaret": "EVET",
+   "kutu_disi": "Sol kutuya X. Grafikte tek uzun kırmızı çizgi: aşağıdan yeşil okun/çıkış mumunun üstünden geçip turuncu şeridin başı üzerinden yukarı çıkıyor (mavi-turuncu sınırı, çıkış mumu).",
+   "parca": "cikis",
+   "guven": "orta"
+  },
+  "6": {
+   "isaret": "HAYIR",
+   "kutu_disi": "İri el yazısı/halka karalaması grafik boyunca; mavi şerit, büyük kırmızı düşüş mumları, turuncu şerit üstünde. Okunamadı.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "7": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Grafik ve sol metin alanını kaplayan çok büyük karalama/el yazısı; okunamadı.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "8": {
+   "isaret": "EVET",
+   "kutu_disi": "",
+   "parca": "yok",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "IKISI",
+   "kutu_disi": "Sol kutuda küçük X (ortada), sağ kutuda büyük X. Grafikte iri karalama/el yazısı mavi ve turuncu şeritlerin üstünde, grafik dışına taşıyor; okunamadı.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "10": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Sağ kutuda X benzeri çizgi + halka (düzensiz); grafikte karalama mavi şerit ve öncesindeki kırmızı/yeşil mumlar üstünde, sol metin alanına taşıyor.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "11": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Grafikte dalgalı çizgi/karalama: mavi şeridin başı ve öncesi mumlar üstünde, grafik dışına taşıyor; halka sol kenarda.",
+   "parca": "once",
+   "guven": "dusuk"
+  },
+  "12": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Karalama mavi şerit ve öncesindeki mumlar üstünde; ayrıca turuncu şeridin altında alt banda yakın kıvrık yatay bir çizgi; okunamadı.",
+   "parca": "birden_fazla",
+   "guven": "dusuk"
+  },
+  "13": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Sağ kutunun üstüne X (kutunun üst kenarında/hemen üstünde, tam içinde değil). Grafikte çok büyük karalama/el yazısı, tüm şeritler üstünde.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "14": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Grafik altında, yeşil ok ve mavi/turuncu geçişinin altında 'M...' benzeri el yazısı; mumların üstünde değil, okunamadı.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "15": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Halka/karalama: mavi şeridin son mumları (büyük kırmızı mumlar), çıkış mumu çevresi ve turuncu şeridin mumları üstünde.",
+   "parca": "birden_fazla",
+   "guven": "orta"
+  },
+  "16": {
+   "isaret": "HAYIR",
+   "kutu_disi": "İri el yazısı/karalama: mavi şerit, öncesi ve turuncu şeridin üst bölümü; okunamadı.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "17": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Mavi şeridin mumları boyunca yatay dalgalı çizgi, öncesindeki düşüş mumlarında halka/karalama; turuncu şerit sağlam.",
+   "parca": "birden_fazla",
+   "guven": "dusuk"
+  },
+  "18": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Mavi şeridin ÖNCESİNDEKİ mumlarda (yükselen yeşil + kırmızı mumlar, düşüşe kadar) büyük çapraz çizgi ve halkalar; üstte mavi/turuncu üzerinde bir halka.",
+   "parca": "once",
+   "guven": "orta"
+  },
+  "19": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Daire: mavi şeridin son mumları (kırmızı mumlar kümesi) etrafında; turuncu şeridin sonundaki mumlar etrafında büyük oval; ayrıca mavi şerit içinde ve turuncunun başında kıvrık çizgiler.",
+   "parca": "birden_fazla",
+   "guven": "yuksek"
+  },
+  "20": {
+   "isaret": "YOK",
+   "kutu_disi": "",
+   "parca": "yok",
+   "guven": "yuksek"
+  },
+  "21": {
+   "isaret": "YOK",
+   "kutu_disi": "",
+   "parca": "yok",
+   "guven": "yuksek"
+  },
+  "22": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Büyük karalama/halkalar: öncesi mumlar, mavi şerit ve turuncu şeridin hemen hemen tamamı, grafik dışına taşıyor.",
+   "parca": "birden_fazla",
+   "guven": "orta"
+  },
+  "23": {
+   "isaret": "HAYIR",
+   "kutu_disi": "Çok büyük el yazısı/karalama (kısmen 'Bolin...' gibi, kesin değil) grafiğin tamamı üstünde.",
+   "parca": "belirsiz",
+   "guven": "orta"
+  },
+  "24": {
+   "isaret": "YOK",
+   "kutu_disi": "",
+   "parca": "yok",
+   "guven": "yuksek"
+  },
+  "25": {
+   "isaret": "HAYIR",
+   "kutu_disi": "",
+   "parca": "yok",
+   "guven": "yuksek"
+  },
+  "26": {
+   "isaret": "YOK",
+   "kutu_disi": "Sağ kutu ve sol kutu boş. Grafikte: mavi şeridin önceki kırmızı mumları çevresinde halkalar, mavi şerit ve turuncu şerit üzerinde karalama; turuncu şerit sonuna dikey çizgi.",
+   "parca": "birden_fazla",
+   "guven": "orta"
+  }
+ }
+}
