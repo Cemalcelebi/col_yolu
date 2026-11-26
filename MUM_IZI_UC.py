@@ -1000,7 +1000,7 @@ def uc_onkayit_yaz(cikti: Optional[str] = None) -> str:
     sh = {**uc_sha_simdi(), "KESIM27_SHA": uc_json_sha(KJ), "SAYIM27_SHA": uc_json_sha(S)}
     sh.update({f"PENCERE_{k}_SHA": v for k, v in S["pencere_sha"].items()})
     kc = MI._mi_git(["log", "-1", "--format=%H %cI", "--", "MUM_IZI_UC.py"])
-    kt = "\n".join(f"| {k} | {dict((r['kod'], r['madde']) for r in IK.IK_KONTROL)[k]} | {v[0]} | {v[1]} |" for k, v in UC_KONTROL.items())
+    kt = "\n".join(f"| {k} | {dict((r['kod'], r.get('ad', r['kod'])) for r in IK.IK_KONTROL)[k]} | {v[0]} | {v[1]} |" for k, v in UC_KONTROL.items())
     s = [f"# MUM_IZI27 ÖN KAYIT — UÇ PENCERELER: en küçük mumlu ve fitil şartları en radikal bölgeler ({MI._mi_simdi()})", "",
          "İş tanımı MUM_IZI27_IS_TANIMI.md. Bu dosya R15, T1, hedef payı, PİYASA ve takvim getirileri hesaplanmadan ÖNCE commit + push edilir; tanımlar, kesimler, "
          "hüküm kuralı sonra değişmez (değişirse SAPMA). Pencereler ve ölçüler getirisizdir; kesimler yalnız keşif (ABD 2016-19) örneğinden. Evren bugün yaşayan "
