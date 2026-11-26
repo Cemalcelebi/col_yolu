@@ -4,6 +4,9 @@ eşik mührü, çakışma kapısı. EK 14: 1. / 2. parti anahtar sha'ları deği
 kapak {N2}, öğrenme şeridi (sayım / sıra / metin), --hakem2 olmadan onay geriye uyumu (MUM_IZI12 onayı birebir).
 EK 16 İŞ B (--olcek): mum boyu ölçüsü (tanım, geleceğe bakma yok), sağlam dikey sınır, yüzde ekseni adımı, sayfa çizimi geleceğe bakmaz, --olcek olmadan
 MUM_IZI14 onayı birebir (pdf sha), ölçekli basım uçtan uca (bölge kimliği, kapılar, hisse adı yok, pdf sha = commit edilen), repodaki ölçekli dosyalar.
+EK 18 İŞ A: eski mühürler (parti 3 anahtarı, eşikler, MUM_IZI14_OGREN birebir), kapı sınırı (0,70 dahil / 0,7001 hariç), 40 bar kuralı, geleceğe
+bakma, KESİK, parti 4 seçimi ve hariç tutma, havuz sayımı, HK-O4 (12'ye tamamlama), parti 4 gerçek anahtar (ORAN bağımsız yeniden hesap, seçim yeniden
+üretimi), yeni ölçekli onay uçtan uca, ölçekli öğrenme dosyası (65 örnek, şerit = json).
 Çalıştır: python test_mum_izi10.py"""
 import json
 import os
@@ -476,6 +479,249 @@ def test_olcekli_repo_dosyalari():
     assert J["eski_anahtar_sha"] == MI._mi_sha(os.path.join(c, "MUM_IZI14_onay_anahtar.json")) == "7f783321f23e8fdd9b5cfd87af92e5fa4332aea9e00cd139be520a4d1b766474"
     assert J["eski_pdf_sha"] == MI._mi_sha(os.path.join(c, "MUM_IZI14_ONAY.pdf")) == E["pdf_sha"] == "584b0db8bd0ff11897a95fdac07a973a5c7657c869774afa80d16dff98e29bf7"
     jt = open(yj, encoding="utf-8").read(); assert not any(f'"{x["sembol"]}"' in jt for x in E["sayfalar"]) and J["bolge_kimligi"]["esit"]
+
+
+# ---------------------------------------------------------------- EK 18 İŞ A: mum boyu kapısı, parti 4, yeni ölçekli onay, ölçekli öğrenme
+P3_SHA = "30bcf8948a3b4cde1f5b12cbf4abedbff5de2b336443fccfb85d3b752ce0e479"
+OGREN14_SHA = "0ce66761b4149175fc9139097e8ba83df0bfd4ddd5f76691f345b96876bbfe66"
+
+
+def test_ek18_eski_muhurler():
+    """Eski partilerin anahtar / eşik sha'ları ve eski öğrenme dosyası değişmez (yeniden üretilir)."""
+    import MUM_IZI as MI
+    y = os.path.join(HK.HK_PARTI[3]["klasor"], "mum_izi14_aday_anahtar.json")
+    if os.path.exists(y):
+        assert MI._mi_sha(y) == P3_SHA
+    assert HK._hk_sha(HK.HK_ESIK_P3) == "ddac418b37d0f5071822e4811709bd0084b277b953418a34dcab357815670246"
+    assert HK._hk_sha(HK.HK_ESIK_OLCEK) == "31420ca2c67457990378fabf093f40a2ad32723f46c88f3cc3c46460d9f6814a"
+    assert HK._hk_sha(HK.HK_ESIK_ONAY2) == "c4b077a3f0e5453405cc479751dd3d293518cb17f57f061a1367b3311f5619f3"
+    assert [k for k in HK.HK_PARTI if not HK.HK_PARTI[k].get("olcek")] == [1, 2, 3] and HK.HK_PARTI[4]["olcek"]
+    og = os.path.join(HK.HK_YOL["cikti"], "MUM_IZI14_OGREN.pdf")
+    if os.path.exists(og) and all(os.path.exists(k["pdf"]) for k in HK.HK_OGREN["kaynak"]):
+        assert MI._mi_sha(og) == OGREN14_SHA
+        with tempfile.TemporaryDirectory() as d:
+            J = HK.hk_ogren(cikti=d); assert J["sha"] == OGREN14_SHA, "eski ogren çıktısı değişti"
+    for k in (1, 2, 3):                                          # eski partiler ölçekli onay yoluna sapmaz
+        if os.path.exists(HK.HK_PARTI[k]["klasor"]):
+            assert not HK._hk_olcek_parti_mi(HK.HK_PARTI[k]["klasor"])
+
+
+def test_ek18_kapi_siniri():
+    G = HK.HK_ESIK_P4; assert G["kapi"]["oran_en_cok"] == 0.70 and G["kapi"]["cok_kucuk"] == 0.50
+    assert HK.hk_kapi(0.70) and HK.hk_kapi(0.6999) and not HK.hk_kapi(0.7001) and not HK.hk_kapi(float("nan")) and not HK.hk_kapi(None)
+    assert HK.hk_katman(0.50) == "ÇOK KÜÇÜK" and HK.hk_katman(0.5001) == "KÜÇÜK" and HK.hk_katman(0.70) == "KÜÇÜK" and HK.hk_katman(0.7001) is None
+
+
+def _ek18_veri(n=260, tohum=18):
+    import pandas as pd
+    O, H, L, C = _seri(n, tohum); ix = pd.bdate_range("2015-01-01", periods=n)
+    H = H.copy(); L = L.copy(); H[150:170] = np.maximum(O, C)[150:170] * 1.001; L[150:170] = np.minimum(O, C)[150:170] * 0.999      # küçük mumlu bölge
+    return pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C}, index=ix)
+
+
+def test_ek18_oran_40bar_gelecek():
+    """ORAN = hk_boy_olcu (tek tanım); önceki 40 bar aday, 39 bar değil; bölge sonrası barlar bozulunca ORAN aynı; KESİK aşımı DUR."""
+    d = _ek18_veri(); ix = d.index
+    olay = [{"zaman": "gunluk", "pazar": "ABD", "sembol": "X", "tarih": str(ix[169].date()), "m": 20, "evren": True},
+            {"zaman": "gunluk", "pazar": "ABD", "sembol": "X", "tarih": str(ix[59].date()), "m": 20, "evren": True},      # önceki 40 bar
+            {"zaman": "gunluk", "pazar": "ABD", "sembol": "X", "tarih": str(ix[58].date()), "m": 20, "evren": True}]      # önceki 39 bar
+    R, sak = HK.hk_olay_oran(olay, veri=lambda z, p: {"X": d}, sakla=True)
+    B = HK.hk_boy_olcu(d.High.to_numpy(float), d.Low.to_numpy(float), d.Close.to_numpy(float), 169, 20)
+    assert R[0]["oran"] == B["oran"] and R[0]["oran"] < 0.5 and R[0]["katman"] == "ÇOK KÜÇÜK" and ("gunluk", "ABD", "X") in sak
+    assert R[1]["onceki_n"] == 40 and np.isfinite(R[1]["oran"]) and R[2]["onceki_n"] == 39 and not np.isfinite(R[2]["oran"]) and R[2]["katman"] is None
+    assert not HK.hk_kapi(R[2]["oran"])
+    d2 = d.copy(); d2.iloc[170:] = d2.iloc[170:] * 9.0; d2.iloc[170:, 2] = d2.iloc[170:, 1] * 0.1
+    R2, _ = HK.hk_olay_oran(olay[:1], veri=lambda z, p: {"X": d2}); assert R2[0]["oran"] == R[0]["oran"]
+    import pandas as pd
+    dk = d.copy(); dk.index = pd.bdate_range("2022-06-01", periods=len(d))
+    try:
+        HK.hk_olay_oran([dict(olay[0], tarih=str(dk.index[-1].date()))], veri=lambda z, p: {"X": dk}); raise AssertionError("KESİK aşımı kabul edildi")
+    except HK.HKHata:
+        pass
+
+
+def _ek18_olay(tohum=4):
+    rng = np.random.default_rng(tohum); o = []
+    for z, n in (("gunluk", 500), ("haftalik", 60)):
+        for i in range(n):
+            p = ["ABD", "AVR", "BIST"][int(rng.integers(3))]; orn = float(rng.uniform(0.3, 1.6)) if rng.random() > 0.05 else float("nan")
+            o.append({"zaman": z, "pazar": p, "sembol": f"{z[0]}{p}{int(rng.integers(0, 300))}", "tarih": f"2020-02-{1 + i % 28:02d}", "m": 20, "k": 8, "S": 0.5,
+                      "evren": bool(rng.random() > 0.1), "oran": orn, "katman": HK.hk_katman(orn)})
+    return o
+
+
+def test_ek18_secim_ve_haric():
+    o = _ek18_olay(); h = {o[0]["sembol"], o[3]["sembol"], o[510]["sembol"]}
+    G = dict(HK.HK_ESIK_P4, gunluk=40, haftalik=300); S = HK.hk_aday_sec4(o, h, G)
+    X = {z: [r for r in S if r["zaman"] == z] for z in ("gunluk", "haftalik")}
+    uygun_h = {r["sembol"] for r in o if r["zaman"] == "haftalik" and r["evren"] and HK.hk_kapi(r["oran"]) and r["sembol"] not in h}
+    assert len(X["gunluk"]) == 40 and len(X["haftalik"]) == len(uygun_h) < 300                    # haftalık yetmedi: hepsi, günlükle doldurulmadı
+    assert all(HK.hk_kapi(r["oran"]) and r["evren"] and r["oran"] <= 0.70 for r in S) and not ({r["sembol"] for r in S} & h)
+    assert len({r["sembol"] for r in S}) == len(S) and sorted(r["sayfa"] for r in S) == list(range(1, len(S) + 1)) and HK.hk_aday_sec4(o, h, G) == S
+    G2 = dict(HK.HK_ESIK_P4); S2 = HK.hk_aday_sec4(o, h, G2)                                    # hepsi < hedef: kapıdan geçen her yeni hisse alınır
+    uygun_g = {r["sembol"] for r in o if r["zaman"] == "gunluk" and r["evren"] and HK.hk_kapi(r["oran"]) and r["sembol"] not in h} - uygun_h
+    assert len(S2) == len(uygun_h) + len(uygun_g) and sum(r["pazar"] == "BIST" for r in S2) > 0.2 * len(S2) - 10   # BIST tavanı yok
+    # hariç listesi parti 4: önceki bütün anahtarlar (eksik anahtar DUR)
+    on = [os.path.basename(x) for x in HK.HK_PARTI[4]["onceki"]]
+    for f in ("mum_izi10_aday_anahtar.json", "mum_izi12_aday_anahtar.json", "mum_izi14_aday_anahtar.json", "mum_izi10_onay_anahtar.json",
+              "MUM_IZI12_onay_anahtar.json", "MUM_IZI14_onay_anahtar.json"):
+        assert f in on, f
+    eski = HK.HK_PARTI[4]["onceki"]
+    try:
+        HK.HK_PARTI[4]["onceki"] = eski + ["/yok/yok.json"]
+        try:
+            HK.hk_haric(4); raise AssertionError("eksik anahtar kabul edildi")
+        except HK.HKHata:
+            pass
+    finally:
+        HK.HK_PARTI[4]["onceki"] = eski
+
+
+def test_ek18_havuz_say():
+    o = _ek18_olay(); h = {o[1]["sembol"]}; pb = {(o[2]["zaman"], o[2]["sembol"], o[2]["tarih"])}
+    V = HK.hk_havuz_say(o, h, pb); g = V["grup"]["tum"]["gunluk"]
+    X = [r for r in o if r["zaman"] == "gunluk" and r["evren"]]; ok = np.array([r["oran"] for r in X]); ok = ok[np.isfinite(ok)]
+    assert g["n"] == len(X) and g["n_oran"] == len(ok) and abs(g["pay_le_0.70"] - np.mean(ok <= 0.70)) < 1e-12 and g["n_le_0.50"] == int((ok <= 0.5).sum())
+    assert g["kapi_gecen_olay"] == int((ok <= 0.70).sum()) and sum(g["katman_olay"].values()) == g["kapi_gecen_olay"]
+    assert V["grup"]["parti_1_3"]["gunluk"]["n"] == int(o[2]["evren"] and o[2]["zaman"] == "gunluk")
+    assert V["grup"]["hic_gosterilmemis"]["gunluk"]["n"] == sum(1 for r in X if r["sembol"] not in h)
+
+
+def test_ek18_onay_sec4():
+    ad = _aday2(40); H2 = {}
+    for r in ad:
+        i = r["sayfa"]; H2[i] = {"karar": ("EVET" if i % 3 == 0 else "KISMEN" if i % 3 == 1 else "HAYIR"), "puan": float(i % 5), "gerekce": ""}
+    kis = [{"sayfa": 100 + i, "zaman": "gunluk", "hakem_puan": 6.0 + 0.4 * i} for i in range(10)] + [{"sayfa": 99, "zaman": "gunluk", "hakem_puan": 5.9}]
+    assert HK.hk_onay_sec4(ad, kis, H2) == HK.hk_onay_sec2(ad, H2)                          # doldurma yok: EK 14 kuralıyla birebir
+    az = ad[:6]; S = HK.hk_onay_sec4(az, kis, H2); nab = sum(H2[r["sayfa"]]["karar"] != "HAYIR" for r in az)
+    c = [r for r in S if r["sinif"] == "c"]
+    assert len(S) == 12 and len(c) == 12 - nab and sorted(r["yeni_sayfa"] for r in S) == list(range(2, 14))
+    assert [r["sayfa"] for r in sorted(c, key=lambda r: (-r["hakem_puan"], r["sayfa"]))] == [109, 108, 107, 106, 105, 104, 103, 102][:len(c)]
+    assert all(r["hakem_puan"] >= 6 for r in c)
+    assert 99 not in {r["sayfa"] for r in S}
+    S2 = HK.hk_onay_sec4(az, [r for r in kis if r["hakem_puan"] < 6], H2); assert len(S2) == nab        # puan < 6 doldurmaz
+    try:
+        HK.hk_onay_sec4([], [], {}); raise AssertionError("boş set kabul edildi")
+    except HK.HKHata:
+        pass
+
+
+def _p4_anahtar():
+    return os.path.join(HK.HK_PARTI[4]["klasor"], "mum_izi18_aday_anahtar.json")
+
+
+def test_ek18_parti4_gercek():
+    import pypdf
+    import pandas as pd
+    import MUM_IZI as MI
+    import MUM_IZI_V2 as MV
+    y = _p4_anahtar()
+    if not os.path.exists(y):
+        print("  (4. parti anahtarı henüz yok: atlandı)"); return
+    K = json.load(open(y, encoding="utf-8")); S = K["sayfalar"]; h = HK.hk_haric(4)
+    assert K["parti"] == 4 and K["esik_sha"] == HK._hk_sha(HK.HK_ESIK_P4) and K["olcek_sha"] == HK._hk_sha(HK.HK_ESIK_OLCEK)
+    assert sorted(r["sayfa"] for r in S) == list(range(1, len(S) + 1)) and len({r["sembol"] for r in S}) == len(S) and not ({r["sembol"] for r in S} & h)
+    assert max(r["bolge_son"] for r in S) <= "2022-12-31" and all(HK.hk_kapi(r["oran"]) and r["katman"] == HK.hk_katman(r["oran"]) for r in S)
+    for z in ("gunluk", "haftalik"):
+        n = sum(r["zaman"] == z for r in S); assert n == K["n_zaman"][z] <= 300 and K["eksik"][z] == 300 - n
+    for f, sha in K["dosya_sha"].items():
+        yp = os.path.join(HK.HK_PARTI[4]["klasor"], f); assert MI._mi_sha(yp) == sha
+        a, b = K["dosya_sayfa"][f]; R = pypdf.PdfReader(yp); assert len(R.pages) == b - a + 1 <= 50
+        t = R.pages[0].extract_text() or ""; assert f"Sayfa {a}" in t and "mum boyu" in t and "benziyor" not in t          # ölçekli, kutusuz
+    rng = np.random.default_rng(1); Vc = {}
+    for i in rng.choice(len(S), size=min(6, len(S)), replace=False):           # ORAN veriden bağımsız yeniden hesap
+        r = S[int(i)]; k = (r["zaman"], r["pazar"])
+        if k not in Vc:
+            Vc[k] = MV.mv_veri(*k)
+        d = Vc[k][r["sembol"]]; t = d.index.get_loc(pd.Timestamp(r["bolge_son"])); s = t - r["pencere"] + 1
+        b = ((d.High - d.Low) / d.Close).to_numpy(float)[:t + 1]; on = b[max(0, s - 120):s]; on = on[np.isfinite(on)]
+        assert abs(np.nanmedian(b[s:t + 1]) / np.median(on) - r["oran"]) < 1e-9 and len(on) >= 40 and str(d.index[s].date()) == r["bolge_bas"]
+    if os.path.exists(HK.HK_YOL["ham8"]):                                       # seçim yeniden üretimi
+        olo, _ = HK.hk_olay_oran([o for o in HK.hk_olaylar() if o["evren"]]); S2 = HK.hk_aday_sec4(olo, h)
+        assert [(r["sayfa"], r["sembol"], r["tarih"]) for r in S2] == [(r["sayfa"], r["sembol"], r["bolge_son"]) for r in S]
+        HV = json.load(open(os.path.join(HK.HK_PARTI[4]["klasor"], "mum_izi18_havuz_sayim.json"), encoding="utf-8"))["havuz"]
+        assert json.loads(json.dumps(HK.hk_havuz_say(olo, h, HK.hk_parti_bolgeleri()))) == HV
+    jt = open(os.path.join(HK.HK_PARTI[4]["klasor"], "mum_izi18_havuz_sayim.json"), encoding="utf-8").read()
+    assert not any(f'"{r["sembol"]}"' in jt for r in S)
+
+
+def test_ek18_onay_yeni_uctan_uca():
+    """Parti 4 adaylarıyla sentetik iki hakem: yeni ölçekli set (anahtar + json + PDF); json'da hisse / tarih yok; kapılar DUR."""
+    import pypdf
+    y = _p4_anahtar()
+    if not os.path.exists(y):
+        print("  (4. parti anahtarı henüz yok: atlandı)"); return
+    kl = HK.HK_PARTI[4]["klasor"]; assert HK._hk_olcek_parti_mi(kl)
+    S = json.load(open(y, encoding="utf-8"))["sayfalar"]; n = [r["sayfa"] for r in S]
+    with tempfile.TemporaryDirectory() as d:
+        h1 = os.path.join(d, "h1.json"); h2 = os.path.join(d, "h2.json")
+        k1 = {str(i): {"karar": ["EVET", "KISMEN", "HAYIR", "HAYIR"][j % 4], "puan": float(j % 10), "gerekce": ""} for j, i in enumerate(n)}
+        json.dump({"sayfalar": k1}, open(h1, "w", encoding="utf-8"))
+        ev = [i for i in n if k1[str(i)]["karar"] == "EVET"]
+        json.dump({"sayfalar": {str(i): {"karar": ["EVET", "HAYIR", "KISMEN"][j % 3], "puan": 7.0, "gerekce": ""} for j, i in enumerate(ev)}},
+                  open(h2, "w", encoding="utf-8"))
+        J = HK.hk_onay([h1], d, kl, None, "DENEME18", h2, olcek=True)
+        K = json.load(open(os.path.join(d, "DENEME18_onay_anahtar.json"), encoding="utf-8"))
+        na = sum(j % 3 == 0 for j in range(len(ev))); nb = sum(j % 3 == 2 for j in range(len(ev)))
+        assert K["secilen_sinif"]["a"] == min(24, na) and K["secilen"] == len(K["sayfalar"]) == J["sayfa_sayisi"] - 1
+        if na + nb >= 12:
+            assert K["doldurulan"] == 0 and K["secilen"] == min(24, na + nb)
+        else:
+            assert K["secilen"] == min(12, na + nb + sum(1 for i in n if k1[str(i)]["karar"] == "KISMEN" and k1[str(i)]["puan"] >= 6)) and "tamamlandı" in K["kapak"]
+        R = pypdf.PdfReader(os.path.join(d, "DENEME18_ONAY_OLCEKLI.pdf")); assert len(R.pages) == K["secilen"] + 1
+        t = " ".join(p.extract_text() or "" for p in R.pages); assert "kısmen" in t and "mum boyu" in t and "%30" in t
+        jt = open(os.path.join(d, "DENEME18_onay_olcekli.json"), encoding="utf-8").read()
+        assert not any(f'"{x["sembol"]}"' in jt or x["bolge_son"] in jt for x in K["sayfalar"]) and all("oran" in x for x in K["sayfalar"])
+        assert all(x["oran"] <= 0.70 for x in K["sayfalar"]) and J["pdf_sha"] == K["pdf_sha"]
+        for kapi in ("var", "eksik_hakem", "hakem2_yok"):
+            with tempfile.TemporaryDirectory() as d2:
+                hh, hh2 = [h1], h2
+                if kapi == "var":
+                    open(os.path.join(d2, "DENEME18_onay_anahtar.json"), "w").write("{}")
+                elif kapi == "eksik_hakem":
+                    k2 = dict(k1); k2.pop(str(n[0])); y1 = os.path.join(d2, "e.json"); json.dump({"sayfalar": k2}, open(y1, "w")); hh = [y1]
+                else:
+                    hh2 = None
+                try:
+                    HK.hk_onay(hh, d2, kl, None, "DENEME18", hh2, olcek=True); raise AssertionError(f"kapı açık: {kapi}")
+                except HK.HKHata:
+                    pass
+                assert not os.path.exists(os.path.join(d2, "DENEME18_ONAY_OLCEKLI.pdf"))
+
+
+def test_ek18_ogren_olcek():
+    import pypdf
+    G = HK.HK_OGREN2
+    if not all(os.path.exists(k["etiket"]) and os.path.exists(k["anahtar"]) for g in G["gruplar"] for k in g["kaynak"]):
+        print("  (öğrenme kaynakları yok: atlandı)"); return
+    L = HK.hk_ogren_liste2(); assert len(L) == 65 and [r["ornek"] for r in L] == list(range(1, 66))
+    for g in G["gruplar"]:
+        bek = {s: 0 for s in G["sira"]}
+        for k in g["kaynak"]:
+            for v in json.load(open(k["etiket"], encoding="utf-8"))["sayfalar"].values():
+                bek[v["isaret"]] += 1
+        assert {s: sum(1 for r in L if r["grup"] == g["ad"] and r["sinif"] == s) for s in G["sira"]} == bek, g["ad"]
+    assert sum(r["grup"] == "olcekli" for r in L) == 17 and all(r["grup"] == "olcekli" for r in L[:17])
+    son = (-1, -1)
+    for r in L:
+        o = (r["grup_i"], G["sira"].index(r["sinif"])); assert o >= son; son = o
+    yp = os.path.join(HK.HK_YOL["cikti"], G["ad"])
+    if os.path.exists(yp):
+        R = pypdf.PdfReader(yp); assert len(R.pages) == 65
+        for pg, r in zip(R.pages, L):
+            t = pg.extract_text() or ""; yz = f"{r['yazi_on']}: {G['yazi'][r['sinif']]}"
+            assert yz in t and f"Örnek {r['ornek']} / 65" in t and "mum boyu" in t, (r["ornek"], t[:120])
+            assert sum(f"{r['yazi_on']}: {v}" in t for s, v in G["yazi"].items() if s != r["sinif"]) == 0
+            assert float(pg.mediabox.height) == 842.4 + G["serit_pt"]
+            for x in ("sembol", "bolge_son"):
+                assert r[x] not in t
+    with tempfile.TemporaryDirectory() as d:                                  # eksik etiket sayfası DUR
+        G2 = json.loads(json.dumps(G)); k = G2["gruplar"][0]["kaynak"][0]; E = json.load(open(k["etiket"], encoding="utf-8")); E["sayfalar"].pop("2")
+        k["etiket"] = os.path.join(d, "e.json"); json.dump(E, open(k["etiket"], "w", encoding="utf-8"))
+        try:
+            HK.hk_ogren_liste2(G2); raise AssertionError("eksik etiket kabul edildi")
+        except HK.HKHata:
+            pass
 
 
 if __name__ == "__main__":

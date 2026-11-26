@@ -1,0 +1,160 @@
+{
+ "not": "EK 18 A1 havuz sayımı (getirisiz; hisse adı yok)",
+ "surum": "EK 18 İŞ A (2026-11-26): mum boyu kapısı + ölçekli aday / onay / öğrenme",
+ "esik_sha": "9130d4fb1cd3a209c07b36c4b0b6cbacbc7d357728db157945a79a8fea71c083",
+ "olcek_sha": "31420ca2c67457990378fabf093f40a2ad32723f46c88f3cc3c46460d9f6814a",
+ "kaynak": {
+  "tarama8_ham_sha": "d0d919f16a1a9e7af04a57650a0627a80a7fe6592c2f79d7ff1eb72837583698",
+  "kural": "R4+M"
+ },
+ "haric_hisse": 1612,
+ "parti_bolge": 1500,
+ "havuz": {
+  "payda": "ORAN hesaplanabilen olay (önceki >= 40 bar)",
+  "esikler": [
+   0.85,
+   0.7,
+   0.5
+  ],
+  "grup": {
+   "tum": {
+    "gunluk": {
+     "n": 4612,
+     "n_oran": 4607,
+     "hisse": 2464,
+     "pay_le_0.85": 0.29867592793574993,
+     "n_le_0.85": 1376,
+     "pay_le_0.70": 0.06642066420664207,
+     "n_le_0.70": 306,
+     "pay_le_0.50": 0.003907097894508357,
+     "n_le_0.50": 18,
+     "kapi_gecen_olay": 306,
+     "kapi_gecen_hisse": 279,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 18,
+      "KÜÇÜK": 288
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 166,
+      "AVR": 20,
+      "BIST": 93
+     }
+    },
+    "haftalik": {
+     "n": 1399,
+     "n_oran": 1361,
+     "hisse": 1129,
+     "pay_le_0.85": 0.2689199118295371,
+     "n_le_0.85": 366,
+     "pay_le_0.70": 0.1080088170462895,
+     "n_le_0.70": 147,
+     "pay_le_0.50": 0.0036737692872887582,
+     "n_le_0.50": 5,
+     "kapi_gecen_olay": 147,
+     "kapi_gecen_hisse": 141,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 5,
+      "KÜÇÜK": 142
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 99,
+      "AVR": 13,
+      "BIST": 29
+     }
+    }
+   },
+   "parti_1_3": {
+    "gunluk": {
+     "n": 750,
+     "n_oran": 750,
+     "hisse": 750,
+     "pay_le_0.85": 0.31066666666666665,
+     "n_le_0.85": 233,
+     "pay_le_0.70": 0.064,
+     "n_le_0.70": 48,
+     "pay_le_0.50": 0.0026666666666666666,
+     "n_le_0.50": 2,
+     "kapi_gecen_olay": 48,
+     "kapi_gecen_hisse": 48,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 2,
+      "KÜÇÜK": 46
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 31,
+      "AVR": 4,
+      "BIST": 13
+     }
+    },
+    "haftalik": {
+     "n": 750,
+     "n_oran": 725,
+     "hisse": 750,
+     "pay_le_0.85": 0.2620689655172414,
+     "n_le_0.85": 190,
+     "pay_le_0.70": 0.10482758620689656,
+     "n_le_0.70": 76,
+     "pay_le_0.50": 0.004137931034482759,
+     "n_le_0.50": 3,
+     "kapi_gecen_olay": 76,
+     "kapi_gecen_hisse": 76,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 3,
+      "KÜÇÜK": 73
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 54,
+      "AVR": 5,
+      "BIST": 17
+     }
+    }
+   },
+   "hic_gosterilmemis": {
+    "gunluk": {
+     "n": 1723,
+     "n_oran": 1718,
+     "hisse": 1117,
+     "pay_le_0.85": 0.279976717112922,
+     "n_le_0.85": 481,
+     "pay_le_0.70": 0.057625145518044235,
+     "n_le_0.70": 99,
+     "pay_le_0.50": 0.004074505238649592,
+     "n_le_0.50": 7,
+     "kapi_gecen_olay": 99,
+     "kapi_gecen_hisse": 96,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 7,
+      "KÜÇÜK": 92
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 69,
+      "AVR": 5,
+      "BIST": 22
+     }
+    },
+    "haftalik": {
+     "n": 192,
+     "n_oran": 187,
+     "hisse": 185,
+     "pay_le_0.85": 0.2192513368983957,
+     "n_le_0.85": 41,
+     "pay_le_0.70": 0.08021390374331551,
+     "n_le_0.70": 15,
+     "pay_le_0.50": 0.0106951871657754,
+     "n_le_0.50": 2,
+     "kapi_gecen_olay": 15,
+     "kapi_gecen_hisse": 15,
+     "katman_olay": {
+      "ÇOK KÜÇÜK": 2,
+      "KÜÇÜK": 13
+     },
+     "pazar_kapi_gecen_hisse": {
+      "ABD": 10,
+      "AVR": 0,
+      "BIST": 5
+     }
+    }
+   }
+  }
+ }
+}
