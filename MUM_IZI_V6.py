@@ -636,7 +636,7 @@ def _v6_uc_sayi(o: Dict[str, float], kapi: Dict[str, Dict[str, Any]]) -> str:
         v = o.get(g["aday"]); isr = "<=" if g["yon"] == "kucuk" else ">="
         p.append(f"{_V6_SOZ[soz]}: {_V6_AD[g['aday']]} {v:.2f} ({isr} {g['esik']:.2f})" if g["yon"] != "ikili" else f"{_V6_SOZ[soz]}: {_V6_AD[g['aday']]} "
                  f"{'evet' if v >= 0.5 else 'hayır'}")
-    return V5._v5_virgul(" · ".join(p))
+    return V5._v5_virgul("\n".join(p))
 
 
 def v6_onay(cikti: Optional[str] = None) -> str:
@@ -679,9 +679,14 @@ def v6_onay(cikti: Optional[str] = None) -> str:
         MV._mv_ciz(ax, a["O"], a["H"], a["L"], a["C"], a["BU"], a["BO"], a["BA"], None, "Senin kalıbın: kodun okuması")
         V5._v5_okuma_ciz(ax, 0, int(sb5["k"]), len(a["C"]), np.asarray(a["L"], float), np.asarray(a["H"], float))
         ms = (f"mum yapısı: gövde {sb5['d_m1']:.2f} · alt fitil {sb5['d_m2']:.2f} · üst fitil {sb5['d_m3']:.2f} · üst / alt {sb5['d_m4']:.1f}")
-        uc = "\n".join(f"{_V6_SOZ[soz]}: {_V6_AD[g['aday']]} " + (f"{sb[g['aday']]:.2f} ({'<=' if g['yon'] == 'kucuk' else '>='} {g['esik']:.2f})"
-                                                                  if g["yon"] != "ikili" and sb.get(g["aday"]) is not None else "(şablonda ölçülemez)")
-                       for soz, g in kapi.items())
+        def _sb(g):
+            v = sb.get(g["aday"])
+            if v is None:
+                return "(şablonda ölçülemez)"
+            if g["yon"] == "ikili":
+                return "evet" if v >= 0.5 else "hayır"
+            return f"{v:.2f} ({'<=' if g['yon'] == 'kucuk' else '>='} {g['esik']:.2f})"
+        uc = "\n".join(f"{_V6_SOZ[soz]}: {_V6_AD[g['aday']]} " + _sb(g) for soz, g in kapi.items())
         fig.text(0.08, 0.33, V5._v5_virgul(ms + "\n" + uc), fontsize=11, va="top")
         fig.text(0.08, 0.95, "Mavi = gel-git kısmı, yeşil ok = SMA'yı aşan mum, turuncu = tırmanış kısmı", fontsize=12, weight="bold")
         pdf.savefig(fig); plt.close(fig)
@@ -701,14 +706,14 @@ def v6_onay(cikti: Optional[str] = None) -> str:
             MV._mv_ciz(ax, Ofull[sl], H_, L_, Cfull[sl], BU[sl], BO[sl], BA[sl], None, f"Sayfa {r['sayfa']}: kodun okuması ({'haftalık' if r['zaman'] == 'haftalik' else 'günlük'} mum)")
             V5._v5_okuma_ciz(ax, t - m + 1 - i0, int(r["k"]), m, L_, H_)
             fig.text(0.34, 0.425, V5._v5_m_metin(P), fontsize=9.5)
-            fig.text(0.34, 0.405, _v6_uc_sayi(o, kapi), fontsize=9.5)
+            fig.text(0.34, 0.415, _v6_uc_sayi(o, kapi), fontsize=9.5, va="top")
             fig.text(0.04, 0.6, "Mavi = gel-git\nYeşil ok = SMA'yı\naşan mum\nTuruncu = tırmanış\nMor = Bollinger 20\nve SMA20 (kesik)\nSağ kenar = bölge sonu\n(sonrası yok)",
                      fontsize=9.5, va="top")
             ax2 = fig.add_axes([0.1, 0.1, 0.8, 0.22]); ax2.axis("off")
             for xx, txt in ((0.0, "✓  benziyor"), (0.55, "✗  benzemiyor")):
                 ax2.add_patch(Rectangle((xx, 0.1), 0.42, 0.8, fill=False, linewidth=3, transform=ax2.transAxes))
                 ax2.text(xx + 0.21, 0.5, txt, ha="center", va="center", fontsize=22, transform=ax2.transAxes)
-            fig.text(0.1, 0.35, "Yanlış okunan parçayı daire içine al.", fontsize=12)
+            fig.text(0.1, 0.34, "Yanlış okunan parçayı daire içine al.", fontsize=12)
             pdf.savefig(fig); plt.close(fig)
     MI._mi_jyaz(ya, {"not": "MÜHÜRLÜ: sayfa -> hisse / tarih / m / k / v1 S / ölçüler; PDF'e girmez", "kapi": kapi, "sayfalar": sec}, "anahtar 9")
     J = {"surum": V6_SURUM, "kapi": kapi, "aday": AJ, "sentetik": SJ, "tarama": {k: JT[k] for k in ("sayim", "n_secim", "secim_sayim", "uygun_olay", "kasa")},

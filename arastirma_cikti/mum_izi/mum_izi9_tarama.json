@@ -1,0 +1,138 @@
+{
+ "surum": "MUM_IZI_V6 v1.0 (2026-11-26): v6 = v5M ∧ K* ∧ D* ∧ BB* (Cemal: küçük mum, muntazam dizilim, net Bollinger daralması)",
+ "kapi_secim": {
+  "K": {
+   "aday": "K3",
+   "esik": 1.1377839406057206,
+   "yon": "kucuk"
+  },
+  "D": {
+   "aday": "D3",
+   "esik": 0.6010556825199288,
+   "yon": "buyuk"
+  },
+  "BB": {
+   "aday": "BB4",
+   "esik": 0.5,
+   "yon": "ikili"
+  }
+ },
+ "kapi": {
+  "kontrol": {
+   "gecti": true
+  },
+  "onkayit_commit": "fcf7c32d9eb40b1497173f25c3a622c93a5eab2e 2026-11-26T08:52:29+00:00",
+  "KOD9_SHA": "2129b71d2f4da6ad5f4f468d23626eaeca59039b882baeced8c8b5902e0fb116",
+  "ESIK9_SHA": "233dd7539de8faa111aee24f87739a78e888e310f6a536bf5d5ad81313d52cb1",
+  "ADAY9_SHA": "fbd7655567a558ab9664117388eeccb5434675b82b190776b9dd4ec8be7dffe2",
+  "SENTETIK9_SHA": "4ee96f910c2e970a6a3fff422e65da1089b87866d19159d446fd576ceaa3ebf0",
+  "V5_KOD_SHA": "2bd267ad5057ef6e5571b92545224b3ce4a2ce0702b295653553237c9a62a6d3",
+  "V4_KOD_SHA": "6b3e2e4fa74f9cde3b4e99c1b47c8f4b9c31765cc604d478e5699bf2768cafbe",
+  "V3_KOD_SHA": "70fc2fb979c47b2a2bd5fb260e1fb1891e7b34268f49c4a4276f482b66a4eb69",
+  "MI_KOD_SHA": "370d582043567440101ade832d560f4a3eebf7a764eb758f634a8811cfd288b9",
+  "MH_KOD_SHA": "8f7440d199dfcf018f838da77da5cf0eabd89062fdc67cf26a0a5678ed4da200",
+  "MV_KOD_SHA": "1bb586cb825b8b437b97df4ec193a682bc626ecc796e9130d27e4906b68d81dc",
+  "E6_KOD_SHA": "cc8c6c914d7ecaa02682eb9c302e63635e567a1d828f7416a0cbb6bdeb291f1d",
+  "ISARET8_SHA": "35fa2d718a76da2e5dbb5517465429d0f858d38a41bae17907b8e22b061d27bb"
+ },
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/mum_izi/acik/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_ABD.pkl": "2016-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_AVR.pkl": "2016-12-30"
+  }
+ },
+ "sayim": {
+  "gunluk|ABD": {
+   "hisse": 4402,
+   "hisse_yil": 23669.1,
+   "olay": 2592,
+   "olay_evren": 1681,
+   "v5M_olay": 5288,
+   "v5M_olay_evren": 3326,
+   "v5M_orani": 0.49016641452344933,
+   "v5M_orani_evren": 0.505411906193626,
+   "evren_hisse_yil_basina": 0.0710207501798521
+  },
+  "gunluk|AVR": {
+   "hisse": 571,
+   "hisse_yil": 3755.5,
+   "olay": 297,
+   "olay_evren": 219,
+   "v5M_olay": 611,
+   "v5M_olay_evren": 449,
+   "v5M_orani": 0.486088379705401,
+   "v5M_orani_evren": 0.48775055679287305,
+   "evren_hisse_yil_basina": 0.058314780199517954
+  },
+  "gunluk|BIST": {
+   "hisse": 467,
+   "hisse_yil": 2612.6,
+   "olay": 603,
+   "olay_evren": 423,
+   "v5M_olay": 1197,
+   "v5M_olay_evren": 837,
+   "v5M_orani": 0.5037593984962406,
+   "v5M_orani_evren": 0.5053763440860215,
+   "evren_hisse_yil_basina": 0.16190871104589966
+  },
+  "haftalik|ABD": {
+   "hisse": 4303,
+   "hisse_yil": 55988.1,
+   "olay": 735,
+   "olay_evren": 398,
+   "v5M_olay": 1785,
+   "v5M_olay_evren": 1013,
+   "v5M_orani": 0.4117647058823529,
+   "v5M_orani_evren": 0.3928923988153998,
+   "evren_hisse_yil_basina": 0.007108651492658813
+  },
+  "haftalik|AVR": {
+   "hisse": 570,
+   "hisse_yil": 9957.2,
+   "olay": 90,
+   "olay_evren": 59,
+   "v5M_olay": 221,
+   "v5M_olay_evren": 151,
+   "v5M_orani": 0.4072398190045249,
+   "v5M_orani_evren": 0.39072847682119205,
+   "evren_hisse_yil_basina": 0.0059253765646335365
+  },
+  "haftalik|BIST": {
+   "hisse": 449,
+   "hisse_yil": 2888.4,
+   "olay": 177,
+   "olay_evren": 109,
+   "v5M_olay": 376,
+   "v5M_olay_evren": 235,
+   "v5M_orani": 0.47074468085106386,
+   "v5M_orani_evren": 0.46382978723404256,
+   "evren_hisse_yil_basina": 0.03773710526841415
+  }
+ },
+ "ham_sha": "8d2d6e71009b5f356f48343bfbf7788d177da45b981729f340db19bb66279fc8",
+ "n_secim": 24,
+ "secim_sayim": {
+  "zaman": {
+   "haftalik": 12,
+   "gunluk": 12
+  },
+  "pazar": {
+   "ABD": 16,
+   "BIST": 5,
+   "AVR": 3
+  }
+ },
+ "uygun_olay": {
+  "gunluk": 2244,
+  "haftalik": 545
+ },
+ "onay_durum": "HAZIR",
+ "sure_sn": 596
+}
