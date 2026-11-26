@@ -1,0 +1,735 @@
+{
+ "hakem": "alt ajan (sonnet) kopma K1",
+ "sayfalar": {
+  "set1": {
+   "3": {
+    "k": "BASKI",
+    "puan": 6,
+    "gerekce": "dönüş var, küçük mum yok, bant dibinden tepki"
+   },
+   "4": {
+    "k": "BASKI",
+    "puan": 6,
+    "gerekce": "sert düşüş sonrası güçlü tepki, bant geniş"
+   },
+   "5": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dip tabanı küçük mumlar, SMA üstü, üst bandı izliyor"
+   },
+   "6": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dipte küçük mumlar, sonda iri yeşil çıkış"
+   },
+   "7": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "uzun düşüş bitti, V yükseliş üst bant üstü"
+   },
+   "8": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "çökme sonrası taban, son mumlar SMA civarı zayıf"
+   },
+   "9": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "dip sonrası tepki, son mumlar karışık üst bandın altında"
+   },
+   "10": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dipte sıkışma küçük mumlar, banda yaslı yükseliş"
+   },
+   "11": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası yükseliş üst bandı izliyor"
+   },
+   "12": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "tepki var, son mumlar bandı izlemiyor"
+   },
+   "13": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "taban sonrası yükseliş üst banda ulaşıyor"
+   },
+   "14": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dipte küçük mumlar, üst bandı izleyerek geçiş"
+   },
+   "15": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "taban sonrası yükseliş ama son kırmızılar zayıf"
+   },
+   "16": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "küçük mumlu dip, SMA geçildi, güçlü son"
+   },
+   "17": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "geniş inişli çıkışlı, düşüş baskısı sürüyor"
+   },
+   "18": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "çöküş sonrası tepki, SMA altında/etrafında"
+   },
+   "19": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dip tabanı, SMA üstüne geçiş, üst bandı izliyor"
+   },
+   "20": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dip tepkisi sonrası üst banda tırmanış"
+   },
+   "21": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dipte taban, sonra üst bandı aşan yükseliş"
+   },
+   "22": {
+    "k": "BASKI",
+    "puan": 6,
+    "gerekce": "taban küçük mumlu ama SMA'yı yeni geçiyor"
+   },
+   "23": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dip taban, SMA üstü, üst banda yürüyüş"
+   },
+   "24": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası uzun yükseliş üst banda yakın"
+   },
+   "25": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "yükseliş sonrası son kırmızılar geri verdi"
+   },
+   "26": {
+    "k": "BASKI",
+    "puan": 6,
+    "gerekce": "sıkışma var, son mumlar iri ve karışık"
+   }
+  },
+  "set2": {
+   "2": {
+    "k": "BASKI",
+    "puan": 1,
+    "gerekce": "düşüşün kendisi sürüyor, küçük tepki"
+   },
+   "3": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "tepki sonrası iri kırmızılar, üst banttan dönüş"
+   },
+   "4": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "dip tepkisi, son mumlar SMA civarı karışık"
+   },
+   "5": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "geniş dip tabanı, SMA aşıldı, üst bandı izliyor"
+   },
+   "6": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "tepki sonrası son mumlar kırmızı geri dönüyor"
+   },
+   "7": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dip taban, SMA üstü, üst banda yürüyüş"
+   },
+   "8": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "küçük mumlu dip, üst bandı izleyerek yükseliş"
+   },
+   "9": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "küçük mumlu dip taban, SMA aşıldı, güçlü son"
+   },
+   "10": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dipte dar sıkışma, banda yaslı yükseliş"
+   },
+   "11": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası taban, üst bandı izleyen yükseliş"
+   },
+   "12": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "taban sonrası üst bant boyunca güçlü yükseliş"
+   },
+   "13": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "kısa düşüş bitti, üst bandı izleyen yükseliş"
+   },
+   "14": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş dibi, küçük mumlar, güçlü yükseliş"
+   },
+   "15": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dip tabanı, SMA geçildi, son mumlar yüksek"
+   },
+   "16": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "önceki düşüş belirsiz, yükseliş içi geri çekilme"
+   },
+   "17": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, taban, üst banda tırmanış"
+   },
+   "18": {
+    "k": "BELIRSIZ",
+    "puan": 4,
+    "gerekce": "yükseliş sonrası son kırmızılar geri çekiyor, öncesi belirsiz"
+   },
+   "19": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş dibi, taban, üst bandı izleyen güçlü yükseliş"
+   },
+   "20": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası yükseliş üst bandı izliyor"
+   },
+   "21": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, banda yaslı yükseliş, son kırmızı"
+   },
+   "22": {
+    "k": "BASKI",
+    "puan": 4,
+    "gerekce": "tepki var ama son iri kırmızı mumlar zayıf"
+   },
+   "23": {
+    "k": "BASKI",
+    "puan": 0,
+    "gerekce": "düşüş devam ediyor, alt banda yapışık"
+   },
+   "24": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dip tabanı sonrası üst bandı aşan yükseliş"
+   },
+   "25": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "çöküş tepkisi, son iri kırmızı mum"
+   },
+   "26": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "dip tepkisi, son mumlar bandın altında karışık"
+   },
+   "27": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "kısa düşüş sonrası banda yaslı güçlü yükseliş"
+   },
+   "28": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "dipte sıkışma küçük mumlar, banda çıkış"
+   },
+   "29": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izleyen yükseliş"
+   },
+   "30": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "tepki sonrası kırmızılarla geri dönüş"
+   },
+   "31": {
+    "k": "BASKI",
+    "puan": 5,
+    "gerekce": "çöküş tepkisi, son mumlar SMA çevresinde"
+   },
+   "32": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş durağı küçük mumlar, üst bandı izliyor"
+   },
+   "33": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, banda yaslı sürekli yükseliş"
+   },
+   "34": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "çöküş sonrası sıkışma, son mumlar iri ve karışık"
+   },
+   "35": {
+    "k": "BELIRSIZ",
+    "puan": 4,
+    "gerekce": "düşüş sonrası SMA altında yatay, kopma yok"
+   },
+   "36": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, banda yaslı yükseliş"
+   },
+   "37": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "küçük çekilme sonrası üst bandı izleyen yükseliş"
+   },
+   "38": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş durağı küçük mumlar, banda çıkış"
+   },
+   "39": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, tepkiler, üst banda tırmanış"
+   },
+   "40": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "dip tabanı, yükseliş ama son kırmızı iri"
+   },
+   "41": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, üst bandı izleyen yükseliş"
+   },
+   "42": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "yatay dalgalı, üst banda yeni ulaştı"
+   },
+   "43": {
+    "k": "BASKI",
+    "puan": 3,
+    "gerekce": "taban sonrası sivri çıkış, son mumlar kırmızı"
+   },
+   "44": {
+    "k": "BASKI",
+    "puan": 2,
+    "gerekce": "tepki sonrası iri kırmızı son mum"
+   },
+   "45": {
+    "k": "BASKI",
+    "puan": 2,
+    "gerekce": "dalgalı, düşüş baskısı, son iri kırmızılar"
+   },
+   "46": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dipte küçük mumlar, sonda iri yeşil çıkış"
+   },
+   "47": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, uzun fitil sonrası yükseliş"
+   },
+   "48": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izliyor"
+   },
+   "49": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, banda yaslı yükseliş"
+   }
+  },
+  "set3": {
+   "3": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, gel-git, SMA aşıldı, üst bandı izliyor"
+   },
+   "4": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, taban, SMA aşıldı, tırmanış"
+   },
+   "5": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "taban sonrası SMA üstünde dar seyir, ivme zayıf"
+   },
+   "6": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, güçlü SMA aşımı, tırmanış"
+   },
+   "7": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, SMA aşımı, üst banda yürüyüş"
+   },
+   "8": {
+    "k": "KOPMUS",
+    "puan": 9,
+    "gerekce": "düşüş bitti, taban, üst bandı birebir izliyor"
+   },
+   "9": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dipte gel-git, SMA aşıldı, yükseliş"
+   },
+   "10": {
+    "k": "KOPMUS",
+    "puan": 9,
+    "gerekce": "çöküş sonrası taban, SMA aşımı, üst banda yaslı"
+   },
+   "11": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çekilme bitti, SMA aşıldı, güçlü tırmanış"
+   },
+   "12": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, gel-git, geri çekilme sonrası yükseliş"
+   },
+   "13": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, SMA aşımı, banda yaslı yükseliş"
+   },
+   "14": {
+    "k": "KOPMUS",
+    "puan": 9,
+    "gerekce": "düşüş bitti, taban, SMA aşımı, üst bandı izliyor"
+   },
+   "15": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, gel-git, SMA aşıldı, ılımlı tırmanış"
+   },
+   "16": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "çöküş sonrası gap, sonra yatay, ivme zayıf"
+   },
+   "17": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "SMA çevresinde yatay, sondaki sıçrama iri kırmızılı"
+   },
+   "18": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çekilme bitti, taban, SMA aşımı, üst bandı izliyor"
+   },
+   "19": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "sürekli zayıf seyir, tek uzun fitil sonrası dalgalı"
+   },
+   "20": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş dibi, taban, SMA aşımı, banda yaslı tırmanış"
+   },
+   "21": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, SMA aşımı, üst banda yakın"
+   },
+   "22": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çekilme bitti, SMA aşıldı, üst banda yürüyüş"
+   },
+   "23": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, SMA aşımı, banda yaslı"
+   },
+   "24": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, taban, SMA aşıldı, güçlü son"
+   },
+   "25": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "kısa düşüş, dar taban, SMA aşımı, güçlü tırmanış"
+   },
+   "26": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, SMA aşımı, üst bandı aşıyor"
+   }
+  },
+  "set4": {
+   "2": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş durağı küçük mumlar, banda yaslı çıkış"
+   },
+   "3": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, taban, üst banda ulaşıp yatay"
+   },
+   "4": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "dalgalı, düşüş net değil, üst banda yeni yaklaştı"
+   },
+   "5": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "sıkışma küçük mumlar, banda çıkış"
+   },
+   "6": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası dar küçük mumlu taban, SMA üstünde"
+   },
+   "7": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izleyerek yükseliş"
+   },
+   "8": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "yatay sıkışma sonrası banda yaslı güçlü yükseliş"
+   },
+   "9": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, banda doğru yükseliş"
+   },
+   "10": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "çok dar sıkışma sonrası banda yaslı, düşüş görünmüyor"
+   },
+   "11": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, taban, yükseliş, son kırmızı"
+   },
+   "12": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, küçük mumlu taban, üst bandı aşıyor"
+   },
+   "13": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş durağı küçük mumlar, banda yaslı çıkış"
+   },
+   "14": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş durağı küçük mumlar, SMA üstüne çıkış"
+   },
+   "15": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası dar küçük mumlu taban, yukarı çıkış"
+   },
+   "16": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izleyerek yükseliş"
+   },
+   "17": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "sert düşüş, uzun taban sıkışma, banda yaklaşıyor"
+   },
+   "18": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "dalgalı taban, sondaki çıkış henüz kısa"
+   },
+   "19": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası taban, SMA üstünde seyir"
+   },
+   "20": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası çok dar taban, bant daralması"
+   },
+   "21": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "taban var, SMA üstü zayıf, son mumlar karışık"
+   },
+   "22": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası düzenli yükseliş, üst banda yakın"
+   },
+   "23": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, taban, banda yaslı yükseliş"
+   },
+   "24": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş durağı küçük mumlar, üst banda yakın"
+   },
+   "25": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "çöküş sonrası taban, SMA aşıldı, banda yakın"
+   }
+  },
+  "set5": {
+   "2": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "belirgin düşüş yok, yatay küçük mumlar"
+   },
+   "3": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş durağı küçük mumlar, SMA üstüne tırmanış"
+   },
+   "4": {
+    "k": "BELIRSIZ",
+    "puan": 5,
+    "gerekce": "öncesi düşüş net değil, dalgalı yükseliş"
+   },
+   "5": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi taban, banda yaslı yükseliş"
+   },
+   "6": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, taban, üst banda yakın dar seyir"
+   },
+   "7": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izliyor"
+   },
+   "8": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "yatay dar sıkışma sonrası banda çıkış, düşüş silik"
+   },
+   "9": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izliyor"
+   },
+   "10": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası küçük mumlar, üst bandı birebir izliyor"
+   },
+   "11": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "yatay sıkışma, sonra banda yaslı yükseliş"
+   },
+   "12": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş bitti, küçük mumlu taban, üst banda çıkış"
+   },
+   "13": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, taban, SMA aşıldı, üst banda yakın"
+   },
+   "14": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "dalgalı dip, yavaş yükseliş SMA üstünde zayıf"
+   },
+   "15": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş dibi, taban, SMA aşımı, üst banda yaklaşma"
+   },
+   "16": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş bitti, taban, üst bandı izleyerek yürüyor"
+   },
+   "17": {
+    "k": "BELIRSIZ",
+    "puan": 6,
+    "gerekce": "uzun dar sıkışma, sonda yeni yukarı kıpırdama"
+   },
+   "18": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "düşüş durağı, SMA aşıldı, banda yakın küçük mumlar"
+   },
+   "19": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, SMA aşımı, üst bandı izliyor"
+   },
+   "20": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası taban, SMA üstü, banda yaslı küçük mumlar"
+   },
+   "21": {
+    "k": "KOPMUS",
+    "puan": 7,
+    "gerekce": "dalgalı taban sonrası üst bandı izleyen yükseliş"
+   },
+   "22": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "düşüş durağı küçük mumlar, SMA aşımı, banda yaklaşma"
+   },
+   "23": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası dar taban, üst banda temas"
+   },
+   "24": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "çöküş sonrası dar küçük mumlu taban, banda çıkış"
+   },
+   "25": {
+    "k": "KOPMUS",
+    "puan": 8,
+    "gerekce": "uzun fitil dibi sonrası banda yaslı yükseliş"
+   }
+  }
+ }
+}
