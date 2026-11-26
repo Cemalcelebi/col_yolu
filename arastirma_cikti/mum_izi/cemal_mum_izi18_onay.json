@@ -1,0 +1,105 @@
+{
+ "kaynak": "MUM_IZI18_ONAY_OLCEKLI_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet) + ana model (işaret konumu mekanik; 2, 3, 10, 12. sayfalara gözle bakıldı); iki okuma birebir aynı",
+ "sayfa1": "Kapak, işaret yok.",
+ "mesaj": "Cemal dosyayı 'Bu' sözüyle gönderdi",
+ "kural": "işaretin gövdesinin durduğu kutu seçimdir; kuyruk sayılmaz",
+ "sayfalar": {
+  "2": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "grafiğin sol üstünde yıldız çizimi (ana modelin okuması: 'en iyi örnek' işareti)",
+   "yildiz": true,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "8": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "işaretin kuyruğu grafiğe kadar uzuyor; ayrı çizim yok",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "11": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "12": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "grafiğin üstünde büyük yıldız çizimi (ana modelin okuması: 'en iyi örnek' işareti)",
+   "yildiz": true,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "13": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  }
+ }
+}
