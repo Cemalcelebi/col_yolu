@@ -17,6 +17,8 @@ Komut:  python MUM_IZI_HAVUZ.py sayim      GETİRİSİZ SAYIM (yalnız yazdırı
         python MUM_IZI_HAVUZ.py kos        kapı (kontrol + ön kayıt sha + commit + temiz ağaç + KASA) -> hesap -> mum_izi24_olay.csv.gz + mum_izi24_sonuc.json
         python MUM_IZI_HAVUZ.py rapor      MUM_IZI24_RAPOR.md tabloları (sonuç json'undan)
         python MUM_IZI_HAVUZ.py sha        kod / eşik sha
+EK 25 (MUM_IZI25_IS_TANIMI.md; rastgele gün tabanı, zamanlama / seçim, piyasa tahmini; EK 24 kodu ve çıktıları değişmez):
+        python MUM_IZI_HAVUZ.py sayim25 | onkayit25 | kos25 | rapor25 | sha25
 Colab:  exec(open('MUM_IZI_HAVUZ.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 Evren bugün işlem gören hisseler (K7: sonuç yukarı yanlı).
 """
@@ -866,6 +868,863 @@ def hv_rapor_yaz(cikti: Optional[str] = None) -> str:
     return MI._mi_yaz(y, hv_rapor_tablo(J), "rapor tablo 24")
 
 
+# ================================================================ 7b) EK 25 — RASTGELE GÜN TABANI (mutlak kârlılık), ZAMANLAMA / SEÇİM, PİYASA TAHMİNİ
+# İş tanımı: arastirma_cikti/mum_izi/MUM_IZI25_IS_TANIMI.md (ana model; 1, 2, 2b, 3. bölüm). EK 24 kodu ve çıktıları DEĞİŞMEZ (yalnız okunur).
+# Girdi: mum_izi24_olay.csv.gz (EK 24 olay satırları) + mum_izi23_olay.csv (göz ölçümü 205 bölge). Veri: hv_blok (EK 24 ile aynı yükleyici + kesik assert).
+HV25_SURUM = "MUM_IZI_HAVUZ EK 25 v1.0 (2026-11-26): rastgele gün tabanı (T1 / T2 / PİYASA(t)), zamanlama / seçim ayrımı, piyasa tahmini (takvim)"
+HV25_YOL = {"olay24": os.path.join(_C, "mum_izi24_olay.csv.gz"), "sonuc24": os.path.join(_C, "mum_izi24_sonuc.json"), "olay23": os.path.join(_C, "mum_izi23_olay.csv"),
+            "onkayit24": os.path.join(_C, "MUM_IZI24_ON_KAYIT.md"), "is_tanimi": os.path.join(_C, "MUM_IZI25_IS_TANIMI.md"),
+            "ek_kural": os.path.join(_C, "MUM_IZI23_EK_KURAL.md"), "gecici": "/tmp/mum_izi/havuz25"}
+HV25_DOSYA = {"onkayit": "MUM_IZI25_ON_KAYIT.md", "rapor": "MUM_IZI25_RAPOR.md", "sonuc": "mum_izi25_sonuc.json", "olay": "mum_izi25_olay.csv.gz"}
+HV25_GOZ_SINIF = {"EVET": "BENZİYOR", "KISMEN": "KISMEN", "HAYIR": "BENZEMİYOR"}
+
+HV25_ESIK: Dict[str, Any] = {
+    "surum": "HV25-1.0",
+    "tohum": 2511,
+    "tohum_tanim": "np.random.default_rng([2511, tür, crc32(anahtar)]); tür 1 = T1 (anahtar 'zaman|pazar|sembol|tarih|kaynak'), 2 = T2 (anahtar 'zaman|pazar|dönem'), "
+                   "3 = olay bootstrap'ı (anahtar tablo adı), 4 = T2 bootstrap'ı (anahtar 'zaman|pazar|dönem'), 5 = takvim bootstrap'ı (anahtar tablo adı); sıra "
+                   "bağımsız, tekrarlanabilir",
+    "olcu": {"tanim": "olay ölçüsü GZ.gz_olc_bir AYNEN (EK 24 satırları; R15 / d5 / d10 olay csv'sinden; hv25_olc_dizi aynı tanımı vektörle yeniden üretir, olay "
+                      "satırlarıyla R15 / E0 / stop / d5 / d10 birebir, değilse DUR); rastgele gün aynı tanım: karar barı t (bölge sonunun yerine), giriş = t + 1 barının "
+                      "açılışı (haftalıkta haftanın ilk günü), R15 = t + 15 barının kapanışı / giriş - 1, stop = t - m + 1 .. t barlarının dibi x 0,98, hedef +%5 / +%10 "
+                      "günlük High >= giriş x (1 + x) ilk gün, Low <= stop ilk günden ÖNCE (aynı gün stop önce; GZ / G2.k17_dokunma aynen)",
+             "ufuk": 15, "stop_carpan": 0.98},
+    "uygun": {"tanim": "rastgele karar barı t uygun <=> t - m + 1 >= 0; t + 15 veri içinde ve t + 15 barının tarihi <= 2022-12-31 (pencere kesiği); giriş tarihi (t + 1 "
+                       "barının ilk günü) olayın DÖNEMİ içinde (giriş tarihine göre; 15. mum dönem dışına taşabilir, olaylarla aynı); giriş açılışı sonlu, > 0 ve > stop "
+                       "(olaylarla aynı ölçülebilirlik); |(t + 1) - k| >= 15 her k için, k = aynı hisse aynı zaman diliminde BİLİNEN BÖLGELERİN giriş barları (EK 24 "
+                       "havuzunun bütün olayları: KAPILI + KAPISIZ + ORAN_YOK, hariç dahil, ölçülemeyenler dahil; k = bölge sonu barı + 1) + göz ölçümü 205 bölge; "
+                       "'15 bardan yakın' = |fark| <= 14 (15 mumluk pencereler örtüşür)",
+              "yakin_bar": 15},
+    "T1": {"cekim": 200, "en_az": 30, "yerine_koyma": False,
+           "tanim": "olay başına aynı hisse, aynı zaman dilimi, aynı dönem, aynı m: uygun barlardan yerine koymadan 200 (uygun < 200 ise hepsi); uygun < 30 ise T1 yok "
+                    "(olay T1 tablolarına girmez; sayısı yazılır); T1_R15 = çekimlerin R15 ortalaması, T1_d5 / T1_d10 = hedef payları; çekim sayısı KAPISIZ dahil "
+                    "her olayda 200 (hesap vektörle; 50'ye inilmedi)"},
+    "T2": {"cekim": 5000, "m": 20, "yerine_koyma": False,
+           "tanim": "hücre (zaman dilimi x pazar x dönem) başına evrenin bütün (hisse, karar barı) uygun çiftlerinden (m = 20, aynı uygunluk ve dışlama kuralı) "
+                    "yerine koymadan 5.000 (az ise hepsi); R15 ortalaması / medyanı, +%5 / +%10 payı; hücre başına tek sayı; belirsizliği ay kümeli bootstrap ile "
+                    "(çekimlerin giriş ayları) farka katılır"},
+    "piyasa": {"en_az_hisse": 5,
+               "tanim": "PİYASA(t) = aynı pazarın (aynı veri: günlükte günlük açık veri, haftalıkta haftalık blok günlük verisi) olayın giriş günü açılışında işlem "
+                        "gören (açılış sonlu > 0) bütün hisselerinin, olayın giriş gününden olayın 15. mum gününe kadar R'si (son geçerli kapanış / giriş açılışı - 1; "
+                        "gz_es_grup'un R tanımı, kovasız) eşit ağırlıklı ortalaması; hariç: olayın hissesi ve o pazarda AYNI GÜN girişli bilinen bölgesi olan hisseler "
+                        "(EK 24 havuzunun bütün olayları, iki zaman dilimi + göz 205); stop / kova şartı yok; < 5 hisse ise yok"},
+    "fark": {"TOPLAM_T1": "R15 - T1_R15 (olay başına)", "TOPLAM_T2": "R15 - T2(hücre)", "ZAMANLAMA": "PİYASA(t) - T2(hücre)", "SECIM": "R15 - PİYASA(t)",
+             "ozdeslik": "TOPLAM_T2 = ZAMANLAMA + SECIM (olay başına; denetim 1e-12, değilse DUR)",
+             "tam_kume": "tablolar R15, T1, PİYASA(t) ve T2 hepsi olan olaylarla (TAM küme); dışarıda kalanlar sayılır; EK 24 eşli farkı (fark) aynı kümenin eşli "
+                         "olaylarında yanında yazılır"},
+    "boot": {"B": 10000, "kume": "giriş ayı (YYYY-AA)", "tanim": "ay kümeli bootstrap: aylar yerine koyarak (multinomial ağırlık), ortalama = ağırlıklı toplam / "
+                                                                "ağırlıklı sayı; T2 içeren farklarda her tekrarda T2 de kendi çekimlerinin giriş ayları üzerinden "
+                                                                "bağımsız yeniden örneklenir; %95 = 2,5 / 97,5 yüzdelik"},
+    "ornek": {"KAPILI": "EK 24 KAPILI ANA (ana örnek)", "KAPILI_DUY": "EK 24 KAPILI hepsi (hariç dahil; duyarlılık)", "KAPISIZ": "EK 24 KAPISIZ ANA (kontrol)",
+              "GOZ_6_9": "mum_izi23_olay.csv set6-set9 (gerçek ölçekle işaretlenen), sınıf = 'sinif' sütunu (EVET = BENZİYOR, KISMEN, HAYIR = BENZEMİYOR), zaman "
+                         "dilimleri birlikte (ayrıca zaman dilimine göre bilgi)",
+              "GOZ_7_9": "set7-set9 (kapı havuzu), aynı sınıflar"},
+    "hucre": {"karar": ["ABD|d1619", "ABD|d2022", "AVR|d1619", "AVR|d2022"], "bilgi": ["BIST|d1619", "BIST|d2022", "ABD|o16", "AVR|o16", "BIST|o16"],
+              "atama": "giriş tarihine göre (HV_ESIK['hucre']['donem']); ayrıca zaman dilimine göre 'hepsi birlikte'"},
+    "okuma": {"MUTLAK_KARLI": "n >= 30 VE farklı ay >= 12 VE TOPLAM FARK (T1) ort > 0 ve ay kümeli alt ucu > 0; aralık sıfırı içeriyorsa AYRIŞMIYOR; üst ucu < 0 ise "
+                              "RASTGELE GÜNDEN KÖTÜ; n ya da ay yetmezse ÖLÇÜLEMEDİ",
+              "ZAMANLAMA": "aynı n / ay şartıyla ZAMANLAMA ort > 0 ve alt ucu > 0 -> ZAMANLAMA VAR; üst ucu < 0 -> ZAMANLAMA TERS (bilgi); aralık sıfırı içeriyorsa "
+                           "AYRIŞMIYOR",
+              "SECIM": "bilgi: aynı kural, etiket SEÇİM + / SEÇİM - / AYRIŞMIYOR",
+              "az_donem": "en kalabalık 3 ayın olay payı > 0,30 -> 'az sayıda döneme dayanıyor' notu",
+              "n_min": 30, "ay_min": 12, "az_donem_pay": 0.30},
+    "goz": {"kismen_kabul": "KISMEN sınıfı (set 6-9, zaman dilimleri birlikte) TOPLAM FARK (T1) ay kümeli %95 aralık kuralıyla 'MUTLAK KÂRLI' (alt ucu > 0; n ve ay "
+                            "şartı aranmaz; n < 30 -> 'ÖRNEKLEM YETERSİZ' notu) <=> KISMEN KABUL; set 7-9 aynı kuralla BİLGİ (ayrışırsa ikisi de yazılır)",
+            "esli": "MUM_IZI23_EK_KURAL eşli okuma (bilgi): sınıfın EK 23 eşli farkı (csv 'fark') ortalaması, basit bootstrap %95 (10.000, tohum 2311): alt > 0 SONRASI "
+                    "İYİ, üst < 0 SONRASI KÖTÜ, aksi GÖSTERİLEMEDİ",
+            "tohum_esli": 2311},
+    "takvim": {"pazar": ["ABD", "AVR", "BIST"], "karar_pazar": ["ABD", "AVR"], "zaman": "gunluk",
+               "takvim": "pazarın günlük verisindeki bütün işlem günlerinin birleşimi (sıralı)",
+               "SAYI": "SAYI(g) = bölge sonu tarihi takvimde g - 4 .. g aralığında (son 5 işlem günü, g dahil; bölge sonu <= g) olan olay sayısı; ana: KAPILI ANA "
+                       "günlük olaylar (ölçülebilirlikten bağımsız); duyarlılık: KAPILI hepsi; kontrol: KAPISIZ ANA",
+               "PIYASA15": "PİYASA15(g) = g + 1 (takvimde sonraki gün) açılışında işlem gören bütün hisselerin (olay dışlaması YOK) g + 1 .. g + 15 takvim günlerinde son "
+                           "geçerli kapanış / g + 1 açılışı - 1, eşit ağırlıklı ortalama; < 5 hisse ise gün yok",
+               "gun": "g + 1 giriş tarihi 2016-01-01 .. 2022-12-31 ve g + 15 takvim günü tarihi <= 2022-12-31; g >= 20; dönem g + 1 tarihine göre (2016-19, 2020-22); "
+                      "bootstrap kümesi g'nin ayı",
+               "durum": ["SAYI = 0", "SAYI = 1-2", "SAYI >= 3"],
+               "farklar": ["(SAYI >= 1) - (SAYI = 0)", "(SAYI >= 3) - (SAYI = 0)"],
+               "dusus": "DUS20(g) = bütün hisselerin (kapanış 5 güne kadar ileri taşınmış) Kapanış(g) / Kapanış(g - 20) - 1 eşit ağırlıklı ortalaması; DÜŞÜŞ günü <=> "
+                        "DUS20 < -0,05; satır: DÜŞÜŞ günlerinde PİYASA15 (gün, ort, medyan, artı payı) ve DÜŞÜŞ - öteki günler farkı [ay kümeli %95]; bilgi: DÜŞÜŞ "
+                        "günleri içinde ve dışında ayrı (SAYI >= 1) - (SAYI = 0)",
+               "okuma": "ABD'de iki dönemde de (SAYI >= 1) - (SAYI = 0) > 0 ve alt ucu > 0 -> 'PİYASA YÜKSELİŞİNİ ÖNCELİYOR' (AVR'de de iki dönemde alt ucu > 0 ise "
+                        "'iki pazarda'); yalnız bir dönemde -> 'TEK DÖNEM'; aksi -> 'GÖSTERİLEMEDİ' (iki dönemde de üst ucu < 0 ise 'GÖSTERİLEMEDİ (ters yönde)'); "
+                        "AVR ve BIST kendi satırında aynı kuralla (bilgi); KAPISIZ sayısıyla aynı tablo (kontrol)"},
+    "kesik": "veri en büyük tarihi <= 2022-12-31 (hv_kesik_kapi her blok) + KASA.kasa_kapisi (EK 24 ile aynı dosyalar); rastgele gün ve takvim günü 15. barı "
+             "<= 2022-12-31",
+}
+
+HV25_KONTROL: Dict[str, Tuple[str, str]] = {
+    "K1": ("EVET", "üç taban önceden sabit: T1 aynı hisse rastgele gün (aynı dönem, aynı m, aynı stop / giriş / ufuk geometrisi), T2 aynı pazar / dönem / zaman "
+                   "dilimi rastgele (hisse, gün), PİYASA(t) aynı giriş günü bütün pazar (olaylı hisseler hariç); EK 24 eşli farkı (aynı gün aynı kova) yanında yazılır; "
+                   "KAPISIZ aynı aday kuralının kontrolü; DÜŞÜŞ günü satırı mekanik üstünlük (düşüş sonrası toparlanma) kontrolü"),
+    "K2": ("EVET", "olay girişi bölge sonundan sonraki bar açılışı (EK 24); rastgele günde stop t'ye kadarki m bar; takvimde SAYI(g) yalnız bölge sonu <= g (test); "
+                   "PİYASA15 g + 1 açılışından; DUS20 g'ye kadar; veri <= 2022-12-31 assert + KASA kapısı"),
+    "K3": ("EVET", "MI.mi_veri geçerli bar (H > L, V > 0) aynen; haftalık tamamlanmış ISO haftaları (MV.mv_haftalik_panel); rastgele gün girişinde açılış sonlu > 0"),
+    "K4": ("EVET", "olaylar EK 24'te tekil (15 bar); rastgele günler bilinen bölgelerin girişine <= 14 bar yakınsa dışlanır; T1 çekimi yerine koymadan; ortalama "
+                   "yanında medyan; çıkarım ay kümeli (günler / olaylar bağımsız sayılmaz)"),
+    "K5": ("EVET", "giriş = sonraki ilk bar açılışı (olay, rastgele gün, takvim g + 1); giriş <= stop ölçülmez (olay ve rastgele gün aynı)"),
+    "K6": ("EVET", "MI bölünme düzeltmeli fiyatlar (EK 24 aynen); getiriler oransal, yerel para; pazar içi karşılaştırma"),
+    "K7": ("EVET", "evren bugün yaşayan hisseler: olay da taban da yukarı yanlı; rastgele gün tabanı aynı evrenden olduğu için yanlılık farkta kısmen düşer, kalkmaz; "
+                   "raporda yazılır; kasa açılmaz"),
+    "K8": ("EVET", "n >= 30 VE farklı ay >= 12 şartı (okuma); en kalabalık 3 ay payı her tabloda; iki dönem ve iki pazar ayrı; göz sınıfları n < 30 -> "
+                   "ÖRNEKLEM YETERSİZ; küçük hücreden 'bulgu' denmez"),
+    "K9": ("EVET", "MUM_IZI25_ON_KAYIT.md: KOD25_SHA, ESIK25_SHA, girdi sha'ları, SAYIM25_SHA + getirisiz sayım + yorum noktaları; hesap ön kayıt commit + push'tan "
+                   "sonra; hv25_kapi: ik_kontrol_kapisi + sha + commit + temiz ağaç + sayım eşitliği"),
+    "K10": ("EVET", "girdi şeması (sütunlar) denetlenir; EK 24 satırında t = takvimde bölge sonu (DUR); göz satırlarında bölge sonu takvimde (DUR); getirisiz "
+                    "aşamada giriş / 15. mum tarihi, E0 ve stop olay satırlarıyla birebir (DUR); hesapta R15 / d5 / d10 birebir (DUR)"),
+    "K11": ("EVET", "hv25_olc_dizi = gz_olc_bir (sentetik test + bütün olay satırları); TOPLAM_T2 = ZAMANLAMA + SECIM (DUR); rapordan önce >= 2 hücre olay csv'sinden "
+                    "bağımsız kısa kodla yeniden üretilir"),
+    "K12": ("EVET", "başlık 'KODUN SEÇTİĞİ BÖLGELER'; 'kalıbın sonucu' denmez; 'mutlak kârlı / zamanlama var' yalnız okuma kuralıyla; sayı ile yorum ayrı cümlede; "
+                    "dönem içi piyasa yönü tabanda da var"),
+    "K13": ("EVET", "çakışma kapısı (_cakisma_kontrol_hv) korunur; EK 24 fonksiyonları ve çıktıları değişmez (test); MUM_IZI_HAKEM / GOZ / GOZ2 ve defter dosyaları "
+                    "değişmez; yalnız kendi yolları commit; sızıntı taraması MI._mi_yaz"),
+    "K14": ("UYGULANMAZ", "öneri / gerçek para işi değil; karar vermez, kasa açılmaz"),
+}
+
+
+def _hv25_yol(ad: str, cikti: Optional[str] = None) -> str:
+    return os.path.join(cikti or HV_YOL["cikti"], HV25_DOSYA[ad])
+
+
+def hv25_esik_sha(E: Optional[Dict[str, Any]] = None) -> str:
+    return hashlib.sha256(json.dumps(E or HV25_ESIK, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def _hv25_rng(tur: int, anahtar: str) -> np.random.Generator:
+    import zlib
+    return np.random.default_rng([int(HV25_ESIK["tohum"]), int(tur), zlib.crc32(str(anahtar).encode("utf-8"))])
+
+
+def hv25_donem(giris: Any) -> Optional[str]:
+    """Giriş tarihine göre dönem adı (o16 / d1619 / d2022) ya da None."""
+    h = hv_hucre_ad(giris, "X").split("|")[1]
+    return None if h == "dis" else h
+
+
+# ---------------------------------------------------------------- ölçü dizileri (rastgele gün ve olay için tek tanım)
+def hv25_dizi(Dg: pd.DataFrame, W: Optional[pd.DataFrame]) -> Dict[str, Any]:
+    """Bir hissenin ölçü dizileri. Bar takvimi B = W (haftalık) ya da Dg (günlük). gi[k] / ei[k] = k barının ilk / son günlük indeksi."""
+    DO = Dg.Open.to_numpy(float); DH = Dg.High.to_numpy(float); DL = Dg.Low.to_numpy(float); DC = Dg.Close.to_numpy(float)
+    if W is None:
+        n = len(Dg); gi = np.arange(n); ei = np.arange(n); tar = Dg.index; ent = Dg.index; BL = DL
+    else:
+        gi = Dg.index.get_indexer(pd.DatetimeIndex(W.bas)); ei = Dg.index.get_indexer(W.index)
+        if (gi < 0).any() or (ei < 0).any():
+            raise HVHata("K10: haftalık bar günleri günlük takvimde yok")
+        tar = W.index; ent = pd.DatetimeIndex(W.bas); BL = W.Low.to_numpy(float)
+    return {"DO": DO, "DH": DH, "DL": DL, "DC": DC, "gi": gi, "ei": ei, "tarih": pd.DatetimeIndex(tar), "giris_tarih": pd.DatetimeIndex(ent), "BL": BL,
+            "n": len(BL), "_rmin": {}}
+
+
+def _hv25_rmin(A: Dict[str, Any], m: int) -> np.ndarray:
+    """rmin[i] = BL[i .. i + m - 1] dibi (i = t - m + 1)."""
+    if m not in A["_rmin"]:
+        BL = A["BL"]
+        A["_rmin"][m] = (np.lib.stride_tricks.sliding_window_view(BL, m).min(axis=1) if len(BL) >= m else np.array([]))
+    return A["_rmin"][m]
+
+
+def hv25_uygun(A: Dict[str, Any], m: int, haric_k: Any, bas: Any, son: Any, kesik: pd.Timestamp = HV_KESIK) -> np.ndarray:
+    """Rastgele karar barı t'lerin uygun olanları (getirisiz; HV25_ESIK['uygun'])."""
+    U = int(HV25_ESIK["olcu"]["ufuk"]); yk = int(HV25_ESIK["uygun"]["yakin_bar"]); sc = float(HV25_ESIK["olcu"]["stop_carpan"]); n = int(A["n"]); m = int(m)
+    if n < m + U + 1:
+        return np.array([], np.int64)
+    t = np.arange(m - 1, n - U)
+    ok = A["tarih"][t + U] <= pd.Timestamp(kesik)
+    gt = A["giris_tarih"][t + 1]; ok &= (gt >= pd.Timestamp(bas)) & (gt <= pd.Timestamp(son))
+    E0 = A["DO"][A["gi"][t + 1]]; st = _hv25_rmin(A, m)[t - m + 1] * sc
+    with np.errstate(invalid="ignore"):
+        ok &= np.isfinite(E0) & (E0 > 0) & np.isfinite(st) & (E0 > st)
+    for k in np.asarray(list(haric_k), np.int64):
+        ok &= np.abs(t + 1 - int(k)) >= yk
+    return t[ok]
+
+
+def hv25_olc_dizi(A: Dict[str, Any], t: Any, m: int) -> Dict[str, np.ndarray]:
+    """gz_olc_bir tanımı vektörle (karar barları t, aynı m): E0, stop, R15, d5, d10, stop15, giris / son15 indeksleri. Uygunluk çağıranda (hv25_uygun)."""
+    U = int(HV25_ESIK["olcu"]["ufuk"]); sc = float(HV25_ESIK["olcu"]["stop_carpan"]); t = np.asarray(t, np.int64)
+    out = {k: np.full(len(t), np.nan) for k in ("E0", "stop", "R15", "d5", "d10", "stop15")}
+    out["g0"] = np.full(len(t), -1, np.int64); out["e15"] = np.full(len(t), -1, np.int64)
+    if not len(t):
+        return out
+    g0 = A["gi"][t + 1]; e15 = A["ei"][t + U]; E0 = A["DO"][g0]; st = _hv25_rmin(A, int(m))[t - int(m) + 1] * sc
+    R = A["DC"][e15] / E0 - 1
+    L = int((e15 - g0).max()) + 1; ix = g0[:, None] + np.arange(L)[None, :]; val = ix <= e15[:, None]; ix = np.minimum(ix, len(A["DH"]) - 1)
+    Hs = np.where(val, A["DH"][ix], -np.inf); Ls = np.where(val, A["DL"][ix], np.inf)
+    stp = Ls <= st[:, None]; ks = np.where(stp.any(1), stp.argmax(1), 10 ** 9)
+    for x, ad in ((0.05, "d5"), (0.10, "d10")):
+        hit = Hs >= (E0 * (1 + x))[:, None]; hk = np.where(hit.any(1), hit.argmax(1), 10 ** 9)
+        out[ad] = (hit.any(1) & (hk < ks)).astype(float)
+    out.update({"E0": E0, "stop": st, "R15": R, "stop15": stp.any(1).astype(float), "g0": g0, "e15": e15})
+    return out
+
+
+# ---------------------------------------------------------------- girdiler
+_HV25_K24 = ["zaman", "pazar", "sembol", "grup", "ana", "haric", "m", "t", "tarih", "bolge_bas", "bolge_son", "hucre", "olculdu", "giris", "E0", "stop", "son15",
+             "R15", "d5", "d10", "fark", "esli"]
+_HV25_K23 = ["set", "sayfa", "sinif", "zaman", "pazar", "sembol", "bolge_bas", "bolge_son", "m", "olculdu", "giris", "E0", "stop", "son15", "R15", "d10", "d5_tum", "fark"]
+
+
+def hv25_girdi() -> pd.DataFrame:
+    """EK 24 olay satırları + göz 205 bölge -> tek tablo (kaynak 'EK24' / 'GOZ23'). Şema denetlenir; getiri hesaplanmaz."""
+    A = pd.read_csv(HV25_YOL["olay24"]); G = pd.read_csv(HV25_YOL["olay23"])
+    for ad, D, K in (("mum_izi24_olay", A, _HV25_K24), ("mum_izi23_olay", G, _HV25_K23)):
+        yok = [c for c in K if c not in D]
+        if yok:
+            raise HVHata(f"K10: {ad} sütun yok: {yok}")
+    if len(A) != 6011 or len(G) != 205:
+        raise HVHata(f"K10: girdi satır sayısı ({len(A)} / {len(G)}; beklenen 6011 / 205)")
+    A = A.copy(); A["kaynak"] = "EK24"; A["set"] = ""; A["sinif"] = ""; A["haric"] = A.haric.fillna("")
+    G = G.copy(); G["kaynak"] = "GOZ23"; G["grup"] = "GOZ"; G["ana"] = False; G["haric"] = ""; G["tarih"] = G.bolge_son; G["t"] = -1
+    G["hucre"] = [hv_hucre_ad(g, p) if isinstance(g, str) else f"{p}|yok" for g, p in zip(G.giris, G.pazar)]
+    G["d5"] = G.d5_tum; G["esli"] = np.isfinite(G.fark.astype(float))
+    G["sinif"] = G.sinif.map(HV25_GOZ_SINIF).fillna("")
+    kol = _HV25_K24 + ["kaynak", "set", "sinif"]
+    X = pd.concat([A[kol], G[kol]], ignore_index=True)
+    X["ana"] = X.ana.astype(bool); X["olculdu"] = X.olculdu.astype(bool)
+    return X
+
+
+def _hv25_ay(s: Any) -> np.ndarray:
+    return pd.to_datetime(pd.Series(s)).dt.strftime("%Y-%m").to_numpy()
+
+
+def hv25_ay_ozet(giris: Any) -> Dict[str, Any]:
+    """Olay sayısı, farklı ay, en kalabalık 3 ayın payı (giriş ayı)."""
+    a = _hv25_ay(giris) if len(giris) else np.array([], str)
+    if not len(a):
+        return {"n": 0, "ay": 0, "ust3_pay": None, "ust3": []}
+    v = pd.Series(a).value_counts()
+    return {"n": int(len(a)), "ay": int(len(v)), "ust3_pay": float(v.iloc[:3].sum() / len(a)), "ust3": [[k, int(c)] for k, c in v.iloc[:3].items()]}
+
+
+# ---------------------------------------------------------------- blok hazırlığı (getirisiz)
+def hv25_blok_hazir(X: pd.DataFrame, z: str, p: str, Vd: Dict[str, pd.DataFrame], W: Optional[Dict[str, pd.DataFrame]]) -> Tuple[pd.DataFrame, Dict[str, Dict[str, Any]], Dict[str, set]]:
+    """Blok (zaman, pazar): olay t'leri (EK 24 t denetimi; göz için bölge sonundan), bilinen bölge giriş barları (dışlama), ölçü dizileri; getirisiz denetim
+    (giriş / 15. mum tarihi, E0, stop olay satırlarıyla birebir)."""
+    B = X[(X.zaman == z) & (X.pazar == p)].copy(); D: Dict[str, Dict[str, Any]] = {}; tt = []
+    for r in B.itertuples():
+        s = r.sembol
+        if s not in D:
+            Dg = Vd.get(s); Wr = (W.get(s) if W is not None else None)
+            if Dg is None or (W is not None and Wr is None):
+                raise HVHata(f"K10: {z} {p} {s}: veri yok")
+            D[s] = hv25_dizi(Dg, Wr)
+        try:
+            k = int(D[s]["tarih"].get_loc(pd.Timestamp(r.tarih)))
+        except KeyError as ex:
+            raise HVHata(f"K10: {z} {p} {s} {r.tarih}: bölge sonu takvimde yok") from ex
+        if r.kaynak == "EK24" and k != int(r.t):
+            raise HVHata(f"K10: {z} {p} {s} {r.tarih}: t {r.t} != takvim {k}")
+        tt.append(k)
+    B["tk"] = tt
+    haric: Dict[str, set] = {}
+    for s, k in zip(B.sembol, B.tk):
+        haric.setdefault(s, set()).add(int(k) + 1)
+    for i, r in zip(B.index, B.itertuples()):              # getirisiz denetim: takvim + E0 + stop
+        if not r.olculdu:
+            continue
+        o = hv25_olc_dizi(D[r.sembol], [r.tk], int(r.m)); A = D[r.sembol]
+        if A["giris_tarih"][r.tk + 1] != pd.Timestamp(r.giris) or A["tarih"][r.tk + 15] != pd.Timestamp(r.son15):
+            raise HVHata(f"K10: {z} {p} {r.sembol} {r.tarih}: giriş / 15. mum tarihi uyuşmuyor")
+        if abs(o["E0"][0] - float(r.E0)) > 6e-7 + 1e-9 * abs(float(r.E0)) or abs(o["stop"][0] - float(r.stop)) > 6e-7 + 1e-9 * abs(float(r.stop)):   # csv %.6f
+            raise HVHata(f"K10: {z} {p} {r.sembol} {r.tarih}: E0 / stop uyuşmuyor")
+    return B, D, haric
+
+
+def hv25_piyasa_matris(Vd: Dict[str, pd.DataFrame]) -> Dict[str, Any]:
+    """Pazar takvimi (bütün işlem günlerinin birleşimi) x hisse: Op, Cl matrisleri."""
+    S = sorted(Vd); cal = pd.DatetimeIndex(np.unique(np.concatenate([Vd[s].index.values.astype("datetime64[ns]") for s in S])))
+    Op = np.full((len(cal), len(S)), np.nan); Cl = np.full((len(cal), len(S)), np.nan)
+    for j, s in enumerate(S):
+        pos = cal.get_indexer(Vd[s].index); Op[pos, j] = Vd[s].Open.to_numpy(float); Cl[pos, j] = Vd[s].Close.to_numpy(float)
+    return {"cal": cal, "S": S, "kol": {s: j for j, s in enumerate(S)}, "Op": Op, "Cl": Cl}
+
+
+def hv25_piyasa_R(M: Dict[str, Any], d: int, e: int, haric_j: Any) -> Tuple[float, int]:
+    """d günü açılışında işlem gören hisselerin [d, e] son geçerli kapanış / açılış - 1 ortalaması (haric_j sütunları hariç)."""
+    E = M["Op"][d].copy(); hj = np.asarray(list(haric_j), np.int64)
+    if len(hj):
+        E[hj] = np.nan
+    j = np.flatnonzero(np.isfinite(E) & (E > 0))
+    if not len(j):
+        return float("nan"), 0
+    c = M["Cl"][d:e + 1, j]; okc = np.isfinite(c)
+    sonk = np.where(okc.any(0), c.shape[0] - 1 - np.argmax(okc[::-1], axis=0), -1)
+    R = np.where(sonk >= 0, c[np.maximum(sonk, 0), np.arange(len(j))] / E[j] - 1, np.nan); R = R[np.isfinite(R)]
+    if len(R) < int(HV25_ESIK["piyasa"]["en_az_hisse"]):
+        return float("nan"), int(len(R))
+    return float(R.mean()), int(len(R))
+
+
+def hv25_gun_haric(X: pd.DataFrame, p: str, M: Dict[str, Any]) -> Dict[int, set]:
+    """PİYASA(t) dışlaması: pazarda aynı gün girişli bilinen bölgeler (iki zaman dilimi, EK 24 havuzu + göz 205). Giriş yoksa bölge sonundan sonraki takvim günü."""
+    out: Dict[int, set] = {}; cal = M["cal"]
+    for s, g, tr in zip(X.sembol[X.pazar == p], X.giris[X.pazar == p], X.tarih[X.pazar == p]):
+        j = M["kol"].get(s)
+        if j is None:
+            continue
+        if isinstance(g, str):
+            d = cal.searchsorted(pd.Timestamp(g))
+        else:
+            d = cal.searchsorted(pd.Timestamp(tr), side="right")
+        if d < len(cal):
+            out.setdefault(int(d), set()).add(j)
+    return out
+
+
+# ---------------------------------------------------------------- takvim serisi (2b; getirisiz kısım ayrı)
+def hv25_sayi(cal: pd.DatetimeIndex, bolge_son: Any, pencere: int = 5) -> np.ndarray:
+    """SAYI(g) = bölge sonu takvimde [g - pencere + 1, g] olan olay sayısı (bölge sonu <= g; geleceğe bakma yok)."""
+    p = cal.searchsorted(pd.DatetimeIndex(pd.to_datetime(pd.Series(bolge_son))), side="left")
+    bs = pd.DatetimeIndex(pd.to_datetime(pd.Series(bolge_son)))
+    if len(p) and ((p >= len(cal)) | (cal[np.minimum(p, len(cal) - 1)] != bs)).any():
+        raise HVHata("K10: bölge sonu pazar takviminde yok")
+    c = np.bincount(p, minlength=len(cal)).astype(np.int64); cs = np.r_[0, np.cumsum(c)]
+    g = np.arange(len(cal)); return cs[g + 1] - cs[np.maximum(g + 1 - int(pencere), 0)]
+
+
+def hv25_takvim_gunler(cal: pd.DatetimeIndex, kesik: pd.Timestamp = HV_KESIK) -> np.ndarray:
+    """2b günleri g: g >= 20, g + 1 tarihi 2016-01-01 .. 2022-12-31, g + 15 tarihi <= kesik."""
+    U = int(HV25_ESIK["olcu"]["ufuk"]); n = len(cal); g = np.arange(20, n - U)
+    ok = (cal[g + 1] >= pd.Timestamp("2016-01-01")) & (cal[g + 1] <= pd.Timestamp("2022-12-31")) & (cal[g + U] <= pd.Timestamp(kesik))
+    return g[ok]
+
+
+def hv25_durum(sayi: np.ndarray) -> np.ndarray:
+    return np.where(sayi <= 0, "SAYI = 0", np.where(sayi <= 2, "SAYI = 1-2", "SAYI >= 3"))
+
+
+def hv25_dus20(M: Dict[str, Any]) -> np.ndarray:
+    C = pd.DataFrame(M["Cl"]).ffill(limit=5).to_numpy(float); out = np.full(len(C), np.nan)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        r = C[20:] / C[:-20] - 1
+    ok = np.isfinite(r); s = np.where(ok, r, 0).sum(1); k = ok.sum(1)
+    out[20:] = np.where(k > 0, s / np.maximum(k, 1), np.nan)
+    return out
+
+
+# ---------------------------------------------------------------- bootstrap
+def hv25_boot(x: Any, ay: Any, anahtar: str, t2c: Optional[Any] = None, t2: Optional[Dict[str, Dict[str, Any]]] = None,
+              B: Optional[int] = None) -> Dict[str, Any]:
+    """Ay kümeli bootstrap ortalama (x - T2(hücre) seçeneğiyle; T2 tekrarları t2[c]['rep'])."""
+    x = np.asarray(x, float); ay = np.asarray(ay, str); B = int(B or HV25_ESIK["boot"]["B"])
+    if not len(x):
+        return {"ort": None, "alt": None, "ust": None, "medyan": None}
+    u, k = np.unique(ay, return_inverse=True); K = len(u)
+    s = np.bincount(k, weights=x, minlength=K); n = np.bincount(k, minlength=K).astype(float)
+    rng = _hv25_rng(3, anahtar); Wm = rng.multinomial(K, np.full(K, 1.0 / K), size=B).astype(float)
+    num = Wm @ s; den = Wm @ n; nok = x.copy()
+    if t2c is not None:
+        t2c = np.asarray(t2c, str)
+        for c in np.unique(t2c):
+            msk = t2c == c; cnt = np.bincount(k[msk], minlength=K).astype(float)
+            num = num - (Wm @ cnt) * np.asarray(t2[c]["rep"], float); nok[msk] = x[msk] - float(t2[c]["ort"])
+    with np.errstate(invalid="ignore", divide="ignore"):
+        d = num / den
+    d = d[np.isfinite(d)]
+    return {"ort": float(nok.mean()), "medyan": float(np.median(nok)), "alt": float(np.quantile(d, 0.025)), "ust": float(np.quantile(d, 0.975))}
+
+
+def hv25_boot_fark(xa: Any, aya: Any, xb: Any, ayb: Any, anahtar: str, B: Optional[int] = None) -> Dict[str, Any]:
+    """İki grup ortalama farkı, ortak ay kümeleriyle (aylar yerine koyarak; her tekrarda ort(a) - ort(b))."""
+    xa = np.asarray(xa, float); xb = np.asarray(xb, float); B = int(B or HV25_ESIK["boot"]["B"])
+    if len(xa) < 2 or len(xb) < 2:
+        return {"fark": None, "alt": None, "ust": None}
+    u = np.unique(np.r_[np.asarray(aya, str), np.asarray(ayb, str)]); ix = {a: i for i, a in enumerate(u)}; K = len(u)
+    ka = np.array([ix[a] for a in np.asarray(aya, str)]); kb = np.array([ix[a] for a in np.asarray(ayb, str)])
+    sa = np.bincount(ka, weights=xa, minlength=K); na = np.bincount(ka, minlength=K).astype(float)
+    sb = np.bincount(kb, weights=xb, minlength=K); nb = np.bincount(kb, minlength=K).astype(float)
+    rng = _hv25_rng(5, anahtar); Wm = rng.multinomial(K, np.full(K, 1.0 / K), size=B).astype(float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        d = (Wm @ sa) / (Wm @ na) - (Wm @ sb) / (Wm @ nb)
+    d = d[np.isfinite(d)]
+    return {"fark": float(xa.mean() - xb.mean()), "alt": float(np.quantile(d, 0.025)) if len(d) else None, "ust": float(np.quantile(d, 0.975)) if len(d) else None}
+
+
+def hv25_t2_rep(R: Any, ay: Any, anahtar: str, B: Optional[int] = None) -> np.ndarray:
+    R = np.asarray(R, float); ay = np.asarray(ay, str); B = int(B or HV25_ESIK["boot"]["B"])
+    u, k = np.unique(ay, return_inverse=True); K = len(u)
+    s = np.bincount(k, weights=R, minlength=K); n = np.bincount(k, minlength=K).astype(float)
+    Wm = _hv25_rng(4, anahtar).multinomial(K, np.full(K, 1.0 / K), size=B).astype(float)
+    return (Wm @ s) / (Wm @ n)
+
+
+# ---------------------------------------------------------------- okuma
+def hv25_okuma(n: int, ay: int, ort: Any, alt: Any, ust: Any, tur: str = "MUTLAK", sart: bool = True) -> str:
+    O = HV25_ESIK["okuma"]
+    if sart and (n < int(O["n_min"]) or ay < int(O["ay_min"])):
+        return "ÖLÇÜLEMEDİ"
+    if alt is None or ust is None or ort is None:
+        return "ÖLÇÜLEMEDİ"
+    poz = {"MUTLAK": "MUTLAK KÂRLI", "ZAMANLAMA": "ZAMANLAMA VAR", "SECIM": "SEÇİM +"}[tur]
+    neg = {"MUTLAK": "RASTGELE GÜNDEN KÖTÜ", "ZAMANLAMA": "ZAMANLAMA TERS", "SECIM": "SEÇİM -"}[tur]
+    if ort > 0 and alt > 0:
+        return poz
+    if ust < 0:
+        return neg
+    return "AYRIŞMIYOR"
+
+
+def hv25_takvim_okuma(F: Dict[str, Dict[str, Any]]) -> str:
+    """F[dönem] = (SAYI >= 1) - (SAYI = 0) farkı {fark, alt, ust} (d1619, d2022)."""
+    ok = [bool(F.get(d) and F[d].get("alt") is not None and F[d].get("fark") is not None and F[d]["fark"] > 0 and F[d]["alt"] > 0) for d in ("d1619", "d2022")]
+    if all(ok):
+        return "PİYASA YÜKSELİŞİNİ ÖNCELİYOR"
+    if any(ok):
+        return "TEK DÖNEM"
+    ters = all(bool(F.get(d) and F[d].get("ust") is not None and F[d]["ust"] < 0) for d in ("d1619", "d2022"))
+    return "GÖSTERİLEMEDİ (ters yönde)" if ters else "GÖSTERİLEMEDİ"
+
+
+# ---------------------------------------------------------------- ana akış
+def hv25_isle(hesap: bool) -> Tuple[pd.DataFrame, Dict[str, Any], Dict[str, Any]]:
+    """Getirisiz (hesap False): uygunluk sayıları, T2 havuz sayıları, takvim durum sayıları. Hesap (True): ek olarak R15 / T1 / T2 / PİYASA(t) / PİYASA15."""
+    X = hv25_girdi(); X["tk"] = -1; X["T1_uygun"] = 0
+    for c in ("T1_n", "T1_R15", "T1_med", "T1_d5", "T1_d10", "PIY_R15", "PIY_n", "R15_y", "d5_y", "d10_y"):
+        X[c] = np.nan
+    S: Dict[str, Any] = {"T2": {}, "takvim": {}, "blok": {}}; T2D: Dict[str, Any] = {}; TK: Dict[str, Any] = {}
+    Dn = HV_ESIK["hucre"]["donem"]; T1 = HV25_ESIK["T1"]
+    for z in HV_ZAMAN:
+        for p in HV_PAZAR:
+            if not ((X.zaman == z) & (X.pazar == p)).any():
+                continue
+            Vd, W, _ = hv_blok(z, p); hv_kesik_kapi(Vd, f"{z} {p} (EK 25)")
+            B, D, haric = hv25_blok_hazir(X, z, p, Vd, W); X.loc[B.index, "tk"] = B.tk
+            # T1
+            cache: Dict[Tuple[str, int, str], np.ndarray] = {}
+            for i, r in zip(B.index, B.itertuples()):
+                if not r.olculdu or r.grup == "ORAN_YOK":
+                    continue
+                if hesap:
+                    o = hv25_olc_dizi(D[r.sembol], [r.tk], int(r.m))
+                    X.loc[i, "R15_y"] = o["R15"][0]; X.loc[i, "d5_y"] = o["d5"][0]; X.loc[i, "d10_y"] = o["d10"][0]
+                dn = hv25_donem(r.giris)
+                if dn is None:
+                    continue
+                kk = (r.sembol, int(r.m), dn)
+                if kk not in cache:
+                    cache[kk] = hv25_uygun(D[r.sembol], int(r.m), haric.get(r.sembol, set()), Dn[dn][0], Dn[dn][1])
+                el = cache[kk]; X.loc[i, "T1_uygun"] = len(el)
+                if not hesap:
+                    continue
+                if len(el) < int(T1["en_az"]):
+                    continue
+                rng = _hv25_rng(1, f"{z}|{p}|{r.sembol}|{r.tarih}|{r.kaynak}")
+                ch = rng.choice(el, size=min(int(T1["cekim"]), len(el)), replace=False); q = hv25_olc_dizi(D[r.sembol], ch, int(r.m))
+                X.loc[i, "T1_n"] = len(ch); X.loc[i, "T1_R15"] = float(q["R15"].mean()); X.loc[i, "T1_med"] = float(np.median(q["R15"]))
+                X.loc[i, "T1_d5"] = float(q["d5"].mean()); X.loc[i, "T1_d10"] = float(q["d10"].mean())
+            # T2 (bütün evren; m 20)
+            Ev = W if W is not None else {s: d for s, d in Vd.items() if len(d) >= 40}
+            hucre_dn = sorted({hv25_donem(g) for g in B.giris[B.olculdu & B.giris.notna()]} - {None})
+            for dn in hucre_dn:
+                ad = f"{z}|{p}|{dn}"; havuz = []
+                for s in sorted(Ev):
+                    if s not in D:
+                        D[s] = hv25_dizi(Vd[s], W[s] if W is not None else None)
+                    el = hv25_uygun(D[s], int(HV25_ESIK["T2"]["m"]), haric.get(s, set()), Dn[dn][0], Dn[dn][1])
+                    if len(el):
+                        havuz.append((s, el))
+                N = int(sum(len(e) for _, e in havuz)); S["T2"][ad] = {"uygun_cift": N, "hisse": len(havuz)}
+                if not hesap or not N:
+                    continue
+                rng = _hv25_rng(2, ad); sec = np.sort(rng.choice(N, size=min(int(HV25_ESIK["T2"]["cekim"]), N), replace=False))
+                sinir = np.cumsum([0] + [len(e) for _, e in havuz]); R = []; d5 = []; d10 = []; ay = []; sm = []; gtar = []
+                hi = np.searchsorted(sinir, sec, side="right") - 1
+                for h in np.unique(hi):
+                    s, el = havuz[h]; tt_ = el[sec[hi == h] - sinir[h]]; q = hv25_olc_dizi(D[s], tt_, int(HV25_ESIK["T2"]["m"]))
+                    R += q["R15"].tolist(); d5 += q["d5"].tolist(); d10 += q["d10"].tolist(); gt = D[s]["giris_tarih"][tt_ + 1]
+                    ay += list(gt.strftime("%Y-%m")); sm += [s] * len(tt_); gtar += list(gt.strftime("%Y-%m-%d"))
+                R = np.asarray(R); rep = hv25_t2_rep(R, ay, ad)
+                T2D[ad] = {"ort": float(R.mean()), "medyan": float(np.median(R)), "d5": float(np.mean(d5)), "d10": float(np.mean(d10)), "n": int(len(R)),
+                           "ay": int(len(set(ay))), "rep": rep, "_cekim": pd.DataFrame({"sembol": sm, "giris": gtar, "R15": R, "d5": d5, "d10": d10})}
+            # PİYASA(t) ve takvim
+            M = hv25_piyasa_matris(Vd); gh = hv25_gun_haric(X, p, M); S["blok"][f"{z}|{p}"] = {"hisse": len(M["S"]), "takvim_gun": int(len(M["cal"]))}
+            if hesap:
+                for i, r in zip(B.index, B.itertuples()):
+                    if not r.olculdu:
+                        continue
+                    d = M["cal"].get_loc(pd.Timestamp(r.giris)); e = M["cal"].get_loc(pd.Timestamp(r.son15))
+                    hj = set(gh.get(int(d), set())) | ({M["kol"][r.sembol]} if r.sembol in M["kol"] else set())
+                    v, k = hv25_piyasa_R(M, int(d), int(e), hj); X.loc[i, "PIY_R15"] = v; X.loc[i, "PIY_n"] = k
+            if z == "gunluk":
+                TK[p] = hv25_takvim_blok(X, p, M, hesap); S["takvim"][p] = TK[p]["sayim"]
+            del Vd, W, D, M; gc.collect(); hvlog.info("EK 25 blok: %s %s", z, p)
+    return X, {"T2": T2D, "takvim": TK}, S
+
+
+def hv25_takvim_blok(X: pd.DataFrame, p: str, M: Dict[str, Any], hesap: bool) -> Dict[str, Any]:
+    cal = M["cal"]; g = hv25_takvim_gunler(cal); E = X[(X.kaynak == "EK24") & (X.zaman == "gunluk") & (X.pazar == p)]
+    sec = {"KAPILI": E[(E.grup == "KAPILI") & E.ana], "KAPILI_DUY": E[E.grup == "KAPILI"], "KAPISIZ": E[(E.grup == "KAPISIZ") & E.ana]}
+    out: Dict[str, Any] = {"g": g, "sayi": {k: hv25_sayi(cal, v.bolge_son)[g] for k, v in sec.items()}, "tarih": cal[g], "donem": [hv25_donem(x) for x in cal[g + 1]],
+                           "sayim": {}}
+    for k in sec:
+        dm = hv25_durum(out["sayi"][k])
+        out["sayim"][k] = {dn: {du: int(((dm == du) & (np.asarray(out["donem"]) == dn)).sum()) for du in HV25_ESIK["takvim"]["durum"]} for dn in ("d1619", "d2022")}
+        out["sayim"][k]["olay"] = int(len(sec[k]))
+    if hesap:
+        U = int(HV25_ESIK["olcu"]["ufuk"]); P = np.full(len(g), np.nan); Pn = np.zeros(len(g), int)
+        for i, gg in enumerate(g):
+            P[i], Pn[i] = hv25_piyasa_R(M, int(gg) + 1, int(gg) + U, [])
+        out["PIY15"] = P; out["PIY_n"] = Pn; out["DUS20"] = hv25_dus20(M)[g]
+    return out
+
+
+# ---------------------------------------------------------------- getirisiz sayım
+def _hv25_ornek(X: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+    E = X[X.kaynak == "EK24"]; G = X[X.kaynak == "GOZ23"]
+    return {"KAPILI": E[(E.grup == "KAPILI") & E.ana], "KAPILI_DUY": E[E.grup == "KAPILI"], "KAPISIZ": E[(E.grup == "KAPISIZ") & E.ana],
+            "GOZ_6_9": G[G.set.isin(["set6", "set7", "set8", "set9"])], "GOZ_7_9": G[G.set.isin(["set7", "set8", "set9"])]}
+
+
+def hv25_sayim(X: pd.DataFrame, S: Dict[str, Any]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {"ornek": {}, "T1_uygun": {}, "T2": S["T2"], "takvim": S["takvim"], "blok": S["blok"]}
+    hucreler = HV25_ESIK["hucre"]["karar"] + HV25_ESIK["hucre"]["bilgi"]
+    for ad, O in _hv25_ornek(X).items():
+        O = O[O.olculdu]; q: Dict[str, Any] = {}
+        zlist = HV_ZAMAN + ("birlikte",) if ad.startswith("GOZ") else HV_ZAMAN
+        for z in zlist:
+            Z = O if z == "birlikte" else O[O.zaman == z]
+            if ad.startswith("GOZ"):
+                for sn in ("BENZİYOR", "KISMEN", "BENZEMİYOR"):
+                    Q = Z[Z.sinif == sn]; q[f"{z}|{sn}"] = {**hv25_ay_ozet(list(Q.giris)), "T1_uygun_az30": int((Q.T1_uygun < 30).sum())}
+                continue
+            q[f"{z}|hepsi"] = {**hv25_ay_ozet(list(Z.giris)), "T1_uygun_az30": int((Z.T1_uygun < 30).sum())}
+            for hc in hucreler:
+                Q = Z[Z.hucre == hc]; q[f"{z}|{hc}"] = {**hv25_ay_ozet(list(Q.giris)), "T1_uygun_az30": int((Q.T1_uygun < 30).sum())}
+            u = Z.T1_uygun.to_numpy(float)
+            out["T1_uygun"][f"{ad}|{z}"] = ({"n": int(len(u)), "min": float(u.min()), "p10": float(np.quantile(u, 0.1)), "medyan": float(np.median(u)),
+                                             "p90": float(np.quantile(u, 0.9)), "max": float(u.max()), "az30": int((u < 30).sum()), "az200": int((u < 200).sum())}
+                                            if len(u) else {"n": 0})
+        out["ornek"][ad] = q
+    return out
+
+
+def hv25_sayim_kos() -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    X, _, S = hv25_isle(False)
+    return X, hv25_sayim(X, S)
+
+
+def hv25_sha_simdi() -> Dict[str, str]:
+    return {"KOD25_SHA": MI._mi_sha(HV_YOL["kod"]), "ESIK25_SHA": hv25_esik_sha(), "ESIK24_SHA": hv_esik_sha(), "GZ_KOD_SHA": MI._mi_sha(GZ.GZ_YOL["kod"]),
+            "ESIK11_SHA": GZ.gz_esik_sha(), "OLAY24_SHA": MI._mi_sha(HV25_YOL["olay24"]), "SONUC24_SHA": MI._mi_sha(HV25_YOL["sonuc24"]),
+            "OLAY23_SHA": MI._mi_sha(HV25_YOL["olay23"]), "IS_TANIMI25_SHA": MI._mi_sha(HV25_YOL["is_tanimi"]), "EK_KURAL23_SHA": MI._mi_sha(HV25_YOL["ek_kural"])}
+
+
+# ---------------------------------------------------------------- tablolar (hesap)
+def hv25_tablo_ornek(O: pd.DataFrame, T2: Dict[str, Any], anahtar: str, sart: bool = True) -> Dict[str, Any]:
+    """Bir olay kümesi: TAM küme (R15, T1, PİYASA, T2) üzerinde bütün farklar."""
+    O = O[O.olculdu]
+    t2k = (O.zaman + "|" + O.pazar + "|" + [str(hv25_donem(g)) for g in O.giris]).to_numpy()
+    tam = np.isfinite(O.R15.astype(float)) & np.isfinite(O.T1_R15.astype(float)) & np.isfinite(O.PIY_R15.astype(float)) & np.array([k in T2 for k in t2k], bool)
+    Q = O[tam]; k2 = t2k[tam.to_numpy()]; ay = _hv25_ay(Q.giris) if len(Q) else np.array([], str)
+    r: Dict[str, Any] = {"n_olculen": int(len(O)), "n_tam": int(len(Q)), "T1_yok": int((~np.isfinite(O.T1_R15.astype(float))).sum()),
+                         "PIY_yok": int((~np.isfinite(O.PIY_R15.astype(float))).sum()), **{f"ay_{k}": v for k, v in hv25_ay_ozet(list(Q.giris)).items()}}
+    if not len(Q):
+        return r
+    R = Q.R15.to_numpy(float); T1v = Q.T1_R15.to_numpy(float); P = Q.PIY_R15.to_numpy(float); t2o = np.array([T2[k]["ort"] for k in k2])
+    if np.abs((R - t2o) - ((P - t2o) + (R - P))).max() > 1e-12:
+        raise HVHata("K11: TOPLAM_T2 = ZAMANLAMA + SECIM değil")
+    r.update({"R15_ort": float(R.mean()), "R15_med": float(np.median(R)), "T1_ort": float(T1v.mean()), "PIY_ort": float(P.mean()), "T2_ort": float(t2o.mean()),
+              "d5": float(Q.d5.astype(float).mean()), "T1_d5": float(Q.T1_d5.mean()), "T2_d5": float(np.mean([T2[k]["d5"] for k in k2])),
+              "d10": float(Q.d10.astype(float).mean()), "T1_d10": float(Q.T1_d10.mean()), "T2_d10": float(np.mean([T2[k]["d10"] for k in k2])),
+              "TOPLAM_T1": hv25_boot(R - T1v, ay, anahtar + "|T1"), "TOPLAM_T2": hv25_boot(R, ay, anahtar + "|T2", k2, T2),
+              "ZAMANLAMA": hv25_boot(P, ay, anahtar + "|Z", k2, T2), "SECIM": hv25_boot(R - P, ay, anahtar + "|S"),
+              "HEDEF5_T1": hv25_boot(Q.d5.to_numpy(float) - Q.T1_d5.to_numpy(float), ay, anahtar + "|H5")})
+    e = Q[Q.esli.astype(bool) & np.isfinite(Q.fark.astype(float))]
+    r["esli_n"] = int(len(e)); r["esli_fark"] = float(e.fark.astype(float).mean()) if len(e) else None
+    n, a = r["ay_n"], r["ay_ay"]
+    r["okuma"] = {"MUTLAK": hv25_okuma(n, a, r["TOPLAM_T1"]["ort"], r["TOPLAM_T1"]["alt"], r["TOPLAM_T1"]["ust"], "MUTLAK", sart),
+                  "MUTLAK_T2": hv25_okuma(n, a, r["TOPLAM_T2"]["ort"], r["TOPLAM_T2"]["alt"], r["TOPLAM_T2"]["ust"], "MUTLAK", sart),
+                  "ZAMANLAMA": hv25_okuma(n, a, r["ZAMANLAMA"]["ort"], r["ZAMANLAMA"]["alt"], r["ZAMANLAMA"]["ust"], "ZAMANLAMA", sart),
+                  "SECIM": hv25_okuma(n, a, r["SECIM"]["ort"], r["SECIM"]["alt"], r["SECIM"]["ust"], "SECIM", sart),
+                  "az_donem": bool(r["ay_ust3_pay"] is not None and r["ay_ust3_pay"] > float(HV25_ESIK["okuma"]["az_donem_pay"])),
+                  "orneklem_yetersiz": bool(n < int(HV25_ESIK["okuma"]["n_min"]))}
+    return r
+
+
+def hv25_esli_boot(f: Any) -> Dict[str, Any]:
+    """EK 23 eşli okuma: basit bootstrap (10.000, tohum 2311)."""
+    f = np.asarray(f, float); f = f[np.isfinite(f)]
+    if len(f) < 2:
+        return {"n": int(len(f)), "ort": float(f.mean()) if len(f) else None, "alt": None, "ust": None, "okuma": "GÖSTERİLEMEDİ"}
+    rng = np.random.default_rng(int(HV25_ESIK["goz"]["tohum_esli"])); b = f[rng.integers(0, len(f), size=(10000, len(f)))].mean(1)
+    lo, hi = float(np.quantile(b, 0.025)), float(np.quantile(b, 0.975))
+    ok = "SONRASI İYİ" if (f.mean() > 0 and lo > 0) else ("SONRASI KÖTÜ" if hi < 0 else "GÖSTERİLEMEDİ")
+    return {"n": int(len(f)), "ort": float(f.mean()), "alt": lo, "ust": hi, "okuma": ok}
+
+
+def hv25_takvim_tablo(TK: Dict[str, Any]) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    for p, K in TK.items():
+        P = K["PIY15"]; ok = np.isfinite(P); dn = np.asarray(K["donem"], object); ay = pd.DatetimeIndex(K["tarih"]).strftime("%Y-%m").to_numpy()
+        q: Dict[str, Any] = {}
+        for sk in ("KAPILI", "KAPILI_DUY", "KAPISIZ"):
+            dm = hv25_durum(K["sayi"][sk]); Fd: Dict[str, Any] = {}
+            for dd in ("d1619", "d2022", "birlikte"):
+                m0 = ok & ((dn == dd) if dd != "birlikte" else np.isin(dn, ["d1619", "d2022"]))
+                sat = {}
+                for du in HV25_ESIK["takvim"]["durum"]:
+                    m = m0 & (dm == du); v = P[m]
+                    sat[du] = {"gun": int(m.sum()), "ort": float(v.mean()) if len(v) else None, "medyan": float(np.median(v)) if len(v) else None,
+                               "arti_pay": float((v > 0).mean()) if len(v) else None, "ay": int(len(set(ay[m])))}
+                a1 = m0 & (dm != "SAYI = 0"); a3 = m0 & (dm == "SAYI >= 3"); a0 = m0 & (dm == "SAYI = 0")
+                sat["fark_1"] = hv25_boot_fark(P[a1], ay[a1], P[a0], ay[a0], f"{p}|{sk}|{dd}|1")
+                sat["fark_3"] = hv25_boot_fark(P[a3], ay[a3], P[a0], ay[a0], f"{p}|{sk}|{dd}|3")
+                sat["fark_1"]["n"] = [int(a1.sum()), int(a0.sum())]; sat["fark_3"]["n"] = [int(a3.sum()), int(a0.sum())]
+                Fd[dd] = sat
+            Fd["okuma"] = hv25_takvim_okuma({d: Fd[d]["fark_1"] for d in ("d1619", "d2022")})
+            q[sk] = Fd
+        D = K["DUS20"]; dus = ok & np.isfinite(D) & (D < -0.05); dg: Dict[str, Any] = {}
+        for dd in ("d1619", "d2022", "birlikte"):
+            m0 = ok & np.isfinite(D) & ((dn == dd) if dd != "birlikte" else np.isin(dn, ["d1619", "d2022"])); a = m0 & dus; b = m0 & ~dus; v = P[a]
+            dm = hv25_durum(K["sayi"]["KAPILI"])
+            dg[dd] = {"gun": int(a.sum()), "ort": float(v.mean()) if len(v) else None, "medyan": float(np.median(v)) if len(v) else None,
+                      "arti_pay": float((v > 0).mean()) if len(v) else None, "oteki_ort": float(P[b].mean()) if b.any() else None,
+                      "fark": hv25_boot_fark(P[a], ay[a], P[b], ay[b], f"{p}|dus|{dd}"),
+                      "dus_icinde_fark_1": hv25_boot_fark(P[a & (dm != "SAYI = 0")], ay[a & (dm != "SAYI = 0")], P[a & (dm == "SAYI = 0")],
+                                                          ay[a & (dm == "SAYI = 0")], f"{p}|dusic|{dd}"),
+                      "dus_disinda_fark_1": hv25_boot_fark(P[b & (dm != "SAYI = 0")], ay[b & (dm != "SAYI = 0")], P[b & (dm == "SAYI = 0")],
+                                                           ay[b & (dm == "SAYI = 0")], f"{p}|dusdis|{dd}"),
+                      "dus_gun_SAYI_1": int((a & (dm != "SAYI = 0")).sum()), "olay_gun_dus_pay": float(dus[ok & (dm != "SAYI = 0")].mean()) if (ok & (dm != "SAYI = 0")).any() else None}
+        q["DUSUS"] = dg; q["gun_n"] = int(ok.sum())
+        out[p] = q
+    ab = out.get("ABD", {}).get("KAPILI", {}); av = out.get("AVR", {}).get("KAPILI", {})
+    if ab:
+        g = ab["okuma"]
+        if g == "PİYASA YÜKSELİŞİNİ ÖNCELİYOR" and av and av.get("okuma") == "PİYASA YÜKSELİŞİNİ ÖNCELİYOR":
+            g += " (iki pazarda)"
+        out["genel"] = g
+    return out
+
+
+def hv25_tablolar(X: pd.DataFrame, EK: Dict[str, Any]) -> Dict[str, Any]:
+    T2 = EK["T2"]; T: Dict[str, Any] = {"ornek": {}, "goz": {}, "T2": {k: {kk: v[kk] for kk in ("ort", "medyan", "d5", "d10", "n", "ay")} for k, v in T2.items()}}
+    hucreler = HV25_ESIK["hucre"]["karar"] + HV25_ESIK["hucre"]["bilgi"]; Ob = _hv25_ornek(X)
+    for ad in ("KAPILI", "KAPILI_DUY", "KAPISIZ"):
+        O = Ob[ad]; q: Dict[str, Any] = {}
+        for z in HV_ZAMAN:
+            Z = O[O.zaman == z]; q[f"{z}|hepsi"] = hv25_tablo_ornek(Z, T2, f"{ad}|{z}|hepsi")
+            for hc in hucreler:
+                q[f"{z}|{hc}"] = hv25_tablo_ornek(Z[Z.hucre == hc], T2, f"{ad}|{z}|{hc}")
+        q["birlikte|hepsi"] = hv25_tablo_ornek(O, T2, f"{ad}|birlikte|hepsi")
+        T["ornek"][ad] = q
+    for ad in ("GOZ_6_9", "GOZ_7_9"):
+        O = Ob[ad]; q = {}
+        for z in ("birlikte",) + HV_ZAMAN:
+            Z = O if z == "birlikte" else O[O.zaman == z]
+            for sn in ("BENZİYOR", "KISMEN", "BENZEMİYOR"):
+                Q = Z[Z.sinif == sn]; r = hv25_tablo_ornek(Q, T2, f"{ad}|{z}|{sn}", sart=False)
+                r["esli_okuma"] = hv25_esli_boot(Q[Q.olculdu].fark.astype(float)); q[f"{z}|{sn}"] = r
+        T["goz"][ad] = q
+    k = T["goz"]["GOZ_6_9"].get("birlikte|KISMEN", {}); k7 = T["goz"]["GOZ_7_9"].get("birlikte|KISMEN", {})
+    T["kismen_kabul"] = {"set_6_9": bool(k.get("okuma", {}).get("MUTLAK") == "MUTLAK KÂRLI"), "set_7_9_bilgi": bool(k7.get("okuma", {}).get("MUTLAK") == "MUTLAK KÂRLI"),
+                         "n_6_9": k.get("n_tam"), "orneklem_yetersiz_6_9": bool((k.get("n_tam") or 0) < 30)}
+    T["takvim"] = hv25_takvim_tablo(EK["takvim"])
+    return T
+
+
+# ---------------------------------------------------------------- kapı, ön kayıt, koşu
+def hv25_kapi(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import IZ_KARNE as IK
+    cikti = cikti or HV_YOL["cikti"]; yol = _hv25_yol("onkayit", cikti)
+    try:
+        k = IK.ik_kontrol_kapisi(yol)
+    except RuntimeError as ex:
+        raise HVHata(str(ex)) from ex
+    metin = open(yol, encoding="utf-8").read(); bek = hv25_sha_simdi()
+    for ad, v in bek.items():
+        if f"{ad}: {v}" not in metin:
+            raise HVHata(f"ön kayıt kapısı (EK 25): {ad} farklı -> DURDU")
+    rel = os.path.relpath(yol, KOK_HV); c = MI._mi_git(["log", "-1", "--format=%H %cI", "--", rel])
+    if not c:
+        raise HVHata("ön kayıt (EK 25) commit'li değil -> DURDU")
+    if MI._mi_git(["status", "--porcelain", "--", rel, "MUM_IZI_HAVUZ.py"]):
+        raise HVHata("ön kayıt / kod çalışma ağacında değişmiş -> DURDU")
+    return {"kontrol": {"gecti": k["gecti"]}, "onkayit_commit": c, **bek}
+
+
+def hv25_onkayit_yaz(cikti: Optional[str] = None) -> str:
+    import IZ_KARNE as IK
+    cikti = cikti or HV_YOL["cikti"]; y = _hv25_yol("onkayit", cikti)
+    if os.path.exists(y):
+        raise HVHata("ön kayıt (EK 25) zaten var")
+    X, S = hv25_sayim_kos(); sh = hv25_sha_simdi(); sh["SAYIM25_SHA"] = hv_json_sha(S)
+    os.makedirs(HV25_YOL["gecici"], exist_ok=True); MI._mi_jyaz(os.path.join(HV25_YOL["gecici"], "sayim25.json"), S, "sayım 25")
+    ad = {k["kod"]: k.get("ad", k["kod"]) for k in IK.IK_KONTROL}
+    kt = "\n".join(["| Kod | Madde | Yanıt | Kanıt |", "|---|---|---|---|"] + [f"| {k} | {ad.get(k, k)} | {a} | {b} |" for k, (a, b) in HV25_KONTROL.items()])
+    kc = MI._mi_git(["log", "-1", "--format=%H %cI", "--", "MUM_IZI_HAVUZ.py"])
+    sat = ["| örneklem | zaman | hücre | n (ölçülen) | farklı ay | en kalabalık 3 ay payı (aylar) | T1 uygun < 30 |", "|---|---|---|---|---|---|---|"]
+    for o, q in S["ornek"].items():
+        for k, v in q.items():
+            z, h = k.split("|", 1)
+            sat.append(f"| {o} | {z} | {h} | {v['n']} | {v['ay']} | {_hv_f(v['ust3_pay'], 3)} ({', '.join(f'{a} {c}' for a, c in v['ust3'])}) | {v['T1_uygun_az30']} |")
+    t1 = ["| örneklem / zaman | n | en az | %10 | medyan | %90 | en çok | < 30 | < 200 |", "|---|---|---|---|---|---|---|---|---|"]
+    for k, v in S["T1_uygun"].items():
+        if v.get("n"):
+            t1.append(f"| {k} | {v['n']} | {v['min']:.0f} | {v['p10']:.0f} | {v['medyan']:.0f} | {v['p90']:.0f} | {v['max']:.0f} | {v['az30']} | {v['az200']} |")
+    t2 = ["| T2 hücresi | uygun (hisse, gün) çifti | hisse |", "|---|---|---|"] + [f"| {k} | {v['uygun_cift']} | {v['hisse']} |" for k, v in S["T2"].items()]
+    tk = ["| pazar | SAYI kaynağı | olay | dönem | SAYI = 0 gün | SAYI = 1-2 gün | SAYI >= 3 gün |", "|---|---|---|---|---|---|---|"]
+    for p, q in S["takvim"].items():
+        for sk, v in q.items():
+            for dn in ("d1619", "d2022"):
+                tk.append(f"| {p} | {sk} | {v['olay']} | {dn} | {v[dn]['SAYI = 0']} | {v[dn]['SAYI = 1-2']} | {v[dn]['SAYI >= 3']} |")
+    yorum = [
+        "1. '15 bardan yakın' = rastgele giriş barı ile bilinen bir bölgenin giriş barı arasında |fark| <= 14 bar (15 mumluk pencereler örtüşür); bilinen bölgeler = "
+        "EK 24 havuzunun BÜTÜN olayları (KAPILI + KAPISIZ + ORAN_YOK, hariç dahil, ölçülemeyenler dahil) + göz ölçümü 205 bölge, aynı hisse ve aynı zaman dilimi.",
+        "2. T1 'aynı dönem' = olayın giriş tarihine göre dönemi (2016 öncesi / 2016-19 / 2020-22); rastgele girişin tarihi dönem içinde, 15. mumu dönem dışına "
+        "taşabilir (olaylarla aynı kural), ama 2022-12-31'i aşamaz.",
+        "3. Rastgele gün 'geçerli' = giriş açılışı sonlu, > 0 ve > stop (olayın ölçülebilirlik kuralı aynen; giriş <= stop olan gün çekilmez). Yerine koymadan "
+        "çekim; T1 için olay başına 200 (KAPISIZ dahil; vektörle hesaplandığı için 50'ye inilmedi); uygun < 30 ise olay T1'siz kalır ve sayılır.",
+        "4. T2 stop m = 20 (iş tanımı); T2 rastgele çiftleri de aynı dışlama ve ölçülebilirlik kuralıyla; T2 hücresi = zaman dilimi x pazar x dönem; T2 belirsizliği "
+        "ay kümeli bootstrap'a katılır (T2 çekimleri kendi giriş aylarıyla, olaylardan bağımsız).",
+        "5. PİYASA(t): olayla aynı veri bloğu (günlükte günlük açık veri, haftalıkta haftalık bloğun günlük verisi), olayın giriş günü açılışında işlem gören bütün "
+        "hisseler, olayın 15. mum gününe kadar son geçerli kapanış (gz_es_grup R tanımı, kova / stop yok), olayın hissesi ve AYNI GÜN girişli bilinen bölgesi olan "
+        "hisseler hariç (iki zaman dilimi birlikte); günlükte 15. mum günü ile haftalıkta 15. haftanın son günü olayınki.",
+        "6. Tablolar TAM kümeyle (R15, T1, PİYASA(t), T2 hepsi olan olaylar); TOPLAM_T2 = ZAMANLAMA + SEÇİM özdeşliği olay başına denetlenir. 'Hepsi birlikte' her "
+        "olayı kendi hücresinin T2'siyle karşılaştırır.",
+        "7. Göz ölçümü sınıfı 'sinif' sütunu (EVET = BENZİYOR, KISMEN, HAYIR = BENZEMİYOR); set 8 s11 duyarlılığı (sinif_duy) kullanılmaz. KISMEN KABUL kararı set 6-9 "
+        "(zaman dilimleri birlikte) ile; set 7-9 bilgi. Göz satırlarının d5'i 'd5_tum' (haftalıkta günlük veriyle aynı kural).",
+        "8. 2b SAYI ana = KAPILI ANA günlük olaylar (EK 24 ana örnekle tutarlı; ölçülebilirlikten bağımsız sayılır); KAPILI hepsi duyarlılık, KAPISIZ ANA kontrol. "
+        "Takvim = pazarın günlük verisindeki işlem günlerinin birleşimi; 'son 5 işlem günü' = takvimde g - 4 .. g; PİYASA15'te olay dışlaması YOK (iş tanımı 'bütün "
+        "hisseler'); bootstrap kümesi g'nin ayı; dönem g + 1 tarihine göre.",
+        "9. 'Pazar son 20 günde %5'ten fazla düşmüş' = DUS20(g) < -0,05 (eşit ağırlıklı, kapanış en çok 5 gün ileri taşınır); bilgi satırı olarak DÜŞÜŞ günleri "
+        "içinde / dışında (SAYI >= 1) - (SAYI = 0) da yazılır (hükme girmez).",
+        "10. Okuma etiketleri iş tanımı 3. bölüm ve 2b aynen; 'iki pazarda' için AVR'de de iki dönemde alt ucu > 0 aranır; iki dönemde de üst ucu < 0 ise "
+        "'GÖSTERİLEMEDİ (ters yönde)'. Ortalama yanında medyan; okuma ortalama ve ay kümeli aralıkla.",
+    ]
+    s = [f"# MUM_IZI25 ÖN KAYIT — KODUN SEÇTİĞİ BÖLGELER: rastgele gün tabanı, zamanlama / seçim, piyasa tahmini ({MI._mi_simdi()})", "",
+         "İş tanımı MUM_IZI25_IS_TANIMI.md (1, 2, 2b, 3. bölüm) ve MUM_IZI23_EK_KURAL.md GÜNCELLEME. Bu dosya rastgele gün, T2, PİYASA(t) ve PİYASA15 getirileri "
+         "hesaplanmadan ÖNCE commit + push edilir; tanımlar, eşikler ve okuma kuralları sonra değişmez (değişirse SAPMA). Olay R15'leri EK 24 / EK 23 çıktılarından "
+         "(daha önce yayımlandı); bu dosyadaki sayım getirisizdir. Evren bugün yaşayan hisseler (olay da taban da yukarı yanlı). Dönem içi piyasa yönü tabanda da "
+         "var. KASA açılmaz (veri <= 2022-12-31).", "",
+         "## Mühürler", "", *[f"{k}: {v}" for k, v in sh.items()], "", f"- MUM_IZI_HAVUZ.py commit'i: {kc or 'yok'}", "",
+         "## GETİRİSİZ SAYIM (yalnız olay / gün sayıları, uygun gün sayıları, takvim durumları; getiri hesaplanmadı)", "",
+         "### Örneklem x hücre (ölçülen olaylar; giriş ayına göre)", "", *sat, "",
+         "### T1: olay başına çekilebilen (uygun) gün sayısı", "", *t1, "", "### T2: uygun (hisse, gün) çiftleri", "", *t2, "",
+         "### Takvim (2b, günlük): SAYI durumlarına göre gün sayısı", "", *tk, "",
+         f"- Blok: {json.dumps(S['blok'], ensure_ascii=False)}", "",
+         "## Yorum gerektiren noktalar (ölçümden ÖNCE sabit)", "", *yorum, "",
+         "## Tanımlar (HV25_ESIK; sha yukarıda)", "", "```", json.dumps(HV25_ESIK, ensure_ascii=False, indent=1), "```", "",
+         "## KONTROL LİSTESİ", "", kt, "", "## SAPMA", "", "(ön kayıt anında yok)", ""]
+    return MI._mi_yaz(y, "\n".join(s), "ön kayıt 25")
+
+
+HV25_OLAY_KOL = ["kaynak", "zaman", "pazar", "sembol", "grup", "ana", "haric", "set", "sinif", "m", "tk", "tarih", "bolge_son", "hucre", "olculdu", "giris", "son15",
+                 "R15", "d5", "d10", "T1_uygun", "T1_n", "T1_R15", "T1_med", "T1_d5", "T1_d10", "PIY_R15", "PIY_n", "T2_hucre", "T2_R15", "T2_d5", "fark", "esli"]
+
+
+def hv25_kos(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import KASA as KS
+    t0 = time.time(); cikti = cikti or HV_YOL["cikti"]
+    if os.path.exists(_hv25_yol("sonuc", cikti)):
+        raise HVHata("sonuç (EK 25) zaten var (ikinci koşu DURUR)")
+    G0 = hv25_kapi(cikti)
+    try:
+        kasa = KS.kasa_kapisi([os.path.join(MV.MV_YOL["gunluk"], f"V_{p}.pkl") for p in HV_PAZAR] + [os.path.join(MH.MH_YOL["tam"], f"V_{p}.pkl") for p in HV_PAZAR],
+                              "2022-12-31")
+    except KS.KasaHata as ex:
+        raise HVHata(f"KASA kapısı KAPALI: {ex}") from ex
+    X, EK, S0 = hv25_isle(True); S = hv25_sayim(X, S0)
+    if f"SAYIM25_SHA: {hv_json_sha(S)}" not in open(_hv25_yol("onkayit", cikti), encoding="utf-8").read():
+        raise HVHata("getirisiz sayım (EK 25) ön kayıttakiyle aynı değil -> DURDU")
+    m = X.olculdu & X.grup.isin(["KAPILI", "KAPISIZ", "GOZ"])
+    for a, b, tol in (("R15", "R15_y", 2e-6), ("d10", "d10_y", 0), ("d5", "d5_y", 0)):
+        v = X.loc[m, [a, b]].astype(float); v = v[np.isfinite(v[a])]
+        kot = ~np.isfinite(v[b]) | (np.abs(v[a] - v[b]) > tol + 1e-6 * np.abs(v[a]))
+        if kot.any():
+            raise HVHata(f"K11: hv25_olc_dizi {a} olay satırlarıyla uyuşmuyor ({int(kot.sum())} satır)")
+    T = hv25_tablolar(X, EK)
+    O = X.copy(); O["T2_hucre"] = [f"{z}|{p}|{hv25_donem(g)}" if isinstance(g, str) else "" for z, p, g in zip(O.zaman, O.pazar, O.giris)]
+    O["T2_R15"] = [EK["T2"][k]["ort"] if k in EK["T2"] else np.nan for k in O.T2_hucre]; O["T2_d5"] = [EK["T2"][k]["d5"] if k in EK["T2"] else np.nan for k in O.T2_hucre]
+    O = O[HV25_OLAY_KOL]
+    C2r = [v["_cekim"].assign(kaynak="T2_CEKIM", T2_hucre=k) for k, v in EK["T2"].items()]
+    TKr = []
+    for p, K in EK["takvim"].items():
+        TKr.append(pd.DataFrame({"kaynak": "TAKVIM", "pazar": p, "tarih": pd.DatetimeIndex(K["tarih"]).strftime("%Y-%m-%d"), "hucre": K["donem"],
+                                 "SAYI_KAPILI": K["sayi"]["KAPILI"], "SAYI_KAPILI_DUY": K["sayi"]["KAPILI_DUY"], "SAYI_KAPISIZ": K["sayi"]["KAPISIZ"],
+                                 "PIY15": K["PIY15"], "PIY_n": K["PIY_n"], "DUS20": K["DUS20"]}))
+    Y = pd.concat([O] + C2r + TKr, ignore_index=True)
+    Y.to_csv(_hv25_yol("olay", cikti), index=False, float_format="%.6f", compression={"method": "gzip", "mtime": 0})
+    J = {"surum": HV25_SURUM, "baslik": "KODUN SEÇTİĞİ BÖLGELER", "kapi": G0, "kasa": kasa, "sayim": S, "tablo": T, "olay_sha": MI._mi_sha(_hv25_yol("olay", cikti)),
+         "sure_sn": round(time.time() - t0)}
+    MI._mi_jyaz(_hv25_yol("sonuc", cikti), J, "sonuç 25")
+    return J
+
+
+def _hv25_b(b: Optional[Dict[str, Any]]) -> str:
+    if not b or b.get("ort", b.get("fark")) is None:
+        return "-"
+    v = b.get("ort", b.get("fark"))
+    return f"{_hv_f(v, 2, True)} [{_hv_f(b.get('alt'), 2, True)}; {_hv_f(b.get('ust'), 2, True)}]"
+
+
+def hv25_rapor_tablo(J: Dict[str, Any]) -> str:
+    T = J["tablo"]; s: List[str] = []
+    bas = ("| hücre | n | farklı ay | ilk 3 ay payı | R15 ort / medyan | T1 ort | T2 ort | PİYASA(t) ort | TOPLAM FARK (T1) [%95] | TOPLAM FARK (T2) [%95] | "
+           "ZAMANLAMA [%95] | SEÇİM [%95] | EK 24 eşli fark (n) | +%5: olay / T1 / T2 | okuma (mutlak; zamanlama; seçim) |")
+    for ad in ("KAPILI", "KAPISIZ", "KAPILI_DUY"):
+        for z in HV_ZAMAN + ("birlikte",):
+            keys = [f"{z}|hepsi"] + ([f"{z}|{hc}" for hc in HV25_ESIK["hucre"]["karar"] + HV25_ESIK["hucre"]["bilgi"]] if z != "birlikte" else [])
+            s += [f"### {ad} — {z.upper()} (KODUN SEÇTİĞİ BÖLGELER)", "", bas, "|" + "---|" * 15]
+            for k in keys:
+                c = T["ornek"][ad].get(k)
+                if not c or not c.get("n_tam"):
+                    s.append(f"| {k.split('|', 1)[1]} | 0 | - | - | - | - | - | - | - | - | - | - | - | - | - |"); continue
+                o = c["okuma"]
+                s.append(f"| {k.split('|', 1)[1]} | {c['n_tam']} | {c['ay_ay']} | {_hv_f(c['ay_ust3_pay'], 2)} | {_hv_f(c['R15_ort'], 2, True)} / {_hv_f(c['R15_med'], 2, True)} | "
+                         f"{_hv_f(c['T1_ort'], 2, True)} | {_hv_f(c['T2_ort'], 2, True)} | {_hv_f(c['PIY_ort'], 2, True)} | {_hv25_b(c['TOPLAM_T1'])} | {_hv25_b(c['TOPLAM_T2'])} | "
+                         f"{_hv25_b(c['ZAMANLAMA'])} | {_hv25_b(c['SECIM'])} | {_hv_f(c['esli_fark'], 2, True)} ({c['esli_n']}) | {_hv_f(c['d5'], 1, True)} / "
+                         f"{_hv_f(c['T1_d5'], 1, True)} / {_hv_f(c['T2_d5'], 1, True)} | {o['MUTLAK']}; {o['ZAMANLAMA']}; {o['SECIM']}"
+                         f"{'; az sayıda döneme dayanıyor' if o['az_donem'] else ''} |")
+            s.append("")
+    for ad in ("GOZ_6_9", "GOZ_7_9"):
+        s += [f"### GÖZ ÖLÇÜMÜ {ad} (sınıf = Cemal'in işareti)", "", "| zaman | sınıf | n | farklı ay | R15 ort / medyan | T1 ort | TOPLAM FARK (T1) [%95] | ZAMANLAMA [%95] | "
+              "SEÇİM [%95] | +%5 olay / T1 | okuma (aralık kuralı) | eşli fark (EK 23 kuralı) [%95] |", "|" + "---|" * 12]
+        for k, c in T["goz"][ad].items():
+            z, sn = k.split("|")
+            if not c.get("n_tam"):
+                s.append(f"| {z} | {sn} | 0 | - | - | - | - | - | - | - | - | - |"); continue
+            e = c["esli_okuma"]
+            s.append(f"| {z} | {sn} | {c['n_tam']} | {c['ay_ay']} | {_hv_f(c['R15_ort'], 2, True)} / {_hv_f(c['R15_med'], 2, True)} | {_hv_f(c['T1_ort'], 2, True)} | "
+                     f"{_hv25_b(c['TOPLAM_T1'])} | {_hv25_b(c['ZAMANLAMA'])} | {_hv25_b(c['SECIM'])} | {_hv_f(c['d5'], 1, True)} / {_hv_f(c['T1_d5'], 1, True)} | "
+                     f"{c['okuma']['MUTLAK']}{' (ÖRNEKLEM YETERSİZ)' if c['okuma']['orneklem_yetersiz'] else ''} | {_hv_f(e['ort'], 2, True)} [{_hv_f(e['alt'], 2, True)}; "
+                     f"{_hv_f(e['ust'], 2, True)}] {e['okuma']} (n {e['n']}) |")
+        s.append("")
+    s += [f"KISMEN KABUL: {json.dumps(T['kismen_kabul'], ensure_ascii=False)}", ""]
+    TK = T["takvim"]
+    for p in ("ABD", "AVR", "BIST"):
+        if p not in TK:
+            continue
+        for sk in ("KAPILI", "KAPISIZ", "KAPILI_DUY"):
+            q = TK[p][sk]
+            s += [f"### PİYASA TAHMİNİ {p} — SAYI kaynağı {sk} (okuma: {q['okuma']})", "",
+                  "| dönem | SAYI = 0: gün / ort / medyan / artı | SAYI = 1-2 | SAYI >= 3 | (>= 1) - (= 0) [ay kümeli %95] | (>= 3) - (= 0) [%95] |", "|---|---|---|---|---|---|"]
+            for dd in ("d1619", "d2022", "birlikte"):
+                r = q[dd]; f = lambda du: f"{r[du]['gun']} / {_hv_f(r[du]['ort'], 2, True)} / {_hv_f(r[du]['medyan'], 2, True)} / {_hv_f(r[du]['arti_pay'], 2)}"  # noqa: E731
+                s.append(f"| {dd} | {f('SAYI = 0')} | {f('SAYI = 1-2')} | {f('SAYI >= 3')} | {_hv25_b(r['fark_1'])} | {_hv25_b(r['fark_3'])} |")
+            s.append("")
+        d = TK[p]["DUSUS"]
+        s += [f"#### {p} — pazar son 20 günde %5'ten fazla düşmüş günler (DUS20 < -0,05)", "",
+              "| dönem | gün | PİYASA15 ort / medyan / artı payı | öteki günler ort | DÜŞÜŞ - öteki [%95] | DÜŞÜŞ içinde (>= 1) - (= 0) [%95] | DÜŞÜŞ dışında (>= 1) - (= 0) [%95] | "
+              "SAYI >= 1 günlerinin DÜŞÜŞ payı |", "|---|---|---|---|---|---|---|---|"]
+        for dd in ("d1619", "d2022", "birlikte"):
+            r = d[dd]
+            s.append(f"| {dd} | {r['gun']} | {_hv_f(r['ort'], 2, True)} / {_hv_f(r['medyan'], 2, True)} / {_hv_f(r['arti_pay'], 2)} | {_hv_f(r['oteki_ort'], 2, True)} | "
+                     f"{_hv25_b(r['fark'])} | {_hv25_b(r['dus_icinde_fark_1'])} | {_hv25_b(r['dus_disinda_fark_1'])} | {_hv_f(r['olay_gun_dus_pay'], 2)} |")
+        s.append("")
+    s += [f"PİYASA TAHMİNİ GENEL (ABD KAPILI; AVR ile): {TK.get('genel')}", ""]
+    s += ["T2 hücreleri: " + "; ".join(f"{k}: n {v['n']}, ort {_hv_f(v['ort'], 2, True)}, medyan {_hv_f(v['medyan'], 2, True)}, +%5 {_hv_f(v['d5'], 1, True)}"
+                                       for k, v in T["T2"].items()), ""]
+    return "\n".join(s)
+
+
+def hv25_rapor_yaz(cikti: Optional[str] = None) -> str:
+    J = json.load(open(_hv25_yol("sonuc", cikti), encoding="utf-8"))
+    y = os.path.join(HV25_YOL["gecici"], "rapor_tablo25.md"); os.makedirs(HV25_YOL["gecici"], exist_ok=True)
+    return MI._mi_yaz(y, hv25_rapor_tablo(J), "rapor tablo 25")
+
+
 # ================================================================ 8) ÇAKIŞMA KAPISI ve ANA
 def _cakisma_kontrol_hv(_once=_CK_ONCE_HV, _dosya="MUM_IZI_HAVUZ.py"):
     g = globals(); ezilen = []
@@ -884,7 +1743,7 @@ _cakisma_kontrol_hv()
 def _hv_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="MUM_IZI_HAVUZ")
-    ap.add_argument("komut", choices=["sayim", "onkayit", "kos", "rapor", "sha"])
+    ap.add_argument("komut", choices=["sayim", "onkayit", "kos", "rapor", "sha", "sayim25", "onkayit25", "kos25", "rapor25", "sha25"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "sayim":
@@ -899,6 +1758,19 @@ def _hv_ana(argv: Optional[List[str]] = None) -> int:
             print(hv_rapor_yaz())
         elif a.komut == "sha":
             print(json.dumps(hv_sha_simdi(), indent=1))
+        elif a.komut == "sayim25":
+            _, S = hv25_sayim_kos(); os.makedirs(HV25_YOL["gecici"], exist_ok=True)
+            MI._mi_jyaz(os.path.join(HV25_YOL["gecici"], "sayim25.json"), S, "sayım 25")
+            print(json.dumps(MI._mi_json({"T1_uygun": S["T1_uygun"], "takvim": S["takvim"], "SAYIM25_SHA": hv_json_sha(S)}), ensure_ascii=False, indent=1))
+        elif a.komut == "onkayit25":
+            print(hv25_onkayit_yaz())
+        elif a.komut == "kos25":
+            J = hv25_kos(); print(json.dumps(MI._mi_json({"kismen_kabul": J["tablo"]["kismen_kabul"], "takvim": J["tablo"]["takvim"].get("genel"),
+                                                          "sure_sn": J["sure_sn"]}), ensure_ascii=False, indent=1))
+        elif a.komut == "rapor25":
+            print(hv25_rapor_yaz())
+        elif a.komut == "sha25":
+            print(json.dumps(hv25_sha_simdi(), indent=1))
     except HVHata as ex:
         hvlog.error("DURDU: %s", ex)
         return 2
