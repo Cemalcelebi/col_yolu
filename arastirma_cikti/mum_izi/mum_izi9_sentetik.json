@@ -1,0 +1,165 @@
+{
+ "surum": "MUM_IZI_V6 v1.0 (2026-11-26): v6 = v5M ∧ K* ∧ D* ∧ BB* (Cemal: küçük mum, muntazam dizilim, net Bollinger daralması)",
+ "kapi": {
+  "K": {
+   "aday": "K3",
+   "esik": 1.1377839406057206,
+   "yon": "kucuk"
+  },
+  "D": {
+   "aday": "D3",
+   "esik": 0.6010556825199288,
+   "yon": "buyuk"
+  },
+  "BB": {
+   "aday": "BB4",
+   "esik": 0.5,
+   "yon": "ikili"
+  }
+ },
+ "poz": {
+  "VAR": 0.35375,
+  "v5M": 0.44958333333333333,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.44125,
+   "0.1": 0.39,
+   "0.2": 0.23
+  },
+  "baglam": {
+   "dip": 0.4625,
+   "yatay": 0.245
+  }
+ },
+ "n1": {
+  "VAR": 0.0,
+  "v5M": 0.0,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.0,
+   "0.1": 0.0,
+   "0.2": 0.0
+  },
+  "baglam": {
+   "dip": 0.0,
+   "yatay": 0.0
+  },
+  "kendi_olcu": "B (v5)",
+  "kendi_ihlal_payi": 0.9970833333333333,
+  "gecerli": true
+ },
+ "n2": {
+  "VAR": 0.0,
+  "v5M": 0.0,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.0,
+   "0.1": 0.0,
+   "0.2": 0.0
+  },
+  "baglam": {
+   "dip": 0.0,
+   "yatay": 0.0
+  },
+  "kendi_olcu": "M",
+  "kendi_ihlal_payi": 1.0,
+  "gecerli": true
+ },
+ "n5": {
+  "VAR": 0.0025,
+  "v5M": 0.010833333333333334,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.0,
+   "0.1": 0.00125,
+   "0.2": 0.00625
+  },
+  "baglam": {
+   "dip": 0.005,
+   "yatay": 0.0
+  },
+  "kendi_olcu": "T",
+  "kendi_ihlal_payi": 0.98875,
+  "gecerli": true
+ },
+ "n8": {
+  "VAR": 0.23375,
+  "v5M": 0.28125,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.3425,
+   "0.1": 0.22125,
+   "0.2": 0.1375
+  },
+  "baglam": {
+   "dip": 0.3383333333333333,
+   "yatay": 0.12916666666666668
+  },
+  "kendi_olcu": "çıkış gövdesi >= 1,2 (b)",
+  "kendi_ihlal_payi": 0.8595833333333334,
+  "gecerli": true
+ },
+ "n9": {
+  "VAR": 0.21375,
+  "v5M": 0.43625,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.29125,
+   "0.1": 0.23625,
+   "0.2": 0.11375
+  },
+  "baglam": {
+   "dip": 0.3225,
+   "yatay": 0.105
+  },
+  "kendi_olcu": "BB*",
+  "kendi_ihlal_payi": 0.5354166666666667,
+  "gecerli": false
+ },
+ "n10": {
+  "VAR": 0.24,
+  "v5M": 0.36666666666666664,
+  "n": 2400,
+  "gurultu": {
+   "0.0": 0.345,
+   "0.1": 0.265,
+   "0.2": 0.11
+  },
+  "baglam": {
+   "dip": 0.3358333333333333,
+   "yatay": 0.14416666666666667
+  },
+  "kendi_olcu": "D*",
+  "kendi_ihlal_payi": 0.5304166666666666,
+  "gecerli": false
+ },
+ "rastgele": {
+  "blok": {
+   "n_bar": 205200,
+   "tekil": 38,
+   "VAR_1000": 0.18518518518518517
+  },
+  "ry": {
+   "n_bar": 205200,
+   "tekil": 59,
+   "VAR_1000": 0.2875243664717349
+  }
+ },
+ "olcut": {
+  "poz_g10": false,
+  "neg": {
+   "n1": true,
+   "n2": true,
+   "n5": true,
+   "n8": false,
+   "n9": "geçersiz kurgu (sayılmaz)",
+   "n10": "geçersiz kurgu (sayılmaz)"
+  },
+  "rastgele": {
+   "blok": true,
+   "ry": true
+  },
+  "gecti": false
+ },
+ "sure_sn": 79
+}

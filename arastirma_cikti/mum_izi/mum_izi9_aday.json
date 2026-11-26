@@ -1,0 +1,275 @@
+{
+ "surum": "MUM_IZI_V6 v1.0 (2026-11-26): v6 = v5M ∧ K* ∧ D* ∧ BB* (Cemal: küçük mum, muntazam dizilim, net Bollinger daralması)",
+ "etiket": {
+  "EVET": 6,
+  "HAYIR": 18,
+  "EVET_kaynak": {
+   "set1": 3,
+   "set3": 2,
+   "set2": 1
+  },
+  "HAYIR_kaynak": {
+   "set3": 17,
+   "set1": 1
+  },
+  "set3_isaret": {
+   "HAYIR": 17,
+   "YOK": 4,
+   "EVET": 2,
+   "IKISI": 1
+  }
+ },
+ "sablon": {
+  "k": 10,
+  "K1": 0.7890791431569915,
+  "K2": 0.3032373073512843,
+  "K3": null,
+  "K4": 0.7890791431569915,
+  "D1": 0.7293004201905527,
+  "D2": 0.8113189862819669,
+  "D3": 0.9381469987618788,
+  "D4": 0.9656602630813793,
+  "BB1": 0.7082396961212073,
+  "BB2": 0.6030531990973897,
+  "BB3": null,
+  "BB4": 1.0
+ },
+ "tablo": {
+  "K1": {
+   "sozcuk": "K",
+   "yon": "kucuk",
+   "evet_min": 0.3796819651567305,
+   "evet_max": 0.9301124231596888,
+   "hayir_medyan": 0.7964192940633377,
+   "sablon": 0.7890791431569915,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.9766180443176733,
+   "puan": 0.3888888888888889,
+   "red_n": 7
+  },
+  "K2": {
+   "sozcuk": "K",
+   "yon": "kucuk",
+   "evet_min": 0.17715604128788043,
+   "evet_max": 0.3955718712079782,
+   "hayir_medyan": 0.19720362828513194,
+   "sablon": 0.3032373073512843,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.4153504647683771,
+   "puan": 0.0,
+   "red_n": 0
+  },
+  "K3": {
+   "sozcuk": "K",
+   "yon": "kucuk",
+   "evet_min": 0.5396618114850159,
+   "evet_max": 1.083603752957829,
+   "hayir_medyan": 1.1693299386460905,
+   "sablon": null,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 1.1377839406057206,
+   "puan": 0.5555555555555556,
+   "red_n": 10
+  },
+  "K4": {
+   "sozcuk": "K",
+   "yon": "kucuk",
+   "evet_min": 0.015383436664453848,
+   "evet_max": 0.570497305674998,
+   "hayir_medyan": 0.6015568879073138,
+   "sablon": 0.7890791431569915,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.8285331003148411,
+   "puan": 0.05555555555555555,
+   "red_n": 1
+  },
+  "D1": {
+   "sozcuk": "D",
+   "yon": "kucuk",
+   "evet_min": 0.3902254700490002,
+   "evet_max": 1.0629856264682194,
+   "hayir_medyan": 0.7539498079847875,
+   "sablon": 0.7293004201905527,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 1.1161349077916305,
+   "puan": 0.16666666666666666,
+   "red_n": 3
+  },
+  "D2": {
+   "sozcuk": "D",
+   "yon": "buyuk",
+   "evet_min": 0.63324475488723,
+   "evet_max": 0.8932844083644551,
+   "hayir_medyan": 0.7199749649639856,
+   "sablon": 0.8113189862819669,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.6015825171428685,
+   "puan": 0.0,
+   "red_n": 0
+  },
+  "D3": {
+   "sozcuk": "D",
+   "yon": "buyuk",
+   "evet_min": 0.6326901921262409,
+   "evet_max": 0.8966172751517065,
+   "hayir_medyan": 0.7550766530878965,
+   "sablon": 0.9381469987618788,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.6010556825199288,
+   "puan": 0.4444444444444444,
+   "red_n": 8
+  },
+  "D4": {
+   "sozcuk": "D",
+   "yon": "kucuk",
+   "evet_min": 0.2763946607890079,
+   "evet_max": 1.3488577428541029,
+   "hayir_medyan": 0.4015794232002046,
+   "sablon": 0.9656602630813793,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 1.4163006299968082,
+   "puan": 0.0,
+   "red_n": 0
+  },
+  "BB1": {
+   "sozcuk": "BB",
+   "yon": "kucuk",
+   "evet_min": 0.12156189446765811,
+   "evet_max": 0.8380640257563237,
+   "hayir_medyan": 0.7808967497396082,
+   "sablon": 0.7082396961212073,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.8799672270441399,
+   "puan": 0.3333333333333333,
+   "red_n": 6
+  },
+  "BB2": {
+   "sozcuk": "BB",
+   "yon": "kucuk",
+   "evet_min": 0.11509465520685586,
+   "evet_max": 0.69960163970822,
+   "hayir_medyan": 0.43760678154564886,
+   "sablon": 0.6030531990973897,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.734581721693631,
+   "puan": 0.05555555555555555,
+   "red_n": 1
+  },
+  "BB3": {
+   "sozcuk": "BB",
+   "yon": "kucuk",
+   "evet_min": 0.008333333333333333,
+   "evet_max": 0.7416666666666667,
+   "hayir_medyan": 0.4125,
+   "sablon": null,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.77875,
+   "puan": 0.1111111111111111,
+   "red_n": 2
+  },
+  "BB4": {
+   "sozcuk": "BB",
+   "yon": "ikili",
+   "evet_min": 1.0,
+   "evet_max": 1.0,
+   "hayir_medyan": 1.0,
+   "sablon": 1.0,
+   "evet_tanimsiz": 0,
+   "gecerli": true,
+   "esik": 0.5,
+   "puan": 0.3888888888888889,
+   "red_n": 7
+  }
+ },
+ "secim": {
+  "K": {
+   "aday": "K3",
+   "puan": 0.5555555555555556,
+   "esik": 1.1377839406057206
+  },
+  "D": {
+   "aday": "D3",
+   "puan": 0.4444444444444444,
+   "esik": 0.6010556825199288
+  },
+  "BB": {
+   "aday": "BB4",
+   "puan": 0.3888888888888889,
+   "esik": 0.5
+  }
+ },
+ "kapi": {
+  "K": {
+   "aday": "K3",
+   "esik": 1.1377839406057206,
+   "yon": "kucuk"
+  },
+  "D": {
+   "aday": "D3",
+   "esik": 0.6010556825199288,
+   "yon": "buyuk"
+  },
+  "BB": {
+   "aday": "BB4",
+   "esik": 0.5,
+   "yon": "ikili"
+  }
+ },
+ "v6_hayir_red": 0.8888888888888888,
+ "v6_evet_gecer": 1.0,
+ "durum": "SEÇİLDİ",
+ "bilgi": {
+  "set1": {
+   "n": 24,
+   "v5M_VAR": 4,
+   "v6_VAR": 3,
+   "v6_VAR_isaret": {
+    "EVET": 3
+   },
+   "v5M_VAR_isaret": {
+    "EVET": 3,
+    "HAYIR": 1
+   }
+  },
+  "set2": {
+   "n": 37,
+   "v5M_VAR": 1,
+   "v6_VAR": 1,
+   "v6_VAR_isaret": {
+    "EVET": 1
+   },
+   "v5M_VAR_isaret": {
+    "EVET": 1
+   }
+  },
+  "set3": {
+   "n": 24,
+   "v5M_VAR": 24,
+   "v6_VAR": 7,
+   "v6_VAR_isaret": {
+    "EVET": 2,
+    "HAYIR": 2,
+    "YOK": 2,
+    "IKISI": 1
+   },
+   "v5M_VAR_isaret": {
+    "HAYIR": 17,
+    "YOK": 4,
+    "EVET": 2,
+    "IKISI": 1
+   }
+  }
+ },
+ "sure_sn": 101
+}
