@@ -1482,14 +1482,14 @@ def yo_png(J: Dict[str, Any], K: Dict[str, Any], yol: str) -> str:
     fig = plt.figure(figsize=(7.2, 12.8), dpi=150)
     fig.text(0.04, 0.975, "Yükselişten önce ne vardı? (ABD 2016-19)", fontsize=15, weight="bold", va="top")
     fig.text(0.04, 0.952, "Yükseliş = 15 günde +%10, önce -%5 görmeden. Aynı gün, aynı oynaklıktaki hisselerle karşılaştırma.", fontsize=8.2, va="top", color="#444")
-    ax1 = fig.add_axes([0.40, 0.56, 0.55, 0.37])
+    ax1 = fig.add_axes([0.45, 0.56, 0.50, 0.37])
     sira = K["sira"][:12][::-1]; v = [K["adim1"][c].get("SMD") or 0 for c in sira]
     ax1.barh(range(len(sira)), v, color=["#2b6cb0" if x > 0 else "#c05621" for x in v])
     ax1.set_yticks(range(len(sira))); ax1.set_yticklabels([TR.get(c, c) for c in sira], fontsize=8)
     ax1.axvline(0, color="k", lw=0.8); ax1.set_xlabel("fark (standart sapma; sağ = yükselişten önce DAHA BÜYÜK)", fontsize=8); ax1.tick_params(axis="x", labelsize=8)
     fig.text(0.04, 0.505, "İleriye doğru sınayınca tuttu mu? (uç %10; oynaklık sabit)", fontsize=13, weight="bold", va="top")
     fig.text(0.04, 0.483, "KAT = uçtaki hisselerin yükseliş olasılığı / aynı oynaklıktaki hisselerin. 1'in üstü = daha sık yükseliş.", fontsize=8.2, va="top", color="#444")
-    ax2 = fig.add_axes([0.40, 0.09, 0.55, 0.37])
+    ax2 = fig.add_axes([0.45, 0.115, 0.50, 0.345])
     sat = [a for a, r in J["satir"].items() if r["uc"] in ("0.10", "BAYRAK")]
     sat = sorted(sat, key=lambda a: J["satir"][a]["olc"]["ABD|d2022"].get("KAT") or 0)[-14:]
     for i, a in enumerate(sat):
@@ -1501,10 +1501,11 @@ def yo_png(J: Dict[str, Any], K: Dict[str, Any], yol: str) -> str:
             lo, hi = o.get("KAT_alt") or x, o.get("KAT_ust") or x
             ax2.plot([lo, hi], [i + dy, i + dy], color=renk.get(r["hukum"], "#888"), lw=1.6)
             ax2.plot(x, i + dy, mk, color=renk.get(r["hukum"], "#888"), ms=4.5, mfc="white" if h == YO_KESIF else renk.get(r["hukum"], "#888"))
-    ax2.set_yticks(range(len(sat))); ax2.set_yticklabels([TR.get(J["satir"][a]["ozellik"], a) for a in sat], fontsize=8)
+    ax2.set_yticks(range(len(sat)))
+    ax2.set_yticklabels([f"{TR.get(J['satir'][a]['ozellik'], a)} [{'yüksek' if J['satir'][a]['yon'] == 'BÜYÜK' else 'düşük'} uç]" for a in sat], fontsize=7.5)
     ax2.axvline(1, color="k", lw=0.8); ax2.set_xlabel("KAT (boş daire = 2016-19, dolu kare = 2020-22; çizgi = %95 aralık)", fontsize=8); ax2.tick_params(axis="x", labelsize=8)
     from matplotlib.patches import Patch
-    ax2.legend(handles=[Patch(color=c, label=k) for k, c in renk.items()], fontsize=6.5, loc="lower right", ncol=2, frameon=False)
+    ax2.legend(handles=[Patch(color=c, label=k) for k, c in renk.items()], fontsize=6.5, loc="upper center", bbox_to_anchor=(0.35, -0.105), ncol=3, frameon=False)
     g = J["genel"]["hukum"]
     fig.text(0.04, 0.035, "SONUÇ: " + g, fontsize=9.5, weight="bold", va="top", wrap=True)
     fig.text(0.04, 0.012, "Evren bugün yaşayan hisseler (yukarı yanlı). Kasa açılmadı. Alım-satım kararı Cemal'in.", fontsize=7, va="top", color="#555")
