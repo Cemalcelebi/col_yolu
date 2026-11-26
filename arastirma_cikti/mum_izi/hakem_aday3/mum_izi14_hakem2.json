@@ -1,0 +1,187 @@
+{
+ "hakem": "alt ajan (sonnet) v4 2. aşama",
+ "ogrenme_bakilan": 48,
+ "ogrenme_notu": "BENZİYOR sayfalarında düşüş net bitmiş, taban küçük mumlu ve Bollinger daralmış; son bölümde küçük mumlar üst bandın hemen altında düzenli tırmanıyor. KISMEN'lerde baş kısım uyuyor ama düşüş tepkisi gibi duruyor, mumlar daha iri ya da son bölüm bandı terk ediyor. BENZEMİYOR'larda iri gövdeli mumlar, bandı delip taşıma, sert V dönüş ve düşüşün hemen ardından gelen tepki var. Ayırt edici kapı: son bölümde bant altı küçük mum dizilimi ve düşüşten kopma.",
+ "sayfalar": {
+  "Sayfa 579": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Yatay sonrası dip, iri yeşil mumlar; son kısım yarı uyuyor"
+  },
+  "Sayfa 270": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "Dev mumlar bandı delip taşıyor, sert yükseliş"
+  },
+  "Sayfa 412": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri gövdeli mumlar bandı dışarıdan deliyor"
+  },
+  "Sayfa 573": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Sert düşüş sonrası tepki; mumlar iri, son kırmızı"
+  },
+  "Sayfa 281": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "Sert V dönüş, iri mumlar"
+  },
+  "Sayfa 551": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "V tepki, iri mumlar, düşüş tepkisi gibi"
+  },
+  "Sayfa 552": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Derin düşüş tepkisi; son kısım bandın altında küçük"
+  },
+  "Sayfa 553": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "Tek dev mumla orta bant aşılmış, band dışı"
+  },
+  "Sayfa 395": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Düşüş yeni bitmiş, geniş band; son küçük mumlar"
+  },
+  "Sayfa 444": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Uzun taban, küçük mumlar bandı altından izliyor"
+  },
+  "Sayfa 196": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Düşüş bitmiş, küçük mumlar üst bandın altında tırmanıyor"
+  },
+  "Sayfa 265": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "V dönüş, iri yeşil mumlar, düşüş içinde tepki"
+  },
+  "Sayfa 123": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "Dağınık iri mumlar, band genişliyor"
+  },
+  "Sayfa 110": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri irili ufaklı dağınık mumlar"
+  },
+  "Sayfa 75": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "Dev spike mumları, dizilim bozuk"
+  },
+  "Sayfa 273": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "Dağınık iri mumlar, düzensiz"
+  },
+  "Sayfa 371": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri gövdeli mumlar bandı deliyor"
+  },
+  "Sayfa 592": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Taban sonrası küçük mumlar üst bandı izliyor"
+  },
+  "Sayfa 314": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri mumlar dağınık, sert dalgalanma"
+  },
+  "Sayfa 577": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "Düzenli küçük tırmanış ama düşüş tepkisi gibi"
+  },
+  "Sayfa 470": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri dağınık mumlar, band daralmıyor"
+  },
+  "Sayfa 418": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Taban, küçük tırmanış; son mumlar iri"
+  },
+  "Sayfa 447": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Uzun taban, daralma; üst banda henüz varmadı"
+  },
+  "Sayfa 488": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "Dev fitil ve dev mum, kalıp bozuk"
+  },
+  "Sayfa 409": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "Düşüş tepkisi, orta boy mumlar bandı deliyor"
+  },
+  "Sayfa 232": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "Dağınık iri mumlar, düzensiz dizilim"
+  },
+  "Sayfa 324": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Düşüş bitmiş, küçük mumlar üst bandın altında"
+  },
+  "Sayfa 212": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Gap düşüş sonrası düzenli tırmanış, bandı delmiş"
+  },
+  "Sayfa 256": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "İri yeşil mumla band dışına çıkış"
+  },
+  "Sayfa 112": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Düşüş bitmiş, küçük düzenli mumlar bandı izliyor"
+  },
+  "Sayfa 416": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Taban, küçük mumlar üst bandın altında tırmanıyor"
+  },
+  "Sayfa 596": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Taban ve daralma var, son mum iri"
+  },
+  "Sayfa 501": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "Taban sonrası küçük mumlar üst bandı izliyor"
+  },
+  "Sayfa 471": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "Düşük oynaklık taban, tırmanış yavaş, üst banda uzak"
+  },
+  "Sayfa 328": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "İri mumlar, sert çıkış, geniş band"
+  },
+  "Sayfa 302": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "İri mumlarla V dönüş, düzensiz"
+  }
+ }
+}
