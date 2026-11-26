@@ -1,0 +1,428 @@
+{
+ "not": "EK 16 İŞ B: ölçekli onay seti; hisse adı / tarih YOK; bölge kimliği eski mühürlü anahtarla denetlendi",
+ "surum": "EK 16 İŞ B (2026-11-26): onay --olcek",
+ "esik_olcek": "HK-OL-1.0",
+ "esik_olcek_sha": "31420ca2c67457990378fabf093f40a2ad32723f46c88f3cc3c46460d9f6814a",
+ "pdf": "MUM_IZI14_ONAY_OLCEKLI.pdf",
+ "pdf_sha": "79aef4477c0f9b2212b18a532001c048dc1d3eee8e60ab0254fac4aca63fda4f",
+ "sayfa_sayisi": 18,
+ "eski_anahtar": "MUM_IZI14_onay_anahtar.json",
+ "eski_anahtar_sha": "7f783321f23e8fdd9b5cfd87af92e5fa4332aea9e00cd139be520a4d1b766474",
+ "eski_pdf": "MUM_IZI14_ONAY.pdf",
+ "eski_pdf_sha": "584b0db8bd0ff11897a95fdac07a973a5c7657c869774afa80d16dff98e29bf7",
+ "eski_pdf_sha_anahtarda": "584b0db8bd0ff11897a95fdac07a973a5c7657c869774afa80d16dff98e29bf7",
+ "kapak": "Bu sette 17 bölge var (günlük ve haftalık karışık). Hakem, yeni ölçütünle ('düşüş net bitmiş, kopmuş; durağında küçük mum ve daralma; sonda üst bandı alttan birebir izleyerek geçiş') 600 yeni adaya baktı ve 18 tanesine 'benziyor' dedi. İkinci, bağımsız hakem bunların 7 tanesine 'benziyor', kalanların çoğuna 'kısmen' dedi; hangisinin hangisi olduğu sayfada yazmaz. Önceki sette 24 bölgenin 11'ine 'benziyor', 8'ine 'kısmen' demiştin. Her sayfaya işaret koy: ✓ = benziyor, K = kısmen, ✗ = benzemiyor. Sonrası gösterilmiyor; bu bölgelerin sonrası senin işaretlerinden sonra ölçülecek. Bu sürümde sağda yüzde ekseni var: mumların gerçek boyu görünür. Önceki (ölçeksiz) dosya yerine bunu işaretle. Kısmen için K kutusu eklendi.",
+ "bolge_kimligi": {
+  "esit": true,
+  "alanlar": [
+   "yeni_sayfa",
+   "aday_sayfa",
+   "zaman",
+   "pazar",
+   "sembol",
+   "bolge_bas",
+   "bolge_son",
+   "pencere"
+  ],
+  "sayfa": 17,
+  "yontem": "seçim aynı hakem / aday girdilerinden yeniden kuruldu; her sayfanın alanları eski anahtardakiyle birebir karşılaştırıldı (eşit değilse DUR)"
+ },
+ "olcu": {
+  "boy": "BOY_MUTLAK = bölge barlarında (H - L) / C medyanı (%); ÖNCEKİ = bölge başından önceki en çok 120 barın (H - L) / C medyanı (en az 40 bar, yoksa boş); ORAN = BOY_MUTLAK / ÖNCEKİ (İŞ A BOY_MUTLAK / BOY_OZ tanımı); yalnız bölge sonu t'ye kadarki barlar (t + 1 ve sonrası kullanılmaz: assert)",
+  "sinir": "dikey sınır = pencere barlarının O / H / L / C değerlerinin %2 - %98 dilimi ile bölge barlarının en düşük L / en yüksek H'sinin birleşimi; bölgedeki Bollinger üst / alt bandı görünsün diye her yönde en çok bu açıklığın %15'i kadar genişler (mum ölçeği ezilmesin); ± %4 pay; bunu aşan fitil / bant çerçevede kesilir, kesilen yere kenarda küçük üçgen (mum: her kesilen mumda koyu kırmızı; bant: her kesik parçada bir mor)",
+  "eksen": "sağda yüzde ekseni: 0 = bölgenin son kapanışı; adım listeden 4-8 çizgi verecek en küçük adım; ince yatay kılavuz; fiyat / tarih / hisse yok"
+ },
+ "sayfalar": [
+  {
+   "boy_mutlak": 6.841150463915345,
+   "onceki": 6.697781282363799,
+   "oran": 1.0214054737692102,
+   "onceki_n": 49,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -41.996,
+    35.694
+   ],
+   "adim": 10.0,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 6,
+    "bant_alt": 6
+   },
+   "son_bar_index": 71,
+   "seri_uzunluk_kullanilan": 72,
+   "yeni_sayfa": 2,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 8.146569361158859,
+   "onceki": null,
+   "oran": null,
+   "onceki_n": 23,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -27.646,
+    22.417
+   ],
+   "adim": 10.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 1,
+    "mum_alt": 1,
+    "bant_ust": 1,
+    "bant_alt": 0
+   },
+   "son_bar_index": 38,
+   "seri_uzunluk_kullanilan": 39,
+   "yeni_sayfa": 3,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 18.42231166713679,
+   "onceki": 10.064172239842827,
+   "oran": 1.8304845374371783,
+   "onceki_n": 120,
+   "bolge_n": 20,
+   "y_sinir_yuzde": [
+    -73.393,
+    43.712
+   ],
+   "adim": 20.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 16,
+    "bant_alt": 8
+   },
+   "son_bar_index": 489,
+   "seri_uzunluk_kullanilan": 490,
+   "yeni_sayfa": 4,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 2.4021962937542765,
+   "onceki": 2.4580656890400925,
+   "oran": 0.9772709917660363,
+   "onceki_n": 120,
+   "bolge_n": 19,
+   "y_sinir_yuzde": [
+    -15.61,
+    7.539
+   ],
+   "adim": 5.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 4,
+    "bant_alt": 11
+   },
+   "son_bar_index": 755,
+   "seri_uzunluk_kullanilan": 756,
+   "yeni_sayfa": 5,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 6.227389163839174,
+   "onceki": 6.311906216953012,
+   "oran": 0.9866099003678421,
+   "onceki_n": 120,
+   "bolge_n": 20,
+   "y_sinir_yuzde": [
+    -36.431,
+    17.987
+   ],
+   "adim": 10.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 18,
+    "bant_alt": 0
+   },
+   "son_bar_index": 252,
+   "seri_uzunluk_kullanilan": 253,
+   "yeni_sayfa": 6,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.7570255123942862,
+   "onceki": 1.8150142540386425,
+   "oran": 0.9680505309997848,
+   "onceki_n": 120,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -9.624,
+    10.007
+   ],
+   "adim": 2.5,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 11,
+    "bant_alt": 10
+   },
+   "son_bar_index": 752,
+   "seri_uzunluk_kullanilan": 753,
+   "yeni_sayfa": 7,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 2.062739719784499,
+   "onceki": 1.7550603885421658,
+   "oran": 1.1753098259473032,
+   "onceki_n": 120,
+   "bolge_n": 21,
+   "y_sinir_yuzde": [
+    -15.32,
+    10.294
+   ],
+   "adim": 5.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 8,
+    "bant_alt": 0
+   },
+   "son_bar_index": 486,
+   "seri_uzunluk_kullanilan": 487,
+   "yeni_sayfa": 8,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 15.637075885810434,
+   "onceki": 12.23491850328061,
+   "oran": 1.2780694764429845,
+   "onceki_n": 43,
+   "bolge_n": 19,
+   "y_sinir_yuzde": [
+    -63.681,
+    76.843
+   ],
+   "adim": 20.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 7,
+    "bant_alt": 10
+   },
+   "son_bar_index": 61,
+   "seri_uzunluk_kullanilan": 62,
+   "yeni_sayfa": 9,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 11.757716890115653,
+   "onceki": 15.642294476350338,
+   "oran": 0.7516619066270745,
+   "onceki_n": 87,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -65.424,
+    70.672
+   ],
+   "adim": 20.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 1,
+    "mum_alt": 0,
+    "bant_ust": 18,
+    "bant_alt": 8
+   },
+   "son_bar_index": 103,
+   "seri_uzunluk_kullanilan": 104,
+   "yeni_sayfa": 10,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 7.6923076923076925,
+   "onceki": 3.8808371207191854,
+   "oran": 1.9821258798107395,
+   "onceki_n": 120,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -46.444,
+    29.734
+   ],
+   "adim": 10.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 17,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1014,
+   "seri_uzunluk_kullanilan": 1015,
+   "yeni_sayfa": 11,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 11.88009523830789,
+   "onceki": 14.096740156983383,
+   "oran": 0.8427547862845872,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -47.049,
+    21.121
+   ],
+   "adim": 10.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 9,
+    "bant_alt": 10
+   },
+   "son_bar_index": 879,
+   "seri_uzunluk_kullanilan": 880,
+   "yeni_sayfa": 12,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 2.1368131628925178,
+   "onceki": 2.2363389302655725,
+   "oran": 0.955496116431137,
+   "onceki_n": 120,
+   "bolge_n": 22,
+   "y_sinir_yuzde": [
+    -17.039,
+    2.072
+   ],
+   "adim": 2.5,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 15
+   },
+   "son_bar_index": 1508,
+   "seri_uzunluk_kullanilan": 1509,
+   "yeni_sayfa": 13,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 5.891659882884541,
+   "onceki": 5.443349722408884,
+   "oran": 1.082359242624092,
+   "onceki_n": 120,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -26.95,
+    25.871
+   ],
+   "adim": 10.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 6,
+    "bant_alt": 10
+   },
+   "son_bar_index": 1031,
+   "seri_uzunluk_kullanilan": 1032,
+   "yeni_sayfa": 14,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 10.869559686112984,
+   "onceki": 11.504494803541457,
+   "oran": 0.9448098218764879,
+   "onceki_n": 120,
+   "bolge_n": 19,
+   "y_sinir_yuzde": [
+    -39.828,
+    50.915
+   ],
+   "adim": 20.0,
+   "cizgi": 4,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 17,
+    "bant_alt": 8
+   },
+   "son_bar_index": 260,
+   "seri_uzunluk_kullanilan": 261,
+   "yeni_sayfa": 15,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 5.035928650380229,
+   "onceki": 7.072800463302564,
+   "oran": 0.71201339222127,
+   "onceki_n": 46,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -35.608,
+    25.091
+   ],
+   "adim": 10.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 19,
+    "bant_alt": 3
+   },
+   "son_bar_index": 69,
+   "seri_uzunluk_kullanilan": 70,
+   "yeni_sayfa": 16,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 3.382900207743939,
+   "onceki": 3.9920318422350665,
+   "oran": 0.8474131323185825,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -22.392,
+    27.567
+   ],
+   "adim": 10.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 16,
+    "bant_alt": 9
+   },
+   "son_bar_index": 804,
+   "seri_uzunluk_kullanilan": 805,
+   "yeni_sayfa": 17,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.8355696236600512,
+   "onceki": 1.989457015319859,
+   "oran": 0.9226485465758775,
+   "onceki_n": 120,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -10.688,
+    15.247
+   ],
+   "adim": 5.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 9,
+    "bant_alt": 0
+   },
+   "son_bar_index": 919,
+   "seri_uzunluk_kullanilan": 920,
+   "yeni_sayfa": 18,
+   "zaman": "gunluk"
+  }
+ ]
+}

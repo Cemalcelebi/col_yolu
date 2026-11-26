@@ -2,6 +2,8 @@
 karışık sıra, tohumla aynı), hakem şeması (sıkı; çelişki DUR), onay seçimi (>= 24 -> 24, 12 / 12 ve eksik dilim tamamlama; < 24 -> hepsi; < 8 -> DUR),
 eşik mührü, çakışma kapısı. EK 14: 1. / 2. parti anahtar sha'ları değişmez, parti 3 hariç tutma, KISMEN kabulü, iki aşamalı sıra,
 kapak {N2}, öğrenme şeridi (sayım / sıra / metin), --hakem2 olmadan onay geriye uyumu (MUM_IZI12 onayı birebir).
+EK 16 İŞ B (--olcek): mum boyu ölçüsü (tanım, geleceğe bakma yok), sağlam dikey sınır, yüzde ekseni adımı, sayfa çizimi geleceğe bakmaz, --olcek olmadan
+MUM_IZI14 onayı birebir (pdf sha), ölçekli basım uçtan uca (bölge kimliği, kapılar, hisse adı yok, pdf sha = commit edilen), repodaki ölçekli dosyalar.
 Çalıştır: python test_mum_izi10.py"""
 import json
 import os
@@ -328,6 +330,152 @@ def test_onay_iki_asamali_uctan_uca():
         assert K["kapak"] == f"{len(H1)} {len(ev)} {na} {K['secilen']}" and K["tohum"] == HK.HK_ESIK_ONAY2["tohum"]
         assert all(x["hakem2_karar"] in ("EVET", "KISMEN") and x["hakem_karar"] == "EVET" and "hakem2_puan" in x and x["sinif"] in ("a", "b") for x in K["sayfalar"])
         assert len(pypdf.PdfReader(os.path.join(d, "DENEME_ONAY.pdf")).pages) == K["secilen"] + 1
+
+
+# ---------------------------------------------------------------- EK 16 İŞ B: --olcek
+def _seri(n=200, tohum=16):
+    rng = np.random.default_rng(tohum); C = 50 * np.exp(np.cumsum(rng.normal(0, 0.02, n))); O = C * (1 + rng.normal(0, 0.005, n))
+    H = np.maximum(O, C) * (1 + rng.uniform(0, 0.02, n)); L = np.minimum(O, C) * (1 - rng.uniform(0, 0.02, n))
+    return O, H, L, C
+
+
+def test_olcek_boy_olcu():
+    O, H, L, C = _seri(); t, m = 150, 20; B = HK.hk_boy_olcu(H, L, C, t, m)
+    b = (H - L) / C; s = t - m + 1
+    assert abs(B["boy_mutlak"] - np.median(b[s:t + 1]) * 100) < 1e-9 and abs(B["onceki"] - np.median(b[s - 120:s]) * 100) < 1e-9
+    assert abs(B["oran"] - B["boy_mutlak"] / B["onceki"]) < 1e-12 and B["onceki_n"] == 120 and B["bolge_n"] == 20 and B["son_bar"] == t
+    H2, L2, C2 = H.copy(), L.copy(), C.copy(); H2[t + 1:] *= 5; L2[t + 1:] = np.nan; C2[t + 1:] = -1     # gelecek bozulsa da sonuç aynı
+    assert HK.hk_boy_olcu(H2, L2, C2, t, m) == B
+    B2 = HK.hk_boy_olcu(H, L, C, 60, 20)                                                                  # önceki 41 bar (>= 40): oran var
+    assert B2["onceki_n"] == 41 and np.isfinite(B2["oran"])
+    B3 = HK.hk_boy_olcu(H, L, C, 55, 20); assert B3["onceki_n"] == 36 and not np.isfinite(B3["oran"])   # < 40: boş
+    assert "yetersiz" in HK.hk_boy_satiri(B3)[1] and "önceki 120 mumunda" in HK.hk_boy_satiri(B)[0] and "önceki 41 mumunda" in HK.hk_boy_satiri(B2)[0]
+    for t_, m_ in ((200, 20), (10, 20), (-1, 5)):
+        try:
+            HK.hk_boy_olcu(H, L, C, t_, m_); raise AssertionError("geçersiz t kabul edildi")
+        except HK.HKHata:
+            pass
+
+
+def test_olcek_y_sinir_ve_adim():
+    O, H, L, C = (x[:40].copy() for x in _seri()); H[3] = C[3] * 3; L[5] = C[5] * 0.2             # bölge dışında iki dev fitil
+    kutu = (20, 39); y0, y1 = HK.hk_y_sinir(O, H, L, C, kutu)
+    assert y1 < H[3] and y0 > L[5], "dev fitil ölçeği ezdi"
+    assert y0 <= np.min(L[20:40]) and y1 >= np.max(H[20:40]), "bölge barı çerçeve dışında"
+    H[30] = C[30] * 2.5; y0b, y1b = HK.hk_y_sinir(O, H, L, C, kutu); assert y1b >= H[30]                 # bölge içindeki dev fitil kesilmez
+    BU = np.full(40, np.max(H) * 10); BA = np.full(40, 1e-6); y0c, y1c = HK.hk_y_sinir(O, H, L, C, kutu, BU=BU, BA=BA)
+    lo, hi = HK.hk_y_sinir(O, H, L, C, kutu); sp = (hi - lo) / (1 + 2 * HK.HK_ESIK_OLCEK["pay"])
+    assert (y1c - y0c) <= sp * (1 + 2 * HK.HK_ESIK_OLCEK["bant_pay"]) * (1 + 2 * HK.HK_ESIK_OLCEK["pay"]) + 1e-6   # bant genişlemesi sınırlı
+    for lo_ in np.linspace(-90, -0.3, 40):
+        for hi_ in np.linspace(0.2, 300, 40):
+            s_, k = HK.hk_yuzde_adim(100 * (1 + lo_ / 100), 100 * (1 + hi_ / 100), 100.0)
+            assert 4 <= len(k) <= 8 and s_ in HK.HK_ESIK_OLCEK["adim"] and 0.0 in k, (lo_, hi_, s_, k)
+    assert HK._hk_yuzde_yazi(0.0) == "0" and HK._hk_yuzde_yazi(5) == "+%5" and HK._hk_yuzde_yazi(-2.5) == "−%2,5"
+
+
+def test_olcek_sayfa_gelecege_bakmaz():
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import MUM_IZI_V2 as MV
+    O, H, L, C = _seri(); ix = pd.bdate_range("2015-01-01", periods=len(C)); d = pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C}, index=ix)
+    a = MV.mv_sablon()["tam"]["ohlc"]; r = {"tarih": str(ix[150].date()), "m": 20, "zaman": "gunluk"}
+    fig = plt.figure(figsize=(8.3, 11.7)); o1 = HK._hk_sayfa_olcek(fig, d, r, a, 2); plt.close(fig)
+    d2 = d.copy(); d2.iloc[151:] = d2.iloc[151:] * 7.0
+    fig = plt.figure(figsize=(8.3, 11.7)); o2 = HK._hk_sayfa_olcek(fig, d2, r, a, 2); plt.close(fig)
+    assert o1 == o2 and o1["seri_uzunluk_kullanilan"] == 151 and o1["son_bar_index"] == 150
+    assert 4 <= o1["cizgi"] <= 8 and o1["y_sinir_yuzde"][0] < 0 < o1["y_sinir_yuzde"][1]
+
+
+def _hk14_girdi():
+    c = HK.HK_YOL["cikti"]; h = os.path.join(c, "hakem_aday3")
+    hk = [os.path.join(h, f"mum_izi14_hakem_{x}.json") for x in "ABCD"]; h2 = os.path.join(h, "mum_izi14_hakem2.json"); ea = os.path.join(c, "MUM_IZI14_onay_anahtar.json")
+    ok = all(os.path.exists(y) for y in hk + [h2, ea, os.path.join(h, "mum_izi14_aday_anahtar.json")])
+    return c, h, hk, h2, ea, ok
+
+
+def _veri_yok(ex):
+    return "veri" in str(ex).lower() or isinstance(ex, (FileNotFoundError, KeyError))
+
+
+def test_onay_geriye_uyum_14():
+    """--olcek yok: MUM_IZI14 onayı aynı girdilerle yeniden kurulur; PDF sha ve anahtar sayfaları mühürlü eskisiyle birebir."""
+    c, h, hk, h2, ea, ok = _hk14_girdi()
+    if not ok:
+        print("  (MUM_IZI14 onay girdileri yok: atlandı)"); return
+    E = json.load(open(ea, encoding="utf-8"))
+    with tempfile.TemporaryDirectory() as d:
+        try:
+            K = HK.hk_onay(hk, d, h, E["kapak"], "MUM_IZI14", h2)
+        except Exception as ex:
+            if _veri_yok(ex):
+                print(f"  (fiyat verisi yok: atlandı: {ex})"); return
+            raise
+        assert K["pdf_sha"] == E["pdf_sha"] and K["sayfalar"] == E["sayfalar"] and K["kapak"] == E["kapak"]
+
+
+def test_onay_olcek_uctan_uca():
+    """--olcek: eski anahtar kopyasıyla geçici klasörde; bölge kimliği eşit, 18 sayfa, json'da hisse adı yok, pdf sha = repodaki ölçekli json; kapılar DUR."""
+    import shutil
+    import pypdf
+    import MUM_IZI as MI
+    c, h, hk, h2, ea, ok = _hk14_girdi()
+    if not ok:
+        print("  (MUM_IZI14 onay girdileri yok: atlandı)"); return
+    E = json.load(open(ea, encoding="utf-8")); sha0 = MI._mi_sha(ea)
+    with tempfile.TemporaryDirectory() as d:
+        shutil.copy(ea, d)
+        try:
+            J = HK.hk_onay(hk, d, h, E["kapak"], "MUM_IZI14", h2, olcek=True)
+        except Exception as ex:
+            if _veri_yok(ex) and not isinstance(ex, HK.HKHata):
+                print(f"  (fiyat verisi yok: atlandı: {ex})"); return
+            raise
+        yp = os.path.join(d, "MUM_IZI14_ONAY_OLCEKLI.pdf"); yj = os.path.join(d, "MUM_IZI14_onay_olcekli.json")
+        R = pypdf.PdfReader(yp); assert len(R.pages) == 18 == J["sayfa_sayisi"]
+        assert J["bolge_kimligi"]["esit"] and J["eski_anahtar_sha"] == sha0 and J["pdf_sha"] == MI._mi_sha(yp)
+        assert J["kapak"] == E["kapak"] + " " + HK.HK_ESIK_OLCEK["kapak_ek"]
+        assert [x["yeni_sayfa"] for x in J["sayfalar"]] == [x["yeni_sayfa"] for x in E["sayfalar"]] == list(range(2, 19))
+        assert [x["zaman"] for x in J["sayfalar"]] == [x["zaman"] for x in E["sayfalar"]]
+        jt = open(yj, encoding="utf-8").read(); pt = " ".join(p.extract_text() or "" for p in R.pages)
+        for x in E["sayfalar"]:
+            assert f'"{x["sembol"]}"' not in jt and x["bolge_son"] not in jt and x["bolge_bas"] not in jt, "json'da hisse / tarih"
+        assert all("sembol" not in x and "bolge_son" not in x for x in J["sayfalar"]) and "kısmen" in pt and "Sayfa 18" in pt and "mum boyu" in pt
+        rp = os.path.join(c, "MUM_IZI14_onay_olcekli.json")
+        if os.path.exists(rp):                                      # yeniden üretim: repodaki ölçekli PDF ile birebir
+            assert json.load(open(rp, encoding="utf-8"))["pdf_sha"] == J["pdf_sha"]
+        for kapi in ("var", "kapak", "kimlik", "hakem"):            # kapılar
+            with tempfile.TemporaryDirectory() as d2:
+                E2 = json.loads(json.dumps(E)); kp = E["kapak"]; hh = list(hk)
+                if kapi == "var":
+                    shutil.copy(ea, d2); open(os.path.join(d2, "MUM_IZI14_onay_olcekli.json"), "w").write("{}")
+                elif kapi == "kapak":
+                    shutil.copy(ea, d2); kp = E["kapak"] + " x"
+                elif kapi == "kimlik":
+                    E2["sayfalar"][0]["bolge_son"] = "1999-01-01"; json.dump(E2, open(os.path.join(d2, "MUM_IZI14_onay_anahtar.json"), "w", encoding="utf-8"))
+                else:
+                    shutil.copy(ea, d2); hh = hk[:3]
+                try:
+                    HK.hk_onay(hh, d2, h, kp, "MUM_IZI14", h2, olcek=True); raise AssertionError(f"kapı açık kaldı: {kapi}")
+                except HK.HKHata:
+                    pass
+                assert not os.path.exists(os.path.join(d2, "MUM_IZI14_ONAY_OLCEKLI.pdf")), kapi
+    assert MI._mi_sha(ea) == sha0
+
+
+def test_olcekli_repo_dosyalari():
+    """Repodaki ölçekli set: json'daki pdf sha = dosya; eski anahtar / eski PDF sha'ları mühürlü dosyalarla aynı; 18 sayfa; hisse adı yok."""
+    import pypdf
+    import MUM_IZI as MI
+    c = HK.HK_YOL["cikti"]; yj = os.path.join(c, "MUM_IZI14_onay_olcekli.json"); yp = os.path.join(c, "MUM_IZI14_ONAY_OLCEKLI.pdf")
+    if not (os.path.exists(yj) and os.path.exists(yp)):
+        print("  (ölçekli set henüz yok: atlandı)"); return
+    J = json.load(open(yj, encoding="utf-8")); E = json.load(open(os.path.join(c, "MUM_IZI14_onay_anahtar.json"), encoding="utf-8"))
+    assert J["pdf_sha"] == MI._mi_sha(yp) and len(pypdf.PdfReader(yp).pages) == 18
+    assert J["eski_anahtar_sha"] == MI._mi_sha(os.path.join(c, "MUM_IZI14_onay_anahtar.json")) == "7f783321f23e8fdd9b5cfd87af92e5fa4332aea9e00cd139be520a4d1b766474"
+    assert J["eski_pdf_sha"] == MI._mi_sha(os.path.join(c, "MUM_IZI14_ONAY.pdf")) == E["pdf_sha"] == "584b0db8bd0ff11897a95fdac07a973a5c7657c869774afa80d16dff98e29bf7"
+    jt = open(yj, encoding="utf-8").read(); assert not any(f'"{x["sembol"]}"' in jt for x in E["sayfalar"]) and J["bolge_kimligi"]["esit"]
 
 
 if __name__ == "__main__":
