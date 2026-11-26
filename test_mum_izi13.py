@@ -143,6 +143,145 @@ def test_mevcut_komutlar_degismedi():
         assert f'a.komut == "{k}"' in yeni
 
 
+# ---------------------------------------------------------------- EK 16: ölçek
+def _k16_seri(T=200, h_once=4.0, h_bolge=(2, 2, 2, 2, 6, 2)):
+    i = np.arange(T); C = np.where(i % 2 == 0, 100.0, 102.0); h = np.full(T, h_once); h[T - len(h_bolge):] = h_bolge
+    return C.copy(), C + h / 2, C - h / 2, C
+
+
+def test_k16_olcu_elle():
+    O, H, L, C = _k16_seri(); P = G2.k16_olcu_bir(O, H, L, C, 6, (0.0, 10.0))
+    pay = (4 / 100 + 4 / 102) / 2                                    # önceki 120 bar: 60 x 4/100, 60 x 4/102
+    assert abs(P["BOY_MUTLAK"] - 100 * (2 / 102 + 2 / 100) / 2) < 1e-12   # bölge r sıralı: 3 x 2/102, 2 x 2/100, 6/100
+    assert abs(P["BOY_OZ"] - 0.5) < 1e-12 and P["n_once"] == 120 and P["n_son"] == 2
+    assert abs(P["SON_BOY_OZ"] - ((6 / 100 + 2 / 102) / 2) / pay) < 1e-12
+    assert abs(P["BOY_BANT"] - 0.5) < 1e-12                          # son 20 kapanış 100 / 102: sigma 1, bant 4; H - L 2 -> 0,5
+    assert abs(P["BOY_SAYFA"] - 0.2) < 1e-12 and abs(P["SISME"] - 10 / 6) < 1e-12   # H - L medyanı 2; bölge 97 .. 103
+    assert G2.K16_EK["A2"]["tohum"] == 16 and G2.K16_EK["A2"]["perm"] == 10000 and G2.K16_ANA == "BOY_OZ"
+
+
+def test_k16_once_penceresi_ve_40_bar():
+    m = 6
+    O, H, L, C = _k16_seri(T=m + 39); assert not np.isfinite(G2.k16_olcu_bir(O, H, L, C, m, None)["BOY_OZ"])          # 39 öncesi bar: boş
+    O, H, L, C = _k16_seri(T=m + 40); assert np.isfinite(G2.k16_olcu_bir(O, H, L, C, m, None)["BOY_OZ"])              # 40: dolu
+    O, H, L, C = _k16_seri(); b = G2.k16_olcu_bir(O, H, L, C, m, None)
+    s = len(C) - m
+    H2 = H.copy(); H2[s - 121] += 50; assert G2.k16_olcu_bir(O, H2, L, C, m, None)["BOY_OZ"] == b["BOY_OZ"]       # 121. önceki bar pencere dışı
+    H3 = H.copy(); H3[s - 120] = L[s - 120] + 0.01; assert G2.k16_olcu_bir(O, H3, L, C, m, None)["BOY_OZ"] != b["BOY_OZ"]   # 120. önceki bar içeride
+    H4 = H.copy(); H4[s - 60:s] += 10; assert G2.k16_olcu_bir(O, H4, L, C, m, None)["BOY_OZ"] < b["BOY_OZ"]          # öncesi büyüyünce oran düşer
+    H5 = H.copy(); H5[s] += 1; assert G2.k16_olcu_bir(O, H5, L, C, m, None)["n_once"] == 120          # bölge barı öncesine girmez
+
+
+def _k16_df(T=200, haftalik=False):
+    O, H, L, C = _k16_seri(T)
+    import pandas as pd
+    ix = pd.bdate_range("2018-01-01", periods=T)
+    d = pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": 1.0}, index=ix)
+    if haftalik:
+        d["bas"] = ix - pd.Timedelta(days=4)
+    return d
+
+
+def test_k16_gelecege_bakma_yok():
+    d = _k16_df(260); t = 199; m = 6
+    r = {"set": "set5", "sayfa": 1, "zaman": "gunluk", "bolge_son": str(d.index[t].date()), "bolge_bas": str(d.index[t - m + 1].date()), "m": m}
+    x = G2.k16_bolge_dizi(d, r); assert len(x[3]) == t + 1
+    P = G2.k16_olcu_bir(*x, m, G2.k16_sayfa_ylim("set5", *x, m))
+    d2 = d.copy(); d2.iloc[t + 1:, :4] = d2.iloc[t + 1:, :4] * 3.7; d2.iloc[t + 1:, 1] += 40
+    x2 = G2.k16_bolge_dizi(d2, r); P2 = G2.k16_olcu_bir(*x2, m, G2.k16_sayfa_ylim("set5", *x2, m))
+    assert all((P[k] == P2[k]) or (np.isnan(P[k]) and np.isnan(P2[k])) for k in P), "sonraki barlar ölçüyü değiştirdi"
+    try:
+        G2.k16_bolge_dizi(d, dict(r, bolge_bas="2018-01-02")); assert False, "bölge başı denetimi çalışmadı"
+    except G2.G2Hata:
+        pass
+    dw = _k16_df(260, haftalik=True); rw = dict(r, zaman="haftalik", bolge_bas=str(dw.bas.iloc[t - m + 1].date()))
+    assert len(G2.k16_bolge_dizi(dw, rw)[0]) == t + 1
+
+
+def test_k16_ylim_sayfa_ile_ayni():
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import MUM_IZI_V2 as MV
+    d = _k16_df(260); rng = np.random.default_rng(16); d["High"] += rng.uniform(0, 3, len(d)); d["Low"] -= rng.uniform(0, 3, len(d)); t = 199; m = 8
+    r = {"set": "set5", "sayfa": 1, "zaman": "gunluk", "bolge_son": str(d.index[t].date()), "bolge_bas": str(d.index[t - m + 1].date()), "m": m}
+    x = G2.k16_bolge_dizi(d, r); y = G2.k16_sayfa_ylim("set5", *x, m)
+    try:
+        import MUM_IZI_HAKEM as HK   # yalnız okunur: sayfayı çizen fonksiyon
+        fig = plt.figure(figsize=(8.3, 11.7)); HK._hk_sayfa(fig, d, {"tarih": r["bolge_son"], "m": m, "zaman": "gunluk"}, MV.mv_sablon()["tam"]["ohlc"], 1, True)
+        yh = fig.axes[1].get_ylim(); plt.close(fig); assert np.allclose(y, yh), (y, yh)
+    except ImportError:
+        print("  (MUM_IZI_HAKEM yok: sayfa karşılaştırması atlandı)")
+    y3 = G2.k16_sayfa_ylim("set3", *x, m, 3); i0 = t - m + 1 - 15; lo = x[2][i0:].min(); hi = x[1][i0:].max()
+    assert np.allclose(y3, (lo - 0.2 * (hi - lo), hi + 0.05 * (hi - lo)))
+
+
+def _k16_sentetik_D():
+    import pandas as pd
+    rows = []
+    for z, ozs, fs in (("gunluk", [0.5, 0.6, 0.7, 1.2, 1.4, 1.6], [0.10, 0.20, 0.30, -0.10, -0.20, 0.00]),
+                       ("haftalik", [0.4, 0.8, 0.9, 1.1, 1.3, np.nan], [0.05, 0.15, -0.05, -0.30, 0.02, 0.5])):
+        for i, (o, f) in enumerate(zip(ozs, fs)):
+            rows.append({"set": "set1", "sayfa": len(rows) + 1, "sinif": "EVET", "zaman": z, "olculdu": True, "es_neden": None, "R15": f + 0.01, "fark": f,
+                         **{k: o for k in G2.K16_AILE_OLCU}})
+    rows.append({"set": "set1", "sayfa": 99, "sinif": "HAYIR", "zaman": "gunluk", "olculdu": True, "es_neden": "es_az", "R15": 0.0, "fark": np.nan,
+                 **{k: 1.0 for k in G2.K16_AILE_OLCU}})
+    return pd.DataFrame(rows)
+
+
+def test_k16_bolme_perm_okuma():
+    import pandas as pd
+    import MUM_IZI_GOZ as GZ
+    assert G2.k16_yari(pd.Series([1.0, 2, 3, 4, 5, np.nan])).tolist() == ["KUCUK", "KUCUK", "KUCUK", "BUYUK", "BUYUK", None]
+    D = _k16_sentetik_D(); T = G2.k16_a2(D); c = T["EVET|BOY_OZ|gunluk"]
+    assert c["KUCUK"]["n"] == 3 and abs(c["KUCUK"]["fark_ort"] - 0.2) < 1e-12 and abs(c["BUYUK"]["fark_ort"] + 0.1) < 1e-12
+    assert abs(c["fark"]["esli_fark_fark"] - 0.3) < 1e-12 and c["fark"]["p"] == GZ.gz_perm(np.array([0.1, 0.2, 0.3]), np.array([-0.1, -0.2, 0.0]), 10000, 16)
+    h = T["EVET|BOY_OZ|haftalik"]; assert h["KUCUK"]["n"] == 3 and h["BUYUK"]["n"] == 2       # medyan 0,9 (NaN yarıya girmez)
+    assert c["spearman"]["n"] == 6 and c["spearman"]["rho"] < 0
+    R = G2.k16_okuma(T); assert R["karar"] == "YÖN CEMAL'İN DEDİĞİ GİBİ" and R["etiket"] == "BİLGİ; ÖRNEKLEM YETERSİZ; GERİYE DÖNÜK"
+    D2 = D.copy(); D2.loc[(D2.zaman == "haftalik") & (D2.BOY_OZ <= 0.9), "fark"] = -0.5; assert G2.k16_okuma(G2.k16_a2(D2))["karar"] == "YÖN CEMAL'İN DEDİĞİ GİBİ DEĞİL"
+    D3 = D.copy(); D3.loc[(D3.zaman == "haftalik") & (D3.BOY_OZ > 0.9), "fark"] = np.nan; assert G2.k16_okuma(G2.k16_a2(D3))["karar"] == "OKUNAMADI"
+    GN = G2.k16_grup_n(D); assert GN["EVET|BOY_OZ|gunluk"]["KUCUK"] == {"n": 3, "n_es": 3} and GN["HEPSI|BOY_OZ|gunluk"]["n_bolge"] == 7
+    q = G2._k16_bh([0.01, None, 0.04, 0.03]); assert q[1] is None and abs(q[0] - 0.03) < 1e-12 and abs(q[2] - 0.04) < 1e-12
+
+
+def test_k16_notlu_gercek():
+    import pandas as pd
+    if not os.path.exists(G2.K16_YOL["sonrasi13"]):
+        print("  (MUM_IZI13_SONRASI yok: atlandı)"); return
+    D = pd.read_csv(G2.K16_YOL["olay13"], usecols=G2.K16_GETIRISIZ); N = G2.k16_notlu(D)
+    assert N.sembol.tolist() == ["TRMET", "SLDB", "TOON", "SIG", "SANM", "NCMI", "ALNY", "EBAY", "EFOR", "IESC"] and N.fiziksel_sayfa.tolist() == [4, 5, 7, 8, 9, 10, 11, 12, 13, 14]
+    assert (N["set"] == "set5").all() and N.sinif.tolist() == ["EVET"] * 8 + ["KISMEN"] * 2
+
+
+def test_k16_mevcut_degismedi():
+    import ast
+    eski = subprocess.run(["git", "show", "9f81e38:MUM_IZI_GOZ2.py"], capture_output=True, text=True, cwd=os.path.dirname(os.path.abspath(G2.__file__))).stdout
+    if not eski:
+        print("  (eski sürüm git'te yok: atlandı)"); return
+    yeni = open(G2.__file__, encoding="utf-8").read()
+
+    def fonk(src):
+        t = ast.parse(src); out = {}
+        for n in t.body:
+            if isinstance(n, ast.FunctionDef):
+                out[n.name] = ast.get_source_segment(src, n)
+            elif isinstance(n, (ast.Assign, ast.AnnAssign)):
+                hed = n.targets[0] if isinstance(n, ast.Assign) else n.target
+                if isinstance(hed, ast.Name):
+                    out[hed.id] = ast.get_source_segment(src, n)
+        return out
+    fe, fy = fonk(eski), fonk(yeni)
+    for ad, s in fe.items():
+        if ad != "_g2_ana":
+            assert fy.get(ad) == s, f"değişti: {ad}"
+    assert G2.k15_ek_sha() == "cbbb6430e21474099f42930a139d5a96f69d418e698adf244c95b08cbe19f982"   # MUM_IZI15 ön kaydındaki EK15_SHA
+    for k in ("ornek", "onkayit", "kos", "pdf", "kopma_sayim", "kopma_onkayit", "kopma"):
+        assert f'a.komut == "{k}"' in yeni
+    import MUM_IZI as MI
+    assert MI._mi_sha(G2.K16_YOL["olay13"]) == "fc27c506ae981157f13b2aeb534e2c9c098a947ad0b158130f0c5845f73dcec8"   # mum_izi13_olay.csv değişmedi
+
+
 if __name__ == "__main__":
     adlar = [k for k in list(globals()) if k.startswith("test_")]
     hata = 0
