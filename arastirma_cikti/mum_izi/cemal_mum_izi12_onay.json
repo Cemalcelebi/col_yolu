@@ -1,0 +1,191 @@
+{
+ "kaynak": "MUM_IZI12_ONAY_cemal_isaretli.pdf",
+ "okuyan": "alt ajan (sonnet)",
+ "sayfa1": "Kapak metni, işaret yok (özgün dosyayla piksel farkı 0). Talimat: benziyorsa ✓ kutusuna X; kısmen benziyorsa iki kutunun arasına K; benzemiyorsa × kutusuna X; yanlış yeri daire içine al. Hakem 600 yeni adaya baktı, 28 benziyor dedi, 24'ü burada (günlük ve haftalık).",
+ "sayfalar": {
+  "2": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (büyük harflerle çapraz); üstte ek yazı okunamadı (Ara/Trend...?)",
+   "kutu_disi": "Yalnız yazı, grafikte daire yok; iki kutu boş",
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "5": {
+   "isaret": "EVET",
+   "yazi": "Grafik üstünde iri bir yazı olabilir ama okunamadı",
+   "kutu_disi": "Bölgenin sağ ucundaki son yükseliş mumları daire içinde; sol grafik boyunca uzun çizgi",
+   "zaman": "haftalik",
+   "guven": "orta"
+  },
+  "6": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (sayfada çapraz iri yazı); ✓ kutusunda da X var",
+   "kutu_disi": "Grafik üstünde yalnız yazı; ✓ kutusunda X + Kısmen birlikte, kutu ile yazı çelişiyor (EVET mi KISMEN mi)",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "✓ kutusunda X + el yazısı 'Kısmen' -> KISMEN (✓ yönlü)"
+  },
+  "8": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen",
+   "kutu_disi": "Grafik üstünde kıvrımlı çizgiler; kutular boş",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (iri yazı); × kutusunda da X var",
+   "kutu_disi": "Grafik üstünde yazı ve bölge dışı kıvrımlar; × kutusunda X + Kısmen birlikte",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "× kutusunda X + el yazısı 'Kısmen' -> KISMEN (× yönlü)"
+  },
+  "11": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "12": {
+   "isaret": "KISMEN",
+   "yazi": "Benzer(?) / Benzer yer; kutular boş, okuma düşük",
+   "kutu_disi": "İki yer daire/kutu içine alınmış: soldaki Senin kalıbın grafiğinin gövdesi ile sağ bölgenin son kısmı (sağ uç mumları); yanlış değil benzeyen yer işareti, kutular boş",
+   "zaman": "haftalik",
+   "guven": "dusuk",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "kutular boş; el yazısı 'Benzer (yer)', kalıbın gövdesi ve bölgenin sonu işaretli -> KISMEN (önceki setteki 'benzer yer' sayfaları gibi)"
+  },
+  "13": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "14": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "Bölgenin tamamı + öncesindeki yüksek hacimli büyük mum etrafında geniş daire; sol kalıpla ok ile bağlanmış (kıyas çizimi)",
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "15": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "Bölge ve öncesi düşüş geniş daire içinde; sol kalıpla ok bağlantısı (kıyas çizimi)",
+   "zaman": "haftalik",
+   "guven": "orta"
+  },
+  "16": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "Düşüş ve bölge içi eğri çizgilerle çevrilmiş; sol kalıpla ok bağlantısı",
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "17": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "18": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "19": {
+   "isaret": "HAYIR",
+   "yazi": "Üstte yazı okunamadı (Kısmen? olabilir)",
+   "kutu_disi": "İki yer dikdörtgen içine alınmış: sol grafik gövdesi ve sağ bölgenin son kısmı; × kutusunda X",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "ana_model_okuma": "× kutusunda X; kalıbın tamamı ve bölgenin sonu çerçeve içinde; üstteki yazı okunamadı -> HAYIR (kutu)"
+  },
+  "20": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (iri yazı); ✓ kutusunda da X var",
+   "kutu_disi": "Grafikte yazı ve kıvrımlar; ✓ kutusunda X + Kısmen birlikte",
+   "zaman": "haftalik",
+   "guven": "orta",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "✓ kutusunda X + el yazısı 'Kısmen' -> KISMEN (✓ yönlü); ana model okudu"
+  },
+  "21": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (iri yazı) + altında okunamayan sözcük; × kutusunda da X var",
+   "kutu_disi": "Grafikte yazı; × kutusunda X + Kısmen birlikte",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "× kutusunda X + el yazısı 'Kısmen' -> KISMEN (× yönlü); ana model okudu"
+  },
+  "22": {
+   "isaret": "EVET",
+   "yazi": "Çöl değil ama (?) — \"Çöl değil, ama...\" gibi okundu, son sözcük belirsiz",
+   "kutu_disi": "Grafik ve sol kalıp üzerinde yazı ve kıvrımlar; ✓ kutusunda X",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "ana_model_okuma": "✓ kutusunda X; el yazısı 'Çöl değil ama …' (son sözcük okunamadı) -> EVET"
+  },
+  "23": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "24": {
+   "isaret": "KISMEN",
+   "yazi": "Kısmen (iri yazı); ✓ kutusunda da X var",
+   "kutu_disi": "Sol kalıpta ok, bölge içinde alt kısımda sağa uzanan ok çizimi; ✓ kutusunda X + Kısmen birlikte",
+   "zaman": "gunluk",
+   "guven": "orta",
+   "isaret_okuma": "BELIRSIZ",
+   "ana_model_karar": "✓ kutusunda X + el yazısı 'Kısmen'; kalıpta yukarı ok, bölgenin altında yatay ok (bölge yatay kalmış) -> KISMEN (✓ yönlü); ana model okudu"
+  },
+  "25": {
+   "isaret": "EVET",
+   "yazi": "Çöl iyi (okuma orta)",
+   "kutu_disi": "Grafik altında iri yazı; ✓ kutusunda X",
+   "zaman": "haftalik",
+   "guven": "orta",
+   "ana_model_okuma": "✓ kutusunda X; el yazısı 'Çöl iyi' -> EVET"
+  }
+ },
+ "guncelleme": "ana model kuralı: el yazısıyla 'Kısmen' / 'Benzer yer' varsa sınıf KISMEN (kutudaki X yönü not edilir); ana model 19-25. sayfaları kendisi okudu. Sayım: EVET 11, KISMEN 8, HAYIR 5"
+}
