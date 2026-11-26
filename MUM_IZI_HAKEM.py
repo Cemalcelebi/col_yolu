@@ -4,8 +4,8 @@
 hakemlik yapmaz, getiri / sonrası hesaplamaz. Adaylar MUM_IZI8 evren taramasının v5M VAR olaylarından (evren içi, tekil) rastgele seçilir.
 Eski kodlar değişmez (içe alınır). Veri <= 2022-12-31; KASA açılmaz.
 
-Komut:  python MUM_IZI_HAKEM.py aday                                       300 aday, 6 PDF (50'şer sayfa) + mühürlü anahtar
-        python MUM_IZI_HAKEM.py onay --hakem <json1> [<json2> ...] [--cikti KLASÖR]
+Komut:  python MUM_IZI_HAKEM.py aday [--parti 1|2]                         1: 300 aday (hakem_aday), 2: 600 yeni aday (hakem_aday2); 50'şer sayfa + anahtar
+        python MUM_IZI_HAKEM.py onay --hakem <json1> [<json2> ...] [--aday KLASÖR] [--kapak "<metin>"] [--ad <önek>] [--cikti KLASÖR]
                                                                            hakemin EVET'lerinden MUM_IZI10_ONAY.pdf + mum_izi10_onay_anahtar.json
 """
 from __future__ import annotations
@@ -62,6 +62,19 @@ HK_ESIK: Dict[str, Any] = {
              "sayfa": "kapak (tek sayfa) + seçilenler MUM_IZI4_ONAY düzeniyle (✓ benziyor / ✗ benzemiyor kutuları VAR); hisse / tarih / sonrası yok",
              "hakem_sema": {"sayfalar": {"<sayfa no>": {"karar": "EVET | HAYIR", "puan": "0-10", "gerekce": "metin"}}}},
 }
+# 2. parti (EK 12): HK_ESIK'e eklenmedi ki 1. partinin anahtarındaki esik_sha geçerli kalsın
+HK_ESIK_P2: Dict[str, Any] = {
+    "surum": "HK-P2-1.0", "tohum": 25112121, "gunluk": 300, "haftalik": 300, "bist_oran": 0.20, "dosya_sayfa": 50, "eksik_izin": True,
+    "secim": "MUM_IZI8 taramasının v5M ('R4+M') VAR, evren içi, tekil olayları; önceki dört setin (MUM_IZI4 / 6 / 8 / 9) ve 1. partinin (hakem_aday, 300 aday) "
+             "hisseleri hariç; önce haftalık sonra günlük, her dilimde (sembol, tarih) sırasına dizilip tohumla karıştırılır ve sırayla alınır: hisse başına bir "
+             "(iki dilim birlikte), BIST dilim başına en çok %20 (döngüde hedefin %20'si tavan; sonunda BIST payı alınan sayının %20'sini aşarsa son alınan BIST "
+             "adayları çıkarılır); bir dilimde uygun hisse yetmezse olabildiği kadar (sayı yazılır); bütün sayfalar tohumla karışık sıraya, 1'den kesintisiz, 50'şer "
+             "sayfalık dosyalar",
+    "sayfa": "1. partiyle aynı (kısa sayfa; 'Senin kalıbın' + bölge turuncu kutu; kutusuz; hisse / tarih / sonrası yok)"}
+HK_PARTI: Dict[int, Dict[str, Any]] = {
+    1: {"esik": HK_ESIK["aday"], "klasor": os.path.join(MI.MI_YOL["cikti"], "hakem_aday"), "onek": "mum_izi10_aday", "baslik": "MUM_IZI10 aday", "onceki": []},
+    2: {"esik": HK_ESIK_P2, "klasor": os.path.join(MI.MI_YOL["cikti"], "hakem_aday2"), "onek": "mum_izi12_aday", "baslik": "MUM_IZI12 aday",
+        "onceki": [os.path.join(MI.MI_YOL["cikti"], "hakem_aday", "mum_izi10_aday_anahtar.json")]}}
 HK_KAPAK = ("Bu kez bölgeleri formül değil, senin işaretlerinden öğrenen bir görsel hakem seçti. Hakemi görmediği 56 sayfanda sınadım: benziyor dediği 5 "
             "sayfanın 3'üne sen de benziyor demiştin. {M} adaya baktı, {N} tanesini seçti; {BUNLAR}. Benziyorsa ✓, benzemiyorsa × kutusuna X koy; yanlış "
             "bulduğun yeri daire içine al.")
@@ -82,9 +95,11 @@ def hk_olaylar() -> List[Dict[str, Any]]:
     return json.load(open(HK_YOL["ham8"], encoding="utf-8"))["olay"][HK_ESIK["kural"]]
 
 
-def hk_haric() -> set:
+def hk_haric(parti: int = 1) -> set:
     h: set = set()
-    for y in HK_YOL["anahtarlar"]:
+    for y in HK_YOL["anahtarlar"] + HK_PARTI[parti]["onceki"]:
+        if not os.path.exists(y):
+            raise HKHata(f"hariç listesi için anahtar yok: {y}")
         h |= {r["sembol"] for r in json.load(open(y, encoding="utf-8"))["sayfalar"]}
     return h
 
@@ -92,16 +107,21 @@ def hk_haric() -> set:
 def hk_aday_sec(olay: List[Dict[str, Any]], haric: set, G: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
     G = G or HK_ESIK["aday"]; rng = np.random.default_rng(G["tohum"]); sec: List[Dict[str, Any]] = []; gor = set(haric)
     for z in ("haftalik", "gunluk"):
-        h = sorted([o for o in olay if o["zaman"] == z and o["evren"]], key=lambda o: (o["sembol"], o["tarih"])); n = 0; bist = 0
+        h = sorted([o for o in olay if o["zaman"] == z and o["evren"]], key=lambda o: (o["sembol"], o["tarih"])); n = 0; bist = 0; dz: List[Dict[str, Any]] = []
+        tavan = int(G["bist_tavan"]) if "bist_tavan" in G else int(np.floor(G["bist_oran"] * G[z] + 1e-9))
         for i in rng.permutation(len(h)):
             o = h[int(i)]
-            if o["sembol"] in gor or (o["pazar"] == "BIST" and bist >= G["bist_tavan"]):
+            if o["sembol"] in gor or (o["pazar"] == "BIST" and bist >= tavan):
                 continue
-            sec.append(dict(o)); gor.add(o["sembol"]); n += 1; bist += int(o["pazar"] == "BIST")
+            dz.append(dict(o)); gor.add(o["sembol"]); n += 1; bist += int(o["pazar"] == "BIST")
             if n >= G[z]:
                 break
-        if n < G[z]:
-            raise HKHata(f"{z}: yalnız {n} aday bulundu (hedef {G[z]})")
+        if "bist_oran" in G:                                   # BIST payı alınan sayının %20'sini aşmasın (dilim yetmediyse)
+            while bist > int(np.floor(G["bist_oran"] * len(dz) + 1e-9)):
+                j = max(i for i, o in enumerate(dz) if o["pazar"] == "BIST"); gor.discard(dz[j]["sembol"]); dz.pop(j); bist -= 1
+        if len(dz) < G[z] and not G.get("eksik_izin", False):
+            raise HKHata(f"{z}: yalnız {len(dz)} aday bulundu (hedef {G[z]})")
+        sec += dz
     p = rng.permutation(len(sec))
     return [dict(sec[i], sayfa=j + 1) for j, i in enumerate(p)]
 
@@ -128,22 +148,25 @@ def _hk_bas(d: pd.DataFrame, r: Dict[str, Any]) -> str:
     t = d.index.get_loc(pd.Timestamp(r["tarih"])); return str(d.index[t - int(r["m"]) + 1].date())
 
 
-def hk_aday(cikti: Optional[str] = None) -> Dict[str, Any]:
+def hk_aday(cikti: Optional[str] = None, parti: int = 1) -> Dict[str, Any]:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
-    kl = cikti or HK_YOL["aday"]; os.makedirs(kl, exist_ok=True); ya = os.path.join(kl, "mum_izi10_aday_anahtar.json")
+    if parti not in HK_PARTI:
+        raise HKHata(f"bilinmeyen parti {parti}")
+    PT = HK_PARTI[parti]; G = PT["esik"]
+    kl = cikti or PT["klasor"]; os.makedirs(kl, exist_ok=True); ya = os.path.join(kl, f"{PT['onek']}_anahtar.json")
     if os.path.exists(ya):
         raise HKHata("aday anahtarı zaten var")
-    sec = hk_aday_sec(hk_olaylar(), hk_haric())
+    sec = hk_aday_sec(hk_olaylar(), hk_haric(parti), G)
     if max(pd.Timestamp(r["tarih"]) for r in sec) > MI.MI_KESIK:
         raise HKHata("KESİK AŞIMI")
-    a = MV.mv_sablon()["tam"]["ohlc"]; Vc: Dict[Any, Any] = {}; G = HK_ESIK["aday"]; dosyalar = []; anah = []
-    for f in range(len(sec) // G["dosya_sayfa"]):
-        y = os.path.join(kl, f"mum_izi10_aday_{f + 1}.pdf"); dosyalar.append(y)
-        with PdfPages(y, metadata={"Title": f"MUM_IZI10 aday {f + 1}", "CreationDate": None, "ModDate": None}) as pdf:
-            for r in sec[f * G["dosya_sayfa"]:(f + 1) * G["dosya_sayfa"]]:
+    a = MV.mv_sablon()["tam"]["ohlc"]; Vc: Dict[Any, Any] = {}; dosyalar = []; anah = []; ds = int(G["dosya_sayfa"])
+    for f in range(int(np.ceil(len(sec) / ds))):
+        y = os.path.join(kl, f"{PT['onek']}_{f + 1}.pdf"); dosyalar.append(y)
+        with PdfPages(y, metadata={"Title": f"{PT['baslik']} {f + 1}", "CreationDate": None, "ModDate": None}) as pdf:
+            for r in sec[f * ds:(f + 1) * ds]:
                 k = (r["zaman"], r["pazar"])
                 if k not in Vc:
                     Vc[k] = MV.mv_veri(*k)
@@ -153,11 +176,12 @@ def hk_aday(cikti: Optional[str] = None) -> Dict[str, Any]:
                              "bolge_bas": _hk_bas(d, r), "bolge_son": r["tarih"], "pencere": int(r["m"]), "k": int(r["k"]), "v1_S": r["S"]})
         hklog.info("%s yazıldı", y)
     X = pd.DataFrame(anah)
-    J = {"not": "MÜHÜRLÜ: sayfa -> hisse / bölge tarihleri; PDF'e girmez", "surum": HK_SURUM, "esik_sha": _hk_sha(), "tohum": G["tohum"],
+    J = {"not": "MÜHÜRLÜ: sayfa -> hisse / bölge tarihleri; PDF'e girmez", "surum": HK_SURUM, "parti": parti, "esik_sha": _hk_sha(G if parti != 1 else None),
+         "tohum": G["tohum"], "hedef": {"gunluk": G["gunluk"], "haftalik": G["haftalik"]}, "n": len(anah),
          "kaynak": {"tarama8_ham_sha": MI._mi_sha(HK_YOL["ham8"]), "kural": HK_ESIK["kural"]},
          "sayim": {f"{z}|{p}": int(v) for (z, p), v in X.groupby(["zaman", "pazar"]).size().items()},
          "dosya_sha": {os.path.basename(y): MI._mi_sha(y) for y in dosyalar}, "sayfalar": anah}
-    MI._mi_jyaz(ya, J, "aday anahtar 10")
+    MI._mi_jyaz(ya, J, f"aday anahtar parti {parti}")
     return J
 
 
@@ -206,25 +230,44 @@ def hk_onay_sec(evet: List[Dict[str, Any]], G: Optional[Dict[str, Any]] = None) 
     return [dict(sec[i], yeni_sayfa=j + 2) for j, i in enumerate(p)]
 
 
-def hk_onay(hakem: List[str], cikti: Optional[str] = None, aday_klasor: Optional[str] = None) -> Dict[str, Any]:
+def hk_aday_anahtar_bul(klasor: str) -> str:
+    """Klasördeki TEK '*anahtar*.json' dosyası (aday anahtarı)."""
+    if not os.path.isdir(klasor):
+        raise HKHata(f"aday klasörü yok: {klasor}")
+    a = sorted(f for f in os.listdir(klasor) if "anahtar" in f and f.endswith(".json"))
+    if len(a) != 1:
+        raise HKHata(f"aday klasöründe tek anahtar json'u olmalı, bulunan: {a}")
+    return os.path.join(klasor, a[0])
+
+
+def hk_kapak_metni(kapak: Optional[str], M: int, N: int, K: int) -> str:
+    """--kapak verilmişse aynen ({M} bakılan aday, {N} hakem EVET, {K} PDF'e giren sayfa yer tutucuları doldurulur); yoksa eski kapak."""
+    if kapak is not None:
+        return kapak.replace("{M}", str(M)).replace("{N}", str(N)).replace("{K}", str(K))
+    return HK_KAPAK.format(M=M, N=N, BUNLAR="bunlar onlar" if N <= HK_ESIK["onay"]["hedef"] else f"içlerinden rastgele {K}'ü bunlar")
+
+
+def hk_onay(hakem: List[str], cikti: Optional[str] = None, aday_klasor: Optional[str] = None, kapak: Optional[str] = None,
+            ad: Optional[str] = None) -> Dict[str, Any]:
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.backends.backend_pdf import PdfPages
-    cikti = cikti or HK_YOL["cikti"]; y = os.path.join(cikti, "MUM_IZI10_ONAY.pdf"); ya = os.path.join(cikti, "mum_izi10_onay_anahtar.json")
+    cikti = cikti or HK_YOL["cikti"]
+    y = os.path.join(cikti, f"{ad}_ONAY.pdf" if ad else "MUM_IZI10_ONAY.pdf"); ya = os.path.join(cikti, f"{ad}_onay_anahtar.json" if ad else "mum_izi10_onay_anahtar.json")
     if os.path.exists(y) or os.path.exists(ya):
-        raise HKHata(f"onay PDF / anahtar zaten var: {cikti}")
-    A = json.load(open(os.path.join(aday_klasor or HK_YOL["aday"], "mum_izi10_aday_anahtar.json"), encoding="utf-8")); Ad = {int(r["sayfa"]): r for r in A["sayfalar"]}
+        raise HKHata(f"onay PDF / anahtar zaten var: {y}")
+    ay = hk_aday_anahtar_bul(aday_klasor or HK_YOL["aday"])
+    A = json.load(open(ay, encoding="utf-8")); Ad = {int(r["sayfa"]): r for r in A["sayfalar"]}
     H = hk_hakem_oku(hakem); yabanci = sorted(set(H) - set(Ad))
     if yabanci:
         raise HKHata(f"hakem dosyasında aday listesinde olmayan sayfalar: {yabanci[:10]}")
     evet = [dict(Ad[n], hakem_puan=v["puan"], hakem_gerekce=v["gerekce"]) for n, v in H.items() if v["karar"] == "EVET"]
     sec = hk_onay_sec(evet); M = len(H); N = len(evet)
-    bunlar = "bunlar onlar" if N <= HK_ESIK["onay"]["hedef"] else f"içlerinden rastgele {len(sec)}'ü bunlar"
     a = MV.mv_sablon()["tam"]["ohlc"]; Vc: Dict[Any, Any] = {}; os.makedirs(cikti, exist_ok=True)
-    with PdfPages(y, metadata={"Title": "MUM_IZI10 onay", "CreationDate": None, "ModDate": None}) as pdf:
+    with PdfPages(y, metadata={"Title": f"{ad or 'MUM_IZI10'} onay", "CreationDate": None, "ModDate": None}) as pdf:
         fig = plt.figure(figsize=(8.3, 11.7)); fig.text(0.06, 0.95, "GÖRSEL HAKEMİN SEÇTİĞİ BÖLGELER", fontsize=16, weight="bold")
-        fig.text(0.06, 0.88, HK_KAPAK.format(M=M, N=N, BUNLAR=bunlar), fontsize=13, va="top", wrap=True)
+        fig.text(0.06, 0.88, hk_kapak_metni(kapak, M, N, len(sec)), fontsize=13, va="top", wrap=True)
         MV._mv_ciz(fig.add_axes([0.25, 0.2, 0.5, 0.35]), a["O"], a["H"], a["L"], a["C"], a["BU"], a["BO"], a["BA"], None, "Senin kalıbın")
         pdf.savefig(fig); plt.close(fig)
         for r in sorted(sec, key=lambda r: r["yeni_sayfa"]):
@@ -236,7 +279,8 @@ def hk_onay(hakem: List[str], cikti: Optional[str] = None, aday_klasor: Optional
                 raise HKHata(f"aday sayfa {r['sayfa']}: bölge başı anahtarla uyuşmuyor")
             fig = plt.figure(figsize=(8.3, 11.7)); _hk_sayfa(fig, d, rr, a, r["yeni_sayfa"], kutular=True); pdf.savefig(fig); plt.close(fig)
     K = {"not": "MÜHÜRLÜ: yeni sayfa -> aday sayfası / hakem puanı / hisse / tarihler; PDF'e girmez", "surum": HK_SURUM, "tohum": HK_ESIK["onay"]["tohum"],
-         "hakem_dosyalari": {os.path.basename(h): MI._mi_sha(h) for h in hakem}, "aday_bakilan": M, "hakem_evet": N, "secilen": len(sec),
+         "hakem_dosyalari": {os.path.basename(h): MI._mi_sha(h) for h in hakem}, "aday_anahtari": os.path.basename(ay), "aday_anahtar_sha": MI._mi_sha(ay),
+         "kapak": hk_kapak_metni(kapak, M, N, len(sec)), "aday_bakilan": M, "hakem_evet": N, "secilen": len(sec),
          "secilen_zaman": pd.Series([r["zaman"] for r in sec], dtype=object).value_counts().to_dict(), "pdf_sha": MI._mi_sha(y),
          "sayfalar": [{"yeni_sayfa": r["yeni_sayfa"], "aday_sayfa": r["sayfa"], "hakem_puan": r["hakem_puan"], "hakem_gerekce": r["hakem_gerekce"], "zaman": r["zaman"],
                        "pazar": r["pazar"], "sembol": r["sembol"], "bolge_bas": r["bolge_bas"], "bolge_son": r["bolge_son"], "pencere": r["pencere"]}
@@ -267,15 +311,18 @@ def _hk_ana(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("komut", choices=["aday", "onay"])
     ap.add_argument("--hakem", nargs="+", default=None, help="hakem json dosyaları (onay)")
     ap.add_argument("--cikti", default=None, help="çıktı klasörü (varsayılan arastirma_cikti/mum_izi; aday için hakem_aday)")
-    ap.add_argument("--aday", default=None, help="aday anahtarının klasörü (onay; varsayılan arastirma_cikti/mum_izi/hakem_aday)")
+    ap.add_argument("--aday", default=None, help="aday klasörü (onay; içinde tek '*anahtar*.json'; varsayılan arastirma_cikti/mum_izi/hakem_aday)")
+    ap.add_argument("--parti", type=int, default=1, help="aday partisi (aday; 1 = hakem_aday, 2 = hakem_aday2)")
+    ap.add_argument("--kapak", default=None, help="onay kapak metni ({M} bakılan aday, {N} hakem EVET, {K} PDF'e giren sayfa)")
+    ap.add_argument("--ad", default=None, help="onay çıktı öneki: <önek>_ONAY.pdf, <önek>_onay_anahtar.json (varsayılan eski adlar)")
     a = ap.parse_args(argv)
     try:
         if a.komut == "aday":
-            J = hk_aday(a.cikti); print(json.dumps({"sayim": J["sayim"], "tohum": J["tohum"]}, ensure_ascii=False))
+            J = hk_aday(a.cikti, a.parti); print(json.dumps({"parti": a.parti, "n": J["n"], "sayim": J["sayim"], "tohum": J["tohum"]}, ensure_ascii=False))
         else:
             if not a.hakem:
                 raise HKHata("--hakem en az bir dosya ister")
-            K = hk_onay(a.hakem, a.cikti, a.aday)
+            K = hk_onay(a.hakem, a.cikti, a.aday, a.kapak, a.ad)
             print(json.dumps({k: K[k] for k in ("aday_bakilan", "hakem_evet", "secilen", "secilen_zaman", "tohum")}, ensure_ascii=False))
     except HKHata as ex:
         hklog.error("DURDU: %s", ex)

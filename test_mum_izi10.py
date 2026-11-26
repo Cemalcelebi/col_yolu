@@ -36,6 +36,38 @@ def test_aday_secim():
     assert HK.hk_aday_sec(o, h, G) == S
 
 
+def test_parti2_secim():
+    o = _olay(400, 120, 3); h = {o[0]["sembol"]}
+    G = dict(HK.HK_ESIK_P2, gunluk=100, haftalik=100)
+    S = HK.hk_aday_sec(o, h, G); X = {z: [r for r in S if r["zaman"] == z] for z in ("gunluk", "haftalik")}
+    assert len({r["sembol"] for r in S}) == len(S) and not ({r["sembol"] for r in S} & h)
+    assert len(X["haftalik"]) < 100                                                    # haftalık yetmedi: olabildiği kadar (DUR yok)
+    for z in X:
+        nb = sum(r["pazar"] == "BIST" for r in X[z]); assert nb <= int(0.20 * len(X[z]) + 1e-9), (z, nb, len(X[z]))
+    assert sorted(r["sayfa"] for r in S) == list(range(1, len(S) + 1)) and HK.hk_aday_sec(o, h, G) == S
+
+
+def test_parti1_tekrar():
+    y = os.path.join(HK.HK_PARTI[1]["klasor"], "mum_izi10_aday_anahtar.json")
+    if not os.path.exists(y) or not os.path.exists(HK.HK_YOL["ham8"]):
+        print("  (1. parti anahtarı / tarama ham dosyası yok: atlandı)"); return
+    K = json.load(open(y, encoding="utf-8")); S = HK.hk_aday_sec(HK.hk_olaylar(), HK.hk_haric(1))
+    assert [(r["sayfa"], r["sembol"]) for r in S] == [(r["sayfa"], r["sembol"]) for r in K["sayfalar"]] and HK._hk_sha() == K["esik_sha"]
+
+
+def test_kapak_ve_anahtar_bul():
+    assert HK.hk_kapak_metni("bak {M}, seç {N}, koy {K}", 600, 40, 24) == "bak 600, seç 40, koy 24"
+    assert "300 adaya baktı, 20 tanesini seçti; bunlar onlar" in HK.hk_kapak_metni(None, 300, 20, 20)
+    with tempfile.TemporaryDirectory() as d:
+        open(os.path.join(d, "x_anahtar.json"), "w").write("{}"); open(os.path.join(d, "a.pdf"), "w").write("")
+        assert HK.hk_aday_anahtar_bul(d).endswith("x_anahtar.json")
+        open(os.path.join(d, "y_anahtar.json"), "w").write("{}")
+        try:
+            HK.hk_aday_anahtar_bul(d); raise AssertionError("iki anahtar kabul edilmemeliydi")
+        except HK.HKHata:
+            pass
+
+
 def test_hakem_sema():
     with tempfile.TemporaryDirectory() as d:
         y1 = os.path.join(d, "a.json"); y2 = os.path.join(d, "b.json")
