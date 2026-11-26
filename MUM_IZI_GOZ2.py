@@ -2088,7 +2088,7 @@ def k21_sayim(G: pd.DataFrame, ES: Optional[pd.DataFrame] = None) -> Dict[str, A
     return {"set8": bir(s8), "kapidan_gecenler": bir(G[G.set.isin(["set7", "set8"])]), "set6_7_8": bir(G[G.set.isin(["set6", "set7", "set8"]) & G.sinif.notna()]),
             "birlesik": bir(G), "set8_isaret": s8.isaret.value_counts().to_dict(),
             "set8_hakem_karar_isaret": {f"{h}|{i}": int(v) for (h, i), v in s8.groupby(["hakem_karar", "isaret"]).size().items()},
-            "set8_katman": s8.katman.value_counts().to_dict(), "set8_duyarlilik_degisen": s8[s8.sinif_duy != s8.sinif][["sayfa", "sinif", "sinif_duy"]].to_dict("records")}
+            "set8_katman": s8.katman.value_counts().to_dict(), "set8_duyarlilik_degisen": s8[s8.sinif_duy.fillna("-") != s8.sinif.fillna("-")][["sayfa", "sinif", "sinif_duy"]].to_dict("records")}
 
 
 # ---------------------------------------------------------------- tablolar
