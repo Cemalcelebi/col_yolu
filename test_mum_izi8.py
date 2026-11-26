@@ -23,12 +23,16 @@ def test_sablon_hepsi():
     P = V5.v5_parcalar(*(a[x] for x in ("O", "H", "L", "C", "BU", "BO", "BA")), S=True)
     assert int(P["k"][0]) == 10 and all(bool(P[p][0]) for p in V5.PARCA), {p: bool(P[p][0]) for p in V5.PARCA}
     assert all(bool(V5.v5_kural(P, r)[0]) for r in V5.KURAL) and abs(float(P["d_S"][0]) - 1.0) < 1e-9
+    assert abs(float(P["d_m1"][0]) - 0.3785) < 1e-3 and abs(float(P["d_m2"][0]) - 0.2029) < 1e-3 and abs(float(P["d_m3"][0]) - 0.4186) < 1e-3
+    assert abs(float(P["d_m4"][0]) - 3.593) < 1e-2 and bool(V5.v5_kural(P, "R4+M")[0])
+    print("   şablon M:", {x: round(float(P["d_" + x][0]), 3) for x in ("m1", "m2", "m3", "m4")})
 
 
 def test_sabit_esik_ve_kurallar():
     E = V5.V5_ESIK["esik"]
     assert (E["k_ust"], E["en_az_sonra"], E["G1_ort"], E["G1_degisim"], E["G2_ust"], E["T_spearman"], E["T_son"], E["I_pay"], E["I_ust"], E["B_max"], E["B_med"],
             E["F_pay"], E["S"]) == (0.6, 5, -0.3, 2, 0.80, 0.5, 0.6, 0.60, 1.05, 0.9, 0.30, 0.50, 0.59)
+    assert (E["m1"], E["m2"], E["m3"], E["m4"]) == (0.45, 0.25, 0.33, 1.5) and V5.v5_liste("R4+M") == V5.KURAL["R4"] + ["M"]
     K = V5.KURAL
     assert K["R2"] == K["R1"] + ["S"] and K["R3"] == K["R1"] + ["T"] and set(K["R6"]) == set(K["R3"]) | {"I", "B"} and set(K["R7"]) == set(K["R6"]) | {"F"}
     assert set(K["R8"]) == set(K["R6"]) | {"S"} and len(K) == 8 and V5.v5_esik_sha() == V5.v5_esik_sha(json.loads(json.dumps(V5.V5_ESIK)))
@@ -40,7 +44,7 @@ def test_vektor_duz_ayni():
         for m in (16, 19, 22, 24):
             sl = slice(e - m + 1, e + 1); W = {"O": O[sl], "H": H[sl], "L": L[sl], "C": C[sl], "BU": BU[sl], "BO": BO[sl]}
             P = V5.v5_parcalar(*(W[k] for k in ("O", "H", "L", "C", "BU", "BO"))); d = V5.v5_duz(W); n += 1; y += int(d["Y"])
-            fark += sum(int(bool(P[p][0]) != bool(d[p])) for p in V5.PARCA[:-1])
+            fark += sum(int(bool(P[p][0]) != bool(d[p])) for p in V5.DUZ_PARCA)
     assert fark == 0 and y > 20, (fark, y)
 
 
@@ -59,6 +63,13 @@ def test_secim_kurali():
     tab["R3"]["kappa"] = 0.34; assert V5.v5_sec(tab, 8)["secilen"] == "R3"
     s = V5.v5_sec({"R1": t(20, 0.18, 3), "R3": t(9, 0.2, 4)}, 8); assert s["durum"] == "DUR"
     assert V5.v5_sec({"R1": t(5, 0.9, 3)}, 8)["durum"] == "DUR"
+
+
+def test_M_kapisi():
+    m = 18; C = np.linspace(100, 110, m); O = C - 0.2; H = C + 1.0; L = O - 0.1; BU = C + 5; BO = C - 1
+    P = V5.v5_parcalar(O, H, L, C, BU, BO); assert bool(P["M"][0])                            # küçük gövde, az alt fitil, uzun üst fitil
+    P = V5.v5_parcalar(O, O + 0.2 + 0.1, L - 1.0, C, BU, BO); assert not bool(P["M"][0])      # alt fitil uzun
+    P = V5.v5_parcalar(C - 3.0, C + 0.1, C - 3.05, C, BU, BO); assert not bool(P["M"][0])      # büyük gövde
 
 
 def test_kendi_olcu():
