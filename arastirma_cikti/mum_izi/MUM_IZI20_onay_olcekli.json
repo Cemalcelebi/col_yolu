@@ -1,0 +1,577 @@
+{
+ "not": "EK 20: katmanlı ölçekli onay seti; hisse adı / tarih / katman / hakem kararı YOK",
+ "surum": "EK 20 (2026-11-26): onay --olcek --katmanli (kapı mı hakem mi)",
+ "esik_olcek": "HK-OL-1.0",
+ "esik_olcek_sha": "31420ca2c67457990378fabf093f40a2ad32723f46c88f3cc3c46460d9f6814a",
+ "esik_onay5_sha": "0b8a14dcf508da4cf7f790fc1690c8b46f78adff1bce2faffa58286afd05fafe",
+ "pdf": "MUM_IZI20_ONAY_OLCEKLI.pdf",
+ "pdf_sha": "be3dc6a404919eceb966cc6b34ec163a06a099e6ffe4566e1258d5b6c7587e6a",
+ "sayfa_sayisi": 25,
+ "anahtar": "MUM_IZI20_onay_anahtar.json",
+ "anahtar_sha": "52ee546d29ecdd75c1f6e91e725578554c300554d1b62b595e532cef0b7d6364",
+ "aday_anahtar_sha": "a859f79924ae145eeb32597ca6734c54ae844185b1fd8e75caec6747b0961744",
+ "kapak": "Bu sette 24 bölge var. Hepsi mum boyu şartını geçiyor (oran en çok 0,70) ama bu kez hakem seçmedi: içinde hakemin 'kısmen' dedikleri de, 'benzemiyor' dedikleri de var; hangisi olduğu sayfada yazmaz. Amaç: gözünü mum boyu şartı mı, hakem mi daha iyi tutuyor, onu ölçmek. Önceki sette 12 bölgenin 6'sına 'benziyor' dedin. Her sayfada bir kutuyu işaretle; en iyi örneklere yine yıldız koyabilirsin. Sonrası gösterilmiyor; işaretlerinden sonra ölçülecek.",
+ "secilen_zaman": {
+  "gunluk": 18,
+  "haftalik": 6
+ },
+ "olcu": {
+  "boy": "BOY_MUTLAK = bölge barlarında (H - L) / C medyanı (%); ÖNCEKİ = bölge başından önceki en çok 120 barın (H - L) / C medyanı (en az 40 bar, yoksa boş); ORAN = BOY_MUTLAK / ÖNCEKİ (İŞ A BOY_MUTLAK / BOY_OZ tanımı); yalnız bölge sonu t'ye kadarki barlar (t + 1 ve sonrası kullanılmaz: assert)",
+  "sinir": "dikey sınır = pencere barlarının O / H / L / C değerlerinin %2 - %98 dilimi ile bölge barlarının en düşük L / en yüksek H'sinin birleşimi; bölgedeki Bollinger üst / alt bandı görünsün diye her yönde en çok bu açıklığın %15'i kadar genişler (mum ölçeği ezilmesin); ± %4 pay; bunu aşan fitil / bant çerçevede kesilir, kesilen yere kenarda küçük üçgen (mum: her kesilen mumda koyu kırmızı; bant: her kesik parçada bir mor)",
+  "eksen": "sağda yüzde ekseni: 0 = bölgenin son kapanışı; adım listeden 4-8 çizgi verecek en küçük adım; ince yatay kılavuz; fiyat / tarih / hisse yok"
+ },
+ "sayfalar": [
+  {
+   "boy_mutlak": 1.2649615823566966,
+   "onceki": 1.9137206865791987,
+   "oran": 0.6609959286262576,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -6.919,
+    0.826
+   ],
+   "adim": 1.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 12
+   },
+   "son_bar_index": 529,
+   "seri_uzunluk_kullanilan": 530,
+   "yeni_sayfa": 2,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 3.316306414043436,
+   "onceki": 4.972157096861656,
+   "oran": 0.6669753890392229,
+   "onceki_n": 120,
+   "bolge_n": 19,
+   "y_sinir_yuzde": [
+    -16.499,
+    3.792
+   ],
+   "adim": 2.5,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 13
+   },
+   "son_bar_index": 1462,
+   "seri_uzunluk_kullanilan": 1463,
+   "yeni_sayfa": 3,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 2.2669983841185575,
+   "onceki": 3.989796144054257,
+   "oran": 0.5681990513467519,
+   "onceki_n": 120,
+   "bolge_n": 21,
+   "y_sinir_yuzde": [
+    -19.283,
+    10.351
+   ],
+   "adim": 5.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 14,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1178,
+   "seri_uzunluk_kullanilan": 1179,
+   "yeni_sayfa": 4,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 0.4028193416286048,
+   "onceki": 0.6066679864464446,
+   "oran": 0.6639864812846274,
+   "onceki_n": 120,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -1.854,
+    6.151
+   ],
+   "adim": 1.0,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 1,
+    "mum_alt": 0,
+    "bant_ust": 16,
+    "bant_alt": 19
+   },
+   "son_bar_index": 290,
+   "seri_uzunluk_kullanilan": 291,
+   "yeni_sayfa": 5,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 0.40302238021647263,
+   "onceki": 1.9248405408055342,
+   "oran": 0.20937961959581866,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -1.514,
+    1.514
+   ],
+   "adim": 0.5,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 15,
+    "bant_alt": 12
+   },
+   "son_bar_index": 320,
+   "seri_uzunluk_kullanilan": 321,
+   "yeni_sayfa": 6,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 3.7573298853766,
+   "onceki": 5.397877912473432,
+   "oran": 0.696075373749034,
+   "onceki_n": 120,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -22.603,
+    6.971
+   ],
+   "adim": 5.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 0
+   },
+   "son_bar_index": 814,
+   "seri_uzunluk_kullanilan": 815,
+   "yeni_sayfa": 7,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 2.39162699616755,
+   "onceki": 3.4483534095127206,
+   "oran": 0.6935562316698581,
+   "onceki_n": 120,
+   "bolge_n": 21,
+   "y_sinir_yuzde": [
+    -12.694,
+    8.294
+   ],
+   "adim": 5.0,
+   "cizgi": 4,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 0
+   },
+   "son_bar_index": 360,
+   "seri_uzunluk_kullanilan": 361,
+   "yeni_sayfa": 8,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.4911425280966395,
+   "onceki": 3.1830968435899667,
+   "oran": 0.4684565381978439,
+   "onceki_n": 120,
+   "bolge_n": 18,
+   "y_sinir_yuzde": [
+    -8.132,
+    1.624
+   ],
+   "adim": 2.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 12,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1423,
+   "seri_uzunluk_kullanilan": 1424,
+   "yeni_sayfa": 9,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 9.257390234347676,
+   "onceki": 16.13781852874217,
+   "oran": 0.5736457017322294,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -53.121,
+    11.881
+   ],
+   "adim": 10.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 15
+   },
+   "son_bar_index": 306,
+   "seri_uzunluk_kullanilan": 307,
+   "yeni_sayfa": 10,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 2.4346129982494698,
+   "onceki": 4.076374702073604,
+   "oran": 0.5972495602553441,
+   "onceki_n": 120,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -11.533,
+    2.766
+   ],
+   "adim": 2.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 15
+   },
+   "son_bar_index": 205,
+   "seri_uzunluk_kullanilan": 206,
+   "yeni_sayfa": 11,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 8.290160112904186,
+   "onceki": 12.130522606023158,
+   "oran": 0.6834132693333327,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -47.145,
+    28.557
+   ],
+   "adim": 10.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 1,
+    "bant_alt": 0
+   },
+   "son_bar_index": 376,
+   "seri_uzunluk_kullanilan": 377,
+   "yeni_sayfa": 12,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 1.9184240205620133,
+   "onceki": 2.9674851460633076,
+   "oran": 0.6464814232034192,
+   "onceki_n": 120,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -16.737,
+    2.624
+   ],
+   "adim": 2.5,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 5
+   },
+   "son_bar_index": 1463,
+   "seri_uzunluk_kullanilan": 1464,
+   "yeni_sayfa": 13,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 7.843138092770022,
+   "onceki": 13.373980909210806,
+   "oran": 0.5864475316671319,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -54.198,
+    19.242
+   ],
+   "adim": 10.0,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 13,
+    "bant_alt": 14
+   },
+   "son_bar_index": 223,
+   "seri_uzunluk_kullanilan": 224,
+   "yeni_sayfa": 14,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 3.2207549853118715,
+   "onceki": 4.607348580154662,
+   "oran": 0.6990473868603524,
+   "onceki_n": 120,
+   "bolge_n": 18,
+   "y_sinir_yuzde": [
+    -14.229,
+    5.65
+   ],
+   "adim": 2.5,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 5,
+    "bant_alt": 8
+   },
+   "son_bar_index": 283,
+   "seri_uzunluk_kullanilan": 284,
+   "yeni_sayfa": 15,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 0.7394600515499358,
+   "onceki": 1.366519289060638,
+   "oran": 0.541126684028185,
+   "onceki_n": 116,
+   "bolge_n": 22,
+   "y_sinir_yuzde": [
+    -2.198,
+    0.389
+   ],
+   "adim": 0.5,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 14,
+    "bant_alt": 0
+   },
+   "son_bar_index": 137,
+   "seri_uzunluk_kullanilan": 138,
+   "yeni_sayfa": 16,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 2.0530694394416216,
+   "onceki": 3.0426841780912683,
+   "oran": 0.6747560112300416,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -13.266,
+    2.451
+   ],
+   "adim": 2.0,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1463,
+   "seri_uzunluk_kullanilan": 1464,
+   "yeni_sayfa": 17,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 3.5155559990631,
+   "onceki": 5.44219597935308,
+   "oran": 0.6459811466548836,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -22.392,
+    3.206
+   ],
+   "adim": 5.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 10
+   },
+   "son_bar_index": 211,
+   "seri_uzunluk_kullanilan": 212,
+   "yeni_sayfa": 18,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 3.960116608641713,
+   "onceki": 6.351758166724915,
+   "oran": 0.6234677871376868,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -27.166,
+    29.441
+   ],
+   "adim": 10.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 9,
+    "bant_alt": 0
+   },
+   "son_bar_index": 934,
+   "seri_uzunluk_kullanilan": 935,
+   "yeni_sayfa": 19,
+   "zaman": "haftalik"
+  },
+  {
+   "boy_mutlak": 2.613761441163951,
+   "onceki": 3.9709374012475096,
+   "oran": 0.6582227764010613,
+   "onceki_n": 120,
+   "bolge_n": 23,
+   "y_sinir_yuzde": [
+    -19.04,
+    1.034
+   ],
+   "adim": 2.5,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 10
+   },
+   "son_bar_index": 1452,
+   "seri_uzunluk_kullanilan": 1453,
+   "yeni_sayfa": 20,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.998668231021554,
+   "onceki": 2.8832318126097967,
+   "oran": 0.6932041406731123,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -12.439,
+    7.099
+   ],
+   "adim": 2.5,
+   "cizgi": 7,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1457,
+   "seri_uzunluk_kullanilan": 1458,
+   "yeni_sayfa": 21,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.8497093002102936,
+   "onceki": 3.4124853660394456,
+   "oran": 0.5420416798320454,
+   "onceki_n": 120,
+   "bolge_n": 17,
+   "y_sinir_yuzde": [
+    -6.827,
+    8.129
+   ],
+   "adim": 2.0,
+   "cizgi": 8,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 17,
+    "bant_alt": 2
+   },
+   "son_bar_index": 1075,
+   "seri_uzunluk_kullanilan": 1076,
+   "yeni_sayfa": 22,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 1.2683156229001429,
+   "onceki": 1.8630519170039699,
+   "oran": 0.6807730967260213,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -8.979,
+    1.322
+   ],
+   "adim": 2.0,
+   "cizgi": 5,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 16
+   },
+   "son_bar_index": 1209,
+   "seri_uzunluk_kullanilan": 1210,
+   "yeni_sayfa": 23,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 4.328072811923212,
+   "onceki": 6.60713523589097,
+   "oran": 0.6550604244351558,
+   "onceki_n": 120,
+   "bolge_n": 24,
+   "y_sinir_yuzde": [
+    -24.884,
+    7.661
+   ],
+   "adim": 5.0,
+   "cizgi": 6,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 10,
+    "bant_alt": 0
+   },
+   "son_bar_index": 1459,
+   "seri_uzunluk_kullanilan": 1460,
+   "yeni_sayfa": 24,
+   "zaman": "gunluk"
+  },
+  {
+   "boy_mutlak": 3.721140649215102,
+   "onceki": 8.282631099649446,
+   "oran": 0.4492703591945071,
+   "onceki_n": 120,
+   "bolge_n": 16,
+   "y_sinir_yuzde": [
+    -18.038,
+    2.893
+   ],
+   "adim": 5.0,
+   "cizgi": 4,
+   "kesilen": {
+    "mum_ust": 0,
+    "mum_alt": 0,
+    "bant_ust": 0,
+    "bant_alt": 13
+   },
+   "son_bar_index": 583,
+   "seri_uzunluk_kullanilan": 584,
+   "yeni_sayfa": 25,
+   "zaman": "haftalik"
+  }
+ ]
+}

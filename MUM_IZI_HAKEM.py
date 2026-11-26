@@ -21,6 +21,11 @@ Komut:  python MUM_IZI_HAKEM.py aday [--parti 1|2|3]                       1: 30
                                                                            ölçekli yeniden çizim + etiket şeridi)
         python MUM_IZI_HAKEM.py onay --hakem ... --hakem2 <json> --aday arastirma_cikti/mum_izi/hakem_aday4 --ad MUM_IZI18 --olcek
                                                                            EK 18 A4: ölçekli partiden YENİ set (HK-O4; <ad>_ONAY_OLCEKLI.pdf + anahtar + json)
+        python MUM_IZI_HAKEM.py onay --olcek --katmanli --hakem arastirma_cikti/mum_izi/hakem_aday4/mum_izi18_hakem_A.json
+               --aday arastirma_cikti/mum_izi/hakem_aday4 --haric arastirma_cikti/mum_izi/MUM_IZI18_onay_anahtar.json --ad MUM_IZI20
+                                                                           EK 20: kapıdan geçen, gösterilmemiş adaylardan katmanlı set (HK-O5; hakem 1. aşama
+                                                                           KISMEN / HAYIR x oran <= 0,65 / > 0,65; katman başına tohum 20 ile 6; katman yalnız
+                                                                           mühürlü anahtarda)
 """
 from __future__ import annotations
 
@@ -1075,6 +1080,158 @@ def hk_ogren_olcek(cikti: Optional[str] = None, ad: Optional[str] = None, G: Opt
     return {"n": N, "sinif": sinif, "cikti": y, "sha": MI._mi_sha(y), "olcu": olc}
 
 
+# ================================================================ 3d) EK 20: KAPI MI HAKEM Mİ — katmanlı ölçekli onay seti
+# İş tanımı: arastirma_cikti/mum_izi/MUM_IZI20_IS_TANIMI.md (f218598), "Tasarım" ve "İŞ (kod)". Yalnız TESPİT (getiri yok). Eski sabitler / yollar değişmez.
+HK_SURUM_O5 = "EK 20 (2026-11-26): onay --olcek --katmanli (kapı mı hakem mi)"
+HK_ESIK_ONAY5: Dict[str, Any] = {
+    "surum": "HK-O5-1.0", "tohum": 20, "katman_basi": 6, "oran_esik": 0.65, "kapi_en_cok": 0.70,
+    "katmanlar": ["KISMEN|oran<=0,65", "KISMEN|0,65<oran<=0,70", "HAYIR|oran<=0,65", "HAYIR|0,65<oran<=0,70"],
+    "beklenen": {"kalan": 99, "KISMEN|oran<=0,65": 16, "KISMEN|0,65<oran<=0,70": 23, "HAYIR|oran<=0,65": 34, "HAYIR|0,65<oran<=0,70": 26},
+    "secim": "aday = 4. parti aday anahtarının sayfaları; Cemal'e gösterilmiş olanlar (hariç onay anahtarındaki 'aday_sayfa') çıkarılır; katman = hakem 1. aşama "
+             "kararı (KISMEN / HAYIR) x oran (<= 0,65 / 0,65 < oran <= 0,70); kalanlarda hakem EVET ya da kapı dışı oran varsa DUR; sayım iş tanımındaki "
+             "getirisiz sayımla aynı değilse DUR; tek rng (tohum 20): katman sırasıyla her katmanın adayları aday sayfa sırasına dizilip karıştırılır, ilk 6 alınır; "
+             "sonra 24 sayfanın PDF sırası aynı rng ile karıştırılır, yeni sayfa numaraları 2'den",
+    "sayfa": "kapak + ölçekli onay sayfası (EK 16: yüzde ekseni, mum boyu satırı ve oran, ✓ / K / × kutuları); katman / hakem kararı / hisse / tarih / fiyat "
+             "sayfada YOK, yalnız mühürlü anahtarda"}
+HK_KAPAK5 = ("Bu sette {K} bölge var. Hepsi mum boyu şartını geçiyor (oran en çok 0,70) ama bu kez hakem seçmedi: içinde hakemin 'kısmen' dedikleri de, "
+             "'benzemiyor' dedikleri de var; hangisi olduğu sayfada yazmaz. Amaç: gözünü mum boyu şartı mı, hakem mi daha iyi tutuyor, onu ölçmek. Önceki sette "
+             "12 bölgenin 6'sına 'benziyor' dedin. Her sayfada bir kutuyu işaretle; en iyi örneklere yine yıldız koyabilirsin. Sonrası gösterilmiyor; "
+             "işaretlerinden sonra ölçülecek.")
+HK_BASLIK5 = "MUM BOYU ŞARTINI GEÇEN BÖLGELER"
+
+
+def hk_katman5(karar: str, oran: Any, G: Optional[Dict[str, Any]] = None) -> str:
+    """EK 20 katmanı: hakem 1. aşama kararı (KISMEN / HAYIR) x oran (<= 0,65 / 0,65 < oran <= 0,70). EVET, şema dışı karar ya da kapı dışı oran -> DUR."""
+    G = G or HK_ESIK_ONAY5
+    if karar not in ("KISMEN", "HAYIR"):
+        raise HKHata(f"katman: hakem kararı {karar!r} (yalnız KISMEN / HAYIR katmanlanır)")
+    try:
+        x = float(oran)
+    except (TypeError, ValueError) as ex:
+        raise HKHata(f"katman: oran {oran!r}") from ex
+    if not (np.isfinite(x) and x <= float(G["kapi_en_cok"])):
+        raise HKHata(f"katman: oran {x} kapı dışı (> {G['kapi_en_cok']})")
+    i = 0 if x <= float(G["oran_esik"]) else 1
+    return G["katmanlar"][(0 if karar == "KISMEN" else 2) + i]
+
+
+def hk_katman_sec(aday: List[Dict[str, Any]], H: Dict[int, Dict[str, Any]], haric_sayfa: set, G: Optional[Dict[str, Any]] = None
+                  ) -> Tuple[Dict[str, int], List[Dict[str, Any]]]:
+    """HK-O5 seçimi (saf fonksiyon). aday: aday anahtarı sayfaları ('sayfa', 'oran'); H: 1. aşama hakem kararları; haric_sayfa: gösterilmiş aday sayfaları.
+    Dönüş: (getirisiz sayım, seçilenler). Seçilen satırlara hakem_karar, hakem_puan, katman, yeni_sayfa eklenir."""
+    G = G or HK_ESIK_ONAY5; Ad = {int(r["sayfa"]): r for r in aday}
+    yab = sorted(set(int(x) for x in haric_sayfa) - set(Ad))
+    if yab:
+        raise HKHata(f"hariç tutulacak sayfalar aday listesinde yok: {yab[:10]}")
+    eks = sorted(set(Ad) - set(H))
+    if eks:
+        raise HKHata(f"1. aşama hakem dosyası {len(eks)} aday sayfasını kapsamıyor: {eks[:10]}")
+    kalan = [Ad[n] for n in sorted(Ad) if n not in {int(x) for x in haric_sayfa}]
+    ev = [int(r["sayfa"]) for r in kalan if H[int(r["sayfa"])]["karar"] == "EVET"]
+    if ev:
+        raise HKHata(f"kalan adaylarda hakem EVET var ({len(ev)}): iş tanımı dışı")
+    kat: Dict[str, List[Dict[str, Any]]] = {k: [] for k in G["katmanlar"]}
+    for r in kalan:
+        h = H[int(r["sayfa"])]; k = hk_katman5(h["karar"], r.get("oran"), G)
+        kat[k].append(dict(r, hakem_karar=h["karar"], hakem_puan=h["puan"], katman=k))
+    sayim = {"kalan": len(kalan), **{k: len(v) for k, v in kat.items()}}
+    if G.get("beklenen") is not None and sayim != G["beklenen"]:
+        raise HKHata(f"getirisiz sayım iş tanımıyla uyuşmuyor: {sayim} != {G['beklenen']}")
+    rng = np.random.default_rng(int(G["tohum"])); n = int(G["katman_basi"]); sec: List[Dict[str, Any]] = []
+    for k in G["katmanlar"]:
+        h = sorted(kat[k], key=lambda r: int(r["sayfa"]))
+        if len(h) < n:
+            raise HKHata(f"katman {k}: {len(h)} aday < {n}")
+        p = rng.permutation(len(h)); sec += [h[int(i)] for i in p[:n]]
+    p = rng.permutation(len(sec))
+    return sayim, [dict(sec[i], yeni_sayfa=j + 2) for j, i in enumerate(p)]
+
+
+def hk_onay_katman(hakem: List[str], haric: str, cikti: Optional[str] = None, aday_klasor: Optional[str] = None, ad: Optional[str] = None,
+                   G: Optional[Dict[str, Any]] = None, veri=None) -> Dict[str, Any]:
+    """EK 20: katmanlı ölçekli onay seti. Çıktı: <ad>_ONAY_OLCEKLI.pdf, <ad>_onay_anahtar.json (mühürlü: aday sayfa, hisse, tarih, oran, hakem kararı / puanı,
+    katman), <ad>_onay_olcekli.json (hisse / tarih / katman / hakem yok). Kapılar (DUR): --ad yok; çıktılardan biri var; aday klasörü ölçekli parti değil; hariç
+    anahtarı başka aday anahtarına ait ya da sayfaları aday anahtarıyla uyuşmuyor; hakem kapsamı; sayım; sayfa ORAN'ı aday anahtarındakinden farklı."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    G = G or HK_ESIK_ONAY5; GO = HK_ESIK_OLCEK; cikti = cikti or HK_YOL["cikti"]; veri = veri or MV.mv_veri
+    if not ad:
+        raise HKHata("katmanlı onay: --ad zorunlu")
+    if not haric or not os.path.exists(haric):
+        raise HKHata(f"katmanlı onay: hariç onay anahtarı yok: {haric}")
+    y = os.path.join(cikti, f"{ad}_ONAY_OLCEKLI.pdf"); ya = os.path.join(cikti, f"{ad}_onay_anahtar.json"); yj = os.path.join(cikti, f"{ad}_onay_olcekli.json")
+    if any(os.path.exists(x) for x in (y, ya, yj)):
+        raise HKHata(f"katmanlı onay PDF / anahtar / json zaten var: {y}")
+    kl = aday_klasor or HK_PARTI[4]["klasor"]
+    if not _hk_olcek_parti_mi(kl):
+        raise HKHata(f"aday klasörü ölçekli parti değil: {kl}")
+    ay = hk_aday_anahtar_bul(kl); A = json.load(open(ay, encoding="utf-8")); Ad = {int(r["sayfa"]): r for r in A["sayfalar"]}
+    E = json.load(open(haric, encoding="utf-8"))
+    if E.get("aday_anahtar_sha") != MI._mi_sha(ay):
+        raise HKHata("hariç onay anahtarı bu aday anahtarına ait değil (aday_anahtar_sha)")
+    hs = set()
+    for x in E.get("sayfalar", []):
+        n = int(x["aday_sayfa"]); r = Ad.get(n)
+        if r is None or any(r[f] != x[f] for f in ("zaman", "pazar", "sembol", "bolge_son")):
+            raise HKHata(f"hariç anahtar sayfası aday anahtarıyla uyuşmuyor: aday sayfa {n}")
+        hs.add(n)
+    if not hs:
+        raise HKHata("hariç onay anahtarında sayfa yok")
+    H = hk_hakem_oku(hakem)
+    yab = sorted(set(H) - set(Ad))
+    if yab:
+        raise HKHata(f"hakem dosyasında aday listesinde olmayan sayfalar: {yab[:10]}")
+    sayim, sec = hk_katman_sec(A["sayfalar"], H, hs, G)
+    K_ = len(sec); kapak_t = HK_KAPAK5.replace("{K}", str(K_))
+    a = MV.mv_sablon()["tam"]["ohlc"]; Vc: Dict[Any, Any] = {}; os.makedirs(cikti, exist_ok=True); olc: List[Dict[str, Any]] = []
+    try:
+        with PdfPages(y, metadata={"Title": f"{ad} onay (ölçekli)", "CreationDate": None, "ModDate": None}) as pdf:
+            fig = plt.figure(figsize=(8.3, 11.7)); fig.text(0.06, 0.95, HK_BASLIK5, fontsize=16, weight="bold")
+            fig.text(0.06, 0.88, kapak_t, fontsize=13, va="top", wrap=True)
+            MV._mv_ciz(fig.add_axes([0.25, 0.2, 0.5, 0.35]), a["O"], a["H"], a["L"], a["C"], a["BU"], a["BO"], a["BA"], None, "Senin kalıbın")
+            pdf.savefig(fig); plt.close(fig)
+            for r in sorted(sec, key=lambda r: r["yeni_sayfa"]):
+                k = (r["zaman"], r["pazar"])
+                if k not in Vc:
+                    Vc[k] = veri(*k)
+                d = Vc[k].get(r["sembol"])
+                if d is None:
+                    raise HKHata(f"aday sayfa {r['sayfa']}: seri yok")
+                rr = {"tarih": r["bolge_son"], "m": r["pencere"], "zaman": r["zaman"]}
+                if pd.Timestamp(r["bolge_son"]) > MI.MI_KESIK:
+                    raise HKHata(f"aday sayfa {r['sayfa']}: KESİK AŞIMI")
+                if _hk_bas(d, rr) != r["bolge_bas"]:
+                    raise HKHata(f"aday sayfa {r['sayfa']}: bölge başı anahtarla uyuşmuyor")
+                fig = plt.figure(figsize=(8.3, 11.7)); o = _hk_sayfa_olcek(fig, d, rr, a, r["yeni_sayfa"], GO); pdf.savefig(fig); plt.close(fig)
+                if not (o["oran"] == r["oran"]):
+                    raise HKHata(f"aday sayfa {r['sayfa']}: ORAN aday anahtarıyla aynı değil")
+                olc.append(dict(o, yeni_sayfa=r["yeni_sayfa"], zaman=r["zaman"]))
+    except Exception:
+        if os.path.exists(y):                               # yarım PDF kalmasın (çıktı kapısı sonraki koşuyu durdurur)
+            os.remove(y)
+        raise
+    pdf_sha = MI._mi_sha(y); S = sorted(sec, key=lambda r: r["yeni_sayfa"])
+    szam = {z: sum(r["zaman"] == z for r in S) for z in ("gunluk", "haftalik")}; skat = {k: sum(r["katman"] == k for r in S) for k in G["katmanlar"]}
+    K = {"not": "MÜHÜRLÜ: yeni sayfa -> aday sayfası / hakem kararı / katman / hisse / tarihler; PDF'e girmez", "surum": HK_SURUM_O5,
+         "surum_onay": G["surum"], "esik_onay5_sha": _hk_sha(G), "esik_olcek_sha": _hk_sha(GO), "tohum": G["tohum"],
+         "hakem_dosyalari": {os.path.basename(h): MI._mi_sha(h) for h in hakem}, "aday_anahtari": os.path.basename(ay), "aday_anahtar_sha": MI._mi_sha(ay),
+         "haric_anahtari": os.path.basename(haric), "haric_anahtar_sha": MI._mi_sha(haric), "haric_aday_sayfa": sorted(hs), "sayim": sayim,
+         "kapak": kapak_t, "secilen": K_, "secilen_zaman": szam, "secilen_katman": skat, "pdf": os.path.basename(y), "pdf_sha": pdf_sha,
+         "sayfalar": [{"yeni_sayfa": r["yeni_sayfa"], "aday_sayfa": r["sayfa"], "zaman": r["zaman"], "pazar": r["pazar"], "sembol": r["sembol"],
+                       "bolge_bas": r["bolge_bas"], "bolge_son": r["bolge_son"], "pencere": r["pencere"], "oran": r["oran"], "hakem_karar": r["hakem_karar"],
+                       "hakem_puan": r["hakem_puan"], "katman": r["katman"]} for r in S]}
+    MI._mi_jyaz(ya, K, "onay anahtar 20 (katmanlı, ölçekli)")
+    J = {"not": "EK 20: katmanlı ölçekli onay seti; hisse adı / tarih / katman / hakem kararı YOK", "surum": HK_SURUM_O5, "esik_olcek": GO["surum"],
+         "esik_olcek_sha": _hk_sha(GO), "esik_onay5_sha": _hk_sha(G), "pdf": os.path.basename(y), "pdf_sha": pdf_sha, "sayfa_sayisi": K_ + 1,
+         "anahtar": os.path.basename(ya), "anahtar_sha": MI._mi_sha(ya), "aday_anahtar_sha": MI._mi_sha(ay), "kapak": kapak_t, "secilen_zaman": szam,
+         "olcu": {k: GO[k] for k in ("boy", "sinir", "eksen")}, "sayfalar": olc}
+    MI._mi_jyaz(yj, J, "ölçekli onay 20")
+    hklog.info("katmanlı onay: kalan %d aday, seçilen %d (günlük %d, haftalık %d) -> %s", sayim["kalan"], K_, szam["gunluk"], szam["haftalik"], y)
+    return dict(J, sayim=sayim, secilen=K_, secilen_katman=skat)
+
+
 # ================================================================ 4) ÇAKIŞMA KAPISI ve ANA
 def _cakisma_kontrol_hk(_once=_CK_ONCE_HK, _dosya="MUM_IZI_HAKEM.py"):
     g = globals(); ezilen = []
@@ -1104,6 +1261,8 @@ def _hk_ana(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--olcek", action="store_true", help="onay: EK 16 ölçekli yeniden basım (yüzde ekseni, mum boyu satırı, üç kutu); eski anahtar gerekir; "
                                                           "<önek>_ONAY_OLCEKLI.pdf + <önek>_onay_olcekli.json. Aday klasörü ölçekli partiyse (4) YENİ set "
                                                           "(+ <önek>_onay_anahtar.json). ogren: EK 18 ölçekli öğrenme dosyası (MUM_IZI18_OGREN.pdf)")
+    ap.add_argument("--katmanli", action="store_true", help="onay --olcek: EK 20 katmanlı set (HK-O5; 1. aşama hakem x oran; --haric ve --ad zorunlu)")
+    ap.add_argument("--haric", default=None, help="onay --katmanli: Cemal'e gösterilmiş onay anahtarı (içindeki 'aday_sayfa' hariç tutulur)")
     a = ap.parse_args(argv)
     try:
         if a.komut == "aday":
@@ -1120,6 +1279,11 @@ def _hk_ana(argv: Optional[List[str]] = None) -> int:
         else:
             if not a.hakem:
                 raise HKHata("--hakem en az bir dosya ister")
+            if a.katmanli:                                  # EK 20 (yalnız --olcek ile)
+                if not a.olcek:
+                    raise HKHata("--katmanli yalnız --olcek ile")
+                J = hk_onay_katman(a.hakem, a.haric, a.cikti, a.aday, a.ad)
+                print(json.dumps({k: J[k] for k in ("pdf", "pdf_sha", "sayfa_sayisi", "anahtar_sha", "secilen", "secilen_zaman")}, ensure_ascii=False)); return 0
             if a.olcek:
                 J = hk_onay(a.hakem, a.cikti, a.aday, a.kapak, a.ad, a.hakem2, olcek=True)
                 print(json.dumps({k: J[k] for k in ("pdf", "pdf_sha", "sayfa_sayisi", "eski_anahtar_sha", "bolge_kimligi", "aday_bakilan", "hakem_evet",
