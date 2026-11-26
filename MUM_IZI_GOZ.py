@@ -180,6 +180,7 @@ def gz_olc_bir(Dg: pd.DataFrame, W: Optional[pd.DataFrame], r: Dict[str, Any], k
     B = W if r["zaman"] == "haftalik" else Dg
     t = B.index.get_loc(pd.Timestamp(r["tarih"])); m = int(r["m"]); s = t - m + 1
     rec["bolge_bas"] = (W.bas.iloc[s] if r["zaman"] == "haftalik" else Dg.index[s]); rec["bolge_son"] = Dg.index[Dg.index.get_loc(B.index[t])]
+    rec["bolge_bas_bar"] = B.index[s]          # ilk barın tarihi (haftalıkta haftanın son günü; MUM_IZI_HAKEM anahtarının 'bolge_bas' tanımı)
     stop = float(B.Low.to_numpy(float)[s:t + 1].min()) * sc; rec["stop"] = stop
     if t + 1 >= len(B):
         rec["neden"] = "giris_yok"; return rec
@@ -212,7 +213,7 @@ def gz_olc(X: pd.DataFrame) -> pd.DataFrame:
                 Vd = MI.mi_veri(r["pazar"], MH.MH_YOL["tam"])["V"]; Vc[k] = (Vd, MV.mv_haftalik_panel(Vd))
         Vd, Vw = Vc[k]
         rec = gz_olc_bir(Vd[r["sembol"]], Vw[r["sembol"]] if Vw is not None else None, r, MI.MI_KESIK)
-        if isinstance(r.get("bolge_bas_anahtar"), str) and str(pd.Timestamp(rec["bolge_bas"]).date()) != r["bolge_bas_anahtar"]:
+        if isinstance(r.get("bolge_bas_anahtar"), str) and str(pd.Timestamp(rec["bolge_bas_bar"]).date()) != r["bolge_bas_anahtar"]:
             raise GZHata(f"K10: {r['set']} s{r['sayfa']} bölge başı anahtarla uyuşmuyor")
         out.append(rec)
     Y = pd.DataFrame(out, index=X.index)

@@ -123,3 +123,5 @@ ANAHTAR_SET4_SHA: c259d11ea69e0f8b1f40f9869221aa15c9121c3e959822af5ccdc1dc3d455b
 (ön kayıt anında yok)
 - EK SAPMA (26 Kas 09:54, ön kayıt cf5ad8d'den sonra, GETİRİ HESAPLANMADAN): ilk 'kos' denemesi K10 denetiminde durdu: set1-3'te boş olan 'bolge_bas_anahtar' alanı DataFrame'de NaN olunca 'dolu' sayıldı (NaN doğru-değerli). Yalnız bu koşul satırı düzeltildi (alan metinse denetle); tanımlar (ESIK11_SHA) aynı; komut durduğu için hiçbir getiri yazılmadı / görülmedi. Yeni kod mührü:
 KOD11_SHA: e018fdf4a58650d7f2841f524ccc37094918a9287cfbd45fd3f8706fbbed05c0
+- EK SAPMA 2 (09:56, GETİRİ HESAPLANMADAN): ikinci 'kos' denemesi set4 s5'te (haftalık) K10'da durdu: MUM_IZI_HAKEM anahtarındaki 'bolge_bas' ilk barın TARİHİDİR (haftalıkta haftanın son günü), denetim haftanın ilk günüyle karşılaştırıyordu. Denetim ilk barın tarihiyle yapılacak biçimde düzeltildi (ölçüde kullanılan bölge başı / stop / eş takvim aralığı değişmedi; tanımlar aynı). Komut durduğu için getiri yazılmadı / görülmedi. Yeni kod mührü:
+KOD11_SHA: f0b0381a4eabe14a015dc6eb929fcc34a1d95d2a399412cc05a5620c4ffb68d5
