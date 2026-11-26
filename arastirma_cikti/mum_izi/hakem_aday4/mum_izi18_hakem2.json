@@ -1,0 +1,77 @@
+{
+ "hakem": "alt ajan (sonnet) v5 2. aşama",
+ "ogrenme_bakilan": 65,
+ "ogrenme_notu": "BENZİYOR sayfalarında düşüş net bitmiş, dipte küçük mumlar ve daralan bant var; son bölümde mumlar üst bandın hemen altında düzenli tırmanıyor. KISMEN'lerde baş kısım dağınık ya da bant geniş, sonu iyi. BENZEMİYOR'larda V dönüş, iri gövdeler, dağınık dizilim ve düşüşün içindeki tepki görünümü var. Ölçeksiz eski etiketler gevşek; 10. ölçütü ayrıca uyguladım.",
+ "sayfalar": {
+  "16": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar, sonda dev yeşil mum"
+  },
+  "69": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "küçük mumlar, sert düşüş yakın, son banda yakın"
+  },
+  "74": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "dipte sıkışma, ortada uzun fitil, sonu banda yakın"
+  },
+  "20": {
+   "karar": "EVET",
+   "puan": 8,
+   "gerekce": "düzenli tırmanış, küçük mumlar, üst banda asılı"
+  },
+  "111": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dip savunması, daralma, sonu üst bandın altında"
+  },
+  "21": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "daralma net, küçük mumlar, banda yakın tırmanış"
+  },
+  "33": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri dağınık mumlar, geniş bant"
+  },
+  "91": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "çok küçük mumlar, sonda bandı aşan mumlar"
+  },
+  "73": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "banda yapışık ama mumlar büyüyor, bant açılıyor"
+  },
+  "45": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dağınık, düşüş içinde tepki"
+  },
+  "47": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "sert düşüş ardından, tırmanış düzenli ama bant geniş"
+  },
+  "28": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dağınık irili ufaklı, son mum büyük"
+  },
+  "61": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "V dönüş, iri mumlar"
+  },
+  "26": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dağınık, sonda dev yeşil mum"
+  }
+ }
+}
