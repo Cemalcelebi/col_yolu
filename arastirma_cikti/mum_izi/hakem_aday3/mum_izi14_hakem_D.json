@@ -1,0 +1,757 @@
+{
+ "hakem": "alt ajan (sonnet) v4 D",
+ "ogrenme_bakilan": 48,
+ "ogrenme_notu": "BENZIYOR sayfalarinda ortak: dusus bitmis, dipte kucuk mumlar, bant daralmis, son bolumde kucuk mumlar ust bandin altinda duzenli tirmaniyor. KISMEN'de baş kisim dagınık ya da son mumlar iri. BENZEMIYOR'da sert dusus icinde tepki, iri ve dagınık mumlar, bandi delen yukselis. Etiketler olculu: Cemal bazi sert dusus sonrasi duzenli tirmanislara da BENZIYOR demis; ben 9. olcut nedeniyle sert dususu en fazla EVET sinirinda tuttum.",
+ "sayfalar": {
+  "451": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "kucuk mum dipte sonra buyuk yesil yukselis bant genisliyor"
+  },
+  "452": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "son dev yesil mum bandi deliyor"
+  },
+  "453": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev govdeli dagınık"
+  },
+  "454": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev govdeli dagınık"
+  },
+  "455": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar sert dusus"
+  },
+  "456": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "son dev mum"
+  },
+  "457": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "buyuk mumlar dagınık"
+  },
+  "458": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "son dev yesil mum bant disi"
+  },
+  "459": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar sert dusus sonrasi"
+  },
+  "460": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık irili ufaklı"
+  },
+  "461": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "irili ufaklı dusus icinde tepki"
+  },
+  "462": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık"
+  },
+  "463": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "bandi delen dev mumlar"
+  },
+  "464": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar"
+  },
+  "465": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "466": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar V donus"
+  },
+  "467": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "son kucuk mumlar ust banda yakin ama iri kirmizi var"
+  },
+  "468": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dipte yatay sonra buyuk yesil"
+  },
+  "469": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "bandi delen sert cikis"
+  },
+  "470": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "V donus dev mum"
+  },
+  "471": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dar bant kucuk mumlar ust bandin altinda tirmanis"
+  },
+  "472": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "buyuk mumlar dagınık"
+  },
+  "473": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar uzun fitil dagınık"
+  },
+  "474": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar genis bant"
+  },
+  "475": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "uzun fitiller buyuk mumlar"
+  },
+  "476": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "sert dusus sonrasi V tepki"
+  },
+  "477": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar tepki"
+  },
+  "478": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "son tirmanis iri gövdeli"
+  },
+  "479": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "sert dusus sonrasi iri yesil"
+  },
+  "480": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "bant daralmis son mumlar oynak"
+  },
+  "481": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "bandi delen iri mumlar"
+  },
+  "482": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "483": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "484": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "485": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dagınık seyrek mumlar"
+  },
+  "486": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "son dev yesil mum"
+  },
+  "487": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert dusus V donus"
+  },
+  "488": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev son mum fitil"
+  },
+  "489": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "490": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık dusus icinde tepki"
+  },
+  "491": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar dagınık"
+  },
+  "492": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "irili ufaklı tepki"
+  },
+  "493": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dar bant kucuk mumlar ust banda yakin ama yatay"
+  },
+  "494": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "495": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "496": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "bandi delen dev mumlar"
+  },
+  "497": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "V donus iri mumlar"
+  },
+  "498": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "499": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "500": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar bant disi"
+  },
+  "501": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dipte kucuk mumlar ust banda yakin tirmanis duşus bitmis"
+  },
+  "502": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar dagınık"
+  },
+  "503": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar sert V"
+  },
+  "504": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "sert V dev mumlar"
+  },
+  "505": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "V donus dev mumlar"
+  },
+  "506": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dagınık dev mumlar"
+  },
+  "507": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "sert dusus sonrasi son kucuk mumlar ust bantta"
+  },
+  "508": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "son dev yesil mum"
+  },
+  "509": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar bandi deliyor"
+  },
+  "510": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev yesil mumlar bandi deliyor"
+  },
+  "511": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar fitil"
+  },
+  "512": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "513": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "514": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık dev kirmizi"
+  },
+  "515": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev mum dagınık"
+  },
+  "516": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dagınık dev"
+  },
+  "517": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "irili ufaklı tirmanis"
+  },
+  "518": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "dip kucuk mumlar sonra iri tirmanis"
+  },
+  "519": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık dev"
+  },
+  "520": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "521": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "dusus bitmis son kucuk mumlar ust bantta ama orta iri mumlar"
+  },
+  "522": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "uzun dusus dip kucuk mumlar son ust banda yapisik"
+  },
+  "523": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "tirmanis iri son mum bant genis"
+  },
+  "524": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "dipte kucuk mumlar son uzun fitilli iri mum"
+  },
+  "525": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar dagınık"
+  },
+  "526": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "kucuk mumlar son iri yesil mum"
+  },
+  "527": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "528": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar"
+  },
+  "529": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev son mum"
+  },
+  "530": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri dagınık"
+  },
+  "531": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev mum ortada"
+  },
+  "532": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev kirmizi"
+  },
+  "533": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "534": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "535": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dip kucuk mumlar son duzenli tirmanis ust banda yakin"
+  },
+  "536": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık irili ufaklı"
+  },
+  "537": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "538": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "bandi delen dev mum"
+  },
+  "539": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık"
+  },
+  "540": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert dusus sonrasi iri"
+  },
+  "541": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "542": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri mumlar"
+  },
+  "543": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev yesil mum sert V"
+  },
+  "544": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "545": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "546": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "sert dusus dagınık"
+  },
+  "547": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "son dev mum"
+  },
+  "548": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "549": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "duzenli dusus dip kucuk mumlar son tirmanis ust banda yakin"
+  },
+  "550": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "bandi delen iri mumlar"
+  },
+  "551": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dusus bitmis son kucuk mumlar ust banda yapisik"
+  },
+  "552": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "dusus bitmis kucuk mumlar basamak basamak ust band altinda"
+  },
+  "553": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar bandi delen"
+  },
+  "554": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "555": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dagınık dev"
+  },
+  "556": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "yatay kucuk mumlar son dev mum"
+  },
+  "557": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "tirmanis duzenli ama iri son mum"
+  },
+  "558": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev mumlar"
+  },
+  "559": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "dusus bitmis son mumlar ust bant altinda ama gövdeler orta"
+  },
+  "560": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dip kucuk mumlar son kucuk mumlar bant ortasi ustu"
+  },
+  "561": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dar bant kucuk mumlar son iri yesil"
+  },
+  "562": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "563": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık"
+  },
+  "564": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mum"
+  },
+  "565": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar bandi delen"
+  },
+  "566": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "dusus sonrasi son kucuk mumlar ust banda yakin"
+  },
+  "567": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "568": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "dip sonrasi son kucuk mumlar ust bantta ama dagınık"
+  },
+  "569": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar"
+  },
+  "570": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık"
+  },
+  "571": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev mumlar bandi deliyor"
+  },
+  "572": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dagınık dev mumlar"
+  },
+  "573": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "sert dusus bitmis duzenli kucuk mum tirmanisi ust banda yapisik"
+  },
+  "574": {
+   "karar": "KISMEN",
+   "puan": 5,
+   "gerekce": "son kucuk mumlar ust bant altinda ama iri mumlar once"
+  },
+  "575": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dar yatay sonra dev mumlar"
+  },
+  "576": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "dagınık orta boy mumlar"
+  },
+  "577": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "sert dusus bitmis kucuk mumlar duzenli ust banda"
+  },
+  "578": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "579": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "duzenli kucuk mumlar ust banda yapisik tirmanis"
+  },
+  "580": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık dev son mum"
+  },
+  "581": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dagınık dev fitil"
+  },
+  "582": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dev yesil mumlar"
+  },
+  "583": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "584": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "585": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "586": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "587": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "dagınık iri"
+  },
+  "588": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar"
+  },
+  "589": {
+   "karar": "KISMEN",
+   "puan": 6,
+   "gerekce": "sert dusus dip kucuk mumlar tirmanis son iri mum"
+  },
+  "590": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "591": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar bandi deliyor"
+  },
+  "592": {
+   "karar": "EVET",
+   "puan": 8,
+   "gerekce": "dusus bitmis dar bant kucuk mumlar duzenli ust banda asili"
+  },
+  "593": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "iri mumlar V"
+  },
+  "594": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "595": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "dev mumlar"
+  },
+  "596": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "sert dusus bitmis kucuk mumlar ust banda yapisik tirmanis"
+  },
+  "597": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "sert kirmizi sonra orta mumlar"
+  },
+  "598": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "son kucuk mumlar ust bantta ama dip iri"
+  },
+  "599": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "tirmanis ust bantta ama iri gövdeler"
+  },
+  "600": {
+   "karar": "KISMEN",
+   "puan": 4,
+   "gerekce": "son mumlar ust bant altinda ama dagınık"
+  }
+ }
+}
