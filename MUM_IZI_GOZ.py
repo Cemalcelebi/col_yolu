@@ -212,7 +212,7 @@ def gz_olc(X: pd.DataFrame) -> pd.DataFrame:
                 Vd = MI.mi_veri(r["pazar"], MH.MH_YOL["tam"])["V"]; Vc[k] = (Vd, MV.mv_haftalik_panel(Vd))
         Vd, Vw = Vc[k]
         rec = gz_olc_bir(Vd[r["sembol"]], Vw[r["sembol"]] if Vw is not None else None, r, MI.MI_KESIK)
-        if r.get("bolge_bas_anahtar") and str(pd.Timestamp(rec["bolge_bas"]).date()) != r["bolge_bas_anahtar"]:
+        if isinstance(r.get("bolge_bas_anahtar"), str) and str(pd.Timestamp(rec["bolge_bas"]).date()) != r["bolge_bas_anahtar"]:
             raise GZHata(f"K10: {r['set']} s{r['sayfa']} bölge başı anahtarla uyuşmuyor")
         out.append(rec)
     Y = pd.DataFrame(out, index=X.index)

@@ -121,3 +121,5 @@ ANAHTAR_SET4_SHA: c259d11ea69e0f8b1f40f9869221aa15c9121c3e959822af5ccdc1dc3d455b
 ## SAPMA
 
 (ön kayıt anında yok)
+- EK SAPMA (26 Kas 09:54, ön kayıt cf5ad8d'den sonra, GETİRİ HESAPLANMADAN): ilk 'kos' denemesi K10 denetiminde durdu: set1-3'te boş olan 'bolge_bas_anahtar' alanı DataFrame'de NaN olunca 'dolu' sayıldı (NaN doğru-değerli). Yalnız bu koşul satırı düzeltildi (alan metinse denetle); tanımlar (ESIK11_SHA) aynı; komut durduğu için hiçbir getiri yazılmadı / görülmedi. Yeni kod mührü:
+KOD11_SHA: e018fdf4a58650d7f2841f524ccc37094918a9287cfbd45fd3f8706fbbed05c0
