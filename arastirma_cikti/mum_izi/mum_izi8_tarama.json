@@ -1,0 +1,169 @@
+{
+ "surum": "MUM_IZI_V5 v1.0 (2026-11-26): etiketlerle seçilen evre kuralı (R1-R8 adayları), kodun okuması PDF'te",
+ "kural": "R4",
+ "nihai": "R4+M",
+ "kapi": {
+  "kontrol": {
+   "gecti": true
+  },
+  "onkayit_commit": "215e28dad4834aa07f01c1dd37677110b90bb8ea 2026-11-26T07:15:15+00:00",
+  "KOD8_SHA": "af74ac0e74ba71b20699b56b89a4ea7fddc1bc7e8dcf2905e0e9cac19d93595f",
+  "ESIK8_SHA": "02b79be4d17ee09dba328bf36878c34a319414ac1f64093c17a3b4c3a1ae6e87",
+  "ADAY8_SHA": "89a48a0385bffe8e8b96fc7632e4830ae092cf8a73b669f9f02419f9e4830e97",
+  "SENTETIK8_SHA": "61979e76dd301033aa5c26447cebaf294bea99f6eaf49c678fd4a4347e8ea76d",
+  "SENTETIK8M_SHA": "16eef3e555fa4eb9846b1be11faef41bd86f12fd0ffda7a656abc3179391c724",
+  "V4_KOD_SHA": "6b3e2e4fa74f9cde3b4e99c1b47c8f4b9c31765cc604d478e5699bf2768cafbe",
+  "V3_KOD_SHA": "70fc2fb979c47b2a2bd5fb260e1fb1891e7b34268f49c4a4276f482b66a4eb69",
+  "MI_KOD_SHA": "370d582043567440101ade832d560f4a3eebf7a764eb758f634a8811cfd288b9",
+  "MH_KOD_SHA": "8f7440d199dfcf018f838da77da5cf0eabd89062fdc67cf26a0a5678ed4da200",
+  "MV_KOD_SHA": "1bb586cb825b8b437b97df4ec193a682bc626ecc796e9130d27e4906b68d81dc",
+  "E6_KOD_SHA": "cc8c6c914d7ecaa02682eb9c302e63635e567a1d828f7416a0cbb6bdeb291f1d",
+  "ETIKET_CSV_SHA": "8fb91d4ad284aacbb893fc33b85efe4f993b46fd094569f7cee353546796da82"
+ },
+ "kasa": {
+  "kesik": "2022-12-31",
+  "dosya": {
+   "/tmp/mum_izi/acik/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/acik/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_ABD.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_AVR.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/tam/V_BIST.pkl": "2022-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_ABD.pkl": "2016-12-30",
+   "/tmp/mum_izi/haftalik/p1/V_AVR.pkl": "2016-12-30"
+  }
+ },
+ "sayim": {
+  "R4": {
+   "gunluk|ABD": {
+    "hisse": 4402,
+    "bar": 5964623,
+    "hisse_yil": 23669.1,
+    "olay": 46648,
+    "olay_evren": 34483,
+    "hisse_yil_basina": 1.970836379767841,
+    "evren_hisse_yil_basina": 1.4568759836120404
+   },
+   "gunluk|AVR": {
+    "hisse": 571,
+    "bar": 946381,
+    "hisse_yil": 3755.5,
+    "olay": 7950,
+    "olay_evren": 6447,
+    "hisse_yil_basina": 2.116906404503049,
+    "evren_hisse_yil_basina": 1.7166912691611518
+   },
+   "gunluk|BIST": {
+    "hisse": 467,
+    "bar": 658371,
+    "hisse_yil": 2612.6,
+    "olay": 4303,
+    "olay_evren": 2712,
+    "hisse_yil_basina": 1.6470288029089981,
+    "evren_hisse_yil_basina": 1.038053012663073
+   },
+   "haftalik|ABD": {
+    "hisse": 4303,
+    "bar": 2911382,
+    "hisse_yil": 55988.1,
+    "olay": 22691,
+    "olay_evren": 15846,
+    "hisse_yil_basina": 0.40528243974854555,
+    "evren_hisse_yil_basina": 0.28302435063485315
+   },
+   "haftalik|AVR": {
+    "hisse": 570,
+    "bar": 517773,
+    "hisse_yil": 9957.2,
+    "olay": 4362,
+    "olay_evren": 3280,
+    "hisse_yil_basina": 0.4380761453378218,
+    "evren_hisse_yil_basina": 0.32941076494911864
+   },
+   "haftalik|BIST": {
+    "hisse": 449,
+    "bar": 150197,
+    "hisse_yil": 2888.4,
+    "olay": 973,
+    "olay_evren": 571,
+    "hisse_yil_basina": 0.3368642516162107,
+    "evren_hisse_yil_basina": 0.1976870376904998
+   }
+  },
+  "R4+M": {
+   "gunluk|ABD": {
+    "hisse": 4402,
+    "bar": 5964623,
+    "hisse_yil": 23669.1,
+    "olay": 5288,
+    "olay_evren": 3326,
+    "hisse_yil_basina": 0.2234132819459,
+    "evren_hisse_yil_basina": 0.1405205324795884
+   },
+   "gunluk|AVR": {
+    "hisse": 571,
+    "bar": 946381,
+    "hisse_yil": 3755.5,
+    "olay": 611,
+    "olay_evren": 449,
+    "hisse_yil_basina": 0.16269557398130352,
+    "evren_hisse_yil_basina": 0.1195586132857697
+   },
+   "gunluk|BIST": {
+    "hisse": 467,
+    "bar": 658371,
+    "hisse_yil": 2612.6,
+    "olay": 1197,
+    "olay_evren": 837,
+    "hisse_yil_basina": 0.4581672035979713,
+    "evren_hisse_yil_basina": 0.32037255589933333
+   },
+   "haftalik|ABD": {
+    "hisse": 4303,
+    "bar": 2911382,
+    "hisse_yil": 55988.1,
+    "olay": 1785,
+    "olay_evren": 1013,
+    "hisse_yil_basina": 0.03188176611657282,
+    "evren_hisse_yil_basina": 0.01809312553282256
+   },
+   "haftalik|AVR": {
+    "hisse": 570,
+    "bar": 517773,
+    "hisse_yil": 9957.2,
+    "olay": 221,
+    "olay_evren": 151,
+    "hisse_yil_basina": 0.022195054589559518,
+    "evren_hisse_yil_basina": 0.015164946801011254
+   },
+   "haftalik|BIST": {
+    "hisse": 449,
+    "bar": 150197,
+    "hisse_yil": 2888.4,
+    "olay": 376,
+    "olay_evren": 235,
+    "hisse_yil_basina": 0.13017570257728184,
+    "evren_hisse_yil_basina": 0.08135981411080115
+   }
+  }
+ },
+ "ham_sha": "d0d919f16a1a9e7af04a57650a0627a80a7fe6592c2f79d7ff1eb72837583698",
+ "n_secim": 24,
+ "secim_sayim": {
+  "zaman": {
+   "haftalik": 12,
+   "gunluk": 12
+  },
+  "pazar": {
+   "ABD": 17,
+   "AVR": 5,
+   "BIST": 2
+  }
+ },
+ "uygun_olay": {
+  "gunluk": 4508,
+  "haftalik": 1368
+ },
+ "onay_durum": "HAZIR",
+ "sure_sn": 640
+}

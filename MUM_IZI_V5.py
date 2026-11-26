@@ -711,8 +711,8 @@ def v5_onay(cikti: Optional[str] = None) -> str:
               "I": f"içeriden: kapanışların %{100 * sb['d_I_pay']:.0f}'i üst bandın içinde (>= %60)",
               "B": f"küçük mum: en büyük gövde {sb['d_B_max']:.2f} (<= 0,90), medyan {sb['d_B_med']:.2f} (<= 0,30) (bant yarı genişliği = 1)",
               "F": f"fitil: üst fitili uzun mum payı %{100 * sb['d_F_pay']:.0f} (>= %50)", "S": f"eski benzerlik puanı {sb['d_S']:.2f} (>= 0,59)",
-              "M": f"mum yapısı (bütün mumlar): gövde {sb['d_m1']:.2f} (<= 0,45) · alt fitil {sb['d_m2']:.2f} (<= 0,25) · üst fitil {sb['d_m3']:.2f} (>= 0,33) · "
-                   f"üst / alt {sb['d_m4']:.1f} (>= 1,5)"}
+              "M": f"mum yapısı (bütün mumlar): gövde {sb['d_m1']:.2f} (<= 0,45) · alt fitil {sb['d_m2']:.2f} (<= 0,25)\n"
+                   f"      üst fitil {sb['d_m3']:.2f} (>= 0,33) · üst / alt {sb['d_m4']:.1f} (>= 1,5)"}
         fig.text(0.08, 0.33, _v5_virgul("\n".join(nt[p] for p in v5_liste(kural) if p in nt)), fontsize=10.5, va="top")
         fig.text(0.08, 0.95, "Mavi = gel-git kısmı, yeşil ok = SMA'yı aşan mum, turuncu = tırmanış kısmı", fontsize=12, weight="bold")
         pdf.savefig(fig); plt.close(fig)
