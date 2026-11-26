@@ -442,6 +442,218 @@ def test_esik_sabit():
     assert len(YO.YO_OZ) == 21 and len(YO.YO_PIYASA_OZ) == 16 and set(YO.YO_KONTROL) == {f"K{i}" for i in range(1, 15)}
 
 
+# ================================================================ EK 2 (YO2): haftalık geriye doğru doğrulama
+def _wdf(O, H, L, C, bas=None, bosluk=None, son="2010-12-31"):
+    m = len(C); ix = pd.date_range(end=son, periods=m, freq="W-FRI")
+    d = pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": 1.0}, index=ix)
+    d["bas"] = ix - pd.Timedelta(days=4) if bas is None else bas; d["n_gun"] = 5
+    d["bosluk"] = np.zeros(m, bool) if bosluk is None else bosluk
+    return d
+
+
+@t
+def test_yo2_sonuc_elle():
+    O = np.array([10, 10, 10, 10, 10, 10, 10.]); H = np.array([11, 11, 11, 10.2, 10.6, 10.3, 10.3]); L = np.array([9.5, 9, 9.4, 9.6, 9.7, 9.6, 9.6])
+    C = np.array([10, 10, 10, 10, 10.4, 10.2, 10.])
+    R = YO.yo2_sonuc_dizi(_dep(O, H, L, C), np.array([0]), np.array([2]))
+    assert R["E0"][0] == 10 and R["Y5"][0] == 1.0 and abs(R["R3"][0] - (10.2 / 10 - 1)) < 1e-12 and R["KOTU20"][0] == 0.0
+    L2 = L.copy(); L2[3] = 8.81                       # stop = 9 x 0,98 = 8,82: ilk hafta stop, hedef 2. hafta -> 0
+    assert YO.yo2_sonuc_dizi(_dep(O, H, L2, C), np.array([0]), np.array([2]))["Y5"][0] == 0.0
+    H3 = H.copy(); H3[3] = 10.6                       # aynı hafta hedef + stop -> stop önce -> 0
+    assert YO.yo2_sonuc_dizi(_dep(O, H3, L2, C), np.array([0]), np.array([2]))["Y5"][0] == 0.0
+    L4 = L.copy(); L4[4] = 8.83                       # stop seviyesinin hemen üstü: stop yok -> 1
+    assert YO.yo2_sonuc_dizi(_dep(O, H, L4, C), np.array([0]), np.array([2]))["Y5"][0] == 1.0
+    C5 = C.copy(); C5[5] = 7.9                        # R3 = -%21 -> KOTU20
+    r5 = YO.yo2_sonuc_dizi(_dep(O, H, L, C5), np.array([0]), np.array([2]))
+    assert r5["KOTU20"][0] == 1.0 and abs(r5["R3"][0] + 0.21) < 1e-12
+    try:
+        YO.yo2_sonuc_dizi(_dep(O, H, L, C), np.array([0]), np.array([4])); raise AssertionError("pencere aşımı yakalanmadı")
+    except YO.YOHata:
+        pass
+
+
+@t
+def test_yo2_ozellik_elle():
+    r = np.random.default_rng(5); m = 40
+    C = 10 + np.cumsum(r.normal(0, 0.3, m)); H = C + r.uniform(0.1, 1, m); L = C - r.uniform(0.1, 1, m)
+    F = YO.yo2_ozellik(H, L, C)
+    for i in (14, 20, 39):
+        assert abs(F["DUSUS_W"][i] - (L[i - 2:i + 1].min() / H[i - 14:i - 2].max() - 1)) < 1e-12
+        rr = (H - L) / C; ref = rr[max(0, i - 26):i - 2]
+        assert abs(F["BOY_W"][i] - np.median(rr[i - 2:i + 1]) / np.median(ref)) < 1e-12
+    assert np.isnan(F["DUSUS_W"][13]) and np.isnan(F["BOY_W"][13])
+    assert F["U40"][39] == float(C[39] > C[:40].mean()) and np.isnan(F["U40"][38])
+
+
+@t
+def test_yo2_gelecege_bakma_yok():
+    r = np.random.default_rng(7); m = 80
+    C = 10 * np.exp(np.cumsum(r.normal(0, 0.05, m))); H = C * 1.05; L = C * 0.95
+    F = YO.yo2_ozellik(H, L, C); k = 50; H2, L2, C2 = H.copy(), L.copy(), C.copy()
+    H2[k + 1:] *= 3; L2[k + 1:] *= 0.2; C2[k + 1:] *= 1.7
+    F2 = YO.yo2_ozellik(H2, L2, C2)
+    for a in F:
+        assert np.allclose(F[a][:k + 1], F2[a][:k + 1], equal_nan=True)
+
+
+@t
+def test_yo2_ornek_maske():
+    m = 30; d = _wdf(np.ones(m) * 10, np.ones(m) * 11, np.ones(m) * 9, np.ones(m) * 10)
+    ev = np.ones(m, bool); i = YO.yo2_ornek_maske(d, ev)
+    assert i.min() == 2 and i.max() == m - 4
+    b = np.zeros(m, bool); b[10] = True; d2 = d.copy(); d2["bosluk"] = b
+    i2 = YO.yo2_ornek_maske(d2, ev)
+    assert not set(range(7, 12)) & set(i2.tolist()) and {6, 12} <= set(i2.tolist())     # bosluk[10] -> i = 7..11 atılır
+    ev2 = ev.copy(); ev2[15] = False
+    assert 15 not in set(YO.yo2_ornek_maske(d, ev2).tolist())
+    d3 = _wdf(np.ones(m) * 10, np.ones(m) * 11, np.ones(m) * 9, np.ones(m) * 10, son="2000-03-31")
+    assert all(pd.DatetimeIndex(d3.bas)[j + 1] >= pd.Timestamp("2000-01-01") for j in YO.yo2_ornek_maske(d3, ev))
+
+
+@t
+def test_yo2_kesim_yalniz_2016_22():
+    r = np.random.default_rng(3); n = 4000
+    gir = pd.to_datetime(r.choice(pd.date_range("2000-01-07", "2022-12-02", freq="W-MON"), n))
+    X = pd.DataFrame({"giris": gir, "DUSUS_W": r.normal(-0.1, 0.1, n), "BOY_W": r.lognormal(0, 0.3, n)}); X["donem"] = YO.yo2_donem(X.giris)
+    G = pd.DataFrame({"giris": pd.date_range("2000-01-03", "2022-12-05", freq="W-MON")}); G["G40"] = r.uniform(0, 1, len(G)); G["donem"] = YO.yo2_donem(G.giris)
+    K = YO.yo2_kesim({"ABD": X}, {"ABD": G})
+    m = X.donem.isin(YO.YO2_KESIM_DONEM)
+    assert abs(K["ABD"]["DUSUS_W"] - np.quantile(X.DUSUS_W[m], 0.10)) < 1e-12 and abs(K["ABD"]["G40"] - np.quantile(G.G40[G.donem.isin(YO.YO2_KESIM_DONEM)], 0.10)) < 1e-12
+    X2 = X.copy(); X2.loc[~m, "DUSUS_W"] = -5.0; X2.loc[~m, "BOY_W"] = 0.0           # 2000-2015 değişir -> kesim aynı
+    G2 = G.copy(); G2.loc[~G.donem.isin(YO.YO2_KESIM_DONEM), "G40"] = 0.0
+    assert YO.HV.hv_json_sha(YO.yo2_kesim({"ABD": X2}, {"ABD": G2})) == YO.HV.hv_json_sha(K)
+    for kol in ("R3", "Y5", "P3"):
+        try:
+            YO.yo2_kesim({"ABD": X.assign(**{kol: 0.0})}, {"ABD": G}); raise AssertionError("sonuç sütunlu kesim yakalanmadı")
+        except YO.YOHata:
+            pass
+
+
+@t
+def test_yo2_sonuc_kapisi():
+    X = pd.DataFrame({"donem": ["a0007", "d1619"], "j": [0, 0], "i": [2, 3]}); G = pd.DataFrame({"donem": ["d1619"]})
+    for asama, x in (("kesim", X), ("sayim", X), ("adim0", X), ("adim1", X), ("adim1", X[X.donem == "d1619"])):
+        try:
+            YO.yo2_sonuc("ABD", x, G, asama, depo={}); raise AssertionError(f"izin dışı sonuç yakalanmadı: {asama}")
+        except YO.YOHata as ex:
+            assert "SIRA" in str(ex)
+
+
+@t
+def test_yo2_bootstrap_tohum():
+    ce = np.array(["2001-Q1", "2001-Q2", "2001-Q1", "2002-Q4"]); k, W, u = YO.yo2_W(ce, 50); k2, W2, _ = YO.yo2_W(ce, 50)
+    assert np.array_equal(W, W2) and list(u) == ["2001-Q1", "2001-Q2", "2002-Q4"] and np.allclose(W.sum(1), 3)
+    assert np.array_equal(W, np.random.default_rng(2000).multinomial(3, np.full(3, 1 / 3), size=50).astype(float))
+    assert list(YO.yo2_ceyrek(pd.to_datetime(["2003-02-03", "2003-12-29", "2008-07-07"]))) == ["2003-Q1", "2003-Q4", "2008-Q3"]
+    # çeyrek kümeli ortalama: tek kümede tüm uçlar -> aralık nokta değerde
+    x = np.array([-0.5, -0.4, 0.1, 0.2, 0.3]); S = pd.DataFrame({"R3": [0.1, 0.2, 0, 0, 0.], "TF": [0.05, 0.15, 0, 0, 0], "Y5": [1, 0, 0, 0, 0.],
+                                                                "p_h": [0.5] * 5, "KOTU20": [0.] * 5, "q_h": [0.1] * 5})
+    o = YO.yo2_olc_hisse(x, -0.3, S, np.array(["2001-Q1", "2001-Q1", "2001-Q2", "2001-Q3", "2001-Q4"]), 200)
+    assert o["n"] == 2 and abs(o["TOPLAM_FARK"] - 0.10) < 1e-12 and abs(o["KAT"] - 1.0) < 1e-12 and o["ceyrek"] == 1
+    assert abs(o["TOPLAM_FARK_alt"] - 0.10) < 1e-12 and abs(o["TOPLAM_FARK_ust"] - 0.10) < 1e-12
+
+
+@t
+def test_yo2_obek_ve_piyasa():
+    assert YO.yo2_obek(np.array([100, 101, 105, 114, 115, 140])) == [(100, 105), (114, 115), (140, 140)]   # 105 -> 114 fark 9: yeni öbek
+    assert YO.yo2_obek(np.array([100, 108])) == [(100, 108)]                                             # fark 8 (arada 7 hafta): aynı öbek
+    g = np.array([0.05, 0.5, 0.6, 0.04, 0.7, 0.8]); v = np.array([0.06, 0.01, -0.06, 0.02, 0.0, 0.01]); h = np.array([10, 11, 12, 30, 31, 32])
+    o = YO.yo2_olc_piyasa(g, 0.1, v, h, np.array(["2001-Q1"] * 3 + ["2001-Q3"] * 3), 100)
+    assert o["n_dusuk"] == 2 and o["obek"] == 2 and abs(o["FARK"] - (0.04 - (-0.04 / 4))) < 1e-12
+    assert abs(o["P5_dusuk"] - 0.5) < 1e-12 and abs(o["M5_oteki"] - 0.25) < 1e-12
+
+
+@t
+def test_yo2_2023_assert():
+    try:
+        YO.yo2_donem(pd.to_datetime(["2022-12-30", "2023-01-02"])); raise AssertionError("2023 girişi yakalanmadı")
+    except YO.YOHata:
+        pass
+    m = 60; d = _wdf(np.ones(m) * 10, np.ones(m) * 11, np.ones(m) * 9, np.ones(m) * 10, son="2023-01-13")
+    with tempfile.TemporaryDirectory() as td:
+        try:
+            YO.yo2_hazirla_pazar("ABD", td, W={"A": d}, evren={"A": np.ones(m, bool)}); raise AssertionError("kesik aşımı yakalanmadı")
+        except YO.YOHata as ex:
+            assert "KESİK" in str(ex)
+
+
+@t
+def test_yo2_eski_ciktilar_degismedi():
+    import hashlib
+    import subprocess
+    kok = os.path.dirname(os.path.abspath(YO.__file__))
+    for ad in YO.YO_DOSYA.values():
+        yol = os.path.join("arastirma_cikti", "yukselis_oncesi", ad)
+        eski = subprocess.run(["git", "show", f"{YO.YO2_ESKI_SHA_COMMIT}:{yol}"], cwd=kok, capture_output=True).stdout
+        assert eski and hashlib.sha256(eski).hexdigest() == hashlib.sha256(open(os.path.join(kok, yol), "rb").read()).hexdigest(), ad
+    for ad in YO.YO2_DOSYA:
+        assert os.path.basename(YO._yo2_yol(ad)) not in set(YO.YO_DOSYA.values())
+
+
+@t
+def test_yo2_endeks():
+    with tempfile.TemporaryDirectory() as td:
+        assert YO.yo2_endeks_durum(td)["durum"] == "YOK"
+        t_ = pd.bdate_range("2001-01-01", "2005-12-30"); r = np.random.default_rng(2); c = 100 * np.exp(np.cumsum(r.normal(0, 0.01, len(t_)))); o = c * 0.999
+        pd.DataFrame({"date": t_.strftime("%Y-%m-%d"), "adjOpen": o, "adjClose": c}).to_csv(os.path.join(td, "SPY.csv"), index=False)
+        assert YO.yo2_endeks_durum(td)["durum"] == "VAR"
+        hn = YO.yo2_hno(t_); w = int(hn[100]); G = pd.DataFrame({"hno": [w]})
+        a = np.flatnonzero(hn == w + 1)[0]; b = np.flatnonzero(hn == w + 3)[-1]
+        assert abs(YO.yo2_endeks_R3(G, td)[0] - (c[b] / o[a] - 1)) < 1e-12
+
+
+@t
+def test_yo2_uctan_uca_sentetik():
+    import MUM_IZI_V2 as MV
+    r = np.random.default_rng(11); ix = pd.bdate_range("2000-01-03", "2022-12-30"); n = len(ix); W = {}
+    for k in range(40):
+        C = 20 * np.exp(np.cumsum(r.normal(0, 0.02, n))); O = C * np.exp(r.normal(0, 0.005, n))
+        H = np.maximum(O, C) * (1 + np.abs(r.normal(0, 0.01, n))) + 1e-6; L = np.minimum(O, C) * (1 - np.abs(r.normal(0, 0.01, n)))
+        W[f"S{k:02d}"] = pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": 1000.0}, index=ix)
+    WP = MV.mv_haftalik_panel(W); ev = {s: np.ones(len(d), bool) for s, d in WP.items()}
+    with tempfile.TemporaryDirectory() as td:
+        for p in YO.YO2_PAZAR:
+            YO.yo2_hazirla_pazar(p, td, W=WP, evren=ev)
+        S, K = YO.yo2_sayim_kos(td); S2, K2 = YO.yo2_sayim_kos(td)
+        assert YO.HV.hv_json_sha(S) == YO.HV.hv_json_sha(S2) and S["yil"]["ABD"]["2010"]["evren_hisse"] == 40
+        X, G = YO.yo2_yukle("ABD", td)
+        assert X.giris.min() >= pd.Timestamp("2000-01-01") and X.giris.max() <= pd.Timestamp("2022-12-31") and set(X.donem) == set(YO.YO2_DONEM)
+        Sx, Sg = YO.yo2_sonuc("ABD", X, G, "test", td, endeks=False)
+        # P3 bir hafta için elle
+        w = int(G.hno.iloc[300]); m = (X.hno == w).to_numpy()
+        assert abs(Sg.P3.iloc[300] - Sx.R3[m].mean()) < 1e-12
+        # T1 bir hisse-dönem için elle
+        q = (X.sembol == "S03") & (X.donem == "a0815"); assert abs(Sx.T1[q].iloc[0] - Sx.R3[q].mean()) < 1e-12
+        # R3 bir satır için doğrudan haftalık barlardan
+        row = X.iloc[5000]; d = WP[row.sembol]; i = int(row.i)
+        assert abs(Sx.R3.iloc[5000] - (d.Close.iloc[i + 3] / d.Open.iloc[i + 1] - 1)) < 1e-12 and row.giris == d.bas.iloc[i + 1]
+        XS = {"ABD": X[X.donem.isin(YO.YO2_SINAMA_DONEM)].reset_index(drop=True)}; GS = {"ABD": G[G.donem.isin(YO.YO2_SINAMA_DONEM)].reset_index(drop=True)}
+        SS, SG = YO.yo2_sonuc("ABD", XS["ABD"], GS["ABD"], "adim1", td, endeks=False)
+        A = YO.yo2_adim_hesap(XS, GS, {"ABD": SS}, {"ABD": SG}, K, YO.YO2_SINAMA_DONEM, B=200)
+        h1 = YO.yo2_hukum_hisse("H1", A["ABD"]["H1"]["tum"], {d: A["ABD"]["H1"][d] for d in YO.YO2_SINAMA_DONEM}, True)
+        assert h1 in ("ÖLÇÜLEMEDİ", "TERS", "GÖSTERİLEMEDİ", "YAŞAYAN EVRENDE DOĞRULANDI (batanlar yok)")
+        assert YO.yo2_hukum_piyasa(A["ABD"]["H3"]["P3"]["tum"], False, True) == "ENDEKS YOK: ÖLÇÜLEMEDİ"
+        assert YO.yo2_hukum_hisse("H2", {"n": 10}, {}, False).startswith("ÖLÇEK UYMADI | ÖLÇÜLEMEDİ")
+
+
+@t
+def test_yo2_hukum_kurali():
+    alt_p = {"a0007": {"TOPLAM_FARK": 0.01}, "a0815": {"TOPLAM_FARK": 0.002}}
+    tum = {"n": 5000, "ceyrek": 60, "TOPLAM_FARK": 0.005, "TOPLAM_FARK_alt": 0.001, "TOPLAM_FARK_ust": 0.009}
+    assert YO.yo2_hukum_hisse("H1", tum, alt_p, True) == "YAŞAYAN EVRENDE DOĞRULANDI (batanlar yok)"
+    assert YO.yo2_hukum_hisse("H1", tum, {**alt_p, "a0815": {"TOPLAM_FARK": -0.001}}, True) == "GÖSTERİLEMEDİ"
+    assert YO.yo2_hukum_hisse("H1", {**tum, "TOPLAM_FARK_alt": -0.001}, alt_p, True) == "GÖSTERİLEMEDİ"
+    assert YO.yo2_hukum_hisse("H2", tum, alt_p, True) == "TERS"
+    assert YO.yo2_hukum_hisse("H1", {**tum, "n": 999}, alt_p, True) == "ÖLÇÜLEMEDİ"
+    o = {"n_dusuk": 40, "obek": 4, "FARK": 0.01, "FARK_alt": 0.002, "P5_FARK": 0.05}
+    assert YO.yo2_hukum_piyasa(o, True, True) == "DOĞRULANDI" and YO.yo2_hukum_piyasa({**o, "obek": 3}, True, True) == "ÖLÇÜLEMEDİ"
+    assert YO.yo2_hukum_piyasa({**o, "P5_FARK": -0.01}, True, True) == "GÖSTERİLEMEDİ" and YO.yo2_hukum_piyasa(o, False, True) == "ENDEKS YOK: ÖLÇÜLEMEDİ"
+    E = YO.YO2_ESIK
+    assert E["boot"]["tohum"] == 2000 and E["boot"]["B"] == 10000 and E["kesim"]["duzey"] == 0.10 and E["sonuc"] == {**E["sonuc"], "ufuk": 3, "hedef": 0.05,
+                                                                                                                "stop_carpan": 0.98, "kotu": -0.20}
+    assert set(YO.YO2_KONTROL) == {f"K{i}" for i in range(1, 15)}
+
+
 t(test_uctan_uca_sentetik)
 
 

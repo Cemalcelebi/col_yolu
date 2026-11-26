@@ -14,6 +14,7 @@ Komut:  python YUKSELIS_ONCESI.py hazirla   ABD + AVR özellik panelleri (getiri
         python YUKSELIS_ONCESI.py adim2     kapı + kesim kapısı -> doğrulama (bir kez) -> yo_sonuc.json + yo_ozet.csv
         python YUKSELIS_ONCESI.py rapor     YO_RAPOR.md + YO_OZET.png (sonuç json'undan)
         python YUKSELIS_ONCESI.py sha       kod / eşik sha
+EK 2:   python YUKSELIS_ONCESI.py yo2_hazirla | yo2_sayim | yo2_onkayit | yo2_adim0 | yo2_adim1 | yo2_rapor   (YO2_IS_TANIMI.md; haftalık 2000-2015, bir kez)
 Colab:  exec(open('YUKSELIS_ONCESI.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 Evren bugün işlem gören hisseler (K7: sonuç yukarı yanlı; iki taraf için de).
 """
@@ -1517,6 +1518,772 @@ def yo_sha_simdi(ham: Optional[str] = None) -> Dict[str, str]:
     return {"YO_KOD_SHA": yo_kod_sha(), "YO_ESIK_SHA": yo_esik_sha()}
 
 
+# ================================================================ 11) EK 2 (YO2): GERİYE DOĞRU DOĞRULAMA — üç varsayım, haftalık 2000-2015, tek sınama
+# İş tanımı: arastirma_cikti/yukselis_oncesi/YO2_IS_TANIMI.md (ana model, 26 Kasım 2026). Yukarıdaki (v1) kod ve çıktılar DEĞİŞMEZ; bu bölüm yalnız ekler.
+# Komut: yo2_hazirla -> yo2_sayim -> yo2_onkayit (commit + push) -> yo2_adim0 -> yo2_adim1 (bir kez) -> yo2_rapor.
+YO2_SURUM = "YUKSELIS_ONCESI EK 2 v1.0 (2026-11-26): H1 / H2 / H3, haftalık, kesimler 2016-22, sınama 2000-2015 (bir kez)"
+YO2_YOL = {"ham": os.path.join(YO_YOL["ham"], "yo2"), "endeks": os.path.join(YO_YOL["ham"], "endeks"),
+           "is_tanimi": os.path.join(KOK_YO, "arastirma_cikti", "yukselis_oncesi", "YO2_IS_TANIMI.md")}
+YO2_DOSYA = {"onkayit": "YO2_ON_KAYIT.md", "sonuc": "yo2_sonuc.json", "ozet": "yo2_ozet.csv", "rapor": "YO2_RAPOR.md"}
+YO2_DONEM = {"a0007": ("2000-01-01", "2007-12-31"), "a0815": ("2008-01-01", "2015-12-31"), "d1619": ("2016-01-01", "2019-12-31"),
+             "d2022": ("2020-01-01", "2022-12-31")}
+YO2_KESIM_DONEM = ("d1619", "d2022")          # kesimler YALNIZ buradan
+YO2_SINAMA_DONEM = ("a0007", "a0815")         # ADIM 1 (2000-2015)
+YO2_PAZAR = ("ABD", "AVR")                    # ABD ana; AVR yön (bilgi)
+YO2_ESKI_SHA_COMMIT = "fab6593"               # eski YO çıktılarının denetlendiği commit (test: bu commit'teki baytlarla aynı kalır)
+
+YO2_ESIK: Dict[str, Any] = {
+    "surum": "YO2-1.0",
+    "veri": "MUM_IZI.mi_veri(pazar, MUM_IZI_HAFTALIK.MH_YOL['tam']) (OS.os_veri geçerli bar: O/H/L/C sonlu > 0, H > L, V > 0) -> MUM_IZI_V2.mv_haftalik_panel "
+            "(ISO hafta: O = ilk geçerli gün açılışı, H / L = haftanın en yüksek / en düşüğü, C = son gün kapanışı; yarım hafta atılır; 'bosluk' = önceki "
+            "haftayla arada boş ISO haftası); ABD (ana), AVR (yön, bilgi); veri <= 2022-12-31 (assert + KASA kapısı); HACİM KULLANILMAZ",
+    "evren": "TEZGÂH 2 P2 havuzu, haftalık (MUM_IZI_UC.uc_evren_e2 kuralı aynen): bar tarihi t (hafta sonu) için ETIKET2.e6_p2_maske = t'den sonraki ilk "
+             "geçerli günlük bar <= 10 satır içinde ve o gün P2'de, t geçersiz gün değil; P2 klasörü t <= 2015-12-31 ise MH_YOL['p1'], sonra MH_YOL['p2']",
+    "donem": YO2_DONEM, "kesim_donem": list(YO2_KESIM_DONEM), "sinama_donem": list(YO2_SINAMA_DONEM),
+    "ornek": "hisse-hafta t = hissenin haftalık bar indeksi i (HER HAFTA; 3 haftalık sonuç pencereleri örtüşür, çıkarım çeyrek kümeli): i >= 2, i + 3 <= son "
+             "bar; i - 1 .. i + 3 barlarında 'bosluk' yok (pencere ve sonuç ardışık ISO haftaları); t barında evren (P2) bayrağı; giriş = i + 1 haftasının "
+             "ilk günü (bas) 2000-01-01 .. 2022-12-31; i + 3 barı <= 2022-12-31; dönem = giriş tarihine göre",
+    "sonuc": {"ufuk": 3, "hedef": 0.05, "stop_carpan": 0.98, "kotu": -0.20,
+              "tanim": "E0 = i + 1 haftasının açılışı; R3 = i + 3 haftasının kapanışı / E0 - 1; Y5 = i + 1 .. i + 3 haftalarında ilk High >= E0 x 1,05 "
+                       "haftası, ilk Low <= pencere dibi (min Low i - 2 .. i) x 0,98 haftasından ÖNCE (aynı hafta = stop önce, kötümser; E0 <= stop ise ilk "
+                       "hafta stop); KOTU20 = R3 < -0,20"},
+    "ozellik": {"DUSUS_W": "min Low_{i-2..i} / maks High_{i-14..i-3} - 1 (pencereden önceki 12 haftanın en yükseğinden pencere dibine; i >= 14)",
+                "BOY_W": "medyan((H - L) / C)_{i-2..i} / medyan((H - L) / C)_{i-26..i-3} (önceki 24 hafta; en az 12 hafta: i >= 14)",
+                "G40": "piyasa haftası w (ISO hafta): w'de barı ve evren bayrağı olan, SMA40 (kendi son 40 haftalık kapanışı, i dahil) tanımlı hisselerde C > "
+                       "SMA40 payı; >= 30 hisse"},
+    "kesim": {"duzey": 0.10, "tanim": "DUSUS_W <= q10, BOY_W <= q10 (ABD 2016-22 hisse-hafta dağılımı; özelliği sonlu satırlar), G40 <= q10 (ABD 2016-22 "
+                                      "piyasa haftası dağılımı); np.quantile doğrusal; eşitler dahil. AVR (bilgi) aynı düzeyin AVR 2016-22 dağılımındaki değeri"},
+    "olcu": {"T1": "aynı hissenin aynı dönemdeki BÜTÜN örnek haftalarının R3 ortalaması (dönem = a0007 / a0815 / d1619 / d2022)",
+             "TOPLAM_FARK": "R3 - T1, uç satırların ortalaması (2000-2015 satırı = iki alt dönemin birleşimi, T1 her satırın kendi alt döneminden)",
+             "KAT": "sum Y5 (uç) / sum p_h (uç), p_h = aynı hissenin aynı dönemdeki bütün örnek haftalarının Y5 payı (aynı hissenin rastgele haftası)",
+             "KOTU20": "uç satırlarda R3 < -0,20 payı; taban = aynı kuralla aynı hissenin dönem payı (q_h) ortalaması uç satırlarda",
+             "piyasa": "P3(w) = w haftası örnek satırlarının (bütün evren; özellikten bağımsız) R3 eşit ağırlıklı ortalaması (>= 5 hisse); ENDEKS(w) = SPY "
+                       "temettü / bölünme düzeltmeli: adjClose(w + 3 haftasının son günü) / adjOpen(w + 1 haftasının ilk günü) - 1 (w + 1 .. w + 3 ISO "
+                       "haftaları veride); düşük genişlik = G40 <= kesim; öteki = aynı dönemdeki öteki haftalar; P(>= +%5), P(<= -%5)",
+             "obek": "düşük genişlik haftaları ISO hafta sırasıyla; ardışık iki düşük hafta arasında >= 8 hafta (sıra farkı >= 9) varsa yeni öbek (AYRI DÖNEM)"},
+    "boot": {"B": 10000, "tohum": 2000, "kume": "giriş çeyreği (YYYY-Qn)",
+             "tanim": "çeyrek kümeli bootstrap: çeyrekler yerine koyarak (multinomial ağırlık), her satırda np.random.default_rng(2000) yeniden (tekrarlanabilir); "
+                      "küme kümesi = satırın popülasyonundaki (hisse: özelliği sonlu satırlar; piyasa: dönemdeki bütün haftalar) çeyrekler; %95 = 2,5 / 97,5 "
+                      "yüzdelik; T1 / p_h / q_h sabit"},
+    "hukum": {"n_min": 1000, "ceyrek_min": 12, "piyasa_n_min": 30, "obek_min": 4,
+              "H1": "DOĞRULANDI <=> 2000-2015 TOPLAM FARK > 0 VE alt > 0 VE a0007 ve a0815 TOPLAM FARK > 0 (etiket 'YAŞAYAN EVRENDE DOĞRULANDI (batanlar yok)')",
+              "H2": "DOĞRULANDI <=> 2000-2015 TOPLAM FARK < 0 VE üst < 0 VE a0007 ve a0815 TOPLAM FARK < 0",
+              "H3": "DOĞRULANDI <=> ENDEKS 3 haftalık getiri farkı (düşük - öteki) > 0 VE alt > 0 VE P(>= +%5) farkı > 0 VE ayrı dönem >= 4",
+              "sira": "ÖLÇÜLEMEDİ (hisse: n < 1000 ya da çeyrek < 12; piyasa: düşük hafta < 30 ya da ayrı dönem < 4 ya da ENDEKS YOK) > DOĞRULANDI > TERS (nokta "
+                      "işareti beklenenin tersi) > GÖSTERİLEMEDİ",
+              "olcek": "ADIM 0 (2016-19 ve 2020-22, ABD): H1 TOPLAM FARK > 0, H2 TOPLAM FARK < 0, H3 (ENDEKS; yoksa P3) getiri farkı > 0 ve P(>= +%5) farkı > 0, "
+                       "İKİ dönemde; biri tersse ADIM 1 etiketi 'ÖLÇEK UYMADI | <hüküm>'"},
+    "kesik": "her pazar veri en büyük tarihi <= 2022-12-31 (HV.hv_kesik_kapi) + KASA.kasa_kapisi(tam, p1, p2 dosyaları, '2022-12-31'); 2023+ giriş assert",
+    "sira": "kod + sentetik test -> getirisiz sayım + kesimler -> ön kayıt commit + push -> ik_kontrol_kapisi -> ADIM 0 (2016-22) -> ADIM 1 (2000-2015, bir "
+            "kez) -> rapor",
+}
+
+YO2_KONTROL: Dict[str, Tuple[str, str]] = {
+    "K1": ("EVET", "taban aynı hissenin aynı dönemdeki bütün örnek haftaları (TOPLAM FARK = R3 - T1; KAT = Y5 / aynı hissenin Y5 payı; KOTU20 aynı); stop pencere "
+                   "dibine göre (uç ve taban satırlarında aynı geometri); H3 öteki haftalar aynı dönem; sınanan şey önceden sabit üç varsayım (eş portföy yok: "
+                   "ölçü hissenin kendine göre)"),
+    "K2": ("EVET", "özellikler i barına kadarki barlardan (test: i + 1 ve sonrası bozulunca aynı); G40 w haftasına kadar; giriş i + 1 açılışı; R3 / Y5 / P3 / "
+                   "ENDEKS ayrı fonksiyonda, aşama izni assert (kesim aşaması sonuç okuyamaz; ADIM 0 yalnız d1619 / d2022, ADIM 1 yalnız a0007 / a0815); "
+                   "kesimler yalnız 2016-22 (assert); 2023+ giriş assert + KASA"),
+    "K3": ("EVET", "MI.mi_veri geçerli bar (H > L, V > 0, O/H/L/C sonlu > 0); haftalık bar yalnız geçerli günlerden; pencere + sonuç haftalarında boşluk (eksik ISO "
+                   "haftası) yok; evren P2 (likidite / fiyat alt sınırı, bölünme şüphesi dışı); geçersiz gün sinyal değil"),
+    "K4": ("EVET", "her hafta örnek (3 haftalık sonuçlar örtüşür; bağımsız sayılmaz): çıkarım çeyrek kümeli bootstrap; n, farklı çeyrek, en kalabalık 3 çeyrek "
+                   "payı ve H3 için ayrı dönem (öbek) sayısı ayrı yazılır; medyan bilgi"),
+    "K5": ("EVET", "giriş = sinyal haftasından sonraki haftanın ilk geçerli gününün açılışı (t kapanışı değil); ENDEKS de w + 1 ilk gün adjOpen"),
+    "K6": ("EVET", "OS / MI bölünme düzeltmeli kopya (tam / p1 MUM_IZI_HAFTALIK hazırlığı); getiriler oransal, yerel para; pazar içi; ENDEKS adjOpen / adjClose "
+                   "aynı kip (temettü + bölünme düzeltmeli)"),
+    "K7": ("EVET", "evren bugün yaşayan hisseler: 2000-2015'te batanlar veride YOK -> H1 ve P3 (evren ortalaması) YUKARI yanlı; H3 hükmü yalnız ENDEKS ile; H1 "
+                   "DOĞRULANDI çıkarsa etiket 'YAŞAYAN EVRENDE DOĞRULANDI (batanlar yok)'; KOTU20 payı yazılır; batan şirket verisi 2000-2015 için yerelde yok"),
+    "K8": ("EVET", "hisse satırı n >= 1.000 ve çeyrek >= 12, piyasa satırı düşük hafta >= 30 ve ayrı dönem >= 4 değilse ÖLÇÜLEMEDİ; iki alt dönem (2000-07, "
+                   "2008-15) işaret şartı H1 / H2 hükmünde; üç sabit varsayım, BH gerekmez (her biri kendi hükmü; ek satır yok)"),
+    "K9": ("EVET", "YO2_ON_KAYIT.md: YO_KOD_SHA, YO2_ESIK_SHA, panel sha, SAYIM_SHA, KESIM_SHA, ENDEKS durumu + getirisiz sayım + kesimler + yorum noktaları; ADIM 0 / "
+                   "ADIM 1 ön kayıt commit + push'tan sonra (kapı: kontrol + mühürler + commit + temiz ağaç + KASA); ikinci ADIM 1 koşusu durur"),
+    "K10": ("EVET", "panel şeması ve satır sayıları sayım sha'sıyla; DUSUS_W / BOY_W / G40 / R3 / Y5 elle hesaplanmış sentetik örneklerle; haftalık panel MV / MH "
+                    "fonksiyonlarıyla (değiştirilmedi); ENDEKS dosyası şema denetimi (date, adjOpen, adjClose), yoksa ENDEKS YOK"),
+    "K11": ("EVET", "rapordan önce >= 2 satır (H1 ve H3 / H2) panel + ham depodan bağımsız kısa kodla yeniden üretilir; rapor sayıları yo2_sonuc.json'dan"),
+    "K12": ("EVET", "hüküm yalnız önceden yazılmış kuralla (DOĞRULANDI / GÖSTERİLEMEDİ / TERS / ÖLÇÜLEMEDİ / ÖLÇEK UYMADI); DOĞRULANDI = 'birleşik iz bileşeni "
+                    "adayı', kasa açılmaz; sayı ile yorum ayrı cümlede; hayatta kalma uyarısı raporda"),
+    "K13": ("EVET", "çakışma kapısı (_cakisma_kontrol_yo) korundu; yalnız YUKSELIS_ONCESI.py'ye ek + kendi testleri + kendi çıktı yolları commit; mevcut modüller / "
+                    "defter dosyaları değişmez; sızıntı taraması MI._mi_yaz; ENDEKS isteğinde kullanıcı bilgisi yok; kod değişirse çalışma zamanını yeniden başlat"),
+    "K14": ("UYGULANMAZ", "öneri / gerçek para işi değil; karar vermez, kasa açılmaz"),
+}
+
+YO2_YORUM = [
+    "Birim hisse-hafta t = hissenin kendi haftalık bar indeksi i; örnek HER HAFTA (v1'deki 'her 5 günde bir / 15 gün ufuk' oranının haftalık karşılığı 'her hafta / "
+    "3 hafta ufuk'; sonuçlar 3 kat örtüşür). Pencere = i - 2 .. i (3 hafta, t dahil); i - 1 .. i + 3 arasında eksik ISO haftası olan satır atılır.",
+    "Hedef stopu GİRİŞE değil pencere dibine göre: stop = min Low_{i-2..i} x 0,98 (iş tanımı). Aynı haftada hedef ve stop: STOP ÖNCE (kötümser). E0 stopun "
+    "altındaysa ilk hafta stop sayılır (Y5 = 0).",
+    "T1 ve 'aynı hissenin rastgele haftaları' (p_h, q_h) dönem başına: a0007 = 2000-07, a0815 = 2008-15, d1619, d2022. 2000-2015 satırı iki alt dönemin "
+    "birleşimidir; her satırın T1'i kendi alt döneminden (8 yıllık piyasa düzeyi farkı T1'e karışmasın). T1 / p_h hissenin o dönemdeki BÜTÜN örnek haftalarından "
+    "(özelliği eksik olanlar dahil); popülasyon (uç payı ve bootstrap kümeleri) özelliği sonlu satırlar.",
+    "DUSUS_W ve BOY_W ilk 14 haftada tanımsız; haftalık veri 2000-01-03'te başladığı için 2000'in ilk ~3,5 ayı H1 / H2'de, ilk ~10 ayı (SMA40) H3'te eksik "
+    "(sayımda). P2 havuzunun kendi ısınması (günlük p1 verisi 2000'de başlar) 2000 başında evreni daraltır (yıl sayımında).",
+    "Kesimler YALNIZ ABD 2016-22 hisse-hafta (H1, H2) ve piyasa haftası (H3) dağılımından; 2000-2015 özellik dağılımı kesime girmez. AVR (bilgi) aynı %10 düzeyinin "
+    "AVR 2016-22 dağılımındaki değeriyle (ön kayıtta yazılı). AVR hükme girmez (ABD ana; AVR yönü bilgi).",
+    "G40 kesiti: w haftasında barı olan, bar tarihinde evren bayrağı taşıyan ve SMA40'ı tanımlı hisseler (>= 30). P3(w) = w haftasındaki ÖRNEK satırlarının "
+    "(evren + boşluksuz + sonuç penceresi veride) R3 ortalaması (>= 5). Piyasa haftası w'nin giriş tarihi = w'nin pazartesisi + 7 gün (dönem ve çeyrek bundan).",
+    "AYRI DÖNEM (öbek): düşük genişlik haftaları ISO hafta sıra numarasıyla; ardışık iki düşük hafta arasında en az 8 hafta varsa (sıra farkı >= 9) yeni öbek. "
+    "Öbek tarihleri ilk ve son haftanın yıl-ayı. H1 / H2 için ayrı dönem = farklı çeyrek sayısı (hükme girmez).",
+    "ENDEKS: yerelde SPY / ^GSPC yok (V_ABD panelleri, /tmp/veri, /tmp/claude-0/tezgah_ref yahoo_kesik.pkl 2015'te başlar, French dosyaları aylık). Tiingo isteği "
+    "(SPY günlük, 1999-2022) 26 Kasım 2026'da 'aylık 500 sembol sınırı aşıldı' yanıtı verdi (yanıt dosyası repo dışında, sha aşağıda). İş tanımının 'indirme "
+    "olmazsa' kuralıyla H3 hükmü 'ENDEKS YOK: ÖLÇÜLEMEDİ'; evren ortalaması P3 ile aynı satır BİLGİ olarak yazılır (hayatta kalma yanlı, hüküm değil). ENDEKS "
+    "durumu ön kayda mühürlüdür; sonradan endeks dosyası konursa ADIM 1 kapısı durur (tek sınama bozulmasın).",
+    "ADIM 0 'ölçek' sınaması ENDEKS yokken H3 için P3 ile yapılır (bilgi). H1 / H2'de ölçek şartı yalnız TOPLAM FARK işareti (iş tanımı: 'aynı yön'); KAT ve "
+    "KOTU20 bilgi.",
+    "Hüküm sırası: ÖLÇÜLEMEDİ > DOĞRULANDI > TERS > GÖSTERİLEMEDİ. TERS = 2000-2015 nokta işareti beklenenin tersi (aralığa bakılmaz). Nokta ve aralık doğru yönde "
+    "ama bir alt dönem ters ise GÖSTERİLEMEDİ. ÖLÇEK UYMADI ön ektir (hüküm yine hesaplanır).",
+    "Batan şirketler (BİLGİ satırı): yerelde 2000-2015'i kapsayan batan / kottan çıkan şirket fiyatı YOK (islenmis-veri K34 Yahoo fiyatları 2020-10'da başlar ve "
+    "2023 sonrasını içerir; Tiingo batanlar repoda değil, kota dolu). H1 batanlar satırı 'YOK' yazılır.",
+    "2000-2015 getirileri yalnız ADIM 1'de bir kez hesaplanır (yo2_sonuc 'adim1' izni); kesim ve sayım fonksiyonları sonuç sütunu olan tabloyu reddeder (assert).",
+]
+
+
+def _yo2_yol(ad: str, cikti: Optional[str] = None) -> str:
+    yol = os.path.join(cikti or YO_YOL["cikti"], YO2_DOSYA[ad])
+    if os.path.basename(yol) in set(YO_DOSYA.values()):
+        raise YOHata("K13: YO2 çıktısı eski YO çıktısının adını kullanamaz")
+    return yol
+
+
+def _yo2_ham(ad: str, ham: Optional[str] = None) -> str:
+    return os.path.join(ham or YO2_YOL["ham"], ad)
+
+
+def yo2_esik_sha(E: Optional[Dict[str, Any]] = None) -> str:
+    return hashlib.sha256(json.dumps(E or YO2_ESIK, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def yo2_donem(giris: Any) -> np.ndarray:
+    g = pd.DatetimeIndex(pd.to_datetime(np.asarray(giris)))
+    out = np.full(len(g), "", dtype=object)
+    for ad, (a, b) in YO2_DONEM.items():
+        out[(g >= pd.Timestamp(a)) & (g <= pd.Timestamp(b))] = ad
+    if (g > YO_KESIK).any():
+        raise YOHata("KASA: 2023 ve sonrası giriş (assert)")
+    return out
+
+
+def yo2_ceyrek(giris: Any) -> np.ndarray:
+    g = pd.DatetimeIndex(pd.to_datetime(np.asarray(giris)))
+    return np.array([f"{y}-Q{q}" for y, q in zip(g.year, g.quarter)], dtype=object)
+
+
+def yo2_hno(ix: Any) -> np.ndarray:
+    """ISO hafta sıra numarası (pazartesi tarihi // 7; MV.mv_haftalik_panel 'bosluk' kuralıyla aynı)."""
+    pz = pd.DatetimeIndex(ix)
+    return ((pz - pd.to_timedelta(pz.dayofweek, unit="D")).normalize().values.astype("datetime64[D]").astype(np.int64)) // 7
+
+
+def yo2_hno_pazartesi(h: Any) -> pd.DatetimeIndex:
+    return pd.DatetimeIndex((np.asarray(h, np.int64) * 7).astype("datetime64[D]"))
+
+
+# ---------------------------------------------------------------- özellikler (yalnız i'ye kadarki barlar)
+def yo2_ozellik(H: np.ndarray, L: np.ndarray, C: np.ndarray) -> Dict[str, np.ndarray]:
+    H, L, C = (np.asarray(a, float) for a in (H, L, C)); m = len(C); nan = lambda: np.full(m, np.nan)  # noqa: E731
+    dus, boy = nan(), nan()
+    if m >= 15:
+        mn3 = _yo_roll(L, 3, "min"); mx12 = _yo_roll(H, 12, "max")           # mx12[k] = maks H_{k-11..k}
+        dus[14:] = mn3[14:] / mx12[11:m - 3] - 1                            # maks H_{i-14..i-3} = mx12[i-3]
+        r = (H - L) / C
+        md3 = _yo_roll(r, 3, "median")
+        md24 = pd.Series(r).rolling(24, min_periods=12).median().to_numpy(float)   # md24[k] = medyan r_{max(0,k-23)..k} (>= 12)
+        boy[14:] = md3[14:] / md24[11:m - 3]                                # önceki 24 = r_{i-26..i-3}
+    s40 = _yo_roll(C, 40, "mean")
+    with np.errstate(invalid="ignore"):
+        u40 = (C > s40).astype(float)
+    u40[~np.isfinite(s40)] = np.nan
+    return {"DUSUS_W": dus, "BOY_W": boy, "U40": u40}
+
+
+def yo2_ornek_maske(W: pd.DataFrame, evren: np.ndarray) -> np.ndarray:
+    """Örnek i'ler (getirisiz): i >= 2, i + 3 <= son, i - 1 .. i + 3 boşluksuz, evren[i], giriş (bas[i+1]) 2000-01-01 .. 2022-12-31, bar i + 3 <= kesik."""
+    m = len(W); U = int(YO2_ESIK["sonuc"]["ufuk"])
+    if m < U + 3:
+        return np.array([], np.int64)
+    i = np.arange(2, m - U)
+    b = np.r_[0, np.cumsum(W["bosluk"].to_numpy(bool).astype(np.int64))] if "bosluk" in W.columns else np.zeros(m + 1, np.int64)
+    ok = (b[i + U + 1] - b[i - 1]) == 0                                    # bosluk[i-1 .. i+3] hiç yok
+    ok &= np.asarray(evren, bool)[i]
+    gir = pd.DatetimeIndex(W["bas"].to_numpy())[i + 1]; son = W.index[i + U]
+    ok &= (gir >= pd.Timestamp("2000-01-01")) & (gir <= YO_KESIK) & (son <= YO_KESIK)
+    return i[ok]
+
+
+def yo2_evren(pazar: str, W: Dict[str, pd.DataFrame]) -> Dict[str, np.ndarray]:
+    """Haftalık bar evren bayrağı (MUM_IZI_UC.uc_evren_e2 / ETIKET2 kuralı aynen; parçalar p1 <= 2015, p2 >= 2016)."""
+    import MUM_IZI_ETIKET2 as E6
+    out = {s: np.zeros(len(d), bool) for s, d in W.items()}
+    for (a, b), kl in E6.e6_parcalar("haftalik", pazar):
+        P = E6.e6_p2_hazirla(pazar, kl)
+        for s, d in W.items():
+            ix = d.index; j = np.flatnonzero((ix >= pd.Timestamp(a)) & (ix <= pd.Timestamp(b)) & (ix >= pd.Timestamp("1999-12-01")))
+            if len(j):
+                out[s][j] = E6.e6_p2_maske(P, s, ix[j])
+        del P; gc.collect()
+    return out
+
+
+def yo2_hazirla_pazar(pazar: str, ham: Optional[str] = None, W: Optional[Dict[str, pd.DataFrame]] = None,
+                      evren: Optional[Dict[str, np.ndarray]] = None) -> Dict[str, Any]:
+    """Haftalık panel -> evren -> özellikler (örnek satırları X) + piyasa haftaları (G) + bar deposu (sonuç için). GETİRİ HESAPLANMAZ."""
+    import MUM_IZI_HAFTALIK as MH
+    t0 = time.time(); ham = ham or YO2_YOL["ham"]; os.makedirs(ham, exist_ok=True)
+    if W is None:
+        Vd = MI.mi_veri(pazar, MH.MH_YOL["tam"])["V"]; yo_kesik_kapi(Vd, f"haftalık {pazar}")
+        W = MV.mv_haftalik_panel(Vd); del Vd; gc.collect()
+    yo_kesik_kapi(W, f"haftalık panel {pazar}")
+    if evren is None:
+        evren = yo2_evren(pazar, W)
+    S = sorted(W); parca = []; Oa, Ha, La, Ca, BAS, IX = [], [], [], [], [], []; off = [0]
+    hk_say: Dict[int, int] = {}; hk_ust: Dict[int, float] = {}
+    yil_bar: Dict[int, set] = {}
+    for j, s in enumerate(S):
+        d = W[s]; O, H, L, C = (d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
+        if not ((H > L).all() and np.isfinite(np.c_[O, H, L, C]).all()):
+            raise YOHata(f"K3: {pazar} {s} haftalık bar H > L / sonlu değil")
+        F = yo2_ozellik(H, L, C); ev = np.asarray(evren[s], bool)
+        for y in np.unique(d.index.year):
+            yil_bar.setdefault(int(y), set()).add(s)
+        hn = yo2_hno(d.index); g = ev & np.isfinite(F["U40"])
+        for h, u in zip(hn[g], F["U40"][g]):
+            hk_say[int(h)] = hk_say.get(int(h), 0) + 1; hk_ust[int(h)] = hk_ust.get(int(h), 0.0) + float(u)
+        Oa.append(O); Ha.append(H); La.append(L); Ca.append(C); BAS.append(pd.DatetimeIndex(d["bas"].to_numpy()).values); IX.append(d.index.values)
+        off.append(off[-1] + len(d))
+        ii = yo2_ornek_maske(d, ev)
+        if not len(ii):
+            continue
+        gir = pd.DatetimeIndex(d["bas"].to_numpy())[ii + 1]
+        parca.append(pd.DataFrame({"pazar": pazar, "sembol": s, "j": j, "i": ii, "tarih": d.index[ii], "giris": gir, "hno": hn[ii],
+                                   "DUSUS_W": F["DUSUS_W"][ii], "BOY_W": F["BOY_W"][ii]}))
+    X = pd.concat(parca, ignore_index=True)
+    X["donem"] = yo2_donem(X.giris); X["ceyrek"] = yo2_ceyrek(X.giris)
+    X = X.sort_values(["giris", "sembol"], kind="stable").reset_index(drop=True)
+    hh = np.array(sorted(hk_say), np.int64); n_k = np.array([hk_say[h] for h in hh]); u_k = np.array([hk_ust[h] for h in hh])
+    en_az = int(YO_ESIK["piyasa"]["kume_en_az"])
+    G = pd.DataFrame({"pazar": pazar, "hno": hh, "n_kesit": n_k, "G40": np.where(n_k >= en_az, u_k / np.maximum(n_k, 1), np.nan)})
+    G["hafta"] = yo2_hno_pazartesi(G.hno); G["giris"] = G.hafta + pd.Timedelta(days=7)
+    son_cuma = G.hafta + pd.Timedelta(days=3 * 7 + 4)
+    G = G[(G.giris >= pd.Timestamp("2000-01-01")) & (son_cuma <= YO_KESIK) & np.isfinite(G.G40)].reset_index(drop=True)
+    G["donem"] = yo2_donem(G.giris); G["ceyrek"] = yo2_ceyrek(G.giris)
+    yol_x = _yo2_ham(f"yo2_ozellik_{pazar}.pkl", ham); yol_g = _yo2_ham(f"yo2_piyasa_{pazar}.pkl", ham); yol_h = _yo2_ham(f"yo2_ham_{pazar}.npz", ham)
+    with open(yol_x, "wb") as f:
+        pickle.dump(X, f, protocol=4)
+    with open(yol_g, "wb") as f:
+        pickle.dump(G, f, protocol=4)
+    np.savez(yol_h, O=np.concatenate(Oa), H=np.concatenate(Ha), L=np.concatenate(La), C=np.concatenate(Ca), off=np.asarray(off, np.int64),
+             bas=np.concatenate(BAS).astype("datetime64[ns]"), ix=np.concatenate(IX).astype("datetime64[ns]"), sembol=np.asarray(S, dtype="U32"))
+    yb = {int(y): len(v) for y, v in sorted(yil_bar.items())}
+    MI._mi_jyaz(_yo2_ham(f"yo2_yil_bar_{pazar}.json", ham), yb, "yıl bar")
+    yolog.info("YO2 %s: %d hisse-hafta, %d piyasa haftası, %d hisse (%.0f sn)", pazar, len(X), len(G), len(S), time.time() - t0)
+    return {"pazar": pazar, "hisse_hafta": int(len(X)), "piyasa_hafta": int(len(G)), "hisse": len(S)}
+
+
+def yo2_hazirla(ham: Optional[str] = None) -> Dict[str, Any]:
+    out = {}
+    for p in YO2_PAZAR:
+        out[p] = yo2_hazirla_pazar(p, ham); gc.collect()
+    return out
+
+
+def yo2_yukle(pazar: str, ham: Optional[str] = None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    with open(_yo2_ham(f"yo2_ozellik_{pazar}.pkl", ham), "rb") as f:
+        X = pickle.load(f)
+    with open(_yo2_ham(f"yo2_piyasa_{pazar}.pkl", ham), "rb") as f:
+        G = pickle.load(f)
+    return X, G
+
+
+def yo2_dosya_sha(ham: Optional[str] = None) -> Dict[str, str]:
+    return {ad: MI._mi_sha(_yo2_ham(ad, ham)) for p in YO2_PAZAR for ad in (f"yo2_ozellik_{p}.pkl", f"yo2_piyasa_{p}.pkl", f"yo2_ham_{p}.npz")}
+
+
+# ---------------------------------------------------------------- ENDEKS (SPY; repo dışı dosya)
+def yo2_endeks_durum(yol: Optional[str] = None) -> Dict[str, Any]:
+    """ENDEKS dosyası durumu (getirisiz): SPY.csv (Tiingo; date, adjOpen, adjClose) varsa ve şema geçerliyse VAR; aksi YOK + yanıt dosyası sha."""
+    d = YO2_YOL["endeks"] if yol is None else yol; csv = os.path.join(d, "SPY.csv"); yan = os.path.join(d, "SPY_tiingo_yanit.txt")
+    if os.path.exists(csv):
+        try:
+            E = pd.read_csv(csv)
+            if {"date", "adjOpen", "adjClose"} <= set(E.columns) and len(E) > 1000:
+                t = pd.to_datetime(E.date.astype(str).str[:10])
+                if t.max() > YO_KESIK + pd.Timedelta(days=1):
+                    raise YOHata("KASA: endeks dosyası 2022 sonrasını içeriyor")
+                return {"durum": "VAR", "kaynak": "Tiingo SPY (adjOpen / adjClose)", "sha": MI._mi_sha(csv), "ilk": str(t.min().date()), "son": str(t.max().date())}
+        except (ValueError, KeyError, pd.errors.ParserError):
+            pass
+    return {"durum": "YOK", "kaynak": "yerelde SPY / ^GSPC yok; Tiingo yanıtı: aylık 500 sembol sınırı aşıldı (26 Kasım 2026)",
+            "yanit_sha": MI._mi_sha(yan) if os.path.exists(yan) else None}
+
+
+def yo2_endeks_R3(G: pd.DataFrame, yol: Optional[str] = None) -> np.ndarray:
+    """ENDEKS 3 haftalık getirisi (SONUÇ: yalnız yo2_sonuc üzerinden). w + 1 .. w + 3 ISO haftaları veride değilse NaN."""
+    d = YO2_YOL["endeks"] if yol is None else yol; E = pd.read_csv(os.path.join(d, "SPY.csv"))
+    t = pd.DatetimeIndex(pd.to_datetime(E.date.astype(str).str[:10])); o = E.adjOpen.to_numpy(float); c = E.adjClose.to_numpy(float)
+    srt = np.argsort(t.values, kind="stable"); t, o, c = t[srt], o[srt], c[srt]
+    hn = yo2_hno(t); st = np.r_[0, np.flatnonzero(np.diff(hn) != 0) + 1]; en = np.r_[st[1:] - 1, len(t) - 1]
+    WO = dict(zip(hn[st].tolist(), o[st])); WC = dict(zip(hn[en].tolist(), c[en]))
+    out = np.full(len(G), np.nan)
+    for k, w in enumerate(G.hno.to_numpy(np.int64)):
+        if all((w + a) in WO for a in (1, 2, 3)):
+            out[k] = WC[w + 3] / WO[w + 1] - 1
+    return out
+
+
+# ---------------------------------------------------------------- SONUÇ (yalnız buradan; aşama izni)
+_YO2_SONUC_IZIN = {"adim0": set(YO2_KESIM_DONEM), "adim1": set(YO2_SINAMA_DONEM), "test": set(YO2_DONEM)}
+_YO2_SONUC_SUTUN = ("E0", "R3", "Y5", "KOTU20", "T1", "p_h", "q_h", "P3", "ENDEKS", "TF")
+
+
+def yo2_sonuc_dizi(dep: Dict[str, np.ndarray], j: np.ndarray, i: np.ndarray) -> Dict[str, np.ndarray]:
+    """E0, R3, Y5, KOTU20 (hisse j, haftalık bar i). Uygunluk çağıranda (i >= 2, i + 3 veride)."""
+    E = YO2_ESIK["sonuc"]; U = int(E["ufuk"]); j = np.asarray(j, np.int64); i = np.asarray(i, np.int64); N = len(j)
+    out = {a: np.full(N, np.nan) for a in ("E0", "R3", "Y5", "KOTU20")}
+    if not N:
+        return out
+    g = dep["off"][j] + i; son = dep["off"][j + 1] - 1
+    if (g + U > son).any() or (i < 2).any():
+        raise YOHata("K10: sonuç / pencere hissenin verisini aşıyor")
+    E0 = dep["O"][g + 1]; R3 = dep["C"][g + U] / E0 - 1
+    dip = np.minimum(np.minimum(dep["L"][g - 2], dep["L"][g - 1]), dep["L"][g]); stop = dip * float(E["stop_carpan"])
+    Wn = g[:, None] + 1 + np.arange(U)[None, :]
+    hit = dep["H"][Wn] >= (E0 * (1 + float(E["hedef"])))[:, None]; stp = dep["L"][Wn] <= stop[:, None]
+    BIG = 10 ** 9
+    kh = np.where(hit.any(1), hit.argmax(1), BIG); ks = np.where(stp.any(1), stp.argmax(1), BIG)
+    out.update({"E0": E0, "R3": R3, "Y5": ((kh < BIG) & (kh < ks)).astype(float), "KOTU20": (R3 < float(E["kotu"])).astype(float)})
+    return out
+
+
+def yo2_sonuc(pazar: str, X: pd.DataFrame, G: pd.DataFrame, asama: str, ham: Optional[str] = None, depo: Optional[Dict[str, np.ndarray]] = None,
+              endeks_yol: Optional[str] = None, endeks: bool = True) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    """Sonuç sütunları YALNIZ aşamanın izin verdiği dönemlerin satırları için (ADIM 0: 2016-22; ADIM 1: 2000-2015). T1 / p_h / q_h hisse x dönem."""
+    if asama not in _YO2_SONUC_IZIN:
+        raise YOHata(f"SIRA: yo2 sonuç aşaması tanımsız: {asama} (kesim / sayım aşamasında sonuç okunmaz)")
+    izin = _YO2_SONUC_IZIN[asama]; dx = set(X.donem.unique()); dg = set(G.donem.unique())
+    if not (dx | dg) <= izin:
+        raise YOHata(f"SIRA: {asama} aşamasında izin dışı dönem sonucu istendi: {sorted((dx | dg) - izin)}")
+    if depo is None:
+        z = np.load(_yo2_ham(f"yo2_ham_{pazar}.npz", ham)); depo = {k: z[k] for k in ("O", "H", "L", "C", "off")}
+    R = yo2_sonuc_dizi(depo, X.j.to_numpy(np.int64), X.i.to_numpy(np.int64))
+    S = pd.DataFrame(R, index=X.index)
+    key = X.sembol.astype(str) + "|" + X.donem.astype(str)
+    for src, dst in (("R3", "T1"), ("Y5", "p_h"), ("KOTU20", "q_h")):
+        S[dst] = S[src].groupby(key).transform("mean").to_numpy(float)
+    S["TF"] = S.R3 - S.T1
+    p3 = S.R3.groupby(X.hno.to_numpy()).agg(["mean", "size"])
+    mn = int(YO_ESIK["piyasa"]["en_az_hisse"])
+    Sg = pd.DataFrame(index=G.index)
+    m = p3.reindex(G.hno.to_numpy()); Sg["P3"] = np.where(m["size"].to_numpy(float) >= mn, m["mean"].to_numpy(float), np.nan); Sg["P3_n"] = m["size"].to_numpy(float)
+    Sg["ENDEKS"] = yo2_endeks_R3(G, endeks_yol) if endeks else np.nan
+    return S, Sg
+
+
+# ---------------------------------------------------------------- İSTATİSTİK
+def yo2_W(ceyrek: np.ndarray, B: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Çeyrek kümeleri: (küme indeksi, W B x K, küme adları). Her çağrıda np.random.default_rng(2000) yeniden (tekrarlanabilir)."""
+    B = int(B or YO2_ESIK["boot"]["B"]); u, k = np.unique(np.asarray(ceyrek, str), return_inverse=True); K = len(u)
+    W = np.random.default_rng(int(YO2_ESIK["boot"]["tohum"])).multinomial(K, np.full(K, 1.0 / K), size=B).astype(float)
+    return k, W, u
+
+
+def _yo2_oz(ceyrek_uc: np.ndarray) -> Dict[str, Any]:
+    v = pd.Series(np.asarray(ceyrek_uc, str)).value_counts()
+    if not len(v):
+        return {"ceyrek": 0, "ust3_pay": None, "ust3": []}
+    return {"ceyrek": int(len(v)), "ust3_pay": float(v.iloc[:3].sum() / v.sum()), "ust3": [[a, int(c)] for a, c in v.iloc[:3].items()]}
+
+
+def yo2_olc_hisse(x: np.ndarray, kesim: float, S: pd.DataFrame, ceyrek: np.ndarray, B: Optional[int] = None) -> Dict[str, Any]:
+    """Uç = x <= kesim (popülasyon: x sonlu). TOPLAM FARK, KAT (Y5), KOTU20 payı / taban; çeyrek kümeli bootstrap."""
+    x = np.asarray(x, float); pop = np.isfinite(x) & np.isfinite(S.R3.to_numpy(float))
+    x = x[pop]; ce = np.asarray(ceyrek, str)[pop]
+    TF, Y5, ph, K20, qh, R3 = (S[c].to_numpy(float)[pop] for c in ("TF", "Y5", "p_h", "KOTU20", "q_h", "R3"))
+    with np.errstate(invalid="ignore"):
+        uc = x <= kesim
+    nu = int(uc.sum()); out: Dict[str, Any] = {"n": nu, "N": int(len(x)), "uc_pay": float(nu / len(x)) if len(x) else None, **_yo2_oz(ce[uc])}
+    if nu < 2:
+        return out
+    out.update({"TOPLAM_FARK": float(TF[uc].mean()), "TF_medyan": float(np.median(TF[uc])), "R3_uc": float(R3[uc].mean()),
+                "P_uc": float(Y5[uc].mean()), "P_taban": float(ph[uc].mean()), "P_genel": float(Y5.mean()),
+                "KAT": float(Y5[uc].sum() / ph[uc].sum()) if ph[uc].sum() > 0 else None,
+                "K20_uc": float(K20[uc].mean()), "K20_taban": float(qh[uc].mean())})
+    out["K20_KAT"] = out["K20_uc"] / out["K20_taban"] if out["K20_taban"] > 0 else None
+    k, W, _ = yo2_W(ce, B); K = W.shape[1]; bc = lambda v: np.bincount(k, weights=v, minlength=K)  # noqa: E731
+    u = uc.astype(float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        nu_ = W @ bc(u); tf = (W @ bc(TF * u)) / nu_; kat = (W @ bc(Y5 * u)) / (W @ bc(ph * u))
+        k20 = (W @ bc(K20 * u)) / nu_ - (W @ bc(qh * u)) / nu_
+    for ad, v in (("TOPLAM_FARK", tf), ("KAT", kat), ("K20_FARK", k20)):
+        a, b = _q(v); out[f"{ad}_alt"] = a; out[f"{ad}_ust"] = b
+    out["K20_FARK"] = out["K20_uc"] - out["K20_taban"]
+    return out
+
+
+def yo2_obek(hno_dusuk: np.ndarray) -> List[Tuple[int, int]]:
+    """Düşük genişlik haftalarının öbekleri: ardışık iki düşük hafta arasında >= 8 hafta (sıra farkı >= 9) -> yeni öbek. (ilk, son) hno."""
+    h = np.sort(np.unique(np.asarray(hno_dusuk, np.int64)))
+    if not len(h):
+        return []
+    sinir = np.flatnonzero(np.diff(h) >= 9); bas = np.r_[0, sinir + 1]; son = np.r_[sinir, len(h) - 1]
+    return [(int(h[a]), int(h[b])) for a, b in zip(bas, son)]
+
+
+def yo2_olc_piyasa(g40: np.ndarray, kesim: float, v: np.ndarray, hno: np.ndarray, ceyrek: np.ndarray, B: Optional[int] = None) -> Dict[str, Any]:
+    """Düşük genişlik (G40 <= kesim) haftalarından sonra v (3 haftalık getiri) ve P(>= +%5), P(<= -%5): düşük / öteki / fark; çeyrek kümeli."""
+    g40 = np.asarray(g40, float); v = np.asarray(v, float); pop = np.isfinite(g40) & np.isfinite(v)
+    g40, v, hno, ce = g40[pop], v[pop], np.asarray(hno, np.int64)[pop], np.asarray(ceyrek, str)[pop]
+    yp, dp = float(YO_ESIK["piyasa"]["esik_YP"]), float(YO_ESIK["piyasa"]["esik_DP"])
+    lo = g40 <= kesim; ot = ~lo; ob = yo2_obek(hno[lo])
+    out: Dict[str, Any] = {"n_dusuk": int(lo.sum()), "n_oteki": int(ot.sum()), "obek": len(ob),
+                           "obek_tarih": [[yo2_hno_pazartesi([a])[0].strftime("%Y-%m"), yo2_hno_pazartesi([b])[0].strftime("%Y-%m")] for a, b in ob],
+                           **_yo2_oz(ce[lo])}
+    if lo.sum() < 2 or ot.sum() < 2:
+        return out
+    P5, M5 = (v >= yp).astype(float), (v <= dp).astype(float)
+    out.update({"ort_dusuk": float(v[lo].mean()), "ort_oteki": float(v[ot].mean()), "P5_dusuk": float(P5[lo].mean()), "P5_oteki": float(P5[ot].mean()),
+                "M5_dusuk": float(M5[lo].mean()), "M5_oteki": float(M5[ot].mean()), "med_dusuk": float(np.median(v[lo])), "med_oteki": float(np.median(v[ot]))})
+    out["FARK"] = out["ort_dusuk"] - out["ort_oteki"]; out["P5_FARK"] = out["P5_dusuk"] - out["P5_oteki"]; out["M5_FARK"] = out["M5_dusuk"] - out["M5_oteki"]
+    k, W, _ = yo2_W(ce, B); K = W.shape[1]; bc = lambda a: np.bincount(k, weights=a, minlength=K)  # noqa: E731
+    l, o = lo.astype(float), ot.astype(float); nl, no = W @ bc(l), W @ bc(o)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        for ad, a in (("FARK", v), ("P5_FARK", P5), ("M5_FARK", M5)):
+            d = (W @ bc(a * l)) / nl - (W @ bc(a * o)) / no; x0, x1 = _q(d); out[f"{ad}_alt"] = x0; out[f"{ad}_ust"] = x1
+    return out
+
+
+# ---------------------------------------------------------------- KESİM (yalnız 2016-22; sonuç okunmaz)
+def yo2_kesim(XS: Dict[str, pd.DataFrame], GS: Dict[str, pd.DataFrame]) -> Dict[str, Any]:
+    """Kesimler: ABD 2016-22 (ana, hüküm) ve AVR 2016-22 (bilgi). Sonuç sütunu olan tablo REDDEDİLİR; 2000-2015 satırları kullanılmaz (assert)."""
+    q = float(YO2_ESIK["kesim"]["duzey"]); K: Dict[str, Any] = {}
+    for p in XS:
+        X, G = XS[p], GS[p]
+        if set(_YO2_SONUC_SUTUN) & (set(X.columns) | set(G.columns)):
+            raise YOHata("SIRA: kesim aşamasında sonuç sütunu var (assert)")
+        x = X[X.donem.isin(YO2_KESIM_DONEM)]; g = G[G.donem.isin(YO2_KESIM_DONEM)]
+        if not len(x) or not len(g) or (set(x.donem) | set(g.donem)) - set(YO2_KESIM_DONEM):
+            raise YOHata("SIRA: kesim yalnız 2016-22 satırlarından")
+        if pd.to_datetime(x.giris).min() < pd.Timestamp("2016-01-01") or pd.to_datetime(g.giris).min() < pd.Timestamp("2016-01-01"):
+            raise YOHata("SIRA: kesimde 2016 öncesi satır (assert)")
+        k = {}
+        for ad in ("DUSUS_W", "BOY_W"):
+            v = x[ad].to_numpy(float); v = v[np.isfinite(v)]; k[ad] = float(np.quantile(v, q)); k[f"{ad}_n"] = int(len(v))
+        v = g.G40.to_numpy(float); v = v[np.isfinite(v)]; k["G40"] = float(np.quantile(v, q)); k["G40_n"] = int(len(v))
+        K[p] = k
+    return K
+
+
+# ---------------------------------------------------------------- GETİRİSİZ SAYIM
+def yo2_sayim(XS: Dict[str, pd.DataFrame], GS: Dict[str, pd.DataFrame], K: Dict[str, Any], YB: Dict[str, Dict[str, int]]) -> Dict[str, Any]:
+    S: Dict[str, Any] = {"yil": {}, "donem": {}, "piyasa": {}}
+    for p, X in XS.items():
+        if set(_YO2_SONUC_SUTUN) & set(X.columns):
+            raise YOHata("SIRA: sayımda sonuç sütunu (assert)")
+        yil = pd.DatetimeIndex(X.giris).year
+        S["yil"][p] = {str(y): {"bar_hisse": int(YB[p].get(str(y), YB[p].get(y, 0))), "evren_hisse": int(X.sembol[yil == y].nunique()),
+                                "hisse_hafta": int((yil == y).sum())} for y in range(2000, 2023)}
+        for d in YO2_DONEM:
+            x = X[X.donem == d]; o = {"hisse_hafta": int(len(x)), "hisse": int(x.sembol.nunique()), "ceyrek": int(x.ceyrek.nunique())}
+            for ad in ("DUSUS_W", "BOY_W"):
+                v = x[ad].to_numpy(float); f = np.isfinite(v)
+                o[ad] = {"eksik": float(1 - f.mean()) if len(v) else None, "uc_n": int((v[f] <= K[p][ad]).sum()),
+                         "q": [float(a) for a in np.quantile(v[f], [0.02, 0.10, 0.50, 0.90])] if f.any() else []}
+            S["donem"][f"{p}|{d}"] = o
+        G = GS[p]
+        for d in YO2_DONEM:
+            g = G[G.donem == d]; lo = g.G40.to_numpy(float) <= K[p]["G40"]; ob = yo2_obek(g.hno.to_numpy(np.int64)[lo])
+            S["piyasa"][f"{p}|{d}"] = {"hafta": int(len(g)), "dusuk": int(lo.sum()), "obek": len(ob),
+                                       "obek_tarih": [[yo2_hno_pazartesi([a])[0].strftime("%Y-%m"), yo2_hno_pazartesi([b])[0].strftime("%Y-%m")] for a, b in ob],
+                                       "G40_q": [float(a) for a in np.quantile(g.G40, [0.02, 0.10, 0.50])] if len(g) else [],
+                                       "kesit_med": float(np.median(g.n_kesit)) if len(g) else None}
+    return S
+
+
+def yo2_sayim_kos(ham: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    XS, GS, YB = {}, {}, {}
+    for p in YO2_PAZAR:
+        XS[p], GS[p] = yo2_yukle(p, ham); YB[p] = json.load(open(_yo2_ham(f"yo2_yil_bar_{p}.json", ham), encoding="utf-8"))
+    K = yo2_kesim(XS, GS)
+    return yo2_sayim(XS, GS, K, YB), K
+
+
+# ---------------------------------------------------------------- HÜKÜM
+def yo2_hukum_hisse(H: str, tum: Dict[str, Any], alt: Dict[str, Dict[str, Any]], olcek_uydu: bool) -> str:
+    E = YO2_ESIK["hukum"]; sg = 1 if H == "H1" else -1
+    if tum.get("n", 0) < int(E["n_min"]) or tum.get("ceyrek", 0) < int(E["ceyrek_min"]) or tum.get("TOPLAM_FARK") is None:
+        h = "ÖLÇÜLEMEDİ"
+    else:
+        tf = tum["TOPLAM_FARK"]; uc = tum["TOPLAM_FARK_alt"] if sg > 0 else tum["TOPLAM_FARK_ust"]
+        alt_ok = all(a.get("TOPLAM_FARK") is not None and sg * a["TOPLAM_FARK"] > 0 for a in alt.values())
+        if sg * tf > 0 and uc is not None and sg * uc > 0 and alt_ok:
+            h = "YAŞAYAN EVRENDE DOĞRULANDI (batanlar yok)" if H == "H1" else "DOĞRULANDI"
+        elif sg * tf < 0:
+            h = "TERS"
+        else:
+            h = "GÖSTERİLEMEDİ"
+    return h if olcek_uydu else f"ÖLÇEK UYMADI | {h}"
+
+
+def yo2_hukum_piyasa(o: Optional[Dict[str, Any]], endeks_var: bool, olcek_uydu: bool) -> str:
+    E = YO2_ESIK["hukum"]
+    if not endeks_var or o is None:
+        h = "ENDEKS YOK: ÖLÇÜLEMEDİ"
+    elif o.get("n_dusuk", 0) < int(E["piyasa_n_min"]) or o.get("obek", 0) < int(E["obek_min"]) or o.get("FARK") is None:
+        h = "ÖLÇÜLEMEDİ"
+    elif o["FARK"] > 0 and (o.get("FARK_alt") or -1) > 0 and o["P5_FARK"] > 0:
+        h = "DOĞRULANDI"
+    elif o["FARK"] < 0:
+        h = "TERS"
+    else:
+        h = "GÖSTERİLEMEDİ"
+    return h if olcek_uydu else f"ÖLÇEK UYMADI | {h}"
+
+
+# ---------------------------------------------------------------- KAPI
+def yo2_kapi(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str, Any]:
+    import IZ_KARNE as IK
+    import KASA as KS
+    import MUM_IZI_HAFTALIK as MH
+    cikti = cikti or YO_YOL["cikti"]; yol = _yo2_yol("onkayit", cikti)
+    try:
+        k = IK.ik_kontrol_kapisi(yol)
+    except RuntimeError as ex:
+        raise YOHata(str(ex)) from ex
+    metin = open(yol, encoding="utf-8").read()
+    S, K = yo2_sayim_kos(ham); ed = yo2_endeks_durum()
+    bek = {"YO_KOD_SHA": yo_kod_sha(), "YO2_ESIK_SHA": yo2_esik_sha(), **{f"DOSYA_{a}": v for a, v in yo2_dosya_sha(ham).items()},
+           "SAYIM_SHA": HV.hv_json_sha(S), "KESIM_SHA": HV.hv_json_sha(K), "ENDEKS_SHA": HV.hv_json_sha(ed)}
+    for a, v in bek.items():
+        if f"{a}: {v}" not in metin:
+            raise YOHata(f"YO2 ön kayıt kapısı: {a} farklı -> DURDU")
+    rel = os.path.relpath(yol, KOK_YO); c = _yo_git(["log", "-1", "--format=%H %cI", "--", rel])
+    if not c:
+        raise YOHata("YO2 ön kayıt commit'li değil -> DURDU")
+    if _yo_git(["status", "--porcelain", "--", rel, "YUKSELIS_ONCESI.py"]):
+        raise YOHata("YO2 ön kayıt / kod çalışma ağacında değişmiş -> DURDU")
+    if _yo_git(["log", "origin/" + _yo_git(["rev-parse", "--abbrev-ref", "HEAD"]), "-1", "--format=%H", "--", rel]) != c.split()[0]:
+        raise YOHata("YO2 ön kayıt push edilmemiş -> DURDU")
+    try:
+        kasa = KS.kasa_kapisi([os.path.join(MH.MH_YOL[kl], f"V_{p}.pkl") for kl in ("tam", "p1") for p in YO2_PAZAR] +
+                              [os.path.join(MH.MH_YOL["p2"], f"V_{p}.pkl") for p in YO2_PAZAR], "2022-12-31")
+    except KS.KasaHata as ex:
+        raise YOHata(f"KASA kapısı KAPALI: {ex}") from ex
+    return {"kontrol": {"gecti": k["gecti"]}, "onkayit_commit": c, "kasa": kasa, "endeks": ed, "kesim": K, **bek}
+
+
+# ---------------------------------------------------------------- ADIM 0 / ADIM 1
+def yo2_adim_hesap(XS: Dict[str, pd.DataFrame], GS: Dict[str, pd.DataFrame], SS: Dict[str, pd.DataFrame], SG: Dict[str, pd.DataFrame],
+                   K: Dict[str, Any], donemler: Tuple[str, ...], B: Optional[int] = None) -> Dict[str, Any]:
+    """Bir adımın bütün satırları: pazar x varsayım x (dönem birleşimi 'tum' + her dönem)."""
+    out: Dict[str, Any] = {}
+    for p in XS:
+        X, G, S, Sg = XS[p], GS[p], SS[p], SG[p]
+        r: Dict[str, Any] = {}
+        for H, ad in (("H1", "DUSUS_W"), ("H2", "BOY_W")):
+            r[H] = {"tum": yo2_olc_hisse(X[ad].to_numpy(float), K[p][ad], S, X.ceyrek.to_numpy(), B)}
+            for d in donemler:
+                m = (X.donem == d).to_numpy()
+                r[H][d] = yo2_olc_hisse(X[ad].to_numpy(float)[m], K[p][ad], S[m].reset_index(drop=True), X.ceyrek.to_numpy()[m], B)
+        r["H3"] = {}
+        for kay in ("ENDEKS", "P3"):
+            if kay == "ENDEKS" and (p != "ABD" or not np.isfinite(Sg.ENDEKS.to_numpy(float)).any()):
+                continue
+            r["H3"][kay] = {"tum": yo2_olc_piyasa(G.G40.to_numpy(float), K[p]["G40"], Sg[kay].to_numpy(float), G.hno.to_numpy(), G.ceyrek.to_numpy(), B)}
+            for d in donemler:
+                m = (G.donem == d).to_numpy()
+                r["H3"][kay][d] = yo2_olc_piyasa(G.G40.to_numpy(float)[m], K[p]["G40"], Sg[kay].to_numpy(float)[m], G.hno.to_numpy()[m],
+                                                 G.ceyrek.to_numpy()[m], B)
+        out[p] = r
+    return out
+
+
+def _yo2_adim_veri(donemler: Tuple[str, ...], asama: str, ham: Optional[str] = None, endeks: bool = False):
+    XS, GS, SS, SG = {}, {}, {}, {}
+    for p in YO2_PAZAR:
+        X, G = yo2_yukle(p, ham)
+        X = X[X.donem.isin(donemler)].reset_index(drop=True); G = G[G.donem.isin(donemler)].reset_index(drop=True)
+        S, Sg = yo2_sonuc(p, X, G, asama, ham, endeks=(endeks and p == "ABD"))
+        XS[p], GS[p], SS[p], SG[p] = X, G, S, Sg
+    return XS, GS, SS, SG
+
+
+def yo2_olcek(A0: Dict[str, Any]) -> Dict[str, Any]:
+    """ADIM 0 ölçek sağlaması (ABD): iki dönemde beklenen yön."""
+    r = A0["ABD"]; o: Dict[str, Any] = {}
+    o["H1"] = all((r["H1"][d].get("TOPLAM_FARK") or 0) > 0 for d in YO2_KESIM_DONEM)
+    o["H2"] = all((r["H2"][d].get("TOPLAM_FARK") or 0) < 0 for d in YO2_KESIM_DONEM)
+    kay = "ENDEKS" if "ENDEKS" in r["H3"] else "P3"
+    o["H3"] = all((r["H3"][kay][d].get("FARK") or 0) > 0 and (r["H3"][kay][d].get("P5_FARK") or 0) > 0 for d in YO2_KESIM_DONEM)
+    o["H3_kaynak"] = kay
+    return o
+
+
+def yo2_adim0(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str, Any]:
+    G0 = yo2_kapi(cikti, ham); ed = G0["endeks"]
+    XS, GS, SS, SG = _yo2_adim_veri(YO2_KESIM_DONEM, "adim0", ham, endeks=(ed["durum"] == "VAR"))
+    A0 = yo2_adim_hesap(XS, GS, SS, SG, G0["kesim"], YO2_KESIM_DONEM)
+    J = {"surum": YO2_SURUM, "zaman": MI._mi_simdi(), "kapi": {k: v for k, v in G0.items() if k != "kesim"}, "kesim": G0["kesim"], "adim0": A0,
+         "olcek": yo2_olcek(A0)}
+    MI._mi_jyaz(_yo2_ham("yo2_adim0.json", ham), J, "yo2 adım 0")
+    return J
+
+
+def yo2_adim1(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str, Any]:
+    cikti = cikti or YO_YOL["cikti"]
+    if os.path.exists(_yo2_yol("sonuc", cikti)):
+        raise YOHata("yo2_sonuc.json zaten var: ADIM 1 bir kez (ikinci koşu DURUR)")
+    a0 = _yo2_ham("yo2_adim0.json", ham)
+    if not os.path.exists(a0):
+        raise YOHata("SIRA: ADIM 0 yok -> ADIM 1 koşmaz")
+    J = json.load(open(a0, encoding="utf-8"))
+    G0 = yo2_kapi(cikti, ham); ed = G0["endeks"]
+    if HV.hv_json_sha(G0["kesim"]) != HV.hv_json_sha(J["kesim"]):
+        raise YOHata("K11: kesimler ADIM 0 ile farklı -> DURDU")
+    XS, GS, SS, SG = _yo2_adim_veri(YO2_SINAMA_DONEM, "adim1", ham, endeks=(ed["durum"] == "VAR"))
+    A1 = yo2_adim_hesap(XS, GS, SS, SG, G0["kesim"], YO2_SINAMA_DONEM)
+    ol = J["olcek"]; r = A1["ABD"]; alt = lambda H: {d: r[H][d] for d in YO2_SINAMA_DONEM}  # noqa: E731
+    hk = {"H1": yo2_hukum_hisse("H1", r["H1"]["tum"], alt("H1"), ol["H1"]), "H2": yo2_hukum_hisse("H2", r["H2"]["tum"], alt("H2"), ol["H2"]),
+          "H3": yo2_hukum_piyasa(r["H3"].get("ENDEKS", {}).get("tum"), ed["durum"] == "VAR", ol["H3"])}
+    bilgi = {"H3_P3": yo2_hukum_piyasa(r["H3"]["P3"]["tum"], True, ol["H3"]) + " (BİLGİ: evren ortalaması, hayatta kalma yanlı; hüküm değil)",
+             "AVR": {H: ("aynı yön" if (A1["AVR"][H]["tum"].get("TOPLAM_FARK") or 0) * (1 if H == "H1" else -1) > 0 else "aynı yön değil") for H in ("H1", "H2")},
+             "batan": "YOK: yerelde 2000-2015'i kapsayan batan şirket fiyatı yok (K34 Yahoo 2020-10'da başlar; Tiingo batanlar repoda değil)"}
+    J.update({"adim1": A1, "hukum": hk, "bilgi": bilgi, "kapi1": {k: v for k, v in G0.items() if k != "kesim"}, "zaman1": MI._mi_simdi(),
+              "hayatta_kalma": "evren bugün yaşayan hisseler: 2000-2015'te batanlar veride yok; H1 ve P3 yukarı yanlı; H3 hükmü yalnız ENDEKS ile"})
+    MI._mi_jyaz(_yo2_yol("sonuc", cikti), J, "yo2 sonuç")
+    yo2_ozet_csv(J, _yo2_yol("ozet", cikti))
+    return J
+
+
+def yo2_ozet_csv(J: Dict[str, Any], yol: str) -> str:
+    rows = []
+    for adim, dm in (("adim0", YO2_KESIM_DONEM), ("adim1", YO2_SINAMA_DONEM)):
+        for p, r in J[adim].items():
+            for H in ("H1", "H2"):
+                for d in ("tum",) + tuple(dm):
+                    rows.append({"adim": adim, "pazar": p, "varsayim": H, "kaynak": "hisse", "donem": d, "kesim": J["kesim"][p]["DUSUS_W" if H == "H1" else "BOY_W"],
+                                 **{k: v for k, v in r[H][d].items() if not isinstance(v, (list, dict))}})
+            for kay, rr in r["H3"].items():
+                for d in ("tum",) + tuple(dm):
+                    rows.append({"adim": adim, "pazar": p, "varsayim": "H3", "kaynak": kay, "donem": d, "kesim": J["kesim"][p]["G40"],
+                                 **{k: v for k, v in rr[d].items() if not isinstance(v, (list, dict))}})
+    D = pd.DataFrame(rows); MI.mi_sizinti(D.to_csv(index=False), "yo2 özet csv"); D.to_csv(yol, index=False, float_format="%.6f")
+    return yol
+
+
+# ---------------------------------------------------------------- ÖN KAYIT / RAPOR
+def yo2_onkayit_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
+    import IZ_KARNE as IK
+    cikti = cikti or YO_YOL["cikti"]; S, K = yo2_sayim_kos(ham); ds = yo2_dosya_sha(ham); ed = yo2_endeks_durum()
+    L = [f"# YO2 ÖN KAYIT — geriye doğru doğrulama: H1 / H2 / H3, haftalık, kesimler 2016-22, sınama 2000-2015 (bir kez) ({MI._mi_simdi()})", "",
+         "İş tanımı YO2_IS_TANIMI.md (ana model). Bu dosya R3 / Y5 / P3 HİÇBİR dönemde hesaplanmadan ÖNCE commit + push edilir; tanımlar, kesimler, hüküm "
+         "kuralları sonra değişmez (değişirse SAPMA). Evren bugün yaşayan hisseler (H1 ve P3 yukarı yanlı). KASA açılmaz (veri <= 2022-12-31). HACİM KULLANILMAZ.",
+         "", "## Mühürler", "", f"YO_KOD_SHA: {yo_kod_sha()}", f"YO2_ESIK_SHA: {yo2_esik_sha()}"]
+    L += [f"DOSYA_{a}: {v}" for a, v in ds.items()]
+    L += [f"SAYIM_SHA: {HV.hv_json_sha(S)}", f"KESIM_SHA: {HV.hv_json_sha(K)}", f"ENDEKS_SHA: {HV.hv_json_sha(ed)}",
+          f"IS_TANIMI_SHA: {MI._mi_sha(YO2_YOL['is_tanimi'])}", "", f"- Panel dosyaları (repo dışı): {YO2_YOL['ham']}", "",
+          "## Üç varsayım (yön, kesim, hüküm SABİT)", "",
+          f"- H1 (ARTI): DUSUS_W <= {K['ABD']['DUSUS_W']:.6f} (ABD 2016-22 %10; n {K['ABD']['DUSUS_W_n']}) -> TOPLAM FARK > 0",
+          f"- H2 (EKSİ): BOY_W <= {K['ABD']['BOY_W']:.6f} (ABD 2016-22 %10; n {K['ABD']['BOY_W_n']}) -> TOPLAM FARK < 0",
+          f"- H3 (ARTI): G40 <= {K['ABD']['G40']:.6f} (ABD 2016-22 piyasa haftası %10; n {K['ABD']['G40_n']}) -> ENDEKS 3 haftalık getiri farkı > 0 ve P(>= +%5) farkı > 0",
+          f"- AVR (bilgi, yön) kesimleri: DUSUS_W {K['AVR']['DUSUS_W']:.6f}, BOY_W {K['AVR']['BOY_W']:.6f}, G40 {K['AVR']['G40']:.6f} (AVR 2016-22 %10)",
+          f"- ENDEKS: {ed['durum']} ({ed['kaynak']})" + (f"; yanıt dosyası sha {ed.get('yanit_sha')}" if ed["durum"] == "YOK" else ""),
+          "- Hüküm: " + YO2_ESIK["hukum"]["H1"] + "; " + YO2_ESIK["hukum"]["H2"] + "; " + YO2_ESIK["hukum"]["H3"] + ". Sıra: " + YO2_ESIK["hukum"]["sira"] + ". "
+          + YO2_ESIK["hukum"]["olcek"], "",
+          "## GETİRİSİZ SAYIM (R3 / Y5 / P3 hesaplanmadı)", "", "### Yıl başına hisse (haftalık barı olan / evrende örnek satırı olan) ve hisse-hafta", "",
+          "| yıl | ABD bar | ABD evren | ABD hisse-hafta | AVR bar | AVR evren | AVR hisse-hafta |", "|---|---|---|---|---|---|---|"]
+    az = []
+    for y in range(2000, 2023):
+        a = S["yil"]["ABD"][str(y)]; b = S["yil"]["AVR"][str(y)]
+        L.append(f"| {y} | {a['bar_hisse']} | {a['evren_hisse']} | {a['hisse_hafta']} | {b['bar_hisse']} | {b['evren_hisse']} | {b['hisse_hafta']} |")
+        if y <= 2015 and a["evren_hisse"] < 300:
+            az.append(str(y))
+    L += ["", "- ABD 2000-2015'te evren hisse sayısı < 300 olan yıl: " + (", ".join(az) + " -> bu yıllar için beklenen ÖLÇÜLEMEDİ değil (satır dönem "
+          "birleşimi), ama yazılır" if az else "yok (beklenen ÖLÇÜLEMEDİ değil)"), "",
+          "### Dönem başına hisse-hafta ve uç sayısı", "", "| pazar / dönem | hisse-hafta | hisse | çeyrek | DUSUS_W eksik % | H1 uç n | BOY_W eksik % | H2 uç n | DUSUS_W %2 / %10 / %50 | BOY_W %2 / %10 / %50 |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
+    for p in YO2_PAZAR:
+        for d in YO2_DONEM:
+            o = S["donem"][f"{p}|{d}"]; a, b = o["DUSUS_W"], o["BOY_W"]
+            fq = lambda q: " / ".join(_f(v, 3) for v in q[:3]) if q else "-"  # noqa: E731
+            L.append(f"| {p} {d} | {o['hisse_hafta']} | {o['hisse']} | {o['ceyrek']} | {_f(a['eksik'], 1, True)} | {a['uc_n']} | {_f(b['eksik'], 1, True)} | "
+                     f"{b['uc_n']} | {fq(a['q'])} | {fq(b['q'])} |")
+    L += ["", "### Piyasa haftaları ve düşük genişlik (G40 <= kesim) öbekleri", "", "| pazar / dönem | hafta | düşük hafta | ayrı dönem (öbek) | öbekler (ilk - son yıl-ay) | G40 %2 / %10 / %50 | kesit medyanı |",
+          "|---|---|---|---|---|---|---|"]
+    for p in YO2_PAZAR:
+        for d in YO2_DONEM:
+            o = S["piyasa"][f"{p}|{d}"]
+            L.append(f"| {p} {d} | {o['hafta']} | {o['dusuk']} | {o['obek']} | {'; '.join(f'{a} - {b}' for a, b in o['obek_tarih']) or '-'} | "
+                     f"{' / '.join(_f(v, 3) for v in o['G40_q'])} | {_f(o['kesit_med'], 0)} |")
+    L += ["", "## Yorum gerektiren noktalar (ölçümden ÖNCE sabit)", ""] + [f"{i + 1}. {t}" for i, t in enumerate(YO2_YORUM)]
+    L += ["", "## Tanımlar (YO2_ESIK; sha yukarıda)", "", "```", json.dumps(YO2_ESIK, ensure_ascii=False, indent=1), "```", "", "## KONTROL LİSTESİ", "",
+          "| Kod | Madde | Yanıt | Kanıt |", "|---|---|---|---|"]
+    ad = {k["kod"]: k.get("ad", k.get("baslik", "")) for k in IK.IK_KONTROL}
+    for k, (y, kn) in YO2_KONTROL.items():
+        L.append(f"| {k} | {ad.get(k, '')} | {y} | {kn} |")
+    L += ["", "## SAPMA", "", "(ön kayıt anında yok)", ""]
+    return MI._mi_yaz(_yo2_yol("onkayit", cikti), "\n".join(L), "yo2 ön kayıt")
+
+
+def _p(x: Any, n: int = 2) -> str:
+    return _f(x, n, True)
+
+
+def _yo2_hs(o: Dict[str, Any]) -> str:
+    return (f"n {o.get('n', 0)}, çeyrek {o.get('ceyrek', 0)} (en kalabalık 3: {_p(o.get('ust3_pay'), 1)}); TOPLAM FARK {_p(o.get('TOPLAM_FARK'))} puan "
+            f"[{_p(o.get('TOPLAM_FARK_alt'))} / {_p(o.get('TOPLAM_FARK_ust'))}] (medyan {_p(o.get('TF_medyan'))}); +%5 payı {_p(o.get('P_uc'), 1)} / taban "
+            f"{_p(o.get('P_taban'), 1)} (KAT {_f(o.get('KAT'), 2)} [{_f(o.get('KAT_alt'), 2)} / {_f(o.get('KAT_ust'), 2)}]); 3 haftada -%20'den kötü "
+            f"{_p(o.get('K20_uc'), 2)} / taban {_p(o.get('K20_taban'), 2)}")
+
+
+def _yo2_ps(o: Dict[str, Any]) -> str:
+    return (f"düşük hafta {o.get('n_dusuk', 0)} (öteki {o.get('n_oteki', 0)}), ayrı dönem {o.get('obek', 0)}, çeyrek {o.get('ceyrek', 0)}; 3 haftalık getiri "
+            f"düşük {_p(o.get('ort_dusuk'))} / öteki {_p(o.get('ort_oteki'))} / fark {_p(o.get('FARK'))} puan [{_p(o.get('FARK_alt'))} / {_p(o.get('FARK_ust'))}]; "
+            f"P(>= +%5) {_p(o.get('P5_dusuk'), 1)} / {_p(o.get('P5_oteki'), 1)} (fark {_p(o.get('P5_FARK'), 1)} [{_p(o.get('P5_FARK_alt'), 1)} / "
+            f"{_p(o.get('P5_FARK_ust'), 1)}]); P(<= -%5) {_p(o.get('M5_dusuk'), 1)} / {_p(o.get('M5_oteki'), 1)} (fark {_p(o.get('M5_FARK'), 1)} "
+            f"[{_p(o.get('M5_FARK_alt'), 1)} / {_p(o.get('M5_FARK_ust'), 1)}])")
+
+
+def yo2_rapor_yaz(cikti: Optional[str] = None, yeniden: Optional[List[str]] = None, hata: Optional[List[str]] = None, sapma: Optional[List[str]] = None) -> str:
+    cikti = cikti or YO_YOL["cikti"]; J = json.load(open(_yo2_yol("sonuc", cikti), encoding="utf-8")); K = J["kesim"]; ed = J["kapi"]["endeks"]
+    a0, a1, ol, hk = J["adim0"], J["adim1"], J["olcek"], J["hukum"]
+    L = [f"# YO2 RAPOR — 2016-22'nin üç tutarlı yönü, hiç bakılmamış 2000-2015 haftalık verisinde (tek sınama; {J['zaman1']})", "",
+         "**HAYATTA KALMA UYARISI:** evren bugün yaşayan hisseler; 2000-2015'te derin düşüşten sonra batanlar veride YOK. Bu H1'i ve evren ortalamasıyla "
+         "ölçülen H3'ü (P3) YUKARI çeker. H3 hükmü yalnız ENDEKS ile verilir; ENDEKS " + ("VAR" if ed["durum"] == "VAR" else "YOK (Tiingo aylık kota; "
+         "yerelde SPY yok) -> H3 ÖLÇÜLEMEDİ") + ".", "", "## SONUÇ", "",
+         f"- H1 (derin düşüş sonrası ARTI): **{hk['H1']}**", f"- H2 (küçük mum sonrası EKSİ): **{hk['H2']}**", f"- H3 (genişlik çok düşükken piyasa ARTI): **{hk['H3']}**",
+         f"- H3 evren ortalamasıyla (BİLGİ): {J['bilgi']['H3_P3']}", f"- AVR yönü (bilgi, 2000-2015): H1 {J['bilgi']['AVR']['H1']}, H2 {J['bilgi']['AVR']['H2']}",
+         f"- Batan şirketlerde H1: {J['bilgi']['batan']}", "- Kasa açılmaz; DOĞRULANDI çıkan varsayım IK_ILERI adayı ve 'birleşik iz bileşeni adayı' olur.", "",
+         f"Kesimler (ABD 2016-22 %10, ön kayıtta): DUSUS_W <= {_p(K['ABD']['DUSUS_W'], 2)}%, BOY_W <= {_f(K['ABD']['BOY_W'], 3)}, G40 <= {_p(K['ABD']['G40'], 1)}%. "
+         f"AVR: {_p(K['AVR']['DUSUS_W'], 2)}%, {_f(K['AVR']['BOY_W'], 3)}, {_p(K['AVR']['G40'], 1)}%.", "",
+         "## ADIM 0 — ölçek sağlaması (2016-19 / 2020-22, haftalık; görülmüş veri)", ""]
+    for p in YO2_PAZAR:
+        for H in ("H1", "H2"):
+            for d in YO2_KESIM_DONEM:
+                L.append(f"- {p} {H} {d}: {_yo2_hs(a0[p][H][d])}")
+        for kay, rr in a0[p]["H3"].items():
+            for d in YO2_KESIM_DONEM:
+                L.append(f"- {p} H3 ({kay}) {d}: {_yo2_ps(rr[d])}")
+    L += ["", f"- Ölçek (ABD): H1 {'uydu' if ol['H1'] else 'UYMADI'}, H2 {'uydu' if ol['H2'] else 'UYMADI'}, H3 ({ol['H3_kaynak']}) {'uydu' if ol['H3'] else 'UYMADI'}", "",
+          "## ADIM 1 — 2000-2015 (bir kez)", ""]
+    for p in YO2_PAZAR:
+        L.append(f"### {p}" + (" (ana)" if p == "ABD" else " (bilgi, yön)")); L.append("")
+        for H in ("H1", "H2"):
+            for d in ("tum",) + YO2_SINAMA_DONEM:
+                L.append(f"- {H} {'2000-2015' if d == 'tum' else d}: {_yo2_hs(a1[p][H][d])}")
+        for kay, rr in a1[p]["H3"].items():
+            for d in ("tum",) + YO2_SINAMA_DONEM:
+                L.append(f"- H3 ({kay}{', BİLGİ' if kay == 'P3' else ''}) {'2000-2015' if d == 'tum' else d}: {_yo2_ps(rr[d])}")
+            L.append(f"- H3 ({kay}) öbekler 2000-2015: " + "; ".join(f"{a} - {b}" for a, b in rr["tum"].get("obek_tarih", [])))
+        L.append("")
+    L += ["## YENİDEN ÜRETİM", ""] + (yeniden or ["(yok)"]) + ["", "## KONTROL LİSTESİ", "", "| Kod | Yanıt | Kanıt |", "|---|---|---|"]
+    L += [f"| {k} | {y} | {kn} |" for k, (y, kn) in YO2_KONTROL.items()]
+    L += ["", "## HATA", ""] + (hata or ["(yok)"]) + ["", "## SAPMA", ""] + (sapma or ["(yok)"])
+    L += ["", "## ÖNERİLEN DEFTER SATIRLARI", "",
+          f"- IK_KAYIT: YO EK 2 (geriye doğru doğrulama, haftalık 2000-2015, tek sınama): H1 {hk['H1']}; H2 {hk['H2']}; H3 {hk['H3']}. Evren yaşayanlar (H1 yukarı yanlı).",
+          "- IK_ILERI: " + ("; ".join(f"{H} DOĞRULANDI -> birleşik iz bileşeni adayı, ileri test 2027 (aynı kesim)" for H in ("H1", "H2", "H3") if "DOĞRULANDI" in hk[H] and "UYMADI" not in hk[H]) or "DOĞRULANDI satırı yok")
+          + ("; H3 ENDEKS gelince (Tiingo kotası) aynı kesimle ENDEKS satırı ayrı ileri test olarak" if ed["durum"] != "VAR" else ""), ""]
+    return MI._mi_yaz(_yo2_yol("rapor", cikti), "\n".join(L), "yo2 rapor")
+
+
 # ================================================================ 10) ÇAKIŞMA KAPISI + KOMUT
 def _cakisma_kontrol_yo(_once=_CK_ONCE_YO, _dosya="YUKSELIS_ONCESI.py"):
     g = globals(); ezilen = []
@@ -1532,10 +2299,30 @@ def _cakisma_kontrol_yo(_once=_CK_ONCE_YO, _dosya="YUKSELIS_ONCESI.py"):
 _cakisma_kontrol_yo()
 
 
+def _yo2_komut(k: str) -> None:
+    """YO2 komutları (EK 2)."""
+    if k == "yo2_hazirla":
+        print(json.dumps(MI._mi_json(yo2_hazirla()), ensure_ascii=False, indent=1))
+    elif k == "yo2_sayim":
+        S, K = yo2_sayim_kos(); MI._mi_jyaz(_yo2_ham("yo2_sayim.json"), {"sayim": S, "kesim": K}, "yo2 sayım")
+        print(json.dumps(MI._mi_json({"yil": S["yil"], "kesim": K, "piyasa": S["piyasa"]}), ensure_ascii=False, indent=1))
+        print("SAYIM_SHA:", HV.hv_json_sha(S), "KESIM_SHA:", HV.hv_json_sha(K))
+    elif k == "yo2_onkayit":
+        print(yo2_onkayit_yaz())
+    elif k == "yo2_adim0":
+        J = yo2_adim0(); print(json.dumps(MI._mi_json({"olcek": J["olcek"], "kapi": J["kapi"]["onkayit_commit"]}), ensure_ascii=False, indent=1))
+    elif k == "yo2_adim1":
+        J = yo2_adim1(); print(json.dumps(MI._mi_json({"hukum": J["hukum"], "bilgi": J["bilgi"]}), ensure_ascii=False, indent=1))
+    elif k == "yo2_rapor":
+        ek = _yo2_ham("yo2_rapor_ek.json"); E = json.load(open(ek, encoding="utf-8")) if os.path.exists(ek) else {}
+        print(yo2_rapor_yaz(yeniden=E.get("yeniden"), hata=E.get("hata"), sapma=E.get("sapma")))
+
+
 def _yo_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="YUKSELIS_ONCESI")
-    ap.add_argument("komut", choices=["hazirla", "sayim", "onkayit", "adim1", "adim2", "rapor", "sha"])
+    ap.add_argument("komut", choices=["hazirla", "sayim", "onkayit", "adim1", "adim2", "rapor", "sha",
+                                      "yo2_hazirla", "yo2_sayim", "yo2_onkayit", "yo2_adim0", "yo2_adim1", "yo2_rapor"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "hazirla":
@@ -1554,6 +2341,8 @@ def _yo_ana(argv: Optional[List[str]] = None) -> int:
             print(yo_rapor_yaz())
         elif a.komut == "sha":
             print(json.dumps(yo_sha_simdi(), indent=1))
+        elif a.komut.startswith("yo2_"):
+            _yo2_komut(a.komut)
     except YOHata as ex:
         yolog.error("DURDU: %s", ex)
         return 2
