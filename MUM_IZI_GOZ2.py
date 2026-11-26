@@ -12,6 +12,7 @@ EK 16 (ölçek: sayfadaki / gerçek mum boyu; yeni getiri yok):            pytho
 EK 17 (üçüncü bakış: set 6 = MUM_IZI14 ölçekli onay 17 bölge; birleşik 145): python MUM_IZI_GOZ2.py set6_sayim | set6_onkayit | set6_kos | set6_pdf
 EK 19 (dördüncü bakış: set 7 = MUM_IZI18 mum boyu kapılı onay 12 bölge; set 6+7; birleşik 157): python MUM_IZI_GOZ2.py set7_sayim | set7_onkayit | set7_kos | set7_pdf
 EK 21 (beşinci bakış: set 8 = MUM_IZI20 katmanlı onay 24 bölge; kapıdan geçenler 36; set 6+7+8; birleşik 181): python MUM_IZI_GOZ2.py set8_sayim | set8_onkayit | set8_kos | set8_pdf
+EK 23 (altıncı bakış: set 9 = MUM_IZI22 geçmişli onay 24 bölge; kapıdan geçenler 60; kapı havuzunda işaret 59; set 6-9; birleşik 205): python MUM_IZI_GOZ2.py set9_sayim | set9_onkayit | set9_kos | set9_pdf
 """
 from __future__ import annotations
 
@@ -2393,6 +2394,447 @@ def k21_pdf(cikti: Optional[str] = None, olay: Optional[pd.DataFrame] = None, so
     return y
 
 
+# ================================================================ 4g) MUM_IZI EK 23: ALTINCI BAKIŞ (set 9 = MUM_IZI22 geçmişli onay seti, 24 bölge) + kapıdan geçenler (set 7+8+9)
+#                                    + kapı havuzunda Cemal'in işareti (set 7+8+9) + gerçek ölçekle işaretlenenler (set 6-9) + BİRLEŞİK 1-9
+K23_SURUM = ("MUM_IZI_GOZ2 set9 v1.0 (2026-11-26): EK 23 göz ölçümü altıncı bakış (set 9) + kapıdan geçenler (set 7+8+9, 60) + kapı havuzunda Cemal'in işareti (59) + "
+             "gerçek ölçekle işaretlenenler (set 6-9) + birleşik 205; tanımlar GZ_ESIK, G2_EK, K17_EK, K19_EK, K21_EK aynen")
+K23_DOSYA = {"onkayit": "MUM_IZI23_ON_KAYIT.md", "rapor": "MUM_IZI23_RAPOR.md", "sonuc": "mum_izi23_sonuc.json", "olay": "mum_izi23_olay.csv", "pdf": "MUM_IZI23_SONRASI.pdf"}
+K23_YOL = {"isaret9": os.path.join(_C, "cemal_mum_izi22_onay.json"), "anahtar9": os.path.join(_C, "MUM_IZI22_onay_anahtar.json"),
+           "olcekli9": os.path.join(_C, "MUM_IZI22_onay_olcekli.json"), "olay21": os.path.join(_C, "mum_izi21_olay.csv"), "sonuc21": os.path.join(_C, "mum_izi21_sonuc.json")}
+K23_SET9_AD = "MUM_IZI22_ONAY_GECMISLI"
+K23_KAPI_SET = ("set7", "set8", "set9")
+K23_OLCEK_SET = ("set6", "set7", "set8", "set9")
+K23_EK: Dict[str, Any] = {
+    "surum": "K23-1.0", "tanim": "MUM_IZI_GOZ GZ_ESIK aynen (ESIK11_SHA) + G2_EK aynen (EK13_SHA) + K17_EK aynen (EK17_SHA) + K19_EK aynen (EK19_SHA) + K21_EK aynen (EK21_SHA): "
+                                "giriş, ufuk 15 mum, stop = bölge dibi x 0,98, CETVEL2 konum eşi, dokunma, d5_tum, k17 hücresi, gz_tablolar, g2_evet_es, k19 / k21 karşılaştırma "
+                                "kuralı (eşli n >= 2), k21 okuma kuralı, k21 getirisiz eş sayımı",
+    "set9": "MUM_IZI22_ONAY_GECMISLI (s2-25): sayfa -> bölge mühürlü MUM_IZI22_onay_anahtar.json 'yeni_sayfa' (aday_sayfa, zaman, pazar, sembol, bolge_bas = ilk barın tarihi, "
+            "bolge_son, pencere, oran, hakem_karar, hakem_puan, katman); işaret cemal_mum_izi22_onay.json (EVET / KISMEN / HAYIR / YOK; başka değer DUR); üç dosyada sayfa kümesi "
+            "ve zaman aynı (DUR); anahtar 'oran' = ölçekli 'oran' (DUR); her bölgede oran <= 0,70 (DUR); iki kutu kuralı k21 aynen (DUR); mum boyu / olağan / oran ölçekli json'dan aynen",
+    "isaretsiz": "k21 aynen: işaret 'YOK' olan bölge sınıf tablolarına girmez ama ölçülür, eş dışlama kümesine ve 'kapıdan geçenler'e girer",
+    "duyarlilik": "k21 aynen: iki kutu içeren sayfa EVET sayılır (sinif_duy); set 8 s11; set 9'da iki kutu varsa aynı kural",
+    "birlesik": "set 1-9 (205 bölge); eş dışlama kümesi 205 olayla kurulur; set 1-8 değerleri mum_izi21_olay.csv ile karşılaştırılır (R15, es_R15, fark, n_es, es_neden): "
+                "değişen satır sayısı ve en büyük mutlak fark yazılır",
+    "gecit": "k17_gecit + k21_es_sayim aynen (getirisiz); hesapta gz_olc ve gz_es ile birebir aynı olmalı (DUR)",
+    "tablolar": {"altinci_bakis": "yalnız set 9: Cemal sınıfı (EVET / KISMEN / HAYIR) x zaman (haftalık, günlük, birlikte) k17 hücresi + gz_tablolar + g2_evet_es; 24 bölgenin dökümü",
+                 "kapidan_gecenler": "set 7 + 8 + 9 (60; oran <= 0,70), Cemal'in işaretinden bağımsız: zaman (haftalık, günlük, birlikte) k17 hücresi + eşli fark ortalamasının "
+                                     "basit (ay kümesiz) olay bootstrap %95 aralığı (B 5000, tohum 23) + işaret çevirme p (iki yönlü, 10.000, tohum 23) + k21 okuma; bilgi "
+                                     "satırları: set 7, set 8, set 9 ayrı (birlikte)",
+                 "kapi_isaret": "set 7 + 8 + 9 sınıflı (59): Cemal sınıfı (EVET, KISMEN, HAYIR, EVET+KISMEN) x zaman k17 hücresi + her sınıfın eşli fark ortalaması (bootstrap "
+                                "B 5000 + işaret çevirme 10.000, tohum 23); EVET - HAYIR ve (EVET+KISMEN) - HAYIR eşli fark farkı (iki örneklem permütasyonu, iki yönlü, 10.000, "
+                                "tohum 23; iki grupta eşli n >= 2 değilse 'karşılaştırma yapılamaz'); duyarlılık sinif_duy ile",
+                 "olcekli": "set 6 + 7 + 8 + 9 sınıflı: k21 'olcekli' tablolarının aynısı (tohum 23) + gz_tablolar + g2_evet_es + duyarlılık",
+                 "birlesik": "set 1-9: gz_tablolar + g2_evet_es + k17 hücresi + duyarlılık (son işaret); MUM_IZI21 birleşiği (mum_izi21_sonuc.json) ile fark"},
+    "karsilastirma": {"n_min": 2, "perm": 10000, "boot": 5000, "tohum": 23},
+    "okuma": {"kapidan_gecenler": "k21 aynen: %95 aralık sıfırın üstünde 'eşlerinden iyi', altında 'eşlerinden kötü', içeriyorsa 'ayrışmıyor'; eşli n < 30 ayrıca 'ÖRNEKLEM "
+                                  "YETERSİZ'; tek aday kuralı havuzu, ABD ağırlıklı: karar etiketi BİLGİ",
+              "oteki": "BİLGİ; ÖRNEKLEM YETERSİZ (n < 30)"},
+    "etiket": "BİLGİ (kapıdan geçenler dahil); n < 30 hücreler: ÖRNEKLEM YETERSİZ",
+    "es_siniri": "eşler bölgenin kendi koşusuyla eşlenmedi (Ç229 / Ç240): aynı gün aynı kova konum eşi",
+    "sonuc_anahtar": "ön kayıt kapısı kaydı 'onkayit_kapi'; temel anahtarlar ile tablo anahtarları kesişirse DUR (EK 19 HATA)",
+    "pdf": "MUM_IZI21_SONRASI düzeni (k17_sayfa aynen): kapakta düz dil özet tablolar (set 9 Cemal sınıfı x zaman; kapıdan geçenler 60 zaman dilimine göre; kapı havuzunda "
+           "Cemal'in işareti 59) + karşılaştırma / birleşik satırları; sonra set 9'un 24 bölgesi: BENZİYOR, KISMEN, BENZEMİYOR (her sınıfta önce haftalık, sonra bölge sonu sırası)",
+}
+K23_KONTROL: Dict[str, Tuple[str, str]] = {
+    "K1": ("EVET", "eş = aynı giriş günü aynı kova (CETVEL2 v2.2 konum eşi) aynı takvim aralığı aynı stop geometrisi (GZ aynen); eş dışlama 205 olayla; sınır: eşler bölgenin "
+                   "kendi koşusuyla eşlenmedi (Ç229 / Ç240); fark = bölge - eş ortalaması (eş aynı giriş / çıkış geometrisi: mekanik üstünlük yok)"),
+    "K2": ("EVET", "Cemal set 9'u sonrasını görmeden işaretledi (geçmişli sayfa bölge sonunda kesik); işaret dosyası commit 9ac1ebf, bu ön kayıt set 9 getirilerinden önce; "
+                   "giriş bölgeden SONRAKİ barın açılışı; veri <= 2022-12-31 + KASA kapısı; mum boyu oranı yalnız bölge sonu t'ye kadarki barlardan (ölçekli json)"),
+    "K3": ("EVET", "MI.mi_veri geçerli bar (H > L, V > 0); haftalık barlar tamamlanmış ISO haftaları (MH / MV aynen)"),
+    "K4": ("EVET", "205 tekil bölge (zaman + sembol + bölge sonu; k23_ornek DUR); set 9'un önceki setlerle ortak sembolü sayılıp yazılır"),
+    "K5": ("EVET", "giriş = bölgeden sonraki ilk geçerli barın açılışı (haftalıkta sonraki haftanın ilk günü); giriş <= stop olay ölçülmez (sayısı yazılır)"),
+    "K6": ("EVET", "MI bölünme düzeltmeli fiyatlar (GZ aynen); getiriler oransal; ABD USD, AVR yerel para, BIST TL; pazarlar arası karşılaştırma eşli farkla"),
+    "K7": ("EVET", "evren bugün yaşayan hisseler (hayatta kalma yanlılığı); sonuç 'yukarı yanlı' okunur, bilgi, kasa açılmaz"),
+    "K8": ("EVET", "set 9 ve sınıf hücrelerinin çoğu n < 30: 'BİLGİ; ÖRNEKLEM YETERSİZ'; kapıdan geçenler 60 (eşli n ayrıca yazılır); eşli n < 2 'karşılaştırma yapılamaz'; "
+                   "24 bölge tek tek listeli; tek dönem (<= 2022), BH yok (karar yok)"),
+    "K9": ("EVET", "MUM_IZI23_ON_KAYIT.md: KOD23 / EK23 / EK21 / EK19 / EK17 / EK13 / ESIK11 / set 6-9 işaret / anahtar / ölçekli / olay21 / sonuç21 sha + getirisiz sayımlar; "
+                   "set 9 getirilerinden önce commit + push; k23_kapi sha + commit + temiz ağaç + IZ_KARNE.ik_kontrol_kapisi"),
+    "K10": ("EVET", "işaret şeması GZ.gz_isaret_oku + yalnız EVET / KISMEN / HAYIR / YOK (DUR); üç set 9 dosyasında sayfa kümesi ve zaman aynı, anahtar oranı = ölçekli oranı, "
+                    "oran <= 0,70 (DUR); iki kutu kuralı (DUR); bölge başı veriden yeniden hesaplanıp anahtarla denetlenir (k17_gecit)"),
+    "K11": ("EVET", "getirisiz geçit ve eş sayımı hesapta gz_olc / gz_es ile birebir (DUR); haftalık +%10 k17 dokunma fonksiyonuyla GZ d10'a eşit (DUR); set 1-8 satırları "
+                    "mum_izi21_olay.csv ile karşılaştırılır; >= 2 hücre olay csv'sinden bağımsız kodla yeniden üretilir (test_mum_izi23)"),
+    "K12": ("EVET", "'iz / tuttu / anlamlı' sözü yok; sayı ile yorum ayrı; n < 30 'örneklem yetersiz'; kapıdan geçenler okuma kuralı önceden yazılı"),
+    "K13": ("EVET", "çakışma kapısı korunur; çalışan fonksiyonlar değişmez (test_mum_izi23 ast karşılaştırması, 7752bef'e göre); yasak defter / mühürlü dosyalara dokunulmaz; "
+                    "yalnız kendi yolları commit; sızıntı taraması MI._mi_yaz"),
+    "K14": ("UYGULANMAZ", "öneri / gerçek para işi değil; karar vermez"),
+}
+K23_KOL = K21_KOL + ["hakem_puan", "aday_sayfa"]
+K23_GR = (("EVET", ["EVET"]), ("KISMEN", ["KISMEN"]), ("HAYIR", ["HAYIR"]), ("EVET+KISMEN", ["EVET", "KISMEN"]))
+
+
+def _k23_yol(ad: str, cikti: Optional[str] = None) -> str:
+    return os.path.join(cikti or G2_YOL["cikti"], K23_DOSYA[ad])
+
+
+def k23_ek_sha() -> str:
+    return hashlib.sha256(json.dumps(K23_EK, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+# ---------------------------------------------------------------- örneklem
+def k23_set9() -> pd.DataFrame:
+    """Set 9: sayfa -> bölge (mühürlü anahtar), işaret (Cemal), mum boyu (ölçekli json). k21_set8 denetimleri aynen."""
+    E = GZ.gz_isaret_oku(K23_YOL["isaret9"]); EJ = json.load(open(K23_YOL["isaret9"], encoding="utf-8"))["sayfalar"]
+    A = json.load(open(K23_YOL["anahtar9"], encoding="utf-8"))["sayfalar"]; B = {int(s["yeni_sayfa"]): s for s in json.load(open(K23_YOL["olcekli9"], encoding="utf-8"))["sayfalar"]}
+    pa = {int(r["yeni_sayfa"]) for r in A}
+    if pa != set(E) or pa != set(B) or len(pa) != len(A):
+        raise G2Hata(f"K10: set 9 sayfa kümeleri uyuşmuyor (anahtar {sorted(pa)}, işaret {sorted(E)}, ölçekli {sorted(B)})")
+    rows = []
+    for r in A:
+        pg = int(r["yeni_sayfa"]); b = B[pg]; ej = EJ[str(pg)]; ez = ej.get("zaman")
+        if E[pg] not in K21_ISARET:
+            raise G2Hata(f"K10: set 9 sayfa {pg} işaret {E[pg]!r} (yalnız {K21_ISARET})")
+        if b.get("zaman") != r["zaman"] or (ez is not None and ez != r["zaman"]):
+            raise G2Hata(f"K10: set 9 sayfa {pg} zaman uyuşmuyor ({r['zaman']}, {b.get('zaman')}, {ez})")
+        if not isinstance(ej.get("yildiz"), bool):
+            raise G2Hata(f"K10: set 9 sayfa {pg} yildiz bool değil ({ej.get('yildiz')!r})")
+        ob = b.get("oran"); oa = r.get("oran")
+        if ob is None or oa is None or abs(float(ob) - float(oa)) > 1e-9:
+            raise G2Hata(f"K10: set 9 sayfa {pg} anahtar oranı ölçekli oranla uyuşmuyor ({oa}, {ob})")
+        if float(ob) > 0.70 + 1e-12:
+            raise G2Hata(f"K10: set 9 sayfa {pg} oran {ob} > 0,70 (mum boyu kapısı)")
+        iki = "iki kutu" in str(ej.get("kutu_disi", ""))
+        if iki and E[pg] != "KISMEN":
+            raise G2Hata(f"K10: set 9 sayfa {pg} iki kutu işaretli ama ana sınıf KISMEN değil ({E[pg]})")
+        rows.append({"set": "set9", "set_ad": K23_SET9_AD, "sayfa": pg, "isaret": E[pg], "zaman": r["zaman"], "pazar": r["pazar"], "sembol": r["sembol"], "tarih": r["bolge_son"],
+                     "m": int(r["pencere"]), "bolge_bas_anahtar": r["bolge_bas"], "hakem_sinif": None, "hakem_karar": r.get("hakem_karar"), "hakem2_karar": None,
+                     "hakem_puan": r.get("hakem_puan"), "aday_sayfa": r.get("aday_sayfa"),
+                     "boy_mutlak": b.get("boy_mutlak"), "boy_onceki": b.get("onceki"), "boy_onceki_n": b.get("onceki_n"), "boy_oran": b.get("oran"),
+                     "yildiz": bool(ej["yildiz"]), "katman": r.get("katman"), "iki_kutu": iki})
+    X = pd.DataFrame(rows)
+    for c in ("boy_mutlak", "boy_onceki", "boy_oran", "hakem_puan"):
+        X[c] = pd.to_numeric(X[c], errors="coerce")
+    X["sinif"] = np.where(X.isaret.isin(GZ.SINIF), X.isaret, None); X["sinif_son"] = X["sinif"]
+    X["sinif_duy"] = np.where(X.iki_kutu, "EVET", X.sinif)
+    return X.drop(columns=["iki_kutu"]).reset_index(drop=True)
+
+
+def k23_ornek() -> pd.DataFrame:
+    X = pd.concat([k21_ornek(), k23_set9()], ignore_index=True)
+    if X.duplicated(["zaman", "sembol", "tarih"]).any():
+        raise G2Hata("K4: aynı bölge iki kez (set 1-9)")
+    X["yildiz"] = X["yildiz"].fillna(False).astype(bool)
+    return X
+
+
+def k23_sembol_tekrar(X: pd.DataFrame) -> Dict[str, Any]:
+    s9 = X[X.set == "set9"]; once = X[X.set != "set9"]
+    ort = sorted(set(s9.sembol) & set(once.sembol))
+    return {"set9_onceki_setlerle_ortak_sembol": ort, "n": len(ort)}
+
+
+def k23_sayim(G: pd.DataFrame, ES: Optional[pd.DataFrame] = None) -> Dict[str, Any]:
+    """GETİRİSİZ sayım (k21_sayim'in küme sayımı aynen): set 9, kapıdan geçenler (7+8+9), kapı havuzunda işaretli, set 6-9 işaretli, birleşik 1-9."""
+    def bir(g: pd.DataFrame) -> Dict[str, Any]:
+        o = k17_sayim(g)["birlesik"]; o["isaretsiz"] = int(g.sinif.isna().sum()); o["zaman"] = g.zaman.value_counts().to_dict()
+        if ES is not None:
+            e = ES.loc[g.index]; o["esi_olan"] = int(e.es_var.sum()); o["esi_olmayan"] = e[~e.es_var].es_neden.fillna("").value_counts().to_dict()
+            o["esi_olan_sinif_zaman"] = {f"{s}|{z}": int(((g.sinif == s) & (g.zaman == z) & e.es_var).sum()) for s in GZ.SINIF for z in K17_ZAMAN}
+            o["esi_olan_zaman"] = {z: int(((g.zaman == z) & e.es_var).sum()) for z in K17_ZAMAN}
+        return o
+    s9 = G[G.set == "set9"]; kp = G[G.set.isin(K23_KAPI_SET)]
+    return {"set9": bir(s9), "kapidan_gecenler": bir(kp), "kapi_isaret": bir(kp[kp.sinif.notna()]), "set6_9": bir(G[G.set.isin(K23_OLCEK_SET) & G.sinif.notna()]),
+            "birlesik": bir(G), "set9_isaret": s9.isaret.value_counts().to_dict(),
+            "set9_hakem_karar_isaret": {f"{h}|{i}": int(v) for (h, i), v in s9.groupby(["hakem_karar", "isaret"]).size().items()},
+            "set9_katman": s9.katman.value_counts().to_dict(), "set9_katman_isaret": {f"{h}|{i}": int(v) for (h, i), v in s9.groupby(["katman", "isaret"]).size().items()},
+            "duyarlilik_degisen": G[G.sinif_duy.fillna("-") != G.sinif.fillna("-")][["set", "sayfa", "sinif", "sinif_duy"]].to_dict("records")}
+
+
+# ---------------------------------------------------------------- tablolar
+def k23_karsilastir(a: pd.DataFrame, b: pd.DataFrame) -> Dict[str, Any]:
+    """k19 / k21 karşılaştırma kuralı aynen (eşli n >= 2), permütasyon tohumu 23 (K23_EK)."""
+    C = K23_EK["karsilastirma"]
+    oa = a[a.olculdu.astype(bool)]; ob = b[b.olculdu.astype(bool)]
+    fa = oa.fark.astype(float).to_numpy(); fb = ob.fark.astype(float).to_numpy(); fa = fa[np.isfinite(fa)]; fb = fb[np.isfinite(fb)]
+    Ra = oa.R15.astype(float).to_numpy(); Rb = ob.R15.astype(float).to_numpy(); Ra = Ra[np.isfinite(Ra)]; Rb = Rb[np.isfinite(Rb)]
+    out: Dict[str, Any] = {"n_a": int(len(Ra)), "n_b": int(len(Rb)), "n_es_a": int(len(fa)), "n_es_b": int(len(fb))}
+    if len(fa) < C["n_min"] or len(fb) < C["n_min"]:
+        out.update({"esli_fark_fark": None, "esli_p": None, "durum": "karşılaştırma yapılamaz"})
+    else:
+        out.update({"esli_fark_fark": float(fa.mean() - fb.mean()), "esli_p": GZ.gz_perm(fa, fb, C["perm"], C["tohum"]), "durum": "hesaplandı"})
+    out["R15_fark_bilgi"] = float(Ra.mean() - Rb.mean()) if len(Ra) and len(Rb) else None
+    return out
+
+
+def k23_es_farki(g: pd.DataFrame) -> Dict[str, Any]:
+    """k21_es_farki aynen, tohum 23: basit olay bootstrap %95 (B 5000) + işaret çevirme p (10.000)."""
+    C = K23_EK["karsilastirma"]; o = g[g.olculdu.astype(bool)]; f = o.fark.astype(float).to_numpy(); f = f[np.isfinite(f)]
+    return {"n_es": int(len(f)), "esli_fark_ort": float(f.mean()) if len(f) else None, "esli_fark_med": float(np.median(f)) if len(f) else None,
+            "boot95": GZ.gz_boot(f, C["boot"], C["tohum"])["ort95"], "p": g2_isaret_perm(f, C["perm"], C["tohum"])}
+
+
+def k23_sinif_tablo(D: pd.DataFrame, kol: str = "sinif") -> Dict[str, Any]:
+    """Sınıf x zaman k17 hücresi + her sınıfın eşli fark ortalaması (bootstrap + işaret çevirme) + EVET - HAYIR ve (EVET+KISMEN) - HAYIR (tohum 23)."""
+    zs = _k19_zs; D = D.copy(); D["sinif"] = D[kol]
+    se = {f"{s}-es|{z}": k23_es_farki(zs(D[D.sinif.isin(sl)], z)) for s, sl in K23_GR for z in K19_ZZ}
+    for k, e in se.items():
+        e["okuma"] = k21_okuma(e)
+    return {"hucre": {f"{s}|{z}": k17_hucre(zs(D[D.sinif.isin(sl)], z)) for s, sl in K23_GR for z in K19_ZZ},
+            "karsilastirma": {f"{ad}|{z}": k23_karsilastir(zs(D[D.sinif.isin(sl)], z), zs(D[D.sinif == "HAYIR"], z))
+                              for ad, sl in (("EVET-HAYIR", ["EVET"]), ("(EVET+KISMEN)-HAYIR", ["EVET", "KISMEN"])) for z in K19_ZZ},
+            "sinif_es": se, "hayir_es": {f"HAYIR-es|{z}": se[f"HAYIR-es|{z}"] for z in K19_ZZ}}
+
+
+def k23_tablolar(Y: pd.DataFrame) -> Dict[str, Any]:
+    zs = _k19_zs; Y9 = Y[Y.set == "set9"]; Yk = Y[Y.set.isin(K23_KAPI_SET)]; Yki = Yk[Yk.sinif.notna()]; Yo = Y[Y.set.isin(K23_OLCEK_SET) & Y.sinif.notna()]
+    b6 = {f"{s}|{z}": k17_hucre(zs(Y9[Y9.sinif == s], z)) for s in GZ.SINIF for z in K19_ZZ}
+    b6.update({f"isaretsiz|{z}": k17_hucre(zs(Y9[Y9.sinif.isna()], z)) for z in K19_ZZ})
+    kg = {}
+    for z in K19_ZZ:
+        c = k17_hucre(zs(Yk, z)); e = k23_es_farki(zs(Yk, z))
+        c.update({"fark_boot95": e["boot95"], "fark_p": e["p"], "okuma": k21_okuma(e)}); kg[f"set7+set8+set9|{z}"] = c
+    kg.update({f"{st}|birlikte": k17_hucre(Y[Y.set == st]) for st in K23_KAPI_SET})
+    ki = k23_sinif_tablo(Yki); ki["duyarlilik"] = k23_sinif_tablo(Yki, "sinif_duy")
+    ol = k23_sinif_tablo(Yo); ol.update({"gz": GZ.gz_tablolar(Yo), "evet_es": g2_evet_es(Yo), "duyarlilik": k23_sinif_tablo(Yo, "sinif_duy")})
+    bk = {f"{s}|{z}": k17_hucre(zs(Y[Y.sinif.isin(sl)], z)) for s, sl in K23_GR for z in K19_ZZ}
+    return {"altinci_bakis": {"hucre": b6, "gz": GZ.gz_tablolar(Y9), "evet_es": g2_evet_es(Y9)}, "kapidan_gecenler": kg, "kapi_isaret": ki, "olcekli": ol,
+            "birlesik": {"tablo": GZ.gz_tablolar(Y), "evet_es": g2_evet_es(Y), "k17_hucre": bk, "duyarlilik_son_isaret": GZ.gz_tablolar(Y, "sinif_son")["karsilastirma"]}}
+
+
+def k23_dokum(Y: pd.DataFrame) -> List[Dict[str, Any]]:
+    Y9 = Y[Y.set == "set9"].copy(); Y9["_s"] = Y9.sinif.map({s: i for i, s in enumerate(GZ.SINIF)}).fillna(9); Y9["_z"] = Y9.zaman.map({"haftalik": 0, "gunluk": 1})
+    kol = ["sayfa", "isaret", "sinif_duy", "zaman", "pazar", "sembol", "bolge_bas", "bolge_son", "m", "olculdu", "neden", "R15", "es_R15", "n_es", "fark", "max15", "min15",
+           "stop15", "d5_tum", "d10", "R30", "boy_mutlak", "boy_onceki", "boy_oran", "hakem_karar", "hakem_puan", "katman", "aday_sayfa"]
+    return [{k: (None if isinstance(v, float) and not np.isfinite(v) else v) for k, v in r.items()}
+            for r in Y9.sort_values(["_s", "_z", "bolge_son"])[kol].to_dict("records")]
+
+
+def k23_fark21(J21: Dict[str, Any], T: Dict[str, Any]) -> Dict[str, Any]:
+    """MUM_IZI21 birleşik (181) -> MUM_IZI23 birleşik (205)."""
+    a = J21["birlesik"]; b = T["birlesik"]; out: Dict[str, Any] = {"karsilastirma": {}, "evet_es": {}, "hucre": {}}
+    for k, v in b["tablo"]["karsilastirma"].items():
+        o = a["tablo"]["karsilastirma"].get(k, {})
+        out["karsilastirma"][k] = {"esli_fark_fark_21": o.get("esli_fark_fark"), "esli_fark_fark_23": v.get("esli_fark_fark"), "esli_p_21": o.get("esli_p"), "esli_p_23": v.get("esli_p"),
+                                   "n_es_a_21": o.get("n_es_a"), "n_es_a_23": v.get("n_es_a"), "n_es_b_21": o.get("n_es_b"), "n_es_b_23": v.get("n_es_b")}
+    for k, v in b["evet_es"].items():
+        o = a["evet_es"].get(k, {})
+        out["evet_es"][k] = {"ort_21": o.get("esli_fark_ort"), "ort_23": v.get("esli_fark_ort"), "p_21": o.get("p"), "p_23": v.get("p"), "n_21": o.get("n_es"), "n_23": v.get("n_es")}
+    for k, v in b["tablo"]["hucre"].items():
+        if k.endswith("|BIST"):
+            continue
+        o = a["tablo"]["hucre"].get(k, {})
+        out["hucre"][k] = {"n_21": o.get("n"), "n_23": v.get("n"), "R15_ort_21": o.get("R15_ort"), "R15_ort_23": v.get("R15_ort"), "fark_ort_21": o.get("fark_ort"),
+                           "fark_ort_23": v.get("fark_ort")}
+    return out
+
+
+# ---------------------------------------------------------------- kapı, ön kayıt, koşu
+def k23_sha_simdi() -> Dict[str, str]:
+    return {"KOD23_SHA": MI._mi_sha(G2_YOL["kod"]), "EK23_SHA": k23_ek_sha(), "EK21_SHA": k21_ek_sha(), "EK19_SHA": k19_ek_sha(), "EK17_SHA": k17_ek_sha(),
+            "EK13_SHA": g2_ek_sha(), "GZ_KOD_SHA": MI._mi_sha(GZ.GZ_YOL["kod"]), "ESIK11_SHA": GZ.gz_esik_sha(), "ISARET_SET9_SHA": MI._mi_sha(K23_YOL["isaret9"]),
+            "ANAHTAR_SET9_SHA": MI._mi_sha(K23_YOL["anahtar9"]), "OLCEKLI_SET9_SHA": MI._mi_sha(K23_YOL["olcekli9"]), "ISARET_SET8_SHA": MI._mi_sha(K21_YOL["isaret8"]),
+            "ANAHTAR_SET8_SHA": MI._mi_sha(K21_YOL["anahtar8"]), "OLCEKLI_SET8_SHA": MI._mi_sha(K21_YOL["olcekli8"]), "ISARET_SET7_SHA": MI._mi_sha(K19_YOL["isaret7"]),
+            "ANAHTAR_SET7_SHA": MI._mi_sha(K19_YOL["anahtar7"]), "ISARET_SET6_SHA": MI._mi_sha(K17_YOL["isaret6"]), "ANAHTAR_SET6_SHA": MI._mi_sha(K17_YOL["anahtar6"]),
+            "OLAY21_SHA": MI._mi_sha(K23_YOL["olay21"]), "SONUC21_SHA": MI._mi_sha(K23_YOL["sonuc21"])}
+
+
+def k23_kapi(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import IZ_KARNE as IK
+    yol = _k23_yol("onkayit", cikti)
+    try:
+        k = IK.ik_kontrol_kapisi(yol)
+    except RuntimeError as ex:
+        raise G2Hata(str(ex)) from ex
+    metin = open(yol, encoding="utf-8").read(); bek = k23_sha_simdi()
+    for ad, v in bek.items():
+        if f"{ad}: {v}" not in metin:
+            raise G2Hata(f"ön kayıt 23 kapısı: {ad} farklı -> DURDU")
+    rel = os.path.relpath(yol, KOK_G2); c = MI._mi_git(["log", "-1", "--format=%H %cI", "--", rel])
+    if not c:
+        raise G2Hata("ön kayıt 23 commit'li değil -> DURDU")
+    gir = [os.path.relpath(v, KOK_G2) for v in list(K23_YOL.values()) + list(K21_YOL.values()) + list(K19_YOL.values()) + list(K17_YOL.values())]
+    if MI._mi_git(["status", "--porcelain", "--", rel, "MUM_IZI_GOZ2.py", "MUM_IZI_GOZ.py"] + gir):
+        raise G2Hata("ön kayıt / kod / girdiler çalışma ağacında değişmiş -> DURDU")
+    return {"kontrol": {"gecti": k["gecti"]}, "onkayit_commit": c, **bek}
+
+
+def k23_onkayit_yaz(cikti: Optional[str] = None) -> str:
+    import IZ_KARNE as IK
+    y = _k23_yol("onkayit", cikti)
+    if os.path.exists(y):
+        raise G2Hata("ön kayıt 23 zaten var")
+    X = k23_ornek(); G = k17_gecit(X); ES = k21_es_sayim(X, G); S = k23_sayim(G, ES); sh = k23_sha_simdi(); st = k23_sembol_tekrar(X)
+    ad = {k["kod"]: k.get("ad", k["kod"]) for k in IK.IK_KONTROL}
+    kt = "\n".join(["| Kod | Madde | Yanıt | Kanıt |", "|---|---|---|---|"] + [f"| {k} | {ad.get(k, k)} | {a} | {b} |" for k, (a, b) in K23_KONTROL.items()])
+    kc = MI._mi_git(["log", "-1", "--format=%H %cI", "--", "MUM_IZI_GOZ2.py"])
+
+    def sat(ad_: str, s: Dict[str, Any]) -> str:
+        return (f"{ad_}: {s['toplam']} bölge (işaretsiz {s['isaretsiz']}), ölçülebilen {s['olculebilir']}, ölçülemeyen {s['toplam'] - s['olculebilir']} "
+                f"{json.dumps(s['olculemedi'], ensure_ascii=False)}; eşi olan {s['esi_olan']}, eşi olmayan {json.dumps(s['esi_olmayan'], ensure_ascii=False)}; zaman "
+                f"{json.dumps(s['zaman'], ensure_ascii=False)} (eşi olan {json.dumps(s['esi_olan_zaman'], ensure_ascii=False)}); pazar {json.dumps(s['pazar'], ensure_ascii=False)}; "
+                f"en geç 15. mum {s['en_gec_15_mum']}.")
+    s = [f"# MUM_IZI23 ÖN KAYIT ({MI._mi_simdi()})", "",
+         "MUM_IZI11 / 13 / 17 / 19 / 21 ön kayıtlarının tanımları AYNEN (MUM_IZI_GOZ.py GZ_ESIK: ESIK11_SHA; G2_EK: EK13_SHA; K17_EK: EK17_SHA; K19_EK: EK19_SHA; K21_EK: "
+         "EK21_SHA): giriş = bölgeden sonraki ilk geçerli barın açılışı; ufuk 15 mum; stop = bölge dibi x 0,98; dokunma; R30; CETVEL2 konum eşi; d5_tum; k17 hücresi; tablolar; "
+         "permütasyonlar; okuma kuralı. Ek: set 9 = MUM_IZI22_ONAY_GECMISLI 24 bölge (hepsi mum boyu kapısından geçen, oran <= 0,70; aynı havuzun gösterilmemiş 75 adayından "
+         "katmanlı: hakem KISMEN / BENZEMİYOR x oran <= 0,65 / 0,65-0,70, 4 x 6; Cemal sonrasını görmeden, geçmişli sayfada (önceki 120 mum + yakın görünüm) işaretledi). "
+         "Bu dosya set 9'un getirileri hesaplanmadan ÖNCE commit edilir; getirisiz sayımlar aşağıda (eş sayımı bölge getirisi hesaplanmadan, yalnız eş uygunluğu).", "",
+         "## Mühürler", "", *[f"{k}: {v}" for k, v in sh.items()], "", f"- MUM_IZI_GOZ2.py commit'i: {kc or 'yok'}", "",
+         "## GETİRİSİZ SAYIM (getiri hesaplanmadı; yalnız işaret, zaman, veri kapıları, eş uygunluğu)", "",
+         sat("Set 9", S["set9"]) + f" İşaret {json.dumps(S['set9_isaret'], ensure_ascii=False)}; hakem kararı x işaret {json.dumps(S['set9_hakem_karar_isaret'], ensure_ascii=False)}; "
+         f"katman x işaret {json.dumps(S['set9_katman_isaret'], ensure_ascii=False)}.", "",
+         *_k21_tablo_md(S["set9"]), "",
+         sat("Kapıdan geçenler (set 7 + 8 + 9; işaretten bağımsız)", S["kapidan_gecenler"]), "",
+         sat("Kapı havuzunda Cemal'in işareti (set 7 + 8 + 9; yalnız sınıflı)", S["kapi_isaret"]), "", *_k21_tablo_md(S["kapi_isaret"]), "",
+         sat("Set 6 + 7 + 8 + 9 (gerçek ölçekle işaretlenenler; yalnız sınıflı)", S["set6_9"]), "", *_k21_tablo_md(S["set6_9"]), "",
+         sat("Birleşik set 1-9", S["birlesik"]), "", *_k21_tablo_md(S["birlesik"]), "",
+         f"- Duyarlılıkta değişen (iki kutu): {json.dumps(S['duyarlilik_degisen'], ensure_ascii=False)}.",
+         f"- Set 9'un önceki setlerle ortak sembolü: {st['n']} {st['set9_onceki_setlerle_ortak_sembol']} (bölge tekrarı yok: zaman + sembol + bölge sonu tekil, denetlendi).",
+         "- Eşsiz olay eşli tabloya girmez (GZ aynen); eş sayımı hesapta gz_es ile satır satır aynı olmalı (DUR).", "",
+         "## Tablolar (önceden; sonuçtan sonra değişmez)", "",
+         "- (i) ALTINCI BAKIŞ = yalnız set 9: Cemal sınıfı x zaman (haftalık, günlük, birlikte): n, R15 ort / medyan, eş ort, eşli fark ort / medyan, artıda payı, eşinden iyi "
+         "payı, +%5 / +%10 stop'tan önce payı, stop payı (k17 hücresi) + GZ tabloları + EVET - eş. 24 bölgenin dökümü (sayfa, işaret, zaman, sembol, R15, eş ort, mum boyu %, oran, "
+         "hakem kararı, katman).",
+         "- (ii) KAPIDAN GEÇENLER = set 7 + 8 + 9 (60; mumları olağanın 0,70 katı ya da altı), Cemal'in işaretinden bağımsız: aynı ölçüler zaman dilimine göre ve birlikte + eşli "
+         "fark ortalamasının basit olay bootstrap %95 aralığı (ay kümesiz; B 5000, tohum 23) + işaret çevirme p (iki yönlü, 10.000, tohum 23). Soru: 'belirgin küçük mumlu "
+         "bölgeler eşlerinden iyi gitti mi'. Bilgi satırları: set 7, set 8, set 9 ayrı (birlikte).",
+         "- (iii) KAPI HAVUZUNDA CEMAL'İN İŞARETİ = set 7 + 8 + 9 sınıflı (59): BENZİYOR / KISMEN / BENZEMİYOR / BENZİYOR + KISMEN x zaman: aynı ölçüler (k17 hücresi + eşli fark "
+         "ortalamasının bootstrap %95 aralığı + işaret çevirme p, tohum 23); BENZİYOR - BENZEMİYOR ve (BENZİYOR + KISMEN) - BENZEMİYOR eşli fark farkı (iki örneklem "
+         "permütasyonu, iki yönlü, 10.000, tohum 23; iki grupta eşli n >= 2 değilse 'karşılaştırma yapılamaz'). Duyarlılık: iki kutulu sayfa (set 8 s11) BENZİYOR sayılırsa.",
+         "- (iv) GERÇEK ÖLÇEKLE İŞARETLENENLER = set 6 + 7 + 8 + 9 sınıflı: MUM_IZI21 (iii) tablosunun aynısı (tohum 23) + GZ tabloları + EVET - eş + duyarlılık.",
+         "- (v) BİRLEŞİK = set 1-9 (205): MUM_IZI21 birleşik tablosunun aynısı (GZ tabloları, EVET - eş, k17 hücresi, duyarlılık son işaret) + MUM_IZI21 birleşiğine göre değişim.",
+         "- Set 1-8 satırları mum_izi21_olay.csv ile karşılaştırılır (R15, es_R15, fark, n_es, es_neden): eş dışlama kümesi 205 olayla kurulduğu için eş değerleri değişebilir; "
+         "değişen satır sayısı ve en büyük fark yazılır.",
+         "- OKUMA: n < 30 hücreler 'BİLGİ; ÖRNEKLEM YETERSİZ'. (ii) ve (iii) sınıf satırları için: eşli fark ortalamasının %95 aralığı sıfırın üstündeyse 'eşlerinden iyi', "
+         "altındaysa 'eşlerinden kötü', sıfırı içeriyorsa 'ayrışmıyor'; eşli n < 30 ise ayrıca 'ÖRNEKLEM YETERSİZ'; tek aday kuralı havuzu ve ABD ağırlıklı olduğu için karar "
+         "etiketi yine BİLGİ. Eş sınırı: eşler bölgenin kendi koşusuyla eşlenmedi (Ç229 / Ç240).", "",
+         "## Ek tanımlar (K23_EK; sha yukarıda)", "", "```", json.dumps(K23_EK, ensure_ascii=False, indent=1), "```", "",
+         "## KONTROL LİSTESİ (`python IZ_KARNE.py kontrol`; K8: set 9 ve sınıf hücreleri n < 30)", "", kt, "", "## SAPMA", "", "(ön kayıt anında yok)", ""]
+    return MI._mi_yaz(y, "\n".join(s), "ön kayıt 23")
+
+
+def k23_kos(cikti: Optional[str] = None) -> Dict[str, Any]:
+    import KASA as KS
+    t0 = time.time(); cikti = cikti or G2_YOL["cikti"]
+    if os.path.exists(_k23_yol("sonuc", cikti)):
+        raise G2Hata("sonuç 23 zaten var")
+    G0 = k23_kapi(cikti)
+    kasa = KS.kasa_kapisi([os.path.join(MV.MV_YOL["gunluk"], f"V_{p}.pkl") for p in ("ABD", "AVR", "BIST")] +
+                          [os.path.join(MH.MH_YOL["tam"], f"V_{p}.pkl") for p in ("ABD", "AVR", "BIST")] + [os.path.join(MH.MH_YOL["p1"], f"V_{p}.pkl") for p in ("ABD", "AVR")],
+                          "2022-12-31")
+    X = k23_ornek(); Gt = k17_gecit(X); ES = k21_es_sayim(X, Gt)
+    Y = GZ.gz_es(GZ.gz_olc(X))
+    if not (Y.olculdu.astype(bool).to_numpy() == Gt.olculebilir.astype(bool).to_numpy()).all() or \
+            not (Y.neden.fillna("").to_numpy() == Gt.neden.fillna("").to_numpy()).all():
+        raise G2Hata("K11: getirisiz geçit ile gz_olc uyuşmuyor")
+    m = Y.olculdu.astype(bool).to_numpy()
+    if not (Y.es_neden.fillna("").to_numpy()[m] == ES.es_neden.fillna("").to_numpy()[m]).all() or \
+            not np.allclose(Y.n_es.to_numpy(float)[m], ES.n_es.to_numpy(float)[m], equal_nan=True):
+        raise G2Hata("K11: getirisiz eş sayımı ile gz_es uyuşmuyor")
+    Y = k17_d5(Y).sort_values(["set", "sayfa"]).reset_index(drop=True)
+    for c in K23_KOL:
+        if c not in Y:
+            Y[c] = np.nan
+    O = Y[K23_KOL].copy()
+    for c in ("bolge_bas", "bolge_son", "giris", "son15"):
+        O[c] = pd.to_datetime(O[c]).dt.strftime("%Y-%m-%d")
+    O.to_csv(_k23_yol("olay", cikti), index=False, float_format="%.6f")
+    O23 = pd.read_csv(_k23_yol("olay", cikti)); O21 = pd.read_csv(K23_YOL["olay21"])
+    J21 = json.load(open(K23_YOL["sonuc21"], encoding="utf-8")); T = k23_tablolar(O23)
+    Y9 = O23[O23.set == "set9"]; Yk = O23[O23.set.isin(K23_KAPI_SET)]; Yo = O23[O23.set.isin(K23_OLCEK_SET) & O23.sinif.notna()]
+    J = {"surum": K23_SURUM, "onkayit_kapi": G0, "kasa": kasa, "sayim": k23_sayim(Gt, ES), "sembol_tekrar": k23_sembol_tekrar(X),
+         "es_yok": {k: D[D.olculdu.astype(bool)].es_neden.fillna("").replace("", "var").value_counts().to_dict()
+                    for k, D in (("set9", Y9), ("kapidan_gecenler", Yk), ("kapi_isaret", Yk[Yk.sinif.notna()]), ("set6_9", Yo), ("birlesik", O23))},
+         "set1_8_mum_izi21_farki": k19_onceki_farki(O21, O23, "set9"), "dokum_set9": k23_dokum(O23), "mum_izi21_birlesik_farki": k23_fark21(J21, T),
+         "etiket": K23_EK["etiket"], "okuma": K23_EK["okuma"], "es_siniri": K23_EK["es_siniri"], "olay_sha": MI._mi_sha(_k23_yol("olay", cikti))}
+    cak = set(J) & set(T)
+    if cak:
+        raise G2Hata(f"sonuç 23 anahtar çakışması {sorted(cak)} (EK 19 HATA) -> DURDU")
+    J.update(T); J["sure_sn"] = round(time.time() - t0)
+    MI._mi_jyaz(_k23_yol("sonuc", cikti), J, "sonuç 23")
+    return J
+
+
+# ---------------------------------------------------------------- PDF
+def k23_pdf(cikti: Optional[str] = None, olay: Optional[pd.DataFrame] = None, sonuc: Optional[Dict[str, Any]] = None, yol: Optional[str] = None) -> str:
+    """MUM_IZI23_SONRASI.pdf (k21_pdf düzeni; sayfalar k17_sayfa aynen). olay / sonuc / yol verilirse dosyalar okunmaz (deneme basımı)."""
+    import textwrap
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from matplotlib.backends.backend_pdf import PdfPages
+    cikti = cikti or G2_YOL["cikti"]; y = yol or _k23_yol("pdf", cikti)
+    if olay is None:
+        J = json.load(open(_k23_yol("sonuc", cikti), encoding="utf-8"))
+        if MI._mi_sha(_k23_yol("olay", cikti)) != J["olay_sha"]:
+            raise G2Hata("olay csv'si sonuç 23 json'uyla uyuşmuyor")
+        O = pd.read_csv(_k23_yol("olay", cikti))
+    else:
+        O, J = olay, sonuc
+    D6 = J["altinci_bakis"]["hucre"]; KG = J["kapidan_gecenler"]; KI = J["kapi_isaret"]; OL = J["olcekli"]; BKK = J["birlesik"]["tablo"]["karsilastirma"]
+    Vc: Dict[Any, Any] = {}; zad = {"haftalik": "haftalık", "gunluk": "günlük", "birlikte": "ikisi"}
+    kol = ["senin\nişaretin", "mum", "bölge", "artıda\nkapanan", "ortalama", "medyan", "eşlerin\nort.", "eşinden\niyi", "+%5'e\nstop'tan önce", "stop\nolan"]
+
+    def puan(v: Optional[float]) -> str:
+        return "-" if v is None or not np.isfinite(v) else f"{v * 100:+.1f} puan".replace(".", ",")
+
+    def p_yaz(p: Optional[float]) -> str:
+        return "-" if p is None else f"{p:.2f}".replace(".", ",")
+
+    def hsat(ad_: str, z: str, c: Dict[str, Any]) -> List[str]:
+        n = c.get("n", 0); ne = c.get("n_es", 0)
+        return [ad_, zad[z], str(n), _k17_pay(c.get("arti_pay"), n), _k17_yuzde(c.get("R15_ort")), _k17_yuzde(c.get("R15_med")), _k17_yuzde(c.get("es_ort")),
+                _k17_pay(c.get("esinden_iyi_pay"), ne), _k17_pay(c.get("d5_pay"), n), _k17_pay(c.get("stop_pay"), n)]
+
+    def satirlar(H: Dict[str, Any], zl: Tuple[str, ...]) -> List[List[str]]:
+        return [hsat(K17_AD[s], z, H[f"{s}|{z}"]) for z in zl for s in GZ.SINIF if H[f"{s}|{z}"].get("n", 0)]
+
+    def tablo(fig, y0: float, baslik: str, sat: List[List[str]], ilk: str = "senin\nişaretin") -> float:
+        fig.text(0.05, y0, baslik, fontsize=11, weight="bold"); h = 0.028 * (len(sat) + 1)
+        ax = fig.add_axes([0.02, y0 - 0.012 - h, 0.96, h]); ax.axis("off")
+        tb = ax.table(cellText=sat, colLabels=[ilk] + kol[1:], loc="upper center", cellLoc="center", colWidths=[0.13, 0.09, 0.06, 0.09, 0.1, 0.1, 0.09, 0.09, 0.13, 0.08],
+                      bbox=[0, 0, 1, 1])
+        tb.auto_set_font_size(False); tb.set_fontsize(9.5)
+        return y0 - 0.012 - h - 0.028
+
+    def fark_yaz(c: Dict[str, Any]) -> str:
+        return "karşılaştırma yapılamaz" if c.get("esli_fark_fark") is None else f"{puan(c['esli_fark_fark'])} (p {p_yaz(c.get('esli_p'))})"
+
+    def aralik(b: Optional[List[float]]) -> str:
+        return "-" if not b else f"{puan(b[0])[:-5]} .. {puan(b[1])}"
+    n9 = int((O.set == "set9").sum()); nk = int(O.set.isin(K23_KAPI_SET).sum()); nki = int((O.set.isin(K23_KAPI_SET) & O.sinif.notna()).sum())
+    no = int((O.set.isin(K23_OLCEK_SET) & O.sinif.notna()).sum())
+    with PdfPages(y, metadata={"Title": "MUM_IZI23 sonrası", "CreationDate": None, "ModDate": None}) as pdf:
+        fig = plt.figure(figsize=(8.3, 11.7))
+        fig.text(0.05, 0.965, f"Son {n9} bölge (gerisi görünen sayfa): işaretlerin sonrasında ne yaptı", fontsize=14, weight="bold")
+        fig.text(0.05, 0.945, "Giriş: bölgeden sonraki ilk mumun açılışı. 15 mum sonraki kapanışla getiri. Eş: aynı gün, benzer oynaklık ve likiditedeki hisseler.",
+                 fontsize=9)
+        yy = tablo(fig, 0.92, f"Bu {n9} bölge", satirlar(D6, K17_ZAMAN))
+        yy = tablo(fig, yy, f"Mumları belirgin küçük {nk} bölgenin hepsi (son üç set; işaretinden bağımsız)",
+                   [hsat("hepsi", z, KG[f"set7+set8+set9|{z}"]) for z in K19_ZZ], ilk="küme")
+        yy = tablo(fig, yy, f"Aynı {nki} bölgede senin işaretin (ikisi birlikte)", satirlar(KI["hucre"], ("birlikte",)))
+        kb = KG["set7+set8+set9|birlikte"]; ko = KI["karsilastirma"]; se = KI["sinif_es"]
+        sat2 = [f"{nk} küçük mumlu bölge eşlerinden ortalama {puan(kb.get('fark_ort'))} ayrıldı (%95 aralık {aralik(kb.get('fark_boot95'))}; p {p_yaz(kb.get('fark_p'))}): "
+                f"{kb.get('okuma', '').split(';')[0]}.",
+                f"{nki} bölgede eşlerine göre: BENZİYOR {puan(se['EVET-es|birlikte'].get('esli_fark_ort'))}, KISMEN {puan(se['KISMEN-es|birlikte'].get('esli_fark_ort'))}, "
+                f"BENZEMİYOR {puan(se['HAYIR-es|birlikte'].get('esli_fark_ort'))}. BENZİYOR - BENZEMİYOR {fark_yaz(ko['EVET-HAYIR|birlikte'])}; "
+                f"(BENZİYOR + KISMEN) - BENZEMİYOR {fark_yaz(ko['(EVET+KISMEN)-HAYIR|birlikte'])}.",
+                f"Yüzde eksenli dört set ({no} bölge): BENZİYOR - BENZEMİYOR {fark_yaz(OL['karsilastirma']['EVET-HAYIR|birlikte'])}.",
+                f"Bütün bölgeler ({int(O.sinif.notna().sum())}): BENZİYOR - BENZEMİYOR günlük {fark_yaz(BKK['EVET-HAYIR|gunluk'])}; haftalık {fark_yaz(BKK['EVET-HAYIR|haftalik'])}."]
+        for s_ in sat2:
+            w = textwrap.fill(s_, 98); fig.text(0.05, yy, w, fontsize=9.5, va="top", linespacing=1.4); yy -= 0.018 * (w.count("\n") + 1) + 0.012
+        fig.text(0.05, yy - 0.008, "Çoğu satırda N < 30: bu bir sonuç değil, bilgi.", fontsize=12.5, weight="bold")
+        fig.text(0.05, yy - 0.045, f"Sonraki sayfalar: bu {n9} bölgenin hepsi; önce BENZİYOR, sonra KISMEN, sonra BENZEMİYOR.\n"
+                 "Hisse ve tarih açık. Sağdaki eksen girişe göre yüzde (0 = giriş fiyatı). Altta bölgedeki gerçek mum boyu\nve bu hissenin olağanına oranı "
+                 "(1'den küçük = mumlar olağandan küçük).", fontsize=9.5, va="top", linespacing=1.5)
+        pdf.savefig(fig); plt.close(fig)
+        X = O[O.set == "set9"].copy(); X["_s"] = X.sinif.map({s: i for i, s in enumerate(GZ.SINIF)}).fillna(9); X["_z"] = X.zaman.map({"haftalik": 0, "gunluk": 1})
+        for r in X.sort_values(["_s", "_z", "bolge_son"]).itertuples():
+            k = (r.zaman, r.pazar)
+            if k not in Vc:
+                Vc[k] = MV.mv_veri(*k)
+            yok = not isinstance(r.sinif, str)
+            rr = r._replace(sinif="KISMEN") if yok else r
+            fig = plt.figure(figsize=(8.3, 11.7)); k17_sayfa(fig, rr, Vc[k][r.sembol])
+            if yok:
+                for t in fig.texts:
+                    if t.get_text().startswith("Senin işaretin:"):
+                        t.set_text("İşaret koymadın (karar dışı)"); t.set_color("#555555")
+            elif isinstance(r.sinif_duy, str) and r.sinif_duy != r.sinif:
+                fig.text(0.55, 0.957, "iki kutu işaretledin (BENZİYOR + KISMEN)", fontsize=11, weight="bold", color="#555555")
+            pdf.savefig(fig); plt.close(fig)
+    return y
+
+
 # ================================================================ 5) ÇAKIŞMA KAPISI ve ANA
 def _cakisma_kontrol_g2(_once=_CK_ONCE_G2, _dosya="MUM_IZI_GOZ2.py"):
     g = globals(); ezilen = []
@@ -2413,7 +2855,7 @@ def _g2_ana(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser(description="MUM_IZI_GOZ2")
     ap.add_argument("komut", choices=["ornek", "onkayit", "kos", "pdf", "kopma_sayim", "kopma_onkayit", "kopma", "olcek_olcu", "olcek_onkayit", "olcek",
                                       "set6_sayim", "set6_onkayit", "set6_kos", "set6_pdf", "set7_sayim", "set7_onkayit", "set7_kos", "set7_pdf",
-                                      "set8_sayim", "set8_onkayit", "set8_kos", "set8_pdf"])
+                                      "set8_sayim", "set8_onkayit", "set8_kos", "set8_pdf", "set9_sayim", "set9_onkayit", "set9_kos", "set9_pdf"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "ornek":
@@ -2460,6 +2902,14 @@ def _g2_ana(argv: Optional[List[str]] = None) -> int:
             J = k21_kos(); print(json.dumps(MI._mi_json({k: J[k] for k in ("sayim", "es_yok", "set1_7_mum_izi19_farki", "sure_sn")}), ensure_ascii=False))
         elif a.komut == "set8_pdf":
             print(k21_pdf())
+        elif a.komut == "set9_sayim":
+            X = k23_ornek(); G = k17_gecit(X); print(json.dumps(MI._mi_json(k23_sayim(G, k21_es_sayim(X, G))), ensure_ascii=False))
+        elif a.komut == "set9_onkayit":
+            print(k23_onkayit_yaz())
+        elif a.komut == "set9_kos":
+            J = k23_kos(); print(json.dumps(MI._mi_json({k: J[k] for k in ("sayim", "es_yok", "set1_8_mum_izi21_farki", "sure_sn")}), ensure_ascii=False))
+        elif a.komut == "set9_pdf":
+            print(k23_pdf())
     except (G2Hata, GZ.GZHata) as ex:
         g2log.error("DURDU: %s", ex)
         return 2
