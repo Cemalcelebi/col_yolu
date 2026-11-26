@@ -159,13 +159,13 @@ def test_sonuc_olay_uyumu():
         assert c["n"] == len(g) and abs(c["R15_ort"] - g.R15.mean()) < 1e-5
         f = g.fark.dropna(); assert abs(c["fark_ort"] - f.mean()) < 1e-5 and abs(c["esinden_iyi_pay"] - (f > 0).mean()) < 1e-12
     K = O[O.set.isin(["set7", "set8"]) & O.olculdu]; c = J["kapidan_gecenler"]["set7+set8|birlikte"]
-    assert c["n"] == len(K) == 36 and abs(c["fark_ort"] - K.fark.dropna().mean()) < 1e-5 and abs(c["d5_pay"] - K.d5_tum.mean()) < 1e-9
+    assert c["n"] == len(K) == 35 and c["n_bolge"] == 36 and abs(c["fark_ort"] - K.fark.dropna().mean()) < 1e-5 and abs(c["d5_pay"] - K.d5_tum.mean()) < 1e-9
     P = O[O.set.isin(["set6", "set7", "set8"]) & O.sinif.notna()]
     a = P[P.sinif == "EVET"].fark.dropna(); b = P[P.sinif == "HAYIR"].fark.dropna(); c = J["olcekli"]["karsilastirma"]["EVET-HAYIR|birlikte"]
     assert abs(c["esli_fark_fark"] - (a.mean() - b.mean())) < 1e-5
     ad = P.sinif.where(P.sayfa.ne(11) | P.set.ne("set8"), "EVET"); a2 = P[ad == "EVET"].fark.dropna()
     assert abs(J["olcekli"]["duyarlilik"]["karsilastirma"]["EVET-HAYIR|birlikte"]["esli_fark_fark"] - (a2.mean() - b.mean())) < 1e-5
-    g = O[(O.sinif == "EVET") & (O.zaman == "gunluk")]; c = J["birlesik"]["tablo"]["hucre"]["EVET|gunluk"]
+    g = O[(O.sinif == "EVET") & (O.zaman == "gunluk") & O.olculdu]; c = J["birlesik"]["tablo"]["hucre"]["EVET|gunluk"]
     assert c["n"] == len(g) and abs(c["fark_ort"] - g.fark.dropna().mean()) < 1e-5
 
 
