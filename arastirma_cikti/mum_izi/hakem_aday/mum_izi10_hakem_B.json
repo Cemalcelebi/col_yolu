@@ -1,0 +1,755 @@
+{
+ "hakem": "alt ajan (sonnet) B",
+ "sayfalar": {
+  "151": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "152": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "153": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "154": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "155": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "156": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "157": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "158": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "159": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "160": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "161": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "162": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "163": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "164": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "165": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "166": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "167": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "168": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "169": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "170": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "171": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "172": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "173": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "174": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "175": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "176": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "177": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "178": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "179": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "180": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "181": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "182": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "183": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "184": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "185": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "186": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "187": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "188": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "189": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "190": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "191": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "192": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "193": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "194": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "195": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "196": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "197": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "198": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "199": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "200": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "201": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "202": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "203": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "204": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "205": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "206": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "207": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "208": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "209": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "210": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "211": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "212": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "213": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "214": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "215": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "216": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "217": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "218": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "219": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "220": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "221": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "222": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "223": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "224": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "225": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "226": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "227": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "228": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "229": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "230": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "231": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "232": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "233": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "234": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "235": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "236": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "237": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "238": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "239": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "240": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "241": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "242": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "243": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "244": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "245": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "246": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "247": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "248": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "249": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "250": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "251": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "252": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "253": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "254": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "255": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "256": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "257": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "258": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "259": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "260": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "261": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "262": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "263": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "264": {
+   "karar": "EVET",
+   "puan": 7,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "265": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "266": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "267": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "268": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "269": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "270": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "271": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "272": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "273": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "274": {
+   "karar": "EVET",
+   "puan": 6,
+   "gerekce": "küçük mumlar, düzenli tırmanış, band daralıyor"
+  },
+  "275": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "276": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "277": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "278": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "279": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "280": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "281": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "282": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "283": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "284": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "285": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "286": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "287": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "288": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "289": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "290": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "291": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "292": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "293": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "294": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "295": {
+   "karar": "HAYIR",
+   "puan": 4,
+   "gerekce": "kısmen küçük mum, dağınık ya da düz"
+  },
+  "296": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  },
+  "297": {
+   "karar": "HAYIR",
+   "puan": 5,
+   "gerekce": "küçük mum ama dizilim ya da band tam değil"
+  },
+  "298": {
+   "karar": "HAYIR",
+   "puan": 1,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "299": {
+   "karar": "HAYIR",
+   "puan": 2,
+   "gerekce": "büyük gövdeli mumlar, sert dönüş, kalıp değil"
+  },
+  "300": {
+   "karar": "HAYIR",
+   "puan": 3,
+   "gerekce": "karışık boy mumlar, kalıba zayıf benzer"
+  }
+ }
+}
