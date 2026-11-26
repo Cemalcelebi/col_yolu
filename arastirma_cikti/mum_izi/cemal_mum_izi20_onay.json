@@ -1,0 +1,201 @@
+{
+ "kaynak": "MUM_IZI20_ONAY_OLCEKLI_cemal_isaretli.pdf",
+ "okuyan": "işaret konumu mekanik + alt ajan (sonnet) + ana model (7, 11, 15. sayfalara gözle bakıldı); okumalar aynı",
+ "sayfa1": "Kapak, işaret yok.",
+ "mesaj": "Cemal (yazdığı gibi): 'Burda eğer mumlar gerçekten küçük kabul ederek işaretledim' (ana modelin okuması: mum boyu şartını sağlanmış sayıp şekle göre işaretledi)",
+ "kural": "işaretin gövdesinin durduğu kutu seçimdir; iki kutu işaretliyse ana sınıf KISMEN (duyarlılık: EVET); işaretsiz sayfa karar dışı",
+ "sayfalar": {
+  "2": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "3": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "4": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "5": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "6": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "7": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "grafikte bölgenin sonundaki dik yükselişin üstüne uzun çizgi çekilmiş",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "8": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "9": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "10": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "11": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "iki kutu işaretli (benziyor + kısmen): ana sınıf KISMEN, duyarlılıkta EVET",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "orta"
+  },
+  "12": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "13": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "14": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "15": {
+   "isaret": "YOK",
+   "yazi": "",
+   "kutu_disi": "işaret yok: karar dışı",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "16": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "17": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "18": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "19": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  },
+  "20": {
+   "isaret": "EVET",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "21": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "22": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "23": {
+   "isaret": "KISMEN",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "24": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "gunluk",
+   "guven": "yuksek"
+  },
+  "25": {
+   "isaret": "HAYIR",
+   "yazi": "",
+   "kutu_disi": "",
+   "yildiz": false,
+   "zaman": "haftalik",
+   "guven": "yuksek"
+  }
+ }
+}
