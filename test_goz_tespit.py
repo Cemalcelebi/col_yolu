@@ -5,6 +5,8 @@ fonksiyonunun bölge bitişinden sonraki barı okumadığı (bozunca aynı); kit
 çizilmediği; onay seti kol sayıları (6 / 8 / 6 / 6 / 4) ve karışık sıra tohumu 2715; aynı girdi -> aynı PDF sha; PDF metninde kol / hisse / tarih yok;
 yüzdelik / tutarlılık / D2 sınırı / tekilleştirme / AUC elle; çakışma kapısı; eşik sözlüğü sabit.
 ÇÖL-K2 (EK 5): beş şart goz2 ile birebir (sentetik), yapay pozitif / negatifler, dip parabolü yedi yapay tip, elle örnekler, sonrası okunmaz, sonrası kapısı.
+ÇÖL-K2 KIRILIM (EK 6): yön kuralı elle (yukarı / aşağı / kırılmadı / aynı bar / kesik), izleme t + 20 ve 2022 sınırı, giriş = kırılımdan sonraki açılış,
+simetrik ilk dokunuş ve belirsiz, tekil 15, kontrol pencereleri YER sağlamaz, kapı, karar anından sonrası okunmaz, karar elle, uçtan uca sentetik.
 Çalıştır: python test_goz_tespit.py"""
 import os
 import sys
@@ -532,6 +534,196 @@ def test_k2_esik_sabit():
     assert GT.GT_K2_OLAY["tekil"] == 40 and GT.GT_K2_OLAY["s_min"] == 120 and GT.GT_K2_OLAY["kollar"] == ["K2", "YMSB", "Y"]
     assert GT.GT_K2_OLC["boot"] == {"B": 2000, "tohum": 5} and GT.GT_K2_OLC["karar"] == {"n": 30, "besli_arti": 4, "kat5": 1.0}
     assert GT.GT_K2_OLC["taban_m"] == 20 and GT.GT_K2_OLC["ufuk"] == 15 and GT.GT_K2_OLC["stop_carpan"] == 0.98
+
+
+# ---------------------------------------------------------------- ÇÖL-K2 KIRILIM (EK 6)
+def _k2k_df(C, H=None, L=None, O=None, son="2022-12-30"):
+    """Elle seri: C verilir; H / L / O verilmezse C +- 0,1 (geçerli bar)."""
+    C = np.asarray(C, float); H = C + 0.1 if H is None else np.asarray(H, float); L = C - 0.1 if L is None else np.asarray(L, float)
+    O = C.copy() if O is None else np.asarray(O, float); ix = pd.bdate_range(end=son, periods=len(C))
+    return pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": 1e5}, index=ix)
+
+
+def _k2k_yon1(d, s, t):
+    y = GT.gt_k2k_yon(d.High.to_numpy(float), d.Low.to_numpy(float), d.Close.to_numpy(float), d.index, np.array([s]), np.array([t]))
+    return int(y["yon"][0]), int(y["b"][0]), int(y["k"][0])
+
+
+@t
+def test_k2k_yon_elle():
+    # bölge 0..9: TAVAN = 10,1 (High), DİP = 8,9 (Low); izleme 10..29
+    base = np.r_[np.full(10, 9.5), np.full(30, 9.5)]; base[4] = 10.0; base[6] = 9.0
+    up = base.copy(); up[13] = 10.2; up[16] = 8.5                     # yukarı önce (13. indeks = izlemenin 4. barı), sonra aşağı
+    assert _k2k_yon1(_k2k_df(up), 0, 9) == (1, 13, 4)
+    dn = base.copy(); dn[12] = 8.7; dn[15] = 10.5                     # aşağı önce
+    assert _k2k_yon1(_k2k_df(dn), 0, 9) == (-1, 12, 3)
+    assert _k2k_yon1(_k2k_df(base), 0, 9) == (0, -1, 0)              # kırılmadı
+    d = _k2k_df(base); d.iloc[11, d.columns.get_loc("High")] = 12.0; d.iloc[11, d.columns.get_loc("Low")] = 7.0
+    assert _k2k_yon1(d, 0, 9) == (0, -1, 0)                           # aynı bar iki yönü fitille deler, kapanış içeride: kırılım değil
+    d.iloc[11, d.columns.get_loc("Close")] = 10.15
+    assert _k2k_yon1(d, 0, 9) == (1, 11, 2)                           # aynı bar: Low < DİP ama Close > TAVAN -> yukarı (kapanış kuralı)
+    late = base.copy(); late[30] = 10.5                               # kırılım 21. barda: 20 barlık izlemenin dışında
+    assert _k2k_yon1(_k2k_df(late), 0, 9) == (0, -1, 0)
+    assert _k2k_yon1(_k2k_df(base[:29]), 0, 9) == (-9, -1, 0)         # kesik: 20. bar veride yok (yukarı kırılım olsa da)
+    up2 = up[:29]; assert _k2k_yon1(_k2k_df(up2), 0, 9)[0] == -9
+    assert _k2k_yon1(_k2k_df(up, son="2023-01-20"), 0, 9)[0] == -9     # kesik: 20. bar (indeks 29) 2023-01-06, 2022-12-31'den sonra
+    assert _k2k_yon1(_k2k_df(up, son="2023-01-13"), 0, 9) == (1, 13, 4)  # 20. bar 2022-12-30: kesik değil
+
+
+@t
+def test_k2k_izleme_sinir_ve_gecerli_bar():
+    d = _seri(400, tohum=61, son="2023-03-31"); H, L = d.High.to_numpy(float), d.Low.to_numpy(float); tt = np.arange(100, 395)
+    IX, kes = GT.gt_k2k_izleme(H, L, d.index, tt)
+    assert (IX[~kes] > tt[~kes][:, None]).all() and (IX[~kes, -1] <= tt[~kes] + 20).all() and (IX[kes] == -1).all()
+    assert (d.index[IX[~kes, -1]] <= GT.GT_KESIK).all() and kes.sum() > 0
+    son_ok = tt[~kes].max(); assert d.index[son_ok + 20] <= GT.GT_KESIK and d.index[son_ok + 21] > GT.GT_KESIK
+    Y = GT.gt_k2k_yon(H, L, d.Close.to_numpy(float), d.index, tt - 39, tt)
+    k = Y["b"] >= 0; assert (Y["b"][k] <= tt[k] + 20).all() and (Y["b"][k] > tt[k]).all() and (Y["yon"][kes] == -9).all()
+    H2 = H.copy(); L2 = L.copy(); H2[205] = L2[205]                    # geçersiz bar (High = Low) izlemeden atlanır
+    IX2, _ = GT.gt_k2k_izleme(H2, L2, d.index, np.array([200])); assert 205 not in IX2[0] and IX2[0, -1] == 221
+
+
+@t
+def test_k2k_giris_kirilim_sonrasi_acilis():
+    import MUM_IZI_HAVUZ as HV
+    d = _seri(300, tohum=62); A = HV.hv25_dizi(d, None); b = np.array([100, 200, 284, 285])
+    G = GT.gt_k2k_giris(A, b); O, C = d.Open.to_numpy(float), d.Close.to_numpy(float)
+    for i in (0, 1, 2):
+        assert not G["kesik"][i] and G["E0"][i] == O[b[i] + 1] and abs(G["R15"][i] - (C[b[i] + 15] / O[b[i] + 1] - 1)) < 1e-12
+        assert pd.Timestamp(G["giris_tarih"][i]) == d.index[b[i] + 1]
+    assert G["kesik"][3] and np.isnan(G["R15"][3])                    # b + 15 veride yok
+    d2 = _seri(300, tohum=62, son="2023-01-06"); G2 = GT.gt_k2k_giris(HV.hv25_dizi(d2, None), np.array([280]))
+    assert G2["kesik"][0]                                             # 15. bar 2022-12-31'den sonra
+
+
+@t
+def test_k2k_simetrik_elle_ve_belirsiz():
+    E0 = 100.0; H = np.full(30, 101.0); L = np.full(30, 99.0)
+    H1 = H.copy(); H1[5] = 105.0; L1 = L.copy(); L1[8] = 94.0         # önce +%5
+    H2 = H.copy(); H2[9] = 106.0; L2 = L.copy(); L2[4] = 95.0         # önce -%5 (eşitlik dokunuş sayılır)
+    H3 = H.copy(); H3[6] = 105.5; L3 = L.copy(); L3[6] = 94.5         # aynı bar -> belirsiz
+    H4 = H.copy(); H4[20] = 120.0                                     # pencere (1..15) dışında: hiçbiri
+    r = [int(GT.gt_k2k_simetrik(h, l, np.array([1]), np.array([15]), np.array([E0]), 0.05)[0]) for h, l in ((H1, L1), (H2, L2), (H3, L3), (H4, L))]
+    assert r == [1, -1, 2, 0]
+    assert int(GT.gt_k2k_simetrik(H1, L1, np.array([1]), np.array([15]), np.array([E0]), 0.10)[0]) == 0
+    up, dn, bel = GT._gt_k2k_pay(np.array([1, 1, -1, 0, 2, 2])); assert (up, dn, bel) == (0.5, 0.25, 2)   # belirsiz paydan da çıkar
+
+
+@t
+def test_k2k_tekil_15():
+    assert list(GT.gt_k2k_tekil(np.array([40, 10, 20, 24, 25, 40]))) == [10, 25, 40]
+    assert list(GT.gt_k2k_tekil(np.array([5, 19, 20, 34, 35]))) == [5, 20, 35] and GT.GT_K2K["tekil"] == 15
+
+
+def _k2k_panel(V, Ls=(20, 40, 80), adim=5):
+    rows = []
+    for sem, d in V.items():
+        for Lw in Ls:
+            for tt in range(130, len(d) - 1, adim):
+                rows.append({"sembol": sem, "L": Lw, "s": tt - Lw + 1, "t": tt, "tarih": d.index[tt], "ATRP20": 0.01 + 0.002 * (tt % 50) / 5})
+    P = pd.DataFrame(rows); AD = []
+    for sem, g in P.groupby("sembol"):
+        d = V[sem]; y = GT.gt_k2_yer_vek(d.High.to_numpy(float), d.Low.to_numpy(float), g.s.to_numpy(), g.t.to_numpy())
+        AD.append(g[y].assign(pazar="ABD"))
+    return P, pd.concat(AD) if AD else P.iloc[:0].assign(pazar="ABD")
+
+
+@t
+def test_k2k_kontrol_y_saglamaz_ve_kapi():
+    O, H, L, C, s, t_ = _k2_seri("poz"); n = len(C); ek = 900
+    r = np.random.default_rng(9); Ce = C[-1] * np.exp(np.cumsum(r.normal(0, 0.01, ek)))
+    d = _k2k_df(np.r_[C, Ce], H=np.r_[H, Ce * 1.01], L=np.r_[L, Ce * 0.99], O=np.r_[O, Ce])
+    V = {"X": d, "Y": _seri(len(d), tohum=63)}; P, AD = _k2k_panel(V)
+    assert len(AD) > 0 and len(AD) < len(P)
+    OL = pd.DataFrame(columns=["pazar", "sembol", "kol", "hucre", "L", "s", "t", "tarih"])
+    R = GT.gt_k2k_pazar("ABD", OL, V, P, AD, olc=False); KP = R["kontrol"]
+    assert len(KP) == len(P) - len(AD) and "yon" not in KP.columns               # sayımda yön yok
+    ad = set(zip(AD.sembol, AD.L, AD.t)); assert not (set(zip(KP.sembol, KP.L, KP.t)) & ad)
+    for sem, g in KP.groupby("sembol"):
+        dd = V[sem]; assert not GT.gt_k2_yer_vek(dd.High.to_numpy(float), dd.Low.to_numpy(float), (g.t - g.L + 1).to_numpy(), g.t.to_numpy()).any()
+    try:
+        GT.gt_k2k_pazar("ABD", OL, V, P, AD.iloc[1:], olc=False)
+    except GT.GTHata:
+        pass
+    else:
+        raise AssertionError("YER kümesi k2_aday ile aynı değilse durmalı")
+    for f in (lambda: GT.gt_k2k_pazar("ABD", OL, V, P, AD, olc=True), lambda: GT.gt_k2k_kir_olay(OL.assign(yon=[]), {}, pd.DataFrame(), {})):
+        try:
+            f()
+        except GT.GTHata:
+            pass
+        else:
+            raise AssertionError("kapı kapalıyken yön / getiri hesaplanmamalı")
+
+
+@t
+def test_k2k_karar_sonrasi_okunmaz():
+    base = np.r_[np.full(10, 9.5), np.full(60, 9.5)]; base[4] = 10.0; base[6] = 9.0; up = base.copy(); up[13] = 10.2
+    d = _k2k_df(up); ref = _k2k_yon1(d, 0, 9)
+    for bozuk_bas in (14, 30):                                          # kırılım barından sonrası ve izleme sonrası bozulur
+        d2 = d.copy(); d2.iloc[bozuk_bas:, :4] = d2.iloc[bozuk_bas:, :4].to_numpy() * np.where(np.arange(len(d2) - bozuk_bas) % 2, 0.5, 2.0)[:, None]
+        d2["High"] = d2[["Open", "High", "Low", "Close"]].max(axis=1) + 0.01; d2["Low"] = d2[["Open", "High", "Low", "Close"]].min(axis=1) - 0.01
+        assert _k2k_yon1(d2, 0, 9) == ref
+    import MUM_IZI_HAVUZ as HV
+    e = _seri(300, tohum=64); A = HV.hv25_dizi(e, None); G1 = GT.gt_k2k_giris(A, np.array([150]))
+    e2 = e.copy(); e2.iloc[166:, :4] = e2.iloc[166:, :4].to_numpy() * 3.0; G2 = GT.gt_k2k_giris(HV.hv25_dizi(e2, None), np.array([150]))
+    assert all(np.array_equal(G1[k], G2[k], equal_nan=True) for k in ("E0", "R15", "s5", "s10")) and not G1["kesik"][0]
+    O, H, L, C, s, t_ = _k2_seri("poz"); y0 = GT.gt_k2_yer_vek(H, L, np.array([s]), np.array([t_]))[0]
+    Hb = np.r_[H[:t_ + 1], np.full(30, 999.0)]; Lb = np.r_[L[:t_ + 1], np.full(30, 0.1)]
+    assert GT.gt_k2_yer_vek(Hb, Lb, np.array([s]), np.array([t_]))[0] == y0     # kontrol penceresi YER'i t sonrasını okumaz
+
+
+@t
+def test_k2k_karar_elle():
+    a = {"n": 50, "fark": {"alt": 0.001}}; assert GT.gt_k2k_karar_yon(a) == "TUTAR"
+    assert GT.gt_k2k_karar_yon({**a, "n": 49}) == "ÖLÇÜLEMEDİ" and GT.gt_k2k_karar_yon({**a, "fark": {"alt": 0.0}}) == "TUTMAZ"
+    b = {"n": 30, "TFk15": {"alt": 0.001}, "medyan_fark": 0.01, "s5": {"fark": {"alt": 0.001}}, "besli_buyuk": 4, "besli_arti": 3}
+    assert GT.gt_k2k_karar_kir(b) == "TUTAR"
+    for k, v in (("n", 29), ("medyan_fark", 0.0), ("TFk15", {"alt": -0.001}), ("s5", {"fark": {"alt": -0.001}}), ("besli_arti", 2)):
+        assert GT.gt_k2k_karar_kir({**b, k: v}) == ("ÖLÇÜLEMEDİ" if k == "n" else "TUTMAZ"), k
+    assert GT.gt_k2k_karar_kir({**b, "besli_buyuk": 1, "besli_arti": 0}) == "TUTAR"          # büyük beşlik < 2: şart aranmaz
+    assert GT.gt_k2k_karar_kir({**b, "besli_buyuk": 2, "besli_arti": 1}) == "TUTMAZ"
+
+
+@t
+def test_k2k_uctan_uca_sentetik():
+    V = {f"S{i}": _seri(1600, tohum=300 + i, son="2022-12-30") for i in range(8)}; P, AD = _k2k_panel(V, Ls=(20, 40), adim=5)
+    import MUM_IZI_HAVUZ as HV
+    rows = []
+    for sem, d in V.items():
+        for tt in range(300, 1560, 60):
+            g = d.index[tt + 1]; rows.append({"pazar": "ABD", "sembol": sem, "L": 40, "s": tt - 39, "t": tt, "tarih": d.index[tt], "ATRP20": 0.01 * (1 + tt % 5),
+                                             "kol": "K2", "hucre": HV.hv_hucre_ad(g, "ABD").replace("|dis", "|yok"), "giris_tarih": g})
+    OL = pd.DataFrame(rows); OL = OL[OL.hucre.isin(["ABD|d1619", "ABD|d2022"])]
+    GT._GT_K2K_DURUM["kapi"] = True; GT._GT_K2_DURUM["kapi"] = True
+    try:
+        R = GT.gt_k2k_pazar("ABD", OL, V, P, AD, olc=True)
+        E = GT.gt_k2k_taban1(R["olay"], R["kontrol"]); T2 = GT.gt_k2k_taban2(R["kontrol_kir"])
+        sin = {"ABD": {"d1619": [0.015, 0.025, 0.035, 0.045], "d2022": [0.015, 0.025, 0.035, 0.045]}}
+        K = GT.gt_k2k_kir_olay(E, {"ABD": V}, T2, sin)
+    finally:
+        GT._GT_K2K_DURUM["kapi"] = False; GT._GT_K2_DURUM["kapi"] = False
+    assert len(E) == len(OL) and set(E.yon) <= {1, -1, 0, -9} and (E.yon == 1).sum() > 10
+    KR = R["kontrol_kir"]; assert (KR.groupby("sembol").b.apply(lambda v: (np.diff(np.sort(v)) >= 15).all())).all()
+    x = E[(E.hucre == "ABD|d2022") & (E.yon != -9)]; x = x[np.isfinite(x.k1_yuk)]
+    TB = GT.gt_k2k_tablo(E, K); oa = TB["A"]["K2"]["ABD|d2022"]
+    assert oa["n"] == len(x) and abs(oa["fark"]["ort"] - ((x.yon == 1).astype(float) - x.k1_yuk).mean()) < 1e-12
+    KP = R["kontrol"]; s0, d0 = x.sembol.iloc[0], x.donem.iloc[0]; L0 = int(x.L.iloc[0])
+    kk = KP[(KP.sembol == s0) & (KP.donem == d0) & (KP.L == L0) & ~KP.kesik]; assert abs(x.k1_yuk.iloc[0] - (kk.yon == 1).mean()) < 1e-12
+    T = K[K.durum == "TAMAM"]; ob = TB["B"]["K2"]["ABD|d2022"]; Tm = T[T.hucre == "ABD|d2022"]
+    assert ob["n"] == len(Tm) and abs(ob["TFk15"]["ort"] - (Tm.R15 - Tm.T1k).mean()) < 1e-12
+    r0 = Tm.iloc[0]; kr = KR[(KR.sembol == r0.sembol) & (KR.donem == r0.donem) & ~KR.kesik]; assert abs(r0.T1k - kr.R15.mean()) < 1e-12
+    dd = V[r0.sembol]; assert r0.E0 == dd.Open.iloc[int(r0.b) + 1] and dd.Close.iloc[int(r0.b)] > r0.TAVAN
+    assert TB["A"]["K2"]["AVR|d1619"]["karar"] == "ÖLÇÜLEMEDİ" and TB["B"]["K2"]["AVR|d1619"]["karar"] == "ÖLÇÜLEMEDİ" and "EMARE" in TB["_karar_B"]["sonuc"]
+    md = GT.gt_k2k_tablo_md(TB); assert GT.GT_K2_BASLIK in md and "K7 UYARISI" in md and "TABLO A" in md and "TABLO B" in md
+
+
+@t
+def test_k2k_esik_sabit():
+    K = GT.GT_K2K
+    assert K["izleme"] == 20 and K["ufuk"] == 15 and K["tekil"] == 15 and K["k2_en_az"] == 5 and K["boot"] == {"B": 2000, "tohum": 6}
+    assert K["karar"] == {"yon_n": 50, "kir_n": 30} and K["besli_en_az"] == 20 and K["besli_pay"] == 0.75 and K["hedef"] == [0.05, 0.10]
+    assert K["olay_sha"] == "e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55" and K["ana"] == "K2"
 
 
 if __name__ == "__main__":
