@@ -1,0 +1,246 @@
+{
+ "tohum": 2724,
+ "kural": "KURAL-3 olaylarından (k3_olay.pkl; 2016-22) rastgele: ANA 16 (ABD 12, BIST 4), ZAMANSIZ 4, rastgele 4; işaret biriktirme seti",
+ "sayfalar": [
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "RNG",
+   "s": 1806,
+   "t": 1825,
+   "L": 20,
+   "sayfa": 1
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "RODRG",
+   "s": 1111,
+   "t": 1130,
+   "L": 20,
+   "sayfa": 2
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "XTNT",
+   "s": 511,
+   "t": 530,
+   "L": 20,
+   "sayfa": 3
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "PDSB",
+   "s": 626,
+   "t": 705,
+   "L": 80,
+   "sayfa": 4
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "AVOD",
+   "s": 1416,
+   "t": 1495,
+   "L": 80,
+   "sayfa": 5
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "RRGB",
+   "s": 1316,
+   "t": 1335,
+   "L": 20,
+   "sayfa": 6
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "BDSX",
+   "s": 421,
+   "t": 440,
+   "L": 20,
+   "sayfa": 7
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "VKING",
+   "s": 1611,
+   "t": 1630,
+   "L": 20,
+   "sayfa": 8
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "CTMX",
+   "s": 161,
+   "t": 200,
+   "L": 40,
+   "sayfa": 9
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "BTCS",
+   "s": 1006,
+   "t": 1025,
+   "L": 20,
+   "sayfa": 10
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "IQ",
+   "s": 786,
+   "t": 825,
+   "L": 40,
+   "sayfa": 11
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ASMB",
+   "s": 276,
+   "t": 355,
+   "L": 80,
+   "sayfa": 12
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "SAP",
+   "s": 1211,
+   "t": 1250,
+   "L": 40,
+   "sayfa": 13
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ARLO",
+   "s": 411,
+   "t": 430,
+   "L": 20,
+   "sayfa": 14
+  },
+  {
+   "kol": "D1+YER_ZAMANSIZ",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "CASA",
+   "s": 1276,
+   "t": 1295,
+   "L": 20,
+   "sayfa": 15
+  },
+  {
+   "kol": "D1+YER_ZAMANSIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "SSM",
+   "s": 186,
+   "t": 205,
+   "L": 20,
+   "sayfa": 16
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "GATEG",
+   "s": 1106,
+   "t": 1125,
+   "L": 20,
+   "sayfa": 17
+  },
+  {
+   "kol": "D1+YER_ZAMANSIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "FTH",
+   "s": 281,
+   "t": 300,
+   "L": 20,
+   "sayfa": 18
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "IZMDC",
+   "s": 1471,
+   "t": 1510,
+   "L": 40,
+   "sayfa": 19
+  },
+  {
+   "kol": "D1+YER_ZAMANSIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "HURA",
+   "s": 1801,
+   "t": 1820,
+   "L": 20,
+   "sayfa": 20
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "DGATE",
+   "s": 791,
+   "t": 870,
+   "L": 80,
+   "sayfa": 21
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "GNRC",
+   "s": 1971,
+   "t": 1990,
+   "L": 20,
+   "sayfa": 22
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ATER",
+   "s": 836,
+   "t": 855,
+   "L": 20,
+   "sayfa": 23
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "CMTL",
+   "s": 1876,
+   "t": 1895,
+   "L": 20,
+   "sayfa": 24
+  }
+ ]
+}
