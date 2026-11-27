@@ -176,6 +176,30 @@ GT_ESIK: Dict[str, Any] = {
                   "de aynı kural, tutarlılık için); kitaplıkta endeks ve kesit, bütün BIST serileri bölge bitişinde kesilerek kurulur",
 }
 
+# ================================================================ ANA MODELİN EK KURALI (27 Kas 2026; ADIM A tablosu görüldükten SONRA, Cemal'in işaretlerinden
+# ve onay setinden ÖNCE yazıldı). GT_ESIK'e girmez (onun sha'sı ADIM A ile mühürlü); ayrı sha ile dedektör json'una ve anahtara yazılır.
+GT_EK_KURAL: Dict[str, Any] = {
+    "surum": "GT-EK-1 (2026-11-27)",
+    "sapma": "SAPMA: iş tanımındaki imza kuralı hiç ölçü seçmedi; ana modelin ek kuralı",
+    "D2": {"ad": "YAKIN İMZA", "medyan_ust": 0.75, "medyan_alt": 0.25, "tutarlilik": 0.55, "karsi_en_cok": 1, "n_en_az": 12, "rho": 0.80,
+           "tanim": "yakın imza ölçüsü <=> medyan sıra >= %75 ya da <= %25 VE tutarlılık >= %55 VE karşı uçta (yön YÜKSEK ise <= %30'da; DÜŞÜK ise >= %70'te) "
+                    "en çok 1 bölge VE ölçüsü olan bölge >= 12; sonra |rho| > 0,80 çiftlerinden tutarlılığı düşük olan atılır (eşitlikte karşı uçta az bölgesi "
+                    "olan kalır); kalan ölçülerin her birinde pencere kitaplığın tarafında ve kitaplık değerlerinin en gevşek %20'lik sınırının içinde "
+                    "(iş tanımındaki D2 sınırı aynen); sıralama = bu ölçülerin kitaplık yönündeki evren yüzdelik sıralarının ortalaması"},
+    "D3": {"ad": "EN YAKIN KOMŞU (sıra uzayı)", "tutarlilik": 0.50, "rho": 0.80, "ortak_en_az": 8, "haric": ["BOLGE_L", "PUAN_ESIT"], "col_basina": 20,
+           "tanim": "tutarlılığı >= %50 olan ölçüler (BOLGE_L ve PUAN_ESIT hariç), |rho| > 0,80 budamasından sonra; her ölçü evren yüzdelik sırasına çevrilir; "
+                    "uzaklık = ortak (boş olmayan) ölçülerde ortalama mutlak sıra farkı, en az 8 ortak ölçü; kitaplıktaki her çölün (aynı L* sınıfında, farklı "
+                    "hisseden) en yakın komşusu; set için 6 sayfa = komşu uzaklığı en küçük 6 çölün komşuları (farklı çöllerden, farklı hisselerden)"},
+    "uygulama": "D3 aday tablosu pazar başına her çölün en yakın 20 farklı hisseli komşusunu uzaklık sırasıyla tutar; onay seçimi kol_pazar'a göre (BIST 3, "
+                "ABD 3) bu sıradan alır, bütün D3 kolunda her çöl ve her hisse en çok bir kez (bir çölün en yakın komşusunun hissesi zaten kullanılmışsa "
+                "o çölün sıradaki komşusu); budama eşitliğinde (D3) medyanı 0,5'ten uzak olan kalır.",
+}
+
+
+def gt_ek_sha() -> str:
+    return hashlib.sha256(json.dumps(GT_EK_KURAL, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
 GT_YORUM = [
     "Kitaplık: COL_SKOR6.CS_KITAPLIK (20 bölge); tam BIST verisinde (/tmp/veri) sembolü olanlar ölçülür (COL_SKOR6 kitaplık.json ile aynı 16 bölge beklenir); "
     "veri yoksa sayısı yazılır, tutarlılık eşiği aynı oranla (%75) uygulanır.",
@@ -574,6 +598,51 @@ def gt_imza_sec(TT: Dict[str, Dict[str, Any]], n_bolge: int, R: Dict[str, Dict[s
     return kal, atilan
 
 
+def _gt_budama(aday: List[str], R: Dict[str, Dict[str, float]], esik: float) -> Tuple[List[str], List[Dict[str, Any]]]:
+    """aday önceden sıralı (önce kalacak olan önde); |rho| > esik olan sonraki ölçü atılır."""
+    kal: List[str] = []; atilan: List[Dict[str, Any]] = []
+    for a in aday:
+        cak = [b for b in kal if abs(R[a][b]) > esik]
+        if cak:
+            atilan.append({"olcu": a, "nedeni": cak[0], "rho": R[a][cak[0]]})
+        else:
+            kal.append(a)
+    return kal, atilan
+
+
+def gt_karsi(T: Dict[str, Any]) -> int:
+    """Kitaplık yönünün karşı ucundaki bölge sayısı (YÜKSEK -> <= 0,30; DÜŞÜK -> >= 0,70)."""
+    return int(T["alt"] if T["yon"] == "YÜKSEK" else T["ust"])
+
+
+def gt_yakin_imza(TT: Dict[str, Dict[str, Any]], R: Dict[str, Dict[str, float]]) -> Tuple[List[str], List[Dict[str, Any]], List[str]]:
+    """EK KURAL D2 'YAKIN İMZA' ölçüleri (GT_EK_KURAL['D2'])."""
+    E = GT_EK_KURAL["D2"]
+    aday = [a for a in GT_OLCU_AD if a not in GT_IMZA_DISI and TT[a]["tut"] is not None and TT[a]["n"] >= E["n_en_az"]
+            and (TT[a]["medyan"] >= E["medyan_ust"] or TT[a]["medyan"] <= E["medyan_alt"]) and TT[a]["tut"] >= E["tutarlilik"]
+            and gt_karsi(TT[a]) <= E["karsi_en_cok"]]
+    aday.sort(key=lambda a: (-TT[a]["tut"], gt_karsi(TT[a]), -abs(TT[a]["medyan"] - 0.5), GT_OLCU_AD.index(a)))
+    kal, atilan = _gt_budama(aday, R, E["rho"])
+    return kal, atilan, aday
+
+
+def gt_d3_olcu_sec(TT: Dict[str, Dict[str, Any]], R: Dict[str, Dict[str, float]]) -> Tuple[List[str], List[Dict[str, Any]], List[str]]:
+    """EK KURAL D3 ölçüleri: tutarlılık >= 0,50 (BOLGE_L / PUAN_ESIT hariç), |rho| > 0,80 budaması."""
+    E = GT_EK_KURAL["D3"]
+    aday = [a for a in GT_OLCU_AD if a not in E["haric"] and a not in GT_IMZA_DISI and TT[a]["tut"] is not None and TT[a]["tut"] >= E["tutarlilik"]]
+    aday.sort(key=lambda a: (-TT[a]["tut"], -abs(TT[a]["medyan"] - 0.5), GT_OLCU_AD.index(a)))
+    kal, atilan = _gt_budama(aday, R, E["rho"])
+    return kal, atilan, aday
+
+
+def gt_d3_uzak(Rp: np.ndarray, rk: np.ndarray, en_az: int) -> np.ndarray:
+    """Ortak sonlu ölçülerde ortalama mutlak sıra farkı; ortak ölçü < en_az ise inf."""
+    D = np.abs(Rp - rk[None, :]); f = np.isfinite(D); k = f.sum(1)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        u = np.where(f, D, 0.0).sum(1) / np.maximum(k, 1)
+    return np.where(k >= en_az, u, np.inf)
+
+
 def gt_auc(x: np.ndarray, y: np.ndarray) -> Optional[float]:
     """AUC = P(x > y) + 0,5 P(x = y) (x: ✓, y: ✗)."""
     x = np.asarray(x, float); y = np.asarray(y, float); x = x[np.isfinite(x)]; y = y[np.isfinite(y)]
@@ -616,14 +685,20 @@ def gt_parmak(ham: Optional[str] = None) -> Dict[str, Any]:
         if au is None:
             ayni.append({"olcu": a, "ayni": None}); continue
         ayni.append({"olcu": a, "auc": au, "ayni": bool((au > 0.5) if TT[a]["yon"] == "YÜKSEK" else (au < 0.5))})
+    # BİLGİ: imzaya en yakın ama geçemeyen 5 ölçü (gt_rapor ile aynı sıralama) mum izi ✓'lerinde de kitaplık yönünde mi
+    yak5 = sorted([a for a in GT_OLCU_AD if a not in imza and a not in GT_IMZA_DISI and TT[a]["tut"] is not None],
+                  key=lambda a: (-TT[a]["tut"], -abs(TT[a]["medyan"] - 0.5)))[:5]
+    yakin_ayni = [{"olcu": a, "yon": TT[a]["yon"], "auc": AUC[a]["auc"],
+                   "ayni": (None if AUC[a]["auc"] is None else bool((AUC[a]["auc"] > 0.5) if TT[a]["yon"] == "YÜKSEK" else (AUC[a]["auc"] < 0.5)))}
+                  for a in yak5]
     J = {"surum": GT_SURUM, "kod_sha": gt_kod_sha(), "esik_sha": gt_esik_sha(), "bolge_n": nb, "bolge_toplam": len(KT),
          "veri_yok": [{"no": r["no"], "sembol": r["sembol"], "neden": r.get("neden")} for r in KT if r["durum"] != "tamam"],
          "dagilim_n": {str(L): int(len(dagB[L]["PUAN_ESIT"])) for L in GT_L},
          "bolge": [{k: r[k] for k in ("no", "sembol", "bas", "bit", "bar", "L", "onceki_bar", "kilitli_pay")} | {"sira": r["sira"]} for r in ok],
          "tutarlilik": TT, "imza": imza, "imza_yon": {a: TT[a]["yon"] for a in imza}, "imza_atilan_rho": atilan,
-         "rho_imza": {a: {b: R[a][b] for b in imza} for a in imza},
+         "rho_imza": {a: {b: R[a][b] for b in imza} for a in imza}, "rho": R,
          "mumizi": {"n_evet": int(ev.sum()), "n_hayir": int(hy.sum()), "pazar": Z.groupby(["pazar", "sinif"]).size().to_dict(), "auc": AUC,
-                    "imza_ayni_uc": ayni},
+                    "imza_ayni_uc": ayni, "yakin_ayni_uc": yakin_ayni},
          "dip_ilk_ucte_bir": int(sum(1 for r in ok if r.get("DIP_YER") is not None and r["DIP_YER"] <= 1 / 3)),
          "dip_yer_n": int(sum(1 for r in ok if r.get("DIP_YER") is not None))}
     J["mumizi"]["pazar"] = {f"{k[0]}|{k[1]}": int(v) for k, v in J["mumizi"]["pazar"].items()}
@@ -698,6 +773,10 @@ def gt_parmak_md(J: Dict[str, Any], ozet: Optional[str] = None) -> str:
     ay = [x for x in M["imza_ayni_uc"] if x["ayni"] is not None]
     S += ["", f"Çöl imza ölçüleri mum izi ✓'lerinde de aynı uçta mı (AUC kitaplık yönünde > 0,5): {sum(x['ayni'] for x in ay)} / {len(ay)} "
           f"({'; '.join(x['olcu'] + ' ' + ('evet' if x['ayni'] else 'hayır') + ' ' + _f(x['auc']) for x in ay)}).", ""]
+    ya = [x for x in M.get("yakin_ayni_uc", []) if x["ayni"] is not None]
+    if ya:
+        S += [f"İmzaya en yakın ama geçemeyen 5 ölçü (bilgi) mum izi ✓'lerinde kitaplık yönünde mi: {sum(x['ayni'] for x in ya)} / {len(ya)} "
+              f"({'; '.join(x['olcu'] + ' ' + x['yon'] + ' ' + ('evet' if x['ayni'] else 'hayır') + ' AUC ' + _f(x['auc']) for x in ya)}).", ""]
     S += ["## 6. Yorum noktaları", ""] + [f"- {y}" for y in GT_YORUM] + [""]
     return "\n".join(S)
 
@@ -789,69 +868,102 @@ def gt_d3_z(r: np.ndarray) -> np.ndarray:
 
 
 def gt_dedektor_hesap(J: Dict[str, Any], ham: Optional[str] = None) -> Dict[str, Any]:
-    imza = list(J["imza"]); yon = J["imza_yon"]; B = J["bolge"]
+    """D1 (iş tanımı) + D2 'YAKIN İMZA' ve D3 'EN YAKIN KOMŞU (sıra uzayı)' (GT_EK_KURAL; iş tanımının imza kuralı ölçü seçmediğinde ana modelin ek kuralı)."""
+    TT = J["tutarlilik"]; R = J["rho"]; B = J["bolge"]
+    imza = list(J["imza"])
+    if imza:
+        d2o = imza; d2_atilan: List[Dict[str, Any]] = []; d2_aday = imza; d2_kaynak = "iş tanımı imza"
+    else:
+        d2o, d2_atilan, d2_aday = gt_yakin_imza(TT, R); d2_kaynak = "EK KURAL yakın imza"
+    d3o, d3_atilan, d3_aday = gt_d3_olcu_sec(TT, R)
+    yon = {a: TT[a]["yon"] for a in set(d2o) | set(d3o)}
     KT = json.load(open(_gt_ham("kitaplik_olcu.json", ham), encoding="utf-8"))
-    sin = {a: gt_d2_sinir([r["sira"][a] for r in B], yon[a]) for a in imza}
-    # kitaplık kendi yakalama
+    sin = {a: gt_d2_sinir([r["sira"][a] for r in B], yon[a]) for a in d2o}
+    E3 = GT_EK_KURAL["D3"]
     kit = []
     for r in B:
-        q = {a: (float(gt_yonlu([r["sira"][a]], yon[a])[0]) if r["sira"][a] is not None else None) for a in imza}
-        gec = all(q[a] is not None and q[a] >= sin[a]["sinir"] for a in imza) if imza else False
+        q = {a: (float(gt_yonlu([r["sira"][a]], yon[a])[0]) if r["sira"][a] is not None else None) for a in d2o}
+        gec = all(q[a] is not None and q[a] >= sin[a]["sinir"] for a in d2o) if d2o else False
         kit.append({"no": r["no"], "sembol": r["sembol"], "L": r["L"], "D1": (r["sira"]["PUAN_ESIT"] or 0) >= GT_ESIK["D1"]["ust"], "D2": gec,
-                    "D2_sagladigi": sum(1 for a in imza if q[a] is not None and q[a] >= sin[a]["sinir"]), "z": {a: (float(gt_d3_z([q[a]])[0]) if q[a] is not None else None) for a in imza}})
-    out: Dict[str, Any] = {"imza": imza, "imza_yon": yon, "d2_sinir": sin, "kitaplik": kit, "pazar": {}, "aday": {}}
+                    "D2_sagladigi": sum(1 for a in d2o if q[a] is not None and q[a] >= sin[a]["sinir"]),
+                    "r3": [(r["sira"][a] if r["sira"][a] is not None else np.nan) for a in d3o]})
+    out: Dict[str, Any] = {"imza": imza, "d2_olcu": d2o, "d2_kaynak": d2_kaynak, "d2_aday": d2_aday, "d2_atilan_rho": d2_atilan,
+                           "d3_olcu": d3o, "d3_aday": d3_aday, "d3_atilan_rho": d3_atilan, "imza_yon": yon, "d2_sinir": sin, "kitaplik": kit,
+                           "ek_kural_sha": gt_ek_sha(), "pazar": {}, "aday": {}}
     for p in GT_HAVUZ_PAZAR:
-        X = gt_yukle(p, ham); dag = gt_dagilim(X); X = gt_sira_ekle(X, dag, imza + ["PUAN_ESIT"])
-        hm, say = gt_havuz_maske(X, imza, gt_haric_bolgeler(p, KT))
+        X = gt_yukle(p, ham); dag = gt_dagilim(X); X = gt_sira_ekle(X, dag, sorted(set(d2o) | set(d3o)) + ["PUAN_ESIT"])
+        hm, say = gt_havuz_maske(X, d2o, gt_haric_bolgeler(p, KT))
         g = X[hm].copy(); del X; gc.collect()
         # D1
         d1 = g[g.PUAN_ESIT_r.to_numpy(float) >= GT_ESIK["D1"]["ust"]].copy(); d1["skor"] = d1.PUAN_ESIT_r.astype(float) + 1e-9 * d1.PUAN_ESIT.astype(float) / 100
         d1t = gt_tekil(d1, "skor")
         # D2
-        Q = np.stack([gt_yonlu(g[f"{a}_r"].to_numpy(float), yon[a]) for a in imza], 1) if imza else np.zeros((len(g), 0))
-        kos = np.stack([Q[:, i] >= sin[a]["sinir"] for i, a in enumerate(imza)], 1) if imza else np.zeros((len(g), 0), bool)
+        Q = np.stack([gt_yonlu(g[f"{a}_r"].to_numpy(float), yon[a]) for a in d2o], 1) if d2o else np.zeros((len(g), 0))
+        kos = np.stack([Q[:, i] >= sin[a]["sinir"] for i, a in enumerate(d2o)], 1) if d2o else np.zeros((len(g), 0), bool)
         k_say = kos.sum(1)
-        d2m = kos.all(1) if imza else np.zeros(len(g), bool)
-        d2 = g[d2m].copy(); d2["skor"] = Q[d2m].mean(1) if imza else np.zeros(0); d2t = gt_tekil(d2, "skor")
-        # D3
-        Zp = gt_d3_z(Q) if imza else np.zeros((len(g), 0)); d3s = []; kul: set = set()
+        d2m = kos.all(1) if d2o else np.zeros(len(g), bool)
+        d2 = g[d2m].copy(); d2["skor"] = Q[d2m].mean(1) if d2o else np.zeros(0); d2t = gt_tekil(d2, "skor")
+        # D3 (sıra uzayı, ortalama mutlak fark)
+        Rp = np.stack([g[f"{a}_r"].to_numpy(float) for a in d3o], 1) if d3o else np.zeros((len(g), 0)); d3s = []; d3_en = {}
+        Lg = g.L.to_numpy(); Sg = g.sembol.to_numpy()
         for kr in kit:
-            zk = np.array([kr["z"][a] if kr["z"][a] is not None else np.nan for a in imza], float); f = np.isfinite(zk)
-            if not f.any():
-                continue
-            ii = np.flatnonzero((g.L.to_numpy() == kr["L"]) & (g.sembol.to_numpy() != kr["sembol"]))
-            dist = np.sqrt(np.mean((Zp[ii][:, f] - zk[f][None, :]) ** 2, axis=1)); o = np.argsort(dist, kind="mergesort")
+            rk = np.asarray(kr["r3"], float)
+            if np.isfinite(rk).sum() < E3["ortak_en_az"]:
+                d3_en[str(kr["no"])] = None; continue
+            ii = np.flatnonzero((Lg == kr["L"]) & (Sg != kr["sembol"]))
+            dist = gt_d3_uzak(Rp[ii], rk, int(E3["ortak_en_az"]))
+            k = min(len(ii), 5000); o = np.argpartition(dist, k - 1)[:k] if k < len(ii) else np.arange(len(ii))
+            o = o[np.lexsort((o, dist[o]))]; gor: set = set()
             for q_ in o:
-                sem = g.sembol.iloc[ii[q_]]
-                if sem in kul:
+                if not np.isfinite(dist[q_]) or len(gor) >= int(E3["col_basina"]):
+                    break
+                sem = Sg[ii[q_]]
+                if sem in gor:
                     continue
-                kul.add(sem); rr = g.iloc[ii[q_]].copy(); rr["skor"] = float(dist[q_]); rr["kitaplik_no"] = kr["no"]; d3s.append(rr); break
+                gor.add(sem); rr = g.iloc[ii[q_]].copy(); rr["skor"] = float(dist[q_]); rr["kitaplik_no"] = kr["no"]; rr["komsu_sira"] = len(gor); d3s.append(rr)
+            d3_en[str(kr["no"])] = next((float(x["skor"]) for x in d3s if x["kitaplik_no"] == kr["no"]), None)
         d3 = pd.DataFrame(d3s)
-        out["pazar"][p] = {"say": say, "D1_ham": int(len(d1)), "D1": int(len(d1t)), "D2_ham": int(d2m.sum()), "D2": int(len(d2t)), "D3": int(len(d3)),
+        out["pazar"][p] = {"say": say, "D1_ham": int(len(d1)), "D1": int(len(d1t)), "D2_ham": int(d2m.sum()), "D2": int(len(d2t)),
+                           "D3": int(sum(v is not None for v in d3_en.values())), "D3_en_yakin": d3_en,
                            "D1_pay": len(d1) / max(len(g), 1), "D2_pay": int(d2m.sum()) / max(len(g), 1),
-                           "D2_kosul_pay": {a: float(kos[:, i].mean()) for i, a in enumerate(imza)},
-                           "D2_kac_kosul": {str(k): int((k_say == k).sum()) for k in range(len(imza) + 1)},
+                           "D2_kosul_pay": {a: float(kos[:, i].mean()) for i, a in enumerate(d2o)},
+                           "D2_kac_kosul": {str(k): int((k_say == k).sum()) for k in range(len(d2o) + 1)},
                            "havuz_L": {str(L): int((g.L.to_numpy() == L).sum()) for L in GT_L},
                            "D2_L": {str(L): int((d2t.L.to_numpy() == L).sum()) for L in GT_L} if len(d2t) else {},
                            "D1_L": {str(L): int((d1t.L.to_numpy() == L).sum()) for L in GT_L}}
-        kol = ["sembol", "t", "s", "L", "tarih", "bas_tarih", "PUAN_ESIT", "PUAN_ESIT_r", "skor"] + [f"{a}_r" for a in imza]
-        out["aday"][p] = {"D1": d1t[kol].head(200), "D2": d2t[kol].head(200),
-                          "D3": d3[kol + ["kitaplik_no"]].sort_values("skor", kind="mergesort") if len(d3) else pd.DataFrame(columns=kol + ["kitaplik_no"]),
+        kol = ["sembol", "t", "s", "L", "tarih", "bas_tarih", "PUAN_ESIT", "PUAN_ESIT_r", "skor"]
+        kol2 = kol + [f"{a}_r" for a in d2o]; kol3 = kol + [f"{a}_r" for a in d3o] + ["kitaplik_no", "komsu_sira"]
+        out["aday"][p] = {"D1": d1t[kol].head(200), "D2": d2t[kol2].head(200),
+                          "D3": d3[kol3].sort_values(["skor", "kitaplik_no"], kind="mergesort").reset_index(drop=True) if len(d3) else pd.DataFrame(columns=kol3),
                           "havuz": g[["sembol", "t", "s", "L", "tarih", "bas_tarih", "PUAN_ESIT", "PUAN_ESIT_r"]].reset_index(drop=True)}
         del g; gc.collect()
+    for k in kit:
+        k.pop("r3", None)
     return out
 
 
 def gt_dedektor_md(J: Dict[str, Any], D: Dict[str, Any], c_parmak: str, ksha: str) -> str:
-    imza = D["imza"]; yon = D["imza_yon"]; E = GT_ESIK
+    imza = D["d2_olcu"]; yon = D["imza_yon"]; E = GT_ESIK; EK = GT_EK_KURAL
     S = ["# GT_DEDEKTOR — üç dedektör (ADIM B; ADIM A'dan sonra, Cemal'in işaretlerinden ve onay setinden ÖNCE sabitlendi)", "",
          f"Parmak izi commit'i: {c_parmak[:10]}; GOZ_TESPIT.py sha {gt_kod_sha()[:12]}; eşik sözlüğü sha {gt_esik_sha()[:12]}; dedektör json sha {ksha[:12]}. "
          "Getiri / sonrası hesaplanmadı.", "",
          "## 1. Tanımlar (kesin)", "",
          f"- HAVUZ: {E['havuz']['tanim']}. Evren: {E['evren']['tanim']}.",
          f"- D1 ESKİ PUAN: {E['D1']['tanim']}.",
-         f"- D2 İMZA: {E['D2']['tanim']}. İmza ölçüleri ({len(imza)}): " + (", ".join(f"{a} ({yon[a]})" for a in imza) or "YOK") + ".",
-         f"- D3 EN YAKIN KOMŞU: {E['D3']['tanim']}.",
+         f"- İŞ TANIMINDAKİ D2 İMZA: {E['D2']['tanim']}. İş tanımı imza ölçüleri ({len(D['imza'])}): " + (", ".join(D["imza"]) or "YOK") + ".",
+         f"- İŞ TANIMINDAKİ D3: {E['D3']['tanim']}." + ("" if D["imza"] else " İmza uzayı boş olduğu için tanımsız."), "",
+         f"## 1a. {EK['sapma']}", "",
+         "Ana modelin ek kuralı ADIM A tablosu görüldükten SONRA, Cemal'in işaretlerinden ve onay setinden ÖNCE yazıldı; imza kuralının sonucu değişmedi "
+         f"(imza = {'yok' if not D['imza'] else ', '.join(D['imza'])}). Ek kural sha {D['ek_kural_sha'][:12]} ({EK['surum']}).", "",
+         f"- D2 {EK['D2']['ad']} (D2'nin yerine): {EK['D2']['tanim']}.",
+         f"- D3 {EK['D3']['ad']} (imza uzayının yerine): {EK['D3']['tanim']}.",
+         f"- Uygulama ayrıntısı: {EK['uygulama']}", "",
+         f"D2 ölçü adayları (budama öncesi): {', '.join(D['d2_aday']) or 'yok'}; budamada atılan: " +
+         ("; ".join(f"{x['olcu']} ({x['nedeni']} ile rho {_f(x['rho'])})" for x in D["d2_atilan_rho"]) or "yok") +
+         f"; KALAN D2 ölçüleri ({len(imza)}): " + (", ".join(f"{a} ({yon[a]})" for a in imza) or "YOK") + ".", "",
+         f"D3 ölçü adayları (tutarlılık >= %50): {', '.join(D['d3_aday']) or 'yok'}; budamada atılan: " +
+         ("; ".join(f"{x['olcu']} ({x['nedeni']} ile rho {_f(x['rho'])})" for x in D["d3_atilan_rho"]) or "yok") +
+         f"; KALAN D3 ölçüleri ({len(D['d3_olcu'])}): {', '.join(D['d3_olcu']) or 'YOK'}.", "",
          f"- TEKİLLEŞTİRME: {E['tekil']['tanim']}.", "",
          "## 2. D2 kesim değerleri (yönlü sıra uzayında; kitaplıktan)", "",
          "| imza ölçüsü | yön | ölçüsü olan çöl | 13/16 kuralı (k) | kitaplık sınırı | uygulanan sınır (maks 0,50) |", "|---|---|---|---|---|---|"]
@@ -869,7 +981,10 @@ def gt_dedektor_md(J: Dict[str, Any], D: Dict[str, Any], c_parmak: str, ksha: st
         S.append(f"| {ad} | {P['BIST'][k + '_ham']:,} / {P['BIST'][k]:,} | {P['ABD'][k + '_ham']:,} / {P['ABD'][k]:,} |".replace(",", "."))
     for k in ("D1", "D2"):
         S.append(f"| {k} havuzun yüzde kaçı (ham) | {_f(100 * P['BIST'][k + '_pay'], 2)} | {_f(100 * P['ABD'][k + '_pay'], 2)} |")
-    S.append(f"| D3 seçilen (her çöle 1) | {P['BIST']['D3']} | {P['ABD']['D3']} |")
+    S.append(f"| D3 komşusu bulunan çöl (en az 8 ortak ölçü) | {P['BIST']['D3']} | {P['ABD']['D3']} |")
+    S += ["", "D3: çöl başına en yakın komşu uzaklığı (ortalama mutlak sıra farkı; küçük = yakın):", "", "| çöl | BIST | ABD |", "|---|---|---|"]
+    for k in D["kitaplik"]:
+        S.append(f"| {k['no']} {k['sembol']} | {_f(P['BIST']['D3_en_yakin'].get(str(k['no'])), 3)} | {_f(P['ABD']['D3_en_yakin'].get(str(k['no'])), 3)} |")
     S += ["", "## 4. D2 imza koşullarının havuzda sağlanma payı", "", "| koşul | BIST | ABD |", "|---|---|---|"]
     for a in imza:
         S.append(f"| {a} ({yon[a]}) | {_f(100 * P['BIST']['D2_kosul_pay'][a], 1)} % | {_f(100 * P['ABD']['D2_kosul_pay'][a], 1)} % |")
@@ -885,6 +1000,8 @@ def gt_dedektor_md(J: Dict[str, Any], D: Dict[str, Any], c_parmak: str, ksha: st
           "- Çöl başına sağlanan D2 koşulu: " + ", ".join(f"{k['no']} {k['sembol']} {k['D2_sagladigi']}/{len(imza)}" for k in kit) + ".", "",
           "## 6. Yorum gerektiren noktalar (ana modele)", ""]
     S += [f"- {y}" for y in GT_YORUM[11:]]
+    if not D["imza"]:
+        S += [f"- {EK['sapma']} (bkz. 1a). D2 / D3 ek kuralla kuruldu; kitaplığın D2'yi geçmesi örneklem içidir (kural kitaplıktan kuruldu)."]
     S += ["- D1'de sınır 'en yüksek puanlılar' için pazar ve L içinde üst %10 seçildi (Ç262 dilimi); sayfalar sıralamanın en üstünden alınır.",
           "- D2 'kitaplığın tarafı' = yönlü sıra >= 0,50; 'gevşek %20 sınırı' = kitaplık yönlü sıralarının 16'da 13'ünün sağladığı en büyük alt sınır; ikisinin büyüğü.",
           "- Dedektör sayfaları sıralamanın en üstünden: kod en çok benzettiğini gösterir; bütün seçilen kümeyi temsil etmez (rapor bunu yazar).",
@@ -976,7 +1093,7 @@ def gt_pdf(yol: str, sayfalar: List[Dict[str, Any]], seri: Any, kapak: Optional[
 def gt_onay_sec(A: Dict[str, Dict[str, pd.DataFrame]], kit: List[Dict[str, Any]], tohum: Optional[int] = None) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
     """A[pazar][kol] sıralı aday tabloları (D1 / D2 / D3 / havuz); kit = verisi olan kitaplık bölgeleri (s, t, sembol, no). Sayfa listesi + sayım."""
     rng = np.random.default_rng(GT_ESIK["tohum"] if tohum is None else tohum); KP = GT_ESIK["kol_pazar"]
-    kul: set = set(); sec: List[Dict[str, Any]] = []; eksik: Dict[str, int] = {}; tasinan: Dict[str, int] = {}
+    kul: set = set(); kul_kit: set = set(); sec: List[Dict[str, Any]] = []; eksik: Dict[str, int] = {}; tasinan: Dict[str, int] = {}
     uygun_kit = [k for k in kit if k["s"] >= int(GT_ESIK["sayfa"]["uzak_en_az"])]
     for i in sorted(rng.choice(len(uygun_kit), KP["KITAPLIK"]["BIST"], replace=False).tolist()):
         k = uygun_kit[i]; kul.add(("BIST", k["sembol"]))
@@ -990,6 +1107,11 @@ def gt_onay_sec(A: Dict[str, Dict[str, pd.DataFrame]], kit: List[Dict[str, Any]]
                 break
             if (p, r.sembol) in kul:
                 continue
+            kno = getattr(r, "kitaplik_no", None) if kol == "D3" else None
+            if kno is not None and pd.notna(kno):
+                if int(kno) in kul_kit:                                   # EK KURAL D3: her çöl en çok bir kez
+                    continue
+                kul_kit.add(int(kno))
             kul.add((p, r.sembol)); kc += 1
             e = {"kol": kol, "pazar": p, "sembol": r.sembol, "s": int(r.s), "t": int(r.t), "L": int(r.L), "kaynak": "acik", "bas": str(pd.Timestamp(r.bas_tarih).date()),
                  "son": str(pd.Timestamp(r.tarih).date()), "PUAN_ESIT": float(r.PUAN_ESIT), "PUAN_ESIT_r": float(r.PUAN_ESIT_r), "skor": float(r.skor)}
@@ -1087,10 +1209,11 @@ def gt_onay(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str,
             raise GTHata(f"onay: bölge tarihleri seriyle uyuşmuyor ({p} sayfa {r['sayfa']})")
         return d
 
-    P = gt_pdf(y, sec, seri)
+    kapak = GT_ESIK["kapak"].replace("Bu sette 30 bölge var.", f"Bu sette {len(sec)} bölge var.") + "\n\n" + GT_ESIK["kapak_ek"]
+    P = gt_pdf(y, sec, seri, kapak=kapak)
     gt_pdf_denetim(y, [r["sembol"] for r in sec])
     K = {"not": "MÜHÜRLÜ: sayfa -> kol / pazar / sembol / bölge tarihleri / puanlar; PDF'e girmez; işaretler gelmeden açılmaz", "surum": GT_SURUM,
-         "kod_sha": gt_kod_sha(), "esik_sha": gt_esik_sha(), "tohum": GT_ESIK["tohum"], "parmak_commit": c_par, "dedektor_commit": c_ded,
+         "kod_sha": gt_kod_sha(), "esik_sha": gt_esik_sha(), "tohum": GT_ESIK["tohum"], "ek_kural_sha": gt_ek_sha(), "parmak_commit": c_par, "dedektor_commit": c_ded,
          "dedektor_json_sha": MI._mi_sha(_gt_yol("dedektor", cikti)), "pdf": os.path.basename(y), "pdf_sha": P["sha"], "say": say,
          "sayfalar": [dict(r, uzak_onceki_bar=o["uzak_onceki_bar"]) for r, o in zip(sec, P["olc"])]}
     MI._mi_jyaz(ya, K, "onay anahtar")
@@ -1121,7 +1244,8 @@ def gt_rapor(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str
                                ("F1", "BOY_YUZDE_ORAN", "BOY_MUTLAK", "UST_FITIL", "SON_UST_FITIL", "F6", "HACIM_ORAN", "HACIM_SON5") if a in TT}},
          "mumizi": {"auc_ilk5": auc, "imza_ayni": sum(x["ayni"] for x in ay), "imza_n": len(ay)},
          "dedektor": {p: {k: P[p][k] for k in ("D1_ham", "D1", "D1_pay", "D2_ham", "D2", "D2_pay", "D3")} | {"havuz": P[p]["say"]["havuz"]} for p in P},
-         "kitaplik_D1": sum(k["D1"] for k in kit), "kitaplik_D2": sum(k["D2"] for k in kit), "kitaplik_n": len(kit), "d2_kosul": len(D["imza"]),
+         "kitaplik_D1": sum(k["D1"] for k in kit), "kitaplik_D2": sum(k["D2"] for k in kit), "kitaplik_n": len(kit), "d2_kosul": len(D.get("d2_olcu", D["imza"])), "d2_olcu": D.get("d2_olcu", D["imza"]),
+         "d3_olcu": D.get("d3_olcu", []), "ek_kural_sha": D.get("ek_kural_sha"),
          "sayim_kurali": GT_ESIK["sayim"]["tanim"], "hata": EK.get("hata", []), "sapma": EK.get("sapma", []), "yeniden": EK.get("yeniden", [])}
     S = ["# GT_RAPOR — GOZ_TESPIT: parmak izi, dedektörler, kör onay seti (yalnız tespit; getiri / sonrası yok)", "",
          f"Kod sha {R['kod_sha'][:12]}, eşik sha {R['esik_sha'][:12]}; parmak izi commit {R['parmak_commit'][:10]} -> dedektör commit {R['dedektor_commit'][:10]} -> "
@@ -1136,7 +1260,8 @@ def gt_rapor(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str
          f"- DEDEKTÖRLER (havuz BIST {_n(P['BIST']['say']['havuz'])} / ABD {_n(P['ABD']['say']['havuz'])} pencere): " + "; ".join(
              f"{k} BIST {_n(P['BIST'][k + '_ham'])} (%{_f(100 * P['BIST'][k + '_pay'], 2)}; tekil {_n(P['BIST'][k])}), ABD {_n(P['ABD'][k + '_ham'])} "
              f"(%{_f(100 * P['ABD'][k + '_pay'], 2)}; tekil {_n(P['ABD'][k])})" for k in ("D1", "D2")) +
-         f"; D3 BIST {P['BIST']['D3']}, ABD {P['ABD']['D3']}. D2'nin {len(D['imza'])} imza koşulu var.",
+         f"; D3 (komşusu bulunan çöl) BIST {P['BIST']['D3']}, ABD {P['ABD']['D3']}. D2'nin {R['d2_kosul']} koşulu var ({', '.join(R['d2_olcu']) or 'yok'}"
+         f"{'; iş tanımı imzası yok, EK KURAL yakın imza' if not imza else ''}); D3 ölçüleri ({len(R['d3_olcu'])}): {', '.join(R['d3_olcu'])}.",
          f"- Kitaplığın kendi yakalaması (örneklem içi): D1 üst %10'unda {R['kitaplik_D1']} / {len(kit)}; D2'yi geçen {R['kitaplik_D2']} / {len(kit)}.",
          f"- ONAY SETİ: {R['sayfa']} bölge sayfası + kapak; kol sayıları {R['kol']}; pazar {R['pazar']}; eksik {R['eksik'] or 'yok'}; taşınan {R['tasinan'] or 'yok'}. "
          "Kol / hisse / tarih PDF'te yok (pdftotext denetimi); eşleme yalnız mühürlü anahtarda.",
