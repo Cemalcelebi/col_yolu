@@ -4,7 +4,7 @@
 
 Bu ölçüm 'çöl tuttu / tutmadı / iz' sorusunu yanıtlamaz; yalnız ÇÖL-K2 dedektörünün (dondurulmuş GT5 olayları) bulduğu bölgelerin tavanı mı dibi mi önce kırdığını ve tavan kırılımından sonraki 15 barı, aynı hissenin sıradan pencereleri / sıradan kırılımlarıyla karşılaştırır.
 
-İş tanımı: arastirma_cikti/goz_tespit/GT6_IS_TANIMI.md (ana model). Bu dosya yön ve getiri hesaplanmadan ÖNCE commit + push edilir.  bu dosyanın commit + push edilmiş olmasını (gt_kapi_commit), KONTROL LİSTESİ'nin dolu olmasını (IZ_KARNE.ik_kontrol_kapisi), kod sha / eşik sha / olay sha'nın bu dosyada yazılı ve gt6_sayim.json ile aynı olmasını denetler; gt6_ozet.json varsa ikinci koşu durur.
+İş tanımı: arastirma_cikti/goz_tespit/GT6_IS_TANIMI.md (ana model). Bu dosya yön ve getiri hesaplanmadan ÖNCE commit + push edilir. `python GOZ_TESPIT.py k2kirolc` bu dosyanın commit + push edilmiş olmasını (gt_kapi_commit), KONTROL LİSTESİ'nin dolu olmasını (IZ_KARNE.ik_kontrol_kapisi), kod sha / eşik sha / olay sha'nın bu dosyada yazılı ve gt6_sayim.json ile aynı olmasını denetler; gt6_ozet.json varsa ikinci koşu durur.
 
 ## 1. Mühürler
 - Kod commit: e9f6949 (GOZ_TESPIT.py bölüm 12 ÇÖL-K2 KIRILIM + test_goz_tespit.py; ilk commit f18d869, ikinci commit yalnız YÖN tablosuna bilgi ölçüsü ekledi; ikisi de ölçümden önce).
@@ -14,6 +14,7 @@ Bu ölçüm 'çöl tuttu / tutmadı / iz' sorusunu yanıtlamaz; yalnız ÇÖL-K2
 - Olay dosyası /root/.kasa/ham/goz_tespit/k2/k2_olay.pkl sha256 (olay_sha; GT5_ON_KAYIT.md ile aynı, kodda assert): e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55
 - Getirisiz sayımlar: arastirma_cikti/goz_tespit/gt6_sayim.json (sha256 73560e6d56d3b54eb98537f6f7b4f554c6ace45af06165d7c7452e87b7381803; bu commit'te).
 - Testler: test_goz_tespit.py 36 / 36 (eski 26 aynen + yeni 10).
+- Not (süreç): ön kayıt dosyası ilk yazılırken kabuk metindeki ters tırnaklı komutu bir kez çalıştırdı (12:43:23 UTC); komut dosya olmadığı için ilk kapıda (gt_kapi_commit) DURDU, hiçbir yön / getiri hesaplanmadı, çıktı yazılmadı (gt6_ozet.json ve k2k_*.pkl yok). Bu düzeltme commit'i metindeki boşluğu doldurur.
 
 ## 2. Tanımlar (GOZ_TESPIT.GT_K2K; iş tanımından aynen, belirsiz yerlerin yorumu §3'te)
 - Bölge [s, t] olay dosyasından; TAVAN = bölgedeki en yüksek High; DİP = en düşük Low (gt_k2k_tavan_dip; yalnız s..t).
