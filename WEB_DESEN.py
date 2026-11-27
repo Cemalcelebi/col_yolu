@@ -1323,7 +1323,8 @@ def wd_gercek_pdf(cikti: Optional[str] = None, ham: Optional[str] = None, yo_ham
         for kol in WD_KOLLAR:
             A = pd.concat([TS[p][TS[p].kol == kol] for p in WD_PAZAR], ignore_index=True)
             fig = plt.figure(figsize=(8.3, 11.7))
-            fig.text(0.04, 0.965, f"{kol}  {WD_KOL[kol]['ad']} — gerçek örnekler (sonrası yok)", fontsize=16, weight="bold", va="top")
+            fig.text(0.04, 0.975, f"{kol}  {WD_KOL[kol]['ad']}", fontsize=16, weight="bold", va="top")
+            fig.text(0.04, 0.948, "gerçek örnekler · SONRASI GÖSTERİLMİYOR · son mum = desenin tanındığı mum", fontsize=11, va="top", color="#444444")
             if not len(A):
                 fig.text(0.1, 0.5, "olay yok", fontsize=20); pdf.savefig(fig); plt.close(fig); continue
             sec = _wd_rng(f"gercek|{kol}").choice(len(A), size=min(adet, len(A)), replace=False)
@@ -1349,9 +1350,9 @@ def wd_gercek_pdf(cikti: Optional[str] = None, ham: Optional[str] = None, yo_ham
                     ax.hlines(r.stop, kutu[0] - 0.5, x1, colors="#c00000", linestyles="--", linewidth=1.3); ax.text(x1, r.stop, "stop", color="#c00000",
                                                                                                                        fontsize=9, ha="right", va="bottom")
                 if kol in WD_ICGIRIS:
-                    ax.plot(son, r.giris, marker=">", color="#1f4fbf", markersize=9, zorder=9)
-                    ax.hlines(r.seviye, kutu[0] - 0.5, x1, colors="#777777", linestyles="--", linewidth=1.0)
-                    ax.text(son, r.giris, " giriş", color="#1f4fbf", fontsize=9, va="center", weight="bold")
+                    ax.hlines(r.seviye, kutu[0] - 0.5, x1, colors="#1f4fbf", linestyles="-", linewidth=1.2, zorder=6)
+                    ax.plot(son + 0.9, r.giris, marker="<", color="#1f4fbf", markersize=11, zorder=10, clip_on=False)
+                    ax.text(kutu[0] - 0.5, r.seviye, "seviye / giriş", color="#1f4fbf", fontsize=8.5, va="bottom", ha="right", weight="bold")
                 else:
                     ax.annotate("giriş: sonraki açılış", xy=(son + 0.6, C[-1]), xytext=(son - 8, y1 - 0.08 * (y1 - y0)), fontsize=8.5, color="#1f4fbf",
                                 arrowprops=dict(arrowstyle="->", color="#1f4fbf"))
@@ -1412,7 +1413,10 @@ WD_YORUM = [
     "1 tik = %0,1 (x 0,999 / x 1,001; iş tanımı). Stop t + 1'in TAM gün dibini kullanır (kaynağın kuralı; giriş anında bilinmeyebilir: R'yi büyütür, +2R'yi zorlaştırır).",
     "W4 KIRILAN SEVİYE: süpürme barı s'den ÖNCE tamamlanmış (i + 2 <= s - 1) en son yerel dibin L'si (W4Y'de en son yerel tepenin H'si); geri bakış sınırı yok. "
     "Yapı kırılımı = s+1 .. s+10 içinde İLK kapanış seviyenin ötesinde; geri test = kırılımdan sonraki 5 bar içinde İLK seviyeye dokunuş; açılış seviyeyi "
-    "geçmişse (W4: O >= seviye; W4Y: O <= seviye) açılışta. Kırılım ile geri test arasında stopa dokunma aranmaz (pozisyon yok).",
+    "geçmişse (W4: O >= seviye; W4Y: O <= seviye) açılışta. Süpürmeden girişe kadar fiyatın stopun (süpürme mumu ucunun) ötesine geçmesi olayı İPTAL ETMEZ (pozisyon yok; iş tanımı şart koymuyor); "
+    "giriş stopun yanlış tarafındaysa STOP_TERS ile atılır.",
+    "W3 / W3T, W5 / W5Y rastgele yürüyüşte de gerçek veridekine yakın sıklıkta çıkıyor (1000 barda ~8-13): bu kollar mekanik tanımdır, dedektör 'ayırt "
+    "edici kalıp' bulmuyor; sonuç yalnız 'bu kurala göre işlem' olarak okunur.",
     "W5: 'sonraki 1-3 bar' = t+1 .. t+3; ilk geri kapanış barı u; giriş u + 1 açılışı; stop = H_t .. H_u en yükseği (W5Y: en düşük L).",
     "W6 'L son 10 barın en düşüğü' = L_t <= min(L_{t-9..t}) (t dahil); W7'de 20. W7T 'kapanış alt yarıda' = (C - L) / boy <= 0,5 (W7'nin >= 0,5 aynası).",
     "W7 hacim: V_t >= 2 x medyan(V_{t-20..t-1}) (t hariç). Hacim, MI.mi_veri günlük açık kopyasının Volume sütunu (YO paneliyle bar bar eşit; assert). "
