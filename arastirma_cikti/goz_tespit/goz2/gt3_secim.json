@@ -1,0 +1,359 @@
+{
+ "tohum": 2718,
+ "kit_bit": {
+  "1": "2025-01-22",
+  "5": "2025-02-28",
+  "3": "2025-07-22",
+  "19": "2025-08-25"
+ },
+ "sayfalar": [
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "GRRR",
+   "s": 141,
+   "t": 180,
+   "L": 40,
+   "d1_sira": 1411417,
+   "kaynak": "acik",
+   "sayfa": 1
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "RCON",
+   "s": 631,
+   "t": 710,
+   "L": 80,
+   "d1_sira": 2638116,
+   "kaynak": "acik",
+   "sayfa": 2
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "UONE",
+   "s": 1361,
+   "t": 1440,
+   "L": 80,
+   "d1_sira": 3249263,
+   "kaynak": "acik",
+   "sayfa": 3
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "NCNA",
+   "s": 1121,
+   "t": 1140,
+   "L": 20,
+   "d1_sira": 2155860,
+   "kaynak": "acik",
+   "sayfa": 4
+  },
+  {
+   "kol": "KITAPLIK_NET",
+   "kitaplik_no": 5,
+   "pazar": "BIST",
+   "sembol": "PAPIL",
+   "s": 1163,
+   "t": 1288,
+   "L": 126,
+   "kaynak": "tam",
+   "sayfa": 5
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "LEN",
+   "s": 1121,
+   "t": 1200,
+   "L": 80,
+   "kaynak": "acik",
+   "sayfa": 6
+  },
+  {
+   "kol": "KITAPLIK_KARISIK",
+   "kitaplik_no": 19,
+   "pazar": "BIST",
+   "sembol": "KAPLM",
+   "s": 2315,
+   "t": 2344,
+   "L": 30,
+   "kaynak": "tam",
+   "sayfa": 7
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "DGNMO",
+   "s": 1481,
+   "t": 1520,
+   "L": 40,
+   "kaynak": "acik",
+   "sayfa": 8
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "MEGAP",
+   "s": 421,
+   "t": 460,
+   "L": 40,
+   "d1_sira": 241509,
+   "kaynak": "acik",
+   "sayfa": 9
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "GLRYH",
+   "s": 1451,
+   "t": 1530,
+   "L": 80,
+   "d1_sira": 156401,
+   "kaynak": "acik",
+   "sayfa": 10
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "SONME",
+   "s": 1416,
+   "t": 1495,
+   "L": 80,
+   "d1_sira": 327881,
+   "kaynak": "acik",
+   "sayfa": 11
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "LRSHO",
+   "s": 901,
+   "t": 940,
+   "L": 40,
+   "d1_sira": 233045,
+   "kaynak": "acik",
+   "sayfa": 12
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "ETYAT",
+   "s": 1476,
+   "t": 1555,
+   "L": 80,
+   "d1_sira": 136804,
+   "kaynak": "acik",
+   "sayfa": 13
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "AHG",
+   "s": 716,
+   "t": 735,
+   "L": 20,
+   "d1_sira": 98943,
+   "kaynak": "acik",
+   "sayfa": 14
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "ELTK",
+   "s": 946,
+   "t": 985,
+   "L": 40,
+   "d1_sira": 1045082,
+   "kaynak": "acik",
+   "sayfa": 15
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "IGC",
+   "s": 1641,
+   "t": 1720,
+   "L": 80,
+   "d1_sira": 1596824,
+   "kaynak": "acik",
+   "sayfa": 16
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "TRMB",
+   "s": 1776,
+   "t": 1795,
+   "L": 20,
+   "kaynak": "acik",
+   "sayfa": 17
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "FTFT",
+   "s": 491,
+   "t": 530,
+   "L": 40,
+   "d1_sira": 1270504,
+   "kaynak": "acik",
+   "sayfa": 18
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "VAKFN",
+   "s": 466,
+   "t": 485,
+   "L": 20,
+   "d1_sira": 369990,
+   "kaynak": "acik",
+   "sayfa": 19
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "SGLY",
+   "s": 1946,
+   "t": 1965,
+   "L": 20,
+   "d1_sira": 2822845,
+   "kaynak": "acik",
+   "sayfa": 20
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "GLYHO",
+   "s": 1486,
+   "t": 1565,
+   "L": 80,
+   "d1_sira": 157454,
+   "kaynak": "acik",
+   "sayfa": 21
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "FADE",
+   "s": 246,
+   "t": 285,
+   "L": 40,
+   "d1_sira": 140226,
+   "kaynak": "acik",
+   "sayfa": 22
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "NMAD",
+   "s": 831,
+   "t": 910,
+   "L": 80,
+   "d1_sira": 2204646,
+   "kaynak": "acik",
+   "sayfa": 23
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "EEIQ",
+   "s": 136,
+   "t": 175,
+   "L": 40,
+   "d1_sira": 1017146,
+   "kaynak": "acik",
+   "sayfa": 24
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "TUCLK",
+   "s": 261,
+   "t": 280,
+   "L": 20,
+   "d1_sira": 356817,
+   "kaynak": "acik",
+   "sayfa": 25
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "GEDIK",
+   "s": 1531,
+   "t": 1610,
+   "L": 80,
+   "kaynak": "acik",
+   "sayfa": 26
+  },
+  {
+   "kol": "KITAPLIK_NET",
+   "kitaplik_no": 1,
+   "pazar": "BIST",
+   "sembol": "BINBN",
+   "s": 50,
+   "t": 71,
+   "L": 22,
+   "kaynak": "tam",
+   "sayfa": 27
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "ISKPL",
+   "s": 161,
+   "t": 180,
+   "L": 20,
+   "d1_sira": 195026,
+   "kaynak": "acik",
+   "sayfa": 28
+  },
+  {
+   "kol": "KITAPLIK_KARISIK",
+   "kitaplik_no": 3,
+   "pazar": "BIST",
+   "sembol": "ENSRI",
+   "s": 788,
+   "t": 825,
+   "L": 38,
+   "kaynak": "tam",
+   "sayfa": 29
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "EGPRO",
+   "s": 991,
+   "t": 1070,
+   "L": 80,
+   "d1_sira": 122030,
+   "kaynak": "acik",
+   "sayfa": 30
+  },
+  {
+   "kol": "D1",
+   "pazar": "BIST",
+   "sembol": "IDGYO",
+   "s": 1386,
+   "t": 1405,
+   "L": 20,
+   "d1_sira": 176554,
+   "kaynak": "acik",
+   "sayfa": 31
+  },
+  {
+   "kol": "D1",
+   "pazar": "ABD",
+   "sembol": "NRSN",
+   "s": 156,
+   "t": 235,
+   "L": 80,
+   "d1_sira": 2236428,
+   "kaynak": "acik",
+   "sayfa": 32
+  }
+ ]
+}

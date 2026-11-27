@@ -1035,7 +1035,7 @@ GT_KONTROL: Dict[str, Tuple[str, str]] = {
 
 
 # ================================================================ 9) ADIM C — ONAY SETİ
-def gt_sayfa(fig, d: pd.DataFrame, s: int, t: int, sayfa: int) -> Dict[str, Any]:
+def gt_sayfa(fig, d: pd.DataFrame, s: int, t: int, sayfa: int, kutu: Optional[List[str]] = None) -> Dict[str, Any]:
     """Geçmişli onay sayfası: üst uzak (önceki <= 120 bar + bölge), alt yakın (önceki 10 bar + bölge), üç kutu. Yalnız d[:t + 1] (assert); sonrası yok."""
     from matplotlib.patches import Rectangle
     G = dict(HK.HK_ESIK_OLCEK); P = GT_ESIK["sayfa"]; s = int(s); t = int(t)
@@ -1065,10 +1065,18 @@ def gt_sayfa(fig, d: pd.DataFrame, s: int, t: int, sayfa: int) -> Dict[str, Any]
     for xx, txt in zip((0.0, 0.345, 0.69), P["kutu"]):
         axk.add_patch(Rectangle((xx, 0.05), 0.31, 0.9, fill=False, linewidth=3, transform=axk.transAxes))
         axk.text(xx + 0.155, 0.5, txt, ha="center", va="center", fontsize=21, transform=axk.transAxes)
+    if kutu:                                                            # isteğe bağlı kutu yazıları (ör. dört kutu: ✓ / K / E erken / ×); verilmezse üstteki üç kutu aynen
+        for p_ in list(axk.patches): p_.remove()
+        for t_ in list(axk.texts): t_.remove()
+        nk = len(kutu); bosluk = 0.035; gen = (1.0 - (nk - 1) * bosluk) / nk
+        for i_, txt in enumerate(kutu):
+            xx = i_ * (gen + bosluk)
+            axk.add_patch(Rectangle((xx, 0.05), gen, 0.9, fill=False, linewidth=3, transform=axk.transAxes))
+            axk.text(xx + gen / 2, 0.5, txt, ha="center", va="center", fontsize=21 if nk <= 3 else 16.5, transform=axk.transAxes)
     return {"uzak_onceki_bar": int(nu), "yakin_onceki_bar": int(s - iy), "uzak": ou, "yakin": oy, "son_bar_index": int(t), "seri_uzunluk_kullanilan": int(len(dg))}
 
 
-def gt_pdf(yol: str, sayfalar: List[Dict[str, Any]], seri: Any, kapak: Optional[str] = None) -> Dict[str, Any]:
+def gt_pdf(yol: str, sayfalar: List[Dict[str, Any]], seri: Any, kapak: Optional[str] = None, kutu: Optional[List[str]] = None) -> Dict[str, Any]:
     """sayfalar: [{'sayfa', 'pazar', 'sembol', 's', 't', 'kaynak'}]; seri(pazar, sembol, kaynak) -> DataFrame. Belirlenimci (metadata tarihsiz)."""
     import matplotlib
     matplotlib.use("Agg")
@@ -1083,7 +1091,7 @@ def gt_pdf(yol: str, sayfalar: List[Dict[str, Any]], seri: Any, kapak: Optional[
             pdf.savefig(fig); plt.close(fig)
             for r in sorted(sayfalar, key=lambda r: r["sayfa"]):
                 d = seri(r["pazar"], r["sembol"], r["kaynak"])
-                fig = plt.figure(figsize=boy); o = gt_sayfa(fig, d, r["s"], r["t"], r["sayfa"]); pdf.savefig(fig); plt.close(fig)
+                fig = plt.figure(figsize=boy); o = gt_sayfa(fig, d, r["s"], r["t"], r["sayfa"], kutu=kutu); pdf.savefig(fig); plt.close(fig)
                 olc.append(dict(o, sayfa=r["sayfa"]))
     except Exception:
         if os.path.exists(yol):

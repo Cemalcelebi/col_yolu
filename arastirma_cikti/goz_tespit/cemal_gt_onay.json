@@ -71,5 +71,43 @@
   23,
   26,
   28
- ]
+ ],
+ "cemal_yanit_27kas": "Evet 39 ve 27 erken yuvarlanma görürsem olur demişim bunlardan birileridir mutlaka tehol dedigin",
+ "erken_kesin": {
+  "25": "not: 'düşüş bitmeli' + ok",
+  "27": "Cemal doğruladı (27 Kas): 'yuvarlanma görürsem olur'",
+  "29": "Cemal doğruladı (27 Kas; '39' yazdı, 29 diye okundu: 39. sayfa yok): 'yuvarlanma görürsem olur'"
+ },
+ "sinif4": {
+  "1": "EVET",
+  "2": "EVET",
+  "3": "EVET",
+  "4": "EVET",
+  "5": "HAYIR",
+  "6": "HAYIR",
+  "7": "HAYIR",
+  "8": "HAYIR",
+  "9": "KISMEN",
+  "10": "EVET",
+  "11": "EVET",
+  "12": "EVET",
+  "13": "EVET",
+  "14": "EVET",
+  "15": "KISMEN",
+  "16": "HAYIR",
+  "17": "HAYIR",
+  "18": "HAYIR",
+  "19": "HAYIR",
+  "20": "EVET",
+  "21": "HAYIR",
+  "22": "HAYIR",
+  "23": "HAYIR",
+  "24": "KISMEN",
+  "25": "ERKEN",
+  "26": "HAYIR",
+  "27": "ERKEN",
+  "28": "HAYIR",
+  "29": "ERKEN",
+  "30": "HAYIR"
+ }
 }
