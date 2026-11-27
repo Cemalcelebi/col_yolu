@@ -1,0 +1,34 @@
+{
+ "not": "Ana modelin mühürlü ön etiketi (27 Kas 2026; GT5; 21 sayfa; kol bilinmeden levhadan; 10 sayfanın etiketi ilk (gönderilmeyen) seçimdeki bakıştan taşındı; ELEME YOK).",
+ "etiket": {
+  "EVET": [
+   3,
+   5,
+   7,
+   9,
+   13,
+   19
+  ],
+  "KISMEN": [
+   12,
+   15,
+   21
+  ],
+  "ERKEN": [
+   1,
+   2,
+   4,
+   8,
+   17,
+   18,
+   20
+  ],
+  "HAYIR": [
+   6,
+   10,
+   11,
+   14,
+   16
+  ]
+ }
+}
