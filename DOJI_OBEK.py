@@ -13,6 +13,7 @@ Komut:  python DOJI_OBEK.py hazirla    doji / öbek tespiti -> olay + taban dosy
         python DOJI_OBEK.py olcum      kapı (ön kayıt commit + push + kontrol + sha) -> ölçüm (BİR KEZ) -> dj_sonuc.json + dj_ozet.csv
         python DOJI_OBEK.py rapor      DJ_RAPOR.md (sonuç json'undan; yeniden üretim ve HATA / SAPMA ham klasördeki dj_rapor_ek.json'dan)
         python DOJI_OBEK.py sha        kod / eşik sha
+EK D40: python DOJI_OBEK.py d40_hazirla | d40_onkayit | d40_olcum   (doji = gövde < 0,40 boy; ayrı ön kayıt DJ_EK_D40_ON_KAYIT.md; sonra rapor)
 Colab:  exec(open('DOJI_OBEK.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 Evren bugün işlem gören hisseler (K7: sonuç yukarı yanlı).
 """
@@ -241,14 +242,14 @@ def dj_adim(O: np.ndarray, H: np.ndarray, L: np.ndarray, C: np.ndarray, w: Optio
     return out
 
 
-def dj_doji(O: Any, H: Any, L: Any, C: Any, govde: Optional[float] = None) -> Dict[str, np.ndarray]:
-    """Doji bayrağı ve nedenleri (t barında yalnız t ve öncesi)."""
+def dj_doji(O: Any, H: Any, L: Any, C: Any, govde: Optional[float] = None, kati: bool = False) -> Dict[str, np.ndarray]:
+    """Doji bayrağı ve nedenleri (t barında yalnız t ve öncesi). kati=True: gövde < govde x boy (D40 kolu; eski kodun tanımı)."""
     E = DJ_ESIK["doji"]; govde = float(E["govde"] if govde is None else govde)
     O, H, L, C = (np.asarray(a, float) for a in (O, H, L, C)); m = len(C)
     boy = H - L
     ort = pd.Series(boy).rolling(int(E["ort_boy_bar"]), min_periods=int(E["ort_boy_bar"])).median().shift(1).to_numpy(float)
     with np.errstate(invalid="ignore"):
-        g_ok = np.abs(C - O) <= govde * boy
+        g_ok = (np.abs(C - O) < govde * boy) if kati else (np.abs(C - O) <= govde * boy)
         b_ok = (boy > 0) & np.isfinite(ort) & (boy >= float(E["boy_oran"]) * ort)
         adim = dj_adim(O, H, L, C)
         yapis = np.isfinite(adim) & (boy <= float(E["adim_kat"]) * adim)
@@ -319,18 +320,19 @@ def _dj_ozellik(O, H, L, C) -> Dict[str, np.ndarray]:
     return {"ATRP20": F["ATRP20"], "KONUM120": F["KONUM120"], "ONCEKI10": onc}
 
 
-def dj_tara_hisse(O, H, L, C, pos, p2, tarih, govde: Optional[float] = None, F: Optional[Dict[str, np.ndarray]] = None) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+def dj_tara_hisse(O, H, L, C, pos, p2, tarih, govde: Optional[float] = None, F: Optional[Dict[str, np.ndarray]] = None, kati: bool = False,
+                  ksin: Tuple[int, ...] = DJ_KSIN) -> Tuple[pd.DataFrame, Dict[str, Any]]:
     """Bir hisse: dojiler -> öbekler -> olay satırları (uygunluk + ATRP sonlu). Getirisiz. Döner (olaylar, sayaç)."""
     O, H, L, C = (np.asarray(a, float) for a in (O, H, L, C)); m = len(C)
     F = F or _dj_ozellik(O, H, L, C)
-    Dj = dj_doji(O, H, L, C, govde)
+    Dj = dj_doji(O, H, L, C, govde, kati)
     atr = F["ATRP20"] * C
     B = dj_obek(Dj["doji"], O, H, L, C, atr, pos)
     say = {"bar": int(m), "aday_govde": int((Dj["govde_ok"]).sum()), "boy_dustu": int((Dj["govde_ok"] & ~Dj["boy_ok"]).sum()),
            "yapis_dustu": int((Dj["govde_ok"] & Dj["boy_ok"] & Dj["yapis"]).sum()), "doji": int(Dj["doji"].sum())}
     if not len(B):
         return B.assign(ATRP20=[], KONUM120=[], ONCEKI10=[]), say
-    B = B[B.k <= 4].reset_index(drop=True)
+    B = B[B.k.isin(ksin)].reset_index(drop=True)          # ANA: 1..4 (4 = 4+); D40: 1, 2, 3, 4, 5 (= 5-6), 7 (= 7+)
     t = B.t.to_numpy(np.int64)
     ok = dj_uygun(m, pos, p2, tarih, t) & np.isfinite(F["ATRP20"][t]) & (F["ATRP20"][t] > 0)
     B = B[ok].reset_index(drop=True); t = B.t.to_numpy(np.int64)
@@ -640,11 +642,11 @@ def dj_etiket(o: Dict[str, Dict[str, Any]], ad: str = "ort", bh_gecti: Optional[
     return "ÖLÇÜLEMEDİ"
 
 
-def dj_doz(seri: Dict[str, Dict[int, Optional[float]]], fark: Dict[str, Dict[int, Dict[str, Any]]]) -> Dict[str, Any]:
+def dj_doz(seri: Dict[str, Dict[int, Optional[float]]], fark: Dict[str, Dict[int, Dict[str, Any]]], ksin: Tuple[int, ...] = DJ_KSIN) -> Dict[str, Any]:
     """DOZ kuralı (bir ölçü): seri[hücre][k] nokta; fark[hücre][k] = (k - 1) bootstrap (k = 3, 4)."""
     yon = []
     for h in DJ_ABD:
-        v = [seri.get(h, {}).get(k) for k in DJ_KSIN]
+        v = [seri.get(h, {}).get(k) for k in ksin]
         if any(x is None for x in v):
             yon.append(0); continue
         d = np.diff(np.asarray(v, float))
@@ -712,7 +714,7 @@ def _dj_taban_hisse(Tg: pd.DataFrame) -> pd.DataFrame:
     return Tg.groupby(["j", "hucre"]).agg(T1=("R15", "mean"), p_h=("U2", "mean"), q_h=("D2", "mean"), h_h=("BUYUKLUK", "mean"), T10=("R10B", "mean"))
 
 
-def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: bool = True) -> Dict[str, Any]:
+def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: bool = True, ksin: Tuple[int, ...] = DJ_KSIN) -> Dict[str, Any]:
     """Bir pazarın olay (getirili) ve taban (getirili) satırlarından hücre x k ölçüleri."""
     th = _dj_taban_hisse(T)
     X = X.join(th, on=["j", "hucre"])
@@ -736,7 +738,7 @@ def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: b
     hucreler = [h for h in DJ_HUCRE if h.split("|")[0] in pz]          # öteki pazarın boş hücreleri birleştirmede ezmesin
     for h in hucreler:
         g = X[X.hucre == h]; Hh: Dict[str, Any] = {}
-        for k in DJ_KSIN:
+        for k in ksin:
             gk = g[g.k == k]; ay = gk.ay.to_numpy(str); an = f"{h}|{k}"
             ao = HV.hv25_ay_ozet([f"{a}-01" for a in ay]) if len(gk) else {"ay": 0, "ust3_pay": None}
             r: Dict[str, Any] = {"n": int(len(gk)), "ay": ao["ay"], "ust3_pay": ao["ust3_pay"],
@@ -774,7 +776,7 @@ def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: b
         if tam:
             F: Dict[str, Any] = {}
             g1 = g[g.k == 1]
-            for k in (2, 3, 4):
+            for k in [x for x in ksin if x > 1]:
                 gk = g[g.k == k]
                 F[str(k)] = {c: dj_boot_fark(gk[c].to_numpy(), gk.ay.to_numpy(str), g1[c].to_numpy(), g1.ay.to_numpy(str), f"{h}|fark{k}|{c}", B)
                              for c in ("TF", "BUYF", "YUK")}
@@ -801,17 +803,17 @@ def _dj_birlestir(A: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
 DJ_BH_OLCU = ("TOPLAM_FARK", "SECIM", "ASIMETRI", "BUYUKLUK_FARK", "DEVAM_YUKARI", "DEVAM_ASAGI", "DONUS_FARK_DUS", "DONUS_FARK_YUKS")
 
 
-def dj_hukum(R: Dict[str, Any]) -> Dict[str, Any]:
-    """BH + satır hükümleri + doz + çıkış + genel."""
+def dj_hukum(R: Dict[str, Any], ksin: Tuple[int, ...] = DJ_KSIN) -> Dict[str, Any]:
+    """BH + satır hükümleri + doz + çıkış + genel. ksin: k basamakları (ANA 1-4; D40 1, 2, 3, 4, 5-6, 7+)."""
     Hc = R["hucre"]; satir = []; p = []
-    for k in DJ_KSIN:
+    for k in ksin:
         for ad in DJ_BH_OLCU:
             ps = [(Hc.get(h, {}).get(str(k), {}).get(ad) or {}).get("p") for h in DJ_ABD]
             satir.append((k, ad)); p.append(max(ps) if all(x is not None for x in ps) else None)
     q = HV._hv_bh(p, float(DJ_ESIK["bh"]["q"]))
     bh = {f"{k}|{ad}": {"p": pp, "q": qq, "gecti": (qq is not None and qq <= float(DJ_ESIK["bh"]["q"]))} for (k, ad), pp, qq in zip(satir, p, q)}
     H: Dict[str, Any] = {"bh": bh, "satir": {}}
-    for k in DJ_KSIN:
+    for k in ksin:
         for ad in DJ_BH_OLCU:
             o = {h: Hc.get(h, {}).get(str(k), {}).get(ad) or {} for h in DJ_HUCRE}
             et = dj_etiket(o, "ort", bh[f"{k}|{ad}"]["gecti"], avr=True)
@@ -826,11 +828,11 @@ def dj_hukum(R: Dict[str, Any]) -> Dict[str, Any]:
             H["satir"][f"{k}|{ad}"] = et
     doz = {}
     for ad, fk in (("TOPLAM_FARK", "TF"), ("BUYUKLUK_FARK", "BUYF"), ("YUKARI_PAY", "YUK")):
-        seri = {h: {k: (Hc.get(h, {}).get(str(k), {}).get(ad) or {}).get("ort") for k in DJ_KSIN} for h in DJ_ABD}
+        seri = {h: {k: (Hc.get(h, {}).get(str(k), {}).get(ad) or {}).get("ort") for k in ksin} for h in DJ_ABD}
         fark = {h: {k: R["fark"].get(h, {}).get(str(k), {}).get(fk) for k in (3, 4)} for h in DJ_ABD}
-        doz[ad] = dj_doz(seri, fark)
+        doz[ad] = dj_doz(seri, fark, ksin)
     H["doz"] = doz; H["doz_hukum"] = "DOJİ SAYISI ETKİLİ" if any(d["etkili"] for d in doz.values()) else "DOJİ SAYISI ETKİSİZ (bu tanımla)"
-    emare = any(H["satir"][f"{k}|TOPLAM_FARK"] in ("ARTI", "EKSİ") for k in DJ_KSIN) or H["doz_hukum"] == "DOJİ SAYISI ETKİLİ"
+    emare = any(H["satir"][f"{k}|TOPLAM_FARK"] in ("ARTI", "EKSİ") for k in ksin) or H["doz_hukum"] == "DOJİ SAYISI ETKİLİ"
     H["genel"] = ("AÇIK VERİDE EMARE (kasa açılmaz; KASA KURALI: tek iz kasa açmaz; ileri test)" if emare
                   else "DOJİ ÖBEĞİ SONRASI AYIRT EDİCİ DEĞİL (bu tanımla)")
     return H
@@ -1180,8 +1182,10 @@ def dj_rapor_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
     for h in DJ_HUCRE:
         L.append(f"- {h}: " + "; ".join(f"{DJ_KAD[k]} n {(J['HAFTA'].get(h, {}).get(str(k)) or {}).get('n')} {_dj_ar(J['HAFTA'].get(h, {}).get(str(k)))}"
                                          for k in DJ_KSIN))
-    L += ["", f"Tabanı olmayan (hissenin o hücrede rastgele günü yok) düşen olay: {J['ANA']['dusen_tabansiz']}", "",
-          "## KONTROL LİSTESİ", "", "| Kod | Yanıt | Kanıt |", "|---|---|---|"]
+    L += ["", f"Tabanı olmayan (hissenin o hücrede rastgele günü yok) düşen olay: {J['ANA']['dusen_tabansiz']}"]
+    if "d40" in J:
+        L += _dj_rapor_d40(J)
+    L += ["", "## KONTROL LİSTESİ", "", "| Kod | Yanıt | Kanıt |", "|---|---|---|"]
     L += [f"| {k} | {y} | {kn} |" for k, (y, kn) in DJ_KONTROL.items()]
     L += ["", "## Yeniden üretim (bağımsız kısa kod)", ""] + [f"- {x}" for x in EK.get("yeniden", ["(yok)"])]
     L += ["", "## HATA", ""] + [f"- {x}" for x in EK.get("hata", ["(yok)"])]
@@ -1189,6 +1193,236 @@ def dj_rapor_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
     L += ["", "## ÖNERİLEN DEFTER SATIRLARI", ""] + [f"- {x}" for x in EK.get("defter", ["(ana model yazar)"])]
     return MI._mi_yaz(_dj_yol("rapor", cikti), "\n".join(L) + "\n", "dj rapor")
 
+
+# ================================================================ 9b) EK KOL D40 (Cemal'in eski kodu GEN10_COL_OGREN v5: doji = gövde / boy < 0,40) — ayrı ön kayıt
+DJ_D40_KSIN = (1, 2, 3, 4, 5, 7)
+DJ_D40_KAD = {1: "k=1 (tek doji)", 2: "k=2", 3: "k=3", 4: "k=4", 5: "k=5-6", 7: "k=7+"}
+DJ_D40_ESIK: Dict[str, Any] = {
+    "surum": "DJ-D40-1.0", "ana_esik_sha_ref": "DJ_ON_KAYIT.md DJ_ESIK_SHA (ana ölçümün bütün kuralları aynen)",
+    "doji": "DOJİ_D40(t) <=> |C - O| < 0,40 x (H - L) (KATI küçüktür; GEN10_COL_OGREN v5 tanımı aynen) VE (H - L) >= 0,5 x ORT_BOY VE (H - L) > 0 VE fiyat "
+            "adımına yapışmış değil (ANA ile aynı)",
+    "govde": 0.40, "kati": True,
+    "obek": "ANA ile aynı (sıra farkı <= 3, takvim satırı <= 6, seviye bandı 0,5 ATR20, sınır dahil)",
+    "k": {"basamak": [1, 2, 3, 4, 5, 7], "tanim": "olay = öbeğin k'inci dojisinin barı; k = 1, 2, 3, 4 (öbeğin 4. dojisi), 5-6 (= öbeğin 5. dojisi; öbek >= 5), "
+                                                 "7+ (= öbeğin 7. dojisi; öbek >= 7); her basamakta öbek başına en çok bir olay"},
+    "olcu": "ANA ile aynı (R15, TOPLAM FARK, SEÇİM, U2 / D2, ASİMETRİ, BÜYÜKLÜK, ÇIKIŞ + DEVAM, DÖNÜŞ, bağlam); taban = ANA ölçümünün taban getiri dosyası "
+            "(getiri_taban_*.pkl; aynı her 5. bar günleri; sonucu D40'tan bağımsız)",
+    "hukum": "ANA ile aynı kural (DJ_ESIK['hukum']); BH ailesi 6 basamak x 8 ölçü = 48 satır; DOZ: 1 -> 2 -> 3 -> 4 -> 5-6 -> 7+ art arda farklar tek yönlü (iki ABD "
+             "döneminde, aynı yönde) VE (k = 3 - 1) ya da (k = 4 - 1) aralığı iki dönemde sıfırı dışlıyor",
+    "rastgele": {"seri": 300, "bar": 1000, "tohum": 2712,
+                 "tanim": "sentetik rastgele seri (C log-getiri N(0, 0,02); O = önceki C x exp(N(0, 0,008)); H = maks(O, C) x (1 + |N(0, 0,01)|); L = min(O, C) x "
+                          "(1 - |N(0, 0,01)|)); aynı doji / öbek kodu (uygunluk süzgeci yok); bin barda k basamağı sıklığı ANA ve D40 için; 'rastgele seride de "
+                          "gerçekteki kadar sık' ise öbek tespiti tek başına ayırt edici değildir (bilgi)"},
+    "sira": "ANA ölçüm bitti (859ac7f) -> D40 getirisiz sayım + rastgele seri karşılaştırması -> DJ_EK_D40_ON_KAYIT.md commit + push -> ik_kontrol_kapisi -> "
+            "D40 ölçüm (bir kez) -> DJ_RAPOR.md 'EK: D40' + dj_sonuc.json 'd40'",
+}
+DJ_D40_KONTROL: Dict[str, Tuple[str, str]] = {k: v for k, v in DJ_KONTROL.items()}
+DJ_D40_KONTROL["K9"] = ("EVET", "DJ_EK_D40_ON_KAYIT.md: D40_KOD_SHA, D40_ESIK_SHA, olay_D40 dosya sha'ları, D40 SAYIM_SHA; ana ön kayda atıf; D40 kapısı: kontrol + sha + "
+                               "commit + push + kod temiz; getiri_D40 dosyası varsa ikinci koşu DURUR; ana ölçümün tanımı / sonucu değişmez")
+DJ_D40_KONTROL["K8"] = ("EVET", "n >= 1.000 değilse ÖLÇÜLEMEDİ; iki ABD + iki AVR dönemi; BH q 0,10 (48 satır aile); rastgele seri karşılaştırması sıklığın ayırt "
+                               "ediciliği için (bilgi)")
+
+
+def dj_d40_hazirla(ham: Optional[str] = None, kaynak: Optional[str] = None) -> Dict[str, Any]:
+    """D40 olayları (getirisiz) -> olay_D40_{pazar}.pkl."""
+    out = {}
+    for p in DJ_PAZAR:
+        t0 = time.time(); D = dj_depo(p, kaynak); tarih = pd.DatetimeIndex(D["tarih"]); S = np.asarray(D["sembol"]).astype(str); off = D["off"]
+        ev = []; say: Dict[str, int] = {}
+        for j in range(len(S)):
+            a, b = int(off[j]), int(off[j + 1])
+            if b - a < 30:
+                continue
+            O, H, L, C = (D[c][a:b].astype(float) for c in ("O", "H", "L", "C")); pos = D["POS"][a:b].astype(np.int64)
+            B, sy = dj_tara_hisse(O, H, L, C, pos, D["P2"][:, j], tarih, float(DJ_D40_ESIK["govde"]), None, True, DJ_D40_KSIN)
+            for kk, v in sy.items():
+                say[kk] = say.get(kk, 0) + v
+            if len(B):
+                B.insert(0, "j", j); ev.append(B)
+        X = pd.concat(ev, ignore_index=True); POS = D["POS"]
+        X["t_row"] = POS[off[X.j.to_numpy()] + X.t.to_numpy()]; X["d_row"] = POS[off[X.j.to_numpy()] + X.t.to_numpy() + 1]
+        X["tarih"] = tarih[X.t_row.to_numpy()]; X["giris"] = tarih[X.d_row.to_numpy()]
+        X["hucre"] = dj_hucre(X.giris, p); X["ay"] = X.giris.dt.strftime("%Y-%m"); X["pazar"] = p; X["sembol"] = S[X.j.to_numpy()]
+        X = X.sort_values(["giris", "sembol", "k"], kind="stable").reset_index(drop=True); dj_kesik_kapi(X.giris, f"olay {p} D40")
+        X.to_pickle(_dj_ham(f"olay_D40_{p}.pkl", ham), protocol=4)
+        with open(_dj_ham(f"sayac_D40_{p}.json", ham), "w", encoding="utf-8") as f:
+            json.dump(say, f, ensure_ascii=False, indent=1)
+        out[p] = {"olay": int(len(X)), "sayac": say}; djlog.info("D40 %s: %d olay (%.0f sn)", p, len(X), time.time() - t0); del D; gc.collect()
+    return out
+
+
+def dj_rastgele_seri(n: int, r: np.random.Generator) -> Tuple[np.ndarray, ...]:
+    C = 50 * np.exp(np.cumsum(r.normal(0, 0.02, n))); O = np.r_[50.0, C[:-1]] * np.exp(r.normal(0, 0.008, n))
+    H = np.maximum(O, C) * (1 + np.abs(r.normal(0, 0.01, n))); L = np.minimum(O, C) * (1 - np.abs(r.normal(0, 0.01, n)))
+    return O, H, L, C
+
+
+def dj_d40_rastgele() -> Dict[str, Any]:
+    """Sentetik rastgele seride bin barda k basamağı sıklığı (ANA ve D40) ve doji payı (bilgi; getirisiz)."""
+    E = DJ_D40_ESIK["rastgele"]; r = _dj_rng("d40|rastgele"); say = {"ANA": {}, "D40": {}}; doji = {"ANA": 0, "D40": 0}; nb = 0
+    for _ in range(int(E["seri"])):
+        O, H, L, C = dj_rastgele_seri(int(E["bar"]), r); F = _dj_ozellik(O, H, L, C); nb += len(C) - 20
+        for kol, g, kt in (("ANA", 0.10, False), ("D40", 0.40, True)):
+            Dj = dj_doji(O, H, L, C, g, kt); doji[kol] += int(Dj["doji"][20:].sum())
+            B = dj_obek(Dj["doji"], O, H, L, C, F["ATRP20"] * C); B = B[B.t >= 20]
+            for k in DJ_D40_KSIN:
+                say[kol][k] = say[kol].get(k, 0) + int((B.k == k).sum())
+    return {"bar": nb, "doji_pay": {k: v / nb for k, v in doji.items()},
+            "bin_bar": {kol: {str(k): 1000 * v / nb for k, v in d.items()} for kol, d in say.items()}}
+
+
+def dj_d40_sayim(ham: Optional[str] = None) -> Dict[str, Any]:
+    S: Dict[str, Any] = {"D40": {}, "obek_boy": {}, "uygun": {}, "sayac": {}, "doji_pay_bar": {}}
+    for p in DJ_PAZAR:
+        U = json.load(open(_dj_ham(f"uygun_{p}.json", ham), encoding="utf-8"))["hisse_gun"]
+        sy = json.load(open(_dj_ham(f"sayac_D40_{p}.json", ham), encoding="utf-8")); S["sayac"][p] = sy
+        S["doji_pay_bar"][p] = sy["doji"] / max(sy["bar"], 1)
+        X = pd.read_pickle(_dj_ham(f"olay_D40_{p}.pkl", ham))
+        for h, g in X.groupby("hucre"):
+            if h not in DJ_HUCRE:
+                continue
+            S["uygun"][h] = int(U.get(h, 0)); d = {}
+            for k in DJ_D40_KSIN:
+                gk = g[g.k == k]; ao = HV.hv25_ay_ozet(gk.giris.dt.strftime("%Y-%m-%d").tolist())
+                d[str(k)] = {"n": int(len(gk)), "bin_hisse_gun": float(1000 * len(gk) / max(S["uygun"][h], 1)), "ay": ao["ay"], "ust3_pay": ao["ust3_pay"],
+                             "hisse": int(gk.sembol.nunique())}
+            S["D40"][h] = d
+            vb = g[g.k == 1].obek_boy.clip(upper=8).value_counts().sort_index()
+            S["obek_boy"][h] = {("8+" if int(i) == 8 else str(int(i))): int(c) for i, c in vb.items()}
+    return S
+
+
+DJ_D40_YORUM = [
+    "D40 kolu ANA ölçümün tanımını, ön kaydını ve sonucunu değiştirmez; ANA sonuç (859ac7f) bu ön kayıttan önce yayımlandı (D40 getirisi görülmedi).",
+    "Doji eşiği KATI küçüktür (< 0,40), eski kodla aynı; ANA kolu <= 0,10 idi. Öteki bütün kurallar ANA ile aynı kod yoluyla (dj_tara_hisse, kati=True).",
+    "Basamaklar: k = 4 satırı öbeğin 4. dojisi (ANA'daki '4+' ile aynı olay), k = 5-6 satırı öbeğin 5. dojisi, k = 7+ satırı öbeğin 7. dojisi; öbek başına "
+    "her basamakta en çok bir olay; aynı öbek birden çok basamağa girer (bağımsız değil).",
+    "Taban (rastgele gün, T1, p_h, q_h, h_h, T10, dönüş tabanı) ANA ölçümünün taban getiri dosyasından okunur (getiri_taban_*.pkl; doji tanımından bağımsız).",
+    "DOZ kuralı 6 basamağın hepsinde art arda tek yön ister (n'ye bakmadan; küçük basamaklar gürültülüdür, kural önceden böyle).",
+    "Rastgele seri karşılaştırması BİLGİDİR: gerçek veri sıklığı uygun hisse-gün paydasıyla, rastgele seri ham bar paydasıyla; ikisi kabaca karşılaştırılır.",
+    "Hüküm etiketleri ANA ile aynı; n < 1.000 olan basamakta aralık sıfırı içerirse ÖLÇÜLEMEDİ.",
+]
+
+
+def dj_d40_onkayit_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
+    import IZ_KARNE as IK
+    S = dj_d40_sayim(ham); Rr = dj_d40_rastgele(); S["rastgele"] = Rr
+    MI._mi_jyaz(_dj_ham("dj_d40_sayim.json", ham), S, "d40 sayım")
+    L = [f"# DJ EK ÖN KAYIT — KOL D40 (doji = gövde < 0,40 x boy; Cemal'in eski kodu) ({MI._mi_simdi()})", "",
+         "Ana ön kayıt: DJ_ON_KAYIT.md (bütün öteki kurallar, eşikler, hüküm sırası oradaki gibi). Bu dosya D40 getirileri (R15 / U2 / D2 / çıkış) hesaplanmadan "
+         "ÖNCE commit + push edilir. ANA ölçüm sonucu bu kayıttan önce yayımlandı; D40 eşiği ve basamakları iş tanımından (ana model mesajı) gelir, sonuca göre "
+         "seçilmedi.", "", "## Mühürler", "", f"D40_KOD_SHA: {dj_kod_sha()}", f"D40_ESIK_SHA: {dj_esik_sha(DJ_D40_ESIK)}",
+         f"DJ_ESIK_SHA: {dj_esik_sha()}"]
+    for p in DJ_PAZAR:
+        L.append(f"DOSYA_olay_D40_{p}.pkl: {MI._mi_sha(_dj_ham(f'olay_D40_{p}.pkl', ham))}")
+        L.append(f"DOSYA_getiri_taban_{p}.pkl: {MI._mi_sha(_dj_ham(f'getiri_taban_{p}.pkl', ham))}")
+    L += [f"D40_SAYIM_SHA: {HV.hv_json_sha({k: v for k, v in S.items() if k != 'rastgele'})}", "",
+          "## Eşik sözlüğü (DJ_D40_ESIK)", "", "```json", json.dumps(DJ_D40_ESIK, ensure_ascii=False, indent=1), "```", "",
+          "## GETİRİSİZ SAYIM (D40)", "",
+          f"Doji payı (bütün geçerli barlar): ABD %{_f(100 * S['doji_pay_bar']['ABD'], 1)}, AVR %{_f(100 * S['doji_pay_bar']['AVR'], 1)} "
+          f"(ANA kolunda yaklaşık %10).", "", "| hücre | uygun hisse-gün | k | olay | bin hisse-günde | farklı ay | en kalabalık 3 ay payı | hisse |",
+          "|---|---|---|---|---|---|---|---|"]
+    for h in DJ_HUCRE:
+        for k in DJ_D40_KSIN:
+            r = S["D40"].get(h, {}).get(str(k), {})
+            L.append(f"| {h} | {S['uygun'].get(h)} | {DJ_D40_KAD[k]} | {r.get('n')} | {_f(r.get('bin_hisse_gun'), 2)} | {r.get('ay')} | {_f(r.get('ust3_pay'), 3)} | "
+                     f"{r.get('hisse')} |")
+    L += ["", "Öbek son uzunluğu dağılımı (BİLGİ): " + "; ".join(f"{h}: {S['obek_boy'].get(h)}" for h in DJ_HUCRE), "",
+          "## Rastgele seri karşılaştırması (getirisiz; bin barda)", "",
+          f"Sentetik rastgele seri ({DJ_D40_ESIK['rastgele']['seri']} seri x {DJ_D40_ESIK['rastgele']['bar']} bar): doji payı ANA %"
+          f"{_f(100 * Rr['doji_pay']['ANA'], 1)}, D40 %{_f(100 * Rr['doji_pay']['D40'], 1)}.", "",
+          "| kol | kaynak | " + " | ".join(DJ_D40_KAD[k] for k in DJ_D40_KSIN) + " |", "|---|---|" + "---|" * len(DJ_D40_KSIN)]
+    for kol in ("ANA", "D40"):
+        L.append(f"| {kol} | rastgele seri | " + " | ".join(_f(Rr["bin_bar"][kol][str(k)], 2) for k in DJ_D40_KSIN) + " |")
+    for h in DJ_ABD:
+        L.append(f"| D40 | gerçek {h} | " + " | ".join(_f(S["D40"][h][str(k)]["bin_hisse_gun"], 2) for k in DJ_D40_KSIN) + " |")
+    L += ["", "## Yorum noktaları (ölçümden önce)", ""] + [f"{i + 1}. {y}" for i, y in enumerate(DJ_D40_YORUM)]
+    L += ["", "## KONTROL LİSTESİ", "", "| Kod | Madde | Yanıt | Kanıt |", "|---|---|---|---|"]
+    ad = {k["kod"]: k["ad"] for k in IK.IK_KONTROL}
+    for k in IK.IK_KONTROL:
+        y, kn = DJ_D40_KONTROL[k["kod"]]; L.append(f"| {k['kod']} | {ad[k['kod']]} | {y} | {kn} |")
+    L += ["", "## SAPMA", "", "(yok)", ""]
+    return MI._mi_yaz(os.path.join(cikti or DJ_YOL["cikti"], "DJ_EK_D40_ON_KAYIT.md"), "\n".join(L), "d40 ön kayıt")
+
+
+def dj_d40_kapi(cikti: Optional[str] = None, ham: Optional[str] = None, git: bool = True) -> Dict[str, Any]:
+    import IZ_KARNE as IK
+    yol = os.path.join(cikti or DJ_YOL["cikti"], "DJ_EK_D40_ON_KAYIT.md")
+    if not os.path.exists(yol):
+        raise DJHata(f"SIRA: D40 ön kaydı yok: {yol}")
+    try:
+        IK.ik_kontrol_kapisi(yol)
+    except RuntimeError as ex:
+        raise DJHata(str(ex)) from ex
+    metin = open(yol, encoding="utf-8").read()
+    m = {x.split(":", 1)[0]: x.split(":", 1)[1].strip() for x in metin.splitlines() if x.startswith(("D40_", "DOSYA_", "DJ_")) and ":" in x}
+    if m.get("D40_KOD_SHA") != dj_kod_sha() or m.get("D40_ESIK_SHA") != dj_esik_sha(DJ_D40_ESIK):
+        raise DJHata("K9: D40 kod / eşik ön kayıttan sonra değişti")
+    for p in DJ_PAZAR:
+        for ad_ in (f"olay_D40_{p}.pkl", f"getiri_taban_{p}.pkl"):
+            if m.get(f"DOSYA_{ad_}") != MI._mi_sha(_dj_ham(ad_, ham)):
+                raise DJHata(f"K9: dosya değişti: {ad_}")
+    if os.path.exists(_dj_ham("getiri_D40_ABD.pkl", ham)):
+        raise DJHata("SIRA: D40 getiri dosyası zaten var: ikinci koşu yasak")
+    out = {"onkayit": yol}
+    if git:
+        rel = os.path.relpath(yol, KOK_DJ); relk = os.path.relpath(DJ_YOL["kod"], KOK_DJ)
+        c = MI._mi_git(["log", "-1", "--format=%H|%cI", "--", rel])
+        if not c or MI._mi_git(["status", "--porcelain", "--", rel, relk]) or not MI._mi_git(["branch", "-r", "--contains", c.split("|")[0]]):
+            raise DJHata("K9: D40 ön kaydı commit + push edilmemiş ya da kod / ön kayıt temiz değil")
+        out["onkayit_commit"] = c
+    return out
+
+
+def dj_d40_olcum(cikti: Optional[str] = None, ham: Optional[str] = None, kaynak: Optional[str] = None, git: bool = True, B: Optional[int] = None) -> Dict[str, Any]:
+    kapi = dj_d40_kapi(cikti, ham, git); A: Dict[str, Any] = {}
+    for p in DJ_PAZAR:
+        D = dj_depo(p, kaynak); dep = {k: D[k] for k in ("O", "H", "L", "C", "POS", "off")}
+        P15, _ = YO.yo_P15(D["Op"], D["Cl"], D["P2"])
+        T = pd.read_pickle(_dj_ham(f"getiri_taban_{p}.pkl", ham))
+        X = pd.read_pickle(_dj_ham(f"olay_D40_{p}.pkl", ham))
+        Rx = pd.DataFrame(dj_getiri_dizi(dep, X.j, X.t, X.ATRP20, X.bant_H, X.bant_L), index=X.index); Rx["P15"] = P15[X.d_row.to_numpy()]
+        Rx.to_pickle(_dj_ham(f"getiri_D40_{p}.pkl", ham), protocol=4)
+        A[p] = dj_olc_kol(pd.concat([X, Rx], axis=1), T, B, tam=True, ksin=DJ_D40_KSIN); del D, dep; gc.collect()
+    R = _dj_birlestir(A); H = dj_hukum(R, DJ_D40_KSIN)
+    yol = _dj_yol("sonuc", cikti); J = json.load(open(yol, encoding="utf-8"))
+    J["d40"] = {"esik_sha": dj_esik_sha(DJ_D40_ESIK), "kod_sha": dj_kod_sha(), "kapi": kapi, "zaman": MI._mi_simdi(), "ANA": R, "hukum": H,
+                "sayim": json.load(open(_dj_ham("dj_d40_sayim.json", ham), encoding="utf-8"))}
+    MI._mi_jyaz(yol, J, "dj sonuç + d40")
+    djlog.info("D40 ölçüm bitti: %s", H["genel"])
+    return J["d40"]
+
+
+def _dj_rapor_d40(J: Dict[str, Any]) -> List[str]:
+    d = J["d40"]; R = d["ANA"]["hucre"]; H = d["hukum"]; S = d["sayim"]; KS = DJ_D40_KSIN; KD = DJ_D40_KAD
+    L = ["", "## EK: D40 (doji = gövde < 0,40 x boy; Cemal'in eski kodu GEN10_COL_OGREN v5; ayrı ön kayıt DJ_EK_D40_ON_KAYIT.md)", "",
+         f"Ön kayıt commit {d['kapi'].get('onkayit_commit', '—')}; kod sha {d['kod_sha'][:12]}. ANA ölçümün tanımı ve sonucu değişmedi.", "",
+         f"GENEL (D40): {H['genel']}", f"DOZ - YANIT (D40): {H['doz_hukum']}", "",
+         f"NOT: gövde < 0,40 olan mumların payı çok yüksek (geçerli barların ABD %{_f(100 * S['doji_pay_bar']['ABD'], 1)}, AVR %"
+         f"{_f(100 * S['doji_pay_bar']['AVR'], 1)} doji sayıldı; ANA'da ~%10); öbek neredeyse her yerde oluşabilir. Sentetik rastgele seride de sıklık aşağıdaki gibi:", "",
+         "| kaynak | " + " | ".join(KD[k] for k in KS) + " |", "|---|" + "---|" * len(KS)]
+    for kol in ("ANA", "D40"):
+        L.append(f"| rastgele seri {kol} (bin barda) | " + " | ".join(_f(S['rastgele']['bin_bar'][kol][str(k)], 2) for k in KS) + " |")
+    for h in DJ_HUCRE:
+        L.append(f"| gerçek D40 {h} (bin hisse-günde) | " + " | ".join(_f(S['D40'][h][str(k)]['bin_hisse_gun'], 2) for k in KS) + " |")
+    L += ["", "| hücre | k | n | R15 ort | R15 medyan | TOPLAM FARK [%95] | SEÇİM [%95] | +2ATR / rastgele | -2ATR / rastgele | ASİMETRİ [%95] | BÜYÜKLÜK KAT [%95] | "
+          "yukarı / aşağı / hiç | DEVAM yukarı [%95] | DEVAM aşağı [%95] | dönüş (düşüş sonrası) / taban |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for h in DJ_HUCRE:
+        for k in KS:
+            r = R.get(h, {}).get(str(k)) or {}; c = r.get("CIKIS_PAY") or {}; dd = r.get("DONUS_DUS") or {}
+            L.append(f"| {h} | {KD[k]} | {r.get('n')} | {_f(r.get('R15_ort'), 2, True)} | {_f(r.get('R15_med'), 2, True)} | {_dj_ar(r.get('TOPLAM_FARK'))} | "
+                     f"{_dj_ar(r.get('SECIM'))} | {_f(r.get('U2'), 1, True)} / {_f(r.get('p_h'), 1, True)} | {_f(r.get('D2'), 1, True)} / {_f(r.get('q_h'), 1, True)} | "
+                     f"{_dj_ar(r.get('ASIMETRI'), 1)} | {_dj_ar(r.get('BUYUKLUK_KAT'), 3, False)} | {_f(c.get('YUKARI'), 1, True)} / {_f(c.get('ASAGI'), 1, True)} / "
+                     f"{_f(c.get('HIC'), 1, True)} | {_dj_ar(r.get('DEVAM_YUKARI'))} | {_dj_ar(r.get('DEVAM_ASAGI'))} | {_f(dd.get('pay'), 1, True)} / {_f(dd.get('taban'), 1, True)} |")
+    for ad, yazi in (("TOPLAM_FARK", "TOPLAM FARK"), ("ASIMETRI", "ASİMETRİ"), ("SECIM", "SEÇİM"), ("BUYUKLUK_FARK", "BÜYÜKLÜK FARKI"), ("DEVAM_YUKARI", "DEVAM yukarı"),
+                     ("DEVAM_ASAGI", "DEVAM aşağı"), ("DONUS_FARK_DUS", "dönüş, düşüş sonrası"), ("DONUS_FARK_YUKS", "dönüş, yükseliş sonrası")):
+        L.append(f"Hüküm D40 ({yazi}): " + "; ".join(f"{KD[k]} {H['satir'][f'{k}|{ad}']}" for k in KS))
+    L += [""] + [f"- DOZ {ad}: yön {x['yon']}, tek yönlü {x['tek_yonlu']}, fark ayrışıyor {x['fark_ayrisiyor']} -> {'ETKİLİ' if x['etkili'] else 'etkisiz'}"
+                 for ad, x in H["doz"].items()]
+    L += ["", "BH (48 satır) geçen: " + (", ".join(k for k, v in H["bh"].items() if v["gecti"]) or "yok"),
+          "", "Eski sonuç (yalnız bilgi): 19 Ekim'de BIST'te DOJI_KUTU_TEST ('kutuda 3-5 doji -> sert hareket') yukarı için iz değil çıkmıştı (0,90-1,02 kat; "
+              "Ç38-Ç39, sonradan güç yetersiz diye ÖLÇÜLEMEDİ sayıldı); ABD'de hiç koşulmamıştı.", ""]
+    return L
 
 # ================================================================ 10) ÇAKIŞMA KAPISI + KOMUT
 def _cakisma_kontrol_dj(_once=_CK_ONCE_DJ, _dosya="DOJI_OBEK.py"):
@@ -1208,7 +1442,7 @@ _cakisma_kontrol_dj()
 def _dj_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="DOJI_OBEK")
-    ap.add_argument("komut", choices=["hazirla", "sayim", "ornek", "onkayit", "olcum", "rapor", "sha"])
+    ap.add_argument("komut", choices=["hazirla", "sayim", "ornek", "onkayit", "olcum", "rapor", "sha", "d40_hazirla", "d40_onkayit", "d40_olcum"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "hazirla":
@@ -1224,6 +1458,12 @@ def _dj_ana(argv: Optional[List[str]] = None) -> int:
             J = dj_olcum(); print(json.dumps(MI._mi_json({"genel": J["hukum"]["genel"], "doz": J["hukum"]["doz_hukum"]}), ensure_ascii=False, indent=1))
         elif a.komut == "rapor":
             print(dj_rapor_yaz())
+        elif a.komut == "d40_hazirla":
+            print(json.dumps(MI._mi_json(dj_d40_hazirla()), ensure_ascii=False, indent=1))
+        elif a.komut == "d40_onkayit":
+            print(dj_d40_onkayit_yaz())
+        elif a.komut == "d40_olcum":
+            d = dj_d40_olcum(); print(json.dumps(MI._mi_json({"genel": d["hukum"]["genel"], "doz": d["hukum"]["doz_hukum"]}), ensure_ascii=False, indent=1))
         elif a.komut == "sha":
             print(json.dumps({"kod": dj_kod_sha(), "esik": dj_esik_sha()}, indent=1))
     except DJHata as ex:

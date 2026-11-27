@@ -372,6 +372,31 @@ def test_uctan_uca_sentetik():
         assert "## HATA" in open(os.path.join(d, "DJ_RAPOR.md"), encoding="utf-8").read()
 
 
+@t
+def test_d40_kati_ve_basamak():
+    O = np.full(12, 8.0); H = np.full(12, 9.0); L = np.full(12, 7.75); C = np.array([8.75] * 11 + [8.5])      # ikili kesin sayılar: gövde 0,5 = 0,40 x 1,25
+    assert not DJ.dj_doji(O, H, L, C, 0.40, kati=True)["doji"][11]           # KATI küçüktür -> doji değil
+    assert DJ.dj_doji(O, H, L, C, 0.40, kati=False)["doji"][11]
+    C2 = C.copy(); C2[11] = 8.49; assert DJ.dj_doji(O, H, L, C2, 0.40, kati=True)["doji"][11]
+    # basamaklar: 8 dojilik öbek -> 1, 2, 3, 4, 5, 7 olayları (6. ve 8. olay değil)
+    n = 260; O = np.full(n, 10.0); C = np.full(n, 10.6); H = np.full(n, 10.8); L = np.full(n, 9.8); ix = list(range(200, 208))   # gövde 0,6 boy: doji değil
+    C[ix] = 10.0
+    tr = pd.bdate_range("2017-01-02", periods=n)
+    B, _ = DJ.dj_tara_hisse(O, H, L, C, np.arange(n), np.ones(n, bool), tr, 0.40, None, True, DJ.DJ_D40_KSIN)
+    g = B[B.t.isin(ix)]
+    assert sorted(g.k.tolist()) == [1, 2, 3, 4, 5, 7], g.k.tolist()
+    B0, _ = DJ.dj_tara_hisse(O, H, L, C, np.arange(n), np.ones(n, bool), tr, 0.10)
+    assert sorted(B0[B0.t.isin(ix)].k.tolist()) == [1, 2, 3, 4]               # ANA varsayılanı değişmedi
+
+
+@t
+def test_d40_rastgele_ve_hukum():
+    r = np.random.default_rng(9); O, H, L, C = DJ.dj_rastgele_seri(300, r); assert (H >= np.maximum(O, C)).all() and (L <= np.minimum(O, C)).all()
+    s = {h: {1: 0.0, 2: 0.01, 3: 0.02, 4: 0.03, 5: 0.04, 7: 0.05} for h in DJ.DJ_ABD}; fk = {h: {3: {"alt": 0.001}, 4: {"alt": 0.002}} for h in DJ.DJ_ABD}
+    assert DJ.dj_doz(s, fk, DJ.DJ_D40_KSIN)["etkili"]
+    s2 = {h: {**s[h], 7: 0.0} for h in DJ.DJ_ABD}; assert not DJ.dj_doz(s2, fk, DJ.DJ_D40_KSIN)["etkili"]
+
+
 if __name__ == "__main__":
     bas = 0
     for f in ISIM:
