@@ -1,0 +1,182 @@
+[
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "WEX",
+  "s": 936,
+  "t": 1015,
+  "L": 80,
+  "no": 1
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "OPTT",
+  "s": 536,
+  "t": 555,
+  "L": 20,
+  "no": 2
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "UFUK",
+  "s": 881,
+  "t": 960,
+  "L": 80,
+  "no": 3
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "WKSP",
+  "s": 786,
+  "t": 805,
+  "L": 20,
+  "no": 4
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "ESI",
+  "s": 271,
+  "t": 290,
+  "L": 20,
+  "no": 5
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "RIOT",
+  "s": 821,
+  "t": 860,
+  "L": 40,
+  "no": 6
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "FENER",
+  "s": 866,
+  "t": 945,
+  "L": 80,
+  "no": 7
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "DIN",
+  "s": 1941,
+  "t": 1960,
+  "L": 20,
+  "no": 8
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "NUGYO",
+  "s": 1691,
+  "t": 1710,
+  "L": 20,
+  "no": 9
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "SEKFK",
+  "s": 1521,
+  "t": 1560,
+  "L": 40,
+  "no": 10
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "RALYH",
+  "s": 1431,
+  "t": 1470,
+  "L": 40,
+  "no": 11
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "KRTEK",
+  "s": 1266,
+  "t": 1345,
+  "L": 80,
+  "no": 12
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "SMHI",
+  "s": 811,
+  "t": 830,
+  "L": 20,
+  "no": 13
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "SRG",
+  "s": 1286,
+  "t": 1325,
+  "L": 40,
+  "no": 14
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "KUYAS",
+  "s": 831,
+  "t": 910,
+  "L": 80,
+  "no": 15
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "ARENA",
+  "s": 1586,
+  "t": 1605,
+  "L": 20,
+  "no": 16
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "ISBIR",
+  "s": 1411,
+  "t": 1430,
+  "L": 20,
+  "no": 17
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "BIST",
+  "sembol": "KUTPO",
+  "s": 1766,
+  "t": 1845,
+  "L": 80,
+  "no": 18
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "CLRB",
+  "s": 706,
+  "t": 725,
+  "L": 20,
+  "no": 19
+ },
+ {
+  "kol": "K1+PARABOL",
+  "pazar": "ABD",
+  "sembol": "DBVT",
+  "s": 796,
+  "t": 815,
+  "L": 20,
+  "no": 20
+ }
+]
