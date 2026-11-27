@@ -1,0 +1,41 @@
+{
+ "A_ANA_ABD_d1619": {
+  "rapor": {
+   "n": 2052,
+   "TF15": 0.007028628971996382,
+   "medyan_fark": -0.01446222088747592,
+   "s5_pay": 0.48393676695563487,
+   "s5_taban": 0.45337909909004903,
+   "s5_fark": 0.030557667865585864
+  },
+  "bagimsiz": {
+   "n": 2052,
+   "TF15": 0.007028628971996382,
+   "medyan_fark": -0.01446222088747592,
+   "s5_pay": 0.48393676695563487,
+   "s5_taban": 0.45337909909004903,
+   "s5_fark": 0.030557667865585864
+  },
+  "en_buyuk_fark": 0.0
+ },
+ "B_ANA_ABD_d2022": {
+  "rapor": {
+   "n": 1344,
+   "TFk15": -0.012268237607806397,
+   "medyan_fark": -0.03285311818961109,
+   "s5_pay": 0.39659574468085107,
+   "s5_taban": 0.4356609503951178,
+   "s5_fark": -0.03906520571426675
+  },
+  "bagimsiz": {
+   "n": 1344,
+   "TFk15": -0.012268237607806397,
+   "medyan_fark": -0.03285311818961109,
+   "s5_pay": 0.39659574468085107,
+   "s5_taban": 0.4356609503951178,
+   "s5_fark": -0.03906520571426675
+  },
+  "en_buyuk_fark": 0.0
+ },
+ "not": "gt8_sagla.py çıktısı: GOZ_TESPIT / MUM_IZI_HAVUZ ölçüm fonksiyonları kullanılmadan ham fiyattan; bootstrap aralığı yeniden üretilmedi (yalnız ortalama / medyan / paylar)"
+}
