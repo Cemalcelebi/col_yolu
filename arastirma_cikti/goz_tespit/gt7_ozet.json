@@ -1,0 +1,620 @@
+{
+ "baslik": "DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)",
+ "k7": "K7 UYARISI: evren bugün yaşayan hisseler; dip dönemlerinde (2018 sonu, 2020 Mart, 2022) batan / kottan çıkan hisseler veride YOK. Bu, hem olayın hem aynı gün evren ortalamasının R15'ini YUKARI çeker; yer şartı en az 2 kat düşmüş hisseleri seçtiği için olay tarafında yanlılık daha büyük olabilir (Ç263 dersi); artı sonuç en fazla 'EMARE (yaşayan evren)'; batanlar dahil veriyle sınama Aralık'ta.",
+ "baslangic_utc": "2026-11-27 13:19:23",
+ "onkayit_commit": "628f3f33f5509c3e808f05cae0b70ab851561fda",
+ "kontrol_kapisi": true,
+ "kod_sha": "3f9d2a9872c7267aa01d70a589f01faf952ae5acf7367a8aaf35237e49fbbb8b",
+ "k2r_esik_sha": "c0841e02865e59f0867f03c81fa815a0a08be6aa1691ad60c5ddca53088f7839",
+ "olay_sha": "e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55",
+ "g40_sha": "46ee92ea37592af607cc8c67d49e29bca37b89fab9ca951052ad14f7c5afc10a",
+ "kesim": 0.276760218650567,
+ "satir_sha": {
+  "olay_r_pkl": "d9d2650fe51a47411cdf44671d589c2ce74d0e69ca646c0955e1d49d950ae31e",
+  "gun_pkl": "34c09b5772ca6b4459a03c4168e3f8d235a2b33bf039a93c0227f6c5bbe744d8",
+  "evren_npz": "c15264bde59128fb2dbf19a1e3957a3e391620c94dc9cea577db518e4e5f0e48"
+ },
+ "evren": {
+  "satir": 5513724,
+  "zorla": 19558,
+  "gun": 1747,
+  "gun_N_medyan": 3053.0,
+  "besli_uyusmaz_gt5": 0
+ },
+ "tablo": {
+  "K2": {
+   "ABD|d1619": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 60,
+     "hisse": 58,
+     "durum": {
+      "TAMAM": 60
+     },
+     "dip_donem": 2,
+     "SECIM": {
+      "n": 60,
+      "ort": 0.017960291073096563,
+      "medyan": 0.012211301129121069,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 60,
+      "ort": 0.0005716258780970359,
+      "medyan": 0.011415340752849612,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": 0.011415340752849612,
+     "R15_ort": 0.08371358404141381,
+     "EV_ORT": 0.06575329296831726,
+     "B_ORT": 0.08314195816331679,
+     "s5_belirsiz": 8,
+     "s5_pay": 0.5192307692307693,
+     "s5_taban": 0.5428837633961628,
+     "s5_fark": -0.02365299416539357,
+     "besli": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 3,
+      "5": 57
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 888,
+     "hisse": 462,
+     "durum": {
+      "TAMAM": 888,
+      "STOP_ALTI": 1
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 888,
+      "ort": -0.00454621564493184,
+      "medyan": -0.04113156063848572,
+      "alt": -0.030326167476137308,
+      "ust": 0.02621708243269538,
+      "p": 0.6591704147926037,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 888,
+      "ort": -0.003944842071896231,
+      "medyan": -0.039480057020316615,
+      "alt": -0.025754771539067862,
+      "ust": 0.02186161301132278,
+      "p": 0.6636681659170415,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.039480057020316615,
+     "R15_ort": 0.0045560329281781765,
+     "EV_ORT": 0.009102248573110018,
+     "B_ORT": 0.008500875000074406,
+     "s5_belirsiz": 53,
+     "s5_pay": 0.437125748502994,
+     "s5_taban": 0.48090158685861256,
+     "s5_fark": -0.043775838355618546,
+     "besli": {
+      "1": 0,
+      "2": 2,
+      "3": 10,
+      "4": 146,
+      "5": 730
+     },
+     "karar": "BİLGİ"
+    }
+   },
+   "ABD|d2022": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 564,
+     "hisse": 502,
+     "durum": {
+      "TAMAM": 564,
+      "STOP_ALTI": 1
+     },
+     "dip_donem": 3,
+     "SECIM": {
+      "n": 564,
+      "ort": 0.0335800591075305,
+      "medyan": 0.002594786476826684,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 564,
+      "ort": 0.02985653624997799,
+      "medyan": 0.0007483355509234901,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": 0.0007483355509234901,
+     "R15_ort": 0.06433919190565734,
+     "EV_ORT": 0.03075913279812685,
+     "B_ORT": 0.03448265565567936,
+     "s5_belirsiz": 36,
+     "s5_pay": 0.39204545454545453,
+     "s5_taban": 0.4506093915547761,
+     "s5_fark": -0.058563937009321554,
+     "besli": {
+      "1": 1,
+      "2": 1,
+      "3": 21,
+      "4": 202,
+      "5": 339
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 1729,
+     "hisse": 970,
+     "durum": {
+      "TAMAM": 1729,
+      "KESIK": 29,
+      "STOP_ALTI": 1
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 1729,
+      "ort": -0.00913255111733574,
+      "medyan": -0.04240585644822074,
+      "alt": -0.029750568040055228,
+      "ust": 0.012301914124795348,
+      "p": 0.8015992003998001,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 1729,
+      "ort": -0.007034316986559912,
+      "medyan": -0.0386520914532102,
+      "alt": -0.021638053833913394,
+      "ust": 0.007714572170709275,
+      "p": 0.8250874562718641,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.0386520914532102,
+     "R15_ort": -0.02088315162296741,
+     "EV_ORT": -0.01175060050563167,
+     "B_ORT": -0.013848834636407497,
+     "s5_belirsiz": 86,
+     "s5_pay": 0.4753499695678637,
+     "s5_taban": 0.46445656521987216,
+     "s5_fark": 0.01089340434799152,
+     "besli": {
+      "1": 2,
+      "2": 34,
+      "3": 210,
+      "4": 795,
+      "5": 688
+     },
+     "karar": "BİLGİ"
+    }
+   }
+  },
+  "YMSB": {
+   "ABD|d1619": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 140,
+     "hisse": 135,
+     "durum": {
+      "TAMAM": 140
+     },
+     "dip_donem": 2,
+     "SECIM": {
+      "n": 140,
+      "ort": 0.07068295297885241,
+      "medyan": 0.017877044187993157,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 140,
+      "ort": 0.04963628487613317,
+      "medyan": 0.00980837295758485,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": 0.00980837295758485,
+     "R15_ort": 0.1353519418032253,
+     "EV_ORT": 0.06466898882437287,
+     "B_ORT": 0.08571565692709213,
+     "s5_belirsiz": 13,
+     "s5_pay": 0.4409448818897638,
+     "s5_taban": 0.5330162613155296,
+     "s5_fark": -0.09207137942576582,
+     "besli": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 6,
+      "5": 134
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 2471,
+     "hisse": 706,
+     "durum": {
+      "TAMAM": 2471,
+      "STOP_ALTI": 8
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 2471,
+      "ort": 0.004435130105919228,
+      "medyan": -0.028530398783497488,
+      "alt": -0.010251532187227734,
+      "ust": 0.020577118850431227,
+      "p": 0.3028485757121439,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 2471,
+      "ort": 0.004812818842096651,
+      "medyan": -0.028196341030992802,
+      "alt": -0.006646775853494701,
+      "ust": 0.017184246266990236,
+      "p": 0.23088455772113944,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.028196341030992802,
+     "R15_ort": 0.011560231305498877,
+     "EV_ORT": 0.007125101199579651,
+     "B_ORT": 0.006747412463402226,
+     "s5_belirsiz": 132,
+     "s5_pay": 0.480119709277469,
+     "s5_taban": 0.4764272109630551,
+     "s5_fark": 0.0036924983144138723,
+     "besli": {
+      "1": 1,
+      "2": 3,
+      "3": 25,
+      "4": 300,
+      "5": 2142
+     },
+     "karar": "BİLGİ"
+    }
+   },
+   "ABD|d2022": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 1360,
+     "hisse": 929,
+     "durum": {
+      "TAMAM": 1360,
+      "STOP_ALTI": 6
+     },
+     "dip_donem": 3,
+     "SECIM": {
+      "n": 1360,
+      "ort": 0.02688388513688924,
+      "medyan": -0.0013497845890250645,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 1360,
+      "ort": 0.022430407564183914,
+      "medyan": -0.005016189913612086,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": -0.005016189913612086,
+     "R15_ort": 0.05905372155730271,
+     "EV_ORT": 0.03216983642041347,
+     "B_ORT": 0.0366233139931188,
+     "s5_belirsiz": 88,
+     "s5_pay": 0.46540880503144655,
+     "s5_taban": 0.5015407282303163,
+     "s5_fark": -0.03613192319886971,
+     "besli": {
+      "1": 4,
+      "2": 1,
+      "3": 54,
+      "4": 369,
+      "5": 932
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 4282,
+     "hisse": 1451,
+     "durum": {
+      "TAMAM": 4282,
+      "KESIK": 144,
+      "STOP_ALTI": 19
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 4282,
+      "ort": -0.0078004134914112155,
+      "medyan": -0.03909817522902504,
+      "alt": -0.02495209337177092,
+      "ust": 0.011264628418103058,
+      "p": 0.8125937031484258,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 4282,
+      "ort": -0.002126640224458553,
+      "medyan": -0.03208239678651993,
+      "alt": -0.010713418862611037,
+      "ust": 0.00796637922218589,
+      "p": 0.6756621689155422,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.03208239678651993,
+     "R15_ort": -0.01786426284147904,
+     "EV_ORT": -0.010063849350067829,
+     "B_ORT": -0.01573762261702049,
+     "s5_belirsiz": 192,
+     "s5_pay": 0.4557457212713936,
+     "s5_taban": 0.4638943497458276,
+     "s5_fark": -0.008148628474433983,
+     "besli": {
+      "1": 9,
+      "2": 49,
+      "3": 376,
+      "4": 1587,
+      "5": 2261
+     },
+     "karar": "BİLGİ"
+    }
+   }
+  },
+  "Y": {
+   "ABD|d1619": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 208,
+     "hisse": 200,
+     "durum": {
+      "TAMAM": 208,
+      "STOP_ALTI": 1
+     },
+     "dip_donem": 2,
+     "SECIM": {
+      "n": 208,
+      "ort": 0.06269301897376701,
+      "medyan": 0.03591770090846759,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 208,
+      "ort": 0.03578318419102252,
+      "medyan": 0.016860545084793996,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 2,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": 0.016860545084793996,
+     "R15_ort": 0.1373002389451233,
+     "EV_ORT": 0.0746072199713563,
+     "B_ORT": 0.1015170547541008,
+     "s5_belirsiz": 18,
+     "s5_pay": 0.48947368421052634,
+     "s5_taban": 0.5526656564557559,
+     "s5_fark": -0.0631919722452296,
+     "besli": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 5,
+      "5": 203
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 3573,
+     "hisse": 830,
+     "durum": {
+      "TAMAM": 3573,
+      "STOP_ALTI": 12
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 3573,
+      "ort": 0.002010219714402682,
+      "medyan": -0.02671993676369837,
+      "alt": -0.012239022692772295,
+      "ust": 0.017813008453188412,
+      "p": 0.4207896051974013,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 3573,
+      "ort": 0.0034525074573160688,
+      "medyan": -0.025202927093028953,
+      "alt": -0.007489205400000559,
+      "ust": 0.015144840911500406,
+      "p": 0.2848575712143928,
+      "kume": 47,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.025202927093028953,
+     "R15_ort": 0.007708758377071459,
+     "EV_ORT": 0.005698538662668774,
+     "B_ORT": 0.004256250919755388,
+     "s5_belirsiz": 212,
+     "s5_pay": 0.4742636120202321,
+     "s5_taban": 0.4671043245426245,
+     "s5_fark": 0.007159287477607579,
+     "besli": {
+      "1": 1,
+      "2": 6,
+      "3": 25,
+      "4": 357,
+      "5": 3184
+     },
+     "karar": "BİLGİ"
+    }
+   },
+   "ABD|d2022": {
+    "DİPTE": {
+     "rejim": "DİPTE",
+     "n": 2141,
+     "hisse": 1371,
+     "durum": {
+      "TAMAM": 2141,
+      "STOP_ALTI": 12
+     },
+     "dip_donem": 3,
+     "SECIM": {
+      "n": 2141,
+      "ort": 0.021717156449785942,
+      "medyan": -0.010747990014652768,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O": {
+      "n": 2141,
+      "ort": 0.01626528682492227,
+      "medyan": -0.014298072727065292,
+      "alt": null,
+      "ust": null,
+      "p": null,
+      "kume": 3,
+      "durum": "ÖLÇÜLEMEDİ"
+     },
+     "SECIM_O_medyan": -0.014298072727065292,
+     "R15_ort": 0.05906116479432164,
+     "EV_ORT": 0.0373440083445357,
+     "B_ORT": 0.04279587796939936,
+     "s5_belirsiz": 151,
+     "s5_pay": 0.5080402010050251,
+     "s5_taban": 0.520143372893817,
+     "s5_fark": -0.012103171888791842,
+     "besli": {
+      "1": 1,
+      "2": 3,
+      "3": 80,
+      "4": 457,
+      "5": 1600
+     },
+     "karar": "ÖLÇÜLEMEDİ"
+    },
+    "DİP DIŞI": {
+     "rejim": "DİP DIŞI",
+     "n": 6054,
+     "hisse": 1645,
+     "durum": {
+      "TAMAM": 6054,
+      "KESIK": 199,
+      "STOP_ALTI": 60
+     },
+     "dip_donem": null,
+     "SECIM": {
+      "n": 6054,
+      "ort": -0.00967782661857606,
+      "medyan": -0.04375504943137981,
+      "alt": -0.02749634573777087,
+      "ust": 0.0109973740671958,
+      "p": 0.8335832083958021,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O": {
+      "n": 6054,
+      "ort": -0.0038617120765290845,
+      "medyan": -0.03565227672616585,
+      "alt": -0.013760428370572087,
+      "ust": 0.00741006300185583,
+      "p": 0.7561219390304847,
+      "kume": 34,
+      "durum": "TAMAM"
+     },
+     "SECIM_O_medyan": -0.03565227672616585,
+     "R15_ort": -0.01849668187805389,
+     "EV_ORT": -0.00881885525947783,
+     "B_ORT": -0.014634969801524806,
+     "s5_belirsiz": 284,
+     "s5_pay": 0.46655112651646446,
+     "s5_taban": 0.46563116135489574,
+     "s5_fark": 0.0009199651615687254,
+     "besli": {
+      "1": 14,
+      "2": 52,
+      "3": 427,
+      "4": 2079,
+      "5": 3482
+     },
+     "karar": "BİLGİ"
+    }
+   }
+  },
+  "_karar": {
+   "ana_kol": "K2",
+   "hucre": {
+    "ABD|d1619": "ÖLÇÜLEMEDİ",
+    "ABD|d2022": "ÖLÇÜLEMEDİ"
+   },
+   "sonuc": "ÖLÇÜLEMEDİ (ANA kol DİPTE hücrelerinden en az biri ölçülemedi)"
+  },
+  "_ek": {
+   "dipte_eksi_disi": {
+    "K2|ABD|d1619": 0.004516467949993267,
+    "K2|ABD|d2022": 0.0368908532365379,
+    "YMSB|ABD|d1619": 0.044823466034036516,
+    "YMSB|ABD|d2022": 0.024557047788642466,
+    "Y|ABD|d1619": 0.03233067673370645,
+    "Y|ABD|d2022": 0.020126998901451355
+   },
+   "k2_eksi_y_dipte": {
+    "ABD|d1619": -0.03521155831292548,
+    "ABD|d2022": 0.01359124942505572
+   }
+  }
+ },
+ "tablo_md": "## DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)\n\nK7 UYARISI: evren bugün yaşayan hisseler; dip dönemlerinde (2018 sonu, 2020 Mart, 2022) batan / kottan çıkan hisseler veride YOK. Bu, hem olayın hem aynı gün evren ortalamasının R15'ini YUKARI çeker; yer şartı en az 2 kat düşmüş hisseleri seçtiği için olay tarafında yanlılık daha büyük olabilir (Ç263 dersi); artı sonuç en fazla 'EMARE (yaşayan evren)'; batanlar dahil veriyle sınama Aralık'ta.\n\n| kol | hücre | rejim | n | hisse | olayı olan dip dönemi | SEÇİM % [GA] | SEÇİM_O % [GA] | medyan SEÇİM_O % | +%5 önce % / aynı gün beşlik tabanı / fark | belirsiz | karar |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n| K2 | ABD|d1619 | DİPTE | 60 | 58 | 2 | 1.80 [küme 2 < 5: GA yok] | 0.06 [küme 2 < 5: GA yok] | 1.14 | 51.9 / 54.3 / -2.4 | 8 | ÖLÇÜLEMEDİ |\n| K2 | ABD|d1619 | DİP DIŞI | 888 | 462 | — | -0.45 [-3.03; 2.62] | -0.39 [-2.58; 2.19] | -3.95 | 43.7 / 48.1 / -4.4 | 53 | BİLGİ |\n| K2 | ABD|d2022 | DİPTE | 564 | 502 | 3 | 3.36 [küme 3 < 5: GA yok] | 2.99 [küme 3 < 5: GA yok] | 0.07 | 39.2 / 45.1 / -5.9 | 36 | ÖLÇÜLEMEDİ |\n| K2 | ABD|d2022 | DİP DIŞI | 1729 | 970 | — | -0.91 [-2.98; 1.23] | -0.70 [-2.16; 0.77] | -3.87 | 47.5 / 46.4 / 1.1 | 86 | BİLGİ |\n| YMSB | ABD|d1619 | DİPTE | 140 | 135 | 2 | 7.07 [küme 2 < 5: GA yok] | 4.96 [küme 2 < 5: GA yok] | 0.98 | 44.1 / 53.3 / -9.2 | 13 | ÖLÇÜLEMEDİ |\n| YMSB | ABD|d1619 | DİP DIŞI | 2471 | 706 | — | 0.44 [-1.03; 2.06] | 0.48 [-0.66; 1.72] | -2.82 | 48.0 / 47.6 / 0.4 | 132 | BİLGİ |\n| YMSB | ABD|d2022 | DİPTE | 1360 | 929 | 3 | 2.69 [küme 3 < 5: GA yok] | 2.24 [küme 3 < 5: GA yok] | -0.50 | 46.5 / 50.2 / -3.6 | 88 | ÖLÇÜLEMEDİ |\n| YMSB | ABD|d2022 | DİP DIŞI | 4282 | 1451 | — | -0.78 [-2.50; 1.13] | -0.21 [-1.07; 0.80] | -3.21 | 45.6 / 46.4 / -0.8 | 192 | BİLGİ |\n| Y | ABD|d1619 | DİPTE | 208 | 200 | 2 | 6.27 [küme 2 < 5: GA yok] | 3.58 [küme 2 < 5: GA yok] | 1.69 | 48.9 / 55.3 / -6.3 | 18 | ÖLÇÜLEMEDİ |\n| Y | ABD|d1619 | DİP DIŞI | 3573 | 830 | — | 0.20 [-1.22; 1.78] | 0.35 [-0.75; 1.51] | -2.52 | 47.4 / 46.7 / 0.7 | 212 | BİLGİ |\n| Y | ABD|d2022 | DİPTE | 2141 | 1371 | 3 | 2.17 [küme 3 < 5: GA yok] | 1.63 [küme 3 < 5: GA yok] | -1.43 | 50.8 / 52.0 / -1.2 | 151 | ÖLÇÜLEMEDİ |\n| Y | ABD|d2022 | DİP DIŞI | 6054 | 1645 | — | -0.97 [-2.75; 1.10] | -0.39 [-1.38; 0.74] | -3.57 | 46.7 / 46.6 / 0.1 | 284 | BİLGİ |\n\nKARAR (ANA kol K2 DİPTE): ABD|d1619 ÖLÇÜLEMEDİ; ABD|d2022 ÖLÇÜLEMEDİ -> ÖLÇÜLEMEDİ (ANA kol DİPTE hücrelerinden en az biri ölçülemedi)\n\nEK OKUMA (karar değil): DİPTE - DİP DIŞI SEÇİM_O ortalaması (puan): K2|ABD|d1619 0.45; K2|ABD|d2022 3.69; YMSB|ABD|d1619 4.48; YMSB|ABD|d2022 2.46; Y|ABD|d1619 3.23; Y|ABD|d2022 2.01\nK2 - Y (DİPTE SEÇİM_O ortalaması, puan): ABD|d1619 -3.52; ABD|d2022 1.36\n"
+}
