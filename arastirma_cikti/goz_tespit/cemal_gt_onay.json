@@ -49,7 +49,27 @@
   "25": "yazı: 'düşüş bitmeli' + aşağı eğimli ok",
   "26": "yazı okunamadı",
   "27": "yazı: 'biraz ... uzun' (okuma belirsiz) + mumların altına taban çizgisi",
-  "28": "yazı okunamadı; bölge sonunda kırılım mumu ve ardından yeni dip var",
-  "29": "aşağı eğri çizimleri + çarpı"
- }
+  "28": "yazı kısmen okundu: 'Bu çöl ...' ile başlıyor olabilir; kutu işareti 'değil'; bölge sonunda kırılım mumu geri alınmış, son mum yeni dipte (ERKEN / bozulmuş olabilir; Cemal'e soruldu)",
+  "29": "büyük U çizimi (yuvarlanma) + ok + çarpı: 'henüz yuvarlanmadı' (Cemal'in 27 Kas açıklamasıyla)"
+ },
+ "cemal_aciklama_27kas": "Değil dediklerimin bir kaçı ben tehol dediğim n için değil henüz yuvarlanma u k işareti koydum sen okurken anladın mi bilmiyorum",
+ "aciklama_okuma": "Ana modelin okuması (yorum): bazı 'değil' / 'kısmen' işaretleri 'yer yanlış' demek değil, 'henüz yuvarlanmadı (U oluşmadı; düşüş bitmedi)' demek; Cemal bunu U çizimi / ok işaretiyle gösterdi. 'u k işareti' = 'U, ok işareti' ya da 'U, K işareti' olabilir (belirsiz).",
+ "erken": {
+  "25": "KISMEN + 'düşüş bitmeli' + aşağı eğimli ok: ERKEN (net)",
+  "29": "DEĞİL + büyük U çizimi + ok + çarpı: ERKEN (ana modelin okuması; ilk okumada düz 'değil' sayılmıştı)",
+  "19": "DEĞİL + 'düşen bıçak': düşüş sürüyor: ERKEN olabilir (belirsiz)",
+  "27": "KISMEN + mumların altına taban (U) çizgisi: ERKEN / kısa olabilir (belirsiz)"
+ },
+ "erken_belirsiz": [
+  8,
+  28
+ ],
+ "okunamayan_not": [
+  18,
+  21,
+  22,
+  23,
+  26,
+  28
+ ]
 }
