@@ -139,6 +139,68 @@ HAFTA kolu (haftalık mum, 15 hafta; TOPLAM FARK):
 
 Tabanı olmayan (hissenin o hücrede rastgele günü yok) düşen olay: {'ABD': 9, 'AVR': 0}
 
+## EK: D40 (doji = gövde < 0,40 x boy; Cemal'in eski kodu GEN10_COL_OGREN v5; ayrı ön kayıt DJ_EK_D40_ON_KAYIT.md)
+
+Ön kayıt commit 48a08608c8006e1c2d71e53f5a3481e74f653a98|2026-11-27T06:57:32+00:00; kod sha a6a511ccc57f. ANA ölçümün tanımı ve sonucu değişmedi.
+
+GENEL (D40): DOJİ ÖBEĞİ SONRASI AYIRT EDİCİ DEĞİL (bu tanımla)
+DOZ - YANIT (D40): DOJİ SAYISI ETKİSİZ (bu tanımla)
+
+NOT: gövde < 0,40 olan mumların payı çok yüksek (geçerli barların ABD %40,8, AVR %41,2 doji sayıldı; ANA'da ~%10); öbek neredeyse her yerde oluşabilir. Sentetik rastgele seride de sıklık aşağıdaki gibi:
+
+| kaynak | k=1 (tek doji) | k=2 | k=3 | k=4 | k=5-6 | k=7+ |
+|---|---|---|---|---|---|---|
+| rastgele seri ANA (bin barda) | 42,02 | 3,77 | 0,30 | 0,02 | 0,00 | 0,00 |
+| rastgele seri D40 (bin barda) | 178,99 | 75,98 | 26,63 | 8,28 | 2,46 | 0,22 |
+| gerçek D40 ABD|d1619 (bin hisse-günde) | 224,94 | 118,11 | 52,90 | 22,13 | 8,93 | 1,39 |
+| gerçek D40 ABD|d2022 (bin hisse-günde) | 230,65 | 111,54 | 45,46 | 17,34 | 6,17 | 0,78 |
+| gerçek D40 AVR|d1619 (bin hisse-günde) | 223,32 | 113,74 | 48,45 | 19,40 | 7,43 | 0,99 |
+| gerçek D40 AVR|d2022 (bin hisse-günde) | 227,20 | 109,88 | 43,93 | 16,19 | 5,69 | 0,67 |
+
+| hücre | k | n | R15 ort | R15 medyan | TOPLAM FARK [%95] | SEÇİM [%95] | +2ATR / rastgele | -2ATR / rastgele | ASİMETRİ [%95] | BÜYÜKLÜK KAT [%95] | yukarı / aşağı / hiç | DEVAM yukarı [%95] | DEVAM aşağı [%95] | dönüş (düşüş sonrası) / taban |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| ABD|d1619 | k=1 (tek doji) | 450569 | 0,85% | 0,83% | -0,07% [-0,71%; 0,57%] | -0,01% [-0,03%; 0,01%] | 32,9% / 33,0% | 27,2% / 26,8% | -0,6% [-5,2%; 4,1%] | 1,017 [0,974; 1,063] | 53,6% / 46,0% / 0,4% | 0,55% [0,08%; 1,00%] | -0,63% [-1,09%; -0,18%] | 56,7% / 56,9% |
+| ABD|d1619 | k=2 | 236589 | 0,87% | 0,87% | -0,04% [-0,71%; 0,61%] | -0,02% [-0,05%; 0,02%] | 33,2% / 32,9% | 26,6% / 26,6% | 0,4% [-4,2%; 5,2%] | 1,017 [0,975; 1,061] | 54,9% / 44,3% / 0,9% | 0,50% [0,02%; 0,96%] | -0,68% [-1,17%; -0,22%] | 56,6% / 56,9% |
+| ABD|d1619 | k=3 | 105953 | 0,91% | 0,86% | 0,00% [-0,66%; 0,68%] | 0,00% [-0,07%; 0,07%] | 33,2% / 32,7% | 26,4% / 26,5% | 0,7% [-4,0%; 5,4%] | 1,021 [0,978; 1,068] | 54,8% / 43,9% / 1,4% | 0,49% [-0,00%; 0,95%] | -0,70% [-1,21%; -0,20%] | 57,0% / 56,9% |
+| ABD|d1619 | k=4 | 44321 | 0,85% | 0,81% | -0,05% [-0,71%; 0,61%] | -0,04% [-0,15%; 0,07%] | 32,8% / 32,5% | 26,5% / 26,4% | 0,1% [-4,6%; 4,8%] | 1,027 [0,984; 1,072] | 54,6% / 43,6% / 1,9% | 0,46% [-0,01%; 0,91%] | -0,64% [-1,19%; -0,12%] | 55,7% / 56,9% |
+| ABD|d1619 | k=5-6 | 17885 | 0,77% | 0,75% | -0,10% [-0,76%; 0,54%] | -0,05% [-0,21%; 0,11%] | 32,7% / 32,3% | 27,2% / 26,3% | -0,5% [-5,6%; 4,5%] | 1,033 [0,987; 1,084] | 53,8% / 43,8% / 2,3% | 0,54% [0,07%; 0,97%] | -0,50% [-1,06%; 0,04%] | 55,0% / 56,9% |
+| ABD|d1619 | k=7+ | 2775 | 0,83% | 0,71% | 0,01% [-0,67%; 0,68%] | -0,02% [-0,39%; 0,37%] | 32,9% / 32,0% | 26,5% / 26,0% | 0,5% [-4,9%; 5,3%] | 1,034 [0,971; 1,100] | 54,0% / 43,1% / 3,0% | 0,66% [0,15%; 1,19%] | -0,47% [-1,18%; 0,22%] | 53,3% / 56,9% |
+| ABD|d2022 | k=1 (tek doji) | 451814 | 0,26% | 0,09% | -0,18% [-1,88%; 1,42%] | -0,03% [-0,10%; 0,03%] | 30,5% / 30,5% | 29,9% / 29,0% | -0,9% [-6,7%; 5,0%] | 1,008 [0,912; 1,145] | 50,5% / 49,3% / 0,2% | 0,02% [-0,96%; 0,96%] | -0,29% [-1,56%; 1,02%] | 49,8% / 49,7% |
+| ABD|d2022 | k=2 | 218498 | 0,59% | 0,24% | 0,18% [-1,26%; 1,61%] | 0,02% [-0,08%; 0,12%] | 31,0% / 30,4% | 28,7% / 29,0% | 0,8% [-5,2%; 6,7%] | 0,971 [0,898; 1,071] | 51,6% / 47,8% / 0,6% | 0,13% [-0,76%; 1,02%] | -0,48% [-1,70%; 0,71%] | 50,5% / 49,7% |
+| ABD|d2022 | k=3 | 89048 | 0,62% | 0,24% | 0,28% [-1,17%; 1,72%] | 0,10% [-0,06%; 0,28%] | 31,2% / 30,2% | 28,4% / 28,9% | 1,5% [-4,7%; 7,7%] | 0,972 [0,901; 1,073] | 52,0% / 46,9% / 1,0% | 0,10% [-0,82%; 0,98%] | -0,49% [-1,69%; 0,70%] | 50,7% / 49,7% |
+| ABD|d2022 | k=4 | 33972 | 0,37% | 0,05% | 0,10% [-1,41%; 1,58%] | 0,07% [-0,18%; 0,32%] | 30,7% / 30,0% | 28,6% / 28,8% | 0,9% [-5,8%; 7,4%] | 0,971 [0,897; 1,078] | 51,4% / 47,1% / 1,5% | -0,00% [-0,86%; 0,83%] | -0,35% [-1,64%; 0,92%] | 49,6% / 49,7% |
+| ABD|d2022 | k=5-6 | 12086 | 0,46% | 0,06% | 0,25% [-1,26%; 1,78%] | 0,22% [-0,05%; 0,51%] | 30,0% / 29,6% | 28,7% / 28,6% | 0,3% [-6,8%; 7,0%] | 0,987 [0,912; 1,088] | 50,2% / 47,8% / 2,0% | -0,00% [-0,85%; 0,82%] | -0,65% [-2,05%; 0,71%] | 49,5% / 49,7% |
+| ABD|d2022 | k=7+ | 1530 | 0,18% | -0,46% | 0,14% [-1,66%; 1,86%] | 0,19% [-0,57%; 1,00%] | 29,0% / 29,1% | 27,1% / 28,2% | 1,1% [-7,8%; 10,2%] | 1,006 [0,915; 1,111] | 48,2% / 49,0% / 2,8% | -0,65% [-1,83%; 0,36%] | -0,16% [-1,90%; 1,47%] | 45,3% / 49,7% |
+| AVR|d1619 | k=1 (tek doji) | 89974 | 0,70% | 0,71% | -0,04% [-0,58%; 0,48%] | 0,00% [-0,03%; 0,03%] | 32,9% / 33,2% | 27,3% / 26,8% | -0,7% [-5,6%; 4,1%] | 1,006 [0,956; 1,062] | 53,6% / 46,0% / 0,4% | 0,39% [0,00%; 0,75%] | -0,52% [-0,93%; -0,13%] | 56,7% / 57,1% |
+| AVR|d1619 | k=2 | 45825 | 0,73% | 0,73% | 0,00% [-0,55%; 0,52%] | 0,01% [-0,03%; 0,06%] | 33,1% / 33,1% | 26,8% / 26,8% | 0,0% [-4,9%; 5,0%] | 1,000 [0,951; 1,054] | 54,3% / 44,8% / 0,9% | 0,43% [0,06%; 0,77%] | -0,61% [-1,03%; -0,19%] | 57,0% / 57,1% |
+| AVR|d1619 | k=3 | 19520 | 0,79% | 0,78% | 0,06% [-0,46%; 0,58%] | 0,02% [-0,06%; 0,10%] | 33,5% / 33,1% | 26,3% / 26,8% | 0,9% [-4,1%; 5,9%] | 0,994 [0,944; 1,049] | 53,9% / 44,7% / 1,4% | 0,46% [0,09%; 0,80%] | -0,66% [-1,08%; -0,25%] | 55,6% / 57,1% |
+| AVR|d1619 | k=4 | 7818 | 0,75% | 0,77% | 0,03% [-0,53%; 0,55%] | 0,02% [-0,10%; 0,15%] | 33,0% / 33,0% | 26,5% / 26,8% | 0,4% [-5,1%; 5,6%] | 1,004 [0,946; 1,065] | 53,2% / 45,0% / 1,8% | 0,44% [0,06%; 0,81%] | -0,65% [-1,06%; -0,21%] | 55,3% / 57,1% |
+| AVR|d1619 | k=5-6 | 2994 | 0,71% | 0,72% | -0,01% [-0,61%; 0,53%] | -0,02% [-0,24%; 0,20%] | 33,3% / 33,0% | 26,1% / 26,8% | 1,0% [-5,4%; 6,8%] | 0,991 [0,929; 1,061] | 53,9% / 43,7% / 2,4% | 0,47% [0,11%; 0,82%] | -0,40% [-0,85%; 0,08%] | 55,1% / 57,1% |
+| AVR|d1619 | k=7+ | 398 | 0,67% | 0,86% | -0,06% [-0,92%; 0,74%] | -0,00% [-0,40%; 0,41%] | 34,7% / 32,8% | 26,1% / 26,6% | 2,4% [-6,7%; 11,4%] | 1,029 [0,901; 1,174] | 53,8% / 43,0% / 3,3% | 0,30% [-0,44%; 0,97%] | -0,27% [-1,32%; 0,82%] | 52,7% / 57,1% |
+| AVR|d2022 | k=1 (tek doji) | 73887 | 0,17% | 0,38% | 0,01% [-1,45%; 1,31%] | 0,02% [-0,05%; 0,08%] | 30,7% / 30,5% | 29,7% / 29,1% | -0,4% [-7,5%; 6,6%] | 1,027 [0,903; 1,205] | 51,4% / 48,3% / 0,3% | 0,19% [-0,52%; 0,90%] | 0,20% [-1,01%; 1,54%] | 52,7% / 52,2% |
+| AVR|d2022 | k=2 | 35735 | 0,39% | 0,40% | 0,22% [-1,00%; 1,40%] | 0,08% [-0,00%; 0,17%] | 30,8% / 30,4% | 28,7% / 29,1% | 0,7% [-6,2%; 7,6%] | 0,979 [0,884; 1,108] | 51,9% / 47,2% / 0,9% | 0,30% [-0,37%; 0,97%] | -0,11% [-1,11%; 1,00%] | 52,8% / 52,2% |
+| AVR|d2022 | k=3 | 14285 | 0,38% | 0,37% | 0,23% [-0,94%; 1,32%] | 0,13% [-0,01%; 0,26%] | 30,7% / 30,3% | 28,5% / 29,0% | 0,9% [-6,1%; 7,8%] | 0,971 [0,874; 1,099] | 52,6% / 46,0% / 1,4% | 0,23% [-0,44%; 0,89%] | -0,09% [-1,10%; 1,02%] | 52,1% / 52,2% |
+| AVR|d2022 | k=4 | 5265 | 0,44% | 0,43% | 0,30% [-0,77%; 1,24%] | 0,17% [-0,10%; 0,41%] | 30,9% / 30,1% | 27,4% / 29,0% | 2,4% [-4,7%; 9,2%] | 0,939 [0,852; 1,052] | 53,8% / 43,7% / 2,5% | 0,16% [-0,46%; 0,73%] | -0,11% [-1,18%; 1,03%] | 51,2% / 52,2% |
+| AVR|d2022 | k=5-6 | 1849 | 0,31% | 0,29% | 0,19% [-0,86%; 1,16%] | 0,15% [-0,22%; 0,52%] | 30,5% / 30,0% | 25,9% / 28,9% | 3,5% [-3,9%; 10,8%] | 0,930 [0,840; 1,046] | 53,9% / 42,4% / 3,7% | 0,11% [-0,56%; 0,69%] | -0,02% [-1,01%; 1,10%] | 49,4% / 52,2% |
+| AVR|d2022 | k=7+ | 217 | 0,90% | 1,13% | 0,92% [-0,48%; 2,34%] | 0,72% [-0,24%; 1,67%] | 35,5% / 29,1% | 18,4% / 28,9% | 16,8% [6,1%; 26,8%] | 0,939 [0,809; 1,091] | 53,5% / 39,2% / 7,4% | 0,61% [-0,25%; 1,51%] | -0,64% [-2,59%; 1,29%] | 50,5% / 52,2% |
+Hüküm D40 (TOPLAM FARK): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ AYRIŞMIYOR
+Hüküm D40 (ASİMETRİ): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ AYRIŞMIYOR
+Hüküm D40 (SEÇİM): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ AYRIŞMIYOR
+Hüküm D40 (BÜYÜKLÜK FARKI): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ AYRIŞMIYOR
+Hüküm D40 (DEVAM yukarı): k=1 (tek doji) TEK DÖNEM; k=2 TEK DÖNEM; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 TEK DÖNEM; k=7+ TEK DÖNEM
+Hüküm D40 (DEVAM aşağı): k=1 (tek doji) TEK DÖNEM; k=2 TEK DÖNEM; k=3 TEK DÖNEM; k=4 TEK DÖNEM; k=5-6 AYRIŞMIYOR; k=7+ ÖLÇÜLEMEDİ
+Hüküm D40 (dönüş, düşüş sonrası): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ TEK DÖNEM
+Hüküm D40 (dönüş, yükseliş sonrası): k=1 (tek doji) AYRIŞMIYOR; k=2 AYRIŞMIYOR; k=3 AYRIŞMIYOR; k=4 AYRIŞMIYOR; k=5-6 AYRIŞMIYOR; k=7+ ÖLÇÜLEMEDİ
+
+- DOZ TOPLAM_FARK: yön [0, 0], tek yönlü False, fark ayrışıyor False -> etkisiz
+- DOZ BUYUKLUK_FARK: yön [0, 0], tek yönlü False, fark ayrışıyor False -> etkisiz
+- DOZ YUKARI_PAY: yön [0, 0], tek yönlü False, fark ayrışıyor False -> etkisiz
+
+BH (48 satır) geçen: yok
+
+Eski sonuç (yalnız bilgi): 19 Ekim'de BIST'te DOJI_KUTU_TEST ('kutuda 3-5 doji -> sert hareket') yukarı için iz değil çıkmıştı (0,90-1,02 kat; Ç38-Ç39, sonradan güç yetersiz diye ÖLÇÜLEMEDİ sayıldı); ABD'de hiç koşulmamıştı.
+
+
 ## KONTROL LİSTESİ
 
 | Kod | Yanıt | Kanıt |
@@ -163,6 +225,7 @@ Tabanı olmayan (hissenin o hücrede rastgele günü yok) düşen olay: {'ABD': 
 - Bağımsız kısa kod (olay + getiri + taban getiri pkl'lerinden, pandas merge) 4 satırda n, R15 ort, TOPLAM FARK, +2ATR payı, yukarı çıkış payı, yukarı DEVAM, büyüklük KAT birebir: ABD 16-19 k=2 (n 31.114; TF -0,068%; KAT 1,020), ABD 20-22 k=3 (n 3.651; TF +0,382%; yukarı %52,5), AVR 16-19 k=2 (n 6.027; TF -0,099%), ABD 16-19 k=4+ (n 844; TF +0,939%; KAT 1,113).
 - Ham bar deposundan (npz) 5 rastgele olayda R15 = C[t+15] / O[t+1] - 1 ve giriş tarihi birebir.
 - 300 rastgele k >= 2 olayında doji kuralı (gövde <= 0,10 boy, boy >= 0,5 x önceki 10 bar medyanı) ve önceki dojinin <= 3 bar önce olması bağımsız kodla: 0 aykırı.
+- EK D40: bağımsız kısa kodla 2 satır birebir (ABD 20-22 k=5-6: n 12.086, TF +0,245%, yukarı çıkış %50,2; AVR 16-19 k=3: n 19.520, TF +0,058%, yukarı %53,9); 300 rastgele D40 olayında doji (< 0,40) + önceki doji <= 3 bar şartı: 0 aykırı.
 
 ## HATA
 
@@ -170,13 +233,16 @@ Tabanı olmayan (hissenin o hücrede rastgele günü yok) düşen olay: {'ABD': 
 - HATA (gösterim, ilk commit'ten önce bulundu): DJ_ORNEKLER.pdf'te öbeğin dojileri uygun olay tablosundan alındığı için 2016 öncesine düşen dojiler işaretlenmiyordu (4+ örneğinde 'Doji sayısı: 1'). PNG denetiminde görüldü; dojiler artık hissenin t'ye kadarki barlarıyla yeniden tespit ediliyor.
 - NOT (veri bütünlüğü): olay pkl dosyalarının sha'sı yeniden üretimde bayt olarak farklı çıkıyor (pickle düzeni); içerik birebir aynı (AVR olay dosyası assert_frame_equal). Ön kayıttaki sha'lar bütünlük mührüdür; olay dosyaları ölçümde değişmedi (kapı denetledi).
 - NOT: olay dosyaları, PDF / örnek ayarı (ESIK 'ornek') ve rapor kodu düzeltilmeden önceki kod sürümüyle üretildi; tespit / uygunluk kodu değişmedi, AVR yeniden üretimi içerik olarak aynı.
+- NOT (D40 testi): sınır testinde 10,4 - 10,0 kayan nokta hatası (0,40000000000000036) testi bozdu; test ikili kesin sayılarla yeniden yazıldı (kod hatası değil). İkinci test kurgusu hatası: 'doji olmayan' barların gövdesi 0,3 boy seçilmişti (D40'ta bu da doji); 0,6'ya çıkarıldı. İkisi de D40 ön kaydından önce.
 
 ## SAPMA
 
 - (yok) Ölçüm bir kez koştu; eşikler ve hüküm kuralları ön kayıttaki gibi. Rapor gösterim kodu ön kayıt sha'sıyla aynı (değişmedi).
+- EK D40 kolu ana modelin ek iş tanımıyla, ANA sonucu yayımlandıktan SONRA eklendi (ayrı ön kayıt 48a0860, getirisi ondan sonra); ANA tanımı / sonucu değişmedi. DOJI_OBEK.py ANA ölçümden sonra değişti (yalnız ek kol ve parametreler; varsayılan davranış testle aynı): ANA kapısı artık sha uyuşmazlığıyla durur (ikinci ANA koşusu zaten yasak).
 
 ## ÖNERİLEN DEFTER SATIRLARI
 
 - IK_KAYIT Ç satırı: DOJI_OBEK (27 Kas): aynı seviyede (0,5 ATR), aralarında en çok 2 mum olan doji öbekleri; sıklık bin hisse-günde tek doji ~83-86, k=2 ~13-15, k=3 ~2-2,5, k=4+ ~0,2-0,4. Sonrası (R15, TOPLAM FARK aynı hissenin rastgele gününe göre): k=1/2/3 AYRIŞMIYOR (n >= 3.600, iki ABD dönemi), k=4+ ÖLÇÜLEMEDİ (n 844 / 532); hareket büyüklüğü, öbek bandından çıkış yönü, önceki yöne göre dönüş: AYRIŞMIYOR; çıkış sonrası 10 bar devamı yalnız pazarın sürüklenmesi kadar; DOZ - YANIT: ETKİSİZ; BH 32 satırda 0 geçen. Hüküm: DOJİ ÖBEĞİ SONRASI AYIRT EDİCİ DEĞİL (bu tanımla). Kasa açılmadı.
 - IK_ILERI: k=4+ satırı ÖLÇÜLEMEDİ (ABD 16-19'da TF +0,94% [-0,18; 2,16], büyüklük KAT 1,11 [1,04; 1,19] tek dönem; ABD 20-22'de yok): kriz sonrası / 2023-24 verisi açıldığında aynı komut, aynı eşik; kasa kuralına göre tek başına açılmaz.
 - IK_HATA: dj_olc_kol pazar birleştirme hatası (sentetik testte, ölçümden önce); PDF doji listesi hatası (PNG denetiminde).
+- EK D40 (gövde < 0,40; Cemal'in eski tanımı): doji payı ~%41; öbek sıklığı rastgele seride de yüksek (k=2 bin barda 76, gerçek 112-118); 6 basamağın hepsinde TOPLAM FARK, büyüklük, asimetri, dönüş AYRIŞMIYOR; doz - yanıt etkisiz; BH 48 satırda 0. Hüküm: AYIRT EDİCİ DEĞİL. Eski BIST Ç38-Ç39 (DOJI_KUTU 0,90-1,02 kat) ile aynı yön.
