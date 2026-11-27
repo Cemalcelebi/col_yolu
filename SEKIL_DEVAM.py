@@ -1332,7 +1332,8 @@ def sd_desen_pdf(J: Dict[str, Any], K: Dict[str, Any], yol: str, Lw: int = 20) -
             for r_, c in enumerate(ls, 1):
                 fig = plt.figure(figsize=(8.3, 11.7)); o = oz[c]; h = np.array(KL["merkez_ham"][c]); Bm = h[:4 * Lw].reshape(Lw, 4)
                 fig.text(0.5, 0.975, f"{ad} {r_}. küme (no {c})", ha="center", va="top", fontsize=22, weight="bold")
-                fig.text(0.05, 0.935, o["tarif"], fontsize=10.5, va="top", wrap=True)
+                import textwrap
+                fig.text(0.05, 0.935, textwrap.fill(o["tarif"], 105), fontsize=10.5, va="top")
                 ax = fig.add_axes([0.08, 0.66, 0.84, 0.21])
                 MV._mv_ciz(ax, Bm[:, 0], Bm[:, 1], Bm[:, 2], Bm[:, 3], np.ones(Lw), np.zeros(Lw), -np.ones(Lw), None, "")
                 ax.set_title("Ortalama şekil (üst çizgi = üst bant, kesikli = SMA20, alt = alt bant)", fontsize=11)
