@@ -1,0 +1,26 @@
+{
+ "kaynak": "GT4_ONAY_cemal_isaretli.pdf (27 Kas 2026)",
+ "okuma": "ink annotation /Rect'inden mekanik (20 sayfa; her sayfada tek kutu işareti; yazı / çizim yok) + ana modelin gözü (s. 6: işaret E kutusunun sağ kenarında, yukarı taşıyor)",
+ "sinif4": {
+  "1": "EVET",
+  "2": "KISMEN",
+  "3": "KISMEN",
+  "4": "ERKEN",
+  "5": "ERKEN",
+  "6": "ERKEN",
+  "7": "KISMEN",
+  "8": "HAYIR",
+  "9": "EVET",
+  "10": "EVET",
+  "11": "ERKEN",
+  "12": "HAYIR",
+  "13": "KISMEN",
+  "14": "HAYIR",
+  "15": "EVET",
+  "16": "ERKEN",
+  "17": "EVET",
+  "18": "EVET",
+  "19": "EVET",
+  "20": "EVET"
+ }
+}
