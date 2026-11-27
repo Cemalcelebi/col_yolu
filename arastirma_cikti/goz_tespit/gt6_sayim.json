@@ -1,0 +1,409 @@
+{
+ "baslik": "DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)",
+ "surum": "GOZ_TESPIT v1.0 (2026-11-27): kitaplık parmak izi + üç dedektör + kör onay seti (yalnız tespit; getiri yok) + ÇÖL-K2 KIRILIM (EK 6)",
+ "kod_sha": "f597baa461008e695a0c94701aba372c2c979c6e09a585e1372d5fdc20b20575",
+ "k2k_esik_sha": "75c9445949e921504c7f076a32bd89f1929ffc39eb56e95f831bbaef45497ead",
+ "k2_esik_sha": "457e7ce7f0a2cc15f92651457209471f0b4213fe85e2a052a87538f8b65bbebe",
+ "olay_sha": "e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55",
+ "not": "GETİRİSİZ: yön / kırılım / getiri yok",
+ "olay": {
+  "K2": {
+   "ABD|d1619": {
+    "bolge": 949,
+    "kesik": 0,
+    "bolge_net": 949,
+    "hisse": 480,
+    "k1_tabanli": 930,
+    "k1_duser": 19,
+    "besli": {
+     "1": 0,
+     "2": 2,
+     "3": 10,
+     "4": 149,
+     "5": 788
+    }
+   },
+   "ABD|d2022": {
+    "bolge": 2324,
+    "kesik": 50,
+    "bolge_net": 2274,
+    "hisse": 1193,
+    "k1_tabanli": 2252,
+    "k1_duser": 22,
+    "besli": {
+     "1": 3,
+     "2": 35,
+     "3": 230,
+     "4": 994,
+     "5": 1012
+    }
+   },
+   "AVR|d1619": {
+    "bolge": 16,
+    "kesik": 0,
+    "bolge_net": 16,
+    "hisse": 10,
+    "k1_tabanli": 16,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 0,
+     "5": 16
+    }
+   },
+   "AVR|d2022": {
+    "bolge": 37,
+    "kesik": 1,
+    "bolge_net": 36,
+    "hisse": 27,
+    "k1_tabanli": 36,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 4,
+     "5": 31
+    }
+   },
+   "BIST|d1619": {
+    "bolge": 79,
+    "kesik": 0,
+    "bolge_net": 79,
+    "hisse": 48,
+    "k1_tabanli": 79,
+    "k1_duser": 0,
+    "besli": {
+     "1": 2,
+     "2": 6,
+     "3": 13,
+     "4": 27,
+     "5": 31
+    }
+   },
+   "BIST|d2022": {
+    "bolge": 93,
+    "kesik": 2,
+    "bolge_net": 91,
+    "hisse": 69,
+    "k1_tabanli": 91,
+    "k1_duser": 0,
+    "besli": {
+     "1": 24,
+     "2": 25,
+     "3": 24,
+     "4": 16,
+     "5": 2
+    }
+   }
+  },
+  "YMSB": {
+   "ABD|d1619": {
+    "bolge": 2619,
+    "kesik": 0,
+    "bolge_net": 2619,
+    "hisse": 723,
+    "k1_tabanli": 2566,
+    "k1_duser": 53,
+    "besli": {
+     "1": 1,
+     "2": 3,
+     "3": 25,
+     "4": 306,
+     "5": 2284
+    }
+   },
+   "ABD|d2022": {
+    "bolge": 5811,
+    "kesik": 211,
+    "bolge_net": 5600,
+    "hisse": 1603,
+    "k1_tabanli": 5546,
+    "k1_duser": 54,
+    "besli": {
+     "1": 13,
+     "2": 50,
+     "3": 430,
+     "4": 1955,
+     "5": 3152
+    }
+   },
+   "AVR|d1619": {
+    "bolge": 34,
+    "kesik": 0,
+    "bolge_net": 34,
+    "hisse": 16,
+    "k1_tabanli": 34,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 1,
+     "3": 0,
+     "4": 1,
+     "5": 32
+    }
+   },
+   "AVR|d2022": {
+    "bolge": 113,
+    "kesik": 3,
+    "bolge_net": 110,
+    "hisse": 58,
+    "k1_tabanli": 110,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 2,
+     "4": 12,
+     "5": 96
+    }
+   },
+   "BIST|d1619": {
+    "bolge": 191,
+    "kesik": 0,
+    "bolge_net": 191,
+    "hisse": 76,
+    "k1_tabanli": 191,
+    "k1_duser": 0,
+    "besli": {
+     "1": 8,
+     "2": 17,
+     "3": 33,
+     "4": 54,
+     "5": 79
+    }
+   },
+   "BIST|d2022": {
+    "bolge": 248,
+    "kesik": 1,
+    "bolge_net": 247,
+    "hisse": 114,
+    "k1_tabanli": 247,
+    "k1_duser": 0,
+    "besli": {
+     "1": 58,
+     "2": 64,
+     "3": 51,
+     "4": 47,
+     "5": 27
+    }
+   }
+  },
+  "Y": {
+   "ABD|d1619": {
+    "bolge": 3794,
+    "kesik": 0,
+    "bolge_net": 3794,
+    "hisse": 864,
+    "k1_tabanli": 3725,
+    "k1_duser": 69,
+    "besli": {
+     "1": 1,
+     "2": 6,
+     "3": 26,
+     "4": 362,
+     "5": 3399
+    }
+   },
+   "ABD|d2022": {
+    "bolge": 8466,
+    "kesik": 269,
+    "bolge_net": 8197,
+    "hisse": 1899,
+    "k1_tabanli": 8120,
+    "k1_duser": 77,
+    "besli": {
+     "1": 15,
+     "2": 54,
+     "3": 507,
+     "4": 2534,
+     "5": 5087
+    }
+   },
+   "AVR|d1619": {
+    "bolge": 69,
+    "kesik": 0,
+    "bolge_net": 69,
+    "hisse": 28,
+    "k1_tabanli": 69,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 1,
+     "3": 1,
+     "4": 4,
+     "5": 63
+    }
+   },
+   "AVR|d2022": {
+    "bolge": 196,
+    "kesik": 2,
+    "bolge_net": 194,
+    "hisse": 80,
+    "k1_tabanli": 194,
+    "k1_duser": 0,
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 12,
+     "5": 181
+    }
+   },
+   "BIST|d1619": {
+    "bolge": 292,
+    "kesik": 0,
+    "bolge_net": 292,
+    "hisse": 96,
+    "k1_tabanli": 292,
+    "k1_duser": 0,
+    "besli": {
+     "1": 13,
+     "2": 24,
+     "3": 45,
+     "4": 67,
+     "5": 143
+    }
+   },
+   "BIST|d2022": {
+    "bolge": 323,
+    "kesik": 1,
+    "bolge_net": 322,
+    "hisse": 123,
+    "k1_tabanli": 322,
+    "k1_duser": 0,
+    "besli": {
+     "1": 64,
+     "2": 74,
+     "3": 67,
+     "4": 51,
+     "5": 66
+    }
+   }
+  }
+ },
+ "kontrol1": {
+  "ABD|d1619": {
+   "20": {
+    "pencere": 550862,
+    "kesik": 0,
+    "net": 550862,
+    "hisse": 3305
+   },
+   "40": {
+    "pencere": 554034,
+    "kesik": 0,
+    "net": 554034,
+    "hisse": 3269
+   },
+   "80": {
+    "pencere": 554298,
+    "kesik": 0,
+    "net": 554298,
+    "hisse": 3211
+   }
+  },
+  "ABD|d2022": {
+   "20": {
+    "pencere": 511699,
+    "kesik": 14736,
+    "net": 496963,
+    "hisse": 4215
+   },
+   "40": {
+    "pencere": 522877,
+    "kesik": 15103,
+    "net": 507774,
+    "hisse": 4184
+   },
+   "80": {
+    "pencere": 527924,
+    "kesik": 15324,
+    "net": 512600,
+    "hisse": 4136
+   }
+  },
+  "AVR|d1619": {
+   "20": {
+    "pencere": 101463,
+    "kesik": 0,
+    "net": 101463,
+    "hisse": 536
+   },
+   "40": {
+    "pencere": 101489,
+    "kesik": 0,
+    "net": 101489,
+    "hisse": 534
+   },
+   "80": {
+    "pencere": 101357,
+    "kesik": 0,
+    "net": 101357,
+    "hisse": 530
+   }
+  },
+  "AVR|d2022": {
+   "20": {
+    "pencere": 82163,
+    "kesik": 2138,
+    "net": 80025,
+    "hisse": 569
+   },
+   "40": {
+    "pencere": 82446,
+    "kesik": 2144,
+    "net": 80302,
+    "hisse": 569
+   },
+   "80": {
+    "pencere": 82520,
+    "kesik": 2150,
+    "net": 80370,
+    "hisse": 567
+   }
+  },
+  "BIST|d1619": {
+   "20": {
+    "pencere": 60692,
+    "kesik": 0,
+    "net": 60692,
+    "hisse": 374
+   },
+   "40": {
+    "pencere": 60188,
+    "kesik": 0,
+    "net": 60188,
+    "hisse": 371
+   },
+   "80": {
+    "pencere": 57912,
+    "kesik": 0,
+    "net": 57912,
+    "hisse": 366
+   }
+  },
+  "BIST|d2022": {
+   "20": {
+    "pencere": 56585,
+    "kesik": 1746,
+    "net": 54839,
+    "hisse": 453
+   },
+   "40": {
+    "pencere": 56668,
+    "kesik": 1728,
+    "net": 54940,
+    "hisse": 449
+   },
+   "80": {
+    "pencere": 56382,
+    "kesik": 1701,
+    "net": 54681,
+    "hisse": 439
+   }
+  }
+ }
+}
