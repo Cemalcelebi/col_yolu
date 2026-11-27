@@ -1,0 +1,196 @@
+{
+ "surum": "GOZ_TESPIT v1.0 (2026-11-27): kitaplık parmak izi + üç dedektör + kör onay seti (yalnız tespit; getiri yok)",
+ "kod_sha": "306fe322b432f150beaa20e591475f222e3eca16b828fe3698ff4a8552e5a353",
+ "esik_sha": "5d4c7975e408669866ba2ca6e8ce9367f8e0fc1089010656e12a0661cc2bcc92",
+ "parmak_commit": "d4f0f4be9336f0ebe97e2dab941b8af29c7f112b",
+ "dedektor_commit": "a17b6a74e3fe89573873b9db3f7a1c87abddabc7",
+ "pdf_sha": "e14ffbc7c3708a1c2ad2fe5e3e831032338675b73a062e99b5a214f260909d07",
+ "anahtar_sha": "499bbd016f055d65d285a5f24bf5687e7e8cce69c6bb51c62ad1b23c48fd4109",
+ "sayfa": 30,
+ "kol": {
+  "D1": 6,
+  "D2": 8,
+  "D3": 6,
+  "RASTGELE": 6,
+  "KITAPLIK": 4
+ },
+ "pazar": {
+  "BIST": 17,
+  "ABD": 13
+ },
+ "eksik": {},
+ "tasinan": {},
+ "parmak": {
+  "olcu_n": 40,
+  "bolge_n": 16,
+  "imza": [],
+  "yakin": [
+   {
+    "olcu": "GOVDE_ORAN",
+    "yon": "DÜŞÜK",
+    "medyan": 0.20119973922393722,
+    "tut_k": 10,
+    "n": 14
+   },
+   {
+    "olcu": "BOY_YUZDE_ORAN",
+    "yon": "DÜŞÜK",
+    "medyan": 0.2249603460464271,
+    "tut_k": 9,
+    "n": 14
+   },
+   {
+    "olcu": "F5",
+    "yon": "YÜKSEK",
+    "medyan": 0.8693126698682745,
+    "tut_k": 10,
+    "n": 16
+   },
+   {
+    "olcu": "F3",
+    "yon": "YÜKSEK",
+    "medyan": 0.7850244015133357,
+    "tut_k": 10,
+    "n": 16
+   },
+   {
+    "olcu": "ONCEKI_DUSUS",
+    "yon": "DÜŞÜK",
+    "medyan": 0.10199477366054763,
+    "tut_k": 8,
+    "n": 14
+   }
+  ],
+  "ilginc": {
+   "F1": {
+    "medyan": 0.5768345773637246,
+    "tut_k": 6,
+    "n": 16
+   },
+   "BOY_YUZDE_ORAN": {
+    "medyan": 0.2249603460464271,
+    "tut_k": 9,
+    "n": 14
+   },
+   "BOY_MUTLAK": {
+    "medyan": 0.6414936215261441,
+    "tut_k": 6,
+    "n": 14
+   },
+   "UST_FITIL": {
+    "medyan": 0.6456655079052044,
+    "tut_k": 6,
+    "n": 14
+   },
+   "SON_UST_FITIL": {
+    "medyan": 0.5641098829700744,
+    "tut_k": 3,
+    "n": 14
+   },
+   "F6": {
+    "medyan": 0.6018642040110184,
+    "tut_k": 3,
+    "n": 16
+   },
+   "HACIM_ORAN": {
+    "medyan": 0.39813579598898163,
+    "tut_k": 3,
+    "n": 16
+   },
+   "HACIM_SON5": {
+    "medyan": 0.5977961223067222,
+    "tut_k": 5,
+    "n": 16
+   }
+  }
+ },
+ "mumizi": {
+  "auc_ilk5": [
+   [
+    "BOY_YUZDE_ORAN",
+    0.29310344827586204
+   ],
+   [
+    "BOY_GRAFIK_ORAN",
+    0.2961460446247465
+   ],
+   [
+    "BANT_SON",
+    0.6820486815415822
+   ],
+   [
+    "F2",
+    0.674537037037037
+   ],
+   [
+    "GOVDE_ORAN",
+    0.34279918864097364
+   ]
+  ],
+  "imza_ayni": 0,
+  "imza_n": 0
+ },
+ "dedektor": {
+  "BIST": {
+   "D1_ham": 33845,
+   "D1": 5907,
+   "D1_pay": 0.09866426455840854,
+   "D2_ham": 56276,
+   "D2": 5709,
+   "D2_pay": 0.1640546654539518,
+   "D3": 15,
+   "havuz": 343032
+  },
+  "ABD": {
+   "D1_ham": 315142,
+   "D1": 49717,
+   "D1_pay": 0.09506775427461296,
+   "D2_ham": 418699,
+   "D2": 42427,
+   "D2_pay": 0.12630742220023408,
+   "D3": 15,
+   "havuz": 3314920
+  }
+ },
+ "kitaplik_D1": 3,
+ "kitaplik_D2": 7,
+ "kitaplik_n": 16,
+ "d2_kosul": 3,
+ "d2_olcu": [
+  "GOVDE_ORAN",
+  "F5",
+  "BOY_GRAFIK_ORAN"
+ ],
+ "d3_olcu": [
+  "GOVDE_ORAN",
+  "F5",
+  "F3",
+  "DARALMA",
+  "BOY_GRAFIK_ORAN",
+  "ZIRVE_DUSUS",
+  "F2",
+  "RS_UZAK",
+  "OYN_SIRA",
+  "ATRP20",
+  "UST_ALT_PAY",
+  "MIKRO"
+ ],
+ "ek_kural_sha": "9b6a27ca5ba228f8783b512bcc489fee6cee01a1ab10bafe8be83f825480eab3",
+ "sayim_kurali": "işaretlerden sonra ana model sayar: kol başına ✓ payı ve ✓ + K payı; RASTGELE kolun ✓ payı taban; 'KOD GÖZÜ TUTUYOR' <=> bir dedektörün ✓ payı >= 0,70 VE RASTGELE ✓ payından en az 40 puan yüksek; KİTAPLIK sayfalarında ✓ sayısı (4'te kaç); sayılar küçük: 'ilk tur'",
+ "hata": [
+  "gt_onay / seri: sayfa satırı yalnız (pazar, hisse) ile aranıyordu; kitaplık kolunda aynı hissenin iki bölgesi (TEHOL) seçilince ikinci bölge birincinin kesim tarihiyle çizilmek istendi ve 'geçersiz bölge' ile durdu. Düzeltme: satırlar sayfa sırasıyla eşlenir, tarih kapısı korunur (ana model; onay seti üretilmeden).",
+  "gt_sayfa: çok derin düşüşlü pencerede (önceki tepe son kapanışın 16-80 katı) MUM_IZI_HAKEM yüzde adımı listesi (en çok %500) yetmedi, 'uygun adım yok' ile durdu. Düzeltme: yalnız bu sayfa çiziminde büyük adımlar eklendi (MUM_IZI_HAKEM değişmedi).",
+  "Süreç: iki alt ajan yarıda durduruldu (sistem 'kullanıcı durdurdu' dedi; Cemal bilerek durdurmadı); onay ve rapor adımları test edilmemiş kodla kaldı; ana model iki hatayı düzeltip adımları kendisi koştu (çalışma düzeninden sapma).",
+  "GT_RAPOR ilk üretiminde HATA / SAPMA / YENİDEN ÜRETİM boş çıktı (ek dosya yazılmamıştı); bu dosyayla dolduruldu."
+ ],
+ "sapma": [
+  "İş tanımındaki imza kuralı hiç ölçü seçmedi (imza = yok). D2 ve D3 ana modelin EK KURALI ile kuruldu (GT_DEDEKTOR.md 1a; ADIM A tablosu görüldükten sonra, onay setinden ve Cemal'in işaretlerinden önce; commit a17b6a7).",
+  "Kod, ölçü hesabı ve tablolar alt ajanların; dedektör, onay ve rapor komutlarını ana model koştu ve iki küçük kod düzeltmesi yaptı (alt ajanlar iki kez durduruldu).",
+  "Ana modelin göz denetimi (18 sayfa): sayfa düzeni doğru (sonrası, ad, tarih yok). D1 ve D2'nin en üst sıralarında aşırı çöküş sonrası düzleşmiş hisseler var (önceki tepe son kapanışın 16-80 katı; 5 sayfa); set kural gereği DEĞİŞTİRİLMEDİ, Cemal'in işareti sonucu belirler."
+ ],
+ "yeniden": [
+  "Ana model, pencere_BIST.pkl + kitaplik_olcu.json'dan bağımsız kısa kodla beş hücreyi yeniden üretti (evren: 2016-22, s >= 30, kilitli <= 0,20, puan sonlu; sıra = (küçük + 0,5 eşit) / n): TEHOL-4 F5 %98,8 (tablo %99); TEHOL-4 GOVDE_ORAN %1,4 (%1); KRVGD F5 %68,0 (%68); HDFGS BOY_GRAFIK_ORAN %34,6 (%35); MANAS ONCEKI_DUSUS %11,0 (%11). Tuttu.",
+  "D2 kesimleri tablo satırlarından elle: GOVDE_ORAN yönlü sıraların alttan 3.'sü 0,52 (rapor 0,520); F5 alttan 4.'sü 0,58 (rapor 0,581). Tuttu.",
+  "Onay sayfalarının 26'sında (kitaplık dışı) bölge barları: H = L bar %0, hacimsiz bar %0 (kilitli bar yok)."
+ ]
+}

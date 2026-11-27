@@ -1038,7 +1038,9 @@ GT_KONTROL: Dict[str, Tuple[str, str]] = {
 def gt_sayfa(fig, d: pd.DataFrame, s: int, t: int, sayfa: int) -> Dict[str, Any]:
     """Geçmişli onay sayfası: üst uzak (önceki <= 120 bar + bölge), alt yakın (önceki 10 bar + bölge), üç kutu. Yalnız d[:t + 1] (assert); sonrası yok."""
     from matplotlib.patches import Rectangle
-    G = HK.HK_ESIK_OLCEK; P = GT_ESIK["sayfa"]; s = int(s); t = int(t)
+    G = dict(HK.HK_ESIK_OLCEK); P = GT_ESIK["sayfa"]; s = int(s); t = int(t)
+    # Çok derin düşüşlü pencerede (önceki fiyat son kapanışın onlarca katı) HK adım listesi (en çok %500) 8 çizgiyi aşar: yalnız bu sayfa için büyük adımlar eklenir.
+    G["adim"] = list(G["adim"]) + [1000, 2000, 2500, 5000, 10000, 20000, 50000, 100000]
     if not (0 <= s <= t < len(d)):
         raise GTHata(f"sayfa: geçersiz bölge (s={s}, t={t}, n={len(d)})")
     dg = d.iloc[:t + 1]
@@ -1195,6 +1197,9 @@ def gt_onay(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str,
     KT = json.load(open(_gt_ham("kitaplik_olcu.json", ham), encoding="utf-8")); kit = [r for r in KT if r["durum"] == "tamam"]
     sec, say = gt_onay_sec(A, kit)
     Vc: Dict[Any, Any] = {}
+    sira: Dict[Tuple[str, str], List[Dict[str, Any]]] = {}
+    for x in sorted(sec, key=lambda q: q["sayfa"]):
+        sira.setdefault((x["pazar"], x["sembol"]), []).append(x)
 
     def seri(p: str, sem: str, kaynak: str) -> pd.DataFrame:
         if (p, kaynak) not in Vc:
@@ -1202,7 +1207,11 @@ def gt_onay(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str,
             if kaynak == "acik":
                 gt_kesik_kapi(Vc[(p, kaynak)], f"onay {p}")
         d = Vc[(p, kaynak)][sem]
-        r = next(x for x in sec if x["pazar"] == p and x["sembol"] == sem)
+        # gt_pdf sayfaları sayfa sırasıyla ve her sayfa için bir kez çağırır: aynı hissenin iki bölgesi (kitaplıkta TEHOL) sırayla eşlenir;
+        # yanlış eşleşme aşağıdaki tarih kapısında durur.
+        r = sira[(p, sem)].pop(0)
+        if r["kaynak"] != kaynak:
+            raise GTHata(f"onay: sayfa kaynağı uyuşmuyor ({p} sayfa {r['sayfa']})")
         if kaynak == "tam":
             d = d[d.index <= pd.Timestamp(next(k["bit"] for k in kit if k["no"] == r["kitaplik_no"]))]
         if str(d.index[r["t"]].date()) != r["son"] or str(d.index[r["s"]].date()) != r["bas"]:
