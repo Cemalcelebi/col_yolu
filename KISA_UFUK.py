@@ -946,6 +946,7 @@ def _ku_eski(J: Dict[str, Any]) -> None:
             elif k["kume"] == "K4":
                 v = M4.get(f"gunluk|{k['kol']}|{h}", {}).get("fark"); e["olcu"] = "EŞLİ FARK (kaynak; TOPLAM FARK değil)"
                 e.setdefault("hukum_hucre", {})[h] = M4.get(f"gunluk|{k['kol']}|{h}", {}).get("hukum")
+                e["hukum"] = "hücre: " + " / ".join(str(e["hukum_hucre"].get(x)) for x in KU_ABD if x in e["hukum_hucre"])
             else:
                 _, kol, uc, Lp = [x for x in KU_K5_KOL if x[0] == k["kol"]][0]
                 v = C["satir"][f"{kol}|{uc}|{Lp}"][h].get("TOPLAM_FARK"); e["hukum"] = C.get("hukum", {}).get(f"{kol}|{uc}|{Lp}")
