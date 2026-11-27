@@ -1,0 +1,370 @@
+{
+ "imza": [],
+ "d2_olcu": [
+  "GOVDE_ORAN",
+  "F5",
+  "BOY_GRAFIK_ORAN"
+ ],
+ "d2_kaynak": "EK KURAL yakın imza",
+ "d2_aday": [
+  "GOVDE_ORAN",
+  "BOY_YUZDE_ORAN",
+  "F5",
+  "ONCEKI_DUSUS",
+  "BOY_GRAFIK_ORAN"
+ ],
+ "d2_atilan_rho": [
+  {
+   "olcu": "BOY_YUZDE_ORAN",
+   "nedeni": "GOVDE_ORAN",
+   "rho": 0.8080089328017308
+  },
+  {
+   "olcu": "ONCEKI_DUSUS",
+   "nedeni": "F5",
+   "rho": -0.9223461783231313
+  }
+ ],
+ "d3_olcu": [
+  "GOVDE_ORAN",
+  "F5",
+  "F3",
+  "DARALMA",
+  "BOY_GRAFIK_ORAN",
+  "ZIRVE_DUSUS",
+  "F2",
+  "RS_UZAK",
+  "OYN_SIRA",
+  "ATRP20",
+  "UST_ALT_PAY",
+  "MIKRO"
+ ],
+ "d3_aday": [
+  "GOVDE_ORAN",
+  "BOY_YUZDE_ORAN",
+  "F5",
+  "F3",
+  "ONCEKI_DUSUS",
+  "DARALMA",
+  "BOY_GRAFIK_ORAN",
+  "ZIRVE_DUSUS",
+  "F2",
+  "RS_UZAK",
+  "OYN_SIRA",
+  "ATRP20",
+  "UST_ALT_PAY",
+  "MIKRO"
+ ],
+ "d3_atilan_rho": [
+  {
+   "olcu": "BOY_YUZDE_ORAN",
+   "nedeni": "GOVDE_ORAN",
+   "rho": 0.8080089328017308
+  },
+  {
+   "olcu": "ONCEKI_DUSUS",
+   "nedeni": "F5",
+   "rho": -0.9223461783231313
+  }
+ ],
+ "imza_yon": {
+  "F2": "YÜKSEK",
+  "RS_UZAK": "DÜŞÜK",
+  "ZIRVE_DUSUS": "DÜŞÜK",
+  "F3": "YÜKSEK",
+  "OYN_SIRA": "YÜKSEK",
+  "UST_ALT_PAY": "YÜKSEK",
+  "BOY_GRAFIK_ORAN": "DÜŞÜK",
+  "F5": "YÜKSEK",
+  "ATRP20": "YÜKSEK",
+  "MIKRO": "DÜŞÜK",
+  "DARALMA": "DÜŞÜK",
+  "GOVDE_ORAN": "DÜŞÜK"
+ },
+ "d2_sinir": {
+  "GOVDE_ORAN": {
+   "n": 14,
+   "k": 12,
+   "sinir_kitaplik": 0.5203518000986356,
+   "sinir": 0.5203518000986356
+  },
+  "F5": {
+   "n": 16,
+   "k": 13,
+   "sinir_kitaplik": 0.5807743339980773,
+   "sinir": 0.5807743339980773
+  },
+  "BOY_GRAFIK_ORAN": {
+   "n": 14,
+   "k": 12,
+   "sinir_kitaplik": 0.5106461209345856,
+   "sinir": 0.5106461209345856
+  }
+ },
+ "kitaplik": [
+  {
+   "no": 1,
+   "sembol": "BINBN",
+   "L": 20,
+   "D1": true,
+   "D2": false,
+   "D2_sagladigi": 1
+  },
+  {
+   "no": 2,
+   "sembol": "NUGYO",
+   "L": 20,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 3,
+   "sembol": "ENSRI",
+   "L": 40,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 4,
+   "sembol": "TEHOL",
+   "L": 20,
+   "D1": false,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 5,
+   "sembol": "PAPIL",
+   "L": 80,
+   "D1": true,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 6,
+   "sembol": "ESCAR",
+   "L": 80,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 7,
+   "sembol": "KTLEV",
+   "L": 80,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 1
+  },
+  {
+   "no": 8,
+   "sembol": "TEHOL",
+   "L": 20,
+   "D1": true,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 9,
+   "sembol": "HDFGS",
+   "L": 40,
+   "D1": false,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 10,
+   "sembol": "ASELS",
+   "L": 20,
+   "D1": false,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 13,
+   "sembol": "EUREN",
+   "L": 20,
+   "D1": false,
+   "D2": true,
+   "D2_sagladigi": 3
+  },
+  {
+   "no": 16,
+   "sembol": "SMRVA",
+   "L": 20,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 17,
+   "sembol": "DOGUB",
+   "L": 20,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 18,
+   "sembol": "MANAS",
+   "L": 40,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 19,
+   "sembol": "KAPLM",
+   "L": 20,
+   "D1": false,
+   "D2": false,
+   "D2_sagladigi": 2
+  },
+  {
+   "no": 20,
+   "sembol": "KRVGD",
+   "L": 80,
+   "D1": false,
+   "D2": true,
+   "D2_sagladigi": 3
+  }
+ ],
+ "ek_kural_sha": "9b6a27ca5ba228f8783b512bcc489fee6cee01a1ab10bafe8be83f825480eab3",
+ "pazar": {
+  "BIST": {
+   "say": {
+    "pencere": 392035,
+    "evren": 375237,
+    "on_bar_120": 365580,
+    "govdesiz_ok": 347147,
+    "imza_sonlu": 344630,
+    "kitaplik_ortusen": 0,
+    "mumizi_ortusen": 1598,
+    "havuz": 343032,
+    "havuz_hisse": 457
+   },
+   "D1_ham": 33845,
+   "D1": 5907,
+   "D2_ham": 56276,
+   "D2": 5709,
+   "D3": 15,
+   "D3_en_yakin": {
+    "1": null,
+    "2": 0.06755815593931228,
+    "3": 0.0730838894798998,
+    "4": 0.05022801303901522,
+    "5": 0.047600123145404245,
+    "6": 0.07906906708671592,
+    "7": 0.05050478459775562,
+    "8": 0.0354367313524179,
+    "9": 0.06194676545926561,
+    "10": 0.0694540399610936,
+    "13": 0.04292404300139948,
+    "16": 0.04888075937646047,
+    "17": 0.03794195942469334,
+    "18": 0.09578595524887512,
+    "19": 0.0741351615753467,
+    "20": 0.06751521467541403
+   },
+   "D1_pay": 0.09866426455840854,
+   "D2_pay": 0.1640546654539518,
+   "D2_kosul_pay": {
+    "GOVDE_ORAN": 0.4713991697567574,
+    "F5": 0.4244210452669139,
+    "BOY_GRAFIK_ORAN": 0.47184519228526783
+   },
+   "D2_kac_kosul": {
+    "0": 87788,
+    "1": 97611,
+    "2": 101357,
+    "3": 56276
+   },
+   "havuz_L": {
+    "20": 114127,
+    "40": 115775,
+    "80": 113130
+   },
+   "D2_L": {
+    "20": 2580,
+    "40": 1115,
+    "80": 2014
+   },
+   "D1_L": {
+    "20": 2164,
+    "40": 1554,
+    "80": 2189
+   }
+  },
+  "ABD": {
+   "say": {
+    "pencere": 3534499,
+    "evren": 3412825,
+    "on_bar_120": 3340282,
+    "govdesiz_ok": 3320939,
+    "imza_sonlu": 3320898,
+    "kitaplik_ortusen": 0,
+    "mumizi_ortusen": 5978,
+    "havuz": 3314920,
+    "havuz_hisse": 4246
+   },
+   "D1_ham": 315142,
+   "D1": 49717,
+   "D2_ham": 418699,
+   "D2": 42427,
+   "D3": 15,
+   "D3_en_yakin": {
+    "1": null,
+    "2": 0.03389481925732415,
+    "3": 0.06804381337486025,
+    "4": 0.07580198365206792,
+    "5": 0.046105574861886885,
+    "6": 0.042553754580066584,
+    "7": 0.03068842861731449,
+    "8": 0.023923419504446274,
+    "9": 0.04342532434614859,
+    "10": 0.05981173144362186,
+    "13": 0.07358738405253262,
+    "16": 0.04356453974743785,
+    "17": 0.04569979664403742,
+    "18": 0.03800258832865014,
+    "19": 0.0866510051670224,
+    "20": 0.07309445602677644
+   },
+   "D1_pay": 0.09506775427461296,
+   "D2_pay": 0.12630742220023408,
+   "D2_kosul_pay": {
+    "GOVDE_ORAN": 0.4791747613818735,
+    "F5": 0.41179666477622384,
+    "BOY_GRAFIK_ORAN": 0.4884660866627249
+   },
+   "D2_kac_kosul": {
+    "0": 709784,
+    "1": 1056246,
+    "2": 1130191,
+    "3": 418699
+   },
+   "havuz_L": {
+    "20": 1111059,
+    "40": 1107720,
+    "80": 1096141
+   },
+   "D2_L": {
+    "20": 21544,
+    "40": 7433,
+    "80": 13450
+   },
+   "D1_L": {
+    "20": 17315,
+    "40": 12958,
+    "80": 19444
+   }
+  }
+ },
+ "surum": "GOZ_TESPIT v1.0 (2026-11-27): kitaplık parmak izi + üç dedektör + kör onay seti (yalnız tespit; getiri yok)",
+ "kod_sha": "09455d76a79dd704a8b3699505c12adfb90c4b7fa1c70423c7769b4ec6b4380b",
+ "esik_sha": "5d4c7975e408669866ba2ca6e8ce9367f8e0fc1089010656e12a0661cc2bcc92",
+ "parmak_commit": "d4f0f4be9336f0ebe97e2dab941b8af29c7f112b",
+ "aday_sha": "680a10eb44592cfb7c53cd4b82af8ffb5e1a07acc256a1e8133db74e3292f4d1"
+}
