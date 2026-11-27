@@ -1,0 +1,12 @@
+{
+ "bolum_pay": 3,
+ "bolum_en_az": 10,
+ "tepe_x": [
+  -1.0,
+  0.5
+ ],
+ "son_bar": 3,
+ "yuksek_dip": 0.05,
+ "r2": 0.6,
+ "yukselis": 0.25
+}

@@ -1,0 +1,46 @@
+{
+ "not": "Ana modelin kör göz yargısı (27 Kas 2026): K1 + DİP PARABOLÜ'nün havuzdan seçtiği 16 bölge + 4 rastgele, karışık; anahtar (dip_anahtar.json) bu dosya commit edildikten sonra açıldı. Ölçüt Cemal'in tanımı: düşüş sonrası altta ince şerit + mum dipleri yukarı açılan parabol, sonda daha derin dip yok; üst taraf oynayabilir.",
+ "etiket": {
+  "EVET": [
+   1,
+   3,
+   4,
+   7,
+   10,
+   13,
+   18,
+   19,
+   20
+  ],
+  "KISMEN": [
+   5,
+   8,
+   9,
+   15,
+   16
+  ],
+  "ERKEN": [
+   11,
+   12,
+   17
+  ],
+  "HAYIR": [
+   2,
+   6,
+   14
+  ]
+ },
+ "neden": {
+  "2": "tepede geri çekilme",
+  "6": "sıçrama ve sönme",
+  "14": "grafik ortasında tümsek",
+  "11": "düşüş sürüyor, kutu yüksek",
+  "12": "aşağı kayma, dönüş yok denecek kadar az",
+  "17": "dipler sona kadar alçalıyor",
+  "5": "dönüş çok taze",
+  "8": "iri fitilli mumlar",
+  "9": "gürültülü",
+  "15": "başta sert düşüş kutunun içinde",
+  "16": "mumlar iri, tek derin fitil"
+ }
+}
