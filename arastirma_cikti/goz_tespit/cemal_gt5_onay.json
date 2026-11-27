@@ -1,0 +1,27 @@
+{
+ "kaynak": "GT5_ONAY_cemal_isaretli.pdf (27 Kas 2026)",
+ "okuma": "ink /Rect'inden mekanik (21 sayfa) + ana modelin gözü (s. 2 ve 21: 'değil' + grafiğin sağ ucuna çizgi)",
+ "sinif4": {
+  "1": "HAYIR",
+  "2": "HAYIR",
+  "3": "ERKEN",
+  "4": "EVET",
+  "5": "EVET",
+  "6": "HAYIR",
+  "7": "EVET",
+  "8": "ERKEN",
+  "9": "EVET",
+  "10": "HAYIR",
+  "11": "HAYIR",
+  "12": "ERKEN",
+  "13": "EVET",
+  "14": "ERKEN",
+  "15": "KISMEN",
+  "16": "KISMEN",
+  "17": "EVET",
+  "18": "ERKEN",
+  "19": "EVET",
+  "20": "EVET",
+  "21": "HAYIR"
+ }
+}
