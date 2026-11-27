@@ -727,6 +727,201 @@ def test_k2k_esik_sabit():
     assert K["olay_sha"] == "e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55" and K["ana"] == "K2"
 
 
+# ---------------------------------------------------------------- ÇÖL-K2 x PİYASA REJİMİ (EK 7)
+def _g40_seri(bas="2015-01-05", son="2022-12-26", tohum=3):
+    pz = pd.date_range(bas, son, freq="W-MON"); r = np.random.default_rng(tohum)
+    return pd.DataFrame({"hno": YO.yo2_hno(pz), "n_kesit": 500, "G40": r.uniform(0.1, 0.8, len(pz)), "pazartesi": pz})
+
+
+@t
+def test_k2r_rejim_yalniz_onceki_hafta():
+    G = _g40_seri(); D = pd.DatetimeIndex(["2018-03-07", "2020-03-20", "2022-06-13"])     # çarşamba, cuma, pazartesi
+    r0 = GT.gt_k2r_rejim(D, G); h = YO.yo2_hno(D)
+    assert (r0["hno_kullanilan"] == h - 1).all() and r0["var"].all()
+    for i, x in enumerate(D):                                       # kullanılan değer = D'nin haftasından önceki haftanın G40'ı
+        assert r0["g40"][i] == float(G.G40[G.hno == h[i] - 1].iloc[0])
+    for i in range(len(D)):                                         # geri bozma: D'nin haftası ve sonrası bozulunca aynı
+        G2 = G.copy(); G2.loc[G2.hno >= h[i], "G40"] = 0.0 if r0["g40"][i] > GT.gt_k2r_kesim() else 0.99
+        r1 = GT.gt_k2r_rejim(D[i:i + 1], G2); assert r1["g40"][0] == r0["g40"][i] and r1["dip"][0] == r0["dip"][i]
+        G3 = G.copy(); G3.loc[G3.hno == h[i] - 1, "G40"] = 0.0 if r0["g40"][i] > GT.gt_k2r_kesim() else 0.99   # ileri: önceki hafta değişince değişir
+        r2 = GT.gt_k2r_rejim(D[i:i + 1], G3); assert r2["dip"][0] != r0["dip"][i]
+    Gs = G.copy(); Gs["hno"] = Gs.hno - 1                           # seriyi bir hafta ileri kaydır (değer bir hafta erken bilinsin) -> sonuç değişir
+    assert not np.array_equal(GT.gt_k2r_rejim(D, Gs)["g40"], r0["g40"])
+    Gb = G[G.hno != h[0] - 1]; rb = GT.gt_k2r_rejim(D[:1], Gb)       # önceki hafta yoksa daha eski son hafta (<= 3 hafta)
+    assert rb["hno_kullanilan"][0] == h[0] - 2
+    Gc = G[(G.hno < h[0] - 4) | (G.hno >= h[0])]; assert not GT.gt_k2r_rejim(D[:1], Gc)["var"][0]
+
+
+@t
+def test_k2r_g40_hesap_elle_ve_pazartesi():
+    ix = pd.date_range("2019-01-04", periods=45, freq="W-FRI")
+    C1 = np.r_[np.full(40, 10.0), np.full(5, 12.0)]; C2 = np.r_[np.full(40, 10.0), np.full(5, 8.0)]
+    W = {}
+    for s, C in (("A", C1), ("B", C2)):
+        W[s] = pd.DataFrame({"Open": C, "High": C * 1.01, "Low": C * 0.99, "Close": C, "bas": ix - pd.Timedelta(days=4), "bosluk": False}, index=ix)
+    ev = {"A": np.ones(45, bool), "B": np.ones(45, bool)}
+    eski = YO.YO_ESIK["piyasa"]["kume_en_az"]; YO.YO_ESIK["piyasa"]["kume_en_az"] = 2
+    try:
+        G = GT.gt_k2r_g40_hesap(W, ev)
+    finally:
+        YO.YO_ESIK["piyasa"]["kume_en_az"] = eski
+    assert len(G) == 6 and (G.n_kesit == 2).all()                 # SMA40 39. bardan itibaren tanımlı (6 hafta)
+    assert G.G40.iloc[0] == 0.0 and (G.G40.iloc[1:] == 0.5).all()   # 39. bar: ikisi de 10 = SMA (C > SMA değil); sonra A üstte, B altta
+    assert (YO.yo2_hno(G.pazartesi) == G.hno.to_numpy()).all() and (G.pazartesi.dt.dayofweek == 0).all()
+
+
+@t
+def test_k2r_kesim_sabit():
+    k0 = GT.gt_k2r_kesim(); G = _g40_seri(); D = pd.bdate_range("2016-01-04", "2022-12-01")
+    r0 = GT.gt_k2r_rejim(D, G)
+    G2 = G.copy(); G2.loc[G2.pazartesi >= pd.Timestamp("2016-01-01"), "G40"] *= 0.3      # 2016-22 verisi değişir
+    r1 = GT.gt_k2r_rejim(D, G2)
+    assert GT.gt_k2r_kesim() == k0 == 0.276760218650567 and GT.GT_K2R["kesim"] == k0
+    assert np.array_equal(r1["dip"], r1["g40"] <= k0) and r1["dip"].sum() > r0["dip"].sum()   # kesim aynı, yalnız DİP günleri değişir
+    yol = GT.GT_K2R["yo2_sayim"]
+    if os.path.exists(yol):
+        assert GT.gt_k2r_kesim_kaynak_denetim(yol)["kesim"] == k0
+    with tempfile.TemporaryDirectory() as td:
+        p = os.path.join(td, "s.json"); open(p, "w").write('{"kesim": {"ABD": {"G40": 0.3}}}')
+        try:
+            GT.gt_k2r_kesim_kaynak_denetim(p)
+        except GT.GTHata:
+            pass
+        else:
+            raise AssertionError("farklı kesim yakalanmalı")
+
+
+@t
+def test_k2r_obek_elle():
+    dip = np.zeros(120, bool); dip[[3, 4, 10]] = True; dip[[31, 32]] = True; dip[[52]] = True; dip[[100]] = True
+    # 10 -> 31: arada 20 gün (fark 21) -> yeni; 32 -> 52: arada 19 gün (fark 20) -> aynı öbek; 52 -> 100 yeni
+    oid, ob = GT.gt_k2r_obek(dip)
+    assert ob == [(3, 10), (31, 52), (100, 100)] and oid[3] == oid[10] == 0 and oid[31] == oid[52] == 1 and oid[100] == 2 and oid[5] == -1
+    o0, b0 = GT.gt_k2r_obek(np.zeros(5, bool)); assert b0 == [] and (o0 == -1).all()
+    takvim = pd.bdate_range("2018-01-01", periods=120); h0 = YO.yo2_hno(takvim[:1])[0]       # 24 tam hafta (pazartesi başlar)
+    G = pd.DataFrame({"hno": np.arange(h0 - 2, h0 + 24)}); G["G40"] = 0.9; G["n_kesit"] = 500
+    for w in (1, 2, 5, 12, 16, 23):                                 # bu haftaların günleri DİP (önceki haftanın G40'ı düşük)
+        G.loc[G.hno == h0 + w - 1, "G40"] = 0.1
+    r = GT.gt_k2r_rejim(takvim, G); assert np.array_equal(np.flatnonzero(r["dip"]), np.concatenate([np.arange(5 * w, 5 * w + 5) for w in (1, 2, 5, 12, 16, 23)]))
+    _, ob = GT.gt_k2r_obek(r["dip"]); assert ob == [(5, 29), (60, 84), (115, 119)]       # 29 -> 60 fark 31 yeni; 64 -> 80 fark 16 aynı; 84 -> 115 yeni
+    gun = [7, 20, 27, 62, 82, 117, 100]
+    E = GT.gt_k2r_olay_rejim(pd.DataFrame({"tarih": takvim[gun], "kol": "K2"}), G, takvim, ob)
+    assert list(E.rejim) == ["DİPTE", "DİP DIŞI", "DİPTE", "DİPTE", "DİPTE", "DİPTE", "DİP DIŞI"]
+    assert list(E.dip_donem) == [0, -1, 0, 1, 1, 2, -1]               # gün 20 öbek 0'ın tarih aralığında ama DİP değil -> -1
+
+
+def _k2r_U(rows):
+    return pd.DataFrame(rows, columns=["tarih", "besli", "R15", "s5"])
+
+
+@t
+def test_k2r_secim_elle():
+    d1, d2 = pd.Timestamp("2020-03-16"), pd.Timestamp("2020-03-17")
+    U = _k2r_U([(d1, 5, 0.10, 1), (d1, 5, -0.02, -1), (d1, 5, 0.04, 2), (d1, 4, 0.00, 0), (d1, 4, 0.06, 1), (d1, 3, -0.10, -1),
+                (d2, 5, 0.20, 1)])
+    G1, G2 = GT.gt_k2r_gun_ozet(U)
+    g = G1.set_index("tarih"); assert g.EV_N[d1] == 6 and abs(g.EV_ORT[d1] - 0.08 / 6) < 1e-15
+    b = G2.set_index(["tarih", "besli"]); assert b.B_N[(d1, 5)] == 3 and abs(b.B_ORT[(d1, 5)] - 0.04) < 1e-15 and b.B_P5[(d1, 5)] == 0.5
+    eski = dict(GT.GT_K2R["evren"]); GT.GT_K2R["evren"]["gun_en_az"] = 3; GT.GT_K2R["evren"]["besli_en_az"] = 2
+    try:
+        E = pd.DataFrame({"tarih": [d1, d1, d2], "besli": [5, 3, 5], "R15": [0.10, -0.10, 0.20], "durum": "TAMAM"})
+        X = GT.gt_k2r_olay_secim(E, G1, G2)
+    finally:
+        GT.GT_K2R["evren"].clear(); GT.GT_K2R["evren"].update(eski)
+    assert abs(X.SECIM[0] - (0.10 - 0.08 / 6)) < 1e-15 and abs(X.SECIM_O[0] - (0.10 - 0.04)) < 1e-15
+    assert abs(X.SECIM[1] - (-0.10 - 0.08 / 6)) < 1e-15 and np.isnan(X.SECIM_O[1]) and X.durum[1] == "ES_AZ"     # beşlik 3'te tek hisse (< 2)
+    assert np.isnan(X.SECIM[2]) and np.isnan(X.SECIM_O[2]) and X.durum[2] == "ES_AZ"                               # d2 evreni 1 hisse
+
+
+@t
+def test_k2r_boot_kume_az_olculemedi_ve_karar():
+    x = np.r_[np.full(40, 0.02), np.full(40, 0.01)]
+    b4 = GT.gt_k2r_boot(x, np.repeat(["a", "b", "c", "d"], 20)); assert b4["durum"] == "ÖLÇÜLEMEDİ" and b4["alt"] is None and b4["kume"] == 4
+    b5 = GT.gt_k2r_boot(x, np.repeat(["a", "b", "c", "d", "e"], 16)); assert b5["durum"] == "TAMAM" and b5["alt"] is not None and b5["alt"] > 0
+    b5b = GT.gt_k2r_boot(x, np.repeat(["a", "b", "c", "d", "e"], 16)); assert b5b["alt"] == b5["alt"]                 # tohum 7: tekrarlanabilir
+    o = {"rejim": "DİPTE", "n": 80, "dip_donem": 4, "SECIM_O": b4, "SECIM_O_medyan": 0.015, "s5_fark": 0.1}
+    assert GT.gt_k2r_karar(o) == "ÖLÇÜLEMEDİ"
+    o.update(dip_donem=5, SECIM_O=b5); assert GT.gt_k2r_karar(o) == "TUTAR"
+    o.update(s5_fark=-0.01); assert GT.gt_k2r_karar(o) == "TUTMAZ"
+    o.update(s5_fark=0.1, n=29); assert GT.gt_k2r_karar(o) == "ÖLÇÜLEMEDİ"
+    o.update(n=80, SECIM_O_medyan=-0.001); assert GT.gt_k2r_karar(o) == "TUTMAZ"
+    assert GT.gt_k2r_karar({**o, "rejim": "DİP DIŞI"}) == "BİLGİ"
+
+
+@t
+def test_k2r_kapi_ve_evren_hisse():
+    d = _seri(700, tohum=41); sin = {"d1619": [0.01, 0.015, 0.02, 0.03], "d2022": [0.01, 0.015, 0.02, 0.03]}
+    try:
+        GT.gt_k2r_evren_hisse(d, [], sin)
+    except GT.GTHata:
+        pass
+    else:
+        raise AssertionError("kapı kapalıyken getiri hesaplanmamalı")
+    d2 = d.copy(); d2.iloc[540:560, d2.columns.get_loc("Open")] = d2.Close.iloc[540:560].to_numpy()   # 540..559 gövdesiz -> 559 gününün 20 barı %100 gövdesiz
+    GT._GT_K2R_DURUM["kapi"] = True
+    try:
+        u = GT.gt_k2r_evren_hisse(d2, [], sin); uz = GT.gt_k2r_evren_hisse(d2, [], sin, zorla=(559,))
+    finally:
+        GT._GT_K2R_DURUM["kapi"] = False
+    k = u["k"]; assert len(k) > 100 and k.min() >= 139 and 559 not in set(k.tolist()) and 559 in set(uz["k"].tolist())
+    assert uz["zorla"][uz["k"] == 559].all() and not uz["zorla"][uz["k"] != 559].any()
+    i = int(np.flatnonzero(uz["k"] == 559)[0]); O, C = d2.Open.to_numpy(), d2.Close.to_numpy()
+    assert abs(uz["R15"][i] - (C[559 + 15] / O[560] - 1)) < 1e-12
+    D = pd.DatetimeIndex(u["tarih"]); assert (D >= pd.Timestamp("2016-01-01")).all() and (pd.DatetimeIndex(d2.index[k + 15]) <= GT.GT_KESIK).all()
+    a = GT.gt_k2r_atrp20(d2.High.to_numpy(), d2.Low.to_numpy(), C)
+    assert np.allclose(a, YO.yo_hisse_ozellik(O, d2.High.to_numpy(), d2.Low.to_numpy(), C, np.ones(len(C)))["ATRP20"], equal_nan=True)
+    j = 300; s5 = GT.gt_k2k_simetrik(d2.High.to_numpy(), d2.Low.to_numpy(), np.array([j + 1]), np.array([j + 15]), np.array([O[j + 1]]), 0.05)[0]
+    if j in set(k.tolist()):
+        assert u["s5"][int(np.flatnonzero(k == j)[0])] == s5
+
+
+@t
+def test_k2r_uctan_uca_olay_hissesi_evrende():
+    import MUM_IZI_HAVUZ as HV
+    V = {f"S{i}": _seri(1300, tohum=500 + i, son="2022-12-30") for i in range(10)}
+    d0 = V["S0"].copy(); tt0 = 900; d0.iloc[tt0 - 19:tt0 + 1, d0.columns.get_loc("Open")] = d0.Close.iloc[tt0 - 19:tt0 + 1].to_numpy()  # S0 t0: 20 bar gövdesiz
+    lo = d0.Low.iloc[tt0 - 39:tt0 + 1].min(); d0.iloc[tt0 + 1, d0.columns.get_loc("Open")] = max(d0.Open.iloc[tt0 + 1], lo * 1.2)
+    d0.iloc[tt0 + 1, d0.columns.get_loc("High")] = max(d0.High.iloc[tt0 + 1], d0.Open.iloc[tt0 + 1]); V["S0"] = d0
+    rows = []
+    for sem, d in V.items():
+        for tt in ([tt0] if sem == "S0" else []) + list(range(400, 1250, 70)):
+            g = d.index[tt + 1]; h = HV.hv_hucre_ad(g, "ABD")
+            if h in ("ABD|d1619", "ABD|d2022"):
+                at = float(GT.gt_k2r_atrp20(d.High.to_numpy(), d.Low.to_numpy(), d.Close.to_numpy())[tt])
+                for kol in ("K2", "Y"):
+                    rows.append({"pazar": "ABD", "sembol": sem, "L": 40, "s": tt - 39, "t": tt, "tarih": d.index[tt], "ATRP20": at, "kol": kol, "hucre": h,
+                                 "giris_tarih": g, "son15_tarih": d.index[tt + 15]})
+    OL = pd.DataFrame(rows)
+    takvim = pd.bdate_range("2016-01-01", "2022-12-30"); takvim = takvim[takvim.isin(V["S0"].index)]
+    G = _g40_seri(tohum=9); r = GT.gt_k2r_rejim(takvim, G); _, ob = GT.gt_k2r_obek(r["dip"])
+    sin = {"d1619": [0.012, 0.016, 0.02, 0.026], "d2022": [0.012, 0.016, 0.02, 0.026]}
+    eski = dict(GT.GT_K2R["evren"]); GT.GT_K2R["evren"]["gun_en_az"] = 3; GT.GT_K2R["evren"]["besli_en_az"] = 1
+    GT._GT_K2R_DURUM["kapi"] = True; GT._GT_K2_DURUM["kapi"] = True
+    try:
+        X, U, G1, G2 = GT.gt_k2r_olc_hesap(OL, G, takvim, ob, sin, V, {})
+        TB = GT.gt_k2r_tablo(X)
+    finally:
+        GT._GT_K2R_DURUM["kapi"] = False; GT._GT_K2_DURUM["kapi"] = False; GT.GT_K2R["evren"].clear(); GT.GT_K2R["evren"].update(eski)
+    assert len(X) == len(OL) and set(X.rejim) <= {"DİPTE", "DİP DIŞI"} and (X.durum == "TAMAM").sum() > 50
+    x0 = X[(X.sembol == "S0") & (X.t == tt0) & (X.kol == "K2")].iloc[0]; assert x0.durum == "TAMAM"
+    j0 = U.attrs["sembol"].index("S0"); z = U[(U.j == j0) & (U.k == tt0)]; assert len(z) == 1 and bool(z.zorla.iloc[0])   # olay hissesi zorla evrende
+    gun = U[U.tarih == x0.tarih]; assert x0.EV_N == len(gun) and abs(x0.SECIM - (x0.R15 - gun.R15.mean())) < 1e-12
+    gb = gun[gun.besli == x0.besli]; assert abs(x0.SECIM_O - (x0.R15 - gb.R15.mean())) < 1e-12 and x0.B_N == len(gb)
+    assert abs(x0.R15 - z.R15.iloc[0]) < 1e-12
+    T = X[(X.durum == "TAMAM") & (X.kol == "K2") & (X.hucre == "ABD|d2022") & (X.rejim == "DİP DIŞI")]
+    o = TB["K2"]["ABD|d2022"]["DİP DIŞI"]; assert o["n"] == len(T) and abs(o["SECIM_O"]["ort"] - T.SECIM_O.mean()) < 1e-12 and o["karar"] == "BİLGİ"
+    assert TB["K2"]["ABD|d1619"]["DİPTE"]["karar"] in ("ÖLÇÜLEMEDİ", "TUTAR", "TUTMAZ") and "_karar" in TB
+    md = GT.gt_k2r_tablo_md(TB); assert GT.GT_K2_BASLIK in md and "K7 UYARISI" in md and "SEÇİM_O" in md
+
+
+@t
+def test_k2r_esik_sabit():
+    K = GT.GT_K2R
+    assert K["kesim"] == 0.276760218650567 and K["obek_ara"] == 20 and K["gecikme_en_cok"] == 3 and K["boot"] == {"B": 2000, "tohum": 7, "kume_en_az": 5}
+    assert K["karar"] == {"n": 30, "donem": 5} and K["simetrik"] == 0.05 and K["ana"] == "K2" and K["kollar"] == ["K2", "YMSB", "Y"]
+    assert K["olay_sha"] == GT.GT_K2K["olay_sha"] and K["evren"]["k_min"] == 139 and K["evren"]["m"] == 20 and K["hucre"] == ["ABD|d1619", "ABD|d2022"]
+
+
 if __name__ == "__main__":
     hata = 0
     for f in ISIM:
