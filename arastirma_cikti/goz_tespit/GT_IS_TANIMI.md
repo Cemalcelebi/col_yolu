@@ -1,0 +1,33 @@
+# GOZ_TESPIT İŞ TANIMI — düğüm: kodun 'aynı' dediği bölge Cemal'in gözünün gördüğü bölgeyle birebir aynı mı; kitaplıktan veriyle parmak izi + kör onay seti (27 Kasım 2026)
+
+Yazan: ana model. Cemal (27 Kas; yazdığı gibi): "Eski kodun '%100 doğru' çıkması, ağırlıkları aynı 20 örnekten öğrenip aynı 20 örnekte sınamasındandı. Bunu gözümün gördüğü bölgeyi vtespit için kullandık tabikide bakalım senin aynı bölge dediğin gerçekten benim gözümün gördüğü bölgeler ile bire bir aynı mi? Bütün sorun burada kilitleniyor ama sen üstüne toprak atıyorsun. ... sen çok veriyi aynı anda işliyorsun bunu kullanalım sen toprak örtüyorsun".
+Ana modelin hatası (hata defterinde): eski kodu sonrası tahmini sanıp 'bir şey göstermiyor' dedi; kod TESPİT içindi. Bu iş yalnız TESPİT içindir: getiri / sonrası hesaplanmaz, çizilmez.
+
+Elde olan (Ç262): Cemal'in 20 çölünden verisi olan 16'sında altı ölçülü puan 3'ünü üst %10'a, 11'ini üst %30'a koyuyor; kitaplığı en çok ayıran ölçü sol bacak düşüşü (%87), sonra önceki oynaklık (%79) ve bant daralması (%70); doji oranı, sıkışma, hacim azalması ayırmıyor. Ama TERS YÖN hiç ölçülmedi: kodun yüksek puan verdiği bölgelerin kaçına Cemal 'çöl' der; rastgele bölgelerin kaçına der (taban oran). Düğüm bu.
+
+## 0. Kesin kurallar
+- YASAK DOSYALAR: IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md, arastirma_cikti/kural_defteri/, mevcut modüller ve testleri (yalnız import / okuma). `git add -A` / `commit -a` yasak. Commit mesajına / rapora kol-sayfa ya da hisse-sayfa eşlemesi yazılmaz.
+- GETİRİ YOK: hiçbir bölgenin sonrası hesaplanmaz; sayfalarda bölge bitişinden sonraki bar çizilmez (assert + test). Kitaplık bölgeleri (2024-26) yalnız ölçü çıkarmak için okunur, bölge bitişinde kesilir (COL_SKOR6 kuralı).
+- Onay setinin aday havuzu: BIST (kitaplık BIST'ten) ve ABD, 2016-01-01..2022-12-31, günlük; kilitli / fiyat adımına yapışmış pencereler atılır (BIST'te sık); kitaplıktaki 16 bölgenin kendisi ve aynı hissede onlarla örtüşen pencereler havuzdan çıkarılır.
+- Yeni tek dosya GOZ_TESPIT.py (KURAL_MOTORU düzeni, hata yakalama, loglama, çakışma kapısı) + test_goz_tespit.py; çıktılar arastirma_cikti/goz_tespit/.
+- Rapor başlıkları: KONTROL LİSTESİ (ölçüm yok: uygulanmayanlar gerekçeli), HATA, SAPMA, SONUÇ, ÖNERİLEN DEFTER SATIRLARI.
+
+## 1. ADIM A — PARMAK İZİ: kitaplık bölgelerinde hangi ölçüler hep aynı uçta (çok ölçü, aynı anda)
+- Bölgeler: kitaplıktaki 16 çöl (kendi başlangıç - bitişleriyle; 16-190 bar). Karşılaştırma evreni: BIST 2016-22'de aynı uzunluk sınıfındaki (L = 20 / 40 / 80; en yakını) bütün pencereler.
+- Ölçü kümesi (en çok 40; hepsi bölge barlarından ve öncesinden; tanımları mevcut modüllerden AYNEN): COL_SKOR6'nın altı ölçüsü; MUM_IZI_UC'nin 12 ölçüsü (mum boyu yüzde / grafik / mutlak oranı, gövde oranı, gövde / boy, üst fitil, alt fitil, üst > alt payı, son üçte bir üst fitil, daralma, banda yakınlık, önceki düşüş); YUKSELIS_ONCESI'nin fiyat ölçüleri (MIKRO, RS, OYN_SIRA, MA dizilimi ve eğim, zirveden / dipten bu yana bar, zirveden düşüş, dipten toparlanma hızı, CLV, yükselen dip, MOM_12_1, F15, KONUM120, ATRP20); ek olarak bölge içi: dibin bölgedeki yeri (dip bölgenin ilk üçte birinde mi), dibe dokunma sayısı (dipten en çok 0,5 ATR yukarıda kapanan bar payı: 'dip savunması'), bölge sonu kapanışının bölge aralığındaki yeri, bölge uzunluğu, bölge içi yükselen kapanış payı, hacim ölçüleri (bölge / önceki 200 bar; bölge sonundaki 5 barın hacmi / bölge ortalaması).
+- Her ölçü için: kitaplık bölgelerinin evrendeki yüzdelik sıraları; MEDYAN SIRA; TUTARLILIK = aynı tarafta (>= %70 ya da <= %30) kalan bölge payı; bölge bölge tablo. 'İMZA ÖLÇÜSÜ' <=> tutarlılık >= %75 (16'da 12) ve medyan sıra >= %75 ya da <= %25. İmza ölçüleri arasında sıra ilişkisi 0,8'in üstünde olan çiftlerden tutarlılığı düşük olan atılır.
+- Aynı tablo ikinci bir etiket kaynağı için BİLGİ olarak: mum izi setlerinde Cemal'in BENZİYOR dediği günlük bölgeler (mum_izi23_olay.csv; sinif EVET) ile BENZEMİYOR dedikleri arasında her ölçünün AUC'si (iki kalıp aynı şey mi: çöl kitaplığının imza ölçüleri mum izi ✓'lerinde de aynı uçta mı).
+
+## 2. ADIM B — DEDEKTÖRLER (sabit; ADIM A'dan sonra, Cemal'in işaretlerinden önce yazılır)
+- D1 ESKİ PUAN: COL_SKOR6 PUAN_ESIT (altı ölçü, eşit ağırlık), en yüksek puanlılar.
+- D2 İMZA: ADIM A'nın imza ölçülerinin her biri kitaplığın tarafında ve kitaplığın en gevşek %20'lik sınırının içinde (her imza ölçüsünde kitaplık değerlerinin %20 - %100 aralığı; yani 16 çölün en az 13'ünün sağladığı sınır) olan pencereler; sıralama = imza ölçülerinin evren yüzdelik sıralarının ortalaması.
+- D3 EN YAKIN KOMŞU: standartlaştırılmış imza ölçüleri uzayında kitaplıktaki herhangi bir çöle en yakın pencereler (her çölün en yakın 1'er komşusu, farklı hisseden).
+- Her dedektörde aynı hissede 40 bar içinde tek pencere; L = 20 / 40 / 80 arasında en yüksek sıralı olan.
+
+## 3. ADIM C — KÖR ONAY SETİ (Cemal işaretler; ana model gönderir)
+- 30 sayfa, karışık sırada (tohum 2715), kol sayfada YAZMAZ: D1'den 6, D2'den 8, D3'ten 6, RASTGELE 6 (aynı havuzdan, aynı uzunluk dağılımıyla; TABAN ORAN için), ve KİTAPLIKTAN 4 çöl (Cemal'in kendi çölleri; bitişinde kesilmiş; TEKRAR TUTARLILIĞI için: kendi çölünü tanıyor mu). BIST ve ABD yarı yarıya (kitaplık sayfaları BIST).
+- Sayfa: MUM_IZI_HAKEM'in geçmişli + yüzde eksenli çizimi: üstte uzak görünüm (bölgeden önceki 120 bar + bölge; bölge turuncu kutu), altta yakından bölge (bölge uzunsa bölgenin tamamı + önceki 10 bar); hisse adı / tarih / fiyat / SONRASI yok; altta üç kutu: '✓ çöl', 'K kısmen', '× değil'. Kapakta düz dille: 'Bu sette 30 bölge var. Bir kısmını kod senin çöllerine benzetip seçti, bir kısmı rastgele, bir kısmı başka yolla. Hangisi olduğu yazmıyor. Soru tek: bu bölge senin çöl dediğin şey mi? Sonrası yok.'
+- ÖN KAYITLI SAYIM (işaretlerden sonra; ana model sayar): her kolun ✓ payı ve ✓ + K payı; RASTGELE kolun payı (taban); 'KOD GÖZÜ TUTUYOR' <=> bir dedektörün ✓ payı >= %70 (Cemal'in 27 Kas ölçütü: %70-90) VE rastgele kolun ✓ payından en az 40 puan yüksek; kitaplık sayfalarında ✓ sayısı (4'te kaç: Cemal'in kendi tekrar tutarlılığı). Sayılar küçük (kol başına 6-8): sonuç 'ilk tur' diye okunur; en iyi kol sonraki turda 24 sayfayla yinelenir.
+
+## 4. Çıktılar
+GOZ_TESPIT.py, test_goz_tespit.py; arastirma_cikti/goz_tespit/: GT_PARMAK_IZI.md (ADIM A tabloları; düz dille 'çöllerinin ortak yanı şunlar' özeti), GT_DEDEKTOR.md (ADIM B tanımları, kesim sayıları, her dedektörün havuzda kaç pencere seçtiği), GT_ONAY.pdf, mühürlü GT_onay_anahtar.json (sayfa -> kol, pazar, sembol, bölge tarihleri, puanlar), GT_RAPOR.md, gt_sonuc.json. Büyük dosyalar repoya girmez (/root/.kasa/ham/goz_tespit).
