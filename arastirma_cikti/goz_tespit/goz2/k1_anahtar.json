@@ -1,0 +1,290 @@
+[
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "SAHOL",
+  "s": 141,
+  "t": 220,
+  "L": 80,
+  "no": 1
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "BNKK",
+  "s": 291,
+  "t": 310,
+  "L": 20,
+  "no": 2
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "DCBO",
+  "s": 386,
+  "t": 405,
+  "L": 20,
+  "no": 3
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "SIEB",
+  "s": 1431,
+  "t": 1510,
+  "L": 80,
+  "no": 4
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "AKSUE",
+  "s": 816,
+  "t": 855,
+  "L": 40,
+  "no": 5
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "BEYAZ",
+  "s": 796,
+  "t": 835,
+  "L": 40,
+  "no": 6
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "SNDL",
+  "s": 486,
+  "t": 525,
+  "L": 40,
+  "no": 7
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "DUNYH",
+  "s": 1151,
+  "t": 1230,
+  "L": 80,
+  "no": 8
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "PARSN",
+  "s": 951,
+  "t": 990,
+  "L": 40,
+  "no": 9
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "ANGH",
+  "s": 391,
+  "t": 410,
+  "L": 20,
+  "no": 10
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "BNTAS",
+  "s": 761,
+  "t": 840,
+  "L": 80,
+  "no": 11
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "FORMT",
+  "s": 701,
+  "t": 740,
+  "L": 40,
+  "no": 12
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "ROOT",
+  "s": 471,
+  "t": 490,
+  "L": 20,
+  "no": 13
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "CD",
+  "s": 1741,
+  "t": 1760,
+  "L": 20,
+  "no": 14
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "VERU",
+  "s": 1581,
+  "t": 1660,
+  "L": 80,
+  "no": 15
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "TGSAS",
+  "s": 1486,
+  "t": 1565,
+  "L": 80,
+  "no": 16
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "TMPOL",
+  "s": 421,
+  "t": 440,
+  "L": 20,
+  "no": 17
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "XIFR",
+  "s": 1821,
+  "t": 1840,
+  "L": 20,
+  "no": 18
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "PTCT",
+  "s": 356,
+  "t": 395,
+  "L": 40,
+  "no": 19
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "YESIL",
+  "s": 1286,
+  "t": 1365,
+  "L": 80,
+  "no": 20
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "MMCAS",
+  "s": 1336,
+  "t": 1355,
+  "L": 20,
+  "no": 21
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "DENGE",
+  "s": 1561,
+  "t": 1600,
+  "L": 40,
+  "no": 22
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "MDB",
+  "s": 961,
+  "t": 1000,
+  "L": 40,
+  "no": 23
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "IRON",
+  "s": 351,
+  "t": 430,
+  "L": 80,
+  "no": 24
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "TLMAN",
+  "s": 271,
+  "t": 350,
+  "L": 80,
+  "no": 25
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "PWCM",
+  "s": 861,
+  "t": 900,
+  "L": 40,
+  "no": 26
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "EPLAS",
+  "s": 696,
+  "t": 775,
+  "L": 80,
+  "no": 27
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "RODRG",
+  "s": 1111,
+  "t": 1150,
+  "L": 40,
+  "no": 28
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "AGO",
+  "s": 346,
+  "t": 385,
+  "L": 40,
+  "no": 29
+ },
+ {
+  "kol": "K1",
+  "pazar": "BIST",
+  "sembol": "DGATE",
+  "s": 816,
+  "t": 855,
+  "L": 40,
+  "no": 30
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "KTN",
+  "s": 986,
+  "t": 1005,
+  "L": 20,
+  "no": 31
+ },
+ {
+  "kol": "K1",
+  "pazar": "ABD",
+  "sembol": "MBOT",
+  "s": 716,
+  "t": 735,
+  "L": 20,
+  "no": 32
+ }
+]
