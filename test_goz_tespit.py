@@ -7,6 +7,8 @@ yüzdelik / tutarlılık / D2 sınırı / tekilleştirme / AUC elle; çakışma 
 ÇÖL-K2 (EK 5): beş şart goz2 ile birebir (sentetik), yapay pozitif / negatifler, dip parabolü yedi yapay tip, elle örnekler, sonrası okunmaz, sonrası kapısı.
 ÇÖL-K2 KIRILIM (EK 6): yön kuralı elle (yukarı / aşağı / kırılmadı / aynı bar / kesik), izleme t + 20 ve 2022 sınırı, giriş = kırılımdan sonraki açılış,
 simetrik ilk dokunuş ve belirsiz, tekil 15, kontrol pencereleri YER sağlamaz, kapı, karar anından sonrası okunmaz, karar elle, uçtan uca sentetik.
+KURAL-3 (EK 8): DIPTEN_BAR elle (dip ilk / orta / son bar, eşit dipte ilk görülen), kolların ayrıklığı, D1 sırası evren içinde ve 2016-22 dışı veriyi
+kullanmaz, şartlar bölge sonrasını okumaz, tekil 40, karar elle + kapı, uçtan uca sentetik (A + B + Kontrol 2 denetimi), GT5'in 21 sayfası (gerçek veri).
 Çalıştır: python test_goz_tespit.py"""
 import os
 import sys
@@ -920,6 +922,193 @@ def test_k2r_esik_sabit():
     assert K["kesim"] == 0.276760218650567 and K["obek_ara"] == 20 and K["gecikme_en_cok"] == 3 and K["boot"] == {"B": 2000, "tohum": 7, "kume_en_az": 5}
     assert K["karar"] == {"n": 30, "donem": 5} and K["simetrik"] == 0.05 and K["ana"] == "K2" and K["kollar"] == ["K2", "YMSB", "Y"]
     assert K["olay_sha"] == GT.GT_K2K["olay_sha"] and K["evren"]["k_min"] == 139 and K["evren"]["m"] == 20 and K["hucre"] == ["ABD|d1619", "ABD|d2022"]
+
+
+# ---------------------------------------------------------------- KURAL-3 (EK 8)
+@t
+def test_k3_dipten_bar_elle():
+    L = np.array([5.0, 6, 7, 8, 9, 6, 5, 7, 8, 9])                         # pencere 0..9, n = 10
+    assert GT.gt_k3_dipten_bar(L, [0], [9])[0] == 9 / 10                   # dip ilk barda (eşit dipte ilk görülen: 0, 6 değil)
+    L2 = np.array([9.0, 8, 7, 6, 2, 6, 7, 8, 9, 9]); assert GT.gt_k3_dipten_bar(L2, [0], [9])[0] == 5 / 10   # dip ortada (4. bar)
+    L3 = np.array([9.0, 8, 7, 6, 5, 4, 3, 3.5, 3, 1]); assert GT.gt_k3_dipten_bar(L3, [0], [9])[0] == 0.0    # dip son barda
+    L4 = np.array([9.0, 3, 7, 3, 8, 3, 9, 9, 9, 9]); assert GT.gt_k3_dipten_bar(L4, [0], [9])[0] == 8 / 10   # eşit dipler: ilk görülen (1. bar)
+    v = GT.gt_k3_dipten_bar(np.r_[L2, L3], [0, 10, 5], [9, 19, 14])
+    assert list(v) == [0.5, 0.0, (10 - 1 - int(np.argmin(np.r_[L2, L3][5:15]))) / 10]
+    assert list(GT.gt_k3_zaman([0.5, 0.499, np.nan, 1.0])) == [True, False, False, True]
+    r = np.random.default_rng(4); Lr = r.normal(10, 1, 300); s = r.integers(0, 200, 40); Lw = r.choice([20, 40, 80], 40); tt = np.minimum(s + Lw - 1, 299)
+    ref = [(tt[i] - s[i] - int(np.argmin(Lr[s[i]:tt[i] + 1]))) / (tt[i] - s[i] + 1) for i in range(40)]    # uc_set.py olc tanımı
+    assert np.allclose(GT.gt_k3_dipten_bar(Lr, s, tt), ref, rtol=0, atol=0)
+
+
+@t
+def test_k3_kollar_ayrik_ve_ad():
+    r = np.random.default_rng(5); d1, y, z = (r.random(500) < 0.5 for _ in range(3)); K = GT.gt_k3_kol(d1, y, z)
+    M = np.stack([K[k] for k in GT.GT_K3["kollar"]], 1); assert (M.sum(1) <= 1).all()                       # ayrık
+    assert (K["ANA"] == (d1 & y & z)).all() and (K["ZAMANSIZ"] == (d1 & y & ~z)).all() and (K["PUANSIZ"] == (~d1 & y & z)).all()
+    assert (M.any(1) == (y & (d1 | z))).all() and not (M.any(1) & ~y).any()                                  # üç kol da YER ister
+    assert GT.gt_k3_kol_ad(True, True, True) == "D1+YER+ZAMAN" and GT.gt_k3_kol_ad(True, True, False) == "D1+YER_ZAMANSIZ"
+    assert GT.gt_k3_kol_ad(True, False, True) == "D1+ZAMAN_YERSIZ" and GT.gt_k3_kol_ad(False, True, True) == "YER+ZAMAN_PUANSIZ"
+    assert GT.gt_k3_kol_ad(False, False, True) == "KURAL_DISI" and GT.gt_k3_kol_ad(True, False, False) == "KURAL_DISI"
+
+
+def _k3_panel(n=600, tohum=6):
+    r = np.random.default_rng(tohum); tar = pd.to_datetime(r.choice(pd.date_range("2014-01-01", "2024-06-30").values, n))
+    return pd.DataFrame({"sembol": [f"S{i % 9}" for i in range(n)], "L": r.choice([20, 40, 80], n), "s": r.integers(10, 400, n), "t": r.integers(400, 900, n),
+                         "tarih": tar, "KIL": r.choice([0.0, 0.1, 0.3], n), "PUAN_ESIT": np.where(r.random(n) < 0.05, np.nan, r.normal(50, 10, n)).astype(np.float32),
+                         "pazar": "ABD"})
+
+
+@t
+def test_k3_d1_sira_evren_ici_ve_2016_22():
+    X = _k3_panel(); r = GT.gt_k3_d1_sira(X)
+    dag = GT.gt_dagilim(X.assign(**{a: np.nan for a in GT.GT_OLCU_AD}))
+    ref = GT.gt_sira_ekle(X.copy(), dag, ["PUAN_ESIT"]).PUAN_ESIT_r.to_numpy(np.float32)
+    assert np.array_equal(r, ref, equal_nan=True) and r.dtype == np.float32                           # gt_dagilim + gt_sira_ekle ile AYNEN
+    m = GT.gt_evren_maske(X)
+    for L in GT.GT_L:                                                                                 # elle: evren içi aynı L dağılımı
+        ii = np.flatnonzero(X.L.to_numpy() == L)[:5]; v = X.PUAN_ESIT.to_numpy(float); dg = v[m & (X.L.to_numpy() == L)]
+        for i in ii:
+            e = ((dg < v[i]).sum() + 0.5 * (dg == v[i]).sum()) / len(dg) if np.isfinite(v[i]) else np.nan
+            assert (np.isnan(e) and np.isnan(r[i])) or abs(float(r[i]) - np.float32(e)) == 0
+    dis = ~((X.tarih >= "2016-01-01") & (X.tarih <= "2022-12-31")).to_numpy(); assert dis.any() and (m & dis).sum() == 0
+    X2 = X.copy(); X2.loc[dis, "PUAN_ESIT"] = np.float32(1e6); X2.loc[X2.KIL.to_numpy() > 0.2, "PUAN_ESIT"] = np.float32(-1e6)
+    r2 = GT.gt_k3_d1_sira(X2); assert np.array_equal(r[m], r2[m], equal_nan=True)                     # 2016-22 dışı / evren dışı veri sırayı değiştirmez
+    assert not GT.gt_k3_d1([np.nan, 0.8999, np.float32(0.9) - 1e-7])[[0, 1]].any() and GT.gt_k3_d1([0.9, 1.0]).all()
+    try:
+        GT.gt_k3_d1_sira(pd.concat([X, X.assign(pazar="BIST")]))
+    except GT.GTHata:
+        pass
+    else:
+        raise AssertionError("sıra iki pazar karışık hesaplanmamalı")
+
+
+@t
+def test_k3_sartlar_bolge_sonrasi_okunmaz():
+    O, H, L, C, s, t_ = _k2_seri("poz"); db = GT.gt_k3_dipten_bar(L, [s], [t_])[0]; y = GT.gt_k2_yer_vek(H, L, np.array([s]), np.array([t_]))[0]
+    for ek_h, ek_l in ((999.0, 0.001), (0.5, 0.4)):
+        Hb = np.r_[H[:t_ + 1], np.full(40, ek_h)]; Lb = np.r_[L[:t_ + 1], np.full(40, ek_l)]
+        assert GT.gt_k3_dipten_bar(Lb, [s], [t_])[0] == db and GT.gt_k2_yer_vek(Hb, Lb, np.array([s]), np.array([t_]))[0] == y
+    d = _seri(700, tohum=71); s1 = np.arange(130, 600, 5); t1 = s1 + 39
+    a = GT.gt_k3_dipten_bar(d.Low.to_numpy(float), s1, t1); b = GT.gt_k2_yer_vek(d.High.to_numpy(float), d.Low.to_numpy(float), s1, t1)
+    for k in (0, 20, len(s1) - 1):                                                                    # her pencere kendi t'sinde kesilmiş seriyle aynı
+        dd = d.iloc[:t1[k] + 1]
+        assert GT.gt_k3_dipten_bar(dd.Low.to_numpy(float), [s1[k]], [t1[k]])[0] == a[k]
+        assert GT.gt_k2_yer_vek(dd.High.to_numpy(float), dd.Low.to_numpy(float), s1[k:k + 1], t1[k:k + 1])[0] == b[k]
+
+
+@t
+def test_k3_tekil_40():
+    df = pd.DataFrame({"sembol": ["A"] * 7 + ["B", "B"], "t": [100, 100, 120, 140, 179, 180, 300, 100, 139], "L": [40, 20, 80, 40, 20, 20, 80, 40, 20]})
+    T = GT.gt_k2_tekil(df, bar=int(GT.GT_K3["olay"]["tekil"]))
+    assert list(zip(T.sembol, T.t, T.L)) == [("A", 100, 20), ("A", 140, 40), ("A", 180, 20), ("A", 300, 80), ("B", 100, 40)]   # 139 - 100 = 39 < 40
+
+
+@t
+def test_k3_karar_elle_ve_kapi():
+    b = {"n": 30, "TF15": {"alt": 0.001}, "medyan_fark": 0.01, "s5": {"fark": {"alt": 0.001}}, "besli_buyuk": 4, "besli_arti": 3}
+    assert GT.gt_k3_karar(b, "TF15") == "TUTAR"
+    for k, v in (("n", 29), ("medyan_fark", 0.0), ("TF15", {"alt": -0.001}), ("s5", {"fark": {"alt": 0.0}}), ("besli_arti", 2)):
+        assert GT.gt_k3_karar({**b, k: v}, "TF15") == ("ÖLÇÜLEMEDİ" if k == "n" else "TUTMAZ"), k
+    assert GT.gt_k3_karar({**b, "besli_buyuk": 1, "besli_arti": 0}, "TF15") == "TUTAR" and GT.gt_k3_karar({**b, "besli_buyuk": 2, "besli_arti": 1}, "TF15") == "TUTMAZ"
+    bb = {**b, "TFk15": b["TF15"]}; bb.pop("TF15"); assert GT.gt_k3_karar(bb, "TFk15") == "TUTAR" and GT.gt_k3_karar(bb, "TF15") == "TUTMAZ"
+    import MUM_IZI_HAVUZ as HV
+    A = HV.hv25_dizi(_seri(400, tohum=72), None)
+    for f in (lambda: GT.gt_k3_taban(A, "d2022"), lambda: GT.gt_k3_olay_A(A, np.array([300]), np.array([40]), ["d2022"]),
+              lambda: GT.gt_k3_olc_hesap(pd.DataFrame(), {}, pd.DataFrame())):
+        try:
+            f()
+        except GT.GTHata:
+            pass
+        else:
+            raise AssertionError("kapı kapalıyken getiri hesaplanmamalı")
+
+
+def _k3_seri(m, tohum=1, son="2022-12-30"):
+    """Döngülü seri: 100 bar tepede (~30), 10 barda çöküş, 190 bar dipte (~10, küçük oynaklık); YER şartını sağlayan pencereler üretir."""
+    r = np.random.default_rng(tohum); seviye = np.array([30.0 if (i % 300) < 100 else 30 - 2 * ((i % 300) - 99) if (i % 300) < 110 else 10.0 for i in range(m)])
+    C = seviye * np.exp(np.cumsum(r.normal(0, 0.01, m)) * 0.3) * (1 + r.normal(0, 0.01, m)); O = C * (1 + r.normal(0, 0.006, m))
+    H = np.maximum(O, C) * (1 + np.abs(r.normal(0, 0.008, m))) + 1e-6; L = np.minimum(O, C) * (1 - np.abs(r.normal(0, 0.008, m))) - 1e-6
+    return pd.DataFrame({"Open": O, "High": H, "Low": L, "Close": C, "Volume": 1e5 * np.exp(r.normal(0, 0.5, m))}, index=pd.bdate_range(end=son, periods=m))
+
+
+@t
+def test_k3_uctan_uca_sentetik():
+    import MUM_IZI_HAVUZ as HV
+    V = {f"S{i}": _k3_seri(1600, tohum=400 + i) for i in range(8)}; P, AD = _k2k_panel(V, Ls=(20, 40), adim=5)
+    P = P[P.s >= 120].reset_index(drop=True); AD = AD[AD.s >= 120]; assert len(AD) > 50                 # olay evreni s >= 120
+    r = np.random.default_rng(8); P = P.assign(KIL=0.0, govdesiz_pay=0.0, PUAN_ESIT=r.normal(50, 10, len(P)).astype(np.float32), pazar="ABD")
+    P["D1_sira"] = GT.gt_k3_d1_sira(P); P.loc[r.random(len(P)) < 0.5, "D1_sira"] = np.float32(0.95)       # yapay: D1 payı yüksek
+    A, say = GT.gt_k3_aday_pazar("ABD", P, V, AD)
+    assert say["yer"] == len(AD) == len(A) and say["ANA_ham"] == int(A.ANA.sum()) and (A[["ANA", "ZAMANSIZ", "PUANSIZ"]].sum(axis=1) <= 1).all()
+    try:
+        GT.gt_k3_aday_pazar("ABD", P, V, AD.iloc[1:])
+    except GT.GTHata:
+        pass
+    else:
+        raise AssertionError("YER kümesi k2_aday ile aynı değilse durmalı")
+    a0 = A.iloc[0]; assert a0.DIPTEN_BAR == GT.gt_k3_dipten_bar(V[a0.sembol].Low.to_numpy(float), [a0.s], [a0.t])[0]
+    A["giris_tarih"] = [V[s].index[t + 1] for s, t in zip(A.sembol, A.t)]; A["hucre"] = [HV.hv_hucre_ad(g, "ABD") for g in A.giris_tarih]
+    OL = pd.concat([GT.gt_k2_tekil(A[A[k] == 1], bar=40).assign(kol=k) for k in GT.GT_K3["kollar"]], ignore_index=True)
+    OL = OL[OL.hucre.isin(["ABD|d1619", "ABD|d2022"])]; assert len(OL) > 20
+    eski_v, eski_y = GT.MI.mi_veri, GT.gt_yukle; GT.MI.mi_veri = lambda p, a: {"V": V}; GT.gt_yukle = lambda p, ham=None: P
+    sin = {p: {"d1619": [0.015, 0.025, 0.035, 0.045], "d2022": [0.015, 0.025, 0.035, 0.045]} for p in ("ABD", "AVR", "BIST")}
+    GT._GT_K2K_DURUM["kapi"] = True; GT._GT_K2_DURUM["kapi"] = True; GT._GT_K3_DURUM["kapi"] = True
+    try:
+        KR = GT.gt_k2k_pazar("ABD", OL.iloc[:0], V, GT.gt_k2_evren(P), AD, olc=True)["kontrol_kir"]
+        GA, E, K, kr = GT.gt_k3_olc_hesap(OL, sin, KR)
+        KRb = KR.copy(); KRb.loc[KRb.index[0], "R15"] = 9.0
+        try:
+            GT.gt_k3_kr_denetim(KRb[KRb.sembol == KRb.sembol.iloc[0]], {"ABD": V}, {"ABD": P, "AVR": P.iloc[:0], "BIST": P.iloc[:0]})
+        except GT.GTHata:
+            pass
+        else:
+            raise AssertionError("bozuk Kontrol 2 dosyası denetimden geçmemeli")
+    finally:
+        GT.MI.mi_veri, GT.gt_yukle = eski_v, eski_y; GT._GT_K2K_DURUM["kapi"] = False; GT._GT_K2_DURUM["kapi"] = False; GT._GT_K3_DURUM["kapi"] = False
+    assert kr["hisse"] > 0 and len(GA) == len(OL) == len(E) and (GA.durum == "TAMAM").sum() > 10
+    x = GA[GA.durum == "TAMAM"].iloc[0]; d = V[x.sembol]; E0 = d.Open.iloc[int(x.t) + 1]
+    assert abs(x.R15 - (d.Close.iloc[int(x.t) + 15] / E0 - 1)) < 1e-12
+    Z = 10 ** 9; hi = next((i for i in range(int(x.t) + 1, int(x.t) + 16) if d.High.iloc[i] >= E0 * 1.05), Z)
+    lo = next((i for i in range(int(x.t) + 1, int(x.t) + 16) if d.Low.iloc[i] <= E0 * 0.95), Z)
+    assert x.s5 == (0 if hi == lo == Z else 2 if hi == lo else 1 if hi < lo else -1)
+    Ah = HV.hv25_dizi(d, None); dn = x.hucre.split("|")[1]; a_, b_ = HV.HV_ESIK["hucre"]["donem"][dn]; tu = HV.hv25_uygun(Ah, 20, [], a_, b_, GT.GT_KESIK)
+    o = HV.hv25_olc_dizi(Ah, tu, 20); v = GT.gt_k2k_simetrik(Ah["DH"], Ah["DL"], o["g0"], o["e15"], o["E0"], 0.05)
+    assert abs(x.T1 - o["R15"].mean()) < 1e-12 and abs(x.ts5 - (v[v != 2] == 1).mean()) < 1e-12
+    TB = GT.gt_k3_tablo(GA, E, K); oa = TB["A"]["ANA"]["ABD|d2022"]; T = GA[(GA.durum == "TAMAM") & (GA.kol == "ANA") & (GA.hucre == "ABD|d2022")]
+    assert oa["n"] == len(T) and (not len(T) or abs(oa["TF15"]["ort"] - (T.R15 - T.T1).mean()) < 1e-12)
+    assert TB["A"]["ANA"]["AVR|d1619"]["karar"] == "ÖLÇÜLEMEDİ" and TB["_karar_A"]["sonuc"] in ("EMARE (yaşayan evren)", "ÖLÇÜLEMEDİ", "EMARE DEĞİL")
+    eb = E[E.yon == 1]; assert ((eb.b > eb.t) & (eb.b <= eb.t + 30)).all()
+    md = GT.gt_k3_tablo_md(TB); assert GT.GT_K3_BASLIK in md and "K7 UYARISI" in md and "TABLO A" in md and "TABLO B" in md
+
+
+@t
+def test_k3_esles_gt5_gercek_veri():
+    """GT5'in 21 sayfası (17 kural sayfası kolu aynen; 4 rastgele KURAL-3 kolunda değil) + uc_set_tablo açık sayfalarında Y / DIPTEN_BAR birebir.
+    Getirisiz; gerçek veri (açık kopya + pencere paneli) yoksa ATLANIR (yazılır)."""
+    if not (os.path.exists(GT._gt_ham("pencere_ABD.pkl")) and os.path.isdir(GT.GT_YOL["acik"])):
+        print("ATLANDI test_k3_esles_gt5_gercek_veri: gerçek veri yok"); return
+    import logging
+    logging.disable(logging.INFO)
+    try:
+        R = GT.gt_k3_esles()
+    finally:
+        logging.disable(logging.NOTSET)
+    assert R["gt5_kural_sayfa"] == 17 and R["gt5_kural_ayni"] == 17 and R["gt5_rastgele"] == 4 and R["gt5_rastgele_k3_kolda"] == 0
+    assert R["uc_set"]["ayni"] == R["uc_set"]["acik"] and not R["uc_set"]["fark"] and R["gecti"]
+
+
+@t
+def test_k3_esik_sabit():
+    K = GT.GT_K3
+    assert K["D1"]["ust"] == 0.90 == GT.GT_ESIK["D1"]["ust"] and K["Y"] == GT.GT_K2["Y"] and K["ZAMAN"]["dipten_bar"] == 0.5
+    assert K["kollar"] == ["ANA", "ZAMANSIZ", "PUANSIZ"] and K["ana"] == "ANA" and K["olay"]["tekil"] == 40 and K["olay"]["s_min"] == 120
+    assert {k: K["olay"][k] for k in ("bas", "son", "s_min", "kilitli", "govdesiz", "tekil", "pazar")} == \
+        {k: GT.GT_K2_OLAY[k] for k in ("bas", "son", "s_min", "kilitli", "govdesiz", "tekil", "pazar")}                   # olay evreni ÇÖL-K2 ile aynı
+    O = K["olc"]; assert O["boot"] == {"B": 2000, "tohum": 8} and O["ufuk"] == 15 and O["taban_m"] == 20 and O["hedef"] == [0.05, 0.10] and O["uc"] == 0.20
+    assert (O["besli_en_az"], O["besli_pay"], O["besli_sart_en_az"], O["izleme"], O["kir_tekil"], O["k2_en_az"]) == \
+        (GT.GT_K2K["besli_en_az"], GT.GT_K2K["besli_pay"], GT.GT_K2K["besli_sart_en_az"], GT.GT_K2K["izleme"], GT.GT_K2K["tekil"], GT.GT_K2K["k2_en_az"])
+    assert K["karar"] == {"n": 30} and K["emare_hucre"] == ["ABD|d1619", "ABD|d2022"] and K["hucre_karar"] == GT.GT_K2K["hucre_karar"]
+    assert "%64" in GT.GT_K3_BASLIK and GT.GT_K3_BASLIK.startswith("DEDEKTÖRÜN BULDUĞU BÖLGELER")
 
 
 if __name__ == "__main__":
