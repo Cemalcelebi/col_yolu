@@ -15,6 +15,7 @@ değişmez: geniş evrende (V_*2) kesik 2024-12-31 = KASA_DEFTERI'nde açılmı�
 GİRİŞ KURALLARI (kayıtların kendi tanımı; ES_KAYIT['kural']):
   'gecerli'  CETVEL2 v2.2 R_H: giriş = t+1 açılışı (dosyanın 'giris' günü), çıkış = giriş barı dahil H'inci GEÇERLİ bar (High > Low ve Volume > 0) kapanışı.
   'fi_olcut' FON_IZI.FI_OLCUT r60: giriş günü açılışı, birleşik pazar takviminde 60. günün kapanışı (5 güne kadar ffill), kriz kesiği (FON_IZI.fi_olcut_panel).
+  'oc'       ORTAK_CETVEL r60: fi_olcut ile aynı geometri, yalnız geçerli barlar (OC.oc_veri_hazirla) ve OC.oc_panel birleşik takvimi.
 
 Komut:  python ES_YENIDEN.py secim     seçim listesi + atlananlar (getirisiz)
         python ES_YENIDEN.py sayim     GETİRİSİZ SAYIM (kayıt x kol x hücre: n, ayrı ay; kaynak sha) -> /root/.kasa/ham/es_yeniden/es_sayim.json
@@ -126,10 +127,11 @@ ES_KAYIT: Dict[str, Dict[str, Any]] = {
              "kaynak_not": "YAPI_HEDEF: giriş = kırılım mumundan sonraki ilk geçerli bar açılışı ('giris'), 15 bar ufuk; dosyada R15 yok -> CETVEL2 R15 "
                            "tanımıyla fiyattan (Ç204 yeniden koşu tanımı); kol = 'deneme' (Y6, Y8, Y8B)",
              "eski": "ÖLÇÜLEMEDİ (YAPI_HEDEF 2. tur Y6-Y8; yön aleyhte)"},
-    "Ç189": {"ad": "S+ v2 TAM GİRİLİR (TAM_DIP)", "kaynak": "V", "kural": "fi_olcut", "H": 60, "kesik": "2026-08-31", "pazar": ["ABD", "AVR", "BIST"],
+    "Ç189": {"ad": "S+ v2 TAM GİRİLİR (TAM_DIP)", "kaynak": "V", "kural": "oc", "H": 60, "kesik": "2026-08-31", "pazar": ["ABD", "AVR", "BIST"],
              "dosya": ["arastirma_cikti/fitil_v2/olay_TAM_DIP.csv.gz"],
              "hucre": {"2016-22": ["2016-01-01", "2022-12-31"], "2023": ["2023-01-01", "2023-12-31"], "2024-26": ["2024-01-01", "2026-08-31"]},
-             "kaynak_not": "FITIL_V2 FI_OLCUT r60 (giriş ertesi gün açılış, 60. gün kapanışı, kriz 2026-08-31); hücre = pazar x 'donem'; R = dosya 'r60'",
+             "kaynak_not": "FITIL_V2 -> ORTAK_CETVEL r60 (OC.oc_panel: geçerli barlar, birleşik takvim, giriş açılışı -> 60. takvim satırı kapanışı, "
+                           "5 gün ffill, kriz 2026-08-31); hücre = pazar x 'donem'; R = dosya 'r60'",
              "eski": "ÖLÇÜLEMEDİ (TAM_DIP; hiçbir hücrede alt uç > 0)"},
     "Ç99": {"ad": "KAP içeriden alım (K27): net alım, büyük alım, çölde alım", "kaynak": "V", "kural": "fi_olcut", "H": 60, "kesik": "2026-08-31",
             "pazar": ["BIST"], "dosya": ["arastirma_cikti/fon_izi/k27_olay.csv"],
@@ -433,6 +435,16 @@ def es_taban_uzun(V: Dict[str, pd.DataFrame], kural: str, H: int, kesik: str) ->
         Op = pd.DataFrame({s: V[s].Open for s in S}).reindex(cal).to_numpy(float)
         with np.errstate(invalid="ignore"):
             ok = np.isfinite(P["R"]) & np.isfinite(Op) & (Op > 0)
+        D, J = np.nonzero(ok); R = P["R"][D, J]; D = D.astype(np.int32); J = J.astype(np.int32)
+    elif kural == "oc":
+        import ORTAK_CETVEL as OC   # yalnız okunur (kütüphane); oc_panel kriz = kayıt kesiği
+        if int(OC.OC_ESIK["olcu"]["ufuk"]) != int(H):
+            raise ESHata(f"K5: ORTAK_CETVEL ufku {OC.OC_ESIK['olcu']['ufuk']} != {H}")
+        E = json.loads(json.dumps(OC.OC_ESIK)); E["kriz"] = kesik
+        Vd = OC._oc_veri_sar(V, "?"); Vd["V"] = {s: d for s, d in Vd["V"].items() if len(d)}
+        P = OC.oc_panel(Vd, E); cal = P["tarih"]; S = P["sembol"]
+        with np.errstate(invalid="ignore"):
+            ok = np.isfinite(P["R"]) & np.isfinite(P["Op"]) & (P["Op"] > 0)
         D, J = np.nonzero(ok); R = P["R"][D, J]; D = D.astype(np.int32); J = J.astype(np.int32)
     else:
         raise ESHata(f"K5: bilinmeyen kural {kural}")

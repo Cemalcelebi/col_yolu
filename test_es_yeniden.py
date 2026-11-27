@@ -110,14 +110,15 @@ def test_giris_ufuk_kayittan():
     assert ES.ES_KAYIT["Ç226"]["hucre"] == U2.UC2_ESIK["donem"] and pd.Timestamp(ES.ES_KAYIT["Ç226"]["kesik"]) == U2.UC2_KESIK
     assert ES.ES_KAYIT["Ç204"]["hucre"]["egitim"] == C2.C2_ESIK["donem"]["egitim"]
     assert ES.ES_KAYIT["Ç204"]["hucre"]["sinama"] == C2.C2_ESIK["donem"]["sinama"]
-    for k in ("Ç189", "Ç99"):
-        assert ES.ES_KAYIT[k]["kural"] == "fi_olcut" and ES.ES_KAYIT[k]["H"] == F.FI_OLCUT["ufuk"] and ES.ES_KAYIT[k]["kesik"] == F.FI_OLCUT["kriz"]
+    import ORTAK_CETVEL as OC
+    assert ES.ES_KAYIT["Ç99"]["kural"] == "fi_olcut" and ES.ES_KAYIT["Ç99"]["H"] == F.FI_OLCUT["ufuk"] and ES.ES_KAYIT["Ç99"]["kesik"] == F.FI_OLCUT["kriz"]
+    assert ES.ES_KAYIT["Ç189"]["kural"] == "oc" and ES.ES_KAYIT["Ç189"]["H"] == OC.OC_ESIK["olcu"]["ufuk"] and ES.ES_KAYIT["Ç189"]["kesik"] == OC.OC_ESIK["kriz"]
     # dosyaların kendi ufuk sütunu (getirisiz, ilk satırlar)
     d = pd.read_csv(ES._es_tam(ES.ES_KAYIT["Ç209"]["dosya"][0]), nrows=5000, usecols=["ufuk"]); assert ES.ES_KAYIT["Ç209"]["H"] in set(d.ufuk)
     d = pd.read_csv(ES._es_tam(ES.ES_KAYIT["Ç205"]["dosya"][0]), nrows=5000, usecols=["ufuk"]); assert ES.ES_KAYIT["Ç205"]["H"] in set(d.ufuk)
     d = pd.read_csv(ES._es_tam(ES.ES_KAYIT["Ç206"]["dosya"][0]), nrows=50, usecols=["H"]); assert set(d.H) == {ES.ES_KAYIT["Ç206"]["H"]}
     for k in ES.ES_KAYIT:
-        assert ES.ES_KAYIT[k]["kural"] in ("gecerli", "fi_olcut") and k in ES.ES_OKU
+        assert ES.ES_KAYIT[k]["kural"] in ("gecerli", "fi_olcut", "oc") and k in ES.ES_OKU
 
 
 @t
@@ -130,6 +131,18 @@ def test_fi_olcut_kural_FON_IZI():
     r = [x for jj, dd, x in zip(T["J"], T["D"], T["R"]) if jj == j and dd == d]
     assert len(r) == 1 and abs(r[0] - P["R"][d, j]) < 1e-12
     assert abs(P["R"][d, j] - (V["S1"].Close.iloc[d + 59] / V["S1"].Open.iloc[d] - 1)) < 1e-12
+
+
+@t
+def test_oc_kural_ORTAK_CETVEL():
+    import ORTAK_CETVEL as OC
+    V = _V(35, 150)
+    T = ES.es_taban_uzun(V, "oc", 60, "2099-01-01")
+    E = dict(OC.OC_ESIK); E["kriz"] = "2099-01-01"
+    P = OC.oc_panel(OC._oc_veri_sar(V), E); j = P["kol"]["S2"]; d = 7
+    r = [x for jj, dd, x in zip(T["J"], T["D"], T["R"]) if jj == j and dd == d]
+    assert len(r) == 1 and abs(r[0] - P["R"][d, j]) < 1e-12
+    assert abs(P["R"][d, j] - (V["S2"].Close.iloc[d + 59] / V["S2"].Open.iloc[d] - 1)) < 1e-12
 
 
 @t
