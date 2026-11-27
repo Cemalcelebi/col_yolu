@@ -18,6 +18,9 @@ Komut:  python GOZ_TESPIT.py olcu       kitaplık + BIST / ABD / AVR pencere öl
         python GOZ_TESPIT.py onay       ADIM C (kapı: GT_DEDEKTOR.md commit + push + kontrol tablosu) -> GT_ONAY.pdf + GT_onay_anahtar.json (mühürlü)
         python GOZ_TESPIT.py rapor      GT_RAPOR.md + gt_sonuc.json
         python GOZ_TESPIT.py sha        kod / eşik sha
+        python GOZ_TESPIT.py k2esles    ÇÖL-K2 (EK 5): goz2 GT3 (32) + GT4 (20) sayfalarının beş şartı gt_k2 ile birebir mi
+        python GOZ_TESPIT.py k2olay     ÇÖL-K2 olay listesi (getirisiz; K2 / YMSB / Y) -> gt5_olay.json + /root/.kasa/ham/goz_tespit/k2/
+        python GOZ_TESPIT.py k2olc      ÇÖL-K2 sonrası (kapı: GT5_ON_KAYIT.md commit + push + kontrol listesi; bir kez) -> gt5_sonuc.json, gt5_ozet.json
 Colab:  exec(open('GOZ_TESPIT.py').read())   (kod değiştiyse çalışma zamanını yeniden başlat)
 Evren bugün işlem gören hisseler (K7).
 """
@@ -1325,6 +1328,481 @@ def gt_dedektor_kos(cikti: Optional[str] = None, ham: Optional[str] = None) -> D
     return DJ
 
 
+# ================================================================ 11) ÇÖL-K2 (EK 5, 27 Kas 2026; iş tanımı GT5_IS_TANIMI.md)
+# Beş şart ana modelin denetim araçlarından (goz2/cetvel.py goz_olcu, goz2/parabol.py dip_parabol / dip_parabol_var, goz2/k2.py k2) AYNEN alındı; eşikler
+# goz2/k2.py K2 sözlüğü + goz2/dip_parabol_kural.json (seçilen basamak r2 0,60; yükseliş 0,25). Hiçbir şart bölge sonundan (t) sonraki barı okumaz.
+# Sonuçlar 'DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)' diye okunur.
+GT_K2: Dict[str, Any] = {
+    "Y": {"KUTU_ORAN": 0.22, "KUTU_YER": 0.35, "TEPE_KAT": 2.0},
+    "M": {"BOY_ORAN": 0.80, "GOV_ORAN": 0.80},
+    "S": {"taban_pay": 0.25, "ayri_bar": 3, "dokunus": 3, "yayilim": 0.25},
+    "B": {"dipten_bar": 5, "once": 20},
+    "Z": {"bolum_pay": 3, "bolum_en_az": 10, "tepe_x": [-1.0, 0.5], "son_bar": 3, "yuksek_dip": 0.05, "r2": 0.60, "yukselis": 0.25},
+    "uzak": 120, "uzak_en_az": 40,
+    "tanim": {"Y": "YER: kutu yüksekliği / uzak görünüm (önceki 120 bar + bölge) yüksekliği <= 0,22 VE kutu ortası uzak görünümün alt %35'inde VE önceki 120 barın "
+                   "tepesi / kutu tavanı >= 2",
+              "M": "KÜÇÜK MUM: bölge medyan mum boyu (H - L) / önceki 120 bar medyanı <= 0,80 VE medyan gövde |C - O| oranı <= 0,80",
+              "S": "DİP SAVUNMASI: dibi kutunun alt %25'ine dokunan barlar; aralarında >= 3 bar olanlar ayrı dokunuş; >= 3 ayrı dokunuş VE ilk-son dokunuş arası >= "
+                   "bölge uzunluğunun %25'i",
+              "B": "DERİN DİP BİTTİ: bölge + önceki 20 barın en derin dibi bölge sonundan en az 5 bar geride",
+              "Z": "DİP PARABOLÜ: bölgenin son üçte biri (en az 10 bar) mum DİPLERİNE ikinci derece eğri: kavis > 0, sonda eğim > 0, eğrinin dibi x in [-1; 0,5], "
+                   "son 3 barın dibi bölümün en derin dibinin üstünde, son üçte birin dibi bölüm aralığının >= %5 üstünde, r2 >= 0,60, yükseliş >= 0,25"},
+    "kaynak": "goz2/k2.py K2 + goz2/dip_parabol_kural.json (AYNEN; test_goz_tespit: sözlük ve sayılar goz2 ile birebir)",
+}
+GT_K2_OLAY: Dict[str, Any] = {
+    "bas": "2016-01-01", "son": "2022-12-31", "s_min": 120, "kilitli": 0.20, "govdesiz": 0.30, "tekil": 40, "kollar": ["K2", "YMSB", "Y"],
+    "pazar": ["ABD", "AVR", "BIST"],
+    "tanim": "evren = GOZ_TESPIT pencere paneli (L = 20 / 40 / 80; t % 5 == 0), pencere sonu tarihi 2016-01-01 .. 2022-12-31, s >= 120, kilitli pay <= 0,20, "
+             "gövdesiz bar payı <= 0,30; kollar: K2 = beş şart, YMSB = parabolsüz dört şart (Y, M, S, B), Y = yalnız yer; tekilleştirme kol ve hisse başına: "
+             "pencereler (t, L) artan sırada; bir pencere, aynı kolda tutulan son pencerenin sonundan >= 40 bar sonra bitiyorsa tutulur (ilk görülen; 'en iyi' "
+             "değil); hücre = giriş tarihine (t + 1 barı) göre MUM_IZI_HAVUZ dönemi",
+}
+GT_K2_OLC: Dict[str, Any] = {
+    "ufuk": 15, "stop_carpan": 0.98, "taban_m": 20, "t1_en_az": 30, "hedef": [0.05, 0.10], "uc": 0.20, "boot": {"B": 2000, "tohum": 5}, "besli": 5,
+    "hucre_karar": ["ABD|d1619", "ABD|d2022", "AVR|d1619", "AVR|d2022"], "hucre_bilgi": ["BIST|d1619", "BIST|d2022"], "ana": "K2",
+    "karar": {"n": 30, "besli_arti": 4, "kat5": 1.0},
+    "tanim": {"giris": "olay penceresi sonu t; giriş = t + 1 barı açılışı (MUM_IZI_HAVUZ.hv25_olc_dizi; geçerli bar takvimi)",
+              "R15": "t + 15 barı kapanışı / giriş - 1; R5 (bilgi) = t + 5 barı kapanışı / giriş - 1",
+              "stop": "olay: bölge [s, t] dibi x 0,98 (hv25_olc_dizi m = L); taban günü: o günün önceki 20 bar (t - 19 .. t) dibi x 0,98",
+              "HEDEF": "giriş barından 15. bara kadar High >= giriş x 1,05 (1,10) stop'tan (Low <= stop) ÖNCE; aynı barda ikisi = stop (hv25_olc_dizi aynen)",
+              "uygun": "MUM_IZI_HAVUZ.hv25_uygun: t + 15 veride ve tarihi <= 2022-12-31, giriş tarihi dönemde, giriş > 0 VE giriş > stop; olay da aynı kuralla "
+                       "(m = L) ölçülür, değilse durum KESIK / DIS / STOP_ALTI",
+              "T1": "aynı hissenin aynı dönemdeki (giriş tarihine göre) BÜTÜN uygun günlerinin (m = 20) R15 ortalaması; uygun gün < 30 ise T1_YOK (olay ölçülmez)",
+              "taban": "aynı hisse-dönemin bütün uygun günlerinde aynı kuralla hesaplanan HEDEF5 / HEDEF10 payı ve R15 < -%20 / > +%20 payı; hücre tabanı = "
+                       "olaylar üzerinden ortalama",
+              "TF15": "R15 - T1 (olay başına); hücrede ortalama + ay kümeli bootstrap %95 (giriş ayı; 2.000; np.random.default_rng(5) her kol x hücrede "
+                      "yeniden; KISA_UFUK.ku_boot)",
+              "medyan_fark": "medyan(R15) - medyan(T1) (olaylar üzerinden)",
+              "besli": "ATRP20 (pencere paneli, t günü) beşlikleri: sınırlar o pazar x dönemin evren pencerelerinin (pencere tarihi dönemde) %20/40/60/80'i "
+                       "(getirisiz, olay aşamasında yazılır); beşlik başına TF15 ortalaması; artı beşlik = olayı olan ve TF15 ortalaması > 0",
+              "karar": "hücre TUTAR <=> n >= 30 VE TF15 GA alt ucu > 0 VE medyan fark > 0 VE artı beşlik >= 4 VE HEDEF5 katı (pay / taban) > 1; n < 30 "
+                       "ÖLÇÜLEMEDİ; aksi TUTMAZ; EMARE (yaşayan evren) <=> ANA kol (K2) dört karar hücresinin dördü TUTAR; BIST bilgi"},
+}
+GT_K2_DOSYA = {"olay_json": "gt5_olay.json", "onkayit": "GT5_ON_KAYIT.md", "sonuc": "gt5_sonuc.json", "ozet": "gt5_ozet.json", "rapor_tablo": "GT5_RAPOR_TABLO.md",
+               "olay_pkl": "k2/k2_olay.pkl", "aday_pkl": "k2/k2_aday.pkl", "getiri_pkl": "k2/k2_getiri.pkl"}
+GT_K2_BASLIK = "DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)"
+GT_K2_K7 = ("K7 UYARISI: evren bugün yaşayan hisseler; yer şartı en az 2 kat düşmüş hisseleri seçtiği için batanların yokluğu sonucu YUKARI yanlı yapar "
+            "(Ç263 dersi); T1 aynı hisseden olduğu için yanlılık farkta kısmen düşer, kalkmaz; artı sonuç en fazla 'EMARE (yaşayan evren)'; batanlar dahil "
+            "veriyle sınama Aralık'ta.")
+
+
+def gt_k2_esik_sha() -> str:
+    return hashlib.sha256(json.dumps({"K2": GT_K2, "OLAY": GT_K2_OLAY, "OLC": GT_K2_OLC}, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def _gt_k2_yol(ad: str, cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
+    if ad.endswith("_pkl"):
+        return os.path.join(ham or GT_YOL["ham"], GT_K2_DOSYA[ad])
+    return os.path.join(cikti or GT_YOL["cikti"], GT_K2_DOSYA[ad])
+
+
+def gt_goz_olcu(O: np.ndarray, H: np.ndarray, L: np.ndarray, C: np.ndarray, s: int, t: int, uzak: Optional[int] = None) -> Optional[Dict[str, float]]:
+    """Göz cetveli (goz2/cetvel.py goz_olcu AYNEN): bölge [s, t], uzak görünüm = önceki `uzak` bar + bölge; yalnız t'ye kadar okunur."""
+    uzak = int(GT_K2["uzak"] if uzak is None else uzak)
+    iu = max(0, s - uzak); Hb, Lb, Cb, Ob = H[s:t + 1], L[s:t + 1], C[s:t + 1], O[s:t + 1]; Ho, Lo = H[iu:s], L[iu:s]
+    if len(Ho) < int(GT_K2["uzak_en_az"]):
+        return None
+    ust = float(Hb.max()); alt = float(Lb.min()); kutu = ust - alt
+    gust = float(max(Ho.max(), ust)); galt = float(min(Lo.min(), alt)); ga = gust - galt
+    boyb = np.median(Hb - Lb); boyo = np.median((H[iu:s] - L[iu:s]))
+    govb = np.median(np.abs(Cb - Ob)); govo = np.median(np.abs(C[iu:s] - O[iu:s]))
+    n = len(Cb); x = np.arange(n); egim = np.polyfit(x, Cb, 1)[0] * (n - 1) / kutu if kutu > 0 and n > 2 else np.nan
+    ipk = int(np.argmax(Ho)); dip_once = float(Lo[ipk:].min()) if ipk < len(Lo) else alt
+    return dict(KUTU_ORAN=kutu / ga if ga > 0 else np.nan, KUTU_YER=((ust + alt) / 2 - galt) / ga if ga > 0 else np.nan, TEPE_KAT=float(Ho.max()) / ust,
+                DUSUS=alt / float(Ho.max()) - 1, TEPE_UZAK=len(Ho) - ipk, ONCE_DIP=dip_once / alt - 1, EGIM=float(egim),
+                SON_YER=(Cb[-1] - alt) / kutu if kutu > 0 else np.nan, BOY_ORAN=boyb / boyo if boyo > 0 else np.nan,
+                GOV_ORAN=govb / govo if govo > 0 else np.nan, EN_BUYUK=float((Hb - Lb).max() / kutu) if kutu > 0 else np.nan, KUTU_YUZDE=kutu / alt)
+
+
+def gt_dip_parabol(H: np.ndarray, L: np.ndarray, s: int, t: int, K: Optional[Dict[str, Any]] = None) -> Optional[Dict[str, float]]:
+    """Bölgenin son bölümündeki mum DİPLERİNE ikinci derece eğri (goz2/parabol.py dip_parabol AYNEN; K varsayılanı GT_K2['Z'])."""
+    K = K or GT_K2["Z"]
+    n_b = t - s + 1; n = min(n_b, max(int(K["bolum_en_az"]), n_b // int(K["bolum_pay"]))); i0 = t - n + 1
+    Ls = L[i0:t + 1]; ar = float(H[i0:t + 1].max() - Ls.min())
+    if n < 8 or ar <= 0:
+        return None
+    x = np.linspace(-1.0, 1.0, n); yn = (Ls - Ls.mean()) / ar; a, b, c = np.polyfit(x, yn, 2); f = a * x * x + b * x + c
+    ss = float(((yn - yn.mean()) ** 2).sum()); r2 = 1.0 - float(((yn - f) ** 2).sum()) / ss if ss > 0 else 0.0
+    tx = -b / (2 * a) if abs(a) > 1e-12 else np.nan; dx = float(np.clip(tx, -1, 1)) if np.isfinite(tx) else 1.0
+    yuk = float((a + b + c) - (a * dx * dx + b * dx + c)) if a > 0 else 0.0; k3 = max(3, n // 3)
+    return dict(a=float(a), tepe_x=float(tx), son_egim=float(2 * a + b), yukselis=yuk, r2=r2, n=n, dip_yer=int(np.argmin(Ls)),
+                son_dip=float((Ls[-int(K["son_bar"]):].min() - Ls.min()) / ar), son_ucte_dip=float((Ls[-k3:].min() - Ls.min()) / ar))
+
+
+def gt_dip_parabol_var(p: Optional[Dict[str, float]], K: Optional[Dict[str, Any]] = None) -> bool:
+    """Dipler yukarı açılan parabol çiziyor (goz2/parabol.py dip_parabol_var AYNEN)."""
+    K = K or GT_K2["Z"]
+    return bool(p and p["a"] > 0 and p["son_egim"] > 0 and K["tepe_x"][0] <= p["tepe_x"] <= K["tepe_x"][1] and p["son_dip"] > 0
+                and p["son_ucte_dip"] >= K["yuksek_dip"] and p["r2"] >= K["r2"] and p["yukselis"] >= K["yukselis"])
+
+
+def gt_k2_savunma(Lb: np.ndarray, Hb: np.ndarray, K: Optional[Dict[str, Any]] = None) -> Tuple[bool, int]:
+    """Dip savunması (goz2/k2.py AYNEN): kutunun alt taban_pay'ına dokunan barlar; aralarında >= ayri_bar olanlar ayrı dokunuş."""
+    K = K or GT_K2["S"]; n = len(Lb); dip = float(Lb.min()); kutu = float(Hb.max() - dip)
+    idx = np.where(Lb <= dip + K["taban_pay"] * kutu)[0]; ay: List[int] = []
+    for i in idx:
+        if not ay or i - ay[-1] >= K["ayri_bar"]:
+            ay.append(int(i))
+    return bool(len(ay) >= K["dokunus"] and (ay[-1] - ay[0]) >= K["yayilim"] * n), len(ay)
+
+
+def gt_k2_dip_bitti(L: np.ndarray, s: int, t: int, K: Optional[Dict[str, Any]] = None) -> bool:
+    """Derin dip bitti (goz2/k2.py AYNEN): bölge + önceki `once` barın en derin dibi bölge sonundan en az `dipten_bar` bar geride."""
+    K = K or GT_K2["B"]; i0 = max(0, s - K["once"])
+    return bool((t - (i0 + int(np.argmin(L[i0:t + 1])))) >= K["dipten_bar"])
+
+
+def gt_k2(O: np.ndarray, H: np.ndarray, L: np.ndarray, C: np.ndarray, s: int, t: int) -> Optional[Dict[str, int]]:
+    """ÇÖL-K2 beş şart (goz2/k2.py k2 AYNEN): Y yer, M küçük mum, S dip savunması, B derin dip bitti, Z dip parabolü; K2 = beşi, YMSB = parabolsüz dördü."""
+    o = gt_goz_olcu(O, H, L, C, s, t)
+    if not o:
+        return None
+    Hb, Lb = H[s:t + 1], L[s:t + 1]; Y, M = GT_K2["Y"], GT_K2["M"]
+    y = o["KUTU_ORAN"] <= Y["KUTU_ORAN"] and o["KUTU_YER"] <= Y["KUTU_YER"] and o["TEPE_KAT"] >= Y["TEPE_KAT"]
+    m = o["BOY_ORAN"] <= M["BOY_ORAN"] and o["GOV_ORAN"] <= M["GOV_ORAN"]
+    sv, nd = gt_k2_savunma(Lb, Hb)
+    b = gt_k2_dip_bitti(L, s, t)
+    z = gt_dip_parabol_var(gt_dip_parabol(H, L, s, t))
+    return dict(Y=int(y), M=int(m), S=int(sv), B=int(b), Z=int(z), dokunus=nd, K2=int(y and m and sv and b and z), YMSB=int(y and m and sv and b))
+
+
+def gt_k2_yer_vek(H: np.ndarray, L: np.ndarray, s: np.ndarray, t: np.ndarray) -> np.ndarray:
+    """YER şartı vektörle (gt_goz_olcu ile aynı aritmetik; ön eleme). s, t aynı uzunluklu pencereler (t - s sabit olmak zorunda değil)."""
+    s = np.asarray(s, np.int64); t = np.asarray(t, np.int64); out = np.zeros(len(s), bool); u = int(GT_K2["uzak"]); Y = GT_K2["Y"]
+    for Lw in np.unique(t - s + 1):
+        k = np.where(t - s + 1 == Lw)[0]; ss, tt = s[k], t[k]; tam = ss >= u
+        if tam.any():
+            ks = k[tam]; s1 = ss[tam]
+            ust = np.lib.stride_tricks.sliding_window_view(H, int(Lw)).max(1)[s1]; alt = np.lib.stride_tricks.sliding_window_view(L, int(Lw)).min(1)[s1]
+            homx = np.lib.stride_tricks.sliding_window_view(H, u).max(1)[s1 - u]; lomn = np.lib.stride_tricks.sliding_window_view(L, u).min(1)[s1 - u]
+            kutu = ust - alt; gust = np.maximum(homx, ust); galt = np.minimum(lomn, alt); ga = gust - galt
+            with np.errstate(invalid="ignore", divide="ignore"):
+                ko = np.where(ga > 0, kutu / ga, np.nan); ky = np.where(ga > 0, ((ust + alt) / 2 - galt) / ga, np.nan); tk = homx / ust
+            out[ks] = (ko <= Y["KUTU_ORAN"]) & (ky <= Y["KUTU_YER"]) & (tk >= Y["TEPE_KAT"])
+        for j in k[~tam]:                                              # kısa geçmiş: tek tek (gt_goz_olcu)
+            o = gt_goz_olcu(np.zeros(len(H)), H, L, np.zeros(len(H)), int(s[j]), int(t[j]))
+            out[j] = bool(o and o["KUTU_ORAN"] <= Y["KUTU_ORAN"] and o["KUTU_YER"] <= Y["KUTU_YER"] and o["TEPE_KAT"] >= Y["TEPE_KAT"])
+    return out
+
+
+def gt_k2_tekil(df: pd.DataFrame, bar: Optional[int] = None) -> pd.DataFrame:
+    """Hisse başına (t, L) artan sırada açgözlü: son tutulan pencerenin sonundan >= bar sonra biten pencere tutulur (ilk görülen)."""
+    bar = int(GT_K2_OLAY["tekil"] if bar is None else bar); tut = []
+    for _, g in df.sort_values(["sembol", "t", "L"], kind="mergesort").groupby("sembol", sort=True):
+        son = None
+        for i, tt in zip(g.index, g.t.to_numpy()):
+            if son is None or int(tt) - son >= bar:
+                tut.append(i); son = int(tt)
+    return df.loc[tut].sort_values(["sembol", "t"], kind="mergesort")
+
+
+def gt_k2_evren(P: pd.DataFrame) -> pd.DataFrame:
+    E = GT_K2_OLAY; tr = pd.to_datetime(P["tarih"])
+    m = (tr >= pd.Timestamp(E["bas"])) & (tr <= pd.Timestamp(E["son"])) & (P.s >= int(E["s_min"])) & (P.KIL <= float(E["kilitli"])) & \
+        (P.govdesiz_pay <= float(E["govdesiz"]))
+    return P.loc[m.to_numpy(bool), ["sembol", "L", "s", "t", "tarih", "ATRP20"]].assign(tarih=tr[m.to_numpy(bool)])
+
+
+def gt_k2_aday_pazar(pazar: str, P: pd.DataFrame, V: Dict[str, pd.DataFrame], denetim: int = 300) -> Tuple[pd.DataFrame, Dict[str, Any]]:
+    """Bir pazarın evren pencerelerinde YER ön elemesi (vektör) + YER'i geçenlerde beş şart (gt_k2). Getirisiz. Denetim: YER'i geçmeyenlerden
+    rastgele `denetim` pencerede gt_k2 YER = 0 olmalı; geçenlerin hepsinde gt_k2 YER = 1 olmalı (aksi GTHata)."""
+    t0 = time.time(); gt_kesik_kapi(V, f"k2 {pazar}"); R = []; hata = 0; red = []
+    for sem, g in P.groupby("sembol", sort=True):
+        d = V.get(sem)
+        if d is None:
+            raise GTHata(f"K10: {pazar} {sem}: pencere panelinde var, seride yok")
+        s = g.s.to_numpy(np.int64); t = g.t.to_numpy(np.int64)
+        if t.max() >= len(d) or (d.index[t] != pd.DatetimeIndex(g.tarih)).any():
+            raise GTHata(f"K10: {pazar} {sem}: pencere t indeksi ile seri tarihi uyuşmuyor")
+        O, H, L, C = (d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close"))
+        y = gt_k2_yer_vek(H, L, s, t)
+        for i in np.where(y)[0]:
+            try:
+                o = gt_k2(O[:t[i] + 1], H[:t[i] + 1], L[:t[i] + 1], C[:t[i] + 1], int(s[i]), int(t[i]))   # t sonrası verilmez
+            except Exception as ex:  # noqa: BLE001
+                hata += 1; gtlog.warning("k2 %s %s t=%d: %s", pazar, sem, int(t[i]), ex); continue
+            if not o or o["Y"] != 1:
+                raise GTHata(f"K10: {pazar} {sem} t={int(t[i])}: YER vektör = 1, gt_k2 YER = {o and o['Y']}")
+            r = g.iloc[int(i)]; R.append({"pazar": pazar, "sembol": sem, "L": int(r.L), "s": int(r.s), "t": int(r.t), "tarih": r.tarih,
+                                           "ATRP20": float(r.ATRP20), **o})
+        red.extend((sem, int(s[i]), int(t[i])) for i in np.where(~y)[0][:: max(1, int((~y).sum()) // 3 + 1)])
+    rng = np.random.default_rng(5)
+    for j in rng.permutation(len(red))[:denetim]:
+        sem, s_, t_ = red[int(j)]; d = V[sem]; o = gt_k2(*(d[c].to_numpy(float)[:t_ + 1] for c in ("Open", "High", "Low", "Close")), s_, t_)
+        if o and o["Y"] != 0:
+            raise GTHata(f"K10: {pazar} {sem} t={t_}: YER vektör = 0, gt_k2 YER = 1")
+    A = pd.DataFrame(R)
+    gtlog.info("k2 %s: evren %d pencere, YER %d, K2 %d (%.0f sn; hata %d)", pazar, len(P), len(A), int(A.K2.sum()) if len(A) else 0, time.time() - t0, hata)
+    return A, {"evren": int(len(P)), "evren_hisse": int(P.sembol.nunique()), "yer_pencere": int(len(A)), "hata": hata, "denetim_red": int(min(denetim, len(red)))}
+
+
+def gt_k2_besli_sinir(P: pd.DataFrame) -> Dict[str, List[float]]:
+    """ATRP20 beşlik sınırları: dönem (pencere tarihi) başına evren pencerelerinin %20/40/60/80'i (getirisiz)."""
+    import MUM_IZI_HAVUZ as HV
+    out = {}
+    for dn in ("d1619", "d2022"):
+        a, b = HV.HV_ESIK["hucre"]["donem"][dn]; x = P.ATRP20[(P.tarih >= pd.Timestamp(a)) & (P.tarih <= pd.Timestamp(b))].to_numpy(float)
+        x = x[np.isfinite(x)]; out[dn] = [float(v) for v in np.quantile(x, [0.2, 0.4, 0.6, 0.8])] if len(x) else []
+    return out
+
+
+def gt_k2_olay_kos(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str, Any]:
+    """k2olay: üç kol için olay listesi (getirisiz) -> k2/k2_aday.pkl, k2/k2_olay.pkl, gt5_olay.json (sayımlar, beşlik sınırları, sha)."""
+    import MUM_IZI_HAVUZ as HV
+    os.makedirs(os.path.dirname(_gt_k2_yol("olay_pkl", ham=ham)), exist_ok=True)
+    AD, OL, J = [], [], {"surum": GT_SURUM + " + ÇÖL-K2 (EK 5)", "baslik": GT_K2_BASLIK, "kod_sha": gt_kod_sha(), "k2_esik_sha": gt_k2_esik_sha(),
+                         "pazar": {}, "besli_sinir": {}, "sayim": {}}
+    for p in GT_K2_OLAY["pazar"]:
+        Vd = MI.mi_veri(p, GT_YOL["acik"]); V = {s: d for s, d in Vd["V"].items() if len(d) >= 2}
+        P = gt_k2_evren(gt_yukle(p, ham)); J["besli_sinir"][p] = gt_k2_besli_sinir(P)
+        A, ist = gt_k2_aday_pazar(p, P, V); J["pazar"][p] = ist
+        if len(A):
+            A["giris_tarih"] = [V[s].index[t + 1] if t + 1 < len(V[s]) else pd.NaT for s, t in zip(A.sembol, A.t)]
+            A["hucre"] = [HV.hv_hucre_ad(g, p) if pd.notna(g) else f"{p}|yok" for g in A.giris_tarih]
+            A["son15_tarih"] = [V[s].index[t + 15] if t + 15 < len(V[s]) else pd.NaT for s, t in zip(A.sembol, A.t)]
+            AD.append(A)
+            for kol in GT_K2_OLAY["kollar"]:
+                T = gt_k2_tekil(A[A[kol] == 1]).assign(kol=kol); OL.append(T)
+        del Vd, V, P; gc.collect()
+    AD = pd.concat(AD, ignore_index=True); OL = pd.concat(OL, ignore_index=True)
+    if not (pd.to_datetime(OL.tarih).max() <= GT_KESIK):
+        raise GTHata("KESİK: olay tarihi > 2022-12-31")
+    for ad, X in (("aday_pkl", AD), ("olay_pkl", OL)):
+        with open(_gt_k2_yol(ad, ham=ham), "wb") as f:
+            pickle.dump(X, f, protocol=4)
+    J["olay_sha"] = MI._mi_sha(_gt_k2_yol("olay_pkl", ham=ham)); J["aday_sha"] = MI._mi_sha(_gt_k2_yol("aday_pkl", ham=ham))
+    J["sayim"] = gt_k2_sayim(OL); J["aday_sart"] = {p: {k: int(AD[AD.pazar == p][k].sum()) for k in ("Y", "M", "S", "B", "Z", "YMSB", "K2")}
+                                                   for p in GT_K2_OLAY["pazar"]}
+    MI._mi_jyaz(_gt_k2_yol("olay_json", cikti), J, "gt5 olay json")
+    return J
+
+
+def gt_k2_sayim(OL: pd.DataFrame) -> Dict[str, Any]:
+    """Getirisiz sayım: kol x hücre (giriş tarihine göre) olay ve hisse; 15. bar kesik sonrası olanlar ayrıca; L dağılımı."""
+    out: Dict[str, Any] = {}
+    for kol, g in OL.groupby("kol"):
+        o = {}
+        for h, gg in g.groupby("hucre"):
+            kes = gg.son15_tarih.isna() | (pd.to_datetime(gg.son15_tarih) > GT_KESIK)
+            o[h] = {"olay": int(len(gg)), "hisse": int(gg.sembol.nunique()), "kesik15": int(kes.sum()),
+                    "L": {str(int(k)): int(v) for k, v in gg.L.value_counts().sort_index().items()}}
+        out[kol] = o
+    return out
+
+
+# ---------------------------------------------------------------- İŞ B: sonrası (ön kayıttan SONRA; bir kez)
+_GT_K2_DURUM = {"kapi": False}
+
+
+def gt_k2_taban(A: Dict[str, Any], dn: str) -> Optional[Dict[str, float]]:
+    """Aynı hisse, aynı dönem, bütün uygun günler (m = 20): T1 (R15 ortalaması), medyan R15, HEDEF5 / HEDEF10 payı, R15 < -%20 / > +%20 payı."""
+    import MUM_IZI_HAVUZ as HV
+    if not _GT_K2_DURUM["kapi"]:
+        raise GTHata("sonrası: kapı açılmadan getiri hesaplanmaz")
+    a, b = HV.HV_ESIK["hucre"]["donem"][dn]; m = int(GT_K2_OLC["taban_m"])
+    tu = HV.hv25_uygun(A, m, [], a, b, GT_KESIK)
+    if len(tu) < int(GT_K2_OLC["t1_en_az"]):
+        return None
+    o = HV.hv25_olc_dizi(A, tu, m); R = o["R15"]; u = float(GT_K2_OLC["uc"])
+    return {"T1": float(R.mean()), "T1_med": float(np.median(R)), "tb5": float(o["d5"].mean()), "tb10": float(o["d10"].mean()),
+            "tbalt": float((R < -u).mean()), "tbust": float((R > u).mean()), "t1_n": int(len(tu))}
+
+
+def gt_k2_olay_olc(A: Dict[str, Any], t: np.ndarray, Lw: np.ndarray, giris_dn: List[Optional[str]]) -> pd.DataFrame:
+    """Olay başına durum ve sonrası: hv25_uygun (m = L) üyeliği, hv25_olc_dizi (E0, stop, R15, d5, d10), R5 (bilgi)."""
+    import MUM_IZI_HAVUZ as HV
+    if not _GT_K2_DURUM["kapi"]:
+        raise GTHata("sonrası: kapı açılmadan getiri hesaplanmaz")
+    U = int(GT_K2_OLC["ufuk"]); n = int(A["n"]); rows = []
+    for tt, L_, dn in zip(np.asarray(t, np.int64), np.asarray(Lw, np.int64), giris_dn):
+        r = {"durum": "", "E0": np.nan, "stop": np.nan, "R15": np.nan, "R5": np.nan, "d5": np.nan, "d10": np.nan}
+        if tt + U >= n or A["tarih"][tt + U] > GT_KESIK:
+            r["durum"] = "KESIK"
+        elif dn is None:
+            r["durum"] = "DIS"
+        else:
+            a, b = HV.HV_ESIK["hucre"]["donem"][dn]
+            if int(tt) not in set(HV.hv25_uygun(A, int(L_), [], a, b, GT_KESIK).tolist()):
+                r["durum"] = "STOP_ALTI"
+            else:
+                o = HV.hv25_olc_dizi(A, np.array([tt]), int(L_))
+                r.update({"durum": "TAMAM", "E0": float(o["E0"][0]), "stop": float(o["stop"][0]), "R15": float(o["R15"][0]), "d5": float(o["d5"][0]),
+                          "d10": float(o["d10"][0]), "R5": float(A["DC"][A["ei"][tt + 5]] / o["E0"][0] - 1)})
+        rows.append(r)
+    return pd.DataFrame(rows)
+
+
+def gt_k2_boot(x: np.ndarray, ay: np.ndarray) -> Dict[str, Any]:
+    """Ay kümeli bootstrap ortalama: KISA_UFUK.ku_boot; ağırlık matrisi np.random.default_rng(5) (her çağrıda yeniden), B = 2.000."""
+    import KISA_UFUK as KU
+    u, k = np.unique(np.asarray(ay, str), return_inverse=True); K = len(u)
+    W = np.random.default_rng(int(GT_K2_OLC["boot"]["tohum"])).multinomial(K, np.full(K, 1.0 / K), size=int(GT_K2_OLC["boot"]["B"])).astype(float)
+    return KU.ku_boot(np.asarray(x, float), k, W)
+
+
+def gt_k2_besli(atr: np.ndarray, sinir: List[float]) -> np.ndarray:
+    """ATRP20 beşliği 1..5 (sınıra eşit değer alt beşliğe: searchsorted left); sınır yoksa 0."""
+    if not sinir:
+        return np.zeros(len(atr), int)
+    return np.searchsorted(np.asarray(sinir, float), np.asarray(atr, float), side="left") + 1
+
+
+def gt_k2_hucre(g: pd.DataFrame) -> Dict[str, Any]:
+    """Bir kol x hücre satırı (yalnız TAMAM olaylar)."""
+    o: Dict[str, Any] = {"n": int(len(g)), "hisse": int(g.sembol.nunique()) if len(g) else 0}
+    if not len(g):
+        return o
+    R = g.R15.to_numpy(float); TF = R - g.T1.to_numpy(float); ay = pd.to_datetime(g.giris_tarih).dt.strftime("%Y-%m").to_numpy()
+    o["ay"] = int(len(np.unique(ay))); o["TF15"] = gt_k2_boot(TF, ay); o["R15_ort"] = float(R.mean()); o["T1_ort"] = float(g.T1.mean())
+    o["medyan_fark"] = float(np.median(R) - np.median(g.T1.to_numpy(float))); o["TF15_medyan"] = float(np.median(TF)); o["R5_ort"] = float(g.R5.mean())
+    for x in ("5", "10"):
+        d = float(g[f"d{x}"].mean()); tb = float(g[f"tb{x}"].mean()); o[f"HEDEF{x}"] = d; o[f"taban{x}"] = tb; o[f"kat{x}"] = d / tb if tb > 0 else None
+    u = float(GT_K2_OLC["uc"])
+    o["alt20"] = float((R < -u).mean()); o["taban_alt20"] = float(g.tbalt.mean()); o["ust20"] = float((R > u).mean()); o["taban_ust20"] = float(g.tbust.mean())
+    bs = {}
+    for q in range(1, int(GT_K2_OLC["besli"]) + 1):
+        m = g.besli.to_numpy() == q; bs[str(q)] = {"n": int(m.sum()), "TF15": float(TF[m].mean()) if m.any() else None}
+    o["besli"] = bs; o["besli_arti"] = int(sum(1 for v in bs.values() if v["n"] > 0 and v["TF15"] > 0))
+    return o
+
+
+def gt_k2_karar(o: Dict[str, Any]) -> str:
+    K = GT_K2_OLC["karar"]
+    if o.get("n", 0) < int(K["n"]):
+        return "ÖLÇÜLEMEDİ"
+    tf = o["TF15"]; kat = o.get("kat5")
+    ok = tf.get("alt") is not None and tf["alt"] > 0 and o["medyan_fark"] > 0 and o["besli_arti"] >= int(K["besli_arti"]) and kat is not None and kat > float(K["kat5"])
+    return "TUTAR" if ok else "TUTMAZ"
+
+
+def gt_k2_olc_hesap(OL: pd.DataFrame, sinir: Dict[str, Dict[str, List[float]]], ham: Optional[str] = None) -> pd.DataFrame:
+    """Bütün olaylar: durum, sonrası, T1 ve tabanlar, beşlik. Seri tarihi pencere tarihiyle assert edilir."""
+    import MUM_IZI_HAVUZ as HV
+    parca = []
+    for p in GT_K2_OLAY["pazar"]:
+        Op = OL[OL.pazar == p]
+        if not len(Op):
+            continue
+        Vd = MI.mi_veri(p, GT_YOL["acik"]); V = Vd["V"]; gt_kesik_kapi(V, f"k2 sonrası {p}")
+        for sem, g in Op.groupby("sembol", sort=True):
+            A = HV.hv25_dizi(V[sem], None); t = g.t.to_numpy(np.int64)
+            if (A["tarih"][t] != pd.DatetimeIndex(g.tarih)).any():
+                raise GTHata(f"K10: {p} {sem}: olay t tarihi seriyle uyuşmuyor")
+            dn = [h.split("|")[1] if h.split("|")[1] in ("d1619", "d2022") else None for h in g.hucre]
+            Y = gt_k2_olay_olc(A, t, g.L.to_numpy(np.int64), dn).set_index(g.index)
+            TB = {d_: gt_k2_taban(A, d_) for d_ in set(x for x in dn if x)}
+            for c in ("T1", "T1_med", "tb5", "tb10", "tbalt", "tbust", "t1_n"):
+                Y[c] = [TB[d_][c] if d_ and TB.get(d_) else np.nan for d_ in dn]
+            Y.loc[(Y.durum == "TAMAM") & ~np.isfinite(Y.T1.to_numpy(float)), "durum"] = "T1_YOK"
+            Y["besli"] = [int(gt_k2_besli([a_], sinir[p].get(d_, []))[0]) if d_ else 0 for a_, d_ in zip(g.ATRP20, dn)]
+            parca.append(pd.concat([g, Y], axis=1))
+        del Vd, V; gc.collect()
+    return pd.concat(parca)
+
+
+def gt_k2_tablo(G: pd.DataFrame) -> Dict[str, Any]:
+    out: Dict[str, Any] = {}
+    T = G[G.durum == "TAMAM"]
+    for kol in GT_K2_OLAY["kollar"]:
+        out[kol] = {}
+        for h in GT_K2_OLC["hucre_karar"] + GT_K2_OLC["hucre_bilgi"]:
+            o = gt_k2_hucre(T[(T.kol == kol) & (T.hucre == h)]); o["karar"] = gt_k2_karar(o)
+            o["durum"] = {k: int(v) for k, v in G[(G.kol == kol) & (G.hucre == h)].durum.value_counts().items()}; out[kol][h] = o
+    ana = [out[GT_K2_OLC["ana"]][h]["karar"] for h in GT_K2_OLC["hucre_karar"]]
+    out["_karar"] = {"ana_kol": GT_K2_OLC["ana"], "hucre": dict(zip(GT_K2_OLC["hucre_karar"], ana)),
+                     "sonuc": "EMARE (yaşayan evren)" if all(k == "TUTAR" for k in ana) else "EMARE DEĞİL (dört karar hücresinin dördü tutmadı)"}
+    return out
+
+
+def gt_k2_olc_kos(cikti: Optional[str] = None, ham: Optional[str] = None) -> Dict[str, Any]:
+    """k2olc: kapılar (ön kayıt commit + push, kontrol listesi, olay sha, kod sha, ikinci koşu yok) -> sonrası -> gt5_sonuc.json, gt5_ozet.json, tablo md."""
+    if os.path.exists(_gt_k2_yol("sonuc", cikti)):
+        raise GTHata("gt5_sonuc.json zaten var (ikinci koşu DURUR)")
+    c_on = gt_kapi_commit(_gt_k2_yol("onkayit", cikti), "GT5_ON_KAYIT.md")
+    import IZ_KARNE as IK
+    kk = IK.ik_kontrol_kapisi(_gt_k2_yol("onkayit", cikti))
+    J = json.load(open(_gt_k2_yol("olay_json", cikti), encoding="utf-8"))
+    if MI._mi_sha(_gt_k2_yol("olay_pkl", ham=ham)) != J["olay_sha"]:
+        raise GTHata("olay dosyası ön kayıttaki sha ile aynı değil")
+    if J["kod_sha"] != gt_kod_sha() or J["k2_esik_sha"] != gt_k2_esik_sha():
+        raise GTHata("kod / eşik sha olay aşamasından sonra değişmiş (SAPMA)")
+    on = open(_gt_k2_yol("onkayit", cikti), encoding="utf-8").read()
+    if J["kod_sha"] not in on or J["olay_sha"] not in on:
+        raise GTHata("ön kayıtta kod sha / olay sha yazılı değil")
+    _GT_K2_DURUM["kapi"] = True; bas = time.strftime("%Y-%m-%d %H:%M:%S")
+    try:
+        OL = pickle.load(open(_gt_k2_yol("olay_pkl", ham=ham), "rb"))
+        G = gt_k2_olc_hesap(OL, J["besli_sinir"], ham)
+    finally:
+        _GT_K2_DURUM["kapi"] = False
+    with open(_gt_k2_yol("getiri_pkl", ham=ham), "wb") as f:
+        pickle.dump(G, f, protocol=4)
+    TB = gt_k2_tablo(G)
+    S = {"baslik": GT_K2_BASLIK, "k7": GT_K2_K7, "baslangic": bas, "onkayit_commit": c_on, "kontrol_kapisi": kk["gecti"], "kod_sha": gt_kod_sha(),
+         "k2_esik_sha": gt_k2_esik_sha(), "olay_sha": J["olay_sha"], "getiri_sha": MI._mi_sha(_gt_k2_yol("getiri_pkl", ham=ham)), "tablo": TB}
+    MI._mi_jyaz(_gt_k2_yol("sonuc", cikti), S, "gt5 sonuç")
+    Z = {"baslik": GT_K2_BASLIK, "karar": TB["_karar"], "satir": [
+        {"kol": kol, "hucre": h, "n": o["n"], "hisse": o["hisse"], "TF15": (o.get("TF15") or {}).get("ort"), "TF15_alt": (o.get("TF15") or {}).get("alt"),
+         "TF15_ust": (o.get("TF15") or {}).get("ust"), "medyan_fark": o.get("medyan_fark"), "HEDEF5": o.get("HEDEF5"), "taban5": o.get("taban5"),
+         "kat5": o.get("kat5"), "HEDEF10": o.get("HEDEF10"), "taban10": o.get("taban10"), "alt20": o.get("alt20"), "taban_alt20": o.get("taban_alt20"),
+         "ust20": o.get("ust20"), "taban_ust20": o.get("taban_ust20"), "besli_arti": o.get("besli_arti"), "karar": o["karar"]}
+        for kol in GT_K2_OLAY["kollar"] for h, o in TB[kol].items()]}
+    MI._mi_jyaz(_gt_k2_yol("ozet", cikti), Z, "gt5 özet")
+    MI._mi_yaz(_gt_k2_yol("rapor_tablo", cikti), gt_k2_tablo_md(TB), "gt5 tablo md")
+    return Z
+
+
+def gt_k2_tablo_md(TB: Dict[str, Any]) -> str:
+    def y(v: Any, n: int = 1) -> str:
+        return "—" if v is None or (isinstance(v, float) and not np.isfinite(v)) else f"{100 * v:.{n}f}"
+    L_ = [f"## {GT_K2_BASLIK}", "", GT_K2_K7, "",
+          "| kol | hücre | n | hisse | TF15 % [GA] | medyan fark % | HEDEF5 / taban / kat | HEDEF10 / taban | R15<-20% / taban | R15>+20% / taban | artı beşlik | karar |",
+          "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for kol in GT_K2_OLAY["kollar"]:
+        for h, o in TB[kol].items():
+            tf = o.get("TF15") or {}; ks = "—" if o.get("kat5") is None else f"{o['kat5']:.2f}"
+            L_.append(f"| {kol} | {h} | {o['n']} | {o['hisse']} | {y(tf.get('ort'), 2)} [{y(tf.get('alt'), 2)}; {y(tf.get('ust'), 2)}] | "
+                      f"{y(o.get('medyan_fark'), 2)} | {y(o.get('HEDEF5'))} / {y(o.get('taban5'))} / "
+                      f"{ks} | {y(o.get('HEDEF10'))} / {y(o.get('taban10'))} | "
+                      f"{y(o.get('alt20'))} / {y(o.get('taban_alt20'))} | {y(o.get('ust20'))} / {y(o.get('taban_ust20'))} | {o.get('besli_arti', '—')} | {o['karar']} |")
+    L_ += ["", "Oynaklık (ATRP20) beşlikleri içinde TF15 % (n):", "", "| kol | hücre | B1 | B2 | B3 | B4 | B5 |", "|---|---|---|---|---|---|---|"]
+    for kol in GT_K2_OLAY["kollar"]:
+        for h, o in TB[kol].items():
+            if "besli" in o:
+                L_.append(f"| {kol} | {h} | " + " | ".join(f"{y(v['TF15'], 2)} ({v['n']})" for v in o["besli"].values()) + " |")
+    k = TB["_karar"]; L_ += ["", f"KARAR KURALI (ANA kol {k['ana_kol']}): " + "; ".join(f"{h} {v}" for h, v in k["hucre"].items()) + f" -> {k['sonuc']}", ""]
+    return "\n".join(L_)
+
+
+def gt_k2_goz2_esles() -> Dict[str, Any]:
+    """goz2/k2_onkayit.json'daki GT3 (32) ve GT4 (20) sayfalarının beş şartı GOZ_TESPIT gt_k2 ile yeniden (k2.py hes() ile aynı veri ve kesik)."""
+    D = os.path.join(GT_YOL["cikti"], "goz2"); KJ = json.load(open(os.path.join(D, "k2_onkayit.json"), encoding="utf-8")); VV: Dict[Tuple[str, str], Any] = {}
+
+    def veri(p: str, kaynak: str) -> Dict[str, pd.DataFrame]:
+        if (p, kaynak) not in VV:
+            VV[(p, kaynak)] = MI.mi_veri(p, GT_YOL["tam_bist"] if kaynak == "tam" else GT_YOL["acik"])["V"]
+        return VV[(p, kaynak)]
+
+    def hes(r: Dict[str, Any], bit: Optional[str] = None) -> Optional[Dict[str, int]]:
+        d = veri(r["pazar"], r.get("kaynak", "acik"))[r["sembol"]]
+        if bit:
+            d = d[d.index <= pd.Timestamp(bit)]
+        return gt_k2(*(d[c].to_numpy(float) for c in ("Open", "High", "Low", "Close")), int(r["s"]), int(r["t"]))
+    J3 = json.load(open(os.path.join(D, "gt3_secim.json"), encoding="utf-8")); A4 = json.load(open(os.path.join(D, "dip_anahtar.json"), encoding="utf-8"))
+    out: Dict[str, Any] = {}
+    for ad, sayfa, bek, bit in (("GT3", J3["sayfalar"], KJ["GT3"], lambda r: J3["kit_bit"][str(r["kitaplik_no"])] if r["kaynak"] == "tam" else None),
+                                ("GT4", A4, KJ["GT4"], lambda r: None)):
+        B = {r["sayfa"]: r for r in bek}; ayni = 0; fark = []
+        for r in sayfa:
+            no = r.get("sayfa", r.get("no")); o = hes(r, bit(r)); e = B[no]
+            if all(int(o[k]) == int(e[k]) for k in ("Y", "M", "S", "B", "Z", "K2", "YMSB", "dokunus")):
+                ayni += 1
+            else:
+                fark.append(no)
+        out[ad] = {"sayfa": len(sayfa), "ayni": ayni, "fark": fark}
+    return out
+
+
 def gt_sha_simdi() -> Dict[str, str]:
     return {"GT_KOD_SHA": gt_kod_sha(), "GT_ESIK_SHA": gt_esik_sha()}
 
@@ -1346,7 +1824,7 @@ _cakisma_kontrol_gt()
 def _gt_ana(argv: Optional[List[str]] = None) -> int:
     import argparse
     ap = argparse.ArgumentParser(description="GOZ_TESPIT")
-    ap.add_argument("komut", choices=["olcu", "parmak", "dedektor", "onay", "rapor", "sha"])
+    ap.add_argument("komut", choices=["olcu", "parmak", "dedektor", "onay", "rapor", "sha", "k2esles", "k2olay", "k2olc"])
     a = ap.parse_args(argv)
     try:
         if a.komut == "olcu":
@@ -1361,6 +1839,12 @@ def _gt_ana(argv: Optional[List[str]] = None) -> int:
             print(json.dumps(MI._mi_json(gt_rapor()), ensure_ascii=False, indent=1)[:3000])
         elif a.komut == "sha":
             print(json.dumps(gt_sha_simdi(), indent=1))
+        elif a.komut == "k2esles":
+            print(json.dumps(MI._mi_json(gt_k2_goz2_esles()), ensure_ascii=False, indent=1))
+        elif a.komut == "k2olay":
+            J = gt_k2_olay_kos(); print(json.dumps(MI._mi_json({k: J[k] for k in ("pazar", "sayim", "aday_sart", "olay_sha", "kod_sha")}), ensure_ascii=False, indent=1))
+        elif a.komut == "k2olc":
+            print(json.dumps(MI._mi_json(gt_k2_olc_kos()["karar"]), ensure_ascii=False, indent=1))
     except GTHata as ex:
         gtlog.error("DURDU: %s", ex)
         return 2
