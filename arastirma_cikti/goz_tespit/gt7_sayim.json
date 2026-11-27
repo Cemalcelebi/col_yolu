@@ -1,0 +1,272 @@
+{
+ "surum": "GOZ_TESPIT v1.0 (2026-11-27): kitaplık parmak izi + üç dedektör + kör onay seti (yalnız tespit; getiri yok) + ÇÖL-K2 x PİYASA REJİMİ (EK 7)",
+ "baslik": "DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı bekliyor; kalıp hükmü değil)",
+ "kod_sha": "3f9d2a9872c7267aa01d70a589f01faf952ae5acf7367a8aaf35237e49fbbb8b",
+ "k2r_esik_sha": "c0841e02865e59f0867f03c81fa815a0a08be6aa1691ad60c5ddca53088f7839",
+ "olay_sha": "e0ef464c8159b1f403ba03537352e939ea699b3a2a5c6148366485eae99cbf55",
+ "kesim": 0.276760218650567,
+ "kesim_kaynak": "YUKSELIS_ONCESI EK 2 (Ç257): /root/.kasa/ham/yukselis_oncesi/yo2/yo2_sayim.json kesim.ABD.G40 (= np.quantile(G40, 0,10), ABD 2016-22 piyasa haftaları, n 362; YO2_ESIK 'kesim'); YO2_ON_KAYIT.md satır 26 'G40 <= 0.276760'; YO2_RAPOR.md 'G40 <= 27,7%'",
+ "kesim_denetim": {
+  "yo2_sayim_sha": "47742d0aa5cbaefaa88938168bb823f55c32448a7e82ca298571921a1e364d2f",
+  "kesim": 0.276760218650567,
+  "G40_n": 362
+ },
+ "g40": {
+  "hafta": 416,
+  "ortak_hafta": 414,
+  "ortak_2016_22": 363,
+  "en_buyuk_fark": 0.0,
+  "kesit_ayni": true,
+  "yo2_piyasa_sha": "74df4b39654d967e1d7e1601d510da9a42bc4b5b0f718a8461bfb27899881153",
+  "sure_sn": 200,
+  "g40_sha": "46ee92ea37592af607cc8c67d49e29bca37b89fab9ca951052ad14f7c5afc10a"
+ },
+ "besli_sinir": {
+  "d1619": [
+   0.01830100081861019,
+   0.02466251142323017,
+   0.03301044926047325,
+   0.04939773306250572
+  ],
+  "d2022": [
+   0.02616880089044571,
+   0.03643043711781502,
+   0.0512383222579956,
+   0.0754938632249833
+  ]
+ },
+ "sayim": {
+  "takvim_gun": 1762,
+  "dip_gun": 177,
+  "donem": {
+   "d1619": {
+    "gun": 1006,
+    "dip_gun": 51
+   },
+   "d2022": {
+    "gun": 756,
+    "dip_gun": 126
+   }
+  },
+  "obek": [
+   {
+    "id": 0,
+    "bas": "2016-01-11",
+    "son": "2016-02-26",
+    "dip_gun": 33
+   },
+   {
+    "id": 1,
+    "bas": "2018-12-17",
+    "son": "2019-01-11",
+    "dip_gun": 18
+   },
+   {
+    "id": 2,
+    "bas": "2020-03-16",
+    "son": "2020-05-22",
+    "dip_gun": 44
+   },
+   {
+    "id": 3,
+    "bas": "2022-05-02",
+    "son": "2022-07-29",
+    "dip_gun": 53
+   },
+   {
+    "id": 4,
+    "bas": "2022-09-06",
+    "son": "2022-10-21",
+    "dip_gun": 29
+   }
+  ],
+  "olay": {
+   "K2": {
+    "ABD|d1619": {
+     "DİPTE": {
+      "olay": 60,
+      "hisse": 58,
+      "kesik15": 0,
+      "dip_donem": 2,
+      "dip_donem_kesiksiz": 2,
+      "donem_dagilim": {
+       "0": 29,
+       "1": 31
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 889,
+      "hisse": 462,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    },
+    "ABD|d2022": {
+     "DİPTE": {
+      "olay": 565,
+      "hisse": 502,
+      "kesik15": 0,
+      "dip_donem": 3,
+      "dip_donem_kesiksiz": 3,
+      "donem_dagilim": {
+       "2": 93,
+       "3": 374,
+       "4": 98
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 1759,
+      "hisse": 985,
+      "kesik15": 29,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    }
+   },
+   "YMSB": {
+    "ABD|d1619": {
+     "DİPTE": {
+      "olay": 140,
+      "hisse": 135,
+      "kesik15": 0,
+      "dip_donem": 2,
+      "dip_donem_kesiksiz": 2,
+      "donem_dagilim": {
+       "0": 77,
+       "1": 63
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 2479,
+      "hisse": 706,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    },
+    "ABD|d2022": {
+     "DİPTE": {
+      "olay": 1366,
+      "hisse": 933,
+      "kesik15": 0,
+      "dip_donem": 3,
+      "dip_donem_kesiksiz": 3,
+      "donem_dagilim": {
+       "2": 195,
+       "3": 830,
+       "4": 341
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 4445,
+      "hisse": 1484,
+      "kesik15": 144,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    }
+   },
+   "Y": {
+    "ABD|d1619": {
+     "DİPTE": {
+      "olay": 209,
+      "hisse": 200,
+      "kesik15": 0,
+      "dip_donem": 2,
+      "dip_donem_kesiksiz": 2,
+      "donem_dagilim": {
+       "0": 96,
+       "1": 113
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 3585,
+      "hisse": 832,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    },
+    "ABD|d2022": {
+     "DİPTE": {
+      "olay": 2153,
+      "hisse": 1375,
+      "kesik15": 0,
+      "dip_donem": 3,
+      "dip_donem_kesiksiz": 3,
+      "donem_dagilim": {
+       "2": 551,
+       "3": 1080,
+       "4": 522
+      }
+     },
+     "DİP DIŞI": {
+      "olay": 6313,
+      "hisse": 1684,
+      "kesik15": 199,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     },
+     "YOK": {
+      "olay": 0,
+      "hisse": 0,
+      "kesik15": 0,
+      "dip_donem": null,
+      "dip_donem_kesiksiz": null,
+      "donem_dagilim": null
+     }
+    }
+   }
+  },
+  "hafta_2016_22": 364,
+  "dip_hafta_2016_22": 37
+ },
+ "zaman_utc": "2026-11-27 13:17:04"
+}
