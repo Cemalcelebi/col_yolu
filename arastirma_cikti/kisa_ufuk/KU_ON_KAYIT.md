@@ -1,10 +1,10 @@
-# KU_ON_KAYIT — mevcut beş olay kümesi 3 ve 5 mumluk ufukta: kısa ufuk getirileri hesaplanmadan ÖNCE (2026-11-27T07:37:34Z)
+# KU_ON_KAYIT — mevcut beş olay kümesi 3 ve 5 mumluk ufukta: kısa ufuk getirileri hesaplanmadan ÖNCE (2026-11-27T07:38:20Z)
 
 Sürüm: KISA_UFUK v1.0 (2026-11-27): mevcut beş olay kümesi 3 ve 5 mumluk ufukta. İş tanımı: KU_IS_TANIMI.md. Sonuç dosyası (ku_sonuc.json) bu ön kayıt commit + push edilmeden üretilmez (kapı). Evren bugün yaşayan hisseler (yukarı yanlı). KASA açılmaz (veri <= 2022-12-31). Olaylar kaynak dosyalarından AYNEN alınır; yalnız ufuk değişir.
 
 ## Mühürler
 
-KU_KOD_SHA: bb7b51699222f457c7be70e711bd47864699d38adcdc8f6632533420d883e2f6
+KU_KOD_SHA: f86ab6ccfc1fd59550a2e46007952a70842fc7f19d3a9e71d0628ec6606a6121
 KU_ESIK_SHA: 19c88ab118f9846f8cd1483a0c1dad392a14173ae1fdeb93bfa8164772489c9b
 DOSYA_K1_olay_ABD: b75285eec29a4dcf590eeba5f6e9ea262dce09ba0d69d6f0f91cbb3419f040a1
 DOSYA_K1_olay_AVR: d374781cdad50e2538aaf1db691103b245993ebeddc6634dbe2daea0ca9a05c2
