@@ -1,0 +1,269 @@
+{
+ "not_": "MÜHÜRLÜ: sayfa -> kol / hisse / bölge; işaretler gelmeden açılmaz",
+ "pdf": "GT4_ONAY.pdf",
+ "pdf_sha": "250beb6bbbe4fa8a566d8e8ebd09a34c9723a7dc0ca90b35bdbd0bc000675401",
+ "kutu": [
+  "✓  çöl",
+  "K  kısmen",
+  "E  erken",
+  "×  değil"
+ ],
+ "kural": {
+  "bolum_pay": 3,
+  "bolum_en_az": 10,
+  "tepe_x": [
+   -1.0,
+   0.5
+  ],
+  "son_bar": 3,
+  "yuksek_dip": 0.05,
+  "r2": 0.6,
+  "yukselis": 0.25
+ },
+ "say": {
+  "K1+DIP": 16,
+  "RASTGELE": 4
+ },
+ "sayfalar": [
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "RYAM",
+   "s": 1211,
+   "t": 1250,
+   "L": 40,
+   "no": 1,
+   "sayfa": 1,
+   "kaynak": "acik",
+   "son": "2019-12-19"
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "CNH",
+   "s": 1616,
+   "t": 1655,
+   "L": 40,
+   "no": 2,
+   "sayfa": 2,
+   "kaynak": "acik",
+   "son": "2021-07-30"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "DOGUB",
+   "s": 1026,
+   "t": 1065,
+   "L": 40,
+   "no": 3,
+   "sayfa": 3,
+   "kaynak": "acik",
+   "son": "2019-09-02"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "MTC",
+   "s": 381,
+   "t": 420,
+   "L": 40,
+   "no": 4,
+   "sayfa": 4,
+   "kaynak": "acik",
+   "son": "2020-09-18"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "BURVA",
+   "s": 1491,
+   "t": 1510,
+   "L": 20,
+   "no": 5,
+   "sayfa": 5,
+   "kaynak": "acik",
+   "son": "2021-07-06"
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "UFUK",
+   "s": 621,
+   "t": 700,
+   "L": 80,
+   "no": 6,
+   "sayfa": 6,
+   "kaynak": "acik",
+   "son": "2019-11-11"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "KOSS",
+   "s": 1481,
+   "t": 1520,
+   "L": 40,
+   "no": 7,
+   "sayfa": 7,
+   "kaynak": "acik",
+   "son": "2021-05-28"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "BQ",
+   "s": 501,
+   "t": 540,
+   "L": 40,
+   "no": 8,
+   "sayfa": 8,
+   "kaynak": "acik",
+   "son": "2022-11-21"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "VCEL",
+   "s": 391,
+   "t": 430,
+   "L": 40,
+   "no": 9,
+   "sayfa": 9,
+   "kaynak": "acik",
+   "son": "2016-09-16"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "GOGO",
+   "s": 851,
+   "t": 870,
+   "L": 20,
+   "no": 10,
+   "sayfa": 10,
+   "kaynak": "acik",
+   "son": "2018-06-18"
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "WWW",
+   "s": 1751,
+   "t": 1790,
+   "L": 40,
+   "no": 11,
+   "sayfa": 11,
+   "kaynak": "acik",
+   "son": "2022-02-10"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "NBR",
+   "s": 1376,
+   "t": 1395,
+   "L": 20,
+   "no": 12,
+   "sayfa": 12,
+   "kaynak": "acik",
+   "son": "2020-07-20"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "PAMEL",
+   "s": 971,
+   "t": 1010,
+   "L": 40,
+   "no": 13,
+   "sayfa": 13,
+   "kaynak": "acik",
+   "son": "2019-06-03"
+  },
+  {
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "MAVI",
+   "s": 356,
+   "t": 375,
+   "L": 20,
+   "no": 14,
+   "sayfa": 14,
+   "kaynak": "acik",
+   "son": "2018-12-14"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "BASGZ",
+   "s": 211,
+   "t": 250,
+   "L": 40,
+   "no": 15,
+   "sayfa": 15,
+   "kaynak": "acik",
+   "son": "2022-06-17"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "ABD",
+   "sembol": "TLS",
+   "s": 326,
+   "t": 345,
+   "L": 20,
+   "no": 16,
+   "sayfa": 16,
+   "kaynak": "acik",
+   "son": "2022-04-05"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "FLAP",
+   "s": 746,
+   "t": 825,
+   "L": 80,
+   "no": 17,
+   "sayfa": 17,
+   "kaynak": "acik",
+   "son": "2018-09-14"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "ISFIN",
+   "s": 1086,
+   "t": 1105,
+   "L": 20,
+   "no": 18,
+   "sayfa": 18,
+   "kaynak": "acik",
+   "son": "2019-10-24"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "ETILR",
+   "s": 246,
+   "t": 285,
+   "L": 40,
+   "no": 19,
+   "sayfa": 19,
+   "kaynak": "acik",
+   "son": "2016-08-02"
+  },
+  {
+   "kol": "K1+DIP",
+   "pazar": "BIST",
+   "sembol": "KUTPO",
+   "s": 1706,
+   "t": 1725,
+   "L": 20,
+   "no": 20,
+   "sayfa": 20,
+   "kaynak": "acik",
+   "son": "2022-04-21"
+  }
+ ]
+}

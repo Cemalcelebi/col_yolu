@@ -1,0 +1,182 @@
+[
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "RYAM",
+  "s": 1211,
+  "t": 1250,
+  "L": 40,
+  "no": 1
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "CNH",
+  "s": 1616,
+  "t": 1655,
+  "L": 40,
+  "no": 2
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "DOGUB",
+  "s": 1026,
+  "t": 1065,
+  "L": 40,
+  "no": 3
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "MTC",
+  "s": 381,
+  "t": 420,
+  "L": 40,
+  "no": 4
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "BURVA",
+  "s": 1491,
+  "t": 1510,
+  "L": 20,
+  "no": 5
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "UFUK",
+  "s": 621,
+  "t": 700,
+  "L": 80,
+  "no": 6
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "KOSS",
+  "s": 1481,
+  "t": 1520,
+  "L": 40,
+  "no": 7
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "BQ",
+  "s": 501,
+  "t": 540,
+  "L": 40,
+  "no": 8
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "VCEL",
+  "s": 391,
+  "t": 430,
+  "L": 40,
+  "no": 9
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "GOGO",
+  "s": 851,
+  "t": 870,
+  "L": 20,
+  "no": 10
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "ABD",
+  "sembol": "WWW",
+  "s": 1751,
+  "t": 1790,
+  "L": 40,
+  "no": 11
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "NBR",
+  "s": 1376,
+  "t": 1395,
+  "L": 20,
+  "no": 12
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "PAMEL",
+  "s": 971,
+  "t": 1010,
+  "L": 40,
+  "no": 13
+ },
+ {
+  "kol": "RASTGELE",
+  "pazar": "BIST",
+  "sembol": "MAVI",
+  "s": 356,
+  "t": 375,
+  "L": 20,
+  "no": 14
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "BASGZ",
+  "s": 211,
+  "t": 250,
+  "L": 40,
+  "no": 15
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "ABD",
+  "sembol": "TLS",
+  "s": 326,
+  "t": 345,
+  "L": 20,
+  "no": 16
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "FLAP",
+  "s": 746,
+  "t": 825,
+  "L": 80,
+  "no": 17
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "ISFIN",
+  "s": 1086,
+  "t": 1105,
+  "L": 20,
+  "no": 18
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "ETILR",
+  "s": 246,
+  "t": 285,
+  "L": 40,
+  "no": 19
+ },
+ {
+  "kol": "K1+DIP",
+  "pazar": "BIST",
+  "sembol": "KUTPO",
+  "s": 1706,
+  "t": 1725,
+  "L": 20,
+  "no": 20
+ }
+]
