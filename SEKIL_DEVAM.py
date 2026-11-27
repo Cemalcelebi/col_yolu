@@ -703,7 +703,7 @@ def sd_sayim(PS: Dict[str, Dict[str, Any]]) -> Dict[str, Any]:
             ok = P[f"ok{Lw}"]; q = np.flatnonzero(ok & (P["hucre"] == q_h)); hv = np.flatnonzero(ok)
             hz = []
             for a_, qi in pd.Series(q).groupby(P["ay"][q]).groups.items():
-                r0 = int(P["t_row"][np.asarray(qi)].min()); hz.append(int(sd_havuz_maske(P["t_row"][hv], P["s15_row"][hv], r0).sum()))
+                r0 = int(P["t_row"][q[np.asarray(qi)]].min()); hz.append(int(sd_havuz_maske(P["t_row"][hv], P["s15_row"][hv], r0).sum()))
             S["havuz"][f"{p}|L{Lw}"] = {"sorgu": int(len(q)), "ay": len(hz), "havuz_min": min(hz) if hz else None, "havuz_medyan": float(np.median(hz)) if hz else None,
                                        "havuz_max": max(hz) if hz else None}
     P = PS["ABD"]; S["standart"] = sd_std_hepsi(P, P["hucre"] == SD_ESIK["hucre"]["kesif"])
@@ -1406,11 +1406,11 @@ def sd_onkayit_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> st
          "| hücre | L | pencere | geçerli | atılan (neden) | farklı ay | en kalabalık 3 ay payı | hisse |", "|---|---|---|---|---|---|---|---|"]
     for k, v in sorted(S["hucre"].items()):
         h, L = k.rsplit("|", 1)
-        s.append(f"| {h} | {L} | {v['pencere']} | {v['gecerli']} | {v['atilan']} | {v['ay']} | {_f(v['ust3_pay'], 3)} | {v['hisse']} |")
+        s.append(f"| {h.replace('|', ' ')} | {L} | {v['pencere']} | {v['gecerli']} | {v['atilan']} | {v['ay']} | {_f(v['ust3_pay'], 3)} | {v['hisse']} |")
     s += ["", "Tanımlayıcı boyutu: " + "; ".join(f"{L}: A {b['A']}, B {b['B']}, 0 {b['0']}" for L, b in S["boyut"].items()), "",
           "| komşu havuzu | sorgu | ay | havuz en az | medyan | en çok |", "|---|---|---|---|---|---|"]
     for k, v in S["havuz"].items():
-        s.append(f"| {k} | {v['sorgu']} | {v['ay']} | {v['havuz_min']} | {_f(v['havuz_medyan'], 0)} | {v['havuz_max']} |")
+        s.append(f"| {k.replace('|', ' ')} | {v['sorgu']} | {v['ay']} | {v['havuz_min']} | {_f(v['havuz_medyan'], 0)} | {v['havuz_max']} |")
     s += ["", f"Cemal bölgeleri (pazar, sınıf, durum, sayı): {Jh['cemal']}", "", "## Yorum gerektiren noktalar (ölçümden ÖNCE sabit)", ""]
     s += [f"{i}. {y}" for i, y in enumerate(SD_YORUM, 1)]
     s += ["", "## Tanımlar (SD_ESIK; sha yukarıda)", "", "```", json.dumps(SD_ESIK, ensure_ascii=False, indent=1), "```", "", "## KONTROL LİSTESİ", "",
