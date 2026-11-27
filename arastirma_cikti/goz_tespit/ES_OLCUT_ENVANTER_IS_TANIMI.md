@@ -1,0 +1,10 @@
+# ESKİ 'İZ DEĞİL' KAYITLARININ ENVANTERİ — hangi hüküm aynı gün eşlerine göre verildi (27 Kasım 2026)
+
+Yazan: ana model. Cemal (27 Kas; QMLS ve DGXX grafiklerini yan yana gösterip): "iki farklı hissenin grafiği birebir aynı; aynı sektör hisseleri aynı tepkiyi veriyor; bir iz bulununca aynı gün eşleri de çıkar; 'iz değil' dediklerinin çoğu belki de iz". Aynı itirazın önceki hali (26 Kas): "eşler aynı gün değil rastgele günlerde olmalı". O günden beri ölçüt TOPLAM FARK = R - aynı hissenin rastgele günleri (ZAMANLAMA + SEÇİM ayrımıyla). Ama 26 Kasım'dan ÖNCEKİ hükümlerin çoğu aynı gün eşlerine göre (eşli fark) verildi: sektörün / piyasanın tamamını kaldıran bir iz bu ölçüde sıfır görünür.
+
+## İş (yalnız envanter; ölçüm yok; hiçbir dosya değiştirilmez)
+- Kaynaklar: IZ_KARNE.py (IK_KAYIT bütün Ç kayıtları, IK_ILERI, IK_SINYAL), IZ_DEFTERI.md, COL_OZET.md, arastirma_cikti/ altındaki rapor dosyaları; satır / olay dosyaları için /root/.kasa/ham/ ve arastirma_cikti/**/**olay*.csv*.
+- Her 'İZ DEĞİL' / 'TUTMADI' / 'ÖLÇÜLEMEDİ' / 'EMARE DEĞİL' kararlı kayıt için bir satır: Ç no; kısa ad; olay nedir; karar ölçüsü hangi tabana göreydi: (E) aynı gün eşleri (eşli fark; momentum x likidite kovası, konum eşi, aynı gün aynı hücre vb.), (R) aynı hissenin rastgele / bütün günleri (TOPLAM FARK, T1), (M) mutlak / endeks, (B) belirsiz; olay sayısı (pazar x dönem, yazıyorsa); olay / satır dosyası bugün erişilebilir mi (yol; var / yok); bu dosyada olay tarihi + hisse + giriş sonrası getiri var mı (yeniden ölçüm için yeterli mi).
+- Sonra iki liste: (1) YENİDEN OKUNABİLİR: karar tabanı E olup satır dosyası elde olan kayıtlar, olay sayısı büyükten küçüğe; her biri için 'ZAMANLAMA bileşeni hiç ölçüldü mü' (raporda piyasa / sektör getirisi ayrı yazılmış mı) notu; (2) YENİDEN OKUNAMAZ: tabanı E ama veri yok.
+- Kapalı konular (COL_OZET.md listesi) ayrıca işaretlenir; karar verilmez.
+- Çıktı: arastirma_cikti/goz_tespit/ES_OLCUT_ENVANTER.md (tablo + iki liste + en üstte beş satırlık özet: kaç kayıt E, kaç R, kaçı yeniden okunabilir). Yalnız bu dosya yazılır ve commit edilir. YASAK: IZ_DEFTERI.md, IZ_KARNE.py, CLAUDE.md, COL_OZET.md, ONERI_DEFTERI.md ve başka her dosya.
