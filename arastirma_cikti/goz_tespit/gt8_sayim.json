@@ -1,0 +1,777 @@
+{
+ "surum": "GOZ_TESPIT v1.0 (2026-11-27): kitaplık parmak izi + üç dedektör + kör onay seti (yalnız tespit; getiri yok) + KURAL-3 (EK 8)",
+ "baslik": "DEDEKTÖRÜN BULDUĞU BÖLGELER (Cemal'in görsel onayı eşiğin hemen altında: yeni sayfalarda %64; kalıp hükmü değil)",
+ "not": "GETİRİSİZ: getiri / kırılım / yön hesaplanmadı",
+ "kod_sha": "13520d7006e773d002045558561c3a523e5952baecc89f03b72a35c3841386cb",
+ "k3_esik_sha": "5abb4adce8761bf42fa9893e0f83b3d2480d164204e1c57173842ca690dbab16",
+ "k2_esik_sha": "457e7ce7f0a2cc15f92651457209471f0b4213fe85e2a052a87538f8b65bbebe",
+ "gt5_aday_sha": "1de72c6af86d380f171919cd3b95c288335d4afded2166969187ed044776eb0d",
+ "pazar": {
+  "ABD": {
+   "evren": 3332810,
+   "evren_hisse": 4246,
+   "yer": 110007,
+   "d1": 317992,
+   "zaman": 1832629,
+   "d1_zaman_yersiz": 131718,
+   "ANA_ham": 22123,
+   "ZAMANSIZ_ham": 31457,
+   "PUANSIZ_ham": 22687
+  },
+  "AVR": {
+   "evren": 553811,
+   "evren_hisse": 569,
+   "yer": 2061,
+   "d1": 54088,
+   "zaman": 313704,
+   "d1_zaman_yersiz": 30679,
+   "ANA_ham": 435,
+   "ZAMANSIZ_ham": 592,
+   "PUANSIZ_ham": 461
+  },
+  "BIST": {
+   "evren": 354064,
+   "evren_hisse": 457,
+   "yer": 5439,
+   "d1": 34926,
+   "zaman": 220338,
+   "d1_zaman_yersiz": 16852,
+   "ANA_ham": 677,
+   "ZAMANSIZ_ham": 868,
+   "PUANSIZ_ham": 1819
+  }
+ },
+ "besli_sinir": {
+  "ABD": {
+   "d1619": [
+    0.01830100081861019,
+    0.02466251142323017,
+    0.03301044926047325,
+    0.04939773306250572
+   ],
+   "d2022": [
+    0.02616880089044571,
+    0.03643043711781502,
+    0.0512383222579956,
+    0.0754938632249833
+   ]
+  },
+  "AVR": {
+   "d1619": [
+    0.01504890900105238,
+    0.018605437129735947,
+    0.022582702338695526,
+    0.029080078378319746
+   ],
+   "d2022": [
+    0.02020699344575405,
+    0.025912046432495117,
+    0.032548870891332626,
+    0.04326791688799858
+   ]
+  },
+  "BIST": {
+   "d1619": [
+    0.02545638382434845,
+    0.03239999711513519,
+    0.039894150197505945,
+    0.05156861990690231
+   ],
+   "d2022": [
+    0.033270806074142456,
+    0.04133360385894775,
+    0.04988853409886361,
+    0.06261597722768783
+   ]
+  }
+ },
+ "zaman_utc": "2026-11-27 17:18:23",
+ "olay_sha": "609d8e1fa20be56e5741b8219d28ca0418349c735897b895bd2001675e2bccc9",
+ "aday_sha": "1573864d37d7908ce0c380f5fa4afa1c300a697bfabef5eac3acbdf29911c104",
+ "sayim": {
+  "ANA": {
+   "ABD|d1619": {
+    "olay": 2057,
+    "hisse": 697,
+    "kesik15": 0,
+    "kesiksiz15": 2057,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 1568,
+     "40": 230,
+     "80": 259
+    },
+    "besli": {
+     "1": 0,
+     "2": 3,
+     "3": 19,
+     "4": 207,
+     "5": 1828
+    }
+   },
+   "ABD|d2022": {
+    "olay": 4596,
+    "hisse": 1617,
+    "kesik15": 84,
+    "kesiksiz15": 4512,
+    "izleme_kesik": 117,
+    "L": {
+     "20": 3593,
+     "40": 527,
+     "80": 476
+    },
+    "besli": {
+     "1": 9,
+     "2": 33,
+     "3": 288,
+     "4": 1483,
+     "5": 2783
+    }
+   },
+   "AVR|d1619": {
+    "olay": 43,
+    "hisse": 21,
+    "kesik15": 0,
+    "kesiksiz15": 43,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 31,
+     "40": 4,
+     "80": 8
+    },
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 2,
+     "5": 40
+    }
+   },
+   "AVR|d2022": {
+    "olay": 104,
+    "hisse": 65,
+    "kesik15": 0,
+    "kesiksiz15": 104,
+    "izleme_kesik": 1,
+    "L": {
+     "20": 79,
+     "40": 14,
+     "80": 11
+    },
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 13,
+     "5": 90
+    }
+   },
+   "BIST|d1619": {
+    "olay": 109,
+    "hisse": 60,
+    "kesik15": 0,
+    "kesiksiz15": 109,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 80,
+     "40": 10,
+     "80": 19
+    },
+    "besli": {
+     "1": 4,
+     "2": 8,
+     "3": 14,
+     "4": 28,
+     "5": 55
+    }
+   },
+   "BIST|d2022": {
+    "olay": 128,
+    "hisse": 80,
+    "kesik15": 0,
+    "kesiksiz15": 128,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 91,
+     "40": 14,
+     "80": 23
+    },
+    "besli": {
+     "1": 27,
+     "2": 29,
+     "3": 14,
+     "4": 38,
+     "5": 20
+    }
+   }
+  },
+  "ZAMANSIZ": {
+   "ABD|d1619": {
+    "olay": 2221,
+    "hisse": 702,
+    "kesik15": 0,
+    "kesiksiz15": 2221,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 1545,
+     "40": 338,
+     "80": 338
+    },
+    "besli": {
+     "1": 1,
+     "2": 2,
+     "3": 22,
+     "4": 182,
+     "5": 2014
+    }
+   },
+   "ABD|d2022": {
+    "olay": 5350,
+    "hisse": 1564,
+    "kesik15": 178,
+    "kesiksiz15": 5172,
+    "izleme_kesik": 217,
+    "L": {
+     "20": 3753,
+     "40": 822,
+     "80": 775
+    },
+    "besli": {
+     "1": 9,
+     "2": 29,
+     "3": 304,
+     "4": 1608,
+     "5": 3400
+    }
+   },
+   "AVR|d1619": {
+    "olay": 41,
+    "hisse": 20,
+    "kesik15": 0,
+    "kesiksiz15": 41,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 29,
+     "40": 8,
+     "80": 4
+    },
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 3,
+     "5": 37
+    }
+   },
+   "AVR|d2022": {
+    "olay": 120,
+    "hisse": 58,
+    "kesik15": 3,
+    "kesiksiz15": 117,
+    "izleme_kesik": 4,
+    "L": {
+     "20": 94,
+     "40": 15,
+     "80": 11
+    },
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 1,
+     "4": 4,
+     "5": 115
+    }
+   },
+   "BIST|d1619": {
+    "olay": 133,
+    "hisse": 62,
+    "kesik15": 0,
+    "kesiksiz15": 133,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 93,
+     "40": 9,
+     "80": 31
+    },
+    "besli": {
+     "1": 7,
+     "2": 10,
+     "3": 17,
+     "4": 30,
+     "5": 69
+    }
+   },
+   "BIST|d2022": {
+    "olay": 135,
+    "hisse": 78,
+    "kesik15": 0,
+    "kesiksiz15": 135,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 88,
+     "40": 14,
+     "80": 33
+    },
+    "besli": {
+     "1": 33,
+     "2": 23,
+     "3": 27,
+     "4": 27,
+     "5": 25
+    }
+   }
+  },
+  "PUANSIZ": {
+   "ABD|d1619": {
+    "olay": 2039,
+    "hisse": 726,
+    "kesik15": 0,
+    "kesiksiz15": 2039,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 1637,
+     "40": 260,
+     "80": 142
+    },
+    "besli": {
+     "1": 0,
+     "2": 1,
+     "3": 20,
+     "4": 207,
+     "5": 1811
+    }
+   },
+   "ABD|d2022": {
+    "olay": 4390,
+    "hisse": 1622,
+    "kesik15": 81,
+    "kesiksiz15": 4309,
+    "izleme_kesik": 133,
+    "L": {
+     "20": 3573,
+     "40": 525,
+     "80": 292
+    },
+    "besli": {
+     "1": 5,
+     "2": 32,
+     "3": 309,
+     "4": 1450,
+     "5": 2594
+    }
+   },
+   "AVR|d1619": {
+    "olay": 40,
+    "hisse": 23,
+    "kesik15": 0,
+    "kesiksiz15": 40,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 31,
+     "40": 6,
+     "80": 3
+    },
+    "besli": {
+     "1": 0,
+     "2": 1,
+     "3": 1,
+     "4": 2,
+     "5": 36
+    }
+   },
+   "AVR|d2022": {
+    "olay": 98,
+    "hisse": 62,
+    "kesik15": 0,
+    "kesiksiz15": 98,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 82,
+     "40": 10,
+     "80": 6
+    },
+    "besli": {
+     "1": 0,
+     "2": 0,
+     "3": 0,
+     "4": 10,
+     "5": 88
+    }
+   },
+   "BIST|d1619": {
+    "olay": 185,
+    "hisse": 82,
+    "kesik15": 0,
+    "kesiksiz15": 185,
+    "izleme_kesik": 0,
+    "L": {
+     "20": 139,
+     "40": 25,
+     "80": 21
+    },
+    "besli": {
+     "1": 6,
+     "2": 17,
+     "3": 20,
+     "4": 58,
+     "5": 84
+    }
+   },
+   "BIST|d2022": {
+    "olay": 195,
+    "hisse": 103,
+    "kesik15": 2,
+    "kesiksiz15": 193,
+    "izleme_kesik": 2,
+    "L": {
+     "20": 146,
+     "40": 26,
+     "80": 23
+    },
+    "besli": {
+     "1": 40,
+     "2": 43,
+     "3": 44,
+     "4": 33,
+     "5": 35
+    }
+   }
+  }
+ },
+ "olc_disi_belli": {
+  "ANA": [],
+  "ZAMANSIZ": [],
+  "PUANSIZ": []
+ },
+ "k3esles": {
+  "gt5": [
+   {
+    "sayfa": 1,
+    "pazar": "BIST",
+    "sembol": "SAMAT",
+    "s": 1536,
+    "t": 1615,
+    "L": 80,
+    "anahtar_kol": "D1+YER_ZAMANSIZ",
+    "kod_kol": "D1+YER_ZAMANSIZ",
+    "k3_kol": "ZAMANSIZ",
+    "D1_sira": 0.9997231960296631,
+    "Y": 1,
+    "DIPTEN_BAR": 0.1,
+    "ayni": true
+   },
+   {
+    "sayfa": 2,
+    "pazar": "ABD",
+    "sembol": "NSPR",
+    "s": 731,
+    "t": 770,
+    "L": 40,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999714493751526,
+    "Y": 1,
+    "DIPTEN_BAR": 0.85,
+    "ayni": true
+   },
+   {
+    "sayfa": 3,
+    "pazar": "BIST",
+    "sembol": "YAPRK",
+    "s": 1041,
+    "t": 1060,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9994588494300842,
+    "Y": 1,
+    "DIPTEN_BAR": 0.95,
+    "ayni": true
+   },
+   {
+    "sayfa": 4,
+    "pazar": "ABD",
+    "sembol": "WNW",
+    "s": 331,
+    "t": 350,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999751448631287,
+    "Y": 1,
+    "DIPTEN_BAR": 0.5,
+    "ayni": true
+   },
+   {
+    "sayfa": 5,
+    "pazar": "ABD",
+    "sembol": "CYN",
+    "s": 166,
+    "t": 205,
+    "L": 40,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999802708625793,
+    "Y": 1,
+    "DIPTEN_BAR": 0.775,
+    "ayni": true
+   },
+   {
+    "sayfa": 6,
+    "pazar": "ABD",
+    "sembol": "ANET",
+    "s": 1131,
+    "t": 1150,
+    "L": 20,
+    "anahtar_kol": "RASTGELE",
+    "kod_kol": "KURAL_DISI",
+    "k3_kol": null,
+    "D1_sira": 0.5876250863075256,
+    "Y": 0,
+    "DIPTEN_BAR": 0.95,
+    "ayni": null
+   },
+   {
+    "sayfa": 7,
+    "pazar": "ABD",
+    "sembol": "LEDS",
+    "s": 1631,
+    "t": 1710,
+    "L": 80,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999756217002869,
+    "Y": 1,
+    "DIPTEN_BAR": 0.725,
+    "ayni": true
+   },
+   {
+    "sayfa": 8,
+    "pazar": "BIST",
+    "sembol": "DENGE",
+    "s": 986,
+    "t": 1005,
+    "L": 20,
+    "anahtar_kol": "D1+YER_ZAMANSIZ",
+    "kod_kol": "D1+YER_ZAMANSIZ",
+    "k3_kol": "ZAMANSIZ",
+    "D1_sira": 0.99961918592453,
+    "Y": 1,
+    "DIPTEN_BAR": 0.3,
+    "ayni": true
+   },
+   {
+    "sayfa": 9,
+    "pazar": "ABD",
+    "sembol": "AIFC",
+    "s": 1201,
+    "t": 1220,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999768733978271,
+    "Y": 1,
+    "DIPTEN_BAR": 0.8,
+    "ayni": true
+   },
+   {
+    "sayfa": 10,
+    "pazar": "ABD",
+    "sembol": "WBX",
+    "s": 191,
+    "t": 210,
+    "L": 20,
+    "anahtar_kol": "RASTGELE",
+    "kod_kol": "KURAL_DISI",
+    "k3_kol": null,
+    "D1_sira": 0.8739197850227356,
+    "Y": 0,
+    "DIPTEN_BAR": 0.6,
+    "ayni": null
+   },
+   {
+    "sayfa": 11,
+    "pazar": "BIST",
+    "sembol": "SEYKM",
+    "s": 1521,
+    "t": 1600,
+    "L": 80,
+    "anahtar_kol": "RASTGELE",
+    "kod_kol": "KURAL_DISI",
+    "k3_kol": null,
+    "D1_sira": 0.11870913207530975,
+    "Y": 0,
+    "DIPTEN_BAR": 0.0,
+    "ayni": null
+   },
+   {
+    "sayfa": 12,
+    "pazar": "ABD",
+    "sembol": "VIVO",
+    "s": 711,
+    "t": 730,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999759793281555,
+    "Y": 1,
+    "DIPTEN_BAR": 0.95,
+    "ayni": true
+   },
+   {
+    "sayfa": 13,
+    "pazar": "ABD",
+    "sembol": "INBS",
+    "s": 336,
+    "t": 415,
+    "L": 80,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999845027923584,
+    "Y": 1,
+    "DIPTEN_BAR": 0.875,
+    "ayni": true
+   },
+   {
+    "sayfa": 14,
+    "pazar": "BIST",
+    "sembol": "EKIZ",
+    "s": 906,
+    "t": 925,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9996993541717529,
+    "Y": 1,
+    "DIPTEN_BAR": 0.55,
+    "ayni": true
+   },
+   {
+    "sayfa": 15,
+    "pazar": "ABD",
+    "sembol": "SLS",
+    "s": 1626,
+    "t": 1705,
+    "L": 80,
+    "anahtar_kol": "D1+ZAMAN_YERSIZ",
+    "kod_kol": "D1+ZAMAN_YERSIZ",
+    "k3_kol": null,
+    "D1_sira": 0.9999818205833435,
+    "Y": 0,
+    "DIPTEN_BAR": 0.7125,
+    "ayni": true
+   },
+   {
+    "sayfa": 16,
+    "pazar": "BIST",
+    "sembol": "NIBAS",
+    "s": 921,
+    "t": 1000,
+    "L": 80,
+    "anahtar_kol": "D1+ZAMAN_YERSIZ",
+    "kod_kol": "D1+ZAMAN_YERSIZ",
+    "k3_kol": null,
+    "D1_sira": 0.9998195171356201,
+    "Y": 0,
+    "DIPTEN_BAR": 0.6625,
+    "ayni": true
+   },
+   {
+    "sayfa": 17,
+    "pazar": "ABD",
+    "sembol": "YJ",
+    "s": 581,
+    "t": 620,
+    "L": 40,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.9999819993972778,
+    "Y": 1,
+    "DIPTEN_BAR": 0.5,
+    "ayni": true
+   },
+   {
+    "sayfa": 18,
+    "pazar": "ABD",
+    "sembol": "REVB",
+    "s": 136,
+    "t": 155,
+    "L": 20,
+    "anahtar_kol": "D1+YER_ZAMANSIZ",
+    "kod_kol": "D1+YER_ZAMANSIZ",
+    "k3_kol": "ZAMANSIZ",
+    "D1_sira": 0.999983012676239,
+    "Y": 1,
+    "DIPTEN_BAR": 0.25,
+    "ayni": true
+   },
+   {
+    "sayfa": 19,
+    "pazar": "BIST",
+    "sembol": "MTRKS",
+    "s": 346,
+    "t": 365,
+    "L": 20,
+    "anahtar_kol": "D1+YER+ZAMAN",
+    "kod_kol": "D1+YER+ZAMAN",
+    "k3_kol": "ANA",
+    "D1_sira": 0.99924236536026,
+    "Y": 1,
+    "DIPTEN_BAR": 0.75,
+    "ayni": true
+   },
+   {
+    "sayfa": 20,
+    "pazar": "ABD",
+    "sembol": "DARE",
+    "s": 656,
+    "t": 735,
+    "L": 80,
+    "anahtar_kol": "D1+YER_ZAMANSIZ",
+    "kod_kol": "D1+YER_ZAMANSIZ",
+    "k3_kol": "ZAMANSIZ",
+    "D1_sira": 0.9999862313270569,
+    "Y": 1,
+    "DIPTEN_BAR": 0.2375,
+    "ayni": true
+   },
+   {
+    "sayfa": 21,
+    "pazar": "BIST",
+    "sembol": "BAGFS",
+    "s": 1531,
+    "t": 1610,
+    "L": 80,
+    "anahtar_kol": "RASTGELE",
+    "kod_kol": "D1+ZAMAN_YERSIZ",
+    "k3_kol": null,
+    "D1_sira": 0.9968029260635376,
+    "Y": 0,
+    "DIPTEN_BAR": 0.9875,
+    "ayni": null
+   }
+  ],
+  "gt5_kural_sayfa": 17,
+  "gt5_kural_ayni": 17,
+  "gt5_rastgele": 4,
+  "gt5_rastgele_k3_kolda": 0,
+  "uc_set": {
+   "sayfa": 82,
+   "acik": 74,
+   "ayni": 74,
+   "fark": [],
+   "kitaplik_okunmadi": 8
+  },
+  "gecti": true
+ }
+}
