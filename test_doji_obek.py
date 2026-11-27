@@ -335,6 +335,43 @@ def test_cakisma_kapisi():
         raise AssertionError("çakışma kapısı çalışmadı")
 
 
+def _sentetik_pazar(u=30, tohum=3):
+    tr = pd.bdate_range("2015-01-02", "2022-12-30"); n = len(tr); r = np.random.default_rng(tohum)
+    Os, Hs, Ls, Cs = [], [], [], []
+    for j in range(u):
+        C = 20 * np.exp(np.cumsum(r.normal(0, 0.02, n))); O = C * np.exp(r.normal(0, 0.01, n))
+        H = np.maximum(O, C) * (1 + np.abs(r.normal(0, 0.01, n))) + 1e-6; L = np.minimum(O, C) * (1 - np.abs(r.normal(0, 0.01, n)))
+        Os.append(O); Hs.append(H); Ls.append(L); Cs.append(C)
+    O = np.concatenate(Os); H = np.concatenate(Hs); L = np.concatenate(Ls); C = np.concatenate(Cs)
+    return {"O": O, "H": H, "L": L, "C": C, "POS": np.tile(np.arange(n), u), "off": np.arange(u + 1) * n, "Op": np.stack(Os, 1), "Cl": np.stack(Cs, 1),
+            "P2": np.ones((n, u), bool), "tarih": tr.values.astype("datetime64[ns]"), "sembol": np.array([f"S{j}" for j in range(u)])}
+
+
+@t
+def test_uctan_uca_sentetik():
+    """hazırla -> sayım -> (kapı atlanarak) ölçüm -> hüküm -> özet + rapor: şema ve akış (sonuç değerleri sınanmaz)."""
+    Dm = {"ABD": _sentetik_pazar(30, 3), "AVR": _sentetik_pazar(12, 4)}
+    with tempfile.TemporaryDirectory() as d:
+        for p in DJ.DJ_PAZAR:
+            DJ.dj_hazirla_pazar(p, ham=d, D=Dm[p])
+        S = DJ.dj_sayim(d); assert S["ANA"]["ABD|d1619"]["2"]["n"] > 0
+        eski_k, eski_d = DJ.dj_kapi, DJ.dj_depo
+        try:
+            DJ.dj_kapi = lambda *a, **k: {"kontrol": True}
+            DJ.dj_depo = lambda p, kaynak=None: Dm[p]
+            J = DJ.dj_olcum(cikti=d, ham=d, git=False, B=200)
+        finally:
+            DJ.dj_kapi, DJ.dj_depo = eski_k, eski_d
+        assert J["hukum"]["genel"] and len(J["hukum"]["bh"]) == 32 and os.path.exists(os.path.join(d, "dj_ozet.csv"))
+        r = J["ANA"]["hucre"]["ABD|d1619"]["2"]; assert r["n"] > 0 and r["TOPLAM_FARK"]["alt"] is not None and r["CIKIS_PAY"]["YUKARI"] is not None
+        eski_h = DJ.DJ_YOL["ham"]
+        try:
+            DJ.DJ_YOL["ham"] = d; DJ.dj_rapor_yaz(cikti=d, ham=d)
+        finally:
+            DJ.DJ_YOL["ham"] = eski_h
+        assert "## HATA" in open(os.path.join(d, "DJ_RAPOR.md"), encoding="utf-8").read()
+
+
 if __name__ == "__main__":
     bas = 0
     for f in ISIM:

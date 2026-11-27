@@ -730,7 +730,11 @@ def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: b
         X[f"DONF_{ad}"] = X[f"DON_{ad}"] - X.hucre.map(tp).astype(float)
         X.attrs[f"don_taban_{ad}"] = {h: float(v) for h, v in tp.items()}
     out: Dict[str, Any] = {"dusen_tabansiz": dus, "hucre": {}, "fark": {}}
-    for h in DJ_HUCRE:
+    pz = set(str(h).split("|")[0] for h in X.hucre.unique()) | set(str(h).split("|")[0] for h in T.hucre.unique())
+    if len(pz) != 1:
+        raise DJHata(f"K10: tek pazar bekleniyordu: {sorted(pz)}")
+    hucreler = [h for h in DJ_HUCRE if h.split("|")[0] in pz]          # öteki pazarın boş hücreleri birleştirmede ezmesin
+    for h in hucreler:
         g = X[X.hucre == h]; Hh: Dict[str, Any] = {}
         for k in DJ_KSIN:
             gk = g[g.k == k]; ay = gk.ay.to_numpy(str); an = f"{h}|{k}"
@@ -777,7 +781,7 @@ def dj_olc_kol(X: pd.DataFrame, T: pd.DataFrame, B: Optional[int] = None, tam: b
             out["fark"][h] = F
     # taban (herhangi gün) satırı: rastgele günlerin kendi değerleri (bilgi)
     tb = {}
-    for h in DJ_HUCRE:
+    for h in hucreler:
         tg = T[T.hucre == h]
         if len(tg):
             tb[h] = {"n": int(len(tg)), "R15_ort": float(tg.R15.mean()), "R15_med": float(tg.R15.median()), "U2": float(tg.U2.mean()),
@@ -916,6 +920,9 @@ DJ_YORUM = [
     "Haftalık kol: mumlar günlük geçerli barlardan; giriş haftasının ilk günlük satırında P2; haftalar arası boşluk (giriş) <= 2 hafta, 15 hafta <= 29 hafta satırı.",
     "Evren bugün yaşayan hisseler: sonuç yukarı yanlı; TOPLAM FARK aynı hisseye göre olduğu için yanlılık kısmen düşer.",
     "Ölçüm bir kez koşar; getiri dosyası varsa kapı durur. Sonuçtan sonra yalnız gösterim değişebilir; aksi SAPMA.",
+    "Getirisiz sayım: k = 4+ ABD iki döneminde n < 1.000 (844 / 532): bu satırda aralık sıfırı içerirse hüküm ÖLÇÜLEMEDİ olur (iddia kapanmaz); AVR k = 4+ "
+    "n 140 / 58 (bilgi; işaret yine okunur, n < 30 değil). DOZ kuralı k = 4+ nokta değerini n'ye bakmadan kullanır (kural önceden böyle).",
+    "Düşen (tabansız) olay sayısı ve DEVAM'ı ölçülemeyen çıkışlar rapora yazılır; dışlanır, yerine konmaz.",
 ]
 
 
