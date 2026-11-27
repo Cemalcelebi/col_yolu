@@ -624,7 +624,7 @@ def es_onkayit_yaz(S: Dict[str, Any], DG: Dict[str, Any], cikti: Optional[str] =
     for kod in sec["secilen"]:
         r = S["kayit"][kod]; hs = sorted({h for v in r["kol"].values() for h in v})
         L += [f"### {kod} ({len(r['kol'])} kol; kaynak sha {', '.join(f'{os.path.basename(a)} {b}' for a, b in r['kaynak_sha'].items())})", "",
-              "| Kol | " + " | ".join(hs) + " |", "|---|" + "---|" * len(hs)]
+              "| Kol | " + " | ".join(h.replace("|", " ") for h in hs) + " |", "|---|" + "---|" * len(hs)]
         for k in sorted(r["kol"]):
             L.append(f"| {k} | " + " | ".join(f"{r['kol'][k][h]['n']} / {r['kol'][k][h]['ay']}" if h in r["kol"][k] else "—" for h in hs) + " |")
         L.append("")
@@ -806,7 +806,7 @@ def es_rapor_yaz(cikti: Optional[str] = None, ham: Optional[str] = None) -> str:
               "| Kol | Hücre | n / ay | TOPLAM | ZAMANLAMA | SEÇİM | Eski fark | ZAM karar | TOP karar |", "|---|---|---|---|---|---|---|---|---|"]
         for k, v in r["kol"].items():
             for h, c in v["hucre"].items():
-                L.append(f"| {k} | {h} | {c['n']} / {c['ay']} | {_ga(c.get('TOPLAM'))} | {_ga(c.get('ZAMANLAMA'))} | {_ga(c.get('SECIM'))} | "
+                L.append(f"| {k} | {h.replace('|', ' ')} | {c['n']} / {c['ay']} | {_ga(c.get('TOPLAM'))} | {_ga(c.get('ZAMANLAMA'))} | {_ga(c.get('SECIM'))} | "
                          f"{_f(c.get('eski_fark'))} | {v['ZAMANLAMA']['karar']} | {v['TOPLAM']['karar']} |")
         L.append("")
     yol = _es_yol(ES_DOSYA["rapor"], cikti)
