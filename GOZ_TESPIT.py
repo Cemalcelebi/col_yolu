@@ -1837,6 +1837,8 @@ GT_K2K: Dict[str, Any] = {
         "karar_yon": "YÖN hücresi TUTAR <=> Kontrol 1 tabanı olan bölge >= 50 VE fark GA alt ucu > 0; bölge < 50 ÖLÇÜLEMEDİ; aksi TUTMAZ",
         "karar_kir": "KIRILIM SONRASI hücresi TUTAR <=> n giriş >= 30 VE TFk15 GA alt ucu > 0 VE medyan(R15) - medyan(T1k) > 0 VE simetrik +%5 farkının GA alt "
                      "ucu > 0 VE >= 20 olaylı beşliklerin en az %75'inde TFk15 > 0 (böyle beşlik 2'den azsa bu şart aranmaz); n < 30 ÖLÇÜLEMEDİ; aksi TUTMAZ",
+        "kosullu_bilgi": "BİLGİ (karara girmez): kırılan bölgeler içinde YUKARI payı (yukarı / (yukarı + aşağı)) ve Kontrol 1'in aynı oranı; dar kutu iki "
+                         "yönde de kırılımı artırdığı için (mekanik) yukarı önce payının yanında okunur",
         "emare": "her tablo için ayrı: EMARE (yaşayan evren) <=> ANA kol (K2) ABD 2016-19 VE ABD 2020-22 hücrelerinde o tablo TUTAR; iki tablo ayrı yazılır"},
 }
 GT_K2K_DOSYA = {"sayim": "gt6_sayim.json", "onkayit": "GT6_ON_KAYIT.md", "ozet": "gt6_ozet.json", "gt5_onkayit": "GT5_ON_KAYIT.md",
@@ -2078,10 +2080,12 @@ def gt_k2k_boot(x: np.ndarray, ay: np.ndarray) -> Dict[str, Any]:
 def gt_k2k_taban1(EV: pd.DataFrame, KP: pd.DataFrame) -> pd.DataFrame:
     """Kontrol 1 tabanı: hisse-dönem-L içinde KESIK olmayan pencerelerde YUKARI payı (en az k1_en_az pencere)."""
     x = KP[(~KP.kesik) & KP.donem.notna()]
-    T = x.groupby(["pazar", "sembol", "donem", "L"]).agg(k1_n=("yon", "size"), k1_yuk=("yon", lambda v: float((v == 1).mean()))).reset_index()
+    T = x.groupby(["pazar", "sembol", "donem", "L"]).agg(k1_n=("yon", "size"), k1_yuk=("yon", lambda v: float((v == 1).mean())),
+                                                        k1_asg=("yon", lambda v: float((v == -1).mean())),
+                                                        k1_kos=("yon", lambda v: float((v == 1).sum() / (v != 0).sum()) if (v != 0).any() else np.nan)).reset_index()
     E = EV.copy(); E["donem"] = [h.split("|")[1] for h in E.hucre]
     E = E.merge(T, how="left", on=["pazar", "sembol", "donem", "L"]); E["k1_n"] = E.k1_n.fillna(0).astype(int)
-    E.loc[E.k1_n < int(GT_K2K["k1_en_az"]), "k1_yuk"] = np.nan
+    E.loc[E.k1_n < int(GT_K2K["k1_en_az"]), ["k1_yuk", "k1_asg", "k1_kos"]] = np.nan
     return E
 
 
@@ -2132,10 +2136,14 @@ def gt_k2k_hucre_yon(g: pd.DataFrame) -> Dict[str, Any]:
         return o
     y = a.yon.to_numpy(); ay = pd.to_datetime(a.giris_tarih).dt.strftime("%Y-%m").to_numpy()
     o.update({"yukari": float((y == 1).mean()), "asagi": float((y == -1).mean()), "kirilmadi": float((y == 0).mean()), "taban": float(a.k1_yuk.mean()),
-              "taban_asagi_bilgi": None, "fark": gt_k2k_boot((y == 1).astype(float) - a.k1_yuk.to_numpy(float), ay),
+              "taban_asagi": float(a.k1_asg.mean()), "fark": gt_k2k_boot((y == 1).astype(float) - a.k1_yuk.to_numpy(float), ay),
               "kbar_med_yukari": float(np.median(a.kbar[y == 1])) if (y == 1).any() else None,
               "kbar_med_asagi": float(np.median(a.kbar[y == -1])) if (y == -1).any() else None,
               "adet": {"yukari": int((y == 1).sum()), "asagi": int((y == -1).sum()), "kirilmadi": int((y == 0).sum())}})
+    kb = (y != 0) & np.isfinite(a.k1_kos.to_numpy(float))                 # BİLGİ (kutu genişliğinden bağımsıza yakın): kırılanlar içinde yukarı payı
+    o["kosullu"] = {"n": int(kb.sum()), "pay": float((y[kb] == 1).mean()) if kb.any() else None,
+                    "taban": float(a.k1_kos.to_numpy(float)[kb].mean()) if kb.any() else None,
+                    "fark": gt_k2k_boot((y[kb] == 1).astype(float) - a.k1_kos.to_numpy(float)[kb], ay[kb])}
     return o
 
 
@@ -2247,12 +2255,14 @@ def gt_k2k_tablo_md(TB: Dict[str, Any]) -> str:
         b = b or {}
         return f"{y(b.get('ort'), n)} [{y(b.get('alt'), n)}; {y(b.get('ust'), n)}]"
     L_ = [f"## {GT_K2_BASLIK}", "", GT_K2_K7, "", "### TABLO A — YÖN (Kontrol 1: aynı hisse-dönem-L, YER'i sağlamayan pencereler)", "",
-          "| kol | hücre | bölge (kesik) | n tabanlı | yukarı / aşağı / kırılmadı % | taban yukarı % | fark % [GA] | bar med. yukarı / aşağı | karar |",
-          "|---|---|---|---|---|---|---|---|---|"]
+          "| kol | hücre | bölge (kesik) | n tabanlı | yukarı / aşağı / kırılmadı % | taban yukarı / aşağı % | fark % [GA] | bar med. yukarı / aşağı | "
+          "bilgi: kırılanda yukarı % / taban / fark [GA] | karar |", "|---|---|---|---|---|---|---|---|---|---|"]
     for kol in GT_K2_OLAY["kollar"]:
         for h, o in TB["A"][kol].items():
             L_.append(f"| {kol} | {h} | {o['bolge']} ({o['kesik']}) | {o['n']} | {y(o.get('yukari'))} / {y(o.get('asagi'))} / {y(o.get('kirilmadi'))} | "
-                      f"{y(o.get('taban'))} | {ga(o.get('fark'))} | {o.get('kbar_med_yukari', '—')} / {o.get('kbar_med_asagi', '—')} | {o['karar']} |")
+                      f"{y(o.get('taban'))} / {y(o.get('taban_asagi'))} | {ga(o.get('fark'))} | {o.get('kbar_med_yukari', '—')} / "
+                      f"{o.get('kbar_med_asagi', '—')} | {y((o.get('kosullu') or {}).get('pay'))} / {y((o.get('kosullu') or {}).get('taban'))} / "
+                      f"{ga((o.get('kosullu') or {}).get('fark'))} | {o['karar']} |")
     L_ += ["", "### TABLO B — KIRILIM SONRASI (Kontrol 2: aynı hisse-dönemin sıradan tavan kırılımları; giriş b + 1 açılışı; 15 bar)", "",
            "| kol | hücre | n | TFk15 % [GA] | medyan fark % | +5 önce % / taban / fark [GA] | +10 önce % / taban | -5 önce % / taban | R15<-20 % / taban | "
            "R15>+20 % / taban | beşlik artı / büyük | R15-T1 % | karar |", "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]

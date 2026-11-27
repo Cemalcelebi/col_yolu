@@ -710,6 +710,7 @@ def test_k2k_uctan_uca_sentetik():
     assert oa["n"] == len(x) and abs(oa["fark"]["ort"] - ((x.yon == 1).astype(float) - x.k1_yuk).mean()) < 1e-12
     KP = R["kontrol"]; s0, d0 = x.sembol.iloc[0], x.donem.iloc[0]; L0 = int(x.L.iloc[0])
     kk = KP[(KP.sembol == s0) & (KP.donem == d0) & (KP.L == L0) & ~KP.kesik]; assert abs(x.k1_yuk.iloc[0] - (kk.yon == 1).mean()) < 1e-12
+    assert abs(x.k1_kos.iloc[0] - (kk.yon == 1).sum() / (kk.yon != 0).sum()) < 1e-12 and oa["kosullu"]["n"] == int((x.yon != 0).sum())
     T = K[K.durum == "TAMAM"]; ob = TB["B"]["K2"]["ABD|d2022"]; Tm = T[T.hucre == "ABD|d2022"]
     assert ob["n"] == len(Tm) and abs(ob["TFk15"]["ort"] - (Tm.R15 - Tm.T1k).mean()) < 1e-12
     r0 = Tm.iloc[0]; kr = KR[(KR.sembol == r0.sembol) & (KR.donem == r0.donem) & ~KR.kesik]; assert abs(r0.T1k - kr.R15.mean()) < 1e-12
