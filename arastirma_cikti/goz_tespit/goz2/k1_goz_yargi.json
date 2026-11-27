@@ -1,0 +1,73 @@
+{
+ "not": "Ana modelin kör göz yargısı (27 Kas 2026): ÇÖL-K1'in (ince şerit + grafiğin altında + önce en az 2 kat tepe) havuzdan seçtiği 24 bölge + 8 rastgele, karışık; anahtar (k1_anahtar.json) bu dosya commit edildikten sonra açıldı. Ölçüt Cemal'in ilk set işaretleri.",
+ "etiket": {
+  "EVET": [
+   9,
+   16,
+   17,
+   20,
+   24,
+   32
+  ],
+  "KISMEN": [
+   8,
+   15,
+   26,
+   30
+  ],
+  "ERKEN": [
+   2,
+   4,
+   6,
+   7,
+   11,
+   12,
+   13,
+   21,
+   22,
+   28
+  ],
+  "HAYIR": [
+   1,
+   3,
+   5,
+   10,
+   14,
+   18,
+   19,
+   23,
+   25,
+   27,
+   29,
+   31
+  ]
+ },
+ "neden": {
+  "1": "dipten tepeye yükseliş",
+  "3": "iri tepki mumları",
+  "5": "tepede",
+  "10": "iri, düzensiz mumlar",
+  "14": "düşen bıçak",
+  "18": "tepeden düşüş",
+  "19": "düz tabanın sonunda dip kırılıyor",
+  "23": "tepede",
+  "25": "geniş oynak",
+  "27": "seyrek işlem",
+  "29": "grafik ortasında geniş salınım",
+  "31": "tepede yükseliş",
+  "2": "şerit aşağı kayıyor",
+  "4": "düzenli aşağı kayma",
+  "6": "dipte ince şerit ama yakından basamak basamak aşağı",
+  "7": "aşağı kayma",
+  "11": "yeni dip + toparlanamama",
+  "12": "aşağı kayma",
+  "13": "aşağı kayıp yeni düzleşiyor",
+  "21": "boşluklu düşüş sonrası aşağı",
+  "22": "yuvarlak tabandan sonra yeniden aşağı",
+  "28": "aşağı kayma",
+  "8": "içinde tümsek, sonra hafif aşağı",
+  "15": "tümsek + kayma, sonu düz",
+  "26": "başta patlama mumu, sonra düz",
+  "30": "tepki + düz + sonda düşüş"
+ }
+}
