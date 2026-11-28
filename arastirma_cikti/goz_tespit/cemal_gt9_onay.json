@@ -1,0 +1,36 @@
+{
+ "kaynak": "GT9_ONAY_cemal_isaretli.pdf (28 Kas 2026)",
+ "okuma": "ink /Rect'inden mekanik (21 sayfa) + ana modelin gözü (s. 4: 'kısmen' karalanmış, 'değil' işaretli -> HAYIR; s. 16: 'kısmen' + grafiğin sağ ucunda son mumdan yukarı çizgi; s. 1: işaret yok)",
+ "isaretsiz": [
+  1
+ ],
+ "cizim": {
+  "4": "kısmen karalandı, değil işaretlendi",
+  "16": "sağ uçta son mumdan yukarı kıvrılan çizgi (yön beklentisi yukarı)"
+ },
+ "sinif4": {
+  "2": "ERKEN",
+  "3": "ERKEN",
+  "4": "HAYIR",
+  "5": "HAYIR",
+  "6": "ERKEN",
+  "7": "EVET",
+  "8": "EVET",
+  "9": "ERKEN",
+  "10": "ERKEN",
+  "11": "HAYIR",
+  "12": "KISMEN",
+  "13": "KISMEN",
+  "14": "KISMEN",
+  "15": "HAYIR",
+  "16": "KISMEN",
+  "17": "EVET",
+  "18": "ERKEN",
+  "19": "EVET",
+  "20": "HAYIR",
+  "21": "KISMEN",
+  "22": "EVET",
+  "23": "EVET",
+  "24": "EVET"
+ }
+}

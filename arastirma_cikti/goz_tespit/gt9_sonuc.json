@@ -1,0 +1,287 @@
+{
+ "cemal_say": {
+  "ERKEN": 6,
+  "HAYIR": 5,
+  "EVET": 7,
+  "KISMEN": 5
+ },
+ "isaretsiz": [
+  1
+ ],
+ "kol_x_cemal": {
+  "-": {
+   "D1+YER+ZAMAN": 1,
+   "D1+YER_ZAMANSIZ": 0,
+   "RASTGELE": 0
+  },
+  "ERKEN": {
+   "D1+YER+ZAMAN": 5,
+   "D1+YER_ZAMANSIZ": 1,
+   "RASTGELE": 0
+  },
+  "EVET": {
+   "D1+YER+ZAMAN": 6,
+   "D1+YER_ZAMANSIZ": 0,
+   "RASTGELE": 1
+  },
+  "HAYIR": {
+   "D1+YER+ZAMAN": 1,
+   "D1+YER_ZAMANSIZ": 2,
+   "RASTGELE": 2
+  },
+  "KISMEN": {
+   "D1+YER+ZAMAN": 3,
+   "D1+YER_ZAMANSIZ": 1,
+   "RASTGELE": 1
+  }
+ },
+ "iki_goz": {
+  "n": 23,
+  "uyum2": 0.6956521739130435,
+  "kappa2": 0.25116279069767455,
+  "uyum4": 0.391304347826087,
+  "kappa4": 0.18481012658227847
+ },
+ "satir": [
+  {
+   "sayfa": 1,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "RNG",
+   "L": 20,
+   "son": "2022-04-01",
+   "cemal": "-",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 2,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "BIST",
+   "sembol": "RODRG",
+   "L": 20,
+   "son": "2019-12-02",
+   "cemal": "ERKEN",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 3,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "XTNT",
+   "L": 20,
+   "son": "2017-02-22",
+   "cemal": "ERKEN",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 4,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "PDSB",
+   "L": 80,
+   "son": "2018-07-20",
+   "cemal": "HAYIR",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 5,
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "AVOD",
+   "L": 80,
+   "son": "2021-05-25",
+   "cemal": "HAYIR",
+   "model": "HAYIR"
+  },
+  {
+   "sayfa": 6,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "RRGB",
+   "L": 20,
+   "son": "2020-04-23",
+   "cemal": "ERKEN",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 7,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "BDSX",
+   "L": 20,
+   "son": "2022-07-29",
+   "cemal": "EVET",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 8,
+   "kol": "RASTGELE",
+   "pazar": "BIST",
+   "sembol": "VKING",
+   "L": 20,
+   "son": "2022-07-19",
+   "cemal": "EVET",
+   "model": "HAYIR"
+  },
+  {
+   "sayfa": 9,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "CTMX",
+   "L": 40,
+   "son": "2016-07-26",
+   "cemal": "ERKEN",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 10,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "BTCS",
+   "L": 20,
+   "son": "2019-11-18",
+   "cemal": "ERKEN",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 11,
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "IQ",
+   "L": 40,
+   "son": "2021-07-09",
+   "cemal": "HAYIR",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 12,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "ASMB",
+   "L": 80,
+   "son": "2016-06-01",
+   "cemal": "KISMEN",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 13,
+   "kol": "RASTGELE",
+   "pazar": "ABD",
+   "sembol": "SAP",
+   "L": 40,
+   "son": "2019-12-19",
+   "cemal": "KISMEN",
+   "model": "HAYIR"
+  },
+  {
+   "sayfa": 14,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "ARLO",
+   "L": 20,
+   "son": "2020-04-21",
+   "cemal": "KISMEN",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 15,
+   "kol": "D1+YER_ZAMANSIZ",
+   "pazar": "BIST",
+   "sembol": "CASA",
+   "L": 20,
+   "son": "2021-09-02",
+   "cemal": "HAYIR",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 16,
+   "kol": "D1+YER_ZAMANSIZ",
+   "pazar": "ABD",
+   "sembol": "SSM",
+   "L": 20,
+   "son": "2022-09-13",
+   "cemal": "KISMEN",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 17,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "BIST",
+   "sembol": "GATEG",
+   "L": 20,
+   "son": "2019-11-25",
+   "cemal": "EVET",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 18,
+   "kol": "D1+YER_ZAMANSIZ",
+   "pazar": "ABD",
+   "sembol": "FTH",
+   "L": 20,
+   "son": "2022-04-13",
+   "cemal": "ERKEN",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 19,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "BIST",
+   "sembol": "IZMDC",
+   "L": 40,
+   "son": "2021-06-25",
+   "cemal": "EVET",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 20,
+   "kol": "D1+YER_ZAMANSIZ",
+   "pazar": "ABD",
+   "sembol": "HURA",
+   "L": 20,
+   "son": "2022-09-16",
+   "cemal": "HAYIR",
+   "model": "ERKEN"
+  },
+  {
+   "sayfa": 21,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "BIST",
+   "sembol": "DGATE",
+   "L": 80,
+   "son": "2018-11-14",
+   "cemal": "KISMEN",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 22,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "GNRC",
+   "L": 20,
+   "son": "2022-11-28",
+   "cemal": "EVET",
+   "model": "KISMEN"
+  },
+  {
+   "sayfa": 23,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "ATER",
+   "L": 20,
+   "son": "2022-11-01",
+   "cemal": "EVET",
+   "model": "EVET"
+  },
+  {
+   "sayfa": 24,
+   "kol": "D1+YER+ZAMAN",
+   "pazar": "ABD",
+   "sembol": "CMTL",
+   "L": 20,
+   "son": "2022-07-14",
+   "cemal": "EVET",
+   "model": "EVET"
+  }
+ ]
+}
