@@ -1,0 +1,284 @@
+{
+ "not_": "MÜHÜRLÜ: sayfa -> kol / hisse / bölge; işaretler gelmeden açılmaz",
+ "pdf": "GT10_ONAY.pdf",
+ "pdf_sha": "0ef6ad3e800cef2497e4fa18a7ebfa3fa2307f173364c89c9011b33a7c404196",
+ "kutu": [
+  "✓  çöl",
+  "K  kısmen",
+  "E  erken",
+  "×  değil"
+ ],
+ "kural": "GT10: K3 olaylarından C adayına göre tabakalı 16 (K3+C 8: ABD 6, BIST 2; K3-C 8: ABD 6, BIST 2), yalnız C 4 (ABD 3, BIST 1), rastgele 4; daha önce gösterilmiş hisseler dışarıda; t + 15 <= 2022-12-31",
+ "say": {
+  "C_YALNIZ": 4,
+  "K3+C": 8,
+  "K3-C": 8,
+  "RASTGELE": 4
+ },
+ "sayfalar": [
+  {
+   "kol": "C_YALNIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ADUS",
+   "s": 1601,
+   "t": 1620,
+   "L": 20,
+   "sayfa": 1,
+   "son": "2021-06-10"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "BCTX",
+   "s": 346,
+   "t": 365,
+   "L": 20,
+   "sayfa": 2,
+   "son": "2021-04-15"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "FENER",
+   "s": 851,
+   "t": 930,
+   "L": 80,
+   "sayfa": 3,
+   "son": "2019-02-07"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "MITT",
+   "s": 1321,
+   "t": 1340,
+   "L": 20,
+   "sayfa": 4,
+   "son": "2020-04-30"
+  },
+  {
+   "kol": "C_YALNIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "DMAC",
+   "s": 1146,
+   "t": 1185,
+   "L": 40,
+   "sayfa": 5,
+   "son": "2022-03-18"
+  },
+  {
+   "kol": "C_YALNIZ",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "DURDO",
+   "s": 936,
+   "t": 975,
+   "L": 40,
+   "sayfa": 6,
+   "son": "2019-11-20"
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "GUBRF",
+   "s": 1081,
+   "t": 1160,
+   "L": 80,
+   "sayfa": 7,
+   "son": "2020-01-13"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "PKENT",
+   "s": 1341,
+   "t": 1360,
+   "L": 20,
+   "sayfa": 8,
+   "son": "2022-06-21"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "BTU",
+   "s": 746,
+   "t": 765,
+   "L": 20,
+   "sayfa": 9,
+   "son": "2020-04-17"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ACIC",
+   "s": 1851,
+   "t": 1870,
+   "L": 20,
+   "sayfa": 10,
+   "son": "2022-06-07"
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "TWI",
+   "s": 1601,
+   "t": 1680,
+   "L": 80,
+   "sayfa": 11,
+   "son": "2021-09-03"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "TVRD",
+   "s": 341,
+   "t": 360,
+   "L": 20,
+   "sayfa": 12,
+   "son": "2016-06-08"
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "TRENJ",
+   "s": 571,
+   "t": 610,
+   "L": 40,
+   "sayfa": 13,
+   "son": "2017-11-03"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "HOV",
+   "s": 1121,
+   "t": 1140,
+   "L": 20,
+   "sayfa": 14,
+   "son": "2019-07-16"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "CELC",
+   "s": 1051,
+   "t": 1070,
+   "L": 20,
+   "sayfa": 15,
+   "son": "2021-12-31"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "VSTM",
+   "s": 1431,
+   "t": 1470,
+   "L": 40,
+   "sayfa": 16,
+   "son": "2020-11-03"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "SVRA",
+   "s": 1076,
+   "t": 1095,
+   "L": 20,
+   "sayfa": 17,
+   "son": "2021-09-02"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "OYLUM",
+   "s": 1686,
+   "t": 1765,
+   "L": 80,
+   "sayfa": 18,
+   "son": "2022-06-17"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "TLRY",
+   "s": 276,
+   "t": 295,
+   "L": 20,
+   "sayfa": 19,
+   "son": "2019-09-20"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "LPCN",
+   "s": 1241,
+   "t": 1260,
+   "L": 20,
+   "sayfa": 20,
+   "son": "2020-01-07"
+  },
+  {
+   "kol": "K3+C",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "ODAS",
+   "s": 1521,
+   "t": 1540,
+   "L": 20,
+   "sayfa": 21,
+   "son": "2021-07-26"
+  },
+  {
+   "kol": "C_YALNIZ",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "SLNG",
+   "s": 441,
+   "t": 460,
+   "L": 20,
+   "sayfa": 22,
+   "son": "2016-12-13"
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "OFG",
+   "s": 1741,
+   "t": 1820,
+   "L": 80,
+   "sayfa": 23,
+   "son": "2022-03-25"
+  },
+  {
+   "kol": "K3-C",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "DSP",
+   "s": 136,
+   "t": 175,
+   "L": 40,
+   "sayfa": 24,
+   "son": "2021-10-20"
+  }
+ ]
+}
