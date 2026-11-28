@@ -1,0 +1,37 @@
+{
+ "not": "Ana modelin mühürlü ön etiketi (28 Kas 2026; GT10; 24 sayfa; kol bilinmeden iki levhadan; ELEME YOK). Görülen: 5 sayfa (6, 7, 11, 13, 23) tepede / yükselişte; s. 2 ve s. 20'de veri boşluğu görünüyor (elenmedi; tohumlu seçim aynen).",
+ "etiket": {
+  "EVET": [
+   3,
+   8,
+   9,
+   10,
+   14,
+   17,
+   18,
+   19,
+   20
+  ],
+  "KISMEN": [
+   4,
+   12,
+   16,
+   22
+  ],
+  "ERKEN": [
+   1,
+   5,
+   15,
+   21,
+   24
+  ],
+  "HAYIR": [
+   2,
+   6,
+   7,
+   11,
+   13,
+   23
+  ]
+ }
+}
