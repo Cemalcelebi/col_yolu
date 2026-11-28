@@ -92,3 +92,5 @@
 2026-11-26 00:39 INFO gun 2026-11-25 aday 9 poz 5 kapanan 16 cds_pct 0.84
 2026-11-27 00:48 INFO SAT ENTRA @4.41 +0.0% maliyet bar=23
 2026-11-27 00:48 INFO gun 2026-11-26 aday 9 poz 4 kapanan 17 cds_pct 0.84
+2026-11-28 00:14 INFO COL BOZULDU aday DCTTR @3.07 taban 3.19
+2026-11-28 00:14 INFO gun 2026-11-27 aday 8 poz 4 kapanan 17 cds_pct 0.84

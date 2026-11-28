@@ -1,0 +1,25 @@
+COL GUNLUK RAPOR — 2026-11-28 03:13 (TR)
+Calistirici: GH_GUNLUK v1 (2026-10-19) | GitHub Actions
+Onbellek: sarildi (586 hisse)
+Veri: 586 hisse | son bar 2026-11-27
+Ozet: aday 8 | pozisyon 4 | kapanan 17 | sure 51 sn
+============================================================
+
+== 2026-11-27  CDS 0.84 -> 1.5x
+aday 8 | poz 4 | kapanan 17
+
+TUT  (hisse  kar%  durum  tabana%)
+  BIOEN    +3%  114g  taban -36%  stop=maliyet
+  GARAN    +3%  64g  taban -17%  stop=maliyet
+  HKTM     -3%  117g  taban -28%
+  YKBNK   -11%  64g  taban -5%
+
+BEKLE  (hisse  tavana%  girilecek%  doji  fitil  uzun  ruz%)   [tavana -8% icindekiler, toplam aday 8]
+
+COL BOZULDU (taban kirildi, aday dustu): DCTTR
+
+KAPANAN 17: kazanan %6  ort -21.8% | acilis->acilis ort -23.8% (n=16)
+
+=== D9 RUZGAR LISTESI — sektor sepeti 60g > %0 ve piyasadan >= %10 iyi: 0 sektor | piyasa medyani %-36.7
+  AZ DUSEN (ruzgar degil — sepet eksi, piyasa daha cok dustu): XBANK %-24, XULAS %-29
+  ruzgarli sektorde uzun colde hisse yok
