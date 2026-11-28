@@ -1,0 +1,36 @@
+{
+ "kaynak": "GT10_ONAY_cemal_isaretli.pdf (28 Kas 2026)",
+ "okuma": "ink /Rect'inden mekanik (23 sayfa; alt şerit levhasıyla gözle doğrulandı) + s. 1 ana modelin gözüyle: '✓ çöl' ve 'K kısmen' kutularının İKİSİ de işaretli, yakın görünümün sağında yukarı kıvrılan iki yay (yukarı dönüş beklentisi); karalama yok",
+ "belirsiz": {
+  "1": "✓ ve K ikisi de işaretli (ön izleme görüntüsünde ✓ çizmişti); sayımlara girmedi, Cemal'e soruldu"
+ },
+ "cizim": {
+  "1": "yakın görünümün sağında yukarı kıvrılan iki yay",
+  "12": "kısmen kutusundan grafiğe uzanan halka"
+ },
+ "sinif4": {
+  "2": "EVET",
+  "3": "EVET",
+  "4": "ERKEN",
+  "5": "HAYIR",
+  "6": "HAYIR",
+  "7": "HAYIR",
+  "8": "EVET",
+  "9": "EVET",
+  "10": "EVET",
+  "11": "HAYIR",
+  "12": "KISMEN",
+  "13": "HAYIR",
+  "14": "EVET",
+  "15": "HAYIR",
+  "16": "HAYIR",
+  "17": "HAYIR",
+  "18": "EVET",
+  "19": "HAYIR",
+  "20": "HAYIR",
+  "21": "ERKEN",
+  "22": "KISMEN",
+  "23": "HAYIR",
+  "24": "EVET"
+ }
+}

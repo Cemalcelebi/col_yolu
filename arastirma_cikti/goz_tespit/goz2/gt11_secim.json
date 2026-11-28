@@ -1,0 +1,247 @@
+{
+ "tohum": 2812,
+ "kural": "GT11: KURAL-3 olaylarından (k3_olay.pkl; 2016-22) rastgele: ANA 20 (ABD 15, BIST 5), rastgele 4; daha önce gösterilmiş hisseler dışarıda; t + 15 <= 2022-12-31; işaret biriktirme",
+ "onkayit": "ÖN KAYIT (28 Kas 2026; PDF ve işaretlerden önce): işaret biriktirme seti. (1) ANA (K3; 20 sayfa): ✓ payı >= %70 ve rastgele + 40 puan => 'KOD GÖZÜ TUTUYOR' (eşik aynı; son üç sette %64 / %40 / %50). (2) ERKEN AYIRICI: kodun seçtiği sayfalarda ✓ - erken ayrımı EGIM ve DIPTEN_BAR AUC >= 0,70 (yön büyük = ✓); EN AZ 5 erken ve 5 ✓ sayfa yoksa ÖLÇÜLEMEDİ. (3) işaretli sayfaların sonrası Ç277 ileri testine aynı komutla eklenir (işaretlerden sonra); kırılım yönü tablosu (cemal_isaret_kirilim.json) aynı tanımla güncellenir.",
+ "sayfalar": [
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "GOODY",
+   "s": 266,
+   "t": 285,
+   "L": 20,
+   "sayfa": 1
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "SGRX",
+   "s": 706,
+   "t": 725,
+   "L": 20,
+   "sayfa": 2
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "PLUG",
+   "s": 1856,
+   "t": 1895,
+   "L": 40,
+   "sayfa": 3
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "DMRC",
+   "s": 1386,
+   "t": 1425,
+   "L": 40,
+   "sayfa": 4
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "PARSN",
+   "s": 931,
+   "t": 1010,
+   "L": 80,
+   "sayfa": 5
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "FMCC",
+   "s": 1306,
+   "t": 1325,
+   "L": 20,
+   "sayfa": 6
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "NXH",
+   "s": 971,
+   "t": 990,
+   "L": 20,
+   "sayfa": 7
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "KLGYO",
+   "s": 1691,
+   "t": 1710,
+   "L": 20,
+   "sayfa": 8
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "BNTC",
+   "s": 1696,
+   "t": 1715,
+   "L": 20,
+   "sayfa": 9
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "PXS",
+   "s": 501,
+   "t": 520,
+   "L": 20,
+   "sayfa": 10
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "KZIA",
+   "s": 616,
+   "t": 635,
+   "L": 20,
+   "sayfa": 11
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "ETX",
+   "s": 1046,
+   "t": 1085,
+   "L": 40,
+   "sayfa": 12
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "AKCNS",
+   "s": 881,
+   "t": 960,
+   "L": 80,
+   "sayfa": 13
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "FOA",
+   "s": 626,
+   "t": 645,
+   "L": 20,
+   "sayfa": 14
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "RCKT",
+   "s": 611,
+   "t": 630,
+   "L": 20,
+   "sayfa": 15
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "RDNW",
+   "s": 621,
+   "t": 640,
+   "L": 20,
+   "sayfa": 16
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "TH",
+   "s": 491,
+   "t": 510,
+   "L": 20,
+   "sayfa": 17
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "AMBO",
+   "s": 611,
+   "t": 630,
+   "L": 20,
+   "sayfa": 18
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "VRCA",
+   "s": 1036,
+   "t": 1055,
+   "L": 20,
+   "sayfa": 19
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "EMNIS",
+   "s": 931,
+   "t": 950,
+   "L": 20,
+   "sayfa": 20
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "STEM",
+   "s": 426,
+   "t": 445,
+   "L": 20,
+   "sayfa": 21
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "MERKO",
+   "s": 1376,
+   "t": 1395,
+   "L": 20,
+   "sayfa": 22
+  },
+  {
+   "kol": "RASTGELE",
+   "kaynak": "acik",
+   "pazar": "ABD",
+   "sembol": "CTO",
+   "s": 1191,
+   "t": 1230,
+   "L": 40,
+   "sayfa": 23
+  },
+  {
+   "kol": "D1+YER+ZAMAN",
+   "kaynak": "acik",
+   "pazar": "BIST",
+   "sembol": "AVGYO",
+   "s": 556,
+   "t": 575,
+   "L": 20,
+   "sayfa": 24
+  }
+ ]
+}
